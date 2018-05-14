@@ -52,12 +52,9 @@ public class DecorateBiomeEvent extends Event
 {
     private final World world;
     private final Random rand;
-    /**
-     * @deprecated use {@link #chunkPos}
-     */
-    @Deprecated
+    /** @deprecated use {@link #chunkPos} */
+    @Deprecated // TODO remove in 1.13
     private final BlockPos pos;
-    @Nullable // TODO: remove nullable in 1.13
     private final ChunkPos chunkPos;
 
     public DecorateBiomeEvent(World world, Random rand, ChunkPos chunkPos)
@@ -74,7 +71,7 @@ public class DecorateBiomeEvent extends Event
         this.world = world;
         this.rand = rand;
         this.pos = pos;
-        this.chunkPos = null;
+        this.chunkPos = new ChunkPos(pos);
     }
 
     public World getWorld()
@@ -88,9 +85,7 @@ public class DecorateBiomeEvent extends Event
     }
 
     /**
-     * Get the position used for original decoration generation.
-     * This may be anywhere randomly inside the 2x2 chunk area for generation.
-     * To get the original chunk position of the generation before a random location was chosen, use {@link #getChunkPos()}.
+     * @deprecated use {@link #getChunkPos()} or {@link Decorate#getPlacementPos} instead.
      */
     @Deprecated
     public BlockPos getPos()
@@ -98,7 +93,6 @@ public class DecorateBiomeEvent extends Event
         return pos;
     }
 
-    @Nullable // TODO: remove nullable in 1.13
     public ChunkPos getChunkPos()
     {
         return chunkPos;
@@ -155,13 +149,14 @@ public class DecorateBiomeEvent extends Event
         }
 
         private final EventType type;
-        private final BlockPos pos;
+        @Nullable
+        private final BlockPos placementPos;
 
-        public Decorate(World world, Random rand, ChunkPos chunkPos, BlockPos pos, EventType type)
+        public Decorate(World world, Random rand, ChunkPos chunkPos, @Nullable BlockPos placementPos, EventType type)
         {
             super(world, rand, chunkPos);
             this.type = type;
-            this.pos = pos;
+            this.placementPos = placementPos;
         }
 
         @Deprecated // TODO: remove in 1.13
@@ -169,7 +164,7 @@ public class DecorateBiomeEvent extends Event
         {
             super(world, rand, pos);
             this.type = type;
-            this.pos = pos;
+            this.placementPos = null;
         }
 
         public EventType getType()
@@ -178,14 +173,15 @@ public class DecorateBiomeEvent extends Event
         }
 
         /**
-         * Get the position used for original decoration generation.
-         * This may be the original chunk position, or anywhere inside the 2x2 chunk area for generation.
+         * This may be anywhere inside the 2x2 chunk area for generation.
          * To get the original chunk position of the generation before a random location was chosen, use {@link #getChunkPos()}.
+         *
+         * @return the position used for original decoration, or null if it is not specified.
          */
-        @Override // TODO 1.13: this should not be an override any more, it's specific to this event
-        public BlockPos getPos()
+        @Nullable
+        public BlockPos getPlacementPos()
         {
-            return this.pos;
+            return this.placementPos;
         }
     }
 }
