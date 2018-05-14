@@ -30,7 +30,7 @@
          catch (CommandException commandexception)
          {
 -            TextComponentTranslation textcomponenttranslation1 = new TextComponentTranslation(commandexception.getMessage(), commandexception.func_74844_a());
-+		    net.minecraft.util.text.ITextComponent textcomponenttranslation1 = net.minecraftforge.server.command.TextComponentHelper.createComponentTranslation(p_175786_1_, commandexception.getMessage(), commandexception.func_74844_a());
++            net.minecraft.util.text.ITextComponent textcomponenttranslation1 = net.minecraftforge.server.command.TextComponentHelper.createComponentTranslation(p_175786_1_, commandexception.getMessage(), commandexception.func_74844_a());
              textcomponenttranslation1.func_150256_b().func_150238_a(TextFormatting.RED);
              p_175786_1_.func_145747_a(textcomponenttranslation1);
          }
