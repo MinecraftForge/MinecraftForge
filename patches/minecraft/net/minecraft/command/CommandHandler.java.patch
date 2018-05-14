@@ -18,3 +18,19 @@
                  if (j > -1)
                  {
                      List<Entity> list = EntitySelector.<Entity>func_179656_b(p_71556_1_, astring[j], Entity.class);
+@@ -110,13 +121,13 @@
+         }
+         catch (WrongUsageException wrongusageexception)
+         {
+-            TextComponentTranslation textcomponenttranslation2 = new TextComponentTranslation("commands.generic.usage", new Object[] {new TextComponentTranslation(wrongusageexception.getMessage(), wrongusageexception.func_74844_a())});
++            TextComponentTranslation textcomponenttranslation2 = new TextComponentTranslation("commands.generic.usage", new Object[] {net.minecraftforge.server.command.TextComponentHelper.createComponentTranslation(p_175786_1_, wrongusageexception.getMessage(), wrongusageexception.func_74844_a())});
+             textcomponenttranslation2.func_150256_b().func_150238_a(TextFormatting.RED);
+             p_175786_1_.func_145747_a(textcomponenttranslation2);
+         }
+         catch (CommandException commandexception)
+         {
+-            TextComponentTranslation textcomponenttranslation1 = new TextComponentTranslation(commandexception.getMessage(), commandexception.func_74844_a());
++		    net.minecraft.util.text.ITextComponent textcomponenttranslation1 = net.minecraftforge.server.command.TextComponentHelper.createComponentTranslation(p_175786_1_, commandexception.getMessage(), commandexception.func_74844_a());
+             textcomponenttranslation1.func_150256_b().func_150238_a(TextFormatting.RED);
+             p_175786_1_.func_145747_a(textcomponenttranslation1);
+         }
