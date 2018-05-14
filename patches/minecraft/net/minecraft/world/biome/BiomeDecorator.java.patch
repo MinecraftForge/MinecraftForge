@@ -4,7 +4,7 @@
  
      protected void func_150513_a(Biome p_150513_1_, World p_150513_2_, Random p_150513_3_)
      {
-+        net.minecraftforge.event.terraingen.TerrainGen.decorateBiomePre(p_150513_2_, p_150513_3_, field_180294_c);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Pre(p_150513_2_, p_150513_3_, field_180294_c));
          this.func_76797_b(p_150513_2_, p_150513_3_);
  
 +        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_150513_2_, p_150513_3_, field_180294_c, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.SAND))
@@ -133,7 +133,7 @@
                  (new WorldGenLiquids(Blocks.field_150356_k)).func_180709_b(p_150513_2_, p_150513_3_, blockpos3);
              }
          }
-+        net.minecraftforge.event.terraingen.TerrainGen.decorateBiomePost(p_150513_2_, p_150513_3_, field_180294_c);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.terraingen.DecorateBiomeEvent.Post(p_150513_2_, p_150513_3_, field_180294_c));
      }
  
      protected void func_76797_b(World p_76797_1_, Random p_76797_2_)

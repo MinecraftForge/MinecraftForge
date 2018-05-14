@@ -102,30 +102,4 @@ public abstract class TerrainGen
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
-
-    /**
-     * Fired before biome decoration.
-     *
-     * @param world the world being decorated
-     * @param random the random instance used for decoration
-     * @param pos the original chunk position used for generation, passed to the decorator
-     */
-    public static void decorateBiomePre(World world, Random random, BlockPos pos)
-    {
-        DecorateBiomeEvent.Pre event = new DecorateBiomeEvent.Pre(world, random, new ChunkPos(pos));
-        MinecraftForge.EVENT_BUS.post(event);
-    }
-
-    /**
-     * Fired after biome decoration.
-     *
-     * @param world the world being decorated
-     * @param random the random instance used for decoration
-     * @param pos the original chunk position used for generation, passed to the decorator
-     */
-    public static void decorateBiomePost(World world, Random random, BlockPos pos)
-    {
-        DecorateBiomeEvent.Post event = new DecorateBiomeEvent.Post(world, random, new ChunkPos(pos));
-        MinecraftForge.EVENT_BUS.post(event);
-    }
 }

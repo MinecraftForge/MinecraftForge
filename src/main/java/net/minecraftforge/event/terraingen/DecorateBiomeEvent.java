@@ -110,7 +110,7 @@ public class DecorateBiomeEvent extends Event
         @Deprecated // TODO: remove in 1.13
         public Pre(World world, Random rand, BlockPos pos)
         {
-            super(world, rand, pos);
+            this(world, rand, new ChunkPos(pos));
         }
     }
 
@@ -127,7 +127,7 @@ public class DecorateBiomeEvent extends Event
         @Deprecated //TODO: remove in 1.13
         public Post(World world, Random rand, BlockPos pos)
         {
-            super(world, rand, pos);
+            this(world, rand, new ChunkPos(pos));
         }
     }
 
