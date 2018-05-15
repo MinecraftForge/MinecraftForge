@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/IBlockAccess.java
 +++ ../src-work/minecraft/net/minecraft/world/IBlockAccess.java
-@@ -28,4 +28,14 @@
+@@ -28,4 +28,18 @@
  
      @SideOnly(Side.CLIENT)
      WorldType func_175624_G();
@@ -14,4 +14,8 @@
 +     * @return if the block is solid on the side
 +     */
 +    boolean isSideSolid(BlockPos pos, EnumFacing side, boolean _default);
++
++    /* ======================================== FORGE START =====================================*/
++
++    int getLight(EnumSkyBlock type, BlockPos pos);
  }

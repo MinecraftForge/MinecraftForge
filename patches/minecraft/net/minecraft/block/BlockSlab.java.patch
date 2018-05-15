@@ -37,3 +37,22 @@
      }
  
      @SideOnly(Side.CLIENT)
+@@ -158,6 +172,18 @@
+         return block == Blocks.field_150333_U || block == Blocks.field_150376_bx || block == Blocks.field_180389_cP || block == Blocks.field_185771_cX;
+     }
+ 
++    @Override
++    public boolean useNeighborBrightness(final IBlockState state, final EnumFacing dir, final IBlockAccess world, final BlockPos pos)
++    {
++        if (dir.func_176740_k() != EnumFacing.Axis.Y)
++            return false;
++
++        if (this.func_149686_d(state))
++            return false;
++
++        return dir == (state.func_177229_b(field_176554_a) == EnumBlockHalf.TOP ? EnumFacing.DOWN : EnumFacing.UP);
++    }
++
+     public abstract String func_150002_b(int p_150002_1_);
+ 
+     public abstract boolean func_176552_j();
