@@ -137,7 +137,7 @@ public abstract class CommandTreeBase extends CommandBase
         {
             if (command instanceof CommandBase)
             {
-                level = Math.max(level, ((CommandBase) command).getRequiredPermissionLevel());
+                level = Math.min(level, ((CommandBase) command).getRequiredPermissionLevel());
             }
         }
 
