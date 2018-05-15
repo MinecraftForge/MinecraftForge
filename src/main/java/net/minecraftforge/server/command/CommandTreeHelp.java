@@ -65,28 +65,28 @@ public class CommandTreeHelp extends CommandBase
 
             for (ICommand subCommand : parent.getSortedAvailableCommandList(server, sender))
             {
-            	if(subCommand != this)
-				{
-					sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, subCommand.getUsage(sender)));
-				}
+                if(subCommand != this)
+                {
+                    sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, subCommand.getUsage(sender)));
+                }
             }
         }
         else
-		{
-			ICommand subCommand = parent.getSubCommand(args[0]);
-			
-			if(subCommand == null)
-			{
-				throw new CommandNotFoundException();
-			}
-			else if(!subCommand.checkPermission(server, sender))
-			{
-				throw new CommandException("commands.generic.permission");
-			}
-			else
-			{
-				sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, subCommand.getUsage(sender)));	
-			}
-		}
+        {
+            ICommand subCommand = parent.getSubCommand(args[0]);
+            
+            if(subCommand == null)
+            {
+                throw new CommandNotFoundException();
+            }
+            else if(!subCommand.checkPermission(server, sender))
+            {
+                throw new CommandException("commands.generic.permission");
+            }
+            else
+            {
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, subCommand.getUsage(sender)));    
+            }
+        }
     }
 }
