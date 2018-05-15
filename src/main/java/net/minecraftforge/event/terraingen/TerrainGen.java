@@ -58,7 +58,7 @@ public abstract class TerrainGen
 
     /**
      * Use this method when there is a specific BlockPos location given for decoration.
-     * If only the chunk position is available, use {@link #decorate(World, Random, BlockPos, Decorate.EventType)} instead.
+     * If only the chunk position is available, use {@link #decorate(World, Random, ChunkPos, Decorate.EventType)} instead.
      *
      * @param world the world being generated in
      * @param rand the random generator used for decoration
@@ -66,27 +66,33 @@ public abstract class TerrainGen
      * @param placementPos the specific position used for generating a feature, somewhere in the 2x2 chunks used for decoration
      * @param type the type of decoration
      */
-    public static boolean decorateWithPlacementPos(World world, Random rand, BlockPos chunkPos, BlockPos placementPos, Decorate.EventType type)
+    public static boolean decorate(World world, Random rand, ChunkPos chunkPos, BlockPos placementPos, Decorate.EventType type)
     {
-        Decorate event = new Decorate(world, rand, new ChunkPos(chunkPos), placementPos, type);
+        Decorate event = new Decorate(world, rand, chunkPos, placementPos, type);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
 
     /**
      * Use this method when generation doesn't have a specific BlockPos location for generation in the chunk.
-     * If a specific BlockPos for generation is available, use {@link #decorateWithPlacementPos(World, Random, BlockPos, BlockPos, Decorate.EventType)} instead.
+     * If a specific BlockPos for generation is available, use {@link #decorate(World, Random, ChunkPos, BlockPos, Decorate.EventType)} instead.
      *
      * @param world the world being generated in
      * @param rand the random generator used for decoration
-     * @param pos the original chunk position used for generation, passed to the decorator
+     * @param chunkPos the original chunk position used for generation, passed to the decorator
      * @param type the type of decoration
      */
-    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type)
+    public static boolean decorate(World world, Random rand, ChunkPos chunkPos, Decorate.EventType type)
     {
-        Decorate event = new Decorate(world, rand, new ChunkPos(pos), null, type);
+        Decorate event = new Decorate(world, rand, chunkPos, null, type);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
+    }
+
+    @Deprecated
+    public static boolean decorate(World world, Random rand, BlockPos pos, Decorate.EventType type)
+    {
+        return decorate(world, rand, new ChunkPos(pos), type);
     }
 
     public static boolean generateOre(World world, Random rand, WorldGenerator generator, BlockPos pos, GenerateMinable.EventType type)
