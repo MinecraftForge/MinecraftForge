@@ -24,6 +24,11 @@ import net.minecraft.command.CommandNotFoundException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Add help for parent and all its children.
@@ -54,6 +59,28 @@ public class CommandTreeHelp extends CommandBase
     public String getUsage(ICommandSender sender)
     {
         return parent.getUsage(sender) + ".help";
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    {
+        if(args.length == 1)
+        {
+            List<String> keys = new ArrayList<>();
+
+            for (ICommand c : parent.getSubCommands())
+            {
+                if(c.checkPermission(server, sender))
+                {
+                    keys.add(c.getName());
+                }
+            }
+
+            keys.sort(null);
+            return getListOfStringsMatchingLastWord(args, keys);
+        }
+
+        return super.getTabCompletions(server, sender, args, pos);
     }
 
     @Override

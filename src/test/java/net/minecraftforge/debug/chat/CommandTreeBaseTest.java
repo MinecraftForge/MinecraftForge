@@ -23,18 +23,16 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.server.command.CommandTreeBase;
+import net.minecraftforge.server.command.CommandTreeHelp;
 
 @Mod(modid = CommandTreeBaseTest.MOD_ID, name = "CommandTreeBaseTest", version = "1.0.0", acceptableRemoteVersions = "*")
 public class CommandTreeBaseTest
 {
     public static final String MOD_ID = "command_tree_base_test";
-
-    @Mod.Instance(CommandTreeBaseTest.MOD_ID)
-    public static CommandTreeBaseTest inst;
 
     @Mod.EventHandler
     public void onServerStarted(FMLServerStartingEvent event)
@@ -48,6 +46,7 @@ public class CommandTreeBaseTest
         {
             addSubcommand(new CommandPing());
             addSubcommand(new CommandValue());
+			addSubcommand(new CommandTreeHelp(this));
         }
 
         @Override
@@ -67,7 +66,7 @@ public class CommandTreeBaseTest
             @Override
             public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
             {
-                sender.sendMessage(new TextComponentString("Pong!"));
+                sender.sendMessage(new TextComponentTranslation("commands.treecommand_test.ping.text"));
             }
         }
 
@@ -79,6 +78,7 @@ public class CommandTreeBaseTest
             {
                 addSubcommand(new CommandSet());
                 addSubcommand(new CommandGet());
+				addSubcommand(new CommandTreeHelp(this));
             }
 
             @Override
@@ -99,7 +99,7 @@ public class CommandTreeBaseTest
                 public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
                 {
                     value = CommandTreeTest.parseInt(args[0]);
-                    sender.sendMessage(new TextComponentString("Test value set to: " + value));
+                    sender.sendMessage(new TextComponentTranslation("commands.treecommand_test.value.set.text", value));
                 }
             }
 
@@ -114,7 +114,7 @@ public class CommandTreeBaseTest
                 @Override
                 public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
                 {
-                    sender.sendMessage(new TextComponentString("Test value: " + value));
+                    sender.sendMessage(new TextComponentTranslation("commands.treecommand_test.value.set.text", value));
                 }
             }
         }
