@@ -46,7 +46,7 @@ public class CommandTreeBaseTest
         {
             addSubcommand(new CommandPing());
             addSubcommand(new CommandValue());
-			addSubcommand(new CommandTreeHelp(this));
+            addSubcommand(new CommandTreeHelp(this));
         }
 
         @Override
@@ -78,7 +78,7 @@ public class CommandTreeBaseTest
             {
                 addSubcommand(new CommandSet());
                 addSubcommand(new CommandGet());
-				addSubcommand(new CommandTreeHelp(this));
+                addSubcommand(new CommandTreeHelp(this));
             }
 
             @Override
