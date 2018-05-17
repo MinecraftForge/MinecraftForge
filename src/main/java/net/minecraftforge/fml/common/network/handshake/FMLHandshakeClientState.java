@@ -22,13 +22,14 @@ package net.minecraftforge.fml.common.network.handshake;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Futures;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -128,7 +129,7 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
     WAITINGSERVERCOMPLETE
     {
         @Override
-        public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
+        public void accept(final ChannelHandlerContext ctx, final FMLHandshakeMessage msg, final Consumer<? super FMLHandshakeClientState> cons)
         {
             FMLHandshakeMessage.RegistryData pkt = (FMLHandshakeMessage.RegistryData)msg;
             Map<ResourceLocation, ForgeRegistry.Snapshot> snap = ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).get();
@@ -153,18 +154,23 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 
             ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(null);
 
-            Multimap<ResourceLocation, ResourceLocation> locallyMissing = GameData.injectSnapshot(snap, false, false);
-            if (!locallyMissing.isEmpty())
+            //Do the remapping on the Client's thread in case things are reset while the client is running. We stall the network thread until this is finished which can cause the IO thread to time out... Not sure if we can do anything about that.
+            final Map<ResourceLocation, ForgeRegistry.Snapshot> snap_f = snap;
+            Futures.getUnchecked(Minecraft.getMinecraft().addScheduledTask(() ->
             {
-                cons.accept(ERROR);
-                NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                dispatcher.rejectHandshake("Fatally missing registry entries");
-                FMLLog.log.fatal("Failed to connect to server: there are {} missing registry items", locallyMissing.size());
-                locallyMissing.asMap().forEach((key, value) ->  FMLLog.log.debug("Missing {} Entries: {}", key, value));
-                return;
-            }
-            cons.accept(PENDINGCOMPLETE);
-            ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+                Multimap<ResourceLocation, ResourceLocation> locallyMissing = GameData.injectSnapshot(snap_f, false, false);
+                if (!locallyMissing.isEmpty())
+                {
+                    cons.accept(ERROR);
+                    NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                    dispatcher.rejectHandshake("Fatally missing registry entries");
+                    FMLLog.log.fatal("Failed to connect to server: there are {} missing registry items", locallyMissing.size());
+                    locallyMissing.asMap().forEach((key, value) ->  FMLLog.log.debug("Missing {} Entries: {}", key, value));
+                    return;
+                }
+                cons.accept(PENDINGCOMPLETE);
+                ctx.writeAndFlush(new FMLHandshakeMessage.HandshakeAck(ordinal())).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            }));
         }
     },
     PENDINGCOMPLETE
@@ -197,7 +203,8 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
             if (msg instanceof FMLHandshakeMessage.HandshakeReset)
             {
                 cons.accept(HELLO);
-                GameData.revertToFrozen();
+                //Run the revert on the client thread in case things are currently running to prevent race conditions while rebuilding the registries.
+                Minecraft.getMinecraft().addScheduledTask(GameData::revertToFrozen);
             }
         }
     },
