@@ -37,6 +37,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,11 +57,22 @@ public class ConfigAnnotationTest
     @Mod.EventHandler
     public void init(FMLInitializationEvent event)
     {
+        logger.info("Starting config modification test.");
+        logger.debug("Starting simple variable change test.");
         logger.debug("Old: {}", CONFIG_TYPES.bool);
         CONFIG_TYPES.bool = !CONFIG_TYPES.bool;
         logger.debug("New: {}", CONFIG_TYPES.bool);
         ConfigManager.sync(MODID, Type.INSTANCE);
         logger.debug("After sync: {}", CONFIG_TYPES.bool);
+
+        logger.debug("Starting map key addition test.");
+        logger.debug("Old map keys: {}", Arrays.deepToString(ROOT_CONFIG_TEST.mapTest.keySet().toArray()));
+        String key = "" + System.currentTimeMillis();
+        logger.debug("Adding key: {}", key);
+        ROOT_CONFIG_TEST.mapTest.put(key, Math.PI);
+        ConfigManager.sync(MODID, Type.INSTANCE);
+        logger.debug("Keys after sync: {}", Arrays.deepToString(ROOT_CONFIG_TEST.mapTest.keySet().toArray()));
+        logger.debug("Synced. Check config gui to verify the key was added properly");
     }
 
     @SubscribeEvent
@@ -72,8 +84,19 @@ public class ConfigAnnotationTest
         }
     }
 
+    @Config(modid = MODID, type = Type.INSTANCE)
+    public static class ROOT_CONFIG_TEST {
+        public static HashMap<String, Double> mapTest = new HashMap<>();
+
+        static {
+            mapTest.put("foobar", 2.0);
+            mapTest.put("foobaz", 100.5);
+            mapTest.put("barbaz", Double.MAX_VALUE);
+        }
+    }
+
     @LangKey("config_test.config.types")
-    @Config(modid = MODID, type = Type.INSTANCE, name = MODID + "_types")
+    @Config(modid = MODID, type = Type.INSTANCE, name = MODID + "_types", category = "types")
     public static class CONFIG_TYPES
     {
         public static boolean     bool = false;
@@ -117,7 +140,7 @@ public class ConfigAnnotationTest
     }
 
     @LangKey("config_test.config.annotations")
-    @Config(modid = MODID)
+    @Config(modid = MODID, category = "annotations")
     public static class CONFIG_ANNOTATIONS
     {
         @RangeDouble(min = -10.5, max = 100.5)
@@ -140,7 +163,7 @@ public class ConfigAnnotationTest
     }
 
     @LangKey("config_test.config.subcats")
-    @Config(modid = MODID, name = MODID + "_subcats", category = "")
+    @Config(modid = MODID, name = MODID + "_subcats", category = "subcats")
     public static class CONFIG_SUBCATS
     {
         //public static String THIS_WILL_ERROR = "DUH";
@@ -176,7 +199,7 @@ public class ConfigAnnotationTest
     }
 
     @LangKey("config_test.config.maps")
-    @Config(modid = MODID, name = MODID + "_map")
+    @Config(modid = MODID, name = MODID + "_map", category = "maps")
     public static class CONFIG_MAP
     {
         @Name("map")
