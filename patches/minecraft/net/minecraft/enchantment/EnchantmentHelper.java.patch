@@ -4,7 +4,7 @@
          field_77520_b.field_77497_a = 0;
          field_77520_b.field_77496_b = p_77508_1_;
          func_77516_a(field_77520_b, p_77508_0_);
-+        field_77520_b.field_77496_b = null;
++        field_77520_b.field_77496_b = null; //Forge Fix memory leaks: https://bugs.mojang.com/browse/MC-128547
          return field_77520_b.field_77497_a;
      }
  
@@ -13,7 +13,7 @@
              func_77518_a(field_151388_d, p_151384_0_.func_184614_ca());
          }
 +
-+        field_151388_d.field_151363_b = null;
++        field_151388_d.field_151363_b = null; //Forge Fix memory leaks: https://bugs.mojang.com/browse/MC-128547
 +        field_151388_d.field_151364_a = null;
      }
  
@@ -23,7 +23,7 @@
              func_77518_a(field_151389_e, p_151385_0_.func_184614_ca());
          }
 +
-+        field_151389_e.field_151366_a = null;
++        field_151389_e.field_151366_a = null; //Forge Fix memory leaks: https://bugs.mojang.com/browse/MC-128547
 +        field_151389_e.field_151365_b = null;
      }
  
