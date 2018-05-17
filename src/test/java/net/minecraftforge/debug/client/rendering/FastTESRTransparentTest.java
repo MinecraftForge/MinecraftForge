@@ -251,7 +251,7 @@ public class FastTESRTransparentTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent evt)
     {
-        GameRegistry.registerTileEntity(TransparentFastTE.class, "fast-tesr-te");
+        GameRegistry.registerTileEntity(TransparentFastTE.class, MODID + ":fast-tesr-te");
     }
 
     @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
