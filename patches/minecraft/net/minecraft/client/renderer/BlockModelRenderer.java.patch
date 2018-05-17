@@ -5,7 +5,7 @@
      public boolean func_187493_a(IBlockAccess p_187493_1_, IBakedModel p_187493_2_, IBlockState p_187493_3_, BlockPos p_187493_4_, BufferBuilder p_187493_5_, boolean p_187493_6_, long p_187493_7_)
      {
 -        boolean flag = Minecraft.func_71379_u() && p_187493_3_.func_185906_d() == 0 && p_187493_2_.func_177555_b();
-+        boolean flag = Minecraft.func_71379_u() && p_187493_3_.getLightValue(p_187493_1_, p_187493_4_) == 0 && p_187493_2_.func_177555_b();
++        boolean flag = Minecraft.func_71379_u() && p_187493_3_.getLightValue(p_187493_1_, p_187493_4_) == 0 && p_187493_2_.isAmbientOcclusion(p_187493_3_);
  
          try
          {

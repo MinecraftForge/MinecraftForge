@@ -4,12 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
-import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -68,12 +65,15 @@ public abstract class FieldWrapper implements IFieldWrapper
     {
         private Map<String, Object> theMap = null;
         private Type mType;
+        private final String baseName;
         ITypeAdapter adapter;
 
         @SuppressWarnings("unchecked")
         private MapWrapper(String category, Field field, Object instance)
         {
             super(category, field, instance);
+
+            this.baseName = (this.category == null) ? "" : (this.category + ".") + this.name.toLowerCase(Locale.ENGLISH) + ".";
 
             try
             {
@@ -123,7 +123,7 @@ public abstract class FieldWrapper implements IFieldWrapper
             Iterator<String> it = keys.iterator();
             for (int i = 0; i < keyArray.length; i++)
             {
-                keyArray[i] = category + "." + name + "." + it.next();
+                keyArray[i] = this.baseName + it.next();
             }
 
             return keyArray;
@@ -132,28 +132,27 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public Object getValue(String key)
         {
-            return theMap.get(StringUtils.replaceOnce(key, category + "." + name + ".", ""));
+            return theMap.get(getSuffix(key));
         }
 
         @Override
         public void setValue(String key, Object value)
         {
-            String suffix = StringUtils.replaceOnce(key, category + "." + name + ".", "");
-            theMap.put(suffix, value);
+            theMap.put(getSuffix(key), value);
         }
 
         @Override
-        public boolean hasKey(String name)
+        public boolean hasKey(String key)
         {
-            return theMap.containsKey(name);
+            return theMap.containsKey(getSuffix(key));
         }
 
         @Override
-        public boolean handlesKey(String name)
+        public boolean handlesKey(String key)
         {
-            if (name == null)
+            if (key == null)
                 return false;
-            return name.startsWith(category + "." + name + ".");
+            return key.startsWith(this.baseName);
         }
 
         @Override
@@ -169,7 +168,17 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public String getCategory()
         {
-            return category + "." + name;
+            return (this.category == null) ? "" : (this.category + ".") + this.name.toLowerCase(Locale.ENGLISH);
+        }
+
+        /**
+         * Removes the {@code this.baseName} prefix from the key
+         * @param key the key to be edited
+         * @return the keys suffix
+         */
+        private String getSuffix(String key)
+        {
+            return StringUtils.replaceOnce(key, this.baseName, "");
         }
 
     }
@@ -336,15 +345,15 @@ public abstract class FieldWrapper implements IFieldWrapper
         }
 
         @Override
-        public boolean hasKey(String name)
+        public boolean hasKey(String key)
         {
-            return (this.category + "." + this.name).equals(name);
+            return (this.category + "." + this.name).equals(key);
         }
 
         @Override
-        public boolean handlesKey(String name)
+        public boolean handlesKey(String key)
         {
-            return hasKey(name);
+            return hasKey(key);
         }
 
         @Override
@@ -361,7 +370,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public String getCategory()
         {
-            return category;
+            return this.category;
         }
 
     }
