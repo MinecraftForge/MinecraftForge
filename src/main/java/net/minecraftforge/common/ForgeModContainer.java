@@ -114,6 +114,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean shouldSortRecipies = true;
     public static boolean disableVersionCheck = false;
     public static boolean forgeLightPipelineEnabled = true;
+    public static boolean selectiveResourceReloadEnabled = true;
     @Deprecated // TODO remove in 1.13
     public static boolean replaceVanillaBucketModel = true;
     public static boolean zoomInMissingModelTextInGui = false;
@@ -355,6 +356,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 "Enable the forge block rendering pipeline - fixes the lighting of custom models.");
         forgeLightPipelineEnabled = prop.getBoolean(true);
         prop.setLanguageKey("forge.configgui.forgeLightPipelineEnabled");
+        propOrder.add(prop.getName());
+
+        prop = config.get(Configuration.CATEGORY_CLIENT, "selectiveResourceReloadEnabled", true,
+                "When enabled, makes specific reload tasks such as language changing quicker to run.");
+        selectiveResourceReloadEnabled = prop.getBoolean(true);
+        prop.setLanguageKey("forge.configgui.selectiveResourceReloadEnabled");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_CLIENT, propOrder);

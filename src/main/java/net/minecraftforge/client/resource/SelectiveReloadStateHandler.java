@@ -22,6 +22,8 @@ package net.minecraftforge.client.resource;
 import javax.annotation.Nullable;
 import java.util.function.Predicate;
 
+import net.minecraftforge.common.ForgeModContainer;
+
 /**
  * Handles reload parameters for selective loaders.
  */
@@ -56,7 +58,7 @@ public enum SelectiveReloadStateHandler
      */
     public Predicate<IResourceType> get()
     {
-        if (this.currentPredicate == null)
+        if (this.currentPredicate == null || !ForgeModContainer.selectiveResourceReloadEnabled)
         {
             return ReloadRequirements.all();
         }
