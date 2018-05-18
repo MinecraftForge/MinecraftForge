@@ -349,25 +349,23 @@ public class BlockEvent extends Event
      * {@link Result#ALLOW} will force the farmland to be trampled.<br>
      * {@link Result#DENY} will stop the farmland from form being trampled.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is {@link Cancelable}.<br>
      *
-     * This event has a result. {@link HasResult}<br>
+     * This event does not have a result. {@link HasResult}<br>
      * <br>
      */
-    @HasResult
+    @Cancelable
     public static class FarmlandTrampleEvent extends BlockEvent
     {
 
         private final Entity entity;
         private final float fallDistance;
-        private final boolean trampleResult;
 
-        public FarmlandTrampleEvent(World world, BlockPos pos, IBlockState state, float fallDistance, boolean trampleResult, Entity entity)
+        public FarmlandTrampleEvent(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
         {
             super(world, pos, state);
             this.entity = entity;
             this.fallDistance = fallDistance;
-            this.trampleResult = trampleResult;
         }
 
         public Entity getEntity() {
@@ -376,10 +374,6 @@ public class BlockEvent extends Event
 
         public float getFallDistance() {
             return fallDistance;
-        }
-
-        public boolean getTrampleResult() {
-            return trampleResult;
         }
 
     }

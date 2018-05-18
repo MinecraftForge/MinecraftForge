@@ -21,7 +21,7 @@ public class FarmlandTrampleEventTest
         }
         if(event.getEntity().isSneaking())
         {
-            event.setResult(Event.Result.DENY);
+            event.setCanceled(true);
         }
     }
 }
