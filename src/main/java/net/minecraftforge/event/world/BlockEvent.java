@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockPortal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -126,7 +127,7 @@ public class BlockEvent extends Event
             this.player = player;
 
             if (state == null || !ForgeHooks.canHarvestBlock(state.getBlock(), player, world, pos) || // Handle empty block or player unable to break block scenario
-                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
+                    (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
@@ -285,7 +286,7 @@ public class BlockEvent extends Event
             super(world, pos, state);
         }
     }
-    
+
     /**
      * Fired when a crop block grows.  See subevents.
      *
@@ -343,16 +344,8 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when when farmland attempts to trampled.<br>
-     * <br>
-     * {@link Result#DEFAULT} will pass on to the vanilla farmland trample mechanics.<br>
-     * {@link Result#ALLOW} will force the farmland to be trampled.<br>
-     * {@link Result#DENY} will stop the farmland from form being trampled.<br>
-     * <br>
-     * This event is {@link Cancelable}.<br>
-     *
-     * This event does not have a result. {@link HasResult}<br>
-     * <br>
+     * Fired when when farmland gets trampled
+     * This event is {@link Cancelable}
      */
     @Cancelable
     public static class FarmlandTrampleEvent extends BlockEvent
@@ -376,5 +369,27 @@ public class BlockEvent extends Event
             return fallDistance;
         }
 
+    }
+
+    /* Fired when an attempt is made to spawn a nether portal from
+     * {@link net.minecraft.block.BlockPortal#trySpawnPortal(World, BlockPos)}.
+     *
+     * If cancelled, the portal will not be spawned.
+     */
+    @Cancelable
+    public static class PortalSpawnEvent extends BlockEvent
+    {
+        private final BlockPortal.Size size;
+
+        public PortalSpawnEvent(World world, BlockPos pos, IBlockState state, BlockPortal.Size size)
+        {
+            super(world, pos, state);
+            this.size = size;
+        }
+
+        public BlockPortal.Size getPortalSize()
+        {
+            return size;
+        }
     }
 }
