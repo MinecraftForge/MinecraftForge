@@ -51,7 +51,8 @@ class CommandWorldCancel extends AbstractWorldCommand
         {
             base.setJob(null);
             sender.sendMessage(new TextComponentTranslation("commands.forge.loadworld.cancel.confirm"));
-        } else
+        }
+        else
         {
             sender.sendMessage(new TextComponentTranslation("commands.forge.loadworld.cancel.no_job"));
         }

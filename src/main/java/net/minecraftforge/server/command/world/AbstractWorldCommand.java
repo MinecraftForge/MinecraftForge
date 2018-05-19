@@ -21,7 +21,6 @@ package net.minecraftforge.server.command.world;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.SaveFormatOld;
 import net.minecraft.world.storage.WorldInfo;
 
@@ -45,12 +44,8 @@ abstract class AbstractWorldCommand extends CommandBase
 
     boolean doesWorldExist(MinecraftServer server, String folderName)
     {
-        ISaveFormat converter = server.getActiveAnvilConverter();
-        if (!(converter instanceof SaveFormatOld))
-        {
-            return false;
-        }
-        File saveDirectory = new File(((SaveFormatOld) converter).savesDirectory, folderName);
+        SaveFormatOld  converter = (SaveFormatOld) server.getActiveAnvilConverter();
+        File saveDirectory = new File(converter.savesDirectory, folderName);
         File save = new File(saveDirectory, "level.dat");
         if (exists(server, save))
         {

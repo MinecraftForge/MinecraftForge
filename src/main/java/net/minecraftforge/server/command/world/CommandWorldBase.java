@@ -69,11 +69,11 @@ public class CommandWorldBase extends CommandTreeBase
         if (currentJob != null)
         {
             currentJob.cancel();
+            currentJob = job;
         }
         if (job != null)
         {
             job.start();
-            currentJob = job;
         }
     }
 
