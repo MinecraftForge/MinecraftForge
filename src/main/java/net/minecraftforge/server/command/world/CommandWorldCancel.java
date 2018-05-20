@@ -22,7 +22,7 @@ package net.minecraftforge.server.command.world;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraftforge.server.command.TextComponentHelper;
 
 class CommandWorldCancel extends AbstractWorldCommand
 {
@@ -50,11 +50,11 @@ class CommandWorldCancel extends AbstractWorldCommand
         if (base.isWorldJobScheduled())
         {
             base.setJob(null);
-            sender.sendMessage(new TextComponentTranslation("commands.forge.loadworld.cancel.confirm"));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.loadworld.cancel.confirm"));
         }
         else
         {
-            sender.sendMessage(new TextComponentTranslation("commands.forge.loadworld.cancel.no_job"));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.loadworld.cancel.no_job"));
         }
     }
 }

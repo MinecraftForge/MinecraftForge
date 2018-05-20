@@ -22,7 +22,8 @@ package net.minecraftforge.server.command.world;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextComponentBase;
+import net.minecraftforge.server.command.TextComponentHelper;
 
 import java.util.concurrent.Executors;
 
@@ -112,7 +113,7 @@ abstract class AbstractWorldJob extends Thread
             {
                 for (EntityPlayerMP p : server.getPlayerList().getPlayers())
                 {
-                    p.connection.disconnect(new TextComponentTranslation("commands.forge.loadworld.load.kick_msg"));
+                    p.connection.disconnect(TextComponentHelper.createComponentTranslation(server, "commands.forge.loadworld.load.kick_msg"));
                 }
             });
             for (int i = 0; i < 5 && server.getCurrentPlayerCount() > 0; i++)
@@ -138,9 +139,9 @@ abstract class AbstractWorldJob extends Thread
         server.getPlayerList().sendMessage(getTextComponent(delayMs));
     }
 
-    private TextComponentTranslation getTextComponent(int delayMs)
+    private TextComponentBase getTextComponent(int delayMs)
     {
-        return new TextComponentTranslation(delayMs <= 0 ? AbstractWorldJob.SWITCH_NOW_KEY : AbstractWorldJob.DELAY_KEY, delayMs / 1000);
+        return TextComponentHelper.createComponentTranslation(server, delayMs <= 0 ? AbstractWorldJob.SWITCH_NOW_KEY : AbstractWorldJob.DELAY_KEY, delayMs / 1000);
     }
 
     private void callFromMainThread(MinecraftServer server, Runnable run)
