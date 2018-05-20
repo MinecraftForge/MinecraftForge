@@ -34,9 +34,9 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-class CommandWorldLoad extends AbstractWorldCommand
+class CommandSaveLoad extends AbstractSaveCommand
 {
-    CommandWorldLoad(CommandWorldBase base)
+    CommandSaveLoad(CommandSaveBase base)
     {
         super(base);
     }
@@ -50,7 +50,7 @@ class CommandWorldLoad extends AbstractWorldCommand
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "commands.forge.loadworld.load.usage";
+        return "commands.forge.loadsave.load.usage";
     }
 
     @Override
@@ -70,10 +70,10 @@ class CommandWorldLoad extends AbstractWorldCommand
 
         if (!doesWorldExist(server, folderName))
         {
-            throw new CommandException("commands.forge.loadworld.load.not_found", folderName);
+            throw new CommandException("commands.forge.loadsave.load.not_found", folderName);
         }
 
-        base.setJob(new LoadWorldJob(server, sender, folderName, delayS));
+        base.setJob(new LoadSaveJob(server, sender, folderName, delayS));
     }
 
     /* -----------------------------------------------------------------------------------------------------------------

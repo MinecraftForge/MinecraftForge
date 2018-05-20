@@ -23,10 +23,10 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldType;
 
-class LoadWorldJob extends NewWorldJob
+class LoadSaveJob extends NewSaveJob
 {
 
-    LoadWorldJob(MinecraftServer server, ICommandSender sender, String folderName, int delayS)
+    LoadSaveJob(MinecraftServer server, ICommandSender sender, String folderName, int delayS)
     {
         super(server, sender, folderName, delayS, 0, WorldType.DEFAULT, "");
     }

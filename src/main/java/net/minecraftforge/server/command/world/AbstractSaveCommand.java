@@ -26,12 +26,12 @@ import net.minecraft.world.storage.WorldInfo;
 
 import java.io.File;
 
-abstract class AbstractWorldCommand extends CommandBase
+abstract class AbstractSaveCommand extends CommandBase
 {
 
-    protected CommandWorldBase base;
+    protected CommandSaveBase base;
 
-    AbstractWorldCommand(CommandWorldBase base)
+    AbstractSaveCommand(CommandSaveBase base)
     {
         this.base = base;
     }

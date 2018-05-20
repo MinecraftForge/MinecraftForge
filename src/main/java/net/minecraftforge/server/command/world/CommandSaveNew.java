@@ -33,10 +33,10 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-class CommandWorldNew extends AbstractWorldCommand
+class CommandSaveNew extends AbstractSaveCommand
 {
 
-    CommandWorldNew(CommandWorldBase base)
+    CommandSaveNew(CommandSaveBase base)
     {
         super(base);
     }
@@ -50,7 +50,7 @@ class CommandWorldNew extends AbstractWorldCommand
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "commands.forge.loadworld.new.usage";
+        return "commands.forge.loadsave.new.usage";
     }
 
     @Override
@@ -75,7 +75,7 @@ class CommandWorldNew extends AbstractWorldCommand
                 type = WorldType.parseWorldType(args[3]);
                 if (type == null)
                 {
-                    throw new WrongUsageException("commands.forge.loadworld.new.wrong_world_type", args[3]);
+                    throw new WrongUsageException("commands.forge.loadsave.new.wrong_world_type", args[3]);
                 }
             case 3:
                 seedString = args[2];
@@ -87,10 +87,10 @@ class CommandWorldNew extends AbstractWorldCommand
 
         if (doesWorldExist(server, folderName))
         {
-            throw new CommandException("commands.forge.loadworld.new.exists", folderName);
+            throw new CommandException("commands.forge.loadsave.new.exists", folderName);
         }
 
-        base.setJob(new NewWorldJob(server, sender, folderName, delayS, getSeedForString(seedString), type, generatorOptions));
+        base.setJob(new NewSaveJob(server, sender, folderName, delayS, getSeedForString(seedString), type, generatorOptions));
     }
 
     /**

@@ -28,28 +28,28 @@ import net.minecraftforge.server.command.CommandTreeBase;
 
 import javax.annotation.Nullable;
 
-public class CommandWorldBase extends CommandTreeBase
+public class CommandSaveBase extends CommandTreeBase
 {
 
-    private AbstractWorldJob currentJob;
+    private AbstractSaveJob currentJob;
 
-    public CommandWorldBase()
+    public CommandSaveBase()
     {
-        super.addSubcommand(new CommandWorldLoad(this));
-        super.addSubcommand(new CommandWorldNew(this));
-        super.addSubcommand(new CommandWorldCancel(this));
+        super.addSubcommand(new CommandSaveLoad(this));
+        super.addSubcommand(new CommandSaveNew(this));
+        super.addSubcommand(new CommandSaveCancel(this));
     }
 
     @Override
     public String getName()
     {
-        return "loadworld";
+        return "loadsave";
     }
 
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "commands.forge.loadworld.base.usage";
+        return "commands.forge.loadsave.base.usage";
     }
 
     @Override
@@ -61,10 +61,10 @@ public class CommandWorldBase extends CommandTreeBase
     @Override
     public void addSubcommand(ICommand command)
     {
-        throw new UnsupportedOperationException("Don't add sub-commands to /forge loadworld, create your own command.");
+        throw new UnsupportedOperationException("Don't add sub-commands to /forge loadsave, create your own command.");
     }
 
-    void setJob(@Nullable AbstractWorldJob job)
+    void setJob(@Nullable AbstractSaveJob job)
     {
         if (currentJob != null)
         {
@@ -87,7 +87,7 @@ public class CommandWorldBase extends CommandTreeBase
     {
         if (server.isSinglePlayer())
         {
-            throw new WrongUsageException("commands.forge.loadworld.base.no_sp");
+            throw new WrongUsageException("commands.forge.loadsave.base.no_sp");
         }
         super.execute(server, sender, args);
     }

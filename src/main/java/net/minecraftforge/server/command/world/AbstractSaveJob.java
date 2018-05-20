@@ -27,14 +27,14 @@ import net.minecraftforge.server.command.TextComponentHelper;
 
 import java.util.concurrent.Executors;
 
-abstract class AbstractWorldJob extends Thread
+abstract class AbstractSaveJob extends Thread
 {
     private static final int MS_SECOND = 1000;
     private static final int MS_MINUTE = 60 * MS_SECOND;
     private static final int MS_HOUR = 60 * MS_MINUTE;
 
-    private static final String SWITCH_NOW_KEY = "commands.forge.loadworld.load.switch_now";
-    private static final String DELAY_KEY = "commands.forge.loadworld.load.delay";
+    private static final String SWITCH_NOW_KEY = "commands.forge.loadsave.load.switch_now";
+    private static final String DELAY_KEY = "commands.forge.loadsave.load.delay";
 
     protected MinecraftServer server;
     protected ICommandSender sender;
@@ -43,7 +43,7 @@ abstract class AbstractWorldJob extends Thread
 
     private boolean cancelled = false;
 
-    AbstractWorldJob(MinecraftServer server, ICommandSender sender, String folderName, int delayS)
+    AbstractSaveJob(MinecraftServer server, ICommandSender sender, String folderName, int delayS)
     {
         this.server = server;
         this.sender = sender;
@@ -75,7 +75,7 @@ abstract class AbstractWorldJob extends Thread
 
     private void waitDelay()
     {
-        int[] mentionTimes = {AbstractWorldJob.MS_HOUR, AbstractWorldJob.MS_MINUTE * 10, AbstractWorldJob.MS_MINUTE, AbstractWorldJob.MS_SECOND * 30, AbstractWorldJob.MS_SECOND * 10};
+        int[] mentionTimes = {AbstractSaveJob.MS_HOUR, AbstractSaveJob.MS_MINUTE * 10, AbstractSaveJob.MS_MINUTE, AbstractSaveJob.MS_SECOND * 30, AbstractSaveJob.MS_SECOND * 10};
         try
         {
             for (int time : mentionTimes)
@@ -113,7 +113,7 @@ abstract class AbstractWorldJob extends Thread
             {
                 for (EntityPlayerMP p : server.getPlayerList().getPlayers())
                 {
-                    p.connection.disconnect(TextComponentHelper.createComponentTranslation(p, "commands.forge.loadworld.load.kick_msg"));
+                    p.connection.disconnect(TextComponentHelper.createComponentTranslation(p, "commands.forge.loadsave.load.kick_msg"));
                 }
             });
             for (int i = 0; i < 5 && server.getCurrentPlayerCount() > 0; i++)
@@ -144,7 +144,7 @@ abstract class AbstractWorldJob extends Thread
 
     private TextComponentBase getTextComponent(ICommandSender sender, int delayMs)
     {
-        return TextComponentHelper.createComponentTranslation(sender, delayMs <= 0 ? AbstractWorldJob.SWITCH_NOW_KEY : AbstractWorldJob.DELAY_KEY, delayMs / 1000);
+        return TextComponentHelper.createComponentTranslation(sender, delayMs <= 0 ? AbstractSaveJob.SWITCH_NOW_KEY : AbstractSaveJob.DELAY_KEY, delayMs / 1000);
     }
 
     private void callFromMainThread(MinecraftServer server, Runnable run)

@@ -23,7 +23,7 @@ import net.minecraft.command.ICommand;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.server.command.world.CommandWorldBase;
+import net.minecraftforge.server.command.world.CommandSaveBase;
 
 public class ForgeCommand extends CommandTreeBase
 {
@@ -35,7 +35,7 @@ public class ForgeCommand extends CommandTreeBase
         super.addSubcommand(new CommandEntity());
         super.addSubcommand(new CommandSetDimension());
         super.addSubcommand(new CommandTreeHelp(this));
-        super.addSubcommand(new CommandWorldBase());
+        super.addSubcommand(new CommandSaveBase());
     }
 
     @Override

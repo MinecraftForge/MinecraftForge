@@ -27,14 +27,14 @@ import net.minecraft.world.WorldType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class NewWorldJob extends AbstractWorldJob
+class NewSaveJob extends AbstractSaveJob
 {
 
     private long seed;
     private WorldType type;
     private String generatorOptions;
 
-    NewWorldJob(MinecraftServer server, ICommandSender sender, String folderName, int delayS, long seed, WorldType type, String generatorOptions)
+    NewSaveJob(MinecraftServer server, ICommandSender sender, String folderName, int delayS, long seed, WorldType type, String generatorOptions)
     {
         super(server, sender, folderName, delayS);
         this.seed = seed;

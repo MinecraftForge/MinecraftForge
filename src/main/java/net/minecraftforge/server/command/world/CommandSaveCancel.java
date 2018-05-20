@@ -24,10 +24,10 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.server.command.TextComponentHelper;
 
-class CommandWorldCancel extends AbstractWorldCommand
+class CommandSaveCancel extends AbstractSaveCommand
 {
 
-    CommandWorldCancel(CommandWorldBase base)
+    CommandSaveCancel(CommandSaveBase base)
     {
         super(base);
     }
@@ -41,7 +41,7 @@ class CommandWorldCancel extends AbstractWorldCommand
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "commands.forge.loadworld.cancel.usage";
+        return "commands.forge.loadsave.cancel.usage";
     }
 
     @Override
@@ -50,11 +50,11 @@ class CommandWorldCancel extends AbstractWorldCommand
         if (base.isWorldJobScheduled())
         {
             base.setJob(null);
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.loadworld.cancel.confirm"));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.loadsave.cancel.confirm"));
         }
         else
         {
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.loadworld.cancel.no_job"));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.loadsave.cancel.no_job"));
         }
     }
 }
