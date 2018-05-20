@@ -113,7 +113,7 @@ abstract class AbstractWorldJob extends Thread
             {
                 for (EntityPlayerMP p : server.getPlayerList().getPlayers())
                 {
-                    p.connection.disconnect(TextComponentHelper.createComponentTranslation(server, "commands.forge.loadworld.load.kick_msg"));
+                    p.connection.disconnect(TextComponentHelper.createComponentTranslation(p, "commands.forge.loadworld.load.kick_msg"));
                 }
             });
             for (int i = 0; i < 5 && server.getCurrentPlayerCount() > 0; i++)
@@ -131,17 +131,20 @@ abstract class AbstractWorldJob extends Thread
 
     private void sendDelayMsg(ICommandSender sender, int delayMs)
     {
-        sender.sendMessage(getTextComponent(delayMs));
+        sender.sendMessage(getTextComponent(sender, delayMs));
     }
 
     private void sendDelayMsgToAllPlayers(MinecraftServer server, int delayMs)
     {
-        server.getPlayerList().sendMessage(getTextComponent(delayMs));
+        for (EntityPlayerMP p : server.getPlayerList().getPlayers())
+        {
+            p.sendMessage(getTextComponent(p, delayMs));
+        }
     }
 
-    private TextComponentBase getTextComponent(int delayMs)
+    private TextComponentBase getTextComponent(ICommandSender sender, int delayMs)
     {
-        return TextComponentHelper.createComponentTranslation(server, delayMs <= 0 ? AbstractWorldJob.SWITCH_NOW_KEY : AbstractWorldJob.DELAY_KEY, delayMs / 1000);
+        return TextComponentHelper.createComponentTranslation(sender, delayMs <= 0 ? AbstractWorldJob.SWITCH_NOW_KEY : AbstractWorldJob.DELAY_KEY, delayMs / 1000);
     }
 
     private void callFromMainThread(MinecraftServer server, Runnable run)
