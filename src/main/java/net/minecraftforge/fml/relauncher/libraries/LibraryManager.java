@@ -132,10 +132,15 @@ public class LibraryManager
             if (apache.isFile())
                 apache = apache.getParentFile(); //Get to a directory, this *should* always be the case...
             apache = apache.getParentFile(); //Skip the version folder. In case we ever update the version, I don't want to edit this code again.
+            String comp = apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace('\\', '/');
+            if (!comp.endsWith("/"))
+                comp += '/';
 
-            if (!apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace(File.separatorChar, '/').endsWith("/org/apache/maven/maven-artifact/"))
+            if (!comp.endsWith("/org/apache/maven/maven-artifact/"))
             {
-                FMLLog.log.error("Apache Maven library folder was not in the format expected: {}. Using default libraries directory.", new File(source.getLocation().toURI()));
+                FMLLog.log.error("Apache Maven library folder was not in the format expected. Using default libraries directory.");
+                FMLLog.log.error("Full: {}", new File(source.getLocation().toURI()));
+                FMLLog.log.error("Trimmed: {}", comp);
                 return new File(minecraftHome, "libraries");
             }
             //     maven-artifact  /maven          /apache         /org            /libraries
