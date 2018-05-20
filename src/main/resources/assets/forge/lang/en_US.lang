@@ -20,6 +20,20 @@ commands.forge.setdim.invalid.entity=The entity selected (%s) is not valid.
 commands.forge.setdim.invalid.dim=The dimension ID specified (%d) is not valid.
 commands.forge.setdim.invalid.nochange=The entity selected (%s) is already in the dimension specified (%d).
 
+commands.forge.loadsave.base.usage=Use /forge loadsave <subcommand>
+commands.forge.loadsave.base.no_sp=Can't use command on Singleplayer. 'Save and Quit' and open/create desired map.
+commands.forge.loadsave.load.usage=Use /forge loadsave load <worldFolderName> [delay]
+commands.forge.loadsave.load.kick_msg=The server is switching worlds. Try reconnecting in a couple of seconds.
+commands.forge.loadsave.load.delay=The server is going to switch worlds in %d seconds.
+commands.forge.loadsave.load.switch_now=The server is going to switch worlds now!
+commands.forge.loadsave.load.not_found=Could not find world: %s! Use new command to generate new world.
+commands.forge.loadsave.new.usage=Use /forge loadsave new <worldName> [delay] [seed] [worldType] [generatorSettings]
+commands.forge.loadsave.new.wrong_world_type=Unknown world type: %s
+commands.forge.loadsave.new.exists=World %s already exists! Use load command instead or change folder name.
+commands.forge.loadsave.cancel.usage=Use /forge loadsave cancel
+commands.forge.loadsave.cancel.confirm=Scheduled world load canceled successfully!
+commands.forge.loadsave.cancel.no_job=There is currently no world load scheduled!
+
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.forge.tracking.entity.enabled=Entity tracking enabled for %d seconds.
 commands.forge.tracking.usage=Use /forge track help for more information on tracking subcommands.
