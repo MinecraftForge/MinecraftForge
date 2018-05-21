@@ -450,7 +450,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         // generate maps for all parent objects
         for (String parentThing : allParents)
         {
-            if (!methodNameMaps.containsKey(parentThing))
+            if (!fieldNameMaps.containsKey(parentThing))
             {
                 findAndMergeSuperMaps(parentThing);
             }

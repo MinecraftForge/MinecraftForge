@@ -334,7 +334,15 @@
          }
  
          this.field_147127_av.func_147690_c();
-@@ -2535,159 +2597,8 @@
+@@ -2434,6 +2496,7 @@
+         }
+ 
+         TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_71353_1_);
++        net.minecraftforge.client.MinecraftForgeClient.clearRenderCache();
+ 
+         if (p_71353_1_ != null)
+         {
+@@ -2535,159 +2598,8 @@
      {
          if (this.field_71476_x != null && this.field_71476_x.field_72313_a != RayTraceResult.Type.MISS)
          {
@@ -496,7 +504,7 @@
          }
      }
  
-@@ -3009,18 +2920,8 @@
+@@ -3009,18 +2921,8 @@
  
      public static int func_71369_N()
      {
@@ -517,7 +525,7 @@
      }
  
      public boolean func_70002_Q()
-@@ -3152,6 +3053,9 @@
+@@ -3152,6 +3054,9 @@
          }
          else if (this.field_71439_g != null)
          {
@@ -527,7 +535,7 @@
              if (this.field_71439_g.field_70170_p.field_73011_w instanceof WorldProviderHell)
              {
                  return MusicTicker.MusicType.NETHER;
-@@ -3181,11 +3085,11 @@
+@@ -3181,11 +3086,11 @@
              {
                  if (Keyboard.getEventKeyState())
                  {
@@ -541,7 +549,7 @@
                      {
                          this.field_71456_v.func_146158_b().func_146227_a(ScreenShotHelper.func_148260_a(this.field_71412_D, this.field_71443_c, this.field_71440_d, this.field_147124_at));
                      }
-@@ -3199,6 +3103,7 @@
+@@ -3199,6 +3104,7 @@
                          }
                      }
                  }
@@ -549,7 +557,7 @@
              }
          }
      }
-@@ -3328,6 +3233,12 @@
+@@ -3328,6 +3234,12 @@
          return this.field_184127_aH;
      }
  
@@ -562,7 +570,7 @@
      public boolean func_189648_am()
      {
          return this.field_71439_g != null && this.field_71439_g.func_175140_cp() || this.field_71474_y.field_178879_v;
-@@ -3342,4 +3253,9 @@
+@@ -3342,4 +3254,9 @@
      {
          return this.field_193035_aW;
      }

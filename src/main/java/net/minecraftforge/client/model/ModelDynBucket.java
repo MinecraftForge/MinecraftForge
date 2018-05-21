@@ -104,12 +104,15 @@ public final class ModelDynBucket implements IModel
     public Collection<ResourceLocation> getTextures()
     {
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
+
         if (baseLocation != null)
             builder.add(baseLocation);
         if (liquidLocation != null)
             builder.add(liquidLocation);
         if (coverLocation != null)
             builder.add(coverLocation);
+        if (fluid != null)
+            builder.add(fluid.getStill());
 
         return builder.build();
     }
