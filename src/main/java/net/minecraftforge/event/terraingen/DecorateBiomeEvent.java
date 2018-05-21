@@ -21,22 +21,25 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
-/**DecorateBiomeEvent is fired when a BiomeDecorator is created.
+/**
+ * DecorateBiomeEvent is fired when a BiomeDecorator is created.
  * <br>
  * This event is fired whenever a BiomeDecorator is created in
  * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(Biome)}.<br>
  * <br>
  * {@link #world} contains the world that is being decorated. <br>
  * {@link #rand} contains an instance of Random to be used. <br>
- * {@link #pos} contains the coordinates of the Chunk being decorated. <br>
+ * {@link #chunkPos} contains the original chunk for the decorator. <br>
  * <br>
  * This event is not {@link Cancelable}.
  * <br>
@@ -48,13 +51,26 @@ public class DecorateBiomeEvent extends Event
 {
     private final World world;
     private final Random rand;
+    /** @deprecated use {@link #chunkPos} */
+    @Deprecated // TODO remove in 1.13
     private final BlockPos pos;
+    private final ChunkPos chunkPos;
 
+    public DecorateBiomeEvent(World world, Random rand, ChunkPos chunkPos)
+    {
+        this.world = world;
+        this.rand = rand;
+        this.pos = chunkPos.getBlock(0, 0, 0);
+        this.chunkPos = chunkPos;
+    }
+
+    @Deprecated // TODO: remove in 1.13
     public DecorateBiomeEvent(World world, Random rand, BlockPos pos)
     {
         this.world = world;
         this.rand = rand;
         this.pos = pos;
+        this.chunkPos = new ChunkPos(pos);
     }
 
     public World getWorld()
@@ -67,9 +83,18 @@ public class DecorateBiomeEvent extends Event
         return rand;
     }
 
+    /**
+     * @deprecated use {@link #getChunkPos()} or {@link Decorate#getPlacementPos} instead.
+     */
+    @Deprecated
     public BlockPos getPos()
     {
         return pos;
+    }
+
+    public ChunkPos getChunkPos()
+    {
+        return chunkPos;
     }
 
     /**
@@ -77,9 +102,15 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Pre extends DecorateBiomeEvent
     {
+        public Pre(World world, Random rand, ChunkPos chunkPos)
+        {
+            super(world, rand, chunkPos);
+        }
+
+        @Deprecated // TODO: remove in 1.13
         public Pre(World world, Random rand, BlockPos pos)
         {
-            super(world, rand, pos);
+            this(world, rand, new ChunkPos(pos));
         }
     }
 
@@ -88,35 +119,68 @@ public class DecorateBiomeEvent extends Event
      */
     public static class Post extends DecorateBiomeEvent
     {
+        public Post(World world, Random rand, ChunkPos chunkPos)
+        {
+            super(world, rand, chunkPos);
+        }
+
+        @Deprecated //TODO: remove in 1.13
         public Post(World world, Random rand, BlockPos pos)
         {
-            super(world, rand, pos);
+            this(world, rand, new ChunkPos(pos));
         }
     }
 
     /**
      * This event is fired when a chunk is decorated with a biome feature.
-     *
+     * <p>
      * You can set the result to DENY to prevent the default biome decoration.
      */
     @HasResult
     public static class Decorate extends DecorateBiomeEvent
     {
+        /**
+         * Use {@link EventType#CUSTOM} to filter custom event types
+         */
+        public enum EventType
+        {
+            BIG_SHROOM, CACTUS, CLAY, DEAD_BUSH, DESERT_WELL, LILYPAD, FLOWERS, FOSSIL, GRASS, ICE, LAKE_WATER, LAKE_LAVA, PUMPKIN, REED, ROCK, SAND, SAND_PASS2, SHROOM, TREE, CUSTOM
+        }
+
+        private final EventType type;
+        @Nullable
+        private final BlockPos placementPos;
+
+        public Decorate(World world, Random rand, ChunkPos chunkPos, @Nullable BlockPos placementPos, EventType type)
+        {
+            super(world, rand, chunkPos);
+            this.type = type;
+            this.placementPos = placementPos;
+        }
+
+        @Deprecated // TODO: remove in 1.13
+        public Decorate(World world, Random rand, BlockPos pos, EventType type)
+        {
+            super(world, rand, pos);
+            this.type = type;
+            this.placementPos = null;
+        }
+
         public EventType getType()
         {
             return type;
         }
 
-        /** Use CUSTOM to filter custom event types
+        /**
+         * This may be anywhere inside the 2x2 chunk area for generation.
+         * To get the original chunk position of the generation before a random location was chosen, use {@link #getChunkPos()}.
+         *
+         * @return the position used for original decoration, or null if it is not specified.
          */
-        public static enum EventType { BIG_SHROOM, CACTUS, CLAY, DEAD_BUSH, DESERT_WELL, LILYPAD, FLOWERS, FOSSIL, GRASS, ICE, LAKE_WATER, LAKE_LAVA, PUMPKIN, REED, ROCK, SAND, SAND_PASS2, SHROOM, TREE, CUSTOM }
-
-        private final EventType type;
-
-        public Decorate(World world, Random rand, BlockPos pos, EventType type)
+        @Nullable
+        public BlockPos getPlacementPos()
         {
-            super(world, rand, pos);
-            this.type = type;
+            return this.placementPos;
         }
     }
 }
