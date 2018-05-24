@@ -18,23 +18,21 @@
  */
 package net.minecraftforge.server.command;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandNotFoundException;
+import net.minecraft.command.CommandHelp;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Add help for parent and all its children.
  * Must be added to parent after all other commands.
  */
-public class CommandTreeHelp extends CommandBase
+public class CommandTreeHelp extends CommandHelp
 {
     private final CommandTreeBase parent;
 
@@ -44,76 +42,20 @@ public class CommandTreeHelp extends CommandBase
     }
 
     @Override
-    public int getRequiredPermissionLevel()
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
     {
-        return 0;
+        return true;
     }
 
     @Override
-    public String getName()
+    protected List<ICommand> getSortedPossibleCommands(ICommandSender sender, MinecraftServer server)
     {
-        return "help";
+        return parent.getAvailableSubCommands(server, sender);
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
+    protected Map<String, ICommand> getCommandMap(MinecraftServer server)
     {
-        return parent.getUsage(sender) + ".help";
-    }
-
-    @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
-    {
-        if(args.length == 1)
-        {
-            List<String> keys = new ArrayList<>();
-
-            for (ICommand c : parent.getSubCommands())
-            {
-                if(c.checkPermission(server, sender))
-                {
-                    keys.add(c.getName());
-                }
-            }
-
-            keys.sort(null);
-            return getListOfStringsMatchingLastWord(args, keys);
-        }
-
-        return super.getTabCompletions(server, sender, args, pos);
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-    {
-        if (args.length == 0)
-        {
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, parent.getUsage(sender)));
-
-            for (ICommand subCommand : parent.getSortedAvailableCommandList(server, sender))
-            {
-                if(subCommand != this)
-                {
-                    sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, subCommand.getUsage(sender)));
-                }
-            }
-        }
-        else
-        {
-            ICommand subCommand = parent.getSubCommand(args[0]);
-            
-            if(subCommand == null)
-            {
-                throw new CommandNotFoundException();
-            }
-            else if(!subCommand.checkPermission(server, sender))
-            {
-                throw new CommandException("commands.generic.permission");
-            }
-            else
-            {
-                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, subCommand.getUsage(sender)));    
-            }
-        }
+        return parent.getCommandMap();
     }
 }
