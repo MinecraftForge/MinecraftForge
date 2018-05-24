@@ -201,6 +201,7 @@ fml.menu.modoptions=Mod Options...
 
 item.forge.bucketFilled.name=%s Bucket
 
+fml.messages.log=Refer to the log for more details
 fml.messages.mod.missing.dependencies=%s is missing mods it depends on.
 fml.messages.mod.missing.dependencies.fix=Include the following mods or remove %s.
 fml.messages.mod.missing.dependencies.compatibility=You must include the right dependencies for %s:
@@ -216,6 +217,9 @@ fml.messages.mod.wrongminecraft=The mods listed below can't run in Minecraft ver
 fml.messages.mod.wrongminecraft.requirement=%s (%s) requires Minecraft %s
 fml.messages.mod.wrongminecraft.fix=Try to find an update or remove %s
 fml.messages.mod.wrongminecraft.fix.multiple=Try to find an update or remove these mods
+fml.messages.resources.warning=%s%sBroken Resources have been detected!
+fml.messages.resources.textures=The following Mods have broken or missing Textures:
+fml.messages.resources.models=The following Mods have broken or missing Models:
 fml.messages.version.restriction.any=any
 fml.messages.version.restriction.lower.inclusive=%s or above
 fml.messages.version.restriction.lower.exclusive=above %s

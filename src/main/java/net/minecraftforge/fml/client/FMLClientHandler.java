@@ -426,6 +426,8 @@ public class FMLClientHandler implements IFMLSidedHandler
         else
         {
             logMissingTextureErrors();
+            if (!badTextureDomains.isEmpty() || !badModelDomains.isEmpty())
+                showGuiScreen(new GuiResourceError(badTextureDomains, badModelDomains));
         }
     }
     /**
@@ -926,6 +928,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
     private Set<String> badTextureDomains = Sets.newHashSet();
     private Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
+    private Set<String> badModelDomains = Sets.newHashSet();
 
     public void trackMissingTexture(ResourceLocation resourceLocation)
     {
@@ -1019,6 +1022,11 @@ public class FMLClientHandler implements IFMLSidedHandler
             logger.error(Strings.repeat("=", 50));
         }
         logger.error(Strings.repeat("+=", 25));
+    }
+
+    public void trackBadModelDomain(String name)
+    {
+        badModelDomains.add(name);
     }
 
     @Override
