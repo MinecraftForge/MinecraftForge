@@ -29,7 +29,6 @@ import net.minecraft.util.math.BlockPos;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,21 +39,31 @@ import java.util.Map;
  * E.g. /team settings set [value]
  * settings is subcommand of team and set is subcommand of settings
  */
-public abstract class CommandTreeBase extends CommandBase
+public abstract class CommandTreeBase extends CommandNode
 {
     private final Map<String, ICommand> commandMap = new HashMap<>();
     private final Map<String, ICommand> commandAliasMap = new HashMap<>();
     private List<ICommand> sortedCommands = null;
 
+    public CommandTreeBase(ICommand parent)
+    {
+        super(parent);
+    }
+
+    public CommandTreeBase()
+    {
+        super(null);
+    }
+
     public void addSubcommand(ICommand command)
     {
         commandMap.put(command.getName(), command);
+
         for (String alias : command.getAliases())
         {
             commandAliasMap.put(alias, command);
         }
 
-        command.setParent(this);
         updateSortedCommandList();
     }
 
@@ -68,9 +77,9 @@ public abstract class CommandTreeBase extends CommandBase
     {
         List<ICommand> list = new ArrayList<>();
 
-        for(ICommand command : getSortedCommandList())
+        for (ICommand command : getSortedCommandList())
         {
-            if(command.checkPermission(server, sender))
+            if (command.checkPermission(server, sender))
             {
                 list.add(command);
             }
@@ -97,7 +106,7 @@ public abstract class CommandTreeBase extends CommandBase
 
     public List<ICommand> getSortedCommandList()
     {
-        if(sortedCommands == null)
+        if (sortedCommands == null)
         {
             sortedCommands = new ArrayList<>(commandMap.values());
             sortedCommands.sort(null);
@@ -113,7 +122,7 @@ public abstract class CommandTreeBase extends CommandBase
 
     private static String[] shiftArgs(@Nullable String[] s)
     {
-        if(s == null || s.length == 0)
+        if (s == null || s.length == 0)
         {
             return new String[0];
         }
@@ -156,13 +165,13 @@ public abstract class CommandTreeBase extends CommandBase
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
-        if(args.length == 1)
+        if (args.length == 1)
         {
             List<String> keys = new ArrayList<>();
 
             for (ICommand c : getSortedCommandList())
             {
-                if(c.checkPermission(server, sender))
+                if (c.checkPermission(server, sender))
                 {
                     keys.add(c.getName());
                 }
@@ -173,7 +182,7 @@ public abstract class CommandTreeBase extends CommandBase
 
         ICommand cmd = getSubCommand(args[0]);
 
-        if(cmd != null)
+        if (cmd != null)
         {
             return cmd.getTabCompletions(server, sender, shiftArgs(args), pos);
         }
@@ -209,12 +218,12 @@ public abstract class CommandTreeBase extends CommandBase
         {
             ICommand cmd = getSubCommand(args[0]);
 
-            if(cmd == null)
+            if (cmd == null)
             {
                 String subCommandsString = getAvailableSubCommandsString(server, sender);
                 throw new CommandException("commands.tree_base.invalid_cmd.list_subcommands", args[0], subCommandsString);
             }
-            else if(!cmd.checkPermission(server, sender))
+            else if (!cmd.checkPermission(server, sender))
             {
                 throw new CommandException("commands.generic.permission");
             }

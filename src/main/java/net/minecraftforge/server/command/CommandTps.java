@@ -20,27 +20,28 @@ package net.minecraftforge.server.command;
 
 import java.text.DecimalFormat;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 
-class CommandTps extends CommandBase
+import javax.annotation.Nullable;
+
+class CommandTps extends CommandNode
 {
     private static final DecimalFormat TIME_FORMATTER = new DecimalFormat("########0.000");
+
+    public CommandTps(ICommand parent)
+    {
+        super(parent);
+    }
 
     @Override
     public String getName()
     {
         return "tps";
-    }
-
-    @Override
-    public String getUsage(ICommandSender sender)
-    {
-        return "commands.forge.tps.usage";
     }
 
     @Override

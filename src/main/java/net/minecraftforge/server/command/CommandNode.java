@@ -18,29 +18,24 @@
  */
 package net.minecraftforge.server.command;
 
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 
-public class ForgeCommand extends CommandTreeBase
+import javax.annotation.Nullable;
+
+public abstract class CommandNode extends CommandBase implements ICommandWithParent
 {
-    public ForgeCommand()
+    private final ICommand parent;
+
+    public CommandNode(@Nullable ICommand parent)
     {
-        super.addSubcommand(new CommandTps(this));
-        super.addSubcommand(new CommandTrack(this));
-        super.addSubcommand(new CommandGenerate(this));
-        super.addSubcommand(new CommandEntity(this));
-        super.addSubcommand(new CommandSetDimension(this));
-        super.addSubcommand(new CommandTreeHelp(this));
+        this.parent = parent;
     }
 
     @Override
-    public String getName()
+    @Nullable
+    public ICommand getParent()
     {
-        return "forge";
-    }
-
-    @Override
-    public void addSubcommand(ICommand command)
-    {
-        throw new UnsupportedOperationException("Don't add sub-commands to /forge, create your own command.");
+        return parent;
     }
 }

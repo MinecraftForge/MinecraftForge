@@ -19,28 +19,32 @@
 package net.minecraftforge.server.command;
 
 import net.minecraft.command.ICommand;
+import net.minecraft.command.ICommandSender;
 
-public class ForgeCommand extends CommandTreeBase
+import javax.annotation.Nullable;
+
+/**
+ * Should be implemented by all commands that are part of command tree.
+ * Default implementation of this class is CommandNode.
+ */
+public interface ICommandWithParent extends ICommand
 {
-    public ForgeCommand()
-    {
-        super.addSubcommand(new CommandTps(this));
-        super.addSubcommand(new CommandTrack(this));
-        super.addSubcommand(new CommandGenerate(this));
-        super.addSubcommand(new CommandEntity(this));
-        super.addSubcommand(new CommandSetDimension(this));
-        super.addSubcommand(new CommandTreeHelp(this));
-    }
+	@Nullable
+    ICommand getParent();
 
     @Override
-    public String getName()
+    default String getUsage(ICommandSender sender)
     {
-        return "forge";
+        return "commands." + getPath() + ".usage";
     }
 
-    @Override
-    public void addSubcommand(ICommand command)
+    default String getPath()
     {
-        throw new UnsupportedOperationException("Don't add sub-commands to /forge, create your own command.");
+        if (getParent() instanceof ICommandWithParent)
+        {
+            return ((ICommandWithParent) getParent()).getPath() + '.' + getName();
+        }
+
+        return getName();
     }
 }

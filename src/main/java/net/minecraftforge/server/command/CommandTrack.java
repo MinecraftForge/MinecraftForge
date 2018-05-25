@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
@@ -43,15 +43,15 @@ import net.minecraftforge.server.timings.TimeTracker;
 
 class CommandTrack extends CommandTreeBase
 {
-
     private static final DecimalFormat TIME_FORMAT = new DecimalFormat("#####0.00");
 
-    public CommandTrack()
+    public CommandTrack(ICommand parent)
     {
-        addSubcommand(new StartTrackingCommand());
-        addSubcommand(new ResetTrackingCommand());
-        addSubcommand(new TrackResultsTileEntity());
-        addSubcommand(new TrackResultsEntity());
+        super(parent);
+        addSubcommand(new StartTrackingCommand(this));
+        addSubcommand(new ResetTrackingCommand(this));
+        addSubcommand(new TrackResultsTileEntity(this));
+        addSubcommand(new TrackResultsEntity(this));
         addSubcommand(new CommandTreeHelp(this));
     }
 
@@ -73,8 +73,12 @@ class CommandTrack extends CommandTreeBase
         return "commands.forge.tracking.usage";
     }
 
-    private static class StartTrackingCommand extends CommandBase
+    private static class StartTrackingCommand extends CommandNode
     {
+        public StartTrackingCommand(ICommand parent)
+        {
+            super(parent);
+        }
 
         @Override
         public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
@@ -128,8 +132,13 @@ class CommandTrack extends CommandTreeBase
         }
     }
 
-    private static class ResetTrackingCommand extends CommandBase
+    private static class ResetTrackingCommand extends CommandNode
     {
+        public ResetTrackingCommand(ICommand parent)
+        {
+            super(parent);
+        }
+
         @Override
         public String getName()
         {
@@ -184,13 +193,13 @@ class CommandTrack extends CommandTreeBase
      *
      * @param <T>
      */
-    private static abstract class TrackResultsBaseCommand<T> extends CommandBase
+    private static abstract class TrackResultsBaseCommand<T> extends CommandNode
     {
-
         private TimeTracker<T> tracker;
 
-        protected TrackResultsBaseCommand(TimeTracker<T> tracker)
+        protected TrackResultsBaseCommand(ICommand parent, TimeTracker<T> tracker)
         {
+            super(parent);
             this.tracker = tracker;
         }
 
@@ -270,9 +279,9 @@ class CommandTrack extends CommandTreeBase
 
     private static class TrackResultsEntity extends TrackResultsBaseCommand<Entity>
     {
-        public TrackResultsEntity()
+        public TrackResultsEntity(ICommand parent)
         {
-            super(TimeTracker.ENTITY_UPDATE);
+            super(parent, TimeTracker.ENTITY_UPDATE);
         }
 
         @Override
@@ -307,10 +316,9 @@ class CommandTrack extends CommandTreeBase
 
     private static class TrackResultsTileEntity extends TrackResultsBaseCommand<TileEntity>
     {
-
-        public TrackResultsTileEntity()
+        public TrackResultsTileEntity(ICommand parent)
         {
-            super(TimeTracker.TILE_ENTITY_UPDATE);
+            super(parent, TimeTracker.TILE_ENTITY_UPDATE);
         }
 
         @Override

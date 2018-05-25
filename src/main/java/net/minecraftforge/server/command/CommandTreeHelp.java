@@ -23,16 +23,13 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Add help for parent and all its children.
- * Must be added to parent after all other commands.
  */
-public class CommandTreeHelp extends CommandHelp
+public class CommandTreeHelp extends CommandHelp implements ICommandWithParent
 {
     private final CommandTreeBase parent;
 
@@ -57,5 +54,11 @@ public class CommandTreeHelp extends CommandHelp
     protected Map<String, ICommand> getCommandMap(MinecraftServer server)
     {
         return parent.getCommandMap();
+    }
+
+    @Override
+    public ICommand getParent()
+    {
+        return parent;
     }
 }

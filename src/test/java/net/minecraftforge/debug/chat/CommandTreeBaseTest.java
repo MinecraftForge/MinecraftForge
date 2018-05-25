@@ -19,13 +19,14 @@
 
 package net.minecraftforge.debug.chat;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.server.command.CommandNode;
 import net.minecraftforge.server.command.CommandTreeBase;
 import net.minecraftforge.server.command.CommandTreeHelp;
 
@@ -44,8 +45,8 @@ public class CommandTreeBaseTest
     {
         public CommandTreeTest()
         {
-            addSubcommand(new CommandPing());
-            addSubcommand(new CommandValue());
+            addSubcommand(new CommandPing(this));
+            addSubcommand(new CommandValue(this));
             addSubcommand(new CommandTreeHelp(this));
         }
 
@@ -55,8 +56,13 @@ public class CommandTreeBaseTest
             return "treecommand_test";
         }
 
-        public static class CommandPing extends CommandBase
+        public static class CommandPing extends CommandNode
         {
+            public CommandPing(ICommand parent)
+            {
+                super(parent);
+            }
+
             @Override
             public String getName()
             {
@@ -74,10 +80,11 @@ public class CommandTreeBaseTest
         {
             private static int value = 0;
 
-            public CommandValue()
+            public CommandValue(ICommand parent)
             {
-                addSubcommand(new CommandSet());
-                addSubcommand(new CommandGet());
+                super(parent);
+                addSubcommand(new CommandSet(this));
+                addSubcommand(new CommandGet(this));
                 addSubcommand(new CommandTreeHelp(this));
             }
 
@@ -87,8 +94,13 @@ public class CommandTreeBaseTest
                 return "value";
             }
 
-            public static class CommandSet extends CommandBase
+            public static class CommandSet extends CommandNode
             {
+                public CommandSet(ICommand parent)
+                {
+                    super(parent);
+                }
+
                 @Override
                 public String getName()
                 {
@@ -103,8 +115,13 @@ public class CommandTreeBaseTest
                 }
             }
 
-            public static class CommandGet extends CommandBase
+            public static class CommandGet extends CommandNode
             {
+                public CommandGet(ICommand parent)
+                {
+                    super(parent);
+                }
+
                 @Override
                 public String getName()
                 {
