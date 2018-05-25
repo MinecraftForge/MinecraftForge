@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.BlockPortal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -738,6 +739,11 @@ public class ForgeEventFactory
 
         Result result = evt.getResult();
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
+    }
+
+    public static boolean onTrySpawnPortal(World world, BlockPos pos, BlockPortal.Size size)
+    {
+        return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size));
     }
 
     public static int onEnchantmentLevelSet(World world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)

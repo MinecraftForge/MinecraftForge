@@ -140,7 +140,11 @@ public class ModList
         {
             try
             {
-                temp = Repository.create(getFile(mcdir, this.mod_list.repositoryRoot));
+                File repoFile = getFile(mcdir, this.mod_list.repositoryRoot);
+                if (repoFile != null)
+                {
+                    temp = Repository.create(repoFile);
+                }
             }
             catch (IOException e)
             {
@@ -205,7 +209,7 @@ public class ModList
         }
         catch (IOException ioe)
         {
-            FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Unable to canonicalize path {} relative to {}", path, root.getAbsolutePath()), ioe);
+            FMLLog.log.info(FMLLog.log.getMessageFactory().newMessage("Unable to canonicalize path {} relative to {}", path, root.getAbsolutePath()));
         }
         return null;
     }

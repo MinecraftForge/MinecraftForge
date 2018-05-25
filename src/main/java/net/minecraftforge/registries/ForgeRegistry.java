@@ -43,6 +43,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
@@ -781,6 +785,111 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         public final Set<Integer> blocked = Sets.newHashSet();
         public final Set<ResourceLocation> dummied = Sets.newHashSet();
         public final Map<ResourceLocation, String> overrides = Maps.newHashMap();
+
+        public NBTTagCompound write()
+        {
+            NBTTagCompound data = new NBTTagCompound();
+
+            NBTTagList ids = new NBTTagList();
+            this.ids.entrySet().stream().sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey())).forEach(e ->
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("K", e.getKey().toString());
+                tag.setInteger("V", e.getValue());
+                ids.appendTag(tag);
+            });
+            data.setTag("ids", ids);
+
+            NBTTagList aliases = new NBTTagList();
+            this.aliases.entrySet().stream().sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey())).forEach(e ->
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("K", e.getKey().toString());
+                tag.setString("V", e.getKey().toString());
+                aliases.appendTag(tag);
+            });
+            data.setTag("aliases", aliases);
+
+            NBTTagList overrides = new NBTTagList();
+            this.overrides.entrySet().stream().sorted((o1, o2) -> o1.getKey().compareTo(o2.getKey())).forEach(e ->
+            {
+                NBTTagCompound tag = new NBTTagCompound();
+                tag.setString("K", e.getKey().toString());
+                tag.setString("V", e.getValue());
+                overrides.appendTag(tag);
+            });
+            data.setTag("overrides", overrides);
+
+            int[] blocked = this.blocked.stream().mapToInt(x->x).sorted().toArray();
+            data.setIntArray("blocked", blocked);
+
+            NBTTagList dummied = new NBTTagList();
+            this.dummied.stream().sorted().forEach(e -> dummied.appendTag(new NBTTagString(e.toString())));
+            data.setTag("dummied", dummied);
+
+            return data;
+        }
+
+        public static Snapshot read(NBTTagCompound nbt)
+        {
+            Snapshot ret = new Snapshot();
+            if (nbt == null)
+            {
+                return ret;
+            }
+
+            NBTTagList list = nbt.getTagList("ids", 10);
+            list.forEach(e ->
+            {
+                NBTTagCompound comp = (NBTTagCompound)e;
+                ret.ids.put(new ResourceLocation(comp.getString("K")), comp.getInteger("V"));
+            });
+
+            list = nbt.getTagList("aliases", 10);
+            list.forEach(e ->
+            {
+                NBTTagCompound comp = (NBTTagCompound)e;
+                String v = comp.getString("V");
+                if (v.indexOf(':') == -1) //Forge Bug: https://github.com/MinecraftForge/MinecraftForge/issues/4894 TODO: Remove in 1.13
+                {
+                    ret.overrides.put(new ResourceLocation(comp.getString("K")), v);
+                }
+                else
+                {
+                    ResourceLocation aliask = new ResourceLocation(comp.getString("K"));
+                    ResourceLocation aliasv = new ResourceLocation(v);
+                    if (aliasv.equals(aliask))
+                    {
+                        FMLLog.log.warn("Found unrecoverable 4894 bugged alias/override: {} -> {}, skipping.", aliask, aliasv);
+                    }
+                    else
+                    {
+                        ret.aliases.put(aliask, aliasv);
+                    }
+                }
+            });
+
+            list = nbt.getTagList("overrides", 10);
+            list.forEach(e ->
+            {
+                NBTTagCompound comp = (NBTTagCompound)e;
+                ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
+            });
+
+            int[] blocked = nbt.getIntArray("blocked");
+            for (int i : blocked)
+            {
+                ret.blocked.add(i);
+            }
+
+            list = nbt.getTagList("dummied", 10); //10 - NBTTagCompound, Old format. New format is String list. For now we will just merge the old and new. TODO: Remove in 1.13
+            list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagCompound)e).getString("K"))));
+
+            list = nbt.getTagList("dummied", 8); //8 - NBTTagString, New format, less redundant/verbose
+            list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagString)e).getString())));
+
+            return ret;
+        }
     }
 
     public MissingMappings<?> getMissingEvent(ResourceLocation name, Map<ResourceLocation, Integer> map)

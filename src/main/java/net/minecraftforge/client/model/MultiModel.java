@@ -50,7 +50,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.Function;
-import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -68,7 +67,6 @@ public final class MultiModel implements IModel
         private final ImmutableMap<String, IBakedModel> parts;
 
         private final IBakedModel internalBase;
-        private ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
         private final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
         private final ItemOverrideList overrides = new ItemOverrideList(Lists.newArrayList())
         {
@@ -155,6 +153,12 @@ public final class MultiModel implements IModel
         }
 
         @Override
+        public boolean isAmbientOcclusion(IBlockState state)
+        {
+            return internalBase.isAmbientOcclusion(state);
+        }
+
+        @Override
         public boolean isGui3d()
         {
             return internalBase.isGui3d();
@@ -181,36 +185,16 @@ public final class MultiModel implements IModel
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
-            if(quads == null)
+            ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
+            if (base != null)
             {
-                ImmutableMap.Builder<Optional<EnumFacing>, ImmutableList<BakedQuad>> builder = ImmutableMap.builder();
-
-                for (EnumFacing face : EnumFacing.values())
-                {
-                    ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
-                    if (base != null)
-                    {
-                        quads.addAll(base.getQuads(state, face, 0));
-                    }
-                    for (IBakedModel bakedPart : parts.values())
-                    {
-                        quads.addAll(bakedPart.getQuads(state, face, 0));
-                    }
-                    builder.put(Optional.of(face), quads.build());
-                }
-                ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
-                if (base != null)
-                {
-                    quads.addAll(base.getQuads(state, null, 0));
-                }
-                for (IBakedModel bakedPart : parts.values())
-                {
-                    quads.addAll(bakedPart.getQuads(state, null, 0));
-                }
-                builder.put(Optional.empty(), quads.build());
-                this.quads = builder.build();
+                quads.addAll(base.getQuads(state, side, rand));
             }
-            return quads.get(Optional.ofNullable(side));
+            for (IBakedModel bakedPart : parts.values())
+            {
+                quads.addAll(bakedPart.getQuads(state, side, rand));
+            }
+            return quads.build();
         }
 
         @Override

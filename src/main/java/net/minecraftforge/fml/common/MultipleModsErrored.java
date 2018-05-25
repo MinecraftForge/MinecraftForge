@@ -21,7 +21,13 @@ package net.minecraftforge.fml.common;
 
 import java.util.List;
 
-public class MultipleModsErrored extends EnhancedRuntimeException
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.client.GuiMultipleModsErrored;
+import net.minecraftforge.fml.client.IDisplayableError;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+public class MultipleModsErrored extends EnhancedRuntimeException implements IDisplayableError
 {
     public final List<WrongMinecraftVersionException> wrongMinecraftExceptions;
     public final List<MissingModsException> missingModsExceptions;
@@ -29,6 +35,13 @@ public class MultipleModsErrored extends EnhancedRuntimeException
     {
         this.wrongMinecraftExceptions = wrongMinecraftExceptions;
         this.missingModsExceptions = missingModsExceptions;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public GuiScreen createGui()
+    {
+        return new GuiMultipleModsErrored(this);
     }
 
     @Override
