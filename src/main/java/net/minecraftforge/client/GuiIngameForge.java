@@ -52,6 +52,7 @@ import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -346,6 +347,12 @@ public class GuiIngameForge extends GuiIngame
         }
 
         post(HOTBAR);
+    }
+
+    @Override
+    public void setOverlayMessage(ITextComponent component, boolean animateColor)
+    {
+        this.setOverlayMessage(component.getFormattedText(), animateColor);
     }
 
     protected void renderAir(int width, int height)
