@@ -404,7 +404,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                 ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
                 entry.remap(ForgeRegistries.ITEMS.getValue(newTotem));
             }
-            if (entry.key.toString().equals("forge:bucketFilled"))
+            if (entry.key.toString().equals("forge:bucketfilled"))
             {
                 ResourceLocation newBucket = new ResourceLocation("forge:bucket_filled");
                 entry.remap(ForgeRegistries.ITEMS.getValue(newBucket));
