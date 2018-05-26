@@ -40,7 +40,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 @EventBusSubscriber
 public class ColoredFluidTest
 {
-    static final boolean ENABLED = true;      // <-- enable mod
+    static final boolean ENABLED = false;      // <-- enable mod
     static final Color COLOR = Color.PINK; // <-- change this to try other colors
     
     static final String MODID = "fluidadditionalfields";
