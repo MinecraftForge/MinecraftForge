@@ -23,7 +23,6 @@ import java.io.File;
 import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Map.Entry;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -44,7 +43,6 @@ import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 import com.google.common.collect.Maps;
@@ -127,54 +125,7 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
 
         for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
         {
-            NBTTagCompound data = new NBTTagCompound();
-            registries.setTag(e.getKey().toString(), data);
-
-            NBTTagList ids = new NBTTagList();
-            for (Entry<ResourceLocation, Integer> item : e.getValue().ids.entrySet())
-            {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("K", item.getKey().toString());
-                tag.setInteger("V", item.getValue());
-                ids.appendTag(tag);
-            }
-            data.setTag("ids", ids);
-
-            NBTTagList aliases = new NBTTagList();
-            for (Entry<ResourceLocation, ResourceLocation> entry : e.getValue().aliases.entrySet())
-            {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("K", entry.getKey().toString());
-                tag.setString("V", entry.getValue().toString());
-                aliases.appendTag(tag);
-            }
-            data.setTag("aliases", aliases);
-
-            NBTTagList overrides = new NBTTagList();
-            for (Entry<ResourceLocation, String> entry : e.getValue().overrides.entrySet())
-            {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("K", entry.getKey().toString());
-                tag.setString("V", entry.getValue().toString());
-                overrides.appendTag(tag);
-            }
-            data.setTag("overrides", overrides);
-
-            int[] blocked = new int[e.getValue().blocked.size()];
-            int idx = 0;
-            for (Integer i : e.getValue().blocked)
-            {
-                blocked[idx++] = i;
-            }
-            data.setIntArray("blocked", blocked);
-            NBTTagList dummied = new NBTTagList();
-            for (ResourceLocation entry : e.getValue().dummied)
-            {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("K", entry.toString());
-                dummied.appendTag(tag);
-            }
-            data.setTag("dummied", dummied);
+            registries.setTag(e.getKey().toString(), e.getValue().write());
         }
         return fmlData;
     }
@@ -216,54 +167,7 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
             NBTTagCompound regs = tag.getCompoundTag("Registries");
             for (String key : regs.getKeySet())
             {
-                ForgeRegistry.Snapshot entry = new ForgeRegistry.Snapshot();
-                NBTTagCompound ent = regs.getCompoundTag(key);
-                snapshot.put(new ResourceLocation(key), entry);
-
-                NBTTagList list = ent.getTagList("ids", 10);
-                for (int x = 0; x < list.tagCount(); x++)
-                {
-                    NBTTagCompound e = list.getCompoundTagAt(x);
-                    entry.ids.put(new ResourceLocation(e.getString("K")), e.getInteger("V"));
-                }
-
-                list = ent.getTagList("aliases", 10);
-                for (int x = 0; x < list.tagCount(); x++)
-                {
-                    NBTTagCompound e = list.getCompoundTagAt(x);
-                    String v = e.getString("V");
-                    if (v.indexOf(':') == -1) //Forge Bug: https://github.com/MinecraftForge/MinecraftForge/issues/4894 TODO: Remove in 1.13
-                    {
-                        entry.overrides.put(new ResourceLocation(e.getString("K")), v);
-                    }
-                    else
-                    {
-                        entry.aliases.put(new ResourceLocation(e.getString("K")), new ResourceLocation(v));
-                    }
-                }
-
-                list = ent.getTagList("overrides", 10);
-                for (int x = 0; x < list.tagCount(); x++)
-                {
-                    NBTTagCompound e = list.getCompoundTagAt(x);
-                    entry.overrides.put(new ResourceLocation(e.getString("K")), e.getString("V"));
-                }
-
-                int[] blocked = regs.getCompoundTag(key).getIntArray("blocked");
-                for (int i : blocked)
-                {
-                    entry.blocked.add(i);
-                }
-
-                if (regs.getCompoundTag(key).hasKey("dummied")) // Added in 1.8.9 dev, some worlds may not have it.
-                {
-                    list = regs.getCompoundTag(key).getTagList("dummied",10);
-                    for (int x = 0; x < list.tagCount(); x++)
-                    {
-                        NBTTagCompound e = list.getCompoundTagAt(x);
-                        entry.dummied.add(new ResourceLocation(e.getString("K")));
-                    }
-                }
+                snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompoundTag(key)));
             }
             failedElements = GameData.injectSnapshot(snapshot, true, true);
         }

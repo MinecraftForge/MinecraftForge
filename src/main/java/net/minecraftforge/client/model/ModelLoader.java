@@ -24,9 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,9 +66,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -78,25 +74,18 @@ import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -109,7 +98,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -117,7 +105,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -130,6 +117,8 @@ import javax.annotation.Nullable;
 public final class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
+    private final Map<ModelResourceLocation, ModelBlockDefinition> multipartDefinitions = Maps.newHashMap();
+    private final Map<ModelBlockDefinition, IModel> multipartModels = Maps.newHashMap();
     // TODO: nothing adds to missingVariants, remove it?
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
@@ -260,6 +249,7 @@ public final class ModelLoader extends ModelBakery
     {
         for (ModelResourceLocation location : locations)
         {
+            multipartDefinitions.put(location, definition);
             registerVariant(null, location);
         }
     }
@@ -1186,16 +1176,23 @@ public final class ModelLoader extends ModelBakery
         {
             ModelResourceLocation variant = (ModelResourceLocation) modelLocation;
             ModelBlockDefinition definition = loader.getModelBlockDefinition(variant);
+
             try
             {
                 VariantList variants = definition.getVariant(variant.getVariant());
                 return new WeightedRandomModel(variant, variants);
             }
-            catch(MissingVariantException e)
+            catch (MissingVariantException e)
             {
-                if(definition.hasMultipartData())
+                if (definition.equals(loader.multipartDefinitions.get(variant)))
                 {
-                    return new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                    IModel model = loader.multipartModels.get(definition);
+                    if (model == null)
+                    {
+                        model = new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                        loader.multipartModels.put(definition, model);
+                    }
+                    return model;
                 }
                 throw e;
             }
