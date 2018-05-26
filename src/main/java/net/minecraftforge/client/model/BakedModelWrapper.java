@@ -53,6 +53,12 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
+    public boolean isAmbientOcclusion(IBlockState state)
+    {
+        return originalModel.isAmbientOcclusion(state);
+    }
+
+    @Override
     public boolean isGui3d()
     {
         return originalModel.isGui3d();
