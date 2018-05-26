@@ -434,8 +434,6 @@ public class FMLClientHandler implements IFMLSidedHandler
                         badResources.put("textures", badTextureDomains);
                     showGuiScreen(new GuiResourceError(badResources));
                 }
-                else
-                    FMLLog.log.warn("Skipped ResourceErrorScreen due to deobfusated Environement");
             }
         }
     }
