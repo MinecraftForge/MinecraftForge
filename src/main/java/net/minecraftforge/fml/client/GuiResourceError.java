@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.client;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
@@ -33,26 +34,20 @@ import java.util.Set;
 
 public class GuiResourceError extends GuiErrorScreen
 {
-    private final Set<String> textureOffenders;
-    private final Set<String> modelOffenders;
+    private final Map<String, Set<String>> broken;
 
-    public GuiResourceError(Set<String> textureOffenders, Set<String> modelOffenders)
+    public GuiResourceError(Map<String, Set<String>> brokenResources)
     {
-        super(null,null);
-        this.textureOffenders = Sets.newHashSet();
-        this.modelOffenders = Sets.newHashSet();
+        super(null, null);
+        this.broken = Maps.newHashMap();
 
-        final Map<String,ModContainer> containers = Loader.instance().getIndexedModList();
-        textureOffenders.forEach(name ->
+
+        final Map<String, ModContainer> containers = Loader.instance().getIndexedModList();
+        brokenResources.forEach((type, offenders) -> offenders.forEach(name ->
         {
             ModContainer mc = containers.get(name);
-            this.textureOffenders.add(mc != null ? mc.getName() : name);
-        });
-        modelOffenders.forEach(name ->
-        {
-            ModContainer mc = containers.get(name);
-            this.modelOffenders.add(mc != null ? mc.getName() : name);
-        });
+            this.broken.computeIfAbsent(type, (k) -> Sets.newHashSet()).add(mc != null ? mc.getName() : name);
+        }));
     }
 
     @Override
@@ -79,24 +74,15 @@ public class GuiResourceError extends GuiErrorScreen
         offset+=10;
         this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.log"), this.width / 2, offset, 0xFFFFFF);
         offset += 25;
-        if (!textureOffenders.isEmpty())
+        for (Map.Entry<String, Set<String>> type : broken.entrySet())
         {
-            this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.resources.textures", TextFormatting.RED,TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
-            for (String mod : textureOffenders)
+            this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.resources." + type.getKey(), TextFormatting.RED,TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
+            for (String mod : type.getValue())
             {
                 offset += 10;
                 this.drawCenteredString(this.fontRenderer, mod, this.width / 2, offset, 0xEEEEEE);
             }
             offset += 25;
-        }
-        if (!modelOffenders.isEmpty())
-        {
-            this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.resources.models", TextFormatting.RED,TextFormatting.BOLD, TextFormatting.RESET), this.width / 2, offset, 0xFFFFFF);
-            for (String mod : modelOffenders)
-            {
-                offset += 10;
-                this.drawCenteredString(this.fontRenderer, mod, this.width / 2, offset, 0xEEEEEE);
-            }
         }
         this.buttonList.forEach(button -> button.drawButton(this.mc, mouseX, mouseY, partialTicks));
     }

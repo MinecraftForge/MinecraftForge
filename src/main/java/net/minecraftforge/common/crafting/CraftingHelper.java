@@ -664,7 +664,7 @@ public class CraftingHelper {
     {
         JsonContext ctx = new JsonContext(mod.getModId());
 
-        return findFiles(mod, "assets/" + mod.getModId() + "/recipes",
+        boolean success = findFiles(mod, "assets/" + mod.getModId() + "/recipes",
             root ->
             {
                 Path fPath = root.resolve("_constants.json");
@@ -728,6 +728,9 @@ public class CraftingHelper {
             },
             true, true
         );
+        if (!success)
+            FMLCommonHandler.instance().getSidedDelegate().trackBadResource("recipes", mod.getModId());
+        return success;
     }
 
     /**

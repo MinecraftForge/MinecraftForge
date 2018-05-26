@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -426,8 +427,17 @@ public class FMLClientHandler implements IFMLSidedHandler
         else
         {
             logMissingTextureErrors();
-            if (!badTextureDomains.isEmpty() || !badModelDomains.isEmpty())
-                showGuiScreen(new GuiResourceError(badTextureDomains, badModelDomains));
+            if (!badTextureDomains.isEmpty() || !badResources.isEmpty())
+            {
+                List<?> rps = client.getResourcePackRepository().getRepositoryEntries();
+                if (rps.size() == 0) {
+                    if (badTextureDomains.size() != 0)
+                        badResources.put("textures", badTextureDomains);
+                    showGuiScreen(new GuiResourceError(badResources));
+                }
+                else
+                    FMLLog.log.warn("Disabled ResourceErrorScreen due to active ResourcePacks");
+            }
         }
     }
     /**
@@ -928,7 +938,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
     private Set<String> badTextureDomains = Sets.newHashSet();
     private Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
-    private Set<String> badModelDomains = Sets.newHashSet();
+    private Map<String, Set<String>> badResources = Maps.newHashMap();
 
     public void trackMissingTexture(ResourceLocation resourceLocation)
     {
@@ -1024,9 +1034,10 @@ public class FMLClientHandler implements IFMLSidedHandler
         logger.error(Strings.repeat("+=", 25));
     }
 
-    public void trackBadModelDomain(String name)
+    @Override
+    public void trackBadResource(String type, String name)
     {
-        badModelDomains.add(name);
+        badResources.computeIfAbsent(type, (k) -> Sets.newHashSet()).add(name);
     }
 
     @Override

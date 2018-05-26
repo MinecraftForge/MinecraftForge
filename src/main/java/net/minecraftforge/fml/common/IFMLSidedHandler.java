@@ -73,6 +73,8 @@ public interface IFMLSidedHandler
 
     IThreadListener getWorldThread(INetHandler net);
 
+    default void trackBadResource(String type, String name){}
+
     void processWindowMessages();
 
     String stripSpecialChars(String message);
