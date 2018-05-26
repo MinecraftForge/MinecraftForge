@@ -25,6 +25,7 @@ import java.util.function.Function;
 import org.apache.commons.lang3.Validate;
 import org.objectweb.asm.Type;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -49,6 +50,16 @@ class ASMInfo
         return byID.get(id);
     }
 
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper("")
+        .add("name", name)
+        .add("itf", interfaces)
+        .add("ann", annotations)
+        .toString();
+    }
+
     public enum TargetType { CLASS, FIELD, METHOD, SUBTYPE };
     public enum ValueType
     {
@@ -62,7 +73,7 @@ class ASMInfo
         DOUBLE(Double::valueOf,        v -> {double[]  ret = new double[v.length];  for (int x = 0; x < v.length; x++) ret[x] = Double.parseDouble(v[x]);   return ret; }),
         STRING(x -> x, x -> x),
         CLASS(Type::getType,           v -> {Type[]       ret = new Type[v.length];       for (int x = 0; x < v.length; x++) ret[x] = Type.getType(v[x]);            return ret; }),
-        ENUM(ValueType::getEnumHolder, v -> {EnumHolder[] ret = new EnumHolder[v.length]; for (int x = 0; x < v.length; x++) ret[x] = ValueType.getEnumHolder(v[x]); return ret; }),
+        ENUM(ValueType::getEnumHolder, v -> {List<EnumHolder> ret = Lists.newArrayList(); for (int x = 0; x < v.length; x++) ret.add(ValueType.getEnumHolder(v[x])); return ret; }),
         ANNOTATION(null, null),
         NULL(x -> null, x -> null);
 
@@ -80,7 +91,11 @@ class ASMInfo
             int idx = value.lastIndexOf('/');
             if (idx <= 1)
                 throw new IllegalArgumentException("Can not create a EnumHolder for value: " + value);
-            return new EnumHolder(value.substring(0, idx - 1), value.substring(idx));
+            String field = value.substring(idx + 1);
+            value = value.substring(0, idx);
+            idx = value.indexOf(';'); //Legacy internal name.
+            value = value.substring(1, idx);
+            return new EnumHolder(value, field);
         }
     };
 
@@ -102,10 +117,22 @@ class ASMInfo
                 if (values != null)
                     values.forEach((k, v) -> _values.put(k, v.get(pool)));
                 else
-                    _values.put("value", value);
+                    _values.put("value", value == null ? null : value.get(pool));
             }
 
             return _values;
+        }
+
+        @Override
+        public String toString()
+        {
+            return MoreObjects.toStringHelper("")
+            .add("type", type)
+            .add("name", name)
+            .add("target", target)
+            .add("id", id)
+            .add("value", value)
+            .toString();
         }
     }
 
