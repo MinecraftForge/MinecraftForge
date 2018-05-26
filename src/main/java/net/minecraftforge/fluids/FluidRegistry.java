@@ -23,9 +23,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import net.minecraftforge.fml.common.LoaderState;
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,6 +32,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.common.MinecraftForge;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -45,6 +43,7 @@ import com.google.common.collect.Sets;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.registries.IRegistryDelegate;
@@ -70,6 +69,8 @@ public abstract class FluidRegistry
 
     static boolean universalBucketEnabled = false;
     static Set<Fluid> bucketFluids = Sets.newHashSet();
+
+    static Map<IRegistryDelegate<Fluid>, IFluidColor> colorHandlers = Maps.newHashMap();
 
     public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
         @Override
@@ -472,5 +473,20 @@ public abstract class FluidRegistry
         {
             fluid = fluids.get(name);
         }
+    }
+
+    public static void registerFluidColorHandler(IFluidColor handler, Fluid... fluids)
+    {
+        for (Fluid fluid : fluids)
+        {
+            Preconditions.checkArgument(isFluidRegistered(fluid), "Fluid must be registered before assigning color handler.");
+            colorHandlers.put(makeDelegate(fluid), handler);
+        }
+    }
+
+    public static int colorMultiplier(FluidStack stack, int tintIndex)
+    {
+        IFluidColor handler = colorHandlers.get(makeDelegate(stack.getFluid()));
+        return handler == null ? -1 : handler.colorMultiplier(stack, tintIndex);
     }
 }
