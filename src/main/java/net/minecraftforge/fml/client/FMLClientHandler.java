@@ -429,14 +429,13 @@ public class FMLClientHandler implements IFMLSidedHandler
             logMissingTextureErrors();
             if (!badTextureDomains.isEmpty() || !badResources.isEmpty())
             {
-                List<?> rps = client.getResourcePackRepository().getRepositoryEntries();
-                if (rps.size() == 0) {
+                if ((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")) {
                     if (badTextureDomains.size() != 0)
                         badResources.put("textures", badTextureDomains);
                     showGuiScreen(new GuiResourceError(badResources));
                 }
                 else
-                    FMLLog.log.warn("Disabled ResourceErrorScreen due to active ResourcePacks");
+                    FMLLog.log.warn("Skipped ResourceErrorScreen due to deobfusated Environement");
             }
         }
     }
