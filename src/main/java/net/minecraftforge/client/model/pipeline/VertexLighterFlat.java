@@ -121,7 +121,10 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         float[][] lightmap = quadData[lightmapIndex];
         float[][] color = quadData[colorIndex];
 
-        if (dataLength[normalIndex] >= 3)
+        if (dataLength[normalIndex] >= 3
+            && (quadData[normalIndex][0][0] != -1
+            ||  quadData[normalIndex][0][1] != -1
+            ||  quadData[normalIndex][0][2] != -1))
         {
             normal = quadData[normalIndex];
         }
