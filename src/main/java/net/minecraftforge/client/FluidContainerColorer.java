@@ -21,7 +21,6 @@ package net.minecraftforge.client;
 
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 
@@ -35,6 +34,6 @@ public class FluidContainerColorer implements IItemColor
         if (tintIndex != 1) return -1;
         FluidStack fluidStack = FluidUtil.getFluidContained(stack);
         if (fluidStack == null) return -1;
-        return FluidRegistry.colorMultiplier(fluidStack, tintIndex);
+        return fluidStack.getFluid().getColor(fluidStack);
     }
 }
