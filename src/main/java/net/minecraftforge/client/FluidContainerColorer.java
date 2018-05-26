@@ -31,9 +31,9 @@ public class FluidContainerColorer implements IItemColor
     @Override
     public int colorMultiplier(@Nonnull ItemStack stack, int tintIndex)
     {
-        if (tintIndex != 1) return -1;
+        if (tintIndex != 1) return 0xFFFFFFFF;
         FluidStack fluidStack = FluidUtil.getFluidContained(stack);
-        if (fluidStack == null) return -1;
+        if (fluidStack == null) return 0xFFFFFFFF;
         return fluidStack.getFluid().getColor(fluidStack);
     }
 }
