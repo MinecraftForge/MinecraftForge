@@ -54,7 +54,7 @@ import static net.minecraftforge.debug.entity.player.PlayerSleepWithoutPosTest.*
 @Mod(modid = MOD_ID, name = "Player Sleep Without Position Test", acceptableRemoteVersions = "*")
 public final class PlayerSleepWithoutPosTest
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     static final String MOD_ID = "player_sleep_without_pos_test";
     static final String CHANNEL = "PSWP";
     private static final ResourceLocation CART_NAME = new ResourceLocation(MOD_ID, "bed_cart");
