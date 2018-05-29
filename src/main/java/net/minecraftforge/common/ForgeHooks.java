@@ -76,6 +76,7 @@ import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTippedArrow;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -1399,6 +1400,14 @@ public class ForgeHooks
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    public static boolean canElytraFly(EntityLivingBase entity, ItemStack itemstack)
+    {
+        if (!(entity instanceof EntityPlayer))
+            return itemstack.getItem() == Items.ELYTRA && ItemElytra.isUsable(itemstack);
+
+        return entity.getEntityAttribute(EntityPlayer.ELYTRA_FLIGHT).getAttributeValue() >= 1.0D;
     }
 
     /**
