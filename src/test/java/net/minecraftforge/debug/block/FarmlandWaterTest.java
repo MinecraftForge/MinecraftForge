@@ -1,19 +1,21 @@
 package net.minecraftforge.debug.block;
 
-import net.minecraft.init.Biomes;
-import net.minecraft.world.biome.Biome;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.common.FarmlandWaterManager;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.SimpleTicket;
+import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "farmlandwatertest", name = "Farmland Water Test", version = "1.0.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
 public class FarmlandWaterTest
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     private static Logger logger;
 
     @Mod.EventHandler
@@ -22,34 +24,22 @@ public class FarmlandWaterTest
         if (ENABLED)
         {
             logger = event.getModLog();
+            MinecraftForge.EVENT_BUS.register(FarmlandWaterTest.class);
         }
     }
 
-    /**
-     * Will not allow watering farmland in desert and will always water in swampland and won't accept rain as water source in river
-     */
+    //Sets a region of 16x16x16 watered at the pos where an arrow hit
     @SubscribeEvent
-    public static void onFarmlandWaterCheck(BlockEvent.FarmlandWaterCheckEvent event)
+    public static void onProjectileImpact(ProjectileImpactEvent.Arrow event)
     {
-        if (!ENABLED)
+        World world = event.getEntity().world;
+        if (!world.isRemote)
         {
-            return;
-        }
-        Biome biome = event.getWorld().getBiome(event.getPos());
-        if (biome == Biomes.SWAMPLAND || biome == Biomes.MUTATED_SWAMPLAND) // always accept
-        {
-            logger.info("Overriding farmland check for biome " + biome + " to always be watered");
-            event.setResult(Event.Result.ALLOW);
-        }
-        else if (biome == Biomes.DESERT || biome == Biomes.DESERT_HILLS || biome == Biomes.MUTATED_DESERT) // never accept
-        {
-            logger.info("Overriding farmland check for biome " + biome + " to never be watered");
-            event.setResult(Event.Result.DENY);
-        }
-        else if (biome == Biomes.RIVER || biome == Biomes.FROZEN_RIVER)
-        {
-            logger.info("Overriding farmland check for biome " + biome + " to only be watered by source blocks");
-            event.setResult(event.hasNearbyWaterBlock() ? Event.Result.DEFAULT : Event.Result.DENY);
+            BlockPos pos = new BlockPos(event.getRayTraceResult().hitVec);
+            AxisAlignedBB aabb = new AxisAlignedBB(pos).grow(8D);
+            //600 ticks = 30 seconds
+            FarmlandWaterManager.addWateredRegion(world, aabb, 600);
+            logger.info("Watering " + aabb + " for 30 seconds");
         }
     }
 }
