@@ -19,9 +19,7 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.util.Iterator;
 import java.util.List;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList.EntityEggInfo;
@@ -48,22 +46,25 @@ public class EntityRegistry
 {
     public class EntityRegistration
     {
-        private Class<? extends Entity> entityClass;
+        private EntityEntry entry;
         private ModContainer container;
         private ResourceLocation regName;
-        private String entityName;
         private int modId;
         private int trackingRange;
         private int updateFrequency;
         private boolean sendsVelocityUpdates;
         private Function<EntitySpawnMessage, Entity> customSpawnCallback;
         private boolean usesVanillaSpawning;
+        @Deprecated // Use entityentry version
         public EntityRegistration(ModContainer mc, ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
         {
+            this(mc, ForgeRegistries.ENTITIES.getValue(registryName), id, trackingRange, updateFrequency, sendsVelocityUpdates);
+        }
+        public EntityRegistration(ModContainer mc, EntityEntry entry, int id, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
+        {
             this.container = mc;
-            this.regName = registryName;
-            this.entityClass = entityClass;
-            this.entityName = entityName;
+            this.entry = entry;
+            this.regName = entry.getRegistryName();
             this.modId = id;
             this.trackingRange = trackingRange;
             this.updateFrequency = updateFrequency;
@@ -75,7 +76,7 @@ public class EntityRegistry
         }
         public Class<? extends Entity> getEntityClass()
         {
-            return entityClass;
+            return entry.getEntityClass();
         }
         public ModContainer getContainer()
         {
@@ -83,7 +84,7 @@ public class EntityRegistry
         }
         public String getEntityName()
         {
-            return entityName;
+            return entry.getName();
         }
         public int getModEntityId()
         {
@@ -118,6 +119,11 @@ public class EntityRegistry
         {
             this.customSpawnCallback = callable;
             this.usesVanillaSpawning = usesVanillaSpawning;
+        }
+
+        public EntityEntry getEntry()
+        {
+            return entry;
         }
     }
 
@@ -174,27 +180,28 @@ public class EntityRegistry
     private void doModEntityRegistration(ResourceLocation registryName, Class<? extends Entity> entityClass, String entityName, int id, Object mod, int trackingRange, int updateFrequency, boolean sendsVelocityUpdates)
     {
         ModContainer mc = FMLCommonHandler.instance().findContainerFor(mod);
-        EntityRegistration er = new EntityRegistration(mc, registryName, entityClass, entityName, id, trackingRange, updateFrequency, sendsVelocityUpdates);
         try
         {
-            entityClassRegistrations.put(entityClass, er);
+            EntityEntry entry;
             if (!ForgeRegistries.ENTITIES.containsKey(registryName))
             {
-                EntityEntry entry = new EntityEntry(entityClass, entityName).setRegistryName(registryName);
+                entry = new EntityEntry(entityClass, entityName).setRegistryName(registryName);
                 ForgeRegistries.ENTITIES.register(entry);
                 FMLLog.log.trace("Automatically registered mod {} entity {} as {}", mc.getModId(), entityName, entry.getRegistryName());
             }
             else
             {
+                entry = ForgeRegistries.ENTITIES.getValue(registryName);
                 FMLLog.log.debug("Skipping automatic mod {} entity registration for already registered entry {} class {}", mc.getModId(), registryName, entityClass.getName());
             }
+            EntityRegistration er = new EntityRegistration(mc, entry, id, trackingRange, updateFrequency, sendsVelocityUpdates);
+            entityClassRegistrations.put(entityClass, er);
+            entityRegistrations.put(mc, er);
         }
         catch (IllegalArgumentException e)
         {
             FMLLog.log.warn("The mod {} tried to register the entity (registry,name,class) ({},{},{}) one or both of which are already registered", mc.getModId(), registryName, entityName, entityClass.getName(), e);
-            return;
         }
-        entityRegistrations.put(mc, er);
     }
 
     /**

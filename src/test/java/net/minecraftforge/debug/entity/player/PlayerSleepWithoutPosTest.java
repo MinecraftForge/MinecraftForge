@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.common.registry.EntityEntry;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -127,31 +127,23 @@ public final class PlayerSleepWithoutPosTest
     @SubscribeEvent
     public void registerEntity(RegistryEvent.Register<EntityEntry> event)
     {
-        event.getRegistry().register(new EntityEntry(EntityCartBed.class, "bed_cart")
-        {
-            @Override
-            protected void init()
-            {
-            }
-
-            @Override
-            public Entity newInstance(World world)
-            {
-                return new EntityCartBed(world);
-            }
-        }.setRegistryName(MOD_ID, "bed_cart"));
-        EntityRegistry.registerModEntity(CART_NAME, EntityCartBed.class, "bed_cart", 0, this, 80, 3, true);
+        EntityEntryBuilder.create()
+                .entity(EntityCartBed.class)
+                .factory(EntityCartBed::new)
+                .tracker(80, 3, true)
+                .id(MOD_ID, 0)
+                .name("bed_cart")
+                .build();
     }
 
     static void startSleeping(EntityPlayer player)
     {
-        ReflectionHelper.setPrivateValue(EntityPlayer.class, player, true, 26);
-        ReflectionHelper.setPrivateValue(EntityPlayer.class, player, 0, 28);
+        ReflectionHelper.setPrivateValue(EntityPlayer.class, player, true, 26); // sleeping
+        ReflectionHelper.setPrivateValue(EntityPlayer.class, player, 0, 28); // sleepTimer
     }
 
     final class EntityCartBed extends EntityMinecartEmpty
     {
-
         private WeakReference<EntityPlayer> lastSleeper = new WeakReference<>(null);
         private boolean wokeUp = false;
         private boolean rideAfterSleep = false;

@@ -76,7 +76,6 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                     " at ( " + spawnMsg.rawX + "," + spawnMsg.rawY + ", " + spawnMsg.rawZ + ") Please contact mod author or server admin.");
         }
         WorldClient wc = FMLClientHandler.instance().getWorldClient();
-        Class<? extends Entity> cls = er.getEntityClass();
         try
         {
             Entity entity;
@@ -85,7 +84,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                 entity = er.doCustomSpawning(spawnMsg);
             } else
             {
-                entity = ForgeRegistries.ENTITIES.getValue(er.getRegistryName()).newInstance(wc);
+                entity = er.getEntry().newInstance(wc);
 
                 int offset = spawnMsg.entityId - entity.getEntityId();
                 entity.setEntityId(spawnMsg.entityId);

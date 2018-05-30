@@ -276,15 +276,6 @@ public final class EntityEntryBuilder<E extends Entity>
         return entry;
     }
 
-    @Nonnull
-    private EntityRegistry.EntityRegistration createRegistration()
-    {
-        return EntityRegistry.instance().new EntityRegistration(
-            this.mod, this.id, this.entity, this.name, this.network,
-            this.trackingRange, this.trackingUpdateFrequency, this.trackingVelocityUpdates
-        );
-    }
-
     private void registerStatistics()
     {
         if (!this.statisticsRegistered && (this.killEntityStatistic != null && this.entityKilledByStatistic != null))
@@ -340,7 +331,7 @@ public final class EntityEntryBuilder<E extends Entity>
             if (this.added) return;
             this.added = true;
             EntityEntryBuilder.this.registerStatistics();
-            EntityRegistry.instance().insert(EntityEntryBuilder.this.entity, EntityEntryBuilder.this.createRegistration());
+            EntityRegistry.instance().insert(EntityEntryBuilder.this.entity, createRegistration());
             if (EntityEntryBuilder.this.spawns != null)
             {
                 for (final Spawn spawn : EntityEntryBuilder.this.spawns)
@@ -350,6 +341,16 @@ public final class EntityEntryBuilder<E extends Entity>
                 EntityEntryBuilder.this.spawns = null;
             }
         }
+
+        @Nonnull
+        private EntityRegistry.EntityRegistration createRegistration()
+        {
+            return EntityRegistry.instance().new EntityRegistration(
+                    EntityEntryBuilder.this.mod, this, EntityEntryBuilder.this.network,
+                    EntityEntryBuilder.this.trackingRange, EntityEntryBuilder.this.trackingUpdateFrequency, EntityEntryBuilder.this.trackingVelocityUpdates
+            );
+        }
+
     }
 
     public final class Spawn
