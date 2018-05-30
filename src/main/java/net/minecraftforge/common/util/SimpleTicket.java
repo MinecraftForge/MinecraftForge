@@ -24,7 +24,7 @@ public class SimpleTicket<T>
         this.tickTimeout = tickTimeout;
         if (tickTimeout <= 0)
         {
-            throw new IllegalArgumentException("Ticket needs to be valid for at least one tick!");
+            throw new IllegalArgumentException("Ticket needs to be valid for at least one tick, but tickTimeout was " + tickTimeout);
         }
     }
 

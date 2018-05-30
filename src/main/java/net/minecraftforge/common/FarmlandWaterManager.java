@@ -47,10 +47,6 @@ public class FarmlandWaterManager
         Set<SimpleTicket<AxisAlignedBB>> tickets = wateredAABBs.computeIfAbsent(world.provider.getDimension(), id -> new HashSet<>());
         SimpleTicket<AxisAlignedBB> ticket = new SimpleTicket<>(aabb, tickets, tickTimeout);
         ticket.validate();
-        if (!ticket.isValid())
-        {
-            throw new RuntimeException("Invalid ticket");
-        }
         return ticket;
     }
 
@@ -69,11 +65,12 @@ public class FarmlandWaterManager
         {
             return false;
         }
+
         Vec3d posAsVec3d = new Vec3d(pos);
         return tickets.stream().anyMatch(ticket -> ticket.getTarget().contains(posAsVec3d));
     }
 
-    public static void removeAllTickets(World world)
+    static void removeAllTickets(World world)
     {
         if (world.isRemote)
         {
