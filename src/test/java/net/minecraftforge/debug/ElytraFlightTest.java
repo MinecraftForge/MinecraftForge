@@ -84,8 +84,8 @@ public class ElytraFlightTest
 
             if (elytraFlight != null)
             {
-                AttributeModifier mod_elytra_boots = elytraFlight.getModifier(UUID_ELYTRA_BOOTS);
-                if (mod_elytra_boots != null) elytraFlight.removeModifier(mod_elytra_boots);
+                AttributeModifier mod = elytraFlight.getModifier(UUID_ELYTRA_BOOTS);
+                if (mod != null) elytraFlight.removeModifier(mod);
                 if (hasBoots)
                     elytraFlight.applyModifier(new AttributeModifier(
                             UUID_ELYTRA_BOOTS, "elytra_flight_boots", 1.0D, 0));

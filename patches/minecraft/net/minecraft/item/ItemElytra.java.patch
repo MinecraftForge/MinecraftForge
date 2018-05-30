@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemElytra.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemElytra.java
-@@ -61,4 +61,12 @@
+@@ -61,4 +61,13 @@
              return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
          }
      }
 +
++    /* ======================================== FORGE START =====================================*/
 +    public com.google.common.collect.Multimap<String, net.minecraft.entity.ai.attributes.AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
 +    {
 +        com.google.common.collect.Multimap<String, net.minecraft.entity.ai.attributes.AttributeModifier> attribs = super.getAttributeModifiers(slot, stack);
