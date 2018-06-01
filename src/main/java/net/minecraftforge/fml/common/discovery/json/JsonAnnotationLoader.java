@@ -54,6 +54,9 @@ public class JsonAnnotationLoader
             //TODO: Java9 Multi-Release Jars, picking the correct class for the current platform. For now we just ignore them.
             if (entry.getKey().startsWith("META-INF/"))
                 continue;
+            //TODO: Remove in 1.13, some older mods have these in the entries due to FG issue. Basically filter out scala synthetic class.
+            if (entry.getKey().endsWith("$"))
+            	continue;
 
             ASMInfo asm_info = entry.getValue();
             if (asm_info.interfaces != null)
