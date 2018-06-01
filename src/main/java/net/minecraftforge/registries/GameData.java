@@ -735,21 +735,23 @@ public class GameData
 
         if (filter.test(BLOCKS))
         {
-            MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(BLOCKS).getRegisterEvent(BLOCKS));
-            ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any blocks
+            ForgeRegistry<Block> registry = RegistryManager.ACTIVE.getRegistry(BLOCKS);
+            MinecraftForge.EVENT_BUS.post(registry.getRegisterEvent(BLOCKS));
+            ObjectHolderRegistry.INSTANCE.applyObjectHolderFor(registry.registryName); // inject any blocks
         }
         if (filter.test(ITEMS))
         {
-            MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(ITEMS).getRegisterEvent(ITEMS));
-            ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject any items
+            ForgeRegistry<Item> registry = RegistryManager.ACTIVE.getRegistry(ITEMS);
+            MinecraftForge.EVENT_BUS.post(registry.getRegisterEvent(ITEMS));
+            ObjectHolderRegistry.INSTANCE.applyObjectHolderFor(registry.registryName); // inject any items
         }
         for (ResourceLocation rl : keys)
         {
             if (!filter.test(rl)) continue;
             if (rl == BLOCKS || rl == ITEMS) continue;
             MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
+            ObjectHolderRegistry.INSTANCE.applyObjectHolderFor(rl);
         }
-        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
 
 
         /*

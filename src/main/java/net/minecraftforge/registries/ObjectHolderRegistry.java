@@ -21,6 +21,9 @@ package net.minecraftforge.registries;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,7 +47,7 @@ import javax.annotation.Nullable;
 public enum ObjectHolderRegistry
 {
     INSTANCE;
-    private List<ObjectHolderRef> objectHolders = Lists.newArrayList();
+    private final Map<ResourceLocation, List<ObjectHolderRef>> objectHolders = new HashMap<>();
 
     public void findObjectHolders(ASMDataTable table)
     {
@@ -158,18 +161,39 @@ public enum ObjectHolderRegistry
     {
         if (ref.isValid())
         {
-            objectHolders.add(ref);
+            objectHolders.computeIfAbsent(ref.registry.registryName, resourceLocation -> new ArrayList<>()).add(ref);
         }
     }
 
+    /**
+     * Applies all object holders
+     */
     public void applyObjectHolders()
     {
-        FMLLog.log.info("Applying holder lookups");
-        for (ObjectHolderRef ohr : objectHolders)
+        for (ResourceLocation location : objectHolders.keySet())
+        {
+            applyObjectHolderFor(location);
+        }
+    }
+
+    /**
+     * Applies object holders for a specify registry
+     */
+    public void applyObjectHolderFor(ResourceLocation registryName)
+    {
+        List<ObjectHolderRef> objectHolderList = objectHolders.get(registryName);
+        if (objectHolderList == null)
+        {
+            FMLLog.log.debug("No object holders found for {}", registryName);
+            return;
+        }
+
+        FMLLog.log.debug("Applying holder lookups for {}", registryName);
+        for (ObjectHolderRef ohr : objectHolderList)
         {
             ohr.apply();
         }
-        FMLLog.log.info("Holder lookups applied");
+        FMLLog.log.debug("Holder lookups for {} applied", registryName);
     }
 
 }

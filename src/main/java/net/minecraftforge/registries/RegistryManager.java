@@ -87,7 +87,7 @@ public class RegistryManager
             FMLLog.log.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
-        ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, this, allowOverrides, isModifiable, dummyFactory, missing);
+        ForgeRegistry<V> reg = new ForgeRegistry<V>(name, type, defaultKey, min, max, create, add, clear, this, allowOverrides, isModifiable, dummyFactory, missing);
         registries.put(name, reg);
         superTypes.put(type, name);
         if (persisted)
