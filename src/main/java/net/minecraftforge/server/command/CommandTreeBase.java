@@ -135,7 +135,7 @@ public abstract class CommandTreeBase extends CommandNode
     @Override
     public int getRequiredPermissionLevel()
     {
-        int level = Integer.MAX_VALUE;
+        int level = 4;
 
         for (ICommand command : getSortedCommandList())
         {
