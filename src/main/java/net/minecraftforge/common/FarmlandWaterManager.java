@@ -79,7 +79,7 @@ public class FarmlandWaterManager
         Set<SimpleTicket<AxisAlignedBB>> tickets = wateredAABBs.get(world.provider.getDimension());
         if (tickets != null)
         {
-            tickets.clear();
+            SimpleTicket.invalidateAll(tickets);
         }
     }
 
@@ -91,9 +91,7 @@ public class FarmlandWaterManager
             while (ticketIterator.hasNext())
             {
                 SimpleTicket<AxisAlignedBB> next = ticketIterator.next();
-                next.tick();
-                int ticks = next.getTicks();
-                if (ticks == -1 || ticks > next.tickTimeout)
+                if (next.tick())
                 {
                     ticketIterator.remove();
                 }

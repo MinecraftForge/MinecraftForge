@@ -10,12 +10,13 @@ import java.util.Objects;
  */
 public class SimpleTicket<T>
 {
-    @Nonnull
-    private T target;
+    public final int tickTimeout;
     @Nonnull
     private final Collection<SimpleTicket<T>> collection;
-    public final int tickTimeout;
+    @Nonnull
+    private T target;
     private int ticks = 0;
+    private boolean isValid = false;
 
     public SimpleTicket(@Nonnull T target, @Nonnull Collection<SimpleTicket<T>> collection, int tickTimeout)
     {
@@ -33,7 +34,7 @@ public class SimpleTicket<T>
      */
     public boolean isValid()
     {
-        return this.collection.contains(this);
+        return this.isValid;
     }
 
     /**
@@ -42,8 +43,12 @@ public class SimpleTicket<T>
      */
     public void invalidate()
     {
-        this.collection.remove(this);
+        if (this.isValid)
+        {
+            this.collection.remove(this);
+        }
         this.ticks = -1;
+        this.isValid = false;
     }
 
     /**
@@ -51,8 +56,12 @@ public class SimpleTicket<T>
      */
     public final void validate()
     {
-        this.collection.add(this);
+        if (!this.isValid)
+        {
+            this.collection.add(this);
+        }
         this.ticks = 0;
+        this.isValid = true;
     }
 
     @Nonnull
@@ -66,20 +75,22 @@ public class SimpleTicket<T>
         this.target = Objects.requireNonNull(newTarget);
     }
 
-    public void tick()
+    /**
+     * Ticks the ticket. Do not call from mod code, this is only here to be called by the manager
+     * @return true if this ticket should be removed from the iterator
+     */
+    public boolean tick()
     {
-        if (this.ticks == -1)
+        if (!this.isValid || ticks == -1 || ticks > this.tickTimeout)
         {
-            return;
-        }
-
-        if (this.isValid())
-        {
-            this.ticks++;
+            this.ticks = -1;
+            this.isValid = false;
+            return true;
         }
         else
         {
-            this.ticks = -1;
+            this.ticks++;
+            return false;
         }
     }
 
@@ -89,5 +100,14 @@ public class SimpleTicket<T>
     public int getTicks()
     {
         return ticks;
+    }
+
+    public static<T> void invalidateAll(Collection<SimpleTicket<T>> ticketCollection)
+    {
+        for (SimpleTicket<?> simpleTicket : ticketCollection)
+        {
+            simpleTicket.isValid = false;
+        }
+        ticketCollection.clear();
     }
 }
