@@ -62,7 +62,7 @@ public class FarmlandWaterTest
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        event.getRegistry().register(new ItemBlock(testBlock).setRegistryName(new ResourceLocation(ID, "test_item_block")));
+        event.getRegistry().register(new ItemBlock(testBlock).setRegistryName(new ResourceLocation(ID, "test_block")));
     }
 
     //Sets a region of 16x16x16 watered at the pos where an arrow hit
