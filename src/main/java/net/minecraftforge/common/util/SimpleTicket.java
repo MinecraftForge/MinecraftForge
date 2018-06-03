@@ -10,13 +10,12 @@ import java.util.Objects;
  */
 public class SimpleTicket<T>
 {
-    public final int tickTimeout;
+    private final int tickTimeout;
     @Nonnull
     private final Collection<SimpleTicket<T>> collection;
     @Nonnull
     private T target;
-    private int ticks = 0;
-    private boolean isValid = false;
+    private int ticks = -1;
 
     public SimpleTicket(@Nonnull T target, @Nonnull Collection<SimpleTicket<T>> collection, int tickTimeout)
     {
@@ -34,7 +33,7 @@ public class SimpleTicket<T>
      */
     public boolean isValid()
     {
-        return this.isValid;
+        return this.ticks != -1;
     }
 
     /**
@@ -43,25 +42,23 @@ public class SimpleTicket<T>
      */
     public void invalidate()
     {
-        if (this.isValid)
+        if (this.isValid())
         {
             this.collection.remove(this);
         }
         this.ticks = -1;
-        this.isValid = false;
     }
 
     /**
      * Re-adds your ticket to the system.
      */
-    public final void validate()
+    public void validate()
     {
-        if (!this.isValid)
+        if (!this.isValid())
         {
             this.collection.add(this);
         }
         this.ticks = 0;
-        this.isValid = true;
     }
 
     @Nonnull
@@ -81,10 +78,9 @@ public class SimpleTicket<T>
      */
     public boolean tick()
     {
-        if (!this.isValid || ticks == -1 || ticks > this.tickTimeout)
+        if (ticks == -1 || ticks > this.tickTimeout)
         {
             this.ticks = -1;
-            this.isValid = false;
             return true;
         }
         else
@@ -106,7 +102,7 @@ public class SimpleTicket<T>
     {
         for (SimpleTicket<?> simpleTicket : ticketCollection)
         {
-            simpleTicket.isValid = false;
+            simpleTicket.ticks = -1;
         }
         ticketCollection.clear();
     }

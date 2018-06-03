@@ -17,6 +17,7 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.FarmlandWaterManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -115,6 +116,7 @@ public class FarmlandWaterTest
             {
                 tileEntity.farmlandTicket.invalidate();
             }
+            player.sendStatusMessage(new TextComponentString("Changed block powered state to " + tileEntity.isActive), true);
             logger.info("Changed block powered state at {} to {}", pos, tileEntity.isActive);
             return true;
         }
