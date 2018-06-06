@@ -35,8 +35,7 @@ import javax.annotation.Nullable;
 @Mod(modid = FarmlandWaterTest.ID, name = "Farmland Water Test", version = "1.0.0", acceptableRemoteVersions = "*")
 public class FarmlandWaterTest
 {
-    //This mod has two test cases: A block in the creates a 4x4x4 watered region when activated, and a 8x8x8 region will be watered for 30s when shooting an arrow
-    private static final boolean ENABLED = true;
+    //This adds a block that creates a 4x4x4 watered region when activated
     private static Logger logger;
     private static Block testBlock;
     static final String ID = "farmlandwatertest";
@@ -44,11 +43,8 @@ public class FarmlandWaterTest
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        if (ENABLED)
-        {
-            logger = event.getModLog();
-            MinecraftForge.EVENT_BUS.register(FarmlandWaterTest.class);
-        }
+        logger = event.getModLog();
+        MinecraftForge.EVENT_BUS.register(FarmlandWaterTest.class);
     }
 
     @SubscribeEvent
@@ -63,21 +59,6 @@ public class FarmlandWaterTest
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
         event.getRegistry().register(new ItemBlock(testBlock).setRegistryName(new ResourceLocation(ID, "test_block")));
-    }
-
-    //Sets a region of 16x16x16 watered at the pos where an arrow hit
-    @SubscribeEvent
-    public static void onProjectileImpact(ProjectileImpactEvent.Arrow event)
-    {
-        World world = event.getEntity().world;
-        if (!world.isRemote && event.getArrow().shootingEntity instanceof EntityPlayer)
-        {
-            BlockPos pos = new BlockPos(event.getRayTraceResult().hitVec);
-            AxisAlignedBB aabb = new AxisAlignedBB(pos).grow(8D);
-            //600 ticks = 30 seconds
-            FarmlandWaterManager.addWateredRegion(world, aabb, 600);
-            logger.info("Watering " + aabb + " for 30 seconds");
-        }
     }
 
     public static class TestBlock extends Block
@@ -112,31 +93,39 @@ public class FarmlandWaterTest
                 return false;
             }
             tileEntity.isActive = !tileEntity.isActive;
-            if (!tileEntity.isActive && tileEntity.farmlandTicket != null)
-            {
-                tileEntity.farmlandTicket.invalidate();
-            }
+            tileEntity.updateTicket();
             player.sendStatusMessage(new TextComponentString("Changed block powered state to " + tileEntity.isActive), true);
             logger.info("Changed block powered state at {} to {}", pos, tileEntity.isActive);
             return true;
         }
     }
 
-    public static class TestTileEntity extends TileEntity implements ITickable
+    public static class TestTileEntity extends TileEntity
     {
         private SimpleTicket<AxisAlignedBB> farmlandTicket;
         private boolean isActive = false;
 
         @Override
-        public void update()
+        public void onLoad()
         {
-            if (!world.isRemote && isActive)
+            if (!world.isRemote)
             {
-                if (farmlandTicket == null)
-                {
-                    farmlandTicket = FarmlandWaterManager.addWateredRegion(world, new AxisAlignedBB(getPos()).grow(4D));
-                }
+                farmlandTicket = FarmlandWaterManager.addWateredRegion(world, new AxisAlignedBB(pos).grow(4D));
+                updateTicket();
+            }
+        }
+
+        private void updateTicket()
+        {
+            if (world.isRemote)
+                return;
+            if (isActive)
+            {
                 farmlandTicket.validate();
+            }
+            else
+            {
+                farmlandTicket.invalidate();
             }
         }
 
@@ -153,6 +142,15 @@ public class FarmlandWaterTest
         {
             super.readFromNBT(compound);
             isActive = compound.getBoolean("active");
+        }
+
+        @Override
+        public void onChunkUnload()
+        {
+            if (!world.isRemote)
+            {
+                farmlandTicket.invalidate();
+            }
         }
     }
 }

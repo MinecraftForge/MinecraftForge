@@ -17,35 +17,24 @@ public class FarmlandWaterManager
     private static final Int2ObjectMap<Set<SimpleTicket<AxisAlignedBB>>> wateredAABBs = new Int2ObjectOpenHashMap<>();
 
     /**
-     * An overload of {@link #addWateredRegion(World, AxisAlignedBB, int)} with a tickTimeout of 20 ticks.
-     * <br>
-     * If your ticket should stay valid for a longer time, either call {@link SimpleTicket#validate()},
-     * or use the function with the int param if you know how long it is valid.
-     */
-    public static SimpleTicket<AxisAlignedBB> addWateredRegion(World world, AxisAlignedBB aabb)
-    {
-        return addWateredRegion(world, aabb, 20);
-    }
-
-    /**
      * Marks a region in the world as watered so blocks like Farmland know if there is a modded water source.
      * <br>
-     * If you don't want to water the region anymore, call {@link SimpleTicket#invalidate()} so it doesn't have to wait until the tick timer runs out.
+     * If you don't want to water the region anymore, call {@link SimpleTicket#invalidate()}. Also call this
+     * when the region this is unloaded (e.g. your TE is unloaded), and validate once it is loaded
      * <br>
      * The AABB in the ticket is mutable, so if you need to update it, don't create a new ticket but update the existing one using {@link SimpleTicket#setTarget(Object)}.
-     * @param world The world where the region should be marked
+     * @param world The world where the region should be marked. Only server-side worlds are allowed
      * @param aabb The region where blocks should be watered
-     * @param tickTimeout The total time in ticks this ticket should stay valid. The tick timer can be reset using {@link SimpleTicket#validate()}. Should be at least 1 tick
      * @return The ticket for your requested region.
      */
-    public static SimpleTicket<AxisAlignedBB> addWateredRegion(World world, AxisAlignedBB aabb, int tickTimeout)
+    public static SimpleTicket<AxisAlignedBB> addWateredRegion(World world, AxisAlignedBB aabb)
     {
         if (world.isRemote)
         {
             throw new IllegalArgumentException("Water region is only determined server-side");
         }
         Set<SimpleTicket<AxisAlignedBB>> tickets = wateredAABBs.computeIfAbsent(world.provider.getDimension(), id -> new HashSet<>());
-        SimpleTicket<AxisAlignedBB> ticket = new SimpleTicket<>(aabb, tickets, tickTimeout);
+        SimpleTicket<AxisAlignedBB> ticket = new SimpleTicket<>(aabb, tickets);
         ticket.validate();
         return ticket;
     }
@@ -80,22 +69,6 @@ public class FarmlandWaterManager
         if (tickets != null)
         {
             SimpleTicket.invalidateAll(tickets);
-        }
-    }
-
-    static void tick()
-    {
-        for (Set<SimpleTicket<AxisAlignedBB>> set : wateredAABBs.values())
-        {
-            Iterator<SimpleTicket<AxisAlignedBB>> ticketIterator = set.iterator();
-            while (ticketIterator.hasNext())
-            {
-                SimpleTicket<AxisAlignedBB> next = ticketIterator.next();
-                if (next.tick())
-                {
-                    ticketIterator.remove();
-                }
-            }
         }
     }
 }

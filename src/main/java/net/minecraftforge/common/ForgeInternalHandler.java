@@ -89,10 +89,6 @@ public class ForgeInternalHandler
     public void onServerTick(ServerTickEvent event)
     {
         WorldWorkerManager.tick(event.phase == TickEvent.Phase.START);
-        if (event.phase == Phase.END)
-        {
-            FarmlandWaterManager.tick();
-        }
     }
 
     @SubscribeEvent
