@@ -23,10 +23,15 @@ import static net.minecraftforge.common.ForgeVersion.Status.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -35,6 +40,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.electronwill.nightconfig.core.Config;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.electronwill.nightconfig.core.path.PathConfig;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +68,7 @@ public class ForgeVersion
     //This number is incremented every minecraft release, never reset
     public static final int minorVersion    = 23;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 4;
+    public static final int revisionVersion = 2;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
@@ -69,7 +80,7 @@ public class ForgeVersion
     @SuppressWarnings("unused")
     private static String target = null;
 
-    private static final Logger log = LogManager.getLogger(MOD_ID + ".VersionCheck");
+    private static final Logger log = LogManager.getLogger("ForgeVersionCheck");
 
     private static final int MAX_HTTP_REDIRECTS = Integer.getInteger("http.maxRedirects", 20);
 
@@ -108,6 +119,27 @@ public class ForgeVersion
     public static String getVersion()
     {
         return String.format("%d.%d.%d.%d", majorVersion, minorVersion, revisionVersion, buildVersion);
+    }
+
+    public static List<ModInfo> getModInfos()
+    {
+        PathConfig minecraftmod;
+        PathConfig forgemod;
+        try
+        {
+            minecraftmod = PathConfig.of(Paths.get(ForgeVersion.class.getClassLoader().getResource("minecraftmod.toml").toURI()));
+            forgemod = PathConfig.of(Paths.get(ForgeVersion.class.getClassLoader().getResource("forgemod.toml").toURI()));
+            minecraftmod.load();
+            forgemod.load();
+        }
+        catch (URISyntaxException | NullPointerException e)
+        {
+            throw new RuntimeException("Missing toml configs for minecraft and forge!", e);
+        }
+        return Arrays.asList(
+                new ModInfo(null, minecraftmod),
+                new ModInfo(null, forgemod)
+        );
     }
 
     public static enum Status

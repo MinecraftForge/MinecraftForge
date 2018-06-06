@@ -51,11 +51,13 @@ public interface ModContainer
 {
     public static enum Disableable {
         YES, RESTART, NEVER, DEPENDENCIES;
+
     }
     /**
      * The globally unique modid for this mod
      */
     String getModId();
+    String getPrefix();
 
     /**
      * A human readable name

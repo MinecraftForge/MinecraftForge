@@ -24,8 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Sets;
 import net.minecraftforge.fml.common.DummyModContainer;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.ModAPIManager;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.toposort.TopologicalSort.DirectedGraph;
@@ -137,7 +140,23 @@ public class ModSorter
 
     public List<ModContainer> sort()
     {
-        List<ModContainer> sortedList = TopologicalSort.topologicalSort(modGraph);
+        List<ModContainer> sortedList;
+        try
+        {
+            sortedList = TopologicalSort.topologicalSort(modGraph);
+        }
+        catch (TopologicalSort.TopoSortException tse)
+        {
+            FMLLog.log.fatal("Mod Sorting failed.");
+            FMLLog.log.fatal("Visiting node {}", tse.getNode());
+            FMLLog.log.fatal("Current sorted list : {}", tse.getSortedResult());
+            FMLLog.log.fatal("Visited set for this node : {}", tse.getVisitedNodes());
+            FMLLog.log.fatal("Explored node set : {}", tse.getExpandedNodes());
+            Sets.SetView<?> cycleList = Sets.difference(tse.getVisitedNodes(), tse.getExpandedNodes());
+            FMLLog.log.fatal("Likely cycle is in : {}", cycleList);
+
+            throw new ModSortingException("There was a cycle detected in the input graph, sorting is not possible", tse.getNode(), cycleList);
+        }
         sortedList.removeAll(Arrays.asList(new ModContainer[] {beforeAll, before, after, afterAll}));
         return sortedList;
     }

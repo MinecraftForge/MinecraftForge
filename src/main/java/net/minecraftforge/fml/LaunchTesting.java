@@ -21,19 +21,45 @@ package net.minecraftforge.fml;
 
 import com.google.common.base.Strings;
 import cpw.mods.modlauncher.Launcher;
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.item.EnumDyeColor;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.MarkerManager;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
+import org.apache.logging.log4j.core.config.composite.CompositeConfiguration;
+import org.apache.logging.log4j.core.filter.MarkerFilter;
 
 import java.io.File;
 import java.lang.reflect.Field;
+
+import static cpw.mods.modlauncher.Logging.CLASSLOADING;
+import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class LaunchTesting
 {
     public static void main(String... args) throws InterruptedException
     {
         Configurator.setRootLevel(Level.DEBUG);
+        final MarkerFilter classloadingFilter = MarkerFilter.createFilter("CLASSLOADING", Filter.Result.DENY, Filter.Result.NEUTRAL);
+        final MarkerFilter launchpluginFilter = MarkerFilter.createFilter("LAUNCHPLUGIN", Filter.Result.DENY, Filter.Result.NEUTRAL);
+        final LoggerContext logcontext = LoggerContext.getContext(false);
+//        logcontext.getConfiguration().addFilter(classloadingFilter);
+        logcontext.getConfiguration().addFilter(launchpluginFilter);
+        logcontext.updateLoggers();
         hackNatives();
-        Launcher.main("--launchTarget", "devfml","--gameDir", "projects/run", "--accessToken", "blah", "--version", "FMLDev");
+        Launcher.main("--launchTarget", "devfmlclient","--gameDir", "projects/run",
+                "--accessToken", "blah", "--version", "FMLDev", "--assetIndex", "1.12",
+                "--assetsDir","/home/cpw/.gradle/caches/minecraft/assets",
+                "--userProperties", "{}");
         Thread.sleep(10000);
     }
 

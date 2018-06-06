@@ -19,39 +19,10 @@
 
 package net.minecraftforge.fml.loading;
 
-import cpw.mods.modlauncher.api.ILaunchHandlerService;
-import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import net.minecraft.client.main.Main;
-import net.minecraftforge.api.Side;
-
-import java.nio.file.Path;
-import java.util.concurrent.Callable;
-
-public class FMLLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
+public class MissingLanguageException extends RuntimeException
 {
-    @Override
-    public String name()
+    public MissingLanguageException(String message)
     {
-        return "fml";
-    }
-
-    @Override
-    public Path[] identifyTransformationTargets()
-    {
-        return new Path[0];
-    }
-
-    @Override
-    public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
-    {
-        return () -> {
-            return null;
-        };
-    }
-
-    @Override
-    public Side getSidedness()
-    {
-        return Side.CLIENT;
+        super(message);
     }
 }

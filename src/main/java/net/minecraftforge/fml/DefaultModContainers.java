@@ -19,21 +19,14 @@
 
 package net.minecraftforge.fml;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.core.config.Configurator;
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.fml.common.MinecraftDummyContainer;
+import net.minecraftforge.fml.common.ModContainer;
 
-public class Logging
+public class DefaultModContainers
 {
-    public static final Logger fmlLog = LogManager.getLogger("FML");
+    // no construction
+    private DefaultModContainers() {}
 
-    // Lots of markers
-    public static final Marker CORE = MarkerManager.getMarker("CORE");
-    public static final Marker LOADING = MarkerManager.getMarker("LOADING");
-    public static final Marker SCAN = MarkerManager.getMarker("SCAN");
-    public static final Marker SPLASH = MarkerManager.getMarker("SPLASH");
-    public static final Marker MODELLOADING = MarkerManager.getMarker("MODELLOADING");
+    public static final ModContainer MINECRAFT = new MinecraftDummyContainer(ForgeVersion.mcVersion);
 }

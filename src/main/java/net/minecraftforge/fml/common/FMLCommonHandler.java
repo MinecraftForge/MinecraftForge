@@ -19,27 +19,18 @@
 
 package net.minecraftforge.fml.common;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -61,6 +52,7 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.CompoundDataFixer;
+import net.minecraftforge.fml.client.BrandingControl;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -70,21 +62,16 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.thread.SidedThreadGroup;
-import net.minecraftforge.fml.relauncher.CoreModManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
-
-import javax.annotation.Nullable;
 
 /**
  * The main class for non-obfuscated hook handling code
@@ -113,7 +100,6 @@ public class FMLCommonHandler
     private boolean noForge;
     private List<String> brandings;
     private List<String> brandingsNoMC;
-    private List<ICrashCallable> crashCallables = Lists.newArrayList(Loader.instance().getCallableCrashInformation());
     private Set<SaveHandler> handlerSet = Collections.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
     private WeakReference<SaveHandler> handlerToCheck;
     private EventBus eventBus = MinecraftForge.EVENT_BUS;
@@ -121,26 +107,6 @@ public class FMLCommonHandler
 
     private FMLCommonHandler()
     {
-        registerCrashCallable(new ICrashCallable()
-        {
-            @Override
-            public String call() throws Exception
-            {
-                StringBuilder builder = new StringBuilder();
-                Joiner joiner = Joiner.on("\n  ");
-                for(String coreMod : CoreModManager.getTransformers().keySet())
-                {
-                    builder.append("\n" + coreMod + "\n  ").append(joiner.join(CoreModManager.getTransformers().get(coreMod)));
-                }
-                return builder.toString();
-            }
-
-            @Override
-            public String getLabel()
-            {
-                return "Loaded coremods (and transformers)";
-            }
-        });
     }
     /**
      * The FML event bus. Subscribe here for FML related events
@@ -224,34 +190,11 @@ public class FMLCommonHandler
     }
 
 
-    public void computeBranding()
-    {
-        if (brandings == null)
-        {
-            Builder<String> brd = ImmutableList.builder();
-            brd.add(Loader.instance().getMCVersionString());
-            brd.add(Loader.instance().getMCPVersionString());
-            brd.add("Powered by Forge " + ForgeVersion.getVersion());
-            if (sidedDelegate!=null)
-            {
-                brd.addAll(sidedDelegate.getAdditionalBrandingInformation());
-            }
-            if (Loader.instance().getFMLBrandingProperties().containsKey("fmlbranding"))
-            {
-                brd.add(Loader.instance().getFMLBrandingProperties().get("fmlbranding"));
-            }
-            int tModCount = Loader.instance().getModList().size();
-            int aModCount = Loader.instance().getActiveModList().size();
-            brd.add(String.format("%d mod%s loaded, %d mod%s active", tModCount, tModCount!=1 ? "s" :"", aModCount, aModCount!=1 ? "s" :"" ));
-            brandings = brd.build();
-            brandingsNoMC = brandings.subList(1, brandings.size());
-        }
-    }
     public List<String> getBrandings(boolean includeMC)
     {
         if (brandings == null)
         {
-            computeBranding();
+            BrandingControl.computeBranding();
         }
         return includeMC ? ImmutableList.copyOf(brandings) : ImmutableList.copyOf(brandingsNoMC);
     }
@@ -368,19 +311,6 @@ public class FMLCommonHandler
     public void onPlayerPostTick(EntityPlayer player)
     {
         bus().post(new TickEvent.PlayerTickEvent(Phase.END, player));
-    }
-
-    public void registerCrashCallable(ICrashCallable callable)
-    {
-        crashCallables.add(callable);
-    }
-
-    public void enhanceCrashReport(CrashReport crashReport, CrashReportCategory category)
-    {
-        for (ICrashCallable call: crashCallables)
-        {
-            category.addDetail(call.getLabel(), call);
-        }
     }
 
     public void handleWorldDataSave(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
@@ -709,47 +639,6 @@ public class FMLCommonHandler
         }
     }
 
-    /**
-     * Loads a lang file, first searching for a marker to enable the 'extended' format {escape characters}
-     * If the marker is not found it simply returns and let the vanilla code load things.
-     * The Marker is 'PARSE_ESCAPES' by itself on a line starting with '#' as such:
-     * #PARSE_ESCAPES
-     *
-     * @param table The Map to load each key/value pair into.
-     * @param inputstream Input stream containing the lang file.
-     * @return A new InputStream that vanilla uses to load normal Lang files, Null if this is a 'enhanced' file and loading is done.
-     */
-    @Nullable
-    public InputStream loadLanguage(Map<String, String> table, InputStream inputstream) throws IOException
-    {
-        byte[] data = IOUtils.toByteArray(inputstream);
-
-        boolean isEnhanced = false;
-        for (String line : IOUtils.readLines(new ByteArrayInputStream(data), StandardCharsets.UTF_8))
-        {
-            if (!line.isEmpty() && line.charAt(0) == '#')
-            {
-                line = line.substring(1).trim();
-                if (line.equals("PARSE_ESCAPES"))
-                {
-                    isEnhanced = true;
-                    break;
-                }
-            }
-        }
-
-        if (!isEnhanced)
-            return new ByteArrayInputStream(data);
-
-        Properties props = new Properties();
-        props.load(new InputStreamReader(new ByteArrayInputStream(data), StandardCharsets.UTF_8));
-        for (Entry<Object, Object> e : props.entrySet())
-        {
-            table.put((String)e.getKey(), (String)e.getValue());
-        }
-        props.clear();
-        return null;
-    }
     public String stripSpecialChars(String message)
     {
         return sidedDelegate != null ? sidedDelegate.stripSpecialChars(message) : message;

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.common.LoaderState;
 import org.apache.logging.log4j.Level;
 
@@ -177,9 +178,7 @@ public abstract class FluidRegistry
 
     private static String uniqueName(Fluid fluid)
     {
-        ModContainer activeModContainer = Loader.instance().activeModContainer();
-        String activeModContainerName = activeModContainer == null ? "minecraft" : activeModContainer.getModId();
-        return activeModContainerName+":"+fluid.getName();
+        return ModThreadContext.get().getCurrentContainer().getPrefix() +":"+fluid.getName();
     }
 
     /**

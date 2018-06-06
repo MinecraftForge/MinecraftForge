@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
+import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
@@ -55,16 +56,7 @@ public class NotificationModUpdateScreen extends GuiScreen
         {
             if (modButton != null)
             {
-                for (ModContainer mod : Loader.instance().getModList())
-                {
-                    Status status = ForgeVersion.getResult(mod).status;
-                    if (status == Status.OUTDATED || status == Status.BETA_OUTDATED)
-                    {
-                        // TODO: Needs better visualization, maybe stacked icons
-                        // drawn in a terrace-like pattern?
-                        showNotification = Status.OUTDATED;
-                    }
-                }
+                showNotification = ClientModLoader.checkForUpdates();
             }
             hasCheckedForUpdates = true;
         }

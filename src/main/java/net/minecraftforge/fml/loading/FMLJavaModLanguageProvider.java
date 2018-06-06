@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import net.minecraftforge.fml.common.FMLModContainer;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
@@ -52,9 +53,9 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
         }
 
         @Override
-        public ModContainer loadMod(ModFile file, ClassLoader modClassLoader)
+        public ModContainer loadMod(final ModInfo info, final ClassLoader modClassLoader)
         {
-            return null;
+            return new FMLModContainer(info, className, modClassLoader);
         }
     }
 
@@ -74,13 +75,7 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
                     .peek(ad -> fmlLog.debug(SCAN, "Found @Mod class {} with id {}", ad.getClassType().getClassName(), ad.getAnnotationData().get("modid")))
                     .map(ad -> new FMLModTarget(ad.getClassType().getClassName(), (String)ad.getAnnotationData().get("modid")))
                     .collect(Collectors.toMap(FMLModTarget::getModId, Function.identity()));
-            modTargetMap.forEach((key, value) -> scanResult.getFile().claimLanguage(key, value));
+            scanResult.addLanguageLoader(modTargetMap);
         };
-    }
-
-    @Override
-    public List<ModContainer> buildModContainers(List<ModInfo> modFiles, ClassLoader modClassLoader)
-    {
-        return null;
     }
 }

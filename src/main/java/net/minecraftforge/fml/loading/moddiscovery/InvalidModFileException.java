@@ -17,23 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftforge.fml.loading.moddiscovery;
 
-import cpw.mods.modlauncher.api.IEnvironment;
-import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import net.minecraftforge.api.Side;
-
-public abstract class FMLCommonLaunchHandler
+public class InvalidModFileException extends RuntimeException
 {
-    public void setup(final IEnvironment environment)
-    {
-        // We need to check for deobf and patched jar here and if not, build one.
-    }
+    private final ModFile.ModFileInfo modFileInfo;
 
-    public abstract Side getSidedness();
-
-    protected void beforeStart(ITransformingClassLoader launchClassLoader)
+    public InvalidModFileException(String message, ModFile.ModFileInfo modFileInfo)
     {
-        FMLLoader.beforeStart(launchClassLoader);
+        super(message);
+        this.modFileInfo = modFileInfo;
     }
 }

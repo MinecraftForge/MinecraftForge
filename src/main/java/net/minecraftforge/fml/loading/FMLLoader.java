@@ -22,10 +22,14 @@ package net.minecraftforge.fml.loading;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformationService;
+import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
+import net.minecraftforge.api.Side;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.FMLPaths;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.ICoreModProvider;
@@ -51,6 +55,10 @@ public class FMLLoader
     private static ModDiscoverer modDiscoverer;
     private static ICoreModProvider coreModProvider;
     private static LanguageLoadingProvider languageLoadingProvider;
+    private static Side side;
+    private static ModList modList;
+    private static ClassLoader launchClassLoader;
+    private static ModLoader modLoader;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -90,29 +98,31 @@ public class FMLLoader
         languageLoadingProvider = new LanguageLoadingProvider();
     }
 
-    static void setupLaunchHandler(final IEnvironment environment) throws IncompatibleEnvironmentException
+    static void setupLaunchHandler(final IEnvironment environment)
     {
         final String launchTarget = environment.getProperty(IEnvironment.Keys.LAUNCHTARGET.get()).orElse("MISSING");
         final Optional<ILaunchHandlerService> launchHandler = environment.findLaunchHandler(launchTarget);
         fmlLog.debug(CORE, "Using {} as launch service", launchTarget);
         if (!launchHandler.isPresent()) {
             fmlLog.error(CORE,"Missing LaunchHandler {}, cannot continue", launchTarget);
-            throw new IncompatibleEnvironmentException("Missing launch handler");
+            throw new RuntimeException("Missing launch handler");
         }
 
         if (!(launchHandler.get() instanceof FMLCommonLaunchHandler)) {
             fmlLog.error(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
-            throw new IncompatibleEnvironmentException("Incompatible launch handler found");
+            throw new RuntimeException("Incompatible launch handler found");
         }
 
         FMLCommonLaunchHandler commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
         commonLaunchHandler.setup(environment);
+        side = commonLaunchHandler.getSidedness();
     }
     public static void beginModScan()
     {
         fmlLog.debug(SCAN,"Scanning for Mod Locators");
         modDiscoverer = new ModDiscoverer();
-        modDiscoverer.discoverMods();
+        final BackgroundScanHandler backgroundScanHandler = modDiscoverer.discoverMods();
+        modList = backgroundScanHandler.getModList();
     }
 
     public static ICoreModProvider getCoreModProvider() {
@@ -146,5 +156,21 @@ public class FMLLoader
     {
         fmlLog.debug(SCAN, "Adding Access Transformer in {}", modName.getFilePath());
         accessTransformer.addResource(atPath, modName.getFileName());
+    }
+
+    public static Side getSide()
+    {
+        return side;
+    }
+
+    public static void beforeStart(ITransformingClassLoader launchClassLoader)
+    {
+        modLoader = new ModLoader(launchClassLoader.getInstance(), modList);
+        modLoader.classloadModFiles();
+    }
+
+    public static ModLoader getModLoader()
+    {
+        return modLoader;
     }
 }

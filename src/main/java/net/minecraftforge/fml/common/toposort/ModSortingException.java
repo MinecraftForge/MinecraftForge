@@ -59,7 +59,7 @@ public class ModSortingException extends EnhancedRuntimeException implements IDi
     public <T> ModSortingException(String string, T node, Set<T> visitedNodes)
     {
         super(string);
-        this.sortingExceptionData = new SortingExceptionData<T>(node, visitedNodes);
+        this.sortingExceptionData = new SortingExceptionData<>(node, visitedNodes);
     }
 
     @SuppressWarnings("unchecked")

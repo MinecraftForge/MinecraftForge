@@ -19,6 +19,10 @@
 
 package net.minecraftforge.fml.loading;
 
+import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
 import java.nio.file.Path;
@@ -36,18 +40,41 @@ public class LanguageLoadingProvider
 {
     private final List<IModLanguageProvider> languageProviders = new ArrayList<>();
     private final ServiceLoader<IModLanguageProvider> serviceLoader;
-    private final Map<String, IModLanguageProvider> languageProviderMap = new HashMap<>();
+    private final Map<String, ModLanguageWrapper> languageProviderMap = new HashMap<>();
 
+    private static class ModLanguageWrapper {
+        private final IModLanguageProvider modLanguageProvider;
+        private final ArtifactVersion version;
+
+        public ModLanguageWrapper(IModLanguageProvider modLanguageProvider, ArtifactVersion version)
+        {
+            this.modLanguageProvider = modLanguageProvider;
+            this.version = version;
+        }
+
+        public ArtifactVersion getVersion()
+        {
+            return version;
+        }
+
+        public IModLanguageProvider getModLanguageProvider()
+        {
+            return modLanguageProvider;
+        }
+    }
     LanguageLoadingProvider() {
         serviceLoader = ServiceLoader.load(IModLanguageProvider.class);
         serviceLoader.forEach(languageProviders::add);
 
         languageProviders.forEach(lp -> {
             final Package pkg = lp.getClass().getPackage();
-            fmlLog.debug(CORE, "Found system classpath language provider {}, version {}", lp.name(), pkg.getImplementationVersion());
+            String implementationVersion = pkg.getImplementationVersion();
+            if (implementationVersion == null) {
+                implementationVersion = ForgeVersion.getVersion();
+            }
+            fmlLog.debug(CORE, "Found system classpath language provider {}, version {}", lp.name(), implementationVersion);
+            languageProviderMap.put(lp.name(), new ModLanguageWrapper(lp, new DefaultArtifactVersion(implementationVersion)));
         });
-
-        languageProviders.forEach(lp->languageProviderMap.put(lp.name(), lp));
     }
 
     public void addAdditionalLanguages(List<ModFile> modFiles)
@@ -57,8 +84,15 @@ public class LanguageLoadingProvider
         serviceLoader.reload();
     }
 
-    public IModLanguageProvider getLanguage(String name)
-    {
-        return languageProviderMap.get(name);
+    public IModLanguageProvider findLanguage(String modLoader, VersionRange modLoaderVersion) {
+        final ModLanguageWrapper mlw = languageProviderMap.get(modLoader);
+        if (mlw == null) {
+            throw new MissingLanguageException("Missing language "+modLoader);
+        }
+        if (!modLoaderVersion.containsVersion(mlw.getVersion())) {
+            throw new MissingLanguageException("Missing language "+ modLoader + " matching range "+modLoaderVersion + " found "+mlw.getVersion());
+        }
+
+        return mlw.getModLanguageProvider();
     }
 }

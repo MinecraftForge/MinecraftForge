@@ -19,21 +19,19 @@
 
 package net.minecraftforge.fml;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.core.config.Configurator;
+import net.minecraftforge.fml.common.ModContainer;
 
-public class Logging
+public class ModThreadContext
 {
-    public static final Logger fmlLog = LogManager.getLogger("FML");
+    private static ThreadLocal<ModThreadContext> context = ThreadLocal.withInitial(ModThreadContext::new);
 
-    // Lots of markers
-    public static final Marker CORE = MarkerManager.getMarker("CORE");
-    public static final Marker LOADING = MarkerManager.getMarker("LOADING");
-    public static final Marker SCAN = MarkerManager.getMarker("SCAN");
-    public static final Marker SPLASH = MarkerManager.getMarker("SPLASH");
-    public static final Marker MODELLOADING = MarkerManager.getMarker("MODELLOADING");
+    public static ModThreadContext get() {
+        return context.get();
+    }
+
+    private ModContainer currentContainer;
+
+    public ModContainer getCurrentContainer() {
+        return currentContainer == null ? DefaultModContainers.MINECRAFT : currentContainer;
+    }
 }

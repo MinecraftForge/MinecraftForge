@@ -19,40 +19,60 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import net.minecraftforge.fml.FMLEnvironment;
+import net.minecraftforge.fml.StringSubstitutor;
+import net.minecraftforge.fml.StringUtils;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.loading.IModLanguageProvider;
 
-import java.net.URL;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ModInfo {
-    private final ModFile owningFile;
+    private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
+    public static final VersionRange UNBOUNDED = VersionRange.createFromVersionSpec("");
+    private final ModFile.ModFileInfo owningFile;
     private final String modId;
     private final ArtifactVersion version;
     private final String displayName;
     private final String description;
-    private final URL updateJSONURL;
-    private final String modLoader;
     private final List<ModInfo.ModVersion> dependencies;
-    private IModLanguageProvider.IModLanguageLoader loader;
+    private final Map<String,Object> properties;
+    private final UnmodifiableConfig modConfig;
 
-    public ModInfo(final ModFile owningFile, final String modLoader, final String modId, final String displayName, final ArtifactVersion version, final String description, final URL updateJSONURL, final List<ModInfo.ModVersion> dependencies) {
+    public ModInfo(final ModFile.ModFileInfo owningFile, final UnmodifiableConfig modConfig)
+    {
         this.owningFile = owningFile;
-        this.modLoader = modLoader;
-        this.modId = modId;
-        this.displayName = displayName;
-        this.version = version;
-        this.description = description;
-        this.updateJSONURL = updateJSONURL;
-        this.dependencies = dependencies;
+        this.modConfig = modConfig;
+        this.modId = modConfig.<String>getOptional("modId").orElseThrow(() -> new InvalidModFileException("Missing modId entry", owningFile));
+        this.version = modConfig.<String>getOptional("version").
+                map(s->StringSubstitutor.replace(s, owningFile != null ? owningFile.getFile() : null )).
+                map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
+        this.displayName = modConfig.<String>getOptional("displayName").orElse(null);
+        this.description = modConfig.get("description");
+        if (owningFile != null) {
+            this.dependencies = owningFile.getConfig().<List<UnmodifiableConfig>>getOptional(Arrays.asList("dependencies", this.modId)).
+                    orElse(Collections.emptyList()).stream().map(dep -> new ModVersion(this, dep)).collect(Collectors.toList());
+            this.properties = owningFile.getConfig().<UnmodifiableConfig>getOptional(Arrays.asList("modproperties", this.modId)).
+                    map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
+        } else {
+            this.dependencies = Collections.emptyList();
+            this.properties = Collections.emptyMap();
+        }
+
     }
 
     public ModFile getOwningFile() {
-        return owningFile;
-    }
-
-    public String getModLoader() {
-        return modLoader;
+        return owningFile.getFile();
     }
 
     public String getModId() {
@@ -63,32 +83,72 @@ public class ModInfo {
         return version;
     }
 
-    public void setLoader(IModLanguageProvider.IModLanguageLoader loader)
-    {
-        this.loader = loader;
+    public List<ModInfo.ModVersion> getDependencies() {
+        return this.dependencies;
     }
 
     public enum Ordering {
-        BEFORE, AFTER, NONE;
+        BEFORE, AFTER, NONE
     }
 
     public enum DependencySide {
         CLIENT, SERVER, BOTH;
+
+        public boolean isCorrectSide()
+        {
+            return this == BOTH || FMLEnvironment.side.name().equals(this.name());
+        }
     }
 
     public static class ModVersion {
+        private ModInfo owner;
         private final String modId;
-        private final ArtifactVersion version;
+        private final VersionRange versionRange;
         private final boolean mandatory;
         private final Ordering ordering;
         private final DependencySide side;
 
-        public ModVersion(final String modId, final ArtifactVersion version, final boolean mandatory, final Ordering ordering, final DependencySide side) {
-            this.modId = modId;
-            this.version = version;
-            this.mandatory = mandatory;
-            this.ordering = ordering;
-            this.side = side;
+        ModVersion(final ModInfo owner, final UnmodifiableConfig config) {
+            this.owner = owner;
+            this.modId = config.get("modId");
+            this.versionRange = config.getOptional("versionRange").map(String.class::cast).
+                    map(VersionRange::createFromVersionSpec).orElse(UNBOUNDED);
+            this.mandatory = config.get("mandatory");
+            this.ordering = config.getOptional("ordering").map(String.class::cast).
+                    map(Ordering::valueOf).orElse(Ordering.NONE);
+            this.side = config.getOptional("side").map(String.class::cast).
+                    map(DependencySide::valueOf).orElse(DependencySide.BOTH);
+        }
+
+
+        public String getModId()
+        {
+            return modId;
+        }
+
+        public VersionRange getVersionRange()
+        {
+            return versionRange;
+        }
+
+        public boolean isMandatory()
+        {
+            return mandatory;
+        }
+
+        public Ordering getOrdering()
+        {
+            return ordering;
+        }
+
+        public DependencySide getSide()
+        {
+            return side;
+        }
+
+        public void setOwner(final ModInfo owner)
+        {
+            this.owner = owner;
         }
     }
 }

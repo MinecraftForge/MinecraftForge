@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraftforge.fml.StringUtils;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionRange;
@@ -95,6 +96,12 @@ public class DummyModContainer implements ModContainer
     public String getModId()
     {
         return md.modId;
+    }
+
+    @Override
+    public String getPrefix()
+    {
+        return StringUtils.toLowerCase(getModId());
     }
 
     @Override

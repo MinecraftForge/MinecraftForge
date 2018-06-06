@@ -60,6 +60,8 @@ public class FMLServiceProvider implements ITransformationService
         FMLPaths.setup(environment);
         fmlLog.debug(CORE,"Loading configuration");
         FMLConfig.load();
+        fmlLog.debug(CORE, "Preparing launch handler");
+        FMLLoader.setupLaunchHandler(environment);
         fmlLog.debug(CORE,"Initiating mod scan");
         FMLLoader.beginModScan();
         fmlLog.debug(CORE, "Loading access transformers");

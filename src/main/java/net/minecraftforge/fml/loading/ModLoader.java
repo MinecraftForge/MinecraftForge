@@ -20,26 +20,35 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ScanResult;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-/**
- * Loaded as a ServiceLoader, from the classpath. Extensions are loaded from
- * the mods directory, with the FMLType META-INF of LANGPROVIDER.
- *
- * Version data is read from the manifest's implementation version.
- */
-public interface IModLanguageProvider
+public class ModLoader
 {
-    String name();
+    private final ClassLoader launchClassLoader;
+    private final ModList modList;
+    private final ModLoadingClassLoader modClassLoader;
 
-    Consumer<ScanResult> getFileVisitor();
+    public ModLoader(final ClassLoader launchClassLoader, final ModList modList)
+    {
+        this.launchClassLoader = launchClassLoader;
+        this.modList = modList;
+        this.modClassLoader = new ModLoadingClassLoader(this, this.launchClassLoader);
+    }
 
-    interface IModLanguageLoader {
-        ModContainer loadMod(ModInfo info, ClassLoader modClassLoader);
+    public void classloadModFiles()
+    {
+
+    }
+
+    public ModList getModList()
+    {
+        return modList;
+    }
+
+    public void loadMods() {
+        final List<ModContainer> collect = modList.getModFiles().stream().map(mf -> mf.buildMods(this.modClassLoader)).flatMap(Collection::stream).collect(Collectors.toList());
     }
 }

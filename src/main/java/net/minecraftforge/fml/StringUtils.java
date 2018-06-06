@@ -19,6 +19,13 @@
 
 package net.minecraftforge.fml;
 
+import org.apache.commons.lang3.text.StrSubstitutor;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Optional;
+
 /**
  * Created by cpw on 05/06/17.
  */
@@ -31,5 +38,20 @@ public class StringUtils
     public static boolean endsWith(final String search, final String... endings) {
         String lowerSearch = toLowerCase(search);
         return java.util.stream.Stream.of(endings).anyMatch(lowerSearch::endsWith);
+    }
+
+    public static URL toURL(final String string) {
+        try
+        {
+            return new URL(string);
+        }
+        catch (MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static String parseStringFormat(final String input, final Map<String, String> properties) {
+        return StrSubstitutor.replace(input, properties);
     }
 }

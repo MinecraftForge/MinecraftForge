@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraftforge.fml.ModThreadContext;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Set;
@@ -277,8 +278,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     int add(int id, V value)
     {
-        ModContainer mc = Loader.instance().activeModContainer();
-        String owner = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? null : mc.getModId().toLowerCase();
+        final String owner = ModThreadContext.get().getCurrentContainer().getPrefix();
         return add(id, value, owner);
     }
 
@@ -430,7 +430,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         try
         {
-            ReflectionHelper.findMethod(BitSet.class, "trimToSize", null).invoke(this.availabilityMap);
+//            ReflectionHelper.findMethod(BitSet.class, "trimToSize", null).invoke(this.availabilityMap);
         }
         catch (Exception e)
         {

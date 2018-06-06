@@ -21,13 +21,13 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.LanguageLoadingProvider;
+import net.minecraftforge.fml.loading.ModList;
+import net.minecraftforge.fml.loading.ModSorter;
 
-import java.nio.file.Path;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
@@ -61,11 +61,19 @@ public class ModDiscoverer {
         FMLLoader.getLanguageLoadingProvider().addAdditionalLanguages(modFiles.get(ModFile.Type.LANGPROVIDER));
         BackgroundScanHandler backgroundScanHandler = new BackgroundScanHandler();
         final List<ModFile> mods = modFiles.get(ModFile.Type.MOD);
-        mods.forEach(ModFile::identifyMods);
+        for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
+        {
+            ModFile mod = iterator.next();
+            if (!mod.identifyMods()) {
+                fmlLog.debug(SCAN, "Removing file {} from further analysis - it is invalid", mod);
+                iterator.remove();
+            }
+        }
         fmlLog.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
-        mods.stream().map(ModFile::getCoreMods).flatMap(List::stream).forEach(FMLLoader.getCoreModProvider()::addCoreMod);
-        mods.forEach(mod -> mod.getAccessTransformer().ifPresent(path -> FMLLoader.addAccessTransformer(path, mod)));
-        mods.forEach(backgroundScanHandler::submitForScanning);
+        final ModList sortedMods = ModSorter.sort(mods);
+        sortedMods.addCoreMods();
+        sortedMods.addAccessTransformers();
+        sortedMods.addForScanning(backgroundScanHandler);
         return backgroundScanHandler;
     }
 }

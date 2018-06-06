@@ -21,7 +21,9 @@ package net.minecraftforge.fml.loading;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
+import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraft.client.main.Main;
+import net.minecraftforge.api.Side;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -31,12 +33,12 @@ import java.util.concurrent.Callable;
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
-public class FMLDevLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
+public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
     @Override
     public String name()
     {
-        return "devfml";
+        return "devfmlclient";
     }
 
     @Override
@@ -55,10 +57,13 @@ public class FMLDevLaunchProvider extends FMLCommonLaunchHandler implements ILau
     }
 
     @Override
-    public Callable<Void> launchService(String[] arguments, ClassLoader launchClassLoader)
+    public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
     {
         return () -> {
-            Main.main(arguments);
+            fmlLog.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
+            super.beforeStart(launchClassLoader);
+            launchClassLoader.setTargetPackageFilter(cn -> !cn.startsWith("net.minecraftforge.fml.loading."));
+            Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };
     }
@@ -67,5 +72,11 @@ public class FMLDevLaunchProvider extends FMLCommonLaunchHandler implements ILau
     public void setup(IEnvironment environment)
     {
         fmlLog.debug(CORE, "No jar creation necessary. Launch is dev environment");
+    }
+
+    @Override
+    public Side getSidedness()
+    {
+        return Side.CLIENT;
     }
 }

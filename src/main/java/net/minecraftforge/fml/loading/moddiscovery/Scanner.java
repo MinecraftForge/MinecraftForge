@@ -45,9 +45,9 @@ public class Scanner {
     public ScanResult scan() {
         ScanResult result = new ScanResult(fileToScan);
         fileToScan.scanFile(p -> fileVisitor(p, result));
-        final Set<IModLanguageProvider> modLoaders = fileToScan.getModInfos().stream().map(ModInfo::getModLoader).map(FMLLoader.getLanguageLoadingProvider()::getLanguage).collect(Collectors.toSet());
-        modLoaders.stream().peek(ml-> fmlLog.debug(SCAN, "Scanning {} with language loader {}", fileToScan.getFilePath(), ml.name()))
-                .map(IModLanguageProvider::getFileVisitor).forEach(c->c.accept(result));
+        final IModLanguageProvider loader = fileToScan.getLoader();
+        fmlLog.debug(SCAN, "Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());
+        loader.getFileVisitor().accept(result);
         return result;
     }
 

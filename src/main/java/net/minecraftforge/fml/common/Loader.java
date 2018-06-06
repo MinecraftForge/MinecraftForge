@@ -757,19 +757,6 @@ public class Loader
 
     public ICrashCallable getCallableCrashInformation()
     {
-        return new ICrashCallable() {
-            @Override
-            public String call() throws Exception
-            {
-                return getCrashInformation();
-            }
-
-            @Override
-            public String getLabel()
-            {
-                return "FML";
-            }
-        };
     }
 
     public List<ModContainer> getActiveModList()

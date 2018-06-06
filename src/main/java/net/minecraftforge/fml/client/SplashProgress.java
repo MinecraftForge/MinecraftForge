@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.client;
 
+import static net.minecraftforge.fml.Logging.SPLASH;
+import static net.minecraftforge.fml.Logging.fmlLog;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.*;
 
@@ -60,18 +62,18 @@ import net.minecraft.client.resources.SimpleResource;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.CrashReportExtender;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
-import net.minecraftforge.fml.common.asm.FMLSanityChecker;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.LWJGLUtil;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.Drawable;
 import org.lwjgl.opengl.SharedDrawable;
@@ -94,7 +96,7 @@ public class SplashProgress
     private static SplashFontRenderer fontRenderer;
 
     private static final IResourcePack mcPack = Minecraft.getMinecraft().mcDefaultResourcePack;
-    private static final IResourcePack fmlPack = createResourcePack(FMLSanityChecker.fmlLocation);
+    private static final IResourcePack fmlPack = mcPack;
     private static IResourcePack miscPack;
 
     private static Texture fontTexture;
@@ -121,7 +123,18 @@ public class SplashProgress
     private static final int TIMING_FRAME_COUNT = 200;
     private static final int TIMING_FRAME_THRESHOLD = TIMING_FRAME_COUNT * 5 * 1000000; // 5 ms per frame, scaled to nanos
 
-    static final Semaphore mutex = new Semaphore(1);
+    private static final Semaphore mutex = new Semaphore(1);
+
+    public static Void processMessages() {
+        // workaround for windows requiring messages being processed on the main thread
+        if (LWJGLUtil.getPlatform() != LWJGLUtil.PLATFORM_WINDOWS) return null;
+        // If we can't grab the mutex, the update call is blocked, probably in native code, just skip it and carry on
+        // We'll get another go next time
+        if (!SplashProgress.mutex.tryAcquire()) return null;
+        Display.processMessages();
+        SplashProgress.mutex.release();
+        return null;
+    }
 
     private static String getString(String name, String def)
     {
@@ -160,16 +173,10 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.log.info("Could not load splash.properties, will create a default one");
+            fmlLog.info(SPLASH, "Could not load splash.properties, will create a default one");
         }
 
-        //Some systems do not support this and have weird effects, so we need to detect and disable them by default.
-        //The user can always force enable it if they want to take the responsibility for bugs.
-        boolean defaultEnabled = true;
-
-        // Enable if we have the flag, and there's either no optifine, or optifine has added a key to the blackboard ("optifine.ForgeSplashCompatible")
-        // Optifine authors - add this key to the blackboard if you feel your modifications are now compatible with this code.
-        enabled =            getBool("enabled",      defaultEnabled) && ( (!FMLClientHandler.instance().hasOptifine()) || Launch.blackboard.containsKey("optifine.ForgeSplashCompatible"));
+        enabled =            getBool("enabled",      true);
         rotate =             getBool("rotate",       false);
         showMemory =         getBool("showMemory",   true);
         logoOffset =         getInt("logoOffset",    0);
@@ -202,7 +209,7 @@ public class SplashProgress
 
         if(!enabled) return;
         // getting debug info out of the way, while we still can
-        FMLCommonHandler.instance().registerCrashCallable(new ICrashCallable()
+        CrashReportExtender.registerCrashCallable(new ICrashCallable()
         {
             @Override
             public String call() throws Exception
@@ -222,7 +229,7 @@ public class SplashProgress
         CrashReport report = CrashReport.makeCrashReport(new Throwable(), "Loading screen debug info");
         StringBuilder systemDetailsBuilder = new StringBuilder();
         report.getCategory().appendToStringBuilder(systemDetailsBuilder);
-        FMLLog.log.info(systemDetailsBuilder.toString());
+        fmlLog.info(SPLASH, systemDetailsBuilder.toString());
 
         try
         {
@@ -390,13 +397,13 @@ public class SplashProgress
                         if (!isDisplayVSyncForced)
                         {
                             isDisplayVSyncForced = true;
-                            FMLLog.log.info("Using alternative sync timing : {} frames of Display.update took {} nanos", TIMING_FRAME_COUNT, updateTiming);
+                            fmlLog.info(SPLASH,"Using alternative sync timing : {} frames of Display.update took {} nanos", TIMING_FRAME_COUNT, updateTiming);
                         }
                         try { Thread.sleep(16); } catch (InterruptedException ie) {}
                     } else
                     {
                         if (framecount ==TIMING_FRAME_COUNT) {
-                            FMLLog.log.info("Using sync timing. {} frames of Display.update took {} nanos", TIMING_FRAME_COUNT, updateTiming);
+                            fmlLog.info("Using sync timing. {} frames of Display.update took {} nanos", TIMING_FRAME_COUNT, updateTiming);
                         }
                         Display.sync(100);
                     }

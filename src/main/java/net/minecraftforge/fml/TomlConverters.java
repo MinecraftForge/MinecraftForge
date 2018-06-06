@@ -19,21 +19,32 @@
 
 package net.minecraftforge.fml;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-import org.apache.logging.log4j.core.config.Configurator;
+import com.electronwill.nightconfig.core.conversion.Converter;
 
-public class Logging
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public final class TomlConverters
 {
-    public static final Logger fmlLog = LogManager.getLogger("FML");
+    public static class StringToURL implements Converter<URL, String> {
 
-    // Lots of markers
-    public static final Marker CORE = MarkerManager.getMarker("CORE");
-    public static final Marker LOADING = MarkerManager.getMarker("LOADING");
-    public static final Marker SCAN = MarkerManager.getMarker("SCAN");
-    public static final Marker SPLASH = MarkerManager.getMarker("SPLASH");
-    public static final Marker MODELLOADING = MarkerManager.getMarker("MODELLOADING");
+        @Override
+        public URL convertToField(String value)
+        {
+            try
+            {
+                return new URL(value);
+            }
+            catch (MalformedURLException e)
+            {
+                throw new RuntimeException("Invalid URL specified", e);
+            }
+        }
+
+        @Override
+        public String convertFromField(URL value)
+        {
+            return value.toString();
+        }
+    }
 }

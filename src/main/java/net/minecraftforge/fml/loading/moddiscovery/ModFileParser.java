@@ -19,13 +19,10 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.electronwill.nightconfig.core.path.PathConfig;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
-import com.google.gson.JsonDeserializer;
 import com.google.gson.reflect.TypeToken;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
+import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -35,26 +32,27 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ModFileParser {
-    protected static List<ModInfo> readModList(final ModFile modFile) {
+    public static ModFile.ModFileInfo readModList(final ModFile modFile) {
         fmlLog.debug(LOADING,"Parsing mod file candidate {}", modFile.getFilePath());
-        try {
-            final Path modsjson = modFile.getLocator().findPath(modFile, "META-INF", "mods.json");
-            GsonBuilder gsonBuilder = new GsonBuilder();
-            gsonBuilder.registerTypeAdapter(ModInfo.class, (InstanceCreator<ModInfo>)ic -> new ModInfo(modFile, null, null, null, null, null, null, null));
-            gsonBuilder.registerTypeAdapter(ArtifactVersion.class, (JsonDeserializer<ArtifactVersion>) (element, type, context) -> new DefaultArtifactVersion(element.getAsString()));
-            Gson gson = gsonBuilder.create();
-            final ModInfo[] modInfos = gson.fromJson(Files.newBufferedReader(modsjson), ModInfo[].class);
-            return Stream.of(modInfos).collect(Collectors.toList());
-        } catch (IOException e) {
-            fmlLog.debug(LOADING,"Ignoring invalid JAR file {}", modFile.getFilePath());
-            return Collections.emptyList();
+        final Path modsjson = modFile.getLocator().findPath(modFile, "META-INF", "mods.toml");
+        if (!Files.exists(modsjson)) {
+            fmlLog.warn(LOADING, "Mod file {} is missing mods.toml file", modFile);
+            return null;
         }
+        return loadModFile(modFile, modsjson);
+    }
+
+    public static ModFile.ModFileInfo loadModFile(final ModFile file, final Path modsjson)
+    {
+        final PathConfig pathConfig = PathConfig.builder(modsjson).build();
+        pathConfig.load();
+        pathConfig.close();
+        return new ModFile.ModFileInfo(file, pathConfig);
     }
 
     protected static List<CoreModFile> getCoreMods(final ModFile modFile) {

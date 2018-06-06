@@ -61,42 +61,6 @@ public @interface Mod
      * By default, you will have a resource domain that matches the modid. All these uses require that constraints are imposed on the format of the modid.
      */
     String modid();
-
-    /**
-     * An optional GUI factory for this mod. This is the name of a class implementing {@link IModGuiFactory} that will be instantiated
-     * on the client side, and will have certain configuration/options guis requested from it.
-     *
-     * @return The name of a class implementing {@link IModGuiFactory}
-     */
-    String guiFactory() default "";
-
-    /**
-     * A list of custom properties for this mod. Completely up to the mod author if/when they
-     * want to put anything in here.
-     * @return an optional list of custom properties
-     */
-    CustomProperty[] customProperties() default {};
-
-    /**
-     * A custom key => value property pair for use with {@link Mod#customProperties()}
-     * @author cpw
-     *
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({})
-    @interface CustomProperty
-    {
-        /**
-         * A key. Should be unique.
-         * @return A key
-         */
-        String k();
-        /**
-         * A value. Can be anything.
-         * @return A value
-         */
-        String v();
-    }
     /**
      * Marks the associated method as handling an FML lifecycle event.
      * The method must have a single parameter, one of the following types. This annotation

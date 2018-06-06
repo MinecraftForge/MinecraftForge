@@ -24,6 +24,16 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.google.common.base.Joiner;
+import net.minecraftforge.api.Side;
+import net.minecraftforge.fml.SidedExecutor;
+import net.minecraftforge.fml.client.SplashProgress;
+import org.apache.logging.log4j.message.MessageFormatMessage;
+import org.apache.logging.log4j.message.StringFormattedMessage;
+import org.lwjgl.LWJGLUtil;
+import org.lwjgl.opengl.Display;
+
+import static net.minecraftforge.fml.Logging.SPLASH;
+import static net.minecraftforge.fml.Logging.fmlLog;
 
 /**
  * Not a fully fleshed out API, may change in future MC versions.
@@ -52,7 +62,7 @@ public class ProgressManager
         {
             bar.timeEachStep();
         }
-        FMLCommonHandler.instance().processWindowMessages();
+        SidedExecutor.runOn(Side.CLIENT, ()->SplashProgress::processMessages);
         return bar;
     }
 
@@ -71,17 +81,13 @@ public class ProgressManager
         {
             long newTime = System.nanoTime();
             if (bar.timeEachStep)
-            {
-                String timeString = String.format("%.3f", ((float) (newTime - bar.lastTime) / 1000000 / 1000));
-                FMLLog.log.debug("Bar Step: {} - {} took {}s", bar.getTitle(), bar.getMessage(), timeString);
-            }
-            String timeString = String.format("%.3f", ((float) (newTime - bar.startTime) / 1000000 / 1000));
+                fmlLog.debug(SPLASH, () -> new MessageFormatMessage("Bar Step: {0} - {1} took {2,number,0.000}ms", bar.getTitle(), bar.getMessage(), (newTime - bar.lastTime) / 1.0e6));
             if (bar.getSteps() == 1)
-                FMLLog.log.debug("Bar Finished: {} - {} took {}s", bar.getTitle(), bar.getMessage(), timeString);
+                fmlLog.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0} - {1} took {2,number,0.000}ms", bar.getTitle(), bar.getMessage(), (newTime - bar.lastTime) / 1.0e6));
             else
-                FMLLog.log.debug("Bar Finished: {} took {}s", bar.getTitle(), timeString);
+                fmlLog.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0} took {1,number,0.000}ms", bar.getTitle(), (newTime - bar.lastTime) / 1.0e6));
         }
-        FMLCommonHandler.instance().processWindowMessages();
+        SidedExecutor.runOn(Side.CLIENT, ()->SplashProgress::processMessages);
     }
 
     /*
@@ -124,7 +130,7 @@ public class ProgressManager
             if (timeEachStep && step != 0)
             {
                 long newTime = System.nanoTime();
-                FMLLog.log.debug(String.format("Bar Step: %s - %s took %.3fs", getTitle(), getMessage(), ((float)(newTime - lastTime) / 1000000 / 1000)));
+                fmlLog.debug(SPLASH,new MessageFormatMessage("Bar Step: {0} - {1} took {2,number,0.000}ms", getTitle(), getMessage(), (newTime - lastTime) / 1.0e6));
                 lastTime = newTime;
             }
             step++;

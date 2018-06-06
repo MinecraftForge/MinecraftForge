@@ -32,11 +32,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.collect.Sets;
-import com.google.common.collect.Sets.SetView;
-
 /**
  * Topological sort for mod loading
  *
@@ -48,8 +43,8 @@ public class TopologicalSort
 {
     public static class DirectedGraph<T> implements Iterable<T>
     {
-        private final Map<T, SortedSet<T>> graph = new HashMap<T, SortedSet<T>>();
-        private List<T> orderedNodes = new ArrayList<T>();
+        private final Map<T, SortedSet<T>> graph = new HashMap<>();
+        private List<T> orderedNodes = new ArrayList<>();
 
         public boolean addNode(T node)
         {
@@ -60,7 +55,7 @@ public class TopologicalSort
             }
 
             orderedNodes.add(node);
-            graph.put(node, new TreeSet<T>(Comparator.comparingInt(o -> orderedNodes.indexOf(o))));
+            graph.put(node, new TreeSet<>(Comparator.comparingInt(o -> orderedNodes.indexOf(o))));
             return true;
         }
 
@@ -136,10 +131,10 @@ public class TopologicalSort
     public static <T> List<T> topologicalSort(DirectedGraph<T> graph)
     {
         DirectedGraph<T> rGraph = reverse(graph);
-        List<T> sortedResult = new ArrayList<T>();
-        Set<T> visitedNodes = new HashSet<T>();
+        List<T> sortedResult = new ArrayList<>();
+        Set<T> visitedNodes = new HashSet<>();
         // A list of "fully explored" nodes. Leftovers in here indicate cycles in the graph
-        Set<T> expandedNodes = new HashSet<T>();
+        Set<T> expandedNodes = new HashSet<>();
 
         for (T node : rGraph)
         {
@@ -151,7 +146,7 @@ public class TopologicalSort
 
     public static <T> DirectedGraph<T> reverse(DirectedGraph<T> graph)
     {
-        DirectedGraph<T> result = new DirectedGraph<T>();
+        DirectedGraph<T> result = new DirectedGraph<>();
 
         for (T node : graph)
         {
@@ -169,7 +164,7 @@ public class TopologicalSort
         return result;
     }
 
-    public static <T> void explore(T node, DirectedGraph<T> graph, List<T> sortedResult, Set<T> visitedNodes, Set<T> expandedNodes)
+    private static <T> void explore(T node, DirectedGraph<T> graph, List<T> sortedResult, Set<T> visitedNodes, Set<T> expandedNodes)
     {
         // Have we been here before?
         if (visitedNodes.contains(node))
@@ -181,14 +176,7 @@ public class TopologicalSort
                 return;
             }
 
-            FMLLog.log.fatal("Mod Sorting failed.");
-            FMLLog.log.fatal("Visiting node {}", node);
-            FMLLog.log.fatal("Current sorted list : {}", sortedResult);
-            FMLLog.log.fatal("Visited set for this node : {}", visitedNodes);
-            FMLLog.log.fatal("Explored node set : {}", expandedNodes);
-            SetView<T> cycleList = Sets.difference(visitedNodes, expandedNodes);
-            FMLLog.log.fatal("Likely cycle is in : {}", cycleList);
-            throw new ModSortingException("There was a cycle detected in the input graph, sorting is not possible", node, cycleList);
+            throw new TopoSortException(node, sortedResult, visitedNodes, expandedNodes);
         }
 
         // Visit this node
@@ -204,5 +192,40 @@ public class TopologicalSort
         sortedResult.add(node);
         // And mark ourselves as explored
         expandedNodes.add(node);
+    }
+
+    static class TopoSortException extends RuntimeException {
+        private final Object node;
+        private final List<?> sortedResult;
+        private final Set<?> visitedNodes;
+        private final Set<?> expandedNodes;
+
+        public TopoSortException(Object node, List<?> sortedResult, Set<?> visitedNodes, Set<?> expandedNodes)
+        {
+            this.node = node;
+            this.sortedResult = sortedResult;
+            this.visitedNodes = visitedNodes;
+            this.expandedNodes = expandedNodes;
+        }
+
+        public Object getNode()
+        {
+            return node;
+        }
+
+        public List<?> getSortedResult()
+        {
+            return sortedResult;
+        }
+
+        public Set<?> getVisitedNodes()
+        {
+            return visitedNodes;
+        }
+
+        public Set<?> getExpandedNodes()
+        {
+            return expandedNodes;
+        }
     }
 }

@@ -17,41 +17,36 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftforge.fml;
 
-import cpw.mods.modlauncher.api.ILaunchHandlerService;
-import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import net.minecraft.client.main.Main;
 import net.minecraftforge.api.Side;
 
-import java.nio.file.Path;
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 
-public class FMLLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
+public final class SidedExecutor
 {
-    @Override
-    public String name()
-    {
-        return "fml";
-    }
+    private SidedExecutor() {}
 
-    @Override
-    public Path[] identifyTransformationTargets()
-    {
-        return new Path[0];
-    }
-
-    @Override
-    public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
-    {
-        return () -> {
-            return null;
-        };
-    }
-
-    @Override
-    public Side getSidedness()
-    {
-        return Side.CLIENT;
+    /**
+     * Run the callable in the supplier only on the specified {@link Side}
+     *
+     * @param side The side to run on
+     * @param toRun A supplier of the callable to run (Supplier wrapper to ensure classloading only on the appropriate side)
+     * @param <T> The return type from the callable
+     * @return The callable's result
+     */
+    public static <T> T runOn(Side side, Supplier<Callable<T>> toRun) {
+        if (side == Side.CLIENT) {
+            try
+            {
+                return toRun.get().call();
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        return null;
     }
 }

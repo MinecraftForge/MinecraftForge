@@ -20,6 +20,9 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 
+import com.google.common.collect.Multimap;
+import net.minecraftforge.fml.loading.FMLJavaModLanguageProvider;
+import net.minecraftforge.fml.loading.IModLanguageProvider;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
@@ -31,6 +34,7 @@ public class ScanResult {
     private final ModFile file;
     private final List<ScanResult.AnnotationData> annotations = new ArrayList<>();
     private final List<ScanResult.ClassData> classes = new ArrayList<>();
+    private Map<String,? extends IModLanguageProvider.IModLanguageLoader> modTargets;
 
     public ScanResult(final ModFile file) {
         this.file = file;
@@ -51,6 +55,17 @@ public class ScanResult {
     public List<ScanResult.AnnotationData> getAnnotations() {
         return annotations;
     }
+
+    public void addLanguageLoader(Map<String,? extends IModLanguageProvider.IModLanguageLoader> modTargetMap)
+    {
+        modTargets = modTargetMap;
+    }
+
+    public Map<String, ? extends IModLanguageProvider.IModLanguageLoader> getTargets()
+    {
+        return modTargets;
+    }
+
 
     public static class ClassData {
         private final Type clazz;
