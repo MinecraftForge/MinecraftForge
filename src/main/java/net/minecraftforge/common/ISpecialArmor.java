@@ -94,7 +94,7 @@ public interface ISpecialArmor
     * Returning true here means that the armor is able to meaningfully respond
     * to this damage source. Otherwise, no interaction is allowed.
     */
-    default boolean handleUnblockableDamage()
+    default boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, int slot)
     {
         return false;
     }
@@ -158,7 +158,7 @@ public interface ISpecialArmor
                 ArmorProperties prop = null;
                 if (stack.getItem() instanceof ISpecialArmor)
                 {
-                    if (!source.isUnblockable() || ((ISpecialArmor) stack.getItem()).handleUnblockableDamage()) {
+                    if (!source.isUnblockable() || ((ISpecialArmor) stack.getItem()).handleUnblockableDamage(entity, stack, source, damage, slot)) {
                         ISpecialArmor armor = (ISpecialArmor)stack.getItem();
                         prop = armor.getProperties(entity, stack, source, damage, slot).copy();
                         totalArmor += prop.Armor;
