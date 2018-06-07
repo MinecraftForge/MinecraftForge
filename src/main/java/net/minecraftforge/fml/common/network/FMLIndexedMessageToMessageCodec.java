@@ -69,7 +69,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         Class<?> clazz = msg.getClass();
         if (!types.containsKey(clazz))
         {
-            throw new RuntimeException("Undefined discriminator for message type " + clazz.getSimpleName() + " in channel " + channel);
+            throw new RuntimeException("Undefined discriminator for message type " + clazz.getName() + " in channel " + channel);
         }
         byte discriminator = types.get(clazz);
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
