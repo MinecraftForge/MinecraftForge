@@ -27,10 +27,12 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -53,6 +55,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
@@ -105,10 +108,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldEntitySpawner;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
@@ -1449,5 +1453,33 @@ public class ForgeHooks
             }
         }
         return modId;
+    }
+
+    private static final Map<EntityLiving.SpawnPlacementType, BiPredicate<IBlockAccess, BlockPos>> customSpawnPlacements = new IdentityHashMap<>();
+
+    static
+    {
+        customSpawnPlacements.put(null, null);
+        customSpawnPlacements.put(EntityLiving.SpawnPlacementType.ON_GROUND, null);
+        customSpawnPlacements.put(EntityLiving.SpawnPlacementType.IN_AIR, null);
+        customSpawnPlacements.put(EntityLiving.SpawnPlacementType.IN_WATER, null);
+    }
+
+    public static void registerPlacementType(EntityLiving.SpawnPlacementType type, BiPredicate<IBlockAccess, BlockPos> predicate)
+    {
+        if (!customSpawnPlacements.containsKey(type))
+        {
+            customSpawnPlacements.put(type, predicate);
+        }
+    }
+
+    public static boolean canSpawnAt(EntityLiving.SpawnPlacementType type, World world, BlockPos pos)
+    {
+        BiPredicate<IBlockAccess, BlockPos> predicate = customSpawnPlacements.get(type);
+        if (predicate != null)
+        {
+            return predicate.test(world, pos);
+        }
+        return WorldEntitySpawner.canCreatureTypeSpawnBody(type, world, pos);
     }
 }

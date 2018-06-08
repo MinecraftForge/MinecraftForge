@@ -25,16 +25,17 @@ import java.util.*;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
-import net.minecraft.entity.passive.IAnimals;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
 import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityPainting.EnumArt;
 import net.minecraft.entity.passive.HorseArmorType;
+import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.EnumRarity;
@@ -76,7 +77,8 @@ public class EnumHelper
         {SleepResult.class},
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
         {EnumRarity.class, TextFormatting.class, String.class},
-        {HorseArmorType.class, String.class, int.class}
+        {HorseArmorType.class, String.class, int.class},
+        {EntityLiving.SpawnPlacementType.class}
     };
 
     @Nullable
@@ -143,6 +145,12 @@ public class EnumHelper
     public static EnumRarity addRarity(String name, TextFormatting color, String displayName)
     {
         return addEnum(EnumRarity.class, name, color, displayName);
+    }
+
+    @Nullable
+    public static EntityLiving.SpawnPlacementType addSpawnPlacementType(String name)
+    {
+        return addEnum(EntityLiving.SpawnPlacementType.class, name);
     }
 
     /**
