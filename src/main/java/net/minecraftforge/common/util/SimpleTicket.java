@@ -6,17 +6,18 @@ import java.util.Objects;
 
 /**
  * Common class for a simple ticket based system.
- * @param <T> The type your ticket is for
+ * @param <K> The type your ticket is for
+ * @param <V> The type that will be used to check if your ticket matches
  */
-public class SimpleTicket<T>
+public abstract class SimpleTicket<K, V>
 {
     @Nonnull
-    private final Collection<SimpleTicket<T>> collection;
+    private final Collection<SimpleTicket<?, V>> collection;
     @Nonnull
-    private T target;
+    private K target;
     private boolean isValid = false;
 
-    public SimpleTicket(@Nonnull T target, @Nonnull Collection<SimpleTicket<T>> collection)
+    public SimpleTicket(@Nonnull K target, @Nonnull Collection<SimpleTicket<?, V>> collection)
     {
         this.target = target;
         this.collection = collection;
@@ -55,20 +56,22 @@ public class SimpleTicket<T>
         this.isValid = true;
     }
 
+    public abstract boolean matches(V toMatch);
+
     @Nonnull
-    public T getTarget()
+    public K getTarget()
     {
         return this.target;
     }
 
-    public void setTarget(@Nonnull T newTarget)
+    public void setTarget(@Nonnull K newTarget)
     {
         this.target = Objects.requireNonNull(newTarget);
     }
 
-    public static<T> void invalidateAll(Collection<SimpleTicket<T>> ticketCollection)
+    public static<V> void invalidateAll(Collection<SimpleTicket<?, V>> ticketCollection)
     {
-        for (SimpleTicket<?> simpleTicket : ticketCollection)
+        for (SimpleTicket<?, V> simpleTicket : ticketCollection)
         {
             simpleTicket.isValid = false;
         }

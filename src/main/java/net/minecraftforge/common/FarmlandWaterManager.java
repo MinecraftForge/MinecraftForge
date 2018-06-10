@@ -9,34 +9,70 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.SimpleTicket;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Function;
 
 public class FarmlandWaterManager
 {
-    private static final Int2ObjectMap<Set<SimpleTicket<AxisAlignedBB>>> wateredAABBs = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<Set<SimpleTicket<?, Vec3d>>> customWaterHandler = new Int2ObjectOpenHashMap<>();
+
+    private static<T extends SimpleTicket<?, Vec3d>> T register(World world, T ticket)
+    {
+        if (world.isRemote)
+        {
+            throw new IllegalArgumentException("Water region is only determined server-side");
+        }
+        ticket.validate();
+        return ticket;
+    }
+
+    /**
+     * Adds a custom ticket.
+     * Use {@link #addWateredRegion(World, AxisAlignedBB)} if you just need a ticket that can water a certain area.
+     * <br>
+     * If you don't want to water the region anymore, call {@link SimpleTicket#invalidate()}. Also call this
+     * when the region this is unloaded (e.g. your TE is unloaded or the block is removed), and validate once it is loaded
+     * @param world The world where the region should be marked. Only server-side worlds are allowed
+     * @param function The function to determine if a block pos should be watered
+     * @return The ticket for your requested region.
+     */
+    public static SimpleTicket<Function<Vec3d, Boolean>, Vec3d> addCustomWateredRegion(World world, Function<Vec3d, Boolean> function)
+    {
+        Set<SimpleTicket<?, Vec3d>> tickets = customWaterHandler.computeIfAbsent(world.provider.getDimension(), id -> new HashSet<>());
+        SimpleTicket<Function<Vec3d, Boolean>, Vec3d> ticket = new SimpleTicket<Function<Vec3d, Boolean>, Vec3d>(function, tickets)
+        {
+            @Override
+            public boolean matches(Vec3d toMatch)
+            {
+                return getTarget().apply(toMatch);
+            }
+        };
+        return register(world, ticket);
+    }
 
     /**
      * Marks a region in the world as watered so blocks like Farmland know if there is a modded water source.
      * <br>
      * If you don't want to water the region anymore, call {@link SimpleTicket#invalidate()}. Also call this
-     * when the region this is unloaded (e.g. your TE is unloaded), and validate once it is loaded
+     * when the region this is unloaded (e.g. your TE is unloaded or the block is removed), and validate once it is loaded
      * <br>
      * The AABB in the ticket is mutable, so if you need to update it, don't create a new ticket but update the existing one using {@link SimpleTicket#setTarget(Object)}.
      * @param world The world where the region should be marked. Only server-side worlds are allowed
      * @param aabb The region where blocks should be watered
      * @return The ticket for your requested region.
      */
-    public static SimpleTicket<AxisAlignedBB> addWateredRegion(World world, AxisAlignedBB aabb)
+    public static SimpleTicket<AxisAlignedBB, Vec3d> addWateredRegion(World world, AxisAlignedBB aabb)
     {
-        if (world.isRemote)
+        Set<SimpleTicket<?, Vec3d>> tickets = customWaterHandler.computeIfAbsent(world.provider.getDimension(), id -> new HashSet<>());
+        SimpleTicket<AxisAlignedBB, Vec3d> ticket = new SimpleTicket<AxisAlignedBB, Vec3d>(aabb, tickets)
         {
-            throw new IllegalArgumentException("Water region is only determined server-side");
-        }
-        Set<SimpleTicket<AxisAlignedBB>> tickets = wateredAABBs.computeIfAbsent(world.provider.getDimension(), id -> new HashSet<>());
-        SimpleTicket<AxisAlignedBB> ticket = new SimpleTicket<>(aabb, tickets);
-        ticket.validate();
-        return ticket;
+            @Override
+            public boolean matches(Vec3d toMatch)
+            {
+                return getTarget().contains(toMatch);
+            }
+        };
+        return register(world, ticket);
     }
 
     /**
@@ -49,14 +85,14 @@ public class FarmlandWaterManager
         {
             throw new IllegalArgumentException("Water region is only determined server-side");
         }
-        Set<SimpleTicket<AxisAlignedBB>> tickets = wateredAABBs.get(world.provider.getDimension());
+        Set<SimpleTicket<?, Vec3d>> tickets = customWaterHandler.get(world.provider.getDimension());
         if (tickets == null)
         {
             return false;
         }
 
         Vec3d posAsVec3d = new Vec3d(pos);
-        return tickets.stream().anyMatch(ticket -> ticket.getTarget().contains(posAsVec3d));
+        return tickets.stream().anyMatch(ticket -> ticket.matches(posAsVec3d));
     }
 
     static void removeAllTickets(World world)
@@ -65,7 +101,7 @@ public class FarmlandWaterManager
         {
             throw new IllegalArgumentException("Water region is only determined server-side!");
         }
-        Set<SimpleTicket<AxisAlignedBB>> tickets = wateredAABBs.get(world.provider.getDimension());
+        Set<SimpleTicket<?, Vec3d>> tickets = customWaterHandler.get(world.provider.getDimension());
         if (tickets != null)
         {
             SimpleTicket.invalidateAll(tickets);

@@ -1,8 +1,6 @@
 package net.minecraftforge.debug.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
@@ -13,17 +11,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.FarmlandWaterManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.SimpleTicket;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -98,11 +95,22 @@ public class FarmlandWaterTest
             logger.info("Changed block powered state at {} to {}", pos, tileEntity.isActive);
             return true;
         }
+
+        @Override
+        public void breakBlock(World world, BlockPos pos, IBlockState state)
+        {
+            if (world.isRemote)
+                return;
+            TestTileEntity tileEntity = (TestTileEntity) world.getTileEntity(pos);
+            if (tileEntity == null)
+                return;
+            tileEntity.farmlandTicket.invalidate();
+        }
     }
 
     public static class TestTileEntity extends TileEntity
     {
-        private SimpleTicket<AxisAlignedBB> farmlandTicket;
+        private SimpleTicket<AxisAlignedBB, Vec3d> farmlandTicket;
         private boolean isActive = false;
 
         @Override
