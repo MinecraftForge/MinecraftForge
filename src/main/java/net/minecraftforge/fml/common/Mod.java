@@ -118,33 +118,7 @@ public @interface Mod
          * The mod object to inject into this field
          */
         String value() default "";
-
-        /**
-         * Optional owner modid, required if this annotation is on something that is not inside the main class of a mod container.
-         * This is required to prevent mods from classloading other, potentially disabled mods.
-         */
-        String owner() default "";
-    }
-    /**
-     * Populate the annotated field with the mod's metadata.
-     * @author cpw
-     *
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
-    @interface Metadata {
-        /**
-         * The mod id specifying the metadata to load here
-         */
-        String value() default "";
-
-        /**
-         * Optional owner modid, required if this annotation is on something that is not inside the main class of a mod container.
-         * This is required to prevent mods from classloading other, potentially disabled mods.
-         */
-        String owner() default "";
-    }
-
+        }
     /**
      * A class which will be subscribed to {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS} at mod construction time.
      */
