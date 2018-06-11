@@ -25,6 +25,8 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ public abstract class CommandTreeBase extends CommandNode
             commandAliasMap.put(alias, command);
         }
 
-        updateSortedCommandList();
+        clearSortedCommandListCache();
     }
 
     @Deprecated
@@ -115,7 +117,7 @@ public abstract class CommandTreeBase extends CommandNode
         return sortedCommands;
     }
 
-    public void updateSortedCommandList()
+    public void clearSortedCommandListCache()
     {
         sortedCommands = null;
     }
@@ -211,8 +213,7 @@ public abstract class CommandTreeBase extends CommandNode
     {
         if (args.length < 1)
         {
-            String subCommandsString = getAvailableSubCommandsString(server, sender);
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.tree_base.available_subcommands", subCommandsString));
+            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.tree_base.available_subcommands", getAvailableSubCommandsString(server, sender)));
         }
         else
         {
@@ -220,8 +221,10 @@ public abstract class CommandTreeBase extends CommandNode
 
             if (cmd == null)
             {
-                String subCommandsString = getAvailableSubCommandsString(server, sender);
-                throw new CommandException("commands.tree_base.invalid_cmd.list_subcommands", args[0], subCommandsString);
+                ITextComponent textComponent = TextComponentHelper.createComponentTranslation(sender, "commands.tree_base.invalid_cmd", args[0]);
+                textComponent.getStyle().setColor(TextFormatting.RED);
+                sender.sendMessage(textComponent);
+                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.tree_base.available_subcommands", getAvailableSubCommandsString(server, sender)));
             }
             else if (!cmd.checkPermission(server, sender))
             {

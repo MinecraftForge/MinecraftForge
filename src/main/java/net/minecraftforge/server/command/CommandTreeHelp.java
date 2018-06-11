@@ -39,6 +39,12 @@ public class CommandTreeHelp extends CommandHelp implements ICommandWithParent
     }
 
     @Override
+    public String getUsage(ICommandSender sender)
+    {
+        return "commands." + getPath() + ".usage";
+    }
+
+    @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender)
     {
         return true;
