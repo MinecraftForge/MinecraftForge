@@ -21,6 +21,8 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraftforge.fml.common.versioning.VersionRange;
+import net.minecraftforge.fml.language.IModFileInfo;
+import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.StringUtils;
 
 import java.net.URL;

@@ -23,6 +23,7 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionRange;
+import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
 import java.nio.file.Path;

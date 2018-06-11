@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.language.IModFileInfo;
+
 public class InvalidModFileException extends RuntimeException
 {
     private final IModFileInfo modFileInfo;

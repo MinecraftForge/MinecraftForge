@@ -20,10 +20,10 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.StringSubstitutor;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionRange;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,7 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ModInfo implements IModInfo {
+public class ModInfo implements IModInfo
+{
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
     private final ModFileInfo owningFile;
     private final String modId;

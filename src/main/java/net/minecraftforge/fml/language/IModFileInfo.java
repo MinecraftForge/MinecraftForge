@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftforge.fml.language;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraftforge.fml.common.versioning.VersionRange;

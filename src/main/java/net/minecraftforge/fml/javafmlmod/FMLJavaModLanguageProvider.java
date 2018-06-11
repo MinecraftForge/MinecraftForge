@@ -19,11 +19,10 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.loading.IModLanguageProvider;
-import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ScanResult;
+import net.minecraftforge.fml.language.IModLanguageProvider;
+import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
 import java.util.Map;
@@ -52,9 +51,9 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
         }
 
         @Override
-        public ModContainer loadMod(final IModInfo info, final ClassLoader modClassLoader, final ScanResult scanResults)
+        public ModContainer loadMod(final IModInfo info, final ClassLoader modClassLoader, final ModFileScanData modFileScanResults)
         {
-            return new FMLModContainer(info, className, modClassLoader, scanResults);
+            return new FMLModContainer(info, className, modClassLoader, modFileScanResults);
         }
     }
 
@@ -67,7 +66,7 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
     }
 
     @Override
-    public Consumer<ScanResult> getFileVisitor() {
+    public Consumer<ModFileScanData> getFileVisitor() {
         return scanResult -> {
             final Map<String, FMLModTarget> modTargetMap = scanResult.getAnnotations().stream()
                     .filter(ad -> ad.getAnnotationType().equals(MODANNOTATION))

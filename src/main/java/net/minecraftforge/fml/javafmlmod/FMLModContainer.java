@@ -27,8 +27,8 @@ import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ScanResult;
+import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.language.ModFileScanData;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -43,14 +43,14 @@ import static net.minecraftforge.fml.Logging.LOADING;
 public class FMLModContainer extends ModContainer
 {
     private static final Logger LOGGER = LogManager.getLogger("FML");
-    private final ScanResult scanResults;
+    private final ModFileScanData scanResults;
     private Object modInstance;
     private final Class<?> modClass;
 
-    public FMLModContainer(IModInfo info, String className, ClassLoader modClassLoader, ScanResult scanResults)
+    public FMLModContainer(IModInfo info, String className, ClassLoader modClassLoader, ModFileScanData modFileScanResults)
     {
         super(info);
-        this.scanResults = scanResults;
+        this.scanResults = modFileScanResults;
         triggerMap.put(ModLoadingStage.BEGIN, this::constructMod);
         triggerMap.put(ModLoadingStage.PREINIT, this::preinitMod);
 

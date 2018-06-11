@@ -17,11 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftforge.fml.language;
 
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ScanResult;
 
 import java.util.function.Consumer;
 
@@ -35,9 +33,9 @@ public interface IModLanguageProvider
 {
     String name();
 
-    Consumer<ScanResult> getFileVisitor();
+    Consumer<ModFileScanData> getFileVisitor();
 
     interface IModLanguageLoader {
-        ModContainer loadMod(IModInfo info, ClassLoader modClassLoader, ScanResult scanResults);
+        ModContainer loadMod(IModInfo info, ClassLoader modClassLoader, ModFileScanData modFileScanResults);
     }
 }

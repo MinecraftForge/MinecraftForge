@@ -23,8 +23,6 @@ import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
-import net.minecraftforge.fml.loading.moddiscovery.IModFileInfo;
-import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;

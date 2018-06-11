@@ -1,6 +1,6 @@
 package net.minecraftforge.fml.test;
 
-import net.minecraftforge.fml.loading.moddiscovery.IModFileInfo;
+import net.minecraftforge.fml.language.IModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileParser;
 import org.junit.Test;
 

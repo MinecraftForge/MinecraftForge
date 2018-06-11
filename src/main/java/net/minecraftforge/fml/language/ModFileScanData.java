@@ -17,40 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftforge.fml.language;
 
 
-import net.minecraftforge.fml.loading.IModLanguageProvider;
 import org.objectweb.asm.Type;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
-public class ScanResult {
-    private final ModFile file;
-    private final List<ScanResult.AnnotationData> annotations = new ArrayList<>();
-    private final List<ScanResult.ClassData> classes = new ArrayList<>();
+public class ModFileScanData
+{
+    private final List<ModFileScanData.AnnotationData> annotations = new ArrayList<>();
+    private final List<ModFileScanData.ClassData> classes = new ArrayList<>();
     private Map<String,? extends IModLanguageProvider.IModLanguageLoader> modTargets;
 
-    public ScanResult(final ModFile file) {
-        this.file = file;
+    public static Predicate<Type> interestingAnnotations() {
+        return t->true;
     }
 
-    public ModFile getFile() {
-        return file;
-    }
-
-    public static boolean interestingAnnotations(final ModAnnotation annotation) {
-        return true;
-    }
-
-    public List<ScanResult.ClassData> getClasses() {
+    public List<ModFileScanData.ClassData> getClasses() {
         return classes;
     }
 
-    public List<ScanResult.AnnotationData> getAnnotations() {
+    public List<ModFileScanData.AnnotationData> getAnnotations() {
         return annotations;
     }
 
@@ -104,9 +96,6 @@ public class ScanResult {
 
         public Map<String, Object> getAnnotationData() {
             return annotationData;
-        }
-        public static ScanResult.AnnotationData fromModAnnotation(final Type clazz, final ModAnnotation annotation) {
-            return new AnnotationData(annotation.asmType, clazz, annotation.member, annotation.values);
         }
     }
 }

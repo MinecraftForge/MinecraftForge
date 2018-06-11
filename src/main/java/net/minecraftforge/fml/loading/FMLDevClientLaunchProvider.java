@@ -44,7 +44,7 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
 
     private static final List<String> SKIPPACKAGES = Arrays.asList(
             "joptsimple.", "org.lwjgl.", "com.mojang.", "com.google.",
-            "org.apache.commons.", "io.netty.", "net.minecraftforge.fml.loading.",
+            "org.apache.commons.", "io.netty.", "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.",
             "net.minecraftforge.eventbus.", "it.unimi.dsi.fastutil.", "net.minecraftforge.api.",
             "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig."
     );

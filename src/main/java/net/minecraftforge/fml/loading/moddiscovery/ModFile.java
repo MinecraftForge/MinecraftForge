@@ -21,8 +21,11 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.IModFileInfo;
+import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.IModLanguageProvider;
+import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.ModLoadingClassLoader;
 
 import java.nio.file.Files;
@@ -86,8 +89,8 @@ public class ModFile
     private final IModLocator locator;
     private IModFileInfo modFileInfo;
     private Map<String, IModInfo> modInfoMap;
-    private ScanResult fileScanResult;
-    private CompletableFuture<ScanResult> futureScanResult;
+    private ModFileScanData fileModFileScanData;
+    private CompletableFuture<ModFileScanData> futureScanResult;
     private List<CoreModFile> coreMods;
     private Path accessTransformer;
 
@@ -142,19 +145,19 @@ public class ModFile
     /**
      * Run in an executor thread to harvest the class and annotation list
      */
-    public ScanResult compileContent() {
+    public ModFileScanData compileContent() {
         return new Scanner(this).scan();
     }
 
     public void scanFile(Consumer<Path> pathConsumer) {
         locator.scanFile(this, pathConsumer);
     }
-    public void setFutureScanResult(CompletableFuture<ScanResult> future)
+    public void setFutureScanResult(CompletableFuture<ModFileScanData> future)
     {
         this.futureScanResult = future;
     }
 
-    public ScanResult getScanResult() {
+    public ModFileScanData getScanResult() {
         if (this.futureScanResult != null) {
             try {
                 this.futureScanResult.get();
@@ -162,12 +165,12 @@ public class ModFile
                 e.printStackTrace();
             }
         }
-        return this.fileScanResult;
+        return this.fileModFileScanData;
     }
 
-    public void setScanResult(final ScanResult scanResult, final Throwable throwable) {
+    public void setScanResult(final ModFileScanData modFileScanData, final Throwable throwable) {
         this.futureScanResult = null;
-        this.fileScanResult = scanResult;
+        this.fileModFileScanData = modFileScanData;
     }
 
     @Override

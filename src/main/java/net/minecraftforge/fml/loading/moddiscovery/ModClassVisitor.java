@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.language.ModFileScanData;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.FieldVisitor;
@@ -74,10 +75,11 @@ public class ModClassVisitor extends ClassVisitor
         return new ModMethodVisitor(name, desc, annotations);
     }
 
-    public void buildData(final List<ScanResult.ClassData> classes, final List<ScanResult.AnnotationData> annotations) {
-        classes.add(new ScanResult.ClassData(this.asmType, this.asmSuperType, this.interfaces));
-        final List<ScanResult.AnnotationData> collect = this.annotations.stream().filter(ScanResult::interestingAnnotations).
-                map(a -> ScanResult.AnnotationData.fromModAnnotation(this.asmType, a)).collect(Collectors.toList());
+    public void buildData(final List<ModFileScanData.ClassData> classes, final List<ModFileScanData.AnnotationData> annotations) {
+        classes.add(new ModFileScanData.ClassData(this.asmType, this.asmSuperType, this.interfaces));
+        final List<ModFileScanData.AnnotationData> collect = this.annotations.stream().
+                filter(ma->ModFileScanData.interestingAnnotations().test(ma.asmType)).
+                map(a -> ModAnnotation.fromModAnnotation(this.asmType, a)).collect(Collectors.toList());
         annotations.addAll(collect);
     }
 

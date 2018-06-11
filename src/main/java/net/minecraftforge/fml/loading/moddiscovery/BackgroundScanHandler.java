@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import com.google.common.util.concurrent.MoreExecutors;
+import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.ModList;
 
 import java.util.ArrayList;
@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import static net.minecraftforge.fml.Logging.SCAN;
@@ -58,13 +57,13 @@ public class BackgroundScanHandler
         }
         allFiles.add(file);
         pendingFiles.add(file);
-        final CompletableFuture<ScanResult> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
+        final CompletableFuture<ModFileScanData> future = CompletableFuture.supplyAsync(file::compileContent, modContentScanner)
                 .whenComplete(file::setScanResult)
                 .whenComplete((r,t)-> this.addCompletedFile(file,r,t));
         file.setFutureScanResult(future);
     }
 
-    private void addCompletedFile(final ModFile file, final ScanResult scanResult, final Throwable throwable) {
+    private void addCompletedFile(final ModFile file, final ModFileScanData modFileScanData, final Throwable throwable) {
         if (throwable != null) {
             fmlLog.error(SCAN,"An error occurred scanning file {}", file, throwable);
         }

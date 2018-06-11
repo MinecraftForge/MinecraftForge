@@ -21,7 +21,7 @@ package net.minecraftforge.fml.common;
 
 import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
+import net.minecraftforge.fml.language.IModInfo;
 
 import java.util.HashMap;
 import java.util.Map;

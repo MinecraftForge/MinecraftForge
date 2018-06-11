@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading.moddiscovery;
+package net.minecraftforge.fml.language;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
@@ -61,7 +61,7 @@ public interface IModInfo
         private final Ordering ordering;
         private final DependencySide side;
 
-        ModVersion(final IModInfo owner, final UnmodifiableConfig config) {
+        public ModVersion(final IModInfo owner, final UnmodifiableConfig config) {
             this.owner = owner;
             this.modId = config.get("modId");
             this.versionRange = config.getOptional("versionRange").map(String.class::cast).

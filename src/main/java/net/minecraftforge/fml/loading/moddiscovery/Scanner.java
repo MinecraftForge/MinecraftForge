@@ -19,19 +19,14 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.IModLanguageProvider;
-import net.minecraftforge.fml.loading.LanguageLoadingProvider;
+import net.minecraftforge.fml.language.IModLanguageProvider;
+import net.minecraftforge.fml.language.ModFileScanData;
 import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
-import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
@@ -42,8 +37,8 @@ public class Scanner {
         this.fileToScan = fileToScan;
     }
 
-    public ScanResult scan() {
-        ScanResult result = new ScanResult(fileToScan);
+    public ModFileScanData scan() {
+        ModFileScanData result = new ModFileScanData();
         fileToScan.scanFile(p -> fileVisitor(p, result));
         final IModLanguageProvider loader = fileToScan.getLoader();
         fmlLog.debug(SCAN, "Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());
@@ -51,7 +46,7 @@ public class Scanner {
         return result;
     }
 
-    private void fileVisitor(final Path path, final ScanResult result) {
+    private void fileVisitor(final Path path, final ModFileScanData result) {
         try {
             fmlLog.debug(SCAN,"Scanning {} path {}", fileToScan, path);
             ModClassVisitor mcv = new ModClassVisitor();

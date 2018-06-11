@@ -60,7 +60,6 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleResource;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.CrashReportExtender;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;

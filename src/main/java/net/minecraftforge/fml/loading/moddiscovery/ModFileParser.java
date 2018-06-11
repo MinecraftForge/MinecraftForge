@@ -22,6 +22,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.electronwill.nightconfig.core.path.PathConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import net.minecraftforge.fml.language.IModFileInfo;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
