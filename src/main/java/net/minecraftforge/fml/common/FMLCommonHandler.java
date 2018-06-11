@@ -54,7 +54,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.fml.client.BrandingControl;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -102,7 +102,7 @@ public class FMLCommonHandler
     private List<String> brandingsNoMC;
     private Set<SaveHandler> handlerSet = Collections.newSetFromMap(new MapMaker().weakKeys().<SaveHandler,Boolean>makeMap());
     private WeakReference<SaveHandler> handlerToCheck;
-    private EventBus eventBus = MinecraftForge.EVENT_BUS;
+    private IEventBus eventBus = MinecraftForge.EVENT_BUS;
     private volatile CountDownLatch exitLatch = null;
 
     private FMLCommonHandler()
@@ -115,7 +115,7 @@ public class FMLCommonHandler
      * @return the event bus
      */
     @Deprecated
-    public EventBus bus()
+    public IEventBus bus()
     {
         return eventBus;
     }

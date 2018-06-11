@@ -27,7 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = IsBookEnchantableTest.MOD_ID, name = "Test for isBookEnchantable", version = "1.0", acceptableRemoteVersions = "*")
@@ -39,7 +39,7 @@ public class IsBookEnchantableTest
 
     private static final Item TEST_ITEM = new TestItem();
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public static void registerItem(RegistryEvent.Register<Item> event)
     {
         if (ENABLED)
@@ -51,7 +51,7 @@ public class IsBookEnchantableTest
     @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
             if (ENABLED)

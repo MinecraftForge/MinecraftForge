@@ -19,13 +19,13 @@
 
 package net.minecraftforge.fml.loading;
 
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.fml.DefaultModContainers;
 import net.minecraftforge.fml.Java9BackportUtils;
-import net.minecraftforge.fml.Logging;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
+import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.logging.log4j.LogManager;
@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -61,21 +62,21 @@ public class ModSorter
     }
 
     private void sort() {
-        final TopologicalSort.DirectedGraph<ModInfo> topoGraph = new TopologicalSort.DirectedGraph<>();
+        final TopologicalSort.DirectedGraph<IModInfo> topoGraph = new TopologicalSort.DirectedGraph<>();
         modFiles.stream().map(ModFile::getModInfos).
                 flatMap(Collection::stream).forEach(topoGraph::addNode);
         modFiles.stream().map(ModFile::getModInfos).
-                flatMap(Collection::stream).map(ModInfo::getDependencies).flatMap(Collection::stream).forEach(dep->addDependency(topoGraph, dep));
+                flatMap(Collection::stream).map(IModInfo::getDependencies).flatMap(Collection::stream).forEach(dep->addDependency(topoGraph, dep));
     }
 
-    private void addDependency(TopologicalSort.DirectedGraph<ModInfo> topoGraph, ModInfo.ModVersion dep)
+    private void addDependency(TopologicalSort.DirectedGraph<IModInfo> topoGraph, IModInfo.ModVersion dep)
     {
     }
 
     private void buildUniqueList()
     {
-        final Stream<ModInfo> modInfos = modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream);
-        final Map<String, List<ModInfo>> modIds = modInfos.collect(Collectors.groupingBy(ModInfo::getModId));
+        final Stream<ModInfo> modInfos = modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).map(ModInfo.class::cast);
+        final Map<String, List<ModInfo>> modIds = modInfos.collect(Collectors.groupingBy(IModInfo::getModId));
 
         // TODO: make this figure out dupe handling better
         final List<Map.Entry<String, List<ModInfo>>> dupedMods = modIds.entrySet().stream().filter(e -> e.getValue().size() > 1).collect(Collectors.toList());
@@ -90,14 +91,14 @@ public class ModSorter
     private void verifyDependencyVersions()
     {
         final Map<String, ArtifactVersion> modVersions = Stream.concat(modFiles.stream().map(ModFile::getModInfos).
-                flatMap(Collection::stream), ForgeVersion.getModInfos().stream()).collect(Collectors.toMap(ModInfo::getModId, ModInfo::getVersion));
-        final Map<ModInfo, List<ModInfo.ModVersion>> modVersionDependencies = modFiles.stream().
+                flatMap(Collection::stream), DefaultModContainers.getModInfos().stream()).collect(Collectors.toMap(IModInfo::getModId, IModInfo::getVersion));
+        final Map<IModInfo, List<IModInfo.ModVersion>> modVersionDependencies = modFiles.stream().
                 map(ModFile::getModInfos).flatMap(Collection::stream).
                 collect(Collectors.groupingBy(Function.identity(), Java9BackportUtils.flatMapping(e -> e.getDependencies().stream(), Collectors.toList())));
-        final Set<ModInfo.ModVersion> mandatoryModVersions = modVersionDependencies.values().stream().flatMap(Collection::stream).
+        final Set<IModInfo.ModVersion> mandatoryModVersions = modVersionDependencies.values().stream().flatMap(Collection::stream).
                 filter(mv -> mv.isMandatory() && mv.getSide().isCorrectSide()).collect(Collectors.toSet());
         LogManager.getLogger("FML").debug(LOADING, "Found {} mandatory requirements", mandatoryModVersions.size());
-        final Set<ModInfo.ModVersion> missingVersions = mandatoryModVersions.stream().filter(mv->this.modVersionMatches(mv, modVersions)).collect(Collectors.toSet());
+        final Set<IModInfo.ModVersion> missingVersions = mandatoryModVersions.stream().filter(mv->this.modVersionMatches(mv, modVersions)).collect(Collectors.toSet());
         LogManager.getLogger("FML").debug(LOADING, "Found {} mandatory mod requirements missing", missingVersions.size());
 
         if (!missingVersions.isEmpty()) {
@@ -105,7 +106,7 @@ public class ModSorter
         }
     }
 
-    private boolean modVersionMatches(final ModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
+    private boolean modVersionMatches(final IModInfo.ModVersion mv, final Map<String, ArtifactVersion> modVersions)
     {
         return !modVersions.containsKey(mv.getModId()) || !mv.getVersionRange().containsVersion(modVersions.get(mv.getModId()));
     }

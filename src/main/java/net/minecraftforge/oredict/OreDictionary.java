@@ -20,7 +20,6 @@
 package net.minecraftforge.oredict;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +31,6 @@ import net.minecraft.block.BlockPrismarine;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.ModContainer;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -46,15 +44,12 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.common.MinecraftForge;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
+import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 
@@ -701,7 +696,7 @@ public class OreDictionary
         MinecraftForge.EVENT_BUS.post(new OreRegisterEvent(name, ore));
     }
 
-    public static class OreRegisterEvent extends Event
+    public static class OreRegisterEvent extends net.minecraftforge.eventbus.api.Event
     {
         private final String Name;
         private final ItemStack Ore;

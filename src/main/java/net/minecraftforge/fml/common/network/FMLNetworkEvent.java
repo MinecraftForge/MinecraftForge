@@ -27,7 +27,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.INetHandlerPlayServer;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -242,7 +242,8 @@ public class FMLNetworkEvent<T extends INetHandler> extends Event {
      * @author cpw
      *
      */
-    public static class CustomNetworkEvent extends Event {
+    public static class CustomNetworkEvent extends net.minecraftforge.eventbus.api.Event
+    {
         private final Object wrappedEvent;
         public CustomNetworkEvent(Object wrappedEvent)
         {

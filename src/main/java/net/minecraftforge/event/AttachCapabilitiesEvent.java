@@ -26,7 +26,7 @@ import com.google.common.collect.Maps;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.common.eventhandler.GenericEvent;
+import net.minecraftforge.eventbus.api.GenericEvent;
 
 /**
  * Fired whenever an object with Capabilities support {currently TileEntity/Item/Entity)

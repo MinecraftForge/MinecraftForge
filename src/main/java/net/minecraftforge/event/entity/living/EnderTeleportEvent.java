@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.entity.EntityLivingBase;
 
 /**

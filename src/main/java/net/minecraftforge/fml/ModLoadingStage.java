@@ -17,14 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.eventhandler;
+package net.minecraftforge.fml;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-@Retention(value = RUNTIME)
-@Target(value = TYPE)
-public @interface Cancelable{}
+public enum ModLoadingStage
+{
+    ERROR, BEGIN, CONSTRUCT, PREINIT, INIT, POSTINIT, COMPLETE
+}

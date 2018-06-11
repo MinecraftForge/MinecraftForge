@@ -40,7 +40,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = DamageEventTest.MODID, name = "ForgeDebugLivingDamage", version = "1.0", acceptableRemoteVersions = "*")
@@ -155,13 +155,13 @@ public class DamageEventTest
     public static class TestEventHandler
     {
 
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void livingHurtPre(LivingHurtEvent evt)
         {
             logger.info("Entity {} damage from {} (pre-reduction): {}", evt.getEntity(), evt.getSource().getDamageType(), evt.getAmount());
         }
 
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void livingHurtPost(LivingDamageEvent evt)
         {
             logger.info("Entity {} damage from {} (post-reduction): {}", evt.getEntity(), evt.getSource().getDamageType(), evt.getAmount());

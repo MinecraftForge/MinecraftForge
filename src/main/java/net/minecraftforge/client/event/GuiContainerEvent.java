@@ -20,7 +20,7 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Event class for handling GuiContainer specific events.

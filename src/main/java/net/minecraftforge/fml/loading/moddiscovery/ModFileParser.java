@@ -22,7 +22,6 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.electronwill.nightconfig.core.path.PathConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -37,7 +36,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ModFileParser {
-    public static ModFile.ModFileInfo readModList(final ModFile modFile) {
+    public static IModFileInfo readModList(final ModFile modFile) {
         fmlLog.debug(LOADING,"Parsing mod file candidate {}", modFile.getFilePath());
         final Path modsjson = modFile.getLocator().findPath(modFile, "META-INF", "mods.toml");
         if (!Files.exists(modsjson)) {
@@ -47,12 +46,12 @@ public class ModFileParser {
         return loadModFile(modFile, modsjson);
     }
 
-    public static ModFile.ModFileInfo loadModFile(final ModFile file, final Path modsjson)
+    public static IModFileInfo loadModFile(final ModFile file, final Path modsjson)
     {
         final PathConfig pathConfig = PathConfig.builder(modsjson).build();
         pathConfig.load();
         pathConfig.close();
-        return new ModFile.ModFileInfo(file, pathConfig);
+        return new ModFileInfo(file, pathConfig);
     }
 
     protected static List<CoreModFile> getCoreMods(final ModFile modFile) {

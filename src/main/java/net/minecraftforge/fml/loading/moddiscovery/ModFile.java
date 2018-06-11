@@ -19,24 +19,14 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.common.collect.ImmutableMap;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.fml.StringUtils;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.IModLanguageProvider;
 import net.minecraftforge.fml.loading.ModLoadingClassLoader;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -84,7 +74,7 @@ public class ModFile
     public List<ModContainer> buildMods(ModLoadingClassLoader modClassLoader)
     {
         return getScanResult().getTargets().entrySet().stream().
-                map(e->e.getValue().loadMod(this.modInfoMap.get(e.getKey()), modClassLoader)).collect(Collectors.toList());
+                map(e->e.getValue().loadMod(this.modInfoMap.get(e.getKey()), modClassLoader, getScanResult())).collect(Collectors.toList());
     }
 
     public enum Type {
@@ -94,8 +84,8 @@ public class ModFile
     private final Type modFileType;
     private final Manifest manifest;
     private final IModLocator locator;
-    private ModFileInfo modFileInfo;
-    private Map<String, ModInfo> modInfoMap;
+    private IModFileInfo modFileInfo;
+    private Map<String, IModInfo> modInfoMap;
     private ScanResult fileScanResult;
     private CompletableFuture<ScanResult> futureScanResult;
     private List<CoreModFile> coreMods;
@@ -125,7 +115,7 @@ public class ModFile
         return filePath;
     }
 
-    public List<ModInfo> getModInfos() {
+    public List<IModInfo> getModInfos() {
         return modFileInfo.getMods();
     }
 
@@ -135,12 +125,12 @@ public class ModFile
     public boolean identifyMods() {
         this.modFileInfo = ModFileParser.readModList(this);
         if (this.modFileInfo == null) return false;
-        fmlLog.debug(LOADING,"Loading mod file {} with language {}", this.getFilePath(), this.modFileInfo.modLoader);
-        this.modInfoMap = this.getModInfos().stream().collect(Collectors.toMap(ModInfo::getModId, Function.identity()));
+        fmlLog.debug(LOADING,"Loading mod file {} with language {}", this.getFilePath(), this.modFileInfo.getModLoader());
+        this.modInfoMap = this.getModInfos().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> fmlLog.debug(LOADING,"Found coremod {}", mi.getPath()));
         this.accessTransformer = locator.findPath(this, "META-INF", "accesstransformer.cfg");
-        this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this.modFileInfo.modLoader, this.modFileInfo.modLoaderVersion);
+        this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this.modFileInfo.getModLoader(), this.modFileInfo.getModLoaderVersion());
         return true;
     }
 
@@ -193,53 +183,7 @@ public class ModFile
         return locator;
     }
 
-    public ModFileInfo getModFileInfo() {
+    public IModFileInfo getModFileInfo() {
         return modFileInfo;
-    }
-    public static class ModFileInfo {
-        private final UnmodifiableConfig config;
-        private final ModFile modFile;
-        private final URL updateJSONURL;
-        private final URL issueURL;
-        private final String modLoader;
-        private final VersionRange modLoaderVersion;
-        private final List<ModInfo> mods;
-        private final Map<String,Object> properties;
-
-        public ModFileInfo(final ModFile modFile, final UnmodifiableConfig config)
-        {
-            this.modFile = modFile;
-            this.config = config;
-            this.modLoader = config.<String>getOptional("modLoader").
-                    orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
-            this.modLoaderVersion = config.<String>getOptional("loaderVersion").
-                    map(VersionRange::createFromVersionSpec).
-                    orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
-            this.properties = config.<UnmodifiableConfig>getOptional("properties").
-                    map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
-            this.modFile.setFileProperties(this.properties);
-            final ArrayList<UnmodifiableConfig> modConfigs = config.getOrElse("mods", ArrayList::new);
-            if (modConfigs.isEmpty()) {
-                throw new InvalidModFileException("Missing mods list", this);
-            }
-            this.mods = modConfigs.stream().map(mi-> new ModInfo(this, mi)).collect(Collectors.toList());
-            this.updateJSONURL = config.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
-            this.issueURL = config.<String>getOptional("issueTrackerURL").map(StringUtils::toURL).orElse(null);
-        }
-
-        public List<ModInfo> getMods()
-        {
-            return mods;
-        }
-
-        public ModFile getFile()
-        {
-            return this.modFile;
-        }
-
-        public UnmodifiableConfig getConfig()
-        {
-            return this.config;
-        }
     }
 }

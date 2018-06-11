@@ -20,8 +20,6 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 
-import com.google.common.collect.Multimap;
-import net.minecraftforge.fml.loading.FMLJavaModLanguageProvider;
 import net.minecraftforge.fml.loading.IModLanguageProvider;
 import org.objectweb.asm.Type;
 
@@ -65,7 +63,6 @@ public class ScanResult {
     {
         return modTargets;
     }
-
 
     public static class ClassData {
         private final Type clazz;
@@ -111,6 +108,5 @@ public class ScanResult {
         public static ScanResult.AnnotationData fromModAnnotation(final Type clazz, final ModAnnotation annotation) {
             return new AnnotationData(annotation.asmType, clazz, annotation.member, annotation.values);
         }
-
     }
 }

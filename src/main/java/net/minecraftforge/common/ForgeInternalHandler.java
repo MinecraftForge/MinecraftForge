@@ -28,9 +28,8 @@ import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -64,7 +63,7 @@ public class ForgeInternalHandler
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @net.minecraftforge.eventbus.api.SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST)
     public void onDimensionLoad(WorldEvent.Load event)
     {
         ForgeChunkManager.loadWorld(event.getWorld());
@@ -76,7 +75,7 @@ public class ForgeInternalHandler
         ForgeChunkManager.saveWorld(event.getWorld());
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @net.minecraftforge.eventbus.api.SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionUnload(WorldEvent.Unload event)
     {
         ForgeChunkManager.unloadWorld(event.getWorld());

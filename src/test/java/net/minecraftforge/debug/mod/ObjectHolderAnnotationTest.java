@@ -26,7 +26,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
@@ -67,7 +67,7 @@ public class ObjectHolderAnnotationTest
     @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void newRegistry(RegistryEvent.NewRegistry event)
         {
             new RegistryBuilder<ICustomRegistryEntry>()
@@ -77,7 +77,7 @@ public class ObjectHolderAnnotationTest
                     .create();
         }
 
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerPotions(RegistryEvent.Register<Potion> event)
         {
             event.getRegistry().register(

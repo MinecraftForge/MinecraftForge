@@ -1,18 +1,16 @@
 package net.minecraftforge.fml.test;
 
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.moddiscovery.IModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileParser;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.jar.JarFile;
 
 public class ModsTomlTest
 {
@@ -21,7 +19,7 @@ public class ModsTomlTest
     {
         final URL resource = getClass().getClassLoader().getResource("mods.toml");
         final Path path = Paths.get(resource.toURI());
-        final ModFile.ModFileInfo modFileInfo = ModFileParser.loadModFile(null, path);
+        final IModFileInfo modFileInfo = ModFileParser.loadModFile(null, path);
         modFileInfo.getMods();
     }
 

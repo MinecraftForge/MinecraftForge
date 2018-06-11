@@ -21,15 +21,15 @@ package net.minecraftforge.client.event;
 
 import org.lwjgl.input.Mouse;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Author: MachineMuse (Claire Semple)
  * Created: 2:46 PM, 9/4/13
  */
-@Cancelable
-public class MouseEvent extends Event
+@net.minecraftforge.eventbus.api.Cancelable
+public class MouseEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final int x;
     private final int y;

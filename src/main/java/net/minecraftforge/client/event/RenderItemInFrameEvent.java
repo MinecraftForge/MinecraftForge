@@ -22,8 +22,8 @@ package net.minecraftforge.client.event;
 import net.minecraft.client.renderer.entity.RenderItemFrame;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 
@@ -33,7 +33,7 @@ import javax.annotation.Nonnull;
  * You can set canceled to do no further vanilla processing.
  */
 @Cancelable
-public class RenderItemInFrameEvent extends Event
+public class RenderItemInFrameEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final ItemStack item;
     private final EntityItemFrame entityItemFrame;

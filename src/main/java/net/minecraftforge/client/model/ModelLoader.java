@@ -80,6 +80,7 @@ import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
@@ -143,7 +144,7 @@ public final class ModelLoader extends ModelBakery
     @Override
     public IRegistry<ModelResourceLocation, IBakedModel> setupModelRegistry()
     {
-        if (FMLClientHandler.instance().hasError()) // skip loading models if we're just going to show a fatal error screen
+        if (ClientModLoader.isErrored()) // skip loading models if we're just going to show a fatal error screen
             return bakedRegistry;
 
         isLoading = true;

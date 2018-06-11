@@ -46,7 +46,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 @EventBusSubscriber
@@ -63,7 +63,7 @@ public class LootContextTweaksTest
         LootConditionManager.registerCondition(new InBiome.Serialiser());
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public static void onLootTableLoad(LootTableLoadEvent event)
     {
         if (!ENABLED) return;

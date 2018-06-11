@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.fml.StringUtils;
+import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.common.FMLPaths;
 
 import java.io.IOException;

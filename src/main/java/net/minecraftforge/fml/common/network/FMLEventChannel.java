@@ -29,8 +29,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -50,7 +50,7 @@ import javax.annotation.Nullable;
  */
 public class FMLEventChannel {
     private EnumMap<Side, FMLEmbeddedChannel> channels;
-    private EventBus eventBus;
+    private IEventBus eventBus;
 
     /*
      * This is done this way so that the CLIENT specific code in the factory only loads on the client
@@ -100,7 +100,7 @@ public class FMLEventChannel {
     FMLEventChannel(String name)
     {
         this.channels = NetworkRegistry.INSTANCE.newChannel(name, new NetworkEventFiringHandler(this));
-        this.eventBus = new EventBus();
+        this.eventBus = IEventBus.create();
     }
 
     /**

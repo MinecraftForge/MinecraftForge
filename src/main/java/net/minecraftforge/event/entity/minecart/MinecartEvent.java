@@ -22,11 +22,11 @@ package net.minecraftforge.event.entity.minecart;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * MinecartEvent is fired whenever an event involving minecart entities occurs. <br>
- * If a method utilizes this {@link Event} as its parameter, the method will <br>
+ * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will <br>
  * receive every child event of this class.<br>
  * <br>
  * {@link #minecart} contains the minecart entity involved with this event.<br>

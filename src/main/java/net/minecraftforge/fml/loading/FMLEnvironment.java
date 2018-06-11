@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,26 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.eventhandler;
+package net.minecraftforge.fml.loading;
 
-public enum EventPriority implements IEventListener
+import net.minecraftforge.api.Side;
+import net.minecraftforge.fml.loading.FMLLoader;
+
+public class FMLEnvironment
 {
-    /*Priority of event listeners, listeners will be sorted with respect to this priority level.
-     *
-     * Note:
-     *   Due to using a ArrayList in the ListenerList,
-     *   these need to stay in a contiguous index starting at 0. {Default ordinal}
-     */
-    HIGHEST, //First to execute
-    HIGH,
-    NORMAL,
-    LOW,
-    LOWEST //Last to execute
-;
-
-    @Override
-    public void invoke(Event event)
-    {
-        event.setPhase(this);
-    }
+    public static final Side side = FMLLoader.getSide();
 }

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 
 import org.objectweb.asm.Type;

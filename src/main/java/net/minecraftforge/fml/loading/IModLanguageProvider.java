@@ -20,11 +20,9 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ScanResult;
 
-import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -40,6 +38,6 @@ public interface IModLanguageProvider
     Consumer<ScanResult> getFileVisitor();
 
     interface IModLanguageLoader {
-        ModContainer loadMod(ModInfo info, ClassLoader modClassLoader);
+        ModContainer loadMod(IModInfo info, ClassLoader modClassLoader, ScanResult scanResults);
     }
 }

@@ -53,7 +53,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -390,7 +390,8 @@ public class ForgeChunkManager
         }
     }
 
-    public static class ForceChunkEvent extends Event {
+    public static class ForceChunkEvent extends net.minecraftforge.eventbus.api.Event
+    {
         private final Ticket ticket;
         private final ChunkPos location;
 
@@ -411,7 +412,8 @@ public class ForgeChunkManager
         }
     }
 
-    public static class UnforceChunkEvent extends Event {
+    public static class UnforceChunkEvent extends net.minecraftforge.eventbus.api.Event
+    {
         private final Ticket ticket;
         private final ChunkPos location;
 

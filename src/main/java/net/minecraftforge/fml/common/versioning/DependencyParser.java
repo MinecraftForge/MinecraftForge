@@ -30,6 +30,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 
 public final class DependencyParser
@@ -182,7 +183,7 @@ public final class DependencyParser
     }
 
     // TODO 1.13: throw these exceptions instead of logging them
-    /** Based on {@link net.minecraftforge.fml.common.FMLModContainer#sanityCheckModId()} */
+    /** Based on {@link FMLModContainer#sanityCheckModId()} */
     private static void sanityCheckModId(String modId, String dep, String depModId)
     {
         if (Strings.isNullOrEmpty(depModId))

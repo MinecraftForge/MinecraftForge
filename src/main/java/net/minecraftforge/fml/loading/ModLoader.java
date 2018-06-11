@@ -19,7 +19,9 @@
 
 package net.minecraftforge.fml.loading;
 
+import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 
 import java.util.Collection;
 import java.util.List;
@@ -49,6 +51,12 @@ public class ModLoader
     }
 
     public void loadMods() {
-        final List<ModContainer> collect = modList.getModFiles().stream().map(mf -> mf.buildMods(this.modClassLoader)).flatMap(Collection::stream).collect(Collectors.toList());
+        modList.setLoadedMods(modList.getModFiles().stream().
+                map(ModFileInfo::getFile).
+                map(mf -> mf.buildMods(this.modClassLoader)).
+                flatMap(Collection::stream).collect(Collectors.toList()));
+
+        LifecycleEventProvider.LOAD.dispatch(modList);
+        LifecycleEventProvider.PREINIT.dispatch(modList);
     }
 }

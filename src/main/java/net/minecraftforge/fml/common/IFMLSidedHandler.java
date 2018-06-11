@@ -28,7 +28,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.common.util.CompoundDataFixer;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.relauncher.Side;
 
 public interface IFMLSidedHandler
@@ -65,7 +65,7 @@ public interface IFMLSidedHandler
 
     INetHandler getClientPlayHandler();
 
-    void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
+    void fireNetRegistrationEvent(IEventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side);
 
     boolean shouldAllowPlayerLogins();
 

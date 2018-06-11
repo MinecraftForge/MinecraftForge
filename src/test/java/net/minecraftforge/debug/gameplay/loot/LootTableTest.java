@@ -33,7 +33,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod(modid = LootTableTest.MODID, name = "Loot Table Debug", version = "1.0", acceptableRemoteVersions = "*")
 public class LootTableTest
@@ -46,7 +46,7 @@ public class LootTableTest
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void lootLoad(LootTableLoadEvent event)
     {
         if (!event.getName().equals(LootTableList.CHESTS_SPAWN_BONUS_CHEST))
@@ -64,7 +64,7 @@ public class LootTableTest
         event.getTable().removePool("pool3");
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void lootingEvent(LootingLevelEvent event)
     {
         // if the player shoots something with a projectile, use looting 3

@@ -17,18 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.eventhandler;
+package net.minecraftforge.fml.loading.moddiscovery;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import net.minecraftforge.fml.common.versioning.VersionRange;
 
-import static java.lang.annotation.RetentionPolicy.*;
-import static java.lang.annotation.ElementType.*;
+import java.net.URL;
+import java.util.List;
 
-@Retention(value = RUNTIME)
-@Target(value = METHOD)
-public @interface SubscribeEvent
+public interface IModFileInfo
 {
-    EventPriority priority() default EventPriority.NORMAL;
-    boolean receiveCanceled() default false;
+    List<IModInfo> getMods();
+
+    UnmodifiableConfig getConfig();
+
+    URL getUpdateURL(IModFileInfo modFileInfo);
+
+    String getModLoader();
+
+    VersionRange getModLoaderVersion();
 }

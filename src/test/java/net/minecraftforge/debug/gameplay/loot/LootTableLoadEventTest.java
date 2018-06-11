@@ -27,7 +27,7 @@ import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod(modid = LootTableLoadEventTest.MODID, name = "LootTableLoadEventTest", version = "1.0", acceptableRemoteVersions = "*")
 public class LootTableLoadEventTest
@@ -44,7 +44,7 @@ public class LootTableLoadEventTest
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void onLootTableLoadEvent(LootTableLoadEvent event)
     {
         if (LootTableList.CHESTS_SPAWN_BONUS_CHEST.equals(event.getName()))

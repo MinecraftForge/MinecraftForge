@@ -22,7 +22,7 @@ package net.minecraftforge.event.entity.player;
 import java.util.List;
 
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -34,7 +34,7 @@ import net.minecraftforge.event.entity.living.LivingDropsEvent;
  * player dies.  Canceling the event will prevent ALL drops from entering the
  * world.
  */
-@Cancelable
+@net.minecraftforge.eventbus.api.Cancelable
 public class PlayerDropsEvent extends LivingDropsEvent
 {
     private final EntityPlayer entityPlayer;

@@ -22,10 +22,11 @@ package net.minecraftforge.fml.common.gameevent;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.relauncher.Side;
 
-public class TickEvent extends Event {
+public class TickEvent extends net.minecraftforge.eventbus.api.Event
+{
     public enum Type {
         WORLD, PLAYER, CLIENT, SERVER, RENDER;
     }

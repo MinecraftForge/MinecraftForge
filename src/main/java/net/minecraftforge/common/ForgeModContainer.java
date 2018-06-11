@@ -94,7 +94,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -415,7 +415,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
         UsernameCache.setUsername(event.player.getPersistentID(), event.player.getGameProfile().getName());
@@ -491,7 +491,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void registrItems(RegistryEvent.Register<Item> event)
     {
         // Add and register the forge universal bucket, if it's enabled

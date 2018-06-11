@@ -24,7 +24,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod(modid = "clientchateventtest", name = "Client Chat Event Test", version = "0.0.0", clientSideOnly = true)
 public class ClientChatEventTest
@@ -40,7 +40,7 @@ public class ClientChatEventTest
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void onPlayerAttemptChat(ClientChatEvent event)
     {
         if (event.getMessage().equals("Cancel"))

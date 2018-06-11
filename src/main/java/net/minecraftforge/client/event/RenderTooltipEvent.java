@@ -27,8 +27,8 @@ import javax.annotation.Nonnull;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * A set of events which are fired at various points during tooltip rendering.
@@ -42,7 +42,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * <li>{@link RenderTooltipEvent.PostText}</li>
  * </ul>
  */
-public abstract class RenderTooltipEvent extends Event
+public abstract class RenderTooltipEvent extends net.minecraftforge.eventbus.api.Event
 {
     @Nonnull
     protected final ItemStack stack;
@@ -110,7 +110,7 @@ public abstract class RenderTooltipEvent extends Event
      * <p>
      * This event is {@link Cancelable}.
      */
-    @Cancelable
+    @net.minecraftforge.eventbus.api.Cancelable
     public static class Pre extends RenderTooltipEvent
     {
         private int screenWidth;

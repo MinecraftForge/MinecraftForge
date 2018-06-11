@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.texture.TextureMap;
 
 

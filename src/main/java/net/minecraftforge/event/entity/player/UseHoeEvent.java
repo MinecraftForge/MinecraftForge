@@ -23,8 +23,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 
@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
  * setResult(ALLOW) is the same as the old setHandled();
  */
 @Cancelable
-@Event.HasResult
+@net.minecraftforge.eventbus.api.Event.HasResult
 public class UseHoeEvent extends PlayerEvent
 {
 

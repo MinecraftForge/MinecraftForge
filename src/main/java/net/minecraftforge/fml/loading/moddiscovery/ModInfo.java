@@ -20,36 +20,29 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraftforge.fml.FMLEnvironment;
-import net.minecraftforge.fml.StringSubstitutor;
-import net.minecraftforge.fml.StringUtils;
+import net.minecraftforge.fml.loading.StringSubstitutor;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionRange;
-import net.minecraftforge.fml.loading.IModLanguageProvider;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ModInfo {
+public class ModInfo implements IModInfo {
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
-    public static final VersionRange UNBOUNDED = VersionRange.createFromVersionSpec("");
-    private final ModFile.ModFileInfo owningFile;
+    private final ModFileInfo owningFile;
     private final String modId;
     private final ArtifactVersion version;
     private final String displayName;
     private final String description;
-    private final List<ModInfo.ModVersion> dependencies;
+    private final List<IModInfo.ModVersion> dependencies;
     private final Map<String,Object> properties;
     private final UnmodifiableConfig modConfig;
 
-    public ModInfo(final ModFile.ModFileInfo owningFile, final UnmodifiableConfig modConfig)
+    public ModInfo(final ModFileInfo owningFile, final UnmodifiableConfig modConfig)
     {
         this.owningFile = owningFile;
         this.modConfig = modConfig;
@@ -71,84 +64,29 @@ public class ModInfo {
 
     }
 
-    public ModFile getOwningFile() {
-        return owningFile.getFile();
+    @Override
+    public ModFileInfo getOwningFile() {
+        return owningFile;
     }
 
+    @Override
     public String getModId() {
         return modId;
     }
 
+    @Override
     public ArtifactVersion getVersion() {
         return version;
     }
 
-    public List<ModInfo.ModVersion> getDependencies() {
+    @Override
+    public List<IModInfo.ModVersion> getDependencies() {
         return this.dependencies;
     }
 
-    public enum Ordering {
-        BEFORE, AFTER, NONE
+    @Override
+    public UnmodifiableConfig getModConfig() {
+        return this.modConfig;
     }
 
-    public enum DependencySide {
-        CLIENT, SERVER, BOTH;
-
-        public boolean isCorrectSide()
-        {
-            return this == BOTH || FMLEnvironment.side.name().equals(this.name());
-        }
-    }
-
-    public static class ModVersion {
-        private ModInfo owner;
-        private final String modId;
-        private final VersionRange versionRange;
-        private final boolean mandatory;
-        private final Ordering ordering;
-        private final DependencySide side;
-
-        ModVersion(final ModInfo owner, final UnmodifiableConfig config) {
-            this.owner = owner;
-            this.modId = config.get("modId");
-            this.versionRange = config.getOptional("versionRange").map(String.class::cast).
-                    map(VersionRange::createFromVersionSpec).orElse(UNBOUNDED);
-            this.mandatory = config.get("mandatory");
-            this.ordering = config.getOptional("ordering").map(String.class::cast).
-                    map(Ordering::valueOf).orElse(Ordering.NONE);
-            this.side = config.getOptional("side").map(String.class::cast).
-                    map(DependencySide::valueOf).orElse(DependencySide.BOTH);
-        }
-
-
-        public String getModId()
-        {
-            return modId;
-        }
-
-        public VersionRange getVersionRange()
-        {
-            return versionRange;
-        }
-
-        public boolean isMandatory()
-        {
-            return mandatory;
-        }
-
-        public Ordering getOrdering()
-        {
-            return ordering;
-        }
-
-        public DependencySide getSide()
-        {
-            return side;
-        }
-
-        public void setOwner(final ModInfo owner)
-        {
-            this.owner = owner;
-        }
-    }
 }

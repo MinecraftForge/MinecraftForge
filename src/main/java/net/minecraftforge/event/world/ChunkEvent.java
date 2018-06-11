@@ -22,12 +22,12 @@ package net.minecraftforge.event.world;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * ChunkEvent is fired when an event involving a chunk occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #chunk} contains the Chunk this event is affecting.<br>
@@ -55,7 +55,7 @@ public class ChunkEvent extends WorldEvent
      * {@link ChunkProviderClient#loadChunk(int, int)}, <br>
      * Chunk.onChunkLoad(). <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
@@ -74,7 +74,7 @@ public class ChunkEvent extends WorldEvent
      * This event is fired during chunk unloading in <br>
      * Chunk.onChunkUnload(). <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>

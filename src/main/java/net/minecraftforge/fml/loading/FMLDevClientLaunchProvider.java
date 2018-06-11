@@ -22,12 +22,13 @@ package net.minecraftforge.fml.loading;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import net.minecraft.client.main.Main;
 import net.minecraftforge.api.Side;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import static net.minecraftforge.fml.Logging.CORE;
@@ -40,6 +41,13 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     {
         return "devfmlclient";
     }
+
+    private static final List<String> SKIPPACKAGES = Arrays.asList(
+            "joptsimple.", "org.lwjgl.", "com.mojang.", "com.google.",
+            "org.apache.commons.", "io.netty.", "net.minecraftforge.fml.loading.",
+            "net.minecraftforge.eventbus.", "it.unimi.dsi.fastutil.", "net.minecraftforge.api.",
+            "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig."
+    );
 
     @Override
     public Path[] identifyTransformationTargets()
@@ -62,7 +70,7 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
         return () -> {
             fmlLog.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
             super.beforeStart(launchClassLoader);
-            launchClassLoader.setTargetPackageFilter(cn -> !cn.startsWith("net.minecraftforge.fml.loading."));
+            launchClassLoader.addTargetPackageFilter(cn -> SKIPPACKAGES.stream().noneMatch(cn::startsWith));
             Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };

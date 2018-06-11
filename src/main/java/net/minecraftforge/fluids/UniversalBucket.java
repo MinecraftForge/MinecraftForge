@@ -40,9 +40,9 @@ import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
@@ -212,7 +212,7 @@ public class UniversalBucket extends Item
     @SubscribeEvent(priority = EventPriority.LOW) // low priority so other mods can handle their stuff first
     public void onFillBucket(FillBucketEvent event)
     {
-        if (event.getResult() != Event.Result.DEFAULT)
+        if (event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DEFAULT)
         {
             // event was already handled
             return;
@@ -243,7 +243,7 @@ public class UniversalBucket extends Item
         FluidActionResult filledResult = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
         if (filledResult.isSuccess())
         {
-            event.setResult(Event.Result.ALLOW);
+            event.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
             event.setFilledBucket(filledResult.getResult());
         }
         else

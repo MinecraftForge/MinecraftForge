@@ -17,16 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftforge.fml.javafmlmod;
 
-import net.minecraftforge.fml.common.FMLModContainer;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.fml.loading.IModLanguageProvider;
+import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ScanResult;
 import org.objectweb.asm.Type;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -53,9 +52,9 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
         }
 
         @Override
-        public ModContainer loadMod(final ModInfo info, final ClassLoader modClassLoader)
+        public ModContainer loadMod(final IModInfo info, final ClassLoader modClassLoader, final ScanResult scanResults)
         {
-            return new FMLModContainer(info, className, modClassLoader);
+            return new FMLModContainer(info, className, modClassLoader, scanResults);
         }
     }
 

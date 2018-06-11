@@ -24,13 +24,11 @@ import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 
@@ -53,9 +51,9 @@ public class MinecraftForge
      * ORE_GEN_BUS for ore gen events
      * EVENT_BUS for everything else
      */
-    public static final EventBus EVENT_BUS = new EventBus();
-    public static final EventBus TERRAIN_GEN_BUS = new EventBus();
-    public static final EventBus ORE_GEN_BUS = new EventBus();
+    public static final IEventBus EVENT_BUS = IEventBus.create();
+    public static final IEventBus TERRAIN_GEN_BUS = IEventBus.create();
+    public static final IEventBus ORE_GEN_BUS = IEventBus.create();
     public static final String MC_VERSION = Loader.MC_VERSION;
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();

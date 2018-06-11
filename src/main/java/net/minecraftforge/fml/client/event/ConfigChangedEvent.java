@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 import javax.annotation.Nullable;
 
@@ -36,7 +36,7 @@ import javax.annotation.Nullable;
  * @author bspkrs
  */
 @HasResult
-public class ConfigChangedEvent extends Event
+public class ConfigChangedEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final String  modID;
     private final boolean isWorldRunning;

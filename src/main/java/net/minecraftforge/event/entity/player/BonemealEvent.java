@@ -19,8 +19,8 @@
 
 package net.minecraftforge.event.entity.player;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  * setResult(ALLOW) is the same as the old setHandled()
  */
 @Cancelable
-@Event.HasResult
+@net.minecraftforge.eventbus.api.Event.HasResult
 public class BonemealEvent extends PlayerEvent
 {
 

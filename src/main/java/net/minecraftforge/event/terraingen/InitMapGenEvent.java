@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event.terraingen;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.world.gen.MapGenBase;
 
 public class InitMapGenEvent extends Event

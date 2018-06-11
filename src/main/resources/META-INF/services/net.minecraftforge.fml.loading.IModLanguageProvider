@@ -1,1 +1,1 @@
-net.minecraftforge.fml.loading.FMLJavaModLanguageProvider
+net.minecraftforge.fml.javafmlmod.FMLJavaModLanguageProvider

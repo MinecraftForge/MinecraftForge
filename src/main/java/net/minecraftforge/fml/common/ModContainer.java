@@ -19,20 +19,13 @@
 
 package net.minecraftforge.fml.common;
 
-import java.io.File;
-import java.net.URL;
-import java.security.cert.Certificate;
-import java.util.List;
+import net.minecraftforge.fml.LifecycleEventProvider;
+import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.loading.moddiscovery.IModInfo;
+
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionRange;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.eventbus.EventBus;
-
-import javax.annotation.Nullable;
+import java.util.function.Consumer;
 
 /**
  * The container that wraps around mods in the system.
@@ -47,125 +40,82 @@ import javax.annotation.Nullable;
  *
  */
 
-public interface ModContainer
+public abstract class ModContainer
 {
-    public static enum Disableable {
-        YES, RESTART, NEVER, DEPENDENCIES;
-
+    protected final String modId;
+    protected final IModInfo modInfo;
+    protected ModLoadingStage modLoadingStage;
+    protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
+    public ModContainer(IModInfo info)
+    {
+        this.modId = info.getModId();
+        this.modInfo = info;
+        this.triggerMap = new HashMap<>();
+        this.modLoadingStage = ModLoadingStage.BEGIN;
     }
+
     /**
-     * The globally unique modid for this mod
+     * @return the modid for this mod
      */
-    String getModId();
-    String getPrefix();
+    public final String getModId()
+    {
+        return modId;
+    }
 
     /**
-     * A human readable name
+     * @return the resource prefix for the mod
      */
-
-    String getName();
+    public final String getPrefix()
+    {
+        return modId;
+    }
 
     /**
-     * A human readable version identifier
+     * @return The current loading stage for this mod
      */
-    String getVersion();
+    public ModLoadingStage getCurrentState()
+    {
+        return modLoadingStage;
+    }
 
     /**
-     * The location on the file system which this mod came from
+     * Transition the mod to this event if possible.
+     * @param event to transition to
      */
-    File getSource();
+    public final void transitionState(LifecycleEventProvider.LifecycleEvent event)
+    {
+        if (modLoadingStage != event.fromStage())
+        {
+            try
+            {
+                triggerMap.getOrDefault(modLoadingStage, e->{}).accept(event);
+                modLoadingStage = event.toStage();
+            }
+            catch (RuntimeException e)
+            {
+                modLoadingStage = ModLoadingStage.ERROR;
+            }
+        }
+    }
 
     /**
-     * The metadata for this mod
+     * @return the modinfo used to create this mod instance
      */
-    ModMetadata getMetadata();
+    public IModInfo getModInfo()
+    {
+        return modInfo;
+    }
 
     /**
-     * Attach this mod to it's metadata from the supplied metadata collection
-     */
-    void bindMetadata(MetadataCollection mc);
-
-    /**
-     * Set the enabled/disabled state of this mod
-     */
-    void setEnabledState(boolean enabled);
-
-    /**
-     * A list of the modids that this mod requires loaded prior to loading
-     */
-    Set<ArtifactVersion> getRequirements();
-
-    /**
-     * A list of modids that should be loaded prior to this one. The special
-     * value <strong>*</strong> indicates to load <em>after</em> any other mod.
-     */
-    List<ArtifactVersion> getDependencies();
-
-    /**
-     * A list of modids that should be loaded <em>after</em> this one. The
-     * special value <strong>*</strong> indicates to load <em>before</em> any
-     * other mod.
-     */
-    List<ArtifactVersion> getDependants();
-
-    /**
-     * A representative string encapsulating the sorting preferences for this
-     * mod
-     */
-    String getSortingRules();
-
-    /**
-     * Register the event bus for the mod and the controller for error handling
-     * Returns if this bus was successfully registered - disabled mods and other
-     * mods that don't need real events should return false and avoid further
-     * processing
+     * Does this mod match the supplied mod?
      *
-     * @param bus
-     * @param controller
+     * @param mod to compare
+     * @return if the mod matches
      */
-    boolean registerBus(EventBus bus, LoadController controller);
+    public abstract boolean matches(Object mod);
 
     /**
-     * Does this mod match the supplied mod
-     *
-     * @param mod
+     * @return the mod object instance
      */
-    boolean matches(Object mod);
-
-    /**
-     * Get the actual mod object
-     */
-    Object getMod();
-
-    ArtifactVersion getProcessedVersion();
-
-    boolean isImmutable();
-
-    String getDisplayVersion();
-
-    VersionRange acceptableMinecraftVersionRange();
-
-    @Nullable
-    Certificate getSigningCertificate();
-
-    public static final Map<String,String> EMPTY_PROPERTIES = ImmutableMap.of();
-    Map<String,String> getCustomModProperties();
-
-    public Class<?> getCustomResourcePackClass();
-
-    Map<String, String> getSharedModDescriptor();
-
-    Disableable canBeDisabled();
-
-    String getGuiClassName();
-
-    List<String> getOwnedPackages();
-
-    boolean shouldLoadInEnvironment();
-
-    URL getUpdateUrl();
-
-    void setClassVersion(int classVersion);
-
-    int getClassVersion();
+    public abstract Object getMod();
 }

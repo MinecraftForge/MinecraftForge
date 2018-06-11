@@ -22,6 +22,7 @@ package net.minecraftforge.fml.loading;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
@@ -35,25 +36,6 @@ public class ModLoadingClassLoader extends SecureClassLoader
 {
     static {
         ClassLoader.registerAsParallelCapable();
-        // We use a custom URL format : modjar:modid!/path/in/jarfile
-        URL.setURLStreamHandlerFactory(protocol -> "modjar".equals(protocol) ? new URLStreamHandler() {
-            @Override
-            protected URLConnection openConnection(URL url) throws IOException {
-                return new URLConnection(url) {
-                    @Override
-                    public void connect()
-                    {
-                        url.get
-                    }
-                };
-            }
-
-            @Override
-            protected void parseURL(URL u, String spec, int start, int limit)
-            {
-
-            }
-        } : null);
     }
 
     private ModLoader modLoader;

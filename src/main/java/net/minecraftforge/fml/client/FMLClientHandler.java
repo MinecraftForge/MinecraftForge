@@ -109,7 +109,7 @@ import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
@@ -118,8 +118,6 @@ import net.minecraftforge.registries.GameData;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.FormattedMessage;
-import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
@@ -178,9 +176,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     private Minecraft client;
 
     private DummyModContainer optifineContainer;
-
-    @Deprecated // TODO remove in 1.13. mods are referencing this to get around client-only dependencies in old Forge versions
-    private MissingModsException modsMissing;
 
     private boolean loading = true;
 
@@ -584,15 +579,6 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     /**
-     * TODO remove in 1.13
-     */
-    @Deprecated
-    public void displayMissingMods(Object modMissingPacket)
-    {
-//        showGuiScreen(new GuiModsMissingForServer(modMissingPacket));
-    }
-
-    /**
      * If the client is in the midst of loading, we disable saving so that custom settings aren't wiped out
      */
     public boolean isLoading()
@@ -894,7 +880,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     @Override
-    public void fireNetRegistrationEvent(EventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side)
+    public void fireNetRegistrationEvent(IEventBus bus, NetworkManager manager, Set<String> channelSet, String channel, Side side)
     {
         if (side == Side.CLIENT)
         {
@@ -930,7 +916,6 @@ public class FMLClientHandler implements IFMLSidedHandler
         throw new RuntimeException("Unknown INetHandler: " + net);
     }
 
-    private SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
     private Set<String> badTextureDomains = Sets.newHashSet();
     private Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
 
@@ -1043,6 +1028,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         return DISALLOWED_CHAR_MATCHER.removeFrom(StringUtils.stripControlCodes(message));
     }
 
+    public void logMissingTextureErrors() {}
     @Override
     public void reloadRenderers()
     {

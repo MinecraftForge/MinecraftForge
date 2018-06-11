@@ -20,7 +20,7 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Author: MachineMuse (Claire Semple)

@@ -70,10 +70,10 @@ public class ModDiscoverer {
             }
         }
         fmlLog.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
-        final ModList sortedMods = ModSorter.sort(mods);
-        sortedMods.addCoreMods();
-        sortedMods.addAccessTransformers();
-        sortedMods.addForScanning(backgroundScanHandler);
+        final ModList modList = ModSorter.sort(mods);
+        modList.addCoreMods();
+        modList.addAccessTransformers();
+        modList.addForScanning(backgroundScanHandler);
         return backgroundScanHandler;
     }
 }

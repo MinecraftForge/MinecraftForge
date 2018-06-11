@@ -54,6 +54,7 @@ public class FMLLoader
     private static ILaunchPluginService accessTransformer;
     private static ModDiscoverer modDiscoverer;
     private static ICoreModProvider coreModProvider;
+    private static ILaunchPluginService eventBus;
     private static LanguageLoadingProvider languageLoadingProvider;
     private static Side side;
     private static ModList modList;
@@ -70,6 +71,8 @@ public class FMLLoader
             fmlLog.error(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
+        fmlLog.debug(CORE, "Initializing modjar URL handler");
+        URL.setURLStreamHandlerFactory(p->p.equals("modjar") ? new ModJarURLHandler() : null);
 
         accessTransformer = environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> new IncompatibleEnvironmentException("Missing AccessTransformer, cannot run"));
 
@@ -78,6 +81,15 @@ public class FMLLoader
         if (!atPackage.isCompatibleWith("1.0")) {
             fmlLog.error(CORE,"Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible accesstransformer found "+atPackage.getSpecificationVersion());
+        }
+
+        eventBus = environment.findLaunchPlugin("eventbus").orElseThrow(()-> new IncompatibleEnvironmentException("Missing EventBus, cannot run"));
+
+        final Package eventBusPackage = eventBus.getClass().getPackage();
+        fmlLog.debug(CORE,"FML found EventBus version : {}", eventBusPackage.getImplementationVersion());
+        if (!eventBusPackage.isCompatibleWith("1.0")) {
+            fmlLog.error(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
+            throw new IncompatibleEnvironmentException("Incompatible eventbus found "+eventBusPackage.getSpecificationVersion());
         }
 
         final ArrayList<ICoreModProvider> coreModProviders = new ArrayList<>();

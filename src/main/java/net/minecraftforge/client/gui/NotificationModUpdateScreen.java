@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
+import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -41,7 +42,7 @@ public class NotificationModUpdateScreen extends GuiScreen
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
 
     private final GuiButton modButton;
-    private Status showNotification = null;
+    private VersionChecker.Status showNotification = null;
     private boolean hasCheckedForUpdates = false;
 
     public NotificationModUpdateScreen(GuiButton modButton)

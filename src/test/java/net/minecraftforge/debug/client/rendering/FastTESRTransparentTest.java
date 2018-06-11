@@ -56,7 +56,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -219,7 +219,7 @@ public class FastTESRTransparentTest
     public static class BlockHolder
     {
 
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void onBlockRegister(RegistryEvent.Register<Block> evt)
         {
             evt.getRegistry().register(testBlock
@@ -227,7 +227,7 @@ public class FastTESRTransparentTest
                     .setRegistryName("fluid-tesr-block"));
         }
 
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void onItemRegister(RegistryEvent.Register<Item> evt)
         {
             evt.getRegistry().register(new ItemBlock(testBlock)
@@ -257,7 +257,7 @@ public class FastTESRTransparentTest
     @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientLoader
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
             ModelLoader.setCustomStateMapper(testBlock, block -> Collections.emptyMap());

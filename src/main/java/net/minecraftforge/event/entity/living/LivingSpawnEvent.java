@@ -21,11 +21,10 @@ package net.minecraftforge.event.entity.living;
 
 import javax.annotation.Nullable;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 
@@ -142,14 +141,14 @@ public class LivingSpawnEvent extends LivingEvent
      * <br>
      * This event is fired via the {@link ForgeEventFactory#doSpecialSpawn(EntityLiving, World, float, float, float)}.<br>
      * <br>
-     * This event is {@link Cancelable}.<br>
+     * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * If this event is canceled, the Entity is not spawned.<br>
      * <br>
      * This event does not have a result. {@link HasResult}<br>
      * <br>
      * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
      **/
-    @Cancelable
+    @net.minecraftforge.eventbus.api.Cancelable
     public static class SpecialSpawn extends LivingSpawnEvent
     {
         @Nullable

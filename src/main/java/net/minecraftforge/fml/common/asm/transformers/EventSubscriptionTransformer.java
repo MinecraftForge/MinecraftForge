@@ -42,7 +42,7 @@ import static org.objectweb.asm.Type.getMethodDescriptor;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -104,7 +104,7 @@ public class EventSubscriptionTransformer implements IClassTransformer
         // Yes, this recursively loads classes until we get this base class. THIS IS NOT A ISSUE. Coremods should handle re-entry just fine.
         // If they do not this a COREMOD issue NOT a Forge/LaunchWrapper issue.
         Class<?> parent = this.getClass().getClassLoader().loadClass(classNode.superName.replace('/', '.'));
-        if (!Event.class.isAssignableFrom(parent))
+        if (!net.minecraftforge.eventbus.api.Event.class.isAssignableFrom(parent))
         {
             return false;
         }

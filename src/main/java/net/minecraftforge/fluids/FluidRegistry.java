@@ -26,7 +26,6 @@ import java.util.Set;
 
 import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.common.LoaderState;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -48,7 +47,7 @@ import com.google.common.collect.Sets;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 import javax.annotation.Nullable;

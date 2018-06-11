@@ -21,8 +21,8 @@ package net.minecraftforge.event.world;
 
 import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.ChunkPos;
@@ -45,30 +45,14 @@ import net.minecraft.world.chunk.Chunk;
  **/
 public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
 {
-    @Deprecated //TODO: Remove in 1.13
-    private final ChunkPos chunk;
     private final EntityPlayerMP player;
     private final Chunk chunkInstance;
-
-    @Deprecated //TODO: Remove in 1.13
-    public ChunkWatchEvent(ChunkPos chunk, EntityPlayerMP player)
-    {
-        this.chunk = chunk;
-        this.player = player;
-        this.chunkInstance = null;
-    }
 
     public ChunkWatchEvent(Chunk chunk, EntityPlayerMP player)
     {
         this.chunk = chunk.getPos();
         this.player = player;
         this.chunkInstance = chunk;
-    }
-
-    @Deprecated //TODO: Remove in 1.13
-    public ChunkPos getChunk()
-    {
-        return chunk;
     }
 
     public EntityPlayerMP getPlayer()
@@ -91,7 +75,7 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
      * This event is fired when a chunk is added to the watched chunks of an EntityPlayer in
      * {@link PlayerChunkMapEntry#addPlayer(EntityPlayerMP)} and {@link PlayerChunkMapEntry#sendToPlayers()}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
@@ -99,9 +83,6 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
      **/
     public static class Watch extends ChunkWatchEvent
     {
-        @Deprecated //TODO: Remove in 1.13
-        public Watch(ChunkPos chunk, EntityPlayerMP player) { super(chunk, player); }
-
         public Watch(Chunk chunk, EntityPlayerMP player) { super(chunk, player); }
     }
 
@@ -110,7 +91,7 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
      * This event is fired when a chunk is removed from the watched chunks of an EntityPlayer in
      * {@link PlayerChunkMapEntry#removePlayer(EntityPlayerMP)}. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
@@ -118,9 +99,6 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
-        @Deprecated //TODO: Remove in 1.13
-        public UnWatch(ChunkPos chunkLocation, EntityPlayerMP player) { super(chunkLocation, player); }
-
         public UnWatch(Chunk chunk, EntityPlayerMP player) { super(chunk, player); }
     }
 }

@@ -19,12 +19,12 @@
 
 package net.minecraftforge.event.terraingen;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.IChunkGenerator;
 
-public class ChunkGeneratorEvent extends Event
+public class ChunkGeneratorEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final IChunkGenerator gen;
 
