@@ -22,7 +22,7 @@ package net.minecraftforge.fml.common.discovery;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 
 public interface ITypeDiscoverer
 {

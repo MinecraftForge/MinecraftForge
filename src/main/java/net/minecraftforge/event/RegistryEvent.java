@@ -26,7 +26,7 @@ import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;

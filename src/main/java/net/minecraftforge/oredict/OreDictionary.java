@@ -30,7 +30,7 @@ import java.util.Set;
 import net.minecraft.block.BlockPrismarine;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -49,7 +49,6 @@ import com.google.common.collect.Maps;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.eventbus.api.Event;
 
 import javax.annotation.Nonnull;
 

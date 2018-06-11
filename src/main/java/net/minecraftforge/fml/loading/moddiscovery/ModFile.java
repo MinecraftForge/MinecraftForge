@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.language.IModFileInfo;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;

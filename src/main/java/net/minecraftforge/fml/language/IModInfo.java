@@ -34,6 +34,10 @@ public interface IModInfo
 
     String getModId();
 
+    String getDisplayName();
+
+    String getDescription();
+
     ArtifactVersion getVersion();
 
     List<ModVersion> getDependencies();

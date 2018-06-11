@@ -50,13 +50,10 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.ServerPinger;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.AbstractResourcePack;
-import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.LegacyV2Adapter;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraft.client.resources.data.PackMetadataSection;
 import net.minecraft.client.util.RecipeBookClient;
@@ -92,11 +89,11 @@ import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.util.CompoundDataFixer;
+import net.minecraftforge.fml.client.gui.GuiModList;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLContainerHolder;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -104,9 +101,8 @@ import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.MultipleModsErrored;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -116,19 +112,14 @@ import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.GameData;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
 import com.google.common.base.Throwables;
 import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -344,15 +335,6 @@ public class FMLClientHandler implements IFMLSidedHandler
                 haltGame("There was a severe problem during mod loading that has caused the game to fail", le);
                 return;
             }
-        }
-
-        // This call is being phased out for performance reasons in 1.12,
-        // but we are keeping an option here in case something needs it for a little longer.
-        // See https://github.com/MinecraftForge/MinecraftForge/pull/4032
-        // TODO remove in 1.13
-        if (Boolean.parseBoolean(System.getProperty("fml.reloadResourcesOnStart", "false")))
-        {
-            client.refreshResources();
         }
 
         RenderingRegistry.loadEntityRenderers(Minecraft.getMinecraft().getRenderManager().entityRenderMap);

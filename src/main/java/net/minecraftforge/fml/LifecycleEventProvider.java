@@ -21,6 +21,7 @@ package net.minecraftforge.fml;
 
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.loading.ModList;
+import net.minecraftforge.fml.loading.ModLoadingStage;
 
 import java.util.function.Supplier;
 

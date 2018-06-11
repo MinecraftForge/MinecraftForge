@@ -46,7 +46,7 @@ import com.google.common.collect.Sets;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.registries.IRegistryDelegate;
 

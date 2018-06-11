@@ -19,9 +19,7 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.util.Iterator;
 import java.util.List;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList.EntityEggInfo;
@@ -34,7 +32,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
 
 import java.util.function.Function;

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,11 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftforge.fml.client;
 
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.loading.ModList;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
-public interface FMLContainerHolder
+import java.util.Optional;
+import java.util.function.BiFunction;
+
+public class ConfigGuiHandler
 {
-    ModContainer getFMLContainer();
+    public static Optional<BiFunction<Minecraft, GuiScreen, GuiScreen>> getGuiFactoryFor(ModInfo selectedMod)
+    {
+        return ModList.get().getModContainerById(selectedMod.getModId()).map(mc->mc.getCustomExtension("customGuiFactory"));
+    }
 }

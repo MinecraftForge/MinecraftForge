@@ -20,8 +20,7 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
@@ -40,6 +39,7 @@ import java.util.stream.Collectors;
  */
 public class ModList
 {
+    private static ModList INSTANCE;
     private final List<ModFileInfo> modFiles;
     private final List<ModInfo> sortedList;
     private final Map<String, ModFileInfo> fileById;
@@ -47,7 +47,7 @@ public class ModList
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
 
-    public ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
+    private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
         this.modFiles = modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).collect(Collectors.toList());
         this.sortedList = sortedList;
@@ -56,6 +56,15 @@ public class ModList
                 collect(Collectors.toMap(ModInfo::getModId, ModInfo::getOwningFile));
     }
 
+    public static ModList of(List<ModFile> modFiles, List<ModInfo> sortedList)
+    {
+        INSTANCE = new ModList(modFiles, sortedList);
+        return INSTANCE;
+    }
+
+    public static ModList get() {
+        return INSTANCE;
+    }
     public void addCoreMods()
     {
         modFiles.stream().map(ModFileInfo::getFile).map(ModFile::getCoreMods).flatMap(List::stream).forEach(FMLLoader.getCoreModProvider()::addCoreMod);
@@ -108,6 +117,16 @@ public class ModList
 
     public Optional<Object> getModObjectById(String modId)
     {
+        return getModContainerById(modId).map(ModContainer::getMod);
+    }
+
+    public Optional<? extends ModContainer> getModContainerById(String modId)
+    {
         return Optional.ofNullable(this.indexedMods.get(modId));
+    }
+
+    public List<ModInfo> getMods()
+    {
+        return this.sortedList;
     }
 }

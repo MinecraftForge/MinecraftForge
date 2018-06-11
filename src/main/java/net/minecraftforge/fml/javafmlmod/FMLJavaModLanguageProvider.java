@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;

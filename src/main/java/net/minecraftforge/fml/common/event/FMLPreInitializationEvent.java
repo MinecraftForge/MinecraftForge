@@ -25,7 +25,7 @@ import java.security.cert.Certificate;
 import java.util.Properties;
 
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;

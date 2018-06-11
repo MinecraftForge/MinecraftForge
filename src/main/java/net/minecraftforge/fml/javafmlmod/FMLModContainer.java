@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Objects;
 
 import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.loading.ModLoadingStage;
 import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;
@@ -34,6 +34,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.Type;
@@ -117,4 +118,9 @@ public class FMLModContainer extends ModContainer
         return modInstance;
     }
 
+    @Override
+    public <T> T getCustomExtension(final String name)
+    {
+        return ((Function<String,T>)modInstance).apply(name);
+    }
 }

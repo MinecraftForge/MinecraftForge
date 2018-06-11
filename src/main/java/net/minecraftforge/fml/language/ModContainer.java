@@ -17,11 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftforge.fml.language;
 
 import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.loading.ModLoadingStage;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -118,4 +117,6 @@ public abstract class ModContainer
      * @return the mod object instance
      */
     public abstract Object getMod();
+
+    public abstract <T> T getCustomExtension(final String name);
 }

@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ModInfo implements IModInfo
@@ -76,6 +77,17 @@ public class ModInfo implements IModInfo
     }
 
     @Override
+    public String getDisplayName()
+    {
+        return this.displayName;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return this.description;
+    }
+    @Override
     public ArtifactVersion getVersion() {
         return version;
     }
@@ -90,4 +102,8 @@ public class ModInfo implements IModInfo
         return this.modConfig;
     }
 
+    public Optional<String> getLogoFile()
+    {
+        return this.owningFile.getConfig().getOptional("logoFile");
+    }
 }

@@ -57,7 +57,7 @@ public class ModSorter
         ms.buildUniqueList();
         ms.verifyDependencyVersions();
         ms.sort();
-        return new ModList(ms.modFiles, ms.sortedList);
+        return ModList.of(ms.modFiles, ms.sortedList);
     }
 
     private void sort() {

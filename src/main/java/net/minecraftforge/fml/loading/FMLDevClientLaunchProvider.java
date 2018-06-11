@@ -46,7 +46,8 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
             "joptsimple.", "org.lwjgl.", "com.mojang.", "com.google.",
             "org.apache.commons.", "io.netty.", "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.",
             "net.minecraftforge.eventbus.", "it.unimi.dsi.fastutil.", "net.minecraftforge.api.",
-            "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig."
+            "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig.",
+            "net.minecraftforge.fml.common.versioning."
     );
 
     @Override

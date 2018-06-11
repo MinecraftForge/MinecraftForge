@@ -20,7 +20,7 @@
 package net.minecraftforge.fml;
 
 import com.electronwill.nightconfig.core.path.PathConfig;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 

@@ -20,7 +20,6 @@
 package net.minecraftforge.client.gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +49,7 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.BooleanEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import static net.minecraftforge.common.ForgeModContainer.VERSION_CHECK_CAT;
 
 /**

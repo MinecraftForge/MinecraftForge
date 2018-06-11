@@ -19,8 +19,9 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import javax.annotation.Nullable;
 import java.net.URL;
@@ -114,7 +115,7 @@ public class VersionChecker
 
     private static Map<ModContainer, CheckResult> results = new ConcurrentHashMap<>();
 
-    public static CheckResult getResult(ModContainer mod)
+    public static CheckResult getResult(ModInfo mod)
     {
         return new CheckResult(Status.PENDING, null, null, null);
     }

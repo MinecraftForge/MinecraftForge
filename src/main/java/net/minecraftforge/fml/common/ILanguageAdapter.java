@@ -24,6 +24,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 
 public interface ILanguageAdapter {

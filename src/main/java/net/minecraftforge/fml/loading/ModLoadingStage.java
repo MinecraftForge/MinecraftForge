@@ -17,11 +17,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftforge.fml.loading;
 
-import net.minecraftforge.fml.language.ModContainer;
-
-public interface FMLContainerHolder
+public enum ModLoadingStage
 {
-    ModContainer getFMLContainer();
+    ERROR, BEGIN, CONSTRUCT, PREINIT, INIT, POSTINIT, COMPLETE
 }

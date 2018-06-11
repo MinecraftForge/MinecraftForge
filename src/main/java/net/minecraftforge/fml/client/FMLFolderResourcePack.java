@@ -32,7 +32,7 @@ import javax.imageio.ImageIO;
 
 import net.minecraft.client.resources.FolderResourcePack;
 import net.minecraftforge.fml.common.FMLContainerHolder;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 
 public class FMLFolderResourcePack extends FolderResourcePack implements FMLContainerHolder {
 

@@ -20,11 +20,9 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class ModLoader

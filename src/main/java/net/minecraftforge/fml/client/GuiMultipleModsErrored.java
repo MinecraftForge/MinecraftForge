@@ -24,6 +24,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.client.gui.GuiScrollingList;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.ModContainer;

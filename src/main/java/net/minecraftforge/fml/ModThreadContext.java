@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 
 public class ModThreadContext
 {

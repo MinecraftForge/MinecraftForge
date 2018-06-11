@@ -29,6 +29,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.IThreadListener;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 
 public interface IFMLSidedHandler

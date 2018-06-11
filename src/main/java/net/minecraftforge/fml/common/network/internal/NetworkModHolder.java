@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;

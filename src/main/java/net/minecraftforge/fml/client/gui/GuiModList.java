@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client;
+package net.minecraftforge.fml.client.gui;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
@@ -49,21 +51,24 @@ import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.common.ForgeVersion.CheckResult;
-import net.minecraftforge.common.ForgeVersion.Status;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.ModContainer.Disableable;
+import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.client.ConfigGuiHandler;
+import net.minecraftforge.fml.client.ResourcePackLoader;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
-import static net.minecraft.util.text.TextFormatting.*;
 
+import static net.minecraft.util.StringUtils.stripControlCodes;
+
+import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.loading.ModList;
+import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Mouse;
 
-import com.google.common.base.Strings;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -72,14 +77,16 @@ import org.lwjgl.opengl.GL11;
  */
 public class GuiModList extends GuiScreen
 {
-    private enum SortType implements Comparator<ModContainer>
+    private static final Logger LOGGER = LogManager.getLogger();
+
+    private enum SortType implements Comparator<ModInfo>
     {
         NORMAL(24),
         A_TO_Z(25){ @Override protected int compare(String name1, String name2){ return name1.compareTo(name2); }},
         Z_TO_A(26){ @Override protected int compare(String name1, String name2){ return name2.compareTo(name1); }};
 
-        private int buttonID;
 
+        private int buttonID;
         private SortType(int buttonID)
         {
             this.buttonID = buttonID;
@@ -101,24 +108,25 @@ public class GuiModList extends GuiScreen
         protected int compare(String name1, String name2){ return 0; }
 
         @Override
-        public int compare(ModContainer o1, ModContainer o2)
+        public int compare(ModInfo o1, ModInfo o2)
         {
-            String name1 = StringUtils.stripControlCodes(o1.getName()).toLowerCase();
-            String name2 = StringUtils.stripControlCodes(o2.getName()).toLowerCase();
+            String name1 = StringUtils.toLowerCase(stripControlCodes(o1.getDisplayName()));
+            String name2 = StringUtils.toLowerCase(stripControlCodes(o2.getDisplayName()));
             return compare(name1, name2);
         }
+
     }
 
     private GuiScreen mainMenu;
     private GuiSlotModList modList;
     private GuiScrollingList modInfo;
     private int selected = -1;
-    private ModContainer selectedMod;
+    private ModInfo selectedMod;
     private int listWidth;
-    private ArrayList<ModContainer> mods;
+    private List<ModInfo> mods;
     private GuiButton configModButton;
-    private GuiButton disableModButton;
 
+    private final List<ModInfo> unsortedMods;
     private int buttonMargin = 1;
     private int numButtons = SortType.values().length;
 
@@ -134,47 +142,29 @@ public class GuiModList extends GuiScreen
     public GuiModList(GuiScreen mainMenu)
     {
         this.mainMenu = mainMenu;
-        this.mods = new ArrayList<ModContainer>();
-        FMLClientHandler.instance().addSpecialModEntries(mods);
-        // Add child mods to their parent's list
-        for (ModContainer mod : Loader.instance().getModList())
-        {
-            if (mod.getMetadata() != null && mod.getMetadata().parentMod == null && !Strings.isNullOrEmpty(mod.getMetadata().parent))
-            {
-                String parentMod = mod.getMetadata().parent;
-                ModContainer parentContainer = Loader.instance().getIndexedModList().get(parentMod);
-                if (parentContainer != null)
-                {
-                    mod.getMetadata().parentMod = parentContainer;
-                    parentContainer.getMetadata().childMods.add(mod);
-                    continue;
-                }
-            }
-            else if (mod.getMetadata() != null && mod.getMetadata().parentMod != null)
-            {
-                continue;
-            }
-            mods.add(mod);
-        }
+        this.mods = ModList.get().getModFiles().stream().
+                map(mf -> mf.getMods().stream().findFirst()).
+                map(Optional::get).
+                map(ModInfo.class::cast).
+                collect(Collectors.toList());
+        this.unsortedMods = Collections.unmodifiableList(this.mods);
     }
 
     @Override
     public void initGui()
     {
         int slotHeight = 35;
-        for (ModContainer mod : mods)
+        for (ModInfo mod : mods)
         {
-            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getName()) + 10);
-            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion()) + 5 + slotHeight);
+            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getDisplayName()) + 10);
+            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion().getVersionString()) + 5 + slotHeight);
         }
         listWidth = Math.min(listWidth, 150);
         this.modList = new GuiSlotModList(this, mods, listWidth, slotHeight);
 
         this.buttonList.add(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")));
         configModButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, "Config");
-        disableModButton = new GuiButton(21, 10, this.height - 27, this.listWidth, 20, "Disable");
         this.buttonList.add(configModButton);
-        this.buttonList.add(disableModButton);
 
         search = new GuiTextField(0, getFontRenderer(), 12, modList.bottom + 17, modList.listWidth - 4, 14);
         search.setFocused(true);
@@ -225,7 +215,7 @@ public class GuiModList extends GuiScreen
         if (!sorted)
         {
             reloadMods();
-            Collections.sort(mods, sortType);
+            mods.sort(sortType);
             selected = modList.selectedIndex = mods.indexOf(selectedMod);
             sorted = true;
         }
@@ -233,17 +223,8 @@ public class GuiModList extends GuiScreen
 
     private void reloadMods()
     {
-        ArrayList<ModContainer> mods = modList.getMods();
-        mods.clear();
-        for (ModContainer m : Loader.instance().getActiveModList())
-        {
-            // If it passes the filter, and is not a child mod
-            if (m.getName().toLowerCase().contains(search.getText().toLowerCase()) && m.getMetadata().parentMod == null)
-            {
-                mods.add(m);
-            }
-        }
-        this.mods = mods;
+        this.mods = this.unsortedMods.stream().
+                filter(mi->StringUtils.toLowerCase(stripControlCodes(mi.getDisplayName())).contains(StringUtils.toLowerCase(search.getText()))).collect(Collectors.toList());
         lastFilterText = search.getText();
     }
 
@@ -266,7 +247,7 @@ public class GuiModList extends GuiScreen
                 button.enabled = false;
                 sorted = false;
                 sortType = type;
-                this.mods = modList.getMods();
+                Collections.copy(this.mods, this.unsortedMods);
             }
             else
             {
@@ -281,13 +262,13 @@ public class GuiModList extends GuiScreen
                     {
                         try
                         {
-                            IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
-                            GuiScreen newScreen = guiFactory.createConfigGui(this);
-                            this.mc.displayGuiScreen(newScreen);
+                            ConfigGuiHandler.getGuiFactoryFor(selectedMod).
+                                    map(f->f.apply(this.mc, this)).
+                                    ifPresent(newScreen -> this.mc.displayGuiScreen(newScreen));
                         }
-                        catch (Exception e)
+                        catch (final Exception e)
                         {
-                            FMLLog.log.error("There was a critical issue trying to build the config GUI for {}", selectedMod.getModId(), e);
+                            LOGGER.error("There was a critical issue trying to build the config GUI for {}", selectedMod.getModId(), e);
                         }
                         return;
                     }
@@ -347,7 +328,7 @@ public class GuiModList extends GuiScreen
         if (index == this.selected)
             return;
         this.selected = index;
-        this.selectedMod = (index >= 0 && index <= mods.size()) ? mods.get(selected) : null;
+        this.selectedMod = (index >= 0 && index < mods.size()) ? mods.get(selected) : null;
 
         updateCache();
     }
@@ -360,22 +341,18 @@ public class GuiModList extends GuiScreen
     private void updateCache()
     {
         configModButton.visible = false;
-        disableModButton.visible = false;
         modInfo = null;
 
         if (selectedMod == null)
             return;
 
-        ResourceLocation logoPath = null;
-        Dimension logoDims = new Dimension(0, 0);
-        List<String> lines = new ArrayList<String>();
-        CheckResult vercheck = ForgeVersion.getResult(selectedMod);
+        List<String> lines = new ArrayList<>();
+        VersionChecker.CheckResult vercheck = VersionChecker.getResult(selectedMod);
 
-        String logoFile = selectedMod.getMetadata().logoFile;
-        if (!logoFile.isEmpty())
+        Pair<ResourceLocation, Dimension> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = mc.getTextureManager();
-            IResourcePack pack = FMLClientHandler.instance().getResourcePackFor(selectedMod.getModId());
+            IResourcePack pack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId());
             try
             {
                 BufferedImage logo = null;
@@ -391,72 +368,38 @@ public class GuiModList extends GuiScreen
                 }
                 if (logo != null)
                 {
-                    logoPath = tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo));
-                    logoDims = new Dimension(logo.getWidth(), logo.getHeight());
+                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Dimension(logo.getWidth(), logo.getHeight()));
                 }
             }
             catch (IOException e) { }
-        }
+            return Pair.<ResourceLocation, Dimension>of(null, new Dimension(0, 0));
+        }).orElse(Pair.of(null, new Dimension(0, 0)));
 
-        if (!selectedMod.getMetadata().autogenerated)
-        {
-            disableModButton.visible = true;
-            disableModButton.enabled = true;
-            disableModButton.packedFGColour = 0;
-            Disableable disableable = selectedMod.canBeDisabled();
-            if (disableable == Disableable.RESTART)
-            {
-                disableModButton.packedFGColour = 0xFF3377;
-            }
-            else if (disableable != Disableable.YES)
-            {
-                disableModButton.enabled = false;
-            }
+        configModButton.visible = true;
+        configModButton.enabled = true;
+        lines.add(selectedMod.getDisplayName());
+        lines.add(String.format("Version: %s", selectedMod.getVersion().getVersionString()));
+        lines.add(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), ModList.get().getModContainerById(selectedMod.getModId()).
+                map(ModContainer::getCurrentState).map(Object::toString).orElse("NONE")));
 
-            IModGuiFactory guiFactory = FMLClientHandler.instance().getGuiFactoryFor(selectedMod);
-            configModButton.visible = true;
-            configModButton.enabled = false;
-            if (guiFactory != null)
-            {
-                configModButton.enabled = guiFactory.hasConfigGui();
-            }
-            lines.add(selectedMod.getMetadata().name);
-            lines.add(String.format("Version: %s (%s)", selectedMod.getDisplayVersion(), selectedMod.getVersion()));
-            lines.add(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), Loader.instance().getModState(selectedMod)));
-
-            if (!selectedMod.getMetadata().credits.isEmpty())
-            {
-                lines.add("Credits: " + selectedMod.getMetadata().credits);
-            }
-
-            lines.add("Authors: " + selectedMod.getMetadata().getAuthorList());
-            lines.add("URL: " + selectedMod.getMetadata().url);
-
-            if (selectedMod.getMetadata().childMods.isEmpty())
-                lines.add("No child mods for this mod");
-            else
-                lines.add("Child mods: " + selectedMod.getMetadata().getChildModList());
-
-            if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-                lines.add("Update Available: " + (vercheck.url == null ? "" : vercheck.url));
-
-            lines.add(null);
-            lines.add(selectedMod.getMetadata().description);
-        }
+        selectedMod.getModConfig().getOptional("credits").ifPresent(credits->
+                lines.add("Credits: " + credits));
+        selectedMod.getModConfig().getOptional("authors").ifPresent(authors ->
+                lines.add("Authors: " + authors));
+        selectedMod.getModConfig().getOptional("displayURL").ifPresent(displayURL ->
+                lines.add("URL: " + displayURL));
+        if (selectedMod.getOwningFile().getMods().size()==1)
+            lines.add("No child mods for this mod");
         else
-        {
-            lines.add(WHITE + selectedMod.getName());
-            lines.add(WHITE + "Version: " + selectedMod.getVersion());
-            lines.add(WHITE + "Mod State: " + Loader.instance().getModState(selectedMod));
-            if (vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED)
-                lines.add("Update Available: " + (vercheck.url == null ? "" : vercheck.url));
+            lines.add("Child mods: " + selectedMod.getOwningFile().getMods().stream().map(IModInfo::getDisplayName).collect(Collectors.joining(",")));
 
-            lines.add(null);
-            lines.add(RED + "No mod information found");
-            lines.add(RED + "Ask your mod author to provide a mod mcmod.info file");
-        }
+        if (vercheck.status == VersionChecker.Status.OUTDATED || vercheck.status == VersionChecker.Status.BETA_OUTDATED)
+            lines.add("Update Available: " + (vercheck.url == null ? "" : vercheck.url));
 
-        if ((vercheck.status == Status.OUTDATED || vercheck.status == Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
+        lines.add(null);
+        lines.add(selectedMod.getDescription());
+
+        if ((vercheck.status == VersionChecker.Status.OUTDATED || vercheck.status == VersionChecker.Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
         {
             lines.add(null);
             lines.add("Changes:");
@@ -468,7 +411,7 @@ public class GuiModList extends GuiScreen
             }
         }
 
-        modInfo = new Info(this.width - this.listWidth - 30, lines, logoPath, logoDims);
+        modInfo = new Info(this.width - this.listWidth - 30, lines, logoData.getLeft(), logoData.getRight());
     }
 
     private class Info extends GuiScrollingList

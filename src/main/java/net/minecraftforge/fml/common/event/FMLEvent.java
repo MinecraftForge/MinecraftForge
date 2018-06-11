@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 
 /**
  * Parent type to all FML events. This is based on Guava EventBus. Event Subscription isn't using the Guava annotation

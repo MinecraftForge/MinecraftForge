@@ -25,12 +25,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.MetadataSerializer;
-import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.lwjgl.input.Mouse;
 

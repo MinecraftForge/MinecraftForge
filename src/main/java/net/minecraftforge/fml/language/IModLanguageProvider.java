@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.language;
 
-import net.minecraftforge.fml.common.ModContainer;
-
 import java.util.function.Consumer;
 
 /**

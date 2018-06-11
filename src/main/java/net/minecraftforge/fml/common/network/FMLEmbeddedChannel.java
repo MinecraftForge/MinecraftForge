@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 
 import net.minecraft.network.Packet;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
