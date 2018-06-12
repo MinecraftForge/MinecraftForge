@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiChat.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiChat.java
+@@ -262,4 +262,15 @@
+                 return blockpos;
+             }
+         }
++
++    /*========================================= FORGE START =====================================*/
++
++    /**
++     * Returns chat input field.
++     */
++    public GuiTextField getInputField() {
++        return this.field_146415_a;
++    }
++
++    /*========================================== FORGE END ======================================*/
+ }
