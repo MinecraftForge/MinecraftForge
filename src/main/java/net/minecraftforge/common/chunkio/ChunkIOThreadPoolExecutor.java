@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.fml.common.FMLLog;
 
-public class ChunkIOThreadPoolExecutor extends ThreadPoolExecutor {
+class ChunkIOThreadPoolExecutor extends ThreadPoolExecutor {
 
     public ChunkIOThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory)
     {
