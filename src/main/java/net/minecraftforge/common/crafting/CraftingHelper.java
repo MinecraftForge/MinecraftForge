@@ -27,7 +27,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,9 +39,15 @@ import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import com.google.common.base.Preconditions;
+import net.minecraftforge.unification.UnificationManager;
+import net.minecraftforge.unification.UnifiedForm;
+import net.minecraftforge.unification.Unified;
+import net.minecraftforge.unification.UnificationIngredient;
+import net.minecraftforge.unification.UnifiedMaterial;
+import net.minecraftforge.unification.Unifier;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -126,6 +131,14 @@ public class CraftingHelper {
             return Ingredient.fromStacks(new ItemStack((Block)obj, 1, OreDictionary.WILDCARD_VALUE));
         else if (obj instanceof String)
             return new OreIngredient((String)obj);
+        else if (obj instanceof Unified)
+        {
+            Unified unified = (Unified) obj;
+            Preconditions.checkArgument(unified.get() instanceof ItemStack, "Unified must be a unified ItemStack");
+            @SuppressWarnings("unchecked")
+            Unified<ItemStack> unifiedItem = (Unified<ItemStack>) unified;
+            return new UnificationIngredient(unifiedItem);
+        }
         else if (obj instanceof JsonElement)
             throw new IllegalArgumentException("JsonObjects must use getIngredient(JsonObject, JsonContext)");
 
@@ -201,8 +214,37 @@ public class CraftingHelper {
         return factory.parse(context, obj);
     }
 
+    public static Unified<ItemStack> getUnifiedItem(JsonObject json, JsonContext context)
+    {
+        if (!json.has("material"))
+            throw new JsonSyntaxException("Unified item has no 'material' key");
+
+        if (!json.has("form"))
+            throw new JsonSyntaxException("Unified item has no 'form' key");
+
+        String materialUid = JsonUtils.getString(json, "material");
+        String formUid = JsonUtils.getString(json, "form");
+        UnifiedMaterial material = UnificationManager.getMaterial(materialUid);
+        UnifiedForm form = UnificationManager.getForm(formUid);
+
+        Unifier<ItemStack> itemStackUnifier = UnificationManager.getItemStackUnifier();
+        Unified<ItemStack> unified = itemStackUnifier.get(material, form);
+        if (unified == null)
+            throw new JsonSyntaxException("There is no unified item for: " + materialUid + " " + formUid);
+        return unified;
+    }
+
     public static ItemStack getItemStack(JsonObject json, JsonContext context)
     {
+        if (json.has("type") && "forge:unified".equals(json.get("type").getAsString()))
+        {
+            Unified<ItemStack> unifiedItem = getUnifiedItem(json, context);
+            final int count = JsonUtils.getInt(json, "count", 1);
+            ItemStack output = unifiedItem.get();
+            output.setCount(count);
+            return output;
+        }
+
         String itemName = context.appendModId(JsonUtils.getString(json, "item"));
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
@@ -537,6 +579,7 @@ public class CraftingHelper {
         registerI("minecraft:empty", (context, json) -> Ingredient.EMPTY);
         registerI("minecraft:item_nbt", (context, json) -> new IngredientNBT(CraftingHelper.getItemStack(json, context)));
         registerI("forge:ore_dict", (context, json) -> new OreIngredient(JsonUtils.getString(json, "ore")));
+        registerI("forge:unified", (context, json) -> new UnificationIngredient(getUnifiedItem(json, context)));
     }
 
     private static void registerC(String name, IConditionFactory fac) {

@@ -1,0 +1,16 @@
+{
+  "type": "forge:ore_shapeless",
+  "group": "shapeless_unified_to_unified",
+  "ingredients": [
+    {
+      "type": "forge:unified",
+      "material": "redstone",
+      "form": "dust"
+    }
+  ],
+  "result": {
+    "type": "forge:unified",
+    "material": "diamond",
+    "form": "gem"
+  }
+}

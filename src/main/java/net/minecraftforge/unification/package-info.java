@@ -1,0 +1,7 @@
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
+package net.minecraftforge.unification;
+
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import mcp.MethodsReturnNonnullByDefault;

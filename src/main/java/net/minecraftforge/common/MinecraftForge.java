@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.unification.UnificationConstants;
 
 import com.google.common.collect.Lists;
 
@@ -86,6 +86,7 @@ public class MinecraftForge
        FMLLog.log.info("MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
        OreDictionary.getOreName(0);
+       UnificationConstants.initVanillaEntries();
 
        UsernameCache.load();
        // Load before all the mods, so MC owns the MC fluids
