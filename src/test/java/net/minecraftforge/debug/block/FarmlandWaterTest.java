@@ -14,12 +14,11 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.FarmlandWaterManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.SimpleTicket;
+import net.minecraftforge.common.ticket.AABBTicket;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -110,7 +109,7 @@ public class FarmlandWaterTest
 
     public static class TestTileEntity extends TileEntity
     {
-        private SimpleTicket<AxisAlignedBB, Vec3d> farmlandTicket;
+        private AABBTicket farmlandTicket;
         private boolean isActive = false;
 
         @Override
@@ -118,7 +117,7 @@ public class FarmlandWaterTest
         {
             if (!world.isRemote)
             {
-                farmlandTicket = FarmlandWaterManager.addWateredRegion(world, new AxisAlignedBB(pos).grow(4D));
+                farmlandTicket = FarmlandWaterManager.addAABBTicket(world, new AxisAlignedBB(pos).grow(4D));
                 updateTicket();
             }
         }
