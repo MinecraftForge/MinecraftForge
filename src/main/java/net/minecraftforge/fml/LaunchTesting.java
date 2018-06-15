@@ -59,6 +59,7 @@ public class LaunchTesting
         logcontext.getConfiguration().addFilter(axformFilter);
         logcontext.getConfiguration().addFilter(eventbusFilter);
         logcontext.updateLoggers();
+        System.setProperty("fml.explodedDir", "/home/cpw/projects/mods/inventorysorter/classes");
         hackNatives();
         Launcher.main("--launchTarget", "devfmlclient","--gameDir", "projects/run",
                 "--accessToken", "blah", "--version", "FMLDev", "--assetIndex", "1.12",

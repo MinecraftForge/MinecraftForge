@@ -18,26 +18,22 @@
  */
 package net.minecraftforge.fml.javafmlmod;
 
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Objects;
-
+import net.minecraftforge.eventbus.EventBusErrorMessage;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.loading.ModLoadingStage;
-import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.language.ModContainer;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.common.event.ModLifecycleEvent;
+import net.minecraftforge.fml.AutomaticEventSubscriber;
+import net.minecraftforge.fml.ModLoadingStage;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import org.objectweb.asm.Type;
+import java.util.function.Consumer;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 
@@ -45,6 +41,7 @@ public class FMLModContainer extends ModContainer
 {
     private static final Logger LOGGER = LogManager.getLogger("FML");
     private final ModFileScanData scanResults;
+    private final IEventBus eventBus;
     private Object modInstance;
     private final Class<?> modClass;
 
@@ -52,43 +49,65 @@ public class FMLModContainer extends ModContainer
     {
         super(info);
         this.scanResults = modFileScanResults;
-        triggerMap.put(ModLoadingStage.BEGIN, this::constructMod);
-        triggerMap.put(ModLoadingStage.PREINIT, this::preinitMod);
+        triggerMap.put(ModLoadingStage.BEGIN, dummy().andThen(this::beforeEvent).andThen(this::constructMod).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.CONSTRUCT, dummy().andThen(this::beforeEvent).andThen(this::preinitMod).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.PREINIT, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
+        this.eventBus = IEventBus.create(this::onEventFailed);
 
         try
         {
             modClass = Class.forName(className, true, modClassLoader);
             LOGGER.error(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
         }
-        catch (ClassNotFoundException e)
+        catch (Throwable e)
         {
             LOGGER.error(LOADING, "Failed to load class {}", className, e);
             throw new RuntimeException(e);
         }
     }
 
-    private void preinitMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
+    private void initMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
     {
 
-        List<Pair<String, String>> instanceFields = scanResults.getAnnotations().stream().
-                filter(a -> Objects.equals(a.getAnnotationType(), Type.getType(Instance.class)) &&
-                        Objects.equals(a.getClassType(), Type.getType(modClass))).
-                map(a->Pair.of(a.getMemberName(), (String)a.getAnnotationData().get("value"))).
-                collect(Collectors.toList());
+    }
 
-        instanceFields.forEach(p->{
-            try
-            {
-                final Field field = modClass.getDeclaredField(p.getLeft());
-                field.setAccessible(true);
-                field.set(modInstance, FMLLoader.getModLoader().getModList().getModObjectById(p.getRight()).get());
-            }
-            catch (NoSuchFieldException | IllegalAccessException e)
-            {
-                LOGGER.error(LOADING, "Unable to set field {} to mod with ID {}", p.getLeft(), p.getRight(), e);
-            }
-        });
+    private Consumer<LifecycleEventProvider.LifecycleEvent> dummy() { return (s) -> {}; }
 
+    private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
+    {
+        LOGGER.error(new EventBusErrorMessage(event, i, iEventListeners, throwable));
+    }
+
+    private void beforeEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
+        ModLoadingContext.get().activeContainer = this;
+    }
+
+    private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
+        final ModLifecycleEvent event = lifecycleEvent.buildModEvent(this);
+        LOGGER.debug(LOADING, "Firing event {} for modid {}", event, this.getModId());
+        try
+        {
+            eventBus.post(event);
+            LOGGER.debug(LOADING, "Fired event {} for modid {}", event, this.getModId());
+        }
+        catch (Throwable e)
+        {
+            LOGGER.error(LOADING,"Caught exception during event {} dispatch for modid {}", event, this.getModId(), e);
+            modLoadingStage = ModLoadingStage.ERROR;
+            modLoadingError.add(e);
+        }
+    }
+
+    private void afterEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
+        ModLoadingContext.get().activeContainer = null;
+        if (getCurrentState() == ModLoadingStage.ERROR) {
+            LOGGER.error(LOADING,"An error occurred while dispatching event {} to {}", lifecycleEvent.fromStage(), getModId());
+        }
+    }
+
+    private void preinitMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
+    {
+        AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
     }
 
     private void constructMod(LifecycleEventProvider.LifecycleEvent event)
@@ -99,10 +118,11 @@ public class FMLModContainer extends ModContainer
             this.modInstance = modClass.newInstance();
             LOGGER.debug(LOADING, "Loaded mod instance {} of type {}", getModId(), modClass.getName());
         }
-        catch (InstantiationException | IllegalAccessException e)
+        catch (Throwable e)
         {
-            LOGGER.error("Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
-            throw new RuntimeException("Failed to create mod instance", e);
+            LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
+            modLoadingStage = ModLoadingStage.ERROR;
+            modLoadingError.add(e);
         }
     }
 
@@ -118,9 +138,8 @@ public class FMLModContainer extends ModContainer
         return modInstance;
     }
 
-    @Override
-    public <T> T getCustomExtension(final String name)
+    public IEventBus getEventBus()
     {
-        return ((Function<String,T>)modInstance).apply(name);
+        return this.eventBus;
     }
 }

@@ -23,7 +23,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;

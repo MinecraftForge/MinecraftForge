@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 

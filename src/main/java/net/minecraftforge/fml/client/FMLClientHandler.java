@@ -101,7 +101,7 @@ import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.MultipleModsErrored;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;

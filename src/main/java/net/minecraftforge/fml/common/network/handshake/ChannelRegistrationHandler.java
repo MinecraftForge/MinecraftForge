@@ -17,6 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+    @Override
+    public void update() {
+        // This method is called every tick (20 times per second normally)
+
+        if (world.isRemote) {
+            // We only do something on the client so we don't have to bother about client-server communication.
+            // The effect that we want to have (blinking the block) is client-side as well.
+            updateCounter();
+            counter -= lastCount * 3;
+            if (counter <= 0) {
+                lit = !lit;
+                counter = 400;      // This is 20 seconds. Rate increases if more mods are near
+                world.markBlockRangeForRenderUpdate(getPos(), getPos());
+            }
+        }
+    }
+
+    private void updateCounter() {
+
 package net.minecraftforge.fml.common.network.handshake;
 
 import io.netty.channel.ChannelHandlerContext;

@@ -25,7 +25,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.GuiSortingProblem;
 import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

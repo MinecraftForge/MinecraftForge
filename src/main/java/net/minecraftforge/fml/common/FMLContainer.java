@@ -38,7 +38,7 @@ import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
@@ -119,7 +119,7 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
             mod.setString("ModVersion", mc.getVersion());
             modList.appendTag(mod);
         }
-        fmlData.setTag("ModList", modList);
+        fmlData.setTag("LoadingModList", modList);
 
         NBTTagCompound registries = new NBTTagCompound();
         fmlData.setTag("Registries", registries);
@@ -135,9 +135,9 @@ public final class FMLContainer extends DummyModContainer implements WorldAccess
     @Override
     public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
     {
-        if (tag.hasKey("ModList"))
+        if (tag.hasKey("LoadingModList"))
         {
-            NBTTagList modList = tag.getTagList("ModList", (byte)10);
+            NBTTagList modList = tag.getTagList("LoadingModList", (byte)10);
             for (int i = 0; i < modList.tagCount(); i++)
             {
                 NBTTagCompound mod = modList.getCompoundTagAt(i);

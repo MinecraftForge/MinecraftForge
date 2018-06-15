@@ -24,8 +24,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.minecraftforge.fml.client.IModGuiFactory;
-import net.minecraftforge.fml.common.event.FMLEvent;
+import net.minecraftforge.api.Side;
+import net.minecraftforge.fml.common.event.ModLifecycleEvent;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -37,15 +37,12 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
-import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.versioning.VersionRange;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * This defines a Mod to FML.
  * Any class found with this annotation applied will be loaded as a Mod. The instance that is loaded will
- * represent the mod to other Mods in the system. It will be sent various subclasses of {@link FMLEvent}
+ * represent the mod to other Mods in the system. It will be sent various subclasses of {@link ModLifecycleEvent}
  * at pre-defined times during the loading of the game, based on where you have applied the {@link EventHandler}
  * annotation.
  */
@@ -60,7 +57,7 @@ public @interface Mod
      * This will be used to identify your mod for third parties (other mods), it will be used to identify your mod for registries such as block and item registries.
      * By default, you will have a resource domain that matches the modid. All these uses require that constraints are imposed on the format of the modid.
      */
-    String modid();
+    String value();
     /**
      * Marks the associated method as handling an FML lifecycle event.
      * The method must have a single parameter, one of the following types. This annotation
@@ -105,20 +102,6 @@ public @interface Mod
     @Target(ElementType.METHOD)
     @interface EventHandler{}
 
-    /**
-     * Populate the annotated field with the mod instance based on the specified ModId. This can be used
-     * to retrieve instances of other mods.
-     * @author cpw
-     *
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.FIELD)
-    @interface Instance {
-        /**
-         * The mod object to inject into this field
-         */
-        String value() default "";
-        }
     /**
      * A class which will be subscribed to {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS} at mod construction time.
      */

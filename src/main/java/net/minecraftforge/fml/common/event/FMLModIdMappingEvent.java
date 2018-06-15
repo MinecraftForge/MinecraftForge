@@ -42,7 +42,7 @@ import net.minecraft.util.ResourceLocation;
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLModIdMappingEvent extends FMLEvent
+public class FMLModIdMappingEvent extends ModLifecycleEvent
 {
     public class ModRemapping
     {
@@ -66,6 +66,7 @@ public class FMLModIdMappingEvent extends FMLEvent
     public final boolean isFrozen;
     public FMLModIdMappingEvent(Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, boolean isFrozen)
     {
+        super(null);
         this.isFrozen = isFrozen;
         this.remaps = Maps.newHashMap();
         remaps.forEach((name, rm) ->

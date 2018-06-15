@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.client;
 
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 
 import java.io.File;
 import java.util.Map.Entry;

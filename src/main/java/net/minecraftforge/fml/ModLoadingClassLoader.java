@@ -17,15 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftforge.fml;
 
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLStreamHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.SecureClassLoader;
@@ -38,11 +36,8 @@ public class ModLoadingClassLoader extends SecureClassLoader
         ClassLoader.registerAsParallelCapable();
     }
 
-    private ModLoader modLoader;
-
-    protected ModLoadingClassLoader(ModLoader modLoader, ClassLoader parent) {
+    protected ModLoadingClassLoader(final ClassLoader parent) {
         super(parent);
-        this.modLoader = modLoader;
     }
 
     @Override
@@ -56,7 +51,7 @@ public class ModLoadingClassLoader extends SecureClassLoader
     {
         LogManager.getLogger("FML").debug(LOADING, "Loading class {}", name);
         final String className = name.replace('.','/').concat(".class");
-        final Path classResource = modLoader.getModList().findResource(className);
+        final Path classResource = FMLLoader.getLoadingModList().findResource(className);
         if (classResource != null) {
             try {
                 final byte[] bytes = Files.readAllBytes(classResource);
@@ -66,6 +61,8 @@ public class ModLoadingClassLoader extends SecureClassLoader
             {
                 throw new ClassNotFoundException("Failed to load class file " + classResource + " for "+ className, e);
             }
+        } else {
+            getParent().loadClass(name);
         }
         throw new ClassNotFoundException("Failed to find class file "+ className);
     }

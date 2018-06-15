@@ -20,6 +20,7 @@
 package net.minecraftforge.fml;
 
 import net.minecraftforge.api.Side;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
@@ -37,7 +38,7 @@ public final class SidedExecutor
      * @return The callable's result
      */
     public static <T> T runOn(Side side, Supplier<Callable<T>> toRun) {
-        if (side == Side.CLIENT) {
+        if (side == FMLEnvironment.side) {
             try
             {
                 return toRun.get().call();
@@ -48,5 +49,17 @@ public final class SidedExecutor
             }
         }
         return null;
+    }
+
+    public static <T> T runSided(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
+        switch (FMLEnvironment.side)
+        {
+            case CLIENT:
+                return clientTarget.get().get();
+            case SERVER:
+                return serverTarget.get().get();
+            default:
+                throw new IllegalArgumentException("UNSIDED?");
+        }
     }
 }

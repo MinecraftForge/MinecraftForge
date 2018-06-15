@@ -22,7 +22,7 @@ package net.minecraftforge.fml.common.network.simpleimpl;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.Side;
 
 /**
  * Context for the {@link IMessageHandler}

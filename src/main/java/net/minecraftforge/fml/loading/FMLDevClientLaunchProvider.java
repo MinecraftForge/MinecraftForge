@@ -24,6 +24,7 @@ import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.Side;
 
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -72,6 +73,10 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
             fmlLog.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
             super.beforeStart(launchClassLoader);
             launchClassLoader.addTargetPackageFilter(cn -> SKIPPACKAGES.stream().noneMatch(cn::startsWith));
+            Field scl = ClassLoader.class.getDeclaredField("scl"); // Get system class loader
+            scl.setAccessible(true); // Set accessible
+            scl.set(null, launchClassLoader.getInstance()); // Update it to your class loader
+            Thread.currentThread().setContextClassLoader(launchClassLoader.getInstance());
             Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };

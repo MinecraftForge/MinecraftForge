@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 import net.minecraftforge.common.util.TextTable;
 import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
-import net.minecraftforge.fml.common.event.FMLEvent;
+import net.minecraftforge.fml.common.event.ModLifecycleEvent;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.event.FMLModDisabledEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -39,7 +39,7 @@ import net.minecraftforge.fml.common.event.FMLStateEvent;
 import net.minecraftforge.fml.common.eventhandler.FMLThrowingEventBus;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.ThreadContext;
 import org.apache.logging.log4j.message.FormattedMessage;
@@ -175,7 +175,7 @@ public class LoadController
     }
 
     @Subscribe
-    public void propogateStateMessage(FMLEvent stateEvent)
+    public void propogateStateMessage(ModLifecycleEvent stateEvent)
     {
         if (stateEvent instanceof FMLPreInitializationEvent)
         {
@@ -190,7 +190,7 @@ public class LoadController
         ProgressManager.pop(bar);
     }
 
-    private void sendEventToModContainer(FMLEvent stateEvent, ModContainer mc)
+    private void sendEventToModContainer(ModLifecycleEvent stateEvent, ModContainer mc)
     {
         String modId = mc.getModId();
         Collection<String> requirements = mc.getRequirements().stream().map(ArtifactVersion::getLabel).collect(Collectors.toCollection(HashSet::new));

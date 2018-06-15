@@ -25,7 +25,7 @@ import java.util.Set;
 
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.base.Strings;

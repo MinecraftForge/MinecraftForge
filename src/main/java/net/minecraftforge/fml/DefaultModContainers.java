@@ -19,53 +19,14 @@
 
 package net.minecraftforge.fml;
 
-import com.electronwill.nightconfig.core.path.PathConfig;
-import net.minecraftforge.fml.language.ModContainer;
-import net.minecraftforge.fml.language.IModInfo;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
+import net.minecraftforge.fml.loading.DefaultModInfos;
 
 public class DefaultModContainers
 {
-    static {
-        PathConfig minecraftmod;
-        PathConfig forgemod;
-        try
-        {
-            minecraftmod = PathConfig.of(Paths.get(DefaultModContainers.class.getClassLoader().getResource("minecraftmod.toml").toURI()));
-            forgemod = PathConfig.of(Paths.get(DefaultModContainers.class.getClassLoader().getResource("forgemod.toml").toURI()));
-            minecraftmod.load();
-            forgemod.load();
-        }
-        catch (URISyntaxException | NullPointerException e)
-        {
-            throw new RuntimeException("Missing toml configs for minecraft and forge!", e);
-        }
-        minecraftModInfo = new ModInfo(null, minecraftmod);
-        forgeModInfo = new ModInfo(null, forgemod);
-
-    }
-
-    private static final IModInfo minecraftModInfo;
-    private static final IModInfo forgeModInfo;
-
-    // no construction
-    private DefaultModContainers() {}
-
-    public static List<IModInfo> getModInfos()
-    {
-        return Arrays.asList(minecraftModInfo, forgeModInfo);
-    }
-
-
-    public static final ModContainer MINECRAFT = new ModContainer(minecraftModInfo)
+    public static final ModContainer MINECRAFT = new ModContainer(DefaultModInfos.minecraftModInfo)
     {
         @Override
-        public boolean matches(Object mod)
+        public boolean matches(final Object mod)
         {
             return mod == this;
         }

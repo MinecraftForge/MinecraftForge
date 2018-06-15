@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading;
 
-import net.minecraftforge.fml.DefaultModContainers;
 import net.minecraftforge.fml.Java9BackportUtils;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.MissingModsException;
@@ -27,14 +26,17 @@ import net.minecraftforge.fml.common.toposort.TopologicalSort;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,34 +44,59 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModSorter
 {
-    private final List<ModFile> modFiles;
+    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private List<ModFile> modFiles;
     private List<ModInfo> sortedList;
     private Map<String, ModInfo> modIdNameLookup;
 
-    public ModSorter(final List<ModFile> modFiles)
+    private ModSorter(final List<ModFile> modFiles)
     {
         this.modFiles = modFiles;
     }
 
-    public static ModList sort(List<ModFile> mods)
+    public static LoadingModList sort(List<ModFile> mods)
     {
         final ModSorter ms = new ModSorter(mods);
         ms.buildUniqueList();
         ms.verifyDependencyVersions();
         ms.sort();
-        return ModList.of(ms.modFiles, ms.sortedList);
+        return LoadingModList.of(ms.modFiles, ms.sortedList);
     }
 
-    private void sort() {
-        final TopologicalSort.DirectedGraph<IModInfo> topoGraph = new TopologicalSort.DirectedGraph<>();
-        modFiles.stream().map(ModFile::getModInfos).
-                flatMap(Collection::stream).forEach(topoGraph::addNode);
-        modFiles.stream().map(ModFile::getModInfos).
-                flatMap(Collection::stream).map(IModInfo::getDependencies).flatMap(Collection::stream).forEach(dep->addDependency(topoGraph, dep));
-    }
-
-    private void addDependency(TopologicalSort.DirectedGraph<IModInfo> topoGraph, IModInfo.ModVersion dep)
+    private void sort()
     {
+        final TopologicalSort.DirectedGraph<Supplier<ModFileInfo>> topoGraph = new TopologicalSort.DirectedGraph<>();
+        modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).forEach(mi -> topoGraph.addNode(() -> mi));
+        modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).map(IModInfo::getDependencies).flatMap(Collection::stream).
+                forEach(dep -> addDependency(topoGraph, dep));
+        final List<Supplier<ModFileInfo>> sorted;
+        try
+        {
+            sorted = TopologicalSort.topologicalSort(topoGraph);
+        }
+        catch (TopologicalSort.TopoSortException e)
+        {
+            TopologicalSort.TopoSortException.TopoSortExceptionData<Supplier<ModInfo>> data = e.getData();
+            LOGGER.error(LOADING, ()-> data);
+            throw e;
+        }
+        this.sortedList = sorted.stream().map(Supplier::get).map(ModFileInfo::getMods).
+                flatMap(Collection::stream).map(ModInfo.class::cast).collect(Collectors.toList());
+        this.modFiles = sorted.stream().map(Supplier::get).map(ModFileInfo::getFile).collect(Collectors.toList());
+    }
+
+    private void addDependency(TopologicalSort.DirectedGraph<Supplier<ModFileInfo>> topoGraph,IModInfo.ModVersion dep)
+    {
+        switch (dep.getOrdering()) {
+            case BEFORE:
+                topoGraph.addEdge(()->(ModFileInfo)dep.getOwner().getOwningFile(), ()->modIdNameLookup.get(dep.getModId()).getOwningFile());
+                break;
+            case AFTER:
+                topoGraph.addEdge(()->modIdNameLookup.get(dep.getModId()).getOwningFile(), ()->(ModFileInfo)dep.getOwner().getOwningFile());
+                break;
+            case NONE:
+                break;
+        }
     }
 
     private void buildUniqueList()
@@ -90,7 +117,7 @@ public class ModSorter
     private void verifyDependencyVersions()
     {
         final Map<String, ArtifactVersion> modVersions = Stream.concat(modFiles.stream().map(ModFile::getModInfos).
-                flatMap(Collection::stream), DefaultModContainers.getModInfos().stream()).collect(Collectors.toMap(IModInfo::getModId, IModInfo::getVersion));
+                flatMap(Collection::stream), DefaultModInfos.getModInfos().stream()).collect(Collectors.toMap(IModInfo::getModId, IModInfo::getVersion));
         final Map<IModInfo, List<IModInfo.ModVersion>> modVersionDependencies = modFiles.stream().
                 map(ModFile::getModInfos).flatMap(Collection::stream).
                 collect(Collectors.groupingBy(Function.identity(), Java9BackportUtils.flatMapping(e -> e.getDependencies().stream(), Collectors.toList())));

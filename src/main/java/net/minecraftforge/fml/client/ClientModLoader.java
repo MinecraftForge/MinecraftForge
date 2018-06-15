@@ -27,7 +27,7 @@ import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.ModLoader;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
@@ -46,7 +46,7 @@ public class ClientModLoader
     {
         SidedProvider.setClient(()->minecraft);
         SplashProgress.start();
-        FMLLoader.getModLoader().loadMods();
+        ModLoader.get().loadMods();
         minecraft.refreshResources();
     }
 

@@ -19,13 +19,13 @@
 
 package net.minecraftforge.fml.common.network.simpleimpl;
 
+import net.minecraftforge.api.Side;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.base.Preconditions;
 

@@ -21,7 +21,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.ModList;
+import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.ModSorter;
 
 import java.util.Collection;
@@ -70,10 +70,10 @@ public class ModDiscoverer {
             }
         }
         fmlLog.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
-        final ModList modList = ModSorter.sort(mods);
-        modList.addCoreMods();
-        modList.addAccessTransformers();
-        modList.addForScanning(backgroundScanHandler);
+        final LoadingModList loadingModList = ModSorter.sort(mods);
+        loadingModList.addCoreMods();
+        loadingModList.addAccessTransformers();
+        loadingModList.addForScanning(backgroundScanHandler);
         return backgroundScanHandler;
     }
 }

@@ -24,11 +24,13 @@ import java.util.Optional;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod.Instance;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -54,8 +56,14 @@ public class FMLInterModComms {
      * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
      * @author cpw
      */
-    public static class IMCEvent extends FMLEvent {
+    public static class IMCEvent extends ModLifecycleEvent
+    {
         private ModContainer activeContainer;
+
+        public IMCEvent()
+        {
+            super(activeContainer);
+        }
 
         @Override
         public void applyModContainer(ModContainer activeContainer)
@@ -371,27 +379,19 @@ public class FMLInterModComms {
 
     private static boolean enqueueStartupMessage(String modTarget, IMCMessage message)
     {
-        if (Loader.instance().activeModContainer() == null)
+        if (ModThreadContext.get().getCurrentContainer() == null)
         {
             return false;
         }
-        enqueueMessage(Loader.instance().activeModContainer(), modTarget, message);
-        return Loader.isModLoaded(modTarget) && !Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION);
+        enqueueMessage(ModThreadContext.get().getCurrentContainer(), modTarget, message);
+        return ModList.get().isLoaded(modTarget);
 
     }
-    private static void enqueueMessage(Object sourceMod, String modTarget, IMCMessage message)
+    private static void enqueueMessage(ModContainer sourceMod, String modTarget, IMCMessage message)
     {
-        ModContainer mc;
-        if (sourceMod instanceof ModContainer) {
-            mc = (ModContainer) sourceMod;
-        }
-        else
+        if (ModList.get().isLoaded(modTarget))
         {
-            mc = FMLCommonHandler.instance().findContainerFor(sourceMod);
-        }
-        if (mc != null && Loader.isModLoaded(modTarget))
-        {
-            message.setSender(mc);
+            message.setSender(sourceMod);
             modMessages.put(modTarget, message);
         }
     }

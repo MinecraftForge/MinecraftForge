@@ -25,7 +25,7 @@ import java.util.List;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.ModClassLoader;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.relauncher.CoreModManager;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

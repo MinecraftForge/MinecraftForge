@@ -21,7 +21,8 @@ package net.minecraftforge.fml.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.loading.ModList;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.language.ExtensionPoint;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import java.util.Optional;
@@ -31,6 +32,7 @@ public class ConfigGuiHandler
 {
     public static Optional<BiFunction<Minecraft, GuiScreen, GuiScreen>> getGuiFactoryFor(ModInfo selectedMod)
     {
-        return ModList.get().getModContainerById(selectedMod.getModId()).map(mc->mc.getCustomExtension("customGuiFactory"));
+        return ModList.get().getModContainerById(selectedMod.getModId()).
+                flatMap(mc -> mc.getCustomExtension(ExtensionPoint.GUIFACTORY));
     }
 }

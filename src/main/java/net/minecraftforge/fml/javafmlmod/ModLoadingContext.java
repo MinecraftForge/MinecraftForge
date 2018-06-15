@@ -17,14 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.javafmlmod;
 
-/**
- * Internal only event, used to begin the lifecycle of loading mods.
- *
- * @author cpw
- */
-public class FMLLoadEvent
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.language.ExtensionPoint;
+
+import java.util.function.Supplier;
+
+public class ModLoadingContext
 {
+    private static ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
+    FMLModContainer activeContainer;
+    public static ModLoadingContext get() {
+        return context.get();
+    }
 
+    public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension) {
+        activeContainer.registerExtensionPoint(point, extension);
+    }
+
+    public IEventBus getModEventBus()
+    {
+        return activeContainer.getEventBus();
+    }
 }

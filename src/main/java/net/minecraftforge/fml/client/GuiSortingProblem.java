@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.common.toposort.ModSortingException.SortingExceptionData;
 

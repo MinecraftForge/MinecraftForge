@@ -24,6 +24,7 @@ import net.minecraftforge.fml.client.GuiWrongMinecraft;
 import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.ModContainer;
 
 public class WrongMinecraftVersionException extends EnhancedRuntimeException implements IDisplayableError
 {

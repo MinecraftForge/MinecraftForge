@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.minecraftforge.fml.language.ModFileScanData;
-import net.minecraftforge.fml.loading.ModList;
+import net.minecraftforge.fml.loading.LoadingModList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +38,7 @@ public class BackgroundScanHandler
     private final List<ModFile> pendingFiles;
     private final List<ModFile> scannedFiles;
     private final List<ModFile> allFiles;
-    private ModList modList;
+    private LoadingModList loadingModList;
 
     public BackgroundScanHandler() {
         modContentScanner = Executors.newSingleThreadExecutor(r -> {
@@ -86,13 +86,13 @@ public class BackgroundScanHandler
         return allFiles;
     }
 
-    public void setModList(ModList modList)
+    public void setLoadingModList(LoadingModList loadingModList)
     {
-        this.modList = modList;
+        this.loadingModList = loadingModList;
     }
 
-    public ModList getModList()
+    public LoadingModList getLoadingModList()
     {
-        return modList;
+        return loadingModList;
     }
 }

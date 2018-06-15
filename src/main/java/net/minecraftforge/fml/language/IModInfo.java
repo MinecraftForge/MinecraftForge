@@ -107,5 +107,10 @@ public interface IModInfo
         {
             this.owner = owner;
         }
+
+        public IModInfo getOwner()
+        {
+            return owner;
+        }
     }
 }

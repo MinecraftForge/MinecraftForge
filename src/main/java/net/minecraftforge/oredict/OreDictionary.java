@@ -30,7 +30,7 @@ import java.util.Set;
 import net.minecraft.block.BlockPrismarine;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;

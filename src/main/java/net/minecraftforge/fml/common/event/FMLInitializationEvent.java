@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraftforge.fml.common.LoaderState.ModState;
+import net.minecraftforge.fml.ModContainer;
 
 /**
  * Called after {@link FMLPreInitializationEvent} and before {@link FMLPostInitializationEvent} during mod
@@ -34,18 +34,11 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLInitializationEvent extends FMLStateEvent
+public class FMLInitializationEvent extends ModLifecycleEvent
 {
 
-    public FMLInitializationEvent(Object... data)
+    public FMLInitializationEvent(final ModContainer container)
     {
-        super(data);
+        super(container);
     }
-    
-    @Override
-    public ModState getModState()
-    {
-        return ModState.INITIALIZED;
-    }
-
 }

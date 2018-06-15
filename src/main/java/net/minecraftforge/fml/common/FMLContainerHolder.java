@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.common;
 
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 
 public interface FMLContainerHolder
 {

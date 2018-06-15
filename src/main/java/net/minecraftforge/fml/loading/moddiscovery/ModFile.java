@@ -20,13 +20,11 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraftforge.fml.language.ModContainer;
 import net.minecraftforge.fml.language.IModFileInfo;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.language.IModLanguageProvider;
-import net.minecraftforge.fml.loading.ModLoadingClassLoader;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,11 +35,9 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
@@ -74,12 +70,6 @@ public class ModFile
         return locator.findPath(this, className);
     }
 
-    public List<ModContainer> buildMods(ModLoadingClassLoader modClassLoader)
-    {
-        return getScanResult().getTargets().entrySet().stream().
-                map(e->e.getValue().loadMod(this.modInfoMap.get(e.getKey()), modClassLoader, getScanResult())).collect(Collectors.toList());
-    }
-
     public enum Type {
         MOD, LIBRARY, LANGPROVIDER
     }
@@ -88,7 +78,6 @@ public class ModFile
     private final Manifest manifest;
     private final IModLocator locator;
     private IModFileInfo modFileInfo;
-    private Map<String, IModInfo> modInfoMap;
     private ModFileScanData fileModFileScanData;
     private CompletableFuture<ModFileScanData> futureScanResult;
     private List<CoreModFile> coreMods;
@@ -129,7 +118,6 @@ public class ModFile
         this.modFileInfo = ModFileParser.readModList(this);
         if (this.modFileInfo == null) return false;
         fmlLog.debug(LOADING,"Loading mod file {} with language {}", this.getFilePath(), this.modFileInfo.getModLoader());
-        this.modInfoMap = this.getModInfos().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> fmlLog.debug(LOADING,"Found coremod {}", mi.getPath()));
         this.accessTransformer = locator.findPath(this, "META-INF", "accesstransformer.cfg");

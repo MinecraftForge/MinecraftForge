@@ -17,14 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.language;
+package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.loading.ModLoadingStage;
+import net.minecraftforge.fml.language.ExtensionPoint;
+import net.minecraftforge.fml.language.IModInfo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * The container that wraps around mods in the system.
@@ -45,11 +50,15 @@ public abstract class ModContainer
     protected final IModInfo modInfo;
     protected ModLoadingStage modLoadingStage;
     protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
+    protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
+    protected final List<Throwable> modLoadingError;
+
     public ModContainer(IModInfo info)
     {
         this.modId = info.getModId();
         this.modInfo = info;
         this.triggerMap = new HashMap<>();
+        this.modLoadingError = new ArrayList<>();
         this.modLoadingStage = ModLoadingStage.BEGIN;
     }
 
@@ -83,7 +92,7 @@ public abstract class ModContainer
      */
     public final void transitionState(LifecycleEventProvider.LifecycleEvent event)
     {
-        if (modLoadingStage != event.fromStage())
+        if (modLoadingStage == event.fromStage())
         {
             try
             {
@@ -105,6 +114,16 @@ public abstract class ModContainer
         return modInfo;
     }
 
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getCustomExtension(ExtensionPoint point) {
+        return Optional.ofNullable((T)extensionPoints.getOrDefault(point,()-> null).get());
+    }
+
+    public <T> void registerExtensionPoint(ExtensionPoint point, Supplier<T> extension)
+    {
+        extensionPoints.put(point, extension);
+    }
+
     /**
      * Does this mod match the supplied mod?
      *
@@ -117,6 +136,4 @@ public abstract class ModContainer
      * @return the mod object instance
      */
     public abstract Object getMod();
-
-    public abstract <T> T getCustomExtension(final String name);
 }

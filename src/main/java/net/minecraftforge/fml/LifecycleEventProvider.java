@@ -20,18 +20,18 @@
 package net.minecraftforge.fml;
 
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.loading.ModList;
-import net.minecraftforge.fml.loading.ModLoadingStage;
+import net.minecraftforge.fml.common.event.ModLifecycleEvent;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 import java.util.function.Supplier;
 
 public enum LifecycleEventProvider
 {
     LOAD(()->new LifecycleEvent(ModLoadingStage.BEGIN)),
-    PREINIT(()->new LifecycleEvent(ModLoadingStage.PREINIT));
+    CONSTRUCT(()->new LifecycleEvent(ModLoadingStage.CONSTRUCT));
 
-    public void dispatch(final ModList target) {
-        target.dispatchLifeCycleEvent(this.event.get());
+    public void dispatch() {
+        ModList.get().dispatchLifeCycleEvent(this.event.get());
     }
     private final Supplier<? extends LifecycleEvent> event;
 
@@ -41,7 +41,7 @@ public enum LifecycleEventProvider
     }
 
 
-    public static class LifecycleEvent extends Event {
+    public static class LifecycleEvent {
         private final ModLoadingStage stage;
 
         public LifecycleEvent(ModLoadingStage stage)
@@ -59,5 +59,9 @@ public enum LifecycleEventProvider
             return ModLoadingStage.values()[this.stage.ordinal()+1];
         }
 
+        public ModLifecycleEvent buildModEvent(FMLModContainer fmlModContainer)
+        {
+            return stage.getModEvent(fmlModContainer);
+        }
     }
 }

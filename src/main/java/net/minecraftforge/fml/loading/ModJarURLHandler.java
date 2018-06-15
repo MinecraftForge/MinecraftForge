@@ -47,7 +47,7 @@ public class ModJarURLHandler extends URLStreamHandler
             @Override
             public InputStream getInputStream() throws IOException
             {
-                return Files.newInputStream(FMLLoader.getModLoader().getModList().getModFileById(modid).getFile().findResource(modpath));
+                return Files.newInputStream(FMLLoader.getLoadingModList().getModFileById(modid).getFile().findResource(modpath));
             }
         };
     }

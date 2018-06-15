@@ -21,7 +21,7 @@ package net.minecraftforge.fml.common.discovery;
 
 import java.util.List;
 
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
 
 public enum ContainerType
 {

@@ -19,13 +19,16 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.google.common.collect.Streams;
 import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.language.ModContainer;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.List;
@@ -37,9 +40,9 @@ import java.util.stream.Collectors;
 /**
  * Master list of all mods
  */
-public class ModList
+public class LoadingModList
 {
-    private static ModList INSTANCE;
+    private static LoadingModList INSTANCE;
     private final List<ModFileInfo> modFiles;
     private final List<ModInfo> sortedList;
     private final Map<String, ModFileInfo> fileById;
@@ -47,22 +50,24 @@ public class ModList
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
 
-    private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
+    private LoadingModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
         this.modFiles = modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).collect(Collectors.toList());
-        this.sortedList = sortedList;
+        this.sortedList = Streams.concat(DefaultModInfos.getModInfos().stream(), sortedList.stream()).
+                map(ModInfo.class::cast).
+                collect(Collectors.toList());
         this.fileById = this.modFiles.stream().map(ModFileInfo::getMods).flatMap(Collection::stream).
                 map(ModInfo.class::cast).
                 collect(Collectors.toMap(ModInfo::getModId, ModInfo::getOwningFile));
     }
 
-    public static ModList of(List<ModFile> modFiles, List<ModInfo> sortedList)
+    public static LoadingModList of(List<ModFile> modFiles, List<ModInfo> sortedList)
     {
-        INSTANCE = new ModList(modFiles, sortedList);
+        INSTANCE = new LoadingModList(modFiles, sortedList);
         return INSTANCE;
     }
 
-    public static ModList get() {
+    public static LoadingModList get() {
         return INSTANCE;
     }
     public void addCoreMods()
@@ -78,7 +83,7 @@ public class ModList
     public void addForScanning(BackgroundScanHandler backgroundScanHandler)
     {
         this.scanner = backgroundScanHandler;
-        backgroundScanHandler.setModList(this);
+        backgroundScanHandler.setLoadingModList(this);
         modFiles.stream().map(ModFileInfo::getFile).forEach(backgroundScanHandler::submitForScanning);
     }
 
@@ -91,7 +96,7 @@ public class ModList
     {
         for (ModFileInfo mf : modFiles) {
             final Path resource = mf.getFile().findResource(className);
-            if (resource != null) return resource;
+            if (Files.exists(resource)) return resource;
         }
         return null;
     }
@@ -109,7 +114,7 @@ public class ModList
         }
     }
 
-    public void setLoadedMods(List<ModContainer> modContainers)
+    public void setLoadedMods(final List<ModContainer> modContainers)
     {
         this.mods = modContainers;
         this.indexedMods = modContainers.stream().collect(Collectors.toMap(ModContainer::getModId, Function.identity()));

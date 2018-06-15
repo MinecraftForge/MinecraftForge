@@ -22,7 +22,7 @@ package net.minecraftforge.fml.language;
 import java.util.function.Consumer;
 
 /**
- * Loaded as a ServiceLoader, from the classpath. Extensions are loaded from
+ * Loaded as a ServiceLoader, from the classpath. ExtensionPoint are loaded from
  * the mods directory, with the FMLType META-INF of LANGPROVIDER.
  *
  * Version data is read from the manifest's implementation version.
@@ -34,6 +34,6 @@ public interface IModLanguageProvider
     Consumer<ModFileScanData> getFileVisitor();
 
     interface IModLanguageLoader {
-        ModContainer loadMod(IModInfo info, ClassLoader modClassLoader, ModFileScanData modFileScanResults);
+        <T> T loadMod(IModInfo info, ClassLoader modClassLoader, ModFileScanData modFileScanResults);
     }
 }

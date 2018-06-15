@@ -27,14 +27,11 @@ import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import net.minecraftforge.api.Side;
 import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.fml.common.FMLPaths;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.ICoreModProvider;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -57,9 +54,8 @@ public class FMLLoader
     private static ILaunchPluginService eventBus;
     private static LanguageLoadingProvider languageLoadingProvider;
     private static Side side;
-    private static ModList modList;
+    private static LoadingModList loadingModList;
     private static ClassLoader launchClassLoader;
-    private static ModLoader modLoader;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -134,7 +130,7 @@ public class FMLLoader
         fmlLog.debug(SCAN,"Scanning for Mod Locators");
         modDiscoverer = new ModDiscoverer();
         final BackgroundScanHandler backgroundScanHandler = modDiscoverer.discoverMods();
-        modList = backgroundScanHandler.getModList();
+        loadingModList = backgroundScanHandler.getLoadingModList();
     }
 
     public static ICoreModProvider getCoreModProvider() {
@@ -177,12 +173,18 @@ public class FMLLoader
 
     public static void beforeStart(ITransformingClassLoader launchClassLoader)
     {
-        modLoader = new ModLoader(launchClassLoader.getInstance(), modList);
-        modLoader.classloadModFiles();
+        FMLLoader.launchClassLoader = launchClassLoader.getInstance();
     }
 
-    public static ModLoader getModLoader()
+
+    public static LoadingModList getLoadingModList()
     {
-        return modLoader;
+        return loadingModList;
+
+    }
+
+    public static ClassLoader getLaunchClassLoader()
+    {
+        return launchClassLoader;
     }
 }

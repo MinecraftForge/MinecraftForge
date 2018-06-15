@@ -17,9 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftforge.fml.language;
 
-public enum ModLoadingStage
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.IResourcePack;
+
+import java.util.function.BiFunction;
+import java.util.function.Function;
+
+public class ExtensionPoint<T>
 {
-    ERROR, BEGIN, CONSTRUCT, PREINIT, INIT, POSTINIT, COMPLETE
+    public static final ExtensionPoint<BiFunction<Minecraft, GuiScreen, GuiScreen>> GUIFACTORY = new ExtensionPoint<>();
+    public static final ExtensionPoint<Function<Minecraft, IResourcePack>> RESOURCEPACK = new ExtensionPoint<>();
 }

@@ -19,6 +19,10 @@
 
 package net.minecraftforge.fml.common.toposort;
 
+import com.google.common.collect.Sets;
+import org.apache.logging.log4j.message.Message;
+import org.apache.logging.log4j.util.StringBuilderFormattable;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -176,7 +180,7 @@ public class TopologicalSort
                 return;
             }
 
-            throw new TopoSortException(node, sortedResult, visitedNodes, expandedNodes);
+            throw new TopoSortException(new TopoSortException.TopoSortExceptionData<>(node, sortedResult, visitedNodes, expandedNodes));
         }
 
         // Visit this node
@@ -194,38 +198,68 @@ public class TopologicalSort
         expandedNodes.add(node);
     }
 
-    static class TopoSortException extends RuntimeException {
-        private final Object node;
-        private final List<?> sortedResult;
-        private final Set<?> visitedNodes;
-        private final Set<?> expandedNodes;
+    public static class TopoSortException extends RuntimeException {
+        private final TopoSortExceptionData<?> topoSortData;
 
-        public TopoSortException(Object node, List<?> sortedResult, Set<?> visitedNodes, Set<?> expandedNodes)
+        public static class TopoSortExceptionData<T> implements Message, StringBuilderFormattable
         {
-            this.node = node;
-            this.sortedResult = sortedResult;
-            this.visitedNodes = visitedNodes;
-            this.expandedNodes = expandedNodes;
+            private final List<T> sortedResult;
+            private final Set<T> visitedNodes;
+            private final Set<T> expandedNodes;
+            private final T node;
+
+            TopoSortExceptionData(T node, List<T> sortedResult, Set<T> visitedNodes, Set<T> expandedNodes)
+            {
+                this.node = node;
+                this.sortedResult = sortedResult;
+                this.visitedNodes = visitedNodes;
+                this.expandedNodes = expandedNodes;
+            }
+
+            @Override
+            public String getFormattedMessage()
+            {
+                return "";
+            }
+
+            @Override
+            public String getFormat()
+            {
+                return "";
+            }
+
+            @Override
+            public Object[] getParameters()
+            {
+                return new Object[0];
+            }
+
+            @Override
+            public Throwable getThrowable()
+            {
+                return null;
+            }
+
+            @Override
+            public void formatTo(StringBuilder buffer)
+            {
+                buffer.append("Mod Sorting failed.\n");
+                buffer.append("Visiting node {}\n").append(String.valueOf(node));
+                buffer.append("Current sorted list : {}\n").append(String.valueOf(sortedResult));
+                buffer.append("Visited set for this node : {}\n").append(String.valueOf(visitedNodes));
+                buffer.append("Explored node set : {}\n").append(expandedNodes);
+                buffer.append("Likely cycle is in : {}\n").append(Sets.difference(visitedNodes, expandedNodes));
+            }
         }
 
-        public Object getNode()
+        public <T> TopoSortException(TopoSortExceptionData<T> data)
         {
-            return node;
+            this.topoSortData = data;
         }
 
-        public List<?> getSortedResult()
-        {
-            return sortedResult;
-        }
-
-        public Set<?> getVisitedNodes()
-        {
-            return visitedNodes;
-        }
-
-        public Set<?> getExpandedNodes()
-        {
-            return expandedNodes;
+        @SuppressWarnings("unchecked")
+        public <T> TopoSortExceptionData<T> getData() {
+            return (TopoSortExceptionData<T>)this.topoSortData;
         }
     }
 }
