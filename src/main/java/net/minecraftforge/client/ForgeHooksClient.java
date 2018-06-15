@@ -746,4 +746,11 @@ public class ForgeHooksClient
         if(texture == null) texture = horse.getHorseArmorType().getTextureName();
         return texture;
     }
+
+    public static float getNightVisionBrightness(EntityRenderer renderer, Entity entity, IBlockState state, float partial, float brightness)
+    {
+        EntityViewRenderEvent.NightVisionBrightness event = new EntityViewRenderEvent.NightVisionBrightness(renderer, entity, state, partial, brightness);
+        if (MinecraftForge.EVENT_BUS.post(event)) return event.getBrightness();
+        return brightness;
+    }
 }

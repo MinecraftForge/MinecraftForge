@@ -189,4 +189,30 @@ public abstract class EntityViewRenderEvent extends Event
             this.fov = fov;
         }
     }
+
+    /**
+     * Event that allows any feature to customize the brightness of night vision effect.
+     * NOTE: In order to make this event have an effect, you must cancel the event
+     */
+    @Cancelable
+    public static class NightVisionBrightness extends EntityViewRenderEvent
+    {
+        private float brightness;
+
+        public NightVisionBrightness(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float brightness)
+        {
+            super(renderer, entity, state, renderPartialTicks);
+            this.setBrightness(brightness);
+        }
+
+        public float getBrightness()
+        {
+            return brightness;
+        }
+
+        public void setBrightness(float brightness)
+        {
+            this.brightness = brightness;
+        }
+    }
 }
