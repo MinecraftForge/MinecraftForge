@@ -13,6 +13,17 @@
      private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
      private static final DataParameter<Integer> field_184830_b = EntityDataManager.<Integer>func_187226_a(EntityPlayer.class, DataSerializers.field_187192_b);
      protected static final DataParameter<Byte> field_184827_bp = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
+@@ -124,8 +130,8 @@
+     @SideOnly(Side.CLIENT)
+     public float field_71082_cx;
+     public float field_71089_bV;
+-    private BlockPos field_71077_c;
+-    private boolean field_82248_d;
++    protected BlockPos field_71077_c;
++    protected boolean field_82248_d;
+     public PlayerCapabilities field_71075_bZ = new PlayerCapabilities();
+     public int field_71068_ca;
+     public int field_71067_cb;
 @@ -165,6 +171,7 @@
          this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a(0.10000000149011612D);
          this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188790_f);

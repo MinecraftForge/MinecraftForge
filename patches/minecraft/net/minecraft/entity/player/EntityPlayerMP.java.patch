@@ -120,13 +120,18 @@
          this.field_71070_bA = this.field_71069_bz;
      }
  
-@@ -1144,6 +1162,18 @@
+@@ -1144,6 +1162,23 @@
          this.field_193110_cw = p_193104_1_.field_193110_cw;
          this.func_192029_h(p_193104_1_.func_192023_dk());
          this.func_192031_i(p_193104_1_.func_192025_dl());
 +
 +        this.spawnChunkMap = p_193104_1_.spawnChunkMap;
 +        this.spawnForcedMap = p_193104_1_.spawnForcedMap;
++        if(p_193104_1_.field_71093_bK != 0)
++        {
++            this.field_71077_c = p_193104_1_.field_71077_c;
++            this.field_82248_d = p_193104_1_.field_82248_d;
++        }
 +
 +        //Copy over a section of the Entity Data from the old player.
 +        //Allows mods to specify data that persists after players respawn.
