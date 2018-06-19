@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.event;
+package net.minecraftforge.fml;
 
-import net.minecraftforge.eventbus.api.Event;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Fired when the {@link net.minecraftforge.client.model.ModelLoader} is ready to receive registrations
+ * Accumulates errors during loading for compact handling
  */
-public class ModelRegistryEvent extends Event
+public class ModLoadingException extends RuntimeException
 {
+    private List<ErrorEvent> errorEvents = new ArrayList<>();
+    public static class ErrorEvent {
+
+    }
 }

@@ -49,9 +49,12 @@ public class FMLModContainer extends ModContainer
     {
         super(info);
         this.scanResults = modFileScanResults;
-        triggerMap.put(ModLoadingStage.BEGIN, dummy().andThen(this::beforeEvent).andThen(this::constructMod).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.CONSTRUCT, dummy().andThen(this::beforeEvent).andThen(this::preinitMod).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.PREINIT, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.CONSTRUCT, dummy().andThen(this::beforeEvent).andThen(this::constructMod).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.PREINIT, dummy().andThen(this::beforeEvent).andThen(this::preinitMod).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.SIDEDINIT, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.INIT, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.POSTINIT, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.COMPLETE, dummy().andThen(this::beforeEvent).andThen(this::completeLoading).andThen(this::fireEvent).andThen(this::afterEvent));
         this.eventBus = IEventBus.create(this::onEventFailed);
 
         try
@@ -64,6 +67,11 @@ public class FMLModContainer extends ModContainer
             LOGGER.error(LOADING, "Failed to load class {}", className, e);
             throw new RuntimeException(e);
         }
+    }
+
+    private void completeLoading(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
+    {
+
     }
 
     private void initMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)

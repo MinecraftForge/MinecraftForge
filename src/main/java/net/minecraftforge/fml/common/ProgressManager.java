@@ -19,18 +19,18 @@
 
 package net.minecraftforge.fml.common;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Joiner;
 import net.minecraftforge.api.Side;
 import net.minecraftforge.fml.SidedExecutor;
+import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.client.SplashProgress;
 import org.apache.logging.log4j.message.MessageFormatMessage;
-import org.apache.logging.log4j.message.StringFormattedMessage;
-import org.lwjgl.LWJGLUtil;
-import org.lwjgl.opengl.Display;
 
 import static net.minecraftforge.fml.Logging.SPLASH;
 import static net.minecraftforge.fml.Logging.fmlLog;
@@ -121,7 +121,7 @@ public class ProgressManager
 
         public void step(Class<?> classToName, String... extra)
         {
-            step(ClassNameUtils.shortName(classToName)+Joiner.on(' ').join(extra));
+            step(ClassNameUtils.shortName(classToName)+ Arrays.stream(extra).collect(Collectors.joining(" ")));
         }
 
         public void step(String message)
@@ -133,9 +133,8 @@ public class ProgressManager
                 fmlLog.debug(SPLASH,new MessageFormatMessage("Bar Step: {0} - {1} took {2,number,0.000}ms", getTitle(), getMessage(), (newTime - lastTime) / 1.0e6));
                 lastTime = newTime;
             }
-            step++;
-            this.message = FMLCommonHandler.instance().stripSpecialChars(message);
-            FMLCommonHandler.instance().processWindowMessages();
+            step += 1;
+            this.message = SidedProvider.STRIPCHARS.<Function<String, String>>get().apply(message);
         }
 
         public String getTitle()

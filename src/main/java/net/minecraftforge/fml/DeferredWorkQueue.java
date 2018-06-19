@@ -17,22 +17,28 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client;
+package net.minecraftforge.fml;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
-import java.util.Optional;
-import java.util.function.BiFunction;
-
-public class ConfigGuiHandler
+public class DeferredWorkQueue
 {
-    public static Optional<BiFunction<Minecraft, GuiScreen, GuiScreen>> getGuiFactoryFor(ModInfo selectedMod)
+    public static ConcurrentLinkedDeque<FutureWorkTask<?>> deferredWorkQueue = new ConcurrentLinkedDeque<>();
+
+    public static <T> Future<T> enqueueWork(Callable<T> workToEnqueue) {
+        final FutureWorkTask<T> workTask = new FutureWorkTask<>(workToEnqueue);
+        DeferredWorkQueue.deferredWorkQueue.add(workTask);
+        return workTask;
+    }
+
+    public static class FutureWorkTask<T> extends FutureTask<T>
     {
-        return ModList.get().getModContainerById(selectedMod.getModId()).
-                flatMap(mc -> mc.getCustomExtension(ExtensionPoint.GUIFACTORY));
+        FutureWorkTask(Callable<T> callable)
+        {
+            super(callable);
+        }
     }
 }

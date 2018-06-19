@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.language.ExtensionPoint;
 import net.minecraftforge.fml.language.IModInfo;
 
 import java.util.ArrayList;
@@ -59,7 +58,7 @@ public abstract class ModContainer
         this.modInfo = info;
         this.triggerMap = new HashMap<>();
         this.modLoadingError = new ArrayList<>();
-        this.modLoadingStage = ModLoadingStage.BEGIN;
+        this.modLoadingStage = ModLoadingStage.CONSTRUCT;
     }
 
     /**
@@ -101,6 +100,7 @@ public abstract class ModContainer
             }
             catch (RuntimeException e)
             {
+                modLoadingError.add(e);
                 modLoadingStage = ModLoadingStage.ERROR;
             }
         }

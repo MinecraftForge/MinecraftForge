@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.language;
 
+import net.minecraftforge.fml.LifecycleEventProvider;
+
 import java.util.function.Consumer;
 
 /**
@@ -32,6 +34,9 @@ public interface IModLanguageProvider
     String name();
 
     Consumer<ModFileScanData> getFileVisitor();
+
+    void preLifecycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent);
+    void postLifecycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent);
 
     interface IModLanguageLoader {
         <T> T loadMod(IModInfo info, ClassLoader modClassLoader, ModFileScanData modFileScanResults);

@@ -38,7 +38,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Master list of all mods
+ * Master list of all mods <em>in the loading context. This class cannot refer outside the
+ * loading package</em>
  */
 public class LoadingModList
 {
@@ -47,8 +48,6 @@ public class LoadingModList
     private final List<ModInfo> sortedList;
     private final Map<String, ModFileInfo> fileById;
     private BackgroundScanHandler scanner;
-    private List<ModContainer> mods;
-    private Map<String, ModContainer> indexedMods;
 
     private LoadingModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
@@ -104,30 +103,6 @@ public class LoadingModList
     public ModFileInfo getModFileById(String modid)
     {
         return this.fileById.get(modid);
-    }
-
-    public void dispatchLifeCycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        this.mods.parallelStream().forEach(m->m.transitionState(lifecycleEvent));
-        final List<ModContainer> erroredContainers = this.mods.stream().filter(m -> m.getCurrentState() == ModLoadingStage.ERROR).collect(Collectors.toList());
-        if (!erroredContainers.isEmpty()) {
-            throw new RuntimeException("Errored containers found!");
-        }
-    }
-
-    public void setLoadedMods(final List<ModContainer> modContainers)
-    {
-        this.mods = modContainers;
-        this.indexedMods = modContainers.stream().collect(Collectors.toMap(ModContainer::getModId, Function.identity()));
-    }
-
-    public Optional<Object> getModObjectById(String modId)
-    {
-        return getModContainerById(modId).map(ModContainer::getMod);
-    }
-
-    public Optional<? extends ModContainer> getModContainerById(String modId)
-    {
-        return Optional.ofNullable(this.indexedMods.get(modId));
     }
 
     public List<ModInfo> getMods()

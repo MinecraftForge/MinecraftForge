@@ -20,31 +20,45 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.Streams;
+import net.minecraftforge.fml.javafmlmod.ModLoadingContext;
+import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.DefaultModInfos;
+import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.FutureTask;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static net.minecraftforge.fml.Logging.LOADING;
+
 /**
- * Master list of all mods
+ * Master list of all mods - game-side version. This is classloaded in the game scope and
+ * can dispatch game level events as a result.
  */
 public class ModList
 {
+    private static Logger LOGGER = LogManager.getLogger("FML");
     private static ModList INSTANCE;
     private final List<ModFileInfo> modFiles;
     private final List<ModInfo> sortedList;
     private final Map<String, ModFileInfo> fileById;
-    private BackgroundScanHandler scanner;
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
+    private ForkJoinPool modLoadingThreadPool = new ForkJoinPool();
+    private List<ModFileScanData> modFileScanData;
 
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
@@ -79,10 +93,21 @@ public class ModList
     }
 
     public void dispatchLifeCycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        this.mods.parallelStream().forEach(m->m.transitionState(lifecycleEvent));
+        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.preLifecycleEvent(lifecycleEvent));
+        DeferredWorkQueue.deferredWorkQueue.clear();
+        try
+        {
+            modLoadingThreadPool.submit(()->this.mods.parallelStream().forEach(m->m.transitionState(lifecycleEvent))).get();
+        }
+        catch (InterruptedException | ExecutionException e)
+        {
+            LOGGER.error(LOADING, "Encountered an exception during parallel processing", e);
+        }
+        DeferredWorkQueue.deferredWorkQueue.forEach(FutureTask::run);
+        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.postLifecycleEvent(lifecycleEvent));
         final List<ModContainer> erroredContainers = this.mods.stream().filter(m -> m.getCurrentState() == ModLoadingStage.ERROR).collect(Collectors.toList());
         if (!erroredContainers.isEmpty()) {
-            throw new RuntimeException("Errored containers found!");
+            throw new RuntimeException("Errored containers found!", erroredContainers.get(0).modLoadingError.get(0));
         }
     }
 
@@ -92,9 +117,10 @@ public class ModList
         this.indexedMods = modContainers.stream().collect(Collectors.toMap(ModContainer::getModId, Function.identity()));
     }
 
-    public Optional<Object> getModObjectById(String modId)
+    @SuppressWarnings("unchecked")
+    public <T> Optional<T> getModObjectById(String modId)
     {
-        return getModContainerById(modId).map(ModContainer::getMod);
+        return getModContainerById(modId).map(ModContainer::getMod).map(o -> (T) o);
     }
 
     public Optional<? extends ModContainer> getModContainerById(String modId)
@@ -110,5 +136,25 @@ public class ModList
     public boolean isLoaded(String modTarget)
     {
         return this.indexedMods.containsKey(modTarget);
+    }
+
+    public int size()
+    {
+        return mods.size();
+    }
+
+    public List<ModFileScanData> getAllScanData()
+    {
+        if (modFileScanData == null)
+        {
+            modFileScanData = this.sortedList.stream().
+                    map(ModInfo::getOwningFile).
+                    filter(Objects::nonNull).
+                    map(ModFileInfo::getFile).
+                    map(ModFile::getScanResult).
+                    collect(Collectors.toList());
+        }
+        return modFileScanData;
+
     }
 }

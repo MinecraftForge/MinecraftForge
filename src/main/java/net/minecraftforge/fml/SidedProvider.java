@@ -22,14 +22,23 @@ package net.minecraftforge.fml;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.api.Side;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.client.SplashProgress;
+import net.minecraftforge.fml.common.event.FMLClientInitEvent;
+import net.minecraftforge.fml.common.event.FMLServerInitEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import sun.plugin.security.StripClassFile;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public enum SidedProvider
 {
-    DATAFIXER(c->c.get().getDataFixer(), s->s.get().getDataFixer());
+    DATAFIXER(c->c.get().getDataFixer(), s->s.get().getDataFixer()),
+    SIDEDINIT((Function<Supplier<Minecraft>, Function<ModContainer, Event>>)c-> mc->new FMLClientInitEvent(c.get(), mc),
+            (Function<Supplier<DedicatedServer>, Function<ModContainer, Event>>)s-> mc->new FMLServerInitEvent(s.get(), mc)),
+    STRIPCHARS((Function<Supplier<Minecraft>, Function<String, String>>)c-> SplashProgress::stripSpecialChars,
+            (Function<Supplier<DedicatedServer>, Function<String, String>>)s-> str->str);
 
     private static Supplier<Minecraft> client;
     private static Supplier<DedicatedServer> server;

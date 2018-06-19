@@ -30,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
 
+import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
@@ -52,7 +53,9 @@ public class AutomaticEventSubscriber
                 collect(Collectors.toList());
 
         ebsTargets.forEach(ad -> {
-            final List<ModAnnotation.EnumHolder> sidesValue = (List<ModAnnotation.EnumHolder>)ad.getAnnotationData().get("value");
+            @SuppressWarnings("unchecked")
+            final List<ModAnnotation.EnumHolder> sidesValue = (List<ModAnnotation.EnumHolder>)ad.getAnnotationData().
+                    getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "SERVER")));
             final EnumSet<Side> sides = sidesValue.stream().map(eh -> Side.valueOf(eh.getValue())).
                     collect(Collectors.toCollection(() -> EnumSet.noneOf(Side.class)));
             final String modId = (String)ad.getAnnotationData().getOrDefault("modId", mod.getModId());

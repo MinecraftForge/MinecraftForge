@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,17 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.language;
+package net.minecraftforge.fml.common.event;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.ModContainer;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-public class ExtensionPoint<T>
+public class FMLServerInitEvent extends ModLifecycleEvent
 {
-    public static final ExtensionPoint<BiFunction<Minecraft, GuiScreen, GuiScreen>> GUIFACTORY = new ExtensionPoint<>();
-    public static final ExtensionPoint<Function<Minecraft, IResourcePack>> RESOURCEPACK = new ExtensionPoint<>();
+    public FMLServerInitEvent(MinecraftServer server, ModContainer container)
+    {
+        super(container);
+    }
 }

@@ -22,10 +22,13 @@ package net.minecraftforge.fml.client;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.fml.ModList;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class BrandingControl
@@ -41,7 +44,7 @@ public class BrandingControl
             brd.add("Minecraft " + ForgeVersion.mcVersion);
             brd.add("MCP " + ForgeVersion.mcpVersion);
             brd.add("Forge " + ForgeVersion.getVersion());
-            int tModCount = 2;
+            int tModCount = ModList.get().size();
 
             brd.add(MessageFormat.format("{0,choice,0#No mods|1#1 mod|1<{0} mods} loaded", tModCount));
             brandings = brd.build();
@@ -59,6 +62,10 @@ public class BrandingControl
         }
     }
 
+    public static void forEachLine(boolean includeMC, boolean reverse, BiConsumer<Integer, String> lineConsumer) {
+        final List<String> brandings = getBrandings(includeMC, reverse);
+        IntStream.range(0, brandings.size()).boxed().forEachOrdered(idx -> lineConsumer.accept(idx, brandings.get(idx)));
+    }
     private static final List<String> defaultClientBranding = Stream.of("fml", "forge").collect(Collectors.toList());
     public static String getClientBranding() {
         return defaultClientBranding.stream().collect(Collectors.joining(","));

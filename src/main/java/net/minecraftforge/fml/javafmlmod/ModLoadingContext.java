@@ -20,8 +20,11 @@
 package net.minecraftforge.fml.javafmlmod;
 
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.language.ExtensionPoint;
+import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.ExtensionPoint;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
 public class ModLoadingContext

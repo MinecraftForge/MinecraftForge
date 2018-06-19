@@ -17,21 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client;
+package net.minecraftforge.fml.client.gui;
 
-import java.io.File;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.client.FMLClientHandler;
 
-public class GuiBackupFailed extends GuiScreen
+public class GuiAccessDenied extends GuiScreen
 {
     private GuiScreen parent;
-    private File zipName;
-    public GuiBackupFailed(GuiScreen parent, File zipName)
+    private ServerData data;
+    public GuiAccessDenied(GuiScreen parent, ServerData data)
     {
         this.parent = parent;
-        this.zipName = zipName;
+        this.data = data;
     }
 
     @Override
@@ -53,9 +54,9 @@ public class GuiBackupFailed extends GuiScreen
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - 2 * 10, 10);
-        this.drawCenteredString(this.fontRenderer, String.format("There was an error saving the archive %s", zipName.getName()), this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
-        this.drawCenteredString(this.fontRenderer, String.format("Please fix the problem and try again"), this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, String.format("The server %s has forbidden modded access", data.serverName), this.width / 2, offset, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

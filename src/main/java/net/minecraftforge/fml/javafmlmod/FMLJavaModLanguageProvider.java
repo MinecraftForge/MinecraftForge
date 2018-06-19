@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
+import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;
@@ -29,6 +31,7 @@ import org.objectweb.asm.Type;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+import java.util.concurrent.FutureTask;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -59,6 +62,9 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
         @Override
         public <T> T loadMod(final IModInfo info, final ClassLoader modClassLoader, final ModFileScanData modFileScanResults)
         {
+            // This language class is loaded in the system level classloader - before the game even starts
+            // So we must treat container construction as an arms length operation, and load the container
+            // in the classloader of the game - the context classloader is appropriate here.
             try
             {
                 final Constructor<?> constructor = Class.forName("net.minecraftforge.fml.javafmlmod.FMLModContainer", true, Thread.currentThread().getContextClassLoader()).
@@ -91,5 +97,15 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
                     .collect(Collectors.toMap(FMLModTarget::getModId, Function.identity()));
             scanResult.addLanguageLoader(modTargetMap);
         };
+    }
+
+    @Override
+    public void preLifecycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
+    {
+    }
+
+    @Override
+    public void postLifecycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
+    {
     }
 }

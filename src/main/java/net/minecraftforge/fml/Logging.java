@@ -35,5 +35,6 @@ public class Logging
     public static final Marker LOADING = MarkerManager.getMarker("LOADING");
     public static final Marker SCAN = MarkerManager.getMarker("SCAN");
     public static final Marker SPLASH = MarkerManager.getMarker("SPLASH");
+    public static final Marker CAPABILITIES = MarkerManager.getMarker("CAPABILITIES");
     public static final Marker MODELLOADING = MarkerManager.getMarker("MODELLOADING");
 }

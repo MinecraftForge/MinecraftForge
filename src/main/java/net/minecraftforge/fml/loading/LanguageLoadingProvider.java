@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.CORE;
@@ -42,6 +43,11 @@ public class LanguageLoadingProvider
     private final List<IModLanguageProvider> languageProviders = new ArrayList<>();
     private final ServiceLoader<IModLanguageProvider> serviceLoader;
     private final Map<String, ModLanguageWrapper> languageProviderMap = new HashMap<>();
+
+    public void forEach(final Consumer<IModLanguageProvider> consumer)
+    {
+        languageProviders.forEach(consumer);
+    }
 
     private static class ModLanguageWrapper {
         private final IModLanguageProvider modLanguageProvider;

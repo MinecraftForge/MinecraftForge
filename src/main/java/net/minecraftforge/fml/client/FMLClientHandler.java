@@ -89,7 +89,18 @@ import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.util.CompoundDataFixer;
+import net.minecraftforge.fml.client.gui.CustomModLoadingErrorDisplayException;
+import net.minecraftforge.fml.client.gui.GuiAccessDenied;
+import net.minecraftforge.fml.client.gui.GuiConfirmation;
+import net.minecraftforge.fml.client.gui.GuiCustomModLoadingErrorScreen;
+import net.minecraftforge.fml.client.gui.GuiDupesFound;
 import net.minecraftforge.fml.client.gui.GuiModList;
+import net.minecraftforge.fml.client.gui.GuiModsMissing;
+import net.minecraftforge.fml.client.gui.GuiMultipleModsErrored;
+import net.minecraftforge.fml.client.gui.GuiNotification;
+import net.minecraftforge.fml.client.gui.GuiOldSaveLoadConfirm;
+import net.minecraftforge.fml.client.gui.GuiSortingProblem;
+import net.minecraftforge.fml.client.gui.GuiWrongMinecraft;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
@@ -165,8 +176,6 @@ public class FMLClientHandler implements IFMLSidedHandler
      * A reference to the server itself
      */
     private Minecraft client;
-
-    private DummyModContainer optifineContainer;
 
     private boolean loading = true;
 

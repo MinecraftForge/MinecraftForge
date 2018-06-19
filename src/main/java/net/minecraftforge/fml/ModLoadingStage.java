@@ -31,12 +31,13 @@ import java.util.function.Supplier;
 public enum ModLoadingStage
 {
     ERROR(null),
-    BEGIN(null),
-    CONSTRUCT(()->FMLPreInitializationEvent::new),
-    PREINIT(()->FMLInitializationEvent::new),
-    INIT(()->FMLPostInitializationEvent::new),
-    POSTINIT(()->FMLLoadCompleteEvent::new),
-    COMPLETE(null);
+    CONSTRUCT(null),
+    PREINIT(()->FMLPreInitializationEvent::new),
+    SIDEDINIT(SidedProvider.SIDEDINIT::get),
+    INIT(()->FMLInitializationEvent::new),
+    POSTINIT(()->FMLPostInitializationEvent::new),
+    COMPLETE(()->FMLLoadCompleteEvent::new),
+    DONE(null);
 
     private final Supplier<Function<ModContainer, ModLifecycleEvent>> modLifecycleEventFunction;
 

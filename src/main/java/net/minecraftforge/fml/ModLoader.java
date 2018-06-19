@@ -19,17 +19,24 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.api.Side;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.registries.GameData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -55,15 +62,24 @@ public class ModLoader
         return INSTANCE == null ? INSTANCE = new ModLoader() : INSTANCE;
     }
 
+    private static Callable<Boolean> fireClientEvents()
+    {
+        return ()->MinecraftForge.EVENT_BUS.post(new ModelRegistryEvent());
+    }
+
     public void loadMods() {
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
         modList.setLoadedMods(loadingModList.getModFiles().stream().
                 map(ModFileInfo::getFile).
                 map(mf -> buildMods(mf, modClassLoader)).
                 flatMap(Collection::stream).collect(Collectors.toList()));
-
-        LifecycleEventProvider.LOAD.dispatch();
         LifecycleEventProvider.CONSTRUCT.dispatch();
+        GameData.fireCreateRegistryEvents();
+        CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
+        LifecycleEventProvider.PREINIT.dispatch();
+        GameData.fireRegistryEvents(rl -> !Objects.equals(rl, GameData.RECIPES));
+        SidedExecutor.runOn(Side.CLIENT, ModLoader::fireClientEvents);
+        LifecycleEventProvider.SIDEDINIT.dispatch();
     }
 
     private List<ModContainer> buildMods(final ModFile modFile, final ModLoadingClassLoader modClassLoader)
@@ -76,4 +92,10 @@ public class ModLoader
     }
 
 
+    public void finishMods()
+    {
+        LifecycleEventProvider.INIT.dispatch();
+        LifecycleEventProvider.POSTINIT.dispatch();
+        LifecycleEventProvider.COMPLETE.dispatch();
+    }
 }
