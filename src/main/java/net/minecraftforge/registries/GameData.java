@@ -733,6 +733,15 @@ public class GameData
         });
         */
 
+        for (ResourceLocation rl : keys)
+        {
+            if (!filter.test(rl)) continue;
+            if (rl == BLOCKS || rl == ITEMS) continue;
+            ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
+            if (!reg.isPreBlocks) continue;
+            MinecraftForge.EVENT_BUS.post(reg.getRegisterEvent(rl));
+        }
+        ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject the preBlocks registries
         if (filter.test(BLOCKS))
         {
             MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(BLOCKS).getRegisterEvent(BLOCKS));
@@ -747,7 +756,9 @@ public class GameData
         {
             if (!filter.test(rl)) continue;
             if (rl == BLOCKS || rl == ITEMS) continue;
-            MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
+            ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
+            if (reg.isPreBlocks) continue;
+            MinecraftForge.EVENT_BUS.post(reg.getRegisterEvent(rl));
         }
         ObjectHolderRegistry.INSTANCE.applyObjectHolders(); // inject everything else
 

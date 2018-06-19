@@ -41,6 +41,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean saveToDisc = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
+    private boolean isPreBlocks = false;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
 
@@ -138,10 +139,16 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         return this;
     }
 
+    public RegistryBuilder<T> setPreBlocks()
+    {
+        this.isPreBlocks = true;
+        return this;
+    }
+
     public IForgeRegistry<T> create()
     {
         return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getAdd(), getClear(), getCreate(), saveToDisc, allowOverrides, allowModifications, dummyFactory, missingFactory);
+                getAdd(), getClear(), getCreate(), saveToDisc, allowOverrides, allowModifications, isPreBlocks, dummyFactory, missingFactory);
     }
 
     @Nullable
