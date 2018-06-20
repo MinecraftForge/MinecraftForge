@@ -273,6 +273,15 @@ public class DimensionManager
 
     public static WorldServer getWorld(int id)
     {
+        return getWorld(id, false);
+    }
+
+    public static WorldServer getWorld(int id, boolean resetUnloadDelay)
+    {
+        if (resetUnloadDelay && unloadQueue.contains(id))
+        {
+            dimensions.get(id).ticksWaited = 0;
+        }
         return worlds.get(id);
     }
 
@@ -339,7 +348,6 @@ public class DimensionManager
 
     /**
      * Queues a dimension to unload, if it can be unloaded.
-     * If the dimension is already queued, it will reset the delay to unload.
      * @param id The id of the dimension
      */
     public static void unloadWorld(int id)
@@ -350,10 +358,6 @@ public class DimensionManager
         if (unloadQueue.add(id))
         {
             FMLLog.log.debug("Queueing dimension {} to unload", id);
-        }
-        else
-        {
-            dimensions.get(id).ticksWaited = 0;
         }
     }
 

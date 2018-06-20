@@ -243,7 +243,7 @@
      public WorldServer func_71218_a(int p_71218_1_)
      {
 -        if (p_71218_1_ == -1)
-+        WorldServer ret = net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_);
++        WorldServer ret = net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_, true);
 +        if (ret == null)
          {
 -            return this.field_71305_c[1];
