@@ -26,6 +26,7 @@ import java.util.Set;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
+import net.minecraftforge.fml.common.asm.transformers.deobf.FMLRemappingAdapter;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 
@@ -55,7 +56,8 @@ public class ASMModParser
         try
         {
             ClassReader reader = new ClassReader(stream);
-            reader.accept(new ModClassVisitor(this), 0);
+            // EXPAND_FRAMES is needed because ASM's RemappingMethodAdapter requires it
+            reader.accept(new FMLRemappingAdapter(new ModClassVisitor(this)), ClassReader.EXPAND_FRAMES);
         }
         catch (Exception ex)
         {
