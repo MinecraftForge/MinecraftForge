@@ -19,7 +19,8 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.api.Side;
+import com.google.common.collect.Streams;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -32,6 +33,7 @@ import net.minecraftforge.registries.GameData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +41,9 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static net.minecraftforge.fml.Logging.CORE;
 
 public class ModLoader
 {
@@ -69,16 +74,30 @@ public class ModLoader
 
     public void loadMods() {
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
-        modList.setLoadedMods(loadingModList.getModFiles().stream().
+        final ModContainer forgeModContainer;
+        try
+        {
+            forgeModContainer = (ModContainer)Class.forName("net.minecraftforge.common.ForgeModContainer", true, modClassLoader).
+            getConstructor(ModLoadingClassLoader.class).newInstance(modClassLoader);
+        }
+        catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e)
+        {
+            LOGGER.error(CORE,"Unable to load the Forge Mod Container", e);
+            throw new RuntimeException(e);
+        }
+        final Stream<ModContainer> modContainerStream = loadingModList.getModFiles().stream().
                 map(ModFileInfo::getFile).
                 map(mf -> buildMods(mf, modClassLoader)).
-                flatMap(Collection::stream).collect(Collectors.toList()));
+                flatMap(Collection::stream);
+        modList.setLoadedMods(Streams.concat(Stream.of(forgeModContainer), modContainerStream).collect(Collectors.toList()));
         LifecycleEventProvider.CONSTRUCT.dispatch();
+        WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
+        WorldPersistenceHooks.addHook((WorldPersistenceHooks.WorldPersistenceHook)forgeModContainer.getMod());
         GameData.fireCreateRegistryEvents();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         LifecycleEventProvider.PREINIT.dispatch();
         GameData.fireRegistryEvents(rl -> !Objects.equals(rl, GameData.RECIPES));
-        SidedExecutor.runOn(Side.CLIENT, ModLoader::fireClientEvents);
+        SidedExecutor.runOn(Dist.CLIENT, ModLoader::fireClientEvents);
         LifecycleEventProvider.SIDEDINIT.dispatch();
     }
 
@@ -97,5 +116,7 @@ public class ModLoader
         LifecycleEventProvider.INIT.dispatch();
         LifecycleEventProvider.POSTINIT.dispatch();
         LifecycleEventProvider.COMPLETE.dispatch();
+        GameData.freezeData();
     }
+
 }

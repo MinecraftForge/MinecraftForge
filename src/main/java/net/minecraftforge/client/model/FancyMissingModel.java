@@ -20,7 +20,7 @@
 package net.minecraftforge.client.model;
 
 import java.util.function.Function;
-import java.util.Optional;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -36,7 +36,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
@@ -201,7 +201,7 @@ final class FancyMissingModel implements IModel
                 case HEAD:
                     break;
                 case GUI:
-                    if (ForgeModContainer.zoomInMissingModelTextInGui)
+                    if (ForgeMod.zoomInMissingModelTextInGui)
                     {
                         transform = new TRSRTransformation(null, new Quat4f(1, 1, 1, 1), new Vector3f(4, 4, 4), null);
                         big = false;

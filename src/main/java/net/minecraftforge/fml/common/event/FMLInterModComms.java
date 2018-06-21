@@ -28,8 +28,6 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.Mod.Instance;
 
@@ -379,11 +377,11 @@ public class FMLInterModComms {
 
     private static boolean enqueueStartupMessage(String modTarget, IMCMessage message)
     {
-        if (ModThreadContext.get().getCurrentContainer() == null)
+        if (ModThreadContext.get().getActiveContainer() == null)
         {
             return false;
         }
-        enqueueMessage(ModThreadContext.get().getCurrentContainer(), modTarget, message);
+        enqueueMessage(ModThreadContext.get().getActiveContainer(), modTarget, message);
         return ModList.get().isLoaded(modTarget);
 
     }

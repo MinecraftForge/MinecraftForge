@@ -22,8 +22,6 @@ package net.minecraftforge.common;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 import java.util.Collections;
@@ -111,11 +109,11 @@ public class MinecraftForge
        if (all.size() == 0)
         return;
 
-       ForgeModContainer.log.debug("Preloading CrashReport Classes");
+       ForgeMod.log.debug("Preloading CrashReport Classes");
        Collections.sort(all); //Sort it because I like pretty output ;)
        for (String name : all)
        {
-           ForgeModContainer.log.debug("\t{}", name);
+           ForgeMod.log.debug("\t{}", name);
            try
            {
                Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());

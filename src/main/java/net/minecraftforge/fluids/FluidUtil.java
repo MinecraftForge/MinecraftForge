@@ -39,7 +39,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -742,7 +742,7 @@ public class FluidUtil
 
         if (FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid))
         {
-            UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
+            UniversalBucket bucket = ForgeMod.getInstance().universalBucket;
             ItemStack filledBucket = new ItemStack(bucket);
             FluidStack fluidContents = new FluidStack(fluidStack, bucket.getCapacity());
 

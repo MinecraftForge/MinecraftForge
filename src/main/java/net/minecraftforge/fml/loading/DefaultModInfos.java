@@ -50,7 +50,7 @@ public class DefaultModInfos
     }
 
     public static final IModInfo minecraftModInfo;
-    private static final IModInfo forgeModInfo;
+    public static final IModInfo forgeModInfo;
 
     // no construction
     private DefaultModInfos() {}

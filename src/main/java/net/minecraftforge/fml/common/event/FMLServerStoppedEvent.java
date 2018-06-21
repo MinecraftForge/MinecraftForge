@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraftforge.fml.common.LoaderState.ModState;
-
 /**
  * Called after {@link FMLServerStoppingEvent} when the server has completely shut down.
  * Called immediately before shutting down, on the dedicated server, and before returning
@@ -30,15 +28,4 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  * @author cpw
  */
 public class FMLServerStoppedEvent extends FMLStateEvent {
-
-    public FMLServerStoppedEvent(Object... data)
-    {
-        super(data);
-    }
-    @Override
-    public ModState getModState()
-    {
-        return ModState.AVAILABLE;
-    }
-
 }

@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.common.event;
 
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.LoaderState.ModState;
 
 /**
  * Called before the server begins loading anything. Called after {@link FMLPostInitializationEvent} on the dedicated
@@ -32,17 +31,11 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  */
 public class FMLServerAboutToStartEvent extends FMLStateEvent {
 
-    private MinecraftServer server;
+    private final MinecraftServer server;
 
-    public FMLServerAboutToStartEvent(Object... data)
+    public FMLServerAboutToStartEvent(MinecraftServer server)
     {
-        super(data);
-        this.server = (MinecraftServer) data[0];
-    }
-    @Override
-    public ModState getModState()
-    {
-        return ModState.AVAILABLE;
+        this.server = (MinecraftServer) server;
     }
 
     public MinecraftServer getServer()

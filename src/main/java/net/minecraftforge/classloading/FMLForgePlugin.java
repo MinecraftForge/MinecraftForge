@@ -40,7 +40,7 @@ public class FMLForgePlugin implements IFMLLoadingPlugin
     @Override
     public String getModContainerClass()
     {
-        return "net.minecraftforge.common.ForgeModContainer";
+        return "net.minecraftforge.common.ForgeMod";
     }
 
     @Override

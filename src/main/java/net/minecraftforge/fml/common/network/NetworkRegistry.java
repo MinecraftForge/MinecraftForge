@@ -35,12 +35,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.INetHandler;
 import net.minecraft.world.World;
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.fml.common.network.internal.NetworkModHolder;
@@ -55,10 +54,10 @@ import javax.annotation.Nullable;
  * @author cpw
  *
  */
-public enum NetworkRegistry
+public class NetworkRegistry
 {
-    INSTANCE;
-    private EnumMap<Side,Map<String,FMLEmbeddedChannel>> channels = Maps.newEnumMap(Side.class);
+    public static final NetworkRegistry INSTANCE = new NetworkRegistry();
+    private EnumMap<LogicalSide,Map<String,FMLEmbeddedChannel>> channels = Maps.newEnumMap(LogicalSide.class);
     private Map<ModContainer, NetworkModHolder> registry = Maps.newHashMap();
     private Map<ModContainer, IGuiHandler> serverGuiHandlers = Maps.newHashMap();
     private Map<ModContainer, IGuiHandler> clientGuiHandlers = Maps.newHashMap();
@@ -67,10 +66,10 @@ public enum NetworkRegistry
      * Set in the {@link ChannelHandlerContext}
      */
     public static final AttributeKey<String> FML_CHANNEL = AttributeKey.valueOf("fml:channelName");
-    public static final AttributeKey<Side> CHANNEL_SOURCE = AttributeKey.valueOf("fml:channelSource");
+    public static final AttributeKey<LogicalSide> CHANNEL_SOURCE = AttributeKey.valueOf("fml:channelSource");
     public static final AttributeKey<ModContainer> MOD_CONTAINER = AttributeKey.valueOf("fml:modContainer");
     public static final AttributeKey<INetHandler> NET_HANDLER = AttributeKey.valueOf("fml:netHandler");
-    public static final AttributeKey<Boolean> FML_MARKER = AttributeKey.valueOf("fml:hasMarker");
+    public static final AttributeKey<String> FML_MARKER = AttributeKey.valueOf("fml:versionMarker");
 
     // Version 1: ServerHello only contains this value as a byte
     // Version 2: ServerHello additionally contains a 4 byte (int) dimension for the logging in client
@@ -78,8 +77,8 @@ public enum NetworkRegistry
 
     private NetworkRegistry()
     {
-        channels.put(Side.CLIENT, Maps.<String,FMLEmbeddedChannel>newConcurrentMap());
-        channels.put(Side.SERVER, Maps.<String,FMLEmbeddedChannel>newConcurrentMap());
+        channels.put(LogicalSide.CLIENT, Maps.<String,FMLEmbeddedChannel>newConcurrentMap());
+        channels.put(LogicalSide.SERVER, Maps.<String,FMLEmbeddedChannel>newConcurrentMap());
     }
 
     /**
@@ -123,8 +122,8 @@ public enum NetworkRegistry
      * <li> Alternatively, simply use the netty features provided here and implement the full power of the netty stack.
      * </ul>
      *
-     * There are two channels created : one for each logical side (considered as the source of an outbound message)
-     * The returned map will contain a value for each logical side, though both will only be working in the
+     * There are two channels created : one for each logical Dist (conDistred as the source of an outbound message)
+     * The returned map will contain a value for each logical Dist, though both will only be working in the
      * integrated server case.
      *
      * The channel expects to read and write using {@link FMLProxyPacket}. All operation is synchronous, as the
@@ -133,7 +132,7 @@ public enum NetworkRegistry
      * The first handler in the pipeline is special and should not be removed or moved from the head - it transforms
      * packets from the outbound of this pipeline into custom packets, based on the current {@link AttributeKey} value
      * {@link FMLOutboundHandler#FML_MESSAGETARGET} and {@link FMLOutboundHandler#FML_MESSAGETARGETARGS} set on the channel.
-     * For the client to server channel (source side : CLIENT) this is fixed as "TOSERVER". For SERVER to CLIENT packets,
+     * For the client to server channel (source Dist : CLIENT) this is fixed as "TOSERVER". For SERVER to CLIENT packets,
      * several possible values exist.
      *
      * Mod Messages should be transformed using a something akin to a {@link MessageToMessageCodec}. FML provides
@@ -147,15 +146,15 @@ public enum NetworkRegistry
      * @param handlers
      * @return
      */
-    public EnumMap<Side,FMLEmbeddedChannel> newChannel(String name, ChannelHandler... handlers)
+    public EnumMap<LogicalSide,FMLEmbeddedChannel> newChannel(String name, ChannelHandler... handlers)
     {
-        if (channels.get(Side.CLIENT).containsKey(name) || channels.get(Side.SERVER).containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || name.startsWith("FML"))
+        if (channels.get(LogicalSide.CLIENT).containsKey(name) || channels.get(LogicalSide.SERVER).containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || name.startsWith("FML"))
         {
             throw new RuntimeException("That channel is already registered");
         }
-        EnumMap<Side,FMLEmbeddedChannel> result = Maps.newEnumMap(Side.class);
+        EnumMap<LogicalSide, FMLEmbeddedChannel> result = Maps.newEnumMap(LogicalSide.class);
 
-        for (Side side : Side.values())
+        for (LogicalSide side : LogicalSide.values())
         {
             FMLEmbeddedChannel channel = new FMLEmbeddedChannel(name, side, handlers);
             channels.get(side).put(name,channel);
@@ -191,26 +190,26 @@ public enum NetworkRegistry
      * @param container The container to associate the channel with
      * @param name The name for the channel
      * @param handlers Some {@link ChannelHandler} for the channel
-     * @return an {@link EnumMap} of the pair of channels. keys are {@link Side}. There will always be two entries.
+     * @return an {@link EnumMap} of the pair of channels. keys are {@link Dist}. There will always be two entries.
      */
-    public EnumMap<Side,FMLEmbeddedChannel> newChannel(ModContainer container, String name, ChannelHandler... handlers)
+    public EnumMap<LogicalSide,FMLEmbeddedChannel> newChannel(ModContainer container, String name, ChannelHandler... handlers)
     {
-        if (channels.get(Side.CLIENT).containsKey(name) || channels.get(Side.SERVER).containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || (name.startsWith("FML") && !("FML".equals(container.getModId()))))
+        if (channels.get(Dist.CLIENT).containsKey(name) || channels.get(Dist.DEDICATED_SERVER).containsKey(name) || name.startsWith("MC|") || name.startsWith("\u0001") || (name.startsWith("FML") && !("FML".equals(container.getModId()))))
         {
             throw new RuntimeException("That channel is already registered");
         }
-        EnumMap<Side,FMLEmbeddedChannel> result = Maps.newEnumMap(Side.class);
+        EnumMap<LogicalSide,FMLEmbeddedChannel> result = Maps.newEnumMap(LogicalSide.class);
 
-        for (Side side : Side.values())
+        for (LogicalSide Dist : LogicalSide.values())
         {
-            FMLEmbeddedChannel channel = new FMLEmbeddedChannel(container, name, side, handlers);
-            channels.get(side).put(name,channel);
-            result.put(side, channel);
+            FMLEmbeddedChannel channel = new FMLEmbeddedChannel(container, name, Dist, handlers);
+            channels.get(Dist).put(name,channel);
+            result.put(Dist, channel);
         }
         return result;
     }
 
-    public FMLEmbeddedChannel getChannel(String name, Side source)
+    public FMLEmbeddedChannel getChannel(String name, Dist source)
     {
         return channels.get(source).get(name);
     }
@@ -241,7 +240,7 @@ public enum NetworkRegistry
      * @param x X coord
      * @param y Y coord
      * @param z Z coord
-     * @return The server side GUI object (An instance of {@link Container})
+     * @return The server Dist GUI object (An instance of {@link Container})
      */
     @Nullable
     public Container getRemoteGuiContainer(ModContainer mc, EntityPlayerMP player, int modGuiId, World world, int x, int y, int z)
@@ -267,7 +266,7 @@ public enum NetworkRegistry
      * @param x X coord
      * @param y Y coord
      * @param z Z coord
-     * @return The client side GUI object (An instance of {@link net.minecraft.client.gui.Gui})
+     * @return The client Dist GUI object (An instance of {@link net.minecraft.client.gui.Gui})
      */
     @Nullable
     public Object getLocalGuiContainer(ModContainer mc, EntityPlayer player, int modGuiId, World world, int x, int y, int z)
@@ -277,12 +276,12 @@ public enum NetworkRegistry
     }
 
     /**
-     * Is there a channel with this name on this side?
+     * Is there a channel with this name on this Dist?
      * @param channelName The name
-     * @param source the side
+     * @param source the Dist
      * @return if there's a channel
      */
-    public boolean hasChannel(String channelName, Side source)
+    public boolean hasChannel(String channelName, Dist source)
     {
         return channels.get(source).containsKey(channelName);
     }
@@ -294,20 +293,23 @@ public enum NetworkRegistry
      * @param remoteVersionRange the acceptable remote range
      * @param asmHarvestedData internal data
      */
+/*
     public void register(ModContainer fmlModContainer, Class<?> clazz, @Nullable String remoteVersionRange, ASMDataTable asmHarvestedData)
     {
         NetworkModHolder networkModHolder = new NetworkModHolder(fmlModContainer, clazz, remoteVersionRange, asmHarvestedData);
         registry.put(fmlModContainer, networkModHolder);
         networkModHolder.testVanillaAcceptance();
     }
+*/
 
-    public boolean isVanillaAccepted(Side from)
+/*
+    public boolean isVanillaAccepted(Dist from)
     {
         return registry.values().stream()
                 .allMatch(mod -> mod.acceptsVanilla(from));
     }
 
-    public Collection<String> getRequiredMods(Side from)
+    public Collection<String> getRequiredMods(Dist from)
     {
         return registry.values().stream()
                 .filter(mod -> !mod.acceptsVanilla(from))
@@ -315,6 +317,7 @@ public enum NetworkRegistry
                 .sorted()
                 .collect(Collectors.toList());
     }
+*/
 
     public Map<ModContainer,NetworkModHolder> registry()
     {
@@ -322,21 +325,21 @@ public enum NetworkRegistry
     }
 
     /**
-     * All the valid channel names for a side
-     * @param side the side
+     * All the valid channel names for a Dist
+     * @param Dist the Dist
      * @return the set of channel names
      */
-    public Set<String> channelNamesFor(Side side)
+    public Set<String> channelNamesFor(Dist Dist)
     {
-        return channels.get(side).keySet();
+        return channels.get(Dist).keySet();
     }
 
     /**
      * INTERNAL fire a handshake to all channels
      * @param networkDispatcher The dispatcher firing
-     * @param origin which side the dispatcher is on
+     * @param origin which Dist the dispatcher is on
      */
-    public void fireNetworkHandshake(NetworkDispatcher networkDispatcher, Side origin)
+    public void fireNetworkHandshake(NetworkDispatcher networkDispatcher, Dist origin)
     {
 /*
         NetworkHandshakeEstablished handshake = new NetworkHandshakeEstablished(networkDispatcher, networkDispatcher.getNetHandler(), origin);

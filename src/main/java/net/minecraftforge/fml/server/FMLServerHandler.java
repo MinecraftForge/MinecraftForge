@@ -43,9 +43,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.IFMLSidedHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.StartupQuery;
+import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.io.IOUtils;
@@ -147,7 +146,7 @@ public class FMLServerHandler implements IFMLSidedHandler
     }
 
     /* (non-Javadoc)
-     * @see net.minecraftforge.fml.common.IFMLSidedHandler#getSide()
+     * @see net.minecraftforge.fml.common.IFMLSidedHandler#getDist()
      */
     @Override
     public Side getSide()

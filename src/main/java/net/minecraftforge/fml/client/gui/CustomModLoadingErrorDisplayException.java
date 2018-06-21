@@ -21,11 +21,10 @@ package net.minecraftforge.fml.client.gui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.IFMLHandledException;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
 /**
  * If a mod throws this exception during loading, it will be called back to render
@@ -37,7 +36,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * @author cpw
  *
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public abstract class CustomModLoadingErrorDisplayException extends EnhancedRuntimeException implements IFMLHandledException, IDisplayableError
 {
     public CustomModLoadingErrorDisplayException() {

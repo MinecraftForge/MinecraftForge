@@ -19,13 +19,9 @@
 
 package net.minecraftforge.fml;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Lists;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.fml.common.ICrashCallable;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.relauncher.CoreModManager;
 
 import java.util.ArrayList;
 import java.util.List;

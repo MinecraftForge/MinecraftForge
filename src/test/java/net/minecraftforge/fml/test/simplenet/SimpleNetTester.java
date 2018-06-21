@@ -21,7 +21,7 @@ package net.minecraftforge.fml.test.simplenet;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import org.junit.Test;
 
 import static org.junit.Assert.assertTrue;

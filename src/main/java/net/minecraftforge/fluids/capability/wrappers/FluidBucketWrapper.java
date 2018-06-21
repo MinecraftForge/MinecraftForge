@@ -27,7 +27,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.Fluid;
@@ -85,9 +85,9 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         {
             return FluidRegistry.getFluidStack("milk", Fluid.BUCKET_VOLUME);
         }
-        else if (item == ForgeModContainer.getInstance().universalBucket)
+        else if (item == ForgeMod.getInstance().universalBucket)
         {
-            return ForgeModContainer.getInstance().universalBucket.getFluid(container);
+            return ForgeMod.getInstance().universalBucket.getFluid(container);
         }
         else
         {

@@ -30,7 +30,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraftforge.common.util.CompoundDataFixer;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.StartupQuery;
 
 public interface IFMLSidedHandler
 {

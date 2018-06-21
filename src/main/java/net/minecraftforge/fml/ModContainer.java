@@ -20,6 +20,7 @@
 package net.minecraftforge.fml;
 
 import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.network.Networking;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,7 +52,6 @@ public abstract class ModContainer
     protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
     protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
     protected final List<Throwable> modLoadingError;
-
     public ModContainer(IModInfo info)
     {
         this.modId = info.getModId();

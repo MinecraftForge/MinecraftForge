@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.common.event;
 
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.ModMetadata;
 
 /**
  * Called before {@link FMLInitializationEvent} during mod startup.

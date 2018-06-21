@@ -25,7 +25,7 @@ import cpw.mods.modlauncher.api.ITransformationService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
@@ -53,9 +53,10 @@ public class FMLLoader
     private static ICoreModProvider coreModProvider;
     private static ILaunchPluginService eventBus;
     private static LanguageLoadingProvider languageLoadingProvider;
-    private static Side side;
+    private static Dist dist;
     private static LoadingModList loadingModList;
     private static ClassLoader launchClassLoader;
+    private static RuntimeDistCleaner runtimeDistCleaner;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -87,6 +88,9 @@ public class FMLLoader
             fmlLog.error(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible eventbus found "+eventBusPackage.getSpecificationVersion());
         }
+
+        runtimeDistCleaner = (RuntimeDistCleaner)environment.findLaunchPlugin("runtimedistcleaner").orElseThrow(()->new IncompatibleEnvironmentException("Missing RuntimeDistCleaner, cannot run!"));
+        fmlLog.debug(CORE, "Found Runtime Dist Cleaner");
 
         final ArrayList<ICoreModProvider> coreModProviders = new ArrayList<>();
         ServiceLoader.load(ICoreModProvider.class).forEach(coreModProviders::add);
@@ -123,7 +127,8 @@ public class FMLLoader
 
         FMLCommonLaunchHandler commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
         commonLaunchHandler.setup(environment);
-        side = commonLaunchHandler.getSidedness();
+        dist = commonLaunchHandler.getDist();
+        runtimeDistCleaner.getExtension().accept(dist);
     }
     public static void beginModScan()
     {
@@ -166,9 +171,9 @@ public class FMLLoader
         accessTransformer.addResource(atPath, modName.getFileName());
     }
 
-    public static Side getSide()
+    public static Dist getDist()
     {
-        return side;
+        return dist;
     }
 
     public static void beforeStart(ITransformingClassLoader launchClassLoader)

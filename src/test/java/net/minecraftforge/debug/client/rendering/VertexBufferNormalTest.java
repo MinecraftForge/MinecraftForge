@@ -32,7 +32,6 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
@@ -42,7 +41,6 @@ public class VertexBufferNormalTest
     @Instance("wrnormal")
     public static VertexBufferNormalTest instance;
 
-    @SidedProxy
     public static ServerProxy proxy;
 
     @EventHandler

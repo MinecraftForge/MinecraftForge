@@ -113,14 +113,12 @@ import net.minecraftforge.fml.common.MetadataCollection;
 import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.MultipleModsErrored;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.StartupQuery;
+import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.GameData;
 
 import org.lwjgl.input.Mouse;

@@ -20,9 +20,11 @@
 package net.minecraftforge.fml.common.network.simpleimpl;
 
 
+import net.minecraftforge.api.distmarker.Dist;
+
 /**
  * A message handler based on {@link IMessage}. Implement and override {@link #onMessage(IMessage, MessageContext)} to
- * process your packet. Supply the class to {@link SimpleNetworkWrapper#registerMessage(Class, Class, int, net.minecraftforge.fml.relauncher.Side)}
+ * process your packet. Supply the class to {@link SimpleNetworkWrapper#registerMessage(Class, Class, int, Side)}
  * to register both the message type and it's associated handler.
  *
  * @author cpw

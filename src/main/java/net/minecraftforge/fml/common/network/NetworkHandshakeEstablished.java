@@ -21,7 +21,7 @@ package net.minecraftforge.fml.common.network;
 
 import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 /**
  * This message is sent through all channels affected by a currently occurring handshake. It is guaranteed to

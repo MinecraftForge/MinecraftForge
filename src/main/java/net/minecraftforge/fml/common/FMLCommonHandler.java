@@ -52,7 +52,10 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.CompoundDataFixer;
-import net.minecraftforge.fml.client.BrandingControl;
+import net.minecraftforge.fml.LogicalSide;
+import net.minecraftforge.fml.StartupQuery;
+import net.minecraftforge.fml.WorldPersistenceHooks;
+import net.minecraftforge.fml.BrandingControl;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -63,7 +66,6 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.thread.SidedThreadGroup;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.server.FMLServerHandler;
 
 import org.apache.logging.log4j.Logger;
@@ -320,7 +322,7 @@ public class FMLCommonHandler
         {
             if (mc instanceof InjectedModContainer)
             {
-                WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
+                WorldPersistenceHooks.WorldPersistenceHook wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
                 if (wac != null)
                 {
                     NBTTagCompound dataForWriting = wac.getDataForWriting(handler, worldInfo);
@@ -332,7 +334,7 @@ public class FMLCommonHandler
 
     public void handleWorldDataLoad(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
     {
-        if (getEffectiveSide()!=Side.SERVER)
+        if (getEffectiveSide()!=LogicalSide.SERVER)
         {
             return;
         }
@@ -348,7 +350,7 @@ public class FMLCommonHandler
         {
             if (mc instanceof InjectedModContainer)
             {
-                WorldAccessContainer wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
+                WorldPersistenceHooks.WorldPersistenceHook wac = ((InjectedModContainer)mc).getWrappedWorldAccessContainer();
                 if (wac != null)
                 {
                     wac.readData(handler, worldInfo, additionalProperties, tagCompound.getCompoundTag(mc.getModId()));
@@ -564,7 +566,7 @@ public class FMLCommonHandler
         if (!shouldAllowPlayerLogins())
         {
             TextComponentString text = new TextComponentString("Server is still starting! Please wait before reconnecting.");
-            FMLLog.log.info("Disconnecting Player: {}", text.getUnformattedText());
+            LOGGER.info("Disconnecting Player: {}", text.getUnformattedText());
             manager.sendPacket(new SPacketDisconnect(text));
             manager.closeChannel(text);
             return false;

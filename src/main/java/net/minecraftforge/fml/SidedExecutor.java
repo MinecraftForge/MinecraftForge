@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import java.util.concurrent.Callable;
@@ -32,13 +32,13 @@ public final class SidedExecutor
     /**
      * Run the callable in the supplier only on the specified {@link Side}
      *
-     * @param side The side to run on
-     * @param toRun A supplier of the callable to run (Supplier wrapper to ensure classloading only on the appropriate side)
+     * @param dist The dist to run on
+     * @param toRun A supplier of the callable to run (Supplier wrapper to ensure classloading only on the appropriate dist)
      * @param <T> The return type from the callable
      * @return The callable's result
      */
-    public static <T> T runOn(Side side, Supplier<Callable<T>> toRun) {
-        if (side == FMLEnvironment.side) {
+    public static <T> T runOn(Dist dist, Supplier<Callable<T>> toRun) {
+        if (dist == FMLEnvironment.dist) {
             try
             {
                 return toRun.get().call();
@@ -52,11 +52,11 @@ public final class SidedExecutor
     }
 
     public static <T> T runSided(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
-        switch (FMLEnvironment.side)
+        switch (FMLEnvironment.dist)
         {
             case CLIENT:
                 return clientTarget.get().get();
-            case SERVER:
+            case DEDICATED_SERVER:
                 return serverTarget.get().get();
             default:
                 throw new IllegalArgumentException("UNSIDED?");

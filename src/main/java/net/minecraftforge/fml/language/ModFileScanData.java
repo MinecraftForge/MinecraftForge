@@ -33,6 +33,7 @@ public class ModFileScanData
     private final List<ModFileScanData.AnnotationData> annotations = new ArrayList<>();
     private final List<ModFileScanData.ClassData> classes = new ArrayList<>();
     private Map<String,? extends IModLanguageProvider.IModLanguageLoader> modTargets;
+    private Map<String,?> functionalScanners;
 
     public static Predicate<Type> interestingAnnotations() {
         return t->true;

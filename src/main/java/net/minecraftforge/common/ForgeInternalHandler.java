@@ -24,6 +24,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -93,7 +94,7 @@ public class ForgeInternalHandler
     public void checkSettings(ClientTickEvent event)
     {
         if (event.phase == Phase.END)
-            FMLClientHandler.instance().updateCloudSettings();
+            CloudRenderer.updateCloudSettings();
     }
 }
 

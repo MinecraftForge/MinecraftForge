@@ -31,7 +31,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
@@ -50,7 +50,7 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.BooleanEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.ModContainer;
-import static net.minecraftforge.common.ForgeModContainer.VERSION_CHECK_CAT;
+import static net.minecraftforge.common.ForgeMod.VERSION_CHECK_CAT;
 
 /**
  * This is the base GuiConfig screen class that all the other Forge-specific config screens will be called from.
@@ -87,8 +87,8 @@ import static net.minecraftforge.common.ForgeModContainer.VERSION_CHECK_CAT;
  *                  - etc.
  *
  * Other things to check out:
- *      ForgeModContainer.syncConfig()
- *      ForgeModContainer.onConfigChanged()
+ *      ForgeMod.syncConfig()
+ *      ForgeMod.onConfigChanged()
  *      ForgeChunkManager.syncConfigDefaults()
  *      ForgeChunkManager.loadConfiguration()
  */
@@ -141,10 +141,10 @@ public class ForgeGuiFactory implements IModGuiFactory
                 // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
                 // GuiConfig object's entryList will also be refreshed to reflect the changes.
                 return new GuiConfig(this.owningScreen,
-                        (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_GENERAL))).getChildElements(),
+                        (new ConfigElement(ForgeMod.getConfig().getCategory(Configuration.CATEGORY_GENERAL))).getChildElements(),
                         this.owningScreen.modID, Configuration.CATEGORY_GENERAL, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
                         this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
-                        GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
+                        GuiConfig.getAbridgedConfigPath(ForgeMod.getConfig().toString()));
             }
         }
 
@@ -165,10 +165,10 @@ public class ForgeGuiFactory implements IModGuiFactory
                 // This GuiConfig object specifies the configID of the object and as such will force-save when it is closed. The parent
                 // GuiConfig object's entryList will also be refreshed to reflect the changes.
                 return new GuiConfig(this.owningScreen,
-                                     (new ConfigElement(ForgeModContainer.getConfig().getCategory(Configuration.CATEGORY_CLIENT))).getChildElements(),
+                                     (new ConfigElement(ForgeMod.getConfig().getCategory(Configuration.CATEGORY_CLIENT))).getChildElements(),
                                      this.owningScreen.modID, Configuration.CATEGORY_CLIENT, this.configElement.requiresWorldRestart() || this.owningScreen.allRequireWorldRestart,
                                      this.configElement.requiresMcRestart() || this.owningScreen.allRequireMcRestart,
-                                     GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
+                                     GuiConfig.getAbridgedConfigPath(ForgeMod.getConfig().toString()));
             }
         }
 
@@ -216,18 +216,18 @@ public class ForgeGuiFactory implements IModGuiFactory
             @Override
             protected GuiScreen buildChildScreen()
             {
-                ConfigCategory cfg = ForgeModContainer.getConfig().getCategory(VERSION_CHECK_CAT);
+                ConfigCategory cfg = ForgeMod.getConfig().getCategory(VERSION_CHECK_CAT);
                 Map<String, Property> values = new HashMap<String, Property>(cfg.getValues());
                 values.remove("Global");
 
-                Property global = ForgeModContainer.getConfig().get(VERSION_CHECK_CAT, "Global", true);
+                Property global = ForgeMod.getConfig().get(VERSION_CHECK_CAT, "Global", true);
 
                 List<Property> props = new ArrayList<Property>();
 
                 for (ModContainer mod : ForgeVersion.gatherMods().keySet())
                 {
                     values.remove(mod.getModId());
-                    props.add(ForgeModContainer.getConfig().get(VERSION_CHECK_CAT, mod.getModId(), true)); //Get or make the value in the config
+                    props.add(ForgeMod.getConfig().get(VERSION_CHECK_CAT, mod.getModId(), true)); //Get or make the value in the config
                 }
                 props.addAll(values.values()); // Add any left overs from the config
                 props.sort(Comparator.comparing(Property::getName));
@@ -244,7 +244,7 @@ public class ForgeGuiFactory implements IModGuiFactory
                 return new GuiConfig(this.owningScreen,
                         list,
                         this.owningScreen.modID, VERSION_CHECK_CAT, true, true,
-                        GuiConfig.getAbridgedConfigPath(ForgeModContainer.getConfig().toString()));
+                        GuiConfig.getAbridgedConfigPath(ForgeMod.getConfig().toString()));
             }
         }
 

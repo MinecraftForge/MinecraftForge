@@ -38,7 +38,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.FMLNetworkException;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import com.google.common.collect.ConcurrentHashMultiset;
 import com.google.common.collect.Lists;

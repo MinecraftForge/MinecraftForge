@@ -23,6 +23,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
 import net.minecraftforge.fml.LifecycleEventProvider;
+import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.common.event.ModLifecycleEvent;
 import net.minecraftforge.fml.AutomaticEventSubscriber;
 import net.minecraftforge.fml.ModLoadingStage;
@@ -84,19 +85,21 @@ public class FMLModContainer extends ModContainer
     private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
     {
         LOGGER.error(new EventBusErrorMessage(event, i, iEventListeners, throwable));
+        modLoadingError.add(throwable);
     }
 
     private void beforeEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        ModLoadingContext.get().activeContainer = this;
+        ModLoadingContext.get().setActiveContainer(this);
+        ModThreadContext.get().setActiveContainer(this);
     }
 
     private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
         final ModLifecycleEvent event = lifecycleEvent.buildModEvent(this);
-        LOGGER.debug(LOADING, "Firing event {} for modid {}", event, this.getModId());
+        LOGGER.debug(LOADING, "Firing event for modid {} : {} @ {}", this.getModId(), event, System.identityHashCode(event.getClass()));
         try
         {
             eventBus.post(event);
-            LOGGER.debug(LOADING, "Fired event {} for modid {}", event, this.getModId());
+            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), event);
         }
         catch (Throwable e)
         {
@@ -107,7 +110,8 @@ public class FMLModContainer extends ModContainer
     }
 
     private void afterEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        ModLoadingContext.get().activeContainer = null;
+        ModThreadContext.get().setActiveContainer(null);
+        ModLoadingContext.get().setActiveContainer(null);
         if (getCurrentState() == ModLoadingStage.ERROR) {
             LOGGER.error(LOADING,"An error occurred while dispatching event {} to {}", lifecycleEvent.fromStage(), getModId());
         }

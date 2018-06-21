@@ -42,8 +42,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraftforge.fml.relauncher.FMLInjectionData;
-
 /**
  * Caches player's last known usernames
  * <p>

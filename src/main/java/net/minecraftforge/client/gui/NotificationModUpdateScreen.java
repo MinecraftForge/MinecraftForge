@@ -25,15 +25,15 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ClientModLoader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class NotificationModUpdateScreen extends GuiScreen
 {
 
@@ -64,7 +64,7 @@ public class NotificationModUpdateScreen extends GuiScreen
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        if (showNotification == null || !showNotification.shouldDraw() || ForgeModContainer.disableVersionCheck)
+        if (showNotification == null || !showNotification.shouldDraw() || ForgeMod.disableVersionCheck)
         {
             return;
         }

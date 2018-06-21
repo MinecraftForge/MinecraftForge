@@ -33,7 +33,8 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
@@ -50,7 +51,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
  * Usage is simple:<ul>
  * <li>construct, and store, an instance of this class. It will automatically register and configure your underlying netty channel.
  *
- * <li>Then, call {@link #registerMessage(Class, Class, int, Side)} for each message type you want to exchange
+ * <li>Then, call {@link #registerMessage(Class, Class, int, Dist)} for each message type you want to exchange
  * providing an {@link IMessageHandler} implementation class as well as an {@link IMessage} implementation class. The side parameter
  * to that method indicates which side (server or client) the <em>message processing</em> will occur on. The discriminator byte
  * should be unique for this channelName - it is used to discriminate between different types of message that might
@@ -96,9 +97,9 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
  *  // Code in a {@link FMLPreInitializationEvent} or {@link FMLInitializationEvent} handler
  *  SimpleNetworkWrapper wrapper = NetworkRegistry.newSimpleChannel("MYCHANNEL");
  *  // Message1 is handled by the Message1Handler class, it has discriminator id 1 and it's on the client
- *  wrapper.registerMessage(Message1Handler.class, Message1.class, 1, Side.CLIENT);
+ *  wrapper.registerMessage(Message1Handler.class, Message1.class, 1, Dist.CLIENT);
  *  // Message2 is handled by the Message2Handler class, it has discriminator id 2 and it's on the server
- *  wrapper.registerMessage(Message2Handler.class, Message2.class, 2, Side.SERVER);
+ *  wrapper.registerMessage(Message2Handler.class, Message2.class, 2, Dist.DEDICATED_SERVER);
  *  </pre>
  * </code>
  *
@@ -111,7 +112,7 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
  *
  */
 public class SimpleNetworkWrapper {
-    private EnumMap<Side, FMLEmbeddedChannel> channels;
+    private EnumMap<LogicalSide, FMLEmbeddedChannel> channels;
     private SimpleIndexedCodec packetCodec;
     private static Class<?> defaultChannelPipeline;
     private static Method generateName;
@@ -154,7 +155,7 @@ public class SimpleNetworkWrapper {
      * @param discriminator a discriminator byte
      * @param side the side for the handler
      */
-    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side)
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(Class<? extends IMessageHandler<REQ, REPLY>> messageHandler, Class<REQ> requestMessageType, int discriminator, Dist side)
     {
         registerMessage(instantiate(messageHandler), requestMessageType, discriminator, side);
     }
@@ -180,12 +181,12 @@ public class SimpleNetworkWrapper {
      * @param discriminator a discriminator byte
      * @param side the side for the handler
      */
-    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, int discriminator, Side side)
+    public <REQ extends IMessage, REPLY extends IMessage> void registerMessage(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestMessageType, int discriminator, Dist side)
     {
         packetCodec.addDiscriminator(discriminator, requestMessageType);
         FMLEmbeddedChannel channel = channels.get(side);
         String type = channel.findChannelHandlerNameForType(SimpleIndexedCodec.class);
-        if (side == Side.SERVER)
+        if (side == Dist.DEDICATED_SERVER)
         {
             addServerHandlerAfter(channel, type, messageHandler, requestMessageType);
         }
@@ -197,17 +198,17 @@ public class SimpleNetworkWrapper {
 
     private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addServerHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
     {
-        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.SERVER, requestType);
+        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Dist.DEDICATED_SERVER, requestType);
         channel.pipeline().addAfter(type, generateName(channel.pipeline(), handler), handler);
     }
 
     private <REQ extends IMessage, REPLY extends IMessage, NH extends INetHandler> void addClientHandlerAfter(FMLEmbeddedChannel channel, String type, IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Class<REQ> requestType)
     {
-        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Side.CLIENT, requestType);
+        SimpleChannelHandlerWrapper<REQ, REPLY> handler = getHandlerWrapper(messageHandler, Dist.CLIENT, requestType);
         channel.pipeline().addAfter(type, generateName(channel.pipeline(), handler), handler);
     }
 
-    private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Side side, Class<REQ> requestType)
+    private <REPLY extends IMessage, REQ extends IMessage> SimpleChannelHandlerWrapper<REQ, REPLY> getHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> messageHandler, Dist side, Class<REQ> requestType)
     {
         return new SimpleChannelHandlerWrapper<REQ, REPLY>(messageHandler, side, requestType);
     }
@@ -221,7 +222,7 @@ public class SimpleNetworkWrapper {
      */
     public Packet<?> getPacketFrom(IMessage message)
     {
-        return channels.get(Side.SERVER).generatePacketFrom(message);
+        return channels.get(Dist.DEDICATED_SERVER).generatePacketFrom(message);
     }
 
     /**
@@ -232,8 +233,8 @@ public class SimpleNetworkWrapper {
      */
     public void sendToAll(IMessage message)
     {
-        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
-        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Dist.DEDICATED_SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALL);
+        channels.get(Dist.DEDICATED_SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -245,9 +246,9 @@ public class SimpleNetworkWrapper {
      */
     public void sendTo(IMessage message, EntityPlayerMP player)
     {
-        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
-        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Dist.DEDICATED_SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
+        channels.get(Dist.DEDICATED_SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
+        channels.get(Dist.DEDICATED_SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -259,9 +260,9 @@ public class SimpleNetworkWrapper {
      */
     public void sendToAllAround(IMessage message, NetworkRegistry.TargetPoint point)
     {
-        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
-        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Dist.DEDICATED_SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
+        channels.get(Dist.DEDICATED_SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        channels.get(Dist.DEDICATED_SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -304,9 +305,9 @@ public class SimpleNetworkWrapper {
      */
     public void sendToDimension(IMessage message, int dimensionId)
     {
-        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
-        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
-        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Dist.DEDICATED_SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.DIMENSION);
+        channels.get(Dist.DEDICATED_SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(dimensionId);
+        channels.get(Dist.DEDICATED_SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     /**
@@ -317,7 +318,7 @@ public class SimpleNetworkWrapper {
      */
     public void sendToServer(IMessage message)
     {
-        channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
-        channels.get(Side.CLIENT).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channels.get(Dist.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
+        channels.get(Dist.CLIENT).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 }

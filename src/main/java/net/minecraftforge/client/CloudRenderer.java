@@ -270,7 +270,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     public void checkSettings()
     {
-        boolean newEnabled = ForgeModContainer.forgeCloudsEnabled
+        boolean newEnabled = ForgeMod.forgeCloudsEnabled
                 && mc.gameSettings.shouldRenderClouds() != 0
                 && mc.world != null
                 && mc.world.provider.isSurfaceWorld();
@@ -489,4 +489,29 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
             reloadTextures();
         }
     }
+
+    private static CloudRenderer cloudRenderer;
+    private static CloudRenderer getCloudRenderer()
+    {
+        if (cloudRenderer == null)
+            cloudRenderer = new CloudRenderer();
+        return cloudRenderer;
+    }
+
+    public static void updateCloudSettings()
+    {
+        getCloudRenderer().checkSettings();
+    }
+
+    public static boolean renderClouds(int cloudTicks, float partialTicks, WorldClient world, Minecraft client)
+    {
+        IRenderHandler renderer = world.provider.getCloudRenderer();
+        if (renderer != null)
+        {
+            renderer.render(partialTicks, world, client);
+            return true;
+        }
+        return getCloudRenderer().render(cloudTicks, partialTicks);
+    }
+
 }

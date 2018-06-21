@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
 
 public class ForgeVersion
 {
-    // This is Forge's Mod Id, used for the ForgeModContainer and resource locations
+    // This is Forge's Mod Id, used for the ForgeMod and resource locations
     public static final String MOD_ID = "forge";
     //This number is incremented every time we remove deprecated code/major API changes, never reset
     public static final int majorVersion    = 14;

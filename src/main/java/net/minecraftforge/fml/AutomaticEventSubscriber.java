@@ -19,10 +19,9 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
@@ -47,6 +46,7 @@ public class AutomaticEventSubscriber
     private static final Logger LOGGER = LogManager.getLogger("FML");
     public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
     {
+        if (scanData == null) return;
         LOGGER.debug(LOADING,"Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
         List<ModFileScanData.AnnotationData> ebsTargets = scanData.getAnnotations().stream().
                 filter(annotationData -> Objects.equals(annotationData.getAnnotationType(), Type.getType(Mod.EventBusSubscriber.class))).
@@ -55,11 +55,11 @@ public class AutomaticEventSubscriber
         ebsTargets.forEach(ad -> {
             @SuppressWarnings("unchecked")
             final List<ModAnnotation.EnumHolder> sidesValue = (List<ModAnnotation.EnumHolder>)ad.getAnnotationData().
-                    getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "SERVER")));
-            final EnumSet<Side> sides = sidesValue.stream().map(eh -> Side.valueOf(eh.getValue())).
-                    collect(Collectors.toCollection(() -> EnumSet.noneOf(Side.class)));
+                    getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "DEDICATED_SERVER")));
+            final EnumSet<Dist> sides = sidesValue.stream().map(eh -> Dist.valueOf(eh.getValue())).
+                    collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
             final String modId = (String)ad.getAnnotationData().getOrDefault("modId", mod.getModId());
-            if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.side)) {
+            if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try
                 {
                     MinecraftForge.EVENT_BUS.register(Class.forName(ad.getClassType().getClassName(), true, loader));

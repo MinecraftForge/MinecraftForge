@@ -39,14 +39,14 @@ import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.Vec3i;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
+import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.base.MoreObjects;
+import java.util.Optional;
 import com.google.common.collect.Maps;
 
 /*
@@ -93,50 +93,26 @@ public final class TRSRTransformation implements IModelState, ITransformation
         full = true;
     }
 
-    /** @deprecated use {@link #from(ItemTransformVec3f)} */
-    @Deprecated // TODO: remove / make private
-    @SideOnly(Side.CLIENT)
-    public TRSRTransformation(ItemTransformVec3f transform)
-    {
-        this(toVecmath(transform.translation), quatFromXYZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
-    }
-
-    /** @deprecated use {@link #from(ModelRotation)} */
-    @Deprecated // TODO: remove
-    @SideOnly(Side.CLIENT)
-    public TRSRTransformation(ModelRotation rotation)
-    {
-        this(rotation.getMatrix());
-    }
-
-    /** @deprecated use {@link #from(EnumFacing)} */
-    @Deprecated // TODO: remove
-    @SideOnly(Side.CLIENT)
-    public TRSRTransformation(EnumFacing facing)
-    {
-        this(getMatrix(facing));
-    }
-
     @Deprecated
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static TRSRTransformation from(ItemTransformVec3f transform)
     {
         return transform.equals(ItemTransformVec3f.DEFAULT) ? identity : new TRSRTransformation(transform);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static TRSRTransformation from(ModelRotation rotation)
     {
         return Cache.get(rotation);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static TRSRTransformation from(EnumFacing facing)
     {
         return Cache.get(getRotation(facing));
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static Matrix4f getMatrix(EnumFacing facing)
     {
         return getRotation(facing).getMatrix();
@@ -558,8 +534,8 @@ public final class TRSRTransformation implements IModelState, ITransformation
      * Don't use this if you don't need to, conversion is lossy (second rotation component is lost).
      */
     @Deprecated
-    @SideOnly(Side.CLIENT)
-    public ItemTransformVec3f toItemTransform()
+    @OnlyIn(Dist.CLIENT)
+    public net.minecraft.client.renderer.block.model.ItemTransformVec3f toItemTransform()
     {
         return new ItemTransformVec3f(toLwjgl(toXYZDegrees(getLeftRot())), toLwjgl(getTranslation()), toLwjgl(getScale()));
     }
@@ -712,19 +688,19 @@ public final class TRSRTransformation implements IModelState, ITransformation
         return Objects.equals(matrix, other.matrix);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static Vector3f toVecmath(org.lwjgl.util.vector.Vector3f vec)
     {
         return new Vector3f(vec.x, vec.y, vec.z);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static Vector4f toVecmath(org.lwjgl.util.vector.Vector4f vec)
     {
         return new Vector4f(vec.x, vec.y, vec.z, vec.w);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static Matrix4f toVecmath(org.lwjgl.util.vector.Matrix4f m)
     {
         return new Matrix4f(
@@ -734,19 +710,19 @@ public final class TRSRTransformation implements IModelState, ITransformation
             m.m03, m.m13, m.m23, m.m33);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static org.lwjgl.util.vector.Vector3f toLwjgl(Vector3f vec)
     {
         return new org.lwjgl.util.vector.Vector3f(vec.x, vec.y, vec.z);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static org.lwjgl.util.vector.Vector4f toLwjgl(Vector4f vec)
     {
         return new org.lwjgl.util.vector.Vector4f(vec.x, vec.y, vec.z, vec.w);
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static org.lwjgl.util.vector.Matrix4f toLwjgl(Matrix4f m)
     {
         org.lwjgl.util.vector.Matrix4f r = new org.lwjgl.util.vector.Matrix4f();
@@ -847,7 +823,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         }
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private static final class Cache
     {
         private static final Map<ModelRotation, TRSRTransformation> rotations = new EnumMap<>(ModelRotation.class);

@@ -20,21 +20,22 @@
 package net.minecraftforge.common.network;
 
 import java.util.EnumMap;
-import net.minecraftforge.common.ForgeModContainer;
+
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
 public class ForgeNetworkHandler
 {
     private static EnumMap<Side, FMLEmbeddedChannel> channelPair;
 
-    public static void registerChannel(ForgeModContainer forgeModContainer, Side side)
+    public static void registerChannel(ForgeMod forgeMod, Side side)
     {
-        channelPair = NetworkRegistry.INSTANCE.newChannel(forgeModContainer, "FORGE", new ForgeRuntimeCodec());
+        channelPair = NetworkRegistry.INSTANCE.newChannel(forgeMod, "FORGE", new ForgeRuntimeCodec());
         if (side == Side.CLIENT)
         {
             addClientHandlers();
@@ -46,7 +47,7 @@ public class ForgeNetworkHandler
         serverChannel.pipeline().addAfter(handlerName, "ServerToClientConnection", new ServerToClientConnectionEstablishedHandler());
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private static void addClientHandlers()
     {
         FMLEmbeddedChannel clientChannel = channelPair.get(Side.CLIENT);

@@ -19,12 +19,15 @@
 
 package net.minecraftforge.fml.common;
 
+import java.util.Locale;
+
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
+import net.minecraftforge.api.distmarker.Dist;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
 
 /**
  * FMLs logging class. <b>Internal use only, NOT FOR MOD LOGGING!</b> Mods use your own log, see {@link FMLPreInitializationEvent#getModLog()}.

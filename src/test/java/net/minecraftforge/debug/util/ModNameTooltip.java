@@ -25,11 +25,11 @@ import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(modid = "forgemodnametooltip", name = "ForgeModNameTooltip", version = "1.0", clientSideOnly = true)
 @Mod.EventBusSubscriber(Side.CLIENT)

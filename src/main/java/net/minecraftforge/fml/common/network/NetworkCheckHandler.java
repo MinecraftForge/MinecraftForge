@@ -19,12 +19,12 @@
 
 package net.minecraftforge.fml.common.network;
 
+import net.minecraftforge.api.distmarker.Dist;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * A method annotated with this will be called when a remote network connection is offered.

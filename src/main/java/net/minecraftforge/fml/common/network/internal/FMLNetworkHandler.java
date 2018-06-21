@@ -37,9 +37,12 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLContainer;
+import net.minecraftforge.fml.FMLWorldPersistenceHook;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.ModContainer;
@@ -52,8 +55,6 @@ import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.CompleteHandshake;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -147,8 +148,10 @@ public class FMLNetworkHandler
      * @return null if everything is fine, returns a string error message if there are mod rejections
      */
     @Nullable
-    public static String checkModList(Map<String,String> listData, Side side)
+    public static String checkModList(Map<String,String> listData, LogicalSide side)
     {
+        return null;
+/*
         List<Pair<ModContainer, String>> rejects = NetworkRegistry.INSTANCE.registry().entrySet().stream()
                 .map(entry -> Pair.of(entry.getKey(), entry.getValue().checkCompatible(listData, side)))
                 .filter(pair -> pair.getValue() != null)
@@ -170,9 +173,10 @@ public class FMLNetworkHandler
             FMLLog.log.info("Rejecting connection {}: {}", side, rejectString);
             return String.format("Server Mod rejections:\n%s", rejectString);
         }
+*/
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     private static void addClientHandlers()
     {
         ChannelPipeline pipeline = channelPair.get(Side.CLIENT).pipeline();
@@ -180,7 +184,7 @@ public class FMLNetworkHandler
         pipeline.addAfter(targetName, "GuiHandler", new OpenGuiHandler());
         pipeline.addAfter(targetName, "EntitySpawnHandler", new EntitySpawnHandler());
     }
-    public static void registerChannel(FMLContainer container, Side side)
+    public static void registerChannel(FMLWorldPersistenceHook container, Side side)
     {
         channelPair = NetworkRegistry.INSTANCE.newChannel(container, "FML", new FMLRuntimeCodec(), new HandshakeCompletionHandler());
         EmbeddedChannel embeddedChannel = channelPair.get(Side.SERVER);

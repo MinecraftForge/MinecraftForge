@@ -50,12 +50,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.common.property.PropertyFloat;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
 /**
  * This is a base implementation for Fluid blocks.
@@ -409,7 +410,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @Nonnull
     public BlockRenderLayer getBlockLayer()
     {
@@ -763,7 +764,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     }
     
     @Override
-    @SideOnly (Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
     {
         if (!isWithinFluid(world, pos, ActiveRenderInfo.projectViewFromEntity(entity, partialTicks)))

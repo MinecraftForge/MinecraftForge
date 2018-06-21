@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

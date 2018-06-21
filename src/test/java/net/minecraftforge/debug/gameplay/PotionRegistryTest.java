@@ -57,7 +57,7 @@ public class PotionRegistryTest
         taken.add(ra);
 
         // a new potion with a random id so that forge has to remap it
-        //new PotionForge(ra, new ResourceLocation(ForgeModContainer.MOD_ID, "realRandomPotion"), false, 0x0000ff);
+        //new PotionForge(ra, new ResourceLocation(ForgeMod.MOD_ID, "realRandomPotion"), false, 0x0000ff);
 
         for (int i = 0; i < 20; i++)
         {
@@ -68,7 +68,7 @@ public class PotionRegistryTest
             taken.add(r);
             // this potions will most likely not have the same IDs between server and client.
             // The forge handshake on connect should fix this.
-            //new PotionForge(new ResourceLocation(ForgeModContainer.MOD_ID, "randomPotion" + r), false, 0xff00ff);
+            //new PotionForge(new ResourceLocation(ForgeMod.MOD_ID, "randomPotion" + r), false, 0xff00ff);
         }
     }
 

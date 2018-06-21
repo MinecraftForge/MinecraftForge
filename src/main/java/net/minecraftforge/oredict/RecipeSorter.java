@@ -260,7 +260,7 @@ public class RecipeSorter implements Comparator<IRecipe>
     private static void bake()
     {
         if (!isDirty) return;
-        FMLLog.log.debug("Forge RecipeSorter Baking:");
+        LOG.debug("Forge RecipeSorter Baking:");
         DirectedGraph<SortEntry> sorter = new DirectedGraph<SortEntry>();
         sorter.addNode(before);
         sorter.addNode(after);

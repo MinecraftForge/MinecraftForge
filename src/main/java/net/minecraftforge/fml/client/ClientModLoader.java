@@ -25,8 +25,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.MetadataSerializer;
-import net.minecraftforge.api.Side;
-import net.minecraftforge.api.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.ModLoader;
@@ -37,7 +37,7 @@ import org.lwjgl.input.Mouse;
 import java.io.IOException;
 import java.util.List;
 
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public class ClientModLoader
 {
     private static boolean loading;

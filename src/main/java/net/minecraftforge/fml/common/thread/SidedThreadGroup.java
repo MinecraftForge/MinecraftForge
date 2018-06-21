@@ -19,20 +19,20 @@
 
 package net.minecraftforge.fml.common.thread;
 
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.concurrent.ThreadFactory;
 
 import javax.annotation.Nonnull;
 
 /**
- * A thread group and factory combination which belongs to a {@link Side}.
+ * A thread group and factory combination which belongs to a {@link LogicalSide}.
  */
 public final class SidedThreadGroup extends ThreadGroup implements ThreadFactory
 {
-    private final Side side;
+    private final LogicalSide side;
 
-    SidedThreadGroup(final Side side)
+    SidedThreadGroup(final LogicalSide side)
     {
         super(side.name());
         this.side = side;
@@ -43,7 +43,7 @@ public final class SidedThreadGroup extends ThreadGroup implements ThreadFactory
      *
      * @return the side
      */
-    public Side getSide()
+    public LogicalSide getSide()
     {
         return this.side;
     }

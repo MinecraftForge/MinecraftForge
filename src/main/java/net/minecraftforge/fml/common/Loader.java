@@ -41,14 +41,9 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ContainerType;
-import net.minecraftforge.fml.common.discovery.ModCandidate;
-import net.minecraftforge.fml.common.discovery.ModDiscoverer;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
@@ -60,11 +55,8 @@ import net.minecraftforge.fml.common.toposort.ModSortingException.SortingExcepti
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.common.versioning.VersionParser;
-import net.minecraftforge.fml.relauncher.CoreModManager;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.libraries.Artifact;
-import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
-import net.minecraftforge.fml.relauncher.libraries.Repository;
+import net.minecraftforge.fml.relauncher.ModListHelper;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
 

@@ -32,10 +32,6 @@ import java.util.Set;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraftforge.fml.common.asm.transformers.ModAPITransformer;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;

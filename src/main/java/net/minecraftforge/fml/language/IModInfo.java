@@ -53,7 +53,7 @@ public interface IModInfo
 
         public boolean isCorrectSide()
         {
-            return this == BOTH || FMLEnvironment.side.name().equals(this.name());
+            return this == BOTH || FMLEnvironment.dist.name().equals(this.name());
         }
     }
 

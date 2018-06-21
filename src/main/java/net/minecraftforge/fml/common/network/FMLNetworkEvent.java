@@ -29,7 +29,7 @@ import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.INetHandlerPlayServer;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 public class FMLNetworkEvent<T extends INetHandler> extends Event {
     private final T handler;

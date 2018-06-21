@@ -21,12 +21,10 @@ package net.minecraftforge.fml.common;
 
 import java.util.Arrays;
 
-import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+import net.minecraftforge.fml.common.asm.deobf.FMLDeobfuscatingRemapper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper.UnableToAccessFieldException;
 import net.minecraftforge.fml.relauncher.ReflectionHelper.UnableToFindFieldException;
-
-import org.apache.logging.log4j.Level;
 
 /**
  * Some reflection helper code.

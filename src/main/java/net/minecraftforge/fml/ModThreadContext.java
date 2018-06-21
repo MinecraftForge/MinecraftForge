@@ -27,9 +27,13 @@ public class ModThreadContext
         return context.get();
     }
 
-    private ModContainer currentContainer;
+    private ModContainer activeContainer;
 
-    public ModContainer getCurrentContainer() {
-        return currentContainer == null ? DefaultModContainers.MINECRAFT : currentContainer;
+    public void setActiveContainer(final ModContainer container) {
+        this.activeContainer = container;
+    }
+
+    public ModContainer getActiveContainer() {
+        return activeContainer == null ? DefaultModContainers.MINECRAFT : activeContainer;
     }
 }

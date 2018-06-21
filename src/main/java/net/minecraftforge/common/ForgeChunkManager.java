@@ -49,6 +49,7 @@ import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.ServerLifecycleHooks;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -626,7 +627,7 @@ public class ForgeChunkManager
             dormantChunkCache.remove(world);
         }
         // integrated server is shutting down
-        if (!FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning())
+        if (!ServerLifecycleHooks.getCurrentServer().isServerRunning())
         {
             playerTickets.clear();
             tickets.clear();

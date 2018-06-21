@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.common.network.simpleimpl;
 
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.network.INetHandler;
@@ -35,14 +35,14 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMessage> extends SimpleChannelInboundHandler<REQ> {
     private final IMessageHandler<? super REQ, ? extends REPLY> messageHandler;
-    private final Side side;
+    private final Dist side;
     
-    public SimpleChannelHandlerWrapper(Class<? extends IMessageHandler<? super REQ, ? extends REPLY>> handler, Side side, Class<REQ> requestType)
+    public SimpleChannelHandlerWrapper(Class<? extends IMessageHandler<? super REQ, ? extends REPLY>> handler, Dist side, Class<REQ> requestType)
     {
         this(SimpleNetworkWrapper.instantiate(handler), side, requestType);
     }
     
-    public SimpleChannelHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> handler, Side side, Class<REQ> requestType)
+    public SimpleChannelHandlerWrapper(IMessageHandler<? super REQ, ? extends REPLY> handler, Dist side, Class<REQ> requestType)
     {
         super(requestType);
         messageHandler = Preconditions.checkNotNull(handler, "IMessageHandler must not be null");

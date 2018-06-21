@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.FutureTask;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -156,5 +157,10 @@ public class ModList
         }
         return modFileScanData;
 
+    }
+
+    public void forEachModFile(Consumer<ModFile> fileConsumer)
+    {
+        modFiles.stream().map(ModFileInfo::getFile).forEach(fileConsumer);
     }
 }

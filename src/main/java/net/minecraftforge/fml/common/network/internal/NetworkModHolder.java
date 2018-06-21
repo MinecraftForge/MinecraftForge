@@ -23,11 +23,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.InvalidVersionSpecificationException;

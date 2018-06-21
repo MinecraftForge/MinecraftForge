@@ -21,7 +21,7 @@ package net.minecraftforge.fml.loading;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 public abstract class FMLCommonLaunchHandler
 {
@@ -30,7 +30,7 @@ public abstract class FMLCommonLaunchHandler
         // We need to check for deobf and patched jar here and if not, build one.
     }
 
-    public abstract Side getSidedness();
+    public abstract Dist getDist();
 
     protected void beforeStart(ITransformingClassLoader launchClassLoader)
     {

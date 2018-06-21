@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.common.event;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 /**
  * The parent of all mod-state changing events

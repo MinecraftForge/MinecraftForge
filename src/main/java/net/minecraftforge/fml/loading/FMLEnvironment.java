@@ -19,10 +19,9 @@
 
 package net.minecraftforge.fml.loading;
 
-import net.minecraftforge.api.Side;
-import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.api.distmarker.Dist;
 
 public class FMLEnvironment
 {
-    public static final Side side = FMLLoader.getSide();
+    public static final Dist dist = FMLLoader.getDist();
 }

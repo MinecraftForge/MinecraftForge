@@ -24,7 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.event.ModLifecycleEvent;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -108,7 +108,7 @@ public @interface Mod
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
     @interface EventBusSubscriber {
-        Side[] value() default { Side.CLIENT, Side.SERVER };
+        Dist[] value() default { Dist.CLIENT, Dist.DEDICATED_SERVER };
 
         /**
          * Optional value, only nessasary if tis annotation is not on the same class that has a @Mod annotation.

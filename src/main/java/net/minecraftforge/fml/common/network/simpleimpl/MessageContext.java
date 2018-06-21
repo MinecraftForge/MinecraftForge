@@ -22,7 +22,7 @@ package net.minecraftforge.fml.common.network.simpleimpl;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 /**
  * Context for the {@link IMessageHandler}
@@ -38,13 +38,13 @@ public class MessageContext {
     public final INetHandler netHandler;
 
     /**
-     * The Side this message has been received on
+     * The Dist this message has been received on
      */
-    public final Side side;
+    public final Dist side;
     /**
      * @param netHandler
      */
-    MessageContext(INetHandler netHandler, Side side)
+    MessageContext(INetHandler netHandler, Dist side)
     {
         this.netHandler = netHandler;
         this.side = side;

@@ -26,7 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.SidedExecutor;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.client.SplashProgress;
@@ -62,7 +62,7 @@ public class ProgressManager
         {
             bar.timeEachStep();
         }
-        SidedExecutor.runOn(Side.CLIENT, ()->SplashProgress::processMessages);
+        SidedExecutor.runOn(Dist.CLIENT, ()->SplashProgress::processMessages);
         return bar;
     }
 
@@ -87,7 +87,7 @@ public class ProgressManager
             else
                 fmlLog.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0} took {1,number,0.000}ms", bar.getTitle(), (newTime - bar.lastTime) / 1.0e6));
         }
-        SidedExecutor.runOn(Side.CLIENT, ()->SplashProgress::processMessages);
+        SidedExecutor.runOn(Dist.CLIENT, ()->SplashProgress::processMessages);
     }
 
     /*

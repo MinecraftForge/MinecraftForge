@@ -27,7 +27,7 @@ import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraftforge.fml.common.versioning.DependencyParser;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;

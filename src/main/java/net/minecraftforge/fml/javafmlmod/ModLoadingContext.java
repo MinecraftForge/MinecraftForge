@@ -20,27 +20,34 @@
 package net.minecraftforge.fml.javafmlmod;
 
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.DeferredWorkQueue;
 import net.minecraftforge.fml.ExtensionPoint;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.function.Supplier;
 
 public class ModLoadingContext
 {
     private static ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
-    FMLModContainer activeContainer;
+    private FMLModContainer activeContainer;
     public static ModLoadingContext get() {
         return context.get();
     }
 
     public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension) {
-        activeContainer.registerExtensionPoint(point, extension);
+        getActiveContainer().registerExtensionPoint(point, extension);
     }
 
     public IEventBus getModEventBus()
     {
-        return activeContainer.getEventBus();
+        return getActiveContainer().getEventBus();
+    }
+
+    public FMLModContainer getActiveContainer()
+    {
+        return activeContainer;
+    }
+
+    public void setActiveContainer(FMLModContainer activeContainer)
+    {
+        this.activeContainer = activeContainer;
     }
 }

@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import net.minecraftforge.common.util.TextTable;
-import net.minecraftforge.fml.common.LoaderState.ModState;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.event.ModLifecycleEvent;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;

@@ -28,7 +28,7 @@ import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.StartupQuery;
+import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 
 public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback {

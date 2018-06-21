@@ -21,8 +21,7 @@ package net.minecraftforge.fml.loading;
 
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import net.minecraft.client.main.Main;
-import net.minecraftforge.api.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
@@ -50,8 +49,8 @@ public class FMLLaunchProvider extends FMLCommonLaunchHandler implements ILaunch
     }
 
     @Override
-    public Side getSidedness()
+    public Dist getDist()
     {
-        return Side.CLIENT;
+        return Dist.CLIENT;
     }
 }

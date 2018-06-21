@@ -20,7 +20,6 @@
 package net.minecraftforge.fml;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;

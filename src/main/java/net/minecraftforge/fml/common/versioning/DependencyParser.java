@@ -31,7 +31,9 @@ import com.google.common.collect.ImmutableList;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class DependencyParser
 {
@@ -188,15 +190,15 @@ public final class DependencyParser
     {
         if (Strings.isNullOrEmpty(depModId))
         {
-            FMLLog.log.error(new DependencyParserException(modId, dep, "The modId is null or empty").getMessage());
+            LOGGER.error(new DependencyParserException(modId, dep, "The modId is null or empty").getMessage());
         }
         else if (depModId.length() > 64)
         {
-            FMLLog.log.error(new DependencyParserException(modId, dep, String.format("The modId '%s' is longer than the maximum of 64 characters.", depModId)).getMessage());
+            LOGGER.error(new DependencyParserException(modId, dep, String.format("The modId '%s' is longer than the maximum of 64 characters.", depModId)).getMessage());
         }
         else if (!depModId.equals(depModId.toLowerCase(Locale.ENGLISH)))
         {
-            FMLLog.log.error(new DependencyParserException(modId, dep, String.format("The modId '%s' must be all lowercase.", depModId)).getMessage());
+            LOGGER.error(new DependencyParserException(modId, dep, String.format("The modId '%s' must be all lowercase.", depModId)).getMessage());
         }
     }
 
