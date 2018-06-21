@@ -28,6 +28,8 @@ net/minecraft/world/World.markAndNotifyBlock(Lnet/minecraft/util/math/BlockPos;L
 net/minecraft/world/World.getCloudColorBody(F)Lnet/minecraft/util/math/Vec3d;=|p_72824_1_
 net/minecraft/world/WorldServer.canMineBlockBody(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/math/BlockPos;)Z=|p_175660_1_,p_175660_2_
 net/minecraft/world/biome/Biome.<init>(IZ)V=|p_i1971_1_,register
+net/minecraft/world/chunk/Chunk.getLightForBody(Lnet/minecraft/world/EnumSkyBlock;Lnet/minecraft/util/math/BlockPos;)I=|p_177413_1_,p_177413_2_
+net/minecraft/world/chunk/Chunk.getLightSubtractedBody(Lnet/minecraft/util/math/BlockPos;I)I=|p_177443_1_,p_177443_2_
 net/minecraft/world/chunk/storage/AnvilChunkLoader.loadChunk__Async(Lnet/minecraft/world/World;II)[Ljava/lang/Object;=|p_75815_1_,p_75815_2_,p_75815_3_
 net/minecraft/world/chunk/storage/AnvilChunkLoader.checkedReadChunkFromNBT__Async(Lnet/minecraft/world/World;IILnet/minecraft/nbt/NBTTagCompound;)[Ljava/lang/Object;=|p_75822_1_,p_75822_2_,p_75822_3_,p_75822_4_
 net/minecraft/world/chunk/storage/AnvilChunkLoader.loadEntities(Lnet/minecraft/world/World;Lnet/minecraft/nbt/NBTTagCompound;Lnet/minecraft/world/chunk/Chunk;)V=|p_75823_1_,p_75823_2_,chunk

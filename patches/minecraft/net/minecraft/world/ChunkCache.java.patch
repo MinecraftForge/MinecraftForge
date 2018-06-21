@@ -17,7 +17,7 @@
          return this.field_72817_c[i][j].func_177424_a(p_190300_1_, p_190300_2_);
      }
  
-@@ -112,6 +113,7 @@
+@@ -112,13 +113,15 @@
      {
          int i = (p_180494_1_.func_177958_n() >> 4) - this.field_72818_a;
          int j = (p_180494_1_.func_177952_p() >> 4) - this.field_72816_b;
@@ -25,15 +25,29 @@
          return this.field_72817_c[i][j].func_177411_a(p_180494_1_, this.field_72815_e.func_72959_q());
      }
  
-@@ -149,6 +151,7 @@
+     @SideOnly(Side.CLIENT)
+     private int func_175629_a(EnumSkyBlock p_175629_1_, BlockPos p_175629_2_)
+     {
+-        if (p_175629_1_ == EnumSkyBlock.SKY && !this.field_72815_e.field_73011_w.func_191066_m())
++        int defaultValue = p_175629_1_ == EnumSkyBlock.SKY && !this.field_72815_e.field_73011_w.func_191066_m() ? 0 : p_175629_1_.field_77198_c;
++        if (false)
+         {
+             return 0;
+         }
+@@ -149,18 +152,20 @@
              {
                  int i = (p_175629_2_.func_177958_n() >> 4) - this.field_72818_a;
                  int j = (p_175629_2_.func_177952_p() >> 4) - this.field_72816_b;
-+                if (!withinBounds(i, j)) return p_175629_1_.field_77198_c;
++                if (!withinBounds(i, j)) return defaultValue;
                  return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
              }
          }
-@@ -160,7 +163,8 @@
+         else
+         {
+-            return p_175629_1_.field_77198_c;
++            return defaultValue;
+         }
+     }
  
      public boolean func_175623_d(BlockPos p_175623_1_)
      {
@@ -43,7 +57,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -170,6 +174,7 @@
+@@ -170,6 +175,7 @@
          {
              int i = (p_175628_2_.func_177958_n() >> 4) - this.field_72818_a;
              int j = (p_175628_2_.func_177952_p() >> 4) - this.field_72816_b;
@@ -51,7 +65,7 @@
              return this.field_72817_c[i][j].func_177413_a(p_175628_1_, p_175628_2_);
          }
          else
-@@ -188,4 +193,21 @@
+@@ -188,4 +194,21 @@
      {
          return this.field_72815_e.func_175624_G();
      }

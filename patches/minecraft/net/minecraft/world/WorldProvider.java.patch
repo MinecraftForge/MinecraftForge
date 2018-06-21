@@ -65,7 +65,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,371 @@
+@@ -241,6 +216,408 @@
          return new WorldBorder();
      }
  
@@ -433,6 +433,43 @@
 +    {
 +        return true;
 +    }
++
++    /** Should be set to true by implementations that override {@code getLight} or {@code getEffectiveLight}. */
++    protected boolean useLightingHooks = false;
++
++    public final boolean useLightingHooks()
++    {
++        return useLightingHooks;
++    }
++
++    /**
++     * Gets the light level at the given position for the specified light type.
++     *
++     * @param chunk the chunk
++     * @param type  the type of light
++     * @param pos   the position in the world
++     * @return the light level
++     */
++    public int getLight(net.minecraft.world.chunk.Chunk chunk, EnumSkyBlock type, BlockPos pos)
++    {
++        return chunk.getLightForBody(type, pos);
++    }
++
++    /**
++     * Gets the effective light level at the given position.
++     * This takes into account both sky and block light.
++     * The skylight level is reduced by the specified amount when being considered.
++     *
++     * @param chunk             the chunk
++     * @param pos               the position in the world
++     * @param skylightReduction the reduction in skylight levels due to weather/time of day
++     * @return the light level
++     */
++    public int getEffectiveLight(net.minecraft.world.chunk.Chunk chunk, BlockPos pos, int skylightReduction)
++    {
++        return chunk.getLightSubtractedBody(pos, skylightReduction);
++    }
++    /* ========================================= FORGE END ====================================== */
 +
      public void func_186061_a(EntityPlayerMP p_186061_1_)
      {
