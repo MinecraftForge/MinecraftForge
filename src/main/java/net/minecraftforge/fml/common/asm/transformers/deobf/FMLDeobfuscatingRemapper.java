@@ -185,15 +185,14 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         String newSrg = parts[2];
         int lastNew = newSrg.lastIndexOf('/');
         String newName = newSrg.substring(lastNew+1);
+
+        if (oldName.equals(newName)) return;
+
         if (!rawFieldMaps.containsKey(cl))
         {
-            rawFieldMaps.put(cl, Maps.<String,String>newHashMap());
+            rawFieldMaps.put(cl, Maps.newHashMap());
         }
-        String fieldType = getFieldType(cl, oldName);
-        // We might be in mcp named land, where in fact the name is "new"
-        if (fieldType == null) fieldType = getFieldType(cl, newName);
-        rawFieldMaps.get(cl).put(oldName + ":" + fieldType, newName);
-        rawFieldMaps.get(cl).put(oldName + ":null", newName);
+        rawFieldMaps.get(cl).put(oldName, newName);
     }
 
     /*
@@ -254,29 +253,33 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         String newSrg = parts[3];
         int lastNew = newSrg.lastIndexOf('/');
         String newName = newSrg.substring(lastNew+1);
+
+        if (oldName.equals(newName)) return;
+
         if (!rawMethodMaps.containsKey(cl))
         {
-            rawMethodMaps.put(cl, Maps.<String,String>newHashMap());
+            rawMethodMaps.put(cl, Maps.newHashMap());
         }
         rawMethodMaps.get(cl).put(oldName+sig, newName);
     }
 
     String mapMemberFieldName(String owner, String name, String desc)
     {
-        String remappedName = mapFieldName(owner, name, desc, true);
-        storeMemberFieldMapping(owner, name, desc, remappedName);
+        String remappedName = mapFieldName(owner, name, desc);
+        if (!name.equals(remappedName))
+        {
+            storeMemberFieldMapping(owner, name, desc, remappedName);
+        }
         return remappedName;
     }
 
-    private void storeMemberFieldMapping(String owner, String name, String desc, String remappedName) {
+    private void storeMemberFieldMapping(String owner, String name, String desc, String remappedName)
+    {
         Map<String, String> fieldMap = getRawFieldMap(owner);
 
-        String key = name + ":" + desc;
-        String altKey = name + ":null";
-
-        if (!fieldMap.containsKey(key)) {
-            fieldMap.put(key, remappedName);
-            fieldMap.put(altKey, remappedName);
+        if (!fieldMap.containsKey(name))
+        {
+            fieldMap.put(name, remappedName);
 
             // Alternatively, maps could be made mutable and we could just set the relevant entry, saving
             // the need to regenerate the super map each time
@@ -297,7 +300,7 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return name;
         }
         Map<String, String> fieldMap = getFieldMap(owner, raw);
-        return fieldMap!=null && fieldMap.containsKey(name+":"+desc) ? fieldMap.get(name+":"+desc) : fieldMap!=null && fieldMap.containsKey(name+":null") ? fieldMap.get(name+":null") :name;
+        return fieldMap == null ? name : fieldMap.getOrDefault(name, name);
     }
 
     @Override
@@ -338,7 +341,6 @@ public class FMLDeobfuscatingRemapper extends Remapper {
         return typeName;
     }
 
-
     @Override
     public String mapMethodName(String owner, String name, String desc)
     {
@@ -347,10 +349,9 @@ public class FMLDeobfuscatingRemapper extends Remapper {
             return name;
         }
         Map<String, String> methodMap = getMethodMap(owner);
-        String methodDescriptor = name+desc;
-        return methodMap!=null && methodMap.containsKey(methodDescriptor) ? methodMap.get(methodDescriptor) : name;
+        return methodMap == null ? name : methodMap.getOrDefault(name+desc, name);
     }
-    
+
     @Override
     @Nullable
     public String mapSignature(String signature, boolean typeSignature)
