@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.common.network.simpleimpl;
 
 import net.minecraftforge.api.distmarker.Dist;
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.fml.network.simple.MessageContext;
 
 import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.FMLLog;

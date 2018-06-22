@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
@@ -29,12 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraftforge.fml.ModLoadingClassLoader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.SidedExecutor;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.javafmlmod.ModLoadingContext;
-import net.minecraftforge.fml.loading.DefaultModInfos;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,12 +59,9 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.server.command.ForgeCommand;
 
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -73,10 +70,14 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 {
     public static final String VERSION_CHECK_CAT = "version_checking";
+    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
     public static int clumpingThreshold = 64;
     public static boolean removeErroringEntities = false;
     public static boolean removeErroringTileEntities = false;
@@ -107,7 +108,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         return INSTANCE;
     }
 
-    private URL updateJSONUrl = null;
     public UniversalBucket universalBucket;
 
     public ForgeMod()
@@ -116,6 +116,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         ModLoadingContext.get().getModEventBus().addListener(this::preInit);
         ModLoadingContext.get().getModEventBus().addListener(this::postInit);
         ModLoadingContext.get().getModEventBus().addListener(this::onAvailable);
+        MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
+        MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
+        MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
     }
 
     public static Configuration getConfig()
@@ -128,7 +131,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         ConfigCategory GENERAL = config.getCategory(CATEGORY_GENERAL);
         if (GENERAL.containsKey(key))
         {
-            FMLLog.log.debug("Remapping property {} from category general to client", key);
+            LOGGER.debug(FORGEMOD, "Remapping property {} from category general to client",key);
             Property property = GENERAL.get(key);
             GENERAL.remove(key);
             config.getCategory(CATEGORY_CLIENT).put(key, property);
@@ -205,7 +208,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         if (removeErroringEntities)
         {
-            FMLLog.log.warn("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
+            LOGGER.warn(FORGEMOD, "Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
@@ -216,7 +219,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
         if (removeErroringTileEntities)
         {
-            FMLLog.log.warn("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
+            LOGGER.warn(FORGEMOD, "Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
@@ -333,7 +336,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
                 if (event.isWorldRunning() && tmpStairs != disableStairSlabCulling)
                 {
-                    FMLCommonHandler.instance().reloadRenderers();
+                    SidedExecutor.runOn(Dist.CLIENT,()->{
+                        Minecraft.getMinecraft().renderGlobal.loadRenderers();
+                        return null;
+                    });
                 }
 
             }
@@ -411,13 +417,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         FluidRegistry.validateFluidRegistry();
     }
 
-    @SubscribeEvent
     public void serverStarting(FMLServerStartingEvent evt)
     {
         evt.registerServerCommand(new ForgeCommand());
     }
 
-    @SubscribeEvent
     public void serverStopping(FMLServerStoppingEvent evt)
     {
         WorldWorkerManager.clear();
@@ -445,7 +449,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         OreDictionary.rebakeMap();
         StatList.reinit();
         Ingredient.invalidateAll();
-        FMLCommonHandler.instance().reloadSearchTrees();
+        SidedExecutor.runOn(Dist.CLIENT, ()-> {
+            Minecraft.getMinecraft().populateSearchTreeManager();
+            Minecraft.getMinecraft().getSearchTreeManager().onResourceManagerReload(Minecraft.getMinecraft().getResourceManager());
+            return null;
+        });
     }
 
     @Override

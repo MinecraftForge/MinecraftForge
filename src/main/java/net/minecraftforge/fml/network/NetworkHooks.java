@@ -21,9 +21,13 @@ package net.minecraftforge.fml.network;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.handshake.client.C00Handshake;
-import net.minecraftforge.fml.common.network.internal.FMLMessage;
+import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraft.network.play.server.SPacketCustomPayload;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import java.util.Objects;
@@ -44,7 +48,7 @@ public class NetworkHooks
 
     public static ConnectionType getConnectionType(final NetHandlerPlayServer connection)
     {
-        return ConnectionType.MODDED;
+        return ConnectionType.forVersionFlag(connection.netManager.channel().attr(NetworkRegistry.FML_MARKER).get());
     }
 
     public static Packet<?> getEntitySpawningPacket(Entity entity)
@@ -55,5 +59,30 @@ public class NetworkHooks
             return null;
         }
         return null;
+    }
+
+    public static void onServerCustomPayload(final SPacketCustomPayload packet, final NetworkManager manager) {
+        NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
+                ifPresent(ni->ni.dispatch(NetworkInstance.NetworkSide.PLAYSERVER, packet.getBufferData(), manager));
+    }
+
+    public static void onClientCustomPayload(final CPacketCustomPayload packet, final NetworkManager manager) {
+        NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
+                ifPresent(ni->ni.dispatch(NetworkInstance.NetworkSide.PLAYCLIENT, packet.getBufferData(), manager));
+    }
+
+    public static void onServerLoginCustomPayload(final SPacketCustomPayload packet, final NetworkManager manager) {
+        NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
+                ifPresent(ni->ni.dispatch(NetworkInstance.NetworkSide.LOGINSERVER, packet.getBufferData(), manager));
+    }
+
+    public static void onClientLoginCustomPayload(final CPacketCustomPayload packet, final NetworkManager manager) {
+        NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
+                ifPresent(ni->ni.dispatch(NetworkInstance.NetworkSide.LOGINCLIENT, packet.getBufferData(), manager));
+    }
+
+    public static void registerServerChannel(NetworkManager manager, C00Handshake packet)
+    {
+        manager.channel().attr(NetworkRegistry.FML_MARKER).set(packet.getFMLVersion());
     }
 }

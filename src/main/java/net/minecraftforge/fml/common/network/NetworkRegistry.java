@@ -69,7 +69,6 @@ public class NetworkRegistry
     public static final AttributeKey<LogicalSide> CHANNEL_SOURCE = AttributeKey.valueOf("fml:channelSource");
     public static final AttributeKey<ModContainer> MOD_CONTAINER = AttributeKey.valueOf("fml:modContainer");
     public static final AttributeKey<INetHandler> NET_HANDLER = AttributeKey.valueOf("fml:netHandler");
-    public static final AttributeKey<String> FML_MARKER = AttributeKey.valueOf("fml:versionMarker");
 
     // Version 1: ServerHello only contains this value as a byte
     // Version 2: ServerHello additionally contains a 4 byte (int) dimension for the logging in client

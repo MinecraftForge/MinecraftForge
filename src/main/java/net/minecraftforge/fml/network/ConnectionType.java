@@ -19,7 +19,23 @@
 
 package net.minecraftforge.fml.network;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public enum ConnectionType
 {
-    MODDED, BUKKIT, VANILLA
+    MODDED(NetworkHooks.NETVERSION), VANILLA(NetworkHooks.NOVERSION);
+
+    private final String versionString;
+
+    ConnectionType(String versionString)
+    {
+        this.versionString = versionString;
+    }
+
+    public static ConnectionType forVersionFlag(String vers)
+    {
+        return Arrays.stream(values()).filter(ct->Objects.equals(ct.versionString, vers)).
+                findFirst().orElse(ConnectionType.VANILLA);
+    }
 }

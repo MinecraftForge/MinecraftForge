@@ -19,13 +19,9 @@
 
 package net.minecraftforge.common;
 
-import static net.minecraftforge.common.ForgeVersion.Status.*;
-
 import net.minecraftforge.fml.VersionChecker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.minecraftforge.fml.common.InjectedModContainer;
 
 import javax.annotation.Nullable;
 

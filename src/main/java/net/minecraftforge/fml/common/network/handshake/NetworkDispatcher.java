@@ -142,7 +142,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
     public void serverToClientHandshake(EntityPlayerMP player)
     {
         this.player = player;
-        Boolean fml = this.manager.channel().attr(NetworkRegistry.FML_MARKER).get();
+        Boolean fml = this.manager.channel().attr(net.minecraftforge.fml.network.NetworkRegistry.FML_MARKER).get();
         if (fml != null && fml)
         {
             //FML on client, send server hello

@@ -17,12 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.network.simpleimpl;
+package net.minecraftforge.fml.network.simple;
 
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.network.NetworkInstance;
 
 /**
  * Context for the {@link IMessageHandler}
@@ -35,19 +38,24 @@ public class MessageContext {
      * The {@link INetHandler} for this message. It could be a client or server handler, depending
      * on the {@link #side} received.
      */
-    public final INetHandler netHandler;
+    private final INetHandler netHandler;
 
     /**
-     * The Dist this message has been received on
+     * The {@link NetworkInstance.NetworkSide} this message has been received on
      */
-    public final Dist side;
+    private final NetworkInstance.NetworkSide side;
     /**
      * @param netHandler
+     * @param side
      */
-    MessageContext(INetHandler netHandler, Dist side)
+    MessageContext(NetworkManager netHandler, NetworkInstance.NetworkSide side)
     {
-        this.netHandler = netHandler;
+        this.netHandler = netHandler.getNetHandler();
         this.side = side;
+    }
+
+    public NetworkInstance.NetworkSide getSide() {
+        return side;
     }
 
     public NetHandlerPlayServer getServerHandler()

@@ -36,6 +36,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nonnull;
 
@@ -52,9 +56,10 @@ public class MinecraftForge
     public static final IEventBus EVENT_BUS = IEventBus.create();
     public static final IEventBus TERRAIN_GEN_BUS = IEventBus.create();
     public static final IEventBus ORE_GEN_BUS = IEventBus.create();
-    public static final String MC_VERSION = Loader.MC_VERSION;
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
+    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Marker FORGE = MarkerManager.getMarker("FORGE");
 
     /**
      * Register a new seed to be dropped when breaking tall grass.
@@ -79,7 +84,7 @@ public class MinecraftForge
     */
    public static void initialize()
    {
-       FMLLog.log.info("MinecraftForge v{} Initialized", ForgeVersion.getVersion());
+       LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
        OreDictionary.getOreName(0);
 

@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.common.network.simpleimpl;
 
 
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.network.simple.MessageContext;
 
 /**
  * A message handler based on {@link IMessage}. Implement and override {@link #onMessage(IMessage, MessageContext)} to
