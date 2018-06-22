@@ -19,12 +19,11 @@
 
 package net.minecraftforge.fml.network.simple;
 
-import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkInstance;
 
 import java.util.function.BiConsumer;
@@ -40,24 +39,18 @@ public class SimpleChannel
     {
         this.instance = instance;
         this.indexedCodec = new IndexedMessageCodec();
-        instance.addListener(this::serverEventListener);
-        instance.addListener(this::clientEventListener);
+        instance.addListener(this::networkEventListener);
     }
 
-    private void clientEventListener(final NetworkInstance.NetworkEvent.ClientCustomPayloadEvent clientCustomPayloadEvent)
+    private void networkEventListener(final NetworkEvent networkEvent)
     {
-    }
-
-    private void serverEventListener(final NetworkInstance.NetworkEvent.ServerCustomPayloadEvent serverCustomPayloadEvent)
-    {
-        this.indexedCodec.consume(serverCustomPayloadEvent.getPayload(),
-                ()->new MessageContext(serverCustomPayloadEvent.getSource(), NetworkInstance.NetworkSide.PLAYSERVER));
+        this.indexedCodec.consume(networkEvent.getPayload(),networkEvent.getSource());
     }
 
     public <MSG> void encodeMessage(MSG message, final PacketBuffer target) {
         this.indexedCodec.build(message, target);
     }
-    public <MSG> void registerMessage(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<MessageContext>> messageConsumer) {
+    public <MSG> void registerMessage(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
         this.indexedCodec.addCodecIndex(index, messageType, encoder, decoder, messageConsumer);
     }
 

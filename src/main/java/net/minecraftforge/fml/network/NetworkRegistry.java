@@ -21,6 +21,7 @@ package net.minecraftforge.fml.network;
 
 import io.netty.util.AttributeKey;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.event.EventNetworkChannel;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,13 +51,21 @@ public class NetworkRegistry
 
 
     public static SimpleChannel newSimpleChannel(final ResourceLocation name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
+        return new SimpleChannel(createInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions));
+    }
+
+    public static EventNetworkChannel newEventChannel(final ResourceLocation name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions) {
+        return new EventNetworkChannel(createInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions));
+    }
+    private static NetworkInstance createInstance(ResourceLocation name, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions)
+    {
         final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
         if (instances.containsKey(name)) {
             LOGGER.error(NETREGISTRY, "Network channel {} already registered.", name);
             throw new IllegalArgumentException("Network Channel {"+ name +"} already registered");
         }
         instances.put(name, networkInstance);
-        return new SimpleChannel(networkInstance);
+        return networkInstance;
     }
 
     static Optional<NetworkInstance> findTarget(ResourceLocation resourceLocation)

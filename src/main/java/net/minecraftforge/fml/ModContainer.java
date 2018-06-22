@@ -20,7 +20,6 @@
 package net.minecraftforge.fml;
 
 import net.minecraftforge.fml.language.IModInfo;
-import net.minecraftforge.fml.network.Networking;
 
 import java.util.ArrayList;
 import java.util.HashMap;

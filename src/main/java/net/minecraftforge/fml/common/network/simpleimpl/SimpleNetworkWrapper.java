@@ -80,14 +80,14 @@ import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
  *  }
  *  // Message1Handler expects input of type Message1 and returns type Message2
  *  public Message1Handler implements IMessageHandler<Message1,Message2> {
- *   public Message2 onMessage(Message1 message, MessageContext ctx) {
+ *   public Message2 onMessage(Message1 message, Context ctx) {
  *    // do something and generate reply message
  *    return aMessage2Object;
  *   }
  *  }
  *  // Message2Handler expects input of type Message2 and returns no message (IMessage)
  *  public Message2Handler implements IMessageHandler<Message2,IMessage> {
- *   public IMessage onMessage(Message2 message, MessageContext ctx) {
+ *   public IMessage onMessage(Message2 message, Context ctx) {
  *    // handle the message 2 response message at the other end
  *    // no reply for this message - return null
  *    return null;

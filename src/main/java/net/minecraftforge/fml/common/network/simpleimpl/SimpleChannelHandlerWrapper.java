@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.common.network.simpleimpl;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.network.simple.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 import net.minecraft.network.INetHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -52,7 +52,7 @@ public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMe
     protected void channelRead0(ChannelHandlerContext ctx, REQ msg) throws Exception
     {
         INetHandler iNetHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-        MessageContext context = new MessageContext(iNetHandler, side);
+        NetworkEvent.Context context = new NetworkEvent.Context(iNetHandler, side);
         REPLY result = messageHandler.onMessage(msg, context);
         if (result != null)
         {

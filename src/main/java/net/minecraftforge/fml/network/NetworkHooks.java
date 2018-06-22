@@ -27,7 +27,6 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
 import java.util.Objects;
@@ -63,22 +62,22 @@ public class NetworkHooks
 
     public static void onServerCustomPayload(final SPacketCustomPayload packet, final NetworkManager manager) {
         NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(NetworkInstance.NetworkSide.PLAYSERVER, packet.getBufferData(), manager));
+                ifPresent(ni->ni.dispatch(Network.PLAYSERVER, packet.getBufferData(), manager));
     }
 
     public static void onClientCustomPayload(final CPacketCustomPayload packet, final NetworkManager manager) {
         NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(NetworkInstance.NetworkSide.PLAYCLIENT, packet.getBufferData(), manager));
+                ifPresent(ni->ni.dispatch(Network.PLAYCLIENT, packet.getBufferData(), manager));
     }
 
     public static void onServerLoginCustomPayload(final SPacketCustomPayload packet, final NetworkManager manager) {
         NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(NetworkInstance.NetworkSide.LOGINSERVER, packet.getBufferData(), manager));
+                ifPresent(ni->ni.dispatch(Network.LOGINSERVER, packet.getBufferData(), manager));
     }
 
     public static void onClientLoginCustomPayload(final CPacketCustomPayload packet, final NetworkManager manager) {
         NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(NetworkInstance.NetworkSide.LOGINCLIENT, packet.getBufferData(), manager));
+                ifPresent(ni->ni.dispatch(Network.LOGINCLIENT, packet.getBufferData(), manager));
     }
 
     public static void registerServerChannel(NetworkManager manager, C00Handshake packet)

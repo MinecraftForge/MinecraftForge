@@ -17,9 +17,34 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.network;
+package net.minecraftforge.fml.network.event;
 
-public class Networking
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkInstance;
+
+import java.util.function.Consumer;
+
+public class EventNetworkChannel
 {
-    public enum Type { SIMPLE, EVENT, NONE }
+    private final NetworkInstance instance;
+
+    public EventNetworkChannel(NetworkInstance instance)
+    {
+        this.instance = instance;
+    }
+
+    public <T extends NetworkEvent> void addListener(Consumer<T> eventListener)
+    {
+        instance.addListener(eventListener);
+    }
+
+    public void registerObject(Object object)
+    {
+        instance.registerObject(object);
+    }
+
+    public void unregisterObject(Object object)
+    {
+        instance.unregisterObject(object);
+    }
 }

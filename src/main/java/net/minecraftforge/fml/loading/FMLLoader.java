@@ -57,6 +57,7 @@ public class FMLLoader
     private static LoadingModList loadingModList;
     private static ClassLoader launchClassLoader;
     private static RuntimeDistCleaner runtimeDistCleaner;
+    private static Path gamePath;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -124,6 +125,7 @@ public class FMLLoader
             fmlLog.error(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
             throw new RuntimeException("Incompatible launch handler found");
         }
+        gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Paths.get(".").toAbsolutePath());
 
         FMLCommonLaunchHandler commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
         commonLaunchHandler.setup(environment);
@@ -191,5 +193,10 @@ public class FMLLoader
     public static ClassLoader getLaunchClassLoader()
     {
         return launchClassLoader;
+    }
+
+    public static Path getGamePath()
+    {
+        return gamePath;
     }
 }

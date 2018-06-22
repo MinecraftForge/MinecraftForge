@@ -20,10 +20,10 @@
 package net.minecraftforge.fml.common.network.simpleimpl;
 
 
-import net.minecraftforge.fml.network.simple.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 
 /**
- * A message handler based on {@link IMessage}. Implement and override {@link #onMessage(IMessage, MessageContext)} to
+ * A message handler based on {@link IMessage}. Implement and override {@link #onMessage(IMessage, NetworkEvent.Context)} to
  * process your packet. Supply the class to {@link SimpleNetworkWrapper#registerMessage(Class, Class, int, Side)}
  * to register both the message type and it's associated handler.
  *
@@ -41,5 +41,5 @@ public interface IMessageHandler<REQ extends IMessage, REPLY extends IMessage> {
      * @param message The message
      * @return an optional return message
      */
-    REPLY onMessage(REQ message, MessageContext ctx);
+    REPLY onMessage(REQ message, NetworkEvent.Context ctx);
 }

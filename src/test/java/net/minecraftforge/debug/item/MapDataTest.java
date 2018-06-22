@@ -51,7 +51,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.network.simple.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -237,7 +237,7 @@ public class MapDataTest
     {
         @Nullable
         @Override
-        public IMessage onMessage(CustomMapPacket message, MessageContext ctx)
+        public IMessage onMessage(CustomMapPacket message, NetworkEvent.Context ctx)
         {
             // Like NetHandlerPlayClient.handleMaps but using our custom type
             Minecraft.getMinecraft().addScheduledTask(new Runnable() {

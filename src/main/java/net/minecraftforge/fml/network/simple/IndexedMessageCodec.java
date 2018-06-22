@@ -22,6 +22,7 @@ package net.minecraftforge.fml.network.simple;
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectArrayMap;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -46,9 +47,9 @@ public class IndexedMessageCodec
         private final Optional<BiConsumer<MSG, PacketBuffer>> encoder;
         private final Optional<Function<PacketBuffer, MSG>> decoder;
         private final int index;
-        private final BiConsumer<MSG,Supplier<MessageContext>> messageConsumer;
+        private final BiConsumer<MSG,Supplier<NetworkEvent.Context>> messageConsumer;
         private final Class<MSG> messageType;
-        public CodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<MessageContext>> messageConsumer)
+        public CodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer)
         {
             this.index = index;
             this.messageType = messageType;
@@ -61,13 +62,16 @@ public class IndexedMessageCodec
 
 
     }
-    private static <M> void tryDecode(PacketBuffer payload, Supplier<MessageContext> context, CodecIndex<M> codec)
+    private static <M> void tryDecode(PacketBuffer payload, Supplier<NetworkEvent.Context> context, CodecIndex<M> codec)
     {
         codec.decoder.map(d->d.apply(payload)).ifPresent(m->codec.messageConsumer.accept(m, context));
     }
 
     private static <M> void tryEncode(PacketBuffer target, M message, CodecIndex<M> codec) {
-        codec.encoder.ifPresent(c->c.accept(message, target));
+        codec.encoder.ifPresent(encoder->{
+            target.writeByte(codec.index & 0xff);
+            encoder.accept(message, target);
+        });
     }
     public <MSG> void build(MSG message, PacketBuffer target)
     {
@@ -80,7 +84,7 @@ public class IndexedMessageCodec
         tryEncode(target, message, codecIndex);
     }
 
-    void consume(final PacketBuffer payload, Supplier<MessageContext> context) {
+    void consume(final PacketBuffer payload, Supplier<NetworkEvent.Context> context) {
         short discriminator = payload.readUnsignedByte();
         final CodecIndex<?> codecIndex = indicies.get(discriminator);
         if (codecIndex == null) {
@@ -90,7 +94,7 @@ public class IndexedMessageCodec
         tryDecode(payload, context, codecIndex);
     }
 
-    <MSG> void addCodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<MessageContext>> messageConsumer) {
+    <MSG> void addCodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
         new CodecIndex<>(index, messageType, encoder, decoder, messageConsumer);
     }
 }
