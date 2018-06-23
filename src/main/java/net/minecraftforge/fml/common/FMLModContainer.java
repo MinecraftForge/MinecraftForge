@@ -589,7 +589,6 @@ public class FMLModContainer implements ModContainer
         }
         catch (Exception e)
         {
-            Throwables.throwIfUnchecked(e);
             FormattedMessage message = new FormattedMessage("{} Failed to load new mod instance.", getModId());
             throw new LoaderException(message.getFormattedMessage(), e);
         }
