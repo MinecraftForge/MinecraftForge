@@ -211,112 +211,118 @@ public class StartupQuery {
     }
 
 
-
-    public static Consumer<StartupQuery> clientQuery(Supplier<Minecraft> clientSupplier)
+    public static class QueryWrapper
     {
-        return (query) -> {
-            Minecraft client = clientSupplier.get();
-            if (query.getResult() == null)
-            {
-                client.displayGuiScreen(new GuiNotification(query));
-            }
-            else
-            {
-                client.displayGuiScreen(new GuiConfirmation(query));
-            }
-
-            if (query.isSynchronous())
-            {
-                while (client.currentScreen instanceof GuiNotification)
+        public static Consumer<StartupQuery> clientQuery(Supplier<Minecraft> clientSupplier)
+        {
+            return (query) -> {
+                Minecraft client = clientSupplier.get();
+                if (query.getResult() == null)
                 {
-                    if (Thread.interrupted()) {
-                        query.exception = new InterruptedException();
-                        throw new RuntimeException();
-                    }
-
-                    client.loadingScreen.displayLoadingString("");
-
-                    try
-                    {
-                        Thread.sleep(50);
-                    } catch (InterruptedException ie) {
-                        query.exception = ie;
-                    }
+                    client.displayGuiScreen(new GuiNotification(query));
+                }
+                else
+                {
+                    client.displayGuiScreen(new GuiConfirmation(query));
                 }
 
-                client.loadingScreen.displayLoadingString(""); // make sure the blank screen is being drawn at the end
-            }
-        };
-    }
-
-    public static Consumer<StartupQuery> dedicatedServerQuery(Supplier<DedicatedServer> serverSupplier)
-    {
-        return (query) -> {
-            DedicatedServer server = serverSupplier.get();
-            if (query.getResult() == null)
-            {
-                LOGGER.warn(SQ, query.getText());
-                query.finish();
-            }
-            else
-            {
-                String text = query.getText() +
-                        "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
-                        "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
-                LOGGER.warn(SQ, text);
-
-                if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)
-
-                boolean done = false;
-
-                while (!done && server.isServerRunning())
+                if (query.isSynchronous())
                 {
-                    if (Thread.interrupted())
+                    while (client.currentScreen instanceof GuiNotification)
                     {
-                        query.exception = new InterruptedException();
-                        throw new RuntimeException();
-                    }
-
-                    DedicatedServer dedServer = (DedicatedServer)server;
-
-                    // rudimentary command processing, check for fml confirm/cancel and stop commands
-                    synchronized (dedServer.pendingCommandList)
-                    {
-                        for (Iterator<PendingCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); )
+                        if (Thread.interrupted())
                         {
-                            String cmd = it.next().command.trim().toLowerCase();
+                            query.exception = new InterruptedException();
+                            throw new RuntimeException();
+                        }
 
-                            if (cmd.equals("/fml confirm"))
-                            {
-                                LOGGER.info(SQ, "confirmed");
-                                query.setResult(true);
-                                done = true;
-                                it.remove();
-                            }
-                            else if (cmd.equals("/fml cancel"))
-                            {
-                                LOGGER.info(SQ, "cancelled");
-                                query.setResult(false);
-                                done = true;
-                                it.remove();
-                            }
-                            else if (cmd.equals("/stop"))
-                            {
-                                StartupQuery.abort();
-                            }
+                        client.loadingScreen.displayLoadingString("");
+
+                        try
+                        {
+                            Thread.sleep(50);
+                        }
+                        catch (InterruptedException ie)
+                        {
+                            query.exception = ie;
                         }
                     }
-                    try
-                    {
-                        Thread.sleep(10L);
-                    } catch (InterruptedException ie) {
-                        query.exception = ie;
-                    }
+
+                    client.loadingScreen.displayLoadingString(""); // make sure the blank screen is being drawn at the end
                 }
+            };
+        }
 
-                query.finish();
-            }
-        };
+        public static Consumer<StartupQuery> dedicatedServerQuery(Supplier<DedicatedServer> serverSupplier)
+        {
+            return (query) -> {
+                DedicatedServer server = serverSupplier.get();
+                if (query.getResult() == null)
+                {
+                    LOGGER.warn(SQ, query.getText());
+                    query.finish();
+                }
+                else
+                {
+                    String text = query.getText() +
+                            "\n\nRun the command /fml confirm or or /fml cancel to proceed." +
+                            "\nAlternatively start the server with -Dfml.queryResult=confirm or -Dfml.queryResult=cancel to preselect the answer.";
+                    LOGGER.warn(SQ, text);
+
+                    if (!query.isSynchronous()) return; // no-op until mc does commands in another thread (if ever)
+
+                    boolean done = false;
+
+                    while (!done && server.isServerRunning())
+                    {
+                        if (Thread.interrupted())
+                        {
+                            query.exception = new InterruptedException();
+                            throw new RuntimeException();
+                        }
+
+                        DedicatedServer dedServer = (DedicatedServer)server;
+
+                        // rudimentary command processing, check for fml confirm/cancel and stop commands
+                        synchronized (dedServer.pendingCommandList)
+                        {
+                            for (Iterator<PendingCommand> it = dedServer.pendingCommandList.iterator(); it.hasNext(); )
+                            {
+                                String cmd = it.next().command.trim().toLowerCase();
+
+                                if (cmd.equals("/fml confirm"))
+                                {
+                                    LOGGER.info(SQ, "confirmed");
+                                    query.setResult(true);
+                                    done = true;
+                                    it.remove();
+                                }
+                                else if (cmd.equals("/fml cancel"))
+                                {
+                                    LOGGER.info(SQ, "cancelled");
+                                    query.setResult(false);
+                                    done = true;
+                                    it.remove();
+                                }
+                                else if (cmd.equals("/stop"))
+                                {
+                                    StartupQuery.abort();
+                                }
+                            }
+                        }
+                        try
+                        {
+                            Thread.sleep(10L);
+                        }
+                        catch (InterruptedException ie)
+                        {
+                            query.exception = ie;
+                        }
+                    }
+
+                    query.finish();
+                }
+            };
+        }
     }
-
 }

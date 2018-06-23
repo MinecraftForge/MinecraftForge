@@ -558,7 +558,7 @@ public class FMLCommonHandler
      * Also verifies the client has the FML marker.
      *
      * @param packet Handshake Packet
-     * @param manager Network connection
+     * @param manager NetworkDirection connection
      * @return True to allow connection, otherwise False.
      */
     public boolean handleServerHandshake(C00Handshake packet, NetworkManager manager)

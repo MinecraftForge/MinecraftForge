@@ -61,7 +61,7 @@ public class LaunchTesting
         logcontext.updateLoggers();
         System.setProperty("fml.explodedDir", "/home/cpw/projects/mods/inventorysorter/classes");
         hackNatives();
-        Launcher.main("--launchTarget", "devfmlclient","--gameDir", "projects/run",
+        Launcher.main("--launchTarget", System.getProperty("target"),"--gameDir", ".",
                 "--accessToken", "blah", "--version", "FMLDev", "--assetIndex", "1.12",
                 "--assetsDir","/home/cpw/.gradle/caches/minecraft/assets",
                 "--userProperties", "{}");

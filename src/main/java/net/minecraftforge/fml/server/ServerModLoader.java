@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,14 +17,24 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.classloading;
+package net.minecraftforge.fml.server;
 
-import java.io.File;
-import java.util.Map;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.SidedProvider;
 
-import javax.annotation.Nullable;
-
-public class FMLForgePlugin
+public class ServerModLoader
 {
-    public static boolean RUNTIME_DEOBF = false;
+    private static DedicatedServer server;
+    public static void begin(DedicatedServer dedicatedServer) {
+        ServerModLoader.server = dedicatedServer;
+        SidedProvider.setServer(()->dedicatedServer);
+        LogicalSidedProvider.setServer(()->dedicatedServer);
+        ModLoader.get().loadMods();
+    }
+
+    public static void end() {
+        ModLoader.get().finishMods();
+    }
 }

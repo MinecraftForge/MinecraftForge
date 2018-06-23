@@ -22,10 +22,20 @@ package net.minecraftforge.fml.common.event;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.ModContainer;
 
+import java.util.function.Supplier;
+
 public class FMLClientInitEvent extends ModLifecycleEvent
 {
-    public FMLClientInitEvent(Minecraft mc, ModContainer container)
+    private final Supplier<Minecraft> minecraftSupplier;
+
+    public FMLClientInitEvent(Supplier<Minecraft> mc, ModContainer container)
     {
         super(container);
+        this.minecraftSupplier = mc;
+    }
+
+    public Supplier<Minecraft> getMinecraftSupplier()
+    {
+        return minecraftSupplier;
     }
 }

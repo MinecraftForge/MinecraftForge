@@ -51,6 +51,7 @@ public class ServerLifecycleHooks
     public static boolean handleServerAboutToStart(final MinecraftServer server)
     {
         currentServer = server;
+        LogicalSidedProvider.setServer(()->server);
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
     }
 
@@ -80,6 +81,7 @@ public class ServerLifecycleHooks
     {
         MinecraftForge.EVENT_BUS.post(new FMLServerStoppedEvent());
         currentServer = null;
+        LogicalSidedProvider.setServer(null);
         CountDownLatch latch = exitLatch;
 
         if (latch != null)

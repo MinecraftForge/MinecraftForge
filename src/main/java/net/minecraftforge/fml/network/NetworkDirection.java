@@ -20,26 +20,33 @@
 package net.minecraftforge.fml.network;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.LogicalSide;
 
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-public enum Network
+public enum NetworkDirection
 {
-    PLAYSERVER(NetworkEvent.ClientCustomPayloadEvent::new),
-    PLAYCLIENT(NetworkEvent.ServerCustomPayloadEvent::new),
-    LOGINSERVER(NetworkEvent.ClientCustomPayloadEvent::new),
-    LOGINCLIENT(NetworkEvent.ServerCustomPayloadEvent::new);
+    PLAYSERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT),
+    PLAYCLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER),
+    LOGINSERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT),
+    LOGINCLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER);
 
     private final BiFunction<PacketBuffer, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier;
+    private final LogicalSide logicalSide;
 
-    Network(BiFunction<PacketBuffer, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier)
+    NetworkDirection(BiFunction<PacketBuffer, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier, LogicalSide logicalSide)
     {
         this.eventSupplier = eventSupplier;
+        this.logicalSide = logicalSide;
     }
 
     public NetworkEvent getEvent(final PacketBuffer buffer, final Supplier<NetworkEvent.Context> manager) {
         return this.eventSupplier.apply(buffer, manager);
     }
 
+    public LogicalSide getLogicalSide()
+    {
+        return logicalSide;
+    }
 }

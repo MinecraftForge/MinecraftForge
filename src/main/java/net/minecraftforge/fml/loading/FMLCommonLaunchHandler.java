@@ -23,6 +23,8 @@ import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 
+import java.nio.file.Path;
+
 public abstract class FMLCommonLaunchHandler
 {
     public void setup(final IEnvironment environment)
@@ -32,8 +34,8 @@ public abstract class FMLCommonLaunchHandler
 
     public abstract Dist getDist();
 
-    protected void beforeStart(ITransformingClassLoader launchClassLoader)
+    protected void beforeStart(ITransformingClassLoader launchClassLoader, Path forgePath)
     {
-        FMLLoader.beforeStart(launchClassLoader);
+        FMLLoader.beforeStart(launchClassLoader, forgePath);
     }
 }

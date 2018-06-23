@@ -61,4 +61,40 @@ public class SimpleChannel
         final CPacketCustomPayload payload = new CPacketCustomPayload(instance.getChannelName(), bufIn);
         Minecraft.getMinecraft().getConnection().sendPacket(payload);
     }
+
+    public static class MessageBuilder<MSG>  {
+        private SimpleChannel channel;
+        private Class<MSG> type;
+        private int id;
+        private BiConsumer<MSG, PacketBuffer> encoder;
+        private Function<PacketBuffer, MSG> decoder;
+        private BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer;
+
+        public static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
+            MessageBuilder<MSG> builder = new MessageBuilder<>();
+            builder.channel = channel;
+            builder.id = id;
+            builder.type = type;
+            return builder;
+        }
+
+        public MessageBuilder<MSG> encoder(BiConsumer<MSG, PacketBuffer> encoder) {
+            this.encoder = encoder;
+            return this;
+        }
+
+        public MessageBuilder<MSG> decoder(Function<PacketBuffer, MSG> decoder) {
+            this.decoder = decoder;
+            return this;
+        }
+
+        public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
+            this.consumer = consumer;
+            return this;
+        }
+
+        public void add() {
+            this.channel.registerMessage(this.id, this.type, this.encoder, this.decoder, this.consumer);
+        }
+    }
 }

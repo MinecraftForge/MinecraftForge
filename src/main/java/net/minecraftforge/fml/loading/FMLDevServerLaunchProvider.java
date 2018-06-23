@@ -35,12 +35,12 @@ import java.util.concurrent.Callable;
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.fmlLog;
 
-public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
+public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
     @Override
     public String name()
     {
-        return "devfmlclient";
+        return "devfmlserver";
     }
 
     private static final List<String> SKIPPACKAGES = Arrays.asList(
@@ -57,7 +57,7 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     {
         try
         {
-            myPath = Paths.get(FMLDevClientLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            myPath = Paths.get(FMLDevServerLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
         }
         catch (URISyntaxException e)
         {
@@ -82,7 +82,7 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
             scl.setAccessible(true); // Set accessible
             scl.set(null, launchClassLoader.getInstance()); // Update it to your class loader
             Thread.currentThread().setContextClassLoader(launchClassLoader.getInstance());
-            Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
+            Class.forName("net.minecraft.server.MinecraftServer", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };
     }
@@ -96,6 +96,6 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     @Override
     public Dist getDist()
     {
-        return Dist.CLIENT;
+        return Dist.DEDICATED_SERVER;
     }
 }

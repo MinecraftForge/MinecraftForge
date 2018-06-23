@@ -19,13 +19,23 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.fml.ModContainer;
+
+import java.util.function.Supplier;
 
 public class FMLServerInitEvent extends ModLifecycleEvent
 {
-    public FMLServerInitEvent(MinecraftServer server, ModContainer container)
+    private final Supplier<DedicatedServer> serverSupplier;
+
+    public FMLServerInitEvent(Supplier<DedicatedServer> server, ModContainer container)
     {
         super(container);
+        this.serverSupplier = server;
+    }
+
+    public Supplier<DedicatedServer> getServerSupplier()
+    {
+        return serverSupplier;
     }
 }

@@ -27,6 +27,7 @@ import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.ModLoader;
@@ -43,20 +44,15 @@ public class ClientModLoader
     private static boolean loading;
     private static Minecraft mc;
 
-    /**
-     * Mod loading entrypoint for the client
-     * @param minecraft
-     * @param defaultResourcePacks
-     * @param mcResourceManager
-     * @param metadataSerializer_
-     */
     public static void begin(final Minecraft minecraft, final List<IResourcePack> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, MetadataSerializer metadataSerializer_)
     {
         loading = true;
         ClientModLoader.mc = minecraft;
         SidedProvider.setClient(()->minecraft);
+        LogicalSidedProvider.setClient(()->minecraft);
         SplashProgress.start();
         ModLoader.get().loadMods();
+        ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         minecraft.refreshResources();
     }
 

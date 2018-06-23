@@ -58,6 +58,7 @@ public class FMLLoader
     private static ClassLoader launchClassLoader;
     private static RuntimeDistCleaner runtimeDistCleaner;
     private static Path gamePath;
+    private static Path forgePath;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
@@ -178,9 +179,10 @@ public class FMLLoader
         return dist;
     }
 
-    public static void beforeStart(ITransformingClassLoader launchClassLoader)
+    public static void beforeStart(ITransformingClassLoader launchClassLoader, Path forgePath)
     {
         FMLLoader.launchClassLoader = launchClassLoader.getInstance();
+        FMLLoader.forgePath = forgePath;
     }
 
 
@@ -198,5 +200,9 @@ public class FMLLoader
     public static Path getGamePath()
     {
         return gamePath;
+    }
+
+    public static Path getForgePath() {
+        return forgePath;
     }
 }

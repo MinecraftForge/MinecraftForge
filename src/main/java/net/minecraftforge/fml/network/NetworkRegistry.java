@@ -61,8 +61,8 @@ public class NetworkRegistry
     {
         final NetworkInstance networkInstance = new NetworkInstance(name, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
         if (instances.containsKey(name)) {
-            LOGGER.error(NETREGISTRY, "Network channel {} already registered.", name);
-            throw new IllegalArgumentException("Network Channel {"+ name +"} already registered");
+            LOGGER.error(NETREGISTRY, "NetworkDirection channel {} already registered.", name);
+            throw new IllegalArgumentException("NetworkDirection Channel {"+ name +"} already registered");
         }
         instances.put(name, networkInstance);
         return networkInstance;
@@ -71,5 +71,49 @@ public class NetworkRegistry
     static Optional<NetworkInstance> findTarget(ResourceLocation resourceLocation)
     {
         return Optional.ofNullable(instances.get(resourceLocation));
+    }
+
+    public static class ChannelBuilder {
+        private ResourceLocation channelName;
+        private Supplier<String> networkProtocolVersion;
+        private Predicate<String> clientAcceptedVersions;
+        private Predicate<String> serverAcceptedVersions;
+
+        public static ChannelBuilder named(ResourceLocation channelName)
+        {
+            ChannelBuilder builder = new ChannelBuilder();
+            builder.channelName = channelName;
+            return builder;
+        }
+
+        public ChannelBuilder networkProtocolVersion(Supplier<String> networkProtocolVersion)
+        {
+            this.networkProtocolVersion = networkProtocolVersion;
+            return this;
+        }
+
+        public ChannelBuilder clientAcceptedVersions(Predicate<String> clientAcceptedVersions)
+        {
+            this.clientAcceptedVersions = clientAcceptedVersions;
+            return this;
+        }
+
+        public ChannelBuilder serverAcceptedVersions(Predicate<String> serverAcceptedVersions)
+        {
+            this.serverAcceptedVersions = serverAcceptedVersions;
+            return this;
+        }
+
+        private NetworkInstance createNetworkInstance() {
+            return createInstance(channelName, networkProtocolVersion, clientAcceptedVersions, serverAcceptedVersions);
+        }
+
+        public SimpleChannel simpleChannel() {
+            return new SimpleChannel(createNetworkInstance());
+        }
+
+        public EventNetworkChannel eventNetworkChannel() {
+            return new EventNetworkChannel(createNetworkInstance());
+        }
     }
 }

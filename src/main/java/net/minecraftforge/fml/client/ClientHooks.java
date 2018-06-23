@@ -26,8 +26,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiWorldSelection;
 import net.minecraft.client.gui.ServerListEntryNormal;
+import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.network.NetworkManager;
@@ -36,6 +38,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.StartupQuery;
+import net.minecraftforge.fml.client.gui.GuiAccessDenied;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.registries.GameData;
 import org.apache.logging.log4j.LogManager;
@@ -191,6 +194,19 @@ public class ClientHooks
         if (client != null && !client.isLocalChannel())
         {
             GameData.revertToFrozen();
+        }
+    }
+
+    public static void connectToServer(GuiScreen guiMultiplayer, ServerData serverEntry)
+    {
+        ExtendedServerListData extendedData = serverDataTag.get(serverEntry);
+        if (extendedData != null && extendedData.isBlocked)
+        {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiAccessDenied(guiMultiplayer, serverEntry));
+        }
+        else
+        {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiConnecting(guiMultiplayer, Minecraft.getMinecraft(), serverEntry));
         }
     }
 

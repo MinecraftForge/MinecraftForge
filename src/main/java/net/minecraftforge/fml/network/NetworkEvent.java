@@ -19,12 +19,15 @@
 
 package net.minecraftforge.fml.network;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.IThreadListener;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.LogicalSidedProvider;
 
 import java.util.function.Supplier;
 
@@ -74,17 +77,17 @@ public class NetworkEvent extends Event
         private final INetHandler netHandler;
 
         /**
-         * The {@link Network} this message has been received on
+         * The {@link NetworkDirection} this message has been received on
          */
-        private final Network side;
+        private final NetworkDirection side;
 
-        Context(NetworkManager netHandler, Network side)
+        Context(NetworkManager netHandler, NetworkDirection side)
         {
             this.netHandler = netHandler.getNetHandler();
             this.side = side;
         }
 
-        public Network getSide() {
+        public NetworkDirection getSide() {
             return side;
         }
 
@@ -96,6 +99,11 @@ public class NetworkEvent extends Event
         public NetHandlerPlayClient getClientHandler()
         {
             return (NetHandlerPlayClient) netHandler;
+        }
+
+        @SuppressWarnings("unchecked")
+        public <V> ListenableFuture<V> enqueueWork(Runnable runnable) {
+            return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getSide().getLogicalSide()).addScheduledTask(runnable);
         }
     }
 }

@@ -70,7 +70,7 @@ public class NetworkInstance
         this.networkEventBus.unregister(object);
     }
 
-    void dispatch(final Network side, final PacketBuffer bufferData, final NetworkManager manager)
+    void dispatch(final NetworkDirection side, final PacketBuffer bufferData, final NetworkManager manager)
     {
         this.networkEventBus.post(side.getEvent(bufferData,()->new NetworkEvent.Context(manager, side)));
     }

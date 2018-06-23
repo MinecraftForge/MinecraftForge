@@ -62,22 +62,22 @@ public class NetworkHooks
 
     public static void onServerCustomPayload(final SPacketCustomPayload packet, final NetworkManager manager) {
         NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(Network.PLAYSERVER, packet.getBufferData(), manager));
+                ifPresent(ni->ni.dispatch(NetworkDirection.PLAYSERVER, packet.getBufferData(), manager));
     }
 
     public static void onClientCustomPayload(final CPacketCustomPayload packet, final NetworkManager manager) {
         NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(Network.PLAYCLIENT, packet.getBufferData(), manager));
+                ifPresent(ni->ni.dispatch(NetworkDirection.PLAYCLIENT, packet.getBufferData(), manager));
     }
 
     public static void onServerLoginCustomPayload(final SPacketCustomPayload packet, final NetworkManager manager) {
         NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(Network.LOGINSERVER, packet.getBufferData(), manager));
+                ifPresent(ni->ni.dispatch(NetworkDirection.LOGINSERVER, packet.getBufferData(), manager));
     }
 
     public static void onClientLoginCustomPayload(final CPacketCustomPayload packet, final NetworkManager manager) {
         NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(Network.LOGINCLIENT, packet.getBufferData(), manager));
+                ifPresent(ni->ni.dispatch(NetworkDirection.LOGINCLIENT, packet.getBufferData(), manager));
     }
 
     public static void registerServerChannel(NetworkManager manager, C00Handshake packet)

@@ -22,6 +22,7 @@ package net.minecraftforge.fml;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraftforge.fml.client.ModFileResourcePack;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -29,5 +30,10 @@ import java.util.function.Function;
 public class ExtensionPoint<T>
 {
     public static final ExtensionPoint<BiFunction<Minecraft, GuiScreen, GuiScreen>> GUIFACTORY = new ExtensionPoint<>();
-    public static final ExtensionPoint<Function<Minecraft, IResourcePack>> RESOURCEPACK = new ExtensionPoint<>();
+    public static final ExtensionPoint<BiFunction<Minecraft, ModFileResourcePack, IResourcePack>> RESOURCEPACK = new ExtensionPoint<>();
+    private Class<T> type;
+
+    private ExtensionPoint() {
+    }
+
 }
