@@ -48,7 +48,7 @@ public class FillBucketEvent extends PlayerEvent
     @Nullable
     private final RayTraceResult target;
 
-    private ItemStack result;
+    private ItemStack result = ItemStack.EMPTY;
 
     public FillBucketEvent(EntityPlayer player, @Nonnull ItemStack current, World world, @Nullable RayTraceResult target)
     {
