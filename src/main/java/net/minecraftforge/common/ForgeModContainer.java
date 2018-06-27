@@ -565,6 +565,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         OreDictionary.rebakeMap();
         StatList.reinit();
         Ingredient.invalidateAll();
+        FMLCommonHandler.instance().resetClientRecipeBook();
         FMLCommonHandler.instance().reloadSearchTrees();
     }
 

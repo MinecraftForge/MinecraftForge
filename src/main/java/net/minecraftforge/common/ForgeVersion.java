@@ -21,8 +21,11 @@ package net.minecraftforge.common;
 
 import static net.minecraftforge.common.ForgeVersion.Status.*;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,14 +35,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
@@ -56,7 +57,7 @@ public class ForgeVersion
     //This number is incremented every minecraft release, never reset
     public static final int minorVersion    = 23;
     //This number is incremented every time a interface changes or new major feature is added, and reset every Minecraft version
-    public static final int revisionVersion = 2;
+    public static final int revisionVersion = 4;
     //This number is incremented every time Jenkins builds Forge, and never reset. Should always be 0 in the repo code.
     public static final int buildVersion    = 0;
     // This is the minecraft version we're building for - used in various places in Forge/FML code
@@ -69,6 +70,8 @@ public class ForgeVersion
     private static String target = null;
 
     private static final Logger log = LogManager.getLogger(MOD_ID + ".VersionCheck");
+
+    private static final int MAX_HTTP_REDIRECTS = Integer.getInteger("http.maxRedirects", 20);
 
     public static int getMajorVersion()
     {
@@ -204,6 +207,40 @@ public class ForgeVersion
                 }
             }
 
+            /**
+             * Opens stream for given URL while following redirects
+             */
+            private InputStream openUrlStream(URL url) throws IOException
+            {
+                URL currentUrl = url;
+                for (int redirects = 0; redirects < MAX_HTTP_REDIRECTS; redirects++)
+                {
+                    URLConnection c = currentUrl.openConnection();
+                    if (c instanceof HttpURLConnection)
+                    {
+                        HttpURLConnection huc = (HttpURLConnection) c;
+                        huc.setInstanceFollowRedirects(false);
+                        int responseCode = huc.getResponseCode();
+                        if (responseCode >= 300 && responseCode <= 399)
+                        {
+                            try
+                            {
+                                String loc = huc.getHeaderField("Location");
+                                currentUrl = new URL(currentUrl, loc);
+                                continue;
+                            }
+                            finally
+                            {
+                                huc.disconnect();
+                            }
+                        }
+                    }
+
+                    return c.getInputStream();
+                }
+                throw new IOException("Too many redirects while trying to fetch " + url);
+            }
+
             private void process(ModContainer mod, URL url)
             {
                 try
@@ -212,7 +249,7 @@ public class ForgeVersion
                     Status status = PENDING;
                     ComparableVersion target = null;
 
-                    InputStream con = url.openStream();
+                    InputStream con = openUrlStream(url);
                     String data = new String(ByteStreams.toByteArray(con), "UTF-8");
                     con.close();
 

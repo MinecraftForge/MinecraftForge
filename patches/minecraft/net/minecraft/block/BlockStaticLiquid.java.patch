@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockStaticLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockStaticLiquid.java
-@@ -52,14 +52,14 @@
+@@ -52,22 +52,22 @@
                      {
                          blockpos = blockpos.func_177982_a(p_180650_4_.nextInt(3) - 1, 1, p_180650_4_.nextInt(3) - 1);
  
@@ -18,7 +18,8 @@
                          {
                              if (this.func_176369_e(p_180650_1_, blockpos))
                              {
-@@ -67,7 +67,7 @@
+-                                p_180650_1_.func_175656_a(blockpos, Blocks.field_150480_ab.func_176223_P());
++                                p_180650_1_.func_175656_a(blockpos, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_180650_1_, blockpos, p_180650_2_, Blocks.field_150480_ab.func_176223_P()));
                                  return;
                              }
                          }
@@ -27,3 +28,12 @@
                          {
                              return;
                          }
+@@ -86,7 +86,7 @@
+ 
+                         if (p_180650_1_.func_175623_d(blockpos1.func_177984_a()) && this.func_176368_m(p_180650_1_, blockpos1))
+                         {
+-                            p_180650_1_.func_175656_a(blockpos1.func_177984_a(), Blocks.field_150480_ab.func_176223_P());
++                            p_180650_1_.func_175656_a(blockpos1.func_177984_a(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_180650_1_, blockpos1.func_177984_a(), p_180650_2_, Blocks.field_150480_ab.func_176223_P()));
+                         }
+                     }
+                 }
