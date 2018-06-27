@@ -409,6 +409,7 @@ public class GameData
         @Override
         public void onValidate(IForgeRegistryInternal<IRecipe> owner, RegistryManager stage, int id, ResourceLocation key, IRecipe obj)
         {
+            if (stage != RegistryManager.ACTIVE) return;
             // verify the recipe output yields a registered item
             Item item = obj.getRecipeOutput().getItem();
             if (!stage.getRegistry(Item.class).containsValue(item))
