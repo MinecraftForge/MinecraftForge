@@ -85,7 +85,7 @@ public class AutomaticEventSubscriber
             }
             catch (Throwable e)
             {
-                FMLLog.log.error("An error occurred trying to load an EventBusSubscriber {} for modid {}", mod.getModId(), e);
+                FMLLog.log.error("An error occurred trying to load an EventBusSubscriber {} for modid {}", targ.getClassName(), mod.getModId(), e);
                 throw new LoaderException(e);
             }
         }

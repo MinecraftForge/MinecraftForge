@@ -24,6 +24,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -48,6 +49,20 @@ public class RegistryOverrideTest
         {
             event.getRegistry().register(new BlockReplacement());
         }
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event)
+    {
+        if (!ENABLED) return;
+
+        event.getRegistry().register(
+                new Item()
+                        .setFull3D()
+                        .setUnlocalizedName("stick")
+                        .setCreativeTab(CreativeTabs.MATERIALS)
+                        .setRegistryName("minecraft:stick")
+        );
     }
 
     private static class BlockReplacement extends Block

@@ -301,22 +301,20 @@ public final class ModelLoader extends ModelBakery
                 Exception exception = null;
                 try
                 {
-                    model = ModelLoaderRegistry.getModel(file);
+                    model = ModelLoaderRegistry.getModel(memory);
                 }
-                catch(Exception normalException)
+                catch (Exception blockstateException)
                 {
-                    // try blockstate json if the item model is missing
-                    FMLLog.log.debug("Item json isn't found for '{}', trying to load the variant from the blockstate json", memory);
                     try
                     {
-                        model = ModelLoaderRegistry.getModel(memory);
+                        model = ModelLoaderRegistry.getModel(file);
                     }
-                    catch (Exception blockstateException)
+                    catch (Exception normalException)
                     {
                         exception = new ItemLoadingException("Could not load item model either from the normal location " + file + " or from the blockstate", normalException, blockstateException);
                     }
                 }
-                if(exception != null)
+                if (exception != null)
                 {
                     storeException(memory, exception);
                     model = ModelLoaderRegistry.getMissingModel(memory, exception);
@@ -1062,6 +1060,8 @@ public final class ModelLoader extends ModelBakery
                 FMLLog.log.fatal("Suppressed additional {} model loading errors for domain {}", e.getValue() - verboseMissingInfoCount, e.getKey());
             }
         }
+        loadingExceptions.clear();
+        missingVariants.clear();
         isLoading = false;
     }
 
