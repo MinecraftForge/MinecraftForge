@@ -22,9 +22,12 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockPortal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
@@ -124,7 +127,7 @@ public class BlockEvent extends Event
             this.player = player;
 
             if (state == null || !ForgeHooks.canHarvestBlock(state.getBlock(), player, world, pos) || // Handle empty block or player unable to break block scenario
-                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
+                    (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
@@ -283,7 +286,7 @@ public class BlockEvent extends Event
             super(world, pos, state);
         }
     }
-    
+
     /**
      * Fired when a crop block grows.  See subevents.
      *
@@ -341,7 +344,34 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when an attempt is made to spawn a nether portal from
+     * Fired when when farmland gets trampled
+     * This event is {@link Cancelable}
+     */
+    @Cancelable
+    public static class FarmlandTrampleEvent extends BlockEvent
+    {
+
+        private final Entity entity;
+        private final float fallDistance;
+
+        public FarmlandTrampleEvent(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
+        {
+            super(world, pos, state);
+            this.entity = entity;
+            this.fallDistance = fallDistance;
+        }
+
+        public Entity getEntity() {
+            return entity;
+        }
+
+        public float getFallDistance() {
+            return fallDistance;
+        }
+
+    }
+
+    /* Fired when an attempt is made to spawn a nether portal from
      * {@link net.minecraft.block.BlockPortal#trySpawnPortal(World, BlockPos)}.
      *
      * If cancelled, the portal will not be spawned.
