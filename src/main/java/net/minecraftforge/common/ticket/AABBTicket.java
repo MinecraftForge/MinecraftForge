@@ -27,7 +27,6 @@ public class AABBTicket extends SimpleTicket<Vec3d>
         this.axisAlignedBB = Objects.requireNonNull(newTarget);
     }
 
-
     @Override
     public boolean matches(Vec3d toMatch)
     {

@@ -75,7 +75,10 @@ public class FarmlandWaterManager
         Set<SimpleTicket<Vec3d>> tickets = customWaterHandler.get(world.provider.getDimension());
         if (tickets != null)
         {
-            SimpleTicket.invalidateAll(tickets);
+            for (SimpleTicket<Vec3d> ticket : tickets)
+            {
+                ticket.invalidate();
+            }
         }
     }
 }

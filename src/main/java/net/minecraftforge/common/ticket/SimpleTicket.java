@@ -64,13 +64,4 @@ public abstract class SimpleTicket<T>
     }
 
     public abstract boolean matches(T toMatch);
-
-    public static<T> void invalidateAll(Collection<SimpleTicket<T>> ticketCollection)
-    {
-        for (SimpleTicket<T> simpleTicket : ticketCollection)
-        {
-            simpleTicket.isValid = false;
-        }
-        ticketCollection.clear();
-    }
 }
