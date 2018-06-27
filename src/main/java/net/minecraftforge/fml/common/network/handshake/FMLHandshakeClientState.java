@@ -22,13 +22,14 @@ package net.minecraftforge.fml.common.network.handshake;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Futures;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -153,7 +154,9 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 
             ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(null);
 
-            Multimap<ResourceLocation, ResourceLocation> locallyMissing = GameData.injectSnapshot(snap, false, false);
+            //Do the remapping on the Client's thread in case things are reset while the client is running. We stall the network thread until this is finished which can cause the IO thread to time out... Not sure if we can do anything about that.
+            final Map<ResourceLocation, ForgeRegistry.Snapshot> snap_f = snap;
+            Multimap<ResourceLocation, ResourceLocation> locallyMissing = Futures.getUnchecked(Minecraft.getMinecraft().addScheduledTask(() -> GameData.injectSnapshot(snap_f, false, false)));
             if (!locallyMissing.isEmpty())
             {
                 cons.accept(ERROR);
@@ -197,7 +200,8 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
             if (msg instanceof FMLHandshakeMessage.HandshakeReset)
             {
                 cons.accept(HELLO);
-                GameData.revertToFrozen();
+                //Run the revert on the client thread in case things are currently running to prevent race conditions while rebuilding the registries.
+                Minecraft.getMinecraft().addScheduledTask(GameData::revertToFrozen);
             }
         }
     },

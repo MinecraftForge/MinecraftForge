@@ -143,6 +143,15 @@
          if (p_147108_1_ instanceof GuiMainMenu || p_147108_1_ instanceof GuiMultiplayer)
          {
              this.field_71474_y.field_74330_P = false;
+@@ -1082,7 +1100,7 @@
+         long i1 = System.nanoTime() - l;
+         this.func_71361_d("Pre render");
+         this.field_71424_I.func_76318_c("sound");
+-        this.field_147127_av.func_147691_a(this.field_71439_g, this.field_71428_T.field_194147_b);
++        this.field_147127_av.setListener(this.func_175606_aa(), this.field_71428_T.field_194147_b); //Forge: MC-46445 Spectator mode particles and sounds computed from where you have been before
+         this.field_71424_I.func_76319_b();
+         this.field_71424_I.func_76320_a("render");
+         GlStateManager.func_179094_E();
 @@ -1094,11 +1112,13 @@
  
          if (!this.field_71454_w)
@@ -325,25 +334,23 @@
          }
  
          this.field_147127_av.func_147690_c();
-@@ -2488,6 +2550,17 @@
+@@ -2434,6 +2496,7 @@
+         }
+ 
+         TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_71353_1_);
++        net.minecraftforge.client.MinecraftForgeClient.clearRenderCache();
+ 
+         if (p_71353_1_ != null)
+         {
+@@ -2488,6 +2551,7 @@
          EntityPlayerSP entityplayersp = this.field_71439_g;
          this.field_71439_g = this.field_71442_b.func_192830_a(this.field_71441_e, this.field_71439_g == null ? new StatisticsManager() : this.field_71439_g.func_146107_m(), this.field_71439_g == null ? new RecipeBook() : this.field_71439_g.func_192035_E());
          this.field_71439_g.func_184212_Q().func_187218_a(entityplayersp.func_184212_Q().func_187231_c());
-+        // Forge - Fix MC-88179 attributes not being copied to new player
-+        for (net.minecraft.entity.ai.attributes.IAttributeInstance oldInst : entityplayersp.func_110140_aT().func_111146_a())
-+        {
-+            net.minecraft.entity.ai.attributes.IAttribute attrib = oldInst.func_111123_a();
-+            net.minecraft.entity.ai.attributes.IAttributeInstance newInst = field_71439_g.func_110140_aT().func_111151_a(attrib);
-+            newInst.func_111128_a(oldInst.func_111125_b());
-+            for (net.minecraft.entity.ai.attributes.AttributeModifier modifier : oldInst.func_111122_c())
-+            {
-+                newInst.func_111121_a(modifier);
-+            }
-+        }
++        this.field_71439_g.updateSyncFields(entityplayersp); // Forge: fix MC-10657
          this.field_71439_g.field_71093_bK = p_71354_1_;
          this.field_175622_Z = this.field_71439_g;
          this.field_71439_g.func_70065_x();
-@@ -2535,159 +2608,8 @@
+@@ -2535,159 +2599,8 @@
      {
          if (this.field_71476_x != null && this.field_71476_x.field_72313_a != RayTraceResult.Type.MISS)
          {
@@ -505,7 +512,7 @@
          }
      }
  
-@@ -3009,18 +2931,8 @@
+@@ -3009,18 +2922,8 @@
  
      public static int func_71369_N()
      {
@@ -526,7 +533,7 @@
      }
  
      public boolean func_70002_Q()
-@@ -3152,6 +3064,9 @@
+@@ -3152,6 +3055,9 @@
          }
          else if (this.field_71439_g != null)
          {
@@ -536,7 +543,7 @@
              if (this.field_71439_g.field_70170_p.field_73011_w instanceof WorldProviderHell)
              {
                  return MusicTicker.MusicType.NETHER;
-@@ -3181,11 +3096,11 @@
+@@ -3181,11 +3087,11 @@
              {
                  if (Keyboard.getEventKeyState())
                  {
@@ -550,7 +557,7 @@
                      {
                          this.field_71456_v.func_146158_b().func_146227_a(ScreenShotHelper.func_148260_a(this.field_71412_D, this.field_71443_c, this.field_71440_d, this.field_147124_at));
                      }
-@@ -3199,6 +3114,7 @@
+@@ -3199,6 +3105,7 @@
                          }
                      }
                  }
@@ -558,7 +565,7 @@
              }
          }
      }
-@@ -3328,6 +3244,12 @@
+@@ -3328,6 +3235,12 @@
          return this.field_184127_aH;
      }
  
@@ -571,7 +578,7 @@
      public boolean func_189648_am()
      {
          return this.field_71439_g != null && this.field_71439_g.func_175140_cp() || this.field_71474_y.field_178879_v;
-@@ -3342,4 +3264,9 @@
+@@ -3342,4 +3255,9 @@
      {
          return this.field_193035_aW;
      }

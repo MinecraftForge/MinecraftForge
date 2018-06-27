@@ -45,6 +45,7 @@ import com.google.gson.JsonParseException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -576,6 +577,11 @@ public class ForgeHooks
     }
 
     public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
+    {
+        return entity instanceof EntityPlayer || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+    }
+
+    public static boolean onPlayerAttack(EntityLivingBase entity, DamageSource src, float amount)
     {
         return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
     }
@@ -1454,4 +1460,17 @@ public class ForgeHooks
         }
         return modId;
     }
+
+    public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
+    {
+
+        if (entity.canTrample(world, state.getBlock(), pos, fallDistance))
+        {
+            BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
+            MinecraftForge.EVENT_BUS.post(event);
+            return !event.isCanceled();
+        }
+        return false;
+    }
+
 }

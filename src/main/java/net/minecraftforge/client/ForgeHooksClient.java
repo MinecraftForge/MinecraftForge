@@ -57,6 +57,7 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.ModelRotation;
@@ -76,7 +77,6 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
@@ -387,29 +387,6 @@ public class ForgeHooksClient
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
-    @SuppressWarnings("deprecation")
-    public static Matrix4f getMatrix(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
-    {
-        javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
-        m.setIdentity();
-        m.setTranslation(TRSRTransformation.toVecmath(transform.translation));
-        t.setIdentity();
-        t.rotY(transform.rotation.y);
-        m.mul(t);
-        t.setIdentity();
-        t.rotX(transform.rotation.x);
-        m.mul(t);
-        t.setIdentity();
-        t.rotZ(transform.rotation.z);
-        m.mul(t);
-        t.setIdentity();
-        t.m00 = transform.scale.x;
-        t.m11 = transform.scale.y;
-        t.m22 = transform.scale.z;
-        m.mul(t);
-        return m;
-    }
-
     private static final Matrix4f flipX;
     static {
         flipX = new Matrix4f();
@@ -627,10 +604,16 @@ public class ForgeHooksClient
     }
 
     @SuppressWarnings("deprecation")
-    public static Optional<TRSRTransformation> applyTransform(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform, Optional<? extends IModelPart> part)
+    public static Optional<TRSRTransformation> applyTransform(ItemTransformVec3f transform, Optional<? extends IModelPart> part)
     {
         if(part.isPresent()) return Optional.empty();
-        return Optional.of(TRSRTransformation.blockCenterToCorner(new TRSRTransformation(transform)));
+        return Optional.of(TRSRTransformation.blockCenterToCorner(TRSRTransformation.from(transform)));
+    }
+
+    public static Optional<TRSRTransformation> applyTransform(ModelRotation rotation, Optional<? extends IModelPart> part)
+    {
+        if(part.isPresent()) return Optional.empty();
+        return Optional.of(TRSRTransformation.from(rotation));
     }
 
     public static Optional<TRSRTransformation> applyTransform(Matrix4f matrix, Optional<? extends IModelPart> part)
@@ -746,9 +729,9 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static Pair<? extends IBakedModel,Matrix4f> handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type)
     {
-        TRSRTransformation tr = new TRSRTransformation(model.getItemCameraTransforms().getTransform(type));
+        TRSRTransformation tr = TRSRTransformation.from(model.getItemCameraTransforms().getTransform(type));
         Matrix4f mat = null;
-        if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
+        if (!tr.isIdentity()) mat = tr.getMatrix();
         return Pair.of(model, mat);
     }
 
@@ -756,7 +739,7 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
     }
-    
+
     public static String getHorseArmorTexture(EntityHorse horse, ItemStack armorStack)
     {
         String texture = armorStack.getItem().getHorseArmorTexture(horse, armorStack);

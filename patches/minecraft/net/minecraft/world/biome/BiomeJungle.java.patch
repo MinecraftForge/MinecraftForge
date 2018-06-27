@@ -8,11 +8,11 @@
 +        int height = p_180624_1_.func_175645_m(p_180624_3_.func_177982_a(i, 0, j)).func_177956_o() * 2; // could == 0, which crashes nextInt
 +        if (height < 1) height = 1;
 +        int k = p_180624_2_.nextInt(height);
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.PUMPKIN))
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, new net.minecraft.util.math.ChunkPos(p_180624_3_), p_180624_3_.func_177982_a(i, k, j), net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.PUMPKIN))
          (new WorldGenMelon()).func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_.func_177982_a(i, k, j));
          WorldGenVines worldgenvines = new WorldGenVines();
  
-+        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, p_180624_3_, net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
++        if(net.minecraftforge.event.terraingen.TerrainGen.decorate(p_180624_1_, p_180624_2_, new net.minecraft.util.math.ChunkPos(p_180624_3_), net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate.EventType.GRASS))
          for (int j1 = 0; j1 < 50; ++j1)
          {
              k = p_180624_2_.nextInt(16) + 8;
