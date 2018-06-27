@@ -24,6 +24,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPortal;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -127,7 +128,7 @@ public class BlockEvent extends Event
             this.player = player;
 
             if (state == null || !ForgeHooks.canHarvestBlock(state.getBlock(), player, world, pos) || // Handle empty block or player unable to break block scenario
-                    (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
+                (state.getBlock().canSilkHarvest(world, pos, world.getBlockState(pos), player) && EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player.getHeldItemMainhand()) > 0)) // If the block is being silk harvested, the exp dropped is 0
             {
                 this.exp = 0;
             }
@@ -284,6 +285,59 @@ public class BlockEvent extends Event
         public CreateFluidSourceEvent(World world, BlockPos pos, IBlockState state)
         {
             super(world, pos, state);
+        }
+    }
+
+    /**
+     * Fired when a liquid places a block. Use {@link #setNewState(IBlockState)} to change the result of
+     * a cobblestone generator or add variants of obsidian. Alternatively, you  could execute
+     * arbitrary code when lava sets blocks on fire, even preventing it.
+     *
+     * {@link #getState()} will return the block that was originally going to be placed.
+     * {@link #getPos()} will return the position of the block to be changed.
+     */
+    @Cancelable
+    public static class FluidPlaceBlockEvent extends BlockEvent
+    {
+        private final BlockPos liquidPos;
+        private IBlockState newState;
+        private IBlockState origState;
+
+        public FluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, IBlockState state)
+        {
+            super(world, pos, state);
+            this.liquidPos = liquidPos;
+            this.newState = state;
+            this.origState = world.getBlockState(pos);
+        }
+
+        /**
+         * @return The position of the liquid this event originated from. This may be the same as {@link #getPos()}.
+         */
+        public BlockPos getLiquidPos()
+        {
+            return liquidPos;
+        }
+
+        /**
+         * @return The block state that will be placed after this event resolves.
+         */
+        public IBlockState getNewState()
+        {
+            return newState;
+        }
+
+        public void setNewState(IBlockState state)
+        {
+            this.newState = state;
+        }
+
+        /**
+         * @return The state of the block to be changed before the event was fired.
+         */
+        public IBlockState getOriginalState()
+        {
+            return origState;
         }
     }
 
