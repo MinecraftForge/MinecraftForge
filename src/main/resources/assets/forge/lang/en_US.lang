@@ -1,4 +1,5 @@
 commands.forge.usage=Use /forge <subcommand>
+commands.forge.help.usage=/forge help [page|command name]
 commands.forge.usage.tracking=Use /forge track <type> <duration>. Valid types are "te" (Tile Entities). Duration in seconds must be <= 60.
 commands.forge.usage.help=Use help [command] to view usages for that command.
 commands.forge.tps.summary=%s : Mean tick time: %d ms. Mean TPS: %d
@@ -9,6 +10,7 @@ commands.forge.gen.progress=Generation Progress: %d/%d
 commands.forge.gen.complete=Finished generating %d new chunks (out of %d) for dimension %d.
 commands.forge.gen.start=Starting to generate %d chunks in a spiral around %d, %d in dimension %d.
 commands.forge.entity.usage=Use /forge entity help for more information on entity subcommands.
+commands.forge.entity.help.usage=/forge entity help [page|command name]
 commands.forge.entity.list.usage=Use /forge entity list [filter] [dim] to get entity info that matches the optional filter.
 commands.forge.entity.list.invalid=Invalid filter, does not match any entities. Use /forge entity list for a proper list
 commands.forge.entity.list.invalidworld=Could not load world for dimension %d. Please select a valid dimension.
@@ -20,6 +22,7 @@ commands.forge.setdim.invalid.entity=The entity selected (%s) is not valid.
 commands.forge.setdim.invalid.dim=The dimension ID specified (%d) is not valid.
 commands.forge.setdim.invalid.nochange=The entity selected (%s) is already in the dimension specified (%d).
 
+commands.forge.track.usage=Use /forge track help [page|command name]
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.forge.tracking.entity.enabled=Entity tracking enabled for %d seconds.
 commands.forge.tracking.usage=Use /forge track help for more information on tracking subcommands.
@@ -31,8 +34,7 @@ commands.forge.tracking.te.usage=Use /forge track te
 commands.forge.tracking.timingEntry=%s - %s [%d, %d, %d]: %s
 commands.forge.tracking.noData=No data has been recorded yet.
 commands.tree_base.invalid_cmd=Invalid subcommand '%s'!
-commands.tree_base.invalid_cmd.list_subcommands=Invalid subcommand '%s'! Available subcommands: %s
-commands.tree_base.available_subcommands=Available SubCommands: %s
+commands.tree_base.available_subcommands=Available subcommands: %s
 forge.texture.preload.warning=Warning: Texture %s not preloaded, will cause render glitches!
 forge.client.shutdown.internal=Shutting down internal server...
 forge.update.newversion=New Forge version available: %s

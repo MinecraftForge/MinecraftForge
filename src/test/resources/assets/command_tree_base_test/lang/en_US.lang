@@ -1,0 +1,9 @@
+commands.treecommand_test.usage=/treecommand_test <subcommand>
+commands.treecommand_test.usage.help=/treecommand_test help [subcommand]
+commands.treecommand_test.ping.usage=/treecommand_test ping
+commands.treecommand_test.ping.text=Pong!
+commands.treecommand_test.value.usage=/treecommand_test value <subcommand>
+commands.treecommand_test.value.set.usage=/treecommand_test value set <value>
+commands.treecommand_test.value.set.text=Test value set to: %d
+commands.treecommand_test.value.get.usage=/treecommand_test value get
+commands.treecommand_test.value.get.text=Test value: %d

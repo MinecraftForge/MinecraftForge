@@ -19,8 +19,8 @@
 
 package net.minecraftforge.server.command;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
@@ -34,8 +34,13 @@ import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandSetDimension extends CommandBase
+public class CommandSetDimension extends CommandNode
 {
+    public CommandSetDimension(ICommand parent)
+    {
+        super(parent);
+    }
+
     @Override
     public String getName()
     {

@@ -28,8 +28,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.Entity;
@@ -46,16 +46,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 class CommandEntity extends CommandTreeBase
 {
-    public CommandEntity()
+    CommandEntity(ICommand parent)
     {
-        addSubcommand(new EntityListCommand());
+        super(parent);
+        addSubcommand(new EntityListCommand(this));
         addSubcommand(new CommandTreeHelp(this));
-    }
-
-    @Override
-    public String getUsage(ICommandSender sender)
-    {
-        return "commands.forge.entity.usage";
     }
 
     @Override
@@ -70,8 +65,13 @@ class CommandEntity extends CommandTreeBase
         return "entity";
     }
 
-    private static class EntityListCommand extends CommandBase
+    private static class EntityListCommand extends CommandNode
     {
+        public EntityListCommand(ICommand parent)
+        {
+            super(parent);
+        }
+
         @Override
         public String getName()
         {
@@ -82,12 +82,6 @@ class CommandEntity extends CommandTreeBase
         public int getRequiredPermissionLevel()
         {
             return 2;
-        }
-
-        @Override
-        public String getUsage(ICommandSender sender)
-        {
-            return "commands.forge.entity.list.usage";
         }
 
         @Override

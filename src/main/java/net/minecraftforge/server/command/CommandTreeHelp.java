@@ -18,104 +18,53 @@
  */
 package net.minecraftforge.server.command;
 
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
+import net.minecraft.command.CommandHelp;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Add help for parent and all its children.
- * Must be added to parent after all other commands.
  */
-public class CommandTreeHelp extends CommandTreeBase
+public class CommandTreeHelp extends CommandHelp implements ICommandWithParent
 {
-    private final ICommand parent;
+    private final CommandTreeBase parent;
 
     public CommandTreeHelp(CommandTreeBase parent)
     {
         this.parent = parent;
-        for (ICommand command : parent.getSubCommands())
-        {
-            addSubcommand(new HelpSubCommand(this, command));
-        }
-    }
-
-    @Override
-    public int getRequiredPermissionLevel()
-    {
-        return 0;
-    }
-
-    @Override
-    public String getName()
-    {
-        return "help";
     }
 
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "commands.forge.usage.help";
+        return "commands." + getPath() + ".usage";
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
     {
-        if (args.length == 0)
-        {
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, parent.getUsage(sender)));
-            for (ICommand subCommand : getSubCommands())
-            {
-                if (subCommand instanceof HelpSubCommand && subCommand.checkPermission(server, sender))
-                {
-                    subCommand.execute(server, sender, args);
-                }
-            }
-            return;
-        }
-        super.execute(server, sender, args);
+        return true;
     }
 
-    public static class HelpSubCommand extends CommandBase
+    @Override
+    protected List<ICommand> getSortedPossibleCommands(ICommandSender sender, MinecraftServer server)
     {
-        private final CommandTreeHelp parent;
-        private final ICommand command;
+        return parent.getAvailableSubCommands(server, sender);
+    }
 
-        public HelpSubCommand(CommandTreeHelp parent, ICommand command)
-        {
-            this.parent = parent;
-            this.command = command;
-        }
+    @Override
+    protected Map<String, ICommand> getCommandMap(MinecraftServer server)
+    {
+        return parent.getCommandMap();
+    }
 
-        @Override
-        public int getRequiredPermissionLevel()
-        {
-            return 0;
-        }
-
-        @Override
-        public String getName()
-        {
-            return command.getName();
-        }
-
-        @Override
-        public String getUsage(ICommandSender sender)
-        {
-            return command.getUsage(sender);
-        }
-
-        @Override
-        public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-        {
-            return command.checkPermission(server, sender);
-        }
-
-        @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-        {
-            sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, command.getUsage(sender)));
-        }
+    @Override
+    public ICommand getParent()
+    {
+        return parent;
     }
 }
