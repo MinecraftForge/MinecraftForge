@@ -28,7 +28,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.util.IThreadListener;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
@@ -37,6 +36,7 @@ import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntityMessage;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.common.registry.IThrowableEntity;
 import net.minecraftforge.fml.common.registry.EntityRegistry.EntityRegistration;
@@ -76,7 +76,6 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                     " at ( " + spawnMsg.rawX + "," + spawnMsg.rawY + ", " + spawnMsg.rawZ + ") Please contact mod author or server admin.");
         }
         WorldClient wc = FMLClientHandler.instance().getWorldClient();
-        Class<? extends Entity> cls = er.getEntityClass();
         try
         {
             Entity entity;
@@ -85,7 +84,7 @@ public class EntitySpawnHandler extends SimpleChannelInboundHandler<FMLMessage.E
                 entity = er.doCustomSpawning(spawnMsg);
             } else
             {
-                entity = cls.getConstructor(World.class).newInstance(wc);
+                entity = er.getEntry().newInstance(wc);
 
                 int offset = spawnMsg.entityId - entity.getEntityId();
                 entity.setEntityId(spawnMsg.entityId);
