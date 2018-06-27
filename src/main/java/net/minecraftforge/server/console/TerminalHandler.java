@@ -46,6 +46,7 @@ public final class TerminalHandler
                 .terminal(terminal)
                 .completer(new ConsoleCommandCompleter(server))
                 .build();
+        reader.setOpt(LineReader.Option.DISABLE_EVENT_EXPANSION);
         reader.unsetOpt(LineReader.Option.INSERT_TAB);
 
         TerminalConsoleAppender.setReader(reader);
