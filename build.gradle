@@ -15,12 +15,8 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
-
-repositories {
-        maven {
-            name = "local"
-            url = "file:///home/cpw/projects/repo"
-        }
+plugins {
+  id 'net.minecrell.licenser' version '0.3'
 }
 
 apply plugin: "maven"
@@ -86,6 +82,13 @@ processJson {
     ])
 }
 
+
+license {
+  header project.file('LICENSE-header.txt')
+  include '**/net/**/*.java'
+  newLine false
+}
+
 task changelog(type: JenkinsChangelog) {
 
     // skip if there is no forge jenkins pass
@@ -113,11 +116,10 @@ task crowdin(type: CrowdinDownload) {
 }
 
 def extraTxts = [
-    "CREDITS-fml.txt",
-    "LICENSE-new.txt",
-    "MinecraftForge-Credits.txt",
-    "Paulscode SoundSystem CodecIBXM License.txt",
-    "Paulscode IBXM Library License.txt"
+    "CREDITS.txt",
+    "LICENSE.txt",
+    "LICENSE-Paulscode SoundSystem CodecIBXM.txt",
+    "LICENSE-Paulscode IBXM Library.txt"
 ]
 if (project.hasProperty('forgeJenkinsPass'))
     extraTxts += changelog

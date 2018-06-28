@@ -5,7 +5,7 @@
      public void func_180658_a(World p_180658_1_, BlockPos p_180658_2_, Entity p_180658_3_, float p_180658_4_)
      {
 -        if (!p_180658_1_.field_72995_K && p_180658_1_.field_73012_v.nextFloat() < p_180658_4_ - 0.5F && p_180658_3_ instanceof EntityLivingBase && (p_180658_3_ instanceof EntityPlayer || p_180658_1_.func_82736_K().func_82766_b("mobGriefing")) && p_180658_3_.field_70130_N * p_180658_3_.field_70130_N * p_180658_3_.field_70131_O > 0.512F)
-+        if (!p_180658_1_.field_72995_K && p_180658_3_.canTrample(p_180658_1_, this, p_180658_2_, p_180658_4_)) // Forge: Move logic to Entity#canTrample
++        if (net.minecraftforge.common.ForgeHooks.onFarmlandTrample(p_180658_1_, p_180658_2_, Blocks.field_150346_d.func_176223_P(), p_180658_4_, p_180658_3_)) // Forge: Move logic to Entity#canTrample
          {
              func_190970_b(p_180658_1_, p_180658_2_);
          }
