@@ -198,9 +198,7 @@ public final class ModelFluid implements IModel
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
-            if (side == null) return ImmutableList.of();
-
-            if (state instanceof IExtendedBlockState)
+            if (side != null && state instanceof IExtendedBlockState)
             {
                 Optional<IExtendedBlockState> exState = Optional.of((IExtendedBlockState)state);
 
@@ -227,7 +225,7 @@ public final class ModelFluid implements IModel
                 return modelCache.getUnchecked(key).getQuads(state, side, rand);
             }
 
-            return faceQuads.get(side);
+            return super.getQuads(state, side, rand);
         }
     }
 
