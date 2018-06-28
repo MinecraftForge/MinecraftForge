@@ -139,6 +139,7 @@ import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.ItemTakeEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -1109,6 +1110,13 @@ public class ForgeHooks
     public static EnumActionResult onItemRightClick(EntityPlayer player, EnumHand hand)
     {
         PlayerInteractEvent.RightClickItem evt = new PlayerInteractEvent.RightClickItem(player, hand);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt.isCanceled() ? evt.getCancellationResult() : null;
+    }
+
+    public static EnumActionResult onItemTake(EntityPlayer player, ItemStack itemStack)
+    {
+        ItemTakeEvent evt = new ItemTakeEvent(itemStack, player);
         MinecraftForge.EVENT_BUS.post(evt);
         return evt.isCanceled() ? evt.getCancellationResult() : null;
     }
