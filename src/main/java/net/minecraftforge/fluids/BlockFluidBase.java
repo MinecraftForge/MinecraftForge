@@ -682,14 +682,14 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                 if (!world.getBlockState(offset).getMaterial().blocksMovement())
                 {
                     otherDecay = getFlowDecay(world, offset.up(densityDir));
-                    if (otherDecay >= 0)
+                    if (otherDecay < quantaPerBlock)
                     {
                         int power = otherDecay - (decay - quantaPerBlock);
                         vec = vec.addVector(side.getFrontOffsetX() * power, 0, side.getFrontOffsetZ() * power);
                     }
                 }
             }
-            else if (otherDecay >= 0)
+            else
             {
                 int power = otherDecay - decay;
                 vec = vec.addVector(side.getFrontOffsetX() * power, 0, side.getFrontOffsetZ() * power);
