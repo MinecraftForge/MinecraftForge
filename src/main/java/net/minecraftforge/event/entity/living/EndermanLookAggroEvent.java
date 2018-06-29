@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 
 /**
- * EndermanLookAggroEvent is fired when a player looks at an Enderman in {@link EntityEnderman#shouldAttackPlayer(EntityPlayer)}<br>
+ * EndermanLookAggroEvent is fired when an Enderman checks if a player is looking at it in {@link EntityEnderman#shouldAttackPlayer(EntityPlayer)}<br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
