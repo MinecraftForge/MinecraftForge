@@ -44,6 +44,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.storage.ThreadedFileIOBase;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -113,6 +114,8 @@ public class ForgeChunkManager
     private static int playerTicketLength;
     private static int dormantChunkCacheSize;
 
+    public static boolean asyncChunkLoading;
+
     public static final List<String> MOD_PROP_ORDER = new ArrayList<String>(2);
 
     private static Set<String> warnedMods = Sets.newHashSet();
@@ -166,7 +169,7 @@ public class ForgeChunkManager
          * @param tickets The tickets to re-register. The list is immutable and cannot be manipulated directly. Copy it first.
          * @param world the world
          */
-        public void ticketsLoaded(List<Ticket> tickets, World world);
+        void ticketsLoaded(List<Ticket> tickets, World world);
     }
 
     /**
@@ -197,7 +200,7 @@ public class ForgeChunkManager
          * to "maxTicketCount" size after the call returns and then offered to the other callback
          * method
          */
-        public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount);
+        List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount);
     }
 
     public interface PlayerOrderedLoadingCallback extends LoadingCallback
@@ -216,7 +219,7 @@ public class ForgeChunkManager
          * @return A list of the tickets this mod wishes to use. This list will subsequently be offered
          * to the main callback for action
          */
-        public ListMultimap<String, Ticket> playerTicketsLoaded(ListMultimap<String, Ticket> tickets, World world);
+        ListMultimap<String, Ticket> playerTicketsLoaded(ListMultimap<String, Ticket> tickets, World world);
     }
     public enum Type
     {
@@ -942,15 +945,19 @@ public class ForgeChunkManager
                 }
             }
         }
-        try
-        {
-            CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
-        }
-        catch (IOException e)
-        {
-            FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
-            return;
-        }
+
+        // Write the actual file on the IO thread rather than blocking the server thread
+        ThreadedFileIOBase.getThreadedIOInstance().queueIO(() -> {
+            try
+            {
+                CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
+            }
+            catch (IOException e)
+            {
+                FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
+            }
+            return false;
+        });
     }
 
     static void loadEntity(Entity entity)
@@ -1009,6 +1016,7 @@ public class ForgeChunkManager
 
         loadChunkEntities(entry.chunk, entry.nbt, world);
 
+        cache.invalidate(coords);
         return entry.chunk;
     }
 
@@ -1099,6 +1107,13 @@ public class ForgeChunkManager
         dormantChunkCacheSize = temp.getInt(0);
         propOrder.add("dormantChunkCacheSize");
         FMLLog.log.info("Configured a dormant chunk cache size of {}", temp.getInt(0));
+
+        temp = config.get("defaults", "asyncChunkLoading", true);
+        temp.setComment("Load chunks asynchronously for players, reducing load on the server thread.\n" +
+                    "Can be disabled to help troubleshoot chunk loading issues.");
+        temp.setLanguageKey("forge.configgui.asyncChunkLoading");
+        asyncChunkLoading = temp.getBoolean(true);
+        propOrder.add("asyncChunkLoading");
 
         config.setCategoryPropertyOrder("defaults", propOrder);
 

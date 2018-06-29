@@ -15,6 +15,12 @@ commands.forge.entity.list.invalidworld=Could not load world for dimension %d. P
 commands.forge.entity.list.none=No entities found.
 commands.forge.entity.list.single.header=Entity: %s Total: %d
 commands.forge.entity.list.multiple.header=Total: %d
+commands.forge.setdim.usage=Use /forge setdim <entity> <dimension> [<x> <y> <z>]
+commands.forge.setdim.invalid.entity=The entity selected (%s) is not valid.
+commands.forge.setdim.invalid.dim=The dimension ID specified (%d) is not valid.
+commands.forge.setdim.invalid.nochange=The entity selected (%s) is already in the dimension specified (%d).
+commands.forge.dimensions.usage=Use /forge dimensions
+commands.forge.dimensions.list=Currently registered dimensions by type:
 
 commands.forge.tracking.te.enabled=Tile Entity tracking enabled for %d seconds.
 commands.forge.tracking.entity.enabled=Entity tracking enabled for %d seconds.
@@ -84,6 +90,8 @@ forge.configgui.alwaysSetupTerrainOffThread.tooltip=Enable forge to queue all ch
 
 forge.configgui.modID.tooltip=The mod ID that you want to define override settings for.
 forge.configgui.modID=Mod ID
+forge.configgui.asyncChunkLoading=Async Chunk Loading
+forge.configgui.asyncChunkLoading.tooltip=Load chunks asynchronously for players, reducing load on the server thread. Can be disabled to help troubleshoot chunk loading issues.
 forge.configgui.dormantChunkCacheSize.tooltip=Unloaded chunks can first be kept in a dormant cache for quicker loading times. Specify the size (in chunks) of that cache here.
 forge.configgui.dormantChunkCacheSize=Dormant Chunk Cache Size
 forge.configgui.enableModOverrides.tooltip=Enable this setting to allow custom per-mod settings to be defined.
@@ -197,8 +205,14 @@ item.forge.bucketFilled.name=%s Bucket
 
 fml.messages.mod.missing.dependencies=%s is missing mods it depends on.
 fml.messages.mod.missing.dependencies.fix=Include the following mods or remove %s.
+fml.messages.mod.missing.dependencies.compatibility=You must include the right dependencies for %s:
+fml.messages.mod.missing.dependencies.missing=missing
+fml.messages.mod.missing.dependencies.compatible.with=Only compatible with %s
+fml.messages.mod.missing.dependencies.requires=Requires %s
+fml.messages.mod.missing.dependencies.you.have=you have %s
 fml.messages.mod.missing.dependencies.see.log=See '%s' for technical information.
 fml.messages.mod.missing.dependencies.multiple=Some mods are missing mods they depends on.
+fml.messages.mod.missing.dependencies.multiple.issues=You must include the right dependencies for the following mods:
 fml.messages.mod.missing.multiple=There were %s errors loading Minecraft
 fml.messages.mod.wrongminecraft=The mods listed below can't run in Minecraft version %s
 fml.messages.mod.wrongminecraft.requirement=%s (%s) requires Minecraft %s

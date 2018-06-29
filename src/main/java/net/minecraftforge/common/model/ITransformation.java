@@ -29,9 +29,9 @@ import net.minecraft.util.EnumFacing;
  */
 public interface ITransformation
 {
-    public Matrix4f getMatrix();
+    Matrix4f getMatrix();
 
-    public EnumFacing rotate(EnumFacing facing);
+    EnumFacing rotate(EnumFacing facing);
 
-    public int rotate(EnumFacing facing, int vertexIndex);
+    int rotate(EnumFacing facing, int vertexIndex);
 }

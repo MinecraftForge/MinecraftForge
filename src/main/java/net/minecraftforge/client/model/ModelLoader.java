@@ -24,9 +24,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,9 +66,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -78,25 +74,18 @@ import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
-import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -106,7 +95,9 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 import java.util.Optional;
-import com.google.common.base.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -114,7 +105,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -127,6 +117,8 @@ import javax.annotation.Nullable;
 public final class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
+    private final Map<ModelResourceLocation, ModelBlockDefinition> multipartDefinitions = Maps.newHashMap();
+    private final Map<ModelBlockDefinition, IModel> multipartModels = Maps.newHashMap();
     // TODO: nothing adds to missingVariants, remove it?
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
@@ -177,14 +169,23 @@ public final class ModelLoader extends ModelBakery
 
         for(IModel model : models.keySet())
         {
-            bakeBar.step("[" + Joiner.on(", ").join(models.get(model)) + "]");
+            String modelLocations = "[" + Joiner.on(", ").join(models.get(model)) + "]";
+            bakeBar.step(modelLocations);
             if(model == getMissingModel())
             {
                 bakedModels.put(model, missingBaked);
             }
             else
             {
-                bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.INSTANCE));
+                try
+                {
+                    bakedModels.put(model, model.bake(model.getDefaultState(), DefaultVertexFormats.ITEM, DefaultTextureGetter.INSTANCE));
+                }
+                catch (Exception e)
+                {
+                    FMLLog.log.error("Exception baking model for location(s) {}:", modelLocations, e);
+                    bakedModels.put(model, missingBaked);
+                }
             }
         }
 
@@ -208,8 +209,10 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected void loadBlocks()
     {
-        List<Block> blocks = Lists.newArrayList(Iterables.filter(Block.REGISTRY, block -> block.getRegistryName() != null));
-        blocks.sort(Comparator.comparing(b -> b.getRegistryName().toString()));
+        List<Block> blocks = StreamSupport.stream(Block.REGISTRY.spliterator(), false)
+                .filter(block -> block.getRegistryName() != null)
+                .sorted(Comparator.comparing(b -> b.getRegistryName().toString()))
+                .collect(Collectors.toList());
         ProgressBar blockBar = ProgressManager.push("ModelLoader: blocks", blocks.size());
 
         BlockStateMapper mapper = this.blockModelShapes.getBlockStateMapper();
@@ -246,6 +249,7 @@ public final class ModelLoader extends ModelBakery
     {
         for (ModelResourceLocation location : locations)
         {
+            multipartDefinitions.put(location, definition);
             registerVariant(null, location);
         }
     }
@@ -280,8 +284,10 @@ public final class ModelLoader extends ModelBakery
 
         registerVariantNames();
 
-        List<Item> items = Lists.newArrayList(Iterables.filter(Item.REGISTRY, item -> item.getRegistryName() != null));
-        Collections.sort(items, (i1, i2) -> i1.getRegistryName().toString().compareTo(i2.getRegistryName().toString()));
+        List<Item> items = StreamSupport.stream(Item.REGISTRY.spliterator(), false)
+                .filter(item -> item.getRegistryName() != null)
+                .sorted(Comparator.comparing(i -> i.getRegistryName().toString()))
+                .collect(Collectors.toList());
 
         ProgressBar itemBar = ProgressManager.push("ModelLoader: items", items.size());
         for(Item item : items)
@@ -295,22 +301,20 @@ public final class ModelLoader extends ModelBakery
                 Exception exception = null;
                 try
                 {
-                    model = ModelLoaderRegistry.getModel(file);
+                    model = ModelLoaderRegistry.getModel(memory);
                 }
-                catch(Exception normalException)
+                catch (Exception blockstateException)
                 {
-                    // try blockstate json if the item model is missing
-                    FMLLog.log.debug("Item json isn't found for '{}', trying to load the variant from the blockstate json", memory);
                     try
                     {
-                        model = ModelLoaderRegistry.getModel(memory);
+                        model = ModelLoaderRegistry.getModel(file);
                     }
-                    catch (Exception blockstateException)
+                    catch (Exception normalException)
                     {
                         exception = new ItemLoadingException("Could not load item model either from the normal location " + file + " or from the blockstate", normalException, blockstateException);
                     }
                 }
-                if(exception != null)
+                if (exception != null)
                 {
                     storeException(memory, exception);
                     model = ModelLoaderRegistry.getMissingModel(memory, exception);
@@ -445,7 +449,7 @@ public final class ModelLoader extends ModelBakery
             }
 
             ItemCameraTransforms transforms = model.getAllTransforms();
-            Map<TransformType, TRSRTransformation> tMap = Maps.newHashMap();
+            Map<TransformType, TRSRTransformation> tMap = Maps.newEnumMap(TransformType.class);
             tMap.putAll(PerspectiveMapWrapper.getTransforms(transforms));
             tMap.putAll(PerspectiveMapWrapper.getTransforms(state));
             IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap));
@@ -936,6 +940,8 @@ public final class ModelLoader extends ModelBakery
      */
     public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
     {
+        if (!isLoading) return;
+
         IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
         Map<String, Integer> modelErrors = Maps.newHashMap();
         Set<ResourceLocation> printedBlockStateErrors = Sets.newHashSet();
@@ -1054,6 +1060,8 @@ public final class ModelLoader extends ModelBakery
                 FMLLog.log.fatal("Suppressed additional {} model loading errors for domain {}", e.getValue() - verboseMissingInfoCount, e.getKey());
             }
         }
+        loadingExceptions.clear();
+        missingVariants.clear();
         isLoading = false;
     }
 
@@ -1168,16 +1176,23 @@ public final class ModelLoader extends ModelBakery
         {
             ModelResourceLocation variant = (ModelResourceLocation) modelLocation;
             ModelBlockDefinition definition = loader.getModelBlockDefinition(variant);
+
             try
             {
                 VariantList variants = definition.getVariant(variant.getVariant());
                 return new WeightedRandomModel(variant, variants);
             }
-            catch(MissingVariantException e)
+            catch (MissingVariantException e)
             {
-                if(definition.hasMultipartData())
+                if (definition.equals(loader.multipartDefinitions.get(variant)))
                 {
-                    return new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                    IModel model = loader.multipartModels.get(definition);
+                    if (model == null)
+                    {
+                        model = new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                        loader.multipartModels.put(definition, model);
+                    }
+                    return model;
                 }
                 throw e;
             }

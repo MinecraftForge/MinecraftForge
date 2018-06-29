@@ -29,6 +29,6 @@ import static java.lang.annotation.ElementType.*;
 @Target(value = METHOD)
 public @interface SubscribeEvent
 {
-    public EventPriority priority() default EventPriority.NORMAL;
-    public boolean receiveCanceled() default false;
+    EventPriority priority() default EventPriority.NORMAL;
+    boolean receiveCanceled() default false;
 }

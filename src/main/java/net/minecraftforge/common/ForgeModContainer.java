@@ -25,6 +25,7 @@ import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.cert.Certificate;
@@ -85,6 +86,7 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.WorldAccessContainer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
+import net.minecraftforge.fml.common.discovery.json.JsonAnnotationLoader;
 import net.minecraftforge.fml.common.event.FMLConstructionEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
@@ -421,6 +423,11 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     @Subscribe
     public void modConstruction(FMLConstructionEvent evt)
     {
+        InputStream is = ForgeModContainer.class.getResourceAsStream("/META-INF/vanilla_annotations.json");
+        if (is != null)
+            JsonAnnotationLoader.loadJson(is, null, evt.getASMHarvestedData());
+        log.debug("Loading Vanilla annotations: " + is);
+
         List<String> all = Lists.newArrayList();
         for (ASMData asm : evt.getASMHarvestedData().getAll(ICrashReportDetail.class.getName().replace('.', '/')))
             all.add(asm.getClassName());
@@ -494,7 +501,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
     private static void registerAllBiomesAndGenerateEvents()
     {
-        for (Biome biome : ForgeRegistries.BIOMES.getValues())
+        for (Biome biome : ForgeRegistries.BIOMES.getValuesCollection())
         {
             if (biome.decorator instanceof DeferredBiomeDecorator)
             {
@@ -551,6 +558,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         OreDictionary.rebakeMap();
         StatList.reinit();
         Ingredient.invalidateAll();
+        FMLCommonHandler.instance().resetClientRecipeBook();
         FMLCommonHandler.instance().reloadSearchTrees();
     }
 
