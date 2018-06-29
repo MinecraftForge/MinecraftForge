@@ -126,7 +126,8 @@ public class SlotItemHandler extends Slot
     @Override
     public boolean canTakeStack(EntityPlayer playerIn)
     {
-        return !this.getItemHandler().extractItem(index, 1, true).isEmpty();
+        net.minecraft.util.EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemTake(playerIn, this.getStack());
+        return cancelResult == null && !this.getItemHandler().extractItem(index, 1, true).isEmpty();
     }
 
     @Override
