@@ -1,4 +1,4 @@
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.entity.player;
 
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -30,9 +30,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.UUID;
 
-@Mod(modid = "elytraflighttest", name = "Custom Elytra Flight Test", version = "0", clientSideOnly = true)
-public class ElytraFlightTest
+@Mod(modid = ElytraFlightAttributeTest.MODID, name = "Elytra Flight Attribute Test", version = "0", clientSideOnly = true)
+public class ElytraFlightAttributeTest
 {
+    public static final String MODID = "elytraflightattributetest";
 
     static final boolean ENABLED = false;
 
@@ -50,7 +51,7 @@ public class ElytraFlightTest
             super(true, 0xFFFFFF);
             this.setPotionName("antielytrapotion");
             this.registerPotionAttributeModifier(EntityPlayer.ELYTRA_FLIGHT, UUID_ANTI_ELYTRA_POTION.toString(), -1.0D, 2);
-            this.setRegistryName(new ResourceLocation("elytraflighttest", "antielytrapotion"));
+            this.setRegistryName(new ResourceLocation(MODID, "antielytrapotion"));
         }
     }
 
@@ -64,7 +65,7 @@ public class ElytraFlightTest
     public void registerItems(RegistryEvent.Register<Item> evt)
     {
         ELYTRA_BOOTS = new ItemArmor(ArmorMaterial.LEATHER, 0, EntityEquipmentSlot.FEET)
-                .setUnlocalizedName("elytra_boots").setRegistryName(new ResourceLocation("elytraflighttest", "elytra_boots"))
+                .setUnlocalizedName("elytra_boots").setRegistryName(new ResourceLocation(MODID, "elytra_boots"))
                 .setCreativeTab(CreativeTabs.TOOLS);
 
         evt.getRegistry().register(ELYTRA_BOOTS);
@@ -131,7 +132,7 @@ public class ElytraFlightTest
     public void registerPotionTypes(RegistryEvent.Register<PotionType> evt)
     {
         evt.getRegistry().register(new PotionType(new PotionEffect(ANTI_ELYTRA_POTION, 300))
-                .setRegistryName("elytraflighttest", "antielytrapotion"));
+                .setRegistryName(MODID, "antielytrapotion"));
     }
 
     @SideOnly(Side.CLIENT)
