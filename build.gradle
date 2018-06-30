@@ -15,8 +15,9 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
     }
 }
+
 plugins {
-  id 'net.minecrell.licenser' version '0.3'
+    id 'net.minecrell.licenser' version '0.4'
 }
 
 apply plugin: "maven"
@@ -84,9 +85,19 @@ processJson {
 
 
 license {
-  header project.file('LICENSE-header.txt')
-  include '**/net/**/*.java'
-  newLine false
+    header = project.file('LICENSE-header.txt')
+
+    include 'net/minecraftforge/'
+    exclude 'net/minecraftforge/server/terminalconsole/'
+
+    tasks {
+        main {
+            files = project.files('src/main/java')
+        }
+        test {
+            files = project.files('src/test/java')
+        }
+    }
 }
 
 task changelog(type: JenkinsChangelog) {
