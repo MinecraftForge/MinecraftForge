@@ -22,34 +22,27 @@ package net.minecraftforge.registries;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.Queue;
-
-import net.minecraft.util.ResourceLocation;
-
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-
 import javax.annotation.Nullable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
- * Internal class used in tracking {@link ObjectHolder} references
+ * Default, field-based implementation for {@link IObjectHolderRef}.
  */
-@SuppressWarnings("rawtypes")
-class ObjectHolderRef
+public class FieldObjectHolderRef implements IObjectHolderRef
 {
+    private Object instance;
     private Field field;
     private ResourceLocation injectedObject;
     private boolean isValid;
     private ForgeRegistry<?> registry;
 
     @SuppressWarnings("unchecked")
-    ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
+    FieldObjectHolderRef(@Nullable Object instance, Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
     {
-        registry = getRegistryForType(field);
+        registry = IObjectHolderRef.getRegistryForType(field.getType());
 
+        this.instance = instance;
         this.field = field;
         this.isValid = registry != null;
         if (extractFromExistingValues)
@@ -67,7 +60,7 @@ class ObjectHolderRef
                 }
                 else
                 {
-                    this.injectedObject = ((IForgeRegistryEntry)existing).getRegistryName();
+                    this.injectedObject = ((IForgeRegistryEntry) existing).getRegistryName();
                 }
             }
             catch (IllegalAccessException e)
@@ -94,31 +87,6 @@ class ObjectHolderRef
         }
     }
 
-    @SuppressWarnings("unchecked")
-    @Nullable
-    private ForgeRegistry<?> getRegistryForType(Field field)
-    {
-        Queue<Class<?>> typesToExamine = new LinkedList<Class<?>>();
-        typesToExamine.add(field.getType());
-
-        ForgeRegistry<?> registry = null;
-        while (!typesToExamine.isEmpty() && registry == null)
-        {
-            Class<?> type = typesToExamine.remove();
-            Collections.addAll(typesToExamine, type.getInterfaces());
-            if (IForgeRegistryEntry.class.isAssignableFrom(type))
-            {
-                registry = (ForgeRegistry<?>)GameRegistry.findRegistry((Class<IForgeRegistryEntry>)type);
-                final Class<?> parentType = type.getSuperclass();
-                if (parentType != null)
-                {
-                    typesToExamine.add(parentType);
-                }
-            }
-        }
-        return registry;
-    }
-
     public boolean isValid()
     {
         return isValid;
@@ -143,7 +111,7 @@ class ObjectHolderRef
         }
         try
         {
-            FinalFieldHelper.setField(field, null, thing);
+            FinalFieldHelper.setField(field, instance, thing);
         }
         catch (IllegalArgumentException | ReflectiveOperationException e)
         {

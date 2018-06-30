@@ -44,7 +44,7 @@ import javax.annotation.Nullable;
 public enum ObjectHolderRegistry
 {
     INSTANCE;
-    private List<ObjectHolderRef> objectHolders = Lists.newArrayList();
+    private List<IObjectHolderRef> objectHolders = Lists.newArrayList();
 
     public void findObjectHolders(ASMDataTable table)
     {
@@ -129,7 +129,7 @@ public enum ObjectHolderRegistry
             try
             {
                 Field f = clazz.getDeclaredField(annotationTarget);
-                addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value), extractFromValue));
+                addHolderReference(new FieldObjectHolderRef(null, f, new ResourceLocation(value), extractFromValue));
             }
             catch (NoSuchFieldException ex)
             {
@@ -150,11 +150,11 @@ public enum ObjectHolderRegistry
             {
                 continue;
             }
-            addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value, f.getName()), extractFromExistingValues));
+            addHolderReference(new FieldObjectHolderRef(null, f, new ResourceLocation(value, f.getName()), extractFromExistingValues));
         }
     }
 
-    private void addHolderReference(ObjectHolderRef ref)
+    public void addHolderReference(IObjectHolderRef ref)
     {
         if (ref.isValid())
         {
@@ -165,7 +165,7 @@ public enum ObjectHolderRegistry
     public void applyObjectHolders()
     {
         FMLLog.log.info("Applying holder lookups");
-        for (ObjectHolderRef ohr : objectHolders)
+        for (IObjectHolderRef ohr : objectHolders)
         {
             ohr.apply();
         }
