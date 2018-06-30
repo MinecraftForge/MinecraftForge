@@ -12,7 +12,7 @@ public class ItemTakeEvent extends PlayerEvent
 {
 
 	/**
-	 * This event is fired in {@link net.minecraft.inventory.Slot#canTakeStack(EntityPlayer)} when a player clicks on an item.
+	 * This event is fired in {@link net.minecraft.inventory.Slot#canTakeStack(EntityPlayer)} and {@link net.minecraftforge.items.SlotItemHandler#canTakeStack(EntityPlayer)} when a player clicks on an item.
 	 */
 	@Nonnull
 	private final ItemStack itemStack;
