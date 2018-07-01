@@ -19,7 +19,7 @@ import org.apache.logging.log4j.Logger;
 @Mod(modid = ForgeNetworkTestMod.MOD_ID, name = ForgeNetworkTestMod.MOD_ID, version = "1.0", acceptableRemoteVersions = "*")
 public class ForgeNetworkTestMod
 {
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     public static final String MOD_ID = "forge_network_test";
 
     private FMLEventChannel channel;
