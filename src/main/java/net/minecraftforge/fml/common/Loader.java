@@ -44,7 +44,6 @@ import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModContainer.Disableable;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLLoadEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.registry.*;
@@ -56,7 +55,6 @@ import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DependencyParser;
 import net.minecraftforge.fml.common.versioning.VersionParser;
 import net.minecraftforge.fml.relauncher.ModListHelper;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
 

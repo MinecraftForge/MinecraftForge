@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.electronwill.nightconfig.core.path.PathConfig;
+import com.electronwill.nightconfig.core.file.FileConfig;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
@@ -31,12 +31,12 @@ import java.util.List;
 public class DefaultModInfos
 {
     static {
-        PathConfig minecraftmod;
-        PathConfig forgemod;
+        FileConfig minecraftmod;
+        FileConfig forgemod;
         try
         {
-            minecraftmod = PathConfig.of(Paths.get(DefaultModInfos.class.getClassLoader().getResource("minecraftmod.toml").toURI()));
-            forgemod = PathConfig.of(Paths.get(DefaultModInfos.class.getClassLoader().getResource("forgemod.toml").toURI()));
+            minecraftmod = FileConfig.of(Paths.get(DefaultModInfos.class.getClassLoader().getResource("minecraftmod.toml").toURI()));
+            forgemod = FileConfig.of(Paths.get(DefaultModInfos.class.getClassLoader().getResource("forgemod.toml").toURI()));
             minecraftmod.load();
             forgemod.load();
         }

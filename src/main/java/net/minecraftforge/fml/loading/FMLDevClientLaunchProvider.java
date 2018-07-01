@@ -40,7 +40,7 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     @Override
     public String name()
     {
-        return "devfmlclient";
+        return "fmldevclient";
     }
 
     private static final List<String> SKIPPACKAGES = Arrays.asList(

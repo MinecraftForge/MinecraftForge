@@ -26,12 +26,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
-public class FMLLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
+public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
     @Override
     public String name()
     {
-        return "fml";
+        return "fmlclient";
     }
 
     @Override

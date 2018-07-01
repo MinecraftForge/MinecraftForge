@@ -27,10 +27,10 @@ import java.util.function.Supplier;
 
 public enum NetworkDirection
 {
-    PLAYSERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT),
-    PLAYCLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER),
-    LOGINSERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT),
-    LOGINCLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER);
+    PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT),
+    PLAY_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER),
+    LOGIN_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT),
+    LOGIN_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER);
 
     private final BiFunction<PacketBuffer, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier;
     private final LogicalSide logicalSide;

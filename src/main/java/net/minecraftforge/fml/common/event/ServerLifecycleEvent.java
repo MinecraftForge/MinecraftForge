@@ -19,27 +19,21 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.eventbus.api.Event;
 
-/**
- * The parent of all mod-state changing events
- */
-public abstract class FMLStateEvent extends ModLifecycleEvent
+public class ServerLifecycleEvent extends Event
 {
 
-    public FMLStateEvent()
+    protected final MinecraftServer server;
+
+    public ServerLifecycleEvent(MinecraftServer server)
     {
-        super(null);
+        this.server = server;
     }
 
-    /**
-     * The side we're loading on. {@link Side#CLIENT} means we're loading in the client, {@link Side#SERVER} means
-     * we're loading in the dedicated server.
-     * @return Return which side we're loading on.
-     */
-    public Side getSide()
+    public MinecraftServer getServer()
     {
-        return FMLCommonHandler.instance().getSide();
+        return server;
     }
 }

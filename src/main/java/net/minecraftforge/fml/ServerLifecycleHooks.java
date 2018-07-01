@@ -60,16 +60,16 @@ public class ServerLifecycleHooks
         return !MinecraftForge.EVENT_BUS.post(new FMLServerStartingEvent(server));
     }
 
-    public static void handleServerStarted()
+    public static void handleServerStarted(final MinecraftServer server)
     {
-        MinecraftForge.EVENT_BUS.post(new FMLServerStartedEvent());
+        MinecraftForge.EVENT_BUS.post(new FMLServerStartedEvent(server));
         allowLogins.set(true);
     }
 
-    public static void handleServerStopping()
+    public static void handleServerStopping(final MinecraftServer server)
     {
         allowLogins.set(false);
-        MinecraftForge.EVENT_BUS.post(new FMLServerStoppingEvent());
+        MinecraftForge.EVENT_BUS.post(new FMLServerStoppingEvent(server));
     }
 
     public static void expectServerStopped()
@@ -79,7 +79,7 @@ public class ServerLifecycleHooks
 
     public static void handleServerStopped(final MinecraftServer server)
     {
-        MinecraftForge.EVENT_BUS.post(new FMLServerStoppedEvent());
+        MinecraftForge.EVENT_BUS.post(new FMLServerStoppedEvent(server));
         currentServer = null;
         LogicalSidedProvider.setServer(null);
         CountDownLatch latch = exitLatch;

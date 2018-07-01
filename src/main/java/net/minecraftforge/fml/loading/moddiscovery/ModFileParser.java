@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import com.electronwill.nightconfig.core.path.PathConfig;
+import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.minecraftforge.fml.language.IModFileInfo;
@@ -49,10 +49,10 @@ public class ModFileParser {
 
     public static IModFileInfo loadModFile(final ModFile file, final Path modsjson)
     {
-        final PathConfig pathConfig = PathConfig.builder(modsjson).build();
-        pathConfig.load();
-        pathConfig.close();
-        return new ModFileInfo(file, pathConfig);
+        final FileConfig fileConfig = FileConfig.builder(modsjson).build();
+        fileConfig.load();
+        fileConfig.close();
+        return new ModFileInfo(file, fileConfig);
     }
 
     protected static List<CoreModFile> getCoreMods(final ModFile modFile) {

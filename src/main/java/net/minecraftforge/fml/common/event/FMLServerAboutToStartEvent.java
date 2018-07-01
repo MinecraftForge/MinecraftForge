@@ -26,20 +26,13 @@ import net.minecraft.server.MinecraftServer;
  * server, and after the player has hit "Play Selected World" in the client. Called before {@link FMLServerStartingEvent}.
  *
  * You can obtain a reference to the server with this event.
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLServerAboutToStartEvent extends FMLStateEvent {
-
-    private final MinecraftServer server;
+public class FMLServerAboutToStartEvent extends ServerLifecycleEvent {
 
     public FMLServerAboutToStartEvent(MinecraftServer server)
     {
-        this.server = (MinecraftServer) server;
+        super(server);
     }
 
-    public MinecraftServer getServer()
-    {
-        return server;
-    }
 }

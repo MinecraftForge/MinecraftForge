@@ -28,22 +28,13 @@ import net.minecraft.server.MinecraftServer;
  * This event allows for customizations of the server, such as loading custom commands, perhaps customizing recipes or
  * other activities.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLServerStartingEvent extends FMLStateEvent
+public class FMLServerStartingEvent extends ServerLifecycleEvent
 {
-
-    private final MinecraftServer server;
-
     public FMLServerStartingEvent(final MinecraftServer server)
     {
-        this.server = (MinecraftServer) server;
-    }
-
-    public MinecraftServer getServer()
-    {
-        return server;
+        super(server);
     }
 
     public void registerServerCommand(ICommand command)

@@ -19,16 +19,18 @@
 
 package net.minecraftforge.fml.common.event;
 
+import net.minecraft.server.MinecraftServer;
+
 /**
  * Called after {@link FMLServerStartingEvent} when the server is available and ready to play.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLServerStartedEvent extends FMLStateEvent
+public class FMLServerStartedEvent extends ServerLifecycleEvent
 {
 
-    public FMLServerStartedEvent()
+    public FMLServerStartedEvent(final MinecraftServer server)
     {
+        super(server);
     }
 }

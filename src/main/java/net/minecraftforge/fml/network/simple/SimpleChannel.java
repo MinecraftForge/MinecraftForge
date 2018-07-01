@@ -62,6 +62,10 @@ public class SimpleChannel
         Minecraft.getMinecraft().getConnection().sendPacket(payload);
     }
 
+    public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int id) {
+        return MessageBuilder.forType(this, type, id);
+    }
+
     public static class MessageBuilder<MSG>  {
         private SimpleChannel channel;
         private Class<MSG> type;
@@ -70,7 +74,7 @@ public class SimpleChannel
         private Function<PacketBuffer, MSG> decoder;
         private BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer;
 
-        public static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
+        private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
             MessageBuilder<MSG> builder = new MessageBuilder<>();
             builder.channel = channel;
             builder.id = id;
