@@ -232,7 +232,7 @@
          }
  
          return multimap;
-@@ -1130,4 +1155,128 @@
+@@ -1130,4 +1155,165 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
@@ -263,6 +263,43 @@
 +        NBTTagCompound ret = new NBTTagCompound();
 +        this.func_77955_b(ret);
 +        return ret;
++    }
++
++    public NBTTagCompound getShareTag()
++    {
++        NBTTagCompound nbttagcompound = null;
++
++        if (func_77973_b().func_77645_m() || func_77973_b().func_77651_p())
++        {
++            nbttagcompound = func_77973_b().getNBTShareTag(this);
++        }
++
++        NBTTagCompound capabilityShareTags = capabilities.serializeShareTag();
++        if (capabilityShareTags != null)
++        {
++            if (nbttagcompound == null)
++            {
++                nbttagcompound = new NBTTagCompound();
++            }
++            nbttagcompound.func_74782_a("ForgeCaps", capabilityShareTags);
++        }
++
++        return nbttagcompound;
++    }
++
++    public void readShareTag(@Nullable NBTTagCompound tag)
++    {
++        if (tag != null && tag.func_150297_b("ForgeCaps", net.minecraftforge.common.util.Constants.NBT.TAG_COMPOUND))
++        {
++            capabilities.deserializeShareTag(tag.func_74775_l("ForgeCaps"));
++            tag.func_82580_o("ForgeCaps");
++            if (tag.func_186856_d() == 0)
++            {
++                return;
++            }
++        }
++
++        func_77973_b().readNBTShareTag(this, tag);
 +    }
 +
 +    public boolean areCapsCompatible(ItemStack other)

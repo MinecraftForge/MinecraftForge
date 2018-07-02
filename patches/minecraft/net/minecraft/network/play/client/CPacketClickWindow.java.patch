@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/network/play/client/CPacketClickWindow.java
 +++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketClickWindow.java
+@@ -45,7 +45,7 @@
+         this.field_149553_c = p_148837_1_.readByte();
+         this.field_149550_d = p_148837_1_.readShort();
+         this.field_149549_f = (ClickType)p_148837_1_.func_179257_a(ClickType.class);
+-        this.field_149551_e = p_148837_1_.func_150791_c();
++        this.field_149551_e = net.minecraftforge.common.util.PacketUtil.readItemStackFromClientToServer(p_148837_1_);
+     }
+ 
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
 @@ -55,7 +55,7 @@
          p_148840_1_.writeByte(this.field_149553_c);
          p_148840_1_.writeShort(this.field_149550_d);

@@ -42,11 +42,13 @@ import net.minecraftforge.common.util.INBTSerializable;
  * Internally the handlers are baked into arrays for fast iteration.
  * The ResourceLocations will be used for the NBT Key when serializing.
  */
-public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider
+public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider, ICapabilityShareTag<NBTTagCompound>
 {
     private ICapabilityProvider[] caps;
     private INBTSerializable<NBTBase>[] writers;
-    private String[] names;
+    private String[] writerNames;
+    private ICapabilityShareTag<NBTBase>[] shareTags;
+    private String[] shareTagNames;
 
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list)
     {
@@ -59,6 +61,8 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
         List<INBTSerializable<NBTBase>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
+        List<ICapabilityShareTag<NBTBase>> lstShareTags = Lists.newArrayList();
+        List<String> lstShareTagNames = Lists.newArrayList();
 
         if (parent != null) // Parents go first!
         {
@@ -79,11 +83,19 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
                 lstWriters.add((INBTSerializable<NBTBase>)prov);
                 lstNames.add(entry.getKey().toString());
             }
+            if (prov instanceof ICapabilityShareTag)
+            {
+                lstShareTags.add((ICapabilityShareTag<NBTBase>)prov);
+                lstShareTagNames.add(entry.getKey().toString());
+            }
         }
 
         caps = lstCaps.toArray(new ICapabilityProvider[lstCaps.size()]);
         writers = lstWriters.toArray(new INBTSerializable[lstWriters.size()]);
-        names = lstNames.toArray(new String[lstNames.size()]);
+        writerNames = lstNames.toArray(new String[lstNames.size()]);
+
+        shareTags = lstShareTags.toArray(new ICapabilityShareTag[lstShareTags.size()]);
+        shareTagNames = lstShareTagNames.toArray(new String[lstNames.size()]);
     }
 
     @Override
@@ -120,7 +132,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         NBTTagCompound nbt = new NBTTagCompound();
         for (int x = 0; x < writers.length; x++)
         {
-            nbt.setTag(names[x], writers[x].serializeNBT());
+            nbt.setTag(writerNames[x], writers[x].serializeNBT());
         }
         return nbt;
     }
@@ -130,9 +142,9 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     {
         for (int x = 0; x < writers.length; x++)
         {
-            if (nbt.hasKey(names[x]))
+            if (nbt.hasKey(writerNames[x]))
             {
-                writers[x].deserializeNBT(nbt.getTag(names[x]));
+                writers[x].deserializeNBT(nbt.getTag(writerNames[x]));
             }
         }
     }
@@ -142,5 +154,29 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         if (other == null) return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
         if (this.writers.length == 0) return other.writers.length == 0;
         return this.serializeNBT().equals(other.serializeNBT());
+    }
+
+    @Override
+    @Nullable
+    public NBTTagCompound serializeShareTag()
+    {
+        NBTTagCompound nbt = new NBTTagCompound();
+        for (int x = 0; x < shareTags.length; x++)
+        {
+            nbt.setTag(shareTagNames[x], shareTags[x].serializeShareTag());
+        }
+        return nbt.getSize() > 0 ? nbt : null;
+    }
+
+    @Override
+    public void deserializeShareTag(NBTTagCompound nbt)
+    {
+        for (int x = 0; x < writers.length; x++)
+        {
+            if (nbt.hasKey(writerNames[x]))
+            {
+                writers[x].deserializeNBT(nbt.getTag(writerNames[x]));
+            }
+        }
     }
 }

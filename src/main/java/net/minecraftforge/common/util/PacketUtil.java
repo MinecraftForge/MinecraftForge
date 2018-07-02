@@ -24,6 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 
+import java.io.IOException;
+
 public class PacketUtil
 {
     private PacketUtil() {}
@@ -54,6 +56,24 @@ public class PacketUtil
             }
 
             buffer.writeCompoundTag(nbttagcompound);
+        }
+    }
+
+    public static ItemStack readItemStackFromClientToServer(PacketBuffer buffer) throws IOException
+    {
+        int i = buffer.readShort();
+
+        if (i < 0)
+        {
+            return ItemStack.EMPTY;
+        }
+        else
+        {
+            int j = buffer.readByte();
+            int k = buffer.readShort();
+            ItemStack itemstack = new ItemStack(Item.getItemById(i), j, k);
+            itemstack.setTagCompound(buffer.readCompoundTag());
+            return itemstack;
         }
     }
 }
