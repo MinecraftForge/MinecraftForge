@@ -95,7 +95,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         writerNames = lstNames.toArray(new String[lstNames.size()]);
 
         shareTags = lstShareTags.toArray(new ICapabilityShareTag[lstShareTags.size()]);
-        shareTagNames = lstShareTagNames.toArray(new String[lstNames.size()]);
+        shareTagNames = lstShareTagNames.toArray(new String[lstShareTagNames.size()]);
     }
 
     @Override
@@ -160,12 +160,14 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     @Nullable
     public NBTTagCompound serializeShareTag()
     {
+        if (shareTags.length == 0)
+            return null;
         NBTTagCompound nbt = new NBTTagCompound();
         for (int x = 0; x < shareTags.length; x++)
         {
             nbt.setTag(shareTagNames[x], shareTags[x].serializeShareTag());
         }
-        return nbt.getSize() > 0 ? nbt : null;
+        return nbt;
     }
 
     @Override
