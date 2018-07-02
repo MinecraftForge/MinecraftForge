@@ -43,6 +43,7 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.capabilities.context.EntityPart;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -92,26 +93,26 @@ public class NoBedSleepingTest
     public static class EventHandler
     {
         @SubscribeEvent
-        public void onEntityConstruct(AttachCapabilitiesEvent<Entity> evt)
+        public void onEntityConstruct(AttachCapabilitiesEvent<Entity, EntityPart> evt)
         {
             if (!(evt.getObject() instanceof EntityPlayer))
             {
                 return;
             }
 
-            evt.addCapability(new ResourceLocation(MODID, "IExtraSleeping"), new ICapabilitySerializable<NBTPrimitive>()
+            evt.addCapability(new ResourceLocation(MODID, "IExtraSleeping"), new ICapabilitySerializable<EntityPart, NBTPrimitive>()
             {
                 IExtraSleeping inst = SLEEP_CAP.getDefaultInstance();
 
                 @Override
-                public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+                public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EntityPart entityPart)
                 {
                     return capability == SLEEP_CAP;
                 }
 
                 @Override
                 @Nullable
-                public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+                public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EntityPart entityPart)
                 {
                     return capability == SLEEP_CAP ? SLEEP_CAP.<T>cast(inst) : null;
                 }

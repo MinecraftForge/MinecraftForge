@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 -public class Village
-+public class Village implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
++public class Village implements net.minecraftforge.common.capabilities.ICapabilitySerializable<Void, NBTTagCompound>
  {
      private World field_75586_a;
      private final List<VillageDoorInfo> field_75584_b = Lists.<VillageDoorInfo>newArrayList();
@@ -181,14 +181,14 @@
      }
 +
 +    /* ======================================== FORGE START =====================================*/
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher<Void> capabilities;
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable Void facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +
 +    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Void facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }

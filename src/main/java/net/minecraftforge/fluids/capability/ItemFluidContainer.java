@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids.capability;
 
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -46,7 +47,7 @@ public class ItemFluidContainer extends Item
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt)
+    public ICapabilityProvider<EntityEquipmentSlot> initCapabilities(@Nonnull ItemStack stack, @Nullable NBTTagCompound nbt)
     {
         return new FluidHandlerItemStack(stack, capacity);
     }

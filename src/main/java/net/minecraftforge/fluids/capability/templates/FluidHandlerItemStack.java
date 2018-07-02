@@ -22,6 +22,7 @@ package net.minecraftforge.fluids.capability.templates;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -42,7 +43,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
  * Additional examples are provided to enable consumable fluid containers (see {@link Consumable}),
  * fluid containers with different empty and full items (see {@link SwapEmpty},
  */
-public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider
+public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider<EntityEquipmentSlot>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
 
@@ -201,7 +202,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EntityEquipmentSlot equipmentSlot)
     {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
     }
@@ -209,7 +210,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EntityEquipmentSlot equipmentSlot)
     {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY ? (T) this : null;
     }

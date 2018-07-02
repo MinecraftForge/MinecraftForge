@@ -42,21 +42,21 @@ import net.minecraftforge.common.util.INBTSerializable;
  * Internally the handlers are baked into arrays for fast iteration.
  * The ResourceLocations will be used for the NBT Key when serializing.
  */
-public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider
+public final class CapabilityDispatcher<TContext> implements INBTSerializable<NBTTagCompound>, ICapabilityProvider<TContext>
 {
-    private ICapabilityProvider[] caps;
+    private ICapabilityProvider<TContext>[] caps;
     private INBTSerializable<NBTBase>[] writers;
     private String[] names;
 
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list)
+    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider<TContext>> list)
     {
         this(list, null);
     }
 
     @SuppressWarnings("unchecked")
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, @Nullable ICapabilityProvider parent)
+    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider<TContext>> list, @Nullable ICapabilityProvider<TContext> parent)
     {
-        List<ICapabilityProvider> lstCaps = Lists.newArrayList();
+        List<ICapabilityProvider<TContext>> lstCaps = Lists.newArrayList();
         List<INBTSerializable<NBTBase>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
 
@@ -70,9 +70,9 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             }
         }
 
-        for (Map.Entry<ResourceLocation, ICapabilityProvider> entry : list.entrySet())
+        for (Map.Entry<ResourceLocation, ICapabilityProvider<TContext>> entry : list.entrySet())
         {
-            ICapabilityProvider prov = entry.getValue();
+            ICapabilityProvider<TContext> prov = entry.getValue();
             lstCaps.add(prov);
             if (prov instanceof INBTSerializable)
             {
@@ -87,11 +87,11 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable TContext context)
     {
-        for (ICapabilityProvider cap : caps)
+        for (ICapabilityProvider<TContext> cap : caps)
         {
-            if (cap.hasCapability(capability, facing))
+            if (cap.hasCapability(capability, context))
             {
                 return true;
             }
@@ -101,11 +101,11 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
 
     @Override
     @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable TContext context)
     {
-        for (ICapabilityProvider cap : caps)
+        for (ICapabilityProvider<TContext> cap : caps)
         {
-            T ret = cap.getCapability(capability, facing);
+            T ret = cap.getCapability(capability, context);
             if (ret != null)
             {
                 return ret;
@@ -137,7 +137,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         }
     }
 
-    public boolean areCompatible(CapabilityDispatcher other) //Called from ItemStack to compare equality.
+    public boolean areCompatible(CapabilityDispatcher<TContext> other) //Called from ItemStack to compare equality.
     {                                                        // Only compares serializeable caps.
         if (other == null) return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
         if (this.writers.length == 0) return other.writers.length == 0;

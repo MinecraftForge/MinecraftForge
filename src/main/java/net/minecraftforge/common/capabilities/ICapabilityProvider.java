@@ -26,7 +26,11 @@ import javax.annotation.Nullable;
 
 import net.minecraft.util.EnumFacing;
 
-public interface ICapabilityProvider
+/**
+ * @param <TContext> The type that provides a context for the capability.
+ *                  In TileEntities, this will be an EnumFacing for the side that is being interacted with.
+ */
+public interface ICapabilityProvider<TContext>
 {
     /**
      * Determines if this object has support for the capability in question on the specific side.
@@ -47,7 +51,7 @@ public interface ICapabilityProvider
      * @return True if this object supports the capability. If true, then {@link #getCapability(Capability, EnumFacing)} 
      * must not return null.
      */
-    boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing);
+    boolean hasCapability(@Nonnull Capability<?> capability, @Nullable TContext facing);
 
     /**
      * Retrieves the handler for the capability requested on the specific side.
@@ -61,9 +65,9 @@ public interface ICapabilityProvider
      * @param capability The capability to check
      * @param facing The Side to check from, 
      *   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
-     * @return The requested capability. Must <strong>NOT</strong> be null when {@link #hasCapability(Capability, EnumFacing)} 
+     * @return The requested capability. Must <strong>NOT</strong> be null when {@link #hasCapability(Capability, TContext)} 
      * would return true. 
      */
     @Nullable
-    <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing);
+    <T> T getCapability(@Nonnull Capability<T> capability, @Nullable TContext facing);
 }

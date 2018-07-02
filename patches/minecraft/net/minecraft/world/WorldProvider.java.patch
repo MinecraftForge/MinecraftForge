@@ -240,7 +240,7 @@
 +     * @return initial holder for capabilities on the world
 +     */
 +    @Nullable
-+    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities() {
++    public net.minecraftforge.common.capabilities.ICapabilityProvider<Void> initCapabilities() {
 +        return null;
 +    }
 +

@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public class Chunk
-+public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider
++public class Chunk implements net.minecraftforge.common.capabilities.ICapabilityProvider<Void>
  {
      private static final Logger field_150817_t = LogManager.getLogger();
      public static final ExtendedBlockStorage field_186036_a = null;
@@ -352,20 +352,20 @@
 +        }
 +    }
 +
-+    private final net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    private final net.minecraftforge.common.capabilities.CapabilityDispatcher<Void> capabilities;
 +    @Nullable
-+    public net.minecraftforge.common.capabilities.CapabilityDispatcher getCapabilities()
++    public net.minecraftforge.common.capabilities.CapabilityDispatcher<Void> getCapabilities()
 +    {
 +        return capabilities;
 +    }
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable Void facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +    @Override
 +    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing)
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Void facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }

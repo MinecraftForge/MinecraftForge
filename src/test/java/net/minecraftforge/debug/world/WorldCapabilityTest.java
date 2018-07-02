@@ -62,7 +62,7 @@ public class WorldCapabilityTest
     public static class NormalEventHandler
     {
         @SubscribeEvent
-        public void attatchTimer(AttachCapabilitiesEvent<World> event)
+        public void attatchTimer(AttachCapabilitiesEvent<World, Void> event)
         {
             if (!event.getObject().isRemote && !event.getObject().provider.isNether())
             {
@@ -190,19 +190,19 @@ public class WorldCapabilityTest
         }
     }
 
-    public static class RainTimerProvider implements ICapabilitySerializable<NBTTagCompound>
+    public static class RainTimerProvider implements ICapabilitySerializable<Void, NBTTagCompound>
     {
         private IRainTimer timer = TIMER_CAP.getDefaultInstance();
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Void nothing)
         {
             return capability == TIMER_CAP;
         }
 
         @Override
         @Nullable
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable Void nothing)
         {
             return capability == TIMER_CAP ? TIMER_CAP.<T>cast(this.timer) : null;
         }

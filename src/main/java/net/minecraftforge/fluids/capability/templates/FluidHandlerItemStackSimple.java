@@ -22,6 +22,7 @@ package net.minecraftforge.fluids.capability.templates;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -39,7 +40,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
  *
  * This implementation only allows item containers to be fully filled or emptied, similar to vanilla buckets.
  */
-public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabilityProvider
+public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabilityProvider<EntityEquipmentSlot>
 {
     public static final String FLUID_NBT_KEY = "Fluid";
 
@@ -178,7 +179,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EntityEquipmentSlot equipmentSlot)
     {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
     }
@@ -186,7 +187,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     @SuppressWarnings("unchecked")
     @Override
     @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EntityEquipmentSlot equipmentSlot)
     {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY ? (T) this : null;
     }

@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBucket;
@@ -197,7 +198,7 @@ public class FluidPlacementTest
         }
 
         @Override
-        public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
+        public ICapabilityProvider<EntityEquipmentSlot> initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
         {
             return new EmptyContainerHandler(stack);
         }
@@ -312,7 +313,7 @@ public class FluidPlacementTest
         }
 
         @Override
-        public ICapabilityProvider initCapabilities(ItemStack stack, NBTTagCompound nbt)
+        public ICapabilityProvider<EntityEquipmentSlot> initCapabilities(ItemStack stack, NBTTagCompound nbt)
         {
             return new FluidHandlerItemStack.SwapEmpty(stack, new ItemStack(EmptyFluidContainer.instance), 1000);
         }

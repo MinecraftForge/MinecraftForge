@@ -15,7 +15,7 @@
      }
 +
 +    @Override
-+    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.NBTTagCompound nbt) {
++    public net.minecraftforge.common.capabilities.ICapabilityProvider<net.minecraft.inventory.EntityEquipmentSlot> initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.NBTTagCompound nbt) {
 +        if (this.getClass() == ItemBucket.class)
 +        {
 +            return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);

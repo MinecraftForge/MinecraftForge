@@ -23,6 +23,7 @@ import net.minecraft.block.BlockDispenser;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -296,7 +297,7 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, NBTTagCompound nbt)
+    public ICapabilityProvider<EntityEquipmentSlot> initCapabilities(@Nonnull ItemStack stack, NBTTagCompound nbt)
     {
         return new FluidBucketWrapper(stack);
     }

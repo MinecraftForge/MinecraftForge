@@ -5,7 +5,7 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public final class ItemStack
-+public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
++public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<EntityEquipmentSlot, NBTTagCompound>
  {
      public static final ItemStack field_190927_a = new ItemStack((Item)null);
      public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
@@ -14,7 +14,7 @@
      private boolean field_179551_k;
  
 +    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher<EntityEquipmentSlot> capabilities;
 +    private NBTTagCompound capNBT;
 +
      public ItemStack(Block p_i1876_1_)
@@ -238,14 +238,14 @@
      }
 +
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable EntityEquipmentSlot facing)
 +    {
 +        return this.field_190928_g  || this.capabilities == null ? false : this.capabilities.hasCapability(capability, facing);
 +    }
 +
 +    @Override
 +    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EntityEquipmentSlot facing)
 +    {
 +        return this.field_190928_g  || this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
 +    }
@@ -293,7 +293,7 @@
 +        if (item != null)
 +        {
 +            this.delegate = item.delegate;
-+            net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
++            net.minecraftforge.common.capabilities.ICapabilityProvider<EntityEquipmentSlot> provider = item.initCapabilities(this, this.capNBT);
 +            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, provider);
 +            if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
 +        }

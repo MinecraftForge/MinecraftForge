@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucketMilk;
 import net.minecraft.item.ItemStack;
@@ -43,7 +44,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
  * Wrapper for vanilla and forge buckets.
  * Swaps between empty bucket and filled bucket of the correct type.
  */
-public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider
+public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider<EntityEquipmentSlot>
 {
     @Nonnull
     protected ItemStack container;
@@ -178,14 +179,14 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EntityEquipmentSlot equipmentSlot)
     {
         return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
     }
 
     @Override
     @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EntityEquipmentSlot equipmentSlot)
     {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)
         {
