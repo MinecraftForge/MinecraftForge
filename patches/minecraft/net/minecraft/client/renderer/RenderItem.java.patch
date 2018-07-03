@@ -72,6 +72,15 @@
          this.func_180454_a(p_191962_1_, p_191962_4_);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
+@@ -364,7 +349,7 @@
+                 {
+                     public String call() throws Exception
+                     {
+-                        return String.valueOf((Object)p_184391_2_.func_77973_b());
++                        return p_184391_2_.func_77973_b().getRegistryName().toString();
+                     }
+                 });
+                 crashreportcategory.func_189529_a("Item Aux", new ICrashReportDetail<String>()
 @@ -413,9 +398,12 @@
                  p_180453_1_.func_175063_a(s, (float)(p_180453_3_ + 19 - 2 - p_180453_1_.func_78256_a(s)), (float)(p_180453_4_ + 6 + 3), 16777215);
                  GlStateManager.func_179145_e();
