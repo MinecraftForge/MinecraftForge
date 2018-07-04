@@ -91,11 +91,18 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         }
 
         caps = lstCaps.toArray(new ICapabilityProvider[lstCaps.size()]);
-        writers = lstWriters.toArray(new INBTSerializable[lstWriters.size()]);
-        writerNames = lstNames.toArray(new String[lstNames.size()]);
 
-        shareTags = lstShareTags.toArray(new ICapabilityShareTag[lstShareTags.size()]);
-        shareTagNames = lstShareTagNames.toArray(new String[lstShareTagNames.size()]);
+        if (lstShareTags.size() > 0)
+        {
+            writers = lstWriters.toArray(new INBTSerializable[lstWriters.size()]);
+            writerNames = lstNames.toArray(new String[lstNames.size()]);
+        }
+
+        if (lstShareTags.size() > 0)
+        {
+            shareTags = lstShareTags.toArray(new ICapabilityShareTag[lstShareTags.size()]);
+            shareTagNames = lstShareTagNames.toArray(new String[lstShareTagNames.size()]);
+        }
     }
 
     @Override
@@ -130,6 +137,8 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     public NBTTagCompound serializeNBT()
     {
         NBTTagCompound nbt = new NBTTagCompound();
+        if (writers == null)
+            return nbt;
         for (int x = 0; x < writers.length; x++)
         {
             nbt.setTag(writerNames[x], writers[x].serializeNBT());
@@ -140,6 +149,8 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     @Override
     public void deserializeNBT(NBTTagCompound nbt)
     {
+        if (writers == null)
+            return;
         for (int x = 0; x < writers.length; x++)
         {
             if (nbt.hasKey(writerNames[x]))
@@ -149,10 +160,17 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         }
     }
 
-    public boolean areCompatible(CapabilityDispatcher other) //Called from ItemStack to compare equality.
-    {                                                        // Only compares serializeable caps.
-        if (other == null) return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
-        if (this.writers.length == 0) return other.writers.length == 0;
+    /**
+     *  Called from ItemStack to compare equality.
+     *  Only compares serializeable caps.
+     *  Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
+     * @param other The other dispatcher
+     * @return True if they are serialization-compatible
+     */
+    public boolean areCompatible(CapabilityDispatcher other)
+    {
+        if (other == null) return writers == null || this.writers.length == 0;
+        if (writers == null || this.writers.length == 0) return other.writers == null || other.writers.length == 0;
         return this.serializeNBT().equals(other.serializeNBT());
     }
 
@@ -160,7 +178,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     @Nullable
     public NBTTagCompound serializeShareTag()
     {
-        if (shareTags.length == 0)
+        if (shareTags == null || shareTags.length == 0)
             return null;
         NBTTagCompound nbt = new NBTTagCompound();
         for (int x = 0; x < shareTags.length; x++)
@@ -173,11 +191,11 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     @Override
     public void deserializeShareTag(NBTTagCompound nbt)
     {
-        for (int x = 0; x < writers.length; x++)
+        for (int x = 0; x < shareTags.length; x++)
         {
-            if (nbt.hasKey(writerNames[x]))
+            if (nbt.hasKey(shareTagNames[x]))
             {
-                writers[x].deserializeNBT(nbt.getTag(writerNames[x]));
+                shareTags[x].deserializeShareTag(nbt.getTag(shareTagNames[x]));
             }
         }
     }
