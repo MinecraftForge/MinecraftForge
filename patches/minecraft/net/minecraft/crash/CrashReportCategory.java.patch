@@ -19,7 +19,7 @@
                  try
                  {
 -                    return String.format("ID #%d (%s // %s)", i, p_180523_2_.func_149739_a(), p_180523_2_.getClass().getCanonicalName());
-+                    return String.format("ID #%d (%s // %s)", i, p_180523_2_.getRegistryName(), p_180523_2_.getClass().getCanonicalName());
++                    return String.format("ID #%d (%s // %s // %s)", i, p_180523_2_.func_149739_a(), p_180523_2_.getClass().getCanonicalName(), p_180523_2_.getRegistryName());
                  }
                  catch (Throwable var2)
                  {
