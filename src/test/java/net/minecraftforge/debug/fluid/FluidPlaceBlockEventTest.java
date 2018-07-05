@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.fluid;
 
 import net.minecraft.block.BlockStone;
 import net.minecraft.init.Blocks;
@@ -37,7 +37,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  *  - Prevent lava from setting surrounding blocks on fire.
  */
 @Mod(modid = "fluidplaceblocktest", name = "FluidPlaceBlockTest", version = "0.0.0", acceptableRemoteVersions = "*")
-public class FluidPlaceBlockTest
+public class FluidPlaceBlockEventTest
 {
     private static final boolean ENABLED = false;
 
@@ -45,7 +45,7 @@ public class FluidPlaceBlockTest
     public void preinit(FMLPreInitializationEvent event)
     {
         if (!ENABLED) return;
-        MinecraftForge.EVENT_BUS.register(FluidPlaceBlockTest.class);
+        MinecraftForge.EVENT_BUS.register(FluidPlaceBlockEventTest.class);
     }
 
     @SubscribeEvent @SuppressWarnings("unused")

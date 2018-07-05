@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.entity.living;
 
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
@@ -28,8 +28,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = LivingAttackEventTest.MODID, name = LivingAttackEventTest.NAME, version = "1.0.0", acceptableRemoteVersions = "*")
-public class LivingAttackEventTest
+@Mod(modid = AttackEventTest.MODID, name = AttackEventTest.NAME, version = "1.0.0", acceptableRemoteVersions = "*")
+public class AttackEventTest
 {
 
     public static final String MODID = "livingattackeventtest";
