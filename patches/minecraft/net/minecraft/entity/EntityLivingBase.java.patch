@@ -263,63 +263,36 @@
                      {
                          d1 = d11;
                          d13 = this.field_70163_u + 2.0D;
-@@ -1781,13 +1809,14 @@
+@@ -1781,21 +1809,22 @@
          }
  
          this.field_70160_al = true;
 +        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
      }
  
-     protected void func_70629_bd()
+-    protected void func_70629_bd()
++    protected float func_189749_co()
+     {
+-        this.field_70181_x += 0.03999999910593033D;
++        return 0.8F;
+     }
+ 
+-    protected void func_180466_bG()
++    protected void func_70629_bd()
      {
 -        this.field_70181_x += 0.03999999910593033D;
 +        this.field_70181_x += 0.03999999910593033D * this.func_110148_a(SWIM_SPEED).func_111126_e();
      }
--
-+    
-     protected void func_180466_bG()
-     {
-         this.field_70181_x += 0.03999999910593033D;
-@@ -1797,7 +1826,38 @@
-     {
-         return 0.8F;
-     }
-+    
-+    public void func_191958_b(float strafe, float up, float forward, float friction)
-+    {
-+        float f = strafe * strafe + up * up + forward * forward;
  
-+        if (f >= 1.0E-4F)
-+        {
-+            f = MathHelper.func_76129_c(f);
-+
-+            if (f < 1.0F)
-+            {
-+                f = 1.0F;
-+            }
-+
-+            f = friction / f;
-+            strafe = strafe * f;
-+            up = up * f;
-+            forward = forward * f;
-+            if(this.func_70090_H())
-+            {
-+                strafe = strafe * (float)this.func_110148_a(SWIM_SPEED).func_111126_e();
-+                up = up * (float)this.func_110148_a(SWIM_SPEED).func_111126_e();
-+                forward = forward * (float)this.func_110148_a(SWIM_SPEED).func_111126_e();
-+            }
-+            float f1 = MathHelper.func_76126_a(this.field_70177_z * 0.017453292F);
-+            float f2 = MathHelper.func_76134_b(this.field_70177_z * 0.017453292F);
-+            this.field_70159_w += (double)(strafe * f2 - forward * f1);
-+            this.field_70181_x += (double)up;
-+            this.field_70179_y += (double)(forward * f2 + strafe * f1);
-+        }
-+    }
-+
-     public void func_191986_a(float p_191986_1_, float p_191986_2_, float p_191986_3_)
+-    protected float func_189749_co()
++    protected void func_180466_bG()
      {
-         if (this.func_70613_aW() || this.func_184186_bw())
-@@ -1874,7 +1934,8 @@
+-        return 0.8F;
++        this.field_70181_x += 0.03999999910593033D * this.func_110148_a(SWIM_SPEED).func_111126_e();
+     }
+ 
+     public void func_191986_a(float p_191986_1_, float p_191986_2_, float p_191986_3_)
+@@ -1874,7 +1903,8 @@
  
                          if (this.field_70122_E)
                          {
@@ -329,7 +302,7 @@
                          }
  
                          float f7 = 0.16277136F / (f6 * f6 * f6);
-@@ -1894,7 +1955,8 @@
+@@ -1894,7 +1924,8 @@
  
                          if (this.field_70122_E)
                          {
@@ -339,7 +312,7 @@
                          }
  
                          if (this.func_70617_f_())
-@@ -2054,6 +2116,7 @@
+@@ -2054,6 +2085,7 @@
  
      public void func_70071_h_()
      {
@@ -347,7 +320,7 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2096,7 +2159,9 @@
+@@ -2096,7 +2128,9 @@
  
                  if (!ItemStack.func_77989_b(itemstack1, itemstack))
                  {
@@ -357,7 +330,7 @@
  
                      if (!itemstack.func_190926_b())
                      {
-@@ -2575,6 +2640,40 @@
+@@ -2575,6 +2609,40 @@
          this.field_70752_e = true;
      }
  
@@ -398,7 +371,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2595,12 +2694,19 @@
+@@ -2595,12 +2663,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -419,7 +392,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2618,8 +2724,10 @@
+@@ -2618,8 +2693,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -431,7 +404,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +2808,9 @@
+@@ -2700,7 +2777,9 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -442,7 +415,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +2834,8 @@
+@@ -2724,7 +2803,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -452,7 +425,7 @@
          }
  
          this.func_184602_cy();
-@@ -2852,6 +2963,31 @@
+@@ -2852,6 +2932,31 @@
          return true;
      }
  
@@ -484,3 +457,35 @@
      public boolean func_190631_cK()
      {
          return true;
+@@ -2861,4 +2966,31 @@
+     public void func_191987_a(BlockPos p_191987_1_, boolean p_191987_2_)
+     {
+     }
++
++    @Override
++    public void func_191958_b(float strafe, float up, float forward, float friction)
++    {
++        float f = strafe * strafe + up * up + forward * forward;
++
++        if (f >= 1.0E-4F)
++        {
++            f = MathHelper.func_76129_c(f);
++            if (f < 1.0F) f = 1.0F;
++            f = friction / f;
++            strafe = strafe * f;
++            up = up * f;
++            forward = forward * f;
++            if(this.func_70090_H() || this.func_180799_ab())
++            {
++                strafe = strafe * (float)this.func_110148_a(SWIM_SPEED).func_111126_e();
++                up = up * (float)this.func_110148_a(SWIM_SPEED).func_111126_e();
++                forward = forward * (float)this.func_110148_a(SWIM_SPEED).func_111126_e();
++            }
++            float f1 = MathHelper.func_76126_a(this.field_70177_z * 0.017453292F);
++            float f2 = MathHelper.func_76134_b(this.field_70177_z * 0.017453292F);
++            this.field_70159_w += (double)(strafe * f2 - forward * f1);
++            this.field_70181_x += (double)up;
++            this.field_70179_y += (double)(forward * f2 + strafe * f1);
++        }
++    }
+ }
