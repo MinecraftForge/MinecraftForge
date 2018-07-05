@@ -263,35 +263,26 @@
                      {
                          d1 = d11;
                          d13 = this.field_70163_u + 2.0D;
-@@ -1781,21 +1809,22 @@
+@@ -1781,16 +1809,17 @@
          }
  
          this.field_70160_al = true;
 +        net.minecraftforge.common.ForgeHooks.onLivingJump(this);
      }
  
--    protected void func_70629_bd()
-+    protected float func_189749_co()
-     {
--        this.field_70181_x += 0.03999999910593033D;
-+        return 0.8F;
-     }
- 
--    protected void func_180466_bG()
-+    protected void func_70629_bd()
+     protected void func_70629_bd()
      {
 -        this.field_70181_x += 0.03999999910593033D;
 +        this.field_70181_x += 0.03999999910593033D * this.func_110148_a(SWIM_SPEED).func_111126_e();
      }
  
--    protected float func_189749_co()
-+    protected void func_180466_bG()
+     protected void func_180466_bG()
      {
--        return 0.8F;
+-        this.field_70181_x += 0.03999999910593033D;
 +        this.field_70181_x += 0.03999999910593033D * this.func_110148_a(SWIM_SPEED).func_111126_e();
      }
  
-     public void func_191986_a(float p_191986_1_, float p_191986_2_, float p_191986_3_)
+     protected float func_189749_co()
 @@ -1874,7 +1903,8 @@
  
                          if (this.field_70122_E)
