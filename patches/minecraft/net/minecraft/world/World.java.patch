@@ -159,7 +159,7 @@
                          try
                          {
 -                            return String.format("ID #%d (%s // %s)", Block.func_149682_b(p_190524_2_), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getCanonicalName());
-+                            return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190524_2_), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getCanonicalName(), p_190524_2_.getRegistryName());
++                            return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190524_2_), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getName(), p_190524_2_.getRegistryName());
                          }
                          catch (Throwable var2)
                          {
@@ -182,7 +182,7 @@
                              try
                              {
 -                                return String.format("ID #%d (%s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getCanonicalName());
-+                                return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getCanonicalName(), p_190529_2_.getRegistryName());
++                                return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getName(), p_190529_2_.getRegistryName());
                              }
                              catch (Throwable var2)
                              {

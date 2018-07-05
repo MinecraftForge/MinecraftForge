@@ -71,7 +71,7 @@
                      try
                      {
 -                        return String.format("ID #%d (%s // %s)", i, Block.func_149729_e(i).func_149739_a(), Block.func_149729_e(i).getClass().getCanonicalName());
-+                    	return String.format("ID #%d (%s // %s // %s)", i, Block.func_149729_e(i).func_149739_a(), Block.func_149729_e(i).getClass().getCanonicalName(), Block.func_149729_e(i).getRegistryName());
++                    	return String.format("ID #%d (%s // %s // %s)", i, Block.func_149729_e(i).func_149739_a(), Block.func_149729_e(i).getClass().getName(), Block.func_149729_e(i).getRegistryName());
                      }
                      catch (Throwable var3)
                      {
