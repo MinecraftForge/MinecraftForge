@@ -92,7 +92,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
 
         caps = lstCaps.toArray(new ICapabilityProvider[lstCaps.size()]);
 
-        if (lstShareTags.size() > 0)
+        if (lstWriters.size() > 0)
         {
             writers = lstWriters.toArray(new INBTSerializable[lstWriters.size()]);
             writerNames = lstNames.toArray(new String[lstNames.size()]);
