@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBeacon.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBeacon.java
+@@ -106,12 +106,12 @@
+ 
+     public static void func_176450_d(final World p_176450_0_, final BlockPos p_176450_1_)
+     {
++        Chunk chunk = p_176450_0_.func_175726_f(p_176450_1_); // Forge: don't access world off-thread
++
+         HttpUtil.field_180193_a.submit(new Runnable()
+         {
+             public void run()
+             {
+-                Chunk chunk = p_176450_0_.func_175726_f(p_176450_1_);
+-
+                 for (int i = p_176450_1_.func_177956_o() - 1; i >= 0; --i)
+                 {
+                     final BlockPos blockpos = new BlockPos(p_176450_1_.func_177958_n(), i, p_176450_1_.func_177952_p());
+@@ -121,7 +121,7 @@
+                         break;
+                     }
+ 
+-                    IBlockState iblockstate = p_176450_0_.func_180495_p(blockpos);
++                    IBlockState iblockstate = chunk.func_177435_g(blockpos); // Forge: don't access world off-thread
+ 
+                     if (iblockstate.func_177230_c() == Blocks.field_150461_bJ)
+                     {
