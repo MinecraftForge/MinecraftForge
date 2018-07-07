@@ -25,11 +25,12 @@
  
                  for (ThreadInfo threadinfo : athreadinfo)
                  {
-@@ -75,6 +76,8 @@
+@@ -75,6 +76,9 @@
                  this.func_180248_a();
              }
  
 +            this.firstRun = false;
++            if (k > this.field_180250_c) continue;
 +
              try
              {
