@@ -44,6 +44,10 @@ public class SleepingTimeCheckEvent extends PlayerEvent
         this.sleepingLocation = sleepingLocation;
     }
 
+    /**
+     * Note that the sleeping location may be an approximated one.
+     * @return The player's sleeping location.
+     */
     public BlockPos getSleepingLocation()
     {
         return sleepingLocation;
