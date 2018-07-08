@@ -1,38 +1,98 @@
 --- ../src-base/minecraft/net/minecraft/world/DimensionType.java
 +++ ../src-work/minecraft/net/minecraft/world/DimensionType.java
-@@ -13,6 +13,7 @@
+@@ -3,23 +3,30 @@
+ import java.lang.reflect.Constructor;
+ import java.lang.reflect.InvocationTargetException;
+ 
+-public enum DimensionType
++public class DimensionType
+ {
+-    OVERWORLD(0, "overworld", "", WorldProviderSurface.class),
+-    NETHER(-1, "the_nether", "_nether", WorldProviderHell.class),
+-    THE_END(1, "the_end", "_end", WorldProviderEnd.class);
++    public static final DimensionType OVERWORLD = new DimensionType(0, "overworld", "", WorldProviderSurface.class, "OVERWORLD");
++    public static final DimensionType NETHER = new DimensionType(-1, "the_nether", "_nether", WorldProviderHell.class, "NETHER");
++    public static final DimensionType THE_END = new DimensionType(1, "the_end", "_end", WorldProviderEnd.class, "THE_END");
++    private static int globalOrdinalPos = 0;
+ 
+     private final int field_186074_d;
      private final String field_186075_e;
      private final String field_186076_f;
      private final Class <? extends WorldProvider > field_186077_g;
 +    private boolean shouldLoadSpawn = false;
++    private final String enumName;
++    private final int ordinal;
  
-     private DimensionType(int p_i46672_3_, String p_i46672_4_, String p_i46672_5_, Class <? extends WorldProvider > p_i46672_6_)
+-    private DimensionType(int p_i46672_3_, String p_i46672_4_, String p_i46672_5_, Class <? extends WorldProvider > p_i46672_6_)
++    private DimensionType(int idIn, String nameIn, String suffixIn, Class <? extends WorldProvider > clazzIn, String enumName)
      {
-@@ -20,6 +21,7 @@
-         this.field_186075_e = p_i46672_4_;
-         this.field_186076_f = p_i46672_5_;
-         this.field_186077_g = p_i46672_6_;
-+        this.shouldLoadSpawn = p_i46672_3_ == 0;
+-        this.field_186074_d = p_i46672_3_;
+-        this.field_186075_e = p_i46672_4_;
+-        this.field_186076_f = p_i46672_5_;
+-        this.field_186077_g = p_i46672_6_;
++        this.field_186074_d = idIn;
++        this.field_186075_e = nameIn;
++        this.field_186076_f = suffixIn;
++        this.field_186077_g = clazzIn;
++        this.shouldLoadSpawn = idIn == 0;
++        this.enumName = enumName;
++        this.ordinal = globalOrdinalPos++;
      }
  
      public int func_186068_a()
-@@ -75,6 +77,20 @@
+@@ -75,6 +82,56 @@
          throw new IllegalArgumentException("Invalid dimension id " + p_186069_0_);
      }
  
++    /*===================================== FORGE START =================================*/
 +    public boolean shouldLoadSpawn(){ return this.shouldLoadSpawn; }
 +    public DimensionType setLoadSpawn(boolean value) { this.shouldLoadSpawn = value; return this; }
 +
-+    private static Class<?>[] ENUM_ARGS = {int.class, String.class, String.class, Class.class};
-+    static { net.minecraftforge.common.util.EnumHelper.testEnum(DimensionType.class, ENUM_ARGS); }
++    //Enum methods (binary compat)
++    private static DimensionType[] VALUES = new DimensionType[]{OVERWORLD, NETHER, THE_END};
++
++    public static DimensionType[] values()
++    {
++        return VALUES;
++    }
++
++    public static DimensionType valueOf(String name)
++    {
++        for (DimensionType type : VALUES)
++        {
++            if (type.enumName.equals(name))
++            {
++                return type;
++            }
++        }
++        throw new IllegalArgumentException("Name not found: " + name);
++    }
++
++    public String name()
++    {
++        return enumName;
++    }
++
++    @Override
++    public String toString()
++    {
++        return enumName;
++    }
++
++    public int ordinal()
++    {
++        return ordinal;
++    }
++
 +    public static DimensionType register(String name, String suffix, int id, Class<? extends WorldProvider> provider, boolean keepLoaded)
 +    {
 +        String enum_name = name.replace(" ", "_").toLowerCase();
-+        DimensionType ret = net.minecraftforge.common.util.EnumHelper.addEnum(DimensionType.class, enum_name, ENUM_ARGS,
-+                id, name, suffix, provider);
++        DimensionType ret = new DimensionType(id, name, suffix, provider, enum_name);
++        VALUES = org.apache.commons.lang3.ArrayUtils.add(VALUES, ret);
 +        return ret.setLoadSpawn(keepLoaded);
 +    }
 +    //TODO: Unregister? There is no way to really delete a enum value...
++    /*===================================== FORGE END =================================*/
 +
      public static DimensionType func_193417_a(String p_193417_0_)
      {
