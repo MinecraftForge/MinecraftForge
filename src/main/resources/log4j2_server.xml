@@ -37,16 +37,16 @@
     </Appenders>
     <Loggers>
         <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
-        <Logger level="info" name="com.mojang"/>
-        <Logger level="info" name="net.minecraft"/>
+        <Logger level="${sys:forge.mojangLogLevel:-info}" name="com.mojang"/>
+        <Logger level="${sys:forge.mojangLogLevel:-info}" name="net.minecraft"/>
         <Root level="all">
             <filters>
                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
             </filters>
-            <AppenderRef ref="Console" level="info"/>
-            <AppenderRef ref="ServerGuiConsole" level="info"/>
-            <AppenderRef ref="File" level="info"/>
-            <AppenderRef ref="DebugFile"/>
+            <AppenderRef ref="Console" level="${sys:forge.consoleLogLevel:-info}"/>
+            <AppenderRef ref="ServerGuiConsole" level="${sys:forge.consoleLogLevel:-info}"/>
+            <AppenderRef ref="File" level="${sys:forge.fileLogLevel:-info}"/>
+            <AppenderRef ref="DebugFile" level="${sys:forge.debugFileLogLevel:-trace}"/>
         </Root>
     </Loggers>
 </Configuration>
