@@ -133,7 +133,7 @@ public class ConfigManager
      * does not exist, it will be created with default values derived from the mods config classes variable default values
      * and comments and ranges, as well as configuration names based on the appropriate annotations found in {@code @Config}.
      *
-     * Note, that this method is being called by the {@link FMLModContaier}, so the mod needn't call it in init().
+     * Note, that this method is being called by the {@link net.minecraftforge.fml.common.FMLModContainer}, so the mod needn't call it in init().
      *
      * If this method is called after the initial load, it will check whether the values in the Configuration object differ
      * from the values in the corresponding variables. If they differ, it will either overwrite the variables if the Configuration
@@ -242,6 +242,8 @@ public class ConfigManager
             boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
             boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
 
+            boolean hasSlidingControl=f.isAnnotationPresent(SlidingOption.class);
+
             if (FieldWrapper.hasWrapperFor(f)) //Wrappers exist for primitives, enums, maps and arrays
             {
                 if (Strings.isNullOrEmpty(category))
@@ -261,6 +263,8 @@ public class ConfigManager
                         {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
 
+                            property.setHasSlidingControl(hasSlidingControl);
+
                             adapt.setDefaultValue(property, wrapper.getValue(key));
                             if (!existed)
                                 adapt.setValue(property, wrapper.getValue(key));
@@ -270,6 +274,7 @@ public class ConfigManager
                         else //If the key is not new, sync according to shouldReadFromVar()
                         {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
+                            property.setHasSlidingControl(hasSlidingControl);
                             Object propVal = adapt.getValue(property);
                             Object mapVal = wrapper.getValue(key);
                             if (shouldReadFromVar(property, propVal, mapVal))

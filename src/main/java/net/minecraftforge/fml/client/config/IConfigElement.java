@@ -186,4 +186,9 @@ public interface IConfigElement
      * [Property] Gets a Pattern object used in String property input validation.
      */
     Pattern getValidationPattern();
+
+    /**
+     * @return true if this element is going to have a slider attached
+     */
+    boolean hasSlidingControl();
 }
