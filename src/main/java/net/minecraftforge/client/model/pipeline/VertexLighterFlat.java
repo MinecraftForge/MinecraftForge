@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -121,14 +121,14 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         float[][] lightmap = quadData[lightmapIndex];
         float[][] color = quadData[colorIndex];
 
-        // If all three normal values are either -1 or 0, normals must be generated
-        if(quadData[normalIndex][0][0] != quadData[normalIndex][0][1] ||
-            quadData[normalIndex][0][1] != quadData[normalIndex][0][2] ||
-           (quadData[normalIndex][0][0] != -1 && quadData[normalIndex][0][0] != 0))
+        if (dataLength[normalIndex] >= 3
+            && (quadData[normalIndex][0][0] != -1
+            ||  quadData[normalIndex][0][1] != -1
+            ||  quadData[normalIndex][0][2] != -1))
         {
             normal = quadData[normalIndex];
         }
-        else
+        else // normals must be generated
         {
             normal = new float[4][4];
             Vector3f v1 = new Vector3f(position[3]);
