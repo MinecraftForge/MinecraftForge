@@ -27,6 +27,18 @@ public class SliderConfigElementTest {
         @Config.RangeInt(min = -100,max = 50)
         public static int integer=0;
 
+        @SlidingOption
+        public static float f=60.7f;
+
+        //this won't do anything
+        @SlidingOption
+        public static boolean bool=false;
+
+        //this also won't do anything
+        @SlidingOption
+        public static String string="I don't slide";
+
+
     }
 
     @SubscribeEvent
