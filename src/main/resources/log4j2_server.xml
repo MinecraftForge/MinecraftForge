@@ -46,7 +46,7 @@
             <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
-            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debug.level:-trace}"/>
+            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-trace}"/>
         </Root>
     </Loggers>
 </Configuration>
