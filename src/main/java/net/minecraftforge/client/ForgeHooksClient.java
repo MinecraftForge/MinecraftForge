@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,14 +22,13 @@ package net.minecraftforge.client;
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Matrix3f;
@@ -126,8 +125,9 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
-import java.util.Optional;
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
@@ -154,7 +154,7 @@ public class ForgeHooksClient
 
         if (block != null && block.isBed(state, world, pos, entity))
         {
-            glRotatef((float)(block.getBedDirection(state, world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef((float)(block.getBedDirection(state, world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
         }
     }
 
@@ -423,7 +423,7 @@ public class ForgeHooksClient
             matrixBuf.put(t);
         }
         matrixBuf.flip();
-        glMultMatrix(matrixBuf);
+        GL11.glMultMatrix(matrixBuf);
     }
 
     // moved and expanded from WorldVertexBufferUploader.draw
@@ -437,32 +437,32 @@ public class ForgeHooksClient
         switch(attrType)
         {
             case POSITION:
-                glVertexPointer(count, constant, stride, buffer);
-                glEnableClientState(GL_VERTEX_ARRAY);
+                GlStateManager.glVertexPointer(count, constant, stride, buffer);
+                GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
                 break;
             case NORMAL:
                 if(count != 3)
                 {
                     throw new IllegalArgumentException("Normal attribute should have the size 3: " + attr);
                 }
-                glNormalPointer(constant, stride, buffer);
-                glEnableClientState(GL_NORMAL_ARRAY);
+                GlStateManager.glNormalPointer(constant, stride, buffer);
+                GlStateManager.glEnableClientState(GL11.GL_NORMAL_ARRAY);
                 break;
             case COLOR:
-                glColorPointer(count, constant, stride, buffer);
-                glEnableClientState(GL_COLOR_ARRAY);
+                GlStateManager.glColorPointer(count, constant, stride, buffer);
+                GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
                 break;
             case UV:
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-                glTexCoordPointer(count, constant, stride, buffer);
-                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                GlStateManager.glTexCoordPointer(count, constant, stride, buffer);
+                GlStateManager.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                 break;
             case PADDING:
                 break;
             case GENERIC:
-                glEnableVertexAttribArray(attr.getIndex());
-                glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
+                GL20.glEnableVertexAttribArray(attr.getIndex());
+                GL20.glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
             default:
                 FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -474,25 +474,25 @@ public class ForgeHooksClient
         switch(attrType)
         {
             case POSITION:
-                glDisableClientState(GL_VERTEX_ARRAY);
+                GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
                 break;
             case NORMAL:
-                glDisableClientState(GL_NORMAL_ARRAY);
+                GlStateManager.glDisableClientState(GL11.GL_NORMAL_ARRAY);
                 break;
             case COLOR:
-                glDisableClientState(GL_COLOR_ARRAY);
+                GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
                 // is this really needed?
                 GlStateManager.resetColor();
                 break;
             case UV:
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                GlStateManager.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                 break;
             case PADDING:
                 break;
             case GENERIC:
-                glDisableVertexAttribArray(attr.getIndex());
+                GL20.glDisableVertexAttribArray(attr.getIndex());
             default:
                 FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }

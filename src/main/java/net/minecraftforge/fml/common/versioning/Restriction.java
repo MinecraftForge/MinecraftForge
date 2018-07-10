@@ -1,26 +1,28 @@
 /*
- * Minecraft Forge
- * Copyright (c) 2016.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * Repackaged and some modifications done by Forge, see in-line comments.
  */
-
 package net.minecraftforge.fml.common.versioning;
 
-import net.minecraft.util.text.translation.I18n;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
+import net.minecraft.util.text.translation.I18n; //Forge: Added imports
 import javax.annotation.Nullable;
 
 /**
@@ -40,7 +42,7 @@ public class Restriction
 
     public static final Restriction EVERYTHING = new Restriction( null, false, null, false );
 
-    public Restriction( @Nullable ArtifactVersion lowerBound, boolean lowerBoundInclusive, @Nullable ArtifactVersion upperBound,
+    public Restriction( @Nullable ArtifactVersion lowerBound, boolean lowerBoundInclusive, @Nullable ArtifactVersion upperBound, //Forge: Added @Nullable
                        boolean upperBoundInclusive )
     {
         this.lowerBound = lowerBound;
@@ -49,7 +51,7 @@ public class Restriction
         this.upperBoundInclusive = upperBoundInclusive;
     }
 
-    @Nullable
+    @Nullable //Forge: Added @Nullable
     public ArtifactVersion getLowerBound()
     {
         return lowerBound;
@@ -60,7 +62,7 @@ public class Restriction
         return lowerBoundInclusive;
     }
 
-    @Nullable
+    @Nullable //Forge: Added @Nullable
     public ArtifactVersion getUpperBound()
     {
         return upperBound;
@@ -184,7 +186,7 @@ public class Restriction
         return true;
     }
 
-    @Override
+    @Override //Forge: Added @Override
     public String toString()
     {
         StringBuilder buf = new StringBuilder();
@@ -204,6 +206,7 @@ public class Restriction
         return buf.toString();
     }
 
+    //Forge: Added toStringFriendly, uses Minecraft's localization engine to create user friendly localized message.
     public String toStringFriendly()
     {
         if ( getLowerBound() == null && getUpperBound() == null )
