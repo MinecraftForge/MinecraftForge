@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -604,8 +604,8 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         super.exceptionCaught(ctx, cause);
     }
 
-    // if we add any attributes, we should force removal of them here so that
-    //they do not hold references to the world and causes it to leak.
+    // If we add any attributes, we should force removal of them here so that
+    // they do not hold references to the world and cause it to leak.
     private void cleanAttributes(ChannelHandlerContext ctx)
     {
         ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(null);
@@ -613,6 +613,7 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).set(null);
         this.handshakeChannel.attr(FML_DISPATCHER).set(null);
         this.manager.channel().attr(FML_DISPATCHER).set(null);
+        NetworkRegistry.INSTANCE.cleanAttributes();
     }
 
     public void setOverrideDimension(int overrideDim) {

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -251,7 +251,7 @@ public class FastTESRTransparentTest
     @EventHandler
     public void preInit(FMLPreInitializationEvent evt)
     {
-        GameRegistry.registerTileEntity(TransparentFastTE.class, "fast-tesr-te");
+        GameRegistry.registerTileEntity(TransparentFastTE.class, MODID + ":fast-tesr-te");
     }
 
     @EventBusSubscriber(value = Side.CLIENT, modid = MODID)

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.TracingPrintStream;
 import net.minecraftforge.fml.common.launcher.FMLTweaker;
+import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
+
 import org.apache.logging.log4j.LogManager;
 
 public class FMLLaunchHandler
@@ -99,6 +101,7 @@ public class FMLLaunchHandler
 
         try
         {
+            LibraryManager.setup(minecraftHome);
             CoreModManager.handleLaunch(minecraftHome, classLoader, tweaker);
         }
         catch (Throwable t)
@@ -129,4 +132,6 @@ public class FMLLaunchHandler
     {
         INSTANCE.injectPostfixTransformers();
     }
+
+
 }

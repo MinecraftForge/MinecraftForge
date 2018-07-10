@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -347,20 +347,20 @@ public class BiomeDictionary
             BiomeDictionary.addTypes(biome, SNOWY);
         }
 
-        if (biome.topBlock != Blocks.SAND && biome.getDefaultTemperature() >= 1.0f && biome.getRainfall() < 0.2f)
+        if (biome.topBlock.getBlock() != Blocks.SAND && biome.getDefaultTemperature() >= 1.0f && biome.getRainfall() < 0.2f)
         {
             BiomeDictionary.addTypes(biome, SAVANNA);
         }
 
-        if (biome.topBlock == Blocks.SAND)
+        if (biome.topBlock.getBlock() == Blocks.SAND)
         {
             BiomeDictionary.addTypes(biome, SANDY);
         }
-        else if (biome.topBlock == Blocks.MYCELIUM)
+        else if (biome.topBlock.getBlock() == Blocks.MYCELIUM)
         {
             BiomeDictionary.addTypes(biome, MUSHROOM);
         }
-        if (biome.fillerBlock == Blocks.HARDENED_CLAY)
+        if (biome.fillerBlock.getBlock() == Blocks.HARDENED_CLAY)
         {
             BiomeDictionary.addTypes(biome, MESA);
         }

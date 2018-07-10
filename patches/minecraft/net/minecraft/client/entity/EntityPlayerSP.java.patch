@@ -111,3 +111,21 @@
          boolean flag4 = (float)this.func_71024_bL().func_75116_a() > 6.0F || this.field_71075_bZ.field_75101_c;
  
          if (this.field_70122_E && !flag1 && !flag2 && this.field_71158_b.field_192832_b >= 0.8F && !this.func_70051_ag() && flag4 && !this.func_184587_cr() && !this.func_70644_a(MobEffects.field_76440_q))
+@@ -1178,4 +1203,17 @@
+             }
+         }
+     }
++
++    public void updateSyncFields(EntityPlayerSP old)
++    {
++        this.field_175172_bI = old.field_175172_bI;
++        this.field_175166_bJ = old.field_175166_bJ;
++        this.field_175167_bK = old.field_175167_bK;
++        this.field_175164_bL = old.field_175164_bL;
++        this.field_175165_bM = old.field_175165_bM;
++        this.field_184841_cd = old.field_184841_cd;
++        this.field_175170_bN = old.field_175170_bN;
++        this.field_175171_bO = old.field_175171_bO;
++        this.field_175168_bP = old.field_175168_bP;
++    }
+ }

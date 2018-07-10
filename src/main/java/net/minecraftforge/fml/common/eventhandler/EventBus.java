@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,6 +47,7 @@ public class EventBus implements IEventExceptionHandler
     private Map<Object,ModContainer> listenerOwners = new MapMaker().weakKeys().weakValues().makeMap();
     private final int busID = maxID++;
     private IEventExceptionHandler exceptionHandler;
+    private boolean shutdown;
 
     public EventBus()
     {
@@ -170,6 +171,8 @@ public class EventBus implements IEventExceptionHandler
 
     public boolean post(Event event)
     {
+        if (shutdown) return false;
+
         IEventListener[] listeners = event.getListenerList().getListeners(busID);
         int index = 0;
         try
@@ -185,7 +188,13 @@ public class EventBus implements IEventExceptionHandler
             Throwables.throwIfUnchecked(throwable);
             throw new RuntimeException(throwable);
         }
-        return (event.isCancelable() ? event.isCanceled() : false);
+        return event.isCancelable() && event.isCanceled();
+    }
+
+    public void shutdown()
+    {
+        FMLLog.log.warn("EventBus {} shutting down - future events will not be posted.", busID);
+        shutdown = true;
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -89,6 +89,16 @@ public class BlockInfo
     public void setBlockPos(BlockPos blockPos)
     {
         this.blockPos = blockPos;
+        cachedTint = -1;
+        cachedMultiplier = -1;
+        shx = shy = shz = 0;
+    }
+
+    public void reset()
+    {
+        this.world = null;
+        this.state = null;
+        this.blockPos = null;
         cachedTint = -1;
         cachedMultiplier = -1;
         shx = shy = shz = 0;

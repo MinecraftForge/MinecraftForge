@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -76,7 +76,7 @@ public class BlockStateLoader
             byte[] data = IOUtils.toByteArray(reader, StandardCharsets.UTF_8);
             reader = new InputStreamReader(new ByteArrayInputStream(data), StandardCharsets.UTF_8);
 
-            Marker marker = GSON.fromJson(new String(data), Marker.class);  // Read "forge_marker" to determine what to load.
+            Marker marker = GSON.fromJson(new String(data, StandardCharsets.UTF_8), Marker.class);  // Read "forge_marker" to determine what to load.
 
             switch (marker.forge_marker)
             {
