@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,12 +19,10 @@
 
 package net.minecraftforge.fml.common.versioning;
 
-/**
- * Describes an artifact version in terms of its components, converts it to/from a string and
- * compares two versions.
- *
- * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- */
+//I beleive this is a unique class except that it uses the same name so that ComparibleVersion can stay the same.
+//Best reference I could find: https://github.com/apache/maven/blob/3501485ed2280e30ba74eb9f0e1c6422b68a3228/maven-artifact/src/main/java/org/apache/maven/artifact/versioning/ArtifactVersion.java
+//This entire package *should* be removed and updated to normal maven-artifact library in 1.13.
+
 public interface ArtifactVersion
     extends Comparable<ArtifactVersion>
 {

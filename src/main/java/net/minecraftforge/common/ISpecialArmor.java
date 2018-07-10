@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -86,6 +86,19 @@ public interface ISpecialArmor
      */
     void damageArmor(EntityLivingBase entity, @Nonnull ItemStack stack, DamageSource source, int damage, int slot);
 
+    /**
+    * Simple check to see if the armor should interact with "Unblockable" damage
+    * sources. A fair number of vanilla damage sources have this tag, such as
+    * Anvils, Falling, Fire, and Magic.
+    *
+    * Returning true here means that the armor is able to meaningfully respond
+    * to this damage source. Otherwise, no interaction is allowed.
+    */
+    default boolean handleUnblockableDamage(EntityLivingBase entity, @Nonnull ItemStack armor, DamageSource source, double damage, int slot)
+    {
+        return false;
+    }
+
     public static class ArmorProperties implements Comparable<ArmorProperties>
     {
         public int    Priority          = 0;
@@ -118,11 +131,6 @@ public interface ISpecialArmor
          */
         public static float applyArmor(EntityLivingBase entity, NonNullList<ItemStack> inventory, DamageSource source, double damage)
         {
-            if (source.isUnblockable())
-            {
-                return (float)damage;
-            }
-
             if (DEBUG)
             {
                 System.out.println("Start: " + damage);
@@ -130,6 +138,12 @@ public interface ISpecialArmor
             
             double totalArmor = entity.getTotalArmorValue();
             double totalToughness = entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
+
+            if (source.isUnblockable())
+            {
+                totalArmor = 0;
+                totalToughness = 0;
+            }
 
             ArrayList<ArmorProperties> dmgVals = new ArrayList<ArmorProperties>();
             for (int slot = 0; slot < inventory.size(); slot++)
@@ -144,12 +158,14 @@ public interface ISpecialArmor
                 ArmorProperties prop = null;
                 if (stack.getItem() instanceof ISpecialArmor)
                 {
-                    ISpecialArmor armor = (ISpecialArmor)stack.getItem();
-                    prop = armor.getProperties(entity, stack, source, damage, slot).copy();
-                    totalArmor += prop.Armor;
-                    totalToughness += prop.Toughness;
+                    if (!source.isUnblockable() || ((ISpecialArmor) stack.getItem()).handleUnblockableDamage(entity, stack, source, damage, slot)) {
+                        ISpecialArmor armor = (ISpecialArmor)stack.getItem();
+                        prop = armor.getProperties(entity, stack, source, damage, slot).copy();
+                        totalArmor += prop.Armor;
+                        totalToughness += prop.Toughness;
+                    }
                 }
-                else if (stack.getItem() instanceof ItemArmor)
+                else if (stack.getItem() instanceof ItemArmor && !source.isUnblockable())
                 {
                     ItemArmor armor = (ItemArmor)stack.getItem();
                     prop = new ArmorProperties(0, 0, Integer.MAX_VALUE);
