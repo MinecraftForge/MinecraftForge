@@ -242,7 +242,7 @@ public class ConfigManager
             boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
             boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
 
-            boolean hasSlidingControl = f.isAnnotationPresent(SlidingOption.class);
+            boolean hasSlidingControl = f.isAnnotationPresent(Config.SlidingOption.class);
 
             if (FieldWrapper.hasWrapperFor(f)) //Wrappers exist for primitives, enums, maps and arrays
             {
