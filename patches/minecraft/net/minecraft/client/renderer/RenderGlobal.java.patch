@@ -124,7 +124,17 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1892,8 +1915,11 @@
+@@ -1852,7 +1875,8 @@
+         GlStateManager.func_187428_a(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+         GlStateManager.func_179147_l();
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 0.5F);
+-        GlStateManager.func_179136_a(-3.0F, -3.0F);
++        // FORGE: Fix MC-234
++        GlStateManager.func_179136_a(-1.0F, -10.0F);
+         GlStateManager.func_179088_q();
+         GlStateManager.func_179092_a(516, 0.1F);
+         GlStateManager.func_179141_d();
+@@ -1892,8 +1916,11 @@
                  double d7 = (double)blockpos.func_177956_o() - d4;
                  double d8 = (double)blockpos.func_177952_p() - d5;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -137,7 +147,7 @@
                  {
                      if (d6 * d6 + d7 * d7 + d8 * d8 > 1024.0D)
                      {
-@@ -2388,7 +2414,7 @@
+@@ -2388,7 +2415,7 @@
  
                  if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
                  {

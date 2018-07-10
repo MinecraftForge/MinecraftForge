@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,21 +21,21 @@ package net.minecraftforge.server.console;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import jline.console.completer.Completer;
 import net.minecraft.server.dedicated.DedicatedServer;
+import org.jline.reader.Candidate;
+import org.jline.reader.Completer;
+import org.jline.reader.LineReader;
+import org.jline.reader.ParsedLine;
 
-public final class ConsoleCommandCompleter implements Completer
+final class ConsoleCommandCompleter implements Completer
 {
-
     private static final Logger logger = LogManager.getLogger();
     private final DedicatedServer server;
 
@@ -45,10 +45,9 @@ public final class ConsoleCommandCompleter implements Completer
     }
 
     @Override
-    public int complete(String buffer, int cursor, List<CharSequence> candidates)
+    public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates)
     {
-        int len = buffer.length();
-
+        String buffer = line.line();
         boolean prefix;
         if (buffer.isEmpty() || buffer.charAt(0) != '/')
         {
@@ -61,43 +60,18 @@ public final class ConsoleCommandCompleter implements Completer
         }
 
         final String input = buffer;
-        Future<List<String>> tabComplete = this.server.callFromMainThread(new Callable<List<String>>() {
+        Future<List<String>> tabComplete = this.server.callFromMainThread(() -> this.server.getTabCompletions(this.server, input, this.server.getPosition(), false));
 
-            @Override
-            public List<String> call() throws Exception
-            {
-                return ConsoleCommandCompleter.this.server.getTabCompletions(ConsoleCommandCompleter.this.server, input,
-                        ConsoleCommandCompleter.this.server.getPosition(), false/*  we're not a command block */);
-            }
-        });
         try
         {
-            List<String> completions = tabComplete.get();
-            Collections.sort(completions);
-            if (prefix)
+            for (String completion : tabComplete.get())
             {
-                candidates.addAll(completions);
-            }
-            else
-            {
-                for (String completion : completions)
+                if (!completion.isEmpty())
                 {
-                    candidates.add(completion.charAt(0) == '/' ? completion.substring(1) : completion);
+                    boolean hasPrefix = prefix || completion.charAt(0) != '/';
+                    Candidate candidate = new Candidate(hasPrefix ? completion : completion.substring(1));
+                    candidates.add(candidate);
                 }
-            }
-
-            int pos = buffer.lastIndexOf(' ');
-            if (pos == -1)
-            {
-                return cursor - len;
-            }
-            else if (prefix)
-            {
-                return cursor - len + pos + 1;
-            }
-            else
-            {
-                return cursor - len + pos;
             }
         }
         catch (InterruptedException e)
@@ -108,8 +82,6 @@ public final class ConsoleCommandCompleter implements Completer
         {
             logger.error("Failed to tab complete", e);
         }
-
-        return cursor;
     }
 
 }
