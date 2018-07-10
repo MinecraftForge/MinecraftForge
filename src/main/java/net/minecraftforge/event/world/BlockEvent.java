@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,13 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockPortal;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
@@ -283,7 +287,60 @@ public class BlockEvent extends Event
             super(world, pos, state);
         }
     }
-    
+
+    /**
+     * Fired when a liquid places a block. Use {@link #setNewState(IBlockState)} to change the result of
+     * a cobblestone generator or add variants of obsidian. Alternatively, you  could execute
+     * arbitrary code when lava sets blocks on fire, even preventing it.
+     *
+     * {@link #getState()} will return the block that was originally going to be placed.
+     * {@link #getPos()} will return the position of the block to be changed.
+     */
+    @Cancelable
+    public static class FluidPlaceBlockEvent extends BlockEvent
+    {
+        private final BlockPos liquidPos;
+        private IBlockState newState;
+        private IBlockState origState;
+
+        public FluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, IBlockState state)
+        {
+            super(world, pos, state);
+            this.liquidPos = liquidPos;
+            this.newState = state;
+            this.origState = world.getBlockState(pos);
+        }
+
+        /**
+         * @return The position of the liquid this event originated from. This may be the same as {@link #getPos()}.
+         */
+        public BlockPos getLiquidPos()
+        {
+            return liquidPos;
+        }
+
+        /**
+         * @return The block state that will be placed after this event resolves.
+         */
+        public IBlockState getNewState()
+        {
+            return newState;
+        }
+
+        public void setNewState(IBlockState state)
+        {
+            this.newState = state;
+        }
+
+        /**
+         * @return The state of the block to be changed before the event was fired.
+         */
+        public IBlockState getOriginalState()
+        {
+            return origState;
+        }
+    }
+
     /**
      * Fired when a crop block grows.  See subevents.
      *
@@ -341,7 +398,34 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when an attempt is made to spawn a nether portal from
+     * Fired when when farmland gets trampled
+     * This event is {@link Cancelable}
+     */
+    @Cancelable
+    public static class FarmlandTrampleEvent extends BlockEvent
+    {
+
+        private final Entity entity;
+        private final float fallDistance;
+
+        public FarmlandTrampleEvent(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
+        {
+            super(world, pos, state);
+            this.entity = entity;
+            this.fallDistance = fallDistance;
+        }
+
+        public Entity getEntity() {
+            return entity;
+        }
+
+        public float getFallDistance() {
+            return fallDistance;
+        }
+
+    }
+
+    /* Fired when an attempt is made to spawn a nether portal from
      * {@link net.minecraft.block.BlockPortal#trySpawnPortal(World, BlockPos)}.
      *
      * If cancelled, the portal will not be spawned.

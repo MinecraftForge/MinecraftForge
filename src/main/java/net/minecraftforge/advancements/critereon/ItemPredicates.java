@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,17 +20,18 @@
 package net.minecraftforge.advancements.critereon;
 
 import com.google.gson.JsonObject;
-import gnu.trove.map.hash.THashMap;
+
 import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
 public class ItemPredicates
 {
-    private static final Map<ResourceLocation, Function<JsonObject, ItemPredicate>> predicates = new THashMap<>();
+    private static final Map<ResourceLocation, Function<JsonObject, ItemPredicate>> predicates = new HashMap<>();
 
     static
     {

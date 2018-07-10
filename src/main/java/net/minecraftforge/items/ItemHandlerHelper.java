@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -162,18 +162,20 @@ public class ItemHandlerHelper
      */
     public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack, int preferredSlot)
     {
+        if (stack.isEmpty()) return;
+
         IItemHandler inventory = new PlayerMainInvWrapper(player.inventory);
         World world = player.world;
 
         // try adding it into the inventory
         ItemStack remainder = stack;
         // insert into preferred slot first
-        if(preferredSlot >= 0)
+        if (preferredSlot >= 0 && preferredSlot < inventory.getSlots())
         {
             remainder = inventory.insertItem(preferredSlot, stack, false);
         }
         // then into the inventory in general
-        if(!remainder.isEmpty())
+        if (!remainder.isEmpty())
         {
             remainder = insertItemStacked(inventory, remainder, false);
         }
@@ -188,7 +190,7 @@ public class ItemHandlerHelper
         // drop remaining itemstack into the world
         if (!remainder.isEmpty() && !world.isRemote)
         {
-            EntityItem entityitem = new EntityItem(world, player.posX, player.posY + 0.5, player.posZ, stack);
+            EntityItem entityitem = new EntityItem(world, player.posX, player.posY + 0.5, player.posZ, remainder);
             entityitem.setPickupDelay(40);
             entityitem.motionX = 0;
             entityitem.motionZ = 0;
