@@ -6,7 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created on 7/9/18 by alexiy.
  * A field marked with this annotation will have a slider control attached in the config UI
  */
 @Retention(RetentionPolicy.RUNTIME)

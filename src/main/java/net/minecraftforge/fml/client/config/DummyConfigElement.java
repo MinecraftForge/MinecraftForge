@@ -390,11 +390,6 @@ public class DummyConfigElement implements IConfigElement
     }
 
     @Override
-    public boolean hasSlidingControl() {
-        return false;
-    }
-
-    @Override
     public Object get()
     {
         return value;

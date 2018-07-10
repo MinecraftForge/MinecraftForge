@@ -190,5 +190,8 @@ public interface IConfigElement
     /**
      * @return true if this element is going to have a slider attached
      */
-    boolean hasSlidingControl();
+    default boolean hasSlidingControl()
+    {
+        return false;
+    }
 }
