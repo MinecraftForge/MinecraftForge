@@ -35,6 +35,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 @Mod(modid = MultiLayerModelTest.MODID, name = "ForgeDebugMultiLayerModel", version = MultiLayerModelTest.VERSION, acceptableRemoteVersions = "*")
 public class MultiLayerModelTest
 {
@@ -80,6 +83,12 @@ public class MultiLayerModelTest
                     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
                     {
                         return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
+                    }
+
+                    @Override
+                    public Set<BlockRenderLayer> getRenderLayers(IBlockState state)
+                    {
+                        return EnumSet.of(BlockRenderLayer.SOLID, BlockRenderLayer.TRANSLUCENT);
                     }
                 }
             );

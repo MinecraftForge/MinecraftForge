@@ -9,7 +9,7 @@
                  {
                      TileEntity tileentity = this.field_189564_r.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
  
-@@ -172,17 +172,19 @@
+@@ -172,17 +172,18 @@
  
                          if (tileentityspecialrenderer != null)
                          {
@@ -25,13 +25,12 @@
                  }
  
 -                BlockRenderLayer blockrenderlayer1 = block.func_180664_k();
-+                for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
-+                     if(!block.canRenderInLayer(iblockstate, blockrenderlayer1)) continue;
-+                     net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
++                for (BlockRenderLayer blockrenderlayer1 : block.getRenderLayers(iblockstate, this.field_189564_r, blockpos$mutableblockpos)) {
++                    net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
                  int j = blockrenderlayer1.ordinal();
  
                  if (block.func_176223_P().func_185901_i() != EnumBlockRenderType.INVISIBLE)
-@@ -197,6 +199,8 @@
+@@ -197,6 +198,8 @@
  
                      aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, this.field_189564_r, bufferbuilder);
                  }
@@ -40,7 +39,7 @@
              }
  
              for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
-@@ -278,7 +282,9 @@
+@@ -278,7 +281,9 @@
      private void func_189563_q()
      {
          int i = 1;
@@ -51,7 +50,7 @@
      }
  
      @Nullable
-@@ -427,6 +433,26 @@
+@@ -427,6 +432,26 @@
          return this.field_178593_n && this.field_188284_q;
      }
  
