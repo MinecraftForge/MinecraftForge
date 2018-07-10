@@ -88,4 +88,14 @@ public interface IItemHandler
      * @return     The maximum stack size allowed in the slot.
      */
     int getSlotLimit(int slot);
+
+    /**
+     * Tests if a slot can accept an ItemStack.
+     * Use instead of simulated insertions for cases where current stack size should be ignored.
+     *
+     * @param slot  Slot to query.
+     * @param stack ItemStack to test with
+     * @return True if automation is allowed to insert the given stack (ignoring stack size) into the given slot.
+     */
+    default boolean isItemValid(int slot, @Nonnull ItemStack stack) { return true; }
 }
