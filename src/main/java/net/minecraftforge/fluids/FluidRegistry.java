@@ -24,7 +24,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraftforge.fml.common.LoaderState;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -39,7 +38,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -69,7 +67,7 @@ public abstract class FluidRegistry
     static Map<Fluid,FluidDelegate> delegates = Maps.newHashMap();
 
     static boolean universalBucketEnabled = false;
-    static Set<Fluid> bucketFluids = Sets.newHashSet();
+    static Set<String> bucketFluids = Sets.newHashSet();
 
     public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
         @Override
@@ -289,18 +287,27 @@ public abstract class FluidRegistry
         {
             registerFluid(fluid);
         }
-        return bucketFluids.add(fluid);
+        return bucketFluids.add(fluid.getName());
     }
 
     /**
      * All fluids registered with the universal bucket
-     * @return An immutable set containing the fluids
+     * @return A new set containing the fluids
      */
     public static Set<Fluid> getBucketFluids()
     {
-        return ImmutableSet.copyOf(bucketFluids);
+        Set<Fluid> fluids = Sets.newHashSet();
+        for (String fluidName : bucketFluids)
+        {
+            fluids.add(getFluid(fluidName));
+        }
+        return fluids;
     }
 
+    public static boolean hasBucket(Fluid fluid)
+    {
+        return bucketFluids.contains(fluid.getName());
+    }
 
     public static Fluid lookupFluidForBlock(Block block)
     {
