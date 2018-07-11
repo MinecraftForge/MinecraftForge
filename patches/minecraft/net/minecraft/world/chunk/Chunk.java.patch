@@ -174,7 +174,12 @@
          {
              if (this.field_150816_i.containsKey(p_177426_1_))
              {
-@@ -854,12 +855,14 @@
+@@ -850,16 +851,18 @@
+     public void func_76631_c()
+     {
+         this.field_76636_d = true;
+-        this.field_76637_e.func_147448_a(this.field_150816_i.values());
++        this.field_76637_e.func_147448_a(com.google.common.collect.ImmutableList.copyOf(this.field_150816_i.values()));
  
          for (ClassInheritanceMultiMap<Entity> classinheritancemultimap : this.field_76645_j)
          {
