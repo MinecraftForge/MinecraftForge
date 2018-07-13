@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -37,7 +38,6 @@ import net.minecraftforge.common.MinecraftForge;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -68,6 +68,7 @@ public abstract class FluidRegistry
 
     static boolean universalBucketEnabled = false;
     static Set<String> bucketFluids = Sets.newHashSet();
+    static Set<Fluid> currentBucketFluids;
 
     public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
         @Override
@@ -140,6 +141,7 @@ public abstract class FluidRegistry
         fluids = localFluids;
         fluidNames = localFluidNames;
         fluidBlocks = null;
+        currentBucketFluids = null;
         for (FluidDelegate fd : delegates.values())
         {
             fd.rebind();
@@ -234,7 +236,7 @@ public abstract class FluidRegistry
      */
     public static Map<String, Fluid> getRegisteredFluids()
     {
-        return ImmutableMap.copyOf(fluids);
+        return Maps.unmodifiableBiMap(fluids);
     }
 
     /**
@@ -244,7 +246,7 @@ public abstract class FluidRegistry
     @Deprecated
     public static Map<Fluid, Integer> getRegisteredFluidIDs()
     {
-        return ImmutableMap.copyOf(fluidIDs);
+        return Maps.unmodifiableBiMap(fluidIDs);
     }
 
     /**
@@ -292,16 +294,20 @@ public abstract class FluidRegistry
 
     /**
      * All fluids registered with the universal bucket
-     * @return A new set containing the fluids
+     * @return A read-only set containing the fluids
      */
     public static Set<Fluid> getBucketFluids()
     {
-        Set<Fluid> fluids = Sets.newHashSet();
-        for (String fluidName : bucketFluids)
+        if (currentBucketFluids == null)
         {
-            fluids.add(getFluid(fluidName));
+            Set<Fluid> tmp = Sets.newHashSet();
+            for (String fluidName : bucketFluids)
+            {
+                tmp.add(getFluid(fluidName));
+            }
+            currentBucketFluids = Collections.unmodifiableSet(tmp);
         }
-        return fluids;
+        return currentBucketFluids;
     }
 
     public static boolean hasBucket(Fluid fluid)
