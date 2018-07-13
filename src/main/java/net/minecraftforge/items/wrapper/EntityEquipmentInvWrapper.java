@@ -179,6 +179,12 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         entity.setItemStackToSlot(equipmentSlot, stack);
     }
 
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        return isItemValid(slot, stack);
+    }
+
     protected EntityEquipmentSlot validateSlotIndex(final int slot)
     {
         if (slot < 0 || slot >= slots.size())
