@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.capabilities;
 
+import java.util.Map;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -31,7 +33,8 @@ public interface ICapabilityProvider
      * The return value of this MIGHT change during runtime if this object gains or loses support
      * for a capability. It is not required to call this function before calling 
      * {@link #getCapability(Capability, EnumFacing)}.
-     *
+     * <p>
+     * Basically, this method functions analogously to {@link Map#containsKey(Object)}.
      * <p>
      * <em>Example:</em>
      *   A Pipe getting a cover placed on one side causing it lose the Inventory attachment function for that side.
@@ -52,6 +55,8 @@ public interface ICapabilityProvider
      * <li>The return value <strong>CAN</strong> be null if the object does not support the capability.</il>
      * <li>The return value <strong>CAN</strong> be the same for multiple faces.</li>
      * </ul>
+     * <p>
+     * Basically, this method functions analogously to {@link Map#get(Object)}.
      *
      * @param capability The capability to check
      * @param facing The Side to check from, 
