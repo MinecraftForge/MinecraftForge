@@ -16,19 +16,19 @@ import javax.annotation.Nonnull;
 @Event.HasResult
 public class CanTakeItemEvent extends PlayerEvent
 {
-	private final ItemStack itemStack;
+    private final ItemStack itemStack;
 
-	public CanTakeItemEvent(@Nonnull ItemStack itemStack, EntityPlayer entityPlayer) {
-		super(entityPlayer);
-		this.itemStack = itemStack;
-	}
+    public CanTakeItemEvent(@Nonnull ItemStack itemStack, EntityPlayer entityPlayer) {
+        super(entityPlayer);
+        this.itemStack = itemStack;
+    }
 
-	/**
-	 * The {@link ItemStack} being moved.
-	 */
-	@Nonnull
-	public ItemStack getItemStack()
-	{
-		return itemStack;
-	}
+    /**
+     * The {@link ItemStack} being moved.
+     */
+    @Nonnull
+    public ItemStack getItemStack()
+    {
+        return itemStack;
+    }
 }
