@@ -84,20 +84,30 @@ public final class ModelDynBucket implements IModel
     private final ResourceLocation coverLocation;
     @Nullable
     private final Fluid fluid;
+
     private final boolean flipGas;
+    private final boolean tint;
 
     public ModelDynBucket()
     {
-        this(null, null, null, null, false);
+        this(null, null, null, null, false, true);
     }
 
+    /** @deprecated use {@link #ModelDynBucket(ResourceLocation, ResourceLocation, ResourceLocation, Fluid, boolean, boolean)} */
+    @Deprecated // TODO: remove
     public ModelDynBucket(@Nullable ResourceLocation baseLocation, @Nullable ResourceLocation liquidLocation, @Nullable ResourceLocation coverLocation, @Nullable Fluid fluid, boolean flipGas)
+    {
+        this(baseLocation, liquidLocation, coverLocation, fluid, flipGas, true);
+    }
+
+    public ModelDynBucket(@Nullable ResourceLocation baseLocation, @Nullable ResourceLocation liquidLocation, @Nullable ResourceLocation coverLocation, @Nullable Fluid fluid, boolean flipGas, boolean tint)
     {
         this.baseLocation = baseLocation;
         this.liquidLocation = liquidLocation;
         this.coverLocation = coverLocation;
         this.fluid = fluid;
         this.flipGas = flipGas;
+        this.tint = tint;
     }
 
     @Override
@@ -150,16 +160,16 @@ public final class ModelDynBucket implements IModel
         {
             TextureAtlasSprite liquid = bakedTextureGetter.apply(liquidLocation);
             // build liquid layer (inside)
-            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, NORTH_Z_FLUID, EnumFacing.NORTH, fluid.getColor()));
-            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, SOUTH_Z_FLUID, EnumFacing.SOUTH, fluid.getColor()));
+            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, NORTH_Z_FLUID, EnumFacing.NORTH, tint ? fluid.getColor() : 0xFFFFFFFF, 1));
+            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, SOUTH_Z_FLUID, EnumFacing.SOUTH, tint ? fluid.getColor() : 0xFFFFFFFF, 1));
             particleSprite = fluidSprite;
         }
         if (coverLocation != null)
         {
             // cover (the actual item around the other two)
             TextureAtlasSprite cover = bakedTextureGetter.apply(coverLocation);
-            builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, NORTH_Z_COVER, cover, EnumFacing.NORTH, 0xffffffff));
-            builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, SOUTH_Z_COVER, cover, EnumFacing.SOUTH, 0xffffffff));
+            builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, NORTH_Z_COVER, cover, EnumFacing.NORTH, 0xFFFFFFFF, 2));
+            builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, SOUTH_Z_COVER, cover, EnumFacing.SOUTH, 0xFFFFFFFF, 2));
             if (particleSprite == null)
             {
                 particleSprite = cover;
@@ -171,8 +181,9 @@ public final class ModelDynBucket implements IModel
 
     /**
      * Sets the liquid in the model.
-     * fluid - Name of the fluid in the FluidRegistry
-     * flipGas - If "true" the model will be flipped upside down if the liquid is a gas. If "false" it wont
+     * "fluid" - Name of the fluid in the FluidRegistry
+     * "flipGas" - If "true" the model will be flipped upside down if the liquid is a gas. If "false" it won't.
+     * "applyTint" - If "true" the model will tint the fluid quads according to the fluid's base color.
      * <p/>
      * If the fluid can't be found, water is used
      */
@@ -194,8 +205,20 @@ public final class ModelDynBucket implements IModel
                 throw new IllegalArgumentException(String.format("DynBucket custom data \"flipGas\" must have value \'true\' or \'false\' (was \'%s\')", flipStr));
         }
 
+        boolean tint = this.tint;
+        if (customData.containsKey("applyTint"))
+        {
+            String string = customData.get("applyTint");
+            switch (string)
+            {
+                case "true":  tint = true;  break;
+                case "false": tint = false; break;
+                default: throw new IllegalArgumentException(String.format("DynBucket custom data \"applyTint\" must have value \'true\' or \'false\' (was \'%s\')", string));
+            }
+        }
+
         // create new model with correct liquid
-        return new ModelDynBucket(baseLocation, liquidLocation, coverLocation, fluid, flip);
+        return new ModelDynBucket(baseLocation, liquidLocation, coverLocation, fluid, flip, tint);
     }
 
     /**
@@ -222,7 +245,7 @@ public final class ModelDynBucket implements IModel
         if (textures.containsKey("cover"))
             cover = new ResourceLocation(textures.get("cover"));
 
-        return new ModelDynBucket(base, liquid, cover, fluid, flipGas);
+        return new ModelDynBucket(base, liquid, cover, fluid, flipGas, tint);
     }
 
     public enum LoaderDynBucket implements ICustomModelLoader
