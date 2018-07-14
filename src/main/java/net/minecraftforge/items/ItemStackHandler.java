@@ -165,6 +165,12 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     }
 
     @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        return true;
+    }
+
+    @Override
     public NBTTagCompound serializeNBT()
     {
         NBTTagList nbtTagList = new NBTTagList();
