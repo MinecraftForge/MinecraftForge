@@ -42,7 +42,7 @@
      }
  
      public Multimap<String, AttributeModifier> func_111205_h(EntityEquipmentSlot p_111205_1_)
-@@ -94,4 +113,28 @@
+@@ -94,4 +113,29 @@
  
          return multimap;
      }
@@ -67,7 +67,8 @@
 +    @Override
 +    public Set<String> getToolClasses(ItemStack stack)
 +    {
-+        return toolClass != null ? com.google.common.collect.ImmutableSet.of(toolClass) : super.getToolClasses(stack);
++        com.google.common.collect.ImmutableSet.Builder<String> classes = com.google.common.collect.ImmutableSet.<String>builder().addAll(super.getToolClasses(stack));
++        return (toolClass != null ? classes.add(toolClass) : classes).build();
 +    }
 +    /*===================================== FORGE END =================================*/
  }
