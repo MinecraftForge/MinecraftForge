@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -56,8 +56,6 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     public void setStackInSlot(int slot, @Nonnull ItemStack stack)
     {
         validateSlotIndex(slot);
-        if (ItemStack.areItemStacksEqual(this.stacks.get(slot), stack))
-            return;
         this.stacks.set(slot, stack);
         onContentsChanged(slot);
     }

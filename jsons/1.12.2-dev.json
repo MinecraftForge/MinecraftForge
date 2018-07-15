@@ -10,7 +10,7 @@
       "name": "net.minecraft:launchwrapper:1.12"
     },
     {
-      "name": "jline:jline:2.13",
+      "name": "org.jline:jline:3.5.1",
       "children": ["sources"],
       "url" : "http://repo.maven.apache.org/maven2"
     },

@@ -9,3 +9,12 @@
              }
  
              this.func_150786_a(nbttagcompound);
+@@ -358,7 +358,7 @@
+             int j = this.readByte();
+             int k = this.readShort();
+             ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j, k);
+-            itemstack.func_77982_d(this.func_150793_b());
++            itemstack.func_77973_b().readNBTShareTag(itemstack, this.func_150793_b());
+             return itemstack;
+         }
+     }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.debug.mod;
 
 import net.minecraft.block.Block;
@@ -24,6 +25,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -48,6 +50,20 @@ public class RegistryOverrideTest
         {
             event.getRegistry().register(new BlockReplacement());
         }
+    }
+
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event)
+    {
+        if (!ENABLED) return;
+
+        event.getRegistry().register(
+                new Item()
+                        .setFull3D()
+                        .setUnlocalizedName("stick")
+                        .setCreativeTab(CreativeTabs.MATERIALS)
+                        .setRegistryName("minecraft:stick")
+        );
     }
 
     private static class BlockReplacement extends Block

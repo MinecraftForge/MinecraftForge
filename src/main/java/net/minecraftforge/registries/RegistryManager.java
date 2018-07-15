@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2018.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.registries;
 
 import java.util.Map;
@@ -75,7 +94,7 @@ public class RegistryManager
     }
 
     <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(ResourceLocation name, Class<V> type, ResourceLocation defaultKey, int min, int max,
-            @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable CreateCallback<V> create,
+            @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable CreateCallback<V> create, @Nullable ValidateCallback<V> validate,
             boolean persisted, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
     {
         Set<Class<?>> parents = Sets.newHashSet();
@@ -87,7 +106,7 @@ public class RegistryManager
             FMLLog.log.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
-        ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, this, allowOverrides, isModifiable, dummyFactory, missing);
+        ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, validate, this, allowOverrides, isModifiable, dummyFactory, missing);
         registries.put(name, reg);
         superTypes.put(type, name);
         if (persisted)

@@ -17,6 +17,15 @@
              {
                  IBlockState iblockstate = p_180650_1_.func_180495_p(p_180650_2_.func_177977_b());
  
+@@ -118,7 +119,7 @@
+         {
+             if (this.field_149764_J == Material.field_151587_i && p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).func_185904_a() == Material.field_151586_h)
+             {
+-                p_180650_1_.func_175656_a(p_180650_2_.func_177977_b(), Blocks.field_150348_b.func_176223_P());
++                p_180650_1_.func_175656_a(p_180650_2_.func_177977_b(), net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_180650_1_, p_180650_2_.func_177977_b(), p_180650_2_, Blocks.field_150348_b.func_176223_P()));
+                 this.func_180688_d(p_180650_1_, p_180650_2_.func_177977_b());
+                 return;
+             }
 @@ -166,6 +167,7 @@
                  }
                  else

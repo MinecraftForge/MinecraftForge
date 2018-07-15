@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2018.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client.model;
 
 import java.util.EnumMap;
@@ -82,14 +101,15 @@ public class PerspectiveMapWrapper implements IBakedModel
         return Pair.of(model, null);
     }
 
-    public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
-    public boolean isGui3d() { return parent.isGui3d(); }
-    public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
-    public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
+    @Override public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
+    @Override public boolean isAmbientOcclusion(IBlockState state) { return parent.isAmbientOcclusion(state); }
+    @Override public boolean isGui3d() { return parent.isGui3d(); }
+    @Override public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
+    @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
     @SuppressWarnings("deprecation")
-    public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) { return parent.getQuads(state, side, rand); }
-    public ItemOverrideList getOverrides() { return parent.getOverrides(); }
+    @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
+    @Override public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) { return parent.getQuads(state, side, rand); }
+    @Override public ItemOverrideList getOverrides() { return parent.getOverrides(); }
 
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)

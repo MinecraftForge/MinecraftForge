@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -85,7 +85,7 @@ public class AutomaticEventSubscriber
             }
             catch (Throwable e)
             {
-                FMLLog.log.error("An error occurred trying to load an EventBusSubscriber {} for modid {}", mod.getModId(), e);
+                FMLLog.log.error("An error occurred trying to load an EventBusSubscriber {} for modid {}", targ.getClassName(), mod.getModId(), e);
                 throw new LoaderException(e);
             }
         }
