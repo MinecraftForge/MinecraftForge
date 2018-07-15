@@ -76,7 +76,7 @@
                          return String.valueOf((Object)p_184391_2_.func_77973_b());
                      }
                  });
-+                crashreportcategory.func_189529_a("Registry Name", () -> p_184391_2_.func_77973_b().getRegistryName().toString());
++                crashreportcategory.func_189529_a("Registry Name", () -> String.valueOf(p_184391_2_.func_77973_b().getRegistryName()));
                  crashreportcategory.func_189529_a("Item Aux", new ICrashReportDetail<String>()
                  {
                      public String call() throws Exception
