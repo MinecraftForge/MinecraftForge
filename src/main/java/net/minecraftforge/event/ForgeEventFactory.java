@@ -116,6 +116,7 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.event.furnace.FurnaceSmeltEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -276,6 +277,14 @@ public class ForgeEventFactory
             }
         }
         return event.getBurnTime();
+    }
+
+    public static ItemStack getFurnaceOutput(@Nonnull ItemStack inputStack, @Nonnull ItemStack outputStack) {
+        FurnaceSmeltEvent event = new FurnaceSmeltEvent(inputStack, outputStack);
+        if(MinecraftForge.EVENT_BUS.post(event)) {
+            return event.getOutputStack();
+        }
+        return outputStack;
     }
 
     public static int getExperienceDrop(EntityLivingBase entity, EntityPlayer attackingPlayer, int originalExperience)

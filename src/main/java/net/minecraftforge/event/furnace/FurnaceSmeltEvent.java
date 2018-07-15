@@ -39,15 +39,17 @@ import javax.annotation.Nullable;
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
+ * <br>
+ * <b>Note this should be deprecated / removed in 1.13</b>
  **/
 @Cancelable
 public class FurnaceSmeltEvent extends Event {
     private final ItemStack inputStack;
     private ItemStack outputStack;
 
-    public FurnaceSmeltEvent(ItemStack inputStack) {
+    public FurnaceSmeltEvent(ItemStack inputStack, ItemStack outputStack) {
         this.inputStack = inputStack;
-        this.outputStack = ItemStack.EMPTY;
+        this.outputStack = outputStack;
     }
 
     public ItemStack getInputStack() {
