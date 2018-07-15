@@ -1454,6 +1454,7 @@ public class ForgeHooks
 
     public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
     {
+
         if (entity.canTrample(world, state.getBlock(), pos, fallDistance))
         {
             BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
