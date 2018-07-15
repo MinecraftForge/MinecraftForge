@@ -17,11 +17,3 @@
                              if (bufferedimage2.getWidth() == bufferedimage.getWidth() && bufferedimage2.getHeight() == bufferedimage.getHeight() && bufferedimage2.getType() == 6)
                              {
                                  for (int l = 0; l < bufferedimage2.getHeight(); ++l)
-@@ -98,6 +104,7 @@
-                     }
-                     finally
-                     {
-+                        if (iresource1 != null)
-                         IOUtils.closeQuietly((Closeable)iresource1);
-                     }
- 
