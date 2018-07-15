@@ -21,6 +21,7 @@ package net.minecraftforge.common.crafting;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,7 +29,6 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,7 +43,6 @@ import javax.annotation.Nonnull;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -839,4 +838,70 @@ public class CraftingHelper {
             IOUtils.closeQuietly(fs);
         }
     }
+
+    /**
+     * Load constants from the given file
+     * @return true if constants loaded successfully
+     */
+    public static boolean loadContext(JsonContext ctx, File file)
+    {
+        BufferedReader reader = null;
+        try
+        {
+            reader = new BufferedReader(new FileReader(file));
+            JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
+            ctx.loadConstants(json);
+            return true;
+        }
+        catch (IOException e)
+        {
+            FMLLog.log.error("Error loading constants from file: {}", file.getAbsolutePath(), e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(reader);
+        }
+        return false;
+    }
+
+    /**
+     * Load constants from file given by path
+     * @param path given relative to assets/modid
+     */
+    public static boolean loadContext(JsonContext ctx, String path)
+    {
+        ModContainer mod = Loader.instance().activeModContainer();
+        if(mod == null)
+        {
+            throw new RuntimeException("Error loading constants, no mod to load for found");
+        }
+        FileSystem fs = null;
+        try
+        {
+            Path fPath = null;
+            if (mod.getSource().isFile())
+            {
+                fs = FileSystems.newFileSystem(mod.getSource().toPath(), null);
+                fPath = fs.getPath("/assets/" + ctx.getModId() + path);
+            }
+            else if (mod.getSource().isDirectory())
+            {
+                fPath = mod.getSource().toPath().resolve("assets/" + ctx.getModId() + path);
+            }
+            if (fPath != null && Files.exists(fPath))
+            {
+                return loadContext(ctx, fPath.toFile());
+            }
+        }
+        catch (IOException e)
+        {
+            FMLLog.log.error("Error reading from file with relative path: {}", path, e);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(fs);
+        }
+        return false;
+    }
+
 }
