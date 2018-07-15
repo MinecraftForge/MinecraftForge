@@ -67,7 +67,7 @@ public class DynamicBannerEventTest
         @SubscribeEvent
         public void getBufferedImage(BufferedImageLoadEvent event)
         {
-            if (!event.resourceLocation.contains(MODID))
+            if (!event.getResourceLocation().contains(MODID))
                 return;
 
             BufferedImage baseImage = buildBackground();

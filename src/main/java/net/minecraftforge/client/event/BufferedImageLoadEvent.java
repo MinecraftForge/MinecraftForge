@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 public class BufferedImageLoadEvent extends Event
 {
 
-    public final String resourceLocation;
+    private final String resourceLocation;
     private BufferedImage result;
 
     public BufferedImageLoadEvent(String s)
@@ -44,5 +44,10 @@ public class BufferedImageLoadEvent extends Event
     public void setResultBufferedImage(@Nonnull BufferedImage result)
     {
         this.result = result;
+    }
+
+    public String getResourceLocation()
+    {
+        return resourceLocation;
     }
 }
