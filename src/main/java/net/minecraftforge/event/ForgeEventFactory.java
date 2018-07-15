@@ -46,6 +46,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
@@ -116,6 +117,7 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.event.furnace.FurnaceSmeltEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
@@ -276,6 +278,12 @@ public class ForgeEventFactory
             }
         }
         return event.getBurnTime();
+    }
+
+    public static ItemStack getFurnaceResult(@Nonnull TileEntityFurnace furnace, @Nonnull ItemStack inputStack, @Nonnull ItemStack outputStack) {
+        FurnaceSmeltEvent event = new FurnaceSmeltEvent(furnace, inputStack, outputStack);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getOutputStack();
     }
 
     public static int getExperienceDrop(EntityLivingBase entity, EntityPlayer attackingPlayer, int originalExperience)

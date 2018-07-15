@@ -53,7 +53,15 @@
                  }
              }
          }
-@@ -295,7 +295,7 @@
+@@ -288,14 +288,14 @@
+             ItemStack itemstack = this.field_145957_n.get(0);
+             ItemStack itemstack1 = FurnaceRecipes.func_77602_a().func_151395_a(itemstack);
+             ItemStack itemstack2 = this.field_145957_n.get(2);
+-
++            itemstack1 = net.minecraftforge.event.ForgeEventFactory.getFurnaceResult(this, itemstack, itemstack1);
+             if (itemstack2.func_190926_b())
+             {
+                 this.field_145957_n.set(2, itemstack1.func_77946_l());
              }
              else if (itemstack2.func_77973_b() == itemstack1.func_77973_b())
              {
