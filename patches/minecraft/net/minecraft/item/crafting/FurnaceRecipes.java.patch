@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/FurnaceRecipes.java
-@@ -113,6 +113,7 @@
+@@ -113,12 +113,15 @@
  
      public void func_151394_a(ItemStack p_151394_1_, ItemStack p_151394_2_, float p_151394_3_)
      {
@@ -8,7 +8,15 @@
          this.field_77604_b.put(p_151394_1_, p_151394_2_);
          this.field_77605_c.put(p_151394_2_, Float.valueOf(p_151394_3_));
      }
-@@ -142,6 +143,9 @@
+ 
+     public ItemStack func_151395_a(ItemStack p_151395_1_)
+     {
++        net.minecraftforge.event.furnace.FurnaceSmeltEvent event = new net.minecraftforge.event.furnace.FurnaceSmeltEvent(p_151395_1_);
++        if(net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return event.getOutputStack();
+         for (Entry<ItemStack, ItemStack> entry : this.field_77604_b.entrySet())
+         {
+             if (this.func_151397_a(p_151395_1_, entry.getKey()))
+@@ -142,6 +145,9 @@
  
      public float func_151398_b(ItemStack p_151398_1_)
      {

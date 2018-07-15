@@ -22,34 +22,32 @@ package net.minecraftforge.event.furnace;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
+
+import javax.annotation.Nullable;
 
 /**
  * FurnaceSmeltEvent is fired when a furnace smelts an item. <br>
  * <br>
- * The furnace will use {@link #getOutputStack} as the result <br>
+ * The furnace will use {@link #getOutputStack} as the result if this event is canceled <br>
  * <br>
- * This event is not {@link Cancelable}.<br>
+ * This event is {@link Cancelable}.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}.<br>
  **/
+@Cancelable
 public class FurnaceSmeltEvent extends Event {
-
-    private final TileEntityFurnace furnace;
     private final ItemStack inputStack;
     private ItemStack outputStack;
 
-    public FurnaceSmeltEvent(TileEntityFurnace furnace, ItemStack inputStack, ItemStack outputStack) {
-        this.furnace = furnace;
+    public FurnaceSmeltEvent(ItemStack inputStack) {
         this.inputStack = inputStack;
-        this.outputStack = outputStack;
-    }
-
-    public TileEntityFurnace getFurnace() {
-        return furnace;
+        this.outputStack = ItemStack.EMPTY;
     }
 
     public ItemStack getInputStack() {

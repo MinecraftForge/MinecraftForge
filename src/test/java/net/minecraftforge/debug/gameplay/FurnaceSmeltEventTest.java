@@ -17,12 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug.item;
+package net.minecraftforge.debug.gameplay;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.potion.PotionUtils;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.furnace.FurnaceSmeltEvent;
@@ -35,25 +33,25 @@ public class FurnaceSmeltEventTest {
 
     public static final String MODID = "furnacesmelteventtest";
 
-    private static final boolean ENABLED = false;
+    private static final boolean ENABLED = true;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         if (ENABLED) {
             MinecraftForge.EVENT_BUS.register(FurnaceSmeltEventTest.class);
         }
-        FurnaceRecipes.instance().addSmelting(Items.POTIONITEM, new ItemStack(Items.LINGERING_POTION), 0.1f);
     }
 
     @SubscribeEvent
     public static void onFurnaceSmelt(FurnaceSmeltEvent event) {
         ItemStack inputStack = event.getInputStack();
-        //If the input item is a potion item, and the furnace is on a diamond block, set the output item to be a lingering potion with the same effects as the input potion
-        if(inputStack.getItem() == Items.POTIONITEM && event.getFurnace().getWorld().getBlockState(event.getFurnace().getPos().down()).getBlock() == Blocks.DIAMOND_BLOCK) {
+        //If the input item is a potion item, set the output item to be a lingering potion with the same effects as the input potion
+        if(inputStack.getItem() == Items.POTIONITEM) {
             ItemStack out = new ItemStack(Items.LINGERING_POTION);
             PotionUtils.addPotionToItemStack(out, PotionUtils.getPotionFromItem(inputStack));
             PotionUtils.appendEffects(out, PotionUtils.getEffectsFromStack(inputStack));
             event.setOutputStack(out);
+            event.setCanceled(true);
         }
     }
 
