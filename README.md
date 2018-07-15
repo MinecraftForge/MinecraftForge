@@ -31,8 +31,7 @@ If you wish to actually inspect Forge, submit PRs or otherwise work
 [See the "Making Changes and Pull Requests" section in the Forge documentation](http://mcforge.readthedocs.io/en/latest/forgedev/#making-changes-and-pull-requests).
 
 ### Contributor License Agreement
-As stated in the [LICENSE-new](LICENSE-new.txt)
- file, we require all contributors to acknowledge the Forge Contributor
- License Agreement. Please ensure you have a valid email address
+We require all contributors to acknowledge the [Forge Contributor
+ License Agreement](https://cla-assistant.io/MinecraftForge/MinecraftForge). Please ensure you have a valid email address
  associated with your github account to do this. If you have previously
  signed it, you should be OK.
