@@ -5,7 +5,7 @@
      public static FurnaceRecipes func_77602_a()
      {
 -        return field_77606_a;
-+        return net.minecraftforge.common.smelting.SmeltingHandler.INSTANCE;
++        return net.minecraftforge.common.smelting.SmeltingHandler.instance();
      }
  
      protected FurnaceRecipes()
