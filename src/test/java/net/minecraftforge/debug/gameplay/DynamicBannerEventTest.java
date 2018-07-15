@@ -57,15 +57,14 @@ public class DynamicBannerEventTest
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        MinecraftForge.EVENT_BUS.register(new EventHandler());
         addBasicPattern("Y");
     }
 
+    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class EventHandler
     {
-        @SideOnly(Side.CLIENT)
         @SubscribeEvent
-        public void getBufferedImage(BufferedImageLoadEvent event)
+        public static void getBufferedImage(BufferedImageLoadEvent event)
         {
             if (!event.getResourceLocation().contains(MODID))
                 return;
