@@ -33,7 +33,7 @@ public class FurnaceSmeltEventTest {
 
     public static final String MODID = "furnacesmelteventtest";
 
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
