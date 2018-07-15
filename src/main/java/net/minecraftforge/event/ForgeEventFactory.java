@@ -783,7 +783,7 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? world.getGameRules().getBoolean("mobGriefing") : result == Result.ALLOW;
     }
 
-	public static BufferedImage getResourceBufferImage(String s) {
+    public static BufferedImage getResourceBufferImage(String s) {
         BufferedImageLoadEvent event = new BufferedImageLoadEvent(s);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getResultBufferedImage();
