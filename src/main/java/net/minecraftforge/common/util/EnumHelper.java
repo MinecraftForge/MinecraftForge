@@ -21,10 +21,13 @@ package net.minecraftforge.common.util;
 
 import java.lang.reflect.*;
 import java.util.*;
+import java.util.function.BiPredicate;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.block.BlockPressurePlate.Sensitivity;
@@ -78,7 +81,7 @@ public class EnumHelper
         {ToolMaterial.class, int.class, int.class, float.class, float.class, int.class},
         {EnumRarity.class, TextFormatting.class, String.class},
         {HorseArmorType.class, String.class, int.class},
-        {EntityLiving.SpawnPlacementType.class}
+        {EntityLiving.SpawnPlacementType.class, BiPredicate.class}
     };
 
     @Nullable
@@ -148,9 +151,9 @@ public class EnumHelper
     }
 
     @Nullable
-    public static EntityLiving.SpawnPlacementType addSpawnPlacementType(String name)
+    public static EntityLiving.SpawnPlacementType addSpawnPlacementType(String name, BiPredicate<IBlockAccess, BlockPos> predicate)
     {
-        return addEnum(EntityLiving.SpawnPlacementType.class, name);
+        return addEnum(EntityLiving.SpawnPlacementType.class, name, predicate);
     }
 
     /**

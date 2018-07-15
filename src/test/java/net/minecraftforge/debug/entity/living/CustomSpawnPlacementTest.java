@@ -23,7 +23,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.monster.EntityStray;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -33,14 +32,13 @@ public class CustomSpawnPlacementTest
 {
     static final String MOD_ID = "custom_spawn_placement_test";
     static final boolean ENABLED = false;
+    static final EntityLiving.SpawnPlacementType CUSTOM = EnumHelper.addSpawnPlacementType("CUSTOM", (world, pos) -> world.getBlockState(pos.down()).getMaterial() == Material.ICE);
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
         if (ENABLED)
         {
-            EntityLiving.SpawnPlacementType CUSTOM = EnumHelper.addSpawnPlacementType("CUSTOM");
-            ForgeHooks.registerPlacementType(CUSTOM, (world, pos) -> world.getBlockState(pos.down()).getMaterial() == Material.ICE);
             // needs edit to EntitySpawnPlacementRegistry to work
             EntitySpawnPlacementRegistry.setPlacementType(EntityStray.class, CUSTOM);
         }

@@ -54,7 +54,7 @@
          }
          else
          {
-+            return net.minecraftforge.common.ForgeHooks.canSpawnAt(p_180267_0_, p_180267_1_, p_180267_2_);
++            return p_180267_0_.canSpawnAt(p_180267_1_, p_180267_2_);
 +        }
 +    }
 +
