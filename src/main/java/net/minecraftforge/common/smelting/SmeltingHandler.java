@@ -29,15 +29,19 @@ import java.util.Map;
 
 public class SmeltingHandler extends FurnaceRecipes
 {
-    public static final SmeltingHandler INSTANCE = new SmeltingHandler();
+    private static final SmeltingHandler INSTANCE = new SmeltingHandler();
 
-    private final Map<ItemStack, ISmeltingRecipe> recipes = Maps.newHashMap();
-    private final Map<ItemStack, ItemStack> staticView;
+    private Map<ItemStack, ISmeltingRecipe> recipes;
+    private Map<ItemStack, ItemStack> staticView;
 
     private SmeltingHandler()
     {
         super();
-        staticView = Maps.transformValues(recipes, ISmeltingRecipe::getGenericOutput);
+    }
+
+    public static SmeltingHandler instance()
+    {
+        return SmeltingHandler.INSTANCE;
     }
 
     @Override
@@ -53,7 +57,7 @@ public class SmeltingHandler extends FurnaceRecipes
             FMLLog.log.info("Ignored smelting recipe with conflicting input: {} = {}", input, recipe.getGenericOutput());
             return;
         }
-        recipes.put(input, recipe);
+        getRecipes().put(input, recipe);
     }
 
     @Override
@@ -72,6 +76,15 @@ public class SmeltingHandler extends FurnaceRecipes
         return staticView;
     }
 
+    public Map<ItemStack, ISmeltingRecipe> getRecipes()
+    {
+        if (recipes != null)
+            return recipes;
+        recipes = Maps.newHashMap();
+        staticView = Maps.transformValues(recipes, ISmeltingRecipe::getGenericOutput);
+        return recipes;
+    }
+
     @Override
     public float getSmeltingExperience(ItemStack stack)
     {
@@ -84,7 +97,7 @@ public class SmeltingHandler extends FurnaceRecipes
 
     public ISmeltingRecipe findRecipe(ItemStack input)
     {
-        for (Map.Entry<ItemStack, ISmeltingRecipe> entry : this.recipes.entrySet())
+        for (Map.Entry<ItemStack, ISmeltingRecipe> entry : getRecipes().entrySet())
         {
             if (OreDictionary.itemMatches(entry.getKey(), input, false))
             {
