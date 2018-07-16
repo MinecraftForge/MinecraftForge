@@ -84,7 +84,7 @@
 +        return 89;
 +    }
 +
-+    public net.minecraft.util.ResourceLocation getBackgroundImageLocation()
++    public net.minecraft.util.ResourceLocation getBackgroundImage()
 +    {
 +        return new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.func_78015_f());
 +    }

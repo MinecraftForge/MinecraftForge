@@ -207,7 +207,7 @@
 +            }
 +        }
 +
-+        this.field_146297_k.func_110434_K().func_110577_a(creativetabs.getBackgroundImageLocation());
++        this.field_146297_k.func_110434_K().func_110577_a(creativetabs.getBackgroundImage());
          this.func_73729_b(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
          this.field_147062_A.func_146194_f();
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
