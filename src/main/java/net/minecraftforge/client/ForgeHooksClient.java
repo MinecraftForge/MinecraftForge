@@ -139,7 +139,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
-import java.util.Optional;
 import java.util.function.Predicate;
 
 import com.google.common.collect.Maps;
