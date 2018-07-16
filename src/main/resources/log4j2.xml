@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="com.mojang.util,net.minecraftforge.server.console.log4j">
+<Configuration status="warn" packages="net.minecraftforge.server.terminalconsole.util">
     <Appenders>
-        <TerminalConsole name="Console">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
-        </TerminalConsole>
-        <!-- Keep a console appender open so log4j2 doesn't close our main out stream if we redirect System.out to the logger -->
-        <Console name="SysOut" target="SYSTEM_OUT"/>
+        <Console name="SysOut" target="SYSTEM_OUT">
+            <PatternLayout>
+                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n">
+                    <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
+                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %msg%n"/>
+                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %msg%n"/>
+                </LoggerNamePatternSelector>
+            </PatternLayout>
+        </Console>
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+            <PatternLayout>
+                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n">
+                    <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
+                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %msg%n"/>
+                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %msg%n"/>
+                </LoggerNamePatternSelector>
+            </PatternLayout>
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
             <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
@@ -27,16 +37,16 @@
     </Appenders>
     <Loggers>
         <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
-        <Logger level="info" name="com.mojang"/>
-        <Logger level="info" name="net.minecraft"/>
+        <Logger level="${sys:forge.logging.mojang.level:-info}" name="com.mojang"/>
+        <Logger level="${sys:forge.logging.mojang.level:-info}" name="net.minecraft"/>
         <Root level="all">
             <filters>
                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
             </filters>
-            <AppenderRef ref="Console" level="info"/>
-            <AppenderRef ref="File" level="info"/>
-            <AppenderRef ref="ServerGuiConsole" level="info"/>
-            <AppenderRef ref="DebugFile"/>
+            <AppenderRef ref="SysOut" level="${sys:forge.logging.console.level:-info}"/>
+            <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
+            <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
+            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-trace}"/>
         </Root>
     </Loggers>
 </Configuration>

@@ -16,11 +16,8 @@ buildscript {
     }
 }
 
-repositories {
-        maven {
-            name = "local"
-            url = "file:///home/cpw/projects/repo"
-        }
+plugins {
+    id 'net.minecrell.licenser' version '0.4'
 }
 
 apply plugin: "maven"
@@ -86,6 +83,28 @@ processJson {
     ])
 }
 
+
+license {
+    header = project.file('LICENSE-header.txt')
+
+    include 'net/minecraftforge/'
+    exclude 'net/minecraftforge/fml/repackage/'
+    exclude 'net/minecraftforge/server/terminalconsole/'
+    exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
+    exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
+    exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
+    exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
+
+    tasks {
+        main {
+            files = project.files('src/main/java')
+        }
+        test {
+            files = project.files('src/test/java')
+        }
+    }
+}
+
 task changelog(type: JenkinsChangelog) {
 
     // skip if there is no forge jenkins pass
@@ -113,11 +132,10 @@ task crowdin(type: CrowdinDownload) {
 }
 
 def extraTxts = [
-    "CREDITS-fml.txt",
-    "LICENSE-new.txt",
-    "MinecraftForge-Credits.txt",
-    "Paulscode SoundSystem CodecIBXM License.txt",
-    "Paulscode IBXM Library License.txt"
+    "CREDITS.txt",
+    "LICENSE.txt",
+    "LICENSE-Paulscode SoundSystem CodecIBXM.txt",
+    "LICENSE-Paulscode IBXM Library.txt"
 ]
 if (project.hasProperty('forgeJenkinsPass'))
     extraTxts += changelog
@@ -234,14 +252,13 @@ task makeMdk(type: Zip) {
 
     from 'gradlew'
     from 'gradlew.bat'
+    from extraTxts
     into ('gradle') {
         from 'gradle'
     }
     into ('eclipse') {
         from 'mdk/eclipse'
     }
-    if (project.hasProperty('forgeJenkinsPass'))
-        from changelog.output
     from ('mdk') {
         filter(ReplaceTokens, tokens: [
         VERSION: project.version,
@@ -249,11 +266,6 @@ task makeMdk(type: Zip) {
         ])
         exclude 'eclipse'
         rename 'gitignore\\.txt', '.gitignore'
-        from 'MinecraftForge-Credits.txt'
-        from 'LICENSE-new.txt'
-        from 'Paulscode IBXM Library License.txt'
-        from 'Paulscode SoundSystem CodecIBXM License.txt'
-        from 'CREDITS-fml.txt'
     }
 }
 tasks.build.dependsOn makeMdk
