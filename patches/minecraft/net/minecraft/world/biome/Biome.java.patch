@@ -164,22 +164,23 @@
      public static void func_185358_q()
      {
          func_185354_a(0, "ocean", new BiomeOcean((new Biome.BiomeProperties("Ocean")).func_185398_c(-1.0F).func_185400_d(0.1F)));
-@@ -552,6 +635,7 @@
+@@ -552,6 +635,8 @@
              public Class <? extends EntityLiving > field_76300_b;
              public int field_76301_c;
              public int field_76299_d;
 +            private final java.lang.reflect.Constructor<? extends EntityLiving> ctr;
++            private final net.minecraftforge.fml.common.registry.EntityEntry entry;
  
              public SpawnListEntry(Class <? extends EntityLiving > p_i1970_1_, int p_i1970_2_, int p_i1970_3_, int p_i1970_4_)
              {
-@@ -559,12 +643,26 @@
+@@ -559,12 +644,26 @@
                  this.field_76300_b = p_i1970_1_;
                  this.field_76301_c = p_i1970_3_;
                  this.field_76299_d = p_i1970_4_;
-+
++                this.entry = net.minecraftforge.fml.common.registry.EntityRegistry.getEntry(p_i1970_1_);
 +                try
 +                {
-+                    ctr = p_i1970_1_.getConstructor(World.class);
++                    this.ctr = this.entry != null ? null : p_i1970_1_.getConstructor(World.class);
 +                }
 +                catch (NoSuchMethodException e)
 +                {
@@ -194,7 +195,7 @@
 +
 +            public EntityLiving newInstance(World world) throws Exception
 +            {
-+                return ctr.newInstance(world);
++                return this.entry != null ? (EntityLiving) this.entry.newInstance(world) : this.ctr.newInstance(world);
 +            }
          }
  
