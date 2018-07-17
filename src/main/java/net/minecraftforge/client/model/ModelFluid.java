@@ -152,6 +152,15 @@ public final class ModelFluid implements IModel
             super(transformation, transforms, format, color, still, flowing, overlay, gas, stateOption.isPresent(), getCorners(stateOption), getFlow(stateOption), getOverlay(stateOption));
         }
 
+        /**
+         * Gets the quantized fluid levels for each corner.
+         *
+         * Each value is packed into 10 bits of the model key, so max range is [0,1024).
+         * The value is currently stored/interpreted as the closest multiple of 1/864.
+         * The divisor is chosen here to allows likely flow values to be exactly representable
+         * while also providing good use of the available value range.
+         * (For fluids with default quanta, this evenly divides the per-block intervals of 1/9 by 96)
+         */
         private static int[] getCorners(Optional<IExtendedBlockState> stateOption)
         {
             int[] cornerRound = {0, 0, 0, 0};
@@ -167,6 +176,13 @@ public final class ModelFluid implements IModel
             return cornerRound;
         }
 
+        /**
+         * Gets the quantized flow direction of the fluid.
+         *
+         * This value comprises 11 bits of the model key, and is signed, so the max range is [-1024,1024).
+         * The value is currently stored as the angle rounded to the nearest degree.
+         * A value of -1000 is used to signify no flow.
+         */
         private static int getFlow(Optional<IExtendedBlockState> stateOption)
         {
             Float flow = -1000f;
@@ -180,6 +196,13 @@ public final class ModelFluid implements IModel
             return flowRound;
         }
 
+        /**
+         * Gets the overlay texture flag for each side.
+         *
+         * This value determines if the fluid "overlay" texture should be used for that side,
+         * instead of the normal "flowing" texture (if applicable for that fluid).
+         * The sides are stored here by their regular horizontal index.
+         */
         private static boolean[] getOverlay(Optional<IExtendedBlockState> stateOption)
         {
             boolean[] overlaySides = new boolean[4];
