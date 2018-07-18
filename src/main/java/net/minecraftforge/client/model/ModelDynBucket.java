@@ -134,8 +134,8 @@ public final class ModelDynBucket implements IModel
 
         ImmutableMap<TransformType, TRSRTransformation> transformMap = PerspectiveMapWrapper.getTransforms(state);
 
-        // if the fluid is a gas wi manipulate the initial state to be rotated 180° to turn it upside down
-        if (flipGas && fluid != null && fluid.isGaseous())
+        // if the fluid is lighter than air, will manipulate the initial state to be rotated 180° to turn it upside down
+        if (flipGas && fluid != null && fluid.isLighterThanAir())
         {
             state = new ModelStateComposition(state, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, new Quat4f(0, 0, 1, 0), null, null)));
         }
@@ -180,12 +180,12 @@ public final class ModelDynBucket implements IModel
     }
 
     /**
-     * Sets the liquid in the model.
-     * "fluid" - Name of the fluid in the FluidRegistry
-     * "flipGas" - If "true" the model will be flipped upside down if the liquid is a gas. If "false" it won't.
+     * Sets the fluid in the model.
+     * "fluid" - Name of the fluid in the fluid registry.
+     * "flipGas" - If "true" the model will be flipped upside down if the fluid is lighter than air. If "false" it won't.
      * "applyTint" - If "true" the model will tint the fluid quads according to the fluid's base color.
      * <p/>
-     * If the fluid can't be found, water is used
+     * If the fluid can't be found, water is used.
      */
     @Override
     public ModelDynBucket process(ImmutableMap<String, String> customData)
