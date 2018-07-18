@@ -586,13 +586,13 @@ public class ForgeHooksClient
     @Deprecated
     public static void registerTESRItemStack(Item item, int metadata, Class<? extends TileEntity> TileClass)
     {
-        tileItemMap.put(Pair.of(item, metadata), TileClass);
+    	tileItemMap.put(Pair.of(item, metadata), TileClass);
     }
-    
+
     public static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) 
     {
         BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
-        
+
         List<BakedQuad> allquads = new ArrayList<>();
 
         for (EnumFacing enumfacing : EnumFacing.values())
@@ -604,36 +604,36 @@ public class ForgeHooksClient
 
         // Current list of consecutive quads with the same lighting
         List<BakedQuad> segment = new ArrayList<>();
-        
+
         // Lighting of the current segment
         int segmentBlockLight = -1;
         int segmentSkyLight = -1;
-        
+
         for (int i = 0; i < allquads.size(); i++) {
-        	BakedQuad q = allquads.get(i);
+            BakedQuad q = allquads.get(i);
 
             // Light value of current quad
             int[] light = { 0, 0 };
-            
+
             // Fail-fast on ITEM, as it cannot have light data
             // Otherwise, inspect the format for TEX_2S (lightmap)
             if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().getElements().contains(DefaultVertexFormats.TEX_2S)) {
                 int lmapIndex = q.getFormat().getElements().indexOf(DefaultVertexFormats.TEX_2S);
-                
+
                 QuadGatheringTransformer qgt = new QuadGatheringTransformer() {
-                    
+
                     @Override
                     public void setTexture(TextureAtlasSprite texture){}
-                    
+
                     @Override
                     public void setQuadTint(int tint){}
-                    
+
                     @Override
                     public void setQuadOrientation(EnumFacing orientation){}
-                    
+
                     @Override
                     public void setApplyDiffuseLighting(boolean diffuse){}
-                    
+
                     @Override
                     protected void processQuad()
                     {
@@ -651,30 +651,30 @@ public class ForgeHooksClient
                 qgt.setVertexFormat(q.getFormat());
                 q.pipe(qgt);
             }
-            
+
             // If this is a new light value, draw the segment and flush it
             if (segmentBlockLight != light[0] || segmentSkyLight != light[1]) {
-            	if (i > 0) { // Make sure this isn't the first quad being processed
-            		drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
-            	}
-            	segmentBlockLight = light[0];
-            	segmentSkyLight = light[1];
+                if (i > 0) { // Make sure this isn't the first quad being processed
+                    drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
+                }
+                segmentBlockLight = light[0];
+                segmentSkyLight = light[1];
             }
-            
+
             segment.add(q);
         }
         drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
-        
+
         // Clean up render state if necessary
         if (segmentBlockLight > 0 && segmentSkyLight > 0) {
-        	OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
-        	GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
+            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
         }
     }
-    
+
     private static void drawSegment(BufferBuilder bufferbuilder, RenderItem ri, int color, ItemStack stack, List<BakedQuad> segment, int bl, int sl) {
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-        
+
         final float emissive = sl / 15f;
         GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
 
@@ -688,12 +688,12 @@ public class ForgeHooksClient
         } else if (sl > lastSl) {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, sl);
         } else {
-        	OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, lastSl);
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, lastSl);
         }
 
         ri.renderQuads(bufferbuilder, segment, color, stack);
         Tessellator.getInstance().draw();
-        
+
         // Preserve this as it represents the "world" lighting
         OpenGlHelper.lastBrightnessX = lastBl;
         OpenGlHelper.lastBrightnessY = lastSl;
