@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
@@ -588,6 +589,62 @@ public class ForgeHooksClient
     {
         tileItemMap.put(Pair.of(item, metadata), TileClass);
     }
+    
+    private static class LightGatheringTransformer extends QuadGatheringTransformer {
+        
+        int blockLight, skyLight;
+        private int lmapIndex = -1;
+        
+        private VertexFormat format;
+        
+        @Override
+        public void setVertexFormat(VertexFormat format) 
+        {
+            if (!Objects.equals(this.format, format)) 
+            {
+                super.setVertexFormat(format);
+                this.format = format;
+                this.lmapIndex = format.getElements().indexOf(DefaultVertexFormats.TEX_2S);
+            }
+        }
+        
+        boolean hasLighting() 
+        {
+            return lmapIndex >= 0;
+        }
+
+        @Override
+        protected void processQuad() 
+        {
+            // Reset light data
+            blockLight = 0;
+            skyLight = 0;
+            // Compute average light for all 4 vertices
+            for (int i = 0; i < 4; i++) 
+            {
+                blockLight += (int) ((quadData[lmapIndex][i][0] * 0xFFFF) / 0x20);
+                skyLight += (int) ((quadData[lmapIndex][i][1] * 0xFFFF) / 0x20);
+            }
+            blockLight /= 4;
+            skyLight /= 4;
+        }
+        
+        // Dummy overrides
+
+        @Override
+        public void setQuadTint(int tint) {}
+
+        @Override
+        public void setQuadOrientation(EnumFacing orientation) {}
+
+        @Override
+        public void setApplyDiffuseLighting(boolean diffuse) {}
+
+        @Override
+        public void setTexture(TextureAtlasSprite texture) {}
+    }
+    
+    private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
 
     public static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) 
     {
@@ -595,7 +652,7 @@ public class ForgeHooksClient
 
         List<BakedQuad> allquads = new ArrayList<>();
 
-        for (EnumFacing enumfacing : EnumFacing.values())
+        for (EnumFacing enumfacing : EnumFacing.VALUES)
         {
             allquads.addAll(model.getQuads(null, enumfacing, 0));
         }
@@ -609,70 +666,53 @@ public class ForgeHooksClient
         int segmentBlockLight = -1;
         int segmentSkyLight = -1;
 
-        for (int i = 0; i < allquads.size(); i++) {
+        for (int i = 0; i < allquads.size(); i++) 
+        {
             BakedQuad q = allquads.get(i);
 
-            // Light value of current quad
-            int[] light = { 0, 0 };
+            // Lighting of the current quad
+            int bl = 0;
+            int sl = 0;
 
             // Fail-fast on ITEM, as it cannot have light data
-            // Otherwise, inspect the format for TEX_2S (lightmap)
-            int lmapIndex;
-            // Strange design to avoid eagerly checking element index when not necessary
-            if (q.getFormat() != DefaultVertexFormats.ITEM && (lmapIndex = q.getFormat().getElements().indexOf(DefaultVertexFormats.TEX_2S)) != -1) {
-                QuadGatheringTransformer qgt = new QuadGatheringTransformer() {
-
-                    @Override
-                    public void setTexture(TextureAtlasSprite texture){}
-
-                    @Override
-                    public void setQuadTint(int tint){}
-
-                    @Override
-                    public void setQuadOrientation(EnumFacing orientation){}
-
-                    @Override
-                    public void setApplyDiffuseLighting(boolean diffuse){}
-
-                    @Override
-                    protected void processQuad()
-                    {
-                        int[] totalLight = new int[2];
-                        for (int i = 0; i < 4; i++) {
-                            float blight = (quadData[lmapIndex][i][0] * 0xFFFF) / 0x20;
-                            float slight = (quadData[lmapIndex][i][1] * 0xFFFF) / 0x20;
-                            totalLight[0] += (int) blight;
-                            totalLight[1] += (int) slight;
-                        }
-                        light[0] = totalLight[0] / 4;
-                        light[1] = totalLight[1] / 4;
-                    }
-                };
-                qgt.setVertexFormat(q.getFormat());
-                q.pipe(qgt);
+            if (q.getFormat() != DefaultVertexFormats.ITEM) 
+            {
+                lightGatherer.setVertexFormat(q.getFormat());
+                if (lightGatherer.hasLighting())
+                {
+                    q.pipe(lightGatherer);
+                }
+                bl = lightGatherer.blockLight;
+                sl = lightGatherer.skyLight;
             }
 
             // If this is a new light value, draw the segment and flush it
-            if (segmentBlockLight != light[0] || segmentSkyLight != light[1]) {
-                if (i > 0) { // Make sure this isn't the first quad being processed
-                    drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
+            if (segmentBlockLight != bl || segmentSkyLight != sl) 
+            {
+                if (i > 0) // Make sure this isn't the first quad being processed 
+                {
+                    drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight, true);
                 }
-                segmentBlockLight = light[0];
-                segmentSkyLight = light[1];
+                segmentBlockLight = bl;
+                segmentSkyLight = sl;
             }
 
             segment.add(q);
         }
-        drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
+        
+        boolean lightDirty = segmentBlockLight > 0 && segmentSkyLight > 0;
+        drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight, lightDirty);
 
         // Clean up render state if necessary
-        if (segmentBlockLight > 0 && segmentSkyLight > 0) {
+        if (lightDirty)
+        {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
             GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
         }
     }
 
-    private static void drawSegment(BufferBuilder bufferbuilder, RenderItem ri, int color, ItemStack stack, List<BakedQuad> segment, int bl, int sl) {
+    private static void drawSegment(BufferBuilder bufferbuilder, RenderItem ri, int color, ItemStack stack, List<BakedQuad> segment, int bl, int sl, boolean updateLighting) 
+    {
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 
         final float emissive = sl / 15f;
