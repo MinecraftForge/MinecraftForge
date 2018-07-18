@@ -586,7 +586,7 @@ public class ForgeHooksClient
     @Deprecated
     public static void registerTESRItemStack(Item item, int metadata, Class<? extends TileEntity> TileClass)
     {
-    	tileItemMap.put(Pair.of(item, metadata), TileClass);
+        tileItemMap.put(Pair.of(item, metadata), TileClass);
     }
 
     public static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) 
@@ -617,9 +617,9 @@ public class ForgeHooksClient
 
             // Fail-fast on ITEM, as it cannot have light data
             // Otherwise, inspect the format for TEX_2S (lightmap)
-            if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().getElements().contains(DefaultVertexFormats.TEX_2S)) {
-                int lmapIndex = q.getFormat().getElements().indexOf(DefaultVertexFormats.TEX_2S);
-
+            int lmapIndex;
+            // Strange design to avoid eagerly checking element index when not necessary
+            if (q.getFormat() != DefaultVertexFormats.ITEM && (lmapIndex = q.getFormat().getElements().indexOf(DefaultVertexFormats.TEX_2S)) != -1) {
                 QuadGatheringTransformer qgt = new QuadGatheringTransformer() {
 
                     @Override
@@ -681,15 +681,7 @@ public class ForgeHooksClient
         bl *= 16;
         sl *= 16;
         final float lastBl = OpenGlHelper.lastBrightnessX, lastSl = OpenGlHelper.lastBrightnessY;
-        if (bl > lastBl && sl > lastSl) {
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, sl);
-        } else if (bl > lastBl) {
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, lastSl);
-        } else if (sl > lastSl) {
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, sl);
-        } else {
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, lastSl);
-        }
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
 
         ri.renderQuads(bufferbuilder, segment, color, stack);
         Tessellator.getInstance().draw();
