@@ -625,8 +625,9 @@ public class ForgeHooksClient
                 blockLight += (int) ((quadData[lmapIndex][i][0] * 0xFFFF) / 0x20);
                 skyLight += (int) ((quadData[lmapIndex][i][1] * 0xFFFF) / 0x20);
             }
-            blockLight /= 4;
-            skyLight /= 4;
+            // Values must be multiplied by 16, divided by 4 for average => x4
+            blockLight *= 4;
+            skyLight *= 4;
         }
         
         // Dummy overrides
@@ -718,8 +719,6 @@ public class ForgeHooksClient
         final float emissive = sl / 15f;
         GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
 
-        bl *= 16;
-        sl *= 16;
         final float lastBl = OpenGlHelper.lastBrightnessX, lastSl = OpenGlHelper.lastBrightnessY;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
 
