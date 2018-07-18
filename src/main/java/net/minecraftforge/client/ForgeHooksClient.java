@@ -591,8 +591,7 @@ public class ForgeHooksClient
     
     public static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) 
     {
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferbuilder = tessellator.getBuffer();
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
         
         List<BakedQuad> allquads = new ArrayList<>();
 
@@ -602,12 +601,22 @@ public class ForgeHooksClient
         }
 
         allquads.addAll(model.getQuads(null, null, 0));
+
+        // Current list of consecutive quads with the same lighting
+        List<BakedQuad> segment = new ArrayList<>();
         
-        Deque<Pair<List<BakedQuad>, int[]>> segmentedQuads = new ArrayDeque<>();
+        // Lighting of the current segment
+        int segmentBlockLight = -1;
+        int segmentSkyLight = -1;
         
-        for (BakedQuad q : allquads) {
-            Pair<List<BakedQuad>, int[]> tail = segmentedQuads.peekLast();
+        for (int i = 0; i < allquads.size(); i++) {
+        	BakedQuad q = allquads.get(i);
+
+            // Light value of current quad
             int[] light = { 0, 0 };
+            
+            // Fail-fast on ITEM, as it cannot have light data
+            // Otherwise, inspect the format for TEX_2S (lightmap)
             if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().getElements().contains(DefaultVertexFormats.TEX_2S)) {
                 int lmapIndex = q.getFormat().getElements().indexOf(DefaultVertexFormats.TEX_2S);
                 
@@ -643,38 +652,45 @@ public class ForgeHooksClient
                 q.pipe(qgt);
             }
             
-            if (tail == null || !Arrays.equals(light, tail.getValue())) {
-                segmentedQuads.add(Pair.of(Lists.newArrayList(q), light));
-            } else {
-                tail.getLeft().add(q);
+            // If this is a new light value, draw the segment and flush it
+            if (segmentBlockLight != light[0] || segmentSkyLight != light[1] || i == allquads.size() - 1) {
+            	if (i > 0) { // Make sure this isn't the first quad being processed
+            		drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
+            	}
+            	segmentBlockLight = light[0];
+            	segmentSkyLight = light[1];
             }
+            
+            segment.add(q);
         }
+        drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
+    }
+    
+    private static void drawSegment(BufferBuilder bufferbuilder, RenderItem ri, int color, ItemStack stack, List<BakedQuad> segment, int bl, int sl) {
+        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
         
-        for (Pair<List<BakedQuad>, int[]> segment : segmentedQuads) {
-            bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
-            final int[] light = segment.getRight();
-            
-            final float emissive = light[1] / 15f;
+        final float emissive = sl / 15f;
+        GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
 
-            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
-
-            final float bl = light[0] * 16, sl = light[1] * 16;
-            final float lastBl = OpenGlHelper.lastBrightnessX, lastSl = OpenGlHelper.lastBrightnessY;
-            if (bl > lastBl && sl > lastSl) {
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, sl);
-            } else if (bl > lastBl) {
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, lastSl);
-            } else if (sl > lastSl) {
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, sl);
-            }
-
-            ri.renderQuads(bufferbuilder, segment.getLeft(), color, stack);
-            tessellator.draw();
-            
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, lastSl);
-
-            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+        bl *= 16;
+        sl *= 16;
+        final float lastBl = OpenGlHelper.lastBrightnessX, lastSl = OpenGlHelper.lastBrightnessY;
+        if (bl > lastBl && sl > lastSl) {
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, sl);
+        } else if (bl > lastBl) {
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, lastSl);
+        } else if (sl > lastSl) {
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, sl);
         }
+
+        ri.renderQuads(bufferbuilder, segment, color, stack);
+        Tessellator.getInstance().draw();
+        
+        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, lastSl);
+
+        GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+        
+        segment.clear();
     }
 
     /**
