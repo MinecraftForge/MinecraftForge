@@ -653,7 +653,7 @@ public class ForgeHooksClient
             }
             
             // If this is a new light value, draw the segment and flush it
-            if (segmentBlockLight != light[0] || segmentSkyLight != light[1] || i == allquads.size() - 1) {
+            if (segmentBlockLight != light[0] || segmentSkyLight != light[1]) {
             	if (i > 0) { // Make sure this isn't the first quad being processed
             		drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
             	}
