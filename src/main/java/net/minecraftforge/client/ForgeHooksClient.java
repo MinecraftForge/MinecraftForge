@@ -665,9 +665,11 @@ public class ForgeHooksClient
         }
         drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight);
         
-        // Clean up render state
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
-        GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+        // Clean up render state if necessary
+        if (segmentBlockLight > 0 && segmentSkyLight > 0) {
+        	OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
+        	GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+        }
     }
     
     private static void drawSegment(BufferBuilder bufferbuilder, RenderItem ri, int color, ItemStack stack, List<BakedQuad> segment, int bl, int sl) {
@@ -685,6 +687,8 @@ public class ForgeHooksClient
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, bl, lastSl);
         } else if (sl > lastSl) {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, sl);
+        } else {
+        	OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBl, lastSl);
         }
 
         ri.renderQuads(bufferbuilder, segment, color, stack);
