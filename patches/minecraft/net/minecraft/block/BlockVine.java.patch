@@ -27,12 +27,13 @@
                          {
                              EnumFacing enumfacing3 = enumfacing1.func_176746_e();
                              EnumFacing enumfacing4 = enumfacing1.func_176735_f();
-@@ -459,7 +459,17 @@
+@@ -459,7 +459,18 @@
  
          return i;
      }
 +    /*************************FORGE START***********************************/
-+    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity){ return true; }
++    // Full block ladder fix
++    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity, EnumFacing side){ return (state.func_177229_b(field_176273_b) && side == EnumFacing.SOUTH) || (state.func_177229_b(field_176279_N) && side == EnumFacing.NORTH) || (state.func_177229_b(field_176278_M) && side == EnumFacing.WEST) || (state.func_177229_b(field_176280_O) && side == EnumFacing.EAST); }
 +    @Override public boolean isShearable(ItemStack item, IBlockAccess world, BlockPos pos){ return true; }
 +    @Override
 +    public java.util.List<ItemStack> onSheared(ItemStack item, IBlockAccess world, BlockPos pos, int fortune)

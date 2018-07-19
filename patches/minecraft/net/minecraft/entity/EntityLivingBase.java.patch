@@ -151,7 +151,29 @@
          if (this.field_70146_Z.nextDouble() >= this.func_110148_a(SharedMonsterAttributes.field_111266_c).func_111126_e())
          {
              this.field_70160_al = true;
-@@ -1253,15 +1276,7 @@
+@@ -1240,10 +1263,20 @@
+ 
+     public boolean func_70617_f_()
+     {
++        for(EnumFacing side : EnumFacing.field_176754_o) {
++            if(this.isOnLadder(side)) {
++                return true;
++            }
++        }
++        return false;
++    }
++    
++    public boolean isOnLadder(EnumFacing side)
++    {
+         int i = MathHelper.func_76128_c(this.field_70165_t);
+         int j = MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b);
+         int k = MathHelper.func_76128_c(this.field_70161_v);
+-
++        
+         if (this instanceof EntityPlayer && ((EntityPlayer)this).func_175149_v())
+         {
+             return false;
+@@ -1253,15 +1286,7 @@
              BlockPos blockpos = new BlockPos(i, j, k);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
              Block block = iblockstate.func_177230_c();
@@ -164,11 +186,11 @@
 -            {
 -                return true;
 -            }
-+            return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(iblockstate, field_70170_p, new BlockPos(i, j, k), this);
++            return net.minecraftforge.common.ForgeHooks.isLivingOnLadder(iblockstate, field_70170_p, new BlockPos(i, j, k), this, side);
          }
      }
  
-@@ -1287,6 +1302,9 @@
+@@ -1287,6 +1312,9 @@
  
      public void func_180430_e(float p_180430_1_, float p_180430_2_)
      {
@@ -178,7 +200,7 @@
          super.func_180430_e(p_180430_1_, p_180430_2_);
          PotionEffect potioneffect = this.func_70660_b(MobEffects.field_76430_j);
          float f = potioneffect == null ? 0.0F : (float)(potioneffect.func_76458_c() + 1);
-@@ -1303,7 +1321,7 @@
+@@ -1303,7 +1331,7 @@
  
              if (iblockstate.func_185904_a() != Material.field_151579_a)
              {
@@ -187,7 +209,7 @@
                  this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
              }
          }
-@@ -1380,17 +1398,20 @@
+@@ -1380,17 +1408,20 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -209,7 +231,7 @@
                  this.func_110149_m(this.func_110139_bj() - p_70665_2_);
              }
          }
-@@ -1447,6 +1468,11 @@
+@@ -1447,6 +1478,11 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
      {
@@ -221,7 +243,7 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1694,7 +1720,7 @@
+@@ -1694,7 +1730,7 @@
  
                      if (!this.field_70170_p.func_184143_b(axisalignedbb1))
                      {
@@ -230,7 +252,7 @@
                          {
                              this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
                              return;
-@@ -1702,14 +1728,14 @@
+@@ -1702,14 +1738,14 @@
  
                          BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
@@ -247,7 +269,7 @@
                      {
                          d1 = d11;
                          d13 = this.field_70163_u + 2.0D;
-@@ -1781,6 +1807,7 @@
+@@ -1781,6 +1817,7 @@
          }
  
          this.field_70160_al = true;
@@ -255,7 +277,34 @@
      }
  
      protected void func_70629_bd()
-@@ -1874,7 +1901,8 @@
+@@ -1797,9 +1834,25 @@
+     {
+         return 0.8F;
+     }
+-
++    
+     public void func_191986_a(float p_191986_1_, float p_191986_2_, float p_191986_3_)
+     {
++        EnumFacing side = this.func_174811_aO();
++        
++        if(p_191986_3_ != p_191986_1_)
++        {
++            if(Math.abs(p_191986_3_) > Math.abs(p_191986_1_))
++            {
++                // Mostly going forward/backwards
++                side = p_191986_3_ > 0 ? side : side.func_176734_d();
++            }
++            else
++            {
++                // Mostly going sideways
++                side = p_191986_1_ > 0 ? side.func_176735_f() : side.func_176746_e();
++            }
++        }
++        
+         if (this.func_70613_aW() || this.func_184186_bw())
+         {
+             if (!this.func_70090_H() || this instanceof EntityPlayer && ((EntityPlayer)this).field_71075_bZ.field_75100_b)
+@@ -1874,7 +1927,8 @@
  
                          if (this.field_70122_E)
                          {
@@ -265,7 +314,7 @@
                          }
  
                          float f7 = 0.16277136F / (f6 * f6 * f6);
-@@ -1894,7 +1922,8 @@
+@@ -1894,10 +1948,11 @@
  
                          if (this.field_70122_E)
                          {
@@ -273,9 +322,23 @@
 +                            IBlockState underState = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos.func_189532_c(this.field_70165_t, this.func_174813_aQ().field_72338_b - 1.0D, this.field_70161_v));
 +                            f6 = underState.func_177230_c().getSlipperiness(underState, this.field_70170_p, blockpos$pooledmutableblockpos, this) * 0.91F;
                          }
+-
+-                        if (this.func_70617_f_())
++                        
++                        if (this.isOnLadder(side))
+                         {
+                             float f9 = 0.15F;
+                             this.field_70159_w = MathHelper.func_151237_a(this.field_70159_w, -0.15000000596046448D, 0.15000000596046448D);
+@@ -1919,7 +1974,7 @@
  
-                         if (this.func_70617_f_())
-@@ -2054,6 +2083,7 @@
+                         this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
+ 
+-                        if (this.field_70123_F && this.func_70617_f_())
++                        if (this.field_70123_F && this.isOnLadder(side))
+                         {
+                             this.field_70181_x = 0.2D;
+                         }
+@@ -2054,6 +2109,7 @@
  
      public void func_70071_h_()
      {
@@ -283,7 +346,7 @@
          super.func_70071_h_();
          this.func_184608_ct();
  
-@@ -2096,7 +2126,9 @@
+@@ -2096,7 +2152,9 @@
  
                  if (!ItemStack.func_77989_b(itemstack1, itemstack))
                  {
@@ -293,7 +356,7 @@
  
                      if (!itemstack.func_190926_b())
                      {
-@@ -2575,6 +2607,40 @@
+@@ -2575,6 +2633,40 @@
          this.field_70752_e = true;
      }
  
@@ -334,7 +397,7 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2595,12 +2661,19 @@
+@@ -2595,12 +2687,19 @@
  
              if (itemstack == this.field_184627_bm)
              {
@@ -355,7 +418,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2618,8 +2691,10 @@
+@@ -2618,8 +2717,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -367,7 +430,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +2775,10 @@
+@@ -2700,7 +2801,10 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -379,7 +442,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +2802,8 @@
+@@ -2724,7 +2828,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -389,7 +452,7 @@
          }
  
          this.func_184602_cy();
-@@ -2852,6 +2931,31 @@
+@@ -2852,6 +2957,31 @@
          return true;
      }
  

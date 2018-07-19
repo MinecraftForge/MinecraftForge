@@ -642,17 +642,19 @@ public class ForgeHooks
         return value >= maxXZDistance ? maxXZDistance : value;
     }
 
-    public static boolean isLivingOnLadder(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entity)
+    public static boolean isLivingOnLadder(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entity, EnumFacing side)
     {
         boolean isSpectator = (entity instanceof EntityPlayer && ((EntityPlayer)entity).isSpectator());
         if (isSpectator) return false;
         if (!ForgeModContainer.fullBoundingBoxLadders)
         {
-            return state.getBlock().isLadder(state, world, pos, entity);
+        	Block b1 = state.getBlock();
+        	Block b2 = world.getBlockState(pos.offset(side)).getBlock();
+        	return b1.isLadder(state, world, pos, entity) || b1.isLadder(state, world, pos, entity, side) || b2.isLadder(state, world, pos, entity) || b2.isLadder(state, world, pos, entity, side);
         }
-        else
+    	else
         {
-            AxisAlignedBB bb = entity.getEntityBoundingBox();
+        	AxisAlignedBB bb = entity.getEntityBoundingBox().grow(0.1);
             int mX = MathHelper.floor(bb.minX);
             int mY = MathHelper.floor(bb.minY);
             int mZ = MathHelper.floor(bb.minZ);
@@ -664,7 +666,7 @@ public class ForgeHooks
                     {
                         BlockPos tmp = new BlockPos(x2, y2, z2);
                         state = world.getBlockState(tmp);
-                        if (state.getBlock().isLadder(state, world, tmp, entity))
+                        if (state.getBlock().isLadder(state, world, tmp, entity, side))
                         {
                             return true;
                         }
