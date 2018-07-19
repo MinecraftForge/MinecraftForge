@@ -151,12 +151,14 @@
          if (this.field_70146_Z.nextDouble() >= this.func_110148_a(SharedMonsterAttributes.field_111266_c).func_111126_e())
          {
              this.field_70160_al = true;
-@@ -1240,10 +1263,20 @@
+@@ -1240,10 +1263,22 @@
  
      public boolean func_70617_f_()
      {
-+        for(EnumFacing side : EnumFacing.field_176754_o) {
-+            if(this.isOnLadder(side)) {
++        for(EnumFacing side : EnumFacing.field_176754_o)
++        {
++            if(this.isOnLadder(side))
++            {
 +                return true;
 +            }
 +        }
@@ -173,7 +175,7 @@
          if (this instanceof EntityPlayer && ((EntityPlayer)this).func_175149_v())
          {
              return false;
-@@ -1253,15 +1286,7 @@
+@@ -1253,15 +1288,7 @@
              BlockPos blockpos = new BlockPos(i, j, k);
              IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
              Block block = iblockstate.func_177230_c();
@@ -190,7 +192,7 @@
          }
      }
  
-@@ -1287,6 +1312,9 @@
+@@ -1287,6 +1314,9 @@
  
      public void func_180430_e(float p_180430_1_, float p_180430_2_)
      {
@@ -200,7 +202,7 @@
          super.func_180430_e(p_180430_1_, p_180430_2_);
          PotionEffect potioneffect = this.func_70660_b(MobEffects.field_76430_j);
          float f = potioneffect == null ? 0.0F : (float)(potioneffect.func_76458_c() + 1);
-@@ -1303,7 +1331,7 @@
+@@ -1303,7 +1333,7 @@
  
              if (iblockstate.func_185904_a() != Material.field_151579_a)
              {
@@ -209,7 +211,7 @@
                  this.func_184185_a(soundtype.func_185842_g(), soundtype.func_185843_a() * 0.5F, soundtype.func_185847_b() * 0.75F);
              }
          }
-@@ -1380,17 +1408,20 @@
+@@ -1380,17 +1410,20 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -231,7 +233,7 @@
                  this.func_110149_m(this.func_110139_bj() - p_70665_2_);
              }
          }
-@@ -1447,6 +1478,11 @@
+@@ -1447,6 +1480,11 @@
  
      public void func_184609_a(EnumHand p_184609_1_)
      {
@@ -243,7 +245,7 @@
          if (!this.field_82175_bq || this.field_110158_av >= this.func_82166_i() / 2 || this.field_110158_av < 0)
          {
              this.field_110158_av = -1;
-@@ -1694,7 +1730,7 @@
+@@ -1694,7 +1732,7 @@
  
                      if (!this.field_70170_p.func_184143_b(axisalignedbb1))
                      {
@@ -252,7 +254,7 @@
                          {
                              this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
                              return;
-@@ -1702,14 +1738,14 @@
+@@ -1702,14 +1740,14 @@
  
                          BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
@@ -269,7 +271,7 @@
                      {
                          d1 = d11;
                          d13 = this.field_70163_u + 2.0D;
-@@ -1781,6 +1817,7 @@
+@@ -1781,6 +1819,7 @@
          }
  
          this.field_70160_al = true;
@@ -277,7 +279,7 @@
      }
  
      protected void func_70629_bd()
-@@ -1797,9 +1834,25 @@
+@@ -1797,9 +1836,23 @@
      {
          return 0.8F;
      }
@@ -291,12 +293,10 @@
 +        {
 +            if(Math.abs(p_191986_3_) > Math.abs(p_191986_1_))
 +            {
-+                // Mostly going forward/backwards
 +                side = p_191986_3_ > 0 ? side : side.func_176734_d();
 +            }
 +            else
 +            {
-+                // Mostly going sideways
 +                side = p_191986_1_ > 0 ? side.func_176735_f() : side.func_176746_e();
 +            }
 +        }

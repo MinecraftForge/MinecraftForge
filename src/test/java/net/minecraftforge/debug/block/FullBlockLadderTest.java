@@ -7,10 +7,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod(modid="test_full_ladder")
 public class FullBlockLadderTest
@@ -19,9 +21,14 @@ public class FullBlockLadderTest
     @EventHandler
     public static void onPreInit(FMLPreInitializationEvent e)
     {
-        ForgeRegistries.BLOCKS.register(new FullLadder());
+        MinecraftForge.EVENT_BUS.register(BlockRegistry.class);
     }
-        
+     
+    public static class BlockRegistry
+    {
+        @SubscribeEvent public static void onBlockRegistry(RegistryEvent.Register<Block> e) { e.getRegistry().register(new FullLadder()); }
+    }
+    
     public static class FullLadder extends Block
     {
         

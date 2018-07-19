@@ -302,7 +302,7 @@
 +     * @param side The side the entity is trying to climb on this block
 +     * @return True if the block should act like a ladder
 +     */
-+    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity, EnumFacing side) { return false; }
++    public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity, EnumFacing side) { return this.isLadder(state, world, pos, entity); }
 +
 +    /**
 +     * Return true if the block is a normal, solid cube.  This

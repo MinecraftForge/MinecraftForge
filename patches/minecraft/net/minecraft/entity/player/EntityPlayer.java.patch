@@ -451,7 +451,7 @@
          if (p_180473_1_ != null)
          {
              this.field_71077_c = p_180473_1_;
-@@ -1721,6 +1827,22 @@
+@@ -1721,6 +1827,20 @@
              super.func_191986_a(p_191986_1_, p_191986_2_, p_191986_3_);
          }
  
@@ -461,12 +461,10 @@
 +        {
 +            if(Math.abs(p_191986_3_) > Math.abs(p_191986_1_))
 +            {
-+                // Mostly going forward/backwards
 +                side = p_191986_3_ > 0 ? side : side.func_176734_d();
 +            }
 +            else
 +            {
-+                // Mostly going sideways
 +                side = p_191986_1_ > 0 ? side.func_176735_f() : side.func_176746_e();
 +            }
 +        }
@@ -474,7 +472,7 @@
          this.func_71000_j(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
      }
  
-@@ -1839,6 +1961,10 @@
+@@ -1839,6 +1959,10 @@
  
              super.func_180430_e(p_180430_1_, p_180430_2_);
          }
@@ -485,7 +483,7 @@
      }
  
      protected void func_71061_d_()
-@@ -2176,7 +2302,10 @@
+@@ -2176,7 +2300,10 @@
  
      public ITextComponent func_145748_c_()
      {
@@ -497,7 +495,7 @@
          itextcomponent.func_150256_b().func_150241_a(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/msg " + this.func_70005_c_() + " "));
          itextcomponent.func_150256_b().func_150209_a(this.func_174823_aP());
          itextcomponent.func_150256_b().func_179989_a(this.func_70005_c_());
-@@ -2185,7 +2314,7 @@
+@@ -2185,7 +2312,7 @@
  
      public float func_70047_e()
      {
@@ -506,7 +504,7 @@
  
          if (this.func_70608_bn())
          {
-@@ -2421,6 +2550,168 @@
+@@ -2421,6 +2548,168 @@
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }
  
