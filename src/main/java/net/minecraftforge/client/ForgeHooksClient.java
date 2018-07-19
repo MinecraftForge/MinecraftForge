@@ -701,7 +701,7 @@ public class ForgeHooksClient
             segment.add(q);
         }
         
-        boolean lightDirty = segmentBlockLight > 0 && segmentSkyLight > 0;
+        boolean lightDirty = segment.size() < allquads.size(); // Was at least one change in lighting for this model
         drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight, lightDirty);
 
         // Clean up render state if necessary
@@ -716,11 +716,15 @@ public class ForgeHooksClient
     {
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 
-        final float emissive = sl / 15f;
-        GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
-
-        final float lastBl = OpenGlHelper.lastBrightnessX, lastSl = OpenGlHelper.lastBrightnessY;
-        OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
+        float lastBl = OpenGlHelper.lastBrightnessX;
+        float lastSl = OpenGlHelper.lastBrightnessY;
+        if (updateLighting) 
+        {
+            final float emissive = (float) sl / 0xF0;
+            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
+    
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
+        }
 
         ri.renderQuads(bufferbuilder, segment, color, stack);
         Tessellator.getInstance().draw();
