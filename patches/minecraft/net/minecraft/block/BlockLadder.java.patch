@@ -1,18 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLadder.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLadder.java
-@@ -16,6 +16,7 @@
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
-+import net.minecraftforge.client.model.b3d.B3DModel.Face;
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
- 
-@@ -158,6 +159,8 @@
+@@ -158,6 +158,8 @@
          return new BlockStateContainer(this, new IProperty[] {field_176382_a});
      }
  
-+    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity, EnumFacing side) { return side == state.func_177229_b(field_176382_a).func_176734_d(); }
++    @Override public boolean isLadder(IBlockState state, IBlockAccess world, BlockPos pos, EntityLivingBase entity, EnumFacing side) { return side == state.func_177229_b(field_176382_a).func_176734_d(); }	
 +
      public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
      {
