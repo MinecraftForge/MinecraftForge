@@ -252,14 +252,13 @@ task makeMdk(type: Zip) {
 
     from 'gradlew'
     from 'gradlew.bat'
+    from extraTxts
     into ('gradle') {
         from 'gradle'
     }
     into ('eclipse') {
         from 'mdk/eclipse'
     }
-    if (project.hasProperty('forgeJenkinsPass'))
-        from changelog.output
     from ('mdk') {
         filter(ReplaceTokens, tokens: [
         VERSION: project.version,
@@ -267,11 +266,6 @@ task makeMdk(type: Zip) {
         ])
         exclude 'eclipse'
         rename 'gitignore\\.txt', '.gitignore'
-        from 'MinecraftForge-Credits.txt'
-        from 'LICENSE-new.txt'
-        from 'Paulscode IBXM Library License.txt'
-        from 'Paulscode SoundSystem CodecIBXM License.txt'
-        from 'CREDITS-fml.txt'
     }
 }
 tasks.build.dependsOn makeMdk

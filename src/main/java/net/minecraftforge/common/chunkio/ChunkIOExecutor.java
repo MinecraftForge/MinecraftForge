@@ -41,7 +41,7 @@ public class ChunkIOExecutor
     private static final int PLAYERS_PER_THREAD = 50;
 
     private static final Map<QueuedChunk, ChunkIOProvider> tasks = Maps.newConcurrentMap();
-    private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(BASE_THREADS, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
+    private static final ThreadPoolExecutor pool = new ChunkIOThreadPoolExecutor(BASE_THREADS, Integer.MAX_VALUE, 60L, TimeUnit.SECONDS,
         new LinkedBlockingQueue<Runnable>(),
         new ThreadFactory()
         {
