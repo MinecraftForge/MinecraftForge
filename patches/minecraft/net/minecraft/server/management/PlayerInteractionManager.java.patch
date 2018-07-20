@@ -212,7 +212,7 @@
                      p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
                  }
  
-@@ -402,13 +428,24 @@
+@@ -402,13 +428,27 @@
          }
          else
          {
@@ -222,16 +222,19 @@
 +                    .onRightClickBlock(p_187251_1_, p_187251_4_, p_187251_5_, p_187251_6_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(p_187251_1_, reachDist + 1));
 +            if (event.isCanceled()) return event.getCancellationResult();
 +
-+            EnumActionResult ret = p_187251_3_.onItemUseFirst(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
-+            if (ret != EnumActionResult.PASS) return ret;
-+
-+            boolean bypass = p_187251_1_.func_184614_ca().doesSneakBypassUse(p_187251_2_, p_187251_5_, p_187251_1_) && p_187251_1_.func_184592_cb().doesSneakBypassUse(p_187251_2_, p_187251_5_, p_187251_1_);
 +            EnumActionResult result = EnumActionResult.PASS;
++            if (event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
+             {
+-                IBlockState iblockstate = p_187251_2_.func_180495_p(p_187251_5_);
++                result = p_187251_3_.onItemUseFirst(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
++                if (result != EnumActionResult.PASS) return result ;
++            }
+ 
++            boolean bypass = p_187251_1_.func_184614_ca().doesSneakBypassUse(p_187251_2_, p_187251_5_, p_187251_1_) && p_187251_1_.func_184592_cb().doesSneakBypassUse(p_187251_2_, p_187251_5_, p_187251_1_);
 +
 +            if (!p_187251_1_.func_70093_af() || bypass || event.getUseBlock() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
-             {
-                 IBlockState iblockstate = p_187251_2_.func_180495_p(p_187251_5_);
--
++            {
++                IBlockState iblockstate = p_187251_2_.func_180495_p(p_187251_5_);
 +                if(event.getUseBlock() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
                  if (iblockstate.func_177230_c().func_180639_a(p_187251_2_, p_187251_5_, iblockstate, p_187251_1_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_))
                  {
@@ -240,7 +243,7 @@
                  }
              }
  
-@@ -436,14 +473,22 @@
+@@ -436,14 +476,22 @@
                  {
                      int j = p_187251_3_.func_77960_j();
                      int i = p_187251_3_.func_190916_E();
@@ -264,7 +267,7 @@
                  }
              }
          }
-@@ -453,4 +498,16 @@
+@@ -453,4 +501,16 @@
      {
          this.field_73092_a = p_73080_1_;
      }
