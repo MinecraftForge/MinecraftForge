@@ -19,12 +19,16 @@
 
 package net.minecraftforge.client;
 
+import java.awt.image.BufferedImage;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
@@ -123,5 +127,19 @@ public class MinecraftForgeClient
     {
         regionCache.invalidateAll();
         regionCache.cleanUp();
+    }
+
+    private static HashMap<ResourceLocation, Supplier<BufferedImage>> bannerBufferedImageSuppliers = new HashMap<ResourceLocation, Supplier<BufferedImage>>();
+    public static void registerBannerImageSupplier(ResourceLocation resourceLocation, Supplier<BufferedImage> supplier)
+    {
+        bannerBufferedImageSuppliers.put(resourceLocation, supplier);
+    }
+
+    public static BufferedImage getBannerImage(ResourceLocation resourceLocation)
+    {
+        Supplier<BufferedImage> supplier = bannerBufferedImageSuppliers.get(resourceLocation);
+        if (supplier != null)
+            return supplier.get();
+        return null;
     }
 }

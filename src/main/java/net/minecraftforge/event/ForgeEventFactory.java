@@ -19,7 +19,6 @@
 
 package net.minecraftforge.event;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.EnumSet;
 import java.util.List;
@@ -74,7 +73,6 @@ import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
-import net.minecraftforge.client.event.BufferedImageLoadEvent;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderBlockOverlayEvent;
@@ -782,10 +780,4 @@ public class ForgeEventFactory
         Result result = event.getResult();
         return result == Result.DEFAULT ? world.getGameRules().getBoolean("mobGriefing") : result == Result.ALLOW;
     }
-
-    public static BufferedImage getResourceBufferImage(String s) {
-        BufferedImageLoadEvent event = new BufferedImageLoadEvent(s);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResultBufferedImage();
-	}
 }

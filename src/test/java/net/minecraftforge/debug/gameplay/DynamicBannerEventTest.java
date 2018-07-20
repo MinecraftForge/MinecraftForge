@@ -20,7 +20,6 @@
 package net.minecraftforge.debug.gameplay;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -37,11 +36,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.BannerPattern;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.BufferedImageLoadEvent;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -52,40 +51,37 @@ public class DynamicBannerEventTest
     public static final String VERSION = "1.0";
 
     public static final CreativeTabs bannerTab = new CreativeTabBanners("dynbanner.banners");
+    @SidedProxy
+    public static CommonProxy proxy = null;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        addBasicPattern("Y");
+        BannerPattern pattern = addBasicPattern("Y");
+        proxy.registerSupplier(new ResourceLocation("textures/entity/banner/" + pattern.getFileName() + ".png"));
+        proxy.registerSupplier(new ResourceLocation("textures/entity/shield/" + pattern.getFileName() + ".png"));
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
-    public static class EventHandler
+    public static abstract class CommonProxy
     {
-        @SubscribeEvent
-        public static void getBufferedImage(BufferedImageLoadEvent event)
+        public void registerSupplier(ResourceLocation location)
         {
-            if (!event.getResourceLocation().contains(MODID))
-                return;
+        }
+    }
 
-            BufferedImage baseImage = buildBackground();
-            ColorModel cm = baseImage.getColorModel();
-            BufferedImage copy = new BufferedImage(cm, baseImage.copyData(null), cm.isAlphaPremultiplied(), null);
+    public static final class ServerProxy extends CommonProxy
+    {
+    }
 
-            int width = 11;
-            int height = 30;
-            int startX = 5;
-            int startZ = 5;
-
-            for (int xx = startX; xx <= startX + width; xx++)
-            {
-                for (int zz = startZ; zz <= startZ + height; zz++)
-                {
-                    copy.setRGB(xx, zz, 0xFF000000); // Black
-                }
-            }
-
-            event.setResultBufferedImage(copy);
+    public static final class ClientProxy extends CommonProxy
+    {
+        @Override
+        @SideOnly(Side.CLIENT)
+        public void registerSupplier(ResourceLocation location)
+        {
+            MinecraftForgeClient.registerBannerImageSupplier(location, () -> {
+                return createBufferedImage();
+            });
         }
     }
 
@@ -97,14 +93,34 @@ public class DynamicBannerEventTest
     }
 
     @SideOnly(Side.CLIENT)
+    private static BufferedImage createBufferedImage()
+    {
+        BufferedImage baseImage = buildBackground();
+
+        int width = 11;
+        int height = 30;
+        int startX = 5;
+        int startY = 5;
+
+        for (int xx = startX; xx <= startX + width; xx++)
+        {
+            for (int yy = startY; yy <= startY + height; yy++)
+            {
+                baseImage.setRGB(xx, yy, 0xFF000000); // Black
+            }
+        }
+        return baseImage;
+    }
+
+    @SideOnly(Side.CLIENT)
     private static BufferedImage buildBackground()
     {
         ResourceLocation originalBackground = BannerTextures.BANNER_BASE_TEXTURE;
-        try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(originalBackground)
-                .getInputStream())
+        try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(originalBackground).getInputStream())
         {
             return ImageIO.read(is);
-        } catch (IOException exc)
+        }
+        catch (IOException exc)
         {
             throw new RuntimeException("Couldn't find or open the page background image.", exc);
         }

@@ -1,10 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/LayeredColorMaskTexture.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/LayeredColorMaskTexture.java
-@@ -71,9 +71,15 @@
+@@ -71,9 +71,14 @@
  
                          if (s != null)
                          {
-+                            BufferedImage bufferedimageTemp = net.minecraftforge.event.ForgeEventFactory.getResourceBufferImage(s);
++                            BufferedImage bufferedimageTemp = net.minecraftforge.client.MinecraftForgeClient.getBannerImage(new ResourceLocation(s));
 +                            if (bufferedimageTemp == null)
 +                            {
                              iresource1 = p_110551_1_.func_110536_a(new ResourceLocation(s));
@@ -13,7 +13,6 @@
 +                            bufferedimageTemp = bufferedimage2;
 +                            }
 +                            BufferedImage bufferedimage2 = bufferedimageTemp;
-+                            
                              if (bufferedimage2.getWidth() == bufferedimage.getWidth() && bufferedimage2.getHeight() == bufferedimage.getHeight() && bufferedimage2.getType() == 6)
                              {
                                  for (int l = 0; l < bufferedimage2.getHeight(); ++l)
