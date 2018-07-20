@@ -44,22 +44,27 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = DynamicBannerEventTest.MODID, name = "ForgeDebugDynamicBanner", version = DynamicBannerEventTest.VERSION, acceptableRemoteVersions = "*")
-public class DynamicBannerEventTest
+@Mod(modid = DynamicBannerTest.MODID, name = "ForgeDebugDynamicBanner", version = DynamicBannerTest.VERSION, acceptableRemoteVersions = "*")
+public class DynamicBannerTest
 {
+    private static final boolean ENABLE = false;
     public static final String MODID = "forgedebugdynamicbanner";
     public static final String VERSION = "1.0";
 
-    public static final CreativeTabs bannerTab = new CreativeTabBanners("dynbanner.banners");
+    public static CreativeTabs bannerTab;
     @SidedProxy
     public static CommonProxy proxy = null;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        BannerPattern pattern = addBasicPattern("Y");
-        proxy.registerSupplier(new ResourceLocation("textures/entity/banner/" + pattern.getFileName() + ".png"));
-        proxy.registerSupplier(new ResourceLocation("textures/entity/shield/" + pattern.getFileName() + ".png"));
+        if (ENABLE)
+        {
+            BannerPattern pattern = addBasicPattern("Y");
+            proxy.registerSupplier(new ResourceLocation("textures/entity/banner/" + pattern.getFileName() + ".png"));
+            proxy.registerSupplier(new ResourceLocation("textures/entity/shield/" + pattern.getFileName() + ".png"));
+            bannerTab = new CreativeTabBanners("dynbanner.banners");            
+        }
     }
 
     public static abstract class CommonProxy
