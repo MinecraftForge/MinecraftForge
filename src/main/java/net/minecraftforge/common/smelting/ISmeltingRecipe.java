@@ -19,18 +19,45 @@
 
 package net.minecraftforge.common.smelting;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.crafting.Ingredient;
 
 public interface ISmeltingRecipe
 {
-    ItemStack getSmeltingResult(ItemStack input);
-
-    float getExperience(ItemStack input);
+    /**
+     * @return a static {@link Ingredient} to be used as input
+     */
+    @Nonnull
+    Ingredient getInput();
 
     /**
-     * @return a static representation of the ItemStack return by {@link ISmeltingRecipe#getSmeltingResult(ItemStack)}
-     * to be used in {@link FurnaceRecipes#getSmeltingList()}
+     * @return a {@link ItemStack} to be used as output <b>which has to be copied by the caller</b><br>
+     * <br>
+     * In case the passed input is {@link ItemStack#isEmpty()} a static default representation of the output has to be returned.<br>
+     * The default state is used to keep binary compatibility with the vanilla system<br>
      */
-    ItemStack getGenericOutput();
+    @Nonnull
+    ItemStack getSmeltingResult(ItemStack input);
+
+    default float getExperience(ItemStack input)
+    {
+        return input.getItem().getSmeltingExperience(input);
+    }
+
+    default ItemStack getDefaultResult()
+    {
+        return getSmeltingResult(ItemStack.EMPTY);
+    }
+
+    /**
+     * @return if this recipe can be safely merged with another one if the inputs collide.
+     * This typically means the output doesn't depend on the input<br>
+     * Clarification on merging: {A,B}>R + {A,C}>R = {A,B,C}>R<br>
+     */
+    default boolean isBasic()
+    {
+        return false;
+    }
 }

@@ -41,10 +41,17 @@ public class CompoundIngredient extends Ingredient
     private IntList itemIds;
     private final boolean isSimple;
 
-    protected CompoundIngredient(Collection<Ingredient> children)
+    public CompoundIngredient(Iterable<Ingredient> children)
     {
         super(0);
-        this.children = children;
+        this.children = Lists.newArrayList();
+        for (Ingredient part : children)
+        {
+            if (part instanceof CompoundIngredient)
+                this.children.addAll(((CompoundIngredient) part).children);
+            else
+                this.children.add(part);
+        }
 
         boolean simple = true;
         for (Ingredient child : children)

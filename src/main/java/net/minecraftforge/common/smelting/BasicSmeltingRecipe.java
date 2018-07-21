@@ -19,19 +19,37 @@
 
 package net.minecraftforge.common.smelting;
 
-import net.minecraft.item.ItemStack;
+import javax.annotation.Nonnull;
 
-public class BasicSmeltingRecipe implements ISmeltingRecipe
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
+
+public final class BasicSmeltingRecipe implements ISmeltingRecipe
 {
+    private final Ingredient input;
     private final ItemStack output;
     private final float experience;
 
-    public BasicSmeltingRecipe(ItemStack output, float experience)
+    public BasicSmeltingRecipe(Ingredient input, ItemStack output, float experience)
     {
         this.output = output;
         this.experience = experience;
+        this.input = input;
     }
 
+    public BasicSmeltingRecipe(ItemStack input, ItemStack output, float experience)
+    {
+        this(Ingredient.fromStacks(input), output, experience);
+    }
+
+    @Nonnull
+    @Override
+    public Ingredient getInput()
+    {
+        return input;
+    }
+
+    @Nonnull
     @Override
     public ItemStack getSmeltingResult(ItemStack input)
     {
@@ -47,8 +65,8 @@ public class BasicSmeltingRecipe implements ISmeltingRecipe
     }
 
     @Override
-    public ItemStack getGenericOutput()
+    public boolean isBasic()
     {
-        return output;
+        return true;
     }
 }
