@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,7 @@
 package net.minecraftforge.client.model;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -47,10 +48,8 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.Level;
 
 import java.util.function.Function;
-import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -68,7 +67,6 @@ public final class MultiModel implements IModel
         private final ImmutableMap<String, IBakedModel> parts;
 
         private final IBakedModel internalBase;
-        private ImmutableMap<Optional<EnumFacing>, ImmutableList<BakedQuad>> quads;
         private final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
         private final ItemOverrideList overrides = new ItemOverrideList(Lists.newArrayList())
         {
@@ -129,14 +127,18 @@ public final class MultiModel implements IModel
             // Only changes the base model based on perspective, may recurse for parts in the future.
             if(base != null && perspective)
             {
-                ImmutableMap.Builder<TransformType, Pair<Baked, TRSRTransformation>> builder = ImmutableMap.builder();
+                EnumMap<TransformType, Pair<Baked, TRSRTransformation>> map = new EnumMap<>(TransformType.class);
                 for(TransformType type : TransformType.values())
                 {
                     Pair<? extends IBakedModel, Matrix4f> p = base.handlePerspective(type);
                     IBakedModel newBase = p.getLeft();
-                    builder.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(p.getRight())));
+                    Matrix4f matrix = p.getRight();
+                    if (newBase != base || matrix != null)
+                    {
+                        map.put(type, Pair.of(new Baked(location, false, newBase, parts), new TRSRTransformation(matrix)));
+                    }
                 }
-                transforms = builder.build();
+                transforms = ImmutableMap.copyOf(map);
             }
             else
             {
@@ -148,6 +150,12 @@ public final class MultiModel implements IModel
         public boolean isAmbientOcclusion()
         {
             return internalBase.isAmbientOcclusion();
+        }
+
+        @Override
+        public boolean isAmbientOcclusion(IBlockState state)
+        {
+            return internalBase.isAmbientOcclusion(state);
         }
 
         @Override
@@ -177,43 +185,23 @@ public final class MultiModel implements IModel
         @Override
         public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
         {
-            if(quads == null)
+            ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
+            if (base != null)
             {
-                ImmutableMap.Builder<Optional<EnumFacing>, ImmutableList<BakedQuad>> builder = ImmutableMap.builder();
-
-                for (EnumFacing face : EnumFacing.values())
-                {
-                    ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
-                    if (base != null)
-                    {
-                        quads.addAll(base.getQuads(state, face, 0));
-                    }
-                    for (IBakedModel bakedPart : parts.values())
-                    {
-                        quads.addAll(bakedPart.getQuads(state, face, 0));
-                    }
-                    builder.put(Optional.of(face), quads.build());
-                }
-                ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
-                if (base != null)
-                {
-                    quads.addAll(base.getQuads(state, null, 0));
-                }
-                for (IBakedModel bakedPart : parts.values())
-                {
-                    quads.addAll(bakedPart.getQuads(state, null, 0));
-                }
-                builder.put(Optional.empty(), quads.build());
-                this.quads = builder.build();
+                quads.addAll(base.getQuads(state, side, rand));
             }
-            return quads.get(Optional.ofNullable(side));
+            for (IBakedModel bakedPart : parts.values())
+            {
+                quads.addAll(bakedPart.getQuads(state, side, rand));
+            }
+            return quads.build();
         }
 
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType cameraTransformType)
         {
-            if(transforms.isEmpty()) return Pair.of(this, null);
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
+            if (p == null) return Pair.of(this, null);
             return Pair.of(p.getLeft(), p.getRight().getMatrix());
         }
 

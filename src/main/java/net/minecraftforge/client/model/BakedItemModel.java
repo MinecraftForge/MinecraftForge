@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.client.model;
 
 import javax.annotation.Nullable;
@@ -49,7 +50,13 @@ public class BakedItemModel implements IBakedModel
         this.particle = particle;
         this.transforms = transforms;
         this.overrides = overrides;
-        this.guiModel = new BakedGuiItemModel<>(this);
+        this.guiModel = hasGuiIdentity(transforms) ? new BakedGuiItemModel<>(this) : null;
+    }
+
+    private static boolean hasGuiIdentity(ImmutableMap<TransformType, TRSRTransformation> transforms)
+    {
+        TRSRTransformation guiTransform = transforms.get(TransformType.GUI);
+        return guiTransform == null || guiTransform.isIdentity();
     }
 
     @Override public boolean isAmbientOcclusion() { return true; }
@@ -71,7 +78,7 @@ public class BakedItemModel implements IBakedModel
     @Override
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(TransformType type)
     {
-        if (type == TransformType.GUI)
+        if (type == TransformType.GUI && this.guiModel != null)
         {
             return this.guiModel.handlePerspective(type);
         }

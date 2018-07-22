@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -151,10 +151,8 @@ public class FMLPreInitializationEvent extends FMLStateEvent
      */
     public Logger getModLog()
     {
-        Logger log = LogManager.getLogger(modContainer.getModId());
-        return log;
+        return LogManager.getLogger(modContainer.getModId());
     }
-
 
     /**
      * Retrieve the FML signing certificates, if any. Validate these against the

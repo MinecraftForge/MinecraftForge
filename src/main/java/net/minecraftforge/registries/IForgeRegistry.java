@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -92,6 +92,14 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     interface CreateCallback<V extends IForgeRegistryEntry<V>>
     {
         void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
+    }
+
+    /**
+     * Callback fired when the registry contents are validated.
+     */
+    interface ValidateCallback<V extends IForgeRegistryEntry<V>>
+    {
+        void onValidate(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceLocation key, V obj);
     }
 
     /**

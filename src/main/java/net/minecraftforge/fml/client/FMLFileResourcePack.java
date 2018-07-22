@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import net.minecraftforge.fml.common.FMLLog;
 import org.apache.logging.log4j.LogManager;
 
 import javax.imageio.ImageIO;
@@ -59,7 +60,7 @@ public class FMLFileResourcePack extends FileResourcePack implements FMLContaine
         {
             if ("pack.mcmeta".equals(resourceName))
             {
-                LogManager.getLogger(container.getName()).debug("Mod {} is missing a pack.mcmeta file, substituting a dummy one", container.getName());
+                FMLLog.log.debug("Mod {} is missing a pack.mcmeta file, substituting a dummy one", container.getName());
                 return new ByteArrayInputStream(("{\n" +
                         " \"pack\": {\n"+
                         "   \"description\": \"dummy FML pack for "+container.getName()+"\",\n"+

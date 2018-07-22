@@ -1,10 +1,10 @@
 {
     "assetIndex": {
         "id": "1.12",
-        "sha1": "98c430c16a705f18a58a281b27caabf3ef09d40d",
-        "size": 169253,
-        "url": "https://launchermeta.mojang.com/mc/assets/1.12/98c430c16a705f18a58a281b27caabf3ef09d40d/1.12.json",
-        "totalSize": 127453671
+        "sha1": "e75e9535754c6f2158b0b18b35660f45c4495d78",
+        "size": 169257,
+        "url": "https://launchermeta.mojang.com/mc/assets/1.12/e75e9535754c6f2158b0b18b35660f45c4495d78/1.12.json",
+        "totalSize": 127722338
     },
     "assets": "1.12",
     "downloads": {
@@ -266,13 +266,13 @@
             }
         },
         {
-            "name": "com.mojang:realms:1.10.18",
+            "name": "com.mojang:realms:1.10.22",
             "downloads": {
                 "artifact": {
-                    "size": 3259151,
-                    "sha1": "77a86d7596f49a6b01ad48f1a4a0d6546bc60df5",
-                    "path": "com/mojang/realms/1.10.18/realms-1.10.18.jar",
-                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.18/realms-1.10.18.jar"
+                    "size": 7135057,
+                    "sha1": "bd0dccebdf3744c75f1ca20063f16e8f7d5e663f",
+                    "path": "com/mojang/realms/1.10.22/realms-1.10.22.jar",
+                    "url": "https://libraries.minecraft.net/com/mojang/realms/1.10.22/realms-1.10.22.jar"
                 }
             }
         },
@@ -719,6 +719,6 @@
     "minecraftArguments": "--username ${auth_player_name} --version ${version_name} --gameDir ${game_directory} --assetsDir ${assets_root} --assetIndex ${assets_index_name} --uuid ${auth_uuid} --accessToken ${auth_access_token} --userType ${user_type} --versionType ${version_type}",
     "minimumLauncherVersion": 18,
     "releaseTime": "2017-09-18T08:39:46+00:00",
-    "time": "2018-01-18T09:43:47+00:00",
+    "time": "2018-06-25T15:37:20+00:00",
     "type": "release"
 }

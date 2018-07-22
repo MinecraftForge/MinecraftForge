@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -100,7 +100,7 @@ public class MinecraftForgeClient
         .build(new CacheLoader<Pair<World, BlockPos>, ChunkCache>()
         {
             @Override
-            public ChunkCache load(Pair<World, BlockPos> key) throws Exception
+            public ChunkCache load(Pair<World, BlockPos> key)
             {
                 return new ChunkCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
             }
@@ -117,5 +117,11 @@ public class MinecraftForgeClient
         int y = pos.getY() & ~0xF;
         int z = pos.getZ() & ~0xF;
         return regionCache.getUnchecked(Pair.of(world, new BlockPos(x, y, z)));
+    }
+
+    public static void clearRenderCache()
+    {
+        regionCache.invalidateAll();
+        regionCache.cleanUp();
     }
 }

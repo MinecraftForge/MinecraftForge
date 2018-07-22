@@ -84,6 +84,15 @@
  
              this.func_180443_s();
  
+@@ -895,7 +910,7 @@
+                     {
+                         RenderChunk renderchunk1 = this.field_175008_n.func_178161_a(new BlockPos((j << 4) + 8, i, (k << 4) + 8));
+ 
+-                        if (renderchunk1 != null && p_174970_4_.func_78546_a(renderchunk1.field_178591_c))
++                        if (renderchunk1 != null && p_174970_4_.func_78546_a(renderchunk1.field_178591_c.func_72321_a(0.0, blockpos1.func_177956_o() > 0 ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY, 0.0))) // Forge: fix MC-73139
+                         {
+                             renderchunk1.func_178577_a(p_174970_5_);
+                             queue.add(new RenderGlobal.ContainerLocalRenderInformation(renderchunk1, (EnumFacing)null, 0));
 @@ -951,7 +966,7 @@
                  BlockPos blockpos2 = renderchunk4.func_178568_j().func_177982_a(8, 8, 8);
                  boolean flag3 = blockpos2.func_177951_i(blockpos1) < 768.0D;
@@ -93,111 +102,21 @@
                  {
                      this.field_175009_l.add(renderchunk4);
                  }
-@@ -1253,12 +1268,16 @@
+@@ -1253,6 +1268,13 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
      {
-+        int renderPass = net.minecraftforge.fml.client.FMLClientHandler.instance().renderSky(p_174976_1_);
-+        if(renderPass == -1) return;
++        net.minecraftforge.client.IRenderHandler renderer = this.field_72769_h.field_73011_w.getSkyRenderer();
++        if (renderer != null)
++        {
++            renderer.render(p_174976_1_, field_72769_h, field_72777_q);
++            return;
++        }
++
          if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p().func_186068_a() == 1)
          {
-+            if(renderPass == 0 || renderPass == 1)
              this.func_180448_r();
-         }
-         else if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
-         {
-+            if(renderPass == 0 || renderPass == 1)
-             GlStateManager.func_179090_x();
-             Vec3d vec3d = this.field_72769_h.func_72833_a(this.field_72777_q.func_175606_aa(), p_174976_1_);
-             float f = (float)vec3d.field_72450_a;
-@@ -1275,9 +1294,11 @@
-                 f2 = f5;
-             }
- 
-+            if(renderPass == 0 || renderPass == 1)
-             GlStateManager.func_179124_c(f, f1, f2);
-             Tessellator tessellator = Tessellator.func_178181_a();
-             BufferBuilder bufferbuilder = tessellator.func_178180_c();
-+            if(renderPass == 0 || renderPass == 1) {
-             GlStateManager.func_179132_a(false);
-             GlStateManager.func_179127_m();
-             GlStateManager.func_179124_c(f, f1, f2);
-@@ -1341,15 +1362,21 @@
-                 GlStateManager.func_179121_F();
-                 GlStateManager.func_179103_j(7424);
-             }
-+            }
- 
-+            if(renderPass == 0 || renderPass == 2) {
-             GlStateManager.func_179098_w();
-             GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-             GlStateManager.func_179094_E();
-+            }
-             float f16 = 1.0F - this.field_72769_h.func_72867_j(p_174976_1_);
-+            if(renderPass == 0 || renderPass == 2) {
-             GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, f16);
-             GlStateManager.func_179114_b(-90.0F, 0.0F, 1.0F, 0.0F);
-             GlStateManager.func_179114_b(this.field_72769_h.func_72826_c(p_174976_1_) * 360.0F, 1.0F, 0.0F, 0.0F);
-+            }
-             float f17 = 30.0F;
-+            if(renderPass == 0 || renderPass == 2) {
-             this.field_72770_i.func_110577_a(field_110928_i);
-             bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_181707_g);
-             bufferbuilder.func_181662_b((double)(-f17), 100.0D, (double)(-f17)).func_187315_a(0.0D, 0.0D).func_181675_d();
-@@ -1357,7 +1384,16 @@
-             bufferbuilder.func_181662_b((double)f17, 100.0D, (double)f17).func_187315_a(1.0D, 1.0D).func_181675_d();
-             bufferbuilder.func_181662_b((double)(-f17), 100.0D, (double)f17).func_187315_a(0.0D, 1.0D).func_181675_d();
-             tessellator.func_78381_a();
-+            GlStateManager.func_179121_F();
-+            }
-             f17 = 20.0F;
-+            if(renderPass == 0 || renderPass == 3) {
-+            GlStateManager.func_179098_w();
-+            GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-+            GlStateManager.func_179094_E();
-+            GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, f16);
-+            GlStateManager.func_179114_b(-90.0F, 0.0F, 1.0F, 0.0F);
-+            GlStateManager.func_179114_b(this.field_72769_h.func_72826_c(p_174976_1_) * 360.0F, 1.0F, 0.0F, 0.0F);
-             this.field_72770_i.func_110577_a(field_110927_h);
-             int k1 = this.field_72769_h.func_72853_d();
-             int i2 = k1 % 4;
-@@ -1372,6 +1408,13 @@
-             bufferbuilder.func_181662_b((double)f17, -100.0D, (double)(-f17)).func_187315_a((double)f22, (double)f23).func_181675_d();
-             bufferbuilder.func_181662_b((double)(-f17), -100.0D, (double)(-f17)).func_187315_a((double)f24, (double)f23).func_181675_d();
-             tessellator.func_78381_a();
-+            GlStateManager.func_179121_F();
-+            }
-+            if(renderPass == 0 || renderPass == 4) {
-+            GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-+            GlStateManager.func_179094_E();
-+            GlStateManager.func_179114_b(-90.0F, 0.0F, 1.0F, 0.0F);
-+            GlStateManager.func_179114_b(this.field_72769_h.func_72826_c(p_174976_1_) * 360.0F, 1.0F, 0.0F, 0.0F);
-             GlStateManager.func_179090_x();
-             float f15 = this.field_72769_h.func_72880_h(p_174976_1_) * f16;
- 
-@@ -1393,12 +1436,14 @@
-                     GlStateManager.func_179148_o(this.field_72772_v);
-                 }
-             }
-+            GlStateManager.func_179121_F();
-+            }
- 
-+            if(renderPass == 0 || renderPass == 5) {
-             GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
-             GlStateManager.func_179084_k();
-             GlStateManager.func_179141_d();
-             GlStateManager.func_179127_m();
--            GlStateManager.func_179121_F();
-             GlStateManager.func_179090_x();
-             GlStateManager.func_179124_c(0.0F, 0.0F, 0.0F);
-             double d3 = this.field_72777_q.field_71439_g.func_174824_e(p_174976_1_).field_72448_b - this.field_72769_h.func_72919_O();
-@@ -1465,11 +1510,13 @@
-             GlStateManager.func_179121_F();
-             GlStateManager.func_179098_w();
-             GlStateManager.func_179132_a(true);
-+            }
-         }
-     }
+@@ -1470,6 +1492,7 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_, double p_180447_3_, double p_180447_5_, double p_180447_7_)
      {
@@ -205,7 +124,17 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1892,8 +1939,11 @@
+@@ -1852,7 +1875,8 @@
+         GlStateManager.func_187428_a(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+         GlStateManager.func_179147_l();
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 0.5F);
+-        GlStateManager.func_179136_a(-3.0F, -3.0F);
++        // FORGE: Fix MC-234
++        GlStateManager.func_179136_a(-1.0F, -10.0F);
+         GlStateManager.func_179088_q();
+         GlStateManager.func_179092_a(516, 0.1F);
+         GlStateManager.func_179141_d();
+@@ -1892,8 +1916,11 @@
                  double d7 = (double)blockpos.func_177956_o() - d4;
                  double d8 = (double)blockpos.func_177952_p() - d5;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -218,7 +147,7 @@
                  {
                      if (d6 * d6 + d7 * d7 + d8 * d8 > 1024.0D)
                      {
-@@ -2388,7 +2438,7 @@
+@@ -2388,7 +2415,7 @@
  
                  if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
                  {

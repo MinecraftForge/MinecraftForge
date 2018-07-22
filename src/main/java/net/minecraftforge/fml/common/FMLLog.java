@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,37 +19,21 @@
 
 package net.minecraftforge.fml.common;
 
-import java.util.Locale;
-
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.FMLRelaunchLog;
-import net.minecraftforge.fml.relauncher.Side;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.ThreadContext;
 
 /**
  * FMLs logging class. <b>Internal use only, NOT FOR MOD LOGGING!</b> Mods use your own log, see {@link FMLPreInitializationEvent#getModLog()}.
+ * TODO 1.13 remove all the deprecated methods
  */
 public class FMLLog
 {
 
-    public static final Logger log;
-
-    static {
-        log = LogManager.getLogger("FML");
-        // Default side to client for test harness purposes
-        Side side = FMLLaunchHandler.side();
-        if (side == null) side = Side.CLIENT;
-        ThreadContext.put("side", side.name().toLowerCase(Locale.ENGLISH));
-
-        log.debug("Injecting tracing printstreams for STDOUT/STDERR.");
-        System.setOut(new TracingPrintStream(LogManager.getLogger("STDOUT"), System.out));
-        System.setErr(new TracingPrintStream(LogManager.getLogger("STDERR"), System.err));
-    }
+    public static final Logger log = LogManager.getLogger("FML");
 
     public static void bigWarning(String format, Object... data)
     {

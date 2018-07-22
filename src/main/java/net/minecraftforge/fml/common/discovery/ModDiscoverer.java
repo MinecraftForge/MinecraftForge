@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,24 +21,17 @@ package net.minecraftforge.fml.common.discovery;
 
 import java.io.File;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.common.ModClassLoader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.CoreModManager;
-import net.minecraftforge.fml.relauncher.FileListHelper;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.ObjectArrays;
 
 public class ModDiscoverer
 {
-    private static Pattern zipJar = Pattern.compile("(.+).(zip|jar)$");
-
     private List<ModCandidate> candidates = Lists.newArrayList();
 
     private ASMDataTable dataTable = new ASMDataTable();
@@ -89,44 +82,6 @@ public class ModDiscoverer
 
     }
 
-    public void findModDirMods(File modsDir)
-    {
-        findModDirMods(modsDir, new File[0]);
-    }
-
-    public void findModDirMods(File modsDir, File[] supplementalModFileCandidates)
-    {
-        File[] modList = FileListHelper.sortFileList(modsDir, null);
-        modList = FileListHelper.sortFileList(ObjectArrays.concat(modList, supplementalModFileCandidates, File.class));
-        for (File modFile : modList)
-        {
-            // skip loaded coremods
-            if (CoreModManager.getIgnoredMods().contains(modFile.getName()))
-            {
-                FMLLog.log.trace("Skipping already parsed coremod or tweaker {}", modFile.getName());
-            }
-            else if (modFile.isDirectory())
-            {
-                FMLLog.log.debug("Found a candidate mod directory {}", modFile.getName());
-                addCandidate(new ModCandidate(modFile, modFile, ContainerType.DIR));
-            }
-            else
-            {
-                Matcher matcher = zipJar.matcher(modFile.getName());
-
-                if (matcher.matches())
-                {
-                    FMLLog.log.debug("Found a candidate zip or jar file {}", matcher.group(0));
-                    addCandidate(new ModCandidate(modFile, modFile, ContainerType.JAR));
-                }
-                else
-                {
-                    FMLLog.log.debug("Ignoring unknown file {} in mods directory", modFile.getName());
-                }
-            }
-        }
-    }
-
     public List<ModContainer> identifyMods()
     {
         List<ModContainer> modList = Lists.newArrayList();
@@ -164,7 +119,7 @@ public class ModDiscoverer
         return nonModLibs;
     }
 
-    private void addCandidate(ModCandidate candidate)
+    public void addCandidate(ModCandidate candidate)
     {
         for (ModCandidate c : candidates)
         {

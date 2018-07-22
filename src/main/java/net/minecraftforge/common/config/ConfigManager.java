@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -220,8 +220,12 @@ public class ConfigManager
         {
             if (!Modifier.isPublic(f.getModifiers()))
                 continue;
+
+            //Only the root class may have static fields. Otherwise category tree nodes of the same type would share the
+            //contained value messing up the sync
             if (Modifier.isStatic(f.getModifiers()) != (instance == null))
                 continue;
+
             if (f.isAnnotationPresent(Config.Ignore.class))
                 continue;
 
@@ -230,7 +234,7 @@ public class ConfigManager
             if (ca != null)
                 comment = NEW_LINE.join(ca.value());
 
-            String langKey = modid + "." + (category.isEmpty() ? "" : category + ".") + f.getName().toLowerCase(Locale.ENGLISH);
+            String langKey = modid + "." + (category.isEmpty() ? "" : category + Configuration.CATEGORY_SPLITTER) + f.getName().toLowerCase(Locale.ENGLISH);
             LangKey la = f.getAnnotation(LangKey.class);
             if (la != null)
                 langKey = la.value();
@@ -238,7 +242,7 @@ public class ConfigManager
             boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
             boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
 
-            if (FieldWrapper.hasWrapperFor(f)) //Access the field
+            if (FieldWrapper.hasWrapperFor(f)) //Wrappers exist for primitives, enums, maps and arrays
             {
                 if (Strings.isNullOrEmpty(category))
                     throw new RuntimeException("An empty category may not contain anything but objects representing categories!");
@@ -248,9 +252,9 @@ public class ConfigManager
                     ITypeAdapter adapt = wrapper.getTypeAdapter();
                     Property.Type propType = adapt.getType();
 
-                    for (String key : wrapper.getKeys())
+                    for (String key : wrapper.getKeys()) //Iterate the fully qualified property names the field provides
                     {
-                        String suffix = StringUtils.replaceOnce(key, wrapper.getCategory() + ".", "");
+                        String suffix = StringUtils.replaceOnce(key, wrapper.getCategory() + Configuration.CATEGORY_SPLITTER, "");
 
                         boolean existed = exists(cfg, wrapper.getCategory(), suffix);
                         if (!existed || loading) //Creates keys in category specified by the wrapper if new ones are programaticaly added
@@ -263,7 +267,7 @@ public class ConfigManager
                             else
                                 wrapper.setValue(key, adapt.getValue(property));
                         }
-                        else //If the key is not new, sync according to shoudlReadFromVar()
+                        else //If the key is not new, sync according to shouldReadFromVar()
                         {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
                             Object propVal = adapt.getValue(property);
@@ -278,31 +282,32 @@ public class ConfigManager
 
                     ConfigCategory confCat = cfg.getCategory(wrapper.getCategory());
 
-                    for (Property property : confCat.getOrderedValues())//Are new keys in the Configuration object?
+                    for (Property property : confCat.getOrderedValues()) //Iterate the properties to check for new data from the config side
                     {
-                        if (!wrapper.handlesKey(property.getName()))
+                        String key = confCat.getQualifiedName() + Configuration.CATEGORY_SPLITTER + property.getName();
+                        if (!wrapper.handlesKey(key))
                             continue;
 
-                        if (loading || !wrapper.hasKey(property.getName()))
+                        if (loading || !wrapper.hasKey(key))
                         {
                             Object value = wrapper.getTypeAdapter().getValue(property);
-                            wrapper.setValue(confCat.getName() + "." + property.getName(), value);
+                            wrapper.setValue(key, value);
                         }
                     }
 
-                    if (loading) //Doing this after the loops. The wrapper should set cosmetic stuff.
+                    if (loading)
                         wrapper.setupConfiguration(cfg, comment, langKey, requiresMcRestart, requiresWorldRestart);
 
                 }
-                catch (Exception e) //If anything goes wrong, add the errored field and class.
+                catch (Exception e)
                 {
                     String format = "Error syncing field '%s' of class '%s'!";
                     String error = String.format(format, f.getName(), cls.getName());
                     throw new RuntimeException(error, e);
                 }
             }
-            else if (f.getType().getSuperclass() != null && f.getType().getSuperclass().equals(Object.class)) //Descend the object tree
-            {
+            else if (f.getType().getSuperclass() != null && f.getType().getSuperclass().equals(Object.class))
+            { //If the field extends Object directly, descend the object tree and access the objects members
                 Object newInstance = null;
                 try
                 {
@@ -310,11 +315,11 @@ public class ConfigManager
                 }
                 catch (IllegalAccessException e)
                 {
-                    //This should never happen. Previous checks should eliminate this.
                     throw new RuntimeException(e);
                 }
 
-                String sub = (category.isEmpty() ? "" : category + ".") + getName(f).toLowerCase(Locale.ENGLISH);
+                //Setup the sub category with its respective name, comment, language key, etc.
+                String sub = (category.isEmpty() ? "" : category + Configuration.CATEGORY_SPLITTER) + getName(f).toLowerCase(Locale.ENGLISH);
                 ConfigCategory confCat = cfg.getCategory(sub);
                 confCat.setComment(comment);
                 confCat.setLanguageKey(langKey);

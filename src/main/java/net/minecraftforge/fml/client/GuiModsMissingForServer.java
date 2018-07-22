@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,8 @@
  */
 
 package net.minecraftforge.fml.client;
+
+import java.util.List;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -52,15 +54,17 @@ public class GuiModsMissingForServer extends GuiScreen
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        int offset = Math.max(85 - modsMissing.missingMods.size() * 10, 10);
+        List<MissingModsException.MissingModInfo> missingModsVersions = modsMissing.getMissingModInfos();
+        int offset = Math.max(85 - missingModsVersions.size() * 10, 10);
         this.drawCenteredString(this.fontRenderer, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
         this.drawCenteredString(this.fontRenderer, "The mods and versions listed below could not be found", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
         this.drawCenteredString(this.fontRenderer, "They are required to play on this server", this.width / 2, offset, 0xFFFFFF);
         offset += 5;
-        for (ArtifactVersion v : modsMissing.missingMods)
+        for (MissingModsException.MissingModInfo info : missingModsVersions)
         {
+            ArtifactVersion v = info.getAcceptedVersion();
             offset += 10;
             this.drawCenteredString(this.fontRenderer, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ import java.io.File;
 public class GuiErrorBase extends GuiErrorScreen
 {
     static final File minecraftDir = new File(Loader.instance().getConfigDir().getParent());
-    static final File clientLog = new File(minecraftDir, "logs/fml-client-latest.log");
+    static final File logFile = new File(minecraftDir, "logs/latest.log");
     public GuiErrorBase()
     {
         super(null, null);
@@ -48,7 +48,7 @@ public class GuiErrorBase extends GuiErrorScreen
         super.initGui();
         this.buttonList.clear();
         this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width / 2 - 55, 20, translateOrDefault("fml.button.open.mods.folder", "Open Mods Folder")));
-        String openFileText = translateOrDefault("fml.button.open.file", "Open %s", clientLog.getName());
+        String openFileText = translateOrDefault("fml.button.open.file", "Open %s", logFile.getName());
         this.buttonList.add(new GuiButton(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText));
     }
 
@@ -71,11 +71,11 @@ public class GuiErrorBase extends GuiErrorScreen
         {
             try
             {
-                Desktop.getDesktop().open(clientLog);
+                Desktop.getDesktop().open(logFile);
             }
             catch (Exception e)
             {
-                FMLLog.log.error("Problem opening log file {}", clientLog, e);
+                FMLLog.log.error("Problem opening log file {}", logFile, e);
             }
         }
     }

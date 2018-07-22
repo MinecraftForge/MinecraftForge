@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,10 +28,9 @@ import java.util.Set;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.relauncher.Side;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public final class DependencyParser
 {
@@ -42,7 +41,6 @@ public final class DependencyParser
         public final List<ArtifactVersion> dependants = new ArrayList<>();
     }
 
-    private static final Logger LOGGER = LogManager.getLogger("FML");
     private static final ImmutableList<String> DEPENDENCY_INSTRUCTIONS = ImmutableList.of("client", "server", "required", "before", "after");
     private static final Splitter DEPENDENCY_INSTRUCTIONS_SPLITTER = Splitter.on("-").omitEmptyStrings().trimResults();
     private static final Splitter DEPENDENCY_PART_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
@@ -189,15 +187,15 @@ public final class DependencyParser
     {
         if (Strings.isNullOrEmpty(depModId))
         {
-            LOGGER.error(new DependencyParserException(modId, dep, "The modId is null or empty").getMessage());
+            FMLLog.log.error(new DependencyParserException(modId, dep, "The modId is null or empty").getMessage());
         }
         else if (depModId.length() > 64)
         {
-            LOGGER.error(new DependencyParserException(modId, dep, String.format("The modId '%s' is longer than the maximum of 64 characters.", depModId)).getMessage());
+            FMLLog.log.error(new DependencyParserException(modId, dep, String.format("The modId '%s' is longer than the maximum of 64 characters.", depModId)).getMessage());
         }
         else if (!depModId.equals(depModId.toLowerCase(Locale.ENGLISH)))
         {
-            LOGGER.error(new DependencyParserException(modId, dep, String.format("The modId '%s' must be all lowercase.", depModId)).getMessage());
+            FMLLog.log.error(new DependencyParserException(modId, dep, String.format("The modId '%s' must be all lowercase.", depModId)).getMessage());
         }
     }
 
