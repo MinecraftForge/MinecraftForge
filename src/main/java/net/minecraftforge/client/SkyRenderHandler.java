@@ -36,197 +36,55 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ResourceLocation;
 
 /**
- * Class which handles sky rendering. Sky renderer can be registered here,
- *  see {@link #registerSkyRenderer(SkyRenderPass, ResourceLocation, IRenderHandler, double) registerSkyRenderer}.
+ * Class which handles sky rendering. Sky render layers can be registered here.
+ * TODO Proper sorting system
  * */
 public class SkyRenderHandler
 {
-    private EnumMap<SkyRenderPass, PartSkyRenderer> renderers = new EnumMap<SkyRenderPass, PartSkyRenderer>(SkyRenderPass.class)
-    {{
-        this.put(SkyRenderPass.SKY_BACK, new PartSkyRenderer(getSkyBackDefault()));
-        this.put(SkyRenderPass.SUN_MOON_STARS, new PartSkyRenderer(getSunMoonStarsDefault()));
-        this.put(SkyRenderPass.SKY_FRONT, new PartSkyRenderer(getSkyFrontDefault()));
-    }};
+    private boolean enabled = false;
+    private final SkyLayerGroup rootLayerGroup;
 
-    // The vanilla render pass for parts of vanilla sky rendering on renderglobal call.
-    // 0 means it's the original call.
-    private int vanillaRenderPass;
+    public SkyRenderHandler() {
+        this.rootLayerGroup = new SkyLayerGroup();
+        SkyLayer skyBg = rootLayerGroup.subLayer(new ResourceLocation("sky_background"));
+        SkyLayer celestial = rootLayerGroup.subLayer(new ResourceLocation("celestial"));
+        SkyLayer skyFg = rootLayerGroup.subLayer(new ResourceLocation("sky_foreground"));
 
-    /**
-     * <p>Registers sky renderer for certain pass and id.</p>
-     * <p>Registering a renderer with pre-existing pass & id pair will replace the previous renderer.</p>
-     * <p>You can unregister a renderer by giving <code>null</code> for the renderer parameter.
-     * Unregistering a renderer with its vanilla-counterpart will re-enable a vanilla renderer.</p>
-     * <p>Renderer with higher priority is called earlier.</p>
-     * @param pass the sky render pass
-     * @param id the id for the renderer
-     * @param renderer the renderer
-     * @param priority the priority for the renderer
-     * */
-    public void registerSkyRenderer(SkyRenderPass pass, ResourceLocation id, @Nullable IRenderHandler renderer, double priority)
-    {
-        renderers.get(pass).registerSkyRenderer(id, renderer, priority);
-    }
+        SkyLayerGroup celestialGroup = celestial.asGroup();
+        SkyLayer planetary = celestialGroup.subLayer(new ResourceLocation("planetary"));
+        SkyLayer stellar = celestialGroup.subLayer(new ResourceLocation("stellar"));
 
-    /**
-     * Sets renderer priority for certain pass and id if it exists.
-     * This is to only change the priority of a renderer, usually for vanilla.
-     * @param pass the sky render pass
-     * @param id the id to unregister
-     * @param priority the priority for the renderer
-     * */
-    public void setRendererPriority(SkyRenderPass pass, ResourceLocation id, double priority)
-    {
-        renderers.get(pass).setRendererPriority(id, priority);
-    }
-
-    /**
-     * Unregisters vanilla sky renderer for certain pass and id.
-     * This will only remove the renderer if it's the vanilla one.
-     * @param pass the sky render pass
-     * @param id the id to unregister
-     * @return the vanilla render handler, or <code>null</code> if there wasn't a vanilla renderer for specified pass-id pair
-     * */
-    public @Nullable IRenderHandler unregisterVanillaRenderer(SkyRenderPass pass, ResourceLocation id)
-    {
-        return renderers.get(pass).unregisterVanillaRenderer(id);
+        SkyLayerGroup planetaryGroup = celestial.asGroup();
+        SkyLayer sun = planetaryGroup.subLayer(new ResourceLocation("sun"));
+        SkyLayer moon = planetaryGroup.subLayer(new ResourceLocation("moon"));
     }
 
     public boolean render(float partialTicks, WorldClient world, Minecraft mc)
     {
-        boolean enabled = false;
-        for(PartSkyRenderer part : renderers.values())
-            enabled = enabled || part.enabled();
-
-        if(!enabled)
+        if(!this.enabled)
             return false;
-
-        renderers.get(SkyRenderPass.SKY_BACK).render(partialTicks, world, mc);
-        renderers.get(SkyRenderPass.SUN_MOON_STARS).render(partialTicks, world, mc);
-        renderers.get(SkyRenderPass.SKY_FRONT).render(partialTicks, world, mc);
-
+        for(SkyLayer layer : rootLayerGroup.subLayers())
+            this.render(layer, partialTicks, world, mc);
         return true;
     }
 
-    private static class PartSkyRenderer
+    private void render(SkyLayer layer, float partialTicks, WorldClient world, Minecraft mc)
     {
-        Map<ResourceLocation, RenderHandler> defHandlers;
-        Map<ResourceLocation, RenderHandler> handlers = Maps.newHashMap();
-
-        PartSkyRenderer(Map<ResourceLocation, RenderHandler> defaultHandlers)
+        if(layer.isGroup())
         {
-            this.defHandlers = defaultHandlers;
-            handlers.putAll(defaultHandlers);
+            for(SkyLayer subLayer : layer.asGroup().subLayers())
+                this.render(subLayer, partialTicks, world, mc);
         }
-
-        void registerSkyRenderer(ResourceLocation id, IRenderHandler renderer, double priority)
-        {
-            if(renderer != null)
-                handlers.put(id, new RenderHandler(renderer, priority));
-            else if(defHandlers.containsKey(id))
-                handlers.put(id, defHandlers.get(id));
-            else handlers.remove(id);
-        }
-
-        void setRendererPriority(ResourceLocation id, double priority)
-        {
-            RenderHandler current = handlers.get(id);
-            if(current != null)
-                handlers.put(id, new RenderHandler(current.handler, priority));
-        }
-
-        IRenderHandler unregisterVanillaRenderer(ResourceLocation id)
-        {
-            if(handlers.containsKey(id) && defHandlers.get(id) == handlers.get(id))
-                return handlers.remove(id).handler;
-            else return null;
-        }
-
-        boolean enabled()
-        {
-            return !handlers.equals(this.defHandlers);
-        }
-
-        void render(float partialTicks, WorldClient world, Minecraft mc)
-        {
-            List<RenderHandler> sorted = Lists.newArrayList(handlers.values());
-            Collections.sort(sorted);
-            for(RenderHandler handler : sorted)
-            {
-                handler.handler.render(partialTicks, world, mc);
-            }
-        }
+        if(layer.getRenderer() != null)
+            layer.getRenderer().render(partialTicks, world, mc);
     }
 
-    private static class RenderHandler implements Comparable<RenderHandler>
+    /*private static class SkyBackRenderer extends IRenderHandler
     {
-        IRenderHandler handler;
-        double priority;
-
-        RenderHandler(IRenderHandler handler, double priority)
-        {
-            this.handler = handler;
-            this.priority = priority;
-        }
-
-        @Override
-        public int compareTo(RenderHandler o)
-        {
-            // Higher priority comes first
-            return Comparator.<RenderHandler>comparingDouble(k -> k.priority).reversed().compare(this, o);
-        }
-    }
-
-    private static RenderHandler handler(int vanillaRenderPass, double priority)
-    {
-        return new RenderHandler(new VanillaSkyRenderer(vanillaRenderPass), priority);
-    }
-
-    private Map<ResourceLocation, RenderHandler> getSkyBackDefault()
-    {
-        ImmutableMap.Builder<ResourceLocation, RenderHandler> builder = ImmutableMap.builder();
-        builder.put(new ResourceLocation("sky"), handler(1, 0.0));
-        return builder.build();
-    }
-
-    private Map<ResourceLocation, RenderHandler> getSunMoonStarsDefault()
-    {
-        ImmutableMap.Builder<ResourceLocation, RenderHandler> builder = ImmutableMap.builder();
-        builder.put(new ResourceLocation("sun"), handler(2, 2.0));
-        builder.put(new ResourceLocation("moon"), handler(3, 1.0));
-        builder.put(new ResourceLocation("stars"), handler(4, 0.0));
-        return builder.build();
-    }
-
-    private Map<ResourceLocation, RenderHandler> getSkyFrontDefault()
-    {
-        ImmutableMap.Builder<ResourceLocation, RenderHandler> builder = ImmutableMap.builder();
-        builder.put(new ResourceLocation("sky"), handler(5, 0.0));
-        return builder.build();
-    }
-
-    // Internal method
-    public int getVanillaRenderPass()
-    {
-        return this.vanillaRenderPass;
-    }
-
-    private static class VanillaSkyRenderer extends IRenderHandler
-    {
-        private int vanillaRenderPass;
-
-        VanillaSkyRenderer(int vanillaRenderPass)
-        {
-            this.vanillaRenderPass = vanillaRenderPass;
-        }
-
         @Override
         public void render(float partialTicks, WorldClient world, Minecraft mc)
         {
-            SkyRenderHandler renderHandler = world.provider.getSkyRenderHandler();
-            renderHandler.vanillaRenderPass = this.vanillaRenderPass;
-            mc.renderGlobal.renderSky(partialTicks, mc.gameSettings.anaglyph? 0 : 2);
-            renderHandler.vanillaRenderPass = 0;
+            
         }
-    }
+    }*/
 }

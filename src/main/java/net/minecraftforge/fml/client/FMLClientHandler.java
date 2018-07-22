@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.FormattedMessage;
 import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -138,8 +139,6 @@ import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.GameData;
-
-import org.apache.logging.log4j.message.FormattedMessage;
 
 /**
  * Handles primary communication from hooked code into the system
@@ -1105,27 +1104,22 @@ public class FMLClientHandler implements IFMLSidedHandler
         return getCloudRenderer().render(cloudTicks, partialTicks);
     }
 
-    public int renderSky(float partialTicks)
+    public boolean renderSky(float partialTicks)
     {
         SkyRenderHandler skyRenderer = this.client.world.provider.getSkyRenderHandler();
 
-        if(skyRenderer.getVanillaRenderPass() != 0)
-        {
-            return skyRenderer.getVanillaRenderPass();
-        }
-
         if(skyRenderer.render(partialTicks, this.client.world, this.client))
         {
-            return -1;
+            return true;
         }
 
         IRenderHandler renderer = this.client.world.provider.getSkyRenderer();
         if(renderer != null)
         {
             renderer.render(partialTicks, this.client.world, this.client);
-            return -1;
+            return true;
         }
 
-        return 0;
+        return false;
     }
 }
