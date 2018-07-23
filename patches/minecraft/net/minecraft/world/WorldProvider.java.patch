@@ -65,12 +65,13 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,371 @@
+@@ -241,6 +216,379 @@
          return new WorldBorder();
      }
  
 +    /*======================================= Forge Start =========================================*/
-+    private net.minecraftforge.client.IRenderHandler skyRenderer = null;
++    private net.minecraftforge.client.IRenderHandler legacySkyRenderer = null;
++    private net.minecraftforge.client.SkyRenderHandler skyRenderHandler = new net.minecraftforge.client.SkyRenderHandler();
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
 +    private int dimensionId;
@@ -138,13 +139,20 @@
 +    @SideOnly(Side.CLIENT)
 +    public net.minecraftforge.client.IRenderHandler getSkyRenderer()
 +    {
-+        return this.skyRenderer;
++        return this.legacySkyRenderer;
 +    }
 +
 +    @SideOnly(Side.CLIENT)
 +    public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer)
 +    {
-+        this.skyRenderer = skyRenderer;
++        this.legacySkyRenderer = skyRenderer;
++    }
++
++    @Nullable
++    @SideOnly(Side.CLIENT)
++    public net.minecraftforge.client.SkyRenderHandler getSkyRenderHandler()
++    {
++        return this.skyRenderHandler;
 +    }
 +
 +    @Nullable

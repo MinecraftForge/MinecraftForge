@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2018.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.client;
 
 import javax.annotation.Nullable;
@@ -5,8 +24,8 @@ import javax.annotation.Nullable;
 import net.minecraft.util.ResourceLocation;
 
 public class SkyLayer {
-    private final ResourceLocation id;
-    private SkyLayerGroup group = null;
+    public final ResourceLocation id;
+    private Group group = null;
     private IRenderHandler renderer = null;
 
     SkyLayer(ResourceLocation idIn)
@@ -15,33 +34,26 @@ public class SkyLayer {
     }
 
     /**
-     * Gives the sub-layer group of this layer.
-     * If this layer is not a group, gives this layer sub-layer group.
-     * @return the sub-layer group of this layer
+     * Makes this layer as a layer group of sub-layers.
+     * @return the group reference as a result
      * */
-    public SkyLayerGroup asGroup()
+    public Group makeGroup()
     {
-        if(this.group == null)
-        {
-            this.group = new SkyLayerGroup();
-            this.renderer = null;
-        }
-
+        this.renderer = null;
+        this.group = new Group();
         return this.group;
     }
 
     /**
-     * Check if this layer is group.
-     * @return 
+     * @return the layer group of this layer if it's a group, or <code>null</code> otherwise
      * */
-    public boolean isGroup()
+    public @Nullable Group getGroup()
     {
-        return this.group != null;
+        return this.group;
     }
 
     /**
      * Replace the renderer assigned to this layer with the specified renderer.
-     * If this layer was a group, this removes the sub-layer group from this layer
      * @param rendererIn the renderer to set
      * */
     public void replace(IRenderHandler rendererIn)
@@ -56,6 +68,15 @@ public class SkyLayer {
     public @Nullable IRenderHandler getRenderer()
     {
         return this.renderer;
+    }
+
+    public class Group {
+        public final SkyLayer layer;
+
+        Group()
+        {
+            this.layer = SkyLayer.this;
+        }
     }
 
     @Override

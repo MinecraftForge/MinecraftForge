@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2018.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,17 +19,8 @@
 
 package net.minecraftforge.client;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumMap;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -42,38 +33,69 @@ import net.minecraft.util.ResourceLocation;
 public class SkyRenderHandler
 {
     private boolean enabled = false;
-    private final SkyLayerGroup rootLayerGroup;
+    private final SkyLayer rootLayer;
+    private final Map<ResourceLocation, SkyLayer> layerMap = new HashMap<>();
+    private final Map<ResourceLocation, ResourceLocation> parentMap = new HashMap<>();
 
-    public SkyRenderHandler() {
-        this.rootLayerGroup = new SkyLayerGroup();
-        SkyLayer skyBg = rootLayerGroup.subLayer(new ResourceLocation("sky_background"));
-        SkyLayer celestial = rootLayerGroup.subLayer(new ResourceLocation("celestial"));
-        SkyLayer skyFg = rootLayerGroup.subLayer(new ResourceLocation("sky_foreground"));
+    /**
+     * Registers certain layer as part of certain layer group.
+     * Replaces previous one with the same id if it exists.
+     * @param layerGroup the layer group
+     * @param id the layer id
+     * */
+    public SkyLayer register(SkyLayer.Group layerGroup, ResourceLocation id)
+    {
+        if(layerMap.containsKey(id))
+        {
+            layerMap.remove(id);
+            parentMap.remove(id);
+        }
 
-        SkyLayerGroup celestialGroup = celestial.asGroup();
-        SkyLayer planetary = celestialGroup.subLayer(new ResourceLocation("planetary"));
-        SkyLayer stellar = celestialGroup.subLayer(new ResourceLocation("stellar"));
+        SkyLayer layer = new SkyLayer(id);
+        layerMap.put(id, layer);
+        return layer;
+    }
 
-        SkyLayerGroup planetaryGroup = celestial.asGroup();
-        SkyLayer sun = planetaryGroup.subLayer(new ResourceLocation("sun"));
-        SkyLayer moon = planetaryGroup.subLayer(new ResourceLocation("moon"));
+    /**
+     * @return sky layer registered for specified id
+     * */
+    public SkyLayer getLayer(ResourceLocation id)
+    {
+        return layerMap.get(id);
+    }
+
+    public SkyRenderHandler()
+    {
+        this.rootLayer = new SkyLayer(new ResourceLocation("sky_all"));
+        SkyLayer.Group rootLayerGroup = rootLayer.makeGroup();
+        SkyLayer skyBg = this.register(rootLayerGroup, new ResourceLocation("sky_background"));
+        SkyLayer celestial = this.register(rootLayerGroup, new ResourceLocation("celestial"));
+        SkyLayer skyFg = this.register(rootLayerGroup, new ResourceLocation("sky_foreground"));
+
+        SkyLayer.Group celestialGroup = celestial.makeGroup();
+        SkyLayer planetary = this.register(celestialGroup, new ResourceLocation("planetary"));
+        SkyLayer stellar = this.register(celestialGroup, new ResourceLocation("stellar"));
+
+        SkyLayer.Group planetaryGroup = planetary.makeGroup();
+        SkyLayer sun = this.register(planetaryGroup, new ResourceLocation("sun"));
+        SkyLayer moon = this.register(planetaryGroup, new ResourceLocation("moon"));
     }
 
     public boolean render(float partialTicks, WorldClient world, Minecraft mc)
     {
         if(!this.enabled)
             return false;
-        for(SkyLayer layer : rootLayerGroup.subLayers())
-            this.render(layer, partialTicks, world, mc);
+        //for(SkyLayer layer : rootLayerGroup.subLayers())
+        //    this.render(layer, partialTicks, world, mc);
         return true;
     }
 
     private void render(SkyLayer layer, float partialTicks, WorldClient world, Minecraft mc)
     {
-        if(layer.isGroup())
+        if(layer.getGroup() != null)
         {
-            for(SkyLayer subLayer : layer.asGroup().subLayers())
-                this.render(subLayer, partialTicks, world, mc);
+         //   for(SkyLayer subLayer : layer.asGroup().subLayers())
+         //       this.render(subLayer, partialTicks, world, mc);
         }
         if(layer.getRenderer() != null)
             layer.getRenderer().render(partialTicks, world, mc);
