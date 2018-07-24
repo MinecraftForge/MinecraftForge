@@ -31,7 +31,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.client.SkyRenderHandler;
-import net.minecraftforge.client.SkyRenderPass;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -60,7 +59,7 @@ public class ReplaceSunMoonTest {
             if(world.isRemote && world.provider.isSurfaceWorld())
             {
                 SkyRenderHandler renderHandler = world.provider.getSkyRenderHandler();
-                if(REMOVE_SUN)
+                /*if(REMOVE_SUN)
                     renderHandler.unregisterVanillaRenderer(SkyRenderPass.SUN_MOON_STARS, new ResourceLocation("sun"));
                 if(REMOVE_MOON)
                     renderHandler.unregisterVanillaRenderer(SkyRenderPass.SUN_MOON_STARS, new ResourceLocation("moon"));
@@ -70,7 +69,7 @@ public class ReplaceSunMoonTest {
                 if(REPLACE_SUN)
                     renderHandler.registerSkyRenderer(SkyRenderPass.SUN_MOON_STARS, new ResourceLocation("sun"), new SunRenderer(), 2.0);
                 if(REPLACE_MOON)
-                    renderHandler.registerSkyRenderer(SkyRenderPass.SUN_MOON_STARS, new ResourceLocation("moon"), new MoonRenderer(), 1.0);
+                    renderHandler.registerSkyRenderer(SkyRenderPass.SUN_MOON_STARS, new ResourceLocation("moon"), new MoonRenderer(), 1.0);*/
             }
         }
     }
