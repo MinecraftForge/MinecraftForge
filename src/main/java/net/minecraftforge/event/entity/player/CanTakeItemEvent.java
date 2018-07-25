@@ -36,10 +36,12 @@ import javax.annotation.Nonnull;
 public class CanTakeItemEvent extends PlayerEvent
 {
     private final ItemStack itemStack;
+    private final boolean vanillaResult;
 
-    public CanTakeItemEvent(@Nonnull ItemStack itemStack, EntityPlayer entityPlayer) {
+    public CanTakeItemEvent(@Nonnull ItemStack itemStack, EntityPlayer entityPlayer, boolean vanillaResult) {
         super(entityPlayer);
         this.itemStack = itemStack;
+        this.vanillaResult = vanillaResult;
     }
 
     /**
@@ -49,5 +51,13 @@ public class CanTakeItemEvent extends PlayerEvent
     public ItemStack getItemStack()
     {
         return itemStack;
+    }
+
+    /**
+     * If the item is allowed to be moved normally.
+     */
+    public boolean getVanillaResult()
+    {
+        return vanillaResult;
     }
 }

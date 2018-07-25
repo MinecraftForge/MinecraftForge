@@ -489,9 +489,9 @@ public class ForgeEventFactory
         return event.getResult() == Result.ALLOW ? 1 : 0;
     }
 
-    public static boolean onCanTakeItem(EntityPlayer player, ItemStack itemStack)
+    public static boolean onCanTakeItem(EntityPlayer player, ItemStack itemStack, boolean vanillaResult)
     {
-        Event event = new net.minecraftforge.event.entity.player.CanTakeItemEvent(itemStack, player);
+        Event event = new net.minecraftforge.event.entity.player.CanTakeItemEvent(itemStack, player, vanillaResult);
         MinecraftForge.EVENT_BUS.post(event);
         return !event.isCanceled() && event.getResult() != Result.DENY;
     }

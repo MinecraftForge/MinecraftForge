@@ -15,7 +15,7 @@
      {
 -        return true;
 +        ItemStack itemStack = this.func_75211_c();
-+        return net.minecraftforge.event.ForgeEventFactory.onCanTakeItem(p_82869_1_, itemStack);
++        return net.minecraftforge.event.ForgeEventFactory.onCanTakeItem(p_82869_1_, itemStack, true);
      }
  
      @SideOnly(Side.CLIENT)
