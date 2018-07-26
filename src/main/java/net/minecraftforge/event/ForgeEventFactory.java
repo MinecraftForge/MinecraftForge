@@ -42,6 +42,7 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
@@ -80,6 +81,7 @@ import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityDispatcher;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.context.EntityPart;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.brewing.PlayerBrewedPotionEvent;
 import net.minecraftforge.event.brewing.PotionBrewEvent;
@@ -625,46 +627,46 @@ public class ForgeEventFactory
     }
 
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(TileEntity tileEntity)
+    public static CapabilityDispatcher<EnumFacing> gatherCapabilities(TileEntity tileEntity)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<TileEntity>(TileEntity.class, tileEntity), null);
+        return gatherCapabilities(new AttachCapabilitiesEvent<>(TileEntity.class, tileEntity), null);
     }
 
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Entity entity)
+    public static CapabilityDispatcher<EntityPart> gatherCapabilities(Entity entity)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Entity>(Entity.class, entity), null);
+        return gatherCapabilities(new AttachCapabilitiesEvent<>(Entity.class, entity), null);
     }
 
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Village village)
+    public static CapabilityDispatcher<Void> gatherCapabilities(Village village)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Village>(Village.class, village), null);
+        return gatherCapabilities(new AttachCapabilitiesEvent<>(Village.class, village), null);
     }
 
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(ItemStack stack, ICapabilityProvider parent)
+    public static CapabilityDispatcher<EntityEquipmentSlot> gatherCapabilities(ItemStack stack, ICapabilityProvider<EntityEquipmentSlot> parent)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<ItemStack>(ItemStack.class, stack), parent);
+        return gatherCapabilities(new AttachCapabilitiesEvent<>(ItemStack.class, stack), parent);
     }
 
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
+    public static CapabilityDispatcher<Void> gatherCapabilities(World world, ICapabilityProvider<Void> parent)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<World>(World.class, world), parent);
+        return gatherCapabilities(new AttachCapabilitiesEvent<>(World.class, world), parent);
     }
 
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Chunk chunk)
+    public static CapabilityDispatcher<Void> gatherCapabilities(Chunk chunk)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Chunk>(Chunk.class, chunk), null);
+        return gatherCapabilities(new AttachCapabilitiesEvent<>(Chunk.class, chunk), null);
     }
 
     @Nullable
-    private static CapabilityDispatcher gatherCapabilities(AttachCapabilitiesEvent<?> event, @Nullable ICapabilityProvider parent)
+    private static <TContext> CapabilityDispatcher<TContext> gatherCapabilities(AttachCapabilitiesEvent<? extends ICapabilityProvider<TContext>, TContext> event, @Nullable ICapabilityProvider<TContext> parent)
     {
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher(event.getCapabilities(), parent) : null;
+        return event.getCapabilities().size() > 0 || parent != null ? new CapabilityDispatcher<>(event.getCapabilities(), parent) : null;
     }
 
     public static boolean fireSleepingLocationCheck(EntityPlayer player, BlockPos sleepingLocation)

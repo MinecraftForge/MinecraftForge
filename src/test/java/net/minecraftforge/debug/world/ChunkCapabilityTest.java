@@ -115,7 +115,7 @@ public class ChunkCapabilityTest
         }
     }
 
-    public static class PollutionProvider implements ICapabilitySerializable<NBTBase>
+    public static class PollutionProvider implements ICapabilitySerializable<Void, NBTBase>
     {
         private final IPollution pollution;
 
@@ -135,13 +135,13 @@ public class ChunkCapabilityTest
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable Void nothing) {
             return capability == POLLUTION_CAPABILITY;
         }
 
         @Nullable
         @Override
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable Void nothing) {
             return capability == POLLUTION_CAPABILITY ? POLLUTION_CAPABILITY.cast(pollution) : null;
         }
     }
@@ -149,7 +149,7 @@ public class ChunkCapabilityTest
     public static class EventBusHandler
     {
         @SubscribeEvent
-        public void onAttachChunkCapabilities(AttachCapabilitiesEvent<Chunk> event)
+        public void onAttachChunkCapabilities(AttachCapabilitiesEvent<Chunk, Void> event)
         {
             event.addCapability(new ResourceLocation(MODID, "pollution"), new PollutionProvider(event.getObject()));
         }

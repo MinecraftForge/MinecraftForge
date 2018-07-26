@@ -51,7 +51,7 @@ public class CapabilityAnimation
         }, AnimationStateMachine::getMissing);
     }
 
-    public static class DefaultItemAnimationCapabilityProvider implements ICapabilityProvider
+    public static class DefaultItemAnimationCapabilityProvider<TContext> implements ICapabilityProvider<TContext>
     {
         private final IAnimationStateMachine asm;
 
@@ -61,14 +61,14 @@ public class CapabilityAnimation
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable TContext facing)
         {
             return capability == ANIMATION_CAPABILITY;
         }
 
         @Override
         @Nullable
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable TContext facing)
         {
             if(capability == ANIMATION_CAPABILITY)
             {

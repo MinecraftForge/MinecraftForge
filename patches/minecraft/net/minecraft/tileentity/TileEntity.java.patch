@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public abstract class TileEntity
-+public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
++public abstract class TileEntity implements net.minecraftforge.common.capabilities.ICapabilitySerializable<net.minecraft.util.EnumFacing, NBTTagCompound>
  {
      private static final Logger field_145852_a = LogManager.getLogger();
      private static final RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> field_190562_f = new RegistryNamespaced < ResourceLocation, Class <? extends TileEntity >> ();
@@ -237,7 +237,7 @@
 +        return false;
 +    }
 +
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher<net.minecraft.util.EnumFacing> capabilities;
 +    public TileEntity()
 +    {
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);

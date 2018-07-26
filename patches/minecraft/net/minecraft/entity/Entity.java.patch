@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public abstract class Entity implements ICommandSender
-+public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
++public abstract class Entity implements ICommandSender, net.minecraftforge.common.capabilities.ICapabilitySerializable<net.minecraftforge.common.capabilities.context.EntityPart, NBTTagCompound>
  {
      private static final Logger field_184243_a = LogManager.getLogger();
      private static final List<ItemStack> field_190535_b = Collections.<ItemStack>emptyList();
@@ -41,7 +41,7 @@
 +    private NBTTagCompound customEntityData;
 +    public boolean captureDrops = false;
 +    public java.util.ArrayList<EntityItem> capturedDrops = new java.util.ArrayList<EntityItem>();
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher<net.minecraftforge.common.capabilities.context.EntityPart> capabilities;
 +
      public int func_145782_y()
      {
@@ -368,14 +368,14 @@
 +    }
 +
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraftforge.common.capabilities.context.EntityPart facing)
 +    {
 +        return capabilities != null && capabilities.hasCapability(capability, facing);
 +    }
 +
 +    @Override
 +    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraftforge.common.capabilities.context.EntityPart facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }

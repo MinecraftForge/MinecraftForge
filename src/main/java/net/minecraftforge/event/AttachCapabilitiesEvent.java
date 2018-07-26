@@ -35,11 +35,11 @@ import net.minecraftforge.fml.common.eventhandler.GenericEvent;
  * Please note that as this is fired for ALL object creations efficient code is recommended.
  * And if possible use one of the sub-classes to filter your intended objects.
  */
-public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
+public class AttachCapabilitiesEvent<T extends ICapabilityProvider<TContext>, TContext> extends GenericEvent<T>
 {
     private final T obj;
-    private final Map<ResourceLocation, ICapabilityProvider> caps = Maps.newLinkedHashMap();
-    private final Map<ResourceLocation, ICapabilityProvider> view = Collections.unmodifiableMap(caps);
+    private final Map<ResourceLocation, ICapabilityProvider<TContext>> caps = Maps.newLinkedHashMap();
+    private final Map<ResourceLocation, ICapabilityProvider<TContext>> view = Collections.unmodifiableMap(caps);
 
     public AttachCapabilitiesEvent(Class<T> type, T obj)
     {
@@ -63,7 +63,7 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
      * @param key The name of owner of this capability provider.
      * @param cap The capability provider
      */
-    public void addCapability(ResourceLocation key, ICapabilityProvider cap)
+    public void addCapability(ResourceLocation key, ICapabilityProvider<TContext> cap)
     {
         if (caps.containsKey(key))
             throw new IllegalStateException("Duplicate Capability Key: " + key  + " " + cap);
@@ -73,7 +73,7 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
     /**
      * A unmodifiable view of the capabilities that will be attached to this object.
      */
-    public Map<ResourceLocation, ICapabilityProvider> getCapabilities()
+    public Map<ResourceLocation, ICapabilityProvider<TContext>> getCapabilities()
     {
         return view;
     }

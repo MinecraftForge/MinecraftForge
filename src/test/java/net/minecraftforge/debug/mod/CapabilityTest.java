@@ -22,6 +22,7 @@ package net.minecraftforge.debug.mod;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,11 +34,8 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.village.Village;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.*;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -127,7 +125,7 @@ public class CapabilityTest
     // Having the Provider implement the cap is not recommended as this creates a hard dep on the cap interface.
     // And does not allow for sidedness.
     // But as this is a example and we do not care about that here we go.
-    class Provider<V> implements ICapabilitySerializable<NBTTagCompound>, IExampleCapability
+    class Provider<V extends ICapabilityProvider<C>, C> implements ICapabilitySerializable<C, NBTTagCompound>, IExampleCapability
     {
         private V obj;
         private boolean value;
@@ -138,14 +136,14 @@ public class CapabilityTest
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable C facing)
         {
             return TEST_CAP != null && capability == TEST_CAP;
         }
 
         @Override
         @Nullable
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable C facing)
         {
             if (TEST_CAP != null && capability == TEST_CAP)
             {
@@ -193,18 +191,18 @@ public class CapabilityTest
     // version of the has/getCapability functions yourself. So you have control
     // over everything yours being called first.
     @SubscribeEvent
-    public void onTELoad(AttachCapabilitiesEvent<TileEntity> event)
+    public void onTELoad(AttachCapabilitiesEvent<TileEntity, EnumFacing> event)
     {
         //Attach it! The resource location MUST be unique it's recommended that you tag it with your modid and what the cap is.
-        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<TileEntity>(event.getObject()));
+        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<>(event.getObject()));
     }
 
     @SubscribeEvent
-    public void onItemLoad(AttachCapabilitiesEvent<ItemStack> event)
+    public void onItemLoad(AttachCapabilitiesEvent<ItemStack, EntityEquipmentSlot> event)
     {
         if (event.getObject().getItem() == Items.STICK)
         {
-            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<ItemStack>(event.getObject()));
+            event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<>(event.getObject()));
         }
     }
 
@@ -216,7 +214,7 @@ public class CapabilityTest
     }
 
     @SubscribeEvent
-    public void attachTileEntity(AttachCapabilitiesEvent<TileEntity> event)
+    public void attachTileEntity(AttachCapabilitiesEvent<TileEntity, EnumFacing> event)
     {
         if (!(event.getObject() instanceof TileEntity))
         {
@@ -225,10 +223,10 @@ public class CapabilityTest
     }
 
     @SubscribeEvent
-    public void attachVillage(AttachCapabilitiesEvent<Village> event)
+    public void attachVillage(AttachCapabilitiesEvent<Village, Void> event)
     {
         System.out.println(event.getObject());
-        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider(event.getObject()));
+        event.addCapability(new ResourceLocation("forge.testcapmod:dummy_cap"), new Provider<>(event.getObject()));
     }
 
     //Detects if a player has entered the radius of a village

@@ -5,7 +5,7 @@
  import net.minecraftforge.fml.relauncher.SideOnly;
  
 -public abstract class World implements IBlockAccess
-+public abstract class World implements IBlockAccess, net.minecraftforge.common.capabilities.ICapabilityProvider
++public abstract class World implements IBlockAccess, net.minecraftforge.common.capabilities.ICapabilityProvider<Void>
  {
 +    /**
 +     * Used in the getEntitiesWithinAABB functions to expand the search area for entities.
@@ -24,7 +24,7 @@
 +    public boolean restoringBlockSnapshots = false;
 +    public boolean captureBlockSnapshots = false;
 +    public java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot> capturedBlockSnapshots = new java.util.ArrayList<net.minecraftforge.common.util.BlockSnapshot>();
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++    private net.minecraftforge.common.capabilities.CapabilityDispatcher<Void> capabilities;
 +    private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
 +
      protected World(ISaveHandler p_i45749_1_, WorldInfo p_i45749_2_, WorldProvider p_i45749_3_, Profiler p_i45749_4_, boolean p_i45749_5_)
@@ -1098,7 +1098,7 @@
 +
 +    protected void initCapabilities()
 +    {
-+        net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
++        net.minecraftforge.common.capabilities.ICapabilityProvider<Void> parent = field_73011_w.initCapabilities();
 +        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, parent);
 +        net.minecraftforge.common.util.WorldCapabilityData data = (net.minecraftforge.common.util.WorldCapabilityData)perWorldStorage.func_75742_a(net.minecraftforge.common.util.WorldCapabilityData.class, net.minecraftforge.common.util.WorldCapabilityData.ID);
 +        if (data == null)
@@ -1113,13 +1113,13 @@
 +        }
 +    }
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable Void facing)
 +    {
 +        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
 +    }
 +    @Override
 +    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing)
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable Void facing)
 +    {
 +        return capabilities == null ? null : capabilities.getCapability(capability, facing);
 +    }

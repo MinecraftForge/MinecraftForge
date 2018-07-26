@@ -624,19 +624,19 @@
 +    @SuppressWarnings("unchecked")
 +    @Override
 +    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraftforge.common.capabilities.context.EntityPart facing)
 +    {
 +        if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +        {
 +            if (facing == null) return (T) playerJoinedHandler;
-+            else if (facing.func_176740_k().func_176720_b()) return (T) playerMainHandler;
-+            else if (facing.func_176740_k().func_176722_c()) return (T) playerEquipmentHandler;
++            else if (facing.isHands()) return (T) playerMainHandler;
++            else if (facing.isArmor()) return (T) playerEquipmentHandler;
 +        }
 +        return super.getCapability(capability, facing);
 +    }
 +
 +    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraftforge.common.capabilities.context.EntityPart facing)
 +    {
 +        return capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
 +    }

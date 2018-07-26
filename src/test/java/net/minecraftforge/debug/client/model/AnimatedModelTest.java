@@ -36,6 +36,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -57,6 +58,7 @@ import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.animation.TimeValues.VariableValue;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.context.EntityPart;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.ExtendedBlockState;
@@ -263,7 +265,7 @@ public class AnimatedModelTest
             new ItemBlock(TEST_BLOCK)
             {
                 @Override
-                public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
+                public ICapabilityProvider<EntityEquipmentSlot> initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt)
                 {
                     return new ItemAnimationHolder();
                 }
@@ -346,7 +348,7 @@ public class AnimatedModelTest
         }
     }
 
-    private static class ItemAnimationHolder implements ICapabilityProvider
+    private static class ItemAnimationHolder implements ICapabilityProvider<EntityEquipmentSlot>
     {
         private final VariableValue cycleLength = new VariableValue(4);
 
@@ -355,14 +357,14 @@ public class AnimatedModelTest
         ));
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EntityEquipmentSlot equipmentSlot)
         {
             return capability == CapabilityAnimation.ANIMATION_CAPABILITY;
         }
 
         @Override
         @Nullable
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EntityEquipmentSlot equipmentSlot)
         {
             if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
@@ -543,24 +545,24 @@ public class AnimatedModelTest
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing side)
+        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EntityPart entityPart)
         {
             if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
                 return true;
             }
-            return super.hasCapability(capability, side);
+            return super.hasCapability(capability, entityPart);
         }
 
         @Override
         @Nullable
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing side)
+        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EntityPart entityPart)
         {
             if (capability == CapabilityAnimation.ANIMATION_CAPABILITY)
             {
                 return CapabilityAnimation.ANIMATION_CAPABILITY.cast(asm);
             }
-            return super.getCapability(capability, side);
+            return super.getCapability(capability, entityPart);
         }
     }
 }
