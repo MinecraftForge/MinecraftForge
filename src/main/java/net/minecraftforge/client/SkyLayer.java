@@ -34,18 +34,28 @@ public class SkyLayer {
     }
 
     /**
-     * Makes this layer as a layer group of sub-layers.
-     * @return the group reference as a result
+     * Creates layer group associated with this layer. <p>
+     * This will discard the associated renderer if it exists.
+     * @return the resulted group
      * */
-    public Group makeGroup()
+    public SkyLayer.Group makeGroup()
     {
-        this.renderer = null;
         this.group = new Group();
+        this.renderer = null;
         return this.group;
     }
 
+    void setRenderer(IRenderHandler rendererIn)
+    {
+        if(this.group != null)
+            throw new IllegalStateException(
+                    String.format("Layer %s is associated with layer group, so it can't have a renderer",
+                            this.id));
+        this.renderer = rendererIn;
+    }
+
     /**
-     * @return the layer group of this layer if it's a group, or <code>null</code> otherwise
+     * @return gets layer group associated with this layer if it exists, <code>null</code> otherwise
      * */
     public @Nullable Group getGroup()
     {
@@ -53,24 +63,15 @@ public class SkyLayer {
     }
 
     /**
-     * Replace the renderer assigned to this layer with the specified renderer.
-     * @param rendererIn the renderer to set
-     * */
-    public void replace(IRenderHandler rendererIn)
-    {
-        this.group = null;
-        this.renderer = rendererIn;
-    }
-
-    /**
-     * @return renderer assigned to this layer, or <code>null</code> if it doesn't present
+     * @return gets the renderer if it exists, <code>null</code> otherwise
      * */
     public @Nullable IRenderHandler getRenderer()
     {
         return this.renderer;
     }
 
-    public class Group {
+    public class Group
+    {
         public final SkyLayer layer;
 
         Group()

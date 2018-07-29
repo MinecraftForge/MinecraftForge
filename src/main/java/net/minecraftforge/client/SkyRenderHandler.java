@@ -21,6 +21,13 @@ package net.minecraftforge.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.Graphs;
+import com.google.common.graph.MutableGraph;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -32,28 +39,78 @@ import net.minecraft.util.ResourceLocation;
  * */
 public class SkyRenderHandler
 {
-    private boolean enabled = false;
-    private final SkyLayer rootLayer;
+    private SkyLayer rootLayer;
     private final Map<ResourceLocation, SkyLayer> layerMap = new HashMap<>();
-    private final Map<ResourceLocation, ResourceLocation> parentMap = new HashMap<>();
+    private final MutableGraph<SkyLayer> layerGraph = GraphBuilder.directed().build();
+    private final MutableGraph<SkyLayer> orderGraph = GraphBuilder.directed().build();
+
+    private boolean enabled;
+    private final ListMultimap<SkyLayer, SkyLayer> order = ArrayListMultimap.create();
+
+    private SkyLayer register(ResourceLocation id)
+    {
+        SkyLayer layer = new SkyLayer(id);
+        this.rootLayer = layer;
+        layerMap.put(id, layer);
+        layerGraph.addNode(layer);
+        orderGraph.addNode(layer);
+        return layer;
+    }
 
     /**
      * Registers certain layer as part of certain layer group.
-     * Replaces previous one with the same id if it exists.
+     * Replaces previous one with an empty layer if there was a layer.
      * @param layerGroup the layer group
      * @param id the layer id
+     * @return the registered layer
+     * @throws IllegalArgumentException if the specified layer group is invalid / not registered
      * */
     public SkyLayer register(SkyLayer.Group layerGroup, ResourceLocation id)
     {
+        if(!layerMap.containsKey(layerGroup.layer.id))
+            throw new IllegalArgumentException(String.format("Invalid layer %s", layerGroup.layer.id));
+
+        if(this.rootLayer.id.equals(id))
+            throw new IllegalArgumentException(String.format("Can't remove root layer with id %s", id));
+
         if(layerMap.containsKey(id))
         {
-            layerMap.remove(id);
-            parentMap.remove(id);
+            SkyLayer layer = layerMap.get(id);
+            for(SkyLayer subLayer : Graphs.reachableNodes(this.layerGraph, layer))
+            {
+                SkyLayer parent = layerGraph.predecessors(subLayer).stream().findFirst().get();
+                layerMap.remove(subLayer.id);
+                layerGraph.removeNode(subLayer);
+                orderGraph.removeNode(subLayer);
+                order.remove(parent, subLayer);
+            }
         }
 
         SkyLayer layer = new SkyLayer(id);
         layerMap.put(id, layer);
+        layerGraph.addNode(layer);
+        layerGraph.putEdge(layerGroup.layer, layer);
+        orderGraph.addNode(layer);
+        order.put(layerGroup.layer, layer);
         return layer;
+    }
+
+    /**
+     * Require ordering between two layers.
+     * @param prior the prior layer which comes before the other
+     * @param posterior the posterior layer which comes after the other
+     * */
+    public void requireOrder(SkyLayer prior, SkyLayer posterior)
+    {
+        orderGraph.putEdge(prior, posterior);
+    }
+
+    /**
+     * @return the root sky layer
+     * */
+    public SkyLayer getRootLayer()
+    {
+        return this.rootLayer;
     }
 
     /**
@@ -64,9 +121,19 @@ public class SkyRenderHandler
         return layerMap.get(id);
     }
 
+    /**
+     * @return the sub-layers in the specified layer group
+     * */
+    public Set<SkyLayer> getSubLayers(SkyLayer.Group group)
+    {
+        return layerGraph.successors(group.layer);
+    }
+
+    @SuppressWarnings("unused")
     public SkyRenderHandler()
     {
-        this.rootLayer = new SkyLayer(new ResourceLocation("sky_all"));
+        SkyLayer rootLayer = this.register(new ResourceLocation("sky_all"));
+
         SkyLayer.Group rootLayerGroup = rootLayer.makeGroup();
         SkyLayer skyBg = this.register(rootLayerGroup, new ResourceLocation("sky_background"));
         SkyLayer celestial = this.register(rootLayerGroup, new ResourceLocation("celestial"));
@@ -74,19 +141,24 @@ public class SkyRenderHandler
 
         SkyLayer.Group celestialGroup = celestial.makeGroup();
         SkyLayer planetary = this.register(celestialGroup, new ResourceLocation("planetary"));
-        SkyLayer stellar = this.register(celestialGroup, new ResourceLocation("stellar"));
+        SkyLayer stars = this.register(celestialGroup, new ResourceLocation("stars"));
 
         SkyLayer.Group planetaryGroup = planetary.makeGroup();
         SkyLayer sun = this.register(planetaryGroup, new ResourceLocation("sun"));
         SkyLayer moon = this.register(planetaryGroup, new ResourceLocation("moon"));
     }
 
+    public void build()
+    {
+        
+    }
+
     public boolean render(float partialTicks, WorldClient world, Minecraft mc)
     {
         if(!this.enabled)
             return false;
-        //for(SkyLayer layer : rootLayerGroup.subLayers())
-        //    this.render(layer, partialTicks, world, mc);
+
+        this.render(this.rootLayer, partialTicks, world, mc);
         return true;
     }
 

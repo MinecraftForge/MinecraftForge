@@ -106,7 +106,7 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
      {
-+        if (this.field_72769_h.field_73011_w.getSkyRenderHandler().render(p_174976_1_, field_72769_h, field_72777_q))
++        if (net.minecraftforge.fml.client.FMLClientHandler.instance().renderSky(p_174976_1_))
 +            return;
          if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p().func_186068_a() == 1)
          {
