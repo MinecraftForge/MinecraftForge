@@ -20,11 +20,15 @@
 package net.minecraftforge.client;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Sets;
+import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
@@ -96,7 +100,8 @@ public class SkyRenderHandler
     }
 
     /**
-     * Require ordering between two layers.
+     * Require ordering between two layers. <p>
+     * Ordering from a parent layer to a child layer will be ignored.
      * @param prior the prior layer which comes before the other
      * @param posterior the posterior layer which comes after the other
      * */
@@ -150,7 +155,38 @@ public class SkyRenderHandler
 
     public void build()
     {
-        
+        // Search for actual pairs
+        Set<SkyLayer> temp = Sets.newHashSet();
+        for(EndpointPair<SkyLayer> pair : orderGraph.edges())
+        {
+            Optional<SkyLayer> current = Optional.of(pair.source());
+            temp.clear();
+            while(current.isPresent())
+            {
+                temp.add(current.get());
+                current = layerGraph.predecessors(current.get()).stream().findFirst();
+            }
+
+            if(temp.contains(pair.target()))
+                continue;
+
+            current = Optional.of(pair.target());
+            Optional<SkyLayer> parent = layerGraph.predecessors(pair.target()).stream().findFirst();
+            while(parent.isPresent())
+            {
+                if(temp.contains(parent.get()))
+                    break;
+                current = parent;
+                parent = layerGraph.predecessors(current.get()).stream().findFirst();
+            }
+
+            // TODO Put parent settings here
+        }
+
+        for(SkyLayer group : order.keySet())
+        {
+            List<SkyLayer> layer = order.get(group);
+        }
     }
 
     public boolean render(float partialTicks, WorldClient world, Minecraft mc)
