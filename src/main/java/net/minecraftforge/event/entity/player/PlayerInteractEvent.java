@@ -168,7 +168,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If {@link net.minecraft.item.Item#onItemUse} should be called
+         * @return If {@link net.minecraft.item.Item#onItemUseFirst} and {@link net.minecraft.item.Item#onItemUse} should be called
          */
         public Result getUseItem()
         {

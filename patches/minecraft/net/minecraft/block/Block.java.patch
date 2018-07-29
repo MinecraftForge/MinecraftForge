@@ -221,7 +221,7 @@
      public SoundType func_185467_w()
      {
          return this.field_149762_H;
-@@ -934,6 +952,1345 @@
+@@ -934,6 +952,1361 @@
      {
      }
  
@@ -1494,6 +1494,22 @@
 +    }
 +
 +    /**
++     * Used to determine the state 'viewed' by an entity (see
++     * {@link net.minecraft.client.renderer.ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
++     * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
++     *
++     * @param state     the state
++     * @param world     the world
++     * @param pos       the position
++     * @param viewpoint the viewpoint
++     * @return the block state that should be 'seen'
++     */
++    public IBlockState getStateAtViewpoint(IBlockState state, IBlockAccess world, BlockPos pos, Vec3d viewpoint)
++    {
++        return state;
++    }
++
++    /**
 +     * Gets the {@link IBlockState} to place
 +     * @param world The world the block is being placed in
 +     * @param pos The position the block is being placed at
@@ -1567,7 +1583,7 @@
      public static void func_149671_p()
      {
          func_176215_a(0, field_176230_a, (new BlockAir()).func_149663_c("air"));
-@@ -1105,7 +2462,7 @@
+@@ -1105,7 +2478,7 @@
          Block block11 = (new BlockQuartz()).func_149672_a(SoundType.field_185851_d).func_149711_c(0.8F).func_149663_c("quartzBlock");
          func_176219_a(155, "quartz_block", block11);
          func_176219_a(156, "quartz_stairs", (new BlockStairs(block11.func_176223_P().func_177226_a(BlockQuartz.field_176335_a, BlockQuartz.EnumType.DEFAULT))).func_149663_c("stairsQuartz"));
@@ -1576,7 +1592,7 @@
          func_176219_a(158, "dropper", (new BlockDropper()).func_149711_c(3.5F).func_149672_a(SoundType.field_185851_d).func_149663_c("dropper"));
          func_176219_a(159, "stained_hardened_clay", (new BlockStainedHardenedClay()).func_149711_c(1.25F).func_149752_b(7.0F).func_149672_a(SoundType.field_185851_d).func_149663_c("clayHardenedStained"));
          func_176219_a(160, "stained_glass_pane", (new BlockStainedGlassPane()).func_149711_c(0.3F).func_149672_a(SoundType.field_185853_f).func_149663_c("thinStainedGlass"));
-@@ -1230,31 +2587,6 @@
+@@ -1230,31 +2603,6 @@
                  block15.field_149783_u = flag;
              }
          }
