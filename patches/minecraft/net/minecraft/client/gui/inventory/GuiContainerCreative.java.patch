@@ -172,7 +172,7 @@
          }
          else
          {
-@@ -676,16 +744,35 @@
+@@ -676,17 +744,36 @@
          RenderHelper.func_74520_c();
          CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
@@ -192,6 +192,7 @@
              }
          }
  
+-        this.field_146297_k.func_110434_K().func_110577_a(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.func_78015_f()));
 +        if (tabPage != 0)
 +        {
 +            if (creativetabs != CreativeTabs.field_78027_g)
@@ -206,9 +207,10 @@
 +            }
 +        }
 +
-         this.field_146297_k.func_110434_K().func_110577_a(new ResourceLocation("textures/gui/container/creative_inventory/tab_" + creativetabs.func_78015_f()));
++        this.field_146297_k.func_110434_K().func_110577_a(creativetabs.getBackgroundImage());
          this.func_73729_b(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
          this.field_147062_A.func_146194_f();
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
 @@ -700,6 +787,14 @@
              this.func_73729_b(i, j + (int)((float)(k - j - 17) * this.field_147067_x), 232 + (this.func_147055_p() ? 0 : 12), 0, 12, 15);
          }

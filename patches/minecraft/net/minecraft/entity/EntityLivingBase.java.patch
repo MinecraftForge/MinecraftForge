@@ -367,18 +367,19 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +2775,9 @@
+@@ -2700,7 +2775,10 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
 -            this.func_184611_a(this.func_184600_cs(), this.field_184627_bm.func_77950_b(this.field_70170_p, this));
++            ItemStack activeItemStackCopy = this.field_184627_bm.func_77946_l();
 +            ItemStack itemstack = this.field_184627_bm.func_77950_b(this.field_70170_p, this);
-+            itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, field_184627_bm, func_184605_cv(), itemstack);
++            itemstack = net.minecraftforge.event.ForgeEventFactory.onItemUseFinish(this, activeItemStackCopy, func_184605_cv(), itemstack);
 +            this.func_184611_a(this.func_184600_cs(), itemstack);
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +2801,8 @@
+@@ -2724,7 +2802,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -388,7 +389,7 @@
          }
  
          this.func_184602_cy();
-@@ -2852,6 +2930,31 @@
+@@ -2852,6 +2931,31 @@
          return true;
      }
  

@@ -72,7 +72,15 @@
          this.func_180454_a(p_191962_1_, p_191962_4_);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
-@@ -413,9 +398,12 @@
+@@ -367,6 +352,7 @@
+                         return String.valueOf((Object)p_184391_2_.func_77973_b());
+                     }
+                 });
++                crashreportcategory.func_189529_a("Registry Name", () -> String.valueOf(p_184391_2_.func_77973_b().getRegistryName()));
+                 crashreportcategory.func_189529_a("Item Aux", new ICrashReportDetail<String>()
+                 {
+                     public String call() throws Exception
+@@ -413,9 +399,12 @@
                  p_180453_1_.func_175063_a(s, (float)(p_180453_3_ + 19 - 2 - p_180453_1_.func_78256_a(s)), (float)(p_180453_4_ + 6 + 3), 16777215);
                  GlStateManager.func_179145_e();
                  GlStateManager.func_179126_j();
@@ -86,7 +94,7 @@
              {
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
-@@ -424,11 +412,10 @@
+@@ -424,11 +413,10 @@
                  GlStateManager.func_179084_k();
                  Tessellator tessellator = Tessellator.func_178181_a();
                  BufferBuilder bufferbuilder = tessellator.func_178180_c();
@@ -102,7 +110,7 @@
                  this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
                  this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
                  GlStateManager.func_179147_l();
-@@ -1099,6 +1086,7 @@
+@@ -1099,6 +1087,7 @@
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.LOAD.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.CORNER.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.DATA.func_185110_a(), "structure_block");
