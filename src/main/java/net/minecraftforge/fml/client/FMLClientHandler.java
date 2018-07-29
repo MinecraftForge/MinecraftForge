@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
@@ -58,6 +59,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -113,6 +115,9 @@ import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.client.IRenderHandler;
 import net.minecraftforge.client.SkyRenderHandler;
 import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.resource.IResourceType;
+import net.minecraftforge.client.resource.ReloadRequirements;
+import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.common.util.CompoundDataFixer;
@@ -1102,6 +1107,29 @@ public class FMLClientHandler implements IFMLSidedHandler
             return true;
         }
         return getCloudRenderer().render(cloudTicks, partialTicks);
+    }
+
+    public void refreshResources(IResourceType... inclusion)
+    {
+        this.refreshResources(ReloadRequirements.include(inclusion));
+    }
+
+    // Wrapper around the existing refreshResources with given reload predicates
+    public void refreshResources(Predicate<IResourceType> resourcePredicate)
+    {
+        SelectiveReloadStateHandler.INSTANCE.beginReload(resourcePredicate);
+        this.client.refreshResources();
+        SelectiveReloadStateHandler.INSTANCE.endReload();
+    }
+
+    public ListenableFuture<Object> scheduleResourcesRefresh(IResourceType... inclusion)
+    {
+        return this.scheduleResourcesRefresh(ReloadRequirements.include(inclusion));
+    }
+
+    public ListenableFuture<Object> scheduleResourcesRefresh(Predicate<IResourceType> resourcePredicate)
+    {
+        return this.client.addScheduledTask(() -> this.refreshResources(resourcePredicate));
     }
 
     public boolean renderSky(float partialTicks)

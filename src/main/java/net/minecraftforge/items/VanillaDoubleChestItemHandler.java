@@ -188,6 +188,19 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     }
 
     @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        boolean accessingUpperChest = slot < 27;
+        int targetSlot = accessingUpperChest ? slot : slot - 27;
+        TileEntityChest chest = getChest(accessingUpperChest);
+        if (chest != null)
+        {
+            return chest.getSingleChestHandler().isItemValid(targetSlot, stack);
+        }
+        return true;
+    }
+
+    @Override
     public boolean equals(Object o)
     {
         if (this == o)

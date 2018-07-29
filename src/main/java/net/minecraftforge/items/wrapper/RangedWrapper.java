@@ -105,6 +105,17 @@ public class RangedWrapper implements IItemHandlerModifiable {
         return 0;
     }
 
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        if (checkSlot(slot))
+        {
+            return compose.isItemValid(slot + minSlot, stack);
+        }
+
+        return false;
+    }
+
     private boolean checkSlot(int localSlot)
     {
         return localSlot + minSlot < maxSlot;
