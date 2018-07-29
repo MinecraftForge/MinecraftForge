@@ -154,6 +154,15 @@
          if (p_175695_3_ != EnumFacing.WEST)
          {
              this.func_190524_a(p_175695_1_.func_177976_e(), p_175695_2_, p_175695_1_);
+@@ -507,7 +559,7 @@
+                     {
+                         try
+                         {
+-                            return String.format("ID #%d (%s // %s)", Block.func_149682_b(p_190524_2_), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getCanonicalName());
++                            return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190524_2_), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getName(), p_190524_2_.getRegistryName());
+                         }
+                         catch (Throwable var2)
+                         {
 @@ -527,11 +579,11 @@
          {
              IBlockState iblockstate = this.func_180495_p(p_190529_1_);
@@ -168,6 +177,15 @@
                  }
                  catch (Throwable throwable)
                  {
+@@ -543,7 +595,7 @@
+                         {
+                             try
+                             {
+-                                return String.format("ID #%d (%s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getCanonicalName());
++                                return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getName(), p_190529_2_.getRegistryName());
+                             }
+                             catch (Throwable var2)
+                             {
 @@ -588,7 +640,7 @@
                  {
                      IBlockState iblockstate = this.func_180495_p(blockpos1);

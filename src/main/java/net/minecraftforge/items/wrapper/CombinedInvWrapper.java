@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -131,5 +131,14 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
         IItemHandlerModifiable handler = getHandlerFromIndex(index);
         int localSlot = getSlotFromIndex(slot, index);
         return handler.getSlotLimit(localSlot);
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        int index = getIndexForSlot(slot);
+        IItemHandlerModifiable handler = getHandlerFromIndex(index);
+        int localSlot = getSlotFromIndex(slot, index);
+        return handler.isItemValid(localSlot, stack);
     }
 }

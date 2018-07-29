@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -73,7 +73,7 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
         Class<?> clazz = msg.getClass();
         if (!types.containsKey(clazz))
         {
-            throw new RuntimeException("Undefined discriminator for message type " + clazz.getSimpleName() + " in channel " + channel);
+            throw new RuntimeException("Undefined discriminator for message type " + clazz.getName() + " in channel " + channel);
         }
         byte discriminator = types.getByte(clazz);
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());

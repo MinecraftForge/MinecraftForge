@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -177,6 +177,12 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         if (ItemStack.areItemStacksEqual(entity.getItemStackFromSlot(equipmentSlot), stack))
             return;
         entity.setItemStackToSlot(equipmentSlot, stack);
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        return IItemHandlerModifiable.super.isItemValid(slot, stack);
     }
 
     protected EntityEquipmentSlot validateSlotIndex(final int slot)

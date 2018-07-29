@@ -50,7 +50,21 @@
                                                      {
                                                          continue label134;
                                                      }
-@@ -228,8 +232,9 @@
+@@ -219,6 +223,13 @@
+         }
+         else
+         {
++            return p_180267_0_.canSpawnAt(p_180267_1_, p_180267_2_);
++        }
++    }
++
++    public static boolean canCreatureTypeSpawnBody(EntityLiving.SpawnPlacementType p_180267_0_, World p_180267_1_, BlockPos p_180267_2_)
++    {
++        {
+             IBlockState iblockstate = p_180267_1_.func_180495_p(p_180267_2_);
+ 
+             if (p_180267_0_ == EntityLiving.SpawnPlacementType.IN_WATER)
+@@ -228,8 +239,9 @@
              else
              {
                  BlockPos blockpos = p_180267_2_.func_177977_b();
@@ -61,7 +75,7 @@
                  {
                      return false;
                  }
-@@ -273,7 +278,7 @@
+@@ -273,7 +285,7 @@
  
                              try
                              {
@@ -70,7 +84,7 @@
                              }
                              catch (Exception exception)
                              {
-@@ -281,6 +286,7 @@
+@@ -281,6 +293,7 @@
                                  continue;
                              }
  
