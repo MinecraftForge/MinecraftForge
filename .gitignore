@@ -2,6 +2,7 @@
 /bin
 /.settings
 /.classpath
+/.project
 
 #In case people make their workspace in the repo
 /eclipse/
