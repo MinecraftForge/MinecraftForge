@@ -29,8 +29,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ticket.AABBTicket;
 import net.minecraftforge.common.ticket.SimpleTicket;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Set;
+import java.util.WeakHashMap;
 
 public class FarmlandWaterManager
 {
@@ -49,7 +50,7 @@ public class FarmlandWaterManager
     public static<T extends SimpleTicket<Vec3d>> T addCustomTicket(World world, T ticket)
     {
         Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
-        Set<SimpleTicket<Vec3d>> tickets = customWaterHandler.computeIfAbsent(world.provider.getDimension(), id -> new HashSet<>());
+        Set<SimpleTicket<Vec3d>> tickets = customWaterHandler.computeIfAbsent(world.provider.getDimension(), id -> Collections.newSetFromMap(new WeakHashMap<>()));
         ticket.setBackend(tickets);
         ticket.validate();
         return ticket;
