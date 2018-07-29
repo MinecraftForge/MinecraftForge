@@ -771,4 +771,9 @@ public class FMLCommonHandler
     public void reloadSearchTrees() {
         this.sidedDelegate.reloadSearchTrees();
     }
+
+    public void reloadCreativeSettings()
+    {
+        this.sidedDelegate.reloadCreativeSettings();
+    }
 }

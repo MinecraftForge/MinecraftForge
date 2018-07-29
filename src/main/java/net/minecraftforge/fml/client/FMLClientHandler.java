@@ -1087,6 +1087,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         this.client.getSearchTreeManager().onResourceManagerReload(this.client.getResourceManager());
     }
 
+    @Override
+    public void reloadCreativeSettings()
+    {
+        this.client.creativeSettings.read();
+    }
+
     private CloudRenderer getCloudRenderer()
     {
         if (cloudRenderer == null)
