@@ -8,9 +8,19 @@
          if (p_180624_2_.nextInt(64) == 0)
          {
              (new WorldGenFossils()).func_180709_b(p_180624_1_, p_180624_2_, p_180624_3_);
-@@ -97,4 +98,10 @@
+@@ -89,12 +90,18 @@
+     public int func_180627_b(BlockPos p_180627_1_)
      {
-         return 6975545;
+         double d0 = field_180281_af.func_151601_a((double)p_180627_1_.func_177958_n() * 0.0225D, (double)p_180627_1_.func_177952_p() * 0.0225D);
+-        return d0 < -0.1D ? 5011004 : 6975545;
++        return getModdedBiomeGrassColor(d0 < -0.1D ? 5011004 : 6975545);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public int func_180625_c(BlockPos p_180625_1_)
+     {
+-        return 6975545;
++        return getModdedBiomeFoliageColor(6975545);
      }
 +
 +    @Override

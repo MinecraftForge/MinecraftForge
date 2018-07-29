@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -45,6 +45,7 @@ import com.google.gson.JsonParseException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -1033,18 +1034,16 @@ public class ForgeHooks
         }
         else if (block instanceof BlockLiquid)
         {
-            filled = BlockLiquid.getLiquidHeightPercent(block.getMetaFromState(state));
+            filled = 1.0 - (BlockLiquid.getLiquidHeightPercent(block.getMetaFromState(state)) - (1.0 / 9.0));
         }
 
         if (filled < 0)
         {
-            filled *= -1;
-            //filled -= 0.11111111F; //Why this is needed.. not sure...
-            return eyes > pos.getY() + 1 + (1 - filled);
+            return eyes > pos.getY() + (filled + 1);
         }
         else
         {
-            return eyes < pos.getY() + 1 + filled;
+            return eyes < pos.getY() + filled;
         }
     }
 
@@ -1450,4 +1449,17 @@ public class ForgeHooks
         }
         return modId;
     }
+
+    public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
+    {
+
+        if (entity.canTrample(world, state.getBlock(), pos, fallDistance))
+        {
+            BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
+            MinecraftForge.EVENT_BUS.post(event);
+            return !event.isCanceled();
+        }
+        return false;
+    }
+
 }

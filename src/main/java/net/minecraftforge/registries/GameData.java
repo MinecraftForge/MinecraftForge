@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -402,9 +402,21 @@ public class GameData
         }
     }
 
-    private static class RecipeCallbacks implements IForgeRegistry.MissingFactory<IRecipe>
+    private static class RecipeCallbacks implements IForgeRegistry.ValidateCallback<IRecipe>, IForgeRegistry.MissingFactory<IRecipe>
     {
         static final RecipeCallbacks INSTANCE = new RecipeCallbacks();
+
+        @Override
+        public void onValidate(IForgeRegistryInternal<IRecipe> owner, RegistryManager stage, int id, ResourceLocation key, IRecipe obj)
+        {
+            if (stage != RegistryManager.ACTIVE) return;
+            // verify the recipe output yields a registered item
+            Item item = obj.getRecipeOutput().getItem();
+            if (!stage.getRegistry(Item.class).containsValue(item))
+            {
+                throw new IllegalStateException(String.format("Recipe %s (%s) produces unregistered item %s (%s)", key, obj, item.getRegistryName(), item));
+            }
+        }
 
         @Override
         public IRecipe createMissing(ResourceLocation key, boolean isNetwork)

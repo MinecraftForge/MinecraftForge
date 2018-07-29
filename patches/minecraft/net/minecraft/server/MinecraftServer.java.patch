@@ -251,7 +251,7 @@
      public WorldServer func_71218_a(int p_71218_1_)
      {
 -        if (p_71218_1_ == -1)
-+        WorldServer ret = net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_);
++        WorldServer ret = net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_, true);
 +        if (ret == null)
          {
 -            return this.field_71305_c[1];
@@ -275,7 +275,24 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1598,4 +1644,9 @@
+@@ -1411,6 +1457,16 @@
+     @SideOnly(Side.SERVER)
+     public static void main(String[] p_main_0_)
+     {
++        //Forge: Copied from DedicatedServer.init as to run as early as possible, Old code left in place intentionally.
++        //Done in good faith with permission: https://github.com/MinecraftForge/MinecraftForge/issues/3659#issuecomment-390467028
++        ServerEula eula = new ServerEula(new File("eula.txt"));
++        if (!eula.func_154346_a())
++        {
++            field_147145_h.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
++            eula.func_154348_b();
++            return;
++        }
++
+         Bootstrap.func_151354_b();
+ 
+         try
+@@ -1598,4 +1654,9 @@
      {
          return this.field_175590_aa;
      }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -71,7 +71,7 @@ public abstract class FluidRegistry
     static boolean universalBucketEnabled = false;
     static Set<Fluid> bucketFluids = Sets.newHashSet();
 
-    public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
+    public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"), new ResourceLocation("blocks/water_overlay")) {
         @Override
         public String getLocalizedName(FluidStack fs) {
             return I18n.translateToLocal("tile.water.name");

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -37,7 +37,7 @@ public class LightUtil
 {
     public static float diffuseLight(float x, float y, float z)
     {
-        return x * x * 0.6f + y * y * ((3f + y) / 4f) + z * z * 0.8f;
+        return Math.min(x * x * 0.6f + y * y * ((3f + y) / 4f) + z * z * 0.8f, 1f);
     }
 
     public static float diffuseLight(EnumFacing side)
