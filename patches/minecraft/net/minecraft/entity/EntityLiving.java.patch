@@ -66,3 +66,23 @@
              }
          }
          else
+@@ -1434,5 +1448,19 @@
+         ON_GROUND,
+         IN_AIR,
+         IN_WATER;
++
++        private final java.util.function.BiPredicate<net.minecraft.world.IBlockAccess, BlockPos> spawnPredicate;
++
++        SpawnPlacementType() { this.spawnPredicate = null; }
++
++        SpawnPlacementType(java.util.function.BiPredicate<net.minecraft.world.IBlockAccess, BlockPos> spawnPredicate)
++        {
++            this.spawnPredicate = spawnPredicate;
++        }
++
++        public boolean canSpawnAt(World world, BlockPos pos)
++        {
++            return this.spawnPredicate != null ? this.spawnPredicate.test(world, pos) : net.minecraft.world.WorldEntitySpawner.canCreatureTypeSpawnBody(this, world, pos);
++        }
+     }
+ }
