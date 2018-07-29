@@ -29,6 +29,7 @@
          this.field_70145_X = this.func_175149_v();
  
          if (this.func_175149_v())
++            if (false)// FORGE: Disabled because this is redundant and prevents modders from creating custom sleeping logic
 @@ -367,6 +375,7 @@
                  this.func_70105_a(f, f1);
              }
