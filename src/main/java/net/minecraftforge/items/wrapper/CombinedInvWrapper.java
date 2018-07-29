@@ -132,4 +132,13 @@ public class CombinedInvWrapper implements IItemHandlerModifiable
         int localSlot = getSlotFromIndex(slot, index);
         return handler.getSlotLimit(localSlot);
     }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        int index = getIndexForSlot(slot);
+        IItemHandlerModifiable handler = getHandlerFromIndex(index);
+        int localSlot = getSlotFromIndex(slot, index);
+        return handler.isItemValid(localSlot, stack);
+    }
 }

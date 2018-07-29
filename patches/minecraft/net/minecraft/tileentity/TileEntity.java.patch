@@ -66,6 +66,15 @@
      public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_)
      {
          double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
+@@ -244,7 +252,7 @@
+ 
+                     try
+                     {
+-                        return String.format("ID #%d (%s // %s)", i, Block.func_149729_e(i).func_149739_a(), Block.func_149729_e(i).getClass().getCanonicalName());
++                        return String.format("ID #%d (%s // %s // %s)", i, Block.func_149729_e(i).func_149739_a(), Block.func_149729_e(i).getClass().getName(), Block.func_149729_e(i).getRegistryName());
+                     }
+                     catch (Throwable var3)
+                     {
 @@ -297,6 +305,204 @@
      {
      }
