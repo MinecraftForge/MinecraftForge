@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.BlockPortal;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -116,7 +115,7 @@ import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
-import net.minecraftforge.event.entity.living.EndermanLookAggroEvent;
+import net.minecraftforge.event.entity.living.EndermanSetAttackTargetEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -774,9 +773,9 @@ public class ForgeEventFactory
         return outList.isEmpty();
     }
   
-    public static EndermanLookAggroEvent onLookAtEnderman(EntityPlayer player, EntityEnderman enderman) 
+    public static EndermanSetAttackTargetEvent onEndermanSetAttackTarget(EntityPlayer player, EntityEnderman enderman)
     {
-        EndermanLookAggroEvent event = new EndermanLookAggroEvent(player,enderman);
+        EndermanSetAttackTargetEvent event = new EndermanSetAttackTargetEvent(player,enderman);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

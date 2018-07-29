@@ -21,19 +21,19 @@ package net.minecraftforge.debug;
 
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraftforge.event.entity.living.EndermanLookAggroEvent;
+import net.minecraftforge.event.entity.living.EndermanSetAttackTargetEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = EndermanLookAggroEventTest.MOD_ID, name = "EndermanLookAggroEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
+@Mod(modid = EndermanSetAttackTargetEventTest.MOD_ID, name = "EndermanSetAttackTargetEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
-public class EndermanLookAggroEventTest {
-    static final String MOD_ID = "enderman_look_aggro_event";
+public class EndermanSetAttackTargetEventTest {
+    static final String MOD_ID = "enderman_set_attack_target_event";
     static final boolean ENABLED = false;
 
     @SubscribeEvent
-    public static void onLookAtEnderman(EndermanLookAggroEvent event) {
+    public static void onLookAtEnderman(EndermanSetAttackTargetEvent event) {
         if (!ENABLED) {
             return;
         }

@@ -4,7 +4,7 @@
      {
          ItemStack itemstack = p_70821_1_.field_71071_by.field_70460_b.get(3);
  
-+        net.minecraftforge.event.entity.living.EndermanLookAggroEvent event = net.minecraftforge.event.ForgeEventFactory.onLookAtEnderman(p_70821_1_,this);
++        net.minecraftforge.event.entity.living.EndermanSetAttackTargetEvent event = net.minecraftforge.event.ForgeEventFactory.onEndermanSetAttackTarget(p_70821_1_,this);
 +        if(event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW) return true;
 +        if(event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY) return false;
          if (itemstack.func_77973_b() == Item.func_150898_a(Blocks.field_150423_aK))
@@ -40,7 +40,7 @@
      public boolean func_70823_r()
      {
          return ((Boolean)this.field_70180_af.func_187225_a(field_184719_bw)).booleanValue();
-@@ -486,7 +500,7 @@
+@@ -486,7 +503,7 @@
                  {
                      return false;
                  }
@@ -49,7 +49,7 @@
                  {
                      return false;
                  }
-@@ -551,7 +565,7 @@
+@@ -551,7 +568,7 @@
                  {
                      return false;
                  }
