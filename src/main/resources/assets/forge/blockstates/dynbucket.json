@@ -11,7 +11,8 @@
       "transform": "forge:default-item",
       "custom": {
         "fluid": "water",
-        "flipGas": true
+        "flipGas": true,
+        "applyTint": false
       }
     }
   }

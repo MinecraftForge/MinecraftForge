@@ -1,13 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntitySpawnPlacementRegistry.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntitySpawnPlacementRegistry.java
-@@ -53,6 +53,12 @@
-         return field_180110_a.get(p_180109_0_);
+@@ -50,9 +50,14 @@
+ 
+     public static EntityLiving.SpawnPlacementType func_180109_a(Class<?> p_180109_0_)
+     {
+-        return field_180110_a.get(p_180109_0_);
++        return field_180110_a.getOrDefault(p_180109_0_, EntityLiving.SpawnPlacementType.ON_GROUND);
      }
  
 +    public static void setPlacementType(Class<? extends Entity> entityClass, EntityLiving.SpawnPlacementType placementType)
 +    {
-+        if(!field_180110_a.containsKey(entityClass))
-+            field_180110_a.put(entityClass, placementType);
++        field_180110_a.putIfAbsent(entityClass, placementType);
 +    }
 +
      static

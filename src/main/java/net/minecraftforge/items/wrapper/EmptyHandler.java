@@ -67,4 +67,10 @@ public class EmptyHandler implements IItemHandlerModifiable
     {
         return 0;
     }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        return false;
+    }
 }
