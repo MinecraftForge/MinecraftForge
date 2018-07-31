@@ -62,7 +62,8 @@ public class FoundChunksForSpawningEventTest
         for (Entry<EnumCreatureType, FoundChunksForSpawningEvent.CreatureTypeData> entry : event.getCreatureTypeData().entrySet())
         {
             FoundChunksForSpawningEvent.CreatureTypeData v = entry.getValue();
-            sb.append("\n    ").append(entry.getKey().name()).append(": ").append(v.getCreatureCount()).append("/").append(v.getMaxCreatureCountWhereCanSpawnMore());
+            sb.append("\n    ").append(entry.getKey().name()).append(": ").append(v.getCreatureCount()).append("/")
+                    .append(v.getMaxCreatureCountWhereCanSpawnMore());
         }
         Exception ex = event.getNewEntityException();
         sb.append("\n  ex: ").append(ex == null ? "null" : ex.getMessage());

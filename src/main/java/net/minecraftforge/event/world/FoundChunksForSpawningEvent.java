@@ -103,8 +103,8 @@ public class FoundChunksForSpawningEvent extends Event
         }
 
         /**
-         * The maximum number of creatures of the given type that can reside in the eligible spawn chunks before the game stops attempting to spawn more. A value of -1 indicates that
-         * no attempt was made to calculate this number.
+         * The maximum number of creatures of the given type that can reside in the eligible spawn chunks before the game stops attempting to spawn more. A value of -1 indicates
+         * that no attempt was made to calculate this number.
          */
         public int getMaxCreatureCountWhereCanSpawnMore()
         {
