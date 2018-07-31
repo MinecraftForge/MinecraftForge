@@ -29,11 +29,11 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class FoundChunksForSpawningEvent extends Event
 {
-    private final FoundChunksForSpawningEventBuilder builder;
+    private final Builder builder;
     private ImmutableList<ChunkPos> eligibleChunksForSpawning;
-    private ImmutableMap<EnumCreatureType, FoundChunksForSpawningEventCreatureTypeData> creatureTypeData;
+    private ImmutableMap<EnumCreatureType, CreatureTypeData> creatureTypeData;
 
-    public FoundChunksForSpawningEvent(FoundChunksForSpawningEventBuilder builderIn)
+    public FoundChunksForSpawningEvent(Builder builderIn)
     {
         builder = builderIn;
     }
@@ -68,13 +68,48 @@ public class FoundChunksForSpawningEvent extends Event
      * Information about the current and maximum number of creatures in each category. An empty map indicates that no attempt was made to calculate i or to spawn any mobs. Missing
      * values indicate that a new entity exception was thrown while attempting to spawn a previous creature type.
      */
-    public ImmutableMap<EnumCreatureType, FoundChunksForSpawningEventCreatureTypeData> getCreatureTypeData()
+    public ImmutableMap<EnumCreatureType, CreatureTypeData> getCreatureTypeData()
     {
         if (creatureTypeData == null)
         {
             creatureTypeData = builder.creatureTypeData.build();
         }
         return creatureTypeData;
+    }
+
+    public static class CreatureTypeData
+    {
+        private final int k4;
+        private final int l4;
+
+        public CreatureTypeData()
+        {
+            k4 = -1;
+            l4 = -1;
+        }
+
+        public CreatureTypeData(int k4In, int l4In)
+        {
+            k4 = k4In;
+            l4 = l4In;
+        }
+
+        /**
+         * The number of creatures of the given type that currently reside in the eligible spawn chunks. A value of -1 indicates that no attempt was made to calculate this number.
+         */
+        public int getk4()
+        {
+            return k4;
+        }
+
+        /**
+         * The maximum number of creatures of the given type that can reside in the eligible spawn chunks before the game stops attempting to spawn more. A value of -1 indicates that
+         * no attempt was made to calculate this number.
+         */
+        public int getl4()
+        {
+            return l4;
+        }
     }
 
     /**
@@ -84,5 +119,19 @@ public class FoundChunksForSpawningEvent extends Event
     public Exception getNewEntityException()
     {
         return builder.newEntityException;
+    }
+
+    public static class Builder
+    {
+        public final WorldServer worldServer;
+        public int i = -1;
+        public final ImmutableList.Builder<ChunkPos> eligibleChunksForSpawning = new ImmutableList.Builder<ChunkPos>();
+        public final ImmutableMap.Builder<EnumCreatureType, CreatureTypeData> creatureTypeData = new ImmutableMap.Builder<EnumCreatureType, CreatureTypeData>();
+        public Exception newEntityException;
+
+        public Builder(WorldServer worldServerIn)
+        {
+            worldServer = worldServerIn;
+        }
     }
 }

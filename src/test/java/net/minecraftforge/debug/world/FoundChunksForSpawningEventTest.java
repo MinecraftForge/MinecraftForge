@@ -24,7 +24,6 @@ import org.apache.logging.log4j.Logger;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.FoundChunksForSpawningEvent;
-import net.minecraftforge.event.world.FoundChunksForSpawningEventCreatureTypeData;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -60,9 +59,9 @@ public class FoundChunksForSpawningEventTest
         sb.append("FoundChunksForSpawningEvent");
         sb.append("\n  numChunks: ").append(event.getEligibleChunksForSpawning().size()).append("/").append(event.getI());
         sb.append("\n  typeData:");
-        for (Entry<EnumCreatureType, FoundChunksForSpawningEventCreatureTypeData> entry : event.getCreatureTypeData().entrySet())
+        for (Entry<EnumCreatureType, FoundChunksForSpawningEvent.CreatureTypeData> entry : event.getCreatureTypeData().entrySet())
         {
-            FoundChunksForSpawningEventCreatureTypeData v = entry.getValue();
+            FoundChunksForSpawningEvent.CreatureTypeData v = entry.getValue();
             sb.append("\n    ").append(entry.getKey().name()).append(": ").append(v.getk4()).append("/").append(v.getl4());
         }
         Exception ex = event.getNewEntityException();

@@ -29,7 +29,7 @@ public final class WorldEntitySpawner
 
     public int findChunksForSpawning(WorldServer worldServerIn, boolean spawnHostileMobs, boolean spawnPeacefulMobs, boolean spawnOnSetTickRate)
     {
-        net.minecraftforge.event.world.FoundChunksForSpawningEventBuilder eventBuilder = new net.minecraftforge.event.world.FoundChunksForSpawningEventBuilder(worldServerIn);
+        net.minecraftforge.event.world.FoundChunksForSpawningEvent.Builder eventBuilder = new net.minecraftforge.event.world.FoundChunksForSpawningEvent.Builder(worldServerIn);
         if (!spawnHostileMobs && !spawnPeacefulMobs)
         {
             net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
@@ -85,7 +85,7 @@ public final class WorldEntitySpawner
                 {
                     int k4 = worldServerIn.countEntities(enumcreaturetype, true);
                     int l4 = enumcreaturetype.getMaxNumberOfCreature() * i / MOB_COUNT_DIV;
-                    eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEventCreatureTypeData(k4, l4));
+                    eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData(k4, l4));
 
                     if (k4 <= l4)
                     {
@@ -185,7 +185,7 @@ public final class WorldEntitySpawner
                         }
                     }
                 }
-                else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEventCreatureTypeData()); }
+                else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData()); }
             }
 
             net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);

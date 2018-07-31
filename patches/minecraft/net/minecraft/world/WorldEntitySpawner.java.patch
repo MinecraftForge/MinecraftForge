@@ -4,7 +4,7 @@
  
      public int func_77192_a(WorldServer p_77192_1_, boolean p_77192_2_, boolean p_77192_3_, boolean p_77192_4_)
      {
-+        net.minecraftforge.event.world.FoundChunksForSpawningEventBuilder eventBuilder = new net.minecraftforge.event.world.FoundChunksForSpawningEventBuilder(p_77192_1_);
++        net.minecraftforge.event.world.FoundChunksForSpawningEvent.Builder eventBuilder = new net.minecraftforge.event.world.FoundChunksForSpawningEvent.Builder(p_77192_1_);
          if (!p_77192_2_ && !p_77192_3_)
          {
 +            net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
@@ -34,7 +34,7 @@
 -                    int k4 = p_77192_1_.func_72907_a(enumcreaturetype.func_75598_a());
 +                    int k4 = p_77192_1_.countEntities(enumcreaturetype, true);
                      int l4 = enumcreaturetype.func_75601_b() * i / field_180268_a;
-+                    eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEventCreatureTypeData(k4, l4));
++                    eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData(k4, l4));
  
                      if (k4 <= l4)
                      {
@@ -85,7 +85,7 @@
                          }
                      }
                  }
-+                else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEventCreatureTypeData()); }
++                else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData()); }
              }
  
 +            net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
