@@ -26,7 +26,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 
@@ -81,7 +80,7 @@ public class AutomaticEventSubscriber
                     FMLLog.log.debug("Registering @EventBusSubscriber for {} for mod {}", targ.getClassName(), mod.getModId());
                     Class<?> subscriptionTarget = Class.forName(targ.getClassName(), false, mcl);
                     ModAnnotation.EnumHolder bus = (ModAnnotation.EnumHolder)targ.getAnnotationInfo().get("bus");
-                    if(bus != null) ForgeBusType.valueOf(bus.getValue()).getBus().register(subscriptionTarget);
+                    if (bus != null) ForgeBusType.valueOf(bus.getValue()).getBus().register(subscriptionTarget);
                     else MinecraftForge.EVENT_BUS.register(subscriptionTarget);
                     FMLLog.log.debug("Injected @EventBusSubscriber class {}", targ.getClassName());
                 }
@@ -115,7 +114,7 @@ public class AutomaticEventSubscriber
         /**
          * @return The EventBus calling the function
          */
-        public EventBus getBus() {
+        public net.minecraftforge.fml.common.eventhandler.EventBus getBus() {
             switch (this) {
                 case EVENT:
                 default:
