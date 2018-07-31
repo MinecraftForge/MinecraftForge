@@ -26,6 +26,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.relauncher.Side;
 import org.apache.logging.log4j.Level;
 
@@ -35,7 +36,7 @@ import java.util.Set;
 
 /**
  * Automatic eventbus subscriber - reads {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber}
- * annotations and passes the class instances to the {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS}
+ * annotations and passes the class instances to one of the three {@link net.minecraftforge.common.MinecraftForge} EventBusses
  */
 public class AutomaticEventSubscriber
 {
@@ -79,7 +80,9 @@ public class AutomaticEventSubscriber
                     }
                     FMLLog.log.debug("Registering @EventBusSubscriber for {} for mod {}", targ.getClassName(), mod.getModId());
                     Class<?> subscriptionTarget = Class.forName(targ.getClassName(), false, mcl);
-                    MinecraftForge.EVENT_BUS.register(subscriptionTarget);
+                    ModAnnotation.EnumHolder bus = (ModAnnotation.EnumHolder)targ.getAnnotationInfo().get("bus");
+                    if(bus != null) ForgeBusType.valueOf(bus.getValue()).getBus().register(subscriptionTarget);
+                    else MinecraftForge.EVENT_BUS.register(subscriptionTarget);
                     FMLLog.log.debug("Injected @EventBusSubscriber class {}", targ.getClassName());
                 }
             }
@@ -91,4 +94,37 @@ public class AutomaticEventSubscriber
         }
     }
 
+    public enum ForgeBusType {
+
+        /**
+         * Gets the {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS}.
+         */
+        EVENT,
+
+        /**
+         * Gets the {@link net.minecraftforge.common.MinecraftForge.TERRAIN_GEN_BUS}.
+         */
+        TERRAIN,
+
+        /**
+         * Gets the {@link net.minecraftforge.common.MinecraftForge.ORE_GEN_BUS}.
+         */
+        ORE;
+
+
+        /**
+         * @return The EventBus calling the function
+         */
+        public EventBus getBus() {
+            switch (this) {
+                case EVENT:
+                default:
+                    return MinecraftForge.EVENT_BUS;
+                case TERRAIN:
+                    return MinecraftForge.TERRAIN_GEN_BUS;
+                case ORE:
+                    return MinecraftForge.ORE_GEN_BUS;
+            }
+        }
+    }
 }

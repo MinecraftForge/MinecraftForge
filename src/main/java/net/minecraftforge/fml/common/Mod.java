@@ -24,6 +24,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.common.event.FMLEvent;
 import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
@@ -37,6 +38,7 @@ import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.versioning.VersionRange;
@@ -367,7 +369,7 @@ public @interface Mod
     }
 
     /**
-     * A class which will be subscribed to {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS} at mod construction time.
+     * A class which will be subscribed to one of the three {@link net.minecraftforge.common.MinecraftForge} EventBusses at mod construction time.
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.TYPE)
@@ -375,10 +377,15 @@ public @interface Mod
         Side[] value() default { Side.CLIENT, Side.SERVER };
 
         /**
-         * Optional value, only nessasary if tis annotation is not on the same class that has a @Mod annotation.
+         * Optional value, only necessary if this annotation is not on the same class that has a @Mod annotation.
          * Needed to prevent early classloading of classes not owned by your mod.
          * @return
          */
         String modid() default "";
+
+        /**
+         * Optional value, only necessary if the event being used is for Ore or Terrain Generation.
+         */
+        AutomaticEventSubscriber.ForgeBusType bus() default AutomaticEventSubscriber.ForgeBusType.EVENT;
     }
 }
