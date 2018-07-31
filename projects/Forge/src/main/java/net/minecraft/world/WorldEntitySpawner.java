@@ -29,8 +29,10 @@ public final class WorldEntitySpawner
 
     public int findChunksForSpawning(WorldServer worldServerIn, boolean spawnHostileMobs, boolean spawnPeacefulMobs, boolean spawnOnSetTickRate)
     {
+        net.minecraftforge.event.world.FoundChunksForSpawningEventBuilder eventBuilder = new net.minecraftforge.event.world.FoundChunksForSpawningEventBuilder(worldServerIn);
         if (!spawnHostileMobs && !spawnPeacefulMobs)
         {
+            net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
             return 0;
         }
         else
@@ -64,6 +66,7 @@ public final class WorldEntitySpawner
                                     if (playerchunkmapentry != null && playerchunkmapentry.isSentToPlayers())
                                     {
                                         this.eligibleChunksForSpawning.add(chunkpos);
+                                        eventBuilder.eligibleChunksForSpawning.add(chunkpos);
                                     }
                                 }
                             }
@@ -71,6 +74,7 @@ public final class WorldEntitySpawner
                     }
                 }
             }
+            eventBuilder.i = i;
 
             int j4 = 0;
             BlockPos blockpos1 = worldServerIn.getSpawnPoint();
@@ -81,6 +85,7 @@ public final class WorldEntitySpawner
                 {
                     int k4 = worldServerIn.countEntities(enumcreaturetype, true);
                     int l4 = enumcreaturetype.getMaxNumberOfCreature() * i / MOB_COUNT_DIV;
+                    eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEventCreatureTypeData(k4, l4));
 
                     if (k4 <= l4)
                     {
@@ -143,6 +148,7 @@ public final class WorldEntitySpawner
                                                 catch (Exception exception)
                                                 {
                                                     exception.printStackTrace();
+                                                    eventBuilder.newEntityException = exception; net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
                                                     return j4;
                                                 }
 
@@ -179,8 +185,10 @@ public final class WorldEntitySpawner
                         }
                     }
                 }
+                else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEventCreatureTypeData()); }
             }
 
+            net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
             return j4;
         }
     }
