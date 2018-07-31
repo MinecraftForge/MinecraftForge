@@ -21,7 +21,7 @@ public class FoundChunksForSpawningEventTest
     public static final String NAME = "FoundChunksForSpawningEvent Test";
     public static final String VERSION = "1.0";
 
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
     private static Logger logger;
 
     @Mod.EventHandler
