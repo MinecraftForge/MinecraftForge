@@ -11,10 +11,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 /**
- * Simple mod to test net.minecraftforge.event.world.FoundChunksForSpawningEvent
- * Prints event data to the log every tick.
+ * Simple mod to test net.minecraftforge.event.world.FoundChunksForSpawningEvent Prints event data to the log every tick.
  */
-@Mod(modid = FoundChunksForSpawningEventTest.MODID, name = FoundChunksForSpawningEventTest.NAME, version = FoundChunksForSpawningEventTest.VERSION, acceptableRemoteVersions = "*")
+@Mod(modid = FoundChunksForSpawningEventTest.MODID, name = FoundChunksForSpawningEventTest.NAME, version = FoundChunksForSpawningEventTest.VERSION,
+        acceptableRemoteVersions = "*")
 public class FoundChunksForSpawningEventTest
 {
     public static final String MODID = "foundchunksforspawningeventtest";

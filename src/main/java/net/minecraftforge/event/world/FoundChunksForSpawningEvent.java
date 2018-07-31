@@ -25,8 +25,8 @@ public class FoundChunksForSpawningEvent extends Event
     }
 
     /**
-     * Usually the number of eligible chunks for spawning, but sometimes greater, depending on something about the world border and the player chunk map.
-     * A value of -1 indicates that there was no attempt to calculate this number.
+     * Usually the number of eligible chunks for spawning, but sometimes greater, depending on something about the world border and the player chunk map. A value of -1 indicates
+     * that there was no attempt to calculate this number.
      */
     public int getI()
     {
@@ -46,9 +46,8 @@ public class FoundChunksForSpawningEvent extends Event
     }
 
     /**
-     * Information about the current and maximum number of creatures in each category.
-     * An empty map indicates that no attempt was made to calculate i or to spawn any mobs.
-     * Missing values indicate that a new entity exception was thrown while attempting to spawn a previous creature type.
+     * Information about the current and maximum number of creatures in each category. An empty map indicates that no attempt was made to calculate i or to spawn any mobs. Missing
+     * values indicate that a new entity exception was thrown while attempting to spawn a previous creature type.
      */
     public ImmutableMap<EnumCreatureType, FoundChunksForSpawningEventCreatureTypeData> getCreatureTypeData()
     {
@@ -60,8 +59,7 @@ public class FoundChunksForSpawningEvent extends Event
     }
 
     /**
-     * If not null, an exception was thrown in net.minecraft.world.biome.Biome.SpawnListEntry:newInstance.
-     * Entries may be missing from creatureTypeData.
+     * If not null, an exception was thrown in net.minecraft.world.biome.Biome.SpawnListEntry:newInstance. Entries may be missing from creatureTypeData.
      */
     @Nullable
     public Exception getNewEntityException()
