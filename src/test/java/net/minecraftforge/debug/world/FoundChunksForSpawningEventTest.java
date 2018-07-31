@@ -57,12 +57,12 @@ public class FoundChunksForSpawningEventTest
     {
         StringBuilder sb = new StringBuilder();
         sb.append("FoundChunksForSpawningEvent");
-        sb.append("\n  numChunks: ").append(event.getEligibleChunksForSpawning().size()).append("/").append(event.getI());
+        sb.append("\n  numChunks: ").append(event.getEligibleChunksForSpawning().size()).append("/").append(event.getNumAttemptedEligibleChunksForSpawning());
         sb.append("\n  typeData:");
         for (Entry<EnumCreatureType, FoundChunksForSpawningEvent.CreatureTypeData> entry : event.getCreatureTypeData().entrySet())
         {
             FoundChunksForSpawningEvent.CreatureTypeData v = entry.getValue();
-            sb.append("\n    ").append(entry.getKey().name()).append(": ").append(v.getk4()).append("/").append(v.getl4());
+            sb.append("\n    ").append(entry.getKey().name()).append(": ").append(v.getCreatureCount()).append("/").append(v.getMaxCreatureCountWhereCanSpawnMore());
         }
         Exception ex = event.getNewEntityException();
         sb.append("\n  ex: ").append(ex == null ? "null" : ex.getMessage());

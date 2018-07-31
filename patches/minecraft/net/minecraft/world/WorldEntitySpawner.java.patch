@@ -23,7 +23,7 @@
                      }
                  }
              }
-+            eventBuilder.i = i;
++            eventBuilder.numAttemptedEligibleChunksForSpawning = i;
  
              int j4 = 0;
              BlockPos blockpos1 = p_77192_1_.func_175694_M();

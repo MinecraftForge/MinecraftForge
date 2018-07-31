@@ -74,7 +74,7 @@ public final class WorldEntitySpawner
                     }
                 }
             }
-            eventBuilder.i = i;
+            eventBuilder.numAttemptedEligibleChunksForSpawning = i;
 
             int j4 = 0;
             BlockPos blockpos1 = worldServerIn.getSpawnPoint();

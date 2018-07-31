@@ -47,9 +47,9 @@ public class FoundChunksForSpawningEvent extends Event
      * Usually the number of eligible chunks for spawning, but sometimes greater, depending on something about the world border and the player chunk map. A value of -1 indicates
      * that there was no attempt to calculate this number.
      */
-    public int getI()
+    public int getNumAttemptedEligibleChunksForSpawning()
     {
-        return builder.i;
+        return builder.numAttemptedEligibleChunksForSpawning;
     }
 
     /**
@@ -79,36 +79,36 @@ public class FoundChunksForSpawningEvent extends Event
 
     public static class CreatureTypeData
     {
-        private final int k4;
-        private final int l4;
+        private final int creatureCount;
+        private final int maxCreatureCountWhereCanSpawnMore;
 
         public CreatureTypeData()
         {
-            k4 = -1;
-            l4 = -1;
+            creatureCount = -1;
+            maxCreatureCountWhereCanSpawnMore = -1;
         }
 
-        public CreatureTypeData(int k4In, int l4In)
+        public CreatureTypeData(int creatureCountIn, int maxCreatureCountWhereCanSpawnMoreIn)
         {
-            k4 = k4In;
-            l4 = l4In;
+            creatureCount = creatureCountIn;
+            maxCreatureCountWhereCanSpawnMore = maxCreatureCountWhereCanSpawnMoreIn;
         }
 
         /**
          * The number of creatures of the given type that currently reside in the eligible spawn chunks. A value of -1 indicates that no attempt was made to calculate this number.
          */
-        public int getk4()
+        public int getCreatureCount()
         {
-            return k4;
+            return creatureCount;
         }
 
         /**
          * The maximum number of creatures of the given type that can reside in the eligible spawn chunks before the game stops attempting to spawn more. A value of -1 indicates that
          * no attempt was made to calculate this number.
          */
-        public int getl4()
+        public int getMaxCreatureCountWhereCanSpawnMore()
         {
-            return l4;
+            return maxCreatureCountWhereCanSpawnMore;
         }
     }
 
@@ -124,7 +124,7 @@ public class FoundChunksForSpawningEvent extends Event
     public static class Builder
     {
         public final WorldServer worldServer;
-        public int i = -1;
+        public int numAttemptedEligibleChunksForSpawning = -1;
         public final ImmutableList.Builder<ChunkPos> eligibleChunksForSpawning = new ImmutableList.Builder<ChunkPos>();
         public final ImmutableMap.Builder<EnumCreatureType, CreatureTypeData> creatureTypeData = new ImmutableMap.Builder<EnumCreatureType, CreatureTypeData>();
         public Exception newEntityException;
