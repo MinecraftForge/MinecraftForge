@@ -23,11 +23,14 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.render.BatchedBufferConfig;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
 import net.minecraftforge.common.model.IModelState;
@@ -38,16 +41,22 @@ import net.minecraftforge.common.property.Properties;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.Map;
+
 /**
  * Generic TileEntitySpecialRenderer that works with the Forge model system and animations.
  */
 public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements IEventHandler<T>
 {
     protected static BlockRendererDispatcher blockRenderer;
+    public AnimationTESR()
+    {
+        super(BatchedBufferConfig.BLOCK);
+    }
 
     @Override
-    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, float partial, BufferBuilder renderer)
-   {
+    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, float partial, Map<BatchedBufferConfig, Tessellator> map)
+    {
         if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
         {
             return;
@@ -75,6 +84,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
                     // TODO: caching?
                     IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(exState.getClean());
                     exState = exState.withProperty(Properties.AnimationProperty, pair.getLeft());
+                    BufferBuilder renderer = map.get(BatchedBufferConfig.BLOCK).getBuffer();
 
                     renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
 

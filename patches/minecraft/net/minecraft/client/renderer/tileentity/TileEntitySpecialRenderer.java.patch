@@ -1,10 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntitySpecialRenderer.java
-@@ -77,6 +77,8 @@
+@@ -77,6 +77,15 @@
          return false;
      }
  
-+    public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, net.minecraft.client.renderer.BufferBuilder buffer) {}
++    /**
++     * @deprecated Use {@link #renderTileEntityFast(TileEntity, double, double, double, float, int, float, java.util.Map)}
++     * */
++    @Deprecated
++    public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, net.minecraft.client.renderer.BufferBuilder blockFormatBuffer) {}
++    @SuppressWarnings("deprecation")
++    public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, java.util.Map<net.minecraftforge.client.render.BatchedBufferConfig, net.minecraft.client.renderer.Tessellator> tessellatorMap) { renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partial, tessellatorMap.get(net.minecraftforge.client.render.BatchedBufferConfig.BLOCK).func_178180_c()); }
++
 +
      protected void func_190052_a(T p_190052_1_, String p_190052_2_, double p_190052_3_, double p_190052_5_, double p_190052_7_, int p_190052_9_)
      {
