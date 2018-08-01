@@ -1,9 +1,0 @@
-package assets.itemrenderertest.models.item;
-
-public class Snippet {
-	{
-	  "parent": "minecraft:item/torch"
-	}
-	
-}
-
