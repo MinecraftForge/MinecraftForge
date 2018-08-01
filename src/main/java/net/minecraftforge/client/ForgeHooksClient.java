@@ -117,6 +117,8 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.ScreenshotEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.client.model.IItemRenderer;
+import net.minecraftforge.client.model.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
@@ -758,6 +760,37 @@ public class ForgeHooksClient
         String texture = armorStack.getItem().getHorseArmorTexture(horse, armorStack);
         if(texture == null) texture = horse.getHorseArmorType().getTextureName();
         return texture;
+    }
+    
+    public static boolean renderCustomItemModel(ItemStack stack, Entity entity, ItemCameraTransforms.TransformType transform, boolean leftHanded) {
+    	IItemRenderer customRenderer = MinecraftForgeClient.getCustomItemRenderer(stack.getItem());
+    	if(customRenderer == null) {
+    		return false;
+    	}
+    	ItemRenderType renderType = null;
+    	switch(transform) {
+    	case THIRD_PERSON_LEFT_HAND:
+    	case THIRD_PERSON_RIGHT_HAND:
+    		renderType = ItemRenderType.EQUIPPED;
+    		break;
+    	case FIRST_PERSON_LEFT_HAND:
+    	case FIRST_PERSON_RIGHT_HAND:
+    		renderType = ItemRenderType.EQUIPPED_FIRST_PERSON;
+    		break;
+    	case GUI:
+    		renderType = ItemRenderType.INVENTORY;
+    		break;
+    	case GROUND:
+    		renderType = ItemRenderType.ENTITY;
+    		break;
+    	default:
+    		break;
+    	}
+    	if(renderType != null && customRenderer.shouldRender(stack, renderType)) {
+    		customRenderer.render(stack, null, renderType);
+    		return true;
+    	}
+    	return false;
     }
 
     public static boolean shouldUseVanillaReloadableListener(IResourceManagerReloadListener listener)

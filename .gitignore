@@ -5,6 +5,8 @@
 
 #In case people make their workspace in the repo
 /eclipse/
+.metadata/
+.recommenders/
 
 #idea
 /.idea

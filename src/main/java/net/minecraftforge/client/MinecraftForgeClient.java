@@ -20,14 +20,11 @@
 package net.minecraftforge.client;
 
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.World;
+import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -35,8 +32,18 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.Item;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.World;
+import net.minecraftforge.client.model.IItemRenderer;
+
 public class MinecraftForgeClient
 {
+	private static final HashMap<Item, IItemRenderer> customItemRenderers = new HashMap<Item, IItemRenderer>();
+	
     public static int getRenderPass()
     {
         return ForgeHooksClient.renderPass;
@@ -123,5 +130,37 @@ public class MinecraftForgeClient
     {
         regionCache.invalidateAll();
         regionCache.cleanUp();
+    }
+    
+    /**
+     * Binds a custom item renderer to the specified item. When rendered, this custom renderer will be used.
+     * @param item The item to bind the renderer to.
+     * @param renderer The renderer for this item.
+     * @throws IllegalArgumentException If the item is null, the renderer is null, or the item already has a custom renderer.
+     */
+    public static void registerItemRenderer(Item item, IItemRenderer renderer) {
+    	if(item == null) {
+    		throw new IllegalArgumentException("Item cannot be null!");
+    	}
+    	if(renderer == null) {
+    		throw new IllegalArgumentException("Renderer cannot be null for item " + item.getRegistryName());
+    	}
+    	if(customItemRenderers.containsKey(item)) {
+    		throw new IllegalArgumentException("Item " + item.getRegistryName() + " already has a custom item renderer!");
+    	}
+    	customItemRenderers.put(item, renderer);
+    }
+    
+    /**
+     * Returns the custom item renderer for the given item.
+     * @param item The item to get the associated renderer for.
+     * @return The custom renderer if this item has one, null otherwise.
+     */
+    @Nullable
+    public static IItemRenderer getCustomItemRenderer(Item item) {
+    	if(item != null || customItemRenderers.containsKey(item)) {
+    		return customItemRenderers.get(item);
+    	}
+    	return null;
     }
 }
