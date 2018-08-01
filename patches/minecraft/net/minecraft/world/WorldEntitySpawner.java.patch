@@ -7,7 +7,7 @@
 +        net.minecraftforge.event.world.FoundChunksForSpawningEvent.Builder eventBuilder = new net.minecraftforge.event.world.FoundChunksForSpawningEvent.Builder(p_77192_1_);
          if (!p_77192_2_ && !p_77192_3_)
          {
-+            net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
++            eventBuilder.post();
              return 0;
          }
          else
@@ -58,7 +58,7 @@
                                                  catch (Exception exception)
                                                  {
                                                      exception.printStackTrace();
-+                                                    eventBuilder.newEntityException = exception; net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
++                                                    eventBuilder.newEntityException = exception; eventBuilder.post();
                                                      return j4;
                                                  }
  
@@ -88,7 +88,7 @@
 +                else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData()); }
              }
  
-+            net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
++            eventBuilder.post();
              return j4;
          }
      }

@@ -124,7 +124,6 @@ import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
-import net.minecraftforge.event.world.FoundChunksForSpawningEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -305,11 +304,6 @@ public class ForgeEventFactory
         LivingPackSizeEvent maxCanSpawnEvent = new LivingPackSizeEvent(entity);
         MinecraftForge.EVENT_BUS.post(maxCanSpawnEvent);
         return maxCanSpawnEvent.getResult() == Result.ALLOW ? maxCanSpawnEvent.getMaxPackSize() : entity.getMaxSpawnedInChunk();
-    }
-
-    public static void onFoundChunksForSpawning(FoundChunksForSpawningEvent.Builder builder)
-    {
-        MinecraftForge.EVENT_BUS.post(new FoundChunksForSpawningEvent(builder));
     }
 
     public static String getPlayerDisplayName(EntityPlayer player, String username)

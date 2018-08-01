@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class FoundChunksForSpawningEvent extends Event
@@ -33,7 +34,7 @@ public class FoundChunksForSpawningEvent extends Event
     private ImmutableList<ChunkPos> eligibleChunksForSpawning;
     private ImmutableMap<EnumCreatureType, CreatureTypeData> creatureTypeData;
 
-    public FoundChunksForSpawningEvent(Builder builderIn)
+    private FoundChunksForSpawningEvent(Builder builderIn)
     {
         builder = builderIn;
     }
@@ -132,6 +133,11 @@ public class FoundChunksForSpawningEvent extends Event
         public Builder(WorldServer worldServerIn)
         {
             worldServer = worldServerIn;
+        }
+
+        public void post()
+        {
+            MinecraftForge.EVENT_BUS.post(new FoundChunksForSpawningEvent(this));
         }
     }
 }

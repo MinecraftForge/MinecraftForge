@@ -32,7 +32,7 @@ public final class WorldEntitySpawner
         net.minecraftforge.event.world.FoundChunksForSpawningEvent.Builder eventBuilder = new net.minecraftforge.event.world.FoundChunksForSpawningEvent.Builder(worldServerIn);
         if (!spawnHostileMobs && !spawnPeacefulMobs)
         {
-            net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
+            eventBuilder.post();
             return 0;
         }
         else
@@ -148,7 +148,7 @@ public final class WorldEntitySpawner
                                                 catch (Exception exception)
                                                 {
                                                     exception.printStackTrace();
-                                                    eventBuilder.newEntityException = exception; net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
+                                                    eventBuilder.newEntityException = exception; eventBuilder.post();
                                                     return j4;
                                                 }
 
@@ -188,7 +188,7 @@ public final class WorldEntitySpawner
                 else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData()); }
             }
 
-            net.minecraftforge.event.ForgeEventFactory.onFoundChunksForSpawning(eventBuilder);
+            eventBuilder.post();
             return j4;
         }
     }
