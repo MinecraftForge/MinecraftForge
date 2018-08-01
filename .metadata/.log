@@ -1,0 +1,10 @@
+!SESSION 2018-08-01 19:43:32.338 -----------------------------------------------
+eclipse.buildId=4.6.0.I20160606-1100
+java.version=1.8.0_101
+java.vendor=Oracle Corporation
+BootLoader constants: OS=macosx, ARCH=x86_64, WS=cocoa, NL=en_AU
+Framework arguments:  -product org.eclipse.epp.package.java.product -product org.eclipse.epp.package.java.product -keyring /Users/130102/.eclipse_keyring
+Command-line arguments:  -os macosx -ws cocoa -arch x86_64 -product org.eclipse.epp.package.java.product -data /Users/130102/Desktop/MinecraftForge -product org.eclipse.epp.package.java.product -keyring /Users/130102/.eclipse_keyring
+
+!ENTRY org.eclipse.core.net 1 0 2018-08-01 19:43:46.886
+!MESSAGE System property http.nonProxyHosts has been set to local|*.local|169.254/16|*.169.254/16|p-counter|*.p-counter|maristns.catholic.edu.au|*.maristns.catholic.edu.au|sydcp2.ceosyd.catholic.edu.au|*.sydcp2.ceosyd.catholic.edu.au|ceosyd.catholic.edu.au|*.ceosyd.catholic.edu.au|idp.cenet.catholic.edu.au|*.idp.cenet.catholic.edu.au|ult-cp-01.ceosyd.catholic.edu.au|*.ult-cp-01.ceosyd.catholic.edu.au|captiveportal-login.ceosyd.catholic.edu.au|*.captiveportal-login.ceosyd.catholic.edu.au by an external source. This value will be overwritten using the values from the preferences

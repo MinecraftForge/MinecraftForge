@@ -1,0 +1,5 @@
+package net.minecraftforge.client.model;
+
+public interface IItemRenderer {
+
+}

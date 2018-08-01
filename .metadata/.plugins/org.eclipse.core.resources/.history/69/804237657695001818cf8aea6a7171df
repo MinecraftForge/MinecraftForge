@@ -1,0 +1,18 @@
+package net.minecraftforge.client.model;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+
+public interface IItemRenderer {
+
+	boolean shouldRender(ItemStack stack, ItemRenderType renderType);
+	void render(ItemStack stack, Entity entity, ItemRenderType renderType);
+	
+	public enum ItemRenderType {
+		EQUIPPED, // equipped by an entity or player in first person
+		EQUIPPED_FIRST_PERSON,
+		INVENTORY,
+		ENTITY
+	}
+	
+}

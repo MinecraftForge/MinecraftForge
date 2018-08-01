@@ -1,0 +1,26 @@
+package net.minecraftforge.client.model;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+
+public interface IItemRenderer {
+
+	/**
+	 * Determines whether the custom renderer should be used for this render type.
+	 * @param stack The ItemStack being renderer
+	 * @param renderType
+	 * @return
+	 */
+	boolean shouldRender(ItemStack stack, ItemRenderType renderType);
+	
+	
+	void render(ItemStack stack, Entity entity, ItemRenderType renderType);
+	
+	public enum ItemRenderType {
+		EQUIPPED, // equipped by an entity or player in third person
+		EQUIPPED_FIRST_PERSON, // equipped by a player in first person
+		INVENTORY, // displayed in the hotbar or inventory gui
+		ENTITY // dropped on the ground as an item
+	}
+	
+}

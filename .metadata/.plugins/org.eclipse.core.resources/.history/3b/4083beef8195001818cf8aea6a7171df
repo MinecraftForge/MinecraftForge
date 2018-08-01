@@ -1,0 +1,74 @@
+package com.romejanic.test;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelPig;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.IItemRenderer;
+import net.minecraftforge.client.model.IItemRenderer.ItemRenderType;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+
+@Mod(modid="testmod", name="Test Mod", version="1.0")
+public class TestMod {
+
+	public Item testItem;
+	
+	@Mod.EventHandler
+	public void preInit(FMLPreInitializationEvent event) {
+		this.testItem = new Item().setCreativeTab(CreativeTabs.MISC).setRegistryName("test").setUnlocalizedName("test");
+		MinecraftForge.EVENT_BUS.register(this);
+		
+		if(event.getSide() == Side.CLIENT) {
+			MinecraftForgeClient.registerItemRenderer(this.testItem, new IItemRenderer() {
+
+				private ModelPig pig;
+				private ResourceLocation tex;
+				
+				@Override
+				public boolean shouldRender(ItemStack stack, ItemRenderType renderType) {
+					switch(renderType) {
+					case EQUIPPED_FIRST_PERSON:
+						return true;
+					default:
+						return false;
+					}
+				}
+
+				@Override
+				public void render(ItemStack stack, Entity entity, ItemRenderType renderType) {
+					if(this.pig == null) {
+						this.pig = new ModelPig();
+					}
+					if(this.tex == null) {
+						this.tex = new ResourceLocation("minecraft:textures/entity/pig/pig.png");
+					}
+					bindTexture(this.tex);
+					
+					GlStateManager.pushMatrix();
+					GlStateManager.scale(0.5f, 0.5f, 0.5f);
+					GlStateManager.rotate(180f, 0f, 0f, 1f);
+					GlStateManager.translate(0f, -1.f, 0f);
+					this.pig.render(entity, 0f, 0f, 0f, 0f, 0f, 0.0625f);
+					GlStateManager.popMatrix();
+				}
+				
+			});
+		}
+	}
+	
+	@SubscribeEvent
+	public void register(RegistryEvent.Register<Item> event) {
+		event.getRegistry().register(this.testItem);
+	}
+
+}
