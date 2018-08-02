@@ -20,6 +20,7 @@
 package net.minecraftforge.client;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +28,6 @@ import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Sets;
 import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
@@ -156,7 +156,8 @@ public class SkyRenderHandler
     public void build()
     {
         // Search for actual pairs
-        Set<SkyLayer> temp = Sets.newHashSet();
+        Set<SkyLayer> temp = new HashSet<>();
+        ListMultimap<SkyLayer, Quadruple> quads = ArrayListMultimap.create(); // Co-parent -> Quadruples
         for(EndpointPair<SkyLayer> pair : orderGraph.edges())
         {
             Optional<SkyLayer> current = Optional.of(pair.source());
@@ -180,13 +181,37 @@ public class SkyRenderHandler
                 parent = layerGraph.predecessors(current.get()).stream().findFirst();
             }
 
-            // TODO Put parent settings here
+            SkyLayer sibling2 = current.get();
+            SkyLayer sibling1 = null;
+            for(SkyLayer layer : layerGraph.successors(parent.get()))
+            {
+                if(temp.contains(layer))
+                    sibling1 = layer;
+            }
+
+            if(sibling1 == null)
+                continue;
+
+            Quadruple quad = new Quadruple();
+            quad.original1 = pair.source();
+            quad.original2 = pair.target();
+            quad.parent1 = sibling1;
+            quad.parent2 = sibling2;
+            quads.put(parent.get(), quad);
         }
 
         for(SkyLayer group : order.keySet())
         {
             List<SkyLayer> layer = order.get(group);
+            List<Quadruple> depList = quads.get(group);
+            // TODO Topological Sorting
         }
+    }
+
+    private static class Quadruple
+    {
+        SkyLayer original1, original2; // Original pair in the order - just for better log
+        SkyLayer parent1, parent2; // Parent pair which matters
     }
 
     public boolean render(float partialTicks, WorldClient world, Minecraft mc)
