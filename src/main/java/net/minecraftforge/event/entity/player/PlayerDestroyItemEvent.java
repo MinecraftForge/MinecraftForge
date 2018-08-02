@@ -54,7 +54,8 @@ import javax.annotation.Nullable;
  * and {@link PlayerInteractionManager#tryHarvestBlock(BlockPos)}.<br>
  * <br>
  * {@link #original} contains the original ItemStack before the item was destroyed. <br>
- * (@link #hand) contains the hand that the current item was held in.<br>
+ * {@link #resultStack} contains the result ItemStack that is placed in the active hand of the player (if {@link #hand} is not null). <br>
+ * {@link #hand} contains the hand that the current item was held in.<br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
@@ -67,6 +68,8 @@ public class PlayerDestroyItemEvent extends PlayerEvent
 {
     @Nonnull
     private final ItemStack original;
+    @Nonnull
+    private ItemStack resultStack = ItemStack.EMPTY;
     @Nullable
     private final EnumHand hand; // May be null if this player destroys the item by any use besides holding it.
     public PlayerDestroyItemEvent(EntityPlayer player, @Nonnull ItemStack original, @Nullable EnumHand hand)
@@ -80,5 +83,8 @@ public class PlayerDestroyItemEvent extends PlayerEvent
     public ItemStack getOriginal() { return this.original; }
     @Nullable
     public EnumHand getHand() { return this.hand; }
+    @Nonnull
+    public ItemStack getResultStack() { return this.resultStack; }
+    public void setResultStack(ItemStack stack) { this.resultStack = stack; }
 
 }

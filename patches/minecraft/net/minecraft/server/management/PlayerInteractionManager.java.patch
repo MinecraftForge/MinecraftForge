@@ -126,7 +126,7 @@
          {
              return false;
          }
-@@ -264,53 +298,41 @@
+@@ -264,53 +298,45 @@
              }
              else
              {
@@ -174,7 +174,11 @@
                      if (!itemstack1.func_190926_b())
                      {
                          itemstack1.func_179548_a(this.field_73092_a, iblockstate, p_180237_1_, this.field_73090_b);
-+                        if (itemstack1.func_190926_b()) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_73090_b, itemstack2, EnumHand.MAIN_HAND);
++                        if (itemstack1.func_190926_b())
++                        {
++                        	ItemStack resultStack = net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_73090_b, itemstack2, EnumHand.MAIN_HAND);
++                        	this.field_73090_b.func_184611_a(EnumHand.MAIN_HAND, resultStack);
++                        }
                      }
  
 +                    flag1 = this.removeBlock(p_180237_1_, flag);
@@ -192,7 +196,7 @@
                  return flag1;
              }
          }
-@@ -328,8 +350,11 @@
+@@ -328,8 +354,11 @@
          }
          else
          {
@@ -204,15 +208,17 @@
              ActionResult<ItemStack> actionresult = p_187250_3_.func_77957_a(p_187250_2_, p_187250_1_, p_187250_4_);
              ItemStack itemstack = actionresult.func_188398_b();
  
-@@ -357,6 +382,7 @@
+@@ -357,7 +386,8 @@
  
                  if (itemstack.func_190926_b())
                  {
-+                    net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187250_1_, copyBeforeUse, p_187250_4_);
-                     p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
+-                    p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
++                	ItemStack resultStack = net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187250_1_, copyBeforeUse, p_187250_4_);
++                    p_187250_1_.func_184611_a(p_187250_4_, resultStack);
                  }
  
-@@ -402,13 +428,27 @@
+                 if (!p_187250_1_.func_184587_cr())
+@@ -402,13 +432,27 @@
          }
          else
          {
@@ -243,7 +249,7 @@
                  }
              }
  
-@@ -436,14 +476,22 @@
+@@ -436,14 +480,26 @@
                  {
                      int j = p_187251_3_.func_77960_j();
                      int i = p_187251_3_.func_190916_E();
@@ -262,12 +268,16 @@
 +                            || result == EnumActionResult.SUCCESS && event.getUseItem() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW) {
 +                        ItemStack copyBeforeUse = p_187251_3_.func_77946_l();
 +                        result = p_187251_3_.func_179546_a(p_187251_1_, p_187251_2_, p_187251_5_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
-+                        if (p_187251_3_.func_190926_b()) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187251_1_, copyBeforeUse, p_187251_4_);
++                        if (p_187251_3_.func_190926_b())
++                        {
++                        	ItemStack resultStack = net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187251_1_, copyBeforeUse, p_187251_4_);
++                        	p_187251_1_.func_184611_a(p_187251_4_, resultStack);
++                        }
 +                    } return result;
                  }
              }
          }
-@@ -453,4 +501,16 @@
+@@ -453,4 +509,16 @@
      {
          this.field_73092_a = p_73080_1_;
      }

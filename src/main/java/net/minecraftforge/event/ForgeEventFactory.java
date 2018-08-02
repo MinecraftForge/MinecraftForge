@@ -174,9 +174,11 @@ public class ForgeEventFactory
         return (MinecraftForge.EVENT_BUS.post(event) ? -1 : event.getNewSpeed());
     }
 
-    public static void onPlayerDestroyItem(EntityPlayer player, @Nonnull ItemStack stack, @Nullable EnumHand hand)
+    public static ItemStack onPlayerDestroyItem(EntityPlayer player, @Nonnull ItemStack stack, @Nullable EnumHand hand)
     {
-        MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
+    	PlayerDestroyItemEvent event = new PlayerDestroyItemEvent(player, stack, hand);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResultStack();
     }
 
     /**

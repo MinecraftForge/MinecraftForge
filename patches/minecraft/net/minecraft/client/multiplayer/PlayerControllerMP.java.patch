@@ -43,8 +43,9 @@
  
                          if (itemstack1.func_190926_b())
                          {
-+                            net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_78776_a.field_71439_g, copyBeforeUse, EnumHand.MAIN_HAND);
-                             this.field_78776_a.field_71439_g.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
+-                            this.field_78776_a.field_71439_g.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
++                        	ItemStack resultStack = net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_78776_a.field_71439_g, copyBeforeUse, EnumHand.MAIN_HAND);
++                            this.field_78776_a.field_71439_g.func_184611_a(EnumHand.MAIN_HAND, resultStack);
                          }
                      }
                  }
@@ -160,7 +161,7 @@
              {
                  if (itemstack.func_190926_b())
                  {
-@@ -430,14 +463,20 @@
+@@ -430,14 +463,24 @@
                      {
                          int i = itemstack.func_77960_j();
                          int j = itemstack.func_190916_E();
@@ -177,12 +178,16 @@
 +                        ItemStack copyForUse = itemstack.func_77946_l();
 +                        if (event.getUseItem() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +                        result = itemstack.func_179546_a(p_187099_1_, p_187099_2_, p_187099_3_, p_187099_6_, p_187099_4_, f, f1, f2);
-+                        if (itemstack.func_190926_b()) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187099_1_, copyForUse, p_187099_6_);
++                        if (itemstack.func_190926_b())
++                        {
++                        	ItemStack resultStack = net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187099_1_, copyForUse, p_187099_6_);
++                        	p_187099_1_.func_184611_a(p_187099_6_, resultStack);
++                        }
 +                        return result;
                      }
                  }
              }
-@@ -466,6 +505,8 @@
+@@ -466,6 +509,8 @@
              }
              else
              {
@@ -191,18 +196,19 @@
                  int i = itemstack.func_190916_E();
                  ActionResult<ItemStack> actionresult = itemstack.func_77957_a(p_187101_2_, p_187101_1_, p_187101_3_);
                  ItemStack itemstack1 = actionresult.func_188398_b();
-@@ -473,6 +514,10 @@
+@@ -473,6 +518,11 @@
                  if (itemstack1 != itemstack || itemstack1.func_190916_E() != i)
                  {
                      p_187101_1_.func_184611_a(p_187101_3_, itemstack1);
 +                    if (itemstack1.func_190926_b())
 +                    {
-+                        net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187101_1_, itemstack, p_187101_3_);
++                    	ItemStack resultStack = net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187101_1_, itemstack, p_187101_3_);
++                    	p_187101_1_.func_184611_a(p_187101_3_, resultStack);
 +                    }
                  }
  
                  return actionresult.func_188397_a();
-@@ -509,6 +554,9 @@
+@@ -509,6 +559,9 @@
          this.func_78750_j();
          Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
          this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));
