@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -298,7 +299,7 @@ public abstract class FluidRegistry
      */
     public static Set<Fluid> getBucketFluids()
     {
-        return ImmutableSet.copyOf(bucketFluids);
+        return Collections.unmodifiableSet(bucketFluids);
     }
 
 
