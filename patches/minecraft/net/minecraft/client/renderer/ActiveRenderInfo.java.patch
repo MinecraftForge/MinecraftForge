@@ -12,6 +12,15 @@
          GlStateManager.func_179111_a(2982, field_178812_b);
          GlStateManager.func_179111_a(2983, field_178813_c);
          GlStateManager.func_187445_a(2978, field_178814_a);
+@@ -81,7 +86,7 @@
+             }
+         }
+ 
+-        return iblockstate;
++        return iblockstate.func_177230_c().getStateAtViewpoint(iblockstate, p_186703_0_, blockpos, vec3d);
+     }
+ 
+     public static float func_178808_b()
 @@ -108,4 +113,14 @@
      {
          return field_74596_h;

@@ -27,6 +27,8 @@ net/minecraft/world/World.getBiomeForCoordsBody(Lnet/minecraft/util/math/BlockPo
 net/minecraft/world/World.markAndNotifyBlock(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/chunk/Chunk;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/block/state/IBlockState;I)V=|p_180501_1_,chunk,iblockstate,p_180501_2_,p_180501_3_
 net/minecraft/world/World.getCloudColorBody(F)Lnet/minecraft/util/math/Vec3d;=|p_72824_1_
 net/minecraft/world/WorldServer.canMineBlockBody(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/math/BlockPos;)Z=|p_175660_1_,p_175660_2_
+net/minecraft/world/WorldEntitySpawner.canCreatureTypeSpawnBody(Lnet/minecraft/entity/EntityLiving$SpawnPlacementType;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;)Z=|p_180267_0_,p_180267_1_,p_180267_2_
+
 net/minecraft/world/biome/Biome.<init>(IZ)V=|p_i1971_1_,register
 net/minecraft/world/chunk/storage/AnvilChunkLoader.loadChunk__Async(Lnet/minecraft/world/World;II)[Ljava/lang/Object;=|p_75815_1_,p_75815_2_,p_75815_3_
 net/minecraft/world/chunk/storage/AnvilChunkLoader.checkedReadChunkFromNBT__Async(Lnet/minecraft/world/World;IILnet/minecraft/nbt/NBTTagCompound;)[Ljava/lang/Object;=|p_75822_1_,p_75822_2_,p_75822_3_,p_75822_4_
