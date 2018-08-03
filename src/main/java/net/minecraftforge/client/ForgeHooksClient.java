@@ -798,7 +798,7 @@ public class ForgeHooksClient
             ((ThreadLocal<?>) nameField.get(null)).set(null);
             ((ThreadLocal<?>) logEventField.get(null)).set(null);
         }
-        catch (ReflectiveOperationException e)
+        catch (ReflectiveOperationException | NoClassDefFoundError e)
         {
             FMLLog.log.error("Unable to invalidate log4j thread cache, thread fields in logs may be inaccurate", e);
         }
