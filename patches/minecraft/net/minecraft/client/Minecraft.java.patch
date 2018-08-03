@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/Minecraft.java
 +++ ../src-work/minecraft/net/minecraft/client/Minecraft.java
-@@ -344,7 +344,6 @@
+@@ -328,6 +328,7 @@
+     private final Tutorial field_193035_aW;
+     long field_71421_N = -1L;
+     private String field_71465_an = "root";
++    public CrashReport integratedServerCrash = null;
+ 
+     public Minecraft(GameConfiguration p_i45547_1_)
+     {
+@@ -344,7 +345,6 @@
          this.field_152355_az = (new YggdrasilAuthenticationService(this.field_110453_aa, UUID.randomUUID().toString())).createMinecraftSessionService();
          this.field_71449_j = p_i45547_1_.field_178745_a.field_178752_a;
          field_147123_G.info("Setting user: {}", (Object)this.field_71449_j.func_111285_a());
@@ -8,7 +16,55 @@
          this.field_71459_aj = p_i45547_1_.field_178741_d.field_178756_a;
          this.field_71443_c = p_i45547_1_.field_178743_b.field_178764_a > 0 ? p_i45547_1_.field_178743_b.field_178764_a : 1;
          this.field_71440_d = p_i45547_1_.field_178743_b.field_178762_b > 0 ? p_i45547_1_.field_178743_b.field_178762_b : 1;
-@@ -464,10 +463,10 @@
+@@ -395,6 +395,8 @@
+                     {
+                         try
+                         {
++                        try
++                        {
+                             this.func_71411_J();
+                         }
+                         catch (OutOfMemoryError var10)
+@@ -403,6 +405,38 @@
+                             this.func_147108_a(new GuiMemoryErrorScreen());
+                             System.gc();
+                         }
++                        }
++                        catch(Throwable t) // Forge: catch exceptions in the game loop, then display an error screen instead of System.exit
++                        {
++                            if (this.field_71441_e != null) { //only if a world is loaded
++                                if(this.integratedServerCrash != null)
++                                {
++                                    this.field_71441_e.func_72882_A();
++                                    this.func_71403_a((WorldClient) null);
++                                }
++                                this.field_152351_aB.clear();
++                                CrashReport worldcrash;
++                                if (t instanceof ReportedException) {
++                                    worldcrash = ((ReportedException) t).func_71575_a();
++                                } else {
++                                    worldcrash = new CrashReport("Unexpected error", t);
++                                }
++                                this.func_71396_d(worldcrash);
++                                field_147123_G.fatal("Exception thrown client world tick!", t);
++                                Bootstrap.func_179870_a(worldcrash.func_71502_e());
++                                this.field_71417_B.func_74373_b();
++                                this.func_147108_a(new net.minecraftforge.fml.client.GuiWorldTickException(worldcrash, false));
++                            } else {
++                                throw t; //throw it normally otherwise
++                            }
++                    	}
++                    	
++                    	if(this.integratedServerCrash != null) //display the integrated server's crash, if any, see IntegratedServer:237
++                    	{
++                		    this.func_147108_a(new net.minecraftforge.fml.client.GuiWorldTickException(this.integratedServerCrash, true));
++                		    this.integratedServerCrash = null;
++                    	} //forge end
++                    	
+                     }
+                     else
+                     {
+@@ -464,10 +498,10 @@
          this.field_110451_am = new SimpleReloadableResourceManager(this.field_110452_an);
          this.field_135017_as = new LanguageManager(this.field_110452_an, this.field_71474_y.field_74363_ab);
          this.field_110451_am.func_110542_a(this.field_135017_as);
