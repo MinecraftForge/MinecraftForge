@@ -23,23 +23,21 @@
 +                        catch(Throwable t) // Forge: catch exceptions in the game loop, then display an error screen instead of System.exit
 +                        {
 +                            if (this.field_71441_e != null) { //only if a world is loaded
-+                                if(this.integratedServerCrash != null)
-+                                {
-+                                    this.field_71441_e.func_72882_A();
++                                if(this.integratedServerCrash == null) {
 +                                    this.func_71403_a((WorldClient) null);
++                                    this.field_152351_aB.clear();
++                                    CrashReport worldcrash;
++                                    if (t instanceof ReportedException) {
++                                        worldcrash = ((ReportedException) t).func_71575_a();
++                                    } else {
++                                        worldcrash = new CrashReport("Unexpected error", t);
++                                    }
++                                    this.func_71396_d(worldcrash);
++                                    field_147123_G.fatal("Exception thrown client world tick!", t);
++                                    Bootstrap.func_179870_a(worldcrash.func_71502_e());
++                                    this.field_71417_B.func_74373_b();
++                                    this.func_147108_a(new net.minecraftforge.fml.client.GuiWorldTickException(worldcrash, false));
 +                                }
-+                                this.field_152351_aB.clear();
-+                                CrashReport worldcrash;
-+                                if (t instanceof ReportedException) {
-+                                    worldcrash = ((ReportedException) t).func_71575_a();
-+                                } else {
-+                                    worldcrash = new CrashReport("Unexpected error", t);
-+                                }
-+                                this.func_71396_d(worldcrash);
-+                                field_147123_G.fatal("Exception thrown client world tick!", t);
-+                                Bootstrap.func_179870_a(worldcrash.func_71502_e());
-+                                this.field_71417_B.func_74373_b();
-+                                this.func_147108_a(new net.minecraftforge.fml.client.GuiWorldTickException(worldcrash, false));
 +                            } else {
 +                                throw t; //throw it normally otherwise
 +                            }
@@ -47,6 +45,8 @@
 +                    	
 +                        if(this.integratedServerCrash != null) //display the integrated server's crash, if any, see IntegratedServer:237
 +                        {
++                            this.func_71403_a((WorldClient) null);
++                            this.field_152351_aB.clear();
 +                            this.func_147108_a(new net.minecraftforge.fml.client.GuiWorldTickException(this.integratedServerCrash, true));
 +                            this.integratedServerCrash = null;
 +                        } //forge end

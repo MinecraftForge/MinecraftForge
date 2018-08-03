@@ -58,55 +58,55 @@
  
      public void func_71217_p()
      {
-+        if(this.field_71349_l.integratedServerCrash != null) return;
++        try
++        {
          boolean flag = this.field_71348_o;
          this.field_71348_o = Minecraft.func_71410_x().func_147114_u() != null && Minecraft.func_71410_x().func_147113_T();
  
-@@ -167,37 +187,56 @@
+@@ -155,13 +172,19 @@
+             this.func_71267_a(false);
          }
-         else
-         {
-+            try
-+            {
-             super.func_71217_p();
  
-             if (this.field_71349_l.field_71474_y.field_151451_c != this.func_184103_al().func_72395_o())
-@@ -198,6 +216,34 @@
-                     }
+-        if (this.field_71348_o)
++        if (this.field_71348_o || this.field_71349_l.integratedServerCrash != null) //to be shut down correctly the server needs this to process the client's messages, ugly but effective
+         {
+             synchronized (this.field_175589_i)
+             {
+                 while (!this.field_175589_i.isEmpty())
+                 {
++                    try {
+                     Util.func_181617_a(this.field_175589_i.poll(), field_147148_h);
++                    }catch(Throwable t) {
++                        if(this.field_71349_l.integratedServerCrash == null) {
++                            throw t;
++                        }
++                    }
                  }
              }
-+            }
-+            catch(Throwable t) //Forge: just close the world instead of stopping the whole game
-+            {
-+                CrashReport worldcrash;
-+                if(t instanceof net.minecraft.util.ReportedException) {
-+                    worldcrash = ((net.minecraft.util.ReportedException)t).func_71575_a();
-+                }else {
-+                    worldcrash = new CrashReport("Unexpected error", t);
-+                }
-+                this.func_71230_b(worldcrash);
-+                field_147148_h.fatal("Exception thrown in server world tick!", t);
-+                net.minecraft.init.Bootstrap.func_179870_a(worldcrash.func_71502_e());
-+                
-+                for (EntityPlayerMP entityplayermp : Lists.newArrayList(IntegratedServer.this.func_184103_al().func_181057_v()))
-+                {
-+                    IntegratedServer.this.func_184103_al().func_72367_e(entityplayermp);
-+                }
-+                
-+                super.func_71263_m();
-+                
-+                try {
-+                    Thread.sleep(100L);
-+                }catch(InterruptedException e){
-+                    ;
-+                }
-+
-+                this.field_71349_l.integratedServerCrash = worldcrash;
-+            }
          }
+@@ -199,6 +222,21 @@
+                 }
+             }
+         }
++        }
++        catch(Throwable t) //Forge: just close the world instead of stopping the whole game
++        {
++            CrashReport worldcrash;
++            if(t instanceof net.minecraft.util.ReportedException) {
++                worldcrash = ((net.minecraft.util.ReportedException)t).func_71575_a();
++            }else {
++                worldcrash = new CrashReport("Unexpected error", t);
++            }
++            this.func_71230_b(worldcrash);
++            field_147148_h.fatal("Exception thrown in server world tick!", t);
++            net.minecraft.init.Bootstrap.func_179870_a(worldcrash.func_71502_e());
++
++            this.field_71349_l.integratedServerCrash = worldcrash;
++        }
      }
  
-@@ -213,6 +259,7 @@
+     public boolean func_71225_e()
+@@ -213,6 +251,7 @@
  
      public EnumDifficulty func_147135_j()
      {
