@@ -26,6 +26,7 @@
 +                                if(this.integratedServerCrash == null) {
 +                                    this.func_71403_a((WorldClient) null);
 +                                    this.field_152351_aB.clear();
++                                    net.minecraftforge.fml.client.ClientStateReset.resetAllClientState();
 +                                    CrashReport worldcrash;
 +                                    if (t instanceof ReportedException) {
 +                                        worldcrash = ((ReportedException) t).func_71575_a();
@@ -361,7 +362,15 @@
          if (p_71353_1_ == null)
          {
              NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
-@@ -2395,6 +2445,18 @@
+ 
+             if (nethandlerplayclient != null)
+             {
++                if(nethandlerplayclient.func_147298_b().func_150724_d()) {
++                    nethandlerplayclient.func_147298_b().func_150718_a(new TextComponentString("World is being unloaded")); //MC-128953
++                }
+                 nethandlerplayclient.func_147296_c();
+             }
+ 
              if (this.field_71437_Z != null && this.field_71437_Z.func_175578_N())
              {
                  this.field_71437_Z.func_71263_m();
