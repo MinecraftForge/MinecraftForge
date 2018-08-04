@@ -19,6 +19,11 @@
 
 package net.minecraftforge.fml.client;
 
+import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL13;
@@ -34,18 +39,52 @@ import net.minecraft.client.renderer.RenderHelper;
 
 public class ClientStateReset {
     
+    public static interface IStateResettable{
+        public void resetState();
+    }
+    
+    //WeakReference allows garbage collection
+    private static final Set<WeakReference<IStateResettable>> resettables = new HashSet();
+    
+    /**
+     * 
+     * @param sr an IStateResettable to be called when the client crashes unexpectedly
+     */
+    public static void addResettable(IStateResettable sr) {
+        resettables.add(new WeakReference(sr));
+    }
+    
+    /**
+     * best not to touch this for now
+     */
+    public static void clearResettables() { //could be used in freememory but not sure it would get repopulated when the world reloads
+        resettables.clear();
+    }
+    
     /**
      * Resets all opengl and network state on the client side, during a crash
      */
-    public static void resetAllClientState() {
+    public static void resetAllClientState()
+    {
         Minecraft mc = Minecraft.getMinecraft();
+        
+        //reset things such as bufferbuilders if the crash happened in the middle of rendering
+        Iterator<WeakReference<IStateResettable>> iterator = resettables.iterator();
+        while (iterator.hasNext()) {
+            WeakReference<IStateResettable> ref = iterator.next();
+            if (ref.get() != null) {
+                ref.get().resetState();
+            } else {
+                iterator.remove();
+            }
+        }
         
         int j;
         while ((j = GlStateManager.glGetError()) != 0) //clear existing gl errors
         {
             String s = GLU.gluErrorString(j);
-            System.out.printf("########## GL ERROR ##########");
-            System.out.printf("@ {}", s);
+            System.out.println("########## GL ERROR ##########");
+            System.out.println("@ Error Handler Cleanup");
             System.out.printf("{}: {}", Integer.valueOf(j), s);
         }
         
@@ -107,10 +146,10 @@ public class ClientStateReset {
         }
         
         GlStateManager.disableColorMaterial();
-        GlStateManager.colorMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_AMBIENT_AND_DIFFUSE);
+        GlStateManager.colorMaterial(1032, 5634);
         
         GlStateManager.disableDepth();
-        GlStateManager.depthFunc(GL11.GL_LESS);
+        GlStateManager.depthFunc(513);
         GlStateManager.depthMask(true);
         
         GlStateManager.disableBlend();
@@ -131,7 +170,8 @@ public class ClientStateReset {
         
         GlStateManager.disableColorLogic();
         GlStateManager.colorLogicOp(5379);
-        
+
+        // Reset texgen TODO: is this correct?
         GlStateManager.disableTexGenCoord(GlStateManager.TexGen.S);
         GlStateManager.disableTexGenCoord(GlStateManager.TexGen.T);
         GlStateManager.disableTexGenCoord(GlStateManager.TexGen.R);
@@ -151,9 +191,8 @@ public class ClientStateReset {
         
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
         GlStateManager.disableTexture2D();
-        
         GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-        
+
         GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST_MIPMAP_LINEAR);
         GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL11.GL_REPEAT);
@@ -162,7 +201,7 @@ public class ClientStateReset {
         GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, 1000);
         GlStateManager.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MIN_LOD, -1000);
         GlStateManager.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
-        
+
         GlStateManager.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
         GlStateManager.glTexEnv(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_COLOR, RenderHelper.setColorBuffer(0.0F, 0.0F, 0.0F, 0.0F));
         GlStateManager.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_COMBINE_RGB, GL11.GL_MODULATE);
@@ -181,7 +220,7 @@ public class ClientStateReset {
         GlStateManager.glTexEnvi(GL11.GL_TEXTURE_ENV, GL13.GL_OPERAND2_ALPHA, GL11.GL_SRC_ALPHA);
         GlStateManager.glTexEnvf(GL11.GL_TEXTURE_ENV, GL13.GL_RGB_SCALE, 1.0F);
         GlStateManager.glTexEnvf(GL11.GL_TEXTURE_ENV, GL11.GL_ALPHA_SCALE, 1.0F);
-        
+
         GlStateManager.disableNormalize();
         GlStateManager.shadeModel(7425);
         GlStateManager.disableRescaleNormal();

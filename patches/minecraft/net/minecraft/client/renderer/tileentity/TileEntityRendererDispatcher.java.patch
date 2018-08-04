@@ -1,6 +1,34 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityRendererDispatcher.java
-@@ -92,7 +92,7 @@
+@@ -35,7 +35,7 @@
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+ @SideOnly(Side.CLIENT)
+-public class TileEntityRendererDispatcher
++public class TileEntityRendererDispatcher implements net.minecraftforge.fml.client.ClientStateReset.IStateResettable
+ {
+     public final Map < Class <? extends TileEntity > , TileEntitySpecialRenderer <? extends TileEntity >> field_147559_m = Maps. < Class <? extends TileEntity > , TileEntitySpecialRenderer <? extends TileEntity >> newHashMap();
+     public static TileEntityRendererDispatcher field_147556_a = new TileEntityRendererDispatcher();
+@@ -55,6 +55,7 @@
+ 
+     private TileEntityRendererDispatcher()
+     {
++        net.minecraftforge.fml.client.ClientStateReset.addResettable(this);
+         this.field_147559_m.put(TileEntitySign.class, new TileEntitySignRenderer());
+         this.field_147559_m.put(TileEntityMobSpawner.class, new TileEntityMobSpawnerRenderer());
+         this.field_147559_m.put(TileEntityPiston.class, new TileEntityPistonRenderer());
+@@ -75,6 +76,10 @@
+             tileentityspecialrenderer.func_147497_a(this);
+         }
+     }
++    
++    public void resetState() {
++        if (drawingBatch) drawingBatch = false;
++    }
+ 
+     public <T extends TileEntity> TileEntitySpecialRenderer<T> func_147546_a(Class <? extends TileEntity > p_147546_1_)
+     {
+@@ -92,7 +97,7 @@
      @Nullable
      public <T extends TileEntity> TileEntitySpecialRenderer<T> func_147547_b(@Nullable TileEntity p_147547_1_)
      {

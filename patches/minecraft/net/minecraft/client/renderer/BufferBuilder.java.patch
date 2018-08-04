@@ -1,6 +1,32 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/BufferBuilder.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/BufferBuilder.java
-@@ -123,6 +123,8 @@
+@@ -18,7 +18,7 @@
+ import org.apache.logging.log4j.Logger;
+ 
+ @SideOnly(Side.CLIENT)
+-public class BufferBuilder
++public class BufferBuilder implements net.minecraftforge.fml.client.ClientStateReset.IStateResettable
+ {
+     private static final Logger field_187316_a = LogManager.getLogger();
+     private ByteBuffer field_179001_a;
+@@ -38,11 +38,16 @@
+ 
+     public BufferBuilder(int p_i46275_1_)
+     {
++        net.minecraftforge.fml.client.ClientStateReset.addResettable(this);
+         this.field_179001_a = GLAllocation.func_74524_c(p_i46275_1_ * 4);
+         this.field_178999_b = this.field_179001_a.asIntBuffer();
+         this.field_181676_c = this.field_179001_a.asShortBuffer();
+         this.field_179000_c = this.field_179001_a.asFloatBuffer();
+     }
++    
++    public void resetState() {
++        if (field_179010_r) func_178977_d();
++    }
+ 
+     private void func_181670_b(int p_181670_1_)
+     {
+@@ -123,6 +128,8 @@
  
              bitset.set(i1);
          }

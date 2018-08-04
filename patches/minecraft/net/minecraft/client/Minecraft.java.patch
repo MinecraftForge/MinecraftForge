@@ -221,7 +221,15 @@
          }
  
          this.field_71424_I.func_76319_b();
-@@ -1455,9 +1476,9 @@
+@@ -1237,6 +1291,7 @@
+         {
+             System.gc();
+             this.func_71403_a((WorldClient)null);
++            net.minecraftforge.fml.client.ClientStateReset.resetAllClientState();
+         }
+         catch (Throwable var2)
+         {
+@@ -1455,9 +1510,9 @@
              {
                  BlockPos blockpos = this.field_71476_x.func_178782_a();
  
