@@ -16,3 +16,29 @@
          NBTBase nbtbase = NBTBase.func_150284_a(p_152449_0_);
  
          try
+@@ -533,4 +535,25 @@
+     {
+         return field_193583_c.matcher(p_193582_0_).matches() ? p_193582_0_ : NBTTagString.func_193588_a(p_193582_0_);
+     }
++
++    // FORGE START
++
++    public void setLongArray(String key, long[] value)
++    {
++        this.field_74784_a.put(key, new NBTTagLongArray(value));
++    }
++
++    public long[] getLongArray(String key)
++    {
++        try
++        {
++            if (this.func_150297_b(key, 12))
++                return ((NBTTagLongArray) this.field_74784_a.get(key)).getLongArray();
++        }
++        catch (ClassCastException classcastexception)
++        {
++            throw new ReportedException(this.func_82581_a(key, 12, classcastexception));
++        }
++        return new long[0];
++    }
+ }
