@@ -9,7 +9,7 @@
  {
      private static final Logger field_179239_b = LogManager.getLogger();
      private List<NBTBase> field_74747_a = Lists.<NBTBase>newArrayList();
-@@ -281,4 +281,56 @@
+@@ -281,4 +281,88 @@
      {
          return this.field_74746_b;
      }
@@ -33,6 +33,11 @@
 +        return 0;
 +    }
 +
++    public boolean getBooleanAt(int i)
++    {
++        return getByteAt(i) != 0;
++    }
++
 +    public short getShortAt(int i)
 +    {
 +        if (i >= 0 && i < this.field_74747_a.size())
@@ -53,6 +58,33 @@
 +                return ((NBTTagLong)nbtbase).func_150291_c();
 +        }
 +        return 0;
++    }
++
++    public byte[] getByteArrayAt(int i)
++    {
++        if (i >= 0 && i < this.field_74747_a.size())
++        {
++            NBTBase nbtbase = this.field_74747_a.get(i);
++            if (nbtbase.func_74732_a() == 7)
++                return ((NBTTagByteArray)nbtbase).func_150292_c();
++        }
++        return new byte[0];
++    }
++
++    public NBTTagList getListTagAt(int i, int type)
++    {
++        if (i >= 0 && i < this.field_74747_a.size())
++        {
++            NBTBase nbtbase = this.field_74747_a.get(i);
++            if (nbtbase.func_74732_a() == 9)
++            {
++                NBTTagList nbttaglist = (NBTTagList) nbtbase;
++                if (!nbttaglist.func_82582_d() && nbttaglist.func_150303_d() != type)
++                    return new NBTTagList();
++                return nbttaglist;
++            }
++        }
++        return new NBTTagList();
 +    }
 +
 +    public long[] getLongArrayAt(int i)
