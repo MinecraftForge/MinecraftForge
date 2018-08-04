@@ -89,7 +89,7 @@ public class ClientStateReset {
         }
         
         //This was made by Runemoro for their VanillaFix mod, original available at https://github.com/DimensionalDevelopment/VanillaFix/blob/master/src/main/java/org/dimdev/utils/GlUtil.java
-        //I modified it a lot tho
+        //I modified it a lot though
         
         if (mc.entityRenderer.isShaderActive()) mc.entityRenderer.stopUseShader();
         
