@@ -111,7 +111,7 @@ public class CompoundIngredient extends Ingredient
     }
     
     @Nonnull
-    public Collection<Ingredient> getChilds()
+    public Collection<Ingredient> getChildren()
     {
         return this.children;
     }
