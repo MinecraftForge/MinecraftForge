@@ -16,23 +16,7 @@
 /.gradle
 
 #occupational hazards
-!/projects/
-/projects/*
-!/projects/Forge/
-/projects/Forge/*
-!/projects/Forge/src/
-/projects/Forge/src/*
-!/projects/Forge/src/main/
-/projects/Forge/src/main/*
-!/projects/Forge/src/main/java/
-/projects/Forge/src/main/java/*
-!/projects/Forge/src/main/java/net/
-/projects/Forge/src/main/java/net/*
-!/projects/Forge/src/main/java/net/minecraft/
-/projects/Forge/src/main/java/net/minecraft/*
-!/projects/Forge/src/main/java/net/minecraft/world/
-/projects/Forge/src/main/java/net/minecraft/world/*
-!/projects/Forge/src/main/java/net/minecraft/world/WorldEntitySpawner.java
+/projects/
 /repo/
 /buildSrc
 
