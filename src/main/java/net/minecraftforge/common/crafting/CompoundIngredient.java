@@ -113,6 +113,6 @@ public class CompoundIngredient extends Ingredient
     @Nonnull
     public Collection<Ingredient> getChilds()
     {
-        return this.children
+        return this.children;
     }
 }
