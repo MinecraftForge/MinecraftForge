@@ -45,11 +45,15 @@ public class SkyLayer {
         return this.group;
     }
 
-    void setRenderer(IRenderHandler rendererIn)
+    /**
+     * Associates the renderer to a layer which doesn't have a group associated.
+     * @throws IllegalStateException if the layer is associated with a layer group
+     * */
+    public void setRenderer(IRenderHandler rendererIn)
     {
         if(this.group != null)
             throw new IllegalStateException(
-                    String.format("Layer %s is associated with layer group, so it can't have a renderer",
+                    String.format("Layer %s is associated with a layer group, so it can't have a renderer",
                             this.id));
         this.renderer = rendererIn;
     }

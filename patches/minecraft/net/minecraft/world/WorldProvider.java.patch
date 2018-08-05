@@ -71,7 +71,7 @@
  
 +    /*======================================= Forge Start =========================================*/
 +    private net.minecraftforge.client.IRenderHandler legacySkyRenderer = null;
-+    private net.minecraftforge.client.SkyRenderHandler skyRenderHandler = new net.minecraftforge.client.SkyRenderHandler();
++    private net.minecraftforge.client.SkyRenderHandler skyRenderHandler = new net.minecraftforge.client.SkyRenderHandler(this);
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
 +    private int dimensionId;
