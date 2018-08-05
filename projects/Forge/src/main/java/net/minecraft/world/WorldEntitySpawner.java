@@ -148,7 +148,8 @@ public final class WorldEntitySpawner
                                                 catch (Exception exception)
                                                 {
                                                     exception.printStackTrace();
-                                                    eventBuilder.newEntityException = exception; eventBuilder.post();
+                                                    eventBuilder.newEntityException = exception;
+                                                    eventBuilder.post();
                                                     return j4;
                                                 }
 
@@ -185,7 +186,10 @@ public final class WorldEntitySpawner
                         }
                     }
                 }
-                else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData()); }
+                else
+                {
+                    eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData());
+                }
             }
 
             eventBuilder.post();

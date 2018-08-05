@@ -48,7 +48,7 @@
                          {
                              BlockPos blockpos = func_180621_a(p_77192_1_, chunkpos1.field_77276_a, chunkpos1.field_77275_b);
                              int k1 = blockpos.func_177958_n();
-@@ -136,18 +143,21 @@
+@@ -136,18 +143,22 @@
  
                                                  try
                                                  {
@@ -58,7 +58,8 @@
                                                  catch (Exception exception)
                                                  {
                                                      exception.printStackTrace();
-+                                                    eventBuilder.newEntityException = exception; eventBuilder.post();
++                                                    eventBuilder.newEntityException = exception;
++                                                    eventBuilder.post();
                                                      return j4;
                                                  }
  
@@ -72,7 +73,7 @@
                                                      ientitylivingdata = entityliving.func_180482_a(p_77192_1_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata);
  
                                                      if (entityliving.func_70058_J())
-@@ -160,7 +170,7 @@
+@@ -160,7 +171,7 @@
                                                          entityliving.func_70106_y();
                                                      }
  
@@ -81,18 +82,21 @@
                                                      {
                                                          continue label134;
                                                      }
-@@ -175,8 +185,10 @@
+@@ -175,8 +186,13 @@
                          }
                      }
                  }
-+                else { eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData()); }
++                else
++                {
++                    eventBuilder.creatureTypeData.put(enumcreaturetype, new net.minecraftforge.event.world.FoundChunksForSpawningEvent.CreatureTypeData());
++                }
              }
  
 +            eventBuilder.post();
              return j4;
          }
      }
-@@ -219,6 +231,13 @@
+@@ -219,6 +235,13 @@
          }
          else
          {
@@ -106,7 +110,7 @@
              IBlockState iblockstate = p_180267_1_.func_180495_p(p_180267_2_);
  
              if (p_180267_0_ == EntityLiving.SpawnPlacementType.IN_WATER)
-@@ -228,8 +247,9 @@
+@@ -228,8 +251,9 @@
              else
              {
                  BlockPos blockpos = p_180267_2_.func_177977_b();
@@ -117,7 +121,7 @@
                  {
                      return false;
                  }
-@@ -273,7 +293,7 @@
+@@ -273,7 +297,7 @@
  
                              try
                              {
@@ -126,7 +130,7 @@
                              }
                              catch (Exception exception)
                              {
-@@ -281,6 +301,7 @@
+@@ -281,6 +305,7 @@
                                  continue;
                              }
  
