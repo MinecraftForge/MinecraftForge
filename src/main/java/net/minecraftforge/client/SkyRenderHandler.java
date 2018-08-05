@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,10 +33,13 @@ import com.google.common.graph.EndpointPair;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.Graphs;
 import com.google.common.graph.MutableGraph;
+import com.google.common.graph.MutableValueGraph;
+import com.google.common.graph.ValueGraphBuilder;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * Class which handles sky rendering. Sky render layers can be registered here.
@@ -48,6 +52,7 @@ public class SkyRenderHandler
     private final MutableGraph<SkyLayer> layerGraph = GraphBuilder.directed().build();
     private final MutableGraph<SkyLayer> orderGraph = GraphBuilder.directed().build();
 
+    private boolean unfinished;
     private boolean enabled;
     private final ListMultimap<SkyLayer, SkyLayer> order = ArrayListMultimap.create();
 
@@ -71,6 +76,7 @@ public class SkyRenderHandler
      * */
     public SkyLayer register(SkyLayer.Group layerGroup, ResourceLocation id)
     {
+        this.unfinished = this.enabled = true;
         if(!layerMap.containsKey(layerGroup.layer.id))
             throw new IllegalArgumentException(String.format("Invalid layer %s", layerGroup.layer.id));
 
@@ -107,6 +113,7 @@ public class SkyRenderHandler
      * */
     public void requireOrder(SkyLayer prior, SkyLayer posterior)
     {
+        this.unfinished = this.enabled = true;
         orderGraph.putEdge(prior, posterior);
     }
 
@@ -151,13 +158,14 @@ public class SkyRenderHandler
         SkyLayer.Group planetaryGroup = planetary.makeGroup();
         SkyLayer sun = this.register(planetaryGroup, new ResourceLocation("sun"));
         SkyLayer moon = this.register(planetaryGroup, new ResourceLocation("moon"));
+        this.enabled = false;
     }
 
     public void build()
     {
         // Search for actual pairs
         Set<SkyLayer> temp = new HashSet<>();
-        ListMultimap<SkyLayer, Quadruple> quads = ArrayListMultimap.create(); // Co-parent -> Quadruples
+        ListMultimap<SkyLayer, LayerOrderInfo> quads = ArrayListMultimap.create(); // Co-parent -> Quadruples
         for(EndpointPair<SkyLayer> pair : orderGraph.edges())
         {
             Optional<SkyLayer> current = Optional.of(pair.source());
@@ -192,7 +200,7 @@ public class SkyRenderHandler
             if(sibling1 == null)
                 continue;
 
-            Quadruple quad = new Quadruple();
+            LayerOrderInfo quad = new LayerOrderInfo();
             quad.original1 = pair.source();
             quad.original2 = pair.target();
             quad.parent1 = sibling1;
@@ -200,15 +208,80 @@ public class SkyRenderHandler
             quads.put(parent.get(), quad);
         }
 
+        // Actual sorting comes here
+        List<SkyLayer> prevOrder = new ArrayList<>();
+        List<SkyLayer> curOrder = new ArrayList<>();
+        MutableValueGraph<SkyLayer, LayerOrderInfo> currentGraph = ValueGraphBuilder.directed().build();
         for(SkyLayer group : order.keySet())
         {
-            List<SkyLayer> layer = order.get(group);
-            List<Quadruple> depList = quads.get(group);
-            // TODO Topological Sorting
+            if(!quads.containsKey(group))
+                continue;
+
+            //Prepare
+            prevOrder.addAll(order.get(group));
+            List<LayerOrderInfo> depList = quads.get(group);
+            for(SkyLayer layer : prevOrder)
+                currentGraph.addNode(layer);
+            for(LayerOrderInfo orderInfo : depList)
+                currentGraph.putEdgeValue(orderInfo.parent1, orderInfo.parent2, orderInfo);
+
+
+            // Sorting using Kahn's algorithm
+            while(!prevOrder.isEmpty())
+            {
+                SkyLayer node = prevOrder.remove(0);
+                if(currentGraph.inDegree(node) == 0)
+                {
+                    curOrder.add(node);
+                    for(SkyLayer succ : currentGraph.successors(node))
+                    {
+                        currentGraph.removeEdge(node, succ);
+                        if(currentGraph.inDegree(succ) == 0)
+                            prevOrder.add(succ);
+                    }
+                }
+            }
+
+            // When a cycle is detected
+            if(!currentGraph.edges().isEmpty())
+            {
+                FMLLog.log.error("Cycle detected in sky layer order in layer group {}, can't evaluate correct order", group.id);
+                SkyLayer source = currentGraph.edges().stream().findFirst().get().source();
+                SkyLayer current = source;
+                Set<SkyLayer> detected = new HashSet<>();
+                while(!detected.contains(current))
+                {
+                    detected.add(current);
+                    current = currentGraph.predecessors(current).stream().findFirst().get();
+                }
+
+                source = current;
+                do
+                {
+                    SkyLayer next = currentGraph.predecessors(current).stream().findFirst().get();
+                    LayerOrderInfo orderInfo = currentGraph.edgeValue(next, current);
+                    FMLLog.log.error("Specified: {} -> {}, Required: {} -> {}",
+                            orderInfo.original1.id, orderInfo.original2.id,
+                            orderInfo.parent1.id, orderInfo.parent2.id);
+                    current = next;
+                } while(current != source);
+
+                throw new IllegalStateException(
+                        String.format("Cycle detected while sorting sky layer under layer group %s, can't proceed.",
+                                group.id));
+            }
+
+            order.removeAll(group);
+            order.putAll(group, curOrder);
+            prevOrder.clear();
+            curOrder.clear();
         }
+
+        // Finished
+        this.unfinished = false;
     }
 
-    private static class Quadruple
+    private static class LayerOrderInfo
     {
         SkyLayer original1, original2; // Original pair in the order - just for better log
         SkyLayer parent1, parent2; // Parent pair which matters
@@ -218,6 +291,8 @@ public class SkyRenderHandler
     {
         if(!this.enabled)
             return false;
+        if(this.unfinished)
+            this.build();
 
         this.render(this.rootLayer, partialTicks, world, mc);
         return true;
@@ -227,9 +302,10 @@ public class SkyRenderHandler
     {
         if(layer.getGroup() != null)
         {
-         //   for(SkyLayer subLayer : layer.asGroup().subLayers())
-         //       this.render(subLayer, partialTicks, world, mc);
+            for(SkyLayer subLayer : order.get(layer))
+                this.render(subLayer, partialTicks, world, mc);
         }
+
         if(layer.getRenderer() != null)
             layer.getRenderer().render(partialTicks, world, mc);
     }
