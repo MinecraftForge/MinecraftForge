@@ -21,6 +21,8 @@ package net.minecraftforge.fml.common.event;
 
 import java.util.function.Function;
 import java.util.Optional;
+
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
@@ -174,6 +176,16 @@ public class FMLInterModComms {
         }
 
         /**
+         * Get the {@link IBlockState} value from this message
+         * @throws ClassCastException if this message doesn't contain an IBlockState value
+         * @return The IBlockState value
+         */
+        public IBlockState getBlockStateValue()
+        {
+            return (IBlockState) value;
+        }
+
+        /**
          * Get the {@link Function} value from this message. This will attempt to classload the function
          * supplied by the caller. The parameter classes are strictly to give a concrete generic function return value.
          * @param functionFrom The type of the argument to the function
@@ -224,6 +236,15 @@ public class FMLInterModComms {
         }
 
         /**
+         * Is this an {@link IBlockState} type message
+         * @return if this is an blockstate type message
+         */
+        public boolean isBlockStateMessage()
+        {
+            return IBlockState.class.isAssignableFrom(getMessageType());
+        }
+
+        /**
          * Is this an {@link NBTTagCompound} type message
          * @return if this is an NBT type message
          */
@@ -268,6 +289,18 @@ public class FMLInterModComms {
      * @return if the message was enqueued successfully and will be processed during startup
      */
     public static boolean sendMessage(String modId, String key, ItemStack value)
+    {
+        return enqueueStartupMessage(modId, new IMCMessage(key, value));
+    }
+
+    /**
+     * Send a startup time message
+     * @param modId The modid to send it to
+     * @param key The mod specific key
+     * @param value An IBlockState value
+     * @return if the message was enqueued successfully and will be processed during startup
+     */
+    public static boolean sendMessage(String modId, String key, IBlockState value)
     {
         return enqueueStartupMessage(modId, new IMCMessage(key, value));
     }
@@ -328,6 +361,18 @@ public class FMLInterModComms {
      * @param value An Itemstack value
      */
     public static void sendRuntimeMessage(Object sourceMod, String modId, String key, ItemStack value)
+    {
+        enqueueMessage(sourceMod, modId, new IMCMessage(key, value));
+    }
+
+    /**
+     * Send a post-startup message
+     * @param sourceMod The mod sending the message
+     * @param modId The modid to send it to
+     * @param key The mod specific key
+     * @param value An IBlockState value
+     */
+    public static void sendRuntimeMessage(Object sourceMod, String modId, String key, IBlockState value)
     {
         enqueueMessage(sourceMod, modId, new IMCMessage(key, value));
     }
