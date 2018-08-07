@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -162,6 +162,12 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     protected int getStackLimit(int slot, @Nonnull ItemStack stack)
     {
         return Math.min(getSlotLimit(slot), stack.getMaxStackSize());
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        return true;
     }
 
     @Override

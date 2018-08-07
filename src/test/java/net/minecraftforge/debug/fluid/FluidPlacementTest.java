@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,6 +43,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.debug.client.model.ModelFluidTest;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -92,7 +93,7 @@ public class FluidPlacementTest
             event.getRegistry().registerAll(
                 EmptyFluidContainer.instance,
                 FluidContainer.instance,
-                new ItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName())
+                new FluidItemBlock(FiniteFluidBlock.instance).setRegistryName(FiniteFluidBlock.instance.getRegistryName())
             );
             MinecraftForge.EVENT_BUS.register(FluidContainer.instance);
         }
@@ -132,7 +133,7 @@ public class FluidPlacementTest
 
         private FiniteFluid()
         {
-            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"));
+            super(name, new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"), new ResourceLocation("blocks/water_overlay"));
         }
 
         @Override
@@ -159,6 +160,26 @@ public class FluidPlacementTest
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
             setUnlocalizedName(MODID + ":" + name);
             setRegistryName(MODID, name);
+        }
+    }
+
+    public static final class FluidItemBlock extends ItemBlock
+    {
+        FluidItemBlock(BlockFluidBase block)
+        {
+            super(block);
+        }
+
+        @Override
+        public BlockFluidBase getBlock()
+        {
+            return (BlockFluidBase) super.getBlock();
+        }
+
+        @Override
+        public int getMetadata(int damage)
+        {
+            return getBlock().getMaxRenderHeightMeta();
         }
     }
 

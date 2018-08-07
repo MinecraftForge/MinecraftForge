@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -185,6 +185,19 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     {
         boolean accessingUpperChest = slot < 27;
         return getChest(accessingUpperChest).getInventoryStackLimit();
+    }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        boolean accessingUpperChest = slot < 27;
+        int targetSlot = accessingUpperChest ? slot : slot - 27;
+        TileEntityChest chest = getChest(accessingUpperChest);
+        if (chest != null)
+        {
+            return chest.getSingleChestHandler().isItemValid(targetSlot, stack);
+        }
+        return true;
     }
 
     @Override

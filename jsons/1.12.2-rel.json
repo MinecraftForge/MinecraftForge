@@ -38,9 +38,14 @@
       "clientreq":true
     },
     {
-      "name": "jline:jline:2.13",
+      "name": "org.jline:jline:3.5.1",
       "url" : "http://files.minecraftforge.net/maven/",
-      "checksums" : [ "2d9530d0a25daffaffda7c35037b046b627bb171" ],
+      "checksums" : [ "51800e9d7a13608894a5a28eed0f5c7fa2f300fb" ],
+      "serverreq":true,
+      "clientreq":false
+    },
+    {
+      "name": "net.java.dev.jna:jna:4.4.0",
       "serverreq":true,
       "clientreq":false
     },

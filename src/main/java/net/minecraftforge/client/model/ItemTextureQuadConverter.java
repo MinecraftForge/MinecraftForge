@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -38,6 +38,13 @@ public final class ItemTextureQuadConverter
         // non-instantiable
     }
 
+    /** @deprecated use {@link #convertTexture(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)}*/
+    @Deprecated // TODO: remove
+    public static List<UnpackedBakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
+    {
+        return convertTexture(format, transform, template, sprite, z, facing, color, -1);
+    }
+
     /**
      * Takes a texture and converts it into BakedQuads.
      * The conversion is done by scanning the texture horizontally and vertically and creating "strips" of the texture.
@@ -48,21 +55,29 @@ public final class ItemTextureQuadConverter
      *
      * @param format
      * @param template The input texture to convert
-     * @param sprite   The texture whose UVs shall be used   @return The generated quads.
+     * @param sprite   The texture whose UVs shall be used
+     * @return The generated quads.
      */
-    public static List<UnpackedBakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
+    public static List<UnpackedBakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color, int tint)
     {
-        List<UnpackedBakedQuad> horizontal = convertTextureHorizontal(format, transform, template, sprite, z, facing, color);
-        List<UnpackedBakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z, facing, color);
+        List<UnpackedBakedQuad> horizontal = convertTextureHorizontal(format, transform, template, sprite, z, facing, color, tint);
+        List<UnpackedBakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z, facing, color, tint);
 
         return horizontal.size() >= vertical.size() ? horizontal : vertical;
+    }
+
+    /** @deprecated use {@link #convertTextureHorizontal(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)} */
+    @Deprecated // TODO: remove
+    public static List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
+    {
+        return convertTextureHorizontal(format, transform, template, sprite, z, facing, color, -1);
     }
 
     /**
      * Scans a texture and converts it into a list of horizontal strips stacked on top of each other.
      * The height of the strips is as big as possible.
      */
-    public static List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
+    public static List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color, int tint)
     {
         int w = template.getIconWidth();
         int h = template.getIconHeight();
@@ -116,7 +131,7 @@ public final class ItemTextureQuadConverter
                                       (float)y * hScale,
                                       (float)x * wScale,
                                       (float)endY * hScale,
-                                      z, sprite, facing, color));
+                                      z, sprite, facing, color, tint));
 
                     // update Y if all the rows match. no need to rescan
                     if (endY - y > 1)
@@ -132,11 +147,18 @@ public final class ItemTextureQuadConverter
         return quads;
     }
 
+    /** @deprecated use {@link #convertTextureVertical(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)} */
+    @Deprecated // TODO: remove
+    public static List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
+    {
+        return convertTextureVertical(format, transform, template, sprite, z, facing, color, -1);
+    }
+
     /**
      * Scans a texture and converts it into a list of vertical strips stacked next to each other from left to right.
      * The width of the strips is as big as possible.
      */
-    public static List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
+    public static List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color, int tint)
     {
         int w = template.getIconWidth();
         int h = template.getIconHeight();
@@ -190,7 +212,7 @@ public final class ItemTextureQuadConverter
                                       (float)start * hScale,
                                       (float)endX * wScale,
                                       (float)y * hScale,
-                                      z, sprite, facing, color));
+                                      z, sprite, facing, color, tint));
 
                     // update X if all the columns match. no need to rescan
                     if (endX - x > 1)
@@ -211,11 +233,18 @@ public final class ItemTextureQuadConverter
         return (color >> 24 & 255) / 255f > 0.1f;
     }
 
+    /** @deprecated use {@link #genQuad(VertexFormat, TRSRTransformation, float, float, float, float, float, TextureAtlasSprite, EnumFacing, int, int)} */
+    @Deprecated // TODO: remove
+    public static UnpackedBakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color)
+    {
+        return genQuad(format, transform, x1, y1, x2, y2, z, sprite, facing, color, -1);
+    }
+
     /**
      * Generates a Front/Back quad for an itemmodel. Therefore only supports facing NORTH and SOUTH.
      * Coordinates are [0,16] to match the usual coordinates used in TextureAtlasSprites
      */
-    public static UnpackedBakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color)
+    public static UnpackedBakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color, int tint)
     {
         float u1 = sprite.getInterpolatedU(x1);
         float v1 = sprite.getInterpolatedV(y1);
@@ -231,15 +260,16 @@ public final class ItemTextureQuadConverter
         y1 = 1f - y2;
         y2 = 1f - tmp;
 
-        return putQuad(format, transform, facing, sprite, color, x1, y1, x2, y2, z, u1, v1, u2, v2);
+        return putQuad(format, transform, facing, sprite, color, tint, x1, y1, x2, y2, z, u1, v1, u2, v2);
     }
 
-    private static UnpackedBakedQuad putQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, TextureAtlasSprite sprite, int color,
+    private static UnpackedBakedQuad putQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, TextureAtlasSprite sprite, int color, int tint,
                                              float x1, float y1, float x2, float y2, float z,
                                              float u1, float v1, float u2, float v2)
     {
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
-        builder.setQuadTint(-1);
+
+        builder.setQuadTint(tint);
         builder.setQuadOrientation(side);
         builder.setTexture(sprite);
 
@@ -249,7 +279,8 @@ public final class ItemTextureQuadConverter
             putVertex(builder, format, transform, side, x2, y1, z, u2, v2, color);
             putVertex(builder, format, transform, side, x2, y2, z, u2, v1, color);
             putVertex(builder, format, transform, side, x1, y2, z, u1, v1, color);
-        } else
+        }
+        else
         {
             putVertex(builder, format, transform, side, x1, y1, z, u1, v2, color);
             putVertex(builder, format, transform, side, x1, y2, z, u1, v1, color);

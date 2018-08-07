@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2018.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,35 +17,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.block;
 
-import net.minecraftforge.event.entity.EntityMobGriefingEvent;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
-@Mod(modid = "entitymobgriefingeventtest", name = "EntityMobGriefingEventTest", version = "1.0", acceptableRemoteVersions = "*")
+@Mod(modid = FarmlandTrampleEventTest.MOD_ID, name = "Farmland Trample Event Test", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
-public class EntityMobGriefingEventTest
+public class FarmlandTrampleEventTest
 {
-    private static final boolean ENABLED = false;
+    static final String MOD_ID = "farmland_trample_test";
+    static final boolean ENABLED = true;
 
     @SubscribeEvent
-    public static void onMobGriefing(EntityMobGriefingEvent event)
+    public static void onFarmlandTrampled(BlockEvent.FarmlandTrampleEvent event)
     {
-        if (ENABLED)
+        if (!ENABLED)
         {
-            String customName = event.getEntity().getCustomNameTag();
-
-            try
-            {
-                Result result = Result.valueOf(customName);
-                event.setResult(result);
-            }
-            catch (IllegalArgumentException iae)
-            {
-                // Thrown if the name tag did not match a result value, can be ignored and DEFAULT will still be used.
-            }
+            return;
+        }
+        if(event.getEntity().isSneaking())
+        {
+            event.setCanceled(true);
         }
     }
 }

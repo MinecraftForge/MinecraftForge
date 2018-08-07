@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -52,12 +52,15 @@ public abstract class QuadGatheringTransformer implements IVertexConsumer
     public void put(int element, float... data)
     {
         System.arraycopy(data, 0, quadData[element][vertices], 0, data.length);
-        if(element == getVertexFormat().getElementCount() - 1) vertices++;
-        if(vertices == 0)
+        if (vertices == 0)
         {
             dataLength[element] = (byte)data.length;
         }
-        else if(vertices == 4)
+        if (element == getVertexFormat().getElementCount() - 1)
+        {
+            vertices++;
+        }
+        if (vertices == 4)
         {
             vertices = 0;
             processQuad();

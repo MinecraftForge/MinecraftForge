@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,14 +22,13 @@ package net.minecraftforge.client;
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.BOSSINFO;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA;
 import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Matrix3f;
@@ -41,6 +40,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.BossInfoClient;
 import net.minecraft.client.gui.FontRenderer;
@@ -48,11 +48,13 @@ import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -72,8 +74,13 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
+import net.minecraft.client.resources.FoliageColorReloadListener;
+import net.minecraft.client.resources.GrassColorReloadListener;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.client.resources.LanguageManager;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.util.SearchTreeManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
@@ -113,6 +120,9 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.resource.IResourceType;
+import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
+import net.minecraftforge.client.resource.VanillaResourceType;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -126,8 +136,11 @@ import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 
-import java.util.Optional;
+import java.util.function.Predicate;
+
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
@@ -154,7 +167,7 @@ public class ForgeHooksClient
 
         if (block != null && block.isBed(state, world, pos, entity))
         {
-            glRotatef((float)(block.getBedDirection(state, world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
+            GL11.glRotatef((float)(block.getBedDirection(state, world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
         }
     }
 
@@ -387,29 +400,6 @@ public class ForgeHooksClient
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
-    @SuppressWarnings("deprecation")
-    public static Matrix4f getMatrix(ItemTransformVec3f transform)
-    {
-        javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
-        m.setIdentity();
-        m.setTranslation(TRSRTransformation.toVecmath(transform.translation));
-        t.setIdentity();
-        t.rotY(transform.rotation.y);
-        m.mul(t);
-        t.setIdentity();
-        t.rotX(transform.rotation.x);
-        m.mul(t);
-        t.setIdentity();
-        t.rotZ(transform.rotation.z);
-        m.mul(t);
-        t.setIdentity();
-        t.m00 = transform.scale.x;
-        t.m11 = transform.scale.y;
-        t.m22 = transform.scale.z;
-        m.mul(t);
-        return m;
-    }
-
     private static final Matrix4f flipX;
     static {
         flipX = new Matrix4f();
@@ -446,7 +436,7 @@ public class ForgeHooksClient
             matrixBuf.put(t);
         }
         matrixBuf.flip();
-        glMultMatrix(matrixBuf);
+        GL11.glMultMatrix(matrixBuf);
     }
 
     // moved and expanded from WorldVertexBufferUploader.draw
@@ -460,32 +450,32 @@ public class ForgeHooksClient
         switch(attrType)
         {
             case POSITION:
-                glVertexPointer(count, constant, stride, buffer);
-                glEnableClientState(GL_VERTEX_ARRAY);
+                GlStateManager.glVertexPointer(count, constant, stride, buffer);
+                GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
                 break;
             case NORMAL:
                 if(count != 3)
                 {
                     throw new IllegalArgumentException("Normal attribute should have the size 3: " + attr);
                 }
-                glNormalPointer(constant, stride, buffer);
-                glEnableClientState(GL_NORMAL_ARRAY);
+                GlStateManager.glNormalPointer(constant, stride, buffer);
+                GlStateManager.glEnableClientState(GL11.GL_NORMAL_ARRAY);
                 break;
             case COLOR:
-                glColorPointer(count, constant, stride, buffer);
-                glEnableClientState(GL_COLOR_ARRAY);
+                GlStateManager.glColorPointer(count, constant, stride, buffer);
+                GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
                 break;
             case UV:
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-                glTexCoordPointer(count, constant, stride, buffer);
-                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+                GlStateManager.glTexCoordPointer(count, constant, stride, buffer);
+                GlStateManager.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                 break;
             case PADDING:
                 break;
             case GENERIC:
-                glEnableVertexAttribArray(attr.getIndex());
-                glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
+                GL20.glEnableVertexAttribArray(attr.getIndex());
+                GL20.glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
             default:
                 FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -497,25 +487,25 @@ public class ForgeHooksClient
         switch(attrType)
         {
             case POSITION:
-                glDisableClientState(GL_VERTEX_ARRAY);
+                GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
                 break;
             case NORMAL:
-                glDisableClientState(GL_NORMAL_ARRAY);
+                GlStateManager.glDisableClientState(GL11.GL_NORMAL_ARRAY);
                 break;
             case COLOR:
-                glDisableClientState(GL_COLOR_ARRAY);
+                GlStateManager.glDisableClientState(GL11.GL_COLOR_ARRAY);
                 // is this really needed?
                 GlStateManager.resetColor();
                 break;
             case UV:
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
-                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+                GlStateManager.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
                 OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
                 break;
             case PADDING:
                 break;
             case GENERIC:
-                glDisableVertexAttribArray(attr.getIndex());
+                GL20.glDisableVertexAttribArray(attr.getIndex());
             default:
                 FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -762,11 +752,33 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
     }
-    
+
     public static String getHorseArmorTexture(EntityHorse horse, ItemStack armorStack)
     {
         String texture = armorStack.getItem().getHorseArmorTexture(horse, armorStack);
         if(texture == null) texture = horse.getHorseArmorType().getTextureName();
         return texture;
     }
+
+    public static boolean shouldUseVanillaReloadableListener(IResourceManagerReloadListener listener)
+    {
+        Predicate<IResourceType> predicate = SelectiveReloadStateHandler.INSTANCE.get();
+
+        if (listener instanceof ModelManager || listener instanceof RenderItem)
+            return predicate.test(VanillaResourceType.MODELS);
+        else if (listener instanceof BlockRendererDispatcher || listener instanceof RenderGlobal)
+            return predicate.test(VanillaResourceType.MODELS);
+        else if (listener instanceof TextureManager || listener instanceof FontRenderer)
+            return predicate.test(VanillaResourceType.TEXTURES);
+        else if (listener instanceof FoliageColorReloadListener || listener instanceof GrassColorReloadListener)
+            return predicate.test(VanillaResourceType.TEXTURES);
+        else if (listener instanceof SoundHandler)
+            return predicate.test(VanillaResourceType.SOUNDS);
+        else if (listener instanceof EntityRenderer)
+            return predicate.test(VanillaResourceType.SHADERS);
+        else if (listener instanceof LanguageManager || listener instanceof SearchTreeManager)
+            return predicate.test(VanillaResourceType.LANGUAGES);
+
+        return true;
+   }
 }

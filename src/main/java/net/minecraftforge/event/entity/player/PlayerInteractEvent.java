@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -168,7 +168,7 @@ public class PlayerInteractEvent extends PlayerEvent
         }
 
         /**
-         * @return If {@link net.minecraft.item.Item#onItemUse} should be called
+         * @return If {@link net.minecraft.item.Item#onItemUseFirst} and {@link net.minecraft.item.Item#onItemUse} should be called
          */
         public Result getUseItem()
         {
