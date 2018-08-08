@@ -115,6 +115,46 @@ public class SkyRenderHandler
     }
 
     /**
+     * Same as {@link #register(net.minecraftforge.client.SkyLayer.Group, ResourceLocation)},
+     *  but registers before the specified sibling.
+     * @param sibling the specified sibling
+     * @param id the layer id
+     * @return the registered layer
+     * @throws IllegalArgumentException if the specified sibling layer does not have a valid parent layer
+     * */
+    public SkyLayer registerBefore(SkyLayer sibling, ResourceLocation id)
+    {
+        if(!layerMap.containsKey(sibling.id))
+            throw new IllegalArgumentException(String.format("Invalid layer %s", sibling.id));
+        if(layerGraph.inDegree(sibling) == 0)
+            throw new IllegalArgumentException(String.format("Can't register layer before %s as it's the root layer", sibling.id));
+
+        SkyLayer registered = this.register(layerGraph.successors(sibling).stream().findFirst().get().getGroup(), id);
+        this.requireOrder(registered, sibling);
+        return registered;
+    }
+
+    /**
+     * Same as {@link #register(net.minecraftforge.client.SkyLayer.Group, ResourceLocation)},
+     *  but registers after the specified sibling.
+     * @param sibling the specified sibling
+     * @param id the layer id
+     * @return the registered layer
+     * @throws IllegalArgumentException if the specified sibling layer does not have a valid parent layer
+     * */
+    public SkyLayer registerAfter(SkyLayer sibling, ResourceLocation id)
+    {
+        if(!layerMap.containsKey(sibling.id))
+            throw new IllegalArgumentException(String.format("Invalid layer %s", sibling.id));
+        if(layerGraph.inDegree(sibling) == 0)
+            throw new IllegalArgumentException(String.format("Can't register layer after %s as it's the root layer", sibling.id));
+
+        SkyLayer registered = this.register(layerGraph.successors(sibling).stream().findFirst().get().getGroup(), id);
+        this.requireOrder(sibling, registered);
+        return registered;
+    }
+
+    /**
      * Require ordering between two layers. <p>
      * Ordering from a parent layer to a child layer will be ignored.
      * @param prior the prior layer which comes before the other
