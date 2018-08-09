@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -39,11 +40,15 @@ import com.google.common.graph.ValueGraphBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
+import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -374,15 +379,63 @@ public class SkyRenderHandler
 
     private static class SkyBackRenderer extends IRenderHandler
     {
+        private final VertexFormat vertexBufferFormat;
         private static final ResourceLocation END_SKY_TEXTURES = new ResourceLocation("textures/environment/end_sky.png");
         private boolean vboEnabled;
         private VertexBuffer skyVBO;
         private int glSkyList;
-        // TODO Initializing this list
+
+        private SkyBackRenderer()
+        {
+            this.vertexBufferFormat = new VertexFormat();
+            this.vertexBufferFormat.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.POSITION, 3));
+            this.vboEnabled = OpenGlHelper.useVbo();
+            this.generateSky();
+        }
+
+        private void generateSky()
+        {
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+            if (this.skyVBO != null)
+            {
+                this.skyVBO.deleteGlBuffers();
+            }
+
+            if (this.glSkyList >= 0)
+            {
+                GLAllocation.deleteDisplayLists(this.glSkyList);
+                this.glSkyList = -1;
+            }
+
+            if (this.vboEnabled)
+            {
+                this.skyVBO = new VertexBuffer(this.vertexBufferFormat);
+                renderSky(bufferbuilder, 16.0F, false);
+                bufferbuilder.finishDrawing();
+                bufferbuilder.reset();
+                this.skyVBO.bufferData(bufferbuilder.getByteBuffer());
+            }
+            else
+            {
+                this.glSkyList = GLAllocation.generateDisplayLists(1);
+                GlStateManager.glNewList(this.glSkyList, 4864);
+                renderSky(bufferbuilder, 16.0F, false);
+                tessellator.draw();
+                GlStateManager.glEndList();
+            }
+        }
 
         @Override
         public void render(float partialTicks, WorldClient world, Minecraft mc)
         {
+            if(this.vboEnabled != OpenGlHelper.useVbo())
+            {
+                this.vboEnabled = OpenGlHelper.useVbo();
+                this.generateSky();
+            }
+
             if (world.provider.getDimensionType().getId() == 1)
             {
                 GlStateManager.disableFog();
@@ -590,13 +643,114 @@ public class SkyRenderHandler
 
     private static class StarRenderer extends IRenderHandler
     {
+        private final VertexFormat vertexBufferFormat;
         private boolean vboEnabled;
         private VertexBuffer starVBO;
         private int starGLCallList;
 
+        private StarRenderer()
+        {
+            this.vertexBufferFormat = new VertexFormat();
+            this.vertexBufferFormat.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.POSITION, 3));
+            this.generateStars();
+            this.vboEnabled = OpenGlHelper.useVbo();
+        }
+
+        private void generateStars()
+        {
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+            if (this.starVBO != null)
+            {
+                this.starVBO.deleteGlBuffers();
+            }
+
+            if (this.starGLCallList >= 0)
+            {
+                GLAllocation.deleteDisplayLists(this.starGLCallList);
+                this.starGLCallList = -1;
+            }
+
+            if (this.vboEnabled)
+            {
+                this.starVBO = new VertexBuffer(this.vertexBufferFormat);
+                this.renderStars(bufferbuilder);
+                bufferbuilder.finishDrawing();
+                bufferbuilder.reset();
+                this.starVBO.bufferData(bufferbuilder.getByteBuffer());
+            }
+            else
+            {
+                this.starGLCallList = GLAllocation.generateDisplayLists(1);
+                GlStateManager.pushMatrix();
+                GlStateManager.glNewList(this.starGLCallList, 4864);
+                this.renderStars(bufferbuilder);
+                tessellator.draw();
+                GlStateManager.glEndList();
+                GlStateManager.popMatrix();
+            }
+        }
+
+        private void renderStars(BufferBuilder bufferBuilderIn)
+        {
+            Random random = new Random(10842L);
+            bufferBuilderIn.begin(7, DefaultVertexFormats.POSITION);
+
+            for (int i = 0; i < 1500; ++i)
+            {
+                double d0 = (double)(random.nextFloat() * 2.0F - 1.0F);
+                double d1 = (double)(random.nextFloat() * 2.0F - 1.0F);
+                double d2 = (double)(random.nextFloat() * 2.0F - 1.0F);
+                double d3 = (double)(0.15F + random.nextFloat() * 0.1F);
+                double d4 = d0 * d0 + d1 * d1 + d2 * d2;
+
+                if (d4 < 1.0D && d4 > 0.01D)
+                {
+                    d4 = 1.0D / Math.sqrt(d4);
+                    d0 = d0 * d4;
+                    d1 = d1 * d4;
+                    d2 = d2 * d4;
+                    double d5 = d0 * 100.0D;
+                    double d6 = d1 * 100.0D;
+                    double d7 = d2 * 100.0D;
+                    double d8 = Math.atan2(d0, d2);
+                    double d9 = Math.sin(d8);
+                    double d10 = Math.cos(d8);
+                    double d11 = Math.atan2(Math.sqrt(d0 * d0 + d2 * d2), d1);
+                    double d12 = Math.sin(d11);
+                    double d13 = Math.cos(d11);
+                    double d14 = random.nextDouble() * Math.PI * 2.0D;
+                    double d15 = Math.sin(d14);
+                    double d16 = Math.cos(d14);
+
+                    for (int j = 0; j < 4; ++j)
+                    {
+                        double d17 = 0.0D;
+                        double d18 = (double)((j & 2) - 1) * d3;
+                        double d19 = (double)((j + 1 & 2) - 1) * d3;
+                        double d20 = 0.0D;
+                        double d21 = d18 * d16 - d19 * d15;
+                        double d22 = d19 * d16 + d18 * d15;
+                        double d23 = d21 * d12 + 0.0D * d13;
+                        double d24 = 0.0D * d12 - d21 * d13;
+                        double d25 = d24 * d9 - d22 * d10;
+                        double d26 = d22 * d9 + d24 * d10;
+                        bufferBuilderIn.pos(d5 + d25, d6 + d23, d7 + d26).endVertex();
+                    }
+                }
+            }
+        }
+
         @Override
         public void render(float partialTicks, WorldClient world, Minecraft mc)
         {
+            if(this.vboEnabled != OpenGlHelper.useVbo())
+            {
+                this.vboEnabled = OpenGlHelper.useVbo();
+                this.generateStars();
+            }
+
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuffer();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -632,13 +786,62 @@ public class SkyRenderHandler
 
     private static class SkyFrontRenderer extends IRenderHandler
     {
+        private final VertexFormat vertexBufferFormat;
         private boolean vboEnabled;
         private VertexBuffer sky2VBO;
         private int glSkyList2;
 
+        private SkyFrontRenderer()
+        {
+            this.vertexBufferFormat = new VertexFormat();
+            this.vertexBufferFormat.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.POSITION, 3));
+            this.generateSky2();
+            this.vboEnabled = OpenGlHelper.useVbo();
+        }
+
+        private void generateSky2()
+        {
+            Tessellator tessellator = Tessellator.getInstance();
+            BufferBuilder bufferbuilder = tessellator.getBuffer();
+
+            if (this.sky2VBO != null)
+            {
+                this.sky2VBO.deleteGlBuffers();
+            }
+
+            if (this.glSkyList2 >= 0)
+            {
+                GLAllocation.deleteDisplayLists(this.glSkyList2);
+                this.glSkyList2 = -1;
+            }
+
+            if (this.vboEnabled)
+            {
+                this.sky2VBO = new VertexBuffer(this.vertexBufferFormat);
+                renderSky(bufferbuilder, -16.0F, true);
+                bufferbuilder.finishDrawing();
+                bufferbuilder.reset();
+                this.sky2VBO.bufferData(bufferbuilder.getByteBuffer());
+            }
+            else
+            {
+                this.glSkyList2 = GLAllocation.generateDisplayLists(1);
+                GlStateManager.glNewList(this.glSkyList2, 4864);
+                renderSky(bufferbuilder, -16.0F, true);
+                tessellator.draw();
+                GlStateManager.glEndList();
+            }
+        }
+
         @Override
         public void render(float partialTicks, WorldClient world, Minecraft mc)
         {
+            if(this.vboEnabled != OpenGlHelper.useVbo())
+            {
+                this.vboEnabled = OpenGlHelper.useVbo();
+                this.generateSky2();
+            }
+
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuffer();
             Vec3d vec3d = world.getSkyColor(mc.getRenderViewEntity(), partialTicks);
@@ -726,6 +929,31 @@ public class SkyRenderHandler
             GlStateManager.popMatrix();
             GlStateManager.enableTexture2D();
             GlStateManager.depthMask(true);
+        }
+    }
+
+    private static void renderSky(BufferBuilder bufferBuilderIn, float posY, boolean reverseX)
+    {
+        bufferBuilderIn.begin(7, DefaultVertexFormats.POSITION);
+
+        for (int k = -384; k <= 384; k += 64)
+        {
+            for (int l = -384; l <= 384; l += 64)
+            {
+                float f = (float)k;
+                float f1 = (float)(k + 64);
+
+                if (reverseX)
+                {
+                    f1 = (float)k;
+                    f = (float)(k + 64);
+                }
+
+                bufferBuilderIn.pos((double)f, (double)posY, (double)l).endVertex();
+                bufferBuilderIn.pos((double)f1, (double)posY, (double)l).endVertex();
+                bufferBuilderIn.pos((double)f1, (double)posY, (double)(l + 64)).endVertex();
+                bufferBuilderIn.pos((double)f, (double)posY, (double)(l + 64)).endVertex();
+            }
         }
     }
 }
