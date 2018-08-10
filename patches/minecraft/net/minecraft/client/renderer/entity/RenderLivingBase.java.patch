@@ -70,3 +70,13 @@
      }
  
      protected boolean func_177070_b(T p_177070_1_)
+@@ -512,4 +521,9 @@
+ 
+         field_177096_e.func_110564_a();
+     }
++    
++    //Forge: A way to retrieve a list of Renderers Render-layers
++    public List<LayerRenderer<T>> getLayerRenders(){
++    	return field_177097_h;
++    }
+ }
