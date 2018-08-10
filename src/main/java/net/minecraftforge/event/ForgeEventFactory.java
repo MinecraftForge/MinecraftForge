@@ -493,7 +493,12 @@ public class ForgeEventFactory
     {
         Event event = new net.minecraftforge.event.entity.player.CanTakeItemEvent(itemStack, player, vanillaResult);
         MinecraftForge.EVENT_BUS.post(event);
-        return !event.isCanceled() && event.getResult() != Result.DENY;
+        if (event.getResult() == Result.DENY) {
+            return false;
+        } else if (event.getResult() == Result.ALLOW) {
+            return true;
+        }
+        return vanillaResult;
     }
 
     public static void onPlayerDrops(EntityPlayer player, DamageSource cause, List<EntityItem> capturedDrops, boolean recentlyHit)
