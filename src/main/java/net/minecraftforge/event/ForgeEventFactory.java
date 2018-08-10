@@ -493,11 +493,10 @@ public class ForgeEventFactory
     {
         Event event = new net.minecraftforge.event.entity.player.CanTakeItemEvent(itemStack, player, vanillaResult);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.getResult() == Result.DENY) {
+        if (event.getResult() == Result.DENY)
             return false;
-        } else if (event.getResult() == Result.ALLOW) {
+        else if (event.getResult() == Result.ALLOW)
             return true;
-        }
         return vanillaResult;
     }
 
