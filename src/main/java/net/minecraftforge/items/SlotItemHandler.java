@@ -127,8 +127,7 @@ public class SlotItemHandler extends Slot
     public boolean canTakeStack(EntityPlayer playerIn)
     {
         boolean vanillaResult = !this.getItemHandler().extractItem(index, 1, true).isEmpty();
-        boolean result = net.minecraftforge.event.ForgeEventFactory.onCanTakeItem(playerIn, this.getStack(), vanillaResult);
-        return result && vanillaResult;
+        return net.minecraftforge.event.ForgeEventFactory.onCanTakeItem(playerIn, this.getStack(), vanillaResult);
     }
 
     @Override
