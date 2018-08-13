@@ -56,7 +56,7 @@ public class FMLSanityChecker implements IFMLCallHook
     public Void call() throws Exception
     {
         CodeSource codeSource = getClass().getProtectionDomain().getCodeSource();
-        boolean goodFML = false;
+        boolean goodFML = !liveEnv;
         boolean fmlIsJar = false;
         if (codeSource.getLocation().getProtocol().equals("jar"))
         {
