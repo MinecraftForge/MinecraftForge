@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldProvider.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldProvider.java
-@@ -55,37 +55,12 @@
+@@ -39,6 +39,7 @@
+         this.field_82913_c = p_76558_1_.func_72912_H().func_82571_y();
+         this.func_76572_b();
+         this.func_76556_a();
++        if(p_76558_1_.field_72995_K) this.skyRenderHandler = new net.minecraftforge.client.SkyRenderHandler(this);
+     }
+ 
+     protected void func_76556_a()
+@@ -55,37 +56,12 @@
      protected void func_76572_b()
      {
          this.field_191067_f = true;
@@ -40,7 +48,7 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -179,7 +154,7 @@
+@@ -179,7 +155,7 @@
      @SideOnly(Side.CLIENT)
      public float func_76571_f()
      {
@@ -49,7 +57,7 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -196,13 +171,13 @@
+@@ -196,13 +172,13 @@
  
      public int func_76557_i()
      {
@@ -65,13 +73,13 @@
      }
  
      @SideOnly(Side.CLIENT)
-@@ -241,6 +216,379 @@
+@@ -241,6 +217,379 @@
          return new WorldBorder();
      }
  
 +    /*======================================= Forge Start =========================================*/
 +    private net.minecraftforge.client.IRenderHandler legacySkyRenderer = null;
-+    private net.minecraftforge.client.SkyRenderHandler skyRenderHandler = new net.minecraftforge.client.SkyRenderHandler(this);
++    private net.minecraftforge.client.SkyRenderHandler skyRenderHandler = null;
 +    private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +    private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
 +    private int dimensionId;

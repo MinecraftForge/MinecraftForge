@@ -28,6 +28,8 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.graph.EndpointPair;
@@ -57,7 +59,6 @@ import net.minecraftforge.fml.common.FMLLog;
 
 /**
  * Class which handles sky rendering. Sky render layers can be registered here.
- * TODO Proper sorting system
  * */
 public class SkyRenderHandler
 {
@@ -68,11 +69,13 @@ public class SkyRenderHandler
 
     private boolean unfinished;
     private boolean enabled;
+    private Runnable update = () -> { this.unfinished = this.enabled = true; };
     private final ListMultimap<SkyLayer, SkyLayer> order = ArrayListMultimap.create();
 
     private SkyLayer register(ResourceLocation id)
     {
-        SkyLayer layer = new SkyLayer(id);
+        update.run();
+        SkyLayer layer = new SkyLayer(id, this.update);
         this.rootLayer = layer;
         layerMap.put(id, layer);
         layerGraph.addNode(layer);
@@ -81,18 +84,13 @@ public class SkyRenderHandler
     }
 
     /**
-     * Registers certain layer as part of certain layer group.
-     * Replaces previous one with an empty layer if there was a layer.
-     * @param layerGroup the layer group
+     * Removes the layer with certain layer id.
      * @param id the layer id
-     * @return the registered layer
-     * @throws IllegalArgumentException if the specified layer group is invalid / not registered
+     * @return <code>true</code> if corresponding layer existed and removed, <code>false</code> otherwise
      * */
-    public SkyLayer register(SkyLayer.Group layerGroup, ResourceLocation id)
+    public boolean remove(ResourceLocation id)
     {
-        this.unfinished = this.enabled = true;
-        if(!layerMap.containsKey(layerGroup.layer.id))
-            throw new IllegalArgumentException(String.format("Invalid layer %s", layerGroup.layer.id));
+        update.run();
 
         if(this.rootLayer.id.equals(id))
             throw new IllegalArgumentException(String.format("Can't remove root layer with id %s", id));
@@ -108,9 +106,28 @@ public class SkyRenderHandler
                 orderGraph.removeNode(subLayer);
                 order.remove(parent, subLayer);
             }
-        }
+            return true;
+        } else return false;
+    }
 
-        SkyLayer layer = new SkyLayer(id);
+    /**
+     * Registers certain layer as part of certain layer group.
+     * Replaces previous one with an empty layer if there was a layer.
+     * @param layerGroup the layer group
+     * @param id the layer id
+     * @return the registered layer
+     * @throws IllegalArgumentException if the specified layer group is invalid / not registered
+     * */
+    public SkyLayer register(SkyLayer.Group layerGroup, ResourceLocation id)
+    {
+        update.run();
+        if(!layerMap.containsKey(layerGroup.layer.id))
+            throw new IllegalArgumentException(String.format("Invalid layer %s", layerGroup.layer.id));
+
+        if(layerMap.containsKey(id))
+            this.remove(id);
+
+        SkyLayer layer = new SkyLayer(id, this.update);
         layerMap.put(id, layer);
         layerGraph.addNode(layer);
         layerGraph.putEdge(layerGroup.layer, layer);
@@ -167,7 +184,7 @@ public class SkyRenderHandler
      * */
     public void requireOrder(SkyLayer prior, SkyLayer posterior)
     {
-        this.unfinished = this.enabled = true;
+        update.run();
         orderGraph.putEdge(prior, posterior);
     }
 
@@ -182,7 +199,7 @@ public class SkyRenderHandler
     /**
      * @return sky layer registered for specified id
      * */
-    public SkyLayer getLayer(ResourceLocation id)
+    public @Nullable SkyLayer getLayer(ResourceLocation id)
     {
         return layerMap.get(id);
     }
@@ -652,8 +669,8 @@ public class SkyRenderHandler
         {
             this.vertexBufferFormat = new VertexFormat();
             this.vertexBufferFormat.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.POSITION, 3));
-            this.generateStars();
             this.vboEnabled = OpenGlHelper.useVbo();
+            this.generateStars();
         }
 
         private void generateStars()
@@ -781,6 +798,7 @@ public class SkyRenderHandler
                 }
             }
             GlStateManager.popMatrix();
+            GlStateManager.enableTexture2D();
         }
     }
 

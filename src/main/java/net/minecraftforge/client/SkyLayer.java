@@ -27,10 +27,12 @@ public class SkyLayer {
     public final ResourceLocation id;
     private Group group = null;
     private IRenderHandler renderer = null;
+    private Runnable update;
 
-    SkyLayer(ResourceLocation idIn)
+    SkyLayer(ResourceLocation idIn, Runnable updateIn)
     {
         this.id = idIn;
+        this.update = updateIn;
     }
 
     /**
@@ -40,8 +42,15 @@ public class SkyLayer {
      * */
     public SkyLayer.Group makeGroup()
     {
-        this.group = new Group();
-        this.renderer = null;
+        if(this.group == null)
+        {
+            this.group = new Group();
+            if(this.renderer != null)
+            {
+                this.renderer = null;
+                update.run();
+            }
+        }
         return this.group;
     }
 
@@ -55,6 +64,7 @@ public class SkyLayer {
             throw new IllegalStateException(
                     String.format("Layer %s is associated with a layer group, so it can't have a renderer",
                             this.id));
+        update.run();
         this.renderer = rendererIn;
     }
 
