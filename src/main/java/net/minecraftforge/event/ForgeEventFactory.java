@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.BlockPortal;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -34,6 +33,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
@@ -116,6 +116,7 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
+import net.minecraftforge.event.entity.living.EndermanSetAttackTargetEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -783,6 +784,13 @@ public class ForgeEventFactory
     {
         MinecraftForge.EVENT_BUS.post(new GetCollisionBoxesEvent(world, entity, aabb, outList));
         return outList.isEmpty();
+    }
+  
+    public static EndermanSetAttackTargetEvent onEndermanSetAttackTarget(EntityPlayer player, EntityEnderman enderman)
+    {
+        EndermanSetAttackTargetEvent event = new EndermanSetAttackTargetEvent(player,enderman);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
     }
 
     public static boolean getMobGriefingEvent(World world, Entity entity)
