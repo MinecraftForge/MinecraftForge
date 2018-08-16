@@ -19,6 +19,7 @@
 
 package net.minecraftforge.debug.item;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
@@ -76,11 +77,11 @@ public class ShieldTest
             @Override
             public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot slot)
             {
-                Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
+                Multimap<String, AttributeModifier> multimap = HashMultimap.<String, AttributeModifier>create();
                 if(slot == EntityEquipmentSlot.MAINHAND)
                 {
-                    multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", 12.0F, 0));
-                    multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -5D, 0));
+                    multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", 20.0F, 0));
+                    multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -3D, 0));
                 }
                 return multimap;
             }
