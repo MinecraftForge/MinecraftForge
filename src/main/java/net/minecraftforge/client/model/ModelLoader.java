@@ -300,6 +300,7 @@ public final class ModelLoader extends ModelBakery
                     try
                     {
                         model = ModelLoaderRegistry.getModel(file);
+                        ModelLoaderRegistry.addAlias(memory, file);
                     }
                     catch (Exception normalException)
                     {
