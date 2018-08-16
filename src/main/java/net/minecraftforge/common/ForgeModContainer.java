@@ -572,6 +572,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         Ingredient.invalidateAll();
         FMLCommonHandler.instance().resetClientRecipeBook();
         FMLCommonHandler.instance().reloadSearchTrees();
+        FMLCommonHandler.instance().reloadCreativeSettings();
     }
 
 
