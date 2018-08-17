@@ -9,17 +9,16 @@
      }
  
      public ItemStack func_75209_a(int p_75209_1_)
-@@ -105,7 +105,8 @@
+@@ -105,7 +105,7 @@
  
      public boolean func_82869_a(EntityPlayer p_82869_1_)
      {
 -        return true;
-+        ItemStack itemStack = this.func_75211_c();
-+        return net.minecraftforge.event.ForgeEventFactory.onCanTakeItem(p_82869_1_, itemStack, true);
++        return net.minecraftforge.event.ForgeEventFactory.onCanTakeItem(p_82869_1_, this.func_75211_c(), true);
      }
  
      @SideOnly(Side.CLIENT)
-@@ -113,4 +114,74 @@
+@@ -113,4 +113,74 @@
      {
          return true;
      }
