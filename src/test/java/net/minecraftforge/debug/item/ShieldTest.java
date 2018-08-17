@@ -74,18 +74,6 @@ public class ShieldTest
             }
             
             @Override
-            public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot slot)
-            {
-                Multimap<String, AttributeModifier> multimap = super.getItemAttributeModifiers(slot);
-                if(slot == EntityEquipmentSlot.MAINHAND)
-                {
-                    multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Weapon modifier", 12.0F, 0));
-                    multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Weapon modifier", -5D, 0));
-                }
-                return multimap;
-            }
-            
-            @Override
             public boolean canDisableShield(ItemStack stack, ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker)
             {
                 return shield.getItem() != DIAMOND_SHIELD;
