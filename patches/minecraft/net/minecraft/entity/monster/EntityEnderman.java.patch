@@ -1,6 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityEnderman.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityEnderman.java
-@@ -267,7 +267,9 @@
+@@ -97,7 +97,6 @@
+ 
+     public void func_70624_b(@Nullable EntityLivingBase p_70624_1_)
+     {
+-        super.func_70624_b(p_70624_1_);
+         IAttributeInstance iattributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+ 
+         if (p_70624_1_ == null)
+@@ -116,6 +115,8 @@
+                 iattributeinstance.func_111121_a(field_110193_bq);
+             }
+         }
++        //Forge: Moved to give {@link net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent} full context
++        super.func_70624_b(p_70624_1_);
+     }
+ 
+     protected void func_70088_a()
+@@ -267,7 +268,9 @@
  
      private boolean func_70825_j(double p_70825_1_, double p_70825_3_, double p_70825_5_)
      {
@@ -11,7 +28,7 @@
  
          if (flag)
          {
-@@ -354,6 +356,18 @@
+@@ -354,6 +357,18 @@
          }
      }
  
@@ -30,7 +47,7 @@
      public boolean func_70823_r()
      {
          return ((Boolean)this.field_70180_af.func_187225_a(field_184719_bw)).booleanValue();
-@@ -486,7 +500,7 @@
+@@ -486,7 +501,7 @@
                  {
                      return false;
                  }
@@ -39,7 +56,7 @@
                  {
                      return false;
                  }
-@@ -551,7 +565,7 @@
+@@ -551,7 +566,7 @@
                  {
                      return false;
                  }
