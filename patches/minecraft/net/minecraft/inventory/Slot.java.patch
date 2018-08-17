@@ -14,7 +14,7 @@
      public boolean func_82869_a(EntityPlayer p_82869_1_)
      {
 -        return true;
-+        return net.minecraftforge.event.ForgeEventFactory.onCanTakeItem(p_82869_1_, this.func_75211_c(), true);
++        return net.minecraftforge.event.ForgeEventFactory.onCanTakeItem(this.func_75211_c(), this, this.field_75224_c, p_82869_1_, true);
      }
  
      @SideOnly(Side.CLIENT)

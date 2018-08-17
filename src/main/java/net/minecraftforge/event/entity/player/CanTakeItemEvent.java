@@ -20,6 +20,8 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -36,11 +38,15 @@ import javax.annotation.Nonnull;
 public class CanTakeItemEvent extends PlayerEvent
 {
     private final ItemStack itemStack;
+    private final Slot slot;
+    private final IInventory inventory;
     private final boolean vanillaResult;
 
-    public CanTakeItemEvent(@Nonnull ItemStack itemStack, EntityPlayer entityPlayer, boolean vanillaResult) {
+    public CanTakeItemEvent(@Nonnull ItemStack itemStack, Slot slot, IInventory inventory, EntityPlayer entityPlayer, boolean vanillaResult) {
         super(entityPlayer);
         this.itemStack = itemStack;
+        this.slot = slot;
+        this.inventory = inventory;
         this.vanillaResult = vanillaResult;
     }
 
@@ -51,6 +57,24 @@ public class CanTakeItemEvent extends PlayerEvent
     public ItemStack getItemStack()
     {
         return itemStack;
+    }
+
+    /**
+     * The {@link Slot} the item is in.
+     */
+    @Nonnull
+    public Slot getSlot()
+    {
+        return slot;
+    }
+
+    /**
+     * The {@link IInventory} the item is in.
+     */
+    @Nonnull
+    public IInventory getInventory()
+    {
+        return inventory;
     }
 
     /**
