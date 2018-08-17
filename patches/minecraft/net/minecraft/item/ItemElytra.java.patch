@@ -1,17 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemElytra.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemElytra.java
-@@ -61,4 +61,14 @@
+@@ -61,4 +61,15 @@
              return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
          }
      }
 +
 +    /* ======================================== FORGE START =====================================*/
++    private static final net.minecraft.entity.ai.attributes.AttributeModifier MODIFIER = new net.minecraft.entity.ai.attributes.AttributeModifier(java.util.UUID.fromString("D41556AA-466D-46E3-8071-262C78065B6A"), "Elytra modifier", 1.0D, 0);
 +    @Override
 +    public com.google.common.collect.Multimap<String, net.minecraft.entity.ai.attributes.AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
 +    {
 +        com.google.common.collect.Multimap<String, net.minecraft.entity.ai.attributes.AttributeModifier> attribs = super.getAttributeModifiers(slot, stack);
-+        attribs.remove(EntityPlayer.ELYTRA_FLIGHT.func_111108_a(), new net.minecraft.entity.ai.attributes.AttributeModifier(java.util.UUID.fromString("D41556AA-466D-46E3-8071-262C78065B6A"), "Elytra modifier", 1.0D, 0));
-+        if (slot == EntityEquipmentSlot.CHEST && ItemElytra.func_185069_d(stack)) attribs.put(EntityPlayer.ELYTRA_FLIGHT.func_111108_a(), new net.minecraft.entity.ai.attributes.AttributeModifier(java.util.UUID.fromString("D41556AA-466D-46E3-8071-262C78065B6A"), "Elytra modifier", 1.0D, 0));
++        attribs.remove(EntityPlayer.ELYTRA_FLIGHT.func_111108_a(), MODIFIER);
++        if (slot == EntityEquipmentSlot.CHEST && ItemElytra.func_185069_d(stack)) attribs.put(EntityPlayer.ELYTRA_FLIGHT.func_111108_a(), MODIFIER);
 +        return attribs;
 +    }
  }
