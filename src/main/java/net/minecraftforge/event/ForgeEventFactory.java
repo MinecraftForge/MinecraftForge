@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,8 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.BlockPortal;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -112,6 +114,7 @@ import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
+import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
@@ -680,6 +683,18 @@ public class ForgeEventFactory
             return canContinueSleep == Result.ALLOW;
     }
 
+    public static boolean fireSleepingTimeCheck(EntityPlayer player, BlockPos sleepingLocation)
+    {
+        SleepingTimeCheckEvent evt = new SleepingTimeCheckEvent(player, sleepingLocation);
+        MinecraftForge.EVENT_BUS.post(evt);
+
+        Result canContinueSleep = evt.getResult();
+        if (canContinueSleep == Result.DEFAULT)
+            return !player.world.isDaytime();
+        else
+            return canContinueSleep == Result.ALLOW;
+    }
+
     public static ActionResult<ItemStack> onArrowNock(ItemStack item, World world, EntityPlayer player, EnumHand hand, boolean hasAmmo)
     {
         ArrowNockEvent event = new ArrowNockEvent(player, item, hand, world, hasAmmo);
@@ -745,6 +760,11 @@ public class ForgeEventFactory
 
         Result result = evt.getResult();
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
+    }
+
+    public static boolean onTrySpawnPortal(World world, BlockPos pos, BlockPortal.Size size)
+    {
+        return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size));
     }
 
     public static int onEnchantmentLevelSet(World world, BlockPos pos, int enchantRow, int power, ItemStack itemStack, int level)

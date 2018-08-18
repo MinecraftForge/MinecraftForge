@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.fml.relauncher.libraries;
 
 import java.io.ByteArrayInputStream;
@@ -98,8 +99,11 @@ public class LibraryManager
         for (ModList list : ModList.getKnownLists(minecraftHome))
         {
             Repository repo = list.getRepository() == null ? libraries_dir : list.getRepository();
-            for (Artifact artifact : list.getArtifacts())
+            List<Artifact> artifacts = list.getArtifacts();
+            // extractPacked adds artifacts to the list. As such, we can't use an Iterator to traverse it.
+            for (int i = 0; i < artifacts.size(); i++)
             {
+                Artifact artifact = artifacts.get(i);
                 Artifact resolved = repo.resolve(artifact);
                 if (resolved != null)
                 {
@@ -132,10 +136,15 @@ public class LibraryManager
             if (apache.isFile())
                 apache = apache.getParentFile(); //Get to a directory, this *should* always be the case...
             apache = apache.getParentFile(); //Skip the version folder. In case we ever update the version, I don't want to edit this code again.
+            String comp = apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace('\\', '/');
+            if (!comp.endsWith("/"))
+                comp += '/';
 
-            if (!apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace(File.separatorChar, '/').endsWith("/org/apache/maven/maven-artifact/"))
+            if (!comp.endsWith("/org/apache/maven/maven-artifact/"))
             {
-                FMLLog.log.error("Apache Maven library folder was not in the format expected: {}. Using default libraries directory.", new File(source.getLocation().toURI()));
+                FMLLog.log.error("Apache Maven library folder was not in the format expected. Using default libraries directory.");
+                FMLLog.log.error("Full: {}", new File(source.getLocation().toURI()));
+                FMLLog.log.error("Trimmed: {}", comp);
                 return new File(minecraftHome, "libraries");
             }
             //     maven-artifact  /maven          /apache         /org            /libraries

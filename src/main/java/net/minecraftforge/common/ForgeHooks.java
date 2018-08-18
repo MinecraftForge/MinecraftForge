@@ -1049,6 +1049,7 @@ public class ForgeHooks
         if (filled < 0)
         {
             return eyes > pos.getY() + (filled + 1);
+<<<<<<< HEAD
         }
         else
         {
@@ -1135,6 +1136,12 @@ public class ForgeHooks
             }
             blockpos$pooledmutableblockpos.release();
             return isInLiquid;
+=======
+        }
+        else
+        {
+            return eyes < pos.getY() + filled;
+>>>>>>> upstream/1.12.x
         }
     }
 

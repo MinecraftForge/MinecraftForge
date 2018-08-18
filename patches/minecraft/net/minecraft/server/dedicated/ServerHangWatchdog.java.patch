@@ -1,22 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/ServerHangWatchdog.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/ServerHangWatchdog.java
-@@ -22,6 +22,7 @@
-     private static final Logger field_180251_a = LogManager.getLogger();
-     private final DedicatedServer field_180249_b;
-     private final long field_180250_c;
-+    private boolean firstRun = true;
- 
-     public ServerHangWatchdog(DedicatedServer p_i46310_1_)
-     {
-@@ -37,14 +38,14 @@
-             long j = MinecraftServer.func_130071_aq();
-             long k = j - i;
- 
--            if (k > this.field_180250_c)
-+            if (k > this.field_180250_c && !this.firstRun)
-             {
-                 field_180251_a.fatal("A single server tick took {} seconds (should be max {})", String.format("%.2f", (float)k / 1000.0F), String.format("%.2f", 0.05F));
-                 field_180251_a.fatal("Considering it to be crashed, server will forcibly shutdown.");
+@@ -44,7 +44,7 @@
                  ThreadMXBean threadmxbean = ManagementFactory.getThreadMXBean();
                  ThreadInfo[] athreadinfo = threadmxbean.dumpAllThreads(true, true);
                  StringBuilder stringbuilder = new StringBuilder();
@@ -25,12 +9,3 @@
  
                  for (ThreadInfo threadinfo : athreadinfo)
                  {
-@@ -75,6 +76,8 @@
-                 this.func_180248_a();
-             }
- 
-+            this.firstRun = false;
-+
-             try
-             {
-                 Thread.sleep(i + this.field_180250_c - j);

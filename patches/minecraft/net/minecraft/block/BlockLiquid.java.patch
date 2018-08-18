@@ -1,5 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockLiquid.java
+<<<<<<< HEAD
 @@ -271,7 +271,7 @@
  
              for (EnumFacing enumfacing : EnumFacing.values())
@@ -9,6 +10,8 @@
                  {
                      flag = true;
                      break;
+=======
+>>>>>>> upstream/1.12.x
 @@ -284,14 +284,14 @@
  
                  if (integer.intValue() == 0)
@@ -26,6 +29,7 @@
                      this.func_180688_d(p_176365_1_, p_176365_2_);
                      return true;
                  }
+<<<<<<< HEAD
 @@ -358,7 +358,7 @@
                  double d5 = d1 - 1.05D;
                  double d7 = d2 + (double)p_180655_4_.nextFloat();
@@ -35,6 +39,8 @@
                  {
                      p_180655_2_.func_175688_a(EnumParticleTypes.DRIP_WATER, d3, d5, d7, 0.0D, 0.0D, 0.0D);
                  }
+=======
+>>>>>>> upstream/1.12.x
 @@ -452,4 +452,29 @@
      {
          return BlockFaceShape.UNDEFINED;

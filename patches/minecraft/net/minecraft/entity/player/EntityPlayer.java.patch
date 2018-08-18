@@ -29,6 +29,15 @@
          this.field_70145_X = this.func_175149_v();
  
          if (this.func_175149_v())
+@@ -207,7 +215,7 @@
+                 {
+                     this.func_70999_a(true, true, false);
+                 }
+-                else if (this.field_70170_p.func_72935_r())
++                else if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, this.field_71081_bT))
+                 {
+                     this.func_70999_a(false, true, true);
+                 }
 @@ -367,6 +375,7 @@
                  this.func_70105_a(f, f1);
              }
@@ -344,6 +353,15 @@
  
          if (!this.field_70170_p.field_72995_K)
          {
+@@ -1456,7 +1547,7 @@
+                 return EntityPlayer.SleepResult.NOT_POSSIBLE_HERE;
+             }
+ 
+-            if (this.field_70170_p.func_72935_r())
++            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, this.field_71081_bT))
+             {
+                 return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
+             }
 @@ -1484,8 +1575,7 @@
          this.func_192030_dh();
          this.func_70105_a(0.2F, 0.2F);
@@ -368,7 +386,8 @@
      {
 +        net.minecraftforge.event.ForgeEventFactory.onPlayerWakeup(this, p_70999_1_, p_70999_2_, p_70999_3_);
          this.func_70105_a(0.6F, 1.8F);
-         IBlockState iblockstate = this.field_70170_p.func_180495_p(this.field_71081_bT);
+-        IBlockState iblockstate = this.field_70170_p.func_180495_p(this.field_71081_bT);
++        IBlockState iblockstate = this.field_71081_bT == null ? null : this.field_70170_p.func_180495_p(this.field_71081_bT);
  
 -        if (this.field_71081_bT != null && iblockstate.func_177230_c() == Blocks.field_150324_C)
 +        if (this.field_71081_bT != null && iblockstate.func_177230_c().isBed(iblockstate, field_70170_p, field_71081_bT, this))

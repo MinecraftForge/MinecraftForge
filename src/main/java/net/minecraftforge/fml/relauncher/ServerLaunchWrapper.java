@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,9 @@ package net.minecraftforge.fml.relauncher;
 
 import java.lang.reflect.Method;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+
 public class ServerLaunchWrapper {
 
     /**
@@ -38,6 +41,11 @@ public class ServerLaunchWrapper {
 
     private void run(String[] args)
     {
+        if (System.getProperty("log4j.configurationFile") == null)
+        {
+            // Set this early so we don't need to reconfigure later
+            System.setProperty("log4j.configurationFile", "log4j2_server.xml");
+        }
         Class<?> launchwrapper = null;
         try
         {

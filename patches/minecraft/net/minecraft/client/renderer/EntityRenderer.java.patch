@@ -167,6 +167,7 @@
              RenderHelper.func_74518_a();
              this.func_175072_h();
          }
+<<<<<<< HEAD
 @@ -1337,11 +1353,12 @@
          GlStateManager.func_179128_n(5888);
          GlStateManager.func_179121_F();
@@ -174,6 +175,9 @@
 -        if (flag && this.field_78531_r.field_71476_x != null && !entity.func_70055_a(Material.field_151586_h))
 +        if (flag && this.field_78531_r.field_71476_x != null && !net.minecraftforge.common.ForgeHooks.isEntityHeadInsideMaterial(entity, Material::isLiquidOtherThanLava))
          {
+=======
+@@ -1342,6 +1358,7 @@
+>>>>>>> upstream/1.12.x
              EntityPlayer entityplayer = (EntityPlayer)entity;
              GlStateManager.func_179118_c();
              this.field_78531_r.field_71424_I.func_76318_c("outline");
@@ -298,6 +302,7 @@
          if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q))
          {
              float f1 = 5.0F;
+<<<<<<< HEAD
 @@ -1889,7 +1926,7 @@
              GlStateManager.func_187430_a(GlStateManager.FogMode.EXP);
              GlStateManager.func_179095_a(0.1F);
@@ -307,6 +312,8 @@
          {
              GlStateManager.func_187430_a(GlStateManager.FogMode.EXP);
  
+=======
+>>>>>>> upstream/1.12.x
 @@ -1940,6 +1977,7 @@
                  GlStateManager.func_179102_b(f * 0.05F);
                  GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);

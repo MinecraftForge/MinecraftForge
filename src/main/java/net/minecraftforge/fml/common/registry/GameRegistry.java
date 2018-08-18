@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -226,9 +226,17 @@ public class GameRegistry
         FurnaceRecipes.instance().addSmeltingRecipe(input, output, xp);
     }
 
+    @Deprecated //TODO: Remove in 1.13, Use ResourceLocation version.
     public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, String key)
     {
+        // As return is ignored for compatibility, always check namespace
+        GameData.checkPrefix(new ResourceLocation(key).toString());
         TileEntity.register(key, tileEntityClass);
+    }
+
+    public static void registerTileEntity(Class<? extends TileEntity> tileEntityClass, ResourceLocation key)
+    {
+        registerTileEntity(tileEntityClass, key.toString());
     }
 
     /**

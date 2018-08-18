@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.fml.relauncher.libraries;
 
 import java.io.File;
@@ -49,8 +50,7 @@ public class ModList
         try
         {
             String key = json.getCanonicalFile().getAbsolutePath();
-            if (cache.containsKey(key))
-                return cache.get(key);
+            return cache.computeIfAbsent(key, k -> new ModList(json, mcdir));
         }
         catch (IOException e)
         {

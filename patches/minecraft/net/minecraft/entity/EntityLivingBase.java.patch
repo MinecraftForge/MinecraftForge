@@ -29,6 +29,7 @@
                  ((WorldServer)this.field_70170_p).func_175739_a(EnumParticleTypes.BLOCK_DUST, this.field_70165_t, this.field_70163_u, this.field_70161_v, i, 0.0D, 0.0D, 0.0D, 0.15000000596046448D, Block.func_176210_f(p_184231_4_));
              }
          }
+<<<<<<< HEAD
 @@ -255,7 +258,7 @@
  
          if (this.func_70089_S())
@@ -38,6 +39,8 @@
              {
                  this.func_70050_g(300);
              }
+=======
+>>>>>>> upstream/1.12.x
 @@ -281,7 +284,7 @@
                      }
                  }

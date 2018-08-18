@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -51,8 +51,11 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLContainer;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 import net.minecraftforge.fml.common.registry.EntityEntry;
@@ -69,6 +72,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
@@ -398,9 +402,21 @@ public class GameData
         }
     }
 
-    private static class RecipeCallbacks implements IForgeRegistry.MissingFactory<IRecipe>
+    private static class RecipeCallbacks implements IForgeRegistry.ValidateCallback<IRecipe>, IForgeRegistry.MissingFactory<IRecipe>
     {
         static final RecipeCallbacks INSTANCE = new RecipeCallbacks();
+
+        @Override
+        public void onValidate(IForgeRegistryInternal<IRecipe> owner, RegistryManager stage, int id, ResourceLocation key, IRecipe obj)
+        {
+            if (stage != RegistryManager.ACTIVE) return;
+            // verify the recipe output yields a registered item
+            Item item = obj.getRecipeOutput().getItem();
+            if (!stage.getRegistry(Item.class).containsValue(item))
+            {
+                throw new IllegalStateException(String.format("Recipe %s (%s) produces unregistered item %s (%s)", key, obj, item.getRegistryName(), item));
+            }
+        }
 
         @Override
         public IRecipe createMissing(ResourceLocation key, boolean isNetwork)
@@ -754,6 +770,21 @@ public class GameData
                 ((ForgeRegistry<?>)reg).freeze();
         });
         */
+    }
+
+    public static ResourceLocation checkPrefix(String name)
+    {
+        int index = name.lastIndexOf(':');
+        String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
+        name = index == -1 ? name : name.substring(index + 1);
+        ModContainer mc = Loader.instance().activeModContainer();
+        String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId().toLowerCase(Locale.ROOT);
+        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
+        {
+            FMLLog.log.warn("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
+            prefix = oldPrefix;
+        }
+        return new ResourceLocation(prefix, name);
     }
 
     private static Field regName;
