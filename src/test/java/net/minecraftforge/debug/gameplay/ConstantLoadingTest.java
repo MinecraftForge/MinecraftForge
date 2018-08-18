@@ -19,6 +19,8 @@
 
 package net.minecraftforge.debug.gameplay;
 
+import java.io.IOException;
+
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
@@ -48,13 +50,15 @@ public class ConstantLoadingTest
             return;
         }
         LOGGER.info("Loading constant for recipe...");
-
-        JsonContext ctx = new JsonContext(MODID);
-        if (!CraftingHelper.loadContext(ctx, "/stuff/someConstants.json"))
+        JsonContext ctx = null;
+        try
         {
+            ctx = CraftingHelper.loadContext("/stuff/someConstants.json");
+        } catch (IOException e) {
             LOGGER.error("Something went wrong in loading the constant");
             return;
         }
+
         Ingredient flint = ctx.getConstant("FLINT");
         if (flint == null)
         {
