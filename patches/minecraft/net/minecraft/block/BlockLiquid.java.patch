@@ -9,6 +9,23 @@
                  {
                      flag = true;
                      break;
+@@ -284,14 +284,14 @@
+ 
+                 if (integer.intValue() == 0)
+                 {
+-                    p_176365_1_.func_175656_a(p_176365_2_, Blocks.field_150343_Z.func_176223_P());
++                    p_176365_1_.func_175656_a(p_176365_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_176365_1_, p_176365_2_, p_176365_2_, Blocks.field_150343_Z.func_176223_P()));
+                     this.func_180688_d(p_176365_1_, p_176365_2_);
+                     return true;
+                 }
+ 
+                 if (integer.intValue() <= 4)
+                 {
+-                    p_176365_1_.func_175656_a(p_176365_2_, Blocks.field_150347_e.func_176223_P());
++                    p_176365_1_.func_175656_a(p_176365_2_, net.minecraftforge.event.ForgeEventFactory.fireFluidPlaceBlockEvent(p_176365_1_, p_176365_2_, p_176365_2_, Blocks.field_150347_e.func_176223_P()));
+                     this.func_180688_d(p_176365_1_, p_176365_2_);
+                     return true;
+                 }
 @@ -358,7 +358,7 @@
                  double d5 = d1 - 1.05D;
                  double d7 = d2 + (double)p_180655_4_.nextFloat();

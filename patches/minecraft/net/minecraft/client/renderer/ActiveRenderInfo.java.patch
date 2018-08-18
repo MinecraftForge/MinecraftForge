@@ -23,6 +23,15 @@
  
              float f1 = (float)(blockpos.func_177956_o() + 1) - f;
  
+@@ -81,7 +90,7 @@
+             }
+         }
+ 
+-        return iblockstate;
++        return iblockstate.func_177230_c().getStateAtViewpoint(iblockstate, p_186703_0_, blockpos, vec3d);
+     }
+ 
+     public static float func_178808_b()
 @@ -108,4 +117,14 @@
      {
          return field_74596_h;

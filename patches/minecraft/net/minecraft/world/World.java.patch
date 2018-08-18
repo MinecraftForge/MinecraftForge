@@ -154,6 +154,15 @@
          if (p_175695_3_ != EnumFacing.WEST)
          {
              this.func_190524_a(p_175695_1_.func_177976_e(), p_175695_2_, p_175695_1_);
+@@ -507,7 +559,7 @@
+                     {
+                         try
+                         {
+-                            return String.format("ID #%d (%s // %s)", Block.func_149682_b(p_190524_2_), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getCanonicalName());
++                            return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190524_2_), p_190524_2_.func_149739_a(), p_190524_2_.getClass().getName(), p_190524_2_.getRegistryName());
+                         }
+                         catch (Throwable var2)
+                         {
 @@ -527,11 +579,11 @@
          {
              IBlockState iblockstate = this.func_180495_p(p_190529_1_);
@@ -168,6 +177,15 @@
                  }
                  catch (Throwable throwable)
                  {
+@@ -543,7 +595,7 @@
+                         {
+                             try
+                             {
+-                                return String.format("ID #%d (%s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getCanonicalName());
++                                return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getName(), p_190529_2_.getRegistryName());
+                             }
+                             catch (Throwable var2)
+                             {
 @@ -588,7 +640,7 @@
                  {
                      IBlockState iblockstate = this.func_180495_p(blockpos1);
@@ -762,21 +780,53 @@
                  {
                      return true;
                  }
-@@ -2574,10 +2787,11 @@
+@@ -2574,10 +2787,10 @@
          else
          {
              IBlockState iblockstate1 = this.func_180495_p(p_175638_1_);
 -            int j2 = p_175638_2_ == EnumSkyBlock.SKY ? 0 : iblockstate1.func_185906_d();
 -            int k2 = iblockstate1.func_185891_c();
-+            int blockLight = iblockstate1.func_177230_c().getLightValue(iblockstate1, this, p_175638_1_);
-+            int j2 = p_175638_2_ == EnumSkyBlock.SKY ? 0 : blockLight;
++            int j2 = p_175638_2_ == EnumSkyBlock.SKY ? 0 : iblockstate1.func_177230_c().getLightValue(iblockstate1, this, p_175638_1_);
 +            int k2 = iblockstate1.func_177230_c().getLightOpacity(iblockstate1, this, p_175638_1_);
  
 -            if (k2 >= 15 && iblockstate1.func_185906_d() > 0)
-+            if (k2 >= 15 && blockLight > 0)
++            if (false) // Forge: fix MC-119932
              {
                  k2 = 1;
              }
+@@ -2589,7 +2802,7 @@
+ 
+             if (k2 >= 15)
+             {
+-                return 0;
++                return j2; // Forge: fix MC-119932
+             }
+             else if (j2 >= 14)
+             {
+@@ -2630,12 +2843,13 @@
+ 
+     public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
+     {
+-        if (!this.func_175648_a(p_180500_2_, 17, false))
++        if (!this.func_175648_a(p_180500_2_, 16, false))
+         {
+             return false;
+         }
+         else
+         {
++            int updateRange = this.func_175648_a(p_180500_2_, 18, false) ? 17 : 15;
+             int j2 = 0;
+             int k2 = 0;
+             this.field_72984_F.func_76320_a("getBrightness");
+@@ -2673,7 +2887,7 @@
+                             int l5 = MathHelper.func_76130_a(k4 - k3);
+                             int i6 = MathHelper.func_76130_a(l4 - l3);
+ 
+-                            if (k5 + l5 + i6 < 17)
++                            if (k5 + l5 + i6 < updateRange)
+                             {
+                                 BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.func_185346_s();
+ 
 @@ -2683,7 +2897,8 @@
                                      int k6 = k4 + enumfacing.func_96559_d();
                                      int l6 = l4 + enumfacing.func_82599_e();
@@ -787,6 +837,15 @@
                                      j5 = this.func_175642_b(p_180500_1_, blockpos$pooledmutableblockpos);
  
                                      if (j5 == i5 - i7 && k2 < this.field_72994_J.length)
+@@ -2725,7 +2940,7 @@
+                         int j9 = Math.abs(i8 - l3);
+                         boolean flag = k2 < this.field_72994_J.length - 6;
+ 
+-                        if (l8 + i9 + j9 < 17 && flag)
++                        if (l8 + i9 + j9 < updateRange && flag)
+                         {
+                             if (this.func_175642_b(p_180500_1_, blockpos2.func_177976_e()) < k8)
+                             {
 @@ -2791,10 +3006,10 @@
      public List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate <? super Entity > p_175674_3_)
      {
