@@ -691,7 +691,7 @@ public class CraftingHelper {
                 String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
                 ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
 
-                try(BufferedReader reader = Files.newBufferedReader(file);)
+                try(BufferedReader reader = Files.newBufferedReader(file))
                 {
                     JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
                     if (json.has("conditions") && !CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), ctx))
@@ -874,5 +874,4 @@ public class CraftingHelper {
             throw new IOException("path could not be resolved: " + path);
         }
     }
-
 }
