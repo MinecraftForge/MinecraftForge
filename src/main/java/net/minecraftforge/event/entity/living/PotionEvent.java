@@ -95,9 +95,9 @@ public class PotionEvent extends LivingEvent
     @HasResult
     public static class PotionApplicableEvent extends PotionEvent
     {
-        public PotionApplicableEvent(EntityLivingBase living, PotionEffect eff)
+        public PotionApplicableEvent(EntityLivingBase living, PotionEffect effect)
         {
-            super(living, eff);
+            super(living, effect);
         }
         
         /**
@@ -118,12 +118,12 @@ public class PotionEvent extends LivingEvent
      */
     public static class PotionAddedEvent extends PotionEvent
     {
-    	private final PotionEffect oldEff;
-    	
-        public PotionAddedEvent(EntityLivingBase living, PotionEffect old, PotionEffect newEffect)
+        private final PotionEffect oldEffect;
+        
+        public PotionAddedEvent(EntityLivingBase living, PotionEffect oldEffect, PotionEffect newEffect)
         {
             super(living, newEffect);
-            oldEff = old;
+            this.oldEffect = oldEffect;
         }
         
         /**
@@ -142,7 +142,7 @@ public class PotionEvent extends LivingEvent
         @Nullable
         public PotionEffect getOldPotionEffect()
         {
-            return oldEff;
+            return oldEffect;
         }
     }
     
