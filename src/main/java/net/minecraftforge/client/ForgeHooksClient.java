@@ -77,6 +77,7 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -666,6 +667,10 @@ public class ForgeHooksClient
         // Lighting of the current segment
         int segmentBlockLight = -1;
         int segmentSkyLight = -1;
+        int segmentColorMultiplier = color;
+        
+        // Tint index cache to avoid unnecessary IItemColor lookups
+        int prevTintIndex = -1;
 
         for (int i = 0; i < allquads.size(); i++) 
         {
@@ -686,23 +691,42 @@ public class ForgeHooksClient
                 bl = lightGatherer.blockLight;
                 sl = lightGatherer.skyLight;
             }
+            
+            int colorMultiplier = segmentColorMultiplier;
+            // If there is no color override, and this quad is tinted, we need to apply IItemColor
+            if (color == 0xFFFFFFFF && q.hasTintIndex())
+            {
+                int tintIndex = q.getTintIndex();
+                
+                if (prevTintIndex != tintIndex)
+                {
+                    colorMultiplier = getColorMultiplier(stack, tintIndex);
+                }
+                prevTintIndex = tintIndex;
+            }
+            else
+            {
+                colorMultiplier = color;
+                prevTintIndex = -1;
+            }
 
             // If this is a new light value, draw the segment and flush it
-            if (segmentBlockLight != bl || segmentSkyLight != sl) 
+            if (segmentBlockLight != bl || segmentSkyLight != sl || segmentColorMultiplier != colorMultiplier) 
             {
                 if (i > 0) // Make sure this isn't the first quad being processed 
                 {
-                    drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight, true);
+                    drawSegment(bufferbuilder, ri, segmentColorMultiplier, stack, segment, segmentBlockLight, segmentSkyLight, true);
                 }
                 segmentBlockLight = bl;
                 segmentSkyLight = sl;
+                segmentColorMultiplier = colorMultiplier;
             }
 
             segment.add(q);
         }
         
         boolean lightDirty = segment.size() < allquads.size(); // Was at least one change in lighting for this model
-        drawSegment(bufferbuilder, ri, color, stack, segment, segmentBlockLight, segmentSkyLight, lightDirty);
+        drawSegment(bufferbuilder, ri, segmentColorMultiplier, stack, segment, segmentBlockLight, segmentSkyLight, lightDirty);
 
         // Clean up render state if necessary
         if (lightDirty)
@@ -720,12 +744,19 @@ public class ForgeHooksClient
         float lastSl = OpenGlHelper.lastBrightnessY;
         if (updateLighting) 
         {
-            final float emissive = (float) sl / 0xF0;
-            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive, emissive, emissive, 1));
+            float emissive = (float) sl / 0xF0;
+            
+            float r = (color >>> 16 & 0xff) / 255f;
+            float g = (color >>>  8 & 0xff) / 255f;
+            float b = (color        & 0xff) / 255f;
+            
+            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
     
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
         }
 
+        // By passing the color multiplier here, we avoid renderQuads doing the same 
+        // work again to determine the tintindex/IItemColor color. 
         ri.renderQuads(bufferbuilder, segment, color, stack);
         Tessellator.getInstance().draw();
 
@@ -734,6 +765,23 @@ public class ForgeHooksClient
         OpenGlHelper.lastBrightnessY = lastSl;
 
         segment.clear();
+    }
+    
+    private static int getColorMultiplier(ItemStack stack, int tintIndex)
+    {
+        if (tintIndex == -1 || stack.isEmpty()) return 0xFFFFFFFF;
+
+        int colorMultiplier = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, tintIndex);
+
+        if (EntityRenderer.anaglyphEnable)
+        {
+            colorMultiplier = TextureUtil.anaglyphColor(colorMultiplier);
+        }
+
+        // Always full opacity
+        colorMultiplier |= 0xff << 24; // -16777216
+
+        return colorMultiplier;
     }
 
     /**
