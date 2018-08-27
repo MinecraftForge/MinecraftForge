@@ -28,6 +28,8 @@
 changelog.txt
 /patches_old/
 /patches_old_bak/
+/patches/minecraft.old/
+/projects.old/
 *.py
 *.7z
 /logs/

@@ -98,12 +98,18 @@ project(':forge') {
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
         systemProperties target:'fmldevclient'
+        workingDir 'runclient'
     }
 
     task runserver(type: JavaExec) {
+        doFirst {
+            mkdir 'runserver'
+        }
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
+        args 'nogui'
         systemProperties target:'fmldevserver'
+        workingDir 'runserver'
     }
 }
 
