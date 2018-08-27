@@ -21,6 +21,7 @@ package net.minecraftforge.fml.common.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
@@ -31,6 +32,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.RegistryManager;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.
@@ -41,16 +43,16 @@ public class ForgeRegistries
 {
     static { init(); } // This must be above the fields so we guarantee it's run before findRegistry is called. Yay static inializers
 
-    public static final IForgeRegistry<Block>        BLOCKS       = GameRegistry.findRegistry(Block.class);
-    public static final IForgeRegistry<Item>         ITEMS        = GameRegistry.findRegistry(Item.class);
-    public static final IForgeRegistry<Potion>       POTIONS      = GameRegistry.findRegistry(Potion.class);
-    public static final IForgeRegistry<Biome>        BIOMES       = GameRegistry.findRegistry(Biome.class);
-    public static final IForgeRegistry<SoundEvent>   SOUND_EVENTS = GameRegistry.findRegistry(SoundEvent.class);
-    public static final IForgeRegistry<PotionType>   POTION_TYPES = GameRegistry.findRegistry(PotionType.class);
-    public static final IForgeRegistry<Enchantment>  ENCHANTMENTS = GameRegistry.findRegistry(Enchantment.class);
-    public static final IForgeRegistry<VillagerProfession> VILLAGER_PROFESSIONS = GameRegistry.findRegistry(VillagerProfession.class);
-    public static final IForgeRegistry<EntityEntry>  ENTITIES     = GameRegistry.findRegistry(EntityEntry.class);
-    public static final IForgeRegistry<IRecipe>      RECIPES      = GameRegistry.findRegistry(IRecipe.class);
+    public static final IForgeRegistry<Block>               BLOCKS       = RegistryManager.ACTIVE.getRegistry(Block.class);
+    public static final IForgeRegistry<Item>                ITEMS        = RegistryManager.ACTIVE.getRegistry(Item.class);
+    public static final IForgeRegistry<Potion>              POTIONS      = RegistryManager.ACTIVE.getRegistry(Potion.class);
+    public static final IForgeRegistry<Biome>               BIOMES       = RegistryManager.ACTIVE.getRegistry(Biome.class);
+    public static final IForgeRegistry<SoundEvent>          SOUND_EVENTS = RegistryManager.ACTIVE.getRegistry(SoundEvent.class);
+    public static final IForgeRegistry<PotionType>          POTION_TYPES = RegistryManager.ACTIVE.getRegistry(PotionType.class);
+    public static final IForgeRegistry<Enchantment>         ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
+    public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
+    public static final IForgeRegistry<Entity>              ENTITIES              = RegistryManager.ACTIVE.getRegistry(Entity.class);
+    public static final IForgeRegistry<IRecipe>             RECIPES      = RegistryManager.ACTIVE.getRegistry(IRecipe.class);
 
 
     /**

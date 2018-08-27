@@ -29,7 +29,6 @@ import java.util.Queue;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import javax.annotation.Nullable;
@@ -108,7 +107,7 @@ class ObjectHolderRef
             Collections.addAll(typesToExamine, type.getInterfaces());
             if (IForgeRegistryEntry.class.isAssignableFrom(type))
             {
-                registry = (ForgeRegistry<?>)GameRegistry.findRegistry((Class<IForgeRegistryEntry>)type);
+                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<IForgeRegistryEntry>)type);
                 final Class<?> parentType = type.getSuperclass();
                 if (parentType != null)
                 {

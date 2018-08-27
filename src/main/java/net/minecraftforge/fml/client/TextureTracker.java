@@ -20,27 +20,13 @@
 package net.minecraftforge.fml.client;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Strings;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.AbstractResourcePack;
-import net.minecraft.client.resources.FallbackResourceManager;
-import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLContainerHolder;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class TextureTracker
@@ -51,24 +37,25 @@ public class TextureTracker
 
     public static void trackMissingTexture(ResourceLocation resourceLocation)
     {
-        badTextureDomains.add(resourceLocation.getResourceDomain());
-        missingTextures.put(resourceLocation.getResourceDomain(),resourceLocation);
+        badTextureDomains.add(resourceLocation.getNamespace());
+        missingTextures.put(resourceLocation.getNamespace(),resourceLocation);
     }
 
     public static void trackBrokenTexture(ResourceLocation resourceLocation, String error)
     {
-        badTextureDomains.add(resourceLocation.getResourceDomain());
-        Set<ResourceLocation> badType = brokenTextures.get(resourceLocation.getResourceDomain(), error);
+        badTextureDomains.add(resourceLocation.getNamespace());
+        Set<ResourceLocation> badType = brokenTextures.get(resourceLocation.getNamespace(), error);
         if (badType == null)
         {
             badType = Sets.newHashSet();
-            brokenTextures.put(resourceLocation.getResourceDomain(), MoreObjects.firstNonNull(error, "Unknown error"), badType);
+            brokenTextures.put(resourceLocation.getNamespace(), MoreObjects.firstNonNull(error, "Unknown error"), badType);
         }
         badType.add(resourceLocation);
     }
 
     public static void logMissingTextureErrors()
     {
+/*
         if (missingTextures.isEmpty() && brokenTextures.isEmpty())
         {
             return;
@@ -141,6 +128,7 @@ public class TextureTracker
             logger.error(Strings.repeat("=", 50));
         }
         logger.error(Strings.repeat("+=", 25));
+*/
     }
 
 

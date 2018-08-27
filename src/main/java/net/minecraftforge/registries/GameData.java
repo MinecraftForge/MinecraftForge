@@ -20,7 +20,6 @@
 package net.minecraftforge.registries;
 
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -54,7 +53,6 @@ import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 import net.minecraftforge.fml.common.registry.EntityEntry;
 import net.minecraftforge.fml.common.registry.EntityEntryBuilder;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
 import com.google.common.collect.ArrayListMultimap;
@@ -76,13 +74,10 @@ import javax.annotation.Nullable;
 
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 /**
  * INTERNAL ONLY
@@ -90,6 +85,9 @@ import static net.minecraftforge.fml.Logging.fmlLog;
  */
 public class GameData
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker GD = MarkerManager.getMarker("GAMEDATA");
+
     public static final ResourceLocation BLOCKS       = new ResourceLocation("minecraft:blocks");
     public static final ResourceLocation ITEMS        = new ResourceLocation("minecraft:items");
     public static final ResourceLocation POTIONS      = new ResourceLocation("minecraft:potions");
@@ -114,8 +112,6 @@ public class GameData
 
     private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
-    private static final Logger LOGGER = LogManager.getLogger("FML");
-    private static final Marker GD = MarkerManager.getMarker("GAMEDATA");
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
     private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
@@ -161,7 +157,7 @@ public class GameData
 
     public static <V extends IForgeRegistryEntry<V>> RegistryNamespacedDefaultedByKey<ResourceLocation, V> getWrapperDefaulted(Class<V> cls)
     {
-        IForgeRegistry<V> reg = GameRegistry.findRegistry(cls);
+        IForgeRegistry<V> reg = RegistryManager.ACTIVE.getRegistry(cls);
         Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + cls.toString());
         @SuppressWarnings("unchecked")
         RegistryNamespacedDefaultedByKey<ResourceLocation, V> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
@@ -171,7 +167,7 @@ public class GameData
 
     public static <V extends IForgeRegistryEntry<V>> RegistryNamespaced<ResourceLocation, V> getWrapper(Class<V> cls)
     {
-        IForgeRegistry<V> reg = GameRegistry.findRegistry(cls);
+        IForgeRegistry<V> reg = RegistryManager.ACTIVE.getRegistry(cls);
         Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + cls.toString());
         @SuppressWarnings("unchecked")
         RegistryNamespaced<ResourceLocation, V> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
@@ -182,20 +178,20 @@ public class GameData
     @SuppressWarnings("unchecked")
     public static BiMap<Block,Item> getBlockItemMap()
     {
-        return GameRegistry.findRegistry(Item.class).getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+        return RegistryManager.ACTIVE.getRegistry((Class<K>)Item.class).getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
     }
 
     @SuppressWarnings("unchecked")
     public static ObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
     {
-        return GameRegistry.findRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
+        return RegistryManager.ACTIVE.getRegistry((Class<K>)Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
     {
         Validate.notNull(value, "Attempted to register a null object");
         Validate.notNull(value.getRegistryName(), String.format("Attempt to register object without having set a registry name %s (type %s)", value, value.getClass().getName()));
-        final IForgeRegistry<K> registry = GameRegistry.findRegistry(value.getRegistryType());
+        final IForgeRegistry<K> registry = RegistryManager.ACTIVE.getRegistry(value.getRegistryType());
         Validate.notNull(registry, "Attempted to registry object without creating registry first: " + value.getRegistryType().getName());
         registry.register(value);
         return value;
@@ -204,7 +200,7 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void vanillaSnapshot()
     {
-        fmlLog.debug("Creating vanilla freeze snapshot");
+        LOGGER.debug("Creating vanilla freeze snapshot");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -217,7 +213,7 @@ public class GameData
         });
         RegistryManager.VANILLA.registries.forEach(LOCK_VANILLA);
         RegistryManager.ACTIVE.registries.forEach(LOCK_VANILLA);
-        fmlLog.debug("Vanilla freeze snapshot created");
+        LOGGER.debug("Vanilla freeze snapshot created");
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

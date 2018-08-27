@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraft.command.CommandHandler;
-import net.minecraft.command.ICommand;
 import net.minecraft.server.MinecraftServer;
 
 /**
@@ -35,11 +33,5 @@ public class FMLServerStartingEvent extends ServerLifecycleEvent
     public FMLServerStartingEvent(final MinecraftServer server)
     {
         super(server);
-    }
-
-    public void registerServerCommand(ICommand command)
-    {
-        CommandHandler ch = (CommandHandler) getServer().getCommandManager();
-        ch.registerCommand(command);
     }
 }

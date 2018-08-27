@@ -469,8 +469,7 @@ public class VersionRange
 
         return restrictions;
     }
-    
-    
+
     //Forge: Removed getSelectedVersion and isSelectedVersion
 
     @Override //Forge: Added @Override
@@ -486,6 +485,7 @@ public class VersionRange
         }
     }
 
+    /*
     //Forge: Added friendly {localized} toString
     public String toStringFriendly()
     {
@@ -503,6 +503,7 @@ public class VersionRange
             return Joiner.on(", ").join(friendlyRestrictions);
         }
     }
+    */
 
     public ArtifactVersion matchVersion( List<ArtifactVersion> versions )
     {

@@ -21,6 +21,7 @@ package net.minecraftforge.fml;
 
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.URL;
@@ -32,6 +33,9 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModLoadingClassLoader extends SecureClassLoader
 {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
     static {
         ClassLoader.registerAsParallelCapable();
     }
@@ -49,7 +53,7 @@ public class ModLoadingClassLoader extends SecureClassLoader
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException
     {
-        LogManager.getLogger("FML").debug(LOADING, "Loading class {}", name);
+        LOGGER.debug(LOADING, "Loading class {}", name);
         final String className = name.replace('.','/').concat(".class");
         final Path classResource = FMLLoader.getLoadingModList().findResource(className);
         if (classResource != null) {

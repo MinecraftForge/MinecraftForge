@@ -21,7 +21,6 @@ package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.Java9BackportUtils;
 import net.minecraftforge.fml.common.DuplicateModsFoundException;
-import net.minecraftforge.fml.common.MissingModsException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.language.IModInfo;
@@ -44,7 +43,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModSorter
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private List<ModFile> modFiles;
     private List<ModInfo> sortedList;
     private Map<String, ModInfo> modIdNameLookup;
@@ -123,12 +122,12 @@ public class ModSorter
                 collect(Collectors.groupingBy(Function.identity(), Java9BackportUtils.flatMapping(e -> e.getDependencies().stream(), Collectors.toList())));
         final Set<IModInfo.ModVersion> mandatoryModVersions = modVersionDependencies.values().stream().flatMap(Collection::stream).
                 filter(mv -> mv.isMandatory() && mv.getSide().isCorrectSide()).collect(Collectors.toSet());
-        LogManager.getLogger("FML").debug(LOADING, "Found {} mandatory requirements", mandatoryModVersions.size());
+        LOGGER.debug(LOADING, "Found {} mandatory requirements", mandatoryModVersions.size());
         final Set<IModInfo.ModVersion> missingVersions = mandatoryModVersions.stream().filter(mv->this.modVersionMatches(mv, modVersions)).collect(Collectors.toSet());
-        LogManager.getLogger("FML").debug(LOADING, "Found {} mandatory mod requirements missing", missingVersions.size());
+        LOGGER.debug(LOADING, "Found {} mandatory mod requirements missing", missingVersions.size());
 
         if (!missingVersions.isEmpty()) {
-            throw new MissingModsException(null,null,null);
+            throw new RuntimeException("Missing mods");
         }
     }
 

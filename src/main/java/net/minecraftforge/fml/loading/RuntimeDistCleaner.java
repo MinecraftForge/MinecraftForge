@@ -46,7 +46,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 public class RuntimeDistCleaner implements ILaunchPluginService
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker DISTXFORM = MarkerManager.getMarker("DISTXFORM");
     private static String DIST;
     private static final String ONLYIN = Type.getDescriptor(OnlyIn.class);

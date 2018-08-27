@@ -30,7 +30,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.network.NettyVarint21FrameDecoder;
@@ -38,10 +37,12 @@ import net.minecraft.network.NettyVarint21FrameEncoder;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.common.FMLLog;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PacketLoggingHandler
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static void register(NetworkManager manager)
     {
         ChannelPipeline pipeline = manager.channel().pipeline();
@@ -56,7 +57,7 @@ public class PacketLoggingHandler
                 {
                     PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
                     msg.writePacketData(buf);
-                    FMLLog.log.debug("{} {}:\n{}", prefix, msg.getClass().getSimpleName(), ByteBufUtils.getContentDump(buf));
+                    LOGGER.debug("{} {}:\n{}", prefix, msg.getClass().getSimpleName(), ByteBufUtils.getContentDump(buf));
                     ctx.fireChannelRead(msg);
                 }
             });
@@ -70,7 +71,7 @@ public class PacketLoggingHandler
                     {
                         PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
                         ((Packet<?>)msg).writePacketData(buf);
-                        FMLLog.log.debug("{} {}:\n{}", prefix, msg.getClass().getSimpleName(), ByteBufUtils.getContentDump(buf));
+                        LOGGER.debug("{} {}:\n{}", prefix, msg.getClass().getSimpleName(), ByteBufUtils.getContentDump(buf));
                     }
                     ctx.write(msg, promise);
                 }
@@ -90,7 +91,7 @@ public class PacketLoggingHandler
                     {
                         ByteBuf pkt = (ByteBuf)itr.next();
                         pkt.markReaderIndex();
-                        FMLLog.log.debug("{}:\n{}", prefix, ByteBufUtils.getContentDump(pkt));
+                        LOGGER.debug("{}:\n{}", prefix, ByteBufUtils.getContentDump(pkt));
                         pkt.resetReaderIndex();
                     }
                 }
@@ -102,7 +103,7 @@ public class PacketLoggingHandler
                 protected void encode(ChannelHandlerContext context, ByteBuf input, ByteBuf output) throws Exception
                 {
                     input.markReaderIndex();
-                    FMLLog.log.debug("{}:\n{}", prefix, ByteBufUtils.getContentDump(input));
+                    LOGGER.debug("{}:\n{}", prefix, ByteBufUtils.getContentDump(input));
                     input.resetReaderIndex();
                     super.encode(context, input, output);
                 }

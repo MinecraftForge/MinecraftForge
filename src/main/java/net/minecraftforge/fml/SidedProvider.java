@@ -23,7 +23,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.client.SplashProgress;
+import net.minecraftforge.fml.client.ClientHooks;
 import net.minecraftforge.fml.common.event.FMLClientInitEvent;
 import net.minecraftforge.fml.common.event.FMLServerInitEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
@@ -34,12 +34,12 @@ import java.util.function.Supplier;
 public enum SidedProvider
 {
     // All of these need to be careful not to directly dereference the client and server elements in their signatures
-    DATAFIXER(c->c.get().getDataFixer(), s->s.get().getDataFixer()),
+    DATAFIXER(c->c.get().getDataFixer(), s->s.get().func_195563_aC()),
     SIDEDINIT((Function<Supplier<Minecraft>, Function<ModContainer, Event>>)c-> mc->new FMLClientInitEvent(c, mc),
             (Function<Supplier<DedicatedServer>, Function<ModContainer, Event>>)s-> mc->new FMLServerInitEvent(s, mc)),
-    STRIPCHARS((Function<Supplier<Minecraft>, Function<String, String>>)c-> SplashProgress::stripSpecialChars,
+    STRIPCHARS((Function<Supplier<Minecraft>, Function<String, String>>)c-> ClientHooks::stripSpecialChars,
             (Function<Supplier<DedicatedServer>, Function<String, String>>)s-> str->str),
-    @SuppressWarnings("Convert2MethodRef") // need to not be methodrefs to avoid classloading all of StartupQuery's data
+    @SuppressWarnings("Convert2MethodRef") // need to not be methodrefs to avoid classloading all of StartupQuery's data (supplier is coming from StartupQuery)
     STARTUPQUERY(c->StartupQuery.QueryWrapper.clientQuery(c), s->StartupQuery.QueryWrapper.dedicatedServerQuery(s));
 
     private static Supplier<Minecraft> client;

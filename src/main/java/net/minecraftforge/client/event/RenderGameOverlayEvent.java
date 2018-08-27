@@ -24,19 +24,13 @@ import java.util.ArrayList;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.gui.BossInfoClient;
-import net.minecraft.client.gui.ScaledResolution;
 
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class RenderGameOverlayEvent extends Event
 {
     public float getPartialTicks()
     {
         return partialTicks;
-    }
-
-    public ScaledResolution getResolution()
-    {
-        return resolution;
     }
 
     public ElementType getType()
@@ -71,20 +65,17 @@ public class RenderGameOverlayEvent extends Event
     }
 
     private final float partialTicks;
-    private final ScaledResolution resolution;
     private final ElementType type;
 
-    public RenderGameOverlayEvent(float partialTicks, ScaledResolution resolution)
+    public RenderGameOverlayEvent(float partialTicks, Void resolution)
     {
         this.partialTicks = partialTicks;
-        this.resolution = resolution;
         this.type = null;
     }
 
     private RenderGameOverlayEvent(RenderGameOverlayEvent parent, ElementType type)
     {
         this.partialTicks = parent.getPartialTicks();
-        this.resolution = parent.getResolution();
         this.type = type;
     }
 

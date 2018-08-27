@@ -21,28 +21,14 @@ package net.minecraftforge.fml;
 
 import com.google.common.base.Strings;
 import cpw.mods.modlauncher.Launcher;
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.item.EnumDyeColor;
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
-import org.apache.logging.log4j.core.config.ConfigurationFactory;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
-import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
-import org.apache.logging.log4j.core.config.composite.CompositeConfiguration;
 import org.apache.logging.log4j.core.filter.MarkerFilter;
 
 import java.io.File;
 import java.lang.reflect.Field;
-
-import static cpw.mods.modlauncher.Logging.CLASSLOADING;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class LaunchTesting
 {

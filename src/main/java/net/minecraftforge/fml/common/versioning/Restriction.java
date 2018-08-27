@@ -22,7 +22,6 @@ package net.minecraftforge.fml.common.versioning;
  * under the License.
  */
 
-import net.minecraft.util.text.translation.I18n; //Forge: Added imports
 import javax.annotation.Nullable;
 
 /**
@@ -206,6 +205,7 @@ public class Restriction
         return buf.toString();
     }
 
+    /*
     //Forge: Added toStringFriendly, uses Minecraft's localization engine to create user friendly localized message.
     public String toStringFriendly()
     {
@@ -262,4 +262,5 @@ public class Restriction
             }
         }
     }
+    */
 }

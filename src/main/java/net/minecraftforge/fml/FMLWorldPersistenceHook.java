@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.google.common.collect.Multimap;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
@@ -47,7 +47,7 @@ import org.apache.logging.log4j.MarkerManager;
 public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.WorldPersistenceHook
 {
 
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker WORLDPERSISTENCE = MarkerManager.getMarker("WP");
 
     @Override
@@ -66,7 +66,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
             final NBTTagCompound mod = new NBTTagCompound();
             mod.setString("ModId", mi.getModId());
             mod.setString("ModVersion", mi.getVersion().getVersionString());
-            modList.appendTag(mod);
+            modList.add(mod);
         });
         fmlData.setTag("LoadingModList", modList);
 
@@ -82,12 +82,12 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
+    public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
     {
         if (tag.hasKey("LoadingModList"))
         {
             NBTTagList modList = tag.getTagList("LoadingModList", (byte)10);
-            for (int i = 0; i < modList.tagCount(); i++)
+            for (int i = 0; i < modList.size(); i++)
             {
                 NBTTagCompound mod = modList.getCompoundTagAt(i);
                 String modId = mod.getString("ModId");

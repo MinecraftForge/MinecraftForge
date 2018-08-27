@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  * The container that wraps around mods in the system.
  * <p>
  * The philosophy is that individual mod implementation technologies should not
- * impact the actual loading and management of mod code. This interface provides
+ * impact the actual loading and management of mod code. This class provides
  * a mechanism by which we can wrap actual mod code so that the loader and other
  * facilities can treat mods at arms length.
  * </p>

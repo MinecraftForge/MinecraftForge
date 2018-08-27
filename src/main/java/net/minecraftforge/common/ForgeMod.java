@@ -25,22 +25,21 @@ import net.minecraft.world.biome.Biome;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.SidedExecutor;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
-import net.minecraftforge.fml.javafmlmod.ModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
@@ -66,9 +65,7 @@ import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -76,7 +73,7 @@ import org.apache.logging.log4j.MarkerManager;
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 {
     public static final String VERSION_CHECK_CAT = "version_checking";
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEMOD = MarkerManager.getMarker("FORGEMOD");
     public static int clumpingThreshold = 64;
     public static boolean removeErroringEntities = false;
@@ -113,9 +110,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public ForgeMod()
     {
         INSTANCE = this;
-        ModLoadingContext.get().getModEventBus().addListener(this::preInit);
-        ModLoadingContext.get().getModEventBus().addListener(this::postInit);
-        ModLoadingContext.get().getModEventBus().addListener(this::onAvailable);
+        FMLModLoadingContext.get().getModEventBus().addListener(this::preInit);
+        FMLModLoadingContext.get().getModEventBus().addListener(this::postInit);
+        FMLModLoadingContext.get().getModEventBus().addListener(this::onAvailable);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
@@ -336,10 +333,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
                 if (event.isWorldRunning() && tmpStairs != disableStairSlabCulling)
                 {
-                    SidedExecutor.runOn(Dist.CLIENT,()->{
-                        Minecraft.getMinecraft().renderGlobal.loadRenderers();
-                        return null;
-                    });
+                    DistExecutor.runWhenOn(Dist.CLIENT,()->()-> Minecraft.getMinecraft().renderGlobal.loadRenderers());
                 }
 
             }
@@ -438,7 +432,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag)
+    public void readData(SaveHandler handler, WorldInfo info, Map<String, INBTBase> propertyMap, NBTTagCompound tag)
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
         FluidRegistry.loadFluidDefaults(tag);
@@ -449,10 +443,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         OreDictionary.rebakeMap();
         StatList.reinit();
         Ingredient.invalidateAll();
-        SidedExecutor.runOn(Dist.CLIENT, ()-> {
+        DistExecutor.runWhenOn(Dist.CLIENT, ()-> () -> {
             Minecraft.getMinecraft().populateSearchTreeManager();
             Minecraft.getMinecraft().getSearchTreeManager().onResourceManagerReload(Minecraft.getMinecraft().getResourceManager());
-            return null;
         });
     }
 

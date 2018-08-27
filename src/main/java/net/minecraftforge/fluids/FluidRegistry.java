@@ -58,7 +58,7 @@ import javax.annotation.Nullable;
  */
 public abstract class FluidRegistry
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FLUIDS = MarkerManager.getMarker("FLUIDS");
     static int maxID = 0;
 

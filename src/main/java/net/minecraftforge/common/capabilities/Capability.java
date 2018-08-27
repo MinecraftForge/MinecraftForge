@@ -23,7 +23,7 @@ import java.util.concurrent.Callable;
 
 import com.google.common.base.Throwables;
 
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.INBTBase;
 import net.minecraft.util.EnumFacing;
 
 import javax.annotation.Nullable;
@@ -58,7 +58,7 @@ public class Capability<T>
          * @return a NBT holding the data. Null if no data needs to be stored.
          */
         @Nullable
-        NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side);
+        INBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side);
 
         /**
          * Read the capability instance from a NBT tag.
@@ -79,7 +79,7 @@ public class Capability<T>
          * @param side The side of the object the instance is associated with.
          * @param nbt A NBT holding the data. Must not be null, as doesn't make sense to call this function with nothing to read...
          */
-        void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt);
+        void readNBT(Capability<T> capability, T instance, EnumFacing side, INBTBase nbt);
     }
 
     /**
@@ -97,7 +97,7 @@ public class Capability<T>
      * Quick access to the IStorage's readNBT. 
      * See {@link IStorage#readNBT(Capability, Object, EnumFacing, NBTBase)}  for documentation.
      */
-    public void readNBT(T instance, EnumFacing side, NBTBase nbt)
+    public void readNBT(T instance, EnumFacing side, INBTBase nbt)
     {
     	storage.readNBT(this, instance, side, nbt); 
     }
@@ -107,7 +107,7 @@ public class Capability<T>
      * See {@link IStorage#writeNBT(Capability, Object, EnumFacing)} for documentation.
      */
     @Nullable
-    public NBTBase writeNBT(T instance, EnumFacing side)
+    public INBTBase writeNBT(T instance, EnumFacing side)
     {
     	return storage.writeNBT(this, instance, side);
     }

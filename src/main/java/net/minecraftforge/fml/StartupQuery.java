@@ -33,6 +33,7 @@ import net.minecraftforge.fml.client.gui.GuiConfirmation;
 import net.minecraftforge.fml.client.gui.GuiNotification;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -42,7 +43,7 @@ import javax.annotation.Nullable;
 
 public class StartupQuery {
     // internal class/functionality, do not use
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker SQ = MarkerManager.getMarker("STARTUPQUERY");
 
     public static boolean confirm(String text)
@@ -236,8 +237,6 @@ public class StartupQuery {
                             throw new RuntimeException();
                         }
 
-                        client.loadingScreen.displayLoadingString("");
-
                         try
                         {
                             Thread.sleep(50);
@@ -247,8 +246,6 @@ public class StartupQuery {
                             query.exception = ie;
                         }
                     }
-
-                    client.loadingScreen.displayLoadingString(""); // make sure the blank screen is being drawn at the end
                 }
             };
         }

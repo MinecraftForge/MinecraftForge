@@ -28,8 +28,6 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 public class Logging
 {
-    public static final Logger fmlLog = LogManager.getLogger("FML");
-
     // Lots of markers
     public static final Marker CORE = MarkerManager.getMarker("CORE");
     public static final Marker LOADING = MarkerManager.getMarker("LOADING");

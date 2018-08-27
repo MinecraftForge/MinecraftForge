@@ -21,6 +21,8 @@ package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.LoadingModList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +32,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static net.minecraftforge.fml.Logging.SCAN;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class BackgroundScanHandler
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ExecutorService modContentScanner;
     private final List<ModFile> pendingFiles;
     private final List<ModFile> scannedFiles;
@@ -65,7 +67,7 @@ public class BackgroundScanHandler
 
     private void addCompletedFile(final ModFile file, final ModFileScanData modFileScanData, final Throwable throwable) {
         if (throwable != null) {
-            fmlLog.error(SCAN,"An error occurred scanning file {}", file, throwable);
+            LOGGER.error(SCAN,"An error occurred scanning file {}", file, throwable);
         }
         pendingFiles.remove(file);
         scannedFiles.add(file);

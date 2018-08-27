@@ -20,13 +20,13 @@
 package net.minecraftforge.fml.client.registry;
 
 import com.google.common.collect.Maps;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -45,13 +45,13 @@ public class ClientRegistry
      * @param id
      * @param specialRenderer
      */
-    public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntitySpecialRenderer<? super T> specialRenderer)
+    public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntityRenderer<? super T> specialRenderer)
     {
         GameRegistry.registerTileEntity(tileEntityClass, id);
         bindTileEntitySpecialRenderer(tileEntityClass, specialRenderer);
     }
 
-    public static <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntitySpecialRenderer<? super T> specialRenderer)
+    public static <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntityRenderer<? super T> specialRenderer)
     {
         TileEntityRendererDispatcher.instance.renderers.put(tileEntityClass, specialRenderer);
         specialRenderer.setRendererDispatcher(TileEntityRendererDispatcher.instance);

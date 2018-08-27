@@ -26,18 +26,13 @@ import java.util.Random;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.monster.EntityZombieVillager;
+import net.minecraftforge.fml.RegistryObject;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.passive.EntityVillager.ITradeList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespaced;
-import net.minecraft.world.gen.structure.StructureComponent;
-import net.minecraft.world.gen.structure.StructureVillagePieces;
-import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
-import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -48,8 +43,7 @@ import javax.annotation.Nullable;
  */
 public class VillagerRegistry
 {
-    @ObjectHolder("minecraft:farmer")
-    public static final VillagerProfession FARMER = null;
+    public static final RegistryObject<VillagerProfession> FARMER = RegistryObject.of("minecraft:farmer", ()->VillagerProfession.class);
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
 
     private Map<Class<?>, IVillageCreationHandler> villageCreationHandlers = Maps.newHashMap();

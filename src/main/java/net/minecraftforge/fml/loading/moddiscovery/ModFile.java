@@ -25,6 +25,8 @@ import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.language.IModLanguageProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,11 +43,12 @@ import java.util.jar.Manifest;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ModFile
 {
     private static final Manifest DEFAULTMANIFEST;
+    private static final Logger LOGGER = LogManager.getLogger();
+
     static {
         DEFAULTMANIFEST = new Manifest();
         DEFAULTMANIFEST.getMainAttributes().putValue("FMLModType", "MOD");
@@ -89,8 +92,8 @@ public class ModFile
         this.locator = locator;
         this.filePath = file;
         manifest = locator.findManifest(file).orElse(DEFAULTMANIFEST);
-        if (manifest != DEFAULTMANIFEST) fmlLog.debug(SCAN,"Mod file {} has a manifest", file);
-        else fmlLog.debug(SCAN,"Mod file {} is missing a manifest", file);
+        if (manifest != DEFAULTMANIFEST) LOGGER.debug(SCAN,"Mod file {} has a manifest", file);
+        else LOGGER.debug(SCAN,"Mod file {} is missing a manifest", file);
         final Optional<String> value = Optional.ofNullable(manifest.getMainAttributes().getValue(TYPE));
         modFileType = Type.valueOf(value.orElse("MOD"));
         jarVersion = Optional.ofNullable(manifest.getMainAttributes().getValue(Attributes.Name.IMPLEMENTATION_VERSION)).orElse("NONE");
@@ -117,9 +120,9 @@ public class ModFile
     public boolean identifyMods() {
         this.modFileInfo = ModFileParser.readModList(this);
         if (this.modFileInfo == null) return false;
-        fmlLog.debug(LOADING,"Loading mod file {} with language {}", this.getFilePath(), this.modFileInfo.getModLoader());
+        LOGGER.debug(LOADING,"Loading mod file {} with language {}", this.getFilePath(), this.modFileInfo.getModLoader());
         this.coreMods = ModFileParser.getCoreMods(this);
-        this.coreMods.forEach(mi-> fmlLog.debug(LOADING,"Found coremod {}", mi.getPath()));
+        this.coreMods.forEach(mi-> LOGGER.debug(LOADING,"Found coremod {}", mi.getPath()));
         this.accessTransformer = locator.findPath(this, "META-INF", "accesstransformer.cfg");
         this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this.modFileInfo.getModLoader(), this.modFileInfo.getModLoaderVersion());
         return true;

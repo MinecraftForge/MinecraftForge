@@ -20,11 +20,9 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.Streams;
-import net.minecraftforge.fml.javafmlmod.ModLoadingContext;
 import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.DefaultModInfos;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
@@ -51,7 +49,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
  */
 public class ModList
 {
-    private static Logger LOGGER = LogManager.getLogger("FML");
+    private static Logger LOGGER = LogManager.getLogger();
     private static ModList INSTANCE;
     private final List<ModFileInfo> modFiles;
     private final List<ModInfo> sortedList;

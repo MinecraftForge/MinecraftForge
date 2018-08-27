@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
@@ -35,10 +35,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.ModContainer;
 
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -150,10 +150,7 @@ public class GuiConfigEntries extends GuiListExtended
                     }
                     else if (configElement.getType() == ConfigGuiType.MOD_ID)
                     {
-                        Map<Object, String> values = new TreeMap<Object, String>();
-                        for (ModContainer mod : Loader.instance().getActiveModList())
-                            values.put(mod.getModId(), mod.getName());
-                        values.put("minecraft", "Minecraft");
+                        Map<Object, String> values = ModList.get().getMods().stream().collect(Collectors.toMap(ModInfo::getModId, ModInfo::getDisplayName));
                         this.listEntries.add(new SelectValueEntry(this.owningScreen, this, configElement, values));
                     }
                     else if (configElement.getType() == ConfigGuiType.STRING)

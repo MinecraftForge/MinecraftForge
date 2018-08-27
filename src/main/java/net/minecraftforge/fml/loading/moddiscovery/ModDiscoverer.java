@@ -23,6 +23,8 @@ import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.ModSorter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -32,16 +34,16 @@ import java.util.ServiceLoader;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.SCAN;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ModDiscoverer {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ServiceLoader<IModLocator> locators;
     private final List<IModLocator> locatorList;
 
     public ModDiscoverer() {
         locators = ServiceLoader.load(IModLocator.class);
         locatorList = ServiceLoaderStreamUtils.toList(this.locators);
-        fmlLog.debug(SCAN,"Found Mod Locators : {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
+        LOGGER.debug(SCAN,"Found Mod Locators : {}", ()->locatorList.stream().map(iModLocator -> "("+iModLocator.name() + ":" + iModLocator.getClass().getPackage().getImplementationVersion()+")").collect(Collectors.joining(",")));
     }
 
     ModDiscoverer(List<IModLocator> locatorList) {
@@ -50,12 +52,12 @@ public class ModDiscoverer {
     }
 
     public BackgroundScanHandler discoverMods() {
-        fmlLog.debug(SCAN,"Scanning for mods and other resources to load. We know {} ways to find mods", locatorList.size());
+        LOGGER.debug(SCAN,"Scanning for mods and other resources to load. We know {} ways to find mods", locatorList.size());
         final Map<ModFile.Type, List<ModFile>> modFiles = locatorList.stream()
-                .peek(loc -> fmlLog.debug(SCAN,"Trying locator {}", loc))
+                .peek(loc -> LOGGER.debug(SCAN,"Trying locator {}", loc))
                 .map(IModLocator::scanMods)
                 .flatMap(Collection::stream)
-                .peek(mf -> fmlLog.debug(SCAN,"Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator()))
+                .peek(mf -> LOGGER.debug(SCAN,"Found mod file {} of type {} with locator {}", mf.getFileName(), mf.getType(), mf.getLocator()))
                 .collect(Collectors.groupingBy(ModFile::getType));
 
         FMLLoader.getLanguageLoadingProvider().addAdditionalLanguages(modFiles.get(ModFile.Type.LANGPROVIDER));
@@ -65,11 +67,11 @@ public class ModDiscoverer {
         {
             ModFile mod = iterator.next();
             if (!mod.identifyMods()) {
-                fmlLog.debug(SCAN, "Removing file {} from further analysis - it is invalid", mod);
+                LOGGER.debug(SCAN, "Removing file {} from further analysis - it is invalid", mod);
                 iterator.remove();
             }
         }
-        fmlLog.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
+        LOGGER.debug(SCAN,"Found {} mod files with {} mods", mods::size, ()->mods.stream().mapToInt(mf -> mf.getModInfos().size()).sum());
         final LoadingModList loadingModList = ModSorter.sort(mods);
         loadingModList.addCoreMods();
         loadingModList.addAccessTransformers();

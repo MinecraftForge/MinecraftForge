@@ -26,11 +26,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -178,6 +176,7 @@ public class GuiScreenEvent extends Event
      * This event fires at the end of {@link GuiScreen#drawDefaultBackground()} and before the rest of the Gui draws.
      * This allows drawing next to Guis, above the background but below any tooltips.
      */
+/*
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
         private final int mouseX;
@@ -193,22 +192,27 @@ public class GuiScreenEvent extends Event
             this.mouseY = scaledHeight - Mouse.getY() * scaledHeight / gui.mc.displayHeight - 1;
         }
 
-        /**
+        */
+/**
          * The x coordinate of the mouse pointer on the screen.
-         */
+         *//*
+
         public int getMouseX()
         {
             return mouseX;
         }
 
-        /**
+        */
+/**
          * The y coordinate of the mouse pointer on the screen.
-         */
+         *//*
+
         public int getMouseY()
         {
             return mouseY;
         }
     }
+*/
 
     /**
      * This event fires in {@link InventoryEffectRenderer#updateActivePotionEffects()}

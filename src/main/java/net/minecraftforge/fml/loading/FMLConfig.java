@@ -19,68 +19,61 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.electronwill.nightconfig.core.ConfigSpec;
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingMode;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.FMLPaths;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class FMLConfig
 {
-    private static FMLConfig INSTANCE;
-    private final Map<String, String> configData = new HashMap<>();
-
-    private FMLConfig() {
-        configData.putAll(defaultValues());
+    private static FMLConfig INSTANCE = new FMLConfig();
+    private static ConfigSpec configSpec = new ConfigSpec();
+    static {
+        configSpec.define("splashscreen", Boolean.TRUE);
+        configSpec.defineInList("side", Dist.CLIENT.name(), Arrays.stream(Dist.values()).map(Enum::name).collect(Collectors.toList()));
+        configSpec.defineInRange("maxframerate", 60, 10, 120);
+        configSpec.defineInRange("minframerate", 60, 10, 120);
+        configSpec.defineInList(Arrays.asList("tasty","flavour"), Dist.CLIENT.name(), Arrays.stream(Dist.values()).map(Enum::name).collect(Collectors.toList()));
+        configSpec.defineInList(Arrays.asList("tasty","teaser"), Dist.CLIENT.name(), Arrays.stream(Dist.values()).map(Enum::name).collect(Collectors.toList()));
+        configSpec.define("longstring", StringUtils.repeat("AAAA", 10000), s->s!=null && ((String)s).length()>0);
     }
 
-    private Map<String,String> defaultValues() {
-        final Map<String,String> result = new HashMap<>();
-        result.put("splashscreen", "true");
-        return result;
-    }
+    private CommentedFileConfig configData;
 
-    private void loadFrom(final Path configFile) throws IOException
+    private void loadFrom(final Path configFile)
     {
-        final Type type = new TypeToken<Map<String, String>>() {}.getType();
-        final Gson gson = new Gson();
-        final Map<String,String> loadedConfig = gson.fromJson(Files.newBufferedReader(configFile), type);
-        if (loadedConfig != null)
-            configData.putAll(loadedConfig);
+        configData = CommentedFileConfig.builder(configFile).sync().
+                defaultResource("/META-INF/defaultfmlconfig.toml").
+                autosave().autoreload().
+                writingMode(WritingMode.REPLACE).
+                build();
+        configData.load();
+        if (!configSpec.isCorrect(configData)) {
+            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
+            configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
+                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
+        }
+        configData.save();
     }
 
-    private void saveConfigIfNecessary(final Path configFile) throws IOException {
-        final Type type = new TypeToken<Map<String, String>>() {}.getType();
-        final Gson gson = new Gson();
-        final BufferedWriter writer = Files.newBufferedWriter(configFile);
-        gson.toJson(configData, type, writer);
-        writer.flush();
-    }
     public static void load()
     {
         final Path configFile = FMLPaths.FMLCONFIG.get();
-        INSTANCE = new FMLConfig();
-        try
-        {
-            if (Files.exists(configFile))
-            {
-                INSTANCE.loadFrom(configFile);
-            }
-            INSTANCE.saveConfigIfNecessary(configFile);
-        }
-        catch (IOException ioe)
-        {
-            fmlLog.error(CORE,"Unable to read FML config at {}", configFile, ioe);
-            throw new RuntimeException("Unable to read FML config", ioe);
-        }
+        INSTANCE.loadFrom(configFile);
+        LogManager.getLogger().debug(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
+        LogManager.getLogger().debug(CORE, "Splash screen is {}", INSTANCE.splashScreenEnabled());
+    }
+
+    public boolean splashScreenEnabled() {
+        return configData.<Boolean>getOptional("splashscreen").orElse(Boolean.FALSE);
     }
 }

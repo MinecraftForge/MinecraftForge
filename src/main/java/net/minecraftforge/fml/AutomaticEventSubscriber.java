@@ -43,7 +43,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
  */
 public class AutomaticEventSubscriber
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
     {
         if (scanData == null) return;

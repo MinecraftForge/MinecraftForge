@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fml.client;
 
-import net.minecraft.client.resources.AbstractResourcePack;
-import net.minecraft.client.resources.FileResourcePack;
-import net.minecraft.client.resources.FolderResourcePack;
-import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.resources.AbstractResourcePack;
+import net.minecraft.resources.FilePack;
+import net.minecraft.resources.FolderPack;
+import net.minecraft.resources.IResourcePack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -48,8 +48,8 @@ public class ResourcePackLoader
                 map(mf -> new ModFileResourcePack(mf.getFile())).
                 collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity()));
         forgePack = Files.isDirectory(FMLLoader.getForgePath()) ?
-                new FolderResourcePack(FMLLoader.getForgePath().toFile()) :
-                new FileResourcePack(FMLLoader.getForgePath().toFile());
+                new FolderPack(FMLLoader.getForgePath().toFile()) :
+                new FilePack(FMLLoader.getForgePath().toFile());
         resourcePacks.add(forgePack);
         resourcePacks.addAll(modResourcePacks.values());
     }

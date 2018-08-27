@@ -26,8 +26,6 @@ package net.minecraftforge.fml.common.versioning;
 public interface ArtifactVersion
     extends Comparable<ArtifactVersion>
 {
-    String getLabel();
-
     String getVersionString();
 
     boolean containsVersion(ArtifactVersion source);

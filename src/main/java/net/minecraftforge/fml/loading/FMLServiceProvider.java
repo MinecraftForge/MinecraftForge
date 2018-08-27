@@ -26,6 +26,8 @@ import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionSpecBuilder;
 import net.minecraftforge.fml.common.FMLPaths;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -34,11 +36,11 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class FMLServiceProvider implements ITransformationService
 {
 
+    private static final Logger LOGGER = LogManager.getLogger();
     private ArgumentAcceptingOptionSpec<String> modsOption;
     private ArgumentAcceptingOptionSpec<String> modListsOption;
     private List<String> modsArgumentList;
@@ -53,15 +55,15 @@ public class FMLServiceProvider implements ITransformationService
     @Override
     public void initialize(IEnvironment environment)
     {
-        fmlLog.debug(CORE,"Setting up basic FML game directories");
+        LOGGER.debug(CORE,"Setting up basic FML game directories");
         FMLPaths.setup(environment);
-        fmlLog.debug(CORE,"Loading configuration");
+        LOGGER.debug(CORE,"Loading configuration");
         FMLConfig.load();
-        fmlLog.debug(CORE, "Preparing launch handler");
+        LOGGER.debug(CORE, "Preparing launch handler");
         FMLLoader.setupLaunchHandler(environment);
-        fmlLog.debug(CORE,"Initiating mod scan");
+        LOGGER.debug(CORE,"Initiating mod scan");
         FMLLoader.beginModScan();
-        fmlLog.debug(CORE, "Loading access transformers");
+        LOGGER.debug(CORE, "Loading access transformers");
         FMLLoader.loadAccessTransformer();
     }
 
@@ -89,7 +91,7 @@ public class FMLServiceProvider implements ITransformationService
     @Override
     public List<ITransformer> transformers()
     {
-        fmlLog.debug(CORE, "Loading coremod transformers");
+        LOGGER.debug(CORE, "Loading coremod transformers");
         return new ArrayList<>(FMLLoader.getCoreModProvider().getCoreModTransformers());
     }
 

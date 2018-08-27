@@ -37,7 +37,7 @@ import javax.annotation.Nonnull;
 import net.minecraft.client.util.RecipeBookClient;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.SidedExecutor;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.commons.io.FilenameUtils;
 
@@ -81,7 +81,7 @@ import org.apache.logging.log4j.MarkerManager;
 public class CraftingHelper {
 
     private static final boolean DEBUG_LOAD_MINECRAFT = false;
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker CRAFTHELPER = MarkerManager.getMarker("CRAFTHELPER");
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
     private static Map<ResourceLocation, IConditionFactory> conditions = new HashMap<>();
@@ -619,10 +619,7 @@ public class CraftingHelper {
         GameData.fireRegistryEvents(rl -> rl.equals(GameData.RECIPES));
 
         //reg.freeze();
-        SidedExecutor.runOn(Dist.CLIENT, ()-> {
-            RecipeBookClient.rebuildTable();
-            return null;
-        });
+        DistExecutor.runWhenOn(Dist.CLIENT, ()-> RecipeBookClient::rebuildTable);
     }
 
     private static void loadFactories(final ModFile modFile)

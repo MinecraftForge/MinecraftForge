@@ -46,7 +46,7 @@ import static net.minecraft.util.text.TextFormatting.*;
  * client, the client takes precedence!
  *
  */
-public class ClientCommandHandler extends CommandHandler
+public class ClientCommandHandler {} /*extends CommandHandler
 {
     public static final ClientCommandHandler instance = new ClientCommandHandler();
 
@@ -55,7 +55,7 @@ public class ClientCommandHandler extends CommandHandler
     /**
      * @return 1 if successfully executed, -1 if no permission or wrong usage,
      *         0 if it doesn't exist or it was canceled (it's sent to the server)
-     */
+     * /
     @Override
     public int executeCommand(ICommandSender sender, String message)
     {
@@ -165,3 +165,4 @@ public class ClientCommandHandler extends CommandHandler
         return Minecraft.getMinecraft().getIntegratedServer();
     }
 }
+*/

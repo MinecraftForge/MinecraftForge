@@ -31,6 +31,8 @@ import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.ICoreModProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -44,10 +46,10 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.SCAN;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class FMLLoader
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static ILaunchPluginService accessTransformer;
     private static ModDiscoverer modDiscoverer;
     private static ICoreModProvider coreModProvider;
@@ -63,51 +65,51 @@ public class FMLLoader
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
         final String version = ForgeVersion.getVersion();
-        fmlLog.debug(CORE,"FML {} loading", version);
+        LOGGER.debug(CORE,"FML {} loading", version);
         final Package modLauncherPackage = ITransformationService.class.getPackage();
-        fmlLog.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
+        LOGGER.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
         if (!modLauncherPackage.isCompatibleWith("1.0")) {
-            fmlLog.error(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
+            LOGGER.error(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
-        fmlLog.debug(CORE, "Initializing modjar URL handler");
+        LOGGER.debug(CORE, "Initializing modjar URL handler");
         URL.setURLStreamHandlerFactory(p->p.equals("modjar") ? new ModJarURLHandler() : null);
 
         accessTransformer = environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> new IncompatibleEnvironmentException("Missing AccessTransformer, cannot run"));
 
         final Package atPackage = accessTransformer.getClass().getPackage();
-        fmlLog.debug(CORE,"FML found AccessTransformer version : {}", atPackage.getImplementationVersion());
+        LOGGER.debug(CORE,"FML found AccessTransformer version : {}", atPackage.getImplementationVersion());
         if (!atPackage.isCompatibleWith("1.0")) {
-            fmlLog.error(CORE,"Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
+            LOGGER.error(CORE,"Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible accesstransformer found "+atPackage.getSpecificationVersion());
         }
 
         eventBus = environment.findLaunchPlugin("eventbus").orElseThrow(()-> new IncompatibleEnvironmentException("Missing EventBus, cannot run"));
 
         final Package eventBusPackage = eventBus.getClass().getPackage();
-        fmlLog.debug(CORE,"FML found EventBus version : {}", eventBusPackage.getImplementationVersion());
+        LOGGER.debug(CORE,"FML found EventBus version : {}", eventBusPackage.getImplementationVersion());
         if (!eventBusPackage.isCompatibleWith("1.0")) {
-            fmlLog.error(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
+            LOGGER.error(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible eventbus found "+eventBusPackage.getSpecificationVersion());
         }
 
         runtimeDistCleaner = (RuntimeDistCleaner)environment.findLaunchPlugin("runtimedistcleaner").orElseThrow(()->new IncompatibleEnvironmentException("Missing RuntimeDistCleaner, cannot run!"));
-        fmlLog.debug(CORE, "Found Runtime Dist Cleaner");
+        LOGGER.debug(CORE, "Found Runtime Dist Cleaner");
 
         final ArrayList<ICoreModProvider> coreModProviders = new ArrayList<>();
         ServiceLoader.load(ICoreModProvider.class).forEach(coreModProviders::add);
 
         if (coreModProviders.isEmpty()) {
-            fmlLog.error(CORE, "Found no coremod provider. Cannot run");
+            LOGGER.error(CORE, "Found no coremod provider. Cannot run");
             throw new IncompatibleEnvironmentException("No coremod library found");
         } else if (coreModProviders.size() > 1) {
-            fmlLog.error(CORE, "Found multiple coremod providers : {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
+            LOGGER.error(CORE, "Found multiple coremod providers : {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
             throw new IncompatibleEnvironmentException("Multiple coremod libraries found");
         }
 
         coreModProvider = coreModProviders.get(0);
         final Package coremodPackage = coreModProvider.getClass().getPackage();
-        fmlLog.debug(CORE,"FML found CoreMod version : {}", coremodPackage.getImplementationVersion());
+        LOGGER.debug(CORE,"FML found CoreMod version : {}", coremodPackage.getImplementationVersion());
 
         languageLoadingProvider = new LanguageLoadingProvider();
     }
@@ -116,14 +118,14 @@ public class FMLLoader
     {
         final String launchTarget = environment.getProperty(IEnvironment.Keys.LAUNCHTARGET.get()).orElse("MISSING");
         final Optional<ILaunchHandlerService> launchHandler = environment.findLaunchHandler(launchTarget);
-        fmlLog.debug(CORE, "Using {} as launch service", launchTarget);
+        LOGGER.debug(CORE, "Using {} as launch service", launchTarget);
         if (!launchHandler.isPresent()) {
-            fmlLog.error(CORE,"Missing LaunchHandler {}, cannot continue", launchTarget);
+            LOGGER.error(CORE,"Missing LaunchHandler {}, cannot continue", launchTarget);
             throw new RuntimeException("Missing launch handler");
         }
 
         if (!(launchHandler.get() instanceof FMLCommonLaunchHandler)) {
-            fmlLog.error(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
+            LOGGER.error(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
             throw new RuntimeException("Incompatible launch handler found");
         }
         gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Paths.get(".").toAbsolutePath());
@@ -135,7 +137,7 @@ public class FMLLoader
     }
     public static void beginModScan()
     {
-        fmlLog.debug(SCAN,"Scanning for Mod Locators");
+        LOGGER.debug(SCAN,"Scanning for Mod Locators");
         modDiscoverer = new ModDiscoverer();
         final BackgroundScanHandler backgroundScanHandler = modDiscoverer.discoverMods();
         loadingModList = backgroundScanHandler.getLoadingModList();
@@ -158,19 +160,19 @@ public class FMLLoader
         }
         try
         {
-            fmlLog.debug(CORE, "Loading forge_at.cfg into access transformer");
+            LOGGER.debug(CORE, "Loading forge_at.cfg into access transformer");
             accessTransformer.addResource(Paths.get(resource.toURI()), "forge_at.cfg");
         }
         catch (URISyntaxException e)
         {
-            fmlLog.error("Error loading forge_at.cfg file", e);
+            LOGGER.error("Error loading forge_at.cfg file", e);
             throw new RuntimeException(e);
         }
     }
 
     public static void addAccessTransformer(Path atPath, ModFile modName)
     {
-        fmlLog.debug(SCAN, "Adding Access Transformer in {}", modName.getFilePath());
+        LOGGER.debug(SCAN, "Adding Access Transformer in {}", modName.getFilePath());
         accessTransformer.addResource(atPath, modName.getFileName());
     }
 

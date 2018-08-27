@@ -17,18 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml;
+package net.minecraftforge.fml.server;
 
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.handshake.client.C00Handshake;
-import net.minecraft.network.login.server.SPacketDisconnect;
+import net.minecraft.network.handshake.client.CPacketHandshake;
+import net.minecraft.network.login.server.SPacketDisconnectLogin;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -43,7 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ServerLifecycleHooks
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker SERVERHOOKS = MarkerManager.getMarker("SERVERHOOKS");
     private static volatile CountDownLatch exitLatch = null;
     private static MinecraftServer currentServer;
@@ -97,12 +98,12 @@ public class ServerLifecycleHooks
     }
     private static AtomicBoolean allowLogins = new AtomicBoolean(false);
 
-    public static boolean handleServerLogin(final C00Handshake packet, final NetworkManager manager) {
+    public static boolean handleServerLogin(final CPacketHandshake packet, final NetworkManager manager) {
         if (!allowLogins.get())
         {
             TextComponentString text = new TextComponentString("Server is still starting! Please wait before reconnecting.");
-            LOGGER.info(SERVERHOOKS,"Disconnecting Player (server is still starting): {}", text.getUnformattedText());
-            manager.sendPacket(new SPacketDisconnect(text));
+            LOGGER.info(SERVERHOOKS,"Disconnecting Player (server is still starting): {}", text.getUnformattedComponentText());
+            manager.sendPacket(new SPacketDisconnectLogin(text));
             manager.closeChannel(text);
             return false;
         }
@@ -113,7 +114,7 @@ public class ServerLifecycleHooks
             TextComponentString text = new TextComponentString("This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
             List<String> modNames = net.minecraftforge.fml.network.NetworkRegistry.getNonVanillaNetworkMods();
             LOGGER.info(SERVERHOOKS,"Disconnecting vanilla connection attempt. Required mods {}", modNames);
-            manager.sendPacket(new SPacketDisconnect(text));
+            manager.sendPacket(new SPacketDisconnectLogin(text));
             manager.closeChannel(text);
             return false;
         }

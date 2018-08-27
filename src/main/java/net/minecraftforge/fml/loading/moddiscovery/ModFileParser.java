@@ -23,6 +23,8 @@ import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import net.minecraftforge.fml.language.IModFileInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -34,14 +36,16 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.LOADING;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ModFileParser {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static IModFileInfo readModList(final ModFile modFile) {
-        fmlLog.debug(LOADING,"Parsing mod file candidate {}", modFile.getFilePath());
+        LOGGER.debug(LOADING,"Parsing mod file candidate {}", modFile.getFilePath());
         final Path modsjson = modFile.getLocator().findPath(modFile, "META-INF", "mods.toml");
         if (!Files.exists(modsjson)) {
-            fmlLog.warn(LOADING, "Mod file {} is missing mods.toml file", modFile);
+            LOGGER.warn(LOADING, "Mod file {} is missing mods.toml file", modFile);
             return null;
         }
         return loadModFile(modFile, modsjson);
@@ -66,12 +70,12 @@ public class ModFileParser {
             final Gson gson = new Gson();
             coreModPaths = gson.fromJson(Files.newBufferedReader(coremodsjson), type);
         } catch (IOException e) {
-            fmlLog.debug(LOADING,"Failed to read coremod list coremods.json", e);
+            LOGGER.debug(LOADING,"Failed to read coremod list coremods.json", e);
             return Collections.emptyList();
         }
 
         return coreModPaths.entrySet().stream().
-                peek(e-> fmlLog.debug(LOADING,"Found coremod {} with Javascript path {}", e.getKey(), e.getValue())).
+                peek(e-> LOGGER.debug(LOADING,"Found coremod {} with Javascript path {}", e.getKey(), e.getValue())).
                 map(e -> new CoreModFile(e.getKey(), modFile.getLocator().findPath(modFile, e.getValue()),modFile)).
                 collect(Collectors.toList());
     }

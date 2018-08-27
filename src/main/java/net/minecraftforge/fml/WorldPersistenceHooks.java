@@ -19,16 +19,13 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class WorldPersistenceHooks
 {
@@ -47,9 +44,7 @@ public class WorldPersistenceHooks
     {
         if (EffectiveSide.get() == LogicalSide.SERVER)
         {
-            Map<String, NBTBase> additionalProperties = new HashMap<>();
-            worldInfo.setAdditionalProperties(additionalProperties);
-            worldPersistenceHooks.forEach(wac->wac.readData(handler, worldInfo, additionalProperties, tagCompound.getCompoundTag(wac.getModId())));
+            worldPersistenceHooks.forEach(wac->wac.readData(handler, worldInfo, tagCompound.getCompoundTag(wac.getModId())));
         }
     }
 
@@ -76,6 +71,6 @@ public class WorldPersistenceHooks
     {
         String getModId();
         NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info);
-        void readData(SaveHandler handler, WorldInfo info, Map<String, NBTBase> propertyMap, NBTTagCompound tag);
+        void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag);
     }
 }

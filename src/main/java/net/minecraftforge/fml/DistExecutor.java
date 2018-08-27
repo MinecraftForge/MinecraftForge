@@ -25,9 +25,9 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 import java.util.concurrent.Callable;
 import java.util.function.Supplier;
 
-public final class SidedExecutor
+public final class DistExecutor
 {
-    private SidedExecutor() {}
+    private DistExecutor() {}
 
     /**
      * Run the callable in the supplier only on the specified {@link Side}
@@ -37,7 +37,7 @@ public final class SidedExecutor
      * @param <T> The return type from the callable
      * @return The callable's result
      */
-    public static <T> T runOn(Dist dist, Supplier<Callable<T>> toRun) {
+    public static <T> T callWhenOn(Dist dist, Supplier<Callable<T>> toRun) {
         if (dist == FMLEnvironment.dist) {
             try
             {
@@ -51,7 +51,12 @@ public final class SidedExecutor
         return null;
     }
 
-    public static <T> T runSided(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
+    public static void runWhenOn(Dist dist, Supplier<Runnable> toRun) {
+        if (dist == FMLEnvironment.dist) {
+            toRun.get().run();
+        }
+    }
+    public static <T> T runForDist(Supplier<Supplier<T>> clientTarget, Supplier<Supplier<T>> serverTarget) {
         switch (FMLEnvironment.dist)
         {
             case CLIENT:

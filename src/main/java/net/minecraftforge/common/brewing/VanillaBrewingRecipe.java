@@ -22,7 +22,7 @@ package net.minecraftforge.common.brewing;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionHelper;
+import net.minecraft.potion.PotionBrewing;
 
 import javax.annotation.Nonnull;
 
@@ -49,7 +49,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     @Override
     public boolean isIngredient(@Nonnull ItemStack stack)
     {
-        return PotionHelper.isReagent(stack);
+        return PotionBrewing.isReagent(stack);
     }
 
     /**
@@ -63,7 +63,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
     {
         if (!input.isEmpty() && !ingredient.isEmpty() && isIngredient(ingredient))
         {
-            ItemStack result = PotionHelper.doReaction(ingredient, input);
+            ItemStack result = PotionBrewing.doReaction(ingredient, input);
             if (result != input)
             {
                 return result;

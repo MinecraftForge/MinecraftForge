@@ -20,11 +20,10 @@
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.client.resources.data.MetadataSerializer;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.data.IMetadataSectionSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LogicalSidedProvider;
@@ -33,7 +32,6 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.client.gui.GuiNotification;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 import java.util.List;
@@ -44,13 +42,12 @@ public class ClientModLoader
     private static boolean loading;
     private static Minecraft mc;
 
-    public static void begin(final Minecraft minecraft, final List<IResourcePack> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, MetadataSerializer metadataSerializer_)
+    public static void begin(final Minecraft minecraft, final List<IResourcePack> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, IMetadataSectionSerializer metadataSerializer)
     {
         loading = true;
         ClientModLoader.mc = minecraft;
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
-        SplashProgress.start();
         ModLoader.get().loadMods();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         minecraft.refreshResources();
@@ -61,7 +58,6 @@ public class ClientModLoader
         ModLoader.get().finishMods();
         loading = false;
         mc.gameSettings.loadOptions();
-        SplashProgress.finish();
     }
 
     public static VersionChecker.Status checkForUpdates()
@@ -73,27 +69,6 @@ public class ClientModLoader
     {
         GlStateManager.disableTexture2D();
         GlStateManager.enableTexture2D();
-    }
-
-    // If the startup screen has a notification on it, render that instead of the loading screen
-    public static boolean drawNotificationOverProgressScreen(final Minecraft client, final ScaledResolution scaledResolution) throws IOException
-    {
-        if (client.currentScreen instanceof GuiNotification)
-        {
-            int width = scaledResolution.getScaledWidth();
-            int height = scaledResolution.getScaledHeight();
-            int mouseX = Mouse.getX() * width / client.displayWidth;
-            int mouseZ = height - Mouse.getY() * height / client.displayHeight - 1;
-
-            client.currentScreen.drawScreen(mouseX, mouseZ, 0);
-            client.currentScreen.handleInput();
-
-            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     public static boolean isErrored()

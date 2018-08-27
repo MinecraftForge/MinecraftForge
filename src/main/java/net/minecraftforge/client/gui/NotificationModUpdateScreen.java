@@ -28,7 +28,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.common.ForgeVersion.Status;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.api.distmarker.Dist;
@@ -85,7 +84,7 @@ public class NotificationModUpdateScreen extends GuiScreen
     public static NotificationModUpdateScreen init(GuiMainMenu guiMainMenu, GuiButton modButton)
     {
         NotificationModUpdateScreen notificationModUpdateScreen = new NotificationModUpdateScreen(modButton);
-        notificationModUpdateScreen.setGuiSize(guiMainMenu.width, guiMainMenu.height);
+        notificationModUpdateScreen.setWorldAndResolution(guiMainMenu.mc, guiMainMenu.width, guiMainMenu.height);
         notificationModUpdateScreen.initGui();
         return notificationModUpdateScreen;
     }

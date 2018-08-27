@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.fml.client;
-
+/*
 import static net.minecraftforge.fml.Logging.SPLASH;
 import static net.minecraftforge.fml.Logging.fmlLog;
 import static org.lwjgl.opengl.GL11.*;
@@ -86,6 +86,7 @@ import org.lwjgl.util.glu.GLU;
 @SuppressWarnings("serial")
 public class SplashProgress
 {
+/*
     private static Drawable d;
     private static volatile boolean pause = false;
     private static volatile boolean done = false;
@@ -613,7 +614,7 @@ public class SplashProgress
      * Resource loading doesn't usually require this call.
      * Call {@link #resume()} when you're done.
      * @deprecated not a stable API, will break, don't use this yet
-     */
+     * /
     @Deprecated
     public static void pause()
     {
@@ -635,7 +636,7 @@ public class SplashProgress
 
     /**
      * @deprecated not a stable API, will break, don't use this yet
-     */
+     * /
     @Deprecated
     public static void resume()
     {
@@ -980,4 +981,5 @@ public class SplashProgress
     {
         return (int) (bytes / 1024L / 1024L);
     }
+    */
 }

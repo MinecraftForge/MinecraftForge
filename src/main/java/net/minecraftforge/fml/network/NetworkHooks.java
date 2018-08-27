@@ -23,11 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
-import net.minecraft.network.handshake.client.C00Handshake;
-import net.minecraft.network.play.client.CPacketCustomPayload;
-import net.minecraft.network.play.server.SPacketCustomPayload;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraft.network.handshake.client.CPacketHandshake;
 
 import java.util.Objects;
 
@@ -40,7 +36,7 @@ public class NetworkHooks
         return ip.contains("\0") ? Objects.equals(ip.split("\0")[1], NETVERSION) ? NETVERSION : ip.split("\0")[1] : NOVERSION;
     }
 
-    public static boolean accepts(final C00Handshake packet)
+    public static boolean accepts(final CPacketHandshake packet)
     {
         return Objects.equals(packet.getFMLVersion(), NETVERSION);
     }
@@ -52,36 +48,18 @@ public class NetworkHooks
 
     public static Packet<?> getEntitySpawningPacket(Entity entity)
     {
-        EntityRegistry.EntityRegistration er = EntityRegistry.instance().lookupModSpawn(entity.getClass(), false);
-        if (er == null || er.usesVanillaSpawning())
-        {
-            return null;
-        }
         return null;
     }
 
-    public static void onServerCustomPayload(final SPacketCustomPayload packet, final NetworkManager manager) {
-        NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(NetworkDirection.PLAY_TO_SERVER, packet.getBufferData(), manager));
+    public static void onCustomPayload(final ICustomPacket<?> packet, final NetworkManager manager) {
+        NetworkRegistry.findTarget(packet.getName()).
+                ifPresent(ni->ni.dispatch(packet.getDirection(), packet.getData(), manager));
     }
 
-    public static void onClientCustomPayload(final CPacketCustomPayload packet, final NetworkManager manager) {
-        NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(NetworkDirection.PLAY_TO_CLIENT, packet.getBufferData(), manager));
-    }
-
-    public static void onServerLoginCustomPayload(final SPacketCustomPayload packet, final NetworkManager manager) {
-        NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(NetworkDirection.LOGIN_TO_SERVER, packet.getBufferData(), manager));
-    }
-
-    public static void onClientLoginCustomPayload(final CPacketCustomPayload packet, final NetworkManager manager) {
-        NetworkRegistry.findTarget(new ResourceLocation(packet.getChannelName())).
-                ifPresent(ni->ni.dispatch(NetworkDirection.LOGIN_TO_CLIENT, packet.getBufferData(), manager));
-    }
-
-    public static void registerServerChannel(NetworkManager manager, C00Handshake packet)
+    public static void registerServerChannel(NetworkManager manager, CPacketHandshake packet)
     {
         manager.channel().attr(NetworkRegistry.FML_MARKER).set(packet.getFMLVersion());
     }
+
+
 }

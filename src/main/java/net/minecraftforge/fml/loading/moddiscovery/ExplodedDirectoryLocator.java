@@ -19,6 +19,9 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -33,23 +36,23 @@ import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 import static net.minecraftforge.fml.Logging.SCAN;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class ExplodedDirectoryLocator implements IModLocator {
     private static final String DIR = System.getProperty("fml.explodedDir", "modclasses");
+    private static final Logger LOGGER = LogManager.getLogger();
     private final Path rootDir;
 
     public ExplodedDirectoryLocator() {
         this.rootDir = FileSystems.getDefault().getPath(DIR);
         if (!Files.exists(this.rootDir)) {
-            fmlLog.debug(LOADING,"Creating directory {}" + this.rootDir);
+            LOGGER.debug(LOADING,"Creating directory {}" + this.rootDir);
             try
             {
                 Files.createDirectory(this.rootDir);
             }
             catch (IOException e)
             {
-                fmlLog.error(LOADING,"Error creating {}", this.rootDir, e);
+                LOGGER.error(LOADING,"Error creating {}", this.rootDir, e);
                 throw new RuntimeException(e);
             }
         }
@@ -75,13 +78,13 @@ public class ExplodedDirectoryLocator implements IModLocator {
 
     @Override
     public void scanFile(final ModFile modFile, final Consumer<Path> pathConsumer) {
-        fmlLog.debug(SCAN,"Scanning directory {}", rootDir);
+        LOGGER.debug(SCAN,"Scanning directory {}", rootDir);
         try (Stream<Path> files = Files.find(rootDir, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        fmlLog.debug(SCAN,"Directory scan complete {}", rootDir);
+        LOGGER.debug(SCAN,"Directory scan complete {}", rootDir);
     }
 
     @Override

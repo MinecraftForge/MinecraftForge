@@ -170,7 +170,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 public class ForgeHooks
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
     //TODO: Loot tables?
     static class SeedEntry extends WeightedRandom.Item

@@ -19,26 +19,52 @@
 
 package net.minecraftforge.fml.network;
 
+import it.unimi.dsi.fastutil.objects.Reference2ReferenceArrayMap;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.login.client.CPacketCustomPayloadLogin;
+import net.minecraft.network.login.server.SPacketCustomPayloadLogin;
+import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraftforge.fml.LogicalSide;
 
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public enum NetworkDirection
 {
-    PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT),
-    PLAY_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER),
-    LOGIN_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT),
-    LOGIN_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER);
+    PLAY_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, CPacketCustomPayload.class),
+    PLAY_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER, SPacketCustomPayload.class),
+    LOGIN_TO_SERVER(NetworkEvent.ClientCustomPayloadEvent::new, LogicalSide.CLIENT, CPacketCustomPayloadLogin.class),
+    LOGIN_TO_CLIENT(NetworkEvent.ServerCustomPayloadEvent::new, LogicalSide.SERVER, SPacketCustomPayloadLogin.class);
 
     private final BiFunction<PacketBuffer, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier;
     private final LogicalSide logicalSide;
+    private final Class<? extends Packet> packetClass;
 
-    NetworkDirection(BiFunction<PacketBuffer, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier, LogicalSide logicalSide)
+    private static final Reference2ReferenceArrayMap<Class<? extends Packet>, NetworkDirection> packetLookup;
+
+    static {
+        packetLookup = Stream.of(values()).
+                collect(Collectors.toMap(NetworkDirection::getPacketClass, Function.identity(), (m1,m2)->m1, Reference2ReferenceArrayMap::new));
+    }
+
+    NetworkDirection(BiFunction<PacketBuffer, Supplier<NetworkEvent.Context>, NetworkEvent> eventSupplier, LogicalSide logicalSide, Class<? extends Packet> clazz)
     {
         this.eventSupplier = eventSupplier;
         this.logicalSide = logicalSide;
+        this.packetClass = clazz;
+    }
+
+    private Class<? extends Packet> getPacketClass() {
+        return packetClass;
+    }
+    public static <T extends ICustomPacket<?>> NetworkDirection directionFor(Class<T> customPacket)
+    {
+        return packetLookup.get(customPacket);
     }
 
     public NetworkEvent getEvent(final PacketBuffer buffer, final Supplier<NetworkEvent.Context> manager) {

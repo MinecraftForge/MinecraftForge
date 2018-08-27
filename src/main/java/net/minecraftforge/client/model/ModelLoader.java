@@ -108,15 +108,17 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static net.minecraftforge.fml.Logging.MODELLOADING;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public final class ModelLoader extends ModelBakery
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
     private final Map<ModelResourceLocation, ModelBlockDefinition> multipartDefinitions = Maps.newHashMap();
     private final Map<ModelBlockDefinition, IModel> multipartModels = Maps.newHashMap();
@@ -939,7 +941,7 @@ public final class ModelLoader extends ModelBakery
             // ignoring pure ResourceLocation arguments, all things we care about pass ModelResourceLocation
             if(entry.getKey() instanceof ModelResourceLocation)
             {
-                fmlLog.debug(MODELLOADING, ()-> new ModelLoaderErrorMessage((ModelResourceLocation)entry.getKey(), entry.getValue(), modelRegistry, this.blockModelShapes, this::getVariantNames));
+                LOGGER.debug(MODELLOADING, ()-> new ModelLoaderErrorMessage((ModelResourceLocation)entry.getKey(), entry.getValue(), modelRegistry, this.blockModelShapes, this::getVariantNames));
                 final ModelResourceLocation location = (ModelResourceLocation)entry.getKey();
                 final IBakedModel model = modelRegistry.getObject(location);
                 if(model == null)
@@ -953,7 +955,7 @@ public final class ModelLoader extends ModelBakery
             IBakedModel model = modelRegistry.getObject(missing);
             if(model == null || model == missingModel)
             {
-                fmlLog.debug(MODELLOADING, ()-> new ModelLoaderErrorMessage(missing, null, modelRegistry, this.blockModelShapes, this::getVariantNames));
+                LOGGER.debug(MODELLOADING, ()-> new ModelLoaderErrorMessage(missing, null, modelRegistry, this.blockModelShapes, this::getVariantNames));
             }
             if(model == null)
             {

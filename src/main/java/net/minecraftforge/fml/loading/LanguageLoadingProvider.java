@@ -25,6 +25,8 @@ import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -36,10 +38,10 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class LanguageLoadingProvider
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final List<IModLanguageProvider> languageProviders = new ArrayList<>();
     private final ServiceLoader<IModLanguageProvider> serviceLoader;
     private final Map<String, ModLanguageWrapper> languageProviderMap = new HashMap<>();
@@ -79,7 +81,7 @@ public class LanguageLoadingProvider
             if (implementationVersion == null) {
                 implementationVersion = ForgeVersion.getVersion();
             }
-            fmlLog.debug(CORE, "Found system classpath language provider {}, version {}", lp.name(), implementationVersion);
+            LOGGER.debug(CORE, "Found system classpath language provider {}, version {}", lp.name(), implementationVersion);
             languageProviderMap.put(lp.name(), new ModLanguageWrapper(lp, new DefaultArtifactVersion(implementationVersion)));
         });
     }

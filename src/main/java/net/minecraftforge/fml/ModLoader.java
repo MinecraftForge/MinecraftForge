@@ -47,7 +47,7 @@ import static net.minecraftforge.fml.Logging.CORE;
 
 public class ModLoader
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static ModLoader INSTANCE;
     private final ClassLoader launchClassLoader;
     private final LoadingModList loadingModList;
@@ -97,7 +97,7 @@ public class ModLoader
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         LifecycleEventProvider.PREINIT.dispatch();
         GameData.fireRegistryEvents(rl -> !Objects.equals(rl, GameData.RECIPES));
-        SidedExecutor.runOn(Dist.CLIENT, ModLoader::fireClientEvents);
+        Boolean result = DistExecutor.callWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
         LifecycleEventProvider.SIDEDINIT.dispatch();
     }
 

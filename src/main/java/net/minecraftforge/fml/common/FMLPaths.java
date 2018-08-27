@@ -21,22 +21,23 @@ package net.minecraftforge.fml.common;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import net.minecraftforge.fml.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Objects;
 
 import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public enum FMLPaths
 {
     GAMEDIR(),
     MODSDIR("mods"),
     CONFIGDIR("config"),
-    FMLCONFIG(false, CONFIGDIR, "fml.cfg");
+    FMLCONFIG(false, CONFIGDIR, "fml.toml");
 
+    private static final Logger LOGGER = LogManager.getLogger();
     private final Path relativePath;
     private final boolean isDirectory;
     private Path absolutePath;
@@ -71,7 +72,7 @@ public enum FMLPaths
         for (FMLPaths path : FMLPaths.values())
         {
             path.absolutePath = rootPath.resolve(path.relativePath).toAbsolutePath();
-            fmlLog.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
+            LOGGER.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
             if (path.isDirectory)
             {
                 FileUtils.getOrCreateDirectory(path.absolutePath, path.name());

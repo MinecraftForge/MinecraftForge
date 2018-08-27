@@ -24,11 +24,11 @@ import net.minecraftforge.fml.ExtensionPoint;
 
 import java.util.function.Supplier;
 
-public class ModLoadingContext
+public class FMLModLoadingContext
 {
-    private static ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
+    private static ThreadLocal<FMLModLoadingContext> context = ThreadLocal.withInitial(FMLModLoadingContext::new);
     private FMLModContainer activeContainer;
-    public static ModLoadingContext get() {
+    public static FMLModLoadingContext get() {
         return context.get();
     }
 

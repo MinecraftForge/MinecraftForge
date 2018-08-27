@@ -223,12 +223,14 @@ public class ForgeGuiFactory implements IModGuiFactory
                 Property global = ForgeMod.getConfig().get(VERSION_CHECK_CAT, "Global", true);
 
                 List<Property> props = new ArrayList<Property>();
-
+// TODO
+/*
                 for (ModContainer mod : ForgeVersion.gatherMods().keySet())
                 {
                     values.remove(mod.getModId());
                     props.add(ForgeMod.getConfig().get(VERSION_CHECK_CAT, mod.getModId(), true)); //Get or make the value in the config
                 }
+*/
                 props.addAll(values.values()); // Add any left overs from the config
                 props.sort(Comparator.comparing(Property::getName));
 
@@ -378,12 +380,15 @@ public class ForgeGuiFactory implements IModGuiFactory
             private static Map<Object, String> getSelectableValues()
             {
                 Map<Object, String> selectableValues = new TreeMap<Object, String>();
+                // TODO
+/*
 
                 for (ModContainer mod : Loader.instance().getActiveModList())
                     // only add mods to the list that have a non-immutable ModContainer
                     if (!mod.isImmutable() && mod.getMod() != null)
                         selectableValues.put(mod.getModId(), mod.getName());
 
+*/
                 return selectableValues;
             }
 

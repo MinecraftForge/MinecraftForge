@@ -59,7 +59,7 @@ import org.apache.logging.log4j.MarkerManager;
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
-    private static Logger LOGGER = LogManager.getLogger("FML");
+    private static Logger LOGGER = LogManager.getLogger();
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
     private final BiMap<ResourceLocation, V> names = HashBiMap.create();
@@ -329,7 +329,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.names.put(key, value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
-        this.owners.put(new OverrideOwner(owner == null ? key.getResourceDomain() : owner, key), value);
+        this.owners.put(new OverrideOwner(owner == null ? key.getPath() : owner, key), value);
 
         if (isDelegated)
         {
@@ -683,7 +683,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
             }
 
-            int realId = add(newId, obj, primaryName == null ? itemName.getResourceDomain() : primaryName);
+            int realId = add(newId, obj, primaryName == null ? itemName.getPath() : primaryName);
             if (realId != newId)
                 LOGGER.warn(REGISTRIES,"Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
             ovs.remove(itemName);
@@ -936,7 +936,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     if (m == null)
                         defaulted.add(remap.key);
                     else
-                        this.add(remap.id, m, remap.key.getResourceDomain());
+                        this.add(remap.id, m, remap.key.getPath());
                 }
                 else if (action == MissingMappings.Action.IGNORE)
                 {

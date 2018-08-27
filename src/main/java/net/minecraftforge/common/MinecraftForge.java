@@ -58,7 +58,7 @@ public class MinecraftForge
     public static final IEventBus ORE_GEN_BUS = IEventBus.create();
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGE = MarkerManager.getMarker("FORGE");
 
     /**

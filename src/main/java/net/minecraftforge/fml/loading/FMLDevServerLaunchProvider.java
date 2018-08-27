@@ -23,6 +23,8 @@ import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.lang.reflect.Field;
 import java.net.URISyntaxException;
@@ -33,10 +35,12 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import static net.minecraftforge.fml.Logging.CORE;
-import static net.minecraftforge.fml.Logging.fmlLog;
 
 public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
+
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     public String name()
     {
@@ -75,7 +79,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
     {
         return () -> {
-            fmlLog.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
+            LOGGER.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
             super.beforeStart(launchClassLoader, myPath);
             launchClassLoader.addTargetPackageFilter(cn -> SKIPPACKAGES.stream().noneMatch(cn::startsWith));
             Field scl = ClassLoader.class.getDeclaredField("scl"); // Get system class loader
@@ -90,7 +94,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     @Override
     public void setup(IEnvironment environment)
     {
-        fmlLog.debug(CORE, "No jar creation necessary. Launch is dev environment");
+        LOGGER.debug(CORE, "No jar creation necessary. Launch is dev environment");
     }
 
     @Override

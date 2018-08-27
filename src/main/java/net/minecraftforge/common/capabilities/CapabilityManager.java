@@ -45,7 +45,7 @@ import static net.minecraftforge.fml.Logging.CAPABILITIES;
 public enum CapabilityManager
 {
     INSTANCE;
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Registers a capability to be consumed by others.

@@ -26,7 +26,7 @@ import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -45,7 +45,7 @@ import net.minecraftforge.common.util.INBTSerializable;
 public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider
 {
     private ICapabilityProvider[] caps;
-    private INBTSerializable<NBTBase>[] writers;
+    private INBTSerializable<INBTBase>[] writers;
     private String[] names;
 
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list)
@@ -57,7 +57,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, @Nullable ICapabilityProvider parent)
     {
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
-        List<INBTSerializable<NBTBase>> lstWriters = Lists.newArrayList();
+        List<INBTSerializable<INBTBase>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
 
         if (parent != null) // Parents go first!
@@ -65,7 +65,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             lstCaps.add(parent);
             if (parent instanceof INBTSerializable)
             {
-                lstWriters.add((INBTSerializable<NBTBase>)parent);
+                lstWriters.add((INBTSerializable<INBTBase>)parent);
                 lstNames.add("Parent");
             }
         }
@@ -76,7 +76,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             lstCaps.add(prov);
             if (prov instanceof INBTSerializable)
             {
-                lstWriters.add((INBTSerializable<NBTBase>)prov);
+                lstWriters.add((INBTSerializable<INBTBase>)prov);
                 lstNames.add(entry.getKey().toString());
             }
         }

@@ -17,12 +17,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.asm;
+package net.minecraftforge.fml.config;
 
-public class ItemStackTransformer extends FieldRedirectTransformer
+public class ModConfig
 {
-    public ItemStackTransformer()
-    {
-        super("net.minecraft.item.ItemStack", "Lnet/minecraft/item/Item;", "getItemRaw");
-    }
 }

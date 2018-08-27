@@ -32,9 +32,9 @@ import java.util.function.Supplier;
 
 public class NetworkInstance
 {
-    public String getChannelName()
+    public ResourceLocation getChannelName()
     {
-        return channelName.toString();
+        return channelName;
     }
 
     private final ResourceLocation channelName;

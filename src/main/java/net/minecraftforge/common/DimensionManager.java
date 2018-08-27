@@ -66,7 +66,7 @@ import javax.annotation.Nullable;
 
 public class DimensionManager
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker DIMMGR = MarkerManager.getMarker("DIMS");
     private static class Dimension
     {

@@ -40,7 +40,7 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 public class FMLModContainer extends ModContainer
 {
-    private static final Logger LOGGER = LogManager.getLogger("FML");
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ModFileScanData scanResults;
     private final IEventBus eventBus;
     private Object modInstance;
@@ -89,7 +89,7 @@ public class FMLModContainer extends ModContainer
     }
 
     private void beforeEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        ModLoadingContext.get().setActiveContainer(this);
+        FMLModLoadingContext.get().setActiveContainer(this);
         ModThreadContext.get().setActiveContainer(this);
     }
 
@@ -111,7 +111,7 @@ public class FMLModContainer extends ModContainer
 
     private void afterEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
         ModThreadContext.get().setActiveContainer(null);
-        ModLoadingContext.get().setActiveContainer(null);
+        FMLModLoadingContext.get().setActiveContainer(null);
         if (getCurrentState() == ModLoadingStage.ERROR) {
             LOGGER.error(LOADING,"An error occurred while dispatching event {} to {}", lifecycleEvent.fromStage(), getModId());
         }
