@@ -25,7 +25,7 @@
          p_174943_2_.func_177059_a(this);
          this.func_110569_e();
          this.func_147631_c();
-@@ -88,13 +99,55 @@
+@@ -88,29 +99,75 @@
          this.field_94258_i.clear();
          int j = Integer.MAX_VALUE;
          int k = 1 << this.field_147636_j;
@@ -48,18 +48,20 @@
  
 +    private int loadTexture(Stitcher stitcher, IResourceManager p_110571_1_, ResourceLocation location, TextureAtlasSprite textureatlassprite, net.minecraftforge.fml.common.ProgressManager.ProgressBar bar, int j, int k)
 +    {
-+        if (loadedSprites.contains(location)) {
++        if (loadedSprites.contains(location))
++        {
 +            return j;
 +        }
 +        ResourceLocation resourcelocation = this.func_184396_a(textureatlassprite);
 +        IResource iresource = null;
 +
-+        for(ResourceLocation loading : loadingSprites)
++        for (ResourceLocation loading : loadingSprites)
 +        {
-+            if(location.equals(loading))
++            if (location.equals(loading))
 +            {
-+                final String error = "circular model dependencies, stack: [" + com.google.common.base.Joiner.on(", ").join(loadingSprites) + "]";
++                final String error = "circular texture dependencies, stack: [" + com.google.common.base.Joiner.on(", ").join(loadingSprites) + "]";
 +                net.minecraftforge.fml.client.FMLClientHandler.instance().trackBrokenTexture(resourcelocation, error);
++                return j;
 +            }
 +        }
 +        loadingSprites.addLast(location);
@@ -74,6 +76,8 @@
 +                TextureAtlasSprite depSprite = field_110574_e.get(dependency.toString());
 +                j = loadTexture(stitcher, p_110571_1_, dependency, depSprite, bar, j, k);
 +            }
+             try
+             {
 +            if (textureatlassprite.hasCustomLoader(p_110571_1_, resourcelocation))
 +            {
 +                if (textureatlassprite.load(p_110571_1_, resourcelocation, l -> field_110574_e.get(l.toString())))
@@ -82,11 +86,13 @@
 +                }
 +            }
 +            else
-             try
-             {
++            {
                  PngSizeInfo pngsizeinfo = PngSizeInfo.func_188532_a(p_110571_1_.func_110536_a(resourcelocation));
-@@ -104,13 +157,13 @@
+                 iresource = p_110571_1_.func_110536_a(resourcelocation);
+                 boolean flag = iresource.func_110526_a("animation") != null;
+                 textureatlassprite.func_188538_a(pngsizeinfo, flag);
              }
++            }
              catch (RuntimeException runtimeexception)
              {
 -                field_147635_d.error("Unable to parse metadata from {}", resourcelocation, runtimeexception);
@@ -103,7 +109,7 @@
              }
              finally
              {
-@@ -122,16 +175,28 @@
+@@ -122,16 +179,28 @@
  
              if (j1 < k)
              {
@@ -134,7 +140,7 @@
          if (i1 < this.field_147636_j)
          {
              field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.field_94254_c, Integer.valueOf(this.field_147636_j), Integer.valueOf(i1), Integer.valueOf(l));
-@@ -140,9 +205,11 @@
+@@ -140,9 +209,11 @@
  
          this.field_94249_f.func_147963_d(this.field_147636_j);
          stitcher.func_110934_a(this.field_94249_f);
@@ -146,7 +152,7 @@
              stitcher.func_94305_f();
          }
          catch (StitcherException stitcherexception)
-@@ -151,12 +218,16 @@
+@@ -151,12 +222,16 @@
          }
  
          field_147635_d.info("Created: {}x{} {}-atlas", Integer.valueOf(stitcher.func_110935_a()), Integer.valueOf(stitcher.func_110936_b()), this.field_94254_c);
@@ -164,7 +170,7 @@
              {
                  String s = textureatlassprite1.func_94215_i();
                  map.remove(s);
-@@ -186,6 +257,8 @@
+@@ -186,6 +261,8 @@
          {
              textureatlassprite2.func_94217_a(this.field_94249_f);
          }
@@ -173,7 +179,7 @@
      }
  
      private boolean func_184397_a(IResourceManager p_184397_1_, final TextureAtlasSprite p_184397_2_)
-@@ -195,7 +268,7 @@
+@@ -195,7 +272,7 @@
          label62:
          {
              boolean flag;
@@ -182,7 +188,7 @@
              try
              {
                  iresource = p_184397_1_.func_110536_a(resourcelocation);
-@@ -292,7 +365,7 @@
+@@ -292,7 +369,7 @@
          }
          else
          {
@@ -191,7 +197,7 @@
  
              if (textureatlassprite == null)
              {
-@@ -318,4 +391,52 @@
+@@ -318,4 +395,52 @@
      {
          return this.field_94249_f;
      }
