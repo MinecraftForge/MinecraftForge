@@ -24,11 +24,15 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 
+import net.minecraftforge.client.render.BatchedBufferConfig;
+import net.minecraftforge.client.render.BatchedTileEntityRenderer;
+import net.minecraftforge.client.render.IBufferDrawer;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.cache.CacheBuilder;
@@ -123,5 +127,12 @@ public class MinecraftForgeClient
     {
         regionCache.invalidateAll();
         regionCache.cleanUp();
+    }
+
+    public static BatchedBufferConfig createCustomFastTESR(int glMode, VertexFormat format, IBufferDrawer drawer)
+    {
+        BatchedBufferConfig config = new BatchedBufferConfig(format, glMode, drawer);
+        BatchedTileEntityRenderer.registerBatchedVertexFormat(config);
+        return config;
     }
 }

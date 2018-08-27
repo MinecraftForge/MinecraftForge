@@ -19,6 +19,10 @@
 
 package net.minecraftforge.client.model.animation;
 
+import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.render.BatchedBufferConfig;
+import net.minecraftforge.client.render.BlockBufferDrawer;
+import net.minecraftforge.client.render.IBufferDrawer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -31,38 +35,36 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 
+import java.util.Collections;
+
+
 public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T>
 {
+    private final BatchedBufferConfig config;
+    @Deprecated
+    public FastTESR()
+    {
+        this(BatchedBufferConfig.BLOCK);
+    }
+
+    public FastTESR(BatchedBufferConfig config)
+    {
+        this.config = config;
+    }
+
     @Override
     public final void render(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial)
     {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.enableBlend();
-        GlStateManager.disableCull();
+        config.drawer.preDraw(MinecraftForgeClient.getRenderPass(), buffer);
+        buffer.begin(config.glMode, config.vertexFormat);
 
-        if (Minecraft.isAmbientOcclusionEnabled())
-        {
-            GlStateManager.shadeModel(GL11.GL_SMOOTH);
-        }
-        else
-        {
-            GlStateManager.shadeModel(GL11.GL_FLAT);
-        }
-
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-
-        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partial, buffer);
+        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partial, Collections.singletonMap(this.config, tessellator));
         buffer.setTranslation(0, 0, 0);
 
         tessellator.draw();
 
-        RenderHelper.enableStandardItemLighting();
+        config.drawer.postDraw(MinecraftForgeClient.getRenderPass());
     }
-
-    @Override
-    public abstract void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer);
 }
