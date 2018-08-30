@@ -34,7 +34,7 @@ import javax.annotation.Nullable;
  *
  * @param <V> The top level type for the registry
  */
-public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
+public interface IForgeRegistry<V extends ForgeRegistryEntry<V>> extends Iterable<V>
 {
     Class<V> getRegistrySuperType();
 
@@ -72,7 +72,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt
      * on the client side from a server side synchronization, or when a world is loaded.
      */
-    interface AddCallback<V extends IForgeRegistryEntry<V>>
+    interface AddCallback<V extends ForgeRegistryEntry<V>>
     {
         void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj, @Nullable V oldObj);
     }
@@ -81,7 +81,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      * Callback fired when the registry is cleared. This is done before a registry is reloaded from client
      * or server.
      */
-    interface ClearCallback<V extends IForgeRegistryEntry<V>>
+    interface ClearCallback<V extends ForgeRegistryEntry<V>>
     {
         void onClear(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
@@ -89,7 +89,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     /**
      * Callback fired when a registry instance is created. Populate slave maps here.
      */
-    interface CreateCallback<V extends IForgeRegistryEntry<V>>
+    interface CreateCallback<V extends ForgeRegistryEntry<V>>
     {
         void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
@@ -105,7 +105,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     /**
      * Factory for creating dummy entries, allowing worlds to be loaded and keep the missing block references.
      */
-    interface DummyFactory<V extends IForgeRegistryEntry<V>>
+    interface DummyFactory<V extends ForgeRegistryEntry<V>>
     {
         V createDummy(ResourceLocation key);
     }
@@ -113,7 +113,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     /**
      *
      */
-    interface MissingFactory<V extends IForgeRegistryEntry<V>>
+    interface MissingFactory<V extends ForgeRegistryEntry<V>>
     {
         V createMissing(ResourceLocation key, boolean isNetwork);
     }

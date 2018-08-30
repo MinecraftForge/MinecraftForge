@@ -28,7 +28,6 @@ import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -51,6 +50,7 @@ public class ForgeInternalHandler
         {
             ItemStack stack = ((EntityItem)entity).getItem();
             Item item = stack.getItem();
+/*
             if (item.hasCustomEntity(stack))
             {
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
@@ -61,6 +61,7 @@ public class ForgeInternalHandler
                     event.getWorld().spawnEntity(newEntity);
                 }
             }
+*/
         }
     }
 

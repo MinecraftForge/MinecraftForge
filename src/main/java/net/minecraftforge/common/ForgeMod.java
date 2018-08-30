@@ -33,15 +33,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.StatList;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -49,16 +46,10 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.server.command.ForgeCommand;
 
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
@@ -118,10 +109,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
     }
 
-    public static Configuration getConfig()
-    {
-        return config;
-    }
+//    public static Configuration getConfig()
+//    {
+//        return config;
+//    }
 
     private static void remapGeneralPropertyToClient(String key)
     {
@@ -340,6 +331,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         }
     }
 
+/*
     public void missingMapping(RegistryEvent.MissingMappings<Item> event)
     {
         for (MissingMappings.Mapping<Item> entry : event.getAllMappings())
@@ -351,10 +343,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
             }
         }
     }
+*/
 
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        UsernameCache.setUsername(event.player.getPersistentID(), event.player.getGameProfile().getName());
+        UsernameCache.setUsername(event.player.getUniqueID(), event.player.getGameProfile().getName());
     }
 
 
@@ -374,6 +367,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         }
     }
 
+/*
     public void registrItems(RegistryEvent.Register<Item> event)
     {
         // Add and register the forge universal bucket, if it's enabled
@@ -385,6 +379,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }
+*/
 
     public void postInit(FMLPostInitializationEvent evt)
     {
@@ -394,6 +389,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     private static void registerAllBiomesAndGenerateEvents()
     {
+/*
         for (Biome biome : ForgeRegistries.BIOMES.getValuesCollection())
         {
             if (biome.decorator instanceof DeferredBiomeDecorator)
@@ -404,16 +400,17 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
             BiomeDictionary.ensureHasTypes(biome);
         }
+*/
     }
 
     public void onAvailable(FMLLoadCompleteEvent evt)
     {
-        FluidRegistry.validateFluidRegistry();
+//        FluidRegistry.validateFluidRegistry();
     }
 
     public void serverStarting(FMLServerStartingEvent evt)
     {
-        evt.registerServerCommand(new ForgeCommand());
+
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)
@@ -432,7 +429,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, Map<String, INBTBase> propertyMap, NBTTagCompound tag)
+    public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
         FluidRegistry.loadFluidDefaults(tag);
@@ -440,13 +437,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public void mappingChanged(FMLModIdMappingEvent evt)
     {
-        OreDictionary.rebakeMap();
-        StatList.reinit();
-        Ingredient.invalidateAll();
-        DistExecutor.runWhenOn(Dist.CLIENT, ()-> () -> {
-            Minecraft.getMinecraft().populateSearchTreeManager();
-            Minecraft.getMinecraft().getSearchTreeManager().onResourceManagerReload(Minecraft.getMinecraft().getResourceManager());
-        });
     }
 
     @Override

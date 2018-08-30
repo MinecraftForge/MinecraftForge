@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/Block.java
++++ b/net/minecraft/block/Block.java
+@@ -75,7 +75,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class Block implements IItemProvider {
++public class Block extends net.minecraftforge.registries.ForgeRegistryEntry<Block> implements IItemProvider {
+    protected static final Logger field_196273_d = LogManager.getLogger();
+    private static final ResourceLocation AIR_ID = new ResourceLocation("air");
+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> REGISTRY = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(AIR_ID);

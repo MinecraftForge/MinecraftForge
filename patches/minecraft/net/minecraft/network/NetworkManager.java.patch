@@ -1,0 +1,19 @@
+--- a/net/minecraft/network/NetworkManager.java
++++ b/net/minecraft/network/NetworkManager.java
+@@ -384,6 +384,16 @@
+       return this.field_211397_t;
+    }
+ 
++   public Channel channel()
++   {
++      return channel;
++   }
++
++   public EnumPacketDirection getDirection()
++   {
++      return this.direction;
++   }
++
+    static class QueuedPacket {
+       private final Packet<?> packet;
+       @Nullable

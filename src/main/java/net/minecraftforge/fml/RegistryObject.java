@@ -21,7 +21,7 @@ package net.minecraftforge.fml;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 
 import java.util.Objects;
@@ -32,20 +32,20 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public final class RegistryObject<T extends IForgeRegistryEntry<? super T>>
+public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
 {
     private final String name;
     private final IForgeRegistry<?> owningRegistry;
     private T value;
     private boolean searched;
 
-    public static <T extends IForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<T>> registryType) {
+    public static <T extends ForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<T>> registryType) {
         return new RegistryObject<>(name, registryType);
     }
 
     private static RegistryObject<?> EMPTY = new RegistryObject<>();
 
-    private static <T extends IForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
+    private static <T extends ForgeRegistryEntry<? super T>> RegistryObject<T> empty() {
         @SuppressWarnings("unchecked")
         RegistryObject<T> t = (RegistryObject<T>) EMPTY;
         return t;
@@ -57,7 +57,7 @@ public final class RegistryObject<T extends IForgeRegistryEntry<? super T>>
         this.owningRegistry = null;
     }
 
-    private <V extends IForgeRegistryEntry<V>> RegistryObject(String name, Supplier<Class<V>> registryType)
+    private <V extends ForgeRegistryEntry<V>> RegistryObject(String name, Supplier<Class<V>> registryType)
     {
         this.name = name;
         IForgeRegistry<V> registry;

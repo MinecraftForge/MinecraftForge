@@ -21,8 +21,6 @@ package net.minecraftforge.registries;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -30,14 +28,14 @@ import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
 
-import com.google.common.collect.Maps;
-
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
-import net.minecraftforge.fml.common.FMLLog;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespacedDefaultedByKey<ResourceLocation, V> implements ILockableRegistry
+class NamespacedDefaultedWrapper<V extends ForgeRegistryEntry<V>> extends RegistryNamespacedDefaultedByKey<ResourceLocation, V> implements ILockableRegistry
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private boolean locked = false;
     private ForgeRegistry<V> delegate;
 
@@ -59,7 +57,7 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
 
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
-            FMLLog.log.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
+            LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
     }
 
     @Override
@@ -132,7 +130,7 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
     @Override
     public void lock(){ this.locked = true; }
 
-    public static class Factory<V extends IForgeRegistryEntry<V>> implements IForgeRegistry.CreateCallback<V>
+    public static class Factory<V extends ForgeRegistryEntry<V>> implements IForgeRegistry.CreateCallback<V>
     {
         public static final ResourceLocation ID = new ResourceLocation("forge", "registry_defaulted_wrapper");
         @Override

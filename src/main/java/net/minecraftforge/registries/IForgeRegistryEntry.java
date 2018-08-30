@@ -41,7 +41,7 @@ public interface IForgeRegistryEntry<V>
      *
      * @param name Unique registry name
      * @return This instance
-     */
+     * /
     V setRegistryName(ResourceLocation name);
 
     /**
@@ -50,7 +50,7 @@ public interface IForgeRegistryEntry<V>
      * If neither are valid null is returned.
      *
      * @return Unique identifier or null.
-     */
+     * /
     @Nullable
     ResourceLocation getRegistryName();
 
@@ -89,4 +89,5 @@ public interface IForgeRegistryEntry<V>
         @Override
         public final Class<T> getRegistryType() { return (Class<T>) token.getRawType(); };
     }
+    */
 }

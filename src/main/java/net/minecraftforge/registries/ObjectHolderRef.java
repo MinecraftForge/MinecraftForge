@@ -66,7 +66,7 @@ class ObjectHolderRef
                 }
                 else
                 {
-                    this.injectedObject = ((IForgeRegistryEntry)existing).getRegistryName();
+                    this.injectedObject = ((ForgeRegistryEntry)existing).getRegistryName();
                 }
             }
             catch (IllegalAccessException e)
@@ -105,9 +105,9 @@ class ObjectHolderRef
         {
             Class<?> type = typesToExamine.remove();
             Collections.addAll(typesToExamine, type.getInterfaces());
-            if (IForgeRegistryEntry.class.isAssignableFrom(type))
+            if (ForgeRegistryEntry.class.isAssignableFrom(type))
             {
-                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<IForgeRegistryEntry>)type);
+                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<ForgeRegistryEntry>)type);
                 final Class<?> parentType = type.getSuperclass();
                 if (parentType != null)
                 {

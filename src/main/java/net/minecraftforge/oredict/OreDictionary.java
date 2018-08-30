@@ -54,6 +54,7 @@ import javax.annotation.Nonnull;
 
 public class OreDictionary
 {
+/*
     private static final boolean DEBUG = false;
     private static boolean hasInit = false;
     private static List<String>          idToName = new ArrayList<String>();
@@ -66,7 +67,7 @@ public class OreDictionary
     /**
      * Minecraft changed from -1 to Short.MAX_VALUE in 1.5 release for the "block wildcard". Use this in case it
      * changes again.
-     */
+     * /
     public static final int WILDCARD_VALUE = Short.MAX_VALUE;
 
     static {
@@ -454,7 +455,7 @@ public class OreDictionary
      *
      * @param name The unique name for this ore 'oreIron', 'ingotIron', etc..
      * @return A number representing the ID for this ore type
-     */
+     * /
     public static int getOreID(String name)
     {
         Integer val = nameToId.get(name);
@@ -475,7 +476,7 @@ public class OreDictionary
      *
      * @param id The ID to translate to a string
      * @return The String name, or "Unknown" if not found.
-     */
+     * /
     public static String getOreName(int id)
     {
         return (id >= 0 && id < idToName.size()) ? idToName.get(id) : "Unknown";
@@ -487,7 +488,7 @@ public class OreDictionary
      *
      * @param stack The item stack of the ore.
      * @return An array of ids that this ore is registered as.
-     */
+     * /
     public static int[] getOreIDs(@Nonnull ItemStack stack)
     {
         if (stack.isEmpty()) throw new IllegalArgumentException("Stack can not be invalid!");
@@ -529,7 +530,7 @@ public class OreDictionary
      *
      * @param name The ore name, directly calls getOreID
      * @return An arrayList containing ItemStacks registered for this ore
-     */
+     * /
     public static NonNullList<ItemStack> getOres(String name)
     {
         return getOres(getOreID(name));
@@ -549,7 +550,7 @@ public class OreDictionary
      * @param name The ore name, directly calls getOreID if the flag is TRUE
      * @param alwaysCreateEntry Flag - should a new entry be created if empty
      * @return An arraylist containing ItemStacks registered for this ore
-     */
+     * /
     public static NonNullList<ItemStack> getOres(String name, boolean alwaysCreateEntry)
     {
         if (alwaysCreateEntry) {
@@ -567,7 +568,7 @@ public class OreDictionary
      *
      * @param name The ore name
      * @return Whether or not that name is in the Ore Dictionary.
-     */
+     * /
     public static boolean doesOreNameExist(String name)
     {
         return nameToId.get(name) != null;
@@ -589,7 +590,7 @@ public class OreDictionary
      *
      * @param id The ore ID, see getOreID
      * @return An List containing ItemStacks registered for this ore
-     */
+     * /
     private static NonNullList<ItemStack> getOres(int id)
     {
         return idToStackUn.size() > id ? idToStackUn.get(id) : EMPTY_LIST;
@@ -645,7 +646,7 @@ public class OreDictionary
      *
      * @param name The name of the ore
      * @param ore The ore's ItemStack
-     */
+     * /
     private static void registerOreImpl(String name, @Nonnull ItemStack ore)
     {
         if ("Unknown".equals(name)) return; //prevent bad IDs.
@@ -750,4 +751,5 @@ public class OreDictionary
             }
         }
     }
+    */
 }

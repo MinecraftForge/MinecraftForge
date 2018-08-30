@@ -1,0 +1,11 @@
+--- a/net/minecraft/potion/PotionType.java
++++ b/net/minecraft/potion/PotionType.java
+@@ -7,7 +7,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
+ 
+-public class PotionType {
++public class PotionType extends net.minecraftforge.registries.ForgeRegistryEntry<PotionType> {
+    private static final ResourceLocation EMPTY = new ResourceLocation("empty");
+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> REGISTRY = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(EMPTY);
+    private final String baseName;

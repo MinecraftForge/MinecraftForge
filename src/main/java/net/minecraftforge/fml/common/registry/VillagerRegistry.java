@@ -27,6 +27,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.entity.monster.EntityZombieVillager;
 import net.minecraftforge.fml.RegistryObject;
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.entity.passive.EntityVillager;
@@ -34,7 +35,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import javax.annotation.Nullable;
 
@@ -188,7 +188,7 @@ public class VillagerRegistry
         }
     }
 
-    public static class VillagerProfession extends IForgeRegistryEntry.Impl<VillagerProfession>
+    public static class VillagerProfession extends ForgeRegistryEntry<VillagerProfession>
     {
         private ResourceLocation name;
         private ResourceLocation texture;

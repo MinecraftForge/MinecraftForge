@@ -1,0 +1,12 @@
+--- a/net/minecraft/network/play/client/CPacketCustomPayload.java
++++ b/net/minecraft/network/play/client/CPacketCustomPayload.java
+@@ -9,7 +9,8 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class CPacketCustomPayload implements Packet<INetHandlerPlayServer> {
++public class CPacketCustomPayload implements Packet<INetHandlerPlayServer>, net.minecraftforge.fml.network.ICustomPacket<CPacketCustomPayload>
++{
+    public static final ResourceLocation field_210344_a = new ResourceLocation("minecraft:brand");
+    private ResourceLocation channel;
+    private PacketBuffer data;

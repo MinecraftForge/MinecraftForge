@@ -43,7 +43,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
+public class ShapelessOreRecipe {} /*extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
     @Nonnull
     protected ItemStack output = ItemStack.EMPTY;
@@ -158,3 +158,4 @@ public class ShapelessOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implem
         return new ShapelessOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), ings, itemstack);
     }
 }
+*/

@@ -22,6 +22,7 @@ package net.minecraftforge.event;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import com.google.common.collect.ImmutableList;
@@ -29,13 +30,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.eventbus.api.GenericEvent;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 
 
 /**
  * RegistryEvent supertype.
  */
-public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEvent<T>
+public class RegistryEvent<T extends ForgeRegistryEntry<T>> extends GenericEvent<T>
 {
     RegistryEvent(Class<T> clazz) {
         super(clazz);
@@ -58,7 +58,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
      * ObjectHolders will reload between Blocks and Items, and after all registries have been visited.
      * @param <T> The registry top level type
      */
-    public static class Register<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T>
+    public static class Register<T extends ForgeRegistryEntry<T>> extends RegistryEvent<T>
     {
         private final IForgeRegistry<T> registry;
         private final ResourceLocation name;
@@ -82,7 +82,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
 
     }
 
-    public static class MissingMappings<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T>
+    public static class MissingMappings<T extends ForgeRegistryEntry<T>> extends RegistryEvent<T>
     {
         private final IForgeRegistry<T> registry;
         private final ResourceLocation name;
@@ -114,7 +114,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
 
         public ImmutableList<Mapping<T>> getMappings()
         {
-            return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getResourceDomain().equals(this.activeMod.getModId())).collect(Collectors.toList()));
+            return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getNamespace().equals(this.activeMod.getModId())).collect(Collectors.toList()));
         }
 
         public ImmutableList<Mapping<T>> getAllMappings()
@@ -154,7 +154,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             REMAP
         }
 
-        public static class Mapping<T extends IForgeRegistryEntry<T>>
+        public static class Mapping<T extends ForgeRegistryEntry<T>>
         {
             public final IForgeRegistry<T> registry;
             private final IForgeRegistry<T> pool;

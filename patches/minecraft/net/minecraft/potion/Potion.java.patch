@@ -1,0 +1,11 @@
+--- a/net/minecraft/potion/Potion.java
++++ b/net/minecraft/potion/Potion.java
+@@ -24,7 +24,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class Potion {
++public class Potion extends net.minecraftforge.registries.ForgeRegistryEntry<Potion> {
+    public static final RegistryNamespaced<ResourceLocation, Potion> REGISTRY = new RegistryNamespaced<ResourceLocation, Potion>();
+    private final Map<IAttribute, AttributeModifier> attributeModifierMap = Maps.<IAttribute, AttributeModifier>newHashMap();
+    private final boolean isBadEffect;

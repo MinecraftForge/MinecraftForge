@@ -19,9 +19,7 @@
 
 package net.minecraftforge.common;
 
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 import java.util.Collections;
@@ -35,7 +33,6 @@ import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -86,8 +83,6 @@ public class MinecraftForge
    {
        LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
-       OreDictionary.getOreName(0);
-
        UsernameCache.load();
        // Load before all the mods, so MC owns the MC fluids
        FluidRegistry.validateFluidRegistry();
@@ -100,6 +95,7 @@ public class MinecraftForge
 
 
 
+/*
    public static void preloadCrashClasses(ASMDataTable table, String modID, Set<String> classes)
    {
        //Find all ICrashReportDetail's handlers and preload them.
@@ -129,4 +125,5 @@ public class MinecraftForge
            }
        }
    }
+*/
 }

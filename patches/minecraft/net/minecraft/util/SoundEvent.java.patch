@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/SoundEvent.java
++++ b/net/minecraft/util/SoundEvent.java
+@@ -4,7 +4,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class SoundEvent {
++public class SoundEvent extends net.minecraftforge.registries.ForgeRegistryEntry<SoundEvent> {
+    public static final RegistryNamespaced<ResourceLocation, SoundEvent> REGISTRY = new RegistryNamespaced<ResourceLocation, SoundEvent>();
+    private final ResourceLocation soundName;
+ 

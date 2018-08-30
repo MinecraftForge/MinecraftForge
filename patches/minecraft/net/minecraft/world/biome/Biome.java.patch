@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/biome/Biome.java
++++ b/net/minecraft/world/biome/Biome.java
+@@ -145,7 +145,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class Biome {
++public abstract class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> {
+    public static final Logger LOGGER = LogManager.getLogger();
+    public static final WorldCarver<ProbabilityConfig> field_201907_b = new CaveWorldCarver();
+    public static final WorldCarver<ProbabilityConfig> field_201908_c = new NetherCaveWorldCarver();

@@ -50,8 +50,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
-public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implements IShapedRecipe
+public class ShapedOreRecipe //extends IForgeRegistryEntry.Impl<IRecipe> implements IShapedRecipe
 {
+/*
     @Deprecated
     public static final int MAX_CRAFT_GRID_WIDTH = 3;
     @Deprecated
@@ -110,7 +111,7 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
 
     /**
      * Based on {@link net.minecraft.item.crafting.ShapedRecipes#checkMatch(InventoryCrafting, int, int, boolean)}
-     */
+     * /
     protected boolean checkMatch(InventoryCrafting inv, int startX, int startY, boolean mirror)
     {
         for (int x = 0; x < inv.getWidth(); x++)
@@ -254,4 +255,5 @@ public class ShapedOreRecipe extends IForgeRegistryEntry.Impl<IRecipe> implement
         ItemStack result = CraftingHelper.getItemStack(JsonUtils.getJsonObject(json, "result"), context);
         return new ShapedOreRecipe(group.isEmpty() ? null : new ResourceLocation(group), result, primer);
     }
+    */
 }

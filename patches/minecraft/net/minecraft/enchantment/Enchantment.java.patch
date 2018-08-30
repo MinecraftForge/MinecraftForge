@@ -1,0 +1,11 @@
+--- a/net/minecraft/enchantment/Enchantment.java
++++ b/net/minecraft/enchantment/Enchantment.java
+@@ -18,7 +18,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public abstract class Enchantment {
++public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
+    public static final RegistryNamespaced<ResourceLocation, Enchantment> REGISTRY = new RegistryNamespaced<ResourceLocation, Enchantment>();
+    private final EntityEquipmentSlot[] applicableEquipmentTypes;
+    private final Enchantment.Rarity rarity;

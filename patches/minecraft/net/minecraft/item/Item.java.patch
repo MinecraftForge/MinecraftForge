@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/Item.java
++++ b/net/minecraft/item/Item.java
+@@ -50,7 +50,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class Item implements IItemProvider {
++public class Item extends net.minecraftforge.registries.ForgeRegistryEntry<Item> implements IItemProvider {
+    public static final RegistryNamespaced<ResourceLocation, Item> REGISTRY = new RegistryNamespaced<ResourceLocation, Item>();
+    public static final Map<Block, Item> BLOCK_TO_ITEM = Maps.<Block, Item>newHashMap();
+    private static final IItemPropertyGetter DAMAGED_GETTER = (p_210306_0_, p_210306_1_, p_210306_2_) -> {

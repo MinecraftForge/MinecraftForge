@@ -31,8 +31,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
 
-public class OreIngredient extends Ingredient
+public class OreIngredient //extends Ingredient
 {
+/*
     private NonNullList<ItemStack> ores;
     private IntList itemIds = null;
     private ItemStack[] array = null;
@@ -121,4 +122,5 @@ public class OreIngredient extends Ingredient
     {
         return true;
     }
+    */
 }
