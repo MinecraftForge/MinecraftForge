@@ -212,6 +212,11 @@ public class DummyConfigElement implements IConfigElement
         this(name, defaultValue, type, langKey, validValues, null, null, null);
     }
     
+    public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey, String[] validValues, String[] validValuesDisplay)
+    {
+    	this(name, defaultValue, type, langKey, validValues, validValuesDisplay, null, null, null);
+    }
+    
     public DummyConfigElement(String name, Object defaultValue, ConfigGuiType type, String langKey)
     {
         this(name, defaultValue, type, langKey, null, null, null, null);

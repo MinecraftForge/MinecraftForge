@@ -99,35 +99,45 @@ public class Property
 
     public Property(String name, String value, Type type)
     {
-        this(name, value, type, false, new String[0], name);
+        this(name, value, type, false, new String[0], new String[0], name);
     }
 
     public Property(String name, String value, Type type, boolean read)
     {
-        this(name, value, type, read, new String[0], name);
+        this(name, value, type, read, new String[0], new String[0], name);
     }
 
     public Property(String name, String value, Type type, String[] validValues)
     {
-        this(name, value, type, false, validValues, name);
+        this(name, value, type, false, validValues, new String[0], name);
+    }
+    
+    public Property(String name, String value, Type type, String[] validValues, String[] validValuesDisplay)
+    {
+        this(name, value, type, false, validValues, validValuesDisplay, name);
     }
 
     public Property(String name, String value, Type type, String langKey)
     {
-        this(name, value, type, false, new String[0], langKey);
+        this(name, value, type, false, new String[0], new String[0], langKey);
     }
 
     public Property(String name, String value, Type type, boolean read, String langKey)
     {
-        this(name, value, type, read, new String[0], langKey);
+        this(name, value, type, read, new String[0], new String[0], langKey);
     }
 
     public Property(String name, String value, Type type, String[] validValues, String langKey)
     {
-        this(name, value, type, false, validValues, langKey);
+        this(name, value, type, false, validValues, new String[0], langKey);
     }
 
-    Property(String name, String value, Type type, boolean read, String[] validValues, String langKey)
+    public Property(String name, String value, Type type, String[] validValues, String[] validValuesDisplay, String langKey)
+    {
+        this(name, value, type, false, validValues, validValuesDisplay, langKey);
+    }
+
+    Property(String name, String value, Type type, boolean read, String[] validValues, String[] validValuesDisplay, String langKey)
     {
         setName(name);
         this.value = value;
@@ -138,6 +148,7 @@ public class Property
         this.defaultValue = value;
         this.defaultValues = new String[0];
         this.validValues = validValues;
+        this.validValuesDisplay = validValues;
         this.isListLengthFixed = false;
         this.maxListLength = -1;
         this.minValue = String.valueOf(Integer.MIN_VALUE);
@@ -168,6 +179,11 @@ public class Property
 
     Property(String name, String[] values, Type type, boolean read, String[] validValues, String langKey)
     {
+    	this(name, values, type, read, validValues, new String[0], langKey);
+    }
+
+    Property(String name, String[] values, Type type, boolean read, String[] validValues, String[] validValuesDisplay, String langKey)
+    {
         setName(name);
         this.type   = type;
         this.values = Arrays.copyOf(values, values.length);
@@ -180,6 +196,7 @@ public class Property
         this.defaultValue = this.defaultValue.replaceFirst(", ", "");
         this.defaultValues = Arrays.copyOf(values, values.length);
         this.validValues = validValues;
+        this.validValuesDisplay = validValues;
         this.isListLengthFixed = false;
         this.maxListLength = -1;
         this.minValue = String.valueOf(Integer.MIN_VALUE);
