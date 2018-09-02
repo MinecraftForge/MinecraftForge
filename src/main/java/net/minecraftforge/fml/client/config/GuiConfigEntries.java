@@ -481,8 +481,8 @@ public class GuiConfigEntries extends GuiListExtended
 
         protected String getValidValueDisplay()
         {
-        	String[] validValuesDisplay = configElement.getValidValuesDisplay();
-        	return validValuesDisplay != null && validValuesDisplay.length > 0 ? validValuesDisplay[currentIndex] : configElement.getValidValues()[currentIndex];
+            String[] validValuesDisplay = configElement.getValidValuesDisplay();
+            return validValuesDisplay != null && validValuesDisplay.length > 0 ? validValuesDisplay[currentIndex] : configElement.getValidValues()[currentIndex];
         }
 
         @Override

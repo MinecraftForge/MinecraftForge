@@ -263,8 +263,8 @@ public abstract class FieldWrapper implements IFieldWrapper
             List<String> listValidValuesDisplay = Lists.newArrayList();
             for (Enum e : ((Class<? extends Enum>) field.getType()).getEnumConstants())
             {
-            	listValidValues.add(e.name());
-            	listValidValuesDisplay.add(e.toString());
+                listValidValues.add(e.name());
+                listValidValuesDisplay.add(e.toString());
             }
 
             prop.setValidationPattern(Pattern.compile(PIPE.join(listValidValues)));

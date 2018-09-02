@@ -134,22 +134,22 @@ public class ConfigAnnotationTest
 
         public enum TEST
         {
-        	BIG("Big"),
-        	BAD("Bad"),
-        	WOLF("Wolf");
+            BIG("Big"),
+            BAD("Bad"),
+            WOLF("Wolf");
 
-        	private String name;
+            private String name;
 
-        	private TEST(String name)
-        	{
-        		this.name = name;
-        	}
+            private TEST(String name)
+            {
+                this.name = name;
+            }
 
-        	@Override
-        	public String toString()
-        	{
-        		return name;
-        	}
+            @Override
+            public String toString()
+            {
+                return name;
+            }
         }
         public static class NestedType
         {

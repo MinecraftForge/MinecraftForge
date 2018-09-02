@@ -179,7 +179,7 @@ public class Property
 
     Property(String name, String[] values, Type type, boolean read, String[] validValues, String langKey)
     {
-    	this(name, values, type, read, validValues, new String[0], langKey);
+        this(name, values, type, read, validValues, new String[0], langKey);
     }
 
     Property(String name, String[] values, Type type, boolean read, String[] validValues, String[] validValuesDisplay, String langKey)
