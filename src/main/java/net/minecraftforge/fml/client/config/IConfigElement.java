@@ -173,6 +173,12 @@ public interface IConfigElement
     String[] getValidValues();
     
     /**
+     * [Property] Gets a String array of the versions of this property's valid values that will display in the config GUI.
+     * This is generally used for String properties to allow the user to select a value from a list of valid values.
+     */
+    String[] getValidValuesDisplay();
+    
+    /**
      * [Property] Gets this property's minimum value.
      */
     Object getMinValue();

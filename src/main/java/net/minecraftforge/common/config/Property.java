@@ -78,6 +78,7 @@ public class Property
     private String[] values;
     private String[] defaultValues;
     private String[] validValues;
+    private String[] validValuesDisplay;
     private String langKey;
     private String minValue;
     private String maxValue;
@@ -699,6 +700,28 @@ public class Property
     public String[] getValidValues()
     {
         return this.validValues;
+    }
+
+    /**
+     * Sets the array of the config GUI display versions of the valid values that this String Property can be set to.
+     * When an array of valid values is defined for a Property the GUI control for that property will be a value cycle button.
+     *
+     * @param validValueAliases a String array of the aliases of valid values
+     */
+    public Property setValidValuesDisplay(String[] validValuesDisplay)
+    {
+        this.validValuesDisplay = validValuesDisplay;
+        return this;
+    }
+
+    /**
+     * Gets the array of the config GUI display versions of the valid values that this String Property can be set to, or null if not defined.
+     *
+     * @return a String array of the aliases of the valid values
+     */
+    public String[] getValidValuesDisplay()
+    {
+        return this.validValuesDisplay;
     }
 
     /**
