@@ -22,6 +22,7 @@ package net.minecraftforge.fml.common.network.simpleimpl;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.network.INetHandler;
+import net.minecraftforge.common.network.NetworkChannelHelper;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -57,7 +58,7 @@ public class SimpleChannelHandlerWrapper<REQ extends IMessage, REPLY extends IMe
         if (result != null)
         {
             ctx.channel().attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.REPLY);
-            ctx.writeAndFlush(result).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+            NetworkChannelHelper.writeAndFlush(ctx, result).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
         }
     }
 

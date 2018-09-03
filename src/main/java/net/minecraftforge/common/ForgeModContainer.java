@@ -126,6 +126,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
                                                        // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
+    public static boolean instantNetworkFlushing = true; //because vanilla spamms TCP packets
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -309,6 +310,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
                         "This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.");
         dimensionUnloadQueueDelay = prop.getInt(0);
         prop.setLanguageKey("forge.configgui.dimensionUnloadQueueDelay");
+        propOrder.add(prop.getName());
+        
+        prop = config.get(Configuration.CATEGORY_GENERAL, "instantNetworkFlushing", true,
+        		"This is enabled by default as this is vanilla behaivuer, by disabling this packets will only get send after each tick to reduce alot of tiny packets (wich have a very large TCP header)");
+        instantNetworkFlushing = prop.getBoolean();
+        prop.setLanguageKey("forge.configgui.instantNetworkFlushing");
         propOrder.add(prop.getName());
 
         config.setCategoryPropertyOrder(CATEGORY_GENERAL, propOrder);
