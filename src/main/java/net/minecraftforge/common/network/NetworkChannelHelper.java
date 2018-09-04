@@ -23,6 +23,9 @@ public class NetworkChannelHelper
     static
     {
         markedChannels = new HashSet<ChannelOutboundInvoker>();
+        Thread t = new Thread(NetworkChannelHelper::run, "NetworkChannelFlush");
+        t.setDaemon(true);
+        t.start();
     }
     
     
@@ -69,7 +72,6 @@ public class NetworkChannelHelper
         }
     }
     
-    
     public static void markForFlush(ChannelOutboundInvoker channel)
     {
         synchronized (markedChannels)
@@ -78,40 +80,32 @@ public class NetworkChannelHelper
         }
     }
     
-    @SubscribeEvent
-    public static void tickServer(TickEvent.ServerTickEvent event)
+    public static void flushAllChannels()
     {
-        if(event.phase==Phase.END)
+        synchronized (markedChannels)
         {
-            synchronized (markedChannels)
-            {
-                System.out.println("NetworkChannelHelper.tickServer()");
-                markedChannels.forEach(ChannelOutboundInvoker::flush);
-                markedChannels.clear();
-            }
-        }
-       
-        
-    }
-    
-    @SubscribeEvent
-    public static void tickClient(TickEvent.ClientTickEvent event)
-    {
-        if(event.phase==Phase.END)
-        {
-            synchronized (markedChannels)
-            {
-                System.out.println("NetworkChannelHelper.tickClient()");
-                markedChannels.forEach(ChannelOutboundInvoker::flush);
-                markedChannels.clear();
-            }
+            markedChannels.forEach(ChannelOutboundInvoker::flush);
+            markedChannels.clear();
         }
     }
     
     private static boolean isInstantFlushEnabled()
     {
-        
-        
         return ForgeModContainer.instantNetworkFlushing;
+    }
+    
+    public static void run()
+    {
+        try
+        {
+            while(true)
+            {
+                flushAllChannels();
+                Thread.sleep(50);
+            }
+        }
+        catch(InterruptedException e) {
+            
+        }
     }
 }
