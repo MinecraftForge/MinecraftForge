@@ -32,7 +32,7 @@
              }
  
 -            ChannelFuture channelfuture = this.field_150746_k.writeAndFlush(p_150732_1_);
-+            ChannelFuture channelfuture = net.minecraftforge.common.network.NetworkChannelHelper.writeAndFlush(this.field_150746_k, p_150732_1_);
++            ChannelFuture channelfuture = net.minecraftforge.common.network.NetworkChannelHelper.writeAndFlush(this.field_150746_k, p_150732_1_, field_150744_m);
  
              if (p_150732_2_ != null)
              {
@@ -47,7 +47,7 @@
                      }
  
 -                    ChannelFuture channelfuture1 = NetworkManager.this.field_150746_k.writeAndFlush(p_150732_1_);
-+                    ChannelFuture channelfuture1 = net.minecraftforge.common.network.NetworkChannelHelper.writeAndFlush(NetworkManager.this.field_150746_k, p_150732_1_);
++                    ChannelFuture channelfuture1 = net.minecraftforge.common.network.NetworkChannelHelper.writeAndFlush(NetworkManager.this.field_150746_k, p_150732_1_, field_150744_m);
  
                      if (p_150732_2_ != null)
                      {
