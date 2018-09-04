@@ -15,7 +15,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 
-@Mod.EventBusSubscriber(modid = "forge")
 public class NetworkChannelHelper
 {
     private static Set<ChannelOutboundInvoker> markedChannels;
