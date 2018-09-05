@@ -63,7 +63,6 @@ public class ModInfo implements IModInfo
             this.dependencies = Collections.emptyList();
             this.properties = Collections.emptyMap();
         }
-
     }
 
     @Override
@@ -104,6 +103,11 @@ public class ModInfo implements IModInfo
 
     public Optional<String> getLogoFile()
     {
-        return this.owningFile.getConfig().getOptional("logoFile");
+        return this.owningFile != null ? this.owningFile.getConfig().getOptional("logoFile") : Optional.empty();
+    }
+
+    public boolean hasConfigUI()
+    {
+        return false;
     }
 }

@@ -1,0 +1,10 @@
+--- a/net/minecraft/network/NetHandlerPlayServer.java
++++ b/net/minecraft/network/NetHandlerPlayServer.java
+@@ -1267,5 +1267,7 @@
+    }
+ 
+    public void processCustomPayload(CPacketCustomPayload packetIn) {
++      PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
++      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(packetIn, this.netManager);
+    }
+ }

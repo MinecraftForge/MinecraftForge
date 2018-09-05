@@ -36,6 +36,15 @@ project(':clean') {
         mappings channel: 'snapshot', version: '20180813-1.12'
         mcVersion = '1.13'
     }
+    task runclient(type: JavaExec) {
+        doFirst {
+            mkdir 'runclient'
+        }
+        classpath sourceSets.main.runtimeClasspath
+        args = ['--accessToken', '0', '--version', '1.13']
+        main 'net.minecraft.client.main.Main'
+        workingDir 'runclient'
+    }
 }
 
 project(':forge') {
@@ -94,7 +103,17 @@ project(':forge') {
             jvmArgs = ['-classpath', project.configurations.ecj.asPath, 'org.eclipse.jdt.internal.compiler.batch.Main', '-nowarn']
         }
     }
+
     task runclient(type: JavaExec) {
+        doFirst {
+            mkdir 'runclient'
+        }
+        doFirst {
+            copy {
+                from sourceSets.main.resources
+                into "$buildDir/classes/java/main"
+            }
+        }
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
         systemProperties target:'fmldevclient'

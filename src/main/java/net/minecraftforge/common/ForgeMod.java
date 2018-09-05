@@ -35,6 +35,7 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
+import net.minecraftforge.server.command.ForgeCommand;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -410,7 +411,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public void serverStarting(FMLServerStartingEvent evt)
     {
-
+        new ForgeCommand(evt.getCommandDispatcher());
     }
 
     public void serverStopping(FMLServerStoppingEvent evt)

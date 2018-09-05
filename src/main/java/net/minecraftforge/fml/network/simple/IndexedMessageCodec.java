@@ -21,7 +21,9 @@ package net.minecraftforge.fml.network.simple;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectArrayMap;
+import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,6 +32,7 @@ import org.apache.logging.log4j.MarkerManager;
 
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -49,6 +52,8 @@ public class IndexedMessageCodec
         private final int index;
         private final BiConsumer<MSG,Supplier<NetworkEvent.Context>> messageConsumer;
         private final Class<MSG> messageType;
+        private Optional<BiConsumer<MSG, Integer>> loginIndexFunction;
+
         public CodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer)
         {
             this.index = index;
@@ -56,15 +61,30 @@ public class IndexedMessageCodec
             this.encoder = Optional.ofNullable(encoder);
             this.decoder = Optional.ofNullable(decoder);
             this.messageConsumer = messageConsumer;
+            this.loginIndexFunction = Optional.empty();
             indicies.put((short)(index & 0xff), this);
             types.put(messageType, this);
         }
 
+        public void setLoginIndexFunction(BiConsumer<MSG, Integer> loginIndexFunction)
+        {
+            this.loginIndexFunction = Optional.of(loginIndexFunction);
+        }
 
+        public Optional<BiConsumer<MSG, Integer>> getLoginIndexFunction() {
+            return this.loginIndexFunction;
+        }
     }
     private static <M> void tryDecode(PacketBuffer payload, Supplier<NetworkEvent.Context> context, CodecIndex<M> codec)
     {
         codec.decoder.map(d->d.apply(payload)).ifPresent(m->codec.messageConsumer.accept(m, context));
+    }
+
+    private static <M> void tryDecode(PacketBuffer payload, Supplier<NetworkEvent.Context> context, int payloadIndex, CodecIndex<M> codec)
+    {
+        codec.decoder.map(d->d.apply(payload)).
+                map(p->{ codec.getLoginIndexFunction().ifPresent(f-> f.accept(p, payloadIndex)); return p; }).
+                ifPresent(m->codec.messageConsumer.accept(m, context));
     }
 
     private static <M> void tryEncode(PacketBuffer target, M message, CodecIndex<M> codec) {
@@ -73,6 +93,7 @@ public class IndexedMessageCodec
             encoder.accept(message, target);
         });
     }
+
     public <MSG> void build(MSG message, PacketBuffer target)
     {
         @SuppressWarnings("unchecked")
@@ -84,7 +105,26 @@ public class IndexedMessageCodec
         tryEncode(target, message, codecIndex);
     }
 
-    void consume(final PacketBuffer payload, Supplier<NetworkEvent.Context> context) {
+    void consume(PacketBuffer payload, int payloadIndex, Supplier<NetworkEvent.Context> context) {
+        if (payload == null) {
+            LOGGER.error(SIMPLENET, "Received empty payload");
+            return;
+        }
+        short discriminator = payload.readUnsignedByte();
+        final CodecIndex<?> codecIndex = indicies.get(discriminator);
+        if (codecIndex == null) {
+            LOGGER.error(SIMPLENET, "Received invalid discriminator byte {}", discriminator);
+            return;
+        }
+        tryDecode(payload, context, payloadIndex, codecIndex);
+    }
+
+    void consume(PacketBuffer payload, Supplier<NetworkEvent.Context> context) {
+        // no data in empty payload
+        if (payload == null) {
+            LOGGER.error(SIMPLENET, "Received empty payload");
+            return;
+        }
         short discriminator = payload.readUnsignedByte();
         final CodecIndex<?> codecIndex = indicies.get(discriminator);
         if (codecIndex == null) {
@@ -94,7 +134,7 @@ public class IndexedMessageCodec
         tryDecode(payload, context, codecIndex);
     }
 
-    <MSG> void addCodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
-        new CodecIndex<>(index, messageType, encoder, decoder, messageConsumer);
+    <MSG> CodecIndex<MSG> addCodecIndex(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
+        return new CodecIndex<>(index, messageType, encoder, decoder, messageConsumer);
     }
 }

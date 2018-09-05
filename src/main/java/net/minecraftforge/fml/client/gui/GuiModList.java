@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.client.gui;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,14 +28,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
@@ -44,14 +46,14 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.client.resources.ResourcePackInfoClient;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
@@ -67,9 +69,6 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Mouse;
-
-import org.lwjgl.opengl.GL11;
 
 /**
  * @author cpw
@@ -78,7 +77,6 @@ import org.lwjgl.opengl.GL11;
 public class GuiModList extends GuiScreen
 {
     private static final Logger LOGGER = LogManager.getLogger();
-
     private enum SortType implements Comparator<ModInfo>
     {
         NORMAL(24),
@@ -86,27 +84,15 @@ public class GuiModList extends GuiScreen
         Z_TO_A(26){ @Override protected int compare(String name1, String name2){ return name2.compareTo(name1); }};
 
 
+
+        GuiButton button;
+
         private int buttonID;
         private SortType(int buttonID)
         {
             this.buttonID = buttonID;
         }
-
-        @Nullable
-        public static SortType getTypeForButton(GuiButton button)
-        {
-            for (SortType t : values())
-            {
-                if (t.buttonID == button.id)
-                {
-                    return t;
-                }
-            }
-            return null;
-        }
-
         protected int compare(String name1, String name2){ return 0; }
-
         @Override
         public int compare(ModInfo o1, ModInfo o2)
         {
@@ -115,95 +101,142 @@ public class GuiModList extends GuiScreen
             return compare(name1, name2);
         }
 
+        String getButtonText() {
+            return I18n.format("fml.menu.mods."+StringUtils.toLowerCase(name()));
+        }
+
+
+    }
+    private class SortButton extends GuiButton {
+        private final SortType type;
+        public SortButton(int buttonId, int x, int y, int width, int height, SortType type)
+        {
+            super(buttonId, x, y, width, height, type.getButtonText());
+            this.type = type;
+        }
+
+        @Override
+        public void func_194829_a(double p_194829_1_, double p_194829_3_)
+        {
+            GuiModList.this.sortType = this.type;
+            resortMods();
+        }
     }
 
     private GuiScreen mainMenu;
+
     private GuiSlotModList modList;
-    private GuiScrollingList modInfo;
+    private InfoPanel modInfo;
     private int selected = -1;
     private ModInfo selectedMod;
     private int listWidth;
     private List<ModInfo> mods;
-    private GuiButton configModButton;
-
     private final List<ModInfo> unsortedMods;
+    private GuiButton configButton;
+
     private int buttonMargin = 1;
     private int numButtons = SortType.values().length;
-
     private String lastFilterText = "";
 
     private GuiTextField search;
+
     private boolean sorted = false;
     private SortType sortType = SortType.NORMAL;
-
     /**
      * @param mainMenu
      */
     public GuiModList(GuiScreen mainMenu)
     {
         this.mainMenu = mainMenu;
-        this.mods = ModList.get().getModFiles().stream().
-                map(mf -> mf.getMods().stream().findFirst()).
-                map(Optional::get).
-                map(ModInfo.class::cast).
-                collect(Collectors.toList());
+        this.mods = Collections.unmodifiableList(ModList.get().getMods());
         this.unsortedMods = Collections.unmodifiableList(this.mods);
     }
 
+    class InfoPanel extends GuiListExtended<Info> {
+        InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int slotHeightIn)
+        {
+            super(mcIn, widthIn, heightIn, topIn, bottomIn, slotHeightIn);
+        }
+
+        @Override
+        protected int getScrollBarX()
+        {
+            return this.width - 6;
+        }
+
+        void setInfo(Info info)
+        {
+            this.func_195086_c();
+            this.func_195085_a(info);
+        }
+
+        public void clear()
+        {
+            this.func_195086_c();
+        }
+    }
     @Override
     public void initGui()
     {
-        int slotHeight = 35;
         for (ModInfo mod : mods)
         {
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getDisplayName()) + 10);
-            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion().getVersionString()) + 5 + slotHeight);
+            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion().getVersionString()) + 5);
         }
         listWidth = Math.min(listWidth, 150);
-        this.modList = new GuiSlotModList(this, mods, listWidth, slotHeight);
+        this.modList = new GuiSlotModList(this, listWidth);
+        this.modList.setSlotXBoundsFromLeft(6);
+        this.modInfo = new InfoPanel(this.mc, this.width - this.listWidth - 30, this.height, 32, this.height - 88 + 4, 1);
+        this.modInfo.setSlotXBoundsFromLeft(this.listWidth + 24);
 
-        this.buttonList.add(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")));
-        configModButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, "Config");
-        this.buttonList.add(configModButton);
+        this.addButton(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")){
+            @Override
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                GuiModList.this.mc.displayGuiScreen(GuiModList.this.mainMenu);
+            }
+        });
+        this.addButton(this.configButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, I18n.format("fml.menu.mods.config")){
+            @Override
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                GuiModList.this.displayModConfig();
+            }
+        });
 
-        search = new GuiTextField(0, getFontRenderer(), 12, modList.bottom + 17, modList.listWidth - 4, 14);
+        search = new GuiTextField(0, getFontRenderer(), 12, modList.bottom + 17, modList.width - 4, 14);
+        field_195124_j.add(search);
+        field_195124_j.add(modList);
         search.setFocused(true);
         search.setCanLoseFocus(true);
 
-        int width = (modList.listWidth / numButtons);
+        final int width = (modList.width / numButtons);
         int x = 10, y = 10;
-        GuiButton normalSort = new GuiButton(SortType.NORMAL.buttonID, x, y, width - buttonMargin, 20, I18n.format("fml.menu.mods.normal"));
-        normalSort.enabled = false;
-        buttonList.add(normalSort);
+        addButton(SortType.NORMAL.button = new SortButton(SortType.NORMAL.buttonID, x, y, width - buttonMargin, 20, SortType.NORMAL));
         x += width + buttonMargin;
-        buttonList.add(new GuiButton(SortType.A_TO_Z.buttonID, x, y, width - buttonMargin, 20, "A-Z"));
+        addButton(SortType.A_TO_Z.button = new SortButton(SortType.NORMAL.buttonID, x, y, width - buttonMargin, 20, SortType.A_TO_Z));
         x += width + buttonMargin;
-        buttonList.add(new GuiButton(SortType.Z_TO_A.buttonID, x, y, width - buttonMargin, 20, "Z-A"));
-
+        addButton(SortType.Z_TO_A.button = new SortButton(SortType.NORMAL.buttonID, x, y, width - buttonMargin, 20, SortType.Z_TO_A));
+        resortMods();
         updateCache();
     }
 
-    @Override
-    protected void mouseClicked(int x, int y, int button) throws IOException
+    private void displayModConfig()
     {
-        super.mouseClicked(x, y, button);
-        search.mouseClicked(x, y, button);
-        if (button == 1 && x >= search.x && x < search.x + search.width && y >= search.y && y < search.y + search.height) {
-            search.setText("");
+        if (selectedMod == null) return;
+        try
+        {
+            ConfigGuiHandler.getGuiFactoryFor(selectedMod).map(f->f.apply(this.mc, this)).ifPresent(newScreen -> this.mc.displayGuiScreen(newScreen));
         }
-    }
-
-    @Override
-    protected void keyTyped(char c, int keyCode) throws IOException
-    {
-        super.keyTyped(c, keyCode);
-        search.textboxKeyTyped(c, keyCode);
+        catch (final Exception e)
+        {
+            LOGGER.error("There was a critical issue trying to build the config GUI for {}", selectedMod.getModId(), e);
+        }
     }
 
     @Override
     public void updateScreen()
     {
-        super.updateScreen();
         search.updateCursorCounter();
 
         if (!search.getText().equals(lastFilterText))
@@ -216,9 +249,15 @@ public class GuiModList extends GuiScreen
         {
             reloadMods();
             mods.sort(sortType);
-            selected = modList.selectedIndex = mods.indexOf(selectedMod);
+            selected = mods.indexOf(selectedMod);
+            modList.refreshList();
             sorted = true;
         }
+    }
+
+    public <T extends GuiListExtended.IGuiListEntry<T>> void buildModList(Consumer<T> modListViewConsumer, Function<ModInfo, T> newEntry)
+    {
+        mods.forEach(mod->modListViewConsumer.accept(newEntry.apply(mod)));
     }
 
     private void reloadMods()
@@ -228,89 +267,30 @@ public class GuiModList extends GuiScreen
         lastFilterText = search.getText();
     }
 
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException
+    private void resortMods()
     {
-        if (button.enabled)
+        for (GuiButton b : buttonList)
         {
-            SortType type = SortType.getTypeForButton(button);
-
-            if (type != null)
-            {
-                for (GuiButton b : buttonList)
-                {
-                    if (SortType.getTypeForButton(b) != null)
-                    {
-                        b.enabled = true;
-                    }
-                }
-                button.enabled = false;
-                sorted = false;
-                sortType = type;
-                Collections.copy(this.mods, this.unsortedMods);
-            }
-            else
-            {
-                switch (button.id)
-                {
-                    case 6:
-                    {
-                        this.mc.displayGuiScreen(this.mainMenu);
-                        return;
-                    }
-                    case 20:
-                    {
-                        try
-                        {
-                            ConfigGuiHandler.getGuiFactoryFor(selectedMod).
-                                    map(f->f.apply(this.mc, this)).
-                                    ifPresent(newScreen -> this.mc.displayGuiScreen(newScreen));
-                        }
-                        catch (final Exception e)
-                        {
-                            LOGGER.error("There was a critical issue trying to build the config GUI for {}", selectedMod.getModId(), e);
-                        }
-                        return;
-                    }
-                }
+            if (b instanceof SortButton) {
+                b.enabled = sortType.button != b;
             }
         }
-        super.actionPerformed(button);
-    }
-
-    public int drawLine(String line, int offset, int shifty)
-    {
-        this.fontRenderer.drawString(line, offset, shifty, 0xd7edea);
-        return shifty + 10;
+        sorted = false;
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
         this.modList.drawScreen(mouseX, mouseY, partialTicks);
-        if (this.modInfo != null)
-            this.modInfo.drawScreen(mouseX, mouseY, partialTicks);
+        this.modInfo.drawScreen(mouseX, mouseY, partialTicks);
 
         int left = ((this.width - this.listWidth - 38) / 2) + this.listWidth + 30;
-        this.drawCenteredString(this.fontRenderer, "Mod List", left, 16, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
         int x = ((10 + modList.right) / 2) - (getFontRenderer().getStringWidth(text) / 2);
-        getFontRenderer().drawString(text, x, modList.bottom + 5, 0xFFFFFF);
-        search.drawTextBox();
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException
-    {
-        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-
-        super.handleMouseInput();
-        if (this.modInfo != null)
-            this.modInfo.handleMouseInput(mouseX, mouseY);
-        this.modList.handleMouseInput(mouseX, mouseY);
+        getFontRenderer().func_211126_b(text, x, modList.bottom + 5, 0xFFFFFF);
+        this.search.func_195608_a(mouseX, mouseY, partialTicks);
     }
 
     Minecraft getMinecraftInstance()
@@ -325,10 +305,13 @@ public class GuiModList extends GuiScreen
 
     public void selectModIndex(int index)
     {
-        if (index == this.selected)
-            return;
-        this.selected = index;
-        this.selectedMod = (index >= 0 && index < mods.size()) ? mods.get(selected) : null;
+        if (index == this.selected) {
+            this.selected = -1;
+        } else
+        {
+            this.selected = index;
+        }
+        this.selectedMod = (this.selected >= 0 && this.selected< mods.size()) ? mods.get(this.selected) : null;
 
         updateCache();
     }
@@ -340,43 +323,34 @@ public class GuiModList extends GuiScreen
 
     private void updateCache()
     {
-        configModButton.visible = false;
-        modInfo = null;
-
-        if (selectedMod == null)
+        if (selectedMod == null) {
+            modInfo.clear();
             return;
+        }
 
+        this.configButton.enabled = selectedMod.hasConfigUI();
         List<String> lines = new ArrayList<>();
         VersionChecker.CheckResult vercheck = VersionChecker.getResult(selectedMod);
 
         Pair<ResourceLocation, Dimension> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = mc.getTextureManager();
-            IResourcePack pack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId());
+            ResourcePackInfoClient pack = ResourcePackLoader.getResourcePackInfo(selectedMod.getModId());
             try
             {
-                BufferedImage logo = null;
-                if (pack != null)
-                {
-                    logo = pack.getPackImage();
-                }
-                else
-                {
-                    InputStream logoResource = getClass().getResourceAsStream(logoFile);
-                    if (logoResource != null)
-                        logo = ImageIO.read(logoResource);
-                }
+                NativeImage logo = null;
+                InputStream logoResource = getClass().getResourceAsStream(logoFile);
+                if (logoResource != null)
+                    logo = NativeImage.func_195713_a(logoResource);
                 if (logo != null)
                 {
-                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Dimension(logo.getWidth(), logo.getHeight()));
+                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Dimension(logo.func_195702_a(), logo.func_195714_b()));
                 }
             }
             catch (IOException e) { }
             return Pair.<ResourceLocation, Dimension>of(null, new Dimension(0, 0));
         }).orElse(Pair.of(null, new Dimension(0, 0)));
 
-        configModButton.visible = true;
-        configModButton.enabled = true;
         lines.add(selectedMod.getDisplayName());
         lines.add(String.format("Version: %s", selectedMod.getVersion().getVersionString()));
         lines.add(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), ModList.get().getModContainerById(selectedMod.getModId()).
@@ -388,7 +362,7 @@ public class GuiModList extends GuiScreen
                 lines.add("Authors: " + authors));
         selectedMod.getModConfig().getOptional("displayURL").ifPresent(displayURL ->
                 lines.add("URL: " + displayURL));
-        if (selectedMod.getOwningFile().getMods().size()==1)
+        if (selectedMod.getOwningFile() == null || selectedMod.getOwningFile().getMods().size()==1)
             lines.add("No child mods for this mod");
         else
             lines.add("Child mods: " + selectedMod.getOwningFile().getMods().stream().map(IModInfo::getDisplayName).collect(Collectors.joining(",")));
@@ -411,37 +385,22 @@ public class GuiModList extends GuiScreen
             }
         }
 
-        modInfo = new Info(this.width - this.listWidth - 30, lines, logoData.getLeft(), logoData.getRight());
+        modInfo.setInfo(new Info(modInfo, lines, logoData.getLeft(), logoData.getRight()));
     }
 
-    private class Info extends GuiScrollingList
+    class Info extends GuiListExtended.IGuiListEntry<Info>
     {
-        @Nullable
         private ResourceLocation logoPath;
         private Dimension logoDims;
         private List<ITextComponent> lines = null;
 
-        public Info(int width, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims)
+        public Info(GuiListExtended<Info> parent, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims)
         {
-            super(GuiModList.this.getMinecraftInstance(),
-                  width,
-                  GuiModList.this.height,
-                  32, GuiModList.this.height - 88 + 4,
-                  GuiModList.this.listWidth + 20, 60,
-                  GuiModList.this.width,
-                  GuiModList.this.height);
+            this.field_195004_a = parent;
             this.lines    = resizeContent(lines);
             this.logoPath = logoPath;
             this.logoDims = logoDims;
-
-            this.setHeaderInfo(true, getHeaderHeight());
         }
-
-        @Override protected int getSize() { return 0; }
-        @Override protected void elementClicked(int index, boolean doubleClick) { }
-        @Override protected boolean isSelected(int index) { return false; }
-        @Override protected void drawBackground() {}
-        @Override protected void drawSlot(int slotIdx, int entryRight, int slotTop, int slotBuffer, Tessellator tess) { }
 
         private List<ITextComponent> resizeContent(List<String> lines)
         {
@@ -454,8 +413,9 @@ public class GuiModList extends GuiScreen
                     continue;
                 }
 
-                ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                int maxTextLength = this.listWidth - 8;
+//                ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
+                ITextComponent chat = new TextComponentString(line);
+                int maxTextLength = this.func_195002_d() - 8;
                 if (maxTextLength >= 0)
                 {
                     ret.addAll(GuiUtilRenderComponents.splitText(chat, maxTextLength, GuiModList.this.fontRenderer, false, true));
@@ -464,39 +424,20 @@ public class GuiModList extends GuiScreen
             return ret;
         }
 
-        private int getHeaderHeight()
-        {
-          int height = 0;
-          if (logoPath != null)
-          {
-              double scaleX = logoDims.width / 200.0;
-              double scaleY = logoDims.height / 65.0;
-              double scale = 1.0;
-              if (scaleX > 1 || scaleY > 1)
-              {
-                  scale = 1.0 / Math.max(scaleX, scaleY);
-              }
-              logoDims.width *= scale;
-              logoDims.height *= scale;
-
-              height += logoDims.height;
-              height += 10;
-          }
-          height += (lines.size() * 10);
-          if (height < this.bottom - this.top - 8) height = this.bottom - this.top - 8;
-          return height;
-        }
-
 
         @Override
-        protected void drawHeader(int entryRight, int relativeY, Tessellator tess)
+        public void func_194999_a(int p_194999_1_, int p_194999_2_, int p_194999_3_, int p_194999_4_, boolean p_194999_5_, float p_194999_6_)
         {
-            int top = relativeY;
+            int top = this.func_195001_c();
+            int left = this.func_195002_d();
+/*
+            int top = this.
 
             if (logoPath != null)
             {
                 GlStateManager.enableBlend();
                 GuiModList.this.mc.renderEngine.bindTexture(logoPath);
+                GlStateManager.draw
                 BufferBuilder wr = tess.getBuffer();
                 int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
                 wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
@@ -509,48 +450,19 @@ public class GuiModList extends GuiScreen
                 top += logoDims.height + 10;
             }
 
+*/
             for (ITextComponent line : lines)
             {
                 if (line != null)
                 {
                     GlStateManager.enableBlend();
-                    GuiModList.this.fontRenderer.drawStringWithShadow(line.getFormattedText(), this.left + 4, top, 0xFFFFFF);
+                    GuiModList.this.fontRenderer.drawStringWithShadow(line.getFormattedText(), left + 4, top, 0xFFFFFF);
                     GlStateManager.disableAlpha();
                     GlStateManager.disableBlend();
                 }
-                top += 10;
+                top += fontRenderer.FONT_HEIGHT + 1;
             }
-        }
 
-        @Override
-        protected void clickHeader(int x, int y)
-        {
-            int offset = y;
-            if (logoPath != null) {
-              offset -= logoDims.height + 10;
-            }
-            if (offset <= 0)
-                return;
-
-            int lineIdx = offset / 10;
-            if (lineIdx >= lines.size())
-                return;
-
-            ITextComponent line = lines.get(lineIdx);
-            if (line != null)
-            {
-                int k = -4;
-                for (ITextComponent part : line) {
-                    if (!(part instanceof TextComponentString))
-                        continue;
-                    k += GuiModList.this.fontRenderer.getStringWidth(((TextComponentString)part).getText());
-                    if (k >= x)
-                    {
-                        GuiModList.this.handleComponentClick(part);
-                        break;
-                    }
-                }
-            }
         }
     }
 }

@@ -16,3 +16,21 @@
              this.setPlayerList(new DedicatedPlayerList(this));
              long j = Util.func_211178_c();
              if (this.getFolderName() == null) {
+@@ -219,6 +221,7 @@
+             TileEntitySkull.setProfileCache(this.getPlayerProfileCache());
+             TileEntitySkull.setSessionService(this.getMinecraftSessionService());
+             PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
++            if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+             LOGGER.info("Preparing level \"{}\"", (Object)this.getFolderName());
+             JsonObject jsonobject = new JsonObject();
+             if (worldtype == WorldType.FLAT) {
+@@ -258,7 +261,8 @@
+             }
+ 
+             Items.AIR.getSubItems(ItemGroup.SEARCH, NonNullList.create());
+-            return true;
++            // <3 you Grum for this, saves us ~30 patch files! --^
++            return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
+          }
+       }
+    }

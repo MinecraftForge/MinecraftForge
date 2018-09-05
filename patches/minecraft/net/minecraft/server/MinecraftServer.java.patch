@@ -1,0 +1,37 @@
+--- a/net/minecraft/server/MinecraftServer.java
++++ b/net/minecraft/server/MinecraftServer.java
+@@ -528,6 +528,7 @@
+    public void run() {
+       try {
+          if (this.init()) {
++            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarted(this);
+             this.field_211151_aa = Util.func_211177_b();
+             this.statusResponse.setServerDescription(new TextComponentString(this.motd));
+             this.statusResponse.setVersion(new ServerStatusResponse.Version("1.13", 393));
+@@ -551,7 +552,10 @@
+ 
+                this.serverIsRunning = true;
+             }
++            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopping(this);
++            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
+          } else {
++            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
+             this.finalTick((CrashReport)null);
+          }
+       } catch (Throwable throwable1) {
+@@ -570,6 +574,7 @@
+             LOGGER.error("We were unable to save this crash report to disk.");
+          }
+ 
++         net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
+          this.finalTick(crashreport);
+       } finally {
+          try {
+@@ -578,6 +583,7 @@
+          } catch (Throwable throwable) {
+             LOGGER.error("Exception stopping the server", throwable);
+          } finally {
++            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
+             this.systemExitNow();
+          }
+ 

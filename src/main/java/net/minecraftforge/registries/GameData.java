@@ -50,12 +50,10 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.StartupQuery;
-import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;

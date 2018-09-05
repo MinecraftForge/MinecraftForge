@@ -19,15 +19,20 @@
 
 package net.minecraftforge.server.command;
 
-import net.minecraft.command.ICommand;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import net.minecraft.command.CommandSource;
+import net.minecraft.util.text.TextComponentString;
 
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
-
-public class ForgeCommand extends CommandTreeBase
+public class ForgeCommand
 {
-    public ForgeCommand()
+    public ForgeCommand(CommandDispatcher<CommandSource> dispatcher)
     {
+        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("forge").
+                requires(cs->cs.func_197034_c(2)).
+                then(LiteralArgumentBuilder.literal("tps")).
+                executes(c->{c.getSource().func_197021_a(new TextComponentString("command.forge.tps.summary")); return 1;}));
+/*
         super.addSubcommand(new CommandTps());
         super.addSubcommand(new CommandTrack());
         super.addSubcommand(new CommandGenerate());
@@ -35,35 +40,6 @@ public class ForgeCommand extends CommandTreeBase
         super.addSubcommand(new CommandSetDimension());
         super.addSubcommand(new CommandDimensions());
         super.addSubcommand(new CommandTreeHelp(this));
-    }
-
-    @Override
-    public String getName()
-    {
-        return "forge";
-    }
-
-    @Override
-    public void addSubcommand(ICommand command)
-    {
-        throw new UnsupportedOperationException("Don't add sub-commands to /forge, create your own command.");
-    }
-
-    @Override
-    public int getRequiredPermissionLevel()
-    {
-        return 0;
-    }
-
-    @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
-        return true;
-    }
-
-    @Override
-    public String getUsage(ICommandSender icommandsender)
-    {
-        return "commands.forge.usage";
+*/
     }
 }

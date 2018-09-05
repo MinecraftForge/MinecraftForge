@@ -43,6 +43,7 @@ import javax.annotation.Nullable;
  */
 public class VillagerRegistry
 {
+/*
     public static final RegistryObject<VillagerProfession> FARMER = RegistryObject.of("minecraft:farmer", ()->VillagerProfession.class);
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
 
@@ -53,29 +54,36 @@ public class VillagerRegistry
         init();
     }
 
-    /**
+    */
+/**
      * Allow access to the {@link net.minecraft.world.gen.structure.StructureVillagePieces} array controlling new village
      * creation so you can insert your own new village pieces
      *
      * @author cpw
-     */
+     *//*
+
     public interface IVillageCreationHandler
     {
-        /**
+        */
+/**
          * Called when {@link net.minecraft.world.gen.structure.MapGenVillage} is creating a new village
          *
          * @param random
          * @param i
-         */
+         *//*
+
         StructureVillagePieces.PieceWeight getVillagePieceWeight(Random random, int i);
 
-        /**
+        */
+/**
          * The class of the root structure component to add to the village
-         */
+         *//*
+
         Class<?> getComponentClass();
 
 
-        /**
+        */
+/**
          * Build an instance of the village component {@link net.minecraft.world.gen.structure.StructureVillagePieces}
          *
          * @param villagePiece
@@ -87,7 +95,8 @@ public class VillagerRegistry
          * @param p3
          * @param facing
          * @param p5
-         */
+         *//*
+
         Village buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random, int p1,
                                int p2, int p3, EnumFacing facing, int p5);
     }
@@ -97,11 +106,13 @@ public class VillagerRegistry
         return INSTANCE;
     }
 
-    /**
+    */
+/**
      * Register a new village creation handler
      *
      * @param handler
-     */
+     *//*
+
     public void registerVillageCreationHandler(IVillageCreationHandler handler)
     {
         villageCreationHandlers.put(handler.getComponentClass(), handler);
@@ -301,12 +312,14 @@ public class VillagerRegistry
         }
     }
 
-    /**
+    */
+/**
      * Hook called when spawning a Villager, sets it's profession to a random registered profession.
      *
      * @param entity The new entity
      * @param rand   The world's RNG
-     */
+     *//*
+
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
         entity.setProfession(INSTANCE.REGISTRY.getRandomObject(rand));
@@ -356,4 +369,5 @@ public class VillagerRegistry
         //It is nasty I know but it's vanilla.
         private static final ITradeList[][][][] trades = EntityVillager.GET_TRADES_DONT_USE();
     }
+*/
 }

@@ -19,15 +19,13 @@
 
 package net.minecraftforge.server.command;
 
-import io.netty.channel.Channel;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.translation.I18n;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraftforge.fml.network.ConnectionType;
 import net.minecraftforge.fml.network.NetworkHooks;
 
@@ -39,11 +37,11 @@ public class TextComponentHelper
      * Detects when sending to a vanilla client and falls back to sending english,
      * since they don't have the lang data necessary to translate on the client.
      */
-    public static TextComponentBase createComponentTranslation(ICommandSender sender, final String translation, final Object... args)
+    public static TextComponentBase createComponentTranslation(ICommandSource source, final String translation, final Object... args)
     {
-        if (isVanillaClient(sender))
+        if (isVanillaClient(source))
         {
-            return new TextComponentString(I18n.translateToLocalFormatted(translation, args));
+            return new TextComponentString(LanguageMap.getInstance().translateKey(translation, args));
         }
         return new TextComponentTranslation(translation, args);
     }

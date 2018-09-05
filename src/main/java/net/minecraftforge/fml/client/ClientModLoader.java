@@ -21,8 +21,11 @@ package net.minecraftforge.fml.client;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.DownloadingPackFinder;
+import net.minecraft.client.resources.ResourcePackInfoClient;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.ResourcePackList;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -42,7 +45,7 @@ public class ClientModLoader
     private static boolean loading;
     private static Minecraft mc;
 
-    public static void begin(final Minecraft minecraft, final List<IResourcePack> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, IMetadataSectionSerializer metadataSerializer)
+    public static void begin(final Minecraft minecraft, final ResourcePackList<ResourcePackInfoClient> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
     {
         loading = true;
         ClientModLoader.mc = minecraft;
@@ -50,7 +53,6 @@ public class ClientModLoader
         LogicalSidedProvider.setClient(()->minecraft);
         ModLoader.get().loadMods();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
-        minecraft.refreshResources();
     }
 
     public static void end()

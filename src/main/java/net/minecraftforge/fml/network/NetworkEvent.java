@@ -20,9 +20,6 @@
 package net.minecraftforge.fml.network;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IThreadListener;
@@ -35,10 +32,9 @@ public class NetworkEvent extends Event
 {
     private final PacketBuffer payload;
     private final Supplier<Context> source;
-
-    private NetworkEvent(PacketBuffer payload, Supplier<Context> source)
+    private NetworkEvent(ICustomPacket<?> payload, Supplier<Context> source)
     {
-        this.payload = payload;
+        this.payload = payload.getData();
         this.source = source;
     }
 
@@ -54,56 +50,92 @@ public class NetworkEvent extends Event
 
     public static class ServerCustomPayloadEvent extends NetworkEvent
     {
-        ServerCustomPayloadEvent(final PacketBuffer payload, final Supplier<Context> source) {
+
+        ServerCustomPayloadEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
             super(payload, source);
         }
     }
     public static class ClientCustomPayloadEvent extends NetworkEvent
     {
-        ClientCustomPayloadEvent(final PacketBuffer payload, final Supplier<Context> source) {
+        ClientCustomPayloadEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
             super(payload, source);
         }
     }
+    public static class ServerCustomPayloadLoginEvent extends ServerCustomPayloadEvent implements ILoginIndex {
+        private final int index;
 
+        ServerCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source)
+        {
+            super(payload, source);
+            this.index = payload.getIndex();
+        }
+
+        public int getIndex()
+        {
+            return index;
+        }
+    }
+
+    public static class ClientCustomPayloadLoginEvent extends ClientCustomPayloadEvent implements ILoginIndex {
+        private final int index;
+
+        ClientCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source)
+        {
+            super(payload, source);
+            this.index = payload.getIndex();
+        }
+
+        public int getIndex()
+        {
+            return index;
+        }
+    }
+
+    public interface ILoginIndex {
+        int getIndex();
+    }
     /**
      * Context for {@link NetworkEvent}
      */
     public static class Context
     {
         /**
-         * The {@link INetHandler} for this message. It could be a client or server handler, depending
-         * on the {@link #side} received.
+         * The {@link NetworkManager} for this message.
          */
-        private final INetHandler netHandler;
+        private final NetworkManager networkManager;
 
         /**
-         * The {@link NetworkDirection} this message has been received on
+         * The {@link NetworkDirection} this message has been received on.
          */
         private final NetworkDirection side;
+        private boolean packetHandled;
 
         Context(NetworkManager netHandler, NetworkDirection side)
         {
-            this.netHandler = netHandler.getNetHandler();
+            this.networkManager = netHandler;
             this.side = side;
         }
 
-        public NetworkDirection getSide() {
+        public NetworkDirection getDirection() {
             return side;
         }
 
-        public NetHandlerPlayServer getServerHandler()
-        {
-            return (NetHandlerPlayServer) netHandler;
+        public NetworkManager getNetworkManager() {
+            return networkManager;
         }
 
-        public NetHandlerPlayClient getClientHandler()
+        public void setPacketHandled(boolean packetHandled) {
+            this.packetHandled = packetHandled;
+        }
+
+        public boolean getPacketHandled()
         {
-            return (NetHandlerPlayClient) netHandler;
+            return packetHandled;
         }
 
         @SuppressWarnings("unchecked")
         public <V> ListenableFuture<V> enqueueWork(Runnable runnable) {
-            return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getSide().getLogicalSide()).addScheduledTask(runnable);
+            return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().getLogicalSide()).addScheduledTask(runnable);
         }
     }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
@@ -37,31 +38,36 @@ import static net.minecraft.util.StringUtils.stripControlCodes;
  * @author cpw
  *
  */
-public class GuiSlotModList extends GuiScrollingList
+public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
 {
-    
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
-    
+    private final int listWidth;
+
     private GuiModList parent;
-    private List<ModInfo> mods;
 
-    public GuiSlotModList(GuiModList parent, List<ModInfo> mods, int listWidth, int slotHeight)
+    public GuiSlotModList(GuiModList parent, int listWidth)
     {
-        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 88 + 4, 10, slotHeight, parent.width, parent.height);
+        super(parent.getMinecraftInstance(), listWidth, parent.height, 32, parent.height - 88 + 4, parent.getFontRenderer().FONT_HEIGHT * 2 + 8);
         this.parent = parent;
-        this.mods = mods;
+        this.listWidth = listWidth;
+        this.refreshList();
     }
 
     @Override
-    protected int getSize()
+    protected int getScrollBarX()
     {
-        return mods.size();
+        return this.listWidth + 6;
     }
 
     @Override
-    protected void elementClicked(int index, boolean doubleClick)
+    public int getListWidth()
     {
-        this.parent.selectModIndex(index);
+        return this.listWidth;
+    }
+
+    void refreshList() {
+        this.func_195086_c();
+        parent.buildModList(this::func_195085_a, mod->new ModEntry(mod, this.parent));
     }
 
     @Override
@@ -76,32 +82,42 @@ public class GuiSlotModList extends GuiScrollingList
         this.parent.drawDefaultBackground();
     }
 
-    @Override
-    protected int getContentHeight()
-    {
-        return (this.getSize()) * 35 + 1;
-    }
+    class ModEntry extends GuiListExtended.IGuiListEntry<ModEntry> {
+        private final ModInfo modInfo;
+        private final GuiModList parent;
 
-    @Override
-    protected void drawSlot(int idx, int right, int top, int height, Tessellator tess)
-    {
-        ModInfo mc = mods.get(idx);
-        String name = stripControlCodes(mc.getDisplayName());
-        String version = stripControlCodes(mc.getVersion().getVersionString());
-        FontRenderer font = this.parent.getFontRenderer();
-        VersionChecker.CheckResult vercheck = VersionChecker.getResult(mc);
+        ModEntry(ModInfo info, GuiModList parent) {
+            this.modInfo = info;
+            this.parent = parent;
+        }
 
-        font.drawString(font.trimStringToWidth(name,    listWidth - 10), this.left + 3 , top +  2, 0xFFFFFF);
-        font.drawString(font.trimStringToWidth(version, listWidth - (5 + height)), this.left + 3 , top + 12, 0xCCCCCC);
-
-        if (vercheck.status.shouldDraw())
+        @Override
+        public void func_194999_a(int p_194999_1_, int p_194999_2_, int p_194999_3_, int p_194999_4_, boolean p_194999_5_, float p_194999_6_)
         {
-            //TODO: Consider adding more icons for visualization
-            Minecraft.getMinecraft().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
-            GlStateManager.color(1, 1, 1, 1);
-            GlStateManager.pushMatrix();
-            Gui.drawModalRectWithCustomSizedTexture(right - (height / 2 + 4), top + (height / 2 - 4), vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
-            GlStateManager.popMatrix();
+            int top = this.func_195001_c();
+            int left = this.func_195002_d();
+            String name = stripControlCodes(modInfo.getDisplayName());
+            String version = stripControlCodes(modInfo.getVersion().getVersionString());
+            VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
+            FontRenderer font = this.parent.getFontRenderer();
+            font.func_211126_b(font.trimStringToWidth(name, listWidth),left + 3, top + 2, 0xFFFFFF);
+            font.func_211126_b(font.trimStringToWidth(version, listWidth), left + 3 , top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
+            if (vercheck.status.shouldDraw())
+            {
+                //TODO: Consider adding more icons for visualization
+                Minecraft.getMinecraft().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
+                GlStateManager.color(1, 1, 1, 1);
+                GlStateManager.pushMatrix();
+                Gui.drawModalRectWithCustomSizedTexture(right - (height / 2 + 4), GuiSlotModList.this.top + (height / 2 - 4), vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
+                GlStateManager.popMatrix();
+            }
+        }
+
+        @Override
+        public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
+        {
+            parent.selectModIndex(this.func_195003_b());
+            return false;
         }
     }
 }

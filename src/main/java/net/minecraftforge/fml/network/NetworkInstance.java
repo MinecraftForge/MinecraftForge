@@ -70,9 +70,11 @@ public class NetworkInstance
         this.networkEventBus.unregister(object);
     }
 
-    void dispatch(final NetworkDirection side, final PacketBuffer bufferData, final NetworkManager manager)
+    boolean dispatch(final NetworkDirection side, final ICustomPacket<?> packet, final NetworkManager manager)
     {
-        this.networkEventBus.post(side.getEvent(bufferData,()->new NetworkEvent.Context(manager, side)));
+        final NetworkEvent.Context context = new NetworkEvent.Context(manager, side);
+        this.networkEventBus.post(side.getEvent(packet, () -> context));
+        return context.getPacketHandled();
     }
 
 

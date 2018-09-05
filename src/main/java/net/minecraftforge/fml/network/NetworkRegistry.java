@@ -41,8 +41,6 @@ public class NetworkRegistry
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
 
-    public static final AttributeKey<String> FML_MARKER = AttributeKey.valueOf("fml:versionMarker");
-
     private static Map<ResourceLocation, NetworkInstance> instances = new HashMap<>();
     public static List<String> getNonVanillaNetworkMods()
     {

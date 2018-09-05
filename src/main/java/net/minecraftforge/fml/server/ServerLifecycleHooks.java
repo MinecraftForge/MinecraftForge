@@ -119,7 +119,7 @@ public class ServerLifecycleHooks
             return false;
         }
 
-        NetworkHooks.registerServerChannel(manager, packet);
+        NetworkHooks.registerServerLoginChannel(manager, packet);
         return true;
 
     }

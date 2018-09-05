@@ -1,0 +1,34 @@
+--- a/net/minecraft/client/gui/GuiMainMenu.java
++++ b/net/minecraft/client/gui/GuiMainMenu.java
+@@ -192,12 +192,18 @@
+             GuiMainMenu.this.mc.displayGuiScreen(new GuiMultiplayer(GuiMainMenu.this));
+          }
+       });
+-      this.addButton(new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online")) {
++      this.addButton(new GuiButton(14, this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("menu.online")) {
+          public void func_194829_a(double p_194829_1_, double p_194829_3_) {
+             GuiMainMenu.this.switchToRealms();
+          }
+       });
++      this.addButton(new GuiButton(6, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("fml.menu.mods")) {
++         @Override
++         public void func_194829_a(double x, double y) {
++            GuiMainMenu.this.mc.displayGuiScreen(new net.minecraftforge.fml.client.gui.GuiModList(GuiMainMenu.this));
+    }
++      });
++   }
+ 
+    private void addDemoButtons(int p_73972_1_, int p_73972_2_) {
+       this.addButton(new GuiButton(11, this.width / 2 - 100, p_73972_1_, I18n.format("menu.playdemo")) {
+@@ -283,7 +289,10 @@
+          s = s + ("release".equalsIgnoreCase(this.mc.getVersionType()) ? "" : "/" + this.mc.getVersionType());
+       }
+ 
+-      this.drawString(this.fontRenderer, s, 2, this.height - 10, -1);
++      net.minecraftforge.fml.BrandingControl.forEachLine(true, true, (brdline, brd) ->
++              this.drawString(this.fontRenderer, brd, 2, this.height - ( 10 + brdline * (this.fontRenderer.FONT_HEIGHT + 1)), 16777215)
++      );
++
+       this.drawString(this.fontRenderer, "Copyright Mojang AB. Do not distribute!", this.widthCopyrightRest, this.height - 10, -1);
+       if (mouseX > this.widthCopyrightRest && mouseX < this.widthCopyrightRest + this.widthCopyright && mouseY > this.height - 10 && mouseY < this.height) {
+          drawRect(this.widthCopyrightRest, this.height - 1, this.widthCopyrightRest + this.widthCopyright, this.height, -1);
