@@ -138,7 +138,6 @@ public class FMLNetworking
         {
             private List<String> modList;
 
-            private int index;
             S2CModList() {
                 this.modList = ModList.get().getMods().stream().map(ModInfo::getModId).collect(Collectors.toList());
             }

@@ -35,4 +35,8 @@ public class Logging
     public static final Marker SPLASH = MarkerManager.getMarker("SPLASH");
     public static final Marker CAPABILITIES = MarkerManager.getMarker("CAPABILITIES");
     public static final Marker MODELLOADING = MarkerManager.getMarker("MODELLOADING");
+
+    // --log CORE:+DEBUG,SCAN:-OFF
+    // forge log debug 5
+
 }
