@@ -69,7 +69,7 @@ public class RecipeMatchingTest
         {
             ResourceLocation location2 = new ResourceLocation(MODID, "stone");
             CraftingHelper.ShapedPrimer primer1 = CraftingHelper.parseShaped("SSS", 'S', new ItemStack(Blocks.IRON_BLOCK));
-            ShapedRecipes recipe2 = new ShapedRecipes(location2.getResourcePath(), primer1.width, primer1.height, primer1.input, new ItemStack(Blocks.GOLD_BLOCK));
+            ShapedRecipes recipe2 = new ShapedRecipes(location2.getPath(), primer1.width, primer1.height, primer1.input, new ItemStack(Blocks.GOLD_BLOCK));
             recipe2.setRegistryName(location2);
             event.getRegistry().register(recipe2);
         }
@@ -102,7 +102,7 @@ public class RecipeMatchingTest
                {
                    return true;
                }
-            }.setRegistryName(MODID, "tool").setMaxDamage(10).setCreativeTab(CreativeTabs.MISC).setUnlocalizedName("recipetest.tool").setMaxStackSize(1);
+            }.setRegistryName(MODID, "tool").setMaxDamage(10).setCreativeTab(CreativeTabs.MISC).setTranslationKey("recipetest.tool").setMaxStackSize(1);
             event.getRegistry().register(TOOL);
         }
     }

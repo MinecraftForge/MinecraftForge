@@ -60,7 +60,7 @@ public class MultiLayerModelTest
                 {
                     {
                         setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-                        setUnlocalizedName(MODID + "." + blockName);
+                        setTranslationKey(MODID + "." + blockName);
                         setRegistryName(blockId);
                     }
 

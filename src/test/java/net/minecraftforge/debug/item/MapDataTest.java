@@ -89,8 +89,8 @@ public class MapDataTest
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> evt)
     {
-        evt.getRegistry().register(new EmptyCustomMap().setUnlocalizedName("emptyCustomMap").setRegistryName("mapdatatest", "empty_custom_map"));
-        evt.getRegistry().register(new CustomMap().setUnlocalizedName("customMap").setRegistryName("mapdatatest", "custom_map"));
+        evt.getRegistry().register(new EmptyCustomMap().setTranslationKey("emptyCustomMap").setRegistryName("mapdatatest", "empty_custom_map"));
+        evt.getRegistry().register(new CustomMap().setTranslationKey("customMap").setRegistryName("mapdatatest", "custom_map"));
     }
 
     public static class EmptyCustomMap extends ItemMapBase

@@ -158,7 +158,7 @@ public class FluidPlacementTest
         {
             super(FiniteFluid.instance, Material.WATER);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(MODID, name);
         }
     }
@@ -192,7 +192,7 @@ public class FluidPlacementTest
         {
             super(Blocks.AIR);
             setRegistryName(MODID, name);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setMaxStackSize(16);
         }
 
@@ -243,7 +243,7 @@ public class FluidPlacementTest
             super(1000, new ItemStack(EmptyFluidContainer.instance), false);
             setCreativeTab(CreativeTabs.MISC);
             setRegistryName(MODID, name);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
         }
 
         @Nonnull

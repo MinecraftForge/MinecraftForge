@@ -255,7 +255,7 @@ public final class ModelDynBucket implements IModel
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && modelLocation.getResourcePath().contains("forgebucket");
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && modelLocation.getPath().contains("forgebucket");
         }
 
         @Override

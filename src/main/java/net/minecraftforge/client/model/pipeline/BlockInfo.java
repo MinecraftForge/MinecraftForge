@@ -135,9 +135,9 @@ public class BlockInfo
         {
             if(!state.doesSideBlockRendering(world, blockPos, side))
             {
-                int x = side.getFrontOffsetX() + 1;
-                int y = side.getFrontOffsetY() + 1;
-                int z = side.getFrontOffsetZ() + 1;
+                int x = side.getXOffset() + 1;
+                int y = side.getYOffset() + 1;
+                int z = side.getZOffset() + 1;
                 s[x][y][z] = Math.max(s[1][1][1] - 1, s[x][y][z]);
                 b[x][y][z] = Math.max(b[1][1][1] - 1, b[x][y][z]);
             }

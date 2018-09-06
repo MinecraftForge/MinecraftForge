@@ -332,7 +332,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.names.put(key, value);
         this.ids.put(idToUse, value);
         this.availabilityMap.set(idToUse);
-        this.owners.put(new OverrideOwner(owner == null ? key.getResourceDomain() : owner, key), value);
+        this.owners.put(new OverrideOwner(owner == null ? key.getNamespace() : owner, key), value);
 
         if (isDelegated)
         {
@@ -691,7 +691,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
             }
 
-            int realId = add(newId, obj, primaryName == null ? itemName.getResourceDomain() : primaryName);
+            int realId = add(newId, obj, primaryName == null ? itemName.getNamespace() : primaryName);
             if (realId != newId)
                 FMLLog.log.warn("Registry {}: Object did not get ID it asked for. Name: {} Expected: {} Got: {}", this.superType.getSimpleName(), entry.getKey(), newId, realId);
             ovs.remove(itemName);
@@ -946,7 +946,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                     if (m == null)
                         defaulted.add(remap.key);
                     else
-                        this.add(remap.id, m, remap.key.getResourceDomain());
+                        this.add(remap.id, m, remap.key.getNamespace());
                 }
                 else if (action == MissingMappings.Action.IGNORE)
                 {

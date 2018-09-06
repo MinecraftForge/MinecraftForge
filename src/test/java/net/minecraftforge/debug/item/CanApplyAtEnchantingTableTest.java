@@ -67,7 +67,7 @@ public class CanApplyAtEnchantingTableTest
             {
                 event.getRegistry().register(
                         testItem.setRegistryName("test_item")
-                                .setUnlocalizedName("FortuneEnchantableOnly")
+                                .setTranslationKey("FortuneEnchantableOnly")
                                 .setMaxStackSize(1));
             }
         }

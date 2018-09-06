@@ -441,7 +441,7 @@ public class ForgeBlockStateV1 extends Marker
             protected ResourceLocation getBlockLocation(String location)
             {
                 ResourceLocation tmp = new ResourceLocation(location);
-                return new ResourceLocation(tmp.getResourceDomain(), "block/" + tmp.getResourcePath());
+                return new ResourceLocation(tmp.getNamespace(), "block/" + tmp.getPath());
             }
 
             /** Throws an error if there are submodels in this submodel. */

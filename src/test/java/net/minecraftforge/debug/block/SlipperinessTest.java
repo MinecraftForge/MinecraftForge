@@ -59,7 +59,7 @@ public class SlipperinessTest
     public static void registerBlocks(RegistryEvent.Register<Block> e)
     {
         e.getRegistry().register(BB_BLOCK
-                .setUnlocalizedName("boat_blaster")
+                .setTranslationKey("boat_blaster")
                 .setRegistryName("boat_blaster")
                 .setCreativeTab(CreativeTabs.BUILDING_BLOCKS));
     }

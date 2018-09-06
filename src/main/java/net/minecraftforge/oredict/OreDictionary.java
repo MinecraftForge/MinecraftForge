@@ -443,7 +443,7 @@ public class OreDictionary
                         replaced++;
                         if(DEBUG && replacedIngs.add(ing))
                         {
-                            String recipeName = obj.getRegistryName().getResourcePath();
+                            String recipeName = obj.getRegistryName().getPath();
                             FMLLog.log.debug("Replaced {} of the recipe \'{}\' with \"{}\".", ing.getMatchingStacks(), recipeName, oreName);
                         }
                     }

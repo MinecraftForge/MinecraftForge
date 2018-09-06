@@ -435,7 +435,7 @@ public final class ItemLayerModel implements IModel
                 break;
             }
             case NORMAL:
-                builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                builder.put(e, (float)side.getXOffset(), (float)side.getYOffset(), (float)side.getZOffset(), 0f);
                 break;
             default:
                 builder.put(e);
@@ -454,10 +454,10 @@ public final class ItemLayerModel implements IModel
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
-                modelLocation.getResourcePath().equals("item-layer") ||
-                modelLocation.getResourcePath().equals("models/block/item-layer") ||
-                modelLocation.getResourcePath().equals("models/item/item-layer"));
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && (
+                modelLocation.getPath().equals("item-layer") ||
+                modelLocation.getPath().equals("models/block/item-layer") ||
+                modelLocation.getPath().equals("models/item/item-layer"));
         }
 
         @Override

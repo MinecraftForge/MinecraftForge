@@ -80,7 +80,7 @@ public class StickyBlockTest
             super();
             this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockType.BLUE_SLIME_BLOCK));
             this.setCreativeTab(CreativeTabs.DECORATIONS);
-            this.setUnlocalizedName("custom_slime_block");
+            this.setTranslationKey("custom_slime_block");
             this.setRegistryName("forgedebugcustomslimeblock:custom_slime_block");
             this.setSoundType(SoundType.SLIME);
         }

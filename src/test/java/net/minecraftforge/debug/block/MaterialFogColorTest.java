@@ -98,7 +98,7 @@ public class MaterialFogColorTest
     {
         if (ENABLED)
         {
-            event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
+            event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setTranslationKey(RES_LOC.toString()));
             Fluid fluid = new Fluid("fog_test", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"), new ResourceLocation("blocks/water_overlay"));
             FluidRegistry.registerFluid(fluid);
             Block fluidBlock = new BlockFluidClassic(fluid, Material.WATER)
@@ -109,7 +109,7 @@ public class MaterialFogColorTest
                     return new Vec3d(0.6F, 0.1F, 0.0F);
                 }
             };
-            event.getRegistry().register(fluidBlock.setCreativeTab(CreativeTabs.BUILDING_BLOCKS).setUnlocalizedName(MODID + ".test_fluid").setRegistryName(testFluidRegistryName));
+            event.getRegistry().register(fluidBlock.setCreativeTab(CreativeTabs.BUILDING_BLOCKS).setTranslationKey(MODID + ".test_fluid").setRegistryName(testFluidRegistryName));
         }
     }
 

@@ -64,7 +64,7 @@ public class ItemBlockSubstitutionRemoveRestoreTest
                 @Nonnull
                 public String apply(@Nonnull ItemStack p_apply_1_)
                 {
-                    return BlockDirt.DirtType.byMetadata(p_apply_1_.getMetadata()).getUnlocalizedName();
+                    return BlockDirt.DirtType.byMetadata(p_apply_1_.getMetadata()).getTranslationKey();
                 }
             });
         }

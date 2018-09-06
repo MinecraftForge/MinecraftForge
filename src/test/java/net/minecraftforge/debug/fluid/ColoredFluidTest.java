@@ -71,7 +71,7 @@ public class ColoredFluidTest
     {
         if (ENABLED)
         {
-            event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setUnlocalizedName(RES_LOC.toString()));
+            event.getRegistry().register((new BlockFluidClassic(SLIME, Material.WATER)).setRegistryName(RES_LOC).setTranslationKey(RES_LOC.toString()));
         }
     }
 }

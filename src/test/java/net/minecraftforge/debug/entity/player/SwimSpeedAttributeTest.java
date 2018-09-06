@@ -63,7 +63,7 @@ public class SwimSpeedAttributeTest
         public SwimSpeedPlate()
         {
             super(ArmorMaterial.DIAMOND, 3, EntityEquipmentSlot.CHEST);
-            setUnlocalizedName("swimSpeedPlate");
+            setTranslationKey("swimSpeedPlate");
         }
 
         @Override

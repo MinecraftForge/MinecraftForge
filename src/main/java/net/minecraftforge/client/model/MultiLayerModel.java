@@ -210,10 +210,10 @@ public final class MultiLayerModel implements IModel
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
-                modelLocation.getResourcePath().equals("multi-layer") ||
-                modelLocation.getResourcePath().equals("models/block/multi-layer") ||
-                modelLocation.getResourcePath().equals("models/item/multi-layer"));
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && (
+                modelLocation.getPath().equals("multi-layer") ||
+                modelLocation.getPath().equals("models/block/multi-layer") ||
+                modelLocation.getPath().equals("models/item/multi-layer"));
         }
 
         @Override

@@ -42,7 +42,7 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
         this.parent = parent;
         this.dirName = dirName;
         this.saveName = saveName;
-        this.zip = new File(FMLClientHandler.instance().getClient().mcDataDir,String.format("%s-%2$td%2$tm%2$ty%2$tH%2$tM%2$tS.zip", dirName, System.currentTimeMillis()));
+        this.zip = new File(FMLClientHandler.instance().getClient().gameDir,String.format("%s-%2$td%2$tm%2$ty%2$tH%2$tM%2$tS.zip", dirName, System.currentTimeMillis()));
     }
 
     @Override

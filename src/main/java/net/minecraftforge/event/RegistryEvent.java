@@ -116,7 +116,7 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
 
         public ImmutableList<Mapping<T>> getMappings()
         {
-            return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getResourceDomain().equals(this.activeMod.getModId())).collect(Collectors.toList()));
+            return ImmutableList.copyOf(this.mappings.stream().filter(e -> e.key.getNamespace().equals(this.activeMod.getModId())).collect(Collectors.toList()));
         }
 
         public ImmutableList<Mapping<T>> getAllMappings()

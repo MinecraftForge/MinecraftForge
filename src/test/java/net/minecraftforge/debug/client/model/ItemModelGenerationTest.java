@@ -57,23 +57,23 @@ public class ItemModelGenerationTest
         event.getRegistry().registerAll(
                 new Item()
                         .setRegistryName("animation_test")
-                        .setUnlocalizedName(MOD_ID + ".animation_test")
+                        .setTranslationKey(MOD_ID + ".animation_test")
                         .setCreativeTab(CreativeTabs.MISC),
                 new Item()
                         .setRegistryName("intersection_test")
-                        .setUnlocalizedName(MOD_ID + ".intersection_test")
+                        .setTranslationKey(MOD_ID + ".intersection_test")
                         .setCreativeTab(CreativeTabs.MISC),
                 new Item()
                         .setRegistryName("opacity_test")
-                        .setUnlocalizedName(MOD_ID + ".opacity_test")
+                        .setTranslationKey(MOD_ID + ".opacity_test")
                         .setCreativeTab(CreativeTabs.MISC),
                 new Item()
                         .setRegistryName("overlap_test")
-                        .setUnlocalizedName(MOD_ID + ".overlap_test")
+                        .setTranslationKey(MOD_ID + ".overlap_test")
                         .setCreativeTab(CreativeTabs.MISC),
                 new Item()
                         .setRegistryName("pattern_test")
-                        .setUnlocalizedName(MOD_ID + ".pattern_test")
+                        .setTranslationKey(MOD_ID + ".pattern_test")
                         .setCreativeTab(CreativeTabs.MISC)
         );
     }

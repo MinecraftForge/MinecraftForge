@@ -77,7 +77,7 @@ public class PotionRegistryTest
         protected PotionForge(ResourceLocation location, boolean badEffect, int potionColor)
         {
             super(badEffect, potionColor);
-            setPotionName("potion." + location.getResourcePath());
+            setPotionName("potion." + location.getPath());
         }
 
         @Override

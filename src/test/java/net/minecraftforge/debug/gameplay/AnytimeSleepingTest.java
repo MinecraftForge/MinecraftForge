@@ -81,7 +81,7 @@ public class AnytimeSleepingTest
         private ItemSleepCharm()
         {
             this.setCreativeTab(CreativeTabs.MISC);
-            this.setUnlocalizedName(MODID + ":" + NAME);
+            this.setTranslationKey(MODID + ":" + NAME);
             this.setRegistryName(new ResourceLocation(MODID, NAME));
         }
     }

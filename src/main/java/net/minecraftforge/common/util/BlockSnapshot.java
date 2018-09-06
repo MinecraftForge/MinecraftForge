@@ -219,8 +219,8 @@ public class BlockSnapshot
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        compound.setString("blockMod", getRegistryName().getResourceDomain());
-        compound.setString("blockName", getRegistryName().getResourcePath());
+        compound.setString("blockMod", getRegistryName().getNamespace());
+        compound.setString("blockName", getRegistryName().getPath());
         compound.setInteger("posX", getPos().getX());
         compound.setInteger("posY", getPos().getY());
         compound.setInteger("posZ", getPos().getZ());

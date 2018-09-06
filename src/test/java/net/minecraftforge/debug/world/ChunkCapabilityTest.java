@@ -171,7 +171,7 @@ public class ChunkCapabilityTest
 
                 if (delta != 0)
                 {
-                    Chunk chunk = event.getWorld().getChunkFromBlockCoords(event.getPos());
+                    Chunk chunk = event.getWorld().getChunk(event.getPos());
                     IPollution pollution = chunk.getCapability(POLLUTION_CAPABILITY, null);
                     pollution.set(pollution.get() + delta, true);
 

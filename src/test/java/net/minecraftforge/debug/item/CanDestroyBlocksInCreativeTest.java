@@ -52,7 +52,7 @@ public class CanDestroyBlocksInCreativeTest
                     return false;
                 }
             }.setRegistryName(MODID, "item_test")
-             .setUnlocalizedName(MODID + ".item_test")
+             .setTranslationKey(MODID + ".item_test")
              .setCreativeTab(CreativeTabs.TOOLS);
 
             event.getRegistry().register(test);

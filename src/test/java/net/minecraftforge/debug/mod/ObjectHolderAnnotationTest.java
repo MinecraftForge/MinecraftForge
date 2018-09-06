@@ -59,7 +59,7 @@ public class ObjectHolderAnnotationTest
         protected PotionForge(ResourceLocation location, boolean badEffect, int potionColor)
         {
             super(badEffect, potionColor);
-            setPotionName("potion." + location.getResourcePath());
+            setPotionName("potion." + location.getPath());
             setRegistryName(location);
         }
     }

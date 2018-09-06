@@ -63,7 +63,7 @@ public class ReachDistanceAttributeTest
         public ExtendedReachPlate()
         {
             super(ArmorMaterial.DIAMOND, 3, EntityEquipmentSlot.CHEST);
-            setUnlocalizedName("extendedReachPlate");
+            setTranslationKey("extendedReachPlate");
         }
 
         @Override

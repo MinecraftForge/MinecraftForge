@@ -255,7 +255,7 @@ public class DynBucketTest
         public DynBottle()
         {
             super(250, new ItemStack(Items.GLASS_BOTTLE), true);
-            setUnlocalizedName("dynbottle");
+            setTranslationKey("dynbottle");
             setRegistryName(new ResourceLocation(MODID, "dynbottle"));
             setMaxStackSize(16);
             setHasSubtypes(true);

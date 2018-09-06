@@ -57,7 +57,7 @@ public class ShieldTest
             @Override
             public String getItemStackDisplayName(ItemStack stack)
             {
-                return I18n.translateToLocal(this.getUnlocalizedNameInefficiently(stack) + ".name").trim();
+                return I18n.translateToLocal(this.getTranslationKeyInefficiently(stack) + ".name").trim();
             }
             
             @Override
@@ -91,8 +91,8 @@ public class ShieldTest
                 return shield.getItem() != DIAMOND_SHIELD;
             }
         }
-        event.getRegistry().register(new ItemCustomShield().setMaxDamage(2098).setUnlocalizedName("diamond_shield").setRegistryName("diamond_shield"));
-        event.getRegistry().register(new ItemHeavyDiamondSword().setUnlocalizedName("heavy_diamond_sword").setRegistryName("heavy_diamond_sword"));
+        event.getRegistry().register(new ItemCustomShield().setMaxDamage(2098).setTranslationKey("diamond_shield").setRegistryName("diamond_shield"));
+        event.getRegistry().register(new ItemHeavyDiamondSword().setTranslationKey("heavy_diamond_sword").setRegistryName("heavy_diamond_sword"));
     }
     
     @SideOnly(Side.CLIENT)

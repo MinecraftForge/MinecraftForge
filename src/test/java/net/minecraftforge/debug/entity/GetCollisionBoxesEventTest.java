@@ -112,7 +112,7 @@ public class GetCollisionBoxesEventTest
 
 
         @Override
-        public String getUnlocalizedName() {
+        public String getTranslationKey() {
             return "CollisionBoxes event test block";
         }
 

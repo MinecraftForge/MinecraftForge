@@ -333,7 +333,7 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected ResourceLocation getModelLocation(ResourceLocation model)
     {
-        return new ResourceLocation(model.getResourceDomain(), model.getResourcePath() + ".json");
+        return new ResourceLocation(model.getNamespace(), model.getPath() + ".json");
     }
 
     private final class VanillaModelWrapper implements IModel
@@ -364,7 +364,7 @@ public final class ModelLoader extends ModelBakery
                     stateModels.put(getInventoryVariant(dep.toString()), ModelLoaderRegistry.getModelOrLogError(dep, "Could not load override model " + dep + " for model " + location));
                 }
             }
-            if(model.getParentLocation() != null && !model.getParentLocation().getResourcePath().startsWith("builtin/"))
+            if(model.getParentLocation() != null && !model.getParentLocation().getPath().startsWith("builtin/"))
             {
                 set.add(model.getParentLocation());
             }
@@ -377,7 +377,7 @@ public final class ModelLoader extends ModelBakery
             // setting parent here to make textures resolve properly
             if(model.getParentLocation() != null)
             {
-                if(model.getParentLocation().getResourcePath().equals("builtin/generated"))
+                if(model.getParentLocation().getPath().equals("builtin/generated"))
                 {
                     model.parent = MODEL_GENERATED;
                 }
@@ -762,7 +762,7 @@ public final class ModelLoader extends ModelBakery
         {
             try
             {
-                missingModel = VanillaLoader.INSTANCE.loadModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+                missingModel = VanillaLoader.INSTANCE.loadModel(new ResourceLocation(MODEL_MISSING.getNamespace(), MODEL_MISSING.getPath()));
             }
             catch(Exception e)
             {
@@ -851,12 +851,12 @@ public final class ModelLoader extends ModelBakery
             {
                 return loader.getMissingModel();
             }
-            String modelPath = modelLocation.getResourcePath();
-            if(modelLocation.getResourcePath().startsWith("models/"))
+            String modelPath = modelLocation.getPath();
+            if(modelLocation.getPath().startsWith("models/"))
             {
                 modelPath = modelPath.substring("models/".length());
             }
-            ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getResourceDomain(), "armatures/" + modelPath + ".json");
+            ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getNamespace(), "armatures/" + modelPath + ".json");
             ModelBlockAnimation animation = ModelBlockAnimation.loadVanillaAnimation(loader.resourceManager, armatureLocation);
             ModelBlock model = loader.loadModel(modelLocation);
             IModel iModel = loader.new VanillaModelWrapper(modelLocation, model, false, animation);
@@ -966,7 +966,7 @@ public final class ModelLoader extends ModelBakery
                 IBakedModel model = modelRegistry.getObject(location);
                 if(model == null || model == missingModel || model instanceof FancyMissingModel.BakedModel)
                 {
-                    String domain = entry.getKey().getResourceDomain();
+                    String domain = entry.getKey().getNamespace();
                     Integer errorCountBox = modelErrors.get(domain);
                     int errorCount = errorCountBox == null ? 0 : errorCountBox;
                     errorCount++;
@@ -1011,7 +1011,7 @@ public final class ModelLoader extends ModelBakery
                         {
                             FMLLog.log.error(errorMsg, entry.getValue());
                         }
-                        ResourceLocation blockstateLocation = new ResourceLocation(location.getResourceDomain(), location.getResourcePath());
+                        ResourceLocation blockstateLocation = new ResourceLocation(location.getNamespace(), location.getPath());
                         if(loadingExceptions.containsKey(blockstateLocation) && !printedBlockStateErrors.contains(blockstateLocation))
                         {
                             FMLLog.log.error("Exception loading blockstate for the variant {}: ", location, loadingExceptions.get(blockstateLocation));
@@ -1031,7 +1031,7 @@ public final class ModelLoader extends ModelBakery
             IBakedModel model = modelRegistry.getObject(missing);
             if(model == null || model == missingModel)
             {
-                String domain = missing.getResourceDomain();
+                String domain = missing.getNamespace();
                 Integer errorCountBox = modelErrors.get(domain);
                 int errorCount = errorCountBox == null ? 0 : errorCountBox;
                 errorCount++;
@@ -1182,7 +1182,7 @@ public final class ModelLoader extends ModelBakery
                     IModel model = loader.multipartModels.get(definition);
                     if (model == null)
                     {
-                        model = new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                        model = new MultipartModel(new ResourceLocation(variant.getNamespace(), variant.getPath()), definition.getMultipartData());
                         loader.multipartModels.put(definition, model);
                     }
                     return model;

@@ -185,7 +185,7 @@ public class ModelLoaderRegistryTest
             super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
@@ -216,7 +216,7 @@ public class ModelLoaderRegistryTest
         @Override
         public IBlockState getStateFromMeta(int meta)
         {
-            return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+            return this.getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta));
         }
 
         @Override
@@ -299,7 +299,7 @@ public class ModelLoaderRegistryTest
         {
             super(Material.IRON);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
@@ -459,7 +459,7 @@ public class ModelLoaderRegistryTest
         {
             super(Material.IRON);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(name);
+            setTranslationKey(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
@@ -500,7 +500,7 @@ public class ModelLoaderRegistryTest
             super(Material.IRON);
             setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(name);
+            setTranslationKey(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
@@ -513,7 +513,7 @@ public class ModelLoaderRegistryTest
         @Override
         public IBlockState getStateFromMeta(int meta)
         {
-            return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+            return this.getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta));
         }
 
         @Override
@@ -582,7 +582,7 @@ public class ModelLoaderRegistryTest
         {
             super(Material.IRON);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(name);
+            setTranslationKey(name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
@@ -686,7 +686,7 @@ public class ModelLoaderRegistryTest
             super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
@@ -717,7 +717,7 @@ public class ModelLoaderRegistryTest
         @Override
         public IBlockState getStateFromMeta(int meta)
         {
-            return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+            return this.getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta));
         }
 
         @Override
@@ -772,7 +772,7 @@ public class ModelLoaderRegistryTest
             super(Material.IRON);
             this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, false).withProperty(SOUTH, false).withProperty(WEST, false).withProperty(EAST, false));
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
@@ -827,7 +827,7 @@ public class ModelLoaderRegistryTest
         {
             super(Material.IRON);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
 

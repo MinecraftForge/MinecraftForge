@@ -521,7 +521,7 @@ public class ForgeHooksClient
 
     public static Matrix4f getMatrix(ModelRotation modelRotation)
     {
-        Matrix4f ret = new Matrix4f(TRSRTransformation.toVecmath(modelRotation.getMatrix4d())), tmp = new Matrix4f();
+        Matrix4f ret = new Matrix4f(TRSRTransformation.toVecmath(modelRotation.matrix())), tmp = new Matrix4f();
         tmp.setIdentity();
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
         ret.mul(tmp, ret);

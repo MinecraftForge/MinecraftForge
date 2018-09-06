@@ -121,7 +121,7 @@ public class PotionCurabilityTest
         public Medicine()
         {
             super(2, 1, false);
-            setUnlocalizedName("medicine");
+            setTranslationKey("medicine");
             setAlwaysEdible();
         }
 

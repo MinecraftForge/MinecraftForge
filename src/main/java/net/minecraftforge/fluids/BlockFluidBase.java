@@ -411,7 +411,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Override
     @SideOnly(Side.CLIENT)
     @Nonnull
-    public BlockRenderLayer getBlockLayer()
+    public BlockRenderLayer getRenderLayer()
     {
         return this.renderLayer;
     }
@@ -513,7 +513,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
         for (int i = 0; i < 4; i++)
         {
-            EnumFacing side = EnumFacing.getHorizontal(i);
+            EnumFacing side = EnumFacing.byHorizontalIndex(i);
             BlockPos offset = pos.offset(side);
             boolean useOverlay = world.getBlockState(offset).getBlockFaceShape(world, offset, side.getOpposite()) == BlockFaceShape.SOLID;
             state = state.withProperty(SIDE_OVERLAYS[i], useOverlay);
@@ -685,14 +685,14 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                     if (otherDecay < quantaPerBlock)
                     {
                         int power = otherDecay - (decay - quantaPerBlock);
-                        vec = vec.addVector(side.getFrontOffsetX() * power, 0, side.getFrontOffsetZ() * power);
+                        vec = vec.add(side.getXOffset() * power, 0, side.getZOffset() * power);
                     }
                 }
             }
             else
             {
                 int power = otherDecay - decay;
-                vec = vec.addVector(side.getFrontOffsetX() * power, 0, side.getFrontOffsetZ() * power);
+                vec = vec.add(side.getXOffset() * power, 0, side.getZOffset() * power);
             }
         }
 
@@ -703,7 +703,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
                 BlockPos offset = pos.offset(side);
                 if (causesDownwardCurrent(world, offset, side) || causesDownwardCurrent(world, offset.down(densityDir), side))
                 {
-                    vec = vec.normalize().addVector(0.0, 6.0 * densityDir, 0.0);
+                    vec = vec.normalize().add(0.0, 6.0 * densityDir, 0.0);
                     break;
                 }
             }

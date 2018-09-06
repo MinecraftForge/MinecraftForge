@@ -61,7 +61,7 @@ public class HorseArmorTest
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
         if(ENABLED)
-            event.getRegistry().register(new ItemTestHorseArmor().setRegistryName(MODID, "test_armor").setUnlocalizedName(MODID + ".testArmor"));
+            event.getRegistry().register(new ItemTestHorseArmor().setRegistryName(MODID, "test_armor").setTranslationKey(MODID + ".testArmor"));
     }
 
     @EventBusSubscriber(modid = MODID, value = Side.CLIENT)

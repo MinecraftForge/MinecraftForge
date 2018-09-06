@@ -150,7 +150,7 @@ public class ChunkGenWorker implements IWorker
             int x = next.getX();
             int z = next.getZ();
 
-            Chunk target = world.getChunkFromChunkCoords(x, z);
+            Chunk target = world.getChunk(x, z);
             Chunk[] chunks = { target };
 
             if (!target.isTerrainPopulated())
@@ -160,9 +160,9 @@ public class ChunkGenWorker implements IWorker
                 // So this does load more chunks then it should, and is a hack, but lets go!.
                 chunks = new Chunk[] {
                     target,
-                    world.getChunkFromChunkCoords(x + 1, z),
-                    world.getChunkFromChunkCoords(x + 1, z + 1),
-                    world.getChunkFromChunkCoords(x,     z + 1),
+                    world.getChunk(x + 1, z),
+                    world.getChunk(x + 1, z + 1),
+                    world.getChunk(x,     z + 1),
                 };
                 try
                 {

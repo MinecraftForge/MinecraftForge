@@ -107,10 +107,10 @@ public final class ModelFluid implements IModel
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
-                modelLocation.getResourcePath().equals("fluid") ||
-                modelLocation.getResourcePath().equals("models/block/fluid") ||
-                modelLocation.getResourcePath().equals("models/item/fluid"));
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && (
+                modelLocation.getPath().equals("fluid") ||
+                modelLocation.getPath().equals("models/block/fluid") ||
+                modelLocation.getPath().equals("models/item/fluid"));
         }
 
         @Override
@@ -346,7 +346,7 @@ public final class ModelFluid implements IModel
                 // sides
                 for (int i = 0; i < 4; i++)
                 {
-                    EnumFacing side = EnumFacing.getHorizontal((5 - i) % 4); // [W, S, E, N]
+                    EnumFacing side = EnumFacing.byHorizontalIndex((5 - i) % 4); // [W, S, E, N]
                     boolean useOverlay = overlay.isPresent() && sideOverlays[side.getHorizontalIndex()];
                     int si = i; // local var for lambda capture
 
@@ -440,7 +440,7 @@ public final class ModelFluid implements IModel
                     break;
                 }
                 case NORMAL:
-                    builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                    builder.put(e, (float)side.getXOffset(), (float)side.getYOffset(), (float)side.getZOffset(), 0f);
                     break;
                 default:
                     builder.put(e);

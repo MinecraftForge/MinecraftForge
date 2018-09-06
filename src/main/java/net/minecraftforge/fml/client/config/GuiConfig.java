@@ -249,10 +249,10 @@ public class GuiConfig extends GuiScreen
     public static String getAbridgedConfigPath(String path)
     {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.mcDataDir.getAbsolutePath().endsWith("."))
-            return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), "/.minecraft/");
+        if (mc.gameDir.getAbsolutePath().endsWith("."))
+            return path.replace("\\", "/").replace(mc.gameDir.getAbsolutePath().replace("\\", "/").substring(0, mc.gameDir.getAbsolutePath().length() - 1), "/.minecraft/");
         else
-            return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
+            return path.replace("\\", "/").replace(mc.gameDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
     }
 
     @Override

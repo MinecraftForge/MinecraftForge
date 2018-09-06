@@ -85,8 +85,8 @@ public class ModelLoaderRegistry
     public static ResourceLocation getActualLocation(ResourceLocation location)
     {
         if(location instanceof ModelResourceLocation) return location;
-        if(location.getResourcePath().startsWith("builtin/")) return location;
-        return new ResourceLocation(location.getResourceDomain(), "models/" + location.getResourcePath());
+        if(location.getPath().startsWith("builtin/")) return location;
+        return new ResourceLocation(location.getNamespace(), "models/" + location.getPath());
     }
 
     /**

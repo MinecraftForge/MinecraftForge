@@ -35,7 +35,7 @@ public class BufferBuilderExpansionTest
     public VertexFormat format = DefaultVertexFormats.POSITION;
     // 4 quads.
     public int num_quads = 4;
-    public int BUFFER_SIZE = format.getNextOffset() * (num_quads * 4);
+    public int BUFFER_SIZE = format.getSize() * (num_quads * 4);
 
     @Test//Test the expansion of the buffer with addVertexData
     public void testAddVertexExpansion()

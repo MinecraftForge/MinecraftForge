@@ -101,7 +101,7 @@ public class TileEntityLoadingTest
         {
             super(Material.ANVIL);
             setRegistryName(NAME);
-            setUnlocalizedName(MODID + "." + NAME);
+            setTranslationKey(MODID + "." + NAME);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
         }
 

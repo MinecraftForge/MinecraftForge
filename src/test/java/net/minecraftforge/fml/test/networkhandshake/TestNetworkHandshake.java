@@ -160,7 +160,7 @@ public class TestNetworkHandshake
             }
         };
         listener = minecraftServer.getNetworkSystem();
-        listener.addLanEndpoint(InetAddress.getLocalHost(), 54321);
+        listener.addEndpoint(InetAddress.getLocalHost(), 54321);
         final Field networkManagers = listener.getClass().getDeclaredField("networkManagers");
         networkManagers.setAccessible(true);
         final List<NetworkManager> nmList = (List<NetworkManager>)networkManagers.get(listener);

@@ -143,7 +143,7 @@ public class ForgeChunkManager
         final ImmutableSetMultimap<ChunkPos, Ticket> persistentChunksFor = getPersistentChunksFor(world);
         final ImmutableSet.Builder<Chunk> builder = ImmutableSet.builder();
         world.profiler.startSection("forcedChunkLoading");
-        builder.addAll(persistentChunksFor.keys().stream().filter(Objects::nonNull).map(input -> world.getChunkFromChunkCoords(input.x, input.z)).iterator());
+        builder.addAll(persistentChunksFor.keys().stream().filter(Objects::nonNull).map(input -> world.getChunk(input.x, input.z)).iterator());
         world.profiler.endStartSection("regularChunkLoading");
         builder.addAll(chunkIterator);
         world.profiler.endSection();
@@ -556,7 +556,7 @@ public class ForgeChunkManager
                     // force the world to load the entity's chunk
                     // the load will come back through the loadEntity method and attach the entity
                     // to the ticket
-                    world.getChunkFromChunkCoords(tick.entityChunkX, tick.entityChunkZ);
+                    world.getChunk(tick.entityChunkX, tick.entityChunkZ);
                 }
             }
             for (Ticket tick : ImmutableSet.copyOf(pendingEntities.values()))

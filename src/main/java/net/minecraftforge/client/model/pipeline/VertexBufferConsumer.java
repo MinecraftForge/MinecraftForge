@@ -41,7 +41,7 @@ public class VertexBufferConsumer implements IVertexConsumer
     {
         super();
         this.renderer = renderer;
-        quadData = new int[renderer.getVertexFormat().getNextOffset()/* / 4 * 4 */];
+        quadData = new int[renderer.getVertexFormat().getSize()/* / 4 * 4 */];
     }
 
     @Override

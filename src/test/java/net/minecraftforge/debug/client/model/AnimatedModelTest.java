@@ -122,7 +122,7 @@ public class AnimatedModelTest
             {
                 {
                     setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-                    setUnlocalizedName(MODID + "." + blockName);
+                    setTranslationKey(MODID + "." + blockName);
                     setRegistryName(new ResourceLocation(MODID, blockName));
                 }
 
@@ -153,7 +153,7 @@ public class AnimatedModelTest
                 @Override
                 public IBlockState getStateFromMeta(int meta)
                 {
-                    return getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+                    return getDefaultState().withProperty(FACING, EnumFacing.byIndex(meta));
                 }
 
                 @Override
@@ -208,7 +208,7 @@ public class AnimatedModelTest
             event.getRegistry().register(new Block(Material.WOOD){
                 {
                     setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-                    setUnlocalizedName(MODID + "." + rotateBlockName);
+                    setTranslationKey(MODID + "." + rotateBlockName);
                     setRegistryName(new ResourceLocation(MODID, rotateBlockName));
                 }
 

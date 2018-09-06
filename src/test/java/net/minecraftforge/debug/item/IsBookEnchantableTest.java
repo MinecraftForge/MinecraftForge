@@ -68,7 +68,7 @@ public class IsBookEnchantableTest
         private TestItem()
         {
             maxStackSize = 1;
-            setUnlocalizedName(MOD_ID + "." + NAME);
+            setTranslationKey(MOD_ID + "." + NAME);
             setRegistryName(NAME);
             setCreativeTab(CreativeTabs.MISC);
         }

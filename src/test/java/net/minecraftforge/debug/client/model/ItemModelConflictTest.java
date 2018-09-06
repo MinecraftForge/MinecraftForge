@@ -51,7 +51,7 @@ public class ItemModelConflictTest
         event.getRegistry().register(
                 new Block(Material.ROCK)
                         .setRegistryName(MODID, "test")
-                        .setUnlocalizedName(MODID + ".test")
+                        .setTranslationKey(MODID + ".test")
                         .setCreativeTab(CreativeTabs.BUILDING_BLOCKS)
         );
     }
@@ -62,7 +62,7 @@ public class ItemModelConflictTest
         event.getRegistry().registerAll(
                 new Item()
                         .setRegistryName(MODID, "item")
-                        .setUnlocalizedName(MODID + ".item")
+                        .setTranslationKey(MODID + ".item")
                         .setCreativeTab(CreativeTabs.MISC),
                 new ItemBlock(TEST_BLOCK)
                         .setRegistryName(TEST_BLOCK.getRegistryName())

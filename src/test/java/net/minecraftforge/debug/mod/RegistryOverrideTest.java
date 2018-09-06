@@ -60,7 +60,7 @@ public class RegistryOverrideTest
         event.getRegistry().register(
                 new Item()
                         .setFull3D()
-                        .setUnlocalizedName("stick")
+                        .setTranslationKey("stick")
                         .setCreativeTab(CreativeTabs.MATERIALS)
                         .setRegistryName("minecraft:stick")
         );
@@ -75,7 +75,7 @@ public class RegistryOverrideTest
             super(Material.ROCK);
             setRegistryName("minecraft", "bookshelf");
             this.setHardness(1.5F);
-            this.setSoundType(SoundType.STONE).setUnlocalizedName("bookshelf");
+            this.setSoundType(SoundType.STONE).setTranslationKey("bookshelf");
             this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
         }
 

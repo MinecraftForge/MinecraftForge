@@ -724,7 +724,7 @@ public class FluidUtil
     {
         Fluid fluid = fluidStack.getFluid();
 
-        if (fluidStack.tag == null || fluidStack.tag.hasNoTags())
+        if (fluidStack.tag == null || fluidStack.tag.isEmpty())
         {
             if (fluid == FluidRegistry.WATER)
             {

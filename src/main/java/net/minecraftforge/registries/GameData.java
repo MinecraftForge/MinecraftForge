@@ -360,7 +360,7 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            Block ret = new BlockDummyAir().setUnlocalizedName("air");
+            Block ret = new BlockDummyAir().setTranslationKey("air");
             GameData.forceRegistryName(ret, key);
             return ret;
         }

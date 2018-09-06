@@ -1191,7 +1191,7 @@ public class ForgeHooks
         {
             this.name = name;
             this.custom = custom;
-            this.vanilla = "minecraft".equals(this.name.getResourceDomain());
+            this.vanilla = "minecraft".equals(this.name.getNamespace());
         }
 
         private void resetPoolCtx()
@@ -1409,7 +1409,7 @@ public class ForgeHooks
     {
         Item item = itemStack.getItem();
         ResourceLocation registryName = item.getRegistryName();
-        String modId = registryName == null ? null : registryName.getResourceDomain();
+        String modId = registryName == null ? null : registryName.getNamespace();
         if ("minecraft".equals(modId))
         {
             if (item instanceof ItemEnchantedBook)
@@ -1424,7 +1424,7 @@ public class ForgeHooks
                         ResourceLocation resourceLocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
                         if (resourceLocation != null)
                         {
-                            return resourceLocation.getResourceDomain();
+                            return resourceLocation.getNamespace();
                         }
                     }
                 }
@@ -1435,7 +1435,7 @@ public class ForgeHooks
                 ResourceLocation resourceLocation = ForgeRegistries.POTION_TYPES.getKey(potionType);
                 if (resourceLocation != null)
                 {
-                    return resourceLocation.getResourceDomain();
+                    return resourceLocation.getNamespace();
                 }
             }
             else if (item instanceof ItemMonsterPlacer)
@@ -1443,7 +1443,7 @@ public class ForgeHooks
                 ResourceLocation resourceLocation = ItemMonsterPlacer.getNamedIdFrom(itemStack);
                 if (resourceLocation != null)
                 {
-                    return resourceLocation.getResourceDomain();
+                    return resourceLocation.getNamespace();
                 }
             }
         }

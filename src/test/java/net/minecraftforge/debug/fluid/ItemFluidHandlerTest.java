@@ -140,7 +140,7 @@ public class ItemFluidHandlerTest
             }
             else
             {
-                resourceDomain = stack.getItem().getRegistryName().getResourceDomain();
+                resourceDomain = stack.getItem().getRegistryName().getNamespace();
             }
             return stack.getCount() + " " + stack.getDisplayName() + " (" + resourceDomain + ")";
         }

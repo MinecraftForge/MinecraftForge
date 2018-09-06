@@ -166,10 +166,10 @@ public class ModelBakeEventTest
 
             private BakedQuad createSidedBakedQuad(float x1, float x2, float z1, float z2, float y, TextureAtlasSprite texture, EnumFacing side)
             {
-                Vec3d v1 = rotate(new Vec3d(x1 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
-                Vec3d v2 = rotate(new Vec3d(x1 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
-                Vec3d v3 = rotate(new Vec3d(x2 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
-                Vec3d v4 = rotate(new Vec3d(x2 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
+                Vec3d v1 = rotate(new Vec3d(x1 - .5, y - .5, z1 - .5), side).add(.5, .5, .5);
+                Vec3d v2 = rotate(new Vec3d(x1 - .5, y - .5, z2 - .5), side).add(.5, .5, .5);
+                Vec3d v3 = rotate(new Vec3d(x2 - .5, y - .5, z2 - .5), side).add(.5, .5, .5);
+                Vec3d v4 = rotate(new Vec3d(x2 - .5, y - .5, z1 - .5), side).add(.5, .5, .5);
                 return new BakedQuad(Ints.concat(
                     vertexToInts((float) v1.x, (float) v1.y, (float) v1.z, -1, texture, 0, 0),
                     vertexToInts((float) v2.x, (float) v2.y, (float) v2.z, -1, texture, 0, 16),
@@ -249,7 +249,7 @@ public class ModelBakeEventTest
         {
             super(Material.IRON);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(blockName);
         }
 
@@ -290,7 +290,7 @@ public class ModelBakeEventTest
             if (te instanceof CustomTileEntity)
             {
                 CustomTileEntity cte = (CustomTileEntity) te;
-                Vec3d vec = revRotate(new Vec3d(hitX - .5, hitY - .5, hitZ - .5), side).addVector(.5, .5, .5);
+                Vec3d vec = revRotate(new Vec3d(hitX - .5, hitY - .5, hitZ - .5), side).add(.5, .5, .5);
                 IUnlistedProperty<Integer> property = properties[side.ordinal()];
                 Integer value = cte.getState().getValue(property);
                 if (value == null)

@@ -186,7 +186,7 @@ public class ModelFluidTest
         {
             super(FLUID, Material.WATER);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
     }
@@ -199,7 +199,7 @@ public class ModelFluidTest
         {
             super(MILK, Material.WATER);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
     }
@@ -212,7 +212,7 @@ public class ModelFluidTest
         {
             super(GAS, Material.LAVA);
             setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            setTranslationKey(MODID + ":" + name);
             setRegistryName(new ResourceLocation(MODID, name));
         }
     }
