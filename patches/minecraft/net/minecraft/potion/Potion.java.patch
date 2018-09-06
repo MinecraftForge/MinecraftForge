@@ -1,6 +1,6 @@
 --- a/net/minecraft/potion/Potion.java
 +++ b/net/minecraft/potion/Potion.java
-@@ -24,7 +24,7 @@
+@@ -23,7 +23,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  

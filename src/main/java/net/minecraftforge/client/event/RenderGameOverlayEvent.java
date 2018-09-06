@@ -23,6 +23,7 @@ import java.util.ArrayList;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.gui.BossInfoClient;
 
 @Cancelable
@@ -67,7 +68,7 @@ public class RenderGameOverlayEvent extends Event
     private final float partialTicks;
     private final ElementType type;
 
-    public RenderGameOverlayEvent(float partialTicks, Void resolution)
+    public RenderGameOverlayEvent(float partialTicks, MainWindow resolution)
     {
         this.partialTicks = partialTicks;
         this.type = null;

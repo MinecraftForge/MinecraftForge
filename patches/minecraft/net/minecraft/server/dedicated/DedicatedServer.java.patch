@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -111,6 +111,7 @@
+@@ -110,6 +110,7 @@
           LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
        }
  
@@ -8,7 +8,7 @@
        LOGGER.info("Loading properties");
        this.settings = new PropertyManager(new File("server.properties"));
        this.eula = new ServerEula(new File("eula.txt"));
-@@ -182,6 +183,7 @@
+@@ -181,6 +182,7 @@
           if (!PreYggdrasilConverter.tryConvert(this.settings)) {
              return false;
           } else {
@@ -16,7 +16,7 @@
              this.setPlayerList(new DedicatedPlayerList(this));
              long j = Util.func_211178_c();
              if (this.getFolderName() == null) {
-@@ -219,6 +221,7 @@
+@@ -218,6 +220,7 @@
              TileEntitySkull.setProfileCache(this.getPlayerProfileCache());
              TileEntitySkull.setSessionService(this.getMinecraftSessionService());
              PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
@@ -24,7 +24,7 @@
              LOGGER.info("Preparing level \"{}\"", (Object)this.getFolderName());
              JsonObject jsonobject = new JsonObject();
              if (worldtype == WorldType.FLAT) {
-@@ -258,7 +261,8 @@
+@@ -257,7 +260,8 @@
              }
  
              Items.AIR.getSubItems(ItemGroup.SEARCH, NonNullList.create());

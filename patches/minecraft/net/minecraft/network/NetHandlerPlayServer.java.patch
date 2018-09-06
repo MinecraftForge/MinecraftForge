@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NetHandlerPlayServer.java
 +++ b/net/minecraft/network/NetHandlerPlayServer.java
-@@ -1267,5 +1267,7 @@
+@@ -1265,5 +1265,7 @@
     }
  
     public void processCustomPayload(CPacketCustomPayload packetIn) {

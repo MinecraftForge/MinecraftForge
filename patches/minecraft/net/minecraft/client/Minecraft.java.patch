@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
-@@ -413,6 +413,7 @@
+@@ -405,6 +405,7 @@
        this.languageManager = new LanguageManager(this.gameSettings.language);
        this.resourceManager.func_199006_a(this.languageManager);
        this.gameSettings.func_198017_a(this.resourcePackRepository);
@@ -8,7 +8,7 @@
        this.refreshResources();
        this.renderEngine = new TextureManager(this.resourceManager);
        this.resourceManager.func_199006_a(this.renderEngine);
-@@ -469,6 +470,7 @@
+@@ -461,6 +462,7 @@
        this.resourceManager.func_199006_a(this.searchTreeManager);
        GlStateManager.viewport(0, 0, this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l());
        this.effectRenderer = new ParticleManager(this.world, this.renderEngine);
@@ -16,7 +16,7 @@
        this.ingameGUI = new GuiIngame(this);
        if (this.serverName != null) {
           this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
-@@ -478,6 +480,7 @@
+@@ -470,6 +472,7 @@
  
        this.debugRenderer = new DebugRenderer(this);
        GLFW.glfwSetErrorCallback(this::func_195545_a).free();
@@ -24,7 +24,7 @@
        if (this.gameSettings.fullScreen && !this.field_195558_d.func_198113_j()) {
           this.field_195558_d.func_198077_g();
        }
-@@ -1404,6 +1407,7 @@
+@@ -1392,6 +1395,7 @@
        NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
        networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null, (p_209507_0_) -> {
        }));

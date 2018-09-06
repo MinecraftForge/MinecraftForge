@@ -85,6 +85,9 @@ project(':forge') {
         implementation 'net.minecraftforge:coremods:0.1+'
         implementation 'com.electronwill.night-config:core:3.4.0'
         implementation 'com.electronwill.night-config:toml:3.4.0'
+        implementation 'org.jline:jline:3.5.1'
+        implementation 'org.apache.maven:maven-artifact:3.5.3'
+        implementation 'java3d:vecmath:1.5.2'
     }
 
     configurations {

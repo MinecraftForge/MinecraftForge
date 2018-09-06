@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ b/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -1615,6 +1615,7 @@
+@@ -1598,6 +1598,7 @@
              ((DebugRendererWorldGenAttempts)this.client.debugRenderer.field_201750_j).func_201734_a(packetbuffer.readBlockPos(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat());
              LOGGER.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
           } else {

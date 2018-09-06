@@ -1,0 +1,16 @@
+--- a/net/minecraft/client/gui/GuiIngame.java
++++ b/net/minecraft/client/gui/GuiIngame.java
+@@ -548,7 +548,13 @@
+             GlStateManager.pushMatrix();
+             GlStateManager.enableBlend();
+             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++            FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
++            if (font == null) {
+             this.getFontRenderer().drawStringWithShadow(s, (float)i, (float)j, 16777215 + (k << 24));
++            } else {
++                i = (this.field_194811_H - font.getStringWidth(s)) / 2;
++                font.drawStringWithShadow(s, (float)i, (float)j, 16777215 + (k << 24));
++            }
+             GlStateManager.disableBlend();
+             GlStateManager.popMatrix();
+          }

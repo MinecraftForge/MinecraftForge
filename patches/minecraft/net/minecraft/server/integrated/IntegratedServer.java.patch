@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
-@@ -122,9 +122,10 @@
+@@ -121,9 +121,10 @@
        this.setAllowFlight(true);
        LOGGER.info("Generating keypair");
        this.setKeyPair(CryptManager.generateKeyPair());

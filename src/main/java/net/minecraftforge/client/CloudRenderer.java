@@ -28,6 +28,7 @@ import net.minecraftforge.client.resource.VanillaResourceType;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
@@ -54,7 +55,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     // Building constants.
     private static final VertexFormat FORMAT = DefaultVertexFormats.POSITION_TEX_COLOR;
-    private static final int TOP_SECTIONS = 12;	// Number of slices a top face will span.
+    private static final int TOP_SECTIONS = 12;    // Number of slices a top face will span.
     private static final int HEIGHT = 4;
     private static final float INSET = 0.001F;
     private static final float ALPHA = 0.8F;
