@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
  * if another entry overrides existing ones in the registry.
  */
 @SuppressWarnings("unchecked")
-public abstract class ForgeRegistryEntry<V extends ForgeRegistryEntry<V>> implements IForgeRegistryEntry<V>
+public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryEntry<V>
 {
     @SuppressWarnings("serial")
     private final TypeToken<V> token = new TypeToken<V>(getClass()){};

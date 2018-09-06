@@ -198,19 +198,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return Collections.unmodifiableSet(this.names.keySet());
     }
 
-    /**
-     * @deprecated use {@link #getValuesCollection} to avoid copying
-     */
-    @Deprecated
-    @Override
-    public List<V> getValues()
-    {
-        return ImmutableList.copyOf(this.names.values());
-    }
-
     @Nonnull
     @Override
-    public Collection<V> getValuesCollection()
+    public Collection<V> getValues()
     {
         return Collections.unmodifiableSet(this.names.values());
     }
@@ -793,7 +783,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setString("K", e.getKey().toString());
                 tag.setInteger("V", e.getValue());
-                ids.appendTag(tag);
+                ids.add(tag);
             });
             data.setTag("ids", ids);
 
@@ -803,7 +793,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setString("K", e.getKey().toString());
                 tag.setString("V", e.getKey().toString());
-                aliases.appendTag(tag);
+                aliases.add(tag);
             });
             data.setTag("aliases", aliases);
 
@@ -813,7 +803,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setString("K", e.getKey().toString());
                 tag.setString("V", e.getValue());
-                overrides.appendTag(tag);
+                overrides.add(tag);
             });
             data.setTag("overrides", overrides);
 
@@ -821,7 +811,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             data.setIntArray("blocked", blocked);
 
             NBTTagList dummied = new NBTTagList();
-            this.dummied.stream().sorted().forEach(e -> dummied.appendTag(new NBTTagString(e.toString())));
+            this.dummied.stream().sorted().forEach(e -> dummied.add(new NBTTagString(e.toString())));
             data.setTag("dummied", dummied);
 
             return data;
@@ -846,24 +836,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             list.forEach(e ->
             {
                 NBTTagCompound comp = (NBTTagCompound)e;
-                String v = comp.getString("V");
-                if (v.indexOf(':') == -1) //Forge Bug: https://github.com/MinecraftForge/MinecraftForge/issues/4894 TODO: Remove in 1.13
-                {
-                    ret.overrides.put(new ResourceLocation(comp.getString("K")), v);
-                }
-                else
-                {
-                    ResourceLocation aliask = new ResourceLocation(comp.getString("K"));
-                    ResourceLocation aliasv = new ResourceLocation(v);
-                    if (aliasv.equals(aliask))
-                    {
-                        FMLLog.log.warn("Found unrecoverable 4894 bugged alias/override: {} -> {}, skipping.", aliask, aliasv);
-                    }
-                    else
-                    {
-                        ret.aliases.put(aliask, aliasv);
-                    }
-                }
+                ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
             });
 
             list = nbt.getTagList("overrides", 10);

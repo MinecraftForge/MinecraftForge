@@ -1,0 +1,10 @@
+--- a/net/minecraft/init/Biomes.java
++++ b/net/minecraft/init/Biomes.java
+@@ -3,6 +3,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.biome.Biome;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public abstract class Biomes {
+    public static final Biome OCEAN;
+    public static final Biome DEFAULT;

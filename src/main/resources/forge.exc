@@ -80,3 +80,5 @@ net/minecraft/command/EntitySelector.isSelectorDefault(Ljava/lang/String;)Z=|p_8
 net/minecraft/client/util/RecipeItemHelper.accountStack(Lnet/minecraft/item/ItemStack;I)V=|p_194112_1_,forceCount
 net/minecraft/client/renderer/ActiveRenderInfo.updateRenderInfo(Lnet/minecraft/entity/Entity;Z)V=|p_74583_0_,p_74583_1_
 net/minecraft/client/audio/SoundManager.setListener(Lnet/minecraft/entity/Entity;F)V=|p_148615_1_,p_148615_2_
+
+net/minecraft/item/ArmorMaterial.create(Ljava/lang/String;Ljava/lang/String;I[IILnet/minecraft/util/SoundEvent;FLjava/util/function/Supplier;)V=|name,p_i48533_3_,p_i48533_4_,p_i48533_5_,p_i48533_6_,p_i48533_7_,p_i48533_8_,p_i48533_9_

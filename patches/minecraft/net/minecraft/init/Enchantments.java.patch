@@ -1,0 +1,10 @@
+--- a/net/minecraft/init/Enchantments.java
++++ b/net/minecraft/init/Enchantments.java
+@@ -4,6 +4,7 @@
+ import net.minecraft.enchantment.Enchantment;
+ import net.minecraft.util.ResourceLocation;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Enchantments {
+    public static final Enchantment PROTECTION = getRegisteredEnchantment("protection");
+    public static final Enchantment FIRE_PROTECTION = getRegisteredEnchantment("fire_protection");
