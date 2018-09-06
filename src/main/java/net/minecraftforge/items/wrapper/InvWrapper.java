@@ -204,6 +204,12 @@ public class InvWrapper implements IItemHandlerModifiable
         return getInv().getInventoryStackLimit();
     }
 
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        return getInv().isItemValidForSlot(slot, stack);
+    }
+
     public IInventory getInv()
     {
         return inv;

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.block;
 
 import net.minecraft.init.Biomes;
 import net.minecraft.world.World;

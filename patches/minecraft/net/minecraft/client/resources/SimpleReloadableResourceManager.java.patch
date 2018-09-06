@@ -8,7 +8,7 @@
          this.func_110543_a();
          field_147967_a.info("Reloading ResourceManager: {}", (Object)field_130074_a.join(Iterables.transform(p_110541_1_, new Function<IResourcePack, String>()
          {
-@@ -103,23 +104,32 @@
+@@ -103,23 +104,33 @@
  
          for (IResourcePack iresourcepack : p_110541_1_)
          {
@@ -36,6 +36,7 @@
          for (IResourceManagerReloadListener iresourcemanagerreloadlistener : this.field_110546_b)
          {
 +            resReload.step(iresourcemanagerreloadlistener.getClass());
++            if (!net.minecraftforge.client.ForgeHooksClient.shouldUseVanillaReloadableListener(iresourcemanagerreloadlistener)) continue; // Forge: Selective reloading for vanilla listeners
              iresourcemanagerreloadlistener.func_110549_a(this);
          }
 +        net.minecraftforge.fml.common.ProgressManager.pop(resReload);

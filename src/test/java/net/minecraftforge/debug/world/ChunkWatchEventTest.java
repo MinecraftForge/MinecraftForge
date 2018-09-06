@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.world;
 
 import org.apache.logging.log4j.Logger;
 
@@ -27,8 +27,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = ChunkWatchWorldTest.MODID, name = "Chunk Watch World Test", version = "1.0", acceptableRemoteVersions = "*")
-public class ChunkWatchWorldTest
+@Mod(modid = ChunkWatchEventTest.MODID, name = "Chunk Watch Event Test", version = "1.0", acceptableRemoteVersions = "*")
+public class ChunkWatchEventTest
 {
     public static final String MODID = "chunkwatchworldtest";
 
@@ -42,7 +42,7 @@ public class ChunkWatchWorldTest
 
         if (ENABLED)
         {
-            MinecraftForge.EVENT_BUS.register(ChunkWatchWorldTest.class);
+            MinecraftForge.EVENT_BUS.register(ChunkWatchEventTest.class);
         }
     }
 

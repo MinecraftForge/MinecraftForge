@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.debug;
+package net.minecraftforge.debug.entity.living;
 
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 
 @Mod(modid = "entitymobgriefingeventtest", name = "EntityMobGriefingEventTest", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
-public class EntityMobGriefingEventTest
+public class MobGriefingEventTest
 {
     private static final boolean ENABLED = false;
 

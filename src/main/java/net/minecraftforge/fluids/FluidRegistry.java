@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -71,7 +72,7 @@ public abstract class FluidRegistry
     static boolean universalBucketEnabled = false;
     static Set<Fluid> bucketFluids = Sets.newHashSet();
 
-    public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
+    public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"), new ResourceLocation("blocks/water_overlay")) {
         @Override
         public String getLocalizedName(FluidStack fs) {
             return I18n.translateToLocal("tile.water.name");
@@ -298,7 +299,7 @@ public abstract class FluidRegistry
      */
     public static Set<Fluid> getBucketFluids()
     {
-        return ImmutableSet.copyOf(bucketFluids);
+        return Collections.unmodifiableSet(bucketFluids);
     }
 
 

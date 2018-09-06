@@ -9,9 +9,9 @@ limitPerRun: 1
 
 pulls:
   # Number of days of inactivity before a Pull Request becomes stale
-  daysUntilStale: 30
+  daysUntilStale: 60
   # Number of days of inactivity before a stale Pull Request is closed
-  daysUntilClose: 7
+  daysUntilClose: 14
   # Pull Requests with these labels will never be considered stale. Set to `[]` to disable
   exemptLabels:
     - Assigned

@@ -1034,18 +1034,16 @@ public class ForgeHooks
         }
         else if (block instanceof BlockLiquid)
         {
-            filled = BlockLiquid.getLiquidHeightPercent(block.getMetaFromState(state));
+            filled = 1.0 - (BlockLiquid.getLiquidHeightPercent(block.getMetaFromState(state)) - (1.0 / 9.0));
         }
 
         if (filled < 0)
         {
-            filled *= -1;
-            //filled -= 0.11111111F; //Why this is needed.. not sure...
-            return eyes > pos.getY() + 1 + (1 - filled);
+            return eyes > pos.getY() + (filled + 1);
         }
         else
         {
-            return eyes < pos.getY() + 1 + filled;
+            return eyes < pos.getY() + filled;
         }
     }
 

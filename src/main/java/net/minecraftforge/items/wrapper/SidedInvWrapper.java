@@ -230,4 +230,10 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     {
         return inv.getInventoryStackLimit();
     }
+
+    @Override
+    public boolean isItemValid(int slot, @Nonnull ItemStack stack)
+    {
+        return inv.isItemValidForSlot(slot, stack);
+    }
 }

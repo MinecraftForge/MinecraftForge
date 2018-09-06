@@ -21,10 +21,19 @@
                  this.field_74317_L.func_110434_K().func_110577_a(TextureMap.field_110575_b);
                  this.field_74317_L.func_147117_R().func_174937_a(false, this.field_151442_I > 0);
 -                this.field_74317_L.func_175603_A();
-+                this.needsResourceRefresh = true; // FORGE: fix for MC-64581 very laggy mipmap slider
++                this.needsBlockModelRefresh = true; // FORGE: fix for MC-64581 very laggy mipmap slider
              }
          }
  
+@@ -361,7 +363,7 @@
+         if (p_74306_1_ == GameSettings.Options.ANAGLYPH)
+         {
+             this.field_74337_g = !this.field_74337_g;
+-            this.field_74317_L.func_110436_a();
++            net.minecraftforge.fml.client.FMLClientHandler.instance().refreshResources(net.minecraftforge.client.resource.VanillaResourceType.TEXTURES);
+         }
+ 
+         if (p_74306_1_ == GameSettings.Options.GRAPHICS)
 @@ -1068,7 +1070,12 @@
                      {
                          if (s1.equals("key_" + keybinding.func_151464_g()))
@@ -82,13 +91,13 @@
 +    }
 +
 +    // FORGE: fix for MC-64581 very laggy mipmap slider
-+    private boolean needsResourceRefresh = false;
++    private boolean needsBlockModelRefresh = false;
 +    public void onGuiClosed()
 +    {
-+        if (needsResourceRefresh)
++        if (needsBlockModelRefresh)
 +        {
-+            this.field_74317_L.func_175603_A();
-+            this.needsResourceRefresh = false;
++            net.minecraftforge.fml.client.FMLClientHandler.instance().scheduleResourcesRefresh(net.minecraftforge.client.resource.VanillaResourceType.MODELS);
++            this.needsBlockModelRefresh = false;
 +        }
 +    }
 +    /******* Forge End ***********/

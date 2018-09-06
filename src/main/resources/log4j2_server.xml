@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="net.minecraftforge.server.terminalconsole">
+<Configuration status="warn" packages="net.minecraftforge.server.terminalconsole,com.mojang.util">
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>
@@ -37,16 +37,16 @@
     </Appenders>
     <Loggers>
         <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
-        <Logger level="info" name="com.mojang"/>
-        <Logger level="info" name="net.minecraft"/>
+        <Logger level="${sys:forge.logging.mojang.level:-info}" name="com.mojang"/>
+        <Logger level="${sys:forge.logging.mojang.level:-info}" name="net.minecraft"/>
         <Root level="all">
             <filters>
                 <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
             </filters>
-            <AppenderRef ref="Console" level="info"/>
-            <AppenderRef ref="ServerGuiConsole" level="info"/>
-            <AppenderRef ref="File" level="info"/>
-            <AppenderRef ref="DebugFile"/>
+            <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
+            <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
+            <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
+            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-trace}"/>
         </Root>
     </Loggers>
 </Configuration>
