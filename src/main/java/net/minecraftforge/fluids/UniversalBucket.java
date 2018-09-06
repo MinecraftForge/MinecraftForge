@@ -136,7 +136,7 @@ public class UniversalBucket extends Item
             return super.getItemStackDisplayName(stack);
         }
 
-        String unloc = this.getTranslationKeyInefficiently(stack);
+        String unloc = this.getUnlocalizedNameInefficiently(stack);
 
         if (I18n.canTranslate(unloc + "." + fluidStack.getFluid().getName()))
         {
