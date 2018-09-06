@@ -23,7 +23,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.client.FMLClientHandler;
 
 public class GuiAccessDenied extends GuiScreen
 {
@@ -38,17 +37,15 @@ public class GuiAccessDenied extends GuiScreen
     @Override
     public void initGui()
     {
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done")));
+        this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done"))
+        {
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                GuiAccessDenied.this.mc.displayGuiScreen(parent);
+            }
+        });
     }
 
-    @Override
-    protected void actionPerformed(GuiButton p_73875_1_)
-    {
-        if (p_73875_1_.enabled && p_73875_1_.id == 1)
-        {
-            FMLClientHandler.instance().showGuiScreen(parent);
-        }
-    }
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {

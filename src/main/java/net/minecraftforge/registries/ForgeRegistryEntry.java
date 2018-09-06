@@ -22,14 +22,17 @@ package net.minecraftforge.registries;
 import com.google.common.reflect.TypeToken;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.ModThreadContext;
-import org.apache.logging.log4j.LogManager;
-
 import javax.annotation.Nullable;
 
+/**
+ * Default implementation of IForgeRegistryEntry, this is necessary to reduce redundant code.
+ * This also enables the registrie's ability to manage delegates. Which are automatically updated
+ * if another entry overrides existing ones in the registry.
+ */
 @SuppressWarnings("unchecked")
-public abstract class ForgeRegistryEntry<V extends ForgeRegistryEntry<V>>
+public abstract class ForgeRegistryEntry<V extends ForgeRegistryEntry<V>> implements IForgeRegistryEntry<V>
 {
+    @SuppressWarnings("serial")
     private final TypeToken<V> token = new TypeToken<V>(getClass()){};
     public final IRegistryDelegate<V> delegate = new RegistryDelegate<>((V)this, (Class<V>)token.getRawType());
     private ResourceLocation registryName = null;
@@ -39,16 +42,7 @@ public abstract class ForgeRegistryEntry<V extends ForgeRegistryEntry<V>>
         if (getRegistryName() != null)
             throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
 
-        int index = name.lastIndexOf(':');
-        String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase();
-        name = index == -1 ? name : name.substring(index + 1);
-        String prefix = ModThreadContext.get().getActiveContainer().getPrefix();
-        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
-        {
-            LogManager.getLogger().info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
-            prefix = oldPrefix;
-        }
-        this.registryName = new ResourceLocation(prefix, name);
+        this.registryName = GameData.checkPrefix(name);
         return (V)this;
     }
 

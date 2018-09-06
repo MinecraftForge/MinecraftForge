@@ -1,0 +1,21 @@
+--- a/net/minecraft/item/crafting/IRecipe.java
++++ b/net/minecraft/item/crafting/IRecipe.java
+@@ -9,7 +9,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public interface IRecipe {
++public interface IRecipe extends net.minecraftforge.registries.IForgeRegistryEntry<IRecipe> {
+    boolean matches(IInventory inv, World worldIn);
+ 
+    ItemStack getCraftingResult(IInventory inv);
+@@ -48,4 +48,9 @@
+    ResourceLocation func_199560_c();
+ 
+    IRecipeSerializer<?> func_199559_b();
++
++   @Override
++   default Class<IRecipe> getRegistryType() {
++       return IRecipe.class;
+ }
++}

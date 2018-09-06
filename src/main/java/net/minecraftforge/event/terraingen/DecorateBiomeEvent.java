@@ -28,11 +28,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.HasResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 /**
  * DecorateBiomeEvent is fired when a BiomeDecorator is created.

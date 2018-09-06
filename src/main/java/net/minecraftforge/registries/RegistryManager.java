@@ -44,7 +44,7 @@ public class RegistryManager
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
 
     BiMap<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> registries = HashBiMap.create();
-    private BiMap<Class<? extends ForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
+    private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
     private Set<ResourceLocation> persisted = Sets.newHashSet();
     private final String name;
 

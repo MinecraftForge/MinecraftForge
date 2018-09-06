@@ -20,7 +20,6 @@
 package net.minecraftforge.registries;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -34,7 +33,7 @@ import javax.annotation.Nullable;
  *
  * @param <V> The top level type for the registry
  */
-public interface IForgeRegistry<V extends ForgeRegistryEntry<V>> extends Iterable<V>
+public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
     Class<V> getRegistrySuperType();
 
@@ -49,13 +48,7 @@ public interface IForgeRegistry<V extends ForgeRegistryEntry<V>> extends Iterabl
     @Nullable ResourceLocation getKey(V value);
 
     @Nonnull Set<ResourceLocation>           getKeys();
-    /** @deprecated use {@link #getValuesCollection} */
-    @Deprecated // TODO: remove in 1.13
-    @Nonnull List<V>                         getValues();
-    @Nonnull
-    default Collection<V>                    getValuesCollection() { // TODO rename this to getValues in 1.13
-        return getValues();
-    }
+    @Nonnull Collection<V>                   getValues();
     @Nonnull Set<Entry<ResourceLocation, V>> getEntries();
 
     /**
@@ -72,7 +65,7 @@ public interface IForgeRegistry<V extends ForgeRegistryEntry<V>> extends Iterabl
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt
      * on the client side from a server side synchronization, or when a world is loaded.
      */
-    interface AddCallback<V extends ForgeRegistryEntry<V>>
+    interface AddCallback<V extends IForgeRegistryEntry<V>>
     {
         void onAdd(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, V obj, @Nullable V oldObj);
     }
@@ -81,7 +74,7 @@ public interface IForgeRegistry<V extends ForgeRegistryEntry<V>> extends Iterabl
      * Callback fired when the registry is cleared. This is done before a registry is reloaded from client
      * or server.
      */
-    interface ClearCallback<V extends ForgeRegistryEntry<V>>
+    interface ClearCallback<V extends IForgeRegistryEntry<V>>
     {
         void onClear(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
@@ -89,7 +82,7 @@ public interface IForgeRegistry<V extends ForgeRegistryEntry<V>> extends Iterabl
     /**
      * Callback fired when a registry instance is created. Populate slave maps here.
      */
-    interface CreateCallback<V extends ForgeRegistryEntry<V>>
+    interface CreateCallback<V extends IForgeRegistryEntry<V>>
     {
         void onCreate(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
@@ -105,7 +98,7 @@ public interface IForgeRegistry<V extends ForgeRegistryEntry<V>> extends Iterabl
     /**
      * Factory for creating dummy entries, allowing worlds to be loaded and keep the missing block references.
      */
-    interface DummyFactory<V extends ForgeRegistryEntry<V>>
+    interface DummyFactory<V extends IForgeRegistryEntry<V>>
     {
         V createDummy(ResourceLocation key);
     }
@@ -113,7 +106,7 @@ public interface IForgeRegistry<V extends ForgeRegistryEntry<V>> extends Iterabl
     /**
      *
      */
-    interface MissingFactory<V extends ForgeRegistryEntry<V>>
+    interface MissingFactory<V extends IForgeRegistryEntry<V>>
     {
         V createMissing(ResourceLocation key, boolean isNetwork);
     }

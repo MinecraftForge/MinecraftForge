@@ -42,11 +42,12 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.ForgeHooksClient;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.base.MoreObjects;
-import java.util.Optional;
 import com.google.common.collect.Maps;
 
 /*
@@ -118,7 +119,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         return getRotation(facing).getMatrix();
     }
 
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static ModelRotation getRotation(EnumFacing facing)
     {
         switch (facing)
@@ -537,7 +538,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     @OnlyIn(Dist.CLIENT)
     public net.minecraft.client.renderer.block.model.ItemTransformVec3f toItemTransform()
     {
-        return new ItemTransformVec3f(toLwjgl(toXYZDegrees(getLeftRot())), toLwjgl(getTranslation()), toLwjgl(getScale()));
+        return new ItemTransformVec3f(toMojang(toXYZDegrees(getLeftRot())), toMojang(getTranslation()), toMojang(getScale()));
     }
 
     public boolean isIdentity()
@@ -689,59 +690,53 @@ public final class TRSRTransformation implements IModelState, ITransformation
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Vector3f toVecmath(org.lwjgl.util.vector.Vector3f vec)
+    public static Vector3f toVecmath(net.minecraft.client.renderer.Vector3f vec)
     {
-        return new Vector3f(vec.x, vec.y, vec.z);
+        return new Vector3f(vec.func_195899_a(), vec.func_195900_b(), vec.func_195902_c());
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Vector4f toVecmath(org.lwjgl.util.vector.Vector4f vec)
+    public static Vector4f toVecmath(net.minecraft.client.renderer.Vector4f vec)
     {
-        return new Vector4f(vec.x, vec.y, vec.z, vec.w);
+        return new Vector4f(vec.func_195910_a(), vec.func_195913_b(), vec.func_195914_c(), vec.func_195915_d());
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Matrix4f toVecmath(org.lwjgl.util.vector.Matrix4f m)
+    public static Matrix4f toVecmath(net.minecraft.client.renderer.Matrix4f m)
     {
         return new Matrix4f(
-            m.m00, m.m10, m.m20, m.m30,
-            m.m01, m.m11, m.m21, m.m31,
-            m.m02, m.m12, m.m22, m.m32,
-            m.m03, m.m13, m.m23, m.m33);
+            m.func_195885_a(0, 0), m.func_195885_a(1, 0), m.func_195885_a(2, 0), m.func_195885_a(3, 0),
+            m.func_195885_a(0, 1), m.func_195885_a(1, 1), m.func_195885_a(2, 1), m.func_195885_a(3, 1),
+            m.func_195885_a(0, 2), m.func_195885_a(1, 2), m.func_195885_a(2, 2), m.func_195885_a(3, 2),
+            m.func_195885_a(0, 3), m.func_195885_a(1, 3), m.func_195885_a(2, 3), m.func_195885_a(3, 3));
+    }
+
+
+    @OnlyIn(Dist.CLIENT)
+    public static net.minecraft.client.renderer.Vector3f toMojang(Vector3f vec)
+    {
+        return new net.minecraft.client.renderer.Vector3f(vec.x, vec.y, vec.z);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static org.lwjgl.util.vector.Vector3f toLwjgl(Vector3f vec)
+    public static net.minecraft.client.renderer.Vector4f toMojang(Vector4f vec)
     {
-        return new org.lwjgl.util.vector.Vector3f(vec.x, vec.y, vec.z);
+        return new net.minecraft.client.renderer.Vector4f(vec.x, vec.y, vec.z, vec.w);
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static org.lwjgl.util.vector.Vector4f toLwjgl(Vector4f vec)
+    public static net.minecraft.client.renderer.Matrix4f toMojang(Matrix4f m)
     {
-        return new org.lwjgl.util.vector.Vector4f(vec.x, vec.y, vec.z, vec.w);
-    }
-
-    @OnlyIn(Dist.CLIENT)
-    public static org.lwjgl.util.vector.Matrix4f toLwjgl(Matrix4f m)
-    {
-        org.lwjgl.util.vector.Matrix4f r = new org.lwjgl.util.vector.Matrix4f();
-        r.m00 = m.m00;
-        r.m01 = m.m10;
-        r.m02 = m.m20;
-        r.m03 = m.m30;
-        r.m10 = m.m01;
-        r.m11 = m.m11;
-        r.m12 = m.m21;
-        r.m13 = m.m31;
-        r.m20 = m.m02;
-        r.m21 = m.m12;
-        r.m22 = m.m22;
-        r.m23 = m.m32;
-        r.m30 = m.m03;
-        r.m31 = m.m13;
-        r.m32 = m.m23;
-        r.m33 = m.m33;
+        net.minecraft.client.renderer.Matrix4f r = new net.minecraft.client.renderer.Matrix4f();
+        float[] row = new float[4];
+        for (int x = 0; x < 4; x++)
+        {
+            m.getRow(x, row);
+            for (int y = 0; y < 4; y++)
+            {
+                r.func_195878_a(x, y, row[y]);
+            }
+        }
         return r;
     }
 

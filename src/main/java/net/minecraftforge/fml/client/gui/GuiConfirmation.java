@@ -18,11 +18,8 @@
  */
 
 package net.minecraftforge.fml.client.gui;
-
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiOptionButton;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.StartupQuery;
 
 public class GuiConfirmation extends GuiNotification
@@ -35,18 +32,23 @@ public class GuiConfirmation extends GuiNotification
     @Override
     public void initGui()
     {
-        this.buttonList.add(new GuiOptionButton(0, this.width / 2 - 155, this.height - 38, I18n.format("gui.yes")));
-        this.buttonList.add(new GuiOptionButton(1, this.width / 2 - 155 + 160, this.height - 38, I18n.format("gui.no")));
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.enabled && (button.id == 0 || button.id == 1))
+        this.buttonList.add(new GuiOptionButton(0, this.width / 2 - 155, this.height - 38, I18n.format("gui.yes"))
         {
-            FMLClientHandler.instance().showGuiScreen(null);
-            query.setResult(button.id == 0);
-            query.finish();
-        }
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                GuiConfirmation.this.mc.displayGuiScreen(null);
+                query.setResult(true);
+                query.finish();
+            }
+        });
+        this.buttonList.add(new GuiOptionButton(1, this.width / 2 - 155 + 160, this.height - 38, I18n.format("gui.no"))
+        {
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                GuiConfirmation.this.mc.displayGuiScreen(null);
+                query.setResult(false);
+                query.finish();
+            }
+        });
     }
 }

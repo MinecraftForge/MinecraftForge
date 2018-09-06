@@ -28,7 +28,7 @@ import net.minecraftforge.registries.IForgeRegistry.*;
 
 import javax.annotation.Nullable;
 
-public class RegistryBuilder<T extends ForgeRegistryEntry<T>>
+public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 {
     private ResourceLocation registryName;
     private Class<T> registryType;

@@ -51,7 +51,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<PotionType>          POTION_TYPES = RegistryManager.ACTIVE.getRegistry(PotionType.class);
     public static final IForgeRegistry<Enchantment>         ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
     public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
-    public static final IForgeRegistry<Entity>              ENTITIES              = RegistryManager.ACTIVE.getRegistry(Entity.class);
+    public static final IForgeRegistry<EntityEntry>         ENTITIES             = RegistryManager.ACTIVE.getRegistry(EntityEntry.class);
     public static final IForgeRegistry<IRecipe>             RECIPES      = RegistryManager.ACTIVE.getRegistry(IRecipe.class);
 
 

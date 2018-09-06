@@ -22,14 +22,16 @@ package net.minecraftforge.fml.client.gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
 
 import java.awt.*;
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class GuiErrorBase extends GuiErrorScreen
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     static final File minecraftDir = new File(Loader.instance().getConfigDir().getParent());
     static final File logFile = new File(minecraftDir, "logs/latest.log");
     public GuiErrorBase()
@@ -47,45 +49,44 @@ public class GuiErrorBase extends GuiErrorScreen
     {
         super.initGui();
         this.buttonList.clear();
-        this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width / 2 - 55, 20, translateOrDefault("fml.button.open.mods.folder", "Open Mods Folder")));
+        this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width / 2 - 55, 20, translateOrDefault("fml.button.open.mods.folder", "Open Mods Folder"))
+        {
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                try
+                {
+                    File modsDir = new File(minecraftDir, "mods");
+                    Desktop.getDesktop().open(modsDir);
+                }
+                catch (Exception e)
+                {
+                    LOGGER.error("Problem opening mods folder", e);
+                }
+            }
+        });
         String openFileText = translateOrDefault("fml.button.open.file", "Open %s", logFile.getName());
-        this.buttonList.add(new GuiButton(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText));
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.id == 10)
+        this.buttonList.add(new GuiButton(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText)
         {
-            try
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
             {
-                File modsDir = new File(minecraftDir, "mods");
-                Desktop.getDesktop().open(modsDir);
+                try
+                {
+                    Desktop.getDesktop().open(logFile);
+                }
+                catch (Exception e)
+                {
+                    LOGGER.error("Problem opening log file {}", logFile, e);
+                }
             }
-            catch (Exception e)
-            {
-                FMLLog.log.error("Problem opening mods folder", e);
-            }
-        }
-        else if (button.id == 11)
-        {
-            try
-            {
-                Desktop.getDesktop().open(logFile);
-            }
-            catch (Exception e)
-            {
-                FMLLog.log.error("Problem opening log file {}", logFile, e);
-            }
-        }
+        });
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-        for(GuiButton button : buttonList)
+        for (GuiButton button : buttonList)
         {
-            button.drawButton(this.mc, mouseX, mouseY, partialTicks);
+            button.func_194828_a(mouseX, mouseY, partialTicks);
         }
     }
 }

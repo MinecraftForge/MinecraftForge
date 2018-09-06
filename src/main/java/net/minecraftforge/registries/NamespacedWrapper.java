@@ -33,7 +33,7 @@ import net.minecraft.util.registry.RegistryNamespaced;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class NamespacedWrapper<V extends ForgeRegistryEntry<V>> extends RegistryNamespaced<ResourceLocation, V> implements ILockableRegistry
+class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespaced<ResourceLocation, V> implements ILockableRegistry
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private boolean locked = false;
@@ -125,7 +125,7 @@ class NamespacedWrapper<V extends ForgeRegistryEntry<V>> extends RegistryNamespa
     @Override
     public void lock(){ this.locked = true; }
 
-    public static class Factory<V extends ForgeRegistryEntry<V>> implements IForgeRegistry.CreateCallback<V>
+    public static class Factory<V extends IForgeRegistryEntry<V>> implements IForgeRegistry.CreateCallback<V>
     {
         public static final ResourceLocation ID = new ResourceLocation("forge", "registry_defaulted_wrapper");
         @Override

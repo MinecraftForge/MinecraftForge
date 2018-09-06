@@ -119,7 +119,7 @@ public class GuiIngameForge extends GuiIngame
         if (pre(ALL)) return;
 
         fontrenderer = mc.fontRenderer;
-        mc.entityRenderer.setupOverlayRendering();
+        //mc.entityRenderer.setupOverlayRendering();
         GlStateManager.enableBlend();
 
         if (renderVignette && Minecraft.isFancyGraphicsEnabled())

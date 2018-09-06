@@ -22,7 +22,6 @@ package net.minecraftforge.fml.client.gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.StartupQuery;
 
 public class GuiNotification extends GuiScreen
@@ -35,17 +34,14 @@ public class GuiNotification extends GuiScreen
     @Override
     public void initGui()
     {
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height - 38, I18n.format("gui.done")));
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.enabled && button.id == 0)
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height - 38, I18n.format("gui.done"))
         {
-            FMLClientHandler.instance().showGuiScreen(null);
-            query.finish();
-        }
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                GuiNotification.this.mc.displayGuiScreen(null);
+                query.finish();
+            }
+        });
     }
 
     @Override
