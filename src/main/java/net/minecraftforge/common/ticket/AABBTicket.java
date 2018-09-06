@@ -28,22 +28,11 @@ import java.util.Objects;
 public class AABBTicket extends SimpleTicket<Vec3d>
 {
     @Nonnull
-    private AxisAlignedBB axisAlignedBB;
+    public final AxisAlignedBB axisAlignedBB;
 
     public AABBTicket(@Nonnull AxisAlignedBB axisAlignedBB)
     {
-        setAABB(axisAlignedBB);
-    }
-
-    @Nonnull
-    public AxisAlignedBB getAABB()
-    {
-        return this.axisAlignedBB;
-    }
-
-    public void setAABB(@Nonnull AxisAlignedBB newTarget)
-    {
-        this.axisAlignedBB = Objects.requireNonNull(newTarget);
+        this.axisAlignedBB = axisAlignedBB;
     }
 
     @Override

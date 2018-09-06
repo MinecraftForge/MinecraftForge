@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -81,8 +82,6 @@ public class ForgeInternalHandler
         ForgeChunkManager.unloadWorld(event.getWorld());
         if (event.getWorld() instanceof WorldServer)
             FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
-        if (!event.getWorld().isRemote)
-            FarmlandWaterManager.removeAllTickets(event.getWorld());
     }
 
     @SubscribeEvent
@@ -96,6 +95,13 @@ public class ForgeInternalHandler
     {
         if (event.phase == Phase.END)
             FMLClientHandler.instance().updateCloudSettings();
+    }
+
+    @SubscribeEvent
+    public void onChunkUnload(ChunkEvent.Unload event)
+    {
+        if (!event.getWorld().isRemote)
+            FarmlandWaterManager.removeTickets(event.getChunk());
     }
 }
 

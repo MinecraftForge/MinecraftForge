@@ -33,7 +33,7 @@ import java.util.Objects;
 public abstract class SimpleTicket<T>
 {
     @Nullable
-    private Collection<SimpleTicket<T>> collection;
+    private ITicketManager<T> manager;
     protected boolean isValid = false;
 
     /**
@@ -41,10 +41,10 @@ public abstract class SimpleTicket<T>
      * <br>
      * Should <b>not</b> be called if you just want to register a ticket to a system like the {@link net.minecraftforge.common.FarmlandWaterManager}
      */
-    public final void setBackend(@Nonnull Collection<SimpleTicket<T>> collection)
+    public final void setBackend(@Nonnull ITicketManager<T> ticketManager)
     {
-        Preconditions.checkState(this.collection == null, "Ticket is already registered to a managing system");
-        this.collection = Objects.requireNonNull(collection);
+        Preconditions.checkState(this.manager == null, "Ticket is already registered to a managing system");
+        this.manager = ticketManager;
     }
 
     /**
@@ -61,10 +61,10 @@ public abstract class SimpleTicket<T>
      */
     public void invalidate()
     {
-        Preconditions.checkState(this.collection != null, "Ticket is not registered to a managing system");
+        Preconditions.checkState(this.manager != null, "Ticket is not registered to a managing system");
         if (this.isValid())
         {
-            this.collection.remove(this);
+            this.manager.remove(this);
         }
         this.isValid = false;
     }
@@ -74,10 +74,10 @@ public abstract class SimpleTicket<T>
      */
     public void validate()
     {
-        Preconditions.checkState(this.collection != null, "Ticket is not registered to a managing system");
+        Preconditions.checkState(this.manager != null, "Ticket is not registered to a managing system");
         if (!this.isValid())
         {
-            this.collection.add(this);
+            this.manager.add(this);
         }
         this.isValid = true;
     }

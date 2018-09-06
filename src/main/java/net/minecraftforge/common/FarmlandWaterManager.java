@@ -24,18 +24,18 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ticket.AABBTicket;
-import net.minecraftforge.common.ticket.SimpleTicket;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.ticket.*;
+import net.minecraftforge.fml.common.FMLLog;
 
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public class FarmlandWaterManager
 {
-    private static final Int2ObjectMap<Set<SimpleTicket<Vec3d>>> customWaterHandler = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<Map<ChunkPos, ChunkTicketManager<Vec3d>>> customWaterHandler = new Int2ObjectOpenHashMap<>();
 
     /**
      * Adds a custom ticket.
@@ -45,13 +45,26 @@ public class FarmlandWaterManager
      * when the region this is unloaded (e.g. your TE is unloaded or the block is removed), and validate once it is loaded
      * @param world The world where the region should be marked. Only server-side worlds are allowed
      * @param ticket Your ticket you want to have registered
+     * @param chunkPoses The chunkPoses where the ticket is located
      * @return The ticket for your requested region.
      */
-    public static<T extends SimpleTicket<Vec3d>> T addCustomTicket(World world, T ticket)
+    @SuppressWarnings("unchecked")
+    public static<T extends SimpleTicket<Vec3d>> T addCustomTicket(World world, T ticket, ChunkPos... chunkPoses)
     {
         Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
-        Set<SimpleTicket<Vec3d>> tickets = customWaterHandler.computeIfAbsent(world.provider.getDimension(), id -> Collections.newSetFromMap(new WeakHashMap<>()));
-        ticket.setBackend(tickets);
+        Preconditions.checkArgument(chunkPoses.length > 0, "Need at least one chunk pos");
+        Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.computeIfAbsent(world.provider.getDimension(), id -> new HashMap<>());
+        if (chunkPoses.length == 1)
+        {
+            ticket.setBackend(ticketMap.computeIfAbsent(chunkPoses[0], ChunkTicketManager::new));
+        }
+        else
+        {
+            ChunkTicketManager<Vec3d>[] tickets = new ChunkTicketManager[chunkPoses.length];
+            for (int i = 0; i < chunkPoses.length; i++)
+                tickets[i] = ticketMap.computeIfAbsent(chunkPoses[i], ChunkTicketManager::new);
+            ticket.setBackend(new MultiChunkTicketManager<>(tickets));
+        }
         ticket.validate();
         return ticket;
     }
@@ -62,14 +75,25 @@ public class FarmlandWaterManager
      * If you don't want to water the region anymore, call {@link SimpleTicket#invalidate()}. Also call this
      * when the region this is unloaded (e.g. your TE is unloaded or the block is removed), and validate once it is loaded
      * <br>
-     * The AABB in the ticket is mutable, so if you need to update it, don't create a new ticket but update the existing one using {@link AABBTicket#setAABB(AxisAlignedBB)}.
+     * The AABB in the ticket is immutable
      * @param world The world where the region should be marked. Only server-side worlds are allowed
      * @param aabb The region where blocks should be watered
      * @return The ticket for your requested region.
      */
     public static AABBTicket addAABBTicket(World world, AxisAlignedBB aabb)
     {
-        return addCustomTicket(world, new AABBTicket(aabb));
+        //First calculate all chunks the aabb is in
+        ChunkPos leftUp = new ChunkPos(((int) aabb.minX) >> 4, ((int) aabb.minZ) >> 4);
+        ChunkPos rightDown = new ChunkPos(((int) aabb.maxX) >> 4, ((int) aabb.maxZ) >> 4);
+        Set<ChunkPos> posSet = new HashSet<>();
+        for (int x = leftUp.x; x <= rightDown.x; x++)
+        {
+            for (int z = leftUp.z; z <= rightDown.z; z++)
+            {
+                posSet.add(new ChunkPos(x, z));
+            }
+        }
+        return addCustomTicket(world, new AABBTicket(aabb), posSet.toArray(new ChunkPos[0]));
     }
 
     /**
@@ -78,27 +102,37 @@ public class FarmlandWaterManager
      */
     public static boolean hasBlockWaterTicket(World world, BlockPos pos)
     {
-        Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
-        Set<SimpleTicket<Vec3d>> tickets = customWaterHandler.get(world.provider.getDimension());
-        if (tickets == null)
+        ChunkTicketManager<Vec3d> ticketManager = getTicketManager(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4), world);
+        if (ticketManager != null)
         {
-            return false;
+            Vec3d posAsVec3d = new Vec3d(pos);
+            for (SimpleTicket<Vec3d> ticket : ticketManager.getTickets()) {
+                if (ticket.matches(posAsVec3d))
+                    return true;
+            }
         }
-
-        Vec3d posAsVec3d = new Vec3d(pos);
-        return tickets.stream().anyMatch(ticket -> ticket.matches(posAsVec3d));
+        return false;
     }
 
-    static void removeAllTickets(World world)
+    static void removeTickets(Chunk chunk)
     {
-        Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
-        Set<SimpleTicket<Vec3d>> tickets = customWaterHandler.get(world.provider.getDimension());
-        if (tickets != null)
+        ChunkTicketManager<Vec3d> ticketManager = getTicketManager(chunk.getPos(), chunk.getWorld());
+        if (ticketManager != null)
         {
-            for (SimpleTicket<Vec3d> ticket : tickets)
+            for (SimpleTicket<Vec3d> ticket : ticketManager.getTickets())
             {
                 ticket.invalidate();
             }
         }
+    }
+
+    private static ChunkTicketManager<Vec3d> getTicketManager(ChunkPos pos, World world) {
+        Preconditions.checkArgument(!world.isRemote, "Water region is only determined server-side");
+        Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.get(world.provider.getDimension());
+        if (ticketMap == null)
+        {
+            return null;
+        }
+        return ticketMap.get(pos);
     }
 }
