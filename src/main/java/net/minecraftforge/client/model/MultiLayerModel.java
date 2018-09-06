@@ -48,6 +48,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 import java.util.Optional;
+import java.util.Random;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
@@ -143,7 +145,7 @@ public final class MultiLayerModel implements IModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
             if (layer == null)
@@ -151,12 +153,12 @@ public final class MultiLayerModel implements IModel
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
                 for (IBakedModel model : models.values())
                 {
-                    builder.addAll(model.getQuads(state, side, rand));
+                    builder.addAll(model.func_200117_a(state, side, rand));
                 }
                 return builder.build();
             }
             // assumes that child model will handle this state properly. FIXME?
-            return models.getOrDefault(Optional.of(layer), missing).getQuads(state, side, rand);
+            return models.getOrDefault(Optional.of(layer), missing).func_200117_a(state, side, rand);
         }
 
         @Override

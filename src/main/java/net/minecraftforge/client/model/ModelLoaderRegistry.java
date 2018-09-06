@@ -25,8 +25,8 @@ import java.util.Set;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.client.model.ModelLoader.VariantLoader;
@@ -35,7 +35,6 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.AnimationStateMachine;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import net.minecraftforge.fml.common.FMLLog;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableMap;
@@ -73,7 +72,7 @@ public class ModelLoaderRegistry
     public static void registerLoader(ICustomModelLoader loader)
     {
         loaders.add(loader);
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(loader);
+        ((IReloadableResourceManager) Minecraft.getMinecraft().func_195551_G()).func_199006_a(loader);
     }
 
     public static boolean loaded(ResourceLocation location)
@@ -85,8 +84,8 @@ public class ModelLoaderRegistry
     public static ResourceLocation getActualLocation(ResourceLocation location)
     {
         if(location instanceof ModelResourceLocation) return location;
-        if(location.getResourcePath().startsWith("builtin/")) return location;
-        return new ResourceLocation(location.getResourceDomain(), "models/" + location.getResourcePath());
+        if(location.getPath().startsWith("builtin/")) return location;
+        return new ResourceLocation(location.getNamespace(), "models/" + location.getPath());
     }
 
     /**

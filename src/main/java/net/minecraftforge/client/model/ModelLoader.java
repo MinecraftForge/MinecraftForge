@@ -129,9 +129,9 @@ public final class ModelLoader extends ModelBakery
         return isLoading;
     }
 
-    public ModelLoader(IResourceManager manager, TextureMap map, BlockModelShapes shapes)
+    public ModelLoader(IResourceManager manager, TextureMap map)
     {
-        super(manager, map, shapes);
+        super(manager, map);
         VanillaLoader.INSTANCE.setLoader(this);
         VariantLoader.INSTANCE.setLoader(this);
         ModelLoaderRegistry.clearModelCache(manager);
@@ -1104,7 +1104,7 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
-    private static class MultipartModel implements IModel
+    static class MultipartModel implements IModel
     {
         private final ResourceLocation location;
         private final Multipart multipart;

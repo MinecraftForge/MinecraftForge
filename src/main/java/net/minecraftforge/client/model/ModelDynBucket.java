@@ -33,9 +33,12 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.resources.data.AnimationMetadataSection;
+import net.minecraft.client.resources.data.AnimationMetadataSectionSerializer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IResource;
@@ -54,6 +57,7 @@ import net.minecraftforge.fluids.FluidUtil;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.Optional;
+import java.util.Random;
 
 import static net.minecraftforge.client.model.ModelDynBucket.LoaderDynBucket.getResource;
 
@@ -144,11 +148,13 @@ public final class ModelDynBucket implements IModel
             fluidSprite = bakedTextureGetter.apply(fluid.getStill());
         }
 
+        Random random = new Random();
         if (baseLocation != null)
         {
             // build base (insidest)
             IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(state, format, bakedTextureGetter);
-            builder.addAll(model.getQuads(null, null, 0));
+            random.setSeed(42);
+            builder.addAll(model.func_200117_a(null, null, random));
             particleSprite = model.getParticleTexture();
         }
         if (liquidLocation != null && fluidSprite != null)
@@ -269,6 +275,7 @@ public final class ModelDynBucket implements IModel
         {
             // only create these textures if they are not added by a resource pack
 
+        	IResource res;
             if (getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_cover.png")) == null)
             {
                 ResourceLocation bucketCover = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_cover");
@@ -289,7 +296,7 @@ public final class ModelDynBucket implements IModel
         {
             try
             {
-                return Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
+                return Minecraft.getMinecraft().func_195551_G().func_199002_a(resourceLocation);
             }
             catch (IOException ignored)
             {
@@ -303,9 +310,9 @@ public final class ModelDynBucket implements IModel
         private final ResourceLocation bucket = new ResourceLocation("items/bucket_empty");
         private final ImmutableList<ResourceLocation> dependencies = ImmutableList.of(bucket);
 
-        private BucketBaseSprite(ResourceLocation resourceLocation)
+        private BucketBaseSprite(IResource resource) throws IOException
         {
-            super(resourceLocation.toString());
+            super(resource.func_199029_a(), new PngSizeInfo(resource), resource.func_199028_a(AnimationMetadataSection.field_195817_a));
         }
 
         @Override

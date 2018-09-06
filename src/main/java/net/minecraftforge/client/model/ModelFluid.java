@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
@@ -442,7 +443,7 @@ public final class ModelFluid implements IModel
                     break;
                 }
                 case NORMAL:
-                    builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                    builder.put(e, (float)side.getXOffset(), (float)side.getYOffset(), (float)side.getZOffset(), 0f);
                     break;
                 default:
                     builder.put(e);
@@ -476,7 +477,7 @@ public final class ModelFluid implements IModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             return side == null ? ImmutableList.of() : faceQuads.get(side);
         }

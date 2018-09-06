@@ -28,6 +28,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelBlock;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResourceManager;
@@ -132,7 +133,6 @@ public final class ItemLayerModel implements IModel
 
         for(int f = 0; f < sprite.getFrameCount(); f++)
         {
-            int[] pixels = sprite.getFrameTextureData(f)[0];
             boolean ptu;
             boolean[] ptv = new boolean[uMax];
             Arrays.fill(ptv, true);
@@ -141,7 +141,7 @@ public final class ItemLayerModel implements IModel
                 ptu = true;
                 for(int u = 0; u < uMax; u++)
                 {
-                    int alpha = getAlpha(pixels, uMax, vMax, u, v);
+                    int alpha = sprite.getPixelRGBA(f, u, v) >> 24 & 0xFF;
                     boolean t = alpha / 255f <= 0.1f;
 
                     if (!t && alpha < 255)
@@ -328,11 +328,6 @@ public final class ItemLayerModel implements IModel
         }
     }
 
-    private static int getAlpha(int[] pixels, int uMax, int vMax, int u, int v)
-    {
-        return pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF;
-    }
-
     private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
     {
         final float eps = 1e-2f;
@@ -435,7 +430,7 @@ public final class ItemLayerModel implements IModel
                 break;
             }
             case NORMAL:
-                builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                builder.put(e, (float)side.getXOffset(), (float)side.getYOffset(), (float)side.getZOffset(), 0f);
                 break;
             default:
                 builder.put(e);
