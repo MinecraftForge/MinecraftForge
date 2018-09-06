@@ -24,22 +24,20 @@ import java.util.function.Predicate;
 import net.minecraftforge.client.resource.IResourceType;
 import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.client.resource.VanillaResourceType;
-
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
 public interface ICustomModelLoader extends ISelectiveResourceReloadListener
 {
     @Override
-    void onResourceManagerReload(IResourceManager resourceManager);
+    void func_195410_a(IResourceManager resourceManager);
 
     @Override
     default void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate)
     {
         if (resourcePredicate.test(VanillaResourceType.MODELS))
         {
-            onResourceManagerReload(resourceManager);
+            func_195410_a(resourceManager);
         }
     }
 

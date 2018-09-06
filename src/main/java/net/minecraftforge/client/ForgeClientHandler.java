@@ -22,9 +22,10 @@ package net.minecraftforge.client;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class ForgeClientHandler
 {
@@ -34,7 +35,7 @@ public class ForgeClientHandler
         // register model for the universal bucket, if it exists
         if (FluidRegistry.isUniversalBucketEnabled())
         {
-            ModelLoader.setBucketModelDefinition(ForgeModContainer.getInstance().universalBucket);
+            ModelLoader.setBucketModelDefinition(ForgeMod.getInstance().universalBucket);
         }
     }
 
@@ -43,7 +44,7 @@ public class ForgeClientHandler
     {
         if (FluidRegistry.isUniversalBucketEnabled())
         {
-            event.getItemColors().registerItemColorHandler(new FluidContainerColorer(), ForgeModContainer.getInstance().universalBucket);
+            event.getItemColors().registerItemColorHandler(new FluidContainerColorer(), ForgeMod.getInstance().universalBucket);
         }
     }
 }

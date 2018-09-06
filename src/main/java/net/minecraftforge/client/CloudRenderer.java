@@ -380,7 +380,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         {
             vbo.bindBuffer();
 
-            int stride = FORMAT.getNextOffset();
+            int stride = FORMAT.getSize();
             GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, stride, 0);
             GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
             GlStateManager.glTexCoordPointer(2, GL11.GL_FLOAT, stride, 12);
@@ -390,9 +390,9 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         }
         else
         {
-            buffer.limit(FORMAT.getNextOffset());
+            buffer.limit(FORMAT.getSize());
             for (int i = 0; i < FORMAT.getElementCount(); i++)
-                FORMAT.getElements().get(i).getUsage().preDraw(FORMAT, i, FORMAT.getNextOffset(), buffer);
+                FORMAT.getElements().get(i).getUsage().preDraw(FORMAT, i, FORMAT.getSize(), buffer);
             buffer.position(0);
         }
 
@@ -451,7 +451,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
         buffer.limit(0);
         for (int i = 0; i < FORMAT.getElementCount(); i++)
-            FORMAT.getElements().get(i).getUsage().postDraw(FORMAT, i, FORMAT.getNextOffset(), buffer);
+            FORMAT.getElements().get(i).getUsage().postDraw(FORMAT, i, FORMAT.getSize(), buffer);
         buffer.position(0);
 
         // Disable our coloring.

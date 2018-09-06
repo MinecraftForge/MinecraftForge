@@ -30,7 +30,7 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
@@ -449,15 +449,15 @@ public final class ItemLayerModel implements IModel
         INSTANCE;
 
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {}
+        public void func_195410_a(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
-                modelLocation.getResourcePath().equals("item-layer") ||
-                modelLocation.getResourcePath().equals("models/block/item-layer") ||
-                modelLocation.getResourcePath().equals("models/item/item-layer"));
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && (
+                modelLocation.getPath().equals("item-layer") ||
+                modelLocation.getPath().equals("models/block/item-layer") ||
+                modelLocation.getPath().equals("models/item/item-layer"));
         }
 
         @Override

@@ -36,7 +36,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -48,9 +48,10 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -63,6 +64,7 @@ import com.google.gson.JsonParser;
 
 public final class ModelFluid implements IModel
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final ModelFluid WATER = new ModelFluid(FluidRegistry.WATER);
     public static final ModelFluid LAVA = new ModelFluid(FluidRegistry.LAVA);
 
@@ -102,15 +104,15 @@ public final class ModelFluid implements IModel
         INSTANCE;
 
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {}
+        public void func_195410_a(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
-                modelLocation.getResourcePath().equals("fluid") ||
-                modelLocation.getResourcePath().equals("models/block/fluid") ||
-                modelLocation.getResourcePath().equals("models/item/fluid"));
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && (
+                modelLocation.getPath().equals("fluid") ||
+                modelLocation.getPath().equals("models/block/fluid") ||
+                modelLocation.getPath().equals("models/item/fluid"));
         }
 
         @Override
@@ -346,7 +348,7 @@ public final class ModelFluid implements IModel
                 // sides
                 for (int i = 0; i < 4; i++)
                 {
-                    EnumFacing side = EnumFacing.getHorizontal((5 - i) % 4); // [W, S, E, N]
+                    EnumFacing side = EnumFacing.byHorizontalIndex((5 - i) % 4); // [W, S, E, N]
                     boolean useOverlay = overlay.isPresent() && sideOverlays[side.getHorizontalIndex()];
                     int si = i; // local var for lambda capture
 
@@ -502,7 +504,7 @@ public final class ModelFluid implements IModel
         String fluid = e.getAsString();
         if(!FluidRegistry.isFluidRegistered(fluid))
         {
-            FMLLog.log.fatal("fluid '{}' not found", fluid);
+            LOGGER.fatal("fluid '{}' not found", fluid);
             return WATER;
         }
         return new ModelFluid(FluidRegistry.getFluid(fluid));

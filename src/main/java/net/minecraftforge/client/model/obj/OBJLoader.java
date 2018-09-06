@@ -25,16 +25,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
-import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /*
  * Loader for OBJ models.
@@ -44,6 +45,7 @@ import org.apache.logging.log4j.Level;
 public enum OBJLoader implements ICustomModelLoader {
     INSTANCE;
 
+    private static final Logger LOGGER = LogManager.getLogger();
     private IResourceManager manager;
     private final Set<String> enabledDomains = new HashSet<>();
     private final Map<ResourceLocation, OBJModel> cache = new HashMap<>();
@@ -52,11 +54,11 @@ public enum OBJLoader implements ICustomModelLoader {
     public void addDomain(String domain)
     {
         enabledDomains.add(domain.toLowerCase());
-        FMLLog.log.info("OBJLoader: Domain {} has been added.", domain.toLowerCase());
+        LOGGER.info("OBJLoader: Domain {} has been added.", domain.toLowerCase());
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager)
+    public void func_195410_a(IResourceManager resourceManager)
     {
         this.manager = resourceManager;
         cache.clear();
@@ -66,13 +68,13 @@ public enum OBJLoader implements ICustomModelLoader {
     @Override
     public boolean accepts(ResourceLocation modelLocation)
     {
-        return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".obj");
+        return enabledDomains.contains(modelLocation.getNamespace()) && modelLocation.getPath().endsWith(".obj");
     }
 
     @Override
     public IModel loadModel(ResourceLocation modelLocation) throws Exception
     {
-        ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
+        ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
         if (!cache.containsKey(file))
         {
             IResource resource = null;
@@ -84,10 +86,10 @@ public enum OBJLoader implements ICustomModelLoader {
                 }
                 catch (FileNotFoundException e)
                 {
-                    if (modelLocation.getResourcePath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
-                    else if (modelLocation.getResourcePath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
+                    if (modelLocation.getPath().startsWith("models/block/"))
+                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
+                    else if (modelLocation.getPath().startsWith("models/item/"))
+                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
                     else throw e;
                 }
                 OBJModel.Parser parser = new OBJModel.Parser(resource, manager);

@@ -36,10 +36,10 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -61,11 +61,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-import net.minecraftforge.fml.common.FMLLog;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public final class ModelDynBucket implements IModel
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbucket"), "inventory");
 
     // minimal Z offset to prevent depth-fighting
@@ -91,13 +93,6 @@ public final class ModelDynBucket implements IModel
     public ModelDynBucket()
     {
         this(null, null, null, null, false, true);
-    }
-
-    /** @deprecated use {@link #ModelDynBucket(ResourceLocation, ResourceLocation, ResourceLocation, Fluid, boolean, boolean)} */
-    @Deprecated // TODO: remove
-    public ModelDynBucket(@Nullable ResourceLocation baseLocation, @Nullable ResourceLocation liquidLocation, @Nullable ResourceLocation coverLocation, @Nullable Fluid fluid, boolean flipGas)
-    {
-        this(baseLocation, liquidLocation, coverLocation, fluid, flipGas, true);
     }
 
     public ModelDynBucket(@Nullable ResourceLocation baseLocation, @Nullable ResourceLocation liquidLocation, @Nullable ResourceLocation coverLocation, @Nullable Fluid fluid, boolean flipGas, boolean tint)
@@ -255,7 +250,7 @@ public final class ModelDynBucket implements IModel
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && modelLocation.getResourcePath().contains("forgebucket");
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && modelLocation.getPath().contains("forgebucket");
         }
 
         @Override
@@ -265,7 +260,7 @@ public final class ModelDynBucket implements IModel
         }
 
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager)
+        public void func_195410_a(IResourceManager resourceManager)
         {
             // no need to clear cache since we create a new model instance
         }
@@ -397,7 +392,7 @@ public final class ModelDynBucket implements IModel
             }
             catch (IOException e)
             {
-                FMLLog.log.error("Failed to close resource", e);
+                LOGGER.error("Failed to close resource", e);
             }
 
             this.clearFramesTextureData();

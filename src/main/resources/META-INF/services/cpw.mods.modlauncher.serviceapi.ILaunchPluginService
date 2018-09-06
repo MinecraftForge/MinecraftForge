@@ -1,3 +1,4 @@
 net.minecraftforge.fml.loading.RuntimeDistCleaner
 net.minecraftforge.common.asm.RuntimeEnumExtener
 net.minecraftforge.common.asm.ObjectHolderDefinalize
+net.minecraftforge.common.asm.CapabilityInjectDefinalize

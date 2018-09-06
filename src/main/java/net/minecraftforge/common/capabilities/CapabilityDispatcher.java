@@ -19,7 +19,6 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
@@ -86,32 +85,18 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         names = lstNames.toArray(new String[lstNames.size()]);
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
-    {
-        for (ICapabilityProvider cap : caps)
-        {
-            if (cap.hasCapability(capability, facing))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
-    @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> OptionalCapabilityInstance<T> getCapability(Capability<T> cap, EnumFacing side)
     {
-        for (ICapabilityProvider cap : caps)
+        for (ICapabilityProvider c : caps)
         {
-            T ret = cap.getCapability(capability, facing);
-            if (ret != null)
-            {
+            OptionalCapabilityInstance<T> ret = c.getCapability(cap, side);
+            if (ret.isPresent()) {
                 return ret;
             }
         }
-        return null;
+        return OptionalCapabilityInstance.empty();
     }
 
     @Override

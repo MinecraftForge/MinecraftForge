@@ -17,23 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client;
-
-import net.minecraft.client.renderer.color.IItemColor;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidUtil;
+package net.minecraftforge.common.capabilities;
 
 import javax.annotation.Nonnull;
 
-public class FluidContainerColorer implements IItemColor
+//Exactly like Supplier, except there IS a contract that each invocation should return a new unique instance and it must not be null.
+@FunctionalInterface
+public interface NonNullSupplier<T>
 {
-    @Override
-    public int getColor(@Nonnull ItemStack stack, int tintIndex)
-    {
-        if (tintIndex != 1) return 0xFFFFFFFF;
-        FluidStack fluidStack = FluidUtil.getFluidContained(stack);
-        if (fluidStack == null) return 0xFFFFFFFF;
-        return fluidStack.getFluid().getColor(fluidStack);
-    }
+    @Nonnull T get();
 }

@@ -45,8 +45,8 @@ public class Attributes
      */
     public static boolean moreSpecific(VertexFormat first, VertexFormat second)
     {
-        int size = first.getNextOffset();
-        if(size != second.getNextOffset()) return false;
+        int size = first.getSize();
+        if(size != second.getSize()) return false;
 
         int padding = 0;
         int j = 0;

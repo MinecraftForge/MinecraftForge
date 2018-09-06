@@ -28,14 +28,13 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 

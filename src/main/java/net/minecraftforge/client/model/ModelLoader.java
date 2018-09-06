@@ -35,8 +35,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockPart;
 import net.minecraft.client.renderer.block.model.BlockPartFace;
@@ -50,7 +50,6 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
-import net.minecraft.client.renderer.block.model.ModelBlockDefinition.MissingVariantException;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.model.MultipartBakedModel;
 import net.minecraft.client.renderer.block.model.SimpleBakedModel;
@@ -59,14 +58,12 @@ import net.minecraft.client.renderer.block.model.VariantList;
 import net.minecraft.client.renderer.block.model.WeightedBakedModel;
 import net.minecraft.client.renderer.block.model.multipart.Multipart;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
-import net.minecraft.client.renderer.block.statemap.BlockStateMapper;
-import net.minecraft.client.renderer.block.statemap.IStateMapper;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.Item;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
@@ -81,7 +78,6 @@ import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.ClientModLoader;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.ProgressManager.ProgressBar;
 import net.minecraftforge.logging.ModelLoaderErrorMessage;
@@ -183,7 +179,7 @@ public final class ModelLoader extends ModelBakery
                 }
                 catch (Exception e)
                 {
-                    FMLLog.log.error("Exception baking model for location(s) {}:", modelLocations, e);
+                    LOGGEr.error("Exception baking model for location(s) {}:", modelLocations, e);
                     bakedModels.put(model, missingBaked);
                 }
             }
@@ -335,7 +331,7 @@ public final class ModelLoader extends ModelBakery
     @Override
     protected ResourceLocation getModelLocation(ResourceLocation model)
     {
-        return new ResourceLocation(model.getResourceDomain(), model.getResourcePath() + ".json");
+        return new ResourceLocation(model.getNamespace(), model.getPath() + ".json");
     }
 
     private final class VanillaModelWrapper implements IModel
@@ -474,7 +470,7 @@ public final class ModelLoader extends ModelBakery
                 {
                     transformation = transformation.compose(newTransforms.get(i));
                     BlockPartRotation rot = part.partRotation;
-                    if(rot == null) rot = new BlockPartRotation(new org.lwjgl.util.vector.Vector3f(), EnumFacing.Axis.Y, 0, false);
+                    if(rot == null) rot = new BlockPartRotation(new Vector3f(), EnumFacing.Axis.Y, 0, false);
                     part = new BlockPart(part.positionFrom, part.positionTo, part.mapFaces, rot, part.shade);
                 }
                 for(Map.Entry<EnumFacing, BlockPartFace> e : part.mapFaces.entrySet())
@@ -764,7 +760,7 @@ public final class ModelLoader extends ModelBakery
         {
             try
             {
-                missingModel = VanillaLoader.INSTANCE.loadModel(new ResourceLocation(MODEL_MISSING.getResourceDomain(), MODEL_MISSING.getResourcePath()));
+                missingModel = VanillaLoader.INSTANCE.loadModel(new ResourceLocation(MODEL_MISSING.getNamespace(), MODEL_MISSING.getPath()));
             }
             catch(Exception e)
             {
@@ -838,7 +834,7 @@ public final class ModelLoader extends ModelBakery
 
         // NOOP, handled in loader
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {}
+        public void func_195410_a(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
@@ -853,12 +849,12 @@ public final class ModelLoader extends ModelBakery
             {
                 return loader.getMissingModel();
             }
-            String modelPath = modelLocation.getResourcePath();
-            if(modelLocation.getResourcePath().startsWith("models/"))
+            String modelPath = modelLocation.getPath();
+            if(modelLocation.getPath().startsWith("models/"))
             {
                 modelPath = modelPath.substring("models/".length());
             }
-            ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getResourceDomain(), "armatures/" + modelPath + ".json");
+            ResourceLocation armatureLocation = new ResourceLocation(modelLocation.getNamespace(), "armatures/" + modelPath + ".json");
             ModelBlockAnimation animation = ModelBlockAnimation.loadVanillaAnimation(loader.resourceManager, armatureLocation);
             ModelBlock model = loader.loadModel(modelLocation);
             IModel iModel = loader.new VanillaModelWrapper(modelLocation, model, false, animation);
@@ -917,6 +913,7 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
+    @SuppressWarnings("serial")
     public static class ItemLoadingException extends ModelLoaderRegistry.LoaderException
     {
         private final Exception normalException;
@@ -1065,7 +1062,7 @@ public final class ModelLoader extends ModelBakery
 
         // NOOP, handled in loader
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {}
+        public void func_195410_a(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
@@ -1091,7 +1088,7 @@ public final class ModelLoader extends ModelBakery
                     IModel model = loader.multipartModels.get(definition);
                     if (model == null)
                     {
-                        model = new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                        model = new MultipartModel(new ResourceLocation(variant.getNamespace(), variant.getPath()), definition.getMultipartData());
                         loader.multipartModels.put(definition, model);
                     }
                     return model;

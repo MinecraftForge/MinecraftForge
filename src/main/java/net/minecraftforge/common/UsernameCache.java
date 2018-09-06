@@ -20,9 +20,9 @@
 package net.minecraftforge.common;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -33,7 +33,6 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import com.google.common.base.Charsets;
-import net.minecraft.world.storage.ThreadedFileIOBase;
 import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -162,6 +161,7 @@ public final class UsernameCache {
 
         try (final BufferedReader reader = Files.newBufferedReader(saveFile, Charsets.UTF_8))
         {
+            @SuppressWarnings("serial")
             Type type = new TypeToken<Map<UUID, String>>(){}.getType();
             map = gson.fromJson(reader, type);
         }
@@ -209,12 +209,12 @@ public final class UsernameCache {
                 // Make sure we don't save when another thread is still saving
                 synchronized (saveFile)
                 {
-                    Files.write(data, saveFile, charset);
+                    Files.write(saveFile, data.getBytes(StandardCharsets.UTF_8));
                 }
             }
             catch (IOException e)
             {
-                log.error("Failed to save username cache to file!", e);
+                LOGGER.error(USRCACHE, "Failed to save username cache to file!", e);
             }
         }
     }

@@ -33,7 +33,7 @@ import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -41,9 +41,10 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 import java.util.Optional;
@@ -54,6 +55,7 @@ import com.google.gson.JsonParser;
 
 public final class MultiLayerModel implements IModel
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final MultiLayerModel INSTANCE = new MultiLayerModel(ImmutableMap.of());
 
     private final ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models;
@@ -121,7 +123,7 @@ public final class MultiLayerModel implements IModel
         {
             return new ModelResourceLocation(e.getAsString());
         }
-        FMLLog.log.fatal("Expect ModelResourceLocation, got: {}", json);
+        LOGGER.fatal("Expect ModelResourceLocation, got: {}", json);
         return new ModelResourceLocation("builtin/missing", "missing");
     }
 
@@ -205,15 +207,15 @@ public final class MultiLayerModel implements IModel
         INSTANCE;
 
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {}
+        public void func_195410_a(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
-                modelLocation.getResourcePath().equals("multi-layer") ||
-                modelLocation.getResourcePath().equals("models/block/multi-layer") ||
-                modelLocation.getResourcePath().equals("models/item/multi-layer"));
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && (
+                modelLocation.getPath().equals("multi-layer") ||
+                modelLocation.getPath().equals("models/block/multi-layer") ||
+                modelLocation.getPath().equals("models/item/multi-layer"));
         }
 
         @Override

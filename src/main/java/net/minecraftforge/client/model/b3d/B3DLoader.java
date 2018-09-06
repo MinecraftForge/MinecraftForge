@@ -40,8 +40,8 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
@@ -68,7 +68,6 @@ import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -108,7 +107,7 @@ public enum B3DLoader implements ICustomModelLoader
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager manager)
+    public void func_195410_a(IResourceManager manager)
     {
         this.manager = manager;
         cache.clear();
@@ -117,14 +116,14 @@ public enum B3DLoader implements ICustomModelLoader
     @Override
     public boolean accepts(ResourceLocation modelLocation)
     {
-        return enabledDomains.contains(modelLocation.getResourceDomain()) && modelLocation.getResourcePath().endsWith(".b3d");
+        return enabledDomains.contains(modelLocation.getNamespace()) && modelLocation.getPath().endsWith(".b3d");
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public IModel loadModel(ResourceLocation modelLocation) throws Exception
     {
-        ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
+        ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
         if(!cache.containsKey(file))
         {
             IResource resource = null;
@@ -136,10 +135,10 @@ public enum B3DLoader implements ICustomModelLoader
                 }
                 catch(FileNotFoundException e)
                 {
-                    if(modelLocation.getResourcePath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
-                    else if(modelLocation.getResourcePath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
+                    if(modelLocation.getPath().startsWith("models/block/"))
+                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
+                    else if(modelLocation.getPath().startsWith("models/item/"))
+                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
                     else throw e;
                 }
                 B3DModel.Parser parser = new B3DModel.Parser(resource.getInputStream());
@@ -452,7 +451,7 @@ public enum B3DLoader implements ICustomModelLoader
         @Override
         public Collection<ResourceLocation> getTextures()
         {
-            return Collections2.filter(textures.values(), loc -> !loc.getResourcePath().startsWith("#"));
+            return Collections2.filter(textures.values(), loc -> !loc.getPath().startsWith("#"));
         }
 
         @Override
@@ -462,9 +461,9 @@ public enum B3DLoader implements ICustomModelLoader
             TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
             for(Map.Entry<String, ResourceLocation> e : textures.entrySet())
             {
-                if(e.getValue().getResourcePath().startsWith("#"))
+                if(e.getValue().getPath().startsWith("#"))
                 {
-                    FMLLog.log.fatal("unresolved texture '{}' for b3d model '{}'", e.getValue().getResourcePath(), modelLocation);
+                    FMLLog.log.fatal("unresolved texture '{}' for b3d model '{}'", e.getValue().getPath(), modelLocation);
                     builder.put(e.getKey(), missing);
                 }
                 else
