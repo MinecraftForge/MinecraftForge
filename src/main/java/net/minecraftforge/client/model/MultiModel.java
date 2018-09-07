@@ -24,6 +24,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
 import java.util.Set;
 
@@ -45,9 +46,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 import com.google.common.collect.ImmutableList;
@@ -59,6 +61,8 @@ import com.google.common.collect.Sets;
 @Deprecated
 public final class MultiModel implements IModel
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     private static final class Baked implements IBakedModel
     {
         private final ResourceLocation location;
@@ -68,7 +72,7 @@ public final class MultiModel implements IModel
 
         private final IBakedModel internalBase;
         private final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
-        private final ItemOverrideList overrides = new ItemOverrideList(Lists.newArrayList())
+        private final ItemOverrideList overrides = new ItemOverrideList() // TODO AT not applying?
         {
             @Override
             public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
@@ -183,16 +187,16 @@ public final class MultiModel implements IModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
             if (base != null)
             {
-                quads.addAll(base.getQuads(state, side, rand));
+                quads.addAll(base.func_200117_a(state, side, rand));
             }
             for (IBakedModel bakedPart : parts.values())
             {
-                quads.addAll(bakedPart.getQuads(state, side, rand));
+                quads.addAll(bakedPart.func_200117_a(state, side, rand));
             }
             return quads.build();
         }
@@ -289,7 +293,7 @@ public final class MultiModel implements IModel
 
         if(bakedBase == null && parts.isEmpty())
         {
-            FMLLog.log.error("MultiModel {} is empty (no base model or parts were provided/resolved)", location);
+            LOGGER.error("MultiModel {} is empty (no base model or parts were provided/resolved)", location);
             IModel missing = ModelLoaderRegistry.getMissingModel();
             return missing.bake(missing.getDefaultState(), format, bakedTextureGetter);
         }

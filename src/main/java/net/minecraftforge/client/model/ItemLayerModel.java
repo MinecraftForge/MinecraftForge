@@ -71,7 +71,7 @@ public final class ItemLayerModel implements IModel
 
     public ItemLayerModel(ModelBlock model)
     {
-        this(getTextures(model), model.createOverrides());
+        this(getTextures(model), model.createOverrides()); // TODO createOverrides got a bunch of crazy new params
     }
 
     private static ImmutableList<ResourceLocation> getTextures(ModelBlock model)

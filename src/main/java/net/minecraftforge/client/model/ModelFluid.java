@@ -222,7 +222,7 @@ public final class ModelFluid implements IModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             if (side != null && state instanceof IExtendedBlockState)
             {
@@ -248,10 +248,10 @@ public final class ModelFluid implements IModel
                 key <<= 1;
                 key |= 1;
 
-                return modelCache.getUnchecked(key).getQuads(state, side, rand);
+                return modelCache.getUnchecked(key).func_200117_a(state, side, rand);
             }
 
-            return super.getQuads(state, side, rand);
+            return super.func_200117_a(state, side, rand);
         }
     }
 

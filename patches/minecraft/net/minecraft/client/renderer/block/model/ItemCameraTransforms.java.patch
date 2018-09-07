@@ -1,0 +1,46 @@
+--- a/net/minecraft/client/renderer/block/model/ItemCameraTransforms.java
++++ b/net/minecraft/client/renderer/block/model/ItemCameraTransforms.java
+@@ -12,6 +12,10 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
++/**
++ * @deprecated use {@link net.minecraftforge.client.model.IPerspectiveAwareModel} instead
++ */
++@Deprecated
+ @OnlyIn(Dist.CLIENT)
+ public class ItemCameraTransforms {
+    public static final ItemCameraTransforms DEFAULT = new ItemCameraTransforms();
+@@ -37,6 +41,7 @@
+       this(ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT, ItemTransformVec3f.DEFAULT);
+    }
+ 
++   @Deprecated
+    public ItemCameraTransforms(ItemCameraTransforms transforms) {
+       this.thirdperson_left = transforms.thirdperson_left;
+       this.thirdperson_right = transforms.thirdperson_right;
+@@ -48,6 +53,7 @@
+       this.fixed = transforms.fixed;
+    }
+ 
++   @Deprecated
+    public ItemCameraTransforms(ItemTransformVec3f thirdperson_leftIn, ItemTransformVec3f thirdperson_rightIn, ItemTransformVec3f firstperson_leftIn, ItemTransformVec3f firstperson_rightIn, ItemTransformVec3f headIn, ItemTransformVec3f guiIn, ItemTransformVec3f groundIn, ItemTransformVec3f fixedIn) {
+       this.thirdperson_left = thirdperson_leftIn;
+       this.thirdperson_right = thirdperson_rightIn;
+@@ -80,6 +86,7 @@
+       }
+    }
+ 
++   @Deprecated
+    public ItemTransformVec3f getTransform(ItemCameraTransforms.TransformType type) {
+       switch(type) {
+       case THIRD_PERSON_LEFT_HAND:
+@@ -136,7 +143,7 @@
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+-   public static enum TransformType {
++   public static enum TransformType implements net.minecraftforge.common.model.IModelPart {
+       NONE,
+       THIRD_PERSON_LEFT_HAND,
+       THIRD_PERSON_RIGHT_HAND,

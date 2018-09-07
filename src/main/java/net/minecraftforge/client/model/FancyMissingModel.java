@@ -47,6 +47,7 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 
 final class FancyMissingModel implements IModel
 {
@@ -135,7 +136,7 @@ final class FancyMissingModel implements IModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             if (side == null)
             {
@@ -151,16 +152,16 @@ final class FancyMissingModel implements IModel
                     }
                     for (int y = 0; y < splitLines.size(); y++)
                     {
-                        fontRenderer.drawString(splitLines.get(y), 0, (int)((y - splitLines.size() / 2f) * fontRenderer.FONT_HEIGHT) + 0x40, 0xFF00FFFF);
+                        fontRenderer.func_211126_b(splitLines.get(y), 0, ((y - splitLines.size() / 2f) * fontRenderer.FONT_HEIGHT) + 0x40, 0xFF00FFFF);
                     }
                     ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                    builder.addAll(missingModel.getQuads(state, side, rand));
+                    builder.addAll(missingModel.func_200117_a (state, side, rand));
                     builder.addAll(fontRenderer.build());
                     quads = builder.build();
                 }
                 return quads;
             }
-            return missingModel.getQuads(state, side, rand);
+            return missingModel.func_200117_a (state, side, rand);
         }
 
         @Override

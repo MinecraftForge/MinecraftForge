@@ -39,6 +39,8 @@ import net.minecraftforge.common.model.TRSRTransformation;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -55,6 +57,9 @@ public class BlockStateLoader
             .registerTypeAdapter(ForgeBlockStateV1.Variant.class, ForgeBlockStateV1.Variant.Deserializer.INSTANCE)
             .registerTypeAdapter(TRSRTransformation.class, ForgeBlockStateV1.TRSRDeserializer.INSTANCE)
             .create();
+    
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     /**
      * Loads a BlockStates json file.
      * Will attempt to parse it as a Forge Enhanced version if possible.
@@ -208,7 +213,7 @@ public class BlockStateLoader
                 final IModel model;
                 if (modelLocation == null)
                 {
-                    FMLLog.log.error("model not found for variant {} for blockstate {}", entry.getKey(), blockstateLocation);
+                    LOGGER.error("model not found for variant {} for blockstate {}", entry.getKey(), blockstateLocation);
                     model = ModelLoaderRegistry.getMissingModel(blockstateLocation, new Throwable());
                 }
                 else

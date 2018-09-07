@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/block/model/ItemOverrideList.java
++++ b/net/minecraft/client/renderer/block/model/ItemOverrideList.java
+@@ -56,4 +56,8 @@
+ 
+       return p_209581_1_;
+    }
++   
++   public com.google.common.collect.ImmutableList<ItemOverride> getOverrides() {
++       return com.google.common.collect.ImmutableList.copyOf(overrides);
+ }
++}

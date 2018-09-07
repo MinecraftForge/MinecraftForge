@@ -23,6 +23,9 @@ import java.util.Deque;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.resources.IResourceManager;
@@ -47,6 +50,8 @@ import com.google.common.collect.Sets;
  */
 public class ModelLoaderRegistry
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     private static final Set<ICustomModelLoader> loaders = Sets.newHashSet();
     private static final Map<ResourceLocation, IModel> cache = Maps.newHashMap();
     private static final Deque<ResourceLocation> loadingModels = Queues.newArrayDeque();
@@ -211,7 +216,7 @@ public class ModelLoaderRegistry
         }
         catch(Exception e)
         {
-            FMLLog.log.error(error, e);
+            LOGGER.error(error, e);
             return getMissingModel(location, e);
         }
     }
