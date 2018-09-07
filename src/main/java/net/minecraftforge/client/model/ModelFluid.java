@@ -21,10 +21,12 @@ package net.minecraftforge.client.model;
 
 import java.util.function.Function;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
@@ -33,6 +35,7 @@ import javax.vecmath.Vector4f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -63,7 +66,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public final class ModelFluid implements IModel
+public final class ModelFluid implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ModelFluid WATER = new ModelFluid(FluidRegistry.WATER);
@@ -77,15 +80,20 @@ public final class ModelFluid implements IModel
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures()
+    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> p_209559_2_)
     {
         return fluid.getOverlay() != null
                 ? ImmutableSet.of(fluid.getStill(), fluid.getFlowing(), fluid.getOverlay())
                 : ImmutableSet.of(fluid.getStill(), fluid.getFlowing());
     }
+    
+    @Override
+    public Collection<ResourceLocation> getOverrideLocations() {
+        return Collections.emptyList();
+    }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
     {
         return new CachingBakedFluid(
                 state.apply(Optional.empty()),

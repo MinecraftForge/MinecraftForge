@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -43,6 +44,7 @@ import net.minecraft.client.renderer.block.model.BlockPartFace;
 import net.minecraft.client.renderer.block.model.BlockPartRotation;
 import net.minecraft.client.renderer.block.model.BuiltInModel;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemModelGenerator;
@@ -115,13 +117,13 @@ import static net.minecraftforge.fml.Logging.MODELLOADING;
 public final class ModelLoader extends ModelBakery
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
+    private final Map<ModelResourceLocation, IUnbakedModel> stateModels = Maps.newHashMap();
     private final Map<ModelResourceLocation, ModelBlockDefinition> multipartDefinitions = Maps.newHashMap();
-    private final Map<ModelBlockDefinition, IModel> multipartModels = Maps.newHashMap();
+    private final Map<ModelBlockDefinition, IUnbakedModel> multipartModels = Maps.newHashMap();
     // TODO: nothing adds to missingVariants, remove it?
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
-    private IModel missingModel = null;
+    private IUnbakedModel missingModel = null;
 
     private boolean isLoading = false;
     public boolean isLoading()
@@ -621,12 +623,12 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
-    private static final class WeightedRandomModel implements IModel
+    private static final class WeightedRandomModel implements IUnbakedModel
     {
         private final List<Variant> variants;
         private final List<ResourceLocation> locations;
         private final Set<ResourceLocation> textures;
-        private final List<IModel> models;
+        private final List<IUnbakedModel> models;
         private final IModelState defaultState;
 
         public WeightedRandomModel(ResourceLocation parent, VariantList variants) throws Exception
@@ -645,7 +647,7 @@ public final class ModelLoader extends ModelBakery
                  * Vanilla eats this, which makes it only show variants that have models.
                  * But that doesn't help debugging, so throw the exception
                  */
-                IModel model;
+                IUnbakedModel model;
                 if(loc.equals(MODEL_MISSING))
                 {
                     // explicit missing location, happens if blockstate has "model"=null
@@ -658,12 +660,12 @@ public final class ModelLoader extends ModelBakery
 
                 // FIXME: is this the place? messes up dependency and texture resolution
                 model = v.process(model);
-                for(ResourceLocation location : model.getDependencies())
+                for(ResourceLocation location : model.getOverrideLocations())
                 {
                     ModelLoaderRegistry.getModelOrMissing(location);
                 }
                 //FMLLog.getLogger().error("Exception resolving indirect dependencies for model" + loc, e);
-                textures.addAll(model.getTextures()); // Kick this, just in case.
+                textures.addAll(model.func_209559_a(ModelLoaderRegistry.getModelGetter(), new HashSet<>())); // Kick this, just in case.
 
                 models.add(model);
 
@@ -675,7 +677,7 @@ public final class ModelLoader extends ModelBakery
             if (models.size() == 0) //If all variants are missing, add one with the missing model and default rotation.
             {
                 // FIXME: log this?
-                IModel missing = ModelLoaderRegistry.getMissingModel();
+                IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
                 models.add(missing);
                 builder.add(Pair.of(missing, TRSRTransformation.identity()));
             }
@@ -683,7 +685,7 @@ public final class ModelLoader extends ModelBakery
             defaultState = new MultiModelState(builder.build());
         }
 
-        private WeightedRandomModel(List<Variant> variants, List<ResourceLocation> locations, Set<ResourceLocation> textures, List<IModel> models, IModelState defaultState)
+        private WeightedRandomModel(List<Variant> variants, List<ResourceLocation> locations, Set<ResourceLocation> textures, List<IUnbakedModel> models, IModelState defaultState)
         {
             this.variants = variants;
             this.locations = locations;
@@ -691,21 +693,21 @@ public final class ModelLoader extends ModelBakery
             this.models = models;
             this.defaultState = defaultState;
         }
-
+        
         @Override
-        public Collection<ResourceLocation> getDependencies()
+        public Collection<ResourceLocation> getOverrideLocations() 
         {
             return ImmutableList.copyOf(locations);
         }
-
+        
         @Override
-        public Collection<ResourceLocation> getTextures()
+        public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_)
         {
             return ImmutableSet.copyOf(textures);
         }
 
         @Override
-        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format) {
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -714,15 +716,15 @@ public final class ModelLoader extends ModelBakery
             if(variants.size() == 1)
             {
                 IModel model = models.get(0);
-                return model.bake(MultiModelState.getPartState(state, model, 0), format, bakedTextureGetter);
+                return model.bake(modelGetter, bakedTextureGetter, MultiModelState.getPartState(state, model, 0), uvlock, format);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(int i = 0; i < variants.size(); i++)
             {
                 IModel model = models.get(i);
-                builder.add(model.bake(MultiModelState.getPartState(state, model, i), format, bakedTextureGetter), variants.get(i).getWeight());
+                builder.add(model.bake(modelGetter, bakedTextureGetter, MultiModelState.getPartState(state, model, i), uvlock, format), variants.get(i).getWeight());
             }
-            return builder.build();
+            return builder.func_209614_a();
         }
 
         @Override
@@ -744,7 +746,7 @@ public final class ModelLoader extends ModelBakery
             List<IModel> retexturedModels = Lists.newArrayList();
             for(int i = 0; i < this.variants.size(); i++)
             {
-                IModel retextured = this.models.get(i).retexture(textures);
+                IUnbakedModel retextured = this.models.get(i).retexture(textures);
                 modelTextures.addAll(retextured.getTextures());
                 retexturedModels.add(retextured);
                 builder.add(Pair.of(retextured, this.variants.get(i).getState()));
@@ -754,7 +756,7 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
-    protected IModel getMissingModel()
+    protected IUnbakedModel getMissingModel()
     {
         if (missingModel == null)
         {

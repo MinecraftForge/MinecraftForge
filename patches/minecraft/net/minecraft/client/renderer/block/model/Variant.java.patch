@@ -25,12 +25,3 @@
     public boolean isUvLock() {
        return this.uvLock;
     }
-@@ -103,4 +108,8 @@
-          }
-       }
-    }
-+   
-+   public net.minecraftforge.client.model.IModel process(net.minecraftforge.client.model.IModel base) {
-+      return base.uvlock(isUvLock());
- }
-+}

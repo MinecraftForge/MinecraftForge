@@ -30,6 +30,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -46,10 +47,12 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
-final class FancyMissingModel implements IModel
+final class FancyMissingModel implements IUnbakedModel
 {
     private static final ResourceLocation font = new ResourceLocation("minecraft", "textures/font/ascii.png");
     private static final ResourceLocation font2 = new ResourceLocation("minecraft", "font/ascii");
@@ -81,27 +84,33 @@ final class FancyMissingModel implements IModel
         }
     });
 
-    private final IModel missingModel;
+    private final IUnbakedModel missingModel;
     private final String message;
 
-    public FancyMissingModel(IModel missingModel, String message)
+    public FancyMissingModel(IUnbakedModel missingModel, String message)
     {
         this.missingModel = missingModel;
         this.message = message;
     }
-
+    
     @Override
-    public Collection<ResourceLocation> getTextures()
+    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) 
     {
         return ImmutableList.of(font2);
     }
+    
+    @Override
+    public Collection<ResourceLocation> getOverrideLocations() 
+    {
+        return Collections.emptyList();
+    }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
     {
-        IBakedModel bigMissing = missingModel.bake(state, format, bakedTextureGetter);
+        IBakedModel bigMissing = missingModel.bake(modelGetter, bakedTextureGetter, state, uvlock, format);
         IModelState smallState = new ModelStateComposition(state, smallTransformation);
-        IBakedModel smallMissing = missingModel.bake(smallState, format, bakedTextureGetter);
+        IBakedModel smallMissing = missingModel.bake(modelGetter, bakedTextureGetter, smallState, uvlock, format);
         return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(format), message, bakedTextureGetter.apply(font2));
     }
 
