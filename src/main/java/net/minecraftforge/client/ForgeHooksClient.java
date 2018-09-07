@@ -521,12 +521,12 @@ public class ForgeHooksClient
         }
     }
 
-    public static void transform(org.lwjgl.util.vector.Vector3f vec, Matrix4f m)
+    public static void transform(net.minecraft.client.renderer.Vector3f vec, Matrix4f m)
     {
-        Vector4f tmp = new Vector4f(vec.x, vec.y, vec.z, 1f);
+        Vector4f tmp = new Vector4f(vec.func_195899_a(), vec.func_195900_b(), vec.func_195902_c(), 1f);
         m.transform(tmp);
         if(Math.abs(tmp.w - 1f) > 1e-5) tmp.scale(1f / tmp.w);
-        vec.set(tmp.x, tmp.y, tmp.z);
+        vec.func_195905_a(tmp.x, tmp.y, tmp.z);
     }
 
     public static Matrix4f getMatrix(ModelRotation modelRotation)
