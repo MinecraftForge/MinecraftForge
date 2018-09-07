@@ -48,8 +48,8 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.*;
@@ -61,13 +61,16 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 import com.google.common.base.Objects;
 import java.util.Optional;
+import java.util.Random;
+
 import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -79,6 +82,8 @@ import com.google.common.collect.Maps;
 
 public class OBJModel implements IModel
 {
+	private static final Logger LOGGER = LogManager.getLogger();
+	
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
     private final ResourceLocation modelLocation;
@@ -119,9 +124,9 @@ public class OBJModel implements IModel
         TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
         for (Map.Entry<String, Material> e : matLib.materials.entrySet())
         {
-            if (e.getValue().getTexture().getTextureLocation().getResourcePath().startsWith("#"))
+            if (e.getValue().getTexture().getTextureLocation().getPath().startsWith("#"))
             {
-                FMLLog.log.fatal("OBJLoader: Unresolved texture '{}' for obj model '{}'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
+                LOGGER.fatal("OBJLoader: Unresolved texture '{}' for obj model '{}'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
                 builder.put(e.getKey(), missing);
             }
             else
@@ -204,8 +209,8 @@ public class OBJModel implements IModel
         public Parser(IResource from, IResourceManager manager) throws IOException
         {
             this.manager = manager;
-            this.objFrom = from.getResourceLocation();
-            this.objStream = new InputStreamReader(from.getInputStream(), StandardCharsets.UTF_8);
+            this.objFrom = from.func_199029_a();
+            this.objStream = new InputStreamReader(from.func_199027_b(), StandardCharsets.UTF_8);
             this.objReader = new BufferedReader(objStream);
         }
 
@@ -258,7 +263,7 @@ public class OBJModel implements IModel
                         }
                         else
                         {
-                            FMLLog.log.error("OBJModel.Parser: (Model: '{}', Line: {}) material '{}' referenced but was not found", objFrom, lineNum, data);
+                            LOGGER.error("OBJModel.Parser: (Model: '{}', Line: {}) material '{}' referenced but was not found", objFrom, lineNum, data);
                         }
                         usemtlCounter++;
                     }
@@ -285,7 +290,7 @@ public class OBJModel implements IModel
                     else if (key.equalsIgnoreCase("f")) // Face Elements: f v1[/vt1][/vn1] ...
                     {
                         if (splitData.length > 4)
-                            FMLLog.log.warn("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
+                            LOGGER.warn("OBJModel.Parser: found a face ('f') with more than 4 vertices, only the first 4 of these vertices will be rendered!");
 
                         List<Vertex> v = Lists.newArrayListWithCapacity(splitData.length);
 
@@ -368,7 +373,7 @@ public class OBJModel implements IModel
                         if (!unknownObjectCommands.contains(key))
                         {
                             unknownObjectCommands.add(key);
-                            FMLLog.log.info("OBJLoader.Parser: command '{}' (model: '{}') is not currently supported, skipping. Line: {} '{}'", key, objFrom, lineNum, currentLine);
+                            LOGGER.info("OBJLoader.Parser: command '{}' (model: '{}') is not currently supported, skipping. Line: {} '{}'", key, objFrom, lineNum, currentLine);
                         }
                     }
                 }
@@ -502,10 +507,10 @@ public class OBJModel implements IModel
             this.materials.clear();
             boolean hasSetTexture = false;
             boolean hasSetColor = false;
-            String domain = from.getResourceDomain();
+            String domain = from.getNamespace();
             if (!path.contains("/"))
-                path = from.getResourcePath().substring(0, from.getResourcePath().lastIndexOf("/") + 1) + path;
-            mtlStream = new InputStreamReader(manager.getResource(new ResourceLocation(domain, path)).getInputStream(), StandardCharsets.UTF_8);
+                path = from.getPath().substring(0, from.getPath().lastIndexOf("/") + 1) + path;
+            mtlStream = new InputStreamReader(manager.func_199002_a(new ResourceLocation(domain, path)).func_199027_b(), StandardCharsets.UTF_8);
             mtlReader = new BufferedReader(mtlStream);
 
             String currentLine = "";
@@ -545,7 +550,7 @@ public class OBJModel implements IModel
                     }
                     else
                     {
-                        FMLLog.log.info("OBJModel: A color has already been defined for material '{}' in '{}'. The color defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+                        LOGGER.info("OBJModel: A color has already been defined for material '{}' in '{}'. The color defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
                 }
                 else if (key.equalsIgnoreCase("map_Ka") || key.equalsIgnoreCase("map_Kd") || key.equalsIgnoreCase("map_Ks"))
@@ -569,7 +574,7 @@ public class OBJModel implements IModel
                     }
                     else
                     {
-                        FMLLog.log.info("OBJModel: A texture has already been defined for material '{}' in '{}'. The texture defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
+                        LOGGER.info("OBJModel: A texture has already been defined for material '{}' in '{}'. The texture defined by key '{}' will not be applied!", material.getName(), new ResourceLocation(domain, path).toString(), key);
                     }
                 }
                 else if (key.equalsIgnoreCase("d") || key.equalsIgnoreCase("Tr"))
@@ -585,7 +590,7 @@ public class OBJModel implements IModel
                     if (!unknownMaterialCommands.contains(key))
                     {
                         unknownMaterialCommands.add(key);
-                        FMLLog.log.info("OBJLoader.MaterialLibrary: key '{}' (model: '{}') is not currently supported, skipping", key, new ResourceLocation(domain, path));
+                        LOGGER.info("OBJLoader.MaterialLibrary: key '{}' (model: '{}') is not currently supported, skipping", key, new ResourceLocation(domain, path));
                     }
                 }
             }
@@ -1306,7 +1311,7 @@ public class OBJModel implements IModel
 
         // FIXME: merge with getQuads
         @Override
-        public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, long rand)
+        public List<BakedQuad> func_200117_a(IBlockState blockState, EnumFacing side, Random rand)
         {
             if (side != null) return ImmutableList.of();
             if (quads == null)
