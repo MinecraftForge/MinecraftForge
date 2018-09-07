@@ -27,6 +27,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
@@ -35,6 +36,8 @@ import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
+
+import java.util.Random;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -46,7 +49,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
     protected static BlockRendererDispatcher blockRenderer;
 
     @Override
-    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, float partial, BufferBuilder renderer)
+    public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, BufferBuilder renderer)
    {
         if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
         {
@@ -54,9 +57,9 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
         }
         if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
-        IBlockAccess world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
+        IWorldReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
         IBlockState state = world.getBlockState(pos);
-        if(state.getPropertyKeys().contains(Properties.StaticProperty))
+        if(state.getBlock().getBlockState().getProperties().contains(Properties.StaticProperty))
         {
             state = state.withProperty(Properties.StaticProperty, false);
         }
@@ -78,7 +81,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
 
                     renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
 
-                    blockRenderer.getBlockModelRenderer().renderModel(world, model, exState, pos, renderer, false);
+                    blockRenderer.getBlockModelRenderer().func_199324_a(world, model, exState, pos, renderer, false, new Random(), 42);
                 }
             }
         }

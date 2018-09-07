@@ -72,10 +72,14 @@ import net.minecraftforge.common.property.Properties;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 import com.google.common.base.Objects;
 import java.util.Optional;
+import java.util.Random;
+
 import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -95,6 +99,8 @@ import com.google.gson.JsonParser;
 public enum B3DLoader implements ICustomModelLoader
 {
     INSTANCE;
+	
+	private static final Logger LOGGER = LogManager.getLogger();
 
     private IResourceManager manager;
 
@@ -131,17 +137,17 @@ public enum B3DLoader implements ICustomModelLoader
             {
                 try
                 {
-                    resource = manager.getResource(file);
+                    resource = manager.func_199002_a(file);
                 }
                 catch(FileNotFoundException e)
                 {
                     if(modelLocation.getPath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
+                        resource = manager.func_199002_a(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
                     else if(modelLocation.getPath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
+                        resource = manager.func_199002_a(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
                     else throw e;
                 }
-                B3DModel.Parser parser = new B3DModel.Parser(resource.getInputStream());
+                B3DModel.Parser parser = new B3DModel.Parser(resource.func_199027_b());
                 B3DModel model = parser.parse();
                 cache.put(file, model);
             }
@@ -463,7 +469,7 @@ public enum B3DLoader implements ICustomModelLoader
             {
                 if(e.getValue().getPath().startsWith("#"))
                 {
-                    FMLLog.log.fatal("unresolved texture '{}' for b3d model '{}'", e.getValue().getPath(), modelLocation);
+                    LOGGER.fatal("unresolved texture '{}' for b3d model '{}'", e.getValue().getPath(), modelLocation);
                     builder.put(e.getKey(), missing);
                 }
                 else
@@ -521,7 +527,7 @@ public enum B3DLoader implements ICustomModelLoader
                         }
                         else
                         {
-                            FMLLog.log.fatal("unknown mesh definition '{}' in array for b3d model '{}'", s.toString(), modelLocation);
+                            LOGGER.fatal("unknown mesh definition '{}' in array for b3d model '{}'", s.toString(), modelLocation);
                             return this;
                         }
                     }
@@ -530,7 +536,7 @@ public enum B3DLoader implements ICustomModelLoader
                 }
                 else
                 {
-                    FMLLog.log.fatal("unknown mesh definition '{}' for b3d model '{}'", e.toString(), modelLocation);
+                    LOGGER.fatal("unknown mesh definition '{}' for b3d model '{}'", e.toString(), modelLocation);
                     return this;
                 }
             }
@@ -544,7 +550,7 @@ public enum B3DLoader implements ICustomModelLoader
                 }
                 else
                 {
-                    FMLLog.log.fatal("unknown keyframe definition '{}' for b3d model '{}'", e.toString(), modelLocation);
+                    LOGGER.fatal("unknown keyframe definition '{}' for b3d model '{}'", e.toString(), modelLocation);
                     return this;
                 }
             }
@@ -636,7 +642,7 @@ public enum B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             if(side != null) return ImmutableList.of();
             IModelState modelState = this.state;

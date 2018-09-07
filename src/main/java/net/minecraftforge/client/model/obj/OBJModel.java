@@ -126,7 +126,7 @@ public class OBJModel implements IModel
         {
             if (e.getValue().getTexture().getTextureLocation().getPath().startsWith("#"))
             {
-                LOGGER.fatal("OBJLoader: Unresolved texture '{}' for obj model '{}'", e.getValue().getTexture().getTextureLocation().getResourcePath(), modelLocation);
+                LOGGER.fatal("OBJLoader: Unresolved texture '{}' for obj model '{}'", e.getValue().getTexture().getTextureLocation().getPath(), modelLocation);
                 builder.put(e.getKey(), missing);
             }
             else

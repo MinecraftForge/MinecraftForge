@@ -20,8 +20,8 @@
 package net.minecraftforge.client.model.animation;
 
 import java.util.List;
+import java.util.Random;
 
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.entity.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -93,7 +94,9 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         lighter.setState(Blocks.AIR.getDefaultState());
         lighter.setBlockPos(pos);
         boolean empty = true;
-        List<BakedQuad> quads = bakedModel.getQuads(null, null, 0);
+        Random random = new Random();
+        random.setSeed(42);
+        List<BakedQuad> quads = bakedModel.func_200117_a(null, null, random);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -105,7 +108,8 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         }
         for(EnumFacing side : EnumFacing.values())
         {
-            quads = bakedModel.getQuads(null, side, 0);
+        	random.setSeed(42);
+            quads = bakedModel.func_200117_a(null, side, random);
             if(!quads.isEmpty())
             {
                 if(empty) lighter.updateBlockInfo();

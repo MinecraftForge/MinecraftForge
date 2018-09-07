@@ -152,7 +152,7 @@ public class LightUtil
     {
         int length = 4 < to.length ? 4 : to.length;
         VertexFormatElement element = formatFrom.getElement(e);
-        int vertexStart = v * formatFrom.getNextOffset() + formatFrom.getOffset(e);
+        int vertexStart = v * formatFrom.getSize() + formatFrom.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.EnumType type = element.getType();
         int size = type.getSize();
@@ -206,7 +206,7 @@ public class LightUtil
     public static void pack(float[] from, int[] to, VertexFormat formatTo, int v, int e)
     {
         VertexFormatElement element = formatTo.getElement(e);
-        int vertexStart = v * formatTo.getNextOffset() + formatTo.getOffset(e);
+        int vertexStart = v * formatTo.getSize() + formatTo.getOffset(e);
         int count = element.getElementCount();
         VertexFormatElement.EnumType type = element.getType();
         int size = type.getSize();

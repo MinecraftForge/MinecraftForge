@@ -55,7 +55,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
 
     public AnimationItemOverrideList(IModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
     {
-        super(overrides);
+        super(overrides); // TODO needs a patch for a simple list ctor?
         this.model = model;
         this.state = state;
         this.format = format;
@@ -63,7 +63,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     }
 
     @Override
-    public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+    public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
     {
         IAnimationStateMachine asm = stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
         if (asm != null)
@@ -80,6 +80,6 @@ public final class AnimationItemOverrideList extends ItemOverrideList
             IModelState state = asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             return model.bake(new ModelStateComposition(state, this.state), format, bakedTextureGetter);
         }
-        return super.handleItemState(originalModel, stack, world, entity);
+        return super.func_209581_a(originalModel, stack, world, entity);
     }
 }
