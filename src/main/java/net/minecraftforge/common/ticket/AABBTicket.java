@@ -23,7 +23,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 public class AABBTicket extends SimpleTicket<Vec3d>
 {

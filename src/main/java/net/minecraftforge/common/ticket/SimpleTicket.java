@@ -23,8 +23,6 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.Objects;
 
 /**
  * Common class for a simple ticket based system.

@@ -19,12 +19,12 @@
 
 package net.minecraftforge.common.ticket;
 
-public class MultiChunkTicketManager<T> implements ITicketManager<T>
+public class MultiTicketManager<T> implements ITicketManager<T>
 {
-    private final ChunkTicketManager<T>[] ticketManagers;
+    private final ITicketGetter<T>[] ticketManagers;
 
     @SafeVarargs
-    public MultiChunkTicketManager(ChunkTicketManager<T>... ticketManagers)
+    public MultiTicketManager(ITicketGetter<T>... ticketManagers)
     {
         this.ticketManagers = ticketManagers;
     }
@@ -32,14 +32,14 @@ public class MultiChunkTicketManager<T> implements ITicketManager<T>
     @Override
     public void add(SimpleTicket<T> ticket)
     {
-        for (ChunkTicketManager<T> manager : ticketManagers)
+        for (ITicketGetter<T> manager : ticketManagers)
             manager.add(ticket);
     }
 
     @Override
     public void remove(SimpleTicket<T> ticket)
     {
-        for (ChunkTicketManager<T> manager : ticketManagers)
+        for (ITicketGetter<T> manager : ticketManagers)
             manager.remove(ticket);
     }
 }

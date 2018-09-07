@@ -28,10 +28,15 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.ticket.*;
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.common.ticket.AABBTicket;
+import net.minecraftforge.common.ticket.ChunkTicketManager;
+import net.minecraftforge.common.ticket.MultiTicketManager;
+import net.minecraftforge.common.ticket.SimpleTicket;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class FarmlandWaterManager
 {
@@ -63,7 +68,7 @@ public class FarmlandWaterManager
             ChunkTicketManager<Vec3d>[] tickets = new ChunkTicketManager[chunkPoses.length];
             for (int i = 0; i < chunkPoses.length; i++)
                 tickets[i] = ticketMap.computeIfAbsent(chunkPoses[i], ChunkTicketManager::new);
-            ticket.setBackend(new MultiChunkTicketManager<>(tickets));
+            ticket.setBackend(new MultiTicketManager<>(tickets));
         }
         ticket.validate();
         return ticket;
