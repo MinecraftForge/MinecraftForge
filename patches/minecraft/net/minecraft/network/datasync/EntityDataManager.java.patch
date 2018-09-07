@@ -15,7 +15,7 @@
                  {
 -                    field_190303_a.debug("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
 +                    field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass); //Forge: log at warn, mods should not add to classes that they don't own
-+                    field_190303_a.debug("Calling stacktrace: ", new RuntimeException()); //Forge: move stacktrace to debug, not needed at warn
++                    if (field_190303_a.isDebugEnabled()) field_190303_a.debug("Calling stacktrace: ", new RuntimeException()); //Forge: move stacktrace to debug, not needed at warn
                  }
              }
              catch (ClassNotFoundException var5)
