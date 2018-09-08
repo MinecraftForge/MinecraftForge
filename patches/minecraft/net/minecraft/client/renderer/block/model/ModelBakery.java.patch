@@ -1,0 +1,22 @@
+--- a/net/minecraft/client/renderer/block/model/ModelBakery.java
++++ b/net/minecraft/client/renderer/block/model/ModelBakery.java
+@@ -83,8 +83,8 @@
+    protected final IResourceManager resourceManager;
+    protected final TextureMap textureMap;
+    protected final RegistrySimple<ModelResourceLocation, IBakedModel> bakedRegistry = new RegistrySimple<ModelResourceLocation, IBakedModel>();
+-   private static final Map<ResourceLocation, StateContainer<Block, IBlockState>> field_209607_C = ImmutableMap.<ResourceLocation, StateContainer<Block, IBlockState>>of(new ResourceLocation("item_frame"), field_209613_y);
+-   private final Map<ResourceLocation, IUnbakedModel> field_209608_D = Maps.<ResourceLocation, IUnbakedModel>newHashMap();
++   protected static final Map<ResourceLocation, StateContainer<Block, IBlockState>> field_209607_C = ImmutableMap.<ResourceLocation, StateContainer<Block, IBlockState>>of(new ResourceLocation("item_frame"), field_209613_y);
++   protected final Map<ResourceLocation, IUnbakedModel> field_209608_D = Maps.<ResourceLocation, IUnbakedModel>newHashMap();
+    private final Set<ResourceLocation> field_209609_E = Sets.<ResourceLocation>newHashSet();
+    private final ModelBlockDefinition.ContainerHolder field_209610_F = new ModelBlockDefinition.ContainerHolder();
+ 
+@@ -280,7 +280,7 @@
+       this.field_209609_E.addAll(p_209593_2_.getOverrideLocations());
+    }
+ 
+-   private void func_209594_a(Map<ModelResourceLocation, IUnbakedModel> p_209594_1_, ModelResourceLocation p_209594_2_) {
++   protected void func_209594_a(Map<ModelResourceLocation, IUnbakedModel> p_209594_1_, ModelResourceLocation p_209594_2_) {
+       p_209594_1_.put(p_209594_2_, this.func_209597_a(p_209594_2_));
+    }
+ 

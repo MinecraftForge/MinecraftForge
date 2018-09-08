@@ -29,13 +29,13 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.entity.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
@@ -76,8 +76,9 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         }
         Pair<IModelState, Iterable<Event>> pair = capability.apply(timeAlive / 20);
         handleEvents((T)entity, timeAlive / 20, pair.getRight());
-        IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
-        IBakedModel bakedModel = model.bake(pair.getLeft(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+        IUnbakedModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
+        // TODO where should uvlock data come from?
+        IBakedModel bakedModel = model.bake(ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter(), pair.getLeft(), false, DefaultVertexFormats.ITEM);
 
         BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.height, entity.posZ);
 

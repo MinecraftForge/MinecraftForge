@@ -34,6 +34,7 @@ import javax.vecmath.Matrix4f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
@@ -59,7 +60,7 @@ import com.google.common.collect.Sets;
 
 // TODO: Switch to vanilla class, or to something similar
 @Deprecated
-public final class MultiModel implements IModel
+public final class MultiModel implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
     
@@ -72,10 +73,10 @@ public final class MultiModel implements IModel
 
         private final IBakedModel internalBase;
         private final ImmutableMap<TransformType, Pair<Baked, TRSRTransformation>> transforms;
-        private final ItemOverrideList overrides = new ItemOverrideList() // TODO AT not applying?
+        private final ItemOverrideList overrides = new ItemOverrideList()
         {
             @Override
-            public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+            public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
             {
                 if(originalModel != Baked.this)
                 {
@@ -86,7 +87,7 @@ public final class MultiModel implements IModel
 
                 if(base != null)
                 {
-                    newBase = base.getOverrides().handleItemState(base, stack, world, entity);
+                    newBase = base.getOverrides().func_209581_a(base, stack, world, entity);
                     if(base != newBase)
                     {
                         dirty = true;
@@ -95,7 +96,7 @@ public final class MultiModel implements IModel
                 ImmutableMap.Builder<String, IBakedModel> builder = ImmutableMap.builder();
                 for(Map.Entry<String, IBakedModel> entry : parts.entrySet())
                 {
-                     IBakedModel newPart = entry.getValue().getOverrides().handleItemState(entry.getValue(), stack, world, entity);
+                     IBakedModel newPart = entry.getValue().getOverrides().func_209581_a(entry.getValue(), stack, world, entity);
                      builder.put(entry.getKey(), newPart);
                      if(entry.getValue() != newPart)
                      {
@@ -218,17 +219,17 @@ public final class MultiModel implements IModel
 
     private final ResourceLocation location;
     @Nullable
-    private final IModel base;
-    private final Map<String, Pair<IModel, IModelState>> parts;
+    private final IUnbakedModel base;
+    private final Map<String, Pair<IUnbakedModel, IModelState>> parts;
 
     // TODO 1.13 remove, kept for binary compatibility
     @Deprecated
-    public MultiModel(ResourceLocation location, @Nullable IModel base, IModelState baseState, ImmutableMap<String, Pair<IModel, IModelState>> parts)
+    public MultiModel(ResourceLocation location, @Nullable IUnbakedModel base, IModelState baseState, ImmutableMap<String, Pair<IUnbakedModel, IModelState>> parts)
     {
         this(location, base, parts);
     }
 
-    public MultiModel(ResourceLocation location, @Nullable IModel base, ImmutableMap<String, Pair<IModel, IModelState>> parts)
+    public MultiModel(ResourceLocation location, @Nullable IUnbakedModel base, ImmutableMap<String, Pair<IUnbakedModel, IModelState>> parts)
     {
         this.location = location;
         this.base = base;
@@ -237,65 +238,65 @@ public final class MultiModel implements IModel
 
     // TODO 1.13 remove, kept for binary compatibility
     @Deprecated
-    public MultiModel(ResourceLocation location, IModel base, IModelState baseState, Map<String, Pair<IModel, IModelState>> parts)
+    public MultiModel(ResourceLocation location, IUnbakedModel base, IModelState baseState, Map<String, Pair<IUnbakedModel, IModelState>> parts)
     {
         this(location, base, parts);
     }
 
-    public MultiModel(ResourceLocation location, IModel base, Map<String, Pair<IModel, IModelState>> parts)
+    public MultiModel(ResourceLocation location, IUnbakedModel base, Map<String, Pair<IUnbakedModel, IModelState>> parts)
     {
         this(location, base, ImmutableMap.copyOf(parts));
     }
-
+    
     @Override
-    public Collection<ResourceLocation> getDependencies()
+    public Collection<ResourceLocation> getOverrideLocations() 
     {
         Set<ResourceLocation> deps = Sets.newHashSet();
 
         if (base != null)
-            deps.addAll(base.getDependencies());
+            deps.addAll(base.getOverrideLocations());
 
-        for (Pair<IModel, IModelState> pair : parts.values())
-            deps.addAll(pair.getLeft().getDependencies());
+        for (Pair<IUnbakedModel, IModelState> pair : parts.values())
+            deps.addAll(pair.getLeft().getOverrideLocations());
+
+        return deps;
+    }
+    
+    @Override
+    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextures) 
+    {
+        Set<ResourceLocation> deps = Sets.newHashSet();
+
+        if (base != null)
+            deps.addAll(base.func_209559_a(modelGetter, missingTextures));
+
+        for (Pair<IUnbakedModel, IModelState> pair : parts.values())
+            deps.addAll(pair.getLeft().func_209559_a(modelGetter, missingTextures));
 
         return deps;
     }
 
     @Override
-    public Collection<ResourceLocation> getTextures()
-    {
-        Set<ResourceLocation> deps = Sets.newHashSet();
-
-        if (base != null)
-            deps.addAll(base.getTextures());
-
-        for (Pair<IModel, IModelState> pair : parts.values())
-            deps.addAll(pair.getLeft().getTextures());
-
-        return deps;
-    }
-
-    @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
     {
         IBakedModel bakedBase = null;
 
         if (base != null)
-            bakedBase = base.bake(state, format, bakedTextureGetter);
+            bakedBase = base.bake(modelGetter, bakedTextureGetter, state, uvlock, format);
 
         ImmutableMap.Builder<String, IBakedModel> mapBuilder = ImmutableMap.builder();
 
-        for (Entry<String, Pair<IModel, IModelState>> entry : parts.entrySet())
+        for (Entry<String, Pair<IUnbakedModel, IModelState>> entry : parts.entrySet())
         {
-            Pair<IModel, IModelState> pair = entry.getValue();
-            mapBuilder.put(entry.getKey(), pair.getLeft().bake(new ModelStateComposition(state, pair.getRight()), format, bakedTextureGetter));
+            Pair<IUnbakedModel, IModelState> pair = entry.getValue();
+            mapBuilder.put(entry.getKey(), pair.getLeft().bake(modelGetter, bakedTextureGetter, new ModelStateComposition(state, pair.getRight()), uvlock, format));
         }
 
         if(bakedBase == null && parts.isEmpty())
         {
             LOGGER.error("MultiModel {} is empty (no base model or parts were provided/resolved)", location);
-            IModel missing = ModelLoaderRegistry.getMissingModel();
-            return missing.bake(missing.getDefaultState(), format, bakedTextureGetter);
+            IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
+            return missing.bake(modelGetter, bakedTextureGetter, missing.getDefaultState(), uvlock, format);
         }
         return new Baked(location, true, bakedBase, mapBuilder.build());
     }

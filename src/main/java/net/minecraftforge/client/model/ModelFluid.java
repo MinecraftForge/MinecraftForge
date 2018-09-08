@@ -125,7 +125,7 @@ public final class ModelFluid implements IUnbakedModel
         }
 
         @Override
-        public IModel loadModel(ResourceLocation modelLocation)
+        public IUnbakedModel loadModel(ResourceLocation modelLocation)
         {
             return WATER;
         }

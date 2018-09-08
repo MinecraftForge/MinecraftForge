@@ -23,16 +23,21 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.client.model.ModelLoader.VariantLoader;
@@ -41,12 +46,6 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.AnimationStateMachine;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
-import com.google.common.collect.Sets;
 
 /*
  * Central hub for custom model loaders.
@@ -94,17 +93,6 @@ public class ModelLoaderRegistry
         if(location instanceof ModelResourceLocation) return location;
         if(location.getPath().startsWith("builtin/")) return location;
         return new ResourceLocation(location.getNamespace(), "models/" + location.getPath());
-    }
-    
-    public static Function<ResourceLocation, IUnbakedModel> getModelGetter() 
-    {
-        return res -> {
-            try {
-                return getModel(res);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        };
     }
 
     /**
@@ -186,7 +174,7 @@ public class ModelLoaderRegistry
             {
                 throw new LoaderException(String.format("Loader %s returned null while loading model %s", accepted, location));
             }
-            textures.addAll(model.func_209559_a(getModelGetter(), new HashSet<>()));
+            textures.addAll(model.func_209559_a(ModelLoader.defaultModelGetter(), new HashSet<>()));
         }
         finally
         {
@@ -207,7 +195,7 @@ public class ModelLoaderRegistry
     /**
      * Use this if you don't care about the exception and want some model anyway.
      */
-    public static IModel getModelOrMissing(ResourceLocation location)
+    public static IUnbakedModel getModelOrMissing(ResourceLocation location)
     {
         try
         {
@@ -222,7 +210,7 @@ public class ModelLoaderRegistry
     /**
      * Use this if you want the model, but need to log the error.
      */
-    public static IModel getModelOrLogError(ResourceLocation location, String error)
+    public static IUnbakedModel getModelOrLogError(ResourceLocation location, String error)
     {
         try
         {

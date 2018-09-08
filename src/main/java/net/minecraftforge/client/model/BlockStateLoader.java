@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.Variant;
@@ -176,13 +177,12 @@ public class BlockStateLoader
             this.gui3d = gui3d;
         }
 
-        private IModel runModelHooks(IModel base, boolean smooth, boolean gui3d, boolean uvlock, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
+        private IUnbakedModel runModelHooks(IUnbakedModel base, boolean smooth, boolean gui3d, ImmutableMap<String, String> textureMap, ImmutableMap<String, String> customData)
         {
             base = base.process(customData);
             base = base.retexture(textureMap);
             base = base.smoothLighting(smooth);
             base = base.gui3d(gui3d);
-            base = base.uvlock(uvlock);
             return base;
         }
 
@@ -190,7 +190,7 @@ public class BlockStateLoader
          * Used to replace the base model with a re-textured model containing sub-models.
          */
         @Override
-        public IModel process(IModel base)
+        public IUnbakedModel process(IUnbakedModel base)
         {
             int size = parts.size();
             // FIXME: should missing base be handled this way?
@@ -198,19 +198,19 @@ public class BlockStateLoader
 
             if (hasBase)
             {
-                base = runModelHooks(base, smooth, gui3d, this.isUvLock(), textures, customData);
+                base = runModelHooks(base, smooth, gui3d, textures, customData);
 
                 if (size <= 0)
                     return base;
             }
 
-            ImmutableMap.Builder<String, Pair<IModel, IModelState>> models = ImmutableMap.builder();
+            ImmutableMap.Builder<String, Pair<IUnbakedModel, IModelState>> models = ImmutableMap.builder();
             for (Entry<String, SubModel> entry : parts.entrySet())
             {
                 SubModel part = entry.getValue();
 
                 final ResourceLocation modelLocation = part.getModelLocation();
-                final IModel model;
+                final IUnbakedModel model;
                 if (modelLocation == null)
                 {
                     LOGGER.error("model not found for variant {} for blockstate {}", entry.getKey(), blockstateLocation);
@@ -221,7 +221,7 @@ public class BlockStateLoader
                     model = ModelLoaderRegistry.getModelOrLogError(modelLocation, "Unable to load block sub-model: \'" + modelLocation);
                 }
 
-                models.put(entry.getKey(), Pair.of(runModelHooks(model, part.smooth, part.gui3d, part.uvLock, part.getTextures(), part.getCustomData()), part.getState()));
+                models.put(entry.getKey(), Pair.of(runModelHooks(model, part.smooth, part.gui3d, part.getTextures(), part.getCustomData()), part.getState()));
             }
 
             return new MultiModel(getModelLocation(), hasBase ? base : null, models.build());

@@ -22,6 +22,7 @@ package net.minecraftforge.client.model.b3d;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import javax.vecmath.Vector3f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -46,7 +48,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.model.ICustomModelLoader;
-import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.ModelStateComposition;
@@ -127,7 +128,7 @@ public enum B3DLoader implements ICustomModelLoader
 
     @Override
     @SuppressWarnings("unchecked")
-    public IModel loadModel(ResourceLocation modelLocation) throws Exception
+    public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
         if(!cache.containsKey(file))
@@ -408,7 +409,7 @@ public enum B3DLoader implements ICustomModelLoader
         }
     }
 
-    private static final class ModelWrapper implements IModel
+    private static final class ModelWrapper implements IUnbakedModel
     {
         private final ResourceLocation modelLocation;
         private final B3DModel model;
@@ -453,15 +454,21 @@ public enum B3DLoader implements ICustomModelLoader
             if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
             return path;
         }
-
+        
         @Override
-        public Collection<ResourceLocation> getTextures()
+        public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_)
         {
             return Collections2.filter(textures.values(), loc -> !loc.getPath().startsWith("#"));
         }
+        
+        @Override
+        public Collection<ResourceLocation> getOverrideLocations() 
+        {
+        	return Collections.emptyList();
+        }
 
         @Override
-        public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+        public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
         {
             ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
             TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));

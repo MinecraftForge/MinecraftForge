@@ -43,6 +43,7 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Optional;
 import java.util.Set;
@@ -88,8 +89,15 @@ public final class ItemLayerModel implements IUnbakedModel
     }
     
     @Override
-    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) {
+    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) 
+    {
         return textures;
+    }
+    
+    @Override
+    public Collection<ResourceLocation> getOverrideLocations() 
+    {
+    	return Collections.emptyList();
     }
 
     @Override
@@ -459,7 +467,7 @@ public final class ItemLayerModel implements IUnbakedModel
         }
 
         @Override
-        public IModel loadModel(ResourceLocation modelLocation)
+        public IUnbakedModel loadModel(ResourceLocation modelLocation)
         {
             return ItemLayerModel.INSTANCE;
         }

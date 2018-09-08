@@ -21,6 +21,7 @@ package net.minecraftforge.client.model;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
@@ -30,6 +31,7 @@ import javax.vecmath.Quat4f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -58,8 +60,7 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.Optional;
 import java.util.Random;
-
-import static net.minecraftforge.client.model.ModelDynBucket.LoaderDynBucket.getResource;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -69,7 +70,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public final class ModelDynBucket implements IModel
+public final class ModelDynBucket implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ModelResourceLocation LOCATION = new ModelResourceLocation(new ResourceLocation(ForgeVersion.MOD_ID, "dynbucket"), "inventory");
@@ -80,7 +81,7 @@ public final class ModelDynBucket implements IModel
     private static final float NORTH_Z_FLUID = 7.498f / 16f;
     private static final float SOUTH_Z_FLUID = 8.502f / 16f;
 
-    public static final IModel MODEL = new ModelDynBucket();
+    public static final IUnbakedModel MODEL = new ModelDynBucket();
 
     @Nullable
     private final ResourceLocation baseLocation;
@@ -108,9 +109,9 @@ public final class ModelDynBucket implements IModel
         this.flipGas = flipGas;
         this.tint = tint;
     }
-
+    
     @Override
-    public Collection<ResourceLocation> getTextures()
+    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_)
     {
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
 
@@ -125,10 +126,15 @@ public final class ModelDynBucket implements IModel
 
         return builder.build();
     }
+    
+    @Override
+    public Collection<ResourceLocation> getOverrideLocations() 
+    {
+    	return Collections.emptyList();
+    }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format,
-                                    Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
     {
 
         ImmutableMap<TransformType, TRSRTransformation> transformMap = PerspectiveMapWrapper.getTransforms(state);
@@ -152,7 +158,7 @@ public final class ModelDynBucket implements IModel
         if (baseLocation != null)
         {
             // build base (insidest)
-            IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(state, format, bakedTextureGetter);
+            IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(modelGetter, bakedTextureGetter, state, uvlock, format);
             random.setSeed(42);
             builder.addAll(model.func_200117_a(null, null, random));
             particleSprite = model.getParticleTexture();
@@ -286,7 +292,7 @@ public final class ModelDynBucket implements IModel
         }
 
         @Override
-        public IModel loadModel(ResourceLocation modelLocation)
+        public IUnbakedModel loadModel(ResourceLocation modelLocation)
         {
             return MODEL;
         }
@@ -426,7 +432,7 @@ public final class ModelDynBucket implements IModel
     private static final class BakedDynBucketOverrideHandler extends ItemOverrideList
     {
         public static final BakedDynBucketOverrideHandler INSTANCE = new BakedDynBucketOverrideHandler();
-        private BakedDynBucketOverrideHandler() { super(); /* TODO AT not applying? */ }
+        private BakedDynBucketOverrideHandler() {}
 
         @Override
         public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
@@ -447,11 +453,11 @@ public final class ModelDynBucket implements IModel
 
             if (!model.cache.containsKey(name))
             {
-                IModel parent = model.parent.process(ImmutableMap.of("fluid", name));
+                IUnbakedModel parent = model.parent.process(ImmutableMap.of("fluid", name));
                 Function<ResourceLocation, TextureAtlasSprite> textureGetter;
                 textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 
-                IBakedModel bakedModel = parent.bake(new SimpleModelState(model.transforms), model.format, textureGetter);
+                IBakedModel bakedModel = parent.bake(ModelLoader.defaultModelGetter(), textureGetter, new SimpleModelState(model.transforms), false, model.format);
                 model.cache.put(name, bakedModel);
                 return bakedModel;
             }

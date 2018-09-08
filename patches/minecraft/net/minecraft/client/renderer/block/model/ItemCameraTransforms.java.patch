@@ -5,7 +5,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 +/**
-+ * @deprecated use {@link net.minecraftforge.client.model.IPerspectiveAwareModel} instead
++ * @deprecated use {@link net.minecraft.client.renderer.block.model.IBakedModel#handlePerspective(TransformType)} instead
 + */
 +@Deprecated
  @OnlyIn(Dist.CLIENT)

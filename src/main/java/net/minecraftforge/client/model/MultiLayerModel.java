@@ -20,6 +20,7 @@
 package net.minecraftforge.client.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -28,6 +29,7 @@ import javax.vecmath.Matrix4f;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -49,13 +51,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.function.Function;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
-public final class MultiLayerModel implements IModel
+public final class MultiLayerModel implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final MultiLayerModel INSTANCE = new MultiLayerModel(ImmutableMap.of());
@@ -66,31 +69,37 @@ public final class MultiLayerModel implements IModel
     {
         this.models = models;
     }
-
+    
     @Override
-    public Collection<ResourceLocation> getDependencies()
+    public Collection<ResourceLocation> getOverrideLocations()
     {
         return ImmutableList.copyOf(models.values());
     }
+    
+    @Override
+    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) 
+    {
+    	return Collections.emptyList();
+    }
 
-    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, IModelState state, boolean uvlock, VertexFormat format, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
     {
         ImmutableMap.Builder<Optional<BlockRenderLayer>, IBakedModel> builder = ImmutableMap.builder();
         for(Optional<BlockRenderLayer> key : models.keySet())
         {
-            IModel model = ModelLoaderRegistry.getModelOrLogError(models.get(key), "Couldn't load MultiLayerModel dependency: " + models.get(key));
-            builder.put(key, model.bake(new ModelStateComposition(state, model.getDefaultState()), format, bakedTextureGetter));
+        	IUnbakedModel model = ModelLoaderRegistry.getModelOrLogError(models.get(key), "Couldn't load MultiLayerModel dependency: " + models.get(key));
+            builder.put(key, model.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(state, model.getDefaultState()), uvlock, format));
         }
         return builder.build();
     }
 
     @Override
-    public IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
     {
-        IModel missing = ModelLoaderRegistry.getMissingModel();
+        IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
         return new MultiLayerBakedModel(
-            buildModels(models, state, format, bakedTextureGetter),
-            missing.bake(missing.getDefaultState(), format, bakedTextureGetter),
+            buildModels(models, state, uvlock, format, modelGetter, bakedTextureGetter),
+            missing.bake(modelGetter, bakedTextureGetter, missing.getDefaultState(), uvlock, format),
             PerspectiveMapWrapper.getTransforms(state)
         );
     }
@@ -221,7 +230,7 @@ public final class MultiLayerModel implements IModel
         }
 
         @Override
-        public IModel loadModel(ResourceLocation modelLocation)
+        public IUnbakedModel loadModel(ResourceLocation modelLocation)
         {
             return MultiLayerModel.INSTANCE;
         }

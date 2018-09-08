@@ -22,7 +22,17 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -178,14 +181,18 @@
+@@ -79,6 +82,9 @@
+       return this.parent != null;
+    }
+ 
++   @Nullable
++   public ResourceLocation getParentLocation() { return parentLocation; }
++
+    public boolean isAmbientOcclusion() {
+       return this.hasParent() ? this.parent.isAmbientOcclusion() : this.ambientOcclusion;
+    }
+@@ -178,14 +184,18 @@
        return set1;
     }
  
@@ -45,7 +55,7 @@
        } else if (modelblock == ModelBakery.MODEL_ENTITY) {
           return new BuiltInModel(this.getAllTransforms(), this.func_209568_a(p_209565_1_, p_209565_2_, p_209565_3_));
        } else {
-@@ -197,9 +204,10 @@
+@@ -197,9 +207,10 @@
                 BlockPartFace blockpartface = blockpart.mapFaces.get(enumfacing);
                 TextureAtlasSprite textureatlassprite1 = p_209565_3_.apply(new ResourceLocation(this.resolveTextureName(blockpartface.texture)));
                 if (blockpartface.cullFace == null) {
@@ -58,7 +68,7 @@
                 }
              }
           }
-@@ -208,8 +216,8 @@
+@@ -208,8 +219,8 @@
        }
     }
  
