@@ -328,9 +328,9 @@ public class ForgeEventFactory
         return event.getNewState();
     }
 
-    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, @Nullable EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)
+    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, @Nullable EntityPlayer entityPlayer, List<ITextComponent> list, ITooltipFlag flags)
     {
-        ItemTooltipEvent event = new ItemTooltipEvent(itemStack, entityPlayer, toolTip, flags);
+        ItemTooltipEvent event = new ItemTooltipEvent(itemStack, entityPlayer, list, flags);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
