@@ -1,0 +1,58 @@
+--- a/net/minecraft/client/renderer/BufferBuilder.java
++++ b/net/minecraft/client/renderer/BufferBuilder.java
+@@ -107,7 +107,8 @@
+ 
+          bitset.set(i1);
+       }
+-
++      this.rawIntBuffer.limit(this.rawIntBuffer.capacity());
++      this.rawIntBuffer.position(this.getBufferSize());
+    }
+ 
+    public BufferBuilder.State getVertexState() {
+@@ -438,15 +439,15 @@
+          break;
+       case USHORT:
+       case SHORT:
+-         this.byteBuffer.putShort(i, (short)((int)x * 32767 & '\uffff'));
+-         this.byteBuffer.putShort(i + 2, (short)((int)y * 32767 & '\uffff'));
+-         this.byteBuffer.putShort(i + 4, (short)((int)z * 32767 & '\uffff'));
++         this.byteBuffer.putShort(i, (short)((int)(x * Short.MAX_VALUE) & 0xFFFF));
++         this.byteBuffer.putShort(i + 2, (short)((int)(y * Short.MAX_VALUE) & 0xFFFF));
++         this.byteBuffer.putShort(i + 4, (short)((int)(z * Short.MAX_VALUE) & 0xFFFF));
+          break;
+       case UBYTE:
+       case BYTE:
+-         this.byteBuffer.put(i, (byte)((int)x * 127 & 255));
+-         this.byteBuffer.put(i + 1, (byte)((int)y * 127 & 255));
+-         this.byteBuffer.put(i + 2, (byte)((int)z * 127 & 255));
++         this.byteBuffer.put(i, (byte)((int)(x * Byte.MAX_VALUE) & 0xFF));
++         this.byteBuffer.put(i + 1, (byte)((int)(y * Byte.MAX_VALUE) & 0xFF));
++         this.byteBuffer.put(i + 2, (byte)((int)(z * Byte.MAX_VALUE) & 0xFF));
+       }
+ 
+       this.nextVertexFormatIndex();
+@@ -521,4 +522,23 @@
+          return this.stateVertexFormat;
+       }
+    }
++   
++   //For some unknown reason Mojang changed the vanilla function to hardcode alpha as 255.... So lets re-add the parameter -.-
++   public void putColorRGBA(int index, int red, int green, int blue, int alpha) {
++       if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
++           this.rawIntBuffer.put(index, alpha << 24 | blue << 16 | green << 8 | red);
++       else
++           this.rawIntBuffer.put(index, red << 24 | green << 16 | blue << 8 | alpha);
+ }
++   
++   public boolean isColorDisabled() {
++	   return noColor;
++   }
++   
++   public void putBulkData(ByteBuffer buffer) {
++       growBuffer(buffer.limit() + this.vertexFormat.getSize());
++       this.byteBuffer.position(this.vertexCount * this.vertexFormat.getSize());
++       this.byteBuffer.put(buffer);
++       this.vertexCount += buffer.limit() / this.vertexFormat.getSize();
++   }
++}
