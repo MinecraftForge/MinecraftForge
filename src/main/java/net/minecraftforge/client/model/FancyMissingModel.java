@@ -75,11 +75,11 @@ final class FancyMissingModel implements IUnbakedModel
                 m,
                 format
             ) {
-                @Override
-                protected float renderUnicodeChar(char c, boolean italic)
-                {
-                    return super.renderDefaultChar(126, italic);
-                }
+//                @Override
+//                protected float renderUnicodeChar(char c, boolean italic)
+//                {
+//                    return super.renderDefaultChar(126, italic);
+//                }
             };
         }
     });

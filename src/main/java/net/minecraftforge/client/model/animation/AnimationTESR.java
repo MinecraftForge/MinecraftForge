@@ -26,7 +26,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.animation.Event;
