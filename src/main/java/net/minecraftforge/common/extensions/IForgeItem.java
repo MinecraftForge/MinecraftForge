@@ -92,13 +92,6 @@ public interface IForgeItem
     boolean isRepairable();
 
     /**
-     * Call to disable repair recipes.
-     * 
-     * @return The current Item instance
-     */
-    Item setNoRepair();
-
-    /**
      * Override this method to change the NBT data being sent to the client. You
      * should ONLY override this when you have no other choice, as this might change
      * behavior client side!
