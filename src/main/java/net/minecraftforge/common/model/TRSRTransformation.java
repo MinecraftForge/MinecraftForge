@@ -98,7 +98,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     @OnlyIn(Dist.CLIENT)
     public static TRSRTransformation from(ItemTransformVec3f transform)
     {
-        return transform.equals(ItemTransformVec3f.DEFAULT) ? identity : new TRSRTransformation(transform);
+        return transform.equals(ItemTransformVec3f.DEFAULT) ? identity : new TRSRTransformation(toVecmath(transform.translation), quatFromXYZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -711,6 +711,10 @@ public final class TRSRTransformation implements IModelState, ITransformation
             m.func_195885_a(0, 3), m.func_195885_a(1, 3), m.func_195885_a(2, 3), m.func_195885_a(3, 3));
     }
 
+    public static Quat4f toVecmath(net.minecraft.client.renderer.Quaternion q)
+    {
+        return new Quat4f(q.func_195889_a(), q.func_195891_b(), q.func_195893_c(), q.func_195894_d());
+    }
 
     @OnlyIn(Dist.CLIENT)
     public static net.minecraft.client.renderer.Vector3f toMojang(Vector3f vec)

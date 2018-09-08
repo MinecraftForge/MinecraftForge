@@ -37,9 +37,12 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.client.renderer.block.model.BlockPart;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation.Parameter.Interpolation;
@@ -53,7 +56,6 @@ import net.minecraftforge.common.model.animation.IJoint;
 import net.minecraftforge.common.model.animation.IJointClip;
 import net.minecraftforge.common.model.animation.JointClips;
 import net.minecraftforge.common.util.JsonUtils;
-import net.minecraftforge.fml.common.FMLLog;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -69,6 +71,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class ModelBlockAnimation
 {
+	private static final Logger LOGGER = LogManager.getLogger();
+	
     private final ImmutableMap<String, ImmutableMap<String, float[]>> joints;
     private final ImmutableMap<String, MBClip> clips;
     private transient ImmutableMultimap<Integer, MBJointWeight> jointIndexMap;
@@ -553,9 +557,9 @@ public class ModelBlockAnimation
     {
         try
         {
-            try (IResource resource = manager.getResource(armatureLocation))
+            try (IResource resource = manager.func_199002_a(armatureLocation))
             {
-                ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), ModelBlockAnimation.class);
+                ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.func_199027_b(), StandardCharsets.UTF_8), ModelBlockAnimation.class);
                 //String json = mbaGson.toJson(mba);
                 return mba;
             }
@@ -567,7 +571,7 @@ public class ModelBlockAnimation
         }
         catch(IOException | JsonParseException e)
         {
-            FMLLog.log.error("Exception loading vanilla model animation {}, skipping", armatureLocation, e);
+            LOGGER.error("Exception loading vanilla model animation {}, skipping", armatureLocation, e);
             return defaultModelBlockAnimation;
         }
     }

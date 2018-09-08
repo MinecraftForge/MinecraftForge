@@ -19,18 +19,19 @@
 
 package net.minecraftforge.client.model;
 
-import java.util.Collection;
-
 import java.util.Optional;
-import com.google.common.collect.ImmutableList;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+
 import com.google.common.collect.ImmutableMap;
+
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.model.IModelState;
-
-import java.util.function.Function;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 
@@ -38,35 +39,11 @@ import net.minecraftforge.common.model.animation.IClip;
  * Interface for models that can be baked
  * (possibly to different vertex formats and with different state).
  */
-public interface IModel
-{
-    /*
-     * Returns all model locations that this model depends on.
-     * Assume that returned collection is immutable.
-     * See ModelLoaderRegistry.getModel for dependency loading.
-     */
-    default Collection<ResourceLocation> getDependencies() {
-        return ImmutableList.of();
-    }
-
-    /*
-     * Returns all texture locations that this model depends on.
-     * Assume that returned collection is immutable.
-     */
-    default Collection<ResourceLocation> getTextures() {
-        return ImmutableList.of();
-    }
-
-    /*
-     * All model texture coordinates should be resolved at this method.
-     * Returned model should be in the simplest form possible, for performance
-     * reasons (if it's not ISmartBlock/ItemModel - then it should be
-     * represented by List<BakedQuad> internally).
-     * Returned model's getFormat() can me less specific than the passed
-     * format argument (some attributes can be replaced with padding),
-     * if there's no such info in this model.
-     */
-    IBakedModel bake(IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter);
+@SuppressWarnings("unchecked")
+public interface IModel<T extends IModel<T>>
+{    
+    @Nullable
+    IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, IModelState state, boolean uvlock, VertexFormat format);
 
     /*
      * Default state this model will be baked with.
@@ -85,20 +62,16 @@ public interface IModel
      * If unknown data is encountered it should be skipped.
      * @return a new model, with data applied.
      */
-    default IModel process(ImmutableMap<String, String> customData) {
-        return this;
+    default T process(ImmutableMap<String, String> customData) {
+        return (T) this;
     }
 
-    default IModel smoothLighting(boolean value) {
-        return this;
+    default T smoothLighting(boolean value) {
+        return (T) this;
     }
 
-    default IModel gui3d(boolean value) {
-        return this;
-    }
-
-    default IModel uvlock(boolean value) {
-        return this;
+    default T gui3d(boolean value) {
+        return (T) this;
     }
 
     /**
@@ -118,7 +91,7 @@ public interface IModel
      * @param textures New
      * @return Model with textures applied.
      */
-    default IModel retexture(ImmutableMap<String, String> textures) {
-        return this;
+    default T retexture(ImmutableMap<String, String> textures) {
+        return (T) this;
     }
 }

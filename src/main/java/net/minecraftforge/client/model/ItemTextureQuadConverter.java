@@ -21,6 +21,7 @@ package net.minecraftforge.client.model;
 
 import com.google.common.collect.Lists;
 
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
@@ -83,7 +84,6 @@ public final class ItemTextureQuadConverter
         int h = template.getIconHeight();
         float wScale = 16f / (float)w;
         float hScale = 16f / (float)h;
-        int[] data = template.getFrameTextureData(0)[0];
         List<UnpackedBakedQuad> quads = Lists.newArrayList();
 
         // the upper left x-position of the current quad
@@ -93,15 +93,15 @@ public final class ItemTextureQuadConverter
             for (int x = 0; x < w; x++)
             {
                 // current pixel
-                int pixel = data[y * w + x];
+                boolean isVisible = !template.func_195662_a(0, x, y);
 
                 // no current quad but found a new one
-                if (start < 0 && isVisible(pixel))
+                if (start < 0 && isVisible)
                 {
                     start = x;
                 }
                 // got a current quad, but it ends here
-                if (start >= 0 && !isVisible(pixel))
+                if (start >= 0 && !isVisible)
                 {
                     // we now check if the visibility of the next row matches the one fo the current row
                     // if they are, we can extend the quad downwards
@@ -111,9 +111,7 @@ public final class ItemTextureQuadConverter
                     {
                         for (int i = 0; i < w; i++)
                         {
-                            int px1 = data[y * w + i];
-                            int px2 = data[endY * w + i];
-                            if (isVisible(px1) != isVisible(px2))
+                            if (template.func_195662_a(0, i, y) != template.func_195662_a(0, i, endY))
                             {
                                 sameRow = false;
                                 break;
@@ -164,7 +162,6 @@ public final class ItemTextureQuadConverter
         int h = template.getIconHeight();
         float wScale = 16f / (float)w;
         float hScale = 16f / (float)h;
-        int[] data = template.getFrameTextureData(0)[0];
         List<UnpackedBakedQuad> quads = Lists.newArrayList();
 
         // the upper left y-position of the current quad
@@ -174,15 +171,15 @@ public final class ItemTextureQuadConverter
             for (int y = 0; y < h; y++)
             {
                 // current pixel
-                int pixel = data[y * w + x];
+                boolean isVisible = !sprite.func_195662_a(0, x, y);
 
                 // no current quad but found a new one
-                if (start < 0 && isVisible(pixel))
+                if (start < 0 && isVisible)
                 {
                     start = y;
                 }
                 // got a current quad, but it ends here
-                if (start >= 0 && !isVisible(pixel))
+                if (start >= 0 && !isVisible)
                 {
                     // we now check if the visibility of the next column matches the one fo the current row
                     // if they are, we can extend the quad downwards
@@ -192,9 +189,7 @@ public final class ItemTextureQuadConverter
                     {
                         for (int i = 0; i < h; i++)
                         {
-                            int px1 = data[i * w + x];
-                            int px2 = data[i * w + endX];
-                            if (isVisible(px1) != isVisible(px2))
+                            if (sprite.func_195662_a(0, x, i) != sprite.func_195662_a(0, endX, i))
                             {
                                 sameColumn = false;
                                 break;
@@ -328,7 +323,7 @@ public final class ItemTextureQuadConverter
                         break;
                     }
                 case NORMAL:
-                    builder.put(e, (float) side.getFrontOffsetX(), (float) side.getFrontOffsetY(), (float) side.getFrontOffsetZ(), 0f);
+                    builder.put(e, (float) side.getXOffset(), (float) side.getYOffset(), (float) side.getZOffset(), 0f);
                     break;
                 default:
                     builder.put(e);

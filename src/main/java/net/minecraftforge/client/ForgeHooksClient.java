@@ -67,6 +67,7 @@ import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.client.renderer.block.model.SimpleBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.entity.model.ModelBiped;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -97,6 +98,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -146,7 +148,7 @@ public class ForgeHooksClient
     //Optifine Helper Functions u.u, these are here specifically for Optifine
     //Note: When using Optifine, these methods are invoked using reflection, which
     //incurs a major performance penalty.
-    public static void orientBedCamera(IBlockAccess world, BlockPos pos, IBlockState state, Entity entity)
+    public static void orientBedCamera(IWorldReader world, BlockPos pos, IBlockState state, Entity entity)
     {
         Block block = state.getBlock();
 
@@ -519,17 +521,17 @@ public class ForgeHooksClient
         }
     }
 
-    public static void transform(org.lwjgl.util.vector.Vector3f vec, Matrix4f m)
+    public static void transform(net.minecraft.client.renderer.Vector3f vec, Matrix4f m)
     {
-        Vector4f tmp = new Vector4f(vec.x, vec.y, vec.z, 1f);
+        Vector4f tmp = new Vector4f(vec.func_195899_a(), vec.func_195900_b(), vec.func_195902_c(), 1f);
         m.transform(tmp);
         if(Math.abs(tmp.w - 1f) > 1e-5) tmp.scale(1f / tmp.w);
-        vec.set(tmp.x, tmp.y, tmp.z);
+        vec.func_195905_a(tmp.x, tmp.y, tmp.z);
     }
 
     public static Matrix4f getMatrix(ModelRotation modelRotation)
     {
-        Matrix4f ret = new Matrix4f(TRSRTransformation.toVecmath(modelRotation.getMatrix4d())), tmp = new Matrix4f();
+        Matrix4f ret = new Matrix4f(TRSRTransformation.toVecmath(modelRotation.func_195820_a()), new Vector3f(), 1), tmp = new Matrix4f();
         tmp.setIdentity();
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
         ret.mul(tmp, ret);

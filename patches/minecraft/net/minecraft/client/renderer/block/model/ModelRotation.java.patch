@@ -1,0 +1,24 @@
+--- a/net/minecraft/client/renderer/block/model/ModelRotation.java
++++ b/net/minecraft/client/renderer/block/model/ModelRotation.java
+@@ -10,9 +10,10 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.client.model.IModel;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public enum ModelRotation {
++public enum ModelRotation implements net.minecraftforge.common.model.IModelState, net.minecraftforge.common.model.ITransformation {
+    X0_Y0(0, 0),
+    X0_Y90(0, 90),
+    X0_Y180(0, 180),
+@@ -97,4 +98,9 @@
+    public static ModelRotation getModelRotation(int x, int y) {
+       return MAP_ROTATIONS.get(combineXY(MathHelper.normalizeAngle(x, 360), MathHelper.normalizeAngle(y, 360)));
+    }
++   
++   public java.util.Optional<net.minecraftforge.common.model.TRSRTransformation> apply(java.util.Optional<? extends net.minecraftforge.common.model.IModelPart> part) { return net.minecraftforge.client.ForgeHooksClient.applyTransform(this, part); }
++   public javax.vecmath.Matrix4f getMatrix() { return net.minecraftforge.common.model.TRSRTransformation.from(this).getMatrix(); }
++   public EnumFacing rotate(EnumFacing facing) { return rotateFace(facing); }
++   public int rotate(EnumFacing facing, int vertexIndex) { return rotateVertex(facing, vertexIndex); }
+ }

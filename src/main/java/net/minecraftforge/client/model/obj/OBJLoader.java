@@ -25,11 +25,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ICustomModelLoader;
-import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 
 import org.apache.commons.io.IOUtils;
@@ -72,7 +72,7 @@ public enum OBJLoader implements ICustomModelLoader {
     }
 
     @Override
-    public IModel loadModel(ResourceLocation modelLocation) throws Exception
+    public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
         if (!cache.containsKey(file))
@@ -82,14 +82,14 @@ public enum OBJLoader implements ICustomModelLoader {
             {
                 try
                 {
-                    resource = manager.getResource(file);
+                    resource = manager.func_199002_a(file);
                 }
                 catch (FileNotFoundException e)
                 {
                     if (modelLocation.getPath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
+                        resource = manager.func_199002_a(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
                     else if (modelLocation.getPath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
+                        resource = manager.func_199002_a(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
                     else throw e;
                 }
                 OBJModel.Parser parser = new OBJModel.Parser(resource, manager);

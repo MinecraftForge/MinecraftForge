@@ -23,6 +23,7 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverride;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -31,7 +32,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.ModelStateComposition;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
@@ -43,19 +45,19 @@ import javax.annotation.Nullable;
 
 public final class AnimationItemOverrideList extends ItemOverrideList
 {
-    private final IModel model;
+    private final IUnbakedModel model;
     private final IModelState state;
     private final VertexFormat format;
     private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
 
-    public AnimationItemOverrideList(IModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
+    public AnimationItemOverrideList(IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
     {
         this(model, state, format, bakedTextureGetter, overrides.getOverrides().reverse());
     }
 
-    public AnimationItemOverrideList(IModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
+    public AnimationItemOverrideList(IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
     {
-        super(overrides);
+        super(model, ModelLoader.defaultModelGetter(), bakedTextureGetter, overrides);
         this.model = model;
         this.state = state;
         this.format = format;
@@ -63,7 +65,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     }
 
     @Override
-    public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+    public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
     {
         IAnimationStateMachine asm = stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
         if (asm != null)
@@ -78,8 +80,9 @@ public final class AnimationItemOverrideList extends ItemOverrideList
                 world = Minecraft.getMinecraft().world;
             }
             IModelState state = asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
-            return model.bake(new ModelStateComposition(state, this.state), format, bakedTextureGetter);
+            // TODO where should uvlock data come from?
+            return model.bake(ModelLoader.defaultModelGetter(), bakedTextureGetter, new ModelStateComposition(state, this.state), false, format);
         }
-        return super.handleItemState(originalModel, stack, world, entity);
+        return super.func_209581_a(originalModel, stack, world, entity);
     }
 }

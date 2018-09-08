@@ -218,13 +218,13 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     @OnlyIn(Dist.CLIENT)
     public static IAnimationStateMachine load(IResourceManager manager, ResourceLocation location, ImmutableMap<String, ITimeValue> customParameters)
     {
-        try (IResource resource = manager.getResource(location))
+        try (IResource resource = manager.func_199002_a(location))
         {
             ClipResolver clipResolver = new ClipResolver();
             ParameterResolver parameterResolver = new ParameterResolver(customParameters);
             Clips.CommonClipTypeAdapterFactory.INSTANCE.setClipResolver(clipResolver);
             TimeValues.CommonTimeValueTypeAdapterFactory.INSTANCE.setValueResolver(parameterResolver);
-            AnimationStateMachine asm = asmGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), AnimationStateMachine.class);
+            AnimationStateMachine asm = asmGson.fromJson(new InputStreamReader(resource.func_199027_b(), StandardCharsets.UTF_8), AnimationStateMachine.class);
             clipResolver.asm = asm;
             parameterResolver.asm = asm;
             asm.initialize();

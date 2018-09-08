@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import net.minecraftforge.client.resource.IResourceType;
 import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.client.resource.VanillaResourceType;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -50,5 +51,5 @@ public interface ICustomModelLoader extends ISelectiveResourceReloadListener
     /*
      * loads (or reloads) specified model
      */
-    IModel loadModel(ResourceLocation modelLocation) throws Exception;
+    IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception;
 }

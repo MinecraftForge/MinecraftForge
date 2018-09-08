@@ -20,8 +20,8 @@
 package net.minecraftforge.client.model.animation;
 
 import java.util.List;
+import java.util.Random;
 
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -29,12 +29,13 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
+import net.minecraft.client.renderer.entity.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
@@ -75,8 +76,9 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         }
         Pair<IModelState, Iterable<Event>> pair = capability.apply(timeAlive / 20);
         handleEvents((T)entity, timeAlive / 20, pair.getRight());
-        IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
-        IBakedModel bakedModel = model.bake(pair.getLeft(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+        IUnbakedModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
+        // TODO where should uvlock data come from?
+        IBakedModel bakedModel = model.bake(ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter(), pair.getLeft(), false, DefaultVertexFormats.ITEM);
 
         BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.height, entity.posZ);
 
@@ -93,7 +95,9 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         lighter.setState(Blocks.AIR.getDefaultState());
         lighter.setBlockPos(pos);
         boolean empty = true;
-        List<BakedQuad> quads = bakedModel.getQuads(null, null, 0);
+        Random random = new Random();
+        random.setSeed(42);
+        List<BakedQuad> quads = bakedModel.func_200117_a(null, null, random);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -105,7 +109,8 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         }
         for(EnumFacing side : EnumFacing.values())
         {
-            quads = bakedModel.getQuads(null, side, 0);
+        	random.setSeed(42);
+            quads = bakedModel.func_200117_a(null, side, random);
             if(!quads.isEmpty())
             {
                 if(empty) lighter.updateBlockInfo();

@@ -19,14 +19,14 @@
 
 package net.minecraftforge.client.resource;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * An enum of all {@link IResourceType}s used by the Vanilla game. These should be used if handling vanilla-related
  * resources.
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public enum VanillaResourceType implements IResourceType
 {
     /**

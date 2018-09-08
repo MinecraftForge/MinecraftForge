@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/tileentity/TileEntityRenderer.java
++++ b/net/minecraft/client/renderer/tileentity/TileEntityRenderer.java
+@@ -63,6 +63,8 @@
+       return false;
+    }
+ 
++   public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, net.minecraft.client.renderer.BufferBuilder buffer) {}
++
+    protected void drawNameplate(T te, String str, double x, double y, double z, int maxDistance) {
+       Entity entity = this.rendererDispatcher.entity;
+       double d0 = te.getDistanceSq(entity.posX, entity.posY, entity.posZ);
