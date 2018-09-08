@@ -334,31 +334,32 @@ public final class ModelDynBucket implements IUnbakedModel
             super(resource.func_199029_a(), getSizeInfo(resource), resource.func_199028_a(AnimationMetadataSection.field_195817_a));
         }
 
-//        @Override
-//        public boolean hasCustomLoader(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
-//        {
-//            return true;
-//        }
-//
-//        @Override
-//        public Collection<ResourceLocation> getDependencies()
-//        {
-//            return dependencies;
-//        }
-//
-//        @Override
-//        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
-//        {
-//            final TextureAtlasSprite sprite = textureGetter.apply(bucket);
-//            // TODO custom sprites are gonna be a PITA, these are final
-//            width = sprite.getIconWidth();
-//            height = sprite.getIconHeight();
-//            // TODO No easy way to dump pixels of one sprite into another without n^2 for loop, investigate patch?
-//            final int[][] pixels = sprite.getFrameTextureData(0);
-//            this.clearFramesTextureData();
-//            this.framesTextureData.add(pixels);
-//            return false;
-//        }
+        /* TODO Custom TAS
+        @Override
+        public boolean hasCustomLoader(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
+        {
+            return true;
+        }
+
+        @Override
+        public Collection<ResourceLocation> getDependencies()
+        {
+            return dependencies;
+        }
+
+        @Override
+        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
+        {
+            final TextureAtlasSprite sprite = textureGetter.apply(bucket);
+            // TODO custom sprites are gonna be a PITA, these are final
+            width = sprite.getIconWidth();
+            height = sprite.getIconHeight();
+            // TODO No easy way to dump pixels of one sprite into another without n^2 for loop, investigate patch?
+            final int[][] pixels = sprite.getFrameTextureData(0);
+            this.clearFramesTextureData();
+            this.framesTextureData.add(pixels);
+            return false;
+        }*/
     }
 
     /**
@@ -375,58 +376,59 @@ public final class ModelDynBucket implements IUnbakedModel
             super(resource.func_199029_a(), getSizeInfo(resource), resource.func_199028_a(AnimationMetadataSection.field_195817_a));
         }
 
-//        @Override
-//        public boolean hasCustomLoader(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
-//        {
-//            return true;
-//        }
-//
-//        @Override
-//        public Collection<ResourceLocation> getDependencies()
-//        {
-//            return dependencies;
-//        }
-//
-//        @Override
-//        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
-//        {
-//            final TextureAtlasSprite sprite = textureGetter.apply(bucket);
-//            final TextureAtlasSprite alphaMask = textureGetter.apply(bucketCoverMask);
-//            width = sprite.getIconWidth();
-//            height = sprite.getIconHeight();
-//            final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
-//            pixels[0] = new int[width * height];
-//
-//            try (
-//                 IResource empty = getResource(new ResourceLocation("textures/items/bucket_empty.png"));
-//                 IResource mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"))
-//            ) {
-//                // use the alpha mask if it fits, otherwise leave the cover texture blank
-//                if (empty != null && mask != null && Objects.equals(empty.func_199026_d(), mask.func_199026_d()) &&
-//                        alphaMask.getIconWidth() == width && alphaMask.getIconHeight() == height)
-//                {
-//                    final int[][] oldPixels = sprite.getFrameTextureData(0);
-//                    final int[][] alphaPixels = alphaMask.getFrameTextureData(0);
-//
-//                    for (int p = 0; p < width * height; p++)
-//                    {
-//                        final int alphaMultiplier = alphaPixels[0][p] >>> 24;
-//                        final int oldPixel = oldPixels[0][p];
-//                        final int oldPixelAlpha = oldPixel >>> 24;
-//                        final int newAlpha = oldPixelAlpha * alphaMultiplier / 0xFF;
-//                        pixels[0][p] = (oldPixel & 0xFFFFFF) + (newAlpha << 24);
-//                    }
-//                }
-//            }
-//            catch (IOException e)
-//            {
-//                LOGGER.error("Failed to close resource", e);
-//            }
-//
-//            this.clearFramesTextureData();
-//            this.framesTextureData.add(pixels);
-//            return false;
-//        }
+        /* TODO Custom TAS
+        @Override
+        public boolean hasCustomLoader(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location)
+        {
+            return true;
+        }
+
+        @Override
+        public Collection<ResourceLocation> getDependencies()
+        {
+            return dependencies;
+        }
+
+        @Override
+        public boolean load(@Nonnull IResourceManager manager, @Nonnull ResourceLocation location, @Nonnull Function<ResourceLocation, TextureAtlasSprite> textureGetter)
+        {
+            final TextureAtlasSprite sprite = textureGetter.apply(bucket);
+            final TextureAtlasSprite alphaMask = textureGetter.apply(bucketCoverMask);
+            width = sprite.getIconWidth();
+            height = sprite.getIconHeight();
+            final int[][] pixels = new int[Minecraft.getMinecraft().gameSettings.mipmapLevels + 1][];
+            pixels[0] = new int[width * height];
+
+            try (
+                 IResource empty = getResource(new ResourceLocation("textures/items/bucket_empty.png"));
+                 IResource mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"))
+            ) {
+                // use the alpha mask if it fits, otherwise leave the cover texture blank
+                if (empty != null && mask != null && Objects.equals(empty.func_199026_d(), mask.func_199026_d()) &&
+                        alphaMask.getIconWidth() == width && alphaMask.getIconHeight() == height)
+                {
+                    final int[][] oldPixels = sprite.getFrameTextureData(0);
+                    final int[][] alphaPixels = alphaMask.getFrameTextureData(0);
+
+                    for (int p = 0; p < width * height; p++)
+                    {
+                        final int alphaMultiplier = alphaPixels[0][p] >>> 24;
+                        final int oldPixel = oldPixels[0][p];
+                        final int oldPixelAlpha = oldPixel >>> 24;
+                        final int newAlpha = oldPixelAlpha * alphaMultiplier / 0xFF;
+                        pixels[0][p] = (oldPixel & 0xFFFFFF) + (newAlpha << 24);
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                LOGGER.error("Failed to close resource", e);
+            }
+
+            this.clearFramesTextureData();
+            this.framesTextureData.add(pixels);
+            return false;
+        }*/
     }
 
     private static final class BakedDynBucketOverrideHandler extends ItemOverrideList
