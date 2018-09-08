@@ -60,22 +60,26 @@
                 TextureAtlasSprite textureatlassprite1 = p_209565_3_.apply(new ResourceLocation(this.resolveTextureName(blockpartface.texture)));
                 if (blockpartface.cullFace == null) {
 -                  simplebakedmodel$builder.addGeneralQuad(func_209567_a(blockpart, blockpartface, textureatlassprite1, enumfacing, p_209565_4_, p_209565_5_));
-+                  simplebakedmodel$builder.addGeneralQuad(func_209567_a(blockpart, blockpartface, textureatlassprite1, enumfacing, state, uvlock));
++                  simplebakedmodel$builder.addGeneralQuad(makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, state, uvlock));
                 } else {
 -                  simplebakedmodel$builder.addFaceQuad(p_209565_4_.rotateFace(blockpartface.cullFace), func_209567_a(blockpart, blockpartface, textureatlassprite1, enumfacing, p_209565_4_, p_209565_5_));
 +                   
-+                  simplebakedmodel$builder.addFaceQuad(state.apply(Optional.empty()).map(trsr -> trsr.rotate(enumfacing)).orElse(enumfacing), func_209567_a(blockpart, blockpartface, textureatlassprite1, enumfacing, state, uvlock));
++                  simplebakedmodel$builder.addFaceQuad(state.apply(Optional.empty()).map(trsr -> trsr.rotate(enumfacing)).orElse(enumfacing), makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, state, uvlock));
                 }
              }
           }
-@@ -208,8 +219,8 @@
-       }
+@@ -209,9 +220,13 @@
     }
  
--   private static BakedQuad func_209567_a(BlockPart p_209567_0_, BlockPartFace p_209567_1_, TextureAtlasSprite p_209567_2_, EnumFacing p_209567_3_, ModelRotation p_209567_4_, boolean p_209567_5_) {
+    private static BakedQuad func_209567_a(BlockPart p_209567_0_, BlockPartFace p_209567_1_, TextureAtlasSprite p_209567_2_, EnumFacing p_209567_3_, ModelRotation p_209567_4_, boolean p_209567_5_) {
 -      return field_209572_h.func_199332_a(p_209567_0_.positionFrom, p_209567_0_.positionTo, p_209567_1_, p_209567_2_, p_209567_3_, p_209567_4_, p_209567_0_.partRotation, p_209567_5_, p_209567_0_.shade);
-+   private static BakedQuad func_209567_a(BlockPart p_209567_0_, BlockPartFace p_209567_1_, TextureAtlasSprite p_209567_2_, EnumFacing p_209567_3_, net.minecraftforge.common.model.IModelState p_209567_4_, boolean p_209567_5_) {
-+      return field_209572_h.makeBakedQuad(p_209567_0_.positionFrom, p_209567_0_.positionTo, p_209567_1_, p_209567_2_, p_209567_3_, p_209567_4_.apply(Optional.empty()).orElse(net.minecraftforge.common.model.TRSRTransformation.identity()), p_209567_0_.partRotation, p_209567_5_, p_209567_0_.shade);
++	  return makeBakedQuad(p_209567_0_, p_209567_1_, p_209567_2_, p_209567_3_, (net.minecraftforge.common.model.IModelState) p_209567_4_, p_209567_5_);
     }
  
++   public static BakedQuad makeBakedQuad(BlockPart p_209567_0_, BlockPartFace p_209567_1_, TextureAtlasSprite p_209567_2_, EnumFacing p_209567_3_, net.minecraftforge.common.model.IModelState p_209567_4_, boolean p_209567_5_) {
++      return field_209572_h.makeBakedQuad(p_209567_0_.positionFrom, p_209567_0_.positionTo, p_209567_1_, p_209567_2_, p_209567_3_, p_209567_4_.apply(Optional.empty()).orElse(net.minecraftforge.common.model.TRSRTransformation.identity()), p_209567_0_.partRotation, p_209567_5_, p_209567_0_.shade);
++   }
++
     public boolean isTexturePresent(String textureName) {
+       return !MissingTextureSprite.func_195677_a().func_195668_m().toString().equals(this.resolveTextureName(textureName));
+    }

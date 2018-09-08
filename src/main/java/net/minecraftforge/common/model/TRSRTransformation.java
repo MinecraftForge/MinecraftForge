@@ -98,7 +98,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     @OnlyIn(Dist.CLIENT)
     public static TRSRTransformation from(ItemTransformVec3f transform)
     {
-        return transform.equals(ItemTransformVec3f.DEFAULT) ? identity : new TRSRTransformation(transform);
+        return transform.equals(ItemTransformVec3f.DEFAULT) ? identity : new TRSRTransformation(toVecmath(transform.translation), quatFromXYZDegrees(toVecmath(transform.rotation)), toVecmath(transform.scale), null);
     }
 
     @OnlyIn(Dist.CLIENT)

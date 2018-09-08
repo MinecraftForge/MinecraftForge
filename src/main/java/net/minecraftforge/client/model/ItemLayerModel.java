@@ -75,7 +75,7 @@ public final class ItemLayerModel implements IUnbakedModel
 
     public ItemLayerModel(ModelBlock model)
     {
-        this(getTextures(model), model.createOverrides()); // TODO createOverrides got a bunch of crazy new params
+        this(getTextures(model), model.func_209568_a(model, ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter()));
     }
 
     private static ImmutableList<ResourceLocation> getTextures(ModelBlock model)
