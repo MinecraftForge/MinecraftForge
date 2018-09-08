@@ -22,7 +22,7 @@ package net.minecraftforge.common;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorld;
 import net.minecraftforge.common.util.EnumHelper;
 
 public enum EnumPlantType
@@ -37,7 +37,7 @@ public enum EnumPlantType
 
     /**
      * Getting a custom {@link EnumPlantType}, or an existing one if it has the same name as that one. Your plant should implement {@link IPlantable}
-     * and return this custom type in {@link IPlantable#getPlantType(IBlockAccess, BlockPos)}.
+     * and return this custom type in {@link IPlantable#getPlant(IWorld, BlockPos)}.
      * 
      * <p>If your new plant grows on blocks like any one of them above, never create a new {@link EnumPlantType}. 
      * This enumeration is only functioning in 

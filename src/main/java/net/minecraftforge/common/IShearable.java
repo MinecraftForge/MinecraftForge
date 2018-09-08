@@ -23,7 +23,7 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorld;
 
 import javax.annotation.Nonnull;
 
@@ -48,7 +48,7 @@ public interface IShearable
      * @param pos Block's position in world.
      * @return If this is shearable, and onSheared should be called.
      */
-    boolean isShearable(@Nonnull ItemStack item, IBlockAccess world, BlockPos pos);
+    boolean isShearable(@Nonnull ItemStack item, IWorld world, BlockPos pos);
 
     /**
      * Performs the shear function on this object.
@@ -69,5 +69,5 @@ public interface IShearable
      * @return A List containing all items from this shearing. May be empty.
      */
     @Nonnull
-    List<ItemStack> onSheared(@Nonnull ItemStack item, IBlockAccess world, BlockPos pos, int fortune);
+    List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune);
 }
