@@ -9,3 +9,21 @@
     public static final RegistryNamespaced<ResourceLocation, Item> REGISTRY = new RegistryNamespaced<ResourceLocation, Item>();
     public static final Map<Block, Item> BLOCK_TO_ITEM = Maps.<Block, Item>newHashMap();
     private static final IItemPropertyGetter DAMAGED_GETTER = (p_210306_0_, p_210306_1_, p_210306_2_) -> {
+@@ -1182,4 +1182,17 @@
+          return this;
+       }
+    }
++
++
++   /* ========================================= FORGE START =====================================*/
++   /**
++    * @return the fuel burn time for this itemStack in a furnace.
++    * Return 0 to make it not act as a fuel.
++    * Return -1 to let the default vanilla logic decide.
++    */
++   public int getItemBurnTime(ItemStack itemStack)
++   {
++      return -1;
+ }
++   /* ========================================= FORGE  END  =====================================*/
++}

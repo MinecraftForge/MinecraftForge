@@ -9,3 +9,60 @@
     protected static final Logger field_196273_d = LogManager.getLogger();
     private static final ResourceLocation AIR_ID = new ResourceLocation("air");
     public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> REGISTRY = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(AIR_ID);
+@@ -626,7 +626,7 @@
+    }
+ 
+    public boolean canSilkHarvest() {
+-      return this.getDefaultState().isFullCube() && !this.hasTileEntity();
++      return this.getDefaultState().isFullCube() && !this.hasTileEntity(silk_check_state.get());
+    }
+ 
+    protected ItemStack getSilkTouchDrop(IBlockState state) {
+@@ -1604,4 +1604,47 @@
+          return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
+       }
+    }
++   /* ==============================A========== FORGE START =====================================*/
++   private ThreadLocal<IBlockState> silk_check_state = new ThreadLocal();
++
++   public boolean canSilkHarvest(IWorld world, BlockPos pos, IBlockState state, EntityPlayer player)
++   {
++       silk_check_state.set(state);
++       boolean ret = this.canSilkHarvest();
++       silk_check_state.set(null);
++       return ret;
+ }
++
++   private boolean isTileProvider = this instanceof ITileEntityProvider;
++
++   /**
++    * Called throughout the code as a replacement for block instanceof BlockContainer
++    * Moving this to the Block base class allows for mods that wish to extend vanilla
++    * blocks, and also want to have a tile entity on that block, may.
++    *
++    * Return true from this function to specify this block has a tile entity.
++    *
++    * @param state State of the current block
++    * @return True if block has a tile entity, false otherwise
++    */
++   public boolean hasTileEntity(IBlockState state)
++   {
++       return isTileProvider;
++   }
++
++   /**
++   * Gathers how much experience this block drops when broken.
++   *
++   * @param state The current state
++   * @param world The world
++   * @param pos Block position
++   * @param fortune
++   * @return Amount of XP from breaking this block.
++   */
++   public int getExpDrop(IBlockState state, IWorld world, BlockPos pos, int fortune)
++   {
++       return 0;
++   }
++
++   /* ======================================== FORGE END =====================================*/
++}
