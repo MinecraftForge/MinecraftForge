@@ -111,10 +111,11 @@ public class OptionalCapabilityInstance<T>
      * @throws NullPointerException if mod object is present and {@code consumer} is
      * null
      */
-    public void ifPresent(Consumer<? super T> consumer)
+    public void ifPresent(NonNullConsumer<? super T> consumer)
     {
-        if (isValid && getValue() != null)
-            consumer.accept(getValue());
+        T val = getValue();
+        if (isValid && val != null)
+            consumer.accept(val);
     }
 
     /**
@@ -154,30 +155,6 @@ public class OptionalCapabilityInstance<T>
     {
         Objects.requireNonNull(mapper);
         return isPresent() ? OptionalCapabilityInstance.of(()->mapper.apply(getValue())) : empty();
-    }
-
-    /**
-     * If a value is present, apply the provided {@code Optional}-bearing
-     * mapping function to it, return that result, otherwise return an empty
-     * {@code Optional}.  This method is similar to {@link #map(Function)},
-     * but the provided mapper is one whose result is already an {@code Optional},
-     * and if invoked, {@code flatMap} does not wrap it with an additional
-     * {@code Optional}.
-     *
-     * @param <U> The type parameter to the {@code Optional} returned by
-     * @param mapper a mapping function to apply to the mod object, if present
-     *           the mapping function
-     * @return the result of applying an {@code Optional}-bearing mapping
-     * function to the value of this {@code Optional}, if a value is present,
-     * otherwise an empty {@code Optional}
-     * @throws NullPointerException if the mapping function is null or returns
-     * a null result
-     */
-    public<U> OptionalCapabilityInstance<U> flatMap(Function<? super T, Optional<U>> mapper)
-    {//I am not sure this is valid, or how to handle this, it's just a copy pasta from Optional. I dont think its needed. Returning a null supplier is bad
-        Objects.requireNonNull(mapper);
-        final U value = map(mapper).orElse(Optional.empty()).orElse(null); // To keep the non-null contract we have to evaluate right now. Should we allow this function at all?
-        return value != null ? OptionalCapabilityInstance.of(() -> value) : OptionalCapabilityInstance.empty();
     }
 
     /**
