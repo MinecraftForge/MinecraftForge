@@ -20,11 +20,14 @@
 package net.minecraftforge.common.capabilities;
 
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -41,6 +44,8 @@ import net.minecraftforge.common.util.INBTSerializable;
  * Internally the handlers are baked into arrays for fast iteration.
  * The ResourceLocations will be used for the NBT Key when serializing.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider
 {
     private ICapabilityProvider[] caps;
@@ -87,7 +92,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
 
 
     @Override
-    public <T> OptionalCapabilityInstance<T> getCapability(Capability<T> cap, EnumFacing side)
+    public <T> OptionalCapabilityInstance<T> getCapability(Capability<T> cap, @Nullable EnumFacing side)
     {
         for (ICapabilityProvider c : caps)
         {
