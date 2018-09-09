@@ -26,7 +26,7 @@
     }
  
     public EntityType<?> func_200600_R() {
-@@ -2591,4 +2594,15 @@
+@@ -2591,4 +2594,14 @@
     public double func_212107_bY() {
        return this.field_211517_W;
     }
@@ -36,7 +36,6 @@
 +   private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +
 +   @Override
-+   @javax.annotation.Nonnull
 +   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +   {
 +       return capabilities == null ? net.minecraftforge.common.capabilities.OptionalCapabilityInstance.empty() : capabilities.getCapability(capability, facing);

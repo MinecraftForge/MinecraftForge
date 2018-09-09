@@ -21,7 +21,7 @@
     private static final Logger LOGGER = LogManager.getLogger();
     private final TileEntityType<?> field_200663_e;
     protected World world;
-@@ -179,4 +182,15 @@
+@@ -179,4 +182,14 @@
     public TileEntityType<?> func_200662_C() {
        return this.field_200663_e;
     }
@@ -31,7 +31,6 @@
 +   private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +
 +   @Override
-+   @Nonnull
 +   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +   {
 +       return capabilities == null ? OptionalCapabilityInstance.empty() : capabilities.getCapability(capability, facing);
