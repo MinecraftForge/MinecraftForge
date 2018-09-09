@@ -135,17 +135,6 @@ public class Capability<T>
         }
     }
 
-    /**
-     * Use this inside ICapabilityProvider.getCapability to avoid unchecked cast warnings.
-     * Example: return SOME_CAPABILITY.cast(instance);
-     * Use with caution;
-     */
-    @SuppressWarnings("unchecked")
-    public <R> R cast(T instance)
-    {
-        return (R)instance;
-    }
-
     // INTERNAL
     private final String name;
     private final IStorage<T> storage;
