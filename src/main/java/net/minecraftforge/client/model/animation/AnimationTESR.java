@@ -50,7 +50,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
     @Override
     public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, BufferBuilder renderer)
    {
-        if(!te.hasCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null))
+        if(!te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY).isPresent())
         {
             return;
         }
@@ -60,7 +60,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
         IBlockState state = world.getBlockState(pos);
         if(state.getBlock().getBlockState().getProperties().contains(Properties.StaticProperty))
         {
-            state = state.withProperty(Properties.StaticProperty, false);
+            state = state.func_206870_a(Properties.StaticProperty, false);
         }
         if(state instanceof IExtendedBlockState)
         {
@@ -68,20 +68,19 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
             if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
             {
                 float time = Animation.getWorldTime(getWorld(), partialTick);
-                IAnimationStateMachine capability = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
-                if (capability != null)
-                {
-                    Pair<IModelState, Iterable<Event>> pair = capability.apply(time);
-                    handleEvents(te, time, pair.getRight());
+                te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
+                    .map(cap -> cap.apply(time))
+                    .ifPresent(pair -> {
+                        handleEvents(te, time, pair.getRight());
 
-                    // TODO: caching?
-                    IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(exState.getClean());
-                    exState = exState.withProperty(Properties.AnimationProperty, pair.getLeft());
+                        // TODO: caching?
+                        IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(exState.getClean());
+                        IExtendedBlockState animState = exState.withProperty(Properties.AnimationProperty, pair.getLeft());
 
-                    renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
+                        renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
 
-                    blockRenderer.getBlockModelRenderer().func_199324_a(world, model, exState, pos, renderer, false, new Random(), 42);
-                }
+                        blockRenderer.getBlockModelRenderer().func_199324_a(world, model, animState, pos, renderer, false, new Random(), 42);
+                    });
             }
         }
     }
