@@ -31,6 +31,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+// TODO review most of the methods in this "patch"
 public interface IForgeItem
 {
     // Helpers for accessing Item data

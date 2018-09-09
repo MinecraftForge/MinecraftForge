@@ -67,22 +67,23 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     @Override
     public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
     {
-        IAnimationStateMachine asm = stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
-        if (asm != null)
-        {
-            // TODO: caching?
-            if(world == null && entity != null)
+        return stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
+            .map(asm -> 
             {
-                world = entity.world;
-            }
-            if(world == null)
-            {
-                world = Minecraft.getMinecraft().world;
-            }
-            IModelState state = asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
+                World w = world;
+                // TODO caching?
+                if(w == null && entity != null)
+                {
+                    w = entity.world;
+                }
+                if(world == null)
+                {
+                    w = Minecraft.getMinecraft().world;
+                }
+                return asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
+            })
             // TODO where should uvlock data come from?
-            return model.bake(ModelLoader.defaultModelGetter(), bakedTextureGetter, new ModelStateComposition(state, this.state), false, format);
-        }
-        return super.func_209581_a(originalModel, stack, world, entity);
+            .map(state -> model.bake(ModelLoader.defaultModelGetter(), bakedTextureGetter, new ModelStateComposition(state, this.state), false, format))
+            .orElseGet(() -> super.func_209581_a(originalModel, stack, world, entity));
     }
 }
