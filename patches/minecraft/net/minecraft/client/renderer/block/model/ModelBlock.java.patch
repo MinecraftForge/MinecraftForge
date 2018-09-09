@@ -73,7 +73,7 @@
  
     private static BakedQuad func_209567_a(BlockPart p_209567_0_, BlockPartFace p_209567_1_, TextureAtlasSprite p_209567_2_, EnumFacing p_209567_3_, ModelRotation p_209567_4_, boolean p_209567_5_) {
 -      return field_209572_h.func_199332_a(p_209567_0_.positionFrom, p_209567_0_.positionTo, p_209567_1_, p_209567_2_, p_209567_3_, p_209567_4_, p_209567_0_.partRotation, p_209567_5_, p_209567_0_.shade);
-+	  return makeBakedQuad(p_209567_0_, p_209567_1_, p_209567_2_, p_209567_3_, (net.minecraftforge.common.model.IModelState) p_209567_4_, p_209567_5_);
++      return makeBakedQuad(p_209567_0_, p_209567_1_, p_209567_2_, p_209567_3_, (net.minecraftforge.common.model.IModelState) p_209567_4_, p_209567_5_);
     }
  
 +   public static BakedQuad makeBakedQuad(BlockPart p_209567_0_, BlockPartFace p_209567_1_, TextureAtlasSprite p_209567_2_, EnumFacing p_209567_3_, net.minecraftforge.common.model.IModelState p_209567_4_, boolean p_209567_5_) {

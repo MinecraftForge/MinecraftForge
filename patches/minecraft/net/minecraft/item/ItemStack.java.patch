@@ -27,7 +27,7 @@
 -   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) {
 +   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_){ this(p_i48204_1_, p_i48204_2_, null); }
 +   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_, @Nullable NBTTagCompound capNBT) {
-+	  this.capNBT = capNBT;
++      this.capNBT = capNBT;
        this.item = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
        this.stackSize = p_i48204_2_;
        this.updateEmptyState();
@@ -39,7 +39,7 @@
     }
  
     private ItemStack(NBTTagCompound compound) {
-+	  this.capNBT = compound.hasKey("ForgeCaps") ? compound.getCompoundTag("ForgeCaps") : null;
++      this.capNBT = compound.hasKey("ForgeCaps") ? compound.getCompoundTag("ForgeCaps") : null;
        Item item = Item.REGISTRY.getObject(new ResourceLocation(compound.getString("id")));
        this.item = item == null ? Items.AIR : item;
        this.stackSize = compound.getByte("Count");
@@ -69,7 +69,7 @@
     }
  
     public EnumActionResult func_196084_a(ItemUseContext p_196084_1_) {
-+	  if (!p_196084_1_.field_196006_g.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
++      if (!p_196084_1_.field_196006_g.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
        EntityPlayer entityplayer = p_196084_1_.func_195999_j();
        BlockPos blockpos = p_196084_1_.func_195995_a();
        BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);
@@ -103,8 +103,8 @@
        }
 -
 +      if (this.capabilities != null) {
-+    	 NBTTagCompound cnbt = this.capabilities.serializeNBT();
-+    	 if (cnbt.getSize() > 0) nbt.setTag("ForgeCaps", cnbt);
++         NBTTagCompound cnbt = this.capabilities.serializeNBT();
++         if (cnbt.getSize() > 0) nbt.setTag("ForgeCaps", cnbt);
 +      }
        return nbt;
     }
@@ -135,12 +135,12 @@
 -   public int getItemDamage() {
 -      return this.stackTagCompound == null ? 0 : this.stackTagCompound.getInteger("Damage");
 +   public int getItemDamage() { // TODO evaluate the necessity of this patch
-+	  return this.getItem().getDamage(this);
++      return this.getItem().getDamage(this);
     }
  
     public void func_196085_b(int p_196085_1_) {
 -      this.func_196082_o().setInteger("Damage", Math.max(0, p_196085_1_));
-+	  getItem().setDamage(this, p_196085_1_);
++      getItem().setDamage(this, p_196085_1_);
     }
  
     public int getMaxDamage() {
@@ -198,7 +198,7 @@
           }
        } else {
 -         multimap = this.getItem().getItemAttributeModifiers(equipmentSlot);
-+    	  multimap = this.getItem().getAttributeModifiers(equipmentSlot, this);
++          multimap = this.getItem().getAttributeModifiers(equipmentSlot, this);
        }
  
        return multimap;
@@ -212,7 +212,7 @@
 +   @Override
 +   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
 +   {
-+	   return this.isEmpty || this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
++       return this.isEmpty || this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
  }
 +
 +   public void deserializeNBT(NBTTagCompound nbt)
