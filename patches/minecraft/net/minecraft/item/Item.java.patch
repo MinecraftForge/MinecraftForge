@@ -13,17 +13,18 @@
     private static final IItemPropertyGetter DAMAGED_GETTER = (p_210306_0_, p_210306_1_, p_210306_2_) -> {
        return p_210306_0_.isItemDamaged() ? 1.0F : 0.0F;
     };
-@@ -126,6 +126,9 @@
+@@ -126,6 +126,10 @@
        this.containerItem = p_i48487_1_.field_200922_c;
        this.maxDamage = p_i48487_1_.field_200921_b;
        this.maxStackSize = p_i48487_1_.field_200920_a;
 +      this.canRepair = p_i48487_1_.canRepair;
 +      this.toolClasses.putAll(p_i48487_1_.toolClasses);
-+      this.teisr = net.minecraftforge.fml.DistExecutor.callWhenOn(Dist.CLIENT, p_i48487_1_.teisr);
++      Object tmp = net.minecraftforge.fml.DistExecutor.callWhenOn(Dist.CLIENT, p_i48487_1_.teisr);
++      this.teisr = tmp == null ? null : () -> (net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer) tmp;
        if (this.maxDamage > 0) {
           this.addPropertyOverride(new ResourceLocation("damaged"), DAMAGED_GETTER);
           this.addPropertyOverride(new ResourceLocation("damage"), DAMAGE_GETTER);
-@@ -149,10 +152,12 @@
+@@ -149,10 +153,12 @@
        return stack;
     }
  
@@ -36,7 +37,7 @@
     public final int getMaxDamage() {
        return this.maxDamage;
     }
-@@ -207,6 +212,7 @@
+@@ -207,6 +213,7 @@
        return this.containerItem;
     }
  
@@ -44,7 +45,7 @@
     public boolean hasContainerItem() {
        return this.containerItem != null;
     }
-@@ -263,7 +269,7 @@
+@@ -263,7 +270,7 @@
     }
  
     public boolean isEnchantable(ItemStack stack) {
@@ -53,7 +54,7 @@
     }
  
     @Nullable
-@@ -280,8 +286,8 @@
+@@ -280,8 +287,8 @@
        float f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
        float f6 = f3 * f4;
        float f7 = f2 * f4;
@@ -64,7 +65,7 @@
        return worldIn.func_200259_a(vec3d, vec3d1, useLiquids ? RayTraceFluidMode.SOURCE_ONLY : RayTraceFluidMode.NEVER, false, false);
     }
  
-@@ -297,6 +303,7 @@
+@@ -297,6 +304,7 @@
     }
  
     protected boolean isInCreativeTab(ItemGroup targetTab) {
@@ -72,7 +73,7 @@
        ItemGroup itemgroup = this.getCreativeTab();
        return itemgroup != null && (targetTab == ItemGroup.SEARCH || targetTab == itemgroup);
     }
-@@ -310,10 +317,49 @@
+@@ -310,10 +318,49 @@
        return false;
     }
  
@@ -83,9 +84,8 @@
  
 +   /* ======================================== FORGE START =====================================*/
 +
-+   @OnlyIn(Dist.CLIENT)
 +   @Nullable
-+   private final net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr;
++   private final java.util.function.Supplier<net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer> teisr;
 +   
 +   private final java.util.Map<String, Integer> toolClasses = new java.util.HashMap<String, Integer>();
 +
@@ -114,7 +114,8 @@
 +   @Override
 +   public final net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer getTileEntityItemStackRenderer()
 +   {
-+       return teisr != null ? teisr : net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer.instance;
++       net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer renderer = teisr != null ? teisr.get() : null;
++       return renderer != null ? renderer : net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer.instance;
 +   }
 +
 +   /* ======================================== FORGE END   =====================================*/
@@ -122,7 +123,7 @@
     public static void registerItems() {
        registerItemBlock(Blocks.AIR, new ItemAir(Blocks.AIR, new Item.Builder()));
        func_200879_a(Blocks.STONE, ItemGroup.BUILDING_BLOCKS);
-@@ -1147,6 +1193,9 @@
+@@ -1147,6 +1194,9 @@
        private Item field_200922_c;
        private ItemGroup field_200923_d;
        private EnumRarity field_208104_e = EnumRarity.COMMON;
@@ -132,7 +133,7 @@
  
        public Item.Builder func_200917_a(int p_200917_1_) {
           if (this.field_200921_b > 0) {
-@@ -1181,5 +1230,27 @@
+@@ -1181,5 +1231,27 @@
           this.field_208104_e = p_208103_1_;
           return this;
        }
