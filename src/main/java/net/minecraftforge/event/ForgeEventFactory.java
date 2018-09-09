@@ -624,41 +624,18 @@ public class ForgeEventFactory
     {
         return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, renderPartialTicks, type, block, pos));
     }
-
+    
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(TileEntity tileEntity)
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<TileEntity>(TileEntity.class, tileEntity), null);
+        return gatherCapabilities(type, provider, null);
     }
-
+    
+    @SuppressWarnings("unchecked")
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Entity entity)
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Entity>(Entity.class, entity), null);
-    }
-
-    @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Village village)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Village>(Village.class, village), null);
-    }
-
-    @Nullable
-    public static CapabilityDispatcher gatherCapabilities(ItemStack stack, ICapabilityProvider parent)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<ItemStack>(ItemStack.class, stack), parent);
-    }
-
-    @Nullable
-    public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<World>(World.class, world), parent);
-    }
-
-    @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Chunk chunk)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Chunk>(Chunk.class, chunk), null);
+        return gatherCapabilities(new AttachCapabilitiesEvent<T>((Class<T>) type, provider), parent);
     }
 
     @Nullable

@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.util;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.storage.WorldSavedData;
@@ -35,7 +37,7 @@ public class WorldCapabilityData extends WorldSavedData
         super(name);
     }
 
-    public WorldCapabilityData(INBTSerializable<NBTTagCompound> serializable)
+    public WorldCapabilityData(@Nullable INBTSerializable<NBTTagCompound> serializable)
     {
         super(ID);
         this.serializable = serializable;

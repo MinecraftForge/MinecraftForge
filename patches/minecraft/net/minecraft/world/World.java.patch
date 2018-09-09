@@ -9,7 +9,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public abstract class World implements IWorld, IWorldReader, AutoCloseable {
-+public abstract class World implements IWorld, IWorldReader, AutoCloseable, net.minecraftforge.common.extensions.IForgeWorld {
++public abstract class World extends net.minecraftforge.common.capabilities.CapabilityProvider implements IWorld, IWorldReader, AutoCloseable, net.minecraftforge.common.extensions.IForgeWorld {
     protected static final Logger field_195596_d = LogManager.getLogger();
     private static final EnumFacing[] field_200007_a = EnumFacing.values();
     private int seaLevel = 63;
@@ -21,37 +21,30 @@
     }
  
     public IWorld init() {
-@@ -2397,4 +2399,38 @@
+@@ -2397,4 +2399,31 @@
     public abstract RecipeManager func_199532_z();
  
     public abstract NetworkTagManager func_205772_D();
 +
 +   /* ======================================== FORGE START =====================================*/
 +
-+   private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
 +   
 +   protected void initCapabilities()
 +   {
 +       net.minecraftforge.common.capabilities.ICapabilityProvider parent = provider.initCapabilities();
-+       capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, parent);
++       this.gatherCapabilities(parent);
 +       net.minecraftforge.common.util.WorldCapabilityData data = (net.minecraftforge.common.util.WorldCapabilityData)perWorldStorage.func_201067_a(net.minecraftforge.common.util.WorldCapabilityData::new, net.minecraftforge.common.util.WorldCapabilityData.ID);
 +       if (data == null)
 +       {
-+           capabilityData = new net.minecraftforge.common.util.WorldCapabilityData(capabilities);
++           capabilityData = new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities());
 +           perWorldStorage.setData(capabilityData.func_195925_e(), capabilityData);
  }
 +       else
 +       {
 +           capabilityData = data;
-+           capabilityData.setCapabilities(provider, capabilities);
++           capabilityData.setCapabilities(provider, getCapabilities());
 +       }
-+   }
-+   
-+   @Override
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing)
-+   {
-+       return capabilities == null ? net.minecraftforge.common.capabilities.OptionalCapabilityInstance.empty() : capabilities.getCapability(capability, facing);
 +   }
 +   
 +   protected WorldSavedDataStorage perWorldStorage; //Moved to a getter to simulate final without being final so we can load in subclasses.

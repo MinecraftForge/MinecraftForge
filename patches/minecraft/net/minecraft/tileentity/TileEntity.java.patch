@@ -9,22 +9,15 @@
  import org.apache.logging.log4j.Logger;
  
 -public abstract class TileEntity {
-+public abstract class TileEntity implements net.minecraftforge.common.extensions.IForgeTileEntity {
++public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeTileEntity {
     private static final Logger LOGGER = LogManager.getLogger();
     private final TileEntityType<?> field_200663_e;
     protected World world;
-@@ -179,4 +180,14 @@
-    public TileEntityType<?> func_200662_C() {
-       return this.field_200663_e;
+@@ -26,6 +27,7 @@
+ 
+    public TileEntity(TileEntityType<?> p_i48289_1_) {
+       this.field_200663_e = p_i48289_1_;
++      this.gatherCapabilities();
     }
-+   
-+   // -- BEGIN FORGE PATCHES --
-+
-+   private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
-+
-+   @Override
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
-+   {
-+       return capabilities == null ? net.minecraftforge.common.capabilities.OptionalCapabilityInstance.empty() : capabilities.getCapability(capability, facing);
- }
-+}
+ 
+    @Nullable
