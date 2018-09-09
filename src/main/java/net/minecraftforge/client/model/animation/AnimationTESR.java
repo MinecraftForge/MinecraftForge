@@ -30,6 +30,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
+import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
@@ -50,7 +51,8 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
     @Override
     public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, BufferBuilder renderer)
    {
-        if(!te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY).isPresent())
+        OptionalCapabilityInstance<IAnimationStateMachine> cap = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY);
+        if(!cap.isPresent())
         {
             return;
         }
@@ -68,8 +70,8 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
             if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
             {
                 float time = Animation.getWorldTime(getWorld(), partialTick);
-                te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
-                    .map(cap -> cap.apply(time))
+                cap
+                    .map(asm -> asm.apply(time))
                     .ifPresent(pair -> {
                         handleEvents(te, time, pair.getRight());
 
