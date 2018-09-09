@@ -1,0 +1,55 @@
+--- a/net/minecraft/entity/Entity.java
++++ b/net/minecraft/entity/Entity.java
+@@ -12,6 +12,8 @@
+ import java.util.Random;
+ import java.util.Set;
+ import java.util.UUID;
++
++import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.Block;
+@@ -97,7 +99,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class Entity implements INameable, ICommandSource {
++public abstract class Entity implements INameable, ICommandSource, net.minecraftforge.common.extensions.IForgeEntity {
+    protected static final Logger LOGGER = LogManager.getLogger();
+    private static final List<ItemStack> EMPTY_EQUIPMENT = Collections.<ItemStack>emptyList();
+    private static final AxisAlignedBB ZERO_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+@@ -190,6 +192,11 @@
+    private boolean isPositionDirty;
+    private final double[] pistonDeltas;
+    private long pistonDeltasGameTime;
++   /**
++    * Setting this to true will prevent the world from calling {@link #onUpdate()} for this entity.
++    */
++   public boolean updateBlocked;
++   private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
+ 
+    public Entity(EntityType<?> p_i48580_1_, World p_i48580_2_) {
+       this.entityId = nextEntityID++;
+@@ -221,6 +228,8 @@
+       this.dataManager.register(SILENT, false);
+       this.dataManager.register(NO_GRAVITY, false);
+       this.entityInit();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++      capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
+    }
+ 
+    public EntityType<?> func_200600_R() {
+@@ -2591,4 +2600,13 @@
+    public double func_212107_bY() {
+       return this.field_211517_W;
+    }
++   
++   /* ================================== Forge Start =====================================*/
++
++   @Override
++   @Nonnull
++   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++   {
++       return capabilities == null ? net.minecraftforge.common.capabilities.OptionalCapabilityInstance.empty() : capabilities.getCapability(capability, facing);
+ }
++}
