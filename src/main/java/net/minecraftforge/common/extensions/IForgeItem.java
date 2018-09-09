@@ -545,14 +545,6 @@ public interface IForgeItem
         return getItem().getItemStackLimit();
     }
 
-    /**
-     * Sets or removes the harvest level for the specified tool class.
-     *
-     * @param toolClass Class
-     * @param level     Harvest level: Wood: 0 Stone: 1 Iron: 2 Diamond: 3 Gold: 0
-     */
-    void setHarvestLevel(String toolClass, int level);
-
     java.util.Set<String> getToolClasses(ItemStack stack);
 
     /**
@@ -763,7 +755,4 @@ public interface IForgeItem
      */
     @OnlyIn(Dist.CLIENT)
     net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer getTileEntityItemStackRenderer();
-
-    @OnlyIn(Dist.CLIENT)
-    void setTileEntityItemStackRenderer(@Nullable net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr);
 }
