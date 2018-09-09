@@ -60,14 +60,14 @@ public class CapabilityAnimation
         }
 
         @Override
-        @Nullable
+        @Nonnull
         public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
             if(capability == ANIMATION_CAPABILITY)
             {
-                return ANIMATION_CAPABILITY.cast(asm);
+                return OptionalCapabilityInstance.of(() -> asm).cast();
             }
-            return null;
+            return OptionalCapabilityInstance.empty();
         }
     }
 }

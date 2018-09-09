@@ -17,15 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.client.resource;
+package net.minecraftforge.common.capabilities;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import javax.annotation.Nonnull;
 
-/**
- * Represents a generic type of reloadable resource. Used for resource reload filtering.
- */
-@OnlyIn(Dist.CLIENT)
-public interface IResourceType
+//Exactly like Consumer, except there IS a contract that the parameter must not be null.
+@FunctionalInterface
+public interface NonNullConsumer<T>
 {
+    void accept(@Nonnull T t);
 }

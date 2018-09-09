@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/dimension/Dimension.java
++++ b/net/minecraft/world/dimension/Dimension.java
+@@ -13,7 +13,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public abstract class Dimension {
++public abstract class Dimension implements net.minecraftforge.common.extensions.IForgeDimension {
+    public static final float[] MOON_PHASE_FACTORS = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
+    protected World world;
+    protected boolean doesWaterVaporize;

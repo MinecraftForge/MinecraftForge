@@ -1,0 +1,55 @@
+--- a/net/minecraft/world/World.java
++++ b/net/minecraft/world/World.java
+@@ -68,10 +68,11 @@
+ import net.minecraft.world.storage.WorldSavedDataStorage;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class World implements IWorld, IWorldReader, AutoCloseable {
++public abstract class World extends net.minecraftforge.common.capabilities.CapabilityProvider implements IWorld, IWorldReader, AutoCloseable, net.minecraftforge.common.extensions.IForgeWorld {
+    protected static final Logger field_195596_d = LogManager.getLogger();
+    private static final EnumFacing[] field_200007_a = EnumFacing.values();
+    private int seaLevel = 63;
+@@ -121,6 +122,7 @@
+       this.provider = providerIn;
+       this.isRemote = client;
+       this.worldBorder = providerIn.createWorldBorder();
++      perWorldStorage = new WorldSavedDataStorage((ISaveHandler)null);
+    }
+ 
+    public IWorld init() {
+@@ -2397,4 +2399,31 @@
+    public abstract RecipeManager func_199532_z();
+ 
+    public abstract NetworkTagManager func_205772_D();
++
++   /* ======================================== FORGE START =====================================*/
++
++   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
++   
++   protected void initCapabilities()
++   {
++       net.minecraftforge.common.capabilities.ICapabilityProvider parent = provider.initCapabilities();
++       this.gatherCapabilities(parent);
++       net.minecraftforge.common.util.WorldCapabilityData data = (net.minecraftforge.common.util.WorldCapabilityData)perWorldStorage.func_201067_a(net.minecraftforge.common.util.WorldCapabilityData::new, net.minecraftforge.common.util.WorldCapabilityData.ID);
++       if (data == null)
++       {
++           capabilityData = new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities());
++           perWorldStorage.setData(capabilityData.func_195925_e(), capabilityData);
+ }
++       else
++       {
++           capabilityData = data;
++           capabilityData.setCapabilities(provider, getCapabilities());
++       }
++   }
++   
++   protected WorldSavedDataStorage perWorldStorage; //Moved to a getter to simulate final without being final so we can load in subclasses.
++   public WorldSavedDataStorage getPerWorldStorage()
++   {
++       return perWorldStorage;
++   }
++}

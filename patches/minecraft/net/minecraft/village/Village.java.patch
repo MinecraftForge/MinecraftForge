@@ -1,0 +1,42 @@
+--- a/net/minecraft/village/Village.java
++++ b/net/minecraft/village/Village.java
+@@ -30,7 +30,7 @@
+ import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.world.World;
+ 
+-public class Village {
++public class Village extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeVillage {
+    private World world;
+    private final List<VillageDoorInfo> villageDoorInfoList = Lists.<VillageDoorInfo>newArrayList();
+    private BlockPos centerHelper = BlockPos.ORIGIN;
+@@ -45,10 +45,12 @@
+    private int numIronGolems;
+ 
+    public Village() {
++       this.gatherCapabilities();
+    }
+ 
+    public Village(World worldIn) {
+       this.world = worldIn;
++      this.gatherCapabilities();
+    }
+ 
+    public void setWorld(World worldIn) {
+@@ -364,7 +366,7 @@
+             this.playerReputation.put(nbttagcompound1.getString("Name"), nbttagcompound1.getInteger("S"));
+          }
+       }
+-
++      if (compound.hasKey("ForgeCaps")) this.deserializeCaps(compound.getCompoundTag("ForgeCaps"));
+    }
+ 
+    public void writeVillageDataToNBT(NBTTagCompound compound) {
+@@ -413,6 +415,8 @@
+       }
+ 
+       compound.setTag("Players", nbttaglist1);
++      NBTTagCompound capTag = this.serializeCaps();
++      if (capTag != null) compound.setTag("ForgeCaps", capTag);
+    }
+ 
+    public void endMatingSeason() {

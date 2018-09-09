@@ -1,0 +1,28 @@
+--- a/net/minecraft/entity/Entity.java
++++ b/net/minecraft/entity/Entity.java
+@@ -12,6 +12,7 @@
+ import java.util.Random;
+ import java.util.Set;
+ import java.util.UUID;
++
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.Block;
+@@ -97,7 +98,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class Entity implements INameable, ICommandSource {
++public abstract class Entity extends net.minecraftforge.common.capabilities.CapabilityProvider implements INameable, ICommandSource, net.minecraftforge.common.extensions.IForgeEntity {
+    protected static final Logger LOGGER = LogManager.getLogger();
+    private static final List<ItemStack> EMPTY_EQUIPMENT = Collections.<ItemStack>emptyList();
+    private static final AxisAlignedBB ZERO_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+@@ -221,6 +222,8 @@
+       this.dataManager.register(SILENT, false);
+       this.dataManager.register(NO_GRAVITY, false);
+       this.entityInit();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityEvent.EntityConstructing(this));
++      this.gatherCapabilities();
+    }
+ 
+    public EntityType<?> func_200600_R() {

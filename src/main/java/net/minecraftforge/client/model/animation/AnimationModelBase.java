@@ -42,11 +42,8 @@ import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
-import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -69,17 +66,18 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingSpeed, float timeAlive, float yawHead, float rotationPitch, float scale)
     {
-        IAnimationStateMachine capability = entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
-        if (capability == null)
-        {
-            return;
-        }
-        Pair<IModelState, Iterable<Event>> pair = capability.apply(timeAlive / 20);
-        handleEvents((T)entity, timeAlive / 20, pair.getRight());
-        IUnbakedModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
-        // TODO where should uvlock data come from?
-        IBakedModel bakedModel = model.bake(ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter(), pair.getLeft(), false, DefaultVertexFormats.ITEM);
+        entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
+            .map(cap -> cap.apply(timeAlive / 20))
+            .map(pair -> {
+                handleEvents((T) entity, timeAlive / 20, pair.getRight());
+                IUnbakedModel unbaked = ModelLoaderRegistry.getModelOrMissing(modelLocation);
+                // TODO where should uvlock data come from?
+                return unbaked.bake(ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter(), pair.getLeft(), false, DefaultVertexFormats.ITEM);
+            }).ifPresent(model -> drawModel(model, entity));
+    }
 
+    private void drawModel(IBakedModel bakedModel, Entity entity)
+    {
         BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.height, entity.posZ);
 
         RenderHelper.disableStandardItemLighting();
@@ -109,7 +107,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         }
         for(EnumFacing side : EnumFacing.values())
         {
-        	random.setSeed(42);
+            random.setSeed(42);
             quads = bakedModel.func_200117_a(null, side, random);
             if(!quads.isEmpty())
             {

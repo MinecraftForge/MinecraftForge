@@ -35,7 +35,8 @@ public class ForgeClientHandler
         // register model for the universal bucket, if it exists
         if (FluidRegistry.isUniversalBucketEnabled())
         {
-            ModelLoader.setBucketModelDefinition(ForgeMod.getInstance().universalBucket);
+        	// TODO no more mesh definitions, this should be implemented with overrides
+//            ModelLoader.setBucketModelDefinition(ForgeMod.getInstance().universalBucket);
         }
     }
 
@@ -44,7 +45,7 @@ public class ForgeClientHandler
     {
         if (FluidRegistry.isUniversalBucketEnabled())
         {
-            event.getItemColors().registerItemColorHandler(new FluidContainerColorer(), ForgeMod.getInstance().universalBucket);
+            event.getItemColors().func_199877_a(new FluidContainerColorer(), ForgeMod.getInstance().universalBucket);
         }
     }
 }

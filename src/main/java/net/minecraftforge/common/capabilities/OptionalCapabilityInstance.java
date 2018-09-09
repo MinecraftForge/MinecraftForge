@@ -28,6 +28,14 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import mcp.MethodsReturnNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class OptionalCapabilityInstance<T>
 {
     private final NonNullSupplier<T> supplier;
@@ -35,7 +43,7 @@ public class OptionalCapabilityInstance<T>
     private Set<Consumer<OptionalCapabilityInstance<T>>> listeners = new HashSet<>();
     private boolean isValid = true;
 
-    private static final OptionalCapabilityInstance<Void> EMPTY = new OptionalCapabilityInstance<>(null);
+    private static final @Nonnull OptionalCapabilityInstance<Void> EMPTY = new OptionalCapabilityInstance<>(null);
 
     @SuppressWarnings("unchecked")
     public static <T> OptionalCapabilityInstance<T> empty()
@@ -49,17 +57,17 @@ public class OptionalCapabilityInstance<T>
         return (OptionalCapabilityInstance<X>)this;
     }
 
-    private OptionalCapabilityInstance(NonNullSupplier<T> instanceSupplier)
+    private OptionalCapabilityInstance(@Nullable NonNullSupplier<T> instanceSupplier)
     {
         this.supplier = instanceSupplier;
     }
 
-    public static <T> OptionalCapabilityInstance<T> of(final NonNullSupplier<T> instanceSupplier)
+    public static <T> OptionalCapabilityInstance<T> of(final @Nullable NonNullSupplier<T> instanceSupplier)
     {
-        return new OptionalCapabilityInstance<>(instanceSupplier);
+        return instanceSupplier == null ? EMPTY.cast() : new OptionalCapabilityInstance<>(instanceSupplier);
     }
 
-    private T getValue()
+    private @Nullable T getValue()
     {
         if (!isValid)
             return null;
@@ -103,10 +111,11 @@ public class OptionalCapabilityInstance<T>
      * @throws NullPointerException if mod object is present and {@code consumer} is
      * null
      */
-    public void ifPresent(Consumer<? super T> consumer)
+    public void ifPresent(NonNullConsumer<? super T> consumer)
     {
-        if (isValid && getValue() != null)
-            consumer.accept(getValue());
+        T val = getValue();
+        if (isValid && val != null)
+            consumer.accept(val);
     }
 
     /**
@@ -149,30 +158,6 @@ public class OptionalCapabilityInstance<T>
     }
 
     /**
-     * If a value is present, apply the provided {@code Optional}-bearing
-     * mapping function to it, return that result, otherwise return an empty
-     * {@code Optional}.  This method is similar to {@link #map(Function)},
-     * but the provided mapper is one whose result is already an {@code Optional},
-     * and if invoked, {@code flatMap} does not wrap it with an additional
-     * {@code Optional}.
-     *
-     * @param <U> The type parameter to the {@code Optional} returned by
-     * @param mapper a mapping function to apply to the mod object, if present
-     *           the mapping function
-     * @return the result of applying an {@code Optional}-bearing mapping
-     * function to the value of this {@code Optional}, if a value is present,
-     * otherwise an empty {@code Optional}
-     * @throws NullPointerException if the mapping function is null or returns
-     * a null result
-     */
-    public<U> OptionalCapabilityInstance<U> flatMap(Function<? super T, Optional<U>> mapper)
-    {//I am not sure this is valid, or how to handle this, it's just a copy pasta from Optional. I dont think its needed. Returning a null supplier is bad
-        Objects.requireNonNull(mapper);
-        final U value = map(mapper).orElse(Optional.empty()).orElse(null); // To keep the non-null contract we have to evaluate right now. Should we allow this function at all?
-        return value != null ? OptionalCapabilityInstance.of(() -> value) : OptionalCapabilityInstance.empty();
-    }
-
-    /**
      * Return the mod object if present, otherwise return {@code other}.
      *
      * @param other the mod object to be returned if there is no mod object present, may
@@ -181,7 +166,8 @@ public class OptionalCapabilityInstance<T>
      */
     public T orElse(T other)
     {
-        return getValue() != null ? getValue() : other;
+        T val = getValue();
+        return val != null ? val : other;
     }
 
     /**
@@ -194,9 +180,10 @@ public class OptionalCapabilityInstance<T>
      * @throws NullPointerException if mod object is not present and {@code other} is
      * null
      */
-    public T orElseGet(Supplier<? extends T> other)
+    public T orElseGet(NonNullSupplier<? extends T> other)
     {
-        return getValue() != null ? getValue() : other.get();
+        T val = getValue();
+        return val != null ? val : other.get();
     }
 
     /**
@@ -217,8 +204,9 @@ public class OptionalCapabilityInstance<T>
      */
     public <X extends Throwable> T orElseThrow(Supplier<? extends X> exceptionSupplier) throws X
     {
-        if (getValue() != null)
-            return getValue();
+        T val = getValue();
+        if (val != null)
+            return val;
         throw exceptionSupplier.get();
     }
 

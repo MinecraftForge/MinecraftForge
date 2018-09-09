@@ -1,0 +1,23 @@
+--- a/net/minecraft/tileentity/TileEntity.java
++++ b/net/minecraft/tileentity/TileEntity.java
+@@ -12,10 +12,11 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public abstract class TileEntity {
++public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeTileEntity {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final TileEntityType<?> field_200663_e;
+    protected World world;
+@@ -26,6 +27,7 @@
+ 
+    public TileEntity(TileEntityType<?> p_i48289_1_) {
+       this.field_200663_e = p_i48289_1_;
++      this.gatherCapabilities();
+    }
+ 
+    @Nullable

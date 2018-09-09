@@ -8,6 +8,6 @@
 +   // Forge Start
 +   
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
-+   	return this.field_195670_c[frameIndex].func_195709_a(x + this.field_195671_d[frameIndex] * this.width, y + this.field_195672_e[frameIndex] * this.height);
++       return this.field_195670_c[frameIndex].func_195709_a(x + this.field_195671_d[frameIndex] * this.width, y + this.field_195672_e[frameIndex] * this.height);
  }
 +}
