@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/WorldServer.java
++++ b/net/minecraft/world/WorldServer.java
+@@ -150,6 +150,7 @@
+          this.getWorldBorder().setTransition(this.worldInfo.getBorderSize());
+       }
+ 
++      this.initCapabilities();
+       return this;
+    }
+ 

@@ -28,14 +28,13 @@ import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 
 import com.google.common.collect.ImmutableList;
 
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
@@ -53,7 +52,8 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
 
     public SimpleModelFontRenderer(GameSettings settings, ResourceLocation font, TextureManager manager, boolean isUnicode, Matrix4f matrix, VertexFormat format)
     {
-        super(settings, font, manager, isUnicode);
+    	super(manager, null);
+//        super(settings, font, manager, isUnicode);
         this.matrix = new Matrix4f(matrix);
         Matrix3f nm = new Matrix3f();
         this.matrix.getRotationScale(nm);
@@ -68,60 +68,11 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
     public void setSprite(TextureAtlasSprite sprite)
     {
         this.sprite = sprite;
-        super.onResourceManagerReload(null);
     }
 
     public void setFillBlanks(boolean fillBlanks)
     {
         this.fillBlanks = fillBlanks;
-    }
-
-    @Override
-    protected float renderDefaultChar(int pos, boolean italic)
-    {
-        float x = (pos % 16) / 16f;
-        float y = (pos / 16) / 16f;
-        float sh = italic ? 1f : 0f;
-        float w = charWidth[pos] - 1.01f;
-        float h = FONT_HEIGHT - 1.01f;
-        float wt = w  / 128f;
-        float ht = h  / 128f;
-
-        UnpackedBakedQuad.Builder quadBuilder = new UnpackedBakedQuad.Builder(format);
-        quadBuilder.setTexture(sprite);
-        quadBuilder.setQuadOrientation(orientation);
-
-        addVertex(quadBuilder, posX + sh,     posY,     x,      y);
-        addVertex(quadBuilder, posX - sh,     posY + h, x,      y + ht);
-        addVertex(quadBuilder, posX + w + sh, posY + h, x + wt, y + ht);
-        addVertex(quadBuilder, posX + w - sh, posY,     x + wt, y);
-        builder.add(quadBuilder.build());
-
-        if(fillBlanks)
-        {
-            float cuv = 15f / 16f;
-
-            quadBuilder = new UnpackedBakedQuad.Builder(format);
-            quadBuilder.setTexture(sprite);
-            quadBuilder.setQuadOrientation(orientation);
-
-            addVertex(quadBuilder, posX + w + sh,              posY,     cuv, cuv);
-            addVertex(quadBuilder, posX + w - sh,              posY + h, cuv, cuv);
-            addVertex(quadBuilder, posX + charWidth[pos] + sh, posY + h, cuv, cuv);
-            addVertex(quadBuilder, posX + charWidth[pos] - sh, posY,     cuv, cuv);
-            builder.add(quadBuilder.build());
-
-            quadBuilder = new UnpackedBakedQuad.Builder(format);
-            quadBuilder.setTexture(sprite);
-            quadBuilder.setQuadOrientation(orientation);
-
-            addVertex(quadBuilder, posX + sh,                  posY + h,           cuv, cuv);
-            addVertex(quadBuilder, posX - sh,                  posY + FONT_HEIGHT, cuv, cuv);
-            addVertex(quadBuilder, posX + charWidth[pos] + sh, posY + FONT_HEIGHT, cuv, cuv);
-            addVertex(quadBuilder, posX + charWidth[pos] - sh, posY + h,           cuv, cuv);
-            builder.add(quadBuilder.build());
-        }
-        return charWidth[pos];
     }
 
     private final Vector4f vec = new Vector4f();
@@ -155,44 +106,6 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
                     break;
             }
         }
-    }
-
-    @Override
-    public void onResourceManagerReload(IResourceManager resourceManager)
-    {
-        super.onResourceManagerReload(resourceManager);
-        String p = locationFontTexture.getResourcePath();
-        if(p.startsWith("textures/")) p = p.substring("textures/".length(), p.length());
-        if(p.endsWith(".png")) p = p.substring(0, p.length() - ".png".length());
-        String f = locationFontTexture.getResourceDomain() + ":" + p;
-        sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(f);
-    }
-
-    @Override
-    protected abstract float renderUnicodeChar(char c, boolean italic);
-
-    @Override
-    protected void doDraw(float shift)
-    {
-        posX += (int)shift;
-    }
-
-    @Override
-    protected void setColor(float r, float g, float b, float a)
-    {
-        this.r = r;
-        this.g = g;
-        this.b = b;
-        this.a = a;
-    }
-
-    @Override public void enableAlpha()
-    {
-    }
-
-    @Override
-    protected void bindTexture(ResourceLocation location)
-    {
     }
 
     public ImmutableList<BakedQuad> build()

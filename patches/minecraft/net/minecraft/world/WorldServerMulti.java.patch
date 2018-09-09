@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/WorldServerMulti.java
++++ b/net/minecraft/world/WorldServerMulti.java
+@@ -60,6 +60,7 @@
+          this.villageCollection.setWorldsForAll(this);
+       }
+ 
++      this.initCapabilities();
+       return this;
+    }
+ 

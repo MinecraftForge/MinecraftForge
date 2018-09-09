@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 public class FluidContainerColorer implements IItemColor
 {
     @Override
-    public int colorMultiplier(@Nonnull ItemStack stack, int tintIndex)
+    public int getColor(@Nonnull ItemStack stack, int tintIndex)
     {
         if (tintIndex != 1) return 0xFFFFFFFF;
         FluidStack fluidStack = FluidUtil.getFluidContained(stack);

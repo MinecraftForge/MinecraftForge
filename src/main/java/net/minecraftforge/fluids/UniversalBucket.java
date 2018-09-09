@@ -155,7 +155,7 @@ public class UniversalBucket extends Item
         // empty bucket shouldn't exist, do nothing since it should be handled by the bucket event
         if (fluidStack == null)
         {
-            return ActionResult.newResult(EnumActionResult.PASS, itemstack);
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
         }
 
         // clicked on a block?
@@ -166,7 +166,7 @@ public class UniversalBucket extends Item
 
         if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK)
         {
-            return ActionResult.newResult(EnumActionResult.PASS, itemstack);
+            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
         }
 
         BlockPos clickPos = mop.getBlockPos();
@@ -184,7 +184,7 @@ public class UniversalBucket extends Item
                 if (result.isSuccess() && !player.capabilities.isCreativeMode)
                 {
                     // success!
-                    player.addStat(StatList.getObjectUseStats(this));
+                    player.addStat(StatList.OBJECT_USE_STATS.func_199076_b(this));
 
                     itemstack.shrink(1);
                     ItemStack drained = result.getResult();
@@ -193,20 +193,20 @@ public class UniversalBucket extends Item
                     // check whether we replace the item or add the empty one to the inventory
                     if (itemstack.isEmpty())
                     {
-                        return ActionResult.newResult(EnumActionResult.SUCCESS, emptyStack);
+                        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, emptyStack);
                     }
                     else
                     {
                         // add empty bucket to player inventory
                         ItemHandlerHelper.giveItemToPlayer(player, emptyStack);
-                        return ActionResult.newResult(EnumActionResult.SUCCESS, itemstack);
+                        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
                     }
                 }
             }
         }
 
         // couldn't place liquid there2
-        return ActionResult.newResult(EnumActionResult.FAIL, itemstack);
+        return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW) // low priority so other mods can handle their stuff first

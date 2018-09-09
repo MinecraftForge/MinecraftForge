@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
++++ b/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
+@@ -439,4 +439,10 @@
+    public void func_195663_q() {
+       this.func_195659_d(0);
+    }
++   
++   // Forge Start
++   
++   public int getPixelRGBA(int frameIndex, int x, int y) {
++   	return this.field_195670_c[frameIndex].func_195709_a(x + this.field_195671_d[frameIndex] * this.width, y + this.field_195672_e[frameIndex] * this.height);
+ }
++}

@@ -35,6 +35,9 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ModelRotation;
 import net.minecraft.util.JsonUtils;
@@ -43,7 +46,6 @@ import net.minecraftforge.client.model.BlockStateLoader.Marker;
 import net.minecraftforge.client.model.BlockStateLoader.SubModel;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.fml.common.FMLLog;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -62,6 +64,7 @@ import com.google.gson.JsonParseException;
 
 public class ForgeBlockStateV1 extends Marker
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     ForgeBlockStateV1.Variant defaults;
     Multimap<String, ForgeBlockStateV1.Variant> variants = LinkedHashMultimap.create();
 
@@ -181,9 +184,9 @@ public class ForgeBlockStateV1 extends Marker
                             String value = v.textures.get(tex.getValue().substring(1));
                             if (value == null)
                             {
-                                FMLLog.log.fatal("Could not resolve texture name \"{}\" for permutation \"{}\"", tex.getValue(), e.getKey());
+                                LOGGER.fatal("Could not resolve texture name \"{}\" for permutation \"{}\"", tex.getValue(), e.getKey());
                                 for (Entry<String, String> t: v.textures.entrySet())
-                                    FMLLog.log.fatal("{}={}", t.getKey(), t.getValue());
+                                    LOGGER.fatal("{}={}", t.getKey(), t.getValue());
                                 throw new JsonParseException("Could not resolve texture name \"" + tex.getValue() + "\" for permutation \"" + e.getKey() + "\"");
                             }
                             v.textures.put(tex.getKey(), value);
@@ -441,7 +444,7 @@ public class ForgeBlockStateV1 extends Marker
             protected ResourceLocation getBlockLocation(String location)
             {
                 ResourceLocation tmp = new ResourceLocation(location);
-                return new ResourceLocation(tmp.getResourceDomain(), "block/" + tmp.getResourcePath());
+                return new ResourceLocation(tmp.getNamespace(), "block/" + tmp.getPath());
             }
 
             /** Throws an error if there are submodels in this submodel. */

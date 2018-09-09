@@ -21,6 +21,8 @@ package net.minecraftforge.client.model;
 
 import java.util.EnumMap;
 import java.util.Optional;
+import java.util.Random;
+
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -108,7 +110,7 @@ public class PerspectiveMapWrapper implements IBakedModel
     @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
     @SuppressWarnings("deprecation")
     @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
-    @Override public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) { return parent.getQuads(state, side, rand); }
+    @Override public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand) { return parent.func_200117_a(state, side, rand); }
     @Override public ItemOverrideList getOverrides() { return parent.getOverrides(); }
 
     @Override

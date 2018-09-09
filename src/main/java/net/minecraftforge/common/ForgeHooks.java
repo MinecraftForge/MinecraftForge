@@ -79,6 +79,7 @@ import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTippedArrow;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -149,13 +150,13 @@ import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.ConnectionType;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.ConnectionType;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
@@ -867,8 +868,11 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemStack itemstack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand)
+    public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemUseContext context)
     {
+    	ItemStack itemstack = context.func_195996_i();
+    	World world = context.func_195991_k();
+    	
         // handle all placement events here
         int meta = itemstack.getItemDamage();
         int size = itemstack.getCount();
@@ -883,7 +887,7 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
-        EnumActionResult ret = itemstack.getItem().onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
+        EnumActionResult ret = itemstack.getItem().func_195939_a(context);
         world.captureBlockSnapshots = false;
 
         if (ret == EnumActionResult.SUCCESS)
@@ -902,12 +906,16 @@ public class ForgeHooks
             world.capturedBlockSnapshots.clear();
 
             // make sure to set pre-placement item data for event
-            itemstack.setItemDamage(meta);
+            itemstack.func_196085_b(meta);
             itemstack.setCount(size);
             if (nbt != null)
             {
                 itemstack.setTagCompound(nbt);
             }
+            
+            EntityPlayer player = context.func_195999_j();
+            EnumFacing side = context.func_196000_l();
+            
             if (blockSnapshots.size() > 1)
             {
                 placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(player, blockSnapshots, side, hand);
@@ -931,7 +939,7 @@ public class ForgeHooks
             else
             {
                 // Change the stack to its new content
-                itemstack.setItemDamage(newMeta);
+                itemstack.func_196085_b(newMeta);
                 itemstack.setCount(newSize);
                 if (nbt != null)
                 {

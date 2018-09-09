@@ -1,0 +1,10 @@
+--- a/net/minecraft/init/Particles.java
++++ b/net/minecraft/init/Particles.java
+@@ -7,6 +7,7 @@
+ import net.minecraft.particles.RedstoneParticleData;
+ import net.minecraft.util.ResourceLocation;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Particles {
+    public static final BasicParticleType field_197608_a;
+    public static final BasicParticleType field_197609_b;

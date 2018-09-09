@@ -38,8 +38,6 @@ import org.objectweb.asm.Type;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import net.minecraftforge.common.util.EnumHelper;
-
 import static net.minecraftforge.fml.Logging.CAPABILITIES;
 
 public enum CapabilityManager
@@ -138,8 +136,8 @@ public enum CapabilityManager
                         LOGGER.warn(CAPABILITIES,"Unable to inject capability {} at {}.{} (Non-Static)", capabilityName, targetClass, targetName);
                         return null;
                     }
-                    // TODO Remove enumhelper here
-                    EnumHelper.setFailsafeFieldValue(field, null, input);
+                    field.setAccessible(true);
+                    field.set(null, input);
                 }
                 catch (Exception e)
                 {

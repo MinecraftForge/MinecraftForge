@@ -19,14 +19,13 @@
 
 package net.minecraftforge.common.model.animation;
 
-import java.util.concurrent.Callable;
-
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -61,20 +60,14 @@ public class CapabilityAnimation
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
-        {
-            return capability == ANIMATION_CAPABILITY;
-        }
-
-        @Override
-        @Nullable
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+        @Nonnull
+        public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
             if(capability == ANIMATION_CAPABILITY)
             {
-                return ANIMATION_CAPABILITY.cast(asm);
+                return OptionalCapabilityInstance.of(() -> asm).cast();
             }
-            return null;
+            return OptionalCapabilityInstance.empty();
         }
     }
 }

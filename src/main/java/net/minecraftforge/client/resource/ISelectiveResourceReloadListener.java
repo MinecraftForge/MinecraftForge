@@ -21,13 +21,13 @@ package net.minecraftforge.client.resource;
 
 import java.util.function.Predicate;
 
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.resources.IResourceManagerReloadListener;
 
 public interface ISelectiveResourceReloadListener extends IResourceManagerReloadListener
 {
     @Override
-    default void onResourceManagerReload(IResourceManager resourceManager)
+    default void func_195410_a(IResourceManager resourceManager)
     {
         // For compatibility, call the selective version from the non-selective function
         onResourceManagerReload(resourceManager, SelectiveReloadStateHandler.INSTANCE.get());

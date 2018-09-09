@@ -1,0 +1,10 @@
+--- a/net/minecraft/init/PotionTypes.java
++++ b/net/minecraft/init/PotionTypes.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.potion.PotionType;
+ import net.minecraft.util.ResourceLocation;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class PotionTypes {
+    private static final Set<PotionType> CACHE;
+    public static final PotionType EMPTY;

@@ -1,29 +1,157 @@
 --- a/net/minecraft/item/Item.java
 +++ b/net/minecraft/item/Item.java
-@@ -50,7 +50,7 @@
+@@ -50,9 +50,9 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public class Item implements IItemProvider {
-+public class Item extends net.minecraftforge.registries.ForgeRegistryEntry<Item> implements IItemProvider {
-    public static final RegistryNamespaced<ResourceLocation, Item> REGISTRY = new RegistryNamespaced<ResourceLocation, Item>();
-    public static final Map<Block, Item> BLOCK_TO_ITEM = Maps.<Block, Item>newHashMap();
+-   public static final RegistryNamespaced<ResourceLocation, Item> REGISTRY = new RegistryNamespaced<ResourceLocation, Item>();
+-   public static final Map<Block, Item> BLOCK_TO_ITEM = Maps.<Block, Item>newHashMap();
++public class Item extends net.minecraftforge.registries.ForgeRegistryEntry<Item> implements IItemProvider, net.minecraftforge.common.extensions.IForgeItem {
++   public static final RegistryNamespaced<ResourceLocation, Item> REGISTRY = net.minecraftforge.registries.GameData.getWrapper(Item.class);
++   public static final Map<Block, Item> BLOCK_TO_ITEM = net.minecraftforge.registries.GameData.getBlockItemMap();
     private static final IItemPropertyGetter DAMAGED_GETTER = (p_210306_0_, p_210306_1_, p_210306_2_) -> {
-@@ -1182,4 +1182,17 @@
+       return p_210306_0_.isItemDamaged() ? 1.0F : 0.0F;
+    };
+@@ -126,6 +126,7 @@
+       this.containerItem = p_i48487_1_.field_200922_c;
+       this.maxDamage = p_i48487_1_.field_200921_b;
+       this.maxStackSize = p_i48487_1_.field_200920_a;
++      this.canRepair = p_i48487_1_.canRepair;
+       if (this.maxDamage > 0) {
+          this.addPropertyOverride(new ResourceLocation("damaged"), DAMAGED_GETTER);
+          this.addPropertyOverride(new ResourceLocation("damage"), DAMAGE_GETTER);
+@@ -149,10 +150,12 @@
+       return stack;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version.
+    public final int getItemStackLimit() {
+       return this.maxStackSize;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version.
+    public final int getMaxDamage() {
+       return this.maxDamage;
+    }
+@@ -207,6 +210,7 @@
+       return this.containerItem;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version.
+    public boolean hasContainerItem() {
+       return this.containerItem != null;
+    }
+@@ -263,7 +267,7 @@
+    }
+ 
+    public boolean isEnchantable(ItemStack stack) {
+-      return this.getItemStackLimit() == 1 && this.isDamageable();
++      return this.getItemStackLimit(stack) == 1 && this.isDamageable();
+    }
+ 
+    @Nullable
+@@ -280,8 +284,8 @@
+       float f5 = MathHelper.sin(-f * ((float)Math.PI / 180F));
+       float f6 = f3 * f4;
+       float f7 = f2 * f4;
+-      double d3 = 5.0D;
+-      Vec3d vec3d1 = vec3d.add((double)f6 * 5.0D, (double)f5 * 5.0D, (double)f7 * 5.0D);
++      double d3 = playerIn.getEntityAttribute(EntityPlayer.REACH_DISTANCE).getAttributeValue();
++      Vec3d vec3d1 = vec3d.add((double)f6 * d3, (double)f5 * d3, (double)f7 * d3);
+       return worldIn.func_200259_a(vec3d, vec3d1, useLiquids ? RayTraceFluidMode.SOURCE_ONLY : RayTraceFluidMode.NEVER, false, false);
+    }
+ 
+@@ -297,6 +301,7 @@
+    }
+ 
+    protected boolean isInCreativeTab(ItemGroup targetTab) {
++      if (getCreativeTabs().stream().anyMatch(tab -> tab == targetTab)) return true;
+       ItemGroup itemgroup = this.getCreativeTab();
+       return itemgroup != null && (targetTab == ItemGroup.SEARCH || targetTab == itemgroup);
+    }
+@@ -310,10 +315,65 @@
+       return false;
+    }
+ 
++   @Deprecated // Use ItemStack sensitive version.
+    public Multimap<String, AttributeModifier> getItemAttributeModifiers(EntityEquipmentSlot equipmentSlot) {
+       return HashMultimap.<String, AttributeModifier>create();
+    }
+ 
++   /* ======================================== FORGE START =====================================*/
++
++   @OnlyIn(Dist.CLIENT)
++   @Nullable
++   private net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr;
++   
++   private java.util.Map<String, Integer> toolClasses = new java.util.HashMap<String, Integer>();
++
++   protected final boolean canRepair;
++
++   @Override
++   public boolean isRepairable()
++   {
++       return canRepair && isDamageable();
++   }
++
++   @Override
++   public void setHarvestLevel(String toolClass, int level)
++   {
++       if (level < 0)
++           toolClasses.remove(toolClass);
++       else
++           toolClasses.put(toolClass, level);
++   }
++
++   @Override
++   public java.util.Set<String> getToolClasses(ItemStack stack)
++   {
++       return toolClasses.keySet();
++   }
++
++   @Override
++   public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState)
++   {
++       Integer ret = toolClasses.get(toolClass);
++       return ret == null ? -1 : ret;
++   }
++
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public final net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer getTileEntityItemStackRenderer()
++   {
++       return teisr != null ? teisr : net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer.instance;
++   }
++
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public void setTileEntityItemStackRenderer(@Nullable net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr)
++   {
++       this.teisr = teisr;
++   }
++   
++   /* ======================================== FORGE END   =====================================*/
++   
+    public static void registerItems() {
+       registerItemBlock(Blocks.AIR, new ItemAir(Blocks.AIR, new Item.Builder()));
+       func_200879_a(Blocks.STONE, ItemGroup.BUILDING_BLOCKS);
+@@ -1147,6 +1207,7 @@
+       private Item field_200922_c;
+       private ItemGroup field_200923_d;
+       private EnumRarity field_208104_e = EnumRarity.COMMON;
++      private boolean canRepair = true;
+ 
+       public Item.Builder func_200917_a(int p_200917_1_) {
+          if (this.field_200921_b > 0) {
+@@ -1181,5 +1242,10 @@
+          this.field_208104_e = p_208103_1_;
           return this;
        }
++      
++      public Item.Builder setNoRepair() {
++          canRepair = false;
++          return this;
     }
-+
-+
-+   /* ========================================= FORGE START =====================================*/
-+   /**
-+    * @return the fuel burn time for this itemStack in a furnace.
-+    * Return 0 to make it not act as a fuel.
-+    * Return -1 to let the default vanilla logic decide.
-+    */
-+   public int getItemBurnTime(ItemStack itemStack)
-+   {
-+      return -1;
  }
-+   /* ========================================= FORGE  END  =====================================*/
 +}

@@ -24,18 +24,14 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockModelShapes;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import org.apache.logging.log4j.message.SimpleMessage;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.function.Function;
 
 import static net.minecraftforge.client.model.ModelLoader.getInventoryVariant;
@@ -44,39 +40,35 @@ public class ModelLoaderErrorMessage extends SimpleMessage
 {
     private final ModelResourceLocation resourceLocation;
     private final Exception exception;
-    private final IRegistry<ModelResourceLocation, IBakedModel> modelRegistry;
 
     private static Multimap<ModelResourceLocation, IBlockState> reverseBlockMap = HashMultimap.create();
     private static Multimap<ModelResourceLocation, String> reverseItemMap = HashMultimap.create();
 
-    private static void buildLookups(final BlockModelShapes blockModelShapes, Function<Item,Iterable<String>> itemNameLookup) {
+    private static void buildLookups() {
         if (!reverseBlockMap.isEmpty()) return;
-        for(Map.Entry<IBlockState, ModelResourceLocation> entry : blockModelShapes.getBlockStateMapper().putAllStateModelLocations().entrySet())
-        {
-            reverseBlockMap.put(entry.getValue(), entry.getKey());
-        }
+        
+        ForgeRegistries.BLOCKS.getValues().stream()
+        	.flatMap(block -> block.getBlockState().getValidStates().stream())
+        	.forEach(state -> reverseBlockMap.put(BlockModelShapes.func_209554_c(state), state));
+
         ForgeRegistries.ITEMS.forEach(item ->
         {
-            for(String s : itemNameLookup.apply(item))
-            {
-                ModelResourceLocation memory = getInventoryVariant(s);
-                reverseItemMap.put(memory, item.getRegistryName().toString());
-            }
+        	ModelResourceLocation memory = getInventoryVariant(ForgeRegistries.ITEMS.getKey(item).toString());
+        	reverseItemMap.put(memory, item.getRegistryName().toString());
         });
 
     }
 
-    public ModelLoaderErrorMessage(ModelResourceLocation resourceLocation, Exception exception, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, BlockModelShapes blockModelShapes, Function<Item, Iterable<String>> itemNameLookup)
+    public ModelLoaderErrorMessage(ModelResourceLocation resourceLocation, Exception exception)
     {
         // if we're logging these error messages, this will get built for reference
-        buildLookups(blockModelShapes, itemNameLookup);
+        buildLookups();
         this.resourceLocation = resourceLocation;
         this.exception = exception;
-        this.modelRegistry = modelRegistry;
     }
 
     private void stuffs() {
-        String domain = resourceLocation.getResourceDomain();
+        String domain = resourceLocation.getNamespace();
         String errorMsg = "Exception loading model for variant " + resourceLocation;
         Collection<IBlockState> blocks = reverseBlockMap.get(resourceLocation);
         if(!blocks.isEmpty())

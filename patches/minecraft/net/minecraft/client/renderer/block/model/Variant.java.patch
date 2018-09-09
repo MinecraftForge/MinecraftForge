@@ -1,0 +1,27 @@
+--- a/net/minecraft/client/renderer/block/model/Variant.java
++++ b/net/minecraft/client/renderer/block/model/Variant.java
+@@ -12,7 +12,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class Variant {
++public class Variant implements net.minecraftforge.client.model.ISmartVariant {
+    private final ResourceLocation modelLocation;
+    private final ModelRotation rotation;
+    private final boolean uvLock;
+@@ -29,10 +29,15 @@
+       return this.modelLocation;
+    }
+ 
++   @Deprecated
+    public ModelRotation getRotation() {
+       return this.rotation;
+    }
+ 
++   public net.minecraftforge.common.model.IModelState getState() {
++      return this.rotation;
++   }
++
+    public boolean isUvLock() {
+       return this.uvLock;
+    }

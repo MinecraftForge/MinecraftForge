@@ -20,13 +20,24 @@
 package net.minecraftforge.client.model;
 
 import java.util.Deque;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Queues;
+import com.google.common.collect.Sets;
+
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
 import net.minecraftforge.client.model.ModelLoader.VariantLoader;
@@ -35,21 +46,16 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.model.animation.AnimationStateMachine;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import net.minecraftforge.fml.common.FMLLog;
-
-import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Queues;
-import com.google.common.collect.Sets;
 
 /*
  * Central hub for custom model loaders.
  */
 public class ModelLoaderRegistry
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     private static final Set<ICustomModelLoader> loaders = Sets.newHashSet();
-    private static final Map<ResourceLocation, IModel> cache = Maps.newHashMap();
+    private static final Map<ResourceLocation, IUnbakedModel> cache = Maps.newHashMap();
     private static final Deque<ResourceLocation> loadingModels = Queues.newArrayDeque();
     private static final Set<ResourceLocation> textures = Sets.newHashSet();
     private static final Map<ResourceLocation, ResourceLocation> aliases = Maps.newHashMap();
@@ -73,7 +79,7 @@ public class ModelLoaderRegistry
     public static void registerLoader(ICustomModelLoader loader)
     {
         loaders.add(loader);
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(loader);
+        ((IReloadableResourceManager) Minecraft.getMinecraft().func_195551_G()).func_199006_a(loader);
     }
 
     public static boolean loaded(ResourceLocation location)
@@ -85,8 +91,8 @@ public class ModelLoaderRegistry
     public static ResourceLocation getActualLocation(ResourceLocation location)
     {
         if(location instanceof ModelResourceLocation) return location;
-        if(location.getResourcePath().startsWith("builtin/")) return location;
-        return new ResourceLocation(location.getResourceDomain(), "models/" + location.getResourcePath());
+        if(location.getPath().startsWith("builtin/")) return location;
+        return new ResourceLocation(location.getNamespace(), "models/" + location.getPath());
     }
 
     /**
@@ -94,11 +100,11 @@ public class ModelLoaderRegistry
      * ResourceLocation argument will be passed directly to the custom model loaders,
      * ModelResourceLocation argument will be loaded through the blockstate system.
      */
-    public static IModel getModel(ResourceLocation location) throws Exception
+    public static IUnbakedModel getModel(ResourceLocation location) throws Exception
     {
-        IModel model;
+        IUnbakedModel model;
 
-        IModel cached = cache.get(location);
+        IUnbakedModel cached = cache.get(location);
         if (cached != null) return cached;
 
         for(ResourceLocation loading : loadingModels)
@@ -168,7 +174,7 @@ public class ModelLoaderRegistry
             {
                 throw new LoaderException(String.format("Loader %s returned null while loading model %s", accepted, location));
             }
-            textures.addAll(model.getTextures());
+            textures.addAll(model.func_209559_a(ModelLoader.defaultModelGetter(), new HashSet<>()));
         }
         finally
         {
@@ -179,7 +185,7 @@ public class ModelLoaderRegistry
             }
         }
         cache.put(location, model);
-        for (ResourceLocation dep : model.getDependencies())
+        for (ResourceLocation dep : model.getOverrideLocations())
         {
             getModelOrMissing(dep);
         }
@@ -189,7 +195,7 @@ public class ModelLoaderRegistry
     /**
      * Use this if you don't care about the exception and want some model anyway.
      */
-    public static IModel getModelOrMissing(ResourceLocation location)
+    public static IUnbakedModel getModelOrMissing(ResourceLocation location)
     {
         try
         {
@@ -204,7 +210,7 @@ public class ModelLoaderRegistry
     /**
      * Use this if you want the model, but need to log the error.
      */
-    public static IModel getModelOrLogError(ResourceLocation location, String error)
+    public static IUnbakedModel getModelOrLogError(ResourceLocation location, String error)
     {
         try
         {
@@ -212,12 +218,12 @@ public class ModelLoaderRegistry
         }
         catch(Exception e)
         {
-            FMLLog.log.error(error, e);
+            LOGGER.error(error, e);
             return getMissingModel(location, e);
         }
     }
 
-    public static IModel getMissingModel()
+    public static IUnbakedModel getMissingModel()
     {
         final ModelLoader loader = VanillaLoader.INSTANCE.getLoader();
         if(loader == null)
@@ -227,11 +233,11 @@ public class ModelLoaderRegistry
         return loader.getMissingModel();
     }
 
-    static IModel getMissingModel(ResourceLocation location, Throwable cause)
+    static IUnbakedModel getMissingModel(ResourceLocation location, Throwable cause)
     {
         //IModel model =  new FancyMissingModel(ExceptionUtils.getStackTrace(cause).replaceAll("\\t", "    "));
-        IModel model = new FancyMissingModel(getMissingModel(), location.toString());
-        textures.addAll(model.getTextures());
+        IUnbakedModel model = new FancyMissingModel(getMissingModel(), location.toString());
+        textures.addAll(model.func_209559_a(null, null));
         return model;
     }
 

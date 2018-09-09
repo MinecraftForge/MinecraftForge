@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/multiplayer/WorldClient.java
++++ b/net/minecraft/client/multiplayer/WorldClient.java
+@@ -81,6 +81,7 @@
+       this.mapStorage = new SaveDataMemoryStorage();
+       this.calculateInitialSkylight();
+       this.calculateInitialWeather();
++      this.initCapabilities();
+    }
+ 
+    public void tick() {

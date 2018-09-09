@@ -22,6 +22,7 @@ package net.minecraftforge.client.model;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -42,9 +43,9 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+    public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
     {
-        return originalModel.getQuads(state, side, rand);
+        return originalModel.func_200117_a(state, side, rand);
     }
 
     @Override

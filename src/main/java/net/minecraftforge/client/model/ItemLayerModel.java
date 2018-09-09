@@ -25,12 +25,15 @@ import net.minecraftforge.common.ForgeVersion;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.block.model.ModelBlock;
+import net.minecraft.client.renderer.block.model.ModelRotation;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
@@ -40,14 +43,16 @@ import net.minecraftforge.common.model.TRSRTransformation;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
-public final class ItemLayerModel implements IModel
+public final class ItemLayerModel implements IUnbakedModel
 {
     public static final ItemLayerModel INSTANCE = new ItemLayerModel(ImmutableList.of());
 
@@ -70,7 +75,7 @@ public final class ItemLayerModel implements IModel
 
     public ItemLayerModel(ModelBlock model)
     {
-        this(getTextures(model), model.createOverrides());
+        this(getTextures(model), model.func_209568_a(model, ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter()));
     }
 
     private static ImmutableList<ResourceLocation> getTextures(ModelBlock model)
@@ -82,12 +87,20 @@ public final class ItemLayerModel implements IModel
         }
         return builder.build();
     }
-
-    public Collection<ResourceLocation> getTextures()
+    
+    @Override
+    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) 
     {
         return textures;
     }
+    
+    @Override
+    public Collection<ResourceLocation> getOverrideLocations() 
+    {
+    	return Collections.emptyList();
+    }
 
+    @Override
     public ItemLayerModel retexture(ImmutableMap<String, String> textures)
     {
         ImmutableList.Builder<ResourceLocation> builder = ImmutableList.builder();
@@ -104,10 +117,9 @@ public final class ItemLayerModel implements IModel
         }
         return new ItemLayerModel(builder.build(), overrides);
     }
-
+    
     @Override
-    public IBakedModel bake(IModelState state, final VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
-    {
+    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean p_209558_4_, VertexFormat format) {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         Optional<TRSRTransformation> transform = state.apply(Optional.empty());
         for(int i = 0; i < textures.size(); i++)
@@ -132,7 +144,6 @@ public final class ItemLayerModel implements IModel
 
         for(int f = 0; f < sprite.getFrameCount(); f++)
         {
-            int[] pixels = sprite.getFrameTextureData(f)[0];
             boolean ptu;
             boolean[] ptv = new boolean[uMax];
             Arrays.fill(ptv, true);
@@ -141,7 +152,7 @@ public final class ItemLayerModel implements IModel
                 ptu = true;
                 for(int u = 0; u < uMax; u++)
                 {
-                    int alpha = getAlpha(pixels, uMax, vMax, u, v);
+                    int alpha = sprite.getPixelRGBA(f, u, v) >> 24 & 0xFF;
                     boolean t = alpha / 255f <= 0.1f;
 
                     if (!t && alpha < 255)
@@ -328,11 +339,6 @@ public final class ItemLayerModel implements IModel
         }
     }
 
-    private static int getAlpha(int[] pixels, int uMax, int vMax, int u, int v)
-    {
-        return pixels[u + (vMax - 1 - v) * uMax] >> 24 & 0xFF;
-    }
-
     private static BakedQuad buildSideQuad(VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, int tint, TextureAtlasSprite sprite, int u, int v, int size)
     {
         final float eps = 1e-2f;
@@ -435,7 +441,7 @@ public final class ItemLayerModel implements IModel
                 break;
             }
             case NORMAL:
-                builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                builder.put(e, (float)side.getXOffset(), (float)side.getYOffset(), (float)side.getZOffset(), 0f);
                 break;
             default:
                 builder.put(e);
@@ -449,19 +455,19 @@ public final class ItemLayerModel implements IModel
         INSTANCE;
 
         @Override
-        public void onResourceManagerReload(IResourceManager resourceManager) {}
+        public void func_195410_a(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
         {
-            return modelLocation.getResourceDomain().equals(ForgeVersion.MOD_ID) && (
-                modelLocation.getResourcePath().equals("item-layer") ||
-                modelLocation.getResourcePath().equals("models/block/item-layer") ||
-                modelLocation.getResourcePath().equals("models/item/item-layer"));
+            return modelLocation.getNamespace().equals(ForgeVersion.MOD_ID) && (
+                modelLocation.getPath().equals("item-layer") ||
+                modelLocation.getPath().equals("models/block/item-layer") ||
+                modelLocation.getPath().equals("models/item/item-layer"));
         }
 
         @Override
-        public IModel loadModel(ResourceLocation modelLocation)
+        public IUnbakedModel loadModel(ResourceLocation modelLocation)
         {
             return ItemLayerModel.INSTANCE;
         }

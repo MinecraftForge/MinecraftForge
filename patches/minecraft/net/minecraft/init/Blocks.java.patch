@@ -1,0 +1,10 @@
+--- a/net/minecraft/init/Blocks.java
++++ b/net/minecraft/init/Blocks.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.util.ResourceLocation;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Blocks {
+    private static final Set<Block> CACHE;
+    public static final Block AIR;

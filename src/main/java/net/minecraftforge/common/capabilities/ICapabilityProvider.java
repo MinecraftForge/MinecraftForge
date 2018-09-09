@@ -19,8 +19,6 @@
 
 package net.minecraftforge.common.capabilities;
 
-import java.util.Map;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -29,41 +27,23 @@ import net.minecraft.util.EnumFacing;
 public interface ICapabilityProvider
 {
     /**
-     * Determines if this object has support for the capability in question on the specific side.
-     * The return value of this MIGHT change during runtime if this object gains or loses support
-     * for a capability. It is not required to call this function before calling 
-     * {@link #getCapability(Capability, EnumFacing)}.
-     * <p>
-     * Basically, this method functions analogously to {@link Map#containsKey(Object)}.
-     * <p>
-     * <em>Example:</em>
-     *   A Pipe getting a cover placed on one side causing it lose the Inventory attachment function for that side.
-     * </p><p>
-     * This is a light weight version of getCapability, intended for metadata uses.
-     * </p>
-     * @param capability The capability to check
-     * @param facing The Side to check from:
-     *   CAN BE NULL. Null is defined to represent 'internal' or 'self'
-     * @return True if this object supports the capability. If true, then {@link #getCapability(Capability, EnumFacing)} 
-     * must not return null.
-     */
-    boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing);
-
-    /**
-     * Retrieves the handler for the capability requested on the specific side.
-     * <ul>
-     * <li>The return value <strong>CAN</strong> be null if the object does not support the capability.</il>
-     * <li>The return value <strong>CAN</strong> be the same for multiple faces.</li>
-     * </ul>
-     * <p>
-     * Basically, this method functions analogously to {@link Map#get(Object)}.
+     * Retrieves the Optional handler for the capability requested on the specific side.
+     * The return value <strong>CAN</strong> be the same for multiple faces.
+     * Modders are encouraged to cache this value, using the listener capabilities of the Optional to
+     * be notified if the requested capability get lost.
      *
      * @param capability The capability to check
-     * @param facing The Side to check from, 
+     * @param facing The Side to check from,
      *   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
-     * @return The requested capability. Must <strong>NOT</strong> be null when {@link #hasCapability(Capability, EnumFacing)} 
-     * would return true. 
+     * @return The requested an optional holding the requested capability.
      */
-    @Nullable
-    <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing);
+    @Nonnull <T> OptionalCapabilityInstance<T> getCapability(@Nonnull final Capability<T> cap, final @Nullable EnumFacing side);
+
+    /*
+     * Purely added as a bouncer to sided version, to make modders stop complaining about calling with a null value.
+     * This should never be OVERRIDDEN, modders should only ever implement the sided version.
+     */
+    @Nonnull default <T> OptionalCapabilityInstance<T> getCapability(@Nonnull final Capability<T> cap) {
+        return getCapability(cap, null);
+    }
 }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/ItemRenderer.java
++++ b/net/minecraft/client/renderer/ItemRenderer.java
+@@ -49,7 +49,7 @@
+ 
+    public ItemRenderer(TextureManager p_i46552_1_, ModelManager p_i46552_2_, ItemColors p_i46552_3_) {
+       this.textureManager = p_i46552_1_;
+-      this.itemModelMesher = new ItemModelMesher(p_i46552_2_);
++      this.itemModelMesher = new net.minecraftforge.client.ItemModelMesherForge(p_i46552_2_);
+ 
+       for(Item item : Item.REGISTRY) {
+          if (!field_195411_c.contains(item)) {

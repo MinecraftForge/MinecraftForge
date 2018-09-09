@@ -20,7 +20,7 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.WorldProvider;
+import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.storage.WorldSavedData;
 
 public class WorldCapabilityData extends WorldSavedData
@@ -66,7 +66,7 @@ public class WorldCapabilityData extends WorldSavedData
         return true;
     }
 
-    public void setCapabilities(WorldProvider provider, INBTSerializable<NBTTagCompound> capabilities)
+    public void setCapabilities(Dimension provider, INBTSerializable<NBTTagCompound> capabilities)
     {
         this.serializable = capabilities;
         if (this.capNBT != null && serializable != null)
