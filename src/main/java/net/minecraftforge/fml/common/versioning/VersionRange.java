@@ -28,6 +28,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Joiner; //Forge: Add Imports
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
 import javax.annotation.Nullable;
 
 /**
@@ -584,4 +587,22 @@ public class VersionRange
         return restrictions.size() == 1 ? restrictions.get(0).getLowerBound().getVersionString() : "";
     }
 
+    //Forge: Added friendly {localized} toString
+    @OnlyIn(Dist.CLIENT)
+    public String toStringFriendly()
+    {
+        if ( recommendedVersion != null )
+        {
+            return recommendedVersion.getVersionString();
+        }
+        else
+        {
+            List<String> friendlyRestrictions = new ArrayList<String>(restrictions.size());
+            for (Restriction restriction : restrictions)
+            {
+                friendlyRestrictions.add(restriction.toStringFriendly());
+            }
+            return Joiner.on(", ").join(friendlyRestrictions);
+        }
+    }
 }

@@ -22,23 +22,21 @@ package net.minecraftforge.fml.common;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.GuiMultipleModsErrored;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.IDisplayableError;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.gui.GuiMultipleModsErrored;
 
 public class MultipleModsErrored extends EnhancedRuntimeException implements IDisplayableError
 {
-    public final List<WrongMinecraftVersionException> wrongMinecraftExceptions;
     public final List<MissingModsException> missingModsExceptions;
-    public MultipleModsErrored(List<WrongMinecraftVersionException> wrongMinecraftExceptions, List<MissingModsException> missingModsExceptions)
+    public MultipleModsErrored(List<MissingModsException> missingModsExceptions)
     {
-        this.wrongMinecraftExceptions = wrongMinecraftExceptions;
         this.missingModsExceptions = missingModsExceptions;
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public GuiScreen createGui()
     {
         return new GuiMultipleModsErrored(this);
@@ -47,10 +45,6 @@ public class MultipleModsErrored extends EnhancedRuntimeException implements IDi
     @Override
     protected void printStackTrace(WrappedPrintStream stream)
     {
-        for (WrongMinecraftVersionException wrongMinecraftVersionException : this.wrongMinecraftExceptions)
-        {
-            wrongMinecraftVersionException.printStackTrace(stream);
-        }
         for (MissingModsException missingModsException : this.missingModsExceptions)
         {
             missingModsException.printStackTrace(stream);

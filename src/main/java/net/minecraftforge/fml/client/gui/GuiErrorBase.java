@@ -19,21 +19,25 @@
 
 package net.minecraftforge.fml.client.gui;
 
+import java.awt.Desktop;
+import java.io.File;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.resources.I18n;
-
-import java.awt.*;
-import java.io.File;
-
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.common.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@OnlyIn(Dist.CLIENT)
 public class GuiErrorBase extends GuiErrorScreen
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    static final File minecraftDir = new File(Loader.instance().getConfigDir().getParent());
+    static final File minecraftDir = new File(FMLPaths.FMLCONFIG.get().toFile().getParent());
     static final File logFile = new File(minecraftDir, "logs/latest.log");
+
     public GuiErrorBase()
     {
         super(null, null);

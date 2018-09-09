@@ -37,6 +37,7 @@ import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLPaths;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation.EnumHolder;
@@ -144,7 +145,7 @@ public class ConfigManager
     {
         FMLLog.log.debug("Attempting to inject @Config classes into {} for type {}", modid, type);
         ClassLoader mcl = Loader.instance().getModClassLoader();
-        File configDir = Loader.instance().getConfigDir();
+        File configDir = FMLPaths.FMLCONFIG.get().toFile();
         Multimap<Config.Type, ASMData> map = asm_data.get(modid);
 
         if (map == null)
@@ -207,7 +208,7 @@ public class ConfigManager
     static Configuration getConfiguration(String modid, String name) {
         if (Strings.isNullOrEmpty(name))
             name = modid;
-        File configDir = Loader.instance().getConfigDir();
+        File configDir = FMLPaths.FMLCONFIG.get().toFile();
         File configFile = new File(configDir, name + ".cfg");
         return CONFIGS.get(configFile.getAbsolutePath());
     }

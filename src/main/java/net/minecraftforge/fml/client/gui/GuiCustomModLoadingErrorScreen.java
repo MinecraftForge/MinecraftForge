@@ -19,19 +19,26 @@
 
 package net.minecraftforge.fml.client.gui;
 
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+
+@OnlyIn(Dist.CLIENT)
 public class GuiCustomModLoadingErrorScreen extends GuiErrorBase
 {
     private CustomModLoadingErrorDisplayException customException;
+
     public GuiCustomModLoadingErrorScreen(CustomModLoadingErrorDisplayException customException)
     {
         this.customException = customException;
     }
+
     @Override
     public void initGui()
     {
         super.initGui();
         this.customException.initGui(this, fontRenderer);
     }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {

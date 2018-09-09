@@ -81,7 +81,7 @@ public class ForgeModContainer extends FMLModContainer
         } catch (MalformedURLException e) {}
 
         config = null;
-        File cfgFile = new File(Loader.instance().getConfigDir(), "forge.cfg");
+        File cfgFile = new File(FMLPaths.FMLCONFIG.get().toFile(), "forge.cfg");
         config = new Configuration(cfgFile);
 
         syncConfig(true);
