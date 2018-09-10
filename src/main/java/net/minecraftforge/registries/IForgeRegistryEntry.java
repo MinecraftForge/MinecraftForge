@@ -30,7 +30,7 @@ public interface IForgeRegistryEntry<V>
     /**
      * Sets a unique name for this Item. This should be used for uniquely identify the instance of the Item.
      * This is the valid replacement for the atrocious 'getTranslationKey().substring(6)' stuff that everyone does.
-     * Unlocalized names have NOTHING to do with unique identifiers. As demonstrated by vanilla blocks and items.
+     * Translation keys have NOTHING to do with unique identifiers. As demonstrated by vanilla blocks and items.
      *
      * The supplied name will be prefixed with the currently active mod's modId.
      * If the supplied name already has a prefix that is different, it will be used and a warning will be logged.

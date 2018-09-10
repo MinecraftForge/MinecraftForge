@@ -326,7 +326,7 @@ public class Fluid
     }
 
     /**
-     * A FluidStack sensitive version of getTranslationKey
+     * A FluidStack sensitive version of getUnlocalizedName
      */
     public String getUnlocalizedName(FluidStack stack)
     {
