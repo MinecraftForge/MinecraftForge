@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/settings/KeyBinding.java
++++ b/net/minecraft/client/settings/KeyBinding.java
+@@ -163,4 +163,9 @@
+    public String func_197982_m() {
+       return this.keyCode.func_197935_d();
+    }
++   
++   public InputMappings.Input getKey() 
++   {
++      return this.keyCode;
++   }
+ }
