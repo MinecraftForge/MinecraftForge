@@ -87,4 +87,3 @@ public class FramebufferEventsTest
         GlStateManager.popMatrix();
     }
 }
-

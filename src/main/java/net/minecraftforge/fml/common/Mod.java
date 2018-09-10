@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -119,6 +119,11 @@ public @interface Mod
      *     Our example mod:
      *      * depends on Forge and uses new features that were introduced in Forge version 14.21.1.2395
      *         "required:forge@[14.21.1.2395,);"
+     *
+     *          1.12.2 Note: for compatibility with Forge older than 14.23.0.2501 the syntax must follow this older format:
+     *          "required-after:forge@[14.21.1.2395,);"
+     *          For more explanation see https://github.com/MinecraftForge/MinecraftForge/issues/4918
+     *
      *      * is a dedicated addon to mod1 and has to have its event handlers run after mod1's are run,
      *         "required-after:mod1;"
      *      * has optional integration with mod2 which depends on features introduced in mod2 version 4.7.0,

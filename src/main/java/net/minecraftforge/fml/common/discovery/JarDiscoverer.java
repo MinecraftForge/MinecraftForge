@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -128,6 +128,14 @@ public class JarDiscoverer implements ITypeDiscoverer
         FMLLog.log.info("Loading jar {} annotation data from json", candidate.getModContainer().getPath());
         ZipEntry json = jar.getEntry(JsonAnnotationLoader.ANNOTATION_JSON);
         Multimap<String, ASMData> annos = JsonAnnotationLoader.loadJson(jar.getInputStream(json), candidate, table);
+
+        for (ZipEntry e : Collections.list(jar.entries()))
+        {
+            if (!e.getName().startsWith("__MACOSX") && !e.getName().startsWith("META-INF/") && e.getName().endsWith(".class"))
+            {
+                candidate.addClassEntry(e.getName());
+            }
+        }
 
         for (Entry<Type, Constructor<? extends ModContainer>> entry : ModContainerFactory.modTypes.entrySet())
         {

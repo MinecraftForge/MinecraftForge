@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,9 +55,9 @@ public class FMLServerTweaker extends FMLTweaker {
         // and deobfuscated parts of the code. Without, the UI won't show anything
         classLoader.addClassLoaderExclusion("com.mojang.util.QueueLogAppender");
 
-        classLoader.addClassLoaderExclusion("jline.");
-        classLoader.addClassLoaderExclusion("org.fusesource.");
-        classLoader.addClassLoaderExclusion("net.minecraftforge.server.console.TerminalConsoleAppender");
+        classLoader.addClassLoaderExclusion("org.jline.");
+        classLoader.addClassLoaderExclusion("com.sun.jna.");
+        classLoader.addClassLoaderExclusion("net.minecraftforge.server.terminalconsole.");
 
         FMLLaunchHandler.configureForServerLaunch(classLoader, this);
         FMLLaunchHandler.appendCoreMods();

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -61,7 +61,7 @@ public final class UsernameCache {
     private static final File saveFile = new File( /* The minecraft dir */(File) FMLInjectionData.data()[6], "usernamecache.json");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final Logger log = LogManager.getLogger(UsernameCache.class);
+    private static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID + ".UsernameCache");
 
     private UsernameCache() {}
 

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,7 +44,7 @@ public class GuiWrongMinecraft extends GuiErrorBase
         offset+=15;
         this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.wrongminecraft.fix", wrongMC.mod.getName()),this.width/2, offset, 0xFFFFFF);
         offset+=20;
-        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.clientLog.getName()), this.width / 2, offset, 0xFFFFFF);
+        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.missing.dependencies.see.log", GuiErrorBase.logFile.getName()), this.width / 2, offset, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,11 +16,14 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.server.command;
 
 import io.netty.channel.Channel;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -49,8 +52,13 @@ public class TextComponentHelper
         if (sender instanceof EntityPlayerMP)
         {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
-            Channel channel = playerMP.connection.netManager.channel();
-            return !channel.attr(NetworkRegistry.FML_MARKER).get();
+            NetHandlerPlayServer connection = playerMP.connection;
+            if (connection != null)
+            {
+                NetworkManager netManager = connection.netManager;
+                Channel channel = netManager.channel();
+                return !channel.attr(NetworkRegistry.FML_MARKER).get();
+            }
         }
         return false;
     }

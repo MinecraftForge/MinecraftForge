@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,7 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
@@ -46,6 +46,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     protected int colorIndex = -1;
     protected int lightmapIndex = -1;
 
+    protected VertexFormat baseFormat;
+
     public VertexLighterFlat(BlockColors colors)
     {
         this.blockInfo = new BlockInfo(colors);
@@ -55,9 +57,11 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     public void setParent(IVertexConsumer parent)
     {
         super.setParent(parent);
-        VertexFormat format = getVertexFormat(parent);
-        if(Objects.equal(format, getVertexFormat())) return;
-        setVertexFormat(format);
+        setVertexFormat(parent.getVertexFormat());
+    }
+
+    private void updateIndices()
+    {
         for(int i = 0; i < getVertexFormat().getElementCount(); i++)
         {
             switch(getVertexFormat().getElement(i).getUsage())
@@ -94,13 +98,19 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         }
     }
 
-    private static VertexFormat getVertexFormat(IVertexConsumer parent)
+    @Override
+    public void setVertexFormat(VertexFormat format)
     {
-        VertexFormat format = parent.getVertexFormat();
-        if(format == null || format.hasNormal()) return format;
-        format = new VertexFormat(format);
-        format.addElement(NORMAL_4F);
-        return format;
+        if (Objects.equals(format, baseFormat)) return;
+        baseFormat = format;
+        super.setVertexFormat(withNormal(format));
+        updateIndices();
+    }
+
+    private static VertexFormat withNormal(VertexFormat format)
+    {
+        if (format == null || format.hasNormal()) return format;
+        return new VertexFormat(format).addElement(NORMAL_4F);
     }
 
     @Override
@@ -111,14 +121,14 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         float[][] lightmap = quadData[lightmapIndex];
         float[][] color = quadData[colorIndex];
 
-        // If all three normal values are either -1 or 0, normals must be generated
-        if(quadData[normalIndex][0][0] != quadData[normalIndex][0][1] ||
-            quadData[normalIndex][0][1] != quadData[normalIndex][0][2] ||
-           (quadData[normalIndex][0][0] != -1 && quadData[normalIndex][0][0] != 0))
+        if (dataLength[normalIndex] >= 3
+            && (quadData[normalIndex][0][0] != -1
+            ||  quadData[normalIndex][0][1] != -1
+            ||  quadData[normalIndex][0][2] != -1))
         {
             normal = quadData[normalIndex];
         }
-        else
+        else // normals must be generated
         {
             normal = new float[4][4];
             Vector3f v1 = new Vector3f(position[3]);
@@ -290,6 +300,11 @@ public class VertexLighterFlat extends QuadGatheringTransformer
     public void setBlockPos(BlockPos blockPos)
     {
         blockInfo.setBlockPos(blockPos);
+    }
+
+    public void resetBlockInfo()
+    {
+        blockInfo.reset();
     }
 
     public void updateBlockInfo()

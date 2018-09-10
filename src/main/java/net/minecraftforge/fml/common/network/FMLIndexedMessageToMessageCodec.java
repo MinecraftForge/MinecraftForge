@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.common.network;
 
-import gnu.trove.map.hash.TByteObjectHashMap;
-import gnu.trove.map.hash.TObjectByteHashMap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -31,14 +29,20 @@ import io.netty.util.AttributeKey;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectMap;
+import it.unimi.dsi.fastutil.bytes.Byte2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.Object2ByteMap;
+import it.unimi.dsi.fastutil.objects.Object2ByteOpenHashMap;
+
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 @Sharable
-public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessageCodec<FMLProxyPacket, A> {
-    private TByteObjectHashMap<Class<? extends A>> discriminators = new TByteObjectHashMap<Class<? extends A>>();
-    private TObjectByteHashMap<Class<? extends A>> types = new TObjectByteHashMap<Class<? extends A>>();
+public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessageCodec<FMLProxyPacket, A>
+{
+    private final Byte2ObjectMap<Class<? extends A>> discriminators = new Byte2ObjectOpenHashMap<>();
+    private final Object2ByteMap<Class<? extends A>> types = new Object2ByteOpenHashMap<>();
 
     /**
      * Make this accessible to subclasses
@@ -65,11 +69,17 @@ public abstract class FMLIndexedMessageToMessageCodec<A> extends MessageToMessag
     @Override
     protected final void encode(ChannelHandlerContext ctx, A msg, List<Object> out) throws Exception
     {
+        String channel = ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get();
+        Class<?> clazz = msg.getClass();
+        if (!types.containsKey(clazz))
+        {
+            throw new RuntimeException("Undefined discriminator for message type " + clazz.getName() + " in channel " + channel);
+        }
+        byte discriminator = types.getByte(clazz);
         PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
-        byte discriminator = types.get(msg.getClass());
         buffer.writeByte(discriminator);
         encodeInto(ctx, msg, buffer);
-        FMLProxyPacket proxy = new FMLProxyPacket(buffer/*.copy()*/, ctx.channel().attr(NetworkRegistry.FML_CHANNEL).get());
+        FMLProxyPacket proxy = new FMLProxyPacket(buffer, channel);
         WeakReference<FMLProxyPacket> ref = ctx.channel().attr(INBOUNDPACKETTRACKER).get().get();
         FMLProxyPacket old = ref == null ? null : ref.get();
         if (old != null)

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,13 +22,14 @@ package net.minecraftforge.fml.common.network.handshake;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.Futures;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -105,12 +106,12 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
         @Override
         public void accept(ChannelHandlerContext ctx, FMLHandshakeMessage msg, Consumer<? super FMLHandshakeClientState> cons)
         {
-            String result = FMLNetworkHandler.checkModList((FMLHandshakeMessage.ModList) msg, Side.SERVER);
-            if (result != null)
+            String modRejections = FMLNetworkHandler.checkModList((FMLHandshakeMessage.ModList) msg, Side.SERVER);
+            if (modRejections != null)
             {
                 cons.accept(ERROR);
                 NetworkDispatcher dispatcher = ctx.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
-                dispatcher.rejectHandshake(result);
+                dispatcher.rejectHandshake(modRejections);
                 return;
             }
             if (!ctx.channel().attr(NetworkDispatcher.IS_LOCAL).get())
@@ -153,7 +154,9 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
 
             ctx.channel().attr(NetworkDispatcher.FML_GAMEDATA_SNAPSHOT).set(null);
 
-            Multimap<ResourceLocation, ResourceLocation> locallyMissing = GameData.injectSnapshot(snap, false, false);
+            //Do the remapping on the Client's thread in case things are reset while the client is running. We stall the network thread until this is finished which can cause the IO thread to time out... Not sure if we can do anything about that.
+            final Map<ResourceLocation, ForgeRegistry.Snapshot> snap_f = snap;
+            Multimap<ResourceLocation, ResourceLocation> locallyMissing = Futures.getUnchecked(Minecraft.getMinecraft().addScheduledTask(() -> GameData.injectSnapshot(snap_f, false, false)));
             if (!locallyMissing.isEmpty())
             {
                 cons.accept(ERROR);
@@ -197,7 +200,8 @@ enum FMLHandshakeClientState implements IHandshakeState<FMLHandshakeClientState>
             if (msg instanceof FMLHandshakeMessage.HandshakeReset)
             {
                 cons.accept(HELLO);
-                GameData.revertToFrozen();
+                //Run the revert on the client thread in case things are currently running to prevent race conditions while rebuilding the registries.
+                Minecraft.getMinecraft().addScheduledTask(GameData::revertToFrozen);
             }
         }
     },

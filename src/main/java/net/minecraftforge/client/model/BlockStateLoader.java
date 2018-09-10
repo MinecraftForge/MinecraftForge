@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -76,13 +76,13 @@ public class BlockStateLoader
             byte[] data = IOUtils.toByteArray(reader, StandardCharsets.UTF_8);
             reader = new InputStreamReader(new ByteArrayInputStream(data), StandardCharsets.UTF_8);
 
-            Marker marker = GSON.fromJson(new String(data), Marker.class);  // Read "forge_marker" to determine what to load.
+            Marker marker = GSON.fromJson(new String(data, StandardCharsets.UTF_8), Marker.class);  // Read "forge_marker" to determine what to load.
 
             switch (marker.forge_marker)
             {
                 case 1: // Version 1
                     ForgeBlockStateV1 v1 = GSON.fromJson(reader, ForgeBlockStateV1.class);
-                    Map<String, VariantList> variants = Maps.newHashMap();
+                    Map<String, VariantList> variants = Maps.newLinkedHashMap();
 
                     for (Entry<String, Collection<ForgeBlockStateV1.Variant>> entry : v1.variants.asMap().entrySet())
                     {   // Convert Version1 variants into vanilla variants for the ModelBlockDefinition.
@@ -94,8 +94,8 @@ public class BlockStateLoader
                             boolean gui3d = var.getGui3d().orElse(true);
                             int weight = var.getWeight().orElse(1);
 
-                            if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0 && var.getState().orElse(null) instanceof ModelRotation)
-                                mcVars.add(new Variant(var.getModel(), (ModelRotation)var.getState().get(), uvLock, weight));
+                            if (var.getModel() != null && var.getSubmodels().size() == 0 && var.getTextures().size() == 0 && var.getCustomData().size() == 0 && var.getState().orElse(ModelRotation.X0_Y0) instanceof ModelRotation)
+                                mcVars.add(new Variant(var.getModel(), (ModelRotation)var.getState().orElse(ModelRotation.X0_Y0), uvLock, weight));
                             else
                                 mcVars.add(new ForgeVariant(location, var.getModel(), var.getState().orElse(TRSRTransformation.identity()), uvLock, smooth, gui3d, weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
                         }

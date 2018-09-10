@@ -1,5 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/BiomeMesa.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/BiomeMesa.java
+@@ -318,13 +318,13 @@
+     @SideOnly(Side.CLIENT)
+     public int func_180625_c(BlockPos p_180625_1_)
+     {
+-        return 10387789;
++        return getModdedBiomeFoliageColor(10387789);
+     }
+ 
+     @SideOnly(Side.CLIENT)
+     public int func_180627_b(BlockPos p_180627_1_)
+     {
+-        return 9470285;
++        return getModdedBiomeGrassColor(9470285);
+     }
+ 
+     class Decorator extends BiomeDecorator
 @@ -336,6 +336,7 @@
          protected void func_76797_b(World p_76797_1_, Random p_76797_2_)
          {

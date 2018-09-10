@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,7 +32,6 @@ import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.FMLSecurityManager;
 
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 import com.google.common.collect.Lists;
@@ -129,7 +128,7 @@ public class FMLTweaker implements ITweaker {
         }
         catch (URISyntaxException e)
         {
-            LogManager.getLogger("FMLTWEAK").log(Level.ERROR, "Missing URI information for FML tweak");
+            LogManager.getLogger("FML.TWEAK").error("Missing URI information for FML tweak");
             throw new RuntimeException(e);
         }
     }
@@ -144,11 +143,6 @@ public class FMLTweaker implements ITweaker {
     @Override
     public String getLaunchTarget()
     {
-        // Remove the extraneous mods and modListFile args
-        @SuppressWarnings("unchecked")
-        Map<String,String> args = (Map<String, String>) Launch.blackboard.get("launchArgs");
-        args.remove("--modListFile");
-        args.remove("--mods");
         return "net.minecraft.client.main.Main";
     }
 
@@ -160,10 +154,11 @@ public class FMLTweaker implements ITweaker {
 
         for (Entry<String, String> arg : launchArgs.entrySet())
         {
+            if ("--modListFile".equals(arg.getKey()) || "--mods".equals(arg.getKey()))
+                continue;
             args.add(arg.getKey());
             args.add(arg.getValue());
         }
-        launchArgs.clear();
 
         return args.toArray(new String[args.size()]);
     }

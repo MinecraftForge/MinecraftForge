@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -94,6 +94,24 @@ public class OreDictionary
             registerOre("stairWood",   Blocks.JUNGLE_STAIRS);
             registerOre("stairWood",   Blocks.ACACIA_STAIRS);
             registerOre("stairWood",   Blocks.DARK_OAK_STAIRS);
+            registerOre("fenceWood", Blocks.OAK_FENCE);
+            registerOre("fenceWood", Blocks.SPRUCE_FENCE);
+            registerOre("fenceWood", Blocks.BIRCH_FENCE);
+            registerOre("fenceWood", Blocks.JUNGLE_FENCE);
+            registerOre("fenceWood", Blocks.DARK_OAK_FENCE);
+            registerOre("fenceWood", Blocks.ACACIA_FENCE);
+            registerOre("fenceGateWood", Blocks.OAK_FENCE_GATE);
+            registerOre("fenceGateWood", Blocks.SPRUCE_FENCE_GATE);
+            registerOre("fenceGateWood", Blocks.BIRCH_FENCE_GATE);
+            registerOre("fenceGateWood", Blocks.JUNGLE_FENCE_GATE);
+            registerOre("fenceGateWood", Blocks.DARK_OAK_FENCE_GATE);
+            registerOre("fenceGateWood", Blocks.ACACIA_FENCE_GATE);
+            registerOre("doorWood", Items.ACACIA_DOOR);
+            registerOre("doorWood", Items.BIRCH_DOOR);
+            registerOre("doorWood", Items.DARK_OAK_DOOR);
+            registerOre("doorWood", Items.OAK_DOOR);
+            registerOre("doorWood", Items.JUNGLE_DOOR);
+            registerOre("doorWood", Items.SPRUCE_DOOR);
             registerOre("stickWood",   Items.STICK);
             registerOre("treeSapling", new ItemStack(Blocks.SAPLING, 1, WILDCARD_VALUE));
             registerOre("treeLeaves",  new ItemStack(Blocks.LEAVES, 1, WILDCARD_VALUE));

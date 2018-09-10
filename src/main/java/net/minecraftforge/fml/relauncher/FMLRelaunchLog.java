@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Legacy FML logging class. Mods use {@link FMLPreInitializationEvent#getModLog()} instead, for Forge internal use use FMLLog.
+ * TODO 1.13 remove this class
  */
 @Deprecated
 public class FMLRelaunchLog {

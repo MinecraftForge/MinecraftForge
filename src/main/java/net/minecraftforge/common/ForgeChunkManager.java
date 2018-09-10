@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -44,6 +44,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.storage.ThreadedFileIOBase;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -944,15 +945,19 @@ public class ForgeChunkManager
                 }
             }
         }
-        try
-        {
-            CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
-        }
-        catch (IOException e)
-        {
-            FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
-            return;
-        }
+
+        // Write the actual file on the IO thread rather than blocking the server thread
+        ThreadedFileIOBase.getThreadedIOInstance().queueIO(() -> {
+            try
+            {
+                CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
+            }
+            catch (IOException e)
+            {
+                FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
+            }
+            return false;
+        });
     }
 
     static void loadEntity(Entity entity)

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiLanguage.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiLanguage.java
+@@ -108,7 +108,7 @@
+             Language language = this.field_148177_m.get(this.field_148176_l.get(p_148144_1_));
+             GuiLanguage.this.field_146454_h.func_135045_a(language);
+             GuiLanguage.this.field_146451_g.field_74363_ab = language.func_135034_a();
+-            this.field_148161_k.func_110436_a();
++            net.minecraftforge.fml.client.FMLClientHandler.instance().refreshResources(net.minecraftforge.client.resource.VanillaResourceType.LANGUAGES);
+             GuiLanguage.this.field_146289_q.func_78264_a(GuiLanguage.this.field_146454_h.func_135042_a() || GuiLanguage.this.field_146451_g.field_151455_aw);
+             GuiLanguage.this.field_146289_q.func_78275_b(GuiLanguage.this.field_146454_h.func_135044_b());
+             GuiLanguage.this.field_146452_r.field_146126_j = I18n.func_135052_a("gui.done");

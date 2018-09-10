@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,7 +35,7 @@ public class BlockInfo
     private IBlockState state;
     private BlockPos blockPos;
 
-    private final boolean[][][] translucent = new boolean[3][3][3];
+    private final boolean[][][] t = new boolean[3][3][3];
     private final int[][][] s = new int[3][3][3];
     private final int[][][] b = new int[3][3][3];
     private final float[][][][] skyLight = new float[3][2][2][2];
@@ -94,13 +94,23 @@ public class BlockInfo
         shx = shy = shz = 0;
     }
 
-    private float combine(int c, int s1, int s2, int s3)
+    public void reset()
     {
-        if(c == 0) c = Math.max(0, Math.max(s1, s2) - 1);
-        if(s1 == 0) s1 = Math.max(0, c - 1);
-        if(s2 == 0) s2 = Math.max(0, c - 1);
-        if(s3 == 0) s3 = Math.max(0, Math.max(s1, s2) - 1);
-        return (float)(c + s1 + s2 + s3) * 0x20 / (4 * 0xFFFF);
+        this.world = null;
+        this.state = null;
+        this.blockPos = null;
+        cachedTint = -1;
+        cachedMultiplier = -1;
+        shx = shy = shz = 0;
+    }
+
+    private float combine(int c, int s1, int s2, int s3, boolean t0, boolean t1, boolean t2, boolean t3)
+    {
+        if (c  == 0 && !t0) c  = Math.max(0, Math.max(s1, s2) - 1);
+        if (s1 == 0 && !t1) s1 = Math.max(0, c - 1);
+        if (s2 == 0 && !t2) s2 = Math.max(0, c - 1);
+        if (s3 == 0 && !t3) s3 = Math.max(0, Math.max(s1, s2) - 1);
+        return (float) (c + s1 + s2 + s3) * 0x20 / (4 * 0xFFFF);
     }
 
     public void updateLightMatrix()
@@ -113,8 +123,7 @@ public class BlockInfo
                 {
                     BlockPos pos = blockPos.add(x - 1, y - 1, z - 1);
                     IBlockState state = world.getBlockState(pos);
-                    translucent[x][y][z] = state.isTranslucent();
-                    //translucent[x][y][z] = world.getBlockState(pos).getBlock().getLightOpacity(world, pos) == 0;
+                    t[x][y][z] = state.getLightOpacity(world, pos) < 15;
                     int brightness = state.getPackedLightmapCoords(world, pos);
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;
@@ -124,7 +133,7 @@ public class BlockInfo
         }
         for(EnumFacing side : SIDES)
         {
-            if(!state.getBlock().doesSideBlockRendering(state, world, blockPos, side))
+            if(!state.doesSideBlockRendering(world, blockPos, side))
             {
                 int x = side.getFrontOffsetX() + 1;
                 int y = side.getFrontOffsetY() + 1;
@@ -143,17 +152,32 @@ public class BlockInfo
                     int y1 = y * 2;
                     int z1 = z * 2;
 
-                    boolean tx = translucent[x1][1][z1] || translucent[x1][y1][1];
-                    skyLight[0][x][y][z] = combine(s[x1][1][1], s[x1][1][z1], s[x1][y1][1], tx ? s[x1][y1][z1] : s[x1][1][1]);
-                    blockLight[0][x][y][z] = combine(b[x1][1][1], b[x1][1][z1], b[x1][y1][1], tx ? b[x1][y1][z1] : b[x1][1][1]);
+                    int     sxyz = s[x1][y1][z1];
+                    int     bxyz = b[x1][y1][z1];
+                    boolean txyz = t[x1][y1][z1];
 
-                    boolean ty = translucent[x1][y1][1] || translucent[1][y1][z1];
-                    skyLight[1][x][y][z] = combine(s[1][y1][1], s[x1][y1][1], s[1][y1][z1], ty ? s[x1][y1][z1] : s[1][y1][1]);
-                    blockLight[1][x][y][z] = combine(b[1][y1][1], b[x1][y1][1], b[1][y1][z1], ty ? b[x1][y1][z1] : b[1][y1][1]);
+                    int     sxz = s[x1][1][z1], sxy = s[x1][y1][1], syz = s[1][y1][z1];
+                    int     bxz = b[x1][1][z1], bxy = b[x1][y1][1], byz = b[1][y1][z1];
+                    boolean txz = t[x1][1][z1], txy = t[x1][y1][1], tyz = t[1][y1][z1];
 
-                    boolean tz = translucent[1][y1][z1] || translucent[x1][1][z1];
-                    skyLight[2][x][y][z] = combine(s[1][1][z1], s[1][y1][z1], s[x1][1][z1], tz ? s[x1][y1][z1] : s[1][1][z1]);
-                    blockLight[2][x][y][z] = combine(b[1][1][z1], b[1][y1][z1], b[x1][1][z1], tz ? b[x1][y1][z1] : b[1][1][z1]);
+                    int     sx = s[x1][1][1], sy = s[1][y1][1], sz = s[1][1][z1];
+                    int     bx = b[x1][1][1], by = b[1][y1][1], bz = b[1][1][z1];
+                    boolean tx = t[x1][1][1], ty = t[1][y1][1], tz = t[1][1][z1];
+
+                    skyLight  [0][x][y][z] = combine(sx, sxz, sxy, txz || txy ? sxyz : sx,
+                                                     tx, txz, txy, txz || txy ? txyz : tx);
+                    blockLight[0][x][y][z] = combine(bx, bxz, bxy, txz || txy ? bxyz : bx,
+                                                     tx, txz, txy, txz || txy ? txyz : tx);
+
+                    skyLight  [1][x][y][z] = combine(sy, sxy, syz, txy || tyz ? sxyz : sy,
+                                                     ty, txy, tyz, txy || tyz ? txyz : ty);
+                    blockLight[1][x][y][z] = combine(by, bxy, byz, txy || tyz ? bxyz : by,
+                                                     ty, txy, tyz, txy || tyz ? txyz : ty);
+
+                    skyLight  [2][x][y][z] = combine(sz, syz, sxz, tyz || txz ? sxyz : sz,
+                                                     tz, tyz, txz, tyz || txz ? txyz : tz);
+                    blockLight[2][x][y][z] = combine(bz, byz, bxz, tyz || txz ? bxyz : bz,
+                                                     tz, tyz, txz, tyz || txz ? txyz : tz);
                 }
             }
         }
@@ -188,7 +212,7 @@ public class BlockInfo
 
     public boolean[][][] getTranslucent()
     {
-        return translucent;
+        return t;
     }
 
     public float[][][][] getSkyLight()

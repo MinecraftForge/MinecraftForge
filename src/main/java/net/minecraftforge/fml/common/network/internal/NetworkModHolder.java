@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -43,8 +43,27 @@ import javax.annotation.Nullable;
 
 public class NetworkModHolder
 {
+    /**
+     * Validates that the mods versions on the client and server are compatible with mod.
+     */
     public abstract class NetworkChecker {
+        /**
+         * @deprecated use {@link #checkCompatible(Map, Side)}
+         */
+        @Deprecated // TODO remove in 1.13
         public abstract boolean check(Map<String,String> remoteVersions, Side side);
+
+        /**
+         * @param remoteVersions map of modIds to version strings, represents all the mods on the given side
+         * @param side the side that the remoteVersions are from
+         * @return null if these mod versions are compatible with this mod,
+         *         an error string reason if these mod versions are not compatible with this mod.
+         */
+        @Nullable
+        public String checkCompatible(Map<String,String> remoteVersions, Side side)
+        {
+            return check(remoteVersions, side) ? toString() : null;
+        }
     }
 
     private class IgnoredChecker extends NetworkChecker {
@@ -53,6 +72,14 @@ public class NetworkModHolder
         {
             return true;
         }
+
+        @Nullable
+        @Override
+        public String checkCompatible(Map<String, String> remoteVersions, Side side)
+        {
+            return null;
+        }
+
         @Override
         public String toString()
         {
@@ -63,28 +90,81 @@ public class NetworkModHolder
         @Override
         public boolean check(Map<String,String> remoteVersions, Side side)
         {
-            return remoteVersions.containsKey(container.getModId()) ? acceptVersion(remoteVersions.get(container.getModId())) : side == Side.SERVER;
+            return checkCompatible(remoteVersions, side) == null;
         }
+
+        @Nullable
+        @Override
+        public String checkCompatible(Map<String, String> remoteVersions, Side side)
+        {
+            String version = remoteVersions.get(container.getModId());
+            if (version != null && acceptVersion(version))
+            {
+                return null;
+            }
+            if (side == Side.SERVER)
+            {
+                return null;
+            }
+            String versionString;
+            if (acceptableRange != null)
+            {
+                if (acceptableRange.hasRestrictions())
+                {
+                    versionString = String.format("version %s", acceptableRange.toStringFriendly());
+                }
+                else
+                {
+                    versionString = String.format("version range %s", acceptableRange.toStringFriendly());
+                }
+            }
+            else
+            {
+                versionString = String.format("version %s", container.getVersion());
+            }
+            if (version != null)
+            {
+                return String.format("Requires %s but client has %s.", versionString, version);
+            }
+            else
+            {
+                return String.format("Requires %s but mod is not found on client.", versionString);
+            }
+        }
+
         @Override
         public String toString()
         {
-            return acceptableRange != null ? String.format("Accepting range %s", acceptableRange) : String.format("Accepting version %s", container.getVersion());
+            return acceptableRange != null ? String.format("Accepting range %s", acceptableRange.toStringFriendly()) : String.format("Accepting version %s", container.getVersion());
         }
     }
     private class MethodNetworkChecker extends NetworkChecker {
         @Override
         public boolean check(Map<String,String> remoteVersions, Side side)
         {
+            return checkCompatible(remoteVersions, side) == null;
+        }
+
+        @Nullable
+        @Override
+        public String checkCompatible(Map<String, String> remoteVersions, Side side)
+        {
             try
             {
-                return (Boolean) checkHandler.invoke(container.getMod(), remoteVersions, side);
+                Boolean result = (Boolean) checkHandler.invoke(container.getMod(), remoteVersions, side);
+                if (result != null && result)
+                {
+                    return null;
+                }
+                return String.format("Failed mod's custom NetworkCheckHandler %s", container);
             }
             catch (Exception e)
             {
                 FMLLog.log.error("Error occurred invoking NetworkCheckHandler {} at {}", container, e);
-                return false;
+                return String.format("Error occurred invoking NetworkCheckHandler %s", container);
             }
         }
+
         @Override
         public String toString()
         {
@@ -209,7 +289,7 @@ public class NetworkModHolder
 
     public boolean acceptVersion(String version)
     {
-        if (acceptableRange!=null)
+        if (acceptableRange != null)
         {
             return acceptableRange.containsVersion(new DefaultArtifactVersion(version));
         }
@@ -219,7 +299,13 @@ public class NetworkModHolder
 
     public boolean check(Map<String,String> data, Side side)
     {
-        return checker.check(data, side);
+        return checker.checkCompatible(data, side) == null;
+    }
+
+    @Nullable
+    public String checkCompatible(Map<String,String> data, Side side)
+    {
+        return checker.checkCompatible(data, side);
     }
 
     public int getLocalId()
@@ -243,8 +329,8 @@ public class NetworkModHolder
     }
 
     public void testVanillaAcceptance() {
-        acceptsVanillaClient = check(ImmutableMap.<String,String>of(), Side.CLIENT);
-        acceptsVanillaServer = check(ImmutableMap.<String,String>of(), Side.SERVER);
+        acceptsVanillaClient = check(ImmutableMap.of(), Side.CLIENT);
+        acceptsVanillaServer = check(ImmutableMap.of(), Side.SERVER);
     }
     public boolean acceptsVanilla(Side from) {
         return from == Side.CLIENT ? acceptsVanillaClient : acceptsVanillaServer;

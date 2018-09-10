@@ -8,6 +8,15 @@
      }
  
      public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
+@@ -576,7 +577,7 @@
+         super.func_70636_d();
+         this.field_70170_p.field_72984_F.func_76320_a("looting");
+ 
+-        if (!this.field_70170_p.field_72995_K && this.func_98052_bS() && !this.field_70729_aU && this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"))
++        if (!this.field_70170_p.field_72995_K && this.func_98052_bS() && !this.field_70729_aU && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this))
+         {
+             for (EntityItem entityitem : this.field_70170_p.func_72872_a(EntityItem.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D)))
+             {
 @@ -702,10 +703,22 @@
  
      protected void func_70623_bb()
@@ -57,3 +66,23 @@
              }
          }
          else
+@@ -1434,5 +1448,19 @@
+         ON_GROUND,
+         IN_AIR,
+         IN_WATER;
++
++        private final java.util.function.BiPredicate<net.minecraft.world.IBlockAccess, BlockPos> spawnPredicate;
++
++        SpawnPlacementType() { this.spawnPredicate = null; }
++
++        SpawnPlacementType(java.util.function.BiPredicate<net.minecraft.world.IBlockAccess, BlockPos> spawnPredicate)
++        {
++            this.spawnPredicate = spawnPredicate;
++        }
++
++        public boolean canSpawnAt(World world, BlockPos pos)
++        {
++            return this.spawnPredicate != null ? this.spawnPredicate.test(world, pos) : net.minecraft.world.WorldEntitySpawner.canCreatureTypeSpawnBody(this, world, pos);
++        }
+     }
+ }

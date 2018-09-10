@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,9 +26,17 @@ import io.netty.channel.embedded.EmbeddedChannel;
 import io.netty.util.AttributeKey;
 
 import java.util.List;
+import java.util.Set;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.server.management.PlayerChunkMap;
+import net.minecraft.server.management.PlayerChunkMapEntry;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
@@ -227,6 +235,79 @@ public class FMLOutboundHandler extends ChannelOutboundHandlerAdapter {
                             if (dispatcher != null) builder.add(dispatcher);
                         }
                     }
+                }
+                return builder.build();
+            }
+        },
+        /**
+         * The packet is sent to all players that are watching the Chunk containing the supplied {@link TargetPoint}.
+         * The {@code range} field of the {@link TargetPoint} is ignored.
+         */
+        TRACKING_POINT(Sets.immutableEnumSet(Side.SERVER))
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                if (!(args instanceof TargetPoint))
+                {
+                    throw new RuntimeException("TRACKING_POINT expects a TargetPoint argument");
+                }
+            }
+
+            @Nullable
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            {
+                TargetPoint tp = (TargetPoint)args;
+                WorldServer world = DimensionManager.getWorld(tp.dimension);
+                if (world == null)
+                {
+                    return ImmutableList.of();
+                }
+
+                PlayerChunkMapEntry entry = world.getPlayerChunkMap().getEntry(MathHelper.floor(tp.x) >> 4, MathHelper.floor(tp.z) >> 4);
+                if (entry == null)
+                {
+                    return ImmutableList.of();
+                }
+
+                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
+                for (EntityPlayerMP player : entry.getWatchingPlayers())
+                {
+                    NetworkDispatcher dispatcher = player.connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                    if (dispatcher != null) builder.add(dispatcher);
+                }
+                return builder.build();
+            }
+        },
+        /**
+         * The packet is sent to all players tracking the supplied {@link Entity}. This is different from {@link #TRACKING_POINT} because Entities
+         * can have different tracking distances depending on their type.
+         */
+        TRACKING_ENTITY(Sets.immutableEnumSet(Side.SERVER))
+        {
+            @Override
+            public void validateArgs(Object args)
+            {
+                if (!(args instanceof Entity))
+                {
+                    throw new RuntimeException("TRACKING_ENTITY expects an Entity argument");
+                }
+            }
+
+            @Nullable
+            @Override
+            public List<NetworkDispatcher> selectNetworks(Object args, ChannelHandlerContext context, FMLProxyPacket packet)
+            {
+                Entity e = (Entity)args;
+                Set<? extends EntityPlayer> players = FMLCommonHandler.instance().getMinecraftServerInstance()
+                        .getWorld(e.dimension).getEntityTracker().getTrackingPlayers(e);
+
+                ImmutableList.Builder<NetworkDispatcher> builder = ImmutableList.builder();
+                for (EntityPlayer player : players)
+                {
+                    NetworkDispatcher dispatcher = ((EntityPlayerMP) player).connection.netManager.channel().attr(NetworkDispatcher.FML_DISPATCHER).get();
+                    if (dispatcher != null) builder.add(dispatcher);
                 }
                 return builder.build();
             }

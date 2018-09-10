@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@ import io.netty.channel.ChannelFutureListener;
 import java.lang.reflect.Method;
 import java.util.EnumMap;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.util.IThreadListener;
 
 import io.netty.channel.ChannelHandler;
@@ -260,6 +261,37 @@ public class SimpleNetworkWrapper {
     {
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
         channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    }
+
+    /**
+     * Sends this message to everyone tracking a point.
+     * The {@link IMessageHandler} for this message type should be on the CLIENT side.
+     * The {@code range} field of the {@link TargetPoint} is ignored.
+     *
+     * @param message The message to send
+     * @param point The tracked {@link TargetPoint} around which to send
+     */
+    public void sendToAllTracking(IMessage message, NetworkRegistry.TargetPoint point)
+    {
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TRACKING_POINT);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(point);
+        channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    }
+
+    /**
+     * Sends this message to everyone tracking an entity.
+     * The {@link IMessageHandler} for this message type should be on the CLIENT side.
+     * This is not equivalent to {@link #sendToAllTracking(IMessage, TargetPoint)}
+     * because entities have different tracking distances based on their type.
+     *
+     * @param message The message to send
+     * @param entity The tracked entity around which to send
+     */
+    public void sendToAllTracking(IMessage message, Entity entity)
+    {
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TRACKING_ENTITY);
+        channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entity);
         channels.get(Side.SERVER).writeAndFlush(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 

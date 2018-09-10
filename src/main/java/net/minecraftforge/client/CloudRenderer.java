@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,12 @@
 
 package net.minecraftforge.client;
 
+import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
+import java.util.function.Predicate;
 
+import net.minecraftforge.client.resource.IResourceType;
+import net.minecraftforge.client.resource.VanillaResourceType;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -36,14 +40,14 @@ import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
 
-public class CloudRenderer implements IResourceManagerReloadListener
+public class CloudRenderer implements ISelectiveResourceReloadListener
 {
     // Shared constants.
     private static final float PX_SIZE = 1 / 256F;
@@ -478,8 +482,11 @@ public class CloudRenderer implements IResourceManagerReloadListener
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager)
+    public void onResourceManagerReload(@Nonnull IResourceManager resourceManager, @Nonnull Predicate<IResourceType> resourcePredicate)
     {
-        reloadTextures();
+        if (resourcePredicate.test(VanillaResourceType.TEXTURES))
+        {
+            reloadTextures();
+        }
     }
 }

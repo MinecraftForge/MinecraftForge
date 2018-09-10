@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016.
+ * Copyright (c) 2016-2018.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -67,6 +67,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.thread.SidedThreadGroup;
 import net.minecraftforge.fml.relauncher.CoreModManager;
@@ -614,6 +615,11 @@ public class FMLCommonHandler
         return sidedDelegate.shouldAllowPlayerLogins();
     }
 
+    public void fireServerConnectionEvent(NetworkManager manager)
+    {
+        bus().post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
+    }
+
     /**
      * Process initial Handshake packet, kicks players from the server if they are connecting while we are starting up.
      * Also verifies the client has the FML marker.
@@ -663,18 +669,17 @@ public class FMLCommonHandler
      */
     public void exitJava(int exitCode, boolean hardExit)
     {
-        FMLLog.log.info("Java has been asked to exit (code {}) by {}.", exitCode, Thread.currentThread().getStackTrace()[1]);
+        FMLLog.log.warn("Java has been asked to exit (code {})", exitCode);
         if (hardExit)
         {
-            FMLLog.log.info("This is an abortive exit and could cause world corruption or other things");
+            FMLLog.log.warn("This is an abortive exit and could cause world corruption or other things");
         }
-        if (Boolean.parseBoolean(System.getProperty("fml.debugExit", "false")))
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        FMLLog.log.warn("Exit trace:");
+        //The first 2 elements are Thread#getStackTrace and FMLCommonHandler#exitJava and aren't relevant
+        for (int i = 2; i < stack.length; i++)
         {
-            FMLLog.log.info("Exit trace", new Throwable());
-        }
-        else
-        {
-            FMLLog.log.info("If this was an unexpected exit, use -Dfml.debugExit=true as a JVM argument to find out where it was called");
+            FMLLog.log.warn("\t{}", stack[i]);
         }
         if (hardExit)
         {
@@ -771,5 +776,10 @@ public class FMLCommonHandler
 
     public void reloadSearchTrees() {
         this.sidedDelegate.reloadSearchTrees();
+    }
+
+    public void reloadCreativeSettings()
+    {
+        this.sidedDelegate.reloadCreativeSettings();
     }
 }
