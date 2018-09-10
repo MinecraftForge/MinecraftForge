@@ -9,3 +9,58 @@
     public static final float[] MOON_PHASE_FACTORS = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
     protected World world;
     protected boolean doesWaterVaporize;
+@@ -141,4 +141,54 @@
+    public abstract boolean doesXZShowFog(int x, int z);
+ 
+    public abstract DimensionType getDimensionType();
++   
++   /*======================================= Forge Start =========================================*/
++   private net.minecraftforge.client.IRenderHandler skyRenderer = null;
++   private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
++   private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
++
++   @Nullable
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public net.minecraftforge.client.IRenderHandler getSkyRenderer()
++   {
++      return this.skyRenderer;
++   }
++   
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer)
++   {
++      this.skyRenderer = skyRenderer;
++   }
++   
++   @Nullable
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public net.minecraftforge.client.IRenderHandler getCloudRenderer()
++   {
++      return cloudRenderer;
++   }
++   
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public void setCloudRenderer(net.minecraftforge.client.IRenderHandler renderer)
++   {
++      cloudRenderer = renderer;
++   }
++   
++   @Nullable
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public net.minecraftforge.client.IRenderHandler getWeatherRenderer()
++   {
++      return weatherRenderer;
++   }
++   
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public void setWeatherRenderer(net.minecraftforge.client.IRenderHandler renderer)
++   {
++      weatherRenderer = renderer;
++   }
+ }

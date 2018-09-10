@@ -1,5 +1,10 @@
 package net.minecraftforge.common.extensions;
 
+import javax.annotation.Nullable;
+
+import net.minecraft.world.World;
+import net.minecraftforge.client.IRenderHandler;
+
 public interface IForgeDimension
 {
     /**
@@ -18,4 +23,19 @@ public interface IForgeDimension
     {
         return null;
     }
+
+    @Nullable
+    IRenderHandler getSkyRenderer();
+
+    void setSkyRenderer(IRenderHandler skyRenderer);
+
+    @Nullable
+    IRenderHandler getCloudRenderer();
+
+    void setCloudRenderer(IRenderHandler renderer);
+
+    @Nullable
+    IRenderHandler getWeatherRenderer();
+
+    void setWeatherRenderer(IRenderHandler renderer);
 }
