@@ -56,6 +56,7 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLPaths;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.io.IOUtils;
 
@@ -1287,7 +1288,7 @@ public class Configuration
 
     public static void enableGlobalConfig()
     {
-        PARENT = new Configuration(new File(Loader.instance().getConfigDir(), "global.cfg"));
+        PARENT = new Configuration(new File(FMLPaths.FMLCONFIG.get().toFile(), "global.cfg"));
         PARENT.load();
     }
 

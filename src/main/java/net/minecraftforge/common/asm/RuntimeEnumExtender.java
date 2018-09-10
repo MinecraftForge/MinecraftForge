@@ -20,6 +20,7 @@ package net.minecraftforge.common.asm;
 
 import java.nio.file.Path;
 
+import net.minecraftforge.fml.AdvancedLogMessageAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Opcodes;
@@ -65,7 +66,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         if ((classNode.access & Opcodes.ACC_ENUM) == 0)
             return classNode;
 
-        Type array = Type.getType("[" + classType.getInternalName());
+        Type array = Type.getType("[" + classType.getDescriptor());
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
@@ -87,16 +88,21 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             MethodNode ctr = classNode.methods.stream().filter(m -> m.name.equals("<init>") && m.desc.equals(desc)).findFirst().orElse(null);
             if (ctr == null)
             {
-                LOGGER.error("Enum has create method with no matching constructor:");
-                LOGGER.error("  Target: " + desc);
-                classNode.methods.stream().filter(m -> m.name.equals("<init>")).forEach(m -> LOGGER.error("        :" + m.desc));
+                LOGGER.error(()->new AdvancedLogMessageAdapter(sb-> {
+                    sb.append("Enum has create method with no matching constructor:\n");
+                    sb.append("  Target: ").append(desc).append("\n");
+                    classNode.methods.stream().filter(m -> m.name.equals("<init>")).forEach(m -> sb.append("        :").append(m.desc).append("\n"));
+                }));
                 throw new IllegalStateException("Enum has create method with no matching constructor: " + desc);
             }
 
             if (values == null)
             {
-                LOGGER.error("Enum has create method but we could not find $VALUES:");
-                classNode.fields.stream().filter(f -> (f.access & Opcodes.ACC_STATIC) != 0).forEach(m -> LOGGER.error("  " + m.name + " " + m.desc));
+                LOGGER.error(()->new AdvancedLogMessageAdapter(sb-> {
+                    sb.append("Enum has create method but we could not find $VALUES. Found:\n");
+                    classNode.fields.stream().filter(f -> (f.access & Opcodes.ACC_STATIC) != 0).
+                            forEach(m -> sb.append("  ").append(m.name).append(" ").append(m.desc).append("\n"));
+                }));
                 throw new IllegalStateException("Enum has create method but we could not find $VALUES");
             }
 
@@ -109,17 +115,18 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             ins.dup();
             ins.load(0, STRING);
             ins.getstatic(classType.getInternalName(), values.name, values.desc);
+            ins.arraylength();
             ins.iconst(1);
             ins.add(Type.INT_TYPE);
             for (int x = 1; x < args.length; x++)
                 ins.load(x, args[x]);
-            ins.invokespecial(classType.getDescriptor(), "<init>", desc, false);
+            ins.invokespecial(classType.getInternalName(), "<init>", desc, false);
             ins.store(1, classType);
             // VALUES = ArrayUtils.add(VALUES, ret)
             ins.getstatic(classType.getInternalName(), values.name, values.desc);
             ins.load(1, classType);
-            ins.invokestatic(ARRAY_UTILS.getDescriptor(), "add", ADD_DESC, false);
-            ins.checkcast(array);
+            ins.invokestatic(ARRAY_UTILS.getInternalName(), "add", ADD_DESC, false);
+            ins.checkcast(Type.getType(values.desc));
             ins.putstatic(classType.getInternalName(), values.name, values.desc);
             //EnumHelper.cleanEnumCache(ThisType.class)
             ins.visitLdcInsn(classType);

@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/resources/I18n.java
++++ b/net/minecraft/client/resources/I18n.java
+@@ -9,6 +9,7 @@
+ 
+    static void setLocale(Locale i18nLocaleIn) {
+       i18nLocale = i18nLocaleIn;
++      net.minecraftforge.fml.ForgeI18n.loadLanguageData(i18nLocale.properties);
+    }
+ 
+    public static String format(String translateKey, Object... parameters) {

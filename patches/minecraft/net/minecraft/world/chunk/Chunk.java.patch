@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public class Chunk implements IChunk {
-+public class Chunk implements IChunk, net.minecraftforge.common.extensions.IForgeChunk {
++public class Chunk extends net.minecraftforge.common.capabilities.CapabilityProvider implements IChunk, net.minecraftforge.common.extensions.IForgeChunk {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ChunkSection NULL_BLOCK_STORAGE = null;
     private final ChunkSection[] storageArrays;
@@ -13,28 +13,37 @@
        this.field_201621_s = p_i49379_6_;
        this.field_205325_u = p_i49379_7_;
        this.inhabitedTime = p_i49379_8_;
-+      capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
++      this.gatherCapabilities();
     }
  
     public Chunk(World p_i48703_1_, ChunkPrimer p_i48703_2_, int p_i48703_3_, int p_i48703_4_) {
-@@ -1164,4 +1165,20 @@
+@@ -1164,4 +1165,29 @@
        QUEUED,
        CHECK;
     }
 +   
-+   /* ======================================== FORGE START =====================================*/
++   // FORGE start
 +   
-+   private final net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
-+   
-+   @Nullable
-+   public net.minecraftforge.common.capabilities.CapabilityDispatcher getCapabilities()
++   /**
++    * <strong>FOR INTERNAL USE ONLY</strong>
++    * <p>
++    * Only public for use in {@link AnvilChunkLoader}. 
++    */
++   @java.lang.Deprecated
++   @javax.annotation.Nullable
++   public final NBTTagCompound writeCapsToNBT()
 +   {
-+       return capabilities;
++       return this.serializeCaps();
  }
-+
-+   @Override
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing)
++   
++   /**
++    * <strong>FOR INTERNAL USE ONLY</strong>
++    * <p>
++    * Only public for use in {@link AnvilChunkLoader}. 
++    */
++   @java.lang.Deprecated
++   public final void readCapsFromNBT(NBTTagCompound tag)
 +   {
-+       return capabilities == null ? net.minecraftforge.common.capabilities.OptionalCapabilityInstance.empty() : capabilities.getCapability(capability, facing);
++       this.deserializeCaps(tag);
 +   }
 +}

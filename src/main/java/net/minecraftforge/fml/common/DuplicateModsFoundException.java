@@ -24,35 +24,18 @@ import java.util.Map.Entry;
 
 import com.google.common.collect.SetMultimap;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.GuiDupesFound;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.client.IDisplayableError;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.gui.GuiDupesFound;
 
-public class DuplicateModsFoundException extends LoaderException implements IDisplayableError
+public class DuplicateModsFoundException extends LoaderException
 {
     private static final long serialVersionUID = 1L;
-    public SetMultimap<ModContainer,File> dupes;
+    public SetMultimap<ModContainer, File> dupes;
 
     public DuplicateModsFoundException(SetMultimap<ModContainer, File> dupes) {
         this.dupes = dupes;
-    }
-
-    @Override
-    protected void printStackTrace(WrappedPrintStream stream)
-    {
-        stream.println("Duplicate Mods:");
-        for (Entry<ModContainer, File> e : dupes.entries())
-        {
-            stream.println(String.format("\t%s : %s", e.getKey().getModId(), e.getValue().getAbsolutePath()));
-        }
-        stream.println("");
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public GuiScreen createGui()
-    {
-        return new GuiDupesFound(this);
     }
 }

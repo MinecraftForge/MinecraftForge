@@ -31,4 +31,6 @@ public interface ArtifactVersion
     boolean containsVersion(ArtifactVersion source);
 
     String getRangeString();
+
+    String getLabel();
 }

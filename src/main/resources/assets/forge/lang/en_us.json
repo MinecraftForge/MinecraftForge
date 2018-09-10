@@ -1,0 +1,10 @@
+{
+  "fml.menu.mods": "Mods",
+  "fml.menu.mods.normal": "Off",
+  "fml.menu.mods.search": "Search",
+  "fml.menu.mods.a_to_z": "A-Z",
+  "fml.menu.mods.z_to_a": "Z-A",
+  "fml.menu.mods.config": "Config",
+  "fml.menu.modoptions": "Mod Options...",
+  "fml.menu.loadingmods": "{0,choice,0#No mods|1#1 mod|1<{0} mods} loaded"
+}

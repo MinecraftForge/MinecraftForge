@@ -19,32 +19,30 @@
 
 package net.minecraftforge.fml.client.gui;
 
+import java.util.List;
+import java.util.Optional;
+
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.MissingModsException;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.MultipleModsErrored;
-import net.minecraftforge.fml.common.WrongMinecraftVersionException;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import org.lwjgl.input.Mouse;
 
-import java.io.IOException;
-import java.util.List;
-
+@OnlyIn(Dist.CLIENT)
 public class GuiMultipleModsErrored extends GuiErrorBase
 {
-    private final List<WrongMinecraftVersionException> wrongMinecraftExceptions;
     private final List<MissingModsException> missingModsExceptions;
     private GuiList list;
 
     public GuiMultipleModsErrored(MultipleModsErrored exception)
     {
-        wrongMinecraftExceptions = exception.wrongMinecraftExceptions;
         missingModsExceptions = exception.missingModsExceptions;
     }
 
@@ -52,12 +50,12 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     public void initGui()
     {
         super.initGui();
-        int additionalSize = missingModsExceptions.isEmpty() || wrongMinecraftExceptions.isEmpty() ? 20 : 55;
+        int additionalSize = missingModsExceptions.isEmpty() ? 20 : 55;
         for (MissingModsException exception : missingModsExceptions)
         {
             additionalSize += exception.getMissingModInfos().size() * 10;
         }
-        list = new GuiList(wrongMinecraftExceptions.size() * 10 + missingModsExceptions.size() * 15 + additionalSize);
+        list = new GuiList(missingModsExceptions.size() * 15 + additionalSize);
     }
 
     @Override
@@ -65,24 +63,15 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     {
         this.drawDefaultBackground();
         this.list.drawScreen(mouseX, mouseY, partialTicks);
-        this.drawCenteredString(this.fontRenderer, I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size() + wrongMinecraftExceptions.size()), this.width/2, 10, 0xFFFFFF);
+        String missingMultipleModsText = I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size());
+        this.drawCenteredString(this.fontRenderer, missingMultipleModsText, this.width / 2, 10, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void actionPerformed(GuiButton button)
+    public boolean mouseScrolled(double scroll)
     {
-        this.list.actionPerformed(button);
-        super.actionPerformed(button);
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException
-    {
-        super.handleMouseInput();
-        int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-        this.list.handleMouseInput(mouseX, mouseY);
+        return this.list.mouseScrolled(scroll);
     }
 
     private class GuiList extends GuiScrollingList
@@ -90,13 +79,13 @@ public class GuiMultipleModsErrored extends GuiErrorBase
         public GuiList(int entryHeight)
         {
             super(GuiMultipleModsErrored.this.mc,
-                  GuiMultipleModsErrored.this.width-20,
-                  GuiMultipleModsErrored.this.height -30,
-                  30, GuiMultipleModsErrored.this.height-50,
-                    10,
-                  entryHeight,
-                  GuiMultipleModsErrored.this.width,
-                  GuiMultipleModsErrored.this.height);
+                GuiMultipleModsErrored.this.width - 20,
+                GuiMultipleModsErrored.this.height - 30,
+                30, GuiMultipleModsErrored.this.height - 50,
+                10,
+                entryHeight,
+                GuiMultipleModsErrored.this.width,
+                GuiMultipleModsErrored.this.height);
         }
 
         @Override
@@ -106,7 +95,9 @@ public class GuiMultipleModsErrored extends GuiErrorBase
         }
 
         @Override
-        protected void elementClicked(int index, boolean doubleClick) {}
+        protected void elementClicked(int index, boolean doubleClick)
+        {
+        }
 
         @Override
         protected boolean isSelected(int index)
@@ -125,26 +116,13 @@ public class GuiMultipleModsErrored extends GuiErrorBase
         {
             int offset = slotTop;
             FontRenderer renderer = GuiMultipleModsErrored.this.fontRenderer;
-            if (!wrongMinecraftExceptions.isEmpty())
-            {
-                renderer.drawString(TextFormatting.UNDERLINE + I18n.format("fml.messages.mod.wrongminecraft", Loader.instance().getMinecraftModContainer().getVersion()), this.left, offset, 0xFFFFFF);
-                offset+=15;
-                for(WrongMinecraftVersionException exception : wrongMinecraftExceptions)
-                {
-                    renderer.drawString(I18n.format("fml.messages.mod.wrongminecraft.requirement", TextFormatting.BOLD + exception.mod.getName() + TextFormatting.RESET, exception.mod.getModId(), exception.mod.acceptableMinecraftVersionRange().toStringFriendly()), this.left, offset, 0xFFFFFF);
-                    offset += 10;
-                }
-                offset+=5;
-                renderer.drawString(I18n.format("fml.messages.mod.wrongminecraft.fix.multiple"), this.left, offset, 0xFFFFFF);
-                offset+=20;
-            }
             if (!missingModsExceptions.isEmpty())
             {
-                renderer.drawString(I18n.format("fml.messages.mod.missing.dependencies.multiple.issues"), this.left, offset, 0xFFFFFF);
-                offset+=15;
+                renderer.func_211126_b(I18n.format("fml.messages.mod.missing.dependencies.multiple.issues"), this.left, offset, 0xFFFFFF);
+                offset += 15;
                 for (MissingModsException exception : missingModsExceptions)
                 {
-                    renderer.drawString(exception.getModName() + ":", this.left, offset, 0xFFFFFF);
+                    renderer.func_211126_b(exception.getModName() + ":", this.left, offset, 0xFFFFFF);
                     for (MissingModsException.MissingModInfo versionInfo : exception.getMissingModInfos())
                     {
                         ArtifactVersion acceptedVersion = versionInfo.getAcceptedVersion();
@@ -162,14 +140,14 @@ public class GuiMultipleModsErrored extends GuiErrorBase
                         String acceptedModVersionString = acceptedVersion.getRangeString();
                         if (acceptedVersion instanceof DefaultArtifactVersion)
                         {
-                            DefaultArtifactVersion dav = (DefaultArtifactVersion)acceptedVersion;
+                            DefaultArtifactVersion dav = (DefaultArtifactVersion) acceptedVersion;
                             if (dav.getRange() != null)
                             {
                                 acceptedModVersionString = dav.getRange().toStringFriendly();
                             }
                         }
-                        ModContainer acceptedMod = Loader.instance().getIndexedModList().get(acceptedModId);
-                        String acceptedModName = acceptedMod != null ? acceptedMod.getName() : acceptedModId;
+                        Optional<? extends ModContainer> acceptedMod = ModList.get().getModContainerById(acceptedModId);
+                        String acceptedModName = acceptedMod.map((mod) -> mod.getModInfo().getDisplayName()).orElse(acceptedModId);
                         String versionInfoText = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", acceptedModName, acceptedModVersionString, missingReason);
                         String message;
                         if (versionInfo.isRequired())
@@ -181,7 +159,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
                             message = I18n.format("fml.messages.mod.missing.dependencies.compatible.with", versionInfoText);
                         }
                         offset += 10;
-                        renderer.drawString(message, this.left, offset, 0xEEEEEE);
+                        renderer.func_211126_b(message, this.left, offset, 0xEEEEEE);
                     }
 
                     offset += 15;

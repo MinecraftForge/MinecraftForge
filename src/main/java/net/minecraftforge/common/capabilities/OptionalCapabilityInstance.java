@@ -64,7 +64,7 @@ public class OptionalCapabilityInstance<T>
 
     public static <T> OptionalCapabilityInstance<T> of(final @Nullable NonNullSupplier<T> instanceSupplier)
     {
-        return new OptionalCapabilityInstance<>(instanceSupplier);
+        return instanceSupplier == null ? EMPTY.cast() : new OptionalCapabilityInstance<>(instanceSupplier);
     }
 
     private @Nullable T getValue()

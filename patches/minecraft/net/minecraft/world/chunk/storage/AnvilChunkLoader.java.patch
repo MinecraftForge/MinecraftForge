@@ -1,31 +1,32 @@
 --- a/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ b/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -445,7 +445,19 @@
+@@ -445,7 +445,20 @@
  
        compound.setTag("Heightmaps", nbttagcompound2);
        compound.setTag("Structures", this.func_202160_a(chunkIn.x, chunkIn.z, chunkIn.func_201609_c(), chunkIn.func_201604_d()));
 +      
-+      if (chunkIn.getCapabilities() != null)
++      try
 +      {
-+          try
++          final NBTTagCompound capTag = chunkIn.writeCapsToNBT();
++          if (capTag != null)
 +          {
-+              compound.setTag("ForgeCaps", chunkIn.getCapabilities().serializeNBT());
++              compound.setTag("ForgeCaps", capTag);
     }
-+          catch (Exception exception)
-+          {
-+              org.apache.logging.log4j.LogManager.getLogger().error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
-+          }
++      }
++      catch (Exception exception)
++      {
++          org.apache.logging.log4j.LogManager.getLogger().error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
 +      }
 +   }
  
     private Chunk readChunkFromNBT(IWorld worldIn, NBTTagCompound compound) {
        int i = compound.getInteger("xPos");
-@@ -511,6 +523,10 @@
+@@ -511,6 +524,10 @@
           chunk.setModified(true);
        }
  
-+      if (chunk.getCapabilities() != null && compound.hasKey("ForgeCaps")) {
-+          chunk.getCapabilities().deserializeNBT(compound.getCompoundTag("ForgeCaps"));
++      if (compound.hasKey("ForgeCaps")) {
++          chunk.readCapsFromNBT(compound.getCompoundTag("ForgeCaps"));
 +      }
 +
        return chunk;

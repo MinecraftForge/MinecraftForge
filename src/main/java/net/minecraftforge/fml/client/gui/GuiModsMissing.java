@@ -20,15 +20,19 @@
 package net.minecraftforge.fml.client.gui;
 
 import java.util.List;
+import java.util.Optional;
 
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.MissingModsException;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 
+@OnlyIn(Dist.CLIENT)
 public class GuiModsMissing extends GuiErrorBase
 {
     private MissingModsException modsMissing;
@@ -46,7 +50,7 @@ public class GuiModsMissing extends GuiErrorBase
         int offset = Math.max(85 - missingModsVersions.size() * 10, 10);
         String modMissingDependenciesText = I18n.format("fml.messages.mod.missing.dependencies.compatibility", TextFormatting.BOLD + modsMissing.getModName() + TextFormatting.RESET);
         this.drawCenteredString(this.fontRenderer, modMissingDependenciesText, this.width / 2, offset, 0xFFFFFF);
-        offset+=5;
+        offset += 5;
         for (MissingModsException.MissingModInfo versionInfo : missingModsVersions)
         {
             ArtifactVersion acceptedVersion = versionInfo.getAcceptedVersion();
@@ -64,14 +68,14 @@ public class GuiModsMissing extends GuiErrorBase
             String acceptedModVersionString = acceptedVersion.getRangeString();
             if (acceptedVersion instanceof DefaultArtifactVersion)
             {
-                DefaultArtifactVersion dav = (DefaultArtifactVersion)acceptedVersion;
+                DefaultArtifactVersion dav = (DefaultArtifactVersion) acceptedVersion;
                 if (dav.getRange() != null)
                 {
                     acceptedModVersionString = dav.getRange().toStringFriendly();
                 }
             }
-            ModContainer acceptedMod = Loader.instance().getIndexedModList().get(acceptedModId);
-            String acceptedModName = acceptedMod != null ? acceptedMod.getName() : acceptedModId;
+            Optional<? extends ModContainer> acceptedMod = ModList.get().getModContainerById(acceptedModId);
+            String acceptedModName = acceptedMod.map((mod) -> mod.getModInfo().getDisplayName()).orElse(acceptedModId);
             String versionInfoText = String.format(TextFormatting.BOLD + "%s " + TextFormatting.RESET + "%s (%s)", acceptedModName, acceptedModVersionString, missingReason);
             String message;
             if (versionInfo.isRequired())

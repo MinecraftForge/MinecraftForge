@@ -22,7 +22,6 @@ package net.minecraftforge.fml;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.fml.ModList;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -47,7 +46,7 @@ public class BrandingControl
             brd.add("Forge " + ForgeVersion.getVersion());
             int tModCount = ModList.get().size();
 
-            brd.add(MessageFormat.format("{0,choice,0#No mods|1#1 mod|1<{0} mods} loaded", tModCount));
+            brd.add(MessageFormat.format(ForgeI18n.getPattern("fml.menu.loadingmods"), tModCount));
             brandings = brd.build();
             brandingsNoMC = brandings.subList(1, brandings.size());
         }

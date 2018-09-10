@@ -46,7 +46,7 @@
  }
 +   
 +   public boolean isColorDisabled() {
-+	   return noColor;
++       return noColor;
 +   }
 +   
 +   public void putBulkData(ByteBuffer buffer) {
