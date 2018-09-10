@@ -1,9 +1,11 @@
-package net.minecraftforge.common.block;
+package net.minecraftforge.common.extensions;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
@@ -17,6 +19,7 @@ public interface IForgeBlock
         return (Block) this;
 
     }
+
     /**
      * Gets the slipperiness at the given location at the given state. Normally
      * between 0 and 1.
@@ -32,26 +35,7 @@ public interface IForgeBlock
      * @param entity the entity in question
      * @return the factor by which the entity's motion should be multiplied
      */
-    default float getSlipperiness(IBlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity)
-    {
-        return this.getBlock().slipperiness;
-    }
-
-    /**
-     * Sets the base slipperiness level. Normally between 0 and 1.
-     * <p>
-     * <b>Calling this method may have no effect on the function of this block</b>,
-     * or may not have the expected result. This block is free to caclculate
-     * its slipperiness arbitrarily. This method is guaranteed to work on the
-     * base {@code Block} class.
-     *
-     * @param slipperiness the base slipperiness of this block
-     * @see #getSlipperiness(IBlockState, IWorldReader, BlockPos, Entity)
-     */
-    default void setDefualtSilpperiness(float slipperiness)
-    {
-        this.getBlock().slipperiness = slipperiness;
-    }
+    float getSlipperiness(IBlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity);
 
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
@@ -124,5 +108,34 @@ public interface IForgeBlock
         return false;
     }
 
+    /**
+     * Called throughout the code as a replacement for block instanceof BlockContainer
+     * Moving this to the Block base class allows for mods that wish to extend vanilla
+     * blocks, and also want to have a tile entity on that block, may.
+     *
+     * Return true from this function to specify this block has a tile entity.
+     *
+     * @param state State of the current block
+     * @return True if block has a tile entity, false otherwise
+     */
+    default boolean hasTIleEntity(IBlockState state)
+    {
+        return this.getBlock().hasTileEntity();
+    }
 
+    boolean canSilkHarvest(IWorldReader world, BlockPos pos, IBlockState state, EntityPlayer player);
+
+    /**
+     * Gathers how much experience this block drops when broken.
+     *
+     * @param state The current state
+     * @param world The world
+     * @param pos Block position
+     * @param fortune
+     * @return Amount of XP from breaking this block.
+     */
+    default int getExpDrop(IBlockState state, IWorldReader world, BlockPos pos, int fortune)
+    {
+        return 0;
+    }
 }
