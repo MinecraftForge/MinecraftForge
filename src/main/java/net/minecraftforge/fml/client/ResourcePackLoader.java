@@ -46,7 +46,8 @@ public class ResourcePackLoader
 
     public static IResourcePack getResourcePackFor(String modId)
     {
-        return modResourcePacks.get(ModList.get().getModFileById(modId).getFile());
+        if (modId == "forge") return forgePack;
+        else return modResourcePacks.get(ModList.get().getModFileById(modId).getFile());
     }
 
     @SuppressWarnings("unchecked")

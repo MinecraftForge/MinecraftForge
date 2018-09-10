@@ -117,6 +117,7 @@ project(':forge') {
                 into "$buildDir/classes/java/main"
             }
         }
+//        jvmArgs = ['-verbose:class']
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
         systemProperties target:'fmldevclient'

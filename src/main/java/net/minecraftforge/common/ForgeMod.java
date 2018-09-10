@@ -88,8 +88,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
                                                        // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
 
-    static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
-
     private static Configuration config;
     private static ForgeMod INSTANCE;
     public static ForgeMod getInstance()

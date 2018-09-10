@@ -30,30 +30,12 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.client.gui.GuiDupesFound;
 
-public class DuplicateModsFoundException extends LoaderException implements IDisplayableError
+public class DuplicateModsFoundException extends LoaderException
 {
     private static final long serialVersionUID = 1L;
     public SetMultimap<ModContainer, File> dupes;
 
     public DuplicateModsFoundException(SetMultimap<ModContainer, File> dupes) {
         this.dupes = dupes;
-    }
-
-    @Override
-    protected void printStackTrace(WrappedPrintStream stream)
-    {
-        stream.println("Duplicate Mods:");
-        for (Entry<ModContainer, File> e : dupes.entries())
-        {
-            stream.println(String.format("\t%s : %s", e.getKey().getModId(), e.getValue().getAbsolutePath()));
-        }
-        stream.println("");
-    }
-
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public GuiScreen createGui()
-    {
-        return new GuiDupesFound(this);
     }
 }
