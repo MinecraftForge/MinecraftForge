@@ -19,7 +19,7 @@
        this.maxStackSize = p_i48487_1_.field_200920_a;
 +      this.canRepair = p_i48487_1_.canRepair;
 +      this.toolClasses.putAll(p_i48487_1_.toolClasses);
-+      Object tmp = net.minecraftforge.fml.DistExecutor.callWhenOn(Dist.CLIENT, p_i48487_1_.teisr);
++      Object tmp = p_i48487_1_.teisr == null ? null : net.minecraftforge.fml.DistExecutor.callWhenOn(Dist.CLIENT, p_i48487_1_.teisr);
 +      this.teisr = tmp == null ? null : () -> (net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer) tmp;
        if (this.maxDamage > 0) {
           this.addPropertyOverride(new ResourceLocation("damaged"), DAMAGED_GETTER);
@@ -86,7 +86,7 @@
 +
 +   @Nullable
 +   private final java.util.function.Supplier<net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer> teisr;
-+   
++
 +   private final java.util.Map<String, Integer> toolClasses = new java.util.HashMap<String, Integer>();
 +
 +   protected final boolean canRepair;
@@ -119,7 +119,7 @@
 +   }
 +
 +   /* ======================================== FORGE END   =====================================*/
-+   
++
     public static void registerItems() {
        registerItemBlock(Blocks.AIR, new ItemAir(Blocks.AIR, new Item.Builder()));
        func_200879_a(Blocks.STONE, ItemGroup.BUILDING_BLOCKS);
@@ -137,7 +137,7 @@
           this.field_208104_e = p_208103_1_;
           return this;
        }
-+      
++
 +      public Item.Builder setNoRepair() {
 +          canRepair = false;
 +          return this;
@@ -154,10 +154,10 @@
 +              toolClasses.remove(toolClass);
 +          else
 +              toolClasses.put(toolClass, level);
- }
++      }
 +
 +      public void setTileEntityItemStackRenderer(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer>> teisrSupplier) {
 +          this.teisr = teisrSupplier;
 +      }
 +   }
-+}
+ }

@@ -45,11 +45,24 @@ public class LaunchTesting
         logcontext.getConfiguration().addFilter(axformFilter);
         logcontext.getConfiguration().addFilter(eventbusFilter);
         logcontext.updateLoggers();
-        System.setProperty("fml.explodedDir", "/home/cpw/projects/mods/inventorysorter/classes");
+        File invsorter = new File("/home/cpw/projects/mods/inventorysorter/classes");
+        if (invsorter.exists()) {
+            System.setProperty("fml.explodedDir", "/home/cpw/projects/mods/inventorysorter/classes"); //TODO: Move this to a example included in our tests, not a random location...
+        }
+        String assets = System.getenv().getOrDefault("assetDirectory", "assets");
+        String target = System.getenv().get("target");
+
+        if (target == null) {
+            throw new IllegalArgumentException("Environment variable target must be set.");
+        }
+
         hackNatives();
-        Launcher.main("--launchTarget", System.getProperty("target"),"--gameDir", ".",
-                "--accessToken", "blah", "--version", "FMLDev", "--assetIndex", "1.13",
-                "--assetsDir","/home/cpw/MultiMC/assets",
+        Launcher.main("--launchTarget", target,
+                "--gameDir", ".",
+                "--accessToken", "blah",
+                "--version", "FMLDev",
+                "--assetIndex", "1.13",
+                "--assetsDir", assets,
                 "--userProperties", "{}");
         Thread.sleep(10000);
     }
@@ -57,7 +70,7 @@ public class LaunchTesting
     private static void hackNatives()
     {
         String paths = System.getProperty("java.library.path");
-        String nativesDir = "/home/cpw/.gradle/caches/minecraft/net/minecraft/natives/1.12.2";
+        String nativesDir = "/home/cpw/.gradle/caches/minecraft/net/minecraft/natives/1.12.2"; //TODO Not hardcode this, FG setups us a natives folder. And sets it in the eclipse run configs.
 
         if (Strings.isNullOrEmpty(paths))
             paths = nativesDir;

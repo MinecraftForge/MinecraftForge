@@ -165,9 +165,9 @@ public class GameData
     }
 
     @SuppressWarnings("unchecked")
-    public static BiMap<Block,Item> getBlockItemMap()
+    public static Map<Block,Item> getBlockItemMap()
     {
-        return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+        return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(BLOCK_TO_ITEM, Map.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -345,7 +345,7 @@ public class GameData
             };
             owner.setSlaveMap(BLOCKSTATE_TO_ID, idMap);
 */
-            owner.setSlaveMap(BLOCK_TO_ITEM, HashBiMap.create());
+            owner.setSlaveMap(BLOCK_TO_ITEM, Maps.newHashMap());
         }
 
         @Override
@@ -380,22 +380,22 @@ public class GameData
             if (item instanceof ItemBlock)
             {
                 @SuppressWarnings("unchecked")
-                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
-                blockToItem.forcePut(((ItemBlock)item).getBlock(), item);
+                Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
+                ((ItemBlock)item).func_195946_a(blockToItem, item);
             }
         }
 
         @Override
         public void onClear(IForgeRegistryInternal<Item> owner, RegistryManager stage)
         {
-            owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class).clear();
+            owner.getSlaveMap(BLOCK_TO_ITEM, Map.class).clear();
         }
 
         @Override
         public void onCreate(IForgeRegistryInternal<Item> owner, RegistryManager stage)
         {
             // We share the blockItem map between items and blocks registries
-            BiMap<?, ?> map = stage.getRegistry(BLOCKS).getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+            Map<?, ?> map = stage.getRegistry(BLOCKS).getSlaveMap(BLOCK_TO_ITEM, Map.class);
             owner.setSlaveMap(BLOCK_TO_ITEM, map);
         }
     }

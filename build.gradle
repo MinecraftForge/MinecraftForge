@@ -70,6 +70,18 @@ project(':forge') {
         patchedSrc = file('src/main/java')
         accessTransformer = file("$rootDir/src/main/resources/forge_at.cfg")
         srgPatches = false
+        clientRun {
+            main = 'net.minecraftforge.fml.LaunchTesting'
+            env = [
+                target: 'fmldevclient'
+            ]
+        }
+        serverRun {
+            main = 'net.minecraftforge.fml.LaunchTesting'
+            env = [
+                target: 'fmldevserver'
+            ]
+        }
     }
     applyPatches {
         canonicalizeAccess true
@@ -77,8 +89,8 @@ project(':forge') {
         maxFuzz 3
     }
     dependencies {
-        implementation project(':clean')
-        implementation 'cpw.mods:modlauncher:0.1+'
+        implementation 'net.minecraft:client:1.13:extra'
+        implementation 'cpw.mods:modlauncher:0.1.0-rc.3' //Pinned until cpw fixes getCommonSupertype
         implementation 'net.minecraftforge:accesstransformers:0.10+:shadowed'
         implementation 'net.minecraftforge:eventbus:0.1+:service'
         implementation 'net.minecraftforge:forgespi:0.1+'
@@ -120,7 +132,7 @@ project(':forge') {
 //        jvmArgs = ['-verbose:class']
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
-        systemProperties target:'fmldevclient'
+        environment target:'fmldevclient'
         workingDir 'runclient'
     }
 
@@ -131,7 +143,7 @@ project(':forge') {
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
         args 'nogui'
-        systemProperties target:'fmldevserver'
+        environment target:'fmldevserver'
         workingDir 'runserver'
     }
 }
