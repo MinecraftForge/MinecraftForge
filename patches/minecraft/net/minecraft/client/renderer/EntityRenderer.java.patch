@@ -79,26 +79,14 @@
          }
  
          GlStateManager.func_179109_b(0.0F, -f, 0.0F);
-@@ -771,12 +769,13 @@
+@@ -771,6 +769,7 @@
  
              boolean flag = this.field_78531_r.func_175606_aa() instanceof EntityLivingBase && ((EntityLivingBase)this.field_78531_r.func_175606_aa()).func_70608_bn();
  
--            if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
--            {
--                this.func_180436_i();
--                this.field_78516_c.func_78440_a(p_78476_1_);
--                this.func_175072_h();
--            }
 +            if (!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHand(field_78531_r.field_71438_f, p_78476_1_, p_78476_2_))
-+                if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
-+                {
-+                    this.func_180436_i();
-+                    this.field_78516_c.func_78440_a(p_78476_1_);
-+                    this.func_175072_h();
-+                }
- 
-             GlStateManager.func_179121_F();
- 
+             if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
+             {
+                 this.func_180436_i();
 @@ -875,6 +874,15 @@
                          f10 = 0.25F + f7 * 0.75F;
                      }
@@ -192,16 +180,14 @@
              RenderHelper.func_74518_a();
              this.func_175072_h();
          }
-@@ -1342,7 +1361,8 @@
+@@ -1342,6 +1361,7 @@
              EntityPlayer entityplayer = (EntityPlayer)entity;
              GlStateManager.func_179118_c();
              this.field_78531_r.field_71424_I.func_76318_c("outline");
--            renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
 +            if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, field_78531_r.field_71476_x, 0, p_175068_2_))
-+                renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
+             renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
              GlStateManager.func_179141_d();
          }
- 
 @@ -1388,6 +1408,17 @@
          GlStateManager.func_179103_j(7425);
          this.field_78531_r.field_71424_I.func_76318_c("translucent");
