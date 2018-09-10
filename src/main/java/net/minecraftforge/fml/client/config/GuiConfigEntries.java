@@ -1684,7 +1684,7 @@ public class GuiConfigEntries extends GuiListExtended
     /**
      * Provides an interface for defining GuiConfigEntry.listEntry objects.
      */
-    public static interface IConfigEntry extends GuiListExtended.IGuiListEntry
+    public static interface IConfigEntry
     {
         /**
          * Gets the IConfigElement object owned by this entry.

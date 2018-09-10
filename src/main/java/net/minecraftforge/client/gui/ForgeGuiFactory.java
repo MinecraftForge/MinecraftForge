@@ -48,8 +48,9 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.BooleanEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+
 import static net.minecraftforge.common.ForgeMod.VERSION_CHECK_CAT;
 
 /**
@@ -399,7 +400,7 @@ public class ForgeGuiFactory implements IModGuiFactory
             @Override
             public void onGuiClosed()
             {
-                Object modObject = Loader.instance().getModObjectList().get(Loader.instance().getIndexedModList().get(currentValue));
+                Object modObject = ModList.get().getModContainerById(getCurrentValue());
                 int maxTickets = 200;
                 int maxChunks = 25;
                 if (modObject != null)

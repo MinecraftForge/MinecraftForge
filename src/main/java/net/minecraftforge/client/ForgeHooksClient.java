@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
@@ -54,6 +55,7 @@ import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -71,6 +73,7 @@ import net.minecraft.client.renderer.entity.model.ModelBiped;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
@@ -87,6 +90,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
@@ -131,12 +135,17 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EntityEquipmentSlot slot, String type)
@@ -181,7 +190,7 @@ public class ForgeHooksClient
     public static void onTextureStitchedPre(TextureMap map)
     {
         MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
-        ModelLoader.White.INSTANCE.register(map);
+//        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
         ModelDynBucket.LoaderDynBucket.INSTANCE.register(map);
     }
 
@@ -239,12 +248,12 @@ public class ForgeHooksClient
             return base + name;
         }
     }
-
+/* TODO mouse input
     public static boolean postMouseEvent()
     {
         return MinecraftForge.EVENT_BUS.post(new MouseEvent());
     }
-
+*/
     public static float getOffsetFOV(EntityPlayer entity, float fov)
     {
         FOVUpdateEvent fovUpdateEvent = new FOVUpdateEvent(entity, fov);
@@ -446,7 +455,7 @@ public class ForgeHooksClient
             matrixBuf.put(t);
         }
         matrixBuf.flip();
-        glMultMatrix(matrixBuf);
+        glMultMatrixf(matrixBuf);
     }
 
     // moved and expanded from WorldVertexBufferUploader.draw
@@ -487,7 +496,7 @@ public class ForgeHooksClient
                 glEnableVertexAttribArray(attr.getIndex());
                 glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
             default:
-                FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
+                LOGGER.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
     }
 
@@ -517,7 +526,7 @@ public class ForgeHooksClient
             case GENERIC:
                 glDisableVertexAttribArray(attr.getIndex());
             default:
-                FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
+                LOGGER.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
     }
 
@@ -572,10 +581,10 @@ public class ForgeHooksClient
         Class<? extends TileEntity> tileClass = tileItemMap.get(Pair.of(item, metadata));
         if (tileClass != null)
         {
-            TileEntitySpecialRenderer<?> r = TileEntityRendererDispatcher.instance.getRenderer(tileClass);
+            TileEntityRenderer<?> r = TileEntityRendererDispatcher.instance.getRenderer(tileClass);
             if (r != null)
             {
-                r.render(null, 0, 0, 0, 0, -1, 0.0F);
+                r.func_199341_a(null, 0, 0, 0, 0, -1);
             }
         }
     }
@@ -648,10 +657,10 @@ public class ForgeHooksClient
         }
     }
 
-    public static IBakedModel getDamageModel(IBakedModel ibakedmodel, TextureAtlasSprite texture, IBlockState state, IBlockAccess world, BlockPos pos)
+    public static IBakedModel getDamageModel(IBakedModel ibakedmodel, TextureAtlasSprite texture, IBlockState state, IWorldReader world, BlockPos pos)
     {
         state = state.getBlock().getExtendedState(state, world, pos);
-        return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, pos)).makeBakedModel();
+        return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, new Random(), 42)).makeBakedModel();
     }
 
     private static int slotMainHand = 0;
@@ -743,7 +752,7 @@ public class ForgeHooksClient
     @SuppressWarnings("deprecation")
     public static Pair<? extends IBakedModel,Matrix4f> handlePerspective(IBakedModel model, ItemCameraTransforms.TransformType type)
     {
-        TRSRTransformation tr = new TRSRTransformation(model.getItemCameraTransforms().getTransform(type));
+        TRSRTransformation tr = TRSRTransformation.from(model.getItemCameraTransforms().getTransform(type));
         Matrix4f mat = null;
         if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
         return Pair.of(model, mat);
@@ -765,7 +774,7 @@ public class ForgeHooksClient
     {
         Predicate<IResourceType> predicate = SelectiveReloadStateHandler.INSTANCE.get();
 
-        if (listener instanceof ModelManager || listener instanceof RenderItem)
+        if (listener instanceof ModelManager || listener instanceof ItemRenderer)
             return predicate.test(VanillaResourceType.MODELS);
         else if (listener instanceof BlockRendererDispatcher || listener instanceof RenderGlobal)
             return predicate.test(VanillaResourceType.MODELS);
