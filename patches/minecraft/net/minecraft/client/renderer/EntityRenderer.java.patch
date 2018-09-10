@@ -79,14 +79,26 @@
          }
  
          GlStateManager.func_179109_b(0.0F, -f, 0.0F);
-@@ -771,6 +769,7 @@
+@@ -771,12 +769,13 @@
  
              boolean flag = this.field_78531_r.func_175606_aa() instanceof EntityLivingBase && ((EntityLivingBase)this.field_78531_r.func_175606_aa()).func_70608_bn();
  
+-            if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
+-            {
+-                this.func_180436_i();
+-                this.field_78516_c.func_78440_a(p_78476_1_);
+-                this.func_175072_h();
+-            }
 +            if (!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHand(field_78531_r.field_71438_f, p_78476_1_, p_78476_2_))
-             if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
-             {
-                 this.func_180436_i();
++                if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && !this.field_78531_r.field_71442_b.func_78747_a())
++                {
++                    this.func_180436_i();
++                    this.field_78516_c.func_78440_a(p_78476_1_);
++                    this.func_175072_h();
++                }
+ 
+             GlStateManager.func_179121_F();
+ 
 @@ -875,6 +874,15 @@
                          f10 = 0.25F + f7 * 0.75F;
                      }
@@ -133,3 +145,185 @@
              }
  
              if (this.field_78531_r.field_71462_r != null)
+@@ -1109,7 +1124,7 @@
+ 
+                 try
+                 {
+-                    this.field_78531_r.field_71462_r.func_73863_a(k1, l1, this.field_78531_r.func_193989_ak());
++                    net.minecraftforge.client.ForgeHooksClient.drawScreen(this.field_78531_r.field_71462_r, k1, l1, this.field_78531_r.func_193989_ak());
+                 }
+                 catch (Throwable throwable)
+                 {
+@@ -1204,7 +1219,7 @@
+ 
+                     if (this.field_78531_r.field_71442_b.func_178889_l() == GameType.SPECTATOR)
+                     {
+-                        flag = block.func_149716_u() && this.field_78531_r.field_71441_e.func_175625_s(blockpos) instanceof IInventory;
++                        flag = block.hasTileEntity(this.field_78531_r.field_71441_e.func_180495_p(blockpos)) && this.field_78531_r.field_71441_e.func_175625_s(blockpos) instanceof IInventory;
+                     }
+                     else
+                     {
+@@ -1262,7 +1277,7 @@
+         GlStateManager.func_179086_m(16640);
+         this.field_78531_r.field_71424_I.func_76318_c("camera");
+         this.func_78479_a(p_175068_2_, p_175068_1_);
+-        ActiveRenderInfo.func_74583_a(this.field_78531_r.field_71439_g, this.field_78531_r.field_71474_y.field_74320_O == 2);
++        ActiveRenderInfo.updateRenderInfo(this.field_78531_r.func_175606_aa(), this.field_78531_r.field_71474_y.field_74320_O == 2); //Forge: MC-46445 Spectator mode particles and sounds computed from where you have been before
+         this.field_78531_r.field_71424_I.func_76318_c("frustum");
+         ClippingHelperImpl.func_78558_a();
+         this.field_78531_r.field_71424_I.func_76318_c("culling");
+@@ -1315,7 +1330,9 @@
+         GlStateManager.func_179118_c();
+         renderglobal.func_174977_a(BlockRenderLayer.SOLID, (double)p_175068_2_, p_175068_1_, entity);
+         GlStateManager.func_179141_d();
++        this.field_78531_r.func_110434_K().func_110581_b(TextureMap.field_110575_b).func_174936_b(false, this.field_78531_r.field_71474_y.field_151442_I > 0); // FORGE: fix flickering leaves when mods mess up the blurMipmap settings
+         renderglobal.func_174977_a(BlockRenderLayer.CUTOUT_MIPPED, (double)p_175068_2_, p_175068_1_, entity);
++        this.field_78531_r.func_110434_K().func_110581_b(TextureMap.field_110575_b).func_174935_a();
+         this.field_78531_r.func_110434_K().func_110581_b(TextureMap.field_110575_b).func_174936_b(false, false);
+         renderglobal.func_174977_a(BlockRenderLayer.CUTOUT, (double)p_175068_2_, p_175068_1_, entity);
+         this.field_78531_r.func_110434_K().func_110581_b(TextureMap.field_110575_b).func_174935_a();
+@@ -1329,7 +1346,9 @@
+             GlStateManager.func_179094_E();
+             RenderHelper.func_74519_b();
+             this.field_78531_r.field_71424_I.func_76318_c("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+             renderglobal.func_180446_a(entity, icamera, p_175068_2_);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(0);
+             RenderHelper.func_74518_a();
+             this.func_175072_h();
+         }
+@@ -1342,7 +1361,8 @@
+             EntityPlayer entityplayer = (EntityPlayer)entity;
+             GlStateManager.func_179118_c();
+             this.field_78531_r.field_71424_I.func_76318_c("outline");
+-            renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
++            if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(renderglobal, entityplayer, field_78531_r.field_71476_x, 0, p_175068_2_))
++                renderglobal.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_175068_2_);
+             GlStateManager.func_179141_d();
+         }
+ 
+@@ -1388,6 +1408,17 @@
+         GlStateManager.func_179103_j(7425);
+         this.field_78531_r.field_71424_I.func_76318_c("translucent");
+         renderglobal.func_174977_a(BlockRenderLayer.TRANSLUCENT, (double)p_175068_2_, p_175068_1_, entity);
++        if (!this.field_175078_W) //Only render if render pass 0 happens as well.
++        {
++            RenderHelper.func_74519_b();
++            this.field_78531_r.field_71424_I.func_76318_c("entities");
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(1);
++            renderglobal.func_180446_a(entity, icamera, p_175068_2_);
++            // restore blending function changed by RenderGlobal.preRenderDamagedBlocks
++            GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++            net.minecraftforge.client.ForgeHooksClient.setRenderPass(-1);
++            RenderHelper.func_74518_a();
++        }
+         GlStateManager.func_179103_j(7424);
+         GlStateManager.func_179132_a(true);
+         GlStateManager.func_179089_o();
+@@ -1400,6 +1431,9 @@
+             this.func_180437_a(renderglobal, p_175068_2_, p_175068_1_, d0, d1, d2);
+         }
+ 
++        this.field_78531_r.field_71424_I.func_76318_c("forge_render_last");
++        net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(renderglobal, p_175068_2_);
++
+         this.field_78531_r.field_71424_I.func_76318_c("hand");
+ 
+         if (this.field_175074_C)
+@@ -1515,6 +1549,13 @@
+ 
+     protected void func_78474_d(float p_78474_1_)
+     {
++        net.minecraftforge.client.IRenderHandler renderer = this.field_78531_r.field_71441_e.field_73011_w.getWeatherRenderer();
++        if (renderer != null)
++        {
++            renderer.render(p_78474_1_, this.field_78531_r.field_71441_e, field_78531_r);
++            return;
++        }
++
+         float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);
+ 
+         if (f > 0.0F)
+@@ -1749,30 +1790,17 @@
+             this.field_175082_R = (float)vec3d3.field_72448_b;
+             this.field_175081_S = (float)vec3d3.field_72449_c;
+         }
+-        else if (iblockstate.func_185904_a() == Material.field_151586_h)
++        else
+         {
+-            float f12 = 0.0F;
+-
+-            if (entity instanceof EntityLivingBase)
+-            {
+-                f12 = (float)EnchantmentHelper.func_185292_c((EntityLivingBase)entity) * 0.2F;
+-
+-                if (((EntityLivingBase)entity).func_70644_a(MobEffects.field_76427_o))
+-                {
+-                    f12 = f12 * 0.3F + 0.6F;
+-                }
+-            }
+-
+-            this.field_175080_Q = 0.02F + f12;
+-            this.field_175082_R = 0.02F + f12;
+-            this.field_175081_S = 0.2F + f12;
++            //Forge Moved to Block.
++            Vec3d viewport = ActiveRenderInfo.func_178806_a(entity, p_78466_1_);
++            BlockPos viewportPos = new BlockPos(viewport);
++            IBlockState viewportState = this.field_78531_r.field_71441_e.func_180495_p(viewportPos);
++            Vec3d inMaterialColor = viewportState.func_177230_c().getFogColor(this.field_78531_r.field_71441_e, viewportPos, viewportState, entity, new Vec3d(field_175080_Q, field_175082_R, field_175081_S), p_78466_1_);
++            this.field_175080_Q = (float)inMaterialColor.field_72450_a;
++            this.field_175082_R = (float)inMaterialColor.field_72448_b;
++            this.field_175081_S = (float)inMaterialColor.field_72449_c;
+         }
+-        else if (iblockstate.func_185904_a() == Material.field_151587_i)
+-        {
+-            this.field_175080_Q = 0.6F;
+-            this.field_175082_R = 0.1F;
+-            this.field_175081_S = 0.0F;
+-        }
+ 
+         float f13 = this.field_78535_ad + (this.field_78539_ae - this.field_78535_ad) * p_78466_1_;
+         this.field_175080_Q *= f13;
+@@ -1830,6 +1858,9 @@
+                 f6 = 1.0F / this.field_175081_S;
+             }
+ 
++            // Forge: fix MC-4647 and MC-10480
++            if (Float.isInfinite(f6)) f6 = Math.nextAfter(f6, 0.0);
++
+             this.field_175080_Q = this.field_175080_Q * (1.0F - f15) + this.field_175080_Q * f6 * f15;
+             this.field_175082_R = this.field_175082_R * (1.0F - f15) + this.field_175082_R * f6 * f15;
+             this.field_175081_S = this.field_175081_S * (1.0F - f15) + this.field_175081_S * f6 * f15;
+@@ -1845,6 +1876,13 @@
+             this.field_175081_S = f7;
+         }
+ 
++        net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(this, entity, iblockstate, p_78466_1_, this.field_175080_Q, this.field_175082_R, this.field_175081_S);
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++
++        this.field_175080_Q = event.getRed();
++        this.field_175082_R = event.getGreen();
++        this.field_175081_S = event.getBlue();
++
+         GlStateManager.func_179082_a(this.field_175080_Q, this.field_175082_R, this.field_175081_S, 0.0F);
+     }
+ 
+@@ -1855,7 +1893,9 @@
+         GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
+         GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+         IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_78468_2_);
+-
++        float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(this, entity, iblockstate, p_78468_2_, 0.1F);
++        if (hook >= 0) GlStateManager.func_179095_a(hook);
++        else
+         if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q))
+         {
+             float f1 = 5.0F;
+@@ -1940,6 +1980,7 @@
+                 GlStateManager.func_179102_b(f * 0.05F);
+                 GlStateManager.func_179153_c(Math.min(f, 192.0F) * 0.5F);
+             }
++            net.minecraftforge.client.ForgeHooksClient.onFogRender(this, entity, iblockstate, p_78468_2_, p_78468_1_, f);
+         }
+ 
+         GlStateManager.func_179142_g();
