@@ -20,7 +20,6 @@
 package net.minecraftforge.common.network;
 
 import java.util.HashSet;
-import java.util.Properties;
 import java.util.Set;
 
 import io.netty.channel.ChannelFuture;
