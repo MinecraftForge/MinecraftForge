@@ -69,7 +69,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Let result be the return value of {@link Entity#applyPlayerInteraction}, or {@link #cancellationResult} if the event is cancelled.
      * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link EntityInteract}.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class EntityInteractSpecific extends PlayerInteractEvent
     {
         private final Vec3d localPos;
@@ -110,7 +110,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * or {@link #cancellationResult} if the event is cancelled.
      * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class EntityInteract extends PlayerInteractEvent
     {
         private final Entity target;
@@ -248,7 +248,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Also note that creative mode directly breaks the block without running any other logic.
      * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.
      */
-    @net.minecraftforge.eventbus.api.Cancelable
+    @Cancelable
     public static class LeftClickBlock extends PlayerInteractEvent
     {
         private Result useBlock = DEFAULT;
@@ -369,11 +369,11 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * @return The effective, i.e. logical, side of this interaction. This will be {@link Side#CLIENT} on the client thread, and {@link Side#SERVER} on the server thread.
+     * @return The effective, i.e. logical, side of this interaction. This will be {@link Dist#CLIENT} on the client thread, and {@link Dist#DEDICATED_SERVER} on the server thread.
      */
-    public Side getSide()
+    public Dist getSide()
     {
-        return getWorld().isRemote ? Side.CLIENT : Side.SERVER;
+        return getWorld().isRemote ? Dist.CLIENT : Dist.DEDICATED_SERVER;
     }
 
     /**
