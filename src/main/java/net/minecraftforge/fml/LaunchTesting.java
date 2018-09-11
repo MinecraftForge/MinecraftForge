@@ -70,7 +70,7 @@ public class LaunchTesting
     private static void hackNatives()
     {
         String paths = System.getProperty("java.library.path");
-        String nativesDir = "/home/cpw/.gradle/caches/minecraft/net/minecraft/natives/1.12.2"; //TODO Not hardcode this, FG setups us a natives folder. And sets it in the eclipse run configs.
+        String nativesDir = System.getenv().get("nativesDirectory");
 
         if (Strings.isNullOrEmpty(paths))
             paths = nativesDir;

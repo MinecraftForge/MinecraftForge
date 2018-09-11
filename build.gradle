@@ -62,6 +62,7 @@ project(':forge') {
         }
     }
     repositories {
+        mavenLocal()
         mavenCentral()
     }
     patcher {
@@ -115,11 +116,11 @@ project(':forge') {
         options.failOnError = false
         options.forkOptions.with {
             executable = 'java'
-            jvmArgs = ['-classpath', project.configurations.ecj.asPath, 'org.eclipse.jdt.internal.compiler.batch.Main', '-nowarn']
+            jvmArgs = ['-classpath', project.configurations.ecj.asPath, 'org.eclipse.jdt.internal.compiler.batch.Main', '-nowarn', '-proceedOnError', '-preserveAllLocals', '-parameters']
         }
     }
 
-    task runclient(type: JavaExec) {
+    task runclient(type: JavaExec, dependsOn: [":forge:downloadAssets", ":forge:extractNatives"]) {
         doFirst {
             mkdir 'runclient'
         }
@@ -132,7 +133,15 @@ project(':forge') {
 //        jvmArgs = ['-verbose:class']
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
-        environment target:'fmldevclient'
+        systemProperties = [
+                "org.lwjgl.util.Debug": "true",
+                "org.lwjgl.util.DebugLoader": "true"
+        ]
+        environment += [
+                target:'fmldevclient',
+                assetDirectory: file("${gradle.getGradleUserHomeDir()}/caches/forge_gradle/assets/"),
+                nativesDirectory: extractNatives.output
+        ]
         workingDir 'runclient'
     }
 

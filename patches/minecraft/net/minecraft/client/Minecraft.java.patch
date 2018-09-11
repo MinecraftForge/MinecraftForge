@@ -24,6 +24,15 @@
        if (this.gameSettings.fullScreen && !this.field_195558_d.func_198113_j()) {
           this.field_195558_d.func_198077_g();
        }
+@@ -485,7 +488,7 @@
+       });
+       List<String> list = Lists.<String>newArrayList();
+       GLFWErrorCallback glfwerrorcallback = GLFW.glfwSetErrorCallback((p_211100_1_, p_211100_2_) -> {
+-         list.add(String.format("GLFW error during init: [0x%X]%s", p_211100_1_, p_211100_2_));
++         list.add(String.format("GLFW error during init: [0x%X] %s", p_211100_1_, GLFWErrorCallback.getDescription(p_211100_2_)));
+       });
+       if (!GLFW.glfwInit()) {
+          throw new IllegalStateException("Failed to initialize GLFW, errors: " + Joiner.on(",").join(list));
 @@ -1392,6 +1395,7 @@
        NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
        networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null, (p_209507_0_) -> {
