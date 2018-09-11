@@ -67,6 +67,21 @@ public class OptionalCapabilityInstance<T>
         return instanceSupplier == null ? EMPTY.cast() : new OptionalCapabilityInstance<>(instanceSupplier);
     }
 
+    public static <T> OptionalCapabilityInstance<T> of(final @Nullable T instance)
+    {
+        return instance == null ? EMPTY.cast() : of(() -> instance);
+    }
+
+    public static <T> OptionalCapabilityInstance<T> of(Capability<?> cap, Capability<T> check, @Nullable NonNullSupplier<T> instanceSupplier)
+    {
+        return of(cap == check ? instanceSupplier : null);
+    }
+
+    public static <T> OptionalCapabilityInstance<T> of(Capability<?> cap, Capability<T> check, @Nullable T instance)
+    {
+        return of(cap == check ? instance : null);
+    }
+
     private @Nullable T getValue()
     {
         if (!isValid)
