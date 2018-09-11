@@ -41,11 +41,11 @@ public interface IForgeBlock
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      *
      * @param state
-     * @param reader
+     * @param world
      * @param pos
      * @return The light value
      */
-    default int getLightVaule(IBlockState state, IWorldReader reader, BlockPos pos)
+    default int getLightValue(IBlockState state, IWorldReader world, BlockPos pos)
     {
         return state.getLightValue();
     }
@@ -118,7 +118,7 @@ public interface IForgeBlock
      * @param state State of the current block
      * @return True if block has a tile entity, false otherwise
      */
-    default boolean hasTIleEntity(IBlockState state)
+    default boolean hasTileEntity(IBlockState state)
     {
         return this.getBlock().hasTileEntity();
     }

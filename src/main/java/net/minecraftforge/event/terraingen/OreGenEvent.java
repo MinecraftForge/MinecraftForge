@@ -21,14 +21,14 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 
-import net.minecraft.world.biome.BiomeDecorator;
+//import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.feature.WorldGenerator;
+//import net.minecraft.world.gen.feature.WorldGenerator;
 
 /**
  * OreGenEvent is fired when an event involving ore generation occurs.<br>
@@ -122,6 +122,7 @@ public class OreGenEvent extends Event
      * <br>
      * This event is fired on the {@link MinecraftForge#ORE_GEN_BUS}.<br>
      **/
+    /* TODO Re-Evaluate
     @HasResult
     public static class GenerateMinable extends OreGenEvent
     {
@@ -147,4 +148,6 @@ public class OreGenEvent extends Event
             return generator;
         }
     }
+
+    */
 }

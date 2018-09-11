@@ -19,7 +19,6 @@
 
 package net.minecraftforge.event.terraingen;
 
-import net.minecraft.world.biome.BiomeProvider;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -35,7 +34,7 @@ import net.minecraft.world.WorldType;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.<br>
  **/
-public class WorldTypeEvent extends net.minecraftforge.eventbus.api.Event
+public class WorldTypeEvent extends Event
 {
     private final WorldType worldType;
 
