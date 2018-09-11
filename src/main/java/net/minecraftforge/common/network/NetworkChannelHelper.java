@@ -20,6 +20,7 @@
 package net.minecraftforge.common.network;
 
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 
 import io.netty.channel.ChannelFuture;
@@ -34,12 +35,15 @@ public class NetworkChannelHelper
 {
     private static Set<ChannelOutboundInvoker> markedChannels;
     
+    public static int flushDelay;
+    
     static
     {
         markedChannels = new HashSet<ChannelOutboundInvoker>();
         Thread t = new Thread(NetworkChannelHelper::run, "NetworkChannelFlush");
         t.setDaemon(true);
         t.start();
+        flushDelay = Integer.getInteger("fml.network.flushDelay", 50);
     }
     
     
@@ -105,7 +109,7 @@ public class NetworkChannelHelper
     
     private static boolean isInstantFlushEnabled()
     {
-        return ForgeModContainer.instantNetworkFlushing;
+        return !ForgeModContainer.flushNetworkOnTick;
     }
     
     public static void run()
@@ -115,7 +119,7 @@ public class NetworkChannelHelper
             while(true)
             {
                 flushAllChannels();
-                Thread.sleep(50);
+                Thread.sleep(flushDelay);
             }
         }
         catch(InterruptedException e) {
