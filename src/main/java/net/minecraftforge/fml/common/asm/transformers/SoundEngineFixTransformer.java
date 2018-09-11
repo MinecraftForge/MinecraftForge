@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.fml.common.asm.transformers;
-
+/* TODO Class transformers
 import java.util.Iterator;
 
 import org.objectweb.asm.ClassReader;
@@ -167,3 +167,4 @@ public class SoundEngineFixTransformer implements IClassTransformer
     }
 
 }
+*/

@@ -46,7 +46,7 @@ public enum ObjectHolderRegistry
     INSTANCE;
     private static final Logger LOGGER = LogManager.getLogger();
     private List<ObjectHolderRef> objectHolders = Lists.newArrayList();
-
+/* TODO annotation data
     public void findObjectHolders(ASMDataTable table)
     {
         LOGGER.info("Processing ObjectHolder annotations");
@@ -69,7 +69,7 @@ public enum ObjectHolderRegistry
         });
         LOGGER.info("Found {} ObjectHolder annotations", objectHolders.size());
     }
-
+*/
     private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue)
     {
         Class<?> clazz;

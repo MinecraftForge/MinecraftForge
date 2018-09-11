@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.oredict;
-
+/*
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -30,7 +30,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
-
+*/
 public class OreIngredient //extends Ingredient
 {
 /*

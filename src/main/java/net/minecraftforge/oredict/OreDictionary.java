@@ -18,7 +18,6 @@
  */
 
 package net.minecraftforge.oredict;
-
 /*
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +52,6 @@ import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 */
-
 public class OreDictionary
 {
 /*

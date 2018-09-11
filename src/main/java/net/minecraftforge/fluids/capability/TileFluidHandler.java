@@ -21,8 +21,10 @@ package net.minecraftforge.fluids.capability;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -32,6 +34,11 @@ import javax.annotation.Nullable;
 public class TileFluidHandler extends TileEntity
 {
     protected FluidTank tank = new FluidTank(Fluid.BUCKET_VOLUME);
+
+    public TileFluidHandler(@Nonnull TileEntityType<?> p_i48289_1_)
+    {
+        super(p_i48289_1_);
+    }
 
     @Override
     public void readFromNBT(NBTTagCompound tag)
@@ -49,18 +56,11 @@ public class TileFluidHandler extends TileEntity
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
-    {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY || super.hasCapability(capability, facing);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    @Nonnull
+    public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-            return (T) tank;
+            return OptionalCapabilityInstance.of(tank).cast();
         return super.getCapability(capability, facing);
     }
 }

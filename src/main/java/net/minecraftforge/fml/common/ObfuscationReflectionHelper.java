@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.fml.common;
-
+/* TODO ReflectionHelper
 import java.util.Arrays;
 
 import net.minecraftforge.fml.common.asm.deobf.FMLDeobfuscatingRemapper;
@@ -31,7 +31,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper.UnableToFindFieldExcep
  *
  * @author cpw
  *
- */
+ * /
 public class ObfuscationReflectionHelper
 {
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex)
@@ -108,3 +108,4 @@ public class ObfuscationReflectionHelper
         }
     }
 }
+*/

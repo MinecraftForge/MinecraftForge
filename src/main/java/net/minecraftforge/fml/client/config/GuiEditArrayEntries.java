@@ -559,7 +559,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
     }
 
-    public static class BaseEntry implements IArrayEntry
+    public static class BaseEntry extends GuiListExtended.IGuiListEntry implements IArrayEntry
     {
         protected final GuiEditArray owningScreen;
         protected final GuiEditArrayEntries owningEntryList;
@@ -592,31 +592,31 @@ public class GuiEditArrayEntries extends GuiListExtended
         }
 
         @Override
-        public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
+        public void func_194999_a(int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float partial)
         {
             if (this.getValue() != null && this.isValidated)
-                owningEntryList.getMC().fontRenderer.drawString(
+                owningEntryList.getMC().fontRenderer.func_211126_b(
                         isValidValue ? TextFormatting.GREEN + VALID : TextFormatting.RED + INVALID,
-                        listWidth / 4 - owningEntryList.getMC().fontRenderer.getStringWidth(VALID) - 2,
-                        y + slotHeight / 2 - owningEntryList.getMC().fontRenderer.FONT_HEIGHT / 2,
+                        entryWidth / 4 - owningEntryList.getMC().fontRenderer.getStringWidth(VALID) - 2,
+                        entryHeight / 2 - owningEntryList.getMC().fontRenderer.FONT_HEIGHT / 2,
                         16777215);
 
-            int half = listWidth / 2;
+            int half = entryWidth / 2;
             if (owningEntryList.canAddMoreEntries)
             {
                 this.btnAddNewEntryAbove.visible = true;
                 this.btnAddNewEntryAbove.x = half + ((half / 2) - 44);
-                this.btnAddNewEntryAbove.y = y;
+                this.btnAddNewEntryAbove.y = this.func_195001_c();
                 this.btnAddNewEntryAbove.drawButton(owningEntryList.getMC(), mouseX, mouseY, partial);
             }
             else
                 this.btnAddNewEntryAbove.visible = false;
 
-            if (!configElement.isListLengthFixed() && slotIndex != owningEntryList.listEntries.size() - 1)
+            if (!configElement.isListLengthFixed() && this.field_195005_b != owningEntryList.listEntries.size() - 1)
             {
                 this.btnRemoveEntry.visible = true;
                 this.btnRemoveEntry.x = half + ((half / 2) - 22);
-                this.btnRemoveEntry.y = y;
+                this.btnRemoveEntry.y = this.func_195001_c();
                 this.btnRemoveEntry.drawButton(owningEntryList.getMC(), mouseX, mouseY, partial);
             }
             else
@@ -689,7 +689,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         public void updatePosition(int p_178011_1_, int p_178011_2_, int p_178011_3_, float partial){}
     }
 
-    public static interface IArrayEntry extends GuiListExtended.IGuiListEntry
+    public static interface IArrayEntry
     {
         void keyTyped(char eventChar, int eventKey);
 

@@ -30,6 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -176,21 +177,11 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
 
         return null;
     }
-
+    
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+    @Nonnull
+    public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
-    }
-
-    @Override
-    @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
-    {
-        if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)
-        {
-            return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.cast(this);
-        }
-        return null;
+        return OptionalCapabilityInstance.of(capability, CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, this).cast();
     }
 }

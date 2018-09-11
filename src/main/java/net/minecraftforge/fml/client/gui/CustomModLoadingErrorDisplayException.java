@@ -21,7 +21,9 @@ package net.minecraftforge.fml.client.gui;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.IFMLHandledException;
 import net.minecraftforge.api.distmarker.Dist;

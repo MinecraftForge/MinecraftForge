@@ -20,6 +20,7 @@
 package net.minecraftforge.items;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
@@ -58,7 +59,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         if (world == null || pos == null || !world.isBlockLoaded(pos))
             return null; // Still loading
 
-        Block blockType = chest.getBlockType();
+        IBlockState state = chest.func_195044_w();
 
         EnumFacing[] horizontals = EnumFacing.HORIZONTALS;
         for (int i = horizontals.length - 1; i >= 0; i--)   // Use reverse order so we can return early
@@ -67,7 +68,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
             BlockPos blockpos = pos.offset(enumfacing);
             Block block = world.getBlockState(blockpos).getBlock();
 
-            if (block == blockType)
+            if (block == state.getBlock())
             {
                 TileEntity otherTE = world.getTileEntity(blockpos);
 
@@ -125,7 +126,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         TileEntityChest chest = getChest(accessingUpperChest);
         if (chest != null)
         {
-            IItemHandler singleHandler = chest.getSingleChestHandler();
+            IItemHandler singleHandler = null; // TODO TileEntityChest patches chest.getSingleChestHandler();
             if (singleHandler instanceof IItemHandlerModifiable)
             {
                 ((IItemHandlerModifiable) singleHandler).setStackInSlot(targetSlot, stack);
@@ -148,7 +149,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
             return stack;
 
         int starting = stack.getCount();
-        ItemStack ret = chest.getSingleChestHandler().insertItem(targetSlot, stack, simulate);
+        ItemStack ret = ItemStack.EMPTY; // TODO TileEntityChest patches chest.getSingleChestHandler().insertItem(targetSlot, stack, simulate);
         if (ret.getCount() != starting && !simulate)
         {
             chest = getChest(!accessingUpperChest);
@@ -169,7 +170,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         if (chest == null)
             return ItemStack.EMPTY;
 
-        ItemStack ret = chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate);
+        ItemStack ret = ItemStack.EMPTY; // TODO TileEntityChest patches chest.getSingleChestHandler().extractItem(targetSlot, amount, simulate);
         if (!ret.isEmpty() && !simulate)
         {
             chest = getChest(!accessingUpperChest);
@@ -195,7 +196,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         TileEntityChest chest = getChest(accessingUpperChest);
         if (chest != null)
         {
-            return chest.getSingleChestHandler().isItemValid(targetSlot, stack);
+            return false; // TODO TileEntityChest patches chest.getSingleChestHandler().isItemValid(targetSlot, stack);
         }
         return true;
     }

@@ -63,11 +63,7 @@ public class CapabilityAnimation
         @Nonnull
         public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
-            if(capability == ANIMATION_CAPABILITY)
-            {
-                return OptionalCapabilityInstance.of(() -> asm).cast();
-            }
-            return OptionalCapabilityInstance.empty();
+            return OptionalCapabilityInstance.of(capability, ANIMATION_CAPABILITY, asm).cast();
         }
     }
 }

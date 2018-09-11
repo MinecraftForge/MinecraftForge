@@ -30,6 +30,7 @@ import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
@@ -46,17 +47,22 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
-import net.minecraft.launchwrapper.Launch;
+
+import cpw.mods.modlauncher.Launcher;
 import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
+import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class LibraryManager
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    
     public static final boolean DISABLE_EXTERNAL_MANIFEST = Boolean.parseBoolean(System.getProperty("forge.disable_external_manifest", "false"));
     public static final boolean ENABLE_AUTO_MOD_MOVEMENT = Boolean.parseBoolean(System.getProperty("forge.enable_auto_mod_movement", "false"));
     private static final String LIBRARY_DIRECTORY_OVERRIDE = System.getProperty("forge.lib_folder", null);
@@ -75,10 +81,10 @@ public class LibraryManager
     public static void setup(File minecraftHome)
     {
         File libDir = findLibraryFolder(minecraftHome);
-        FMLLog.log.debug("Determined Minecraft Libraries Root: {}", libDir);
+        LOGGER.debug("Determined Minecraft Libraries Root: {}", libDir);
         Repository old = Repository.replace(libDir, "libraries");
         if (old != null)
-            FMLLog.log.debug("  Overwriting Previous: {}", old);
+            LOGGER.debug("  Overwriting Previous: {}", old);
         libraries_dir = Repository.get("libraries");
 
         File mods = new File(minecraftHome, "mods");
@@ -119,14 +125,14 @@ public class LibraryManager
     {
         if (LIBRARY_DIRECTORY_OVERRIDE != null)
         {
-            FMLLog.log.error("System variable set to override Library Directory: {}", LIBRARY_DIRECTORY_OVERRIDE);
+            LOGGER.error("System variable set to override Library Directory: {}", LIBRARY_DIRECTORY_OVERRIDE);
             return new File(LIBRARY_DIRECTORY_OVERRIDE);
         }
 
         CodeSource source = ArtifactVersion.class.getProtectionDomain().getCodeSource();
         if (source == null)
         {
-            FMLLog.log.error("Unable to determine codesource for {}. Using default libraries directory.", ArtifactVersion.class.getName());
+            LOGGER.error("Unable to determine codesource for {}. Using default libraries directory.", ArtifactVersion.class.getName());
             return new File(minecraftHome, "libraries");
         }
 
@@ -142,9 +148,9 @@ public class LibraryManager
 
             if (!comp.endsWith("/org/apache/maven/maven-artifact/"))
             {
-                FMLLog.log.error("Apache Maven library folder was not in the format expected. Using default libraries directory.");
-                FMLLog.log.error("Full: {}", new File(source.getLocation().toURI()));
-                FMLLog.log.error("Trimmed: {}", comp);
+                LOGGER.error("Apache Maven library folder was not in the format expected. Using default libraries directory.");
+                LOGGER.error("Full: {}", new File(source.getLocation().toURI()));
+                LOGGER.error("Trimmed: {}", comp);
                 return new File(minecraftHome, "libraries");
             }
             //     maven-artifact  /maven          /apache         /org            /libraries
@@ -152,7 +158,7 @@ public class LibraryManager
         }
         catch (URISyntaxException e)
         {
-            FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Unable to determine file for {}. Using default libraries directory.", ArtifactVersion.class.getName()), e);
+            LOGGER.error(LOGGER.getMessageFactory().newMessage("Unable to determine file for {}. Using default libraries directory.", ArtifactVersion.class.getName()), e);
         }
 
         return new File(minecraftHome, "libraries"); //Everything else failed, return the default.
@@ -163,7 +169,7 @@ public class LibraryManager
         if (!dir.exists())
             return;
 
-        FMLLog.log.debug("Cleaning up mods folder: {}", dir);
+        LOGGER.debug("Cleaning up mods folder: {}", dir);
         for (File file : dir.listFiles(f -> f.isFile() && f.getName().endsWith(".jar")))
         {
             Pair<Artifact, byte[]> ret = extractPacked(file, modlist, modDirs);
@@ -183,7 +189,7 @@ public class LibraryManager
         }
         catch (IOException e)
         {
-            FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Error updating modlist file {}", modlist.getName()), e);
+            LOGGER.error(LOGGER.getMessageFactory().newMessage("Error updating modlist file {}", modlist.getName()), e);
         }
     }
 
@@ -191,20 +197,20 @@ public class LibraryManager
     {
         if (processed.contains(file))
         {
-            FMLLog.log.debug("File already proccessed {}, Skipping", file.getAbsolutePath());
+            LOGGER.debug("File already proccessed {}, Skipping", file.getAbsolutePath());
             return null;
         }
         JarFile jar = null;
         try
         {
             jar = new JarFile(file);
-            FMLLog.log.debug("Examining file: {}", file.getName());
+            LOGGER.debug("Examining file: {}", file.getName());
             processed.add(file);
             return extractPacked(jar, modlist, modDirs);
         }
         catch (IOException ioe)
         {
-            FMLLog.log.error("Unable to read the jar file {} - ignoring", file.getName(), ioe);
+            LOGGER.error("Unable to read the jar file {} - ignoring", file.getName(), ioe);
         }
         finally
         {
@@ -228,7 +234,7 @@ public class LibraryManager
         attrs = jar.getManifest().getMainAttributes();
 
         String modSide = attrs.getValue(LibraryManager.MODSIDE);
-        if (modSide != null && !"BOTH".equals(modSide) && !FMLLaunchHandler.side().name().equals(modSide))
+        if (modSide != null && !"BOTH".equals(modSide) && !FMLEnvironment.dist.name().equals(modSide))
             return null;
 
         if (attrs.containsKey(MODCONTAINSDEPS))
@@ -237,7 +243,7 @@ public class LibraryManager
             {
                 if (!dep.endsWith(".jar"))
                 {
-                    FMLLog.log.error("Contained Dep is not a jar file: {}", dep);
+                    LOGGER.error("Contained Dep is not a jar file: {}", dep);
                     throw new IllegalStateException("Invalid contained dep, Must be jar: " + dep);
                 }
 
@@ -247,14 +253,14 @@ public class LibraryManager
                 JarEntry depEntry = jar.getJarEntry(dep);
                 if (depEntry == null)
                 {
-                    FMLLog.log.error("Contained Dep is not in the jar: {}", dep);
+                    LOGGER.error("Contained Dep is not in the jar: {}", dep);
                     throw new IllegalStateException("Invalid contained dep, Missing from jar: " + dep);
                 }
 
                 String depEndName = new File(dep).getName(); // extract last part of name
                 if (skipContainedDeps.contains(dep) || skipContainedDeps.contains(depEndName))
                 {
-                    FMLLog.log.error("Skipping dep at request: {}", dep);
+                    LOGGER.error("Skipping dep at request: {}", dep);
                     continue;
                 }
 
@@ -294,14 +300,14 @@ public class LibraryManager
                         File target = new File(dir, depEndName);
                         if (target.exists())
                         {
-                            FMLLog.log.debug("Found existing ContainDep extracted to {}, skipping extraction", target.getCanonicalPath());
+                            LOGGER.debug("Found existing ContainDep extracted to {}, skipping extraction", target.getCanonicalPath());
                             found = true;
                         }
                     }
                     if (!found)
                     {
                         File target = new File(modDirs[0], depEndName);
-                        FMLLog.log.debug("Extracting ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
+                        LOGGER.debug("Extracting ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
                         try
                         {
                             Files.createParentDirs(target);
@@ -313,12 +319,12 @@ public class LibraryManager
                             {
                                 ByteStreams.copy(in, out);
                             }
-                            FMLLog.log.debug("Extracted ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
+                            LOGGER.debug("Extracted ContainedDep {} from {} to {}", dep, jar.getName(), target.getCanonicalPath());
                             extractPacked(target, modlist, modDirs);
                         }
                         catch (IOException e)
                         {
-                            FMLLog.log.error("An error occurred extracting dependency", e);
+                            LOGGER.error("An error occurred extracting dependency", e);
                         }
                     }
                 }
@@ -330,7 +336,7 @@ public class LibraryManager
                         File target = artifact.getFile();
                         if (target.exists())
                         {
-                            FMLLog.log.debug("Found existing ContainedDep {}({}) from {} extracted to {}, skipping extraction", dep, artifact.toString(), target.getCanonicalPath(), jar.getName());
+                            LOGGER.debug("Found existing ContainedDep {}({}) from {} extracted to {}, skipping extraction", dep, artifact.toString(), target.getCanonicalPath(), jar.getName());
                             if (!ENABLE_AUTO_MOD_MOVEMENT)
                             {
                                 Pair<?, ?> child = extractPacked(target, modlist, modDirs); //If we're not building a real list we have to re-build the dep list every run. So search down.
@@ -342,7 +348,7 @@ public class LibraryManager
                         }
                         else
                         {
-                            FMLLog.log.debug("Extracting ContainedDep {}({}) from {} to {}", dep, artifact.toString(), jar.getName(), target.getCanonicalPath());
+                            LOGGER.debug("Extracting ContainedDep {}({}) from {} to {}", dep, artifact.toString(), jar.getName(), target.getCanonicalPath());
                             Files.createParentDirs(target);
                             try
                             (
@@ -352,7 +358,7 @@ public class LibraryManager
                             {
                                 ByteStreams.copy(in, out);
                             }
-                            FMLLog.log.debug("Extracted ContainedDep {}({}) from {} to {}", dep, artifact.toString(), jar.getName(), target.getCanonicalPath());
+                            LOGGER.debug("Extracted ContainedDep {}({}) from {} to {}", dep, artifact.toString(), jar.getName(), target.getCanonicalPath());
 
                             if (artifact.isSnapshot())
                             {
@@ -375,11 +381,11 @@ public class LibraryManager
                     }
                     catch (NumberFormatException nfe)
                     {
-                        FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("An error occurred extracting dependency. Invalid Timestamp: {}", meta.getValue(TIMESTAMP)), nfe);
+                        LOGGER.error(LOGGER.getMessageFactory().newMessage("An error occurred extracting dependency. Invalid Timestamp: {}", meta.getValue(TIMESTAMP)), nfe);
                     }
                     catch (IOException e)
                     {
-                        FMLLog.log.error("An error occurred extracting dependency", e);
+                        LOGGER.error("An error occurred extracting dependency", e);
                     }
                 }
             }
@@ -443,26 +449,26 @@ public class LibraryManager
         List<File> list = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
-        Map<String,String> args = (Map<String, String>)Launch.blackboard.get("launchArgs");
+        Map<String,String> args = Collections.emptyMap(); // TODO Launch args - do we need this? (Map<String, String>)Launcher.INSTANCE.blackboard().get("launchArgs");
         String extraMods = args.get("--mods");
         if (extraMods != null)
         {
-            FMLLog.log.info("Found mods from the command line:");
+            LOGGER.info("Found mods from the command line:");
             for (String mod : extraMods.split(","))
             {
                 File file = new File(mcDir, mod);
                 if (!file.exists())
                 {
-                    FMLLog.log.info("  Failed to find mod file {} ({})", mod, file.getAbsolutePath());
+                    LOGGER.info("  Failed to find mod file {} ({})", mod, file.getAbsolutePath());
                 }
                 else if (!list.contains(file))
                 {
-                    FMLLog.log.debug("  Adding {} ({}) to the mod list", mod, file.getAbsolutePath());
+                    LOGGER.debug("  Adding {} ({}) to the mod list", mod, file.getAbsolutePath());
                     list.add(file);
                 }
                 else if (!list.contains(file))
                 {
-                    FMLLog.log.debug("  Duplicte command line mod detected {} ({})", mod, file.getAbsolutePath());
+                    LOGGER.debug("  Duplicte command line mod detected {} ({})", mod, file.getAbsolutePath());
                 }
             }
         }
@@ -473,12 +479,12 @@ public class LibraryManager
             if (!base.isDirectory() || !base.exists())
                 continue;
 
-            FMLLog.log.info("Searching {} for mods", base.getAbsolutePath());
+            LOGGER.info("Searching {} for mods", base.getAbsolutePath());
             for (File f : base.listFiles(MOD_FILENAME_FILTER))
             {
                 if (!list.contains(f))
                 {
-                    FMLLog.log.debug("  Adding {} to the mod list", f.getName());
+                    LOGGER.debug("  Adding {} to the mod list", f.getName());
                     list.add(f);
                 }
             }
