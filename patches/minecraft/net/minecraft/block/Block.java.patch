@@ -5,7 +5,31 @@
  import org.apache.logging.log4j.Logger;
  
 -public class Block implements IItemProvider {
-+public class Block extends net.minecraftforge.registries.ForgeRegistryEntry<Block> implements IItemProvider {
++public class Block extends net.minecraftforge.registries.ForgeRegistryEntry<Block> implements IItemProvider, net.minecraftforge.common.extensions.IForgeBlock {
     protected static final Logger field_196273_d = LogManager.getLogger();
     private static final ResourceLocation AIR_ID = new ResourceLocation("air");
     public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> REGISTRY = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(AIR_ID);
+@@ -1604,4 +1604,23 @@
+          return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
+       }
+    }
++   /* ======================================== FORGE START =====================================*/
++
++   private ThreadLocal<IBlockState> silkCheck = new ThreadLocal<>();
++
++   @Override
++   public float getSlipperiness(IBlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity)
++   {
++      return this.slipperiness;
++   }
++
++   @Override
++   public boolean canSilkHarvest(IWorldReader world, BlockPos pos, IBlockState state, EntityPlayer player)
++   {
++      silkCheck.set(state);
++      boolean ret = this.canSilkHarvest();
++      return ret;
++   }
++
++   /* ========================================= FORGE END ======================================*/
+ }
