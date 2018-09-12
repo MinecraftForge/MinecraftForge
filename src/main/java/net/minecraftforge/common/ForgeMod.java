@@ -329,6 +329,11 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
             }
         }
     }
+    
+    public static Configuration getConfig()
+    {
+        return config;
+    }
 
 /*
     public void missingMapping(RegistryEvent.MissingMappings<Item> event)

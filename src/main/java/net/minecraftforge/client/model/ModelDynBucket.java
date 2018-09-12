@@ -439,32 +439,28 @@ public final class ModelDynBucket implements IUnbakedModel
         @Override
         public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
         {
-            FluidStack fluidStack = FluidUtil.getFluidContained(stack);
+            return FluidUtil.getFluidContained(stack)
+                    .map(fluidStack -> {
+                        BakedDynBucket model = (BakedDynBucket)originalModel;
 
-            // not a fluid item apparently
-            if (fluidStack == null)
-            {
-                // empty bucket
-                return originalModel;
-            }
+                        Fluid fluid = fluidStack.getFluid();
+                        String name = fluid.getName();
 
-            BakedDynBucket model = (BakedDynBucket)originalModel;
+                        if (!model.cache.containsKey(name))
+                        {
+                            IUnbakedModel parent = model.parent.process(ImmutableMap.of("fluid", name));
+                            Function<ResourceLocation, TextureAtlasSprite> textureGetter;
+                            textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
 
-            Fluid fluid = fluidStack.getFluid();
-            String name = fluid.getName();
+                            IBakedModel bakedModel = parent.bake(ModelLoader.defaultModelGetter(), textureGetter, new SimpleModelState(model.transforms), false, model.format);
+                            model.cache.put(name, bakedModel);
+                            return bakedModel;
+                        }
 
-            if (!model.cache.containsKey(name))
-            {
-                IUnbakedModel parent = model.parent.process(ImmutableMap.of("fluid", name));
-                Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-                textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
-
-                IBakedModel bakedModel = parent.bake(ModelLoader.defaultModelGetter(), textureGetter, new SimpleModelState(model.transforms), false, model.format);
-                model.cache.put(name, bakedModel);
-                return bakedModel;
-            }
-
-            return model.cache.get(name);
+                        return model.cache.get(name);
+                    })
+                    // not a fluid item apparently
+                    .orElse(originalModel); // empty bucket
         }
     }
 

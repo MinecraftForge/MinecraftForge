@@ -21,11 +21,12 @@ package net.minecraftforge.client.settings;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.settings.GameSettings;
-import org.lwjgl.input.Keyboard;
+
+import org.lwjgl.glfw.GLFW;
 
 public enum KeyModifier {
     CONTROL {
@@ -34,11 +35,11 @@ public enum KeyModifier {
         {
             if (Minecraft.IS_RUNNING_ON_MAC)
             {
-                return keyCode == Keyboard.KEY_LMETA || keyCode == Keyboard.KEY_RMETA;
+                return keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT;
             }
             else
             {
-                return keyCode == Keyboard.KEY_LCONTROL || keyCode == Keyboard.KEY_RCONTROL;
+                return keyCode == GLFW.GLFW_KEY_LEFT_CONTROL || keyCode == GLFW.GLFW_KEY_RIGHT_CONTROL;
             }
         }
 
@@ -57,7 +58,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(int keyCode)
         {
-            String keyName = GameSettings.getKeyDisplayString(keyCode);
+            String keyName = GLFW.glfwGetKeyName(keyCode, 0);
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
             return I18n.format(localizationFormatKey, keyName);
         }
@@ -66,7 +67,7 @@ public enum KeyModifier {
         @Override
         public boolean matches(int keyCode)
         {
-            return keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT;
+            return keyCode == GLFW.GLFW_KEY_LEFT_SHIFT || keyCode == GLFW.GLFW_KEY_RIGHT_SHIFT;
         }
 
         @Override
@@ -84,7 +85,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(int keyCode)
         {
-            String keyName = GameSettings.getKeyDisplayString(keyCode);
+            String keyName = GLFW.glfwGetKeyName(keyCode, 0);
             return I18n.format("forge.controlsgui.shift", keyName);
         }
     },
@@ -92,7 +93,7 @@ public enum KeyModifier {
         @Override
         public boolean matches(int keyCode)
         {
-            return keyCode == Keyboard.KEY_LMENU || keyCode == Keyboard.KEY_RMENU;
+            return keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT;
         }
 
         @Override
@@ -110,7 +111,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(int keyCode)
         {
-            String keyName = GameSettings.getKeyDisplayString(keyCode);
+            String keyName = GLFW.glfwGetKeyName(keyCode, 0);
             return I18n.format("forge.controlsgui.alt", keyName);
         }
     },
@@ -146,7 +147,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(int keyCode)
         {
-            return GameSettings.getKeyDisplayString(keyCode);
+            return GLFW.glfwGetKeyName(keyCode, 0);
         }
     };
 
