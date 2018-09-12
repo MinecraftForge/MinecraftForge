@@ -3,6 +3,8 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IRenderHandler;
 
 public interface IForgeDimension
@@ -24,18 +26,24 @@ public interface IForgeDimension
         return null;
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Nullable
     IRenderHandler getSkyRenderer();
 
+    @OnlyIn(Dist.CLIENT)
     void setSkyRenderer(IRenderHandler skyRenderer);
 
+    @OnlyIn(Dist.CLIENT)
     @Nullable
     IRenderHandler getCloudRenderer();
 
+    @OnlyIn(Dist.CLIENT)
     void setCloudRenderer(IRenderHandler renderer);
 
+    @OnlyIn(Dist.CLIENT)
     @Nullable
     IRenderHandler getWeatherRenderer();
 
+    @OnlyIn(Dist.CLIENT)
     void setWeatherRenderer(IRenderHandler renderer);
 }
