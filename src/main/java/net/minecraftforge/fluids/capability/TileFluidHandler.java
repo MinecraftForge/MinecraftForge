@@ -34,6 +34,8 @@ import javax.annotation.Nullable;
 public class TileFluidHandler extends TileEntity
 {
     protected FluidTank tank = new FluidTank(Fluid.BUCKET_VOLUME);
+    
+    private final OptionalCapabilityInstance<IFluidHandler> holder = OptionalCapabilityInstance.of(() -> tank);
 
     public TileFluidHandler(@Nonnull TileEntityType<?> p_i48289_1_)
     {
@@ -60,7 +62,7 @@ public class TileFluidHandler extends TileEntity
     public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
-            return OptionalCapabilityInstance.of(tank).cast();
+            return holder.cast();
         return super.getCapability(capability, facing);
     }
 }

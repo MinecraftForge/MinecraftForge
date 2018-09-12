@@ -46,6 +46,8 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider
 {
     public static final String FLUID_NBT_KEY = "Fluid";
+    
+    private final OptionalCapabilityInstance<IFluidHandlerItem> holder = OptionalCapabilityInstance.of(() -> this);
 
     @Nonnull
     protected ItemStack container;
@@ -205,7 +207,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     @Nonnull
     public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
-        return OptionalCapabilityInstance.of(capability, CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, this).cast();
+        return OptionalCapabilityInstance.orEmpty(capability, CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, holder);
     }
 
     /**

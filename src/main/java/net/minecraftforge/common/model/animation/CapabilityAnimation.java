@@ -52,9 +52,10 @@ public class CapabilityAnimation
 
     public static class DefaultItemAnimationCapabilityProvider implements ICapabilityProvider
     {
-        private final IAnimationStateMachine asm;
+        @Nonnull
+        private final OptionalCapabilityInstance<IAnimationStateMachine> asm;
 
-        public DefaultItemAnimationCapabilityProvider(IAnimationStateMachine asm)
+        public DefaultItemAnimationCapabilityProvider(@Nonnull OptionalCapabilityInstance<IAnimationStateMachine> asm)
         {
             this.asm = asm;
         }
@@ -63,7 +64,7 @@ public class CapabilityAnimation
         @Nonnull
         public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
-            return OptionalCapabilityInstance.of(capability, ANIMATION_CAPABILITY, asm).cast();
+            return OptionalCapabilityInstance.orEmpty(capability, ANIMATION_CAPABILITY, asm);
         }
     }
 }
