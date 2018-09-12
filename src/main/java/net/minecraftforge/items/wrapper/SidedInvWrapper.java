@@ -22,6 +22,7 @@ package net.minecraftforge.items.wrapper;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
 
@@ -32,7 +33,17 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     protected final ISidedInventory inv;
     protected final EnumFacing side;
 
-    public SidedInvWrapper(ISidedInventory inv, EnumFacing side)
+    @SuppressWarnings("unchecked")
+    public static <T extends OptionalCapabilityInstance<IItemHandlerModifiable>> T[] create(ISidedInventory inv, EnumFacing... sides) {
+        T[] ret = (T[])new Object[sides.length];
+        for (int x = 0; x < sides.length; x++) {
+            final EnumFacing side = sides[x];
+            ret[x] = (T)OptionalCapabilityInstance.of(() -> (IItemHandlerModifiable)new SidedInvWrapper(inv, side));
+        }
+        return ret;
+    }
+
+    protected SidedInvWrapper(ISidedInventory inv, EnumFacing side)
     {
         this.inv = inv;
         this.side = side;

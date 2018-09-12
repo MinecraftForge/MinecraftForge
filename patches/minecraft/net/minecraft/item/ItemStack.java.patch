@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public final class ItemStack {
-+public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound> {
++public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>, net.minecraftforge.common.extensions.IForgeItemStack {
     private static final Logger field_199558_c = LogManager.getLogger();
     public static final ItemStack EMPTY = new ItemStack((Item)null);
     public static final DecimalFormat DECIMALFORMAT = func_208306_D();

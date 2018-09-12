@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/crafting/IRecipeHidden.java
++++ b/net/minecraft/item/crafting/IRecipeHidden.java
+@@ -3,7 +3,7 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
+ 
+-public abstract class IRecipeHidden implements IRecipe {
++public abstract class IRecipeHidden extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipe> implements IRecipe {
+    private final ResourceLocation field_199563_a;
+ 
+    public IRecipeHidden(ResourceLocation p_i48169_1_) {

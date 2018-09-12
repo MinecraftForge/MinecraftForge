@@ -399,7 +399,7 @@ public class DimensionManager
             {
                 w.saveAllChunks(true, null);
             }
-            catch (MinecraftException e)
+            catch (Exception e)
             {
                 LOGGER.error(DIMMGR,"Caught an exception while saving all chunks:", e);
             }

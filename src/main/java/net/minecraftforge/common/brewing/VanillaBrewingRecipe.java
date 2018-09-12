@@ -37,7 +37,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * Code adapted from TileEntityBrewingStand.isItemValidForSlot(int index, ItemStack stack)
      */
     @Override
-    public boolean isInput(@Nonnull ItemStack stack)
+    public boolean isInput(ItemStack stack)
     {
         Item item = stack.getItem();
         return item == Items.POTIONITEM || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION || item == Items.GLASS_BOTTLE;
@@ -47,7 +47,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * Code adapted from TileEntityBrewingStand.isItemValidForSlot(int index, ItemStack stack)
      */
     @Override
-    public boolean isIngredient(@Nonnull ItemStack stack)
+    public boolean isIngredient(ItemStack stack)
     {
         return PotionBrewing.isReagent(stack);
     }
@@ -58,8 +58,7 @@ public class VanillaBrewingRecipe implements IBrewingRecipe {
      * or if the new potion is a splash potion when the old one wasn't.
      */
     @Override
-    @Nonnull
-    public ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
+    public ItemStack getOutput(ItemStack input, ItemStack ingredient)
     {
         if (!input.isEmpty() && !ingredient.isEmpty() && isIngredient(ingredient))
         {

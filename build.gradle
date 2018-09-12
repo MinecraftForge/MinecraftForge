@@ -18,7 +18,7 @@ version = '1.0.0'
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.forgedev.mcp'
     mcp {
-        config = 'de.oceanlabs.mcp:mcp_config:1.13@zip'
+        config = 'de.oceanlabs.mcp:mcp_config:1.13-2018.08.19.04.56.08@zip'
         pipeline = 'joined'
     }
 }
@@ -73,13 +73,17 @@ project(':forge') {
         srgPatches = false
         clientRun {
             main = 'net.minecraftforge.fml.LaunchTesting'
-            env = [
+            environment = [
                 target: 'fmldevclient'
+            ]
+            properties = [
+                target: 'fmldevclient',
+                assetDirectory: downloadAssets.output
             ]
         }
         serverRun {
             main = 'net.minecraftforge.fml.LaunchTesting'
-            env = [
+            environment = [
                 target: 'fmldevserver'
             ]
         }

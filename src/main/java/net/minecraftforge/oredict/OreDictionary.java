@@ -19,6 +19,7 @@
 
 package net.minecraftforge.oredict;
 
+/*
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -51,6 +52,7 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
+*/
 
 public class OreDictionary
 {
@@ -578,7 +580,7 @@ public class OreDictionary
      * Retrieves a list of all unique ore names that are already registered.
      *
      * @return All unique ore names that are currently registered.
-     */
+     * /
     public static String[] getOreNames()
     {
         return idToName.toArray(new String[idToName.size()]);

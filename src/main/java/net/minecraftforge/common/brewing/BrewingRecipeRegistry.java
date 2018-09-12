@@ -23,9 +23,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
-
-import javax.annotation.Nonnull;
 
 public class BrewingRecipeRegistry {
 
@@ -50,28 +49,9 @@ public class BrewingRecipeRegistry {
      *            done.
      * @return true if the recipe was added.
      */
-    public static boolean addRecipe(@Nonnull ItemStack input, @Nonnull ItemStack ingredient, @Nonnull ItemStack output)
+    public static boolean addRecipe(ItemStack input, Ingredient ingredient, ItemStack output)
     {
         return addRecipe(new BrewingRecipe(input, ingredient, output));
-    }
-
-    /**
-     * Adds a recipe to the registry. Due to the nature of the brewing stand
-     * inputs that stack (a.k.a max stack size > 1) are not allowed.
-     *
-     * @param input
-     *            The ItemStack that goes in same slots as the water bottles
-     *            would.
-     * @param ingredient
-     *            The ItemStack that goes in the same slot as nether wart would.
-     * @param output
-     *            The ItemStack that will replace the input once the brewing is
-     *            done.
-     * @return true if the recipe was added.
-     */
-    public static boolean addRecipe(@Nonnull ItemStack input, @Nonnull String ingredient, @Nonnull ItemStack output)
-    {
-        return addRecipe(new BrewingOreRecipe(input, ingredient, output));
     }
 
     /**
@@ -87,8 +67,7 @@ public class BrewingRecipeRegistry {
      * Returns the output ItemStack obtained by brewing the passed input and
      * ingredient.
      */
-    @Nonnull
-    public static ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
+    public static ItemStack getOutput(ItemStack input, ItemStack ingredient)
     {
         if (input.isEmpty() || input.getCount() != 1) return ItemStack.EMPTY;
         if (ingredient.isEmpty()) return ItemStack.EMPTY;
@@ -107,7 +86,7 @@ public class BrewingRecipeRegistry {
     /**
      * Returns true if the passed input and ingredient have an output
      */
-    public static boolean hasOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient)
+    public static boolean hasOutput(ItemStack input, ItemStack ingredient)
     {
         return !getOutput(input, ingredient).isEmpty();
     }
@@ -117,7 +96,7 @@ public class BrewingRecipeRegistry {
      * Extra parameters exist to allow modders to create bigger brewing stands
      * without much hassle
      */
-    public static boolean canBrew(NonNullList<ItemStack> inputs, @Nonnull ItemStack ingredient, int[] inputIndexes)
+    public static boolean canBrew(NonNullList<ItemStack> inputs, ItemStack ingredient, int[] inputIndexes)
     {
         if (ingredient.isEmpty()) return false;
 
@@ -136,7 +115,7 @@ public class BrewingRecipeRegistry {
      * Used by the brewing stand to brew its inventory Extra parameters exist to
      * allow modders to create bigger brewing stands without much hassle
      */
-    public static void brewPotions(NonNullList<ItemStack> inputs, @Nonnull ItemStack ingredient, int[] inputIndexes)
+    public static void brewPotions(NonNullList<ItemStack> inputs, ItemStack ingredient, int[] inputIndexes)
     {
         for (int i : inputIndexes)
         {
@@ -152,7 +131,7 @@ public class BrewingRecipeRegistry {
      * Returns true if the passed ItemStack is a valid ingredient for any of the
      * recipes in the registry.
      */
-    public static boolean isValidIngredient(@Nonnull ItemStack stack)
+    public static boolean isValidIngredient(ItemStack stack)
     {
         if (stack.isEmpty()) return false;
 
@@ -170,7 +149,7 @@ public class BrewingRecipeRegistry {
      * Returns true if the passed ItemStack is a valid input for any of the
      * recipes in the registry.
      */
-    public static boolean isValidInput(@Nonnull ItemStack stack)
+    public static boolean isValidInput(ItemStack stack)
     {
         if (stack.getCount() != 1) return false;
 
