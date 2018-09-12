@@ -59,7 +59,7 @@ public enum SelectiveReloadStateHandler
      */
     public Predicate<IResourceType> get()
     {
-        if (this.currentPredicate == null) // TODO configs || !ForgeMod.selectiveResourceReloadEnabled)
+        if (this.currentPredicate == null && false) // TODO configs || !ForgeMod.selectiveResourceReloadEnabled)
         {
             return ReloadRequirements.all();
         }
