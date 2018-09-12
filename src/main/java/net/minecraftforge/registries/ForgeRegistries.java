@@ -22,6 +22,7 @@ package net.minecraftforge.registries;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
@@ -49,9 +50,8 @@ public class ForgeRegistries
     public static final IForgeRegistry<PotionType>          POTION_TYPES = RegistryManager.ACTIVE.getRegistry(PotionType.class);
     public static final IForgeRegistry<Enchantment>         ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
 // TODO villager registry    public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
-// TODO entity registry    public static final IForgeRegistry<EntityEntry>         ENTITIES             = RegistryManager.ACTIVE.getRegistry(EntityEntry.class);
+    public static final IForgeRegistry<EntityType<?>>       ENTITIES     = RegistryManager.ACTIVE.getRegistry(EntityType.class);
     public static final IForgeRegistry<IRecipe>             RECIPES      = RegistryManager.ACTIVE.getRegistry(IRecipe.class);
-
 
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
