@@ -18,7 +18,7 @@ version = '1.0.0'
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.forgedev.mcp'
     mcp {
-        config = 'de.oceanlabs.mcp:mcp_config:1.13-2018.08.19.04.56.08@zip'
+        config = 'de.oceanlabs.mcp:mcp_config:1.13-2018.09.12.04.11.00@zip'
         pipeline = 'joined'
     }
 }
