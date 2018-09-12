@@ -26,6 +26,17 @@ public interface IForgeDimension
         return null;
     }
 
+    /**
+     * Sets the providers current dimension ID, used in default getSaveFolder()
+     * Added to allow default providers to be registered for multiple dimensions.
+     * This is to denote the exact dimension ID opposed to the 'type' in WorldType
+     *
+     * @param id Dimension ID
+     */
+    void setId(int id);
+
+    int getId();
+
     @OnlyIn(Dist.CLIENT)
     @Nullable
     IRenderHandler getSkyRenderer();
