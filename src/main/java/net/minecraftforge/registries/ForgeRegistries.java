@@ -32,6 +32,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
+import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.
@@ -49,7 +50,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<SoundEvent>          SOUND_EVENTS = RegistryManager.ACTIVE.getRegistry(SoundEvent.class);
     public static final IForgeRegistry<PotionType>          POTION_TYPES = RegistryManager.ACTIVE.getRegistry(PotionType.class);
     public static final IForgeRegistry<Enchantment>         ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
-// TODO villager registry    public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
+    public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
     public static final IForgeRegistry<EntityType<?>>       ENTITIES     = RegistryManager.ACTIVE.getRegistry(EntityType.class);
     public static final IForgeRegistry<IRecipe>             RECIPES      = RegistryManager.ACTIVE.getRegistry(IRecipe.class);
 
@@ -59,7 +60,7 @@ public class ForgeRegistries
     private static void init()
     {
         GameData.init();
-// TODO villager registry        VillagerRegistry.instance();
+        VillagerRegistry.instance();
         Bootstrap.register();
     }
 

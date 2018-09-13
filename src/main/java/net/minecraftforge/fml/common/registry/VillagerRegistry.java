@@ -31,6 +31,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.passive.EntityVillager.ITradeList;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.RegistryNamespaced;
@@ -43,18 +44,17 @@ import javax.annotation.Nullable;
  */
 public class VillagerRegistry
 {
-/*
+
     public static final RegistryObject<VillagerProfession> FARMER = RegistryObject.of("minecraft:farmer", ()->VillagerProfession.class);
     private static final VillagerRegistry INSTANCE = new VillagerRegistry();
-
+/* TODO village creation
     private Map<Class<?>, IVillageCreationHandler> villageCreationHandlers = Maps.newHashMap();
-
+*/
     private VillagerRegistry()
     {
         init();
     }
 
-    */
 /**
      * Allow access to the {@link net.minecraft.world.gen.structure.StructureVillagePieces} array controlling new village
      * creation so you can insert your own new village pieces
@@ -100,13 +100,12 @@ public class VillagerRegistry
         Village buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List<StructureComponent> pieces, Random random, int p1,
                                int p2, int p3, EnumFacing facing, int p5);
     }
-
+*/
     public static VillagerRegistry instance()
     {
         return INSTANCE;
     }
 
-    */
 /**
      * Register a new village creation handler
      *
@@ -132,7 +131,7 @@ public class VillagerRegistry
     {
         return instance().villageCreationHandlers.get(villagePiece.villagePieceClass).buildComponent(villagePiece, startPiece, pieces, random, p1, p2, p3, facing, p5);
     }
-
+*/
     RegistryNamespaced<ResourceLocation, VillagerProfession> REGISTRY = GameData.getWrapper(VillagerProfession.class);
 
     private void register(VillagerProfession prof, int id)
@@ -178,9 +177,9 @@ public class VillagerRegistry
                 "minecraft:textures/entity/zombie_villager/zombie_smith.png");
         {
             register(prof, 3);
-            (new VillagerCareer(prof, "armor")).init(VanillaTrades.trades[3][0]);
-            (new VillagerCareer(prof, "weapon")).init(VanillaTrades.trades[3][1]);
-            (new VillagerCareer(prof, "tool")).init(VanillaTrades.trades[3][2]);
+            (new VillagerCareer(prof, "armorer")).init(VanillaTrades.trades[3][0]);
+            (new VillagerCareer(prof, "weapon_smith")).init(VanillaTrades.trades[3][1]);
+            (new VillagerCareer(prof, "tool_smith")).init(VanillaTrades.trades[3][2]);
         }
         prof = new VillagerProfession("minecraft:butcher",
                 "minecraft:textures/entity/villager/butcher.png",
@@ -188,7 +187,7 @@ public class VillagerRegistry
         {
             register(prof, 4);
             (new VillagerCareer(prof, "butcher")).init(VanillaTrades.trades[4][0]);
-            (new VillagerCareer(prof, "leather")).init(VanillaTrades.trades[4][1]);
+            (new VillagerCareer(prof, "leatherworker")).init(VanillaTrades.trades[4][1]);
         }
         prof = new VillagerProfession("minecraft:nitwit",
                 "minecraft:textures/entity/villager/villager.png",
@@ -312,13 +311,12 @@ public class VillagerRegistry
         }
     }
 
-    */
-/**
+    /**
      * Hook called when spawning a Villager, sets it's profession to a random registered profession.
      *
      * @param entity The new entity
      * @param rand   The world's RNG
-     *//*
+     */
 
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
@@ -369,5 +367,5 @@ public class VillagerRegistry
         //It is nasty I know but it's vanilla.
         private static final ITradeList[][][][] trades = EntityVillager.GET_TRADES_DONT_USE();
     }
-*/
+
 }

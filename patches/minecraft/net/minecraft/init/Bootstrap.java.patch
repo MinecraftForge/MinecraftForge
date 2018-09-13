@@ -1,0 +1,19 @@
+--- a/net/minecraft/init/Bootstrap.java
++++ b/net/minecraft/init/Bootstrap.java
+@@ -75,6 +75,8 @@
+ import net.minecraft.world.biome.Biome;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.registries.ForgeRegistries;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -421,6 +423,7 @@
+ 
+             redirectOutputToLog();
+          }
++         ForgeRegistries.ITEMS.getClass(); // TODO figure out a better way to ensure this is initialized
+       }
+    }
+ 
