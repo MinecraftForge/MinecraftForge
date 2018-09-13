@@ -55,10 +55,11 @@ import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.FMLPaths;
 import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -66,6 +67,8 @@ import org.apache.commons.io.IOUtils;
  */
 public class Configuration
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static final String CATEGORY_GENERAL = "general";
     public static final String CATEGORY_CLIENT = "client";
     public static final String ALLOWED_CHARS = "._-";
@@ -132,7 +135,7 @@ public class Configuration
             {
                 File fileBak = new File(file.getAbsolutePath() + "_" +
                         new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date()) + ".errored");
-                FMLLog.log.fatal("An exception occurred while loading config file {}. This file will be renamed to {} " +
+                LOGGER.fatal("An exception occurred while loading config file {}. This file will be renamed to {} " +
                         "and a new config file will be generated.", file.getName(), fileBak.getName(), e);
 
                 file.renameTo(fileBak);
@@ -1047,7 +1050,7 @@ public class Configuration
         }
         catch (IOException e)
         {
-            FMLLog.log.error("Error while loading config {}.", fileName, e);
+            LOGGER.error("Error while loading config {}.", fileName, e);
         }
         finally
         {
@@ -1108,7 +1111,7 @@ public class Configuration
         }
         catch (IOException e)
         {
-            FMLLog.log.error("Error while saving config {}.", fileName, e);
+            LOGGER.error("Error while saving config {}.", fileName, e);
         }
     }
 
@@ -1719,7 +1722,7 @@ public class Configuration
         }
         catch (Exception e)
         {
-            FMLLog.log.error("Failed to get float for {}/{}", name, category, e);
+            LOGGER.error("Failed to get float for {}/{}", name, category, e);
         }
         return defaultValue;
     }

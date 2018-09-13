@@ -48,13 +48,12 @@ import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.ServerWorldEventHandler;
-import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
+import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
 import org.apache.logging.log4j.LogManager;
@@ -68,11 +67,11 @@ public class DimensionManager
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker DIMMGR = MarkerManager.getMarker("DIMS");
-    private static class Dimension
+    private static class DimensionData
     {
         private final DimensionType type;
         private int ticksWaited;
-        private Dimension(DimensionType type)
+        private DimensionData(DimensionType type)
         {
             this.type = type;
             this.ticksWaited = 0;
@@ -82,7 +81,7 @@ public class DimensionManager
     private static boolean hasInit = false;
 
     private static final Int2ObjectMap<WorldServer> worlds = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
-    private static final Int2ObjectMap<Dimension> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
+    private static final Int2ObjectMap<DimensionData> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final IntSet keepLoaded = IntSets.synchronize(new IntOpenHashSet());
     private static final IntSet unloadQueue = IntSets.synchronize(new IntLinkedOpenHashSet());
     private static final BitSet dimensionMap = new BitSet(Long.SIZE << 4);
@@ -96,7 +95,7 @@ public class DimensionManager
     {
         int[] ret = new int[dimensions.size()];
         int x = 0;
-        for (Int2ObjectMap.Entry<Dimension> ent : dimensions.int2ObjectEntrySet())
+        for (Int2ObjectMap.Entry<DimensionData> ent : dimensions.int2ObjectEntrySet())
         {
             if (ent.getValue().type == type)
             {
@@ -110,7 +109,7 @@ public class DimensionManager
     public static Map<DimensionType, IntSortedSet> getRegisteredDimensions()
     {
         Map<DimensionType, IntSortedSet> map = new IdentityHashMap<>();
-        for (Int2ObjectMap.Entry<Dimension> entry : dimensions.int2ObjectEntrySet())
+        for (Int2ObjectMap.Entry<DimensionData> entry : dimensions.int2ObjectEntrySet())
         {
             map.computeIfAbsent(entry.getValue().type, k -> new IntRBTreeSet()).add(entry.getIntKey());
         }
@@ -138,7 +137,7 @@ public class DimensionManager
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, new Dimension(type));
+        dimensions.put(id, new DimensionData(type));
         if (id >= 0)
         {
             dimensionMap.set(id);
@@ -171,7 +170,7 @@ public class DimensionManager
         return dimensions.get(dim).type;
     }
 
-    public static WorldProvider getProvider(int dim)
+    public static Dimension getProvider(int dim)
     {
         return getWorld(dim).provider;
     }
@@ -309,14 +308,14 @@ public class DimensionManager
         return dimensions.keySet().toArray(new Integer[0]);
     }
 
-    public static WorldProvider createProviderFor(int dim)
+    public static Dimension createProviderFor(int dim)
     {
         try
         {
             if (dimensions.containsKey(dim))
             {
-                WorldProvider ret = getProviderType(dim).createDimension();
-                ret.setDimension(dim);
+                Dimension ret = getProviderType(dim).createDimension();
+                ret.setId(dim);
                 return ret;
             }
             else
@@ -348,7 +347,7 @@ public class DimensionManager
         return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
                 && world.playerEntities.isEmpty()
                 && !world.provider.getDimensionType().shouldLoadSpawn()
-                && !keepLoaded.contains(world.provider.getDimension());
+                && !keepLoaded.contains(world.provider.getId());
     }
 
     /**
@@ -380,7 +379,7 @@ public class DimensionManager
         while (queueIterator.hasNext())
         {
             int id = queueIterator.nextInt();
-            Dimension dimension = dimensions.get(id);
+            DimensionData dimension = dimensions.get(id);
             if (dimension.ticksWaited < ForgeMod.dimensionUnloadQueueDelay)
             {
                 dimension.ticksWaited++;

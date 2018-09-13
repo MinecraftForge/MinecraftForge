@@ -36,9 +36,11 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.FMLLog;
 
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -49,6 +51,8 @@ import org.lwjgl.input.Keyboard;
  */
 public class GuiConfigEntries extends GuiListExtended
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public final GuiConfig owningScreen;
     public final Minecraft mc;
     public List<IConfigEntry> listEntries;
@@ -129,7 +133,7 @@ public class GuiConfigEntries extends GuiListExtended
                     }
                     catch (Throwable e)
                     {
-                        FMLLog.log.error("There was a critical error instantiating the custom IConfigEntry for config element {}.", configElement.getName(), e);
+                        LOGGER.error("There was a critical error instantiating the custom IConfigEntry for config element {}.", configElement.getName(), e);
                     }
                 else if (configElement.isProperty())
                 {

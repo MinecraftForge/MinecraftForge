@@ -22,7 +22,6 @@ package net.minecraftforge.fluids;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.registries.IRegistryDelegate;
 
 import javax.annotation.Nullable;

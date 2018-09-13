@@ -22,12 +22,15 @@ package net.minecraftforge.common.network;
 import net.minecraftforge.fluids.FluidRegistry;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import net.minecraftforge.fml.common.FMLLog;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
 public class FluidIdRegistryMessageHandler extends SimpleChannelInboundHandler<ForgeMessage.FluidIdMapMessage> {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ForgeMessage.FluidIdMapMessage msg) throws Exception
     {
@@ -36,7 +39,7 @@ public class FluidIdRegistryMessageHandler extends SimpleChannelInboundHandler<F
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception
     {
-        FMLLog.log.error("FluidIdRegistryMessageHandler exception", cause);
+        LOGGER.error("FluidIdRegistryMessageHandler exception", cause);
         super.exceptionCaught(ctx, cause);
     }
 

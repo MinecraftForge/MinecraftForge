@@ -38,10 +38,11 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.PostConfigChangedEvent;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.eventbus.api.Event.Result;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
@@ -54,6 +55,8 @@ import javax.annotation.Nullable;
  */
 public class GuiConfig extends GuiScreen
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     /**
      * A reference to the screen object that created this. Used for navigating between screens.
      */
@@ -289,7 +292,7 @@ public class GuiConfig extends GuiScreen
             }
             catch (Throwable e)
             {
-                FMLLog.log.error("Error performing GuiConfig action:", e);
+                LOGGER.error("Error performing GuiConfig action:", e);
             }
 
             if (flag)
