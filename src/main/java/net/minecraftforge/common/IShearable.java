@@ -23,7 +23,7 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldReader;
 
 import javax.annotation.Nonnull;
 
@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
  * to support mod-shears as well.
  *
  */
-//TODO Change to World, not IBlockAccess and make Implementor responsible for removing itself from the world.
+//TODO Change to World, not IWorldReader and make Implementor responsible for removing itself from the world.
 //Better mimics vanilla behavior and allows more control for the user.
 public interface IShearable
 {
@@ -48,7 +48,7 @@ public interface IShearable
      * @param pos Block's position in world.
      * @return If this is shearable, and onSheared should be called.
      */
-    boolean isShearable(@Nonnull ItemStack item, IBlockAccess world, BlockPos pos);
+    boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos);
 
     /**
      * Performs the shear function on this object.
@@ -69,5 +69,5 @@ public interface IShearable
      * @return A List containing all items from this shearing. May be empty.
      */
     @Nonnull
-    List<ItemStack> onSheared(@Nonnull ItemStack item, IBlockAccess world, BlockPos pos, int fortune);
+    List<ItemStack> onSheared(@Nonnull ItemStack item, IWorldReader world, BlockPos pos, int fortune);
 }
