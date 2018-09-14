@@ -21,6 +21,9 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.awt.Color;
 import java.util.Locale;
 import net.minecraft.block.Block;
@@ -34,8 +37,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.item.EnumRarity;
 
 /**
@@ -56,6 +57,8 @@ import net.minecraft.item.EnumRarity;
  */
 public class Fluid
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static final int BUCKET_VOLUME = 1000;
 
     /** The unique identification name for this fluid. */
@@ -189,7 +192,7 @@ public class Fluid
         }
         else
         {
-            FMLLog.log.warn("A mod has attempted to assign Block {} to the Fluid '{}' but this Fluid has already been linked to the Block {}. "
+            LOGGER.warn("A mod has attempted to assign Block {} to the Fluid '{}' but this Fluid has already been linked to the Block {}. "
                     + "You may have duplicate Fluid Blocks as a result. It *may* be possible to configure your mods to avoid this.", block, fluidName, this.block);
         }
         return this;

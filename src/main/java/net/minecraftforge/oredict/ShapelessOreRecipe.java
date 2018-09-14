@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.oredict;
-
+/*
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.util.RecipeItemHelper;
@@ -42,7 +42,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-
+*/
 public class ShapelessOreRecipe {} /*extends IForgeRegistryEntry.Impl<IRecipe> implements IRecipe
 {
     @Nonnull

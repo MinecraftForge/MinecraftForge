@@ -25,13 +25,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 
-import net.minecraftforge.fml.common.FMLLog;
-
 public class Repository
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     static final Map<String, Repository> cache = new LinkedHashMap<>();
 
     public static Repository create(File root) throws IOException
@@ -129,12 +132,12 @@ public class Repository
         {
             if (target.exists())
             {
-                FMLLog.log.debug("Maven file already exists for {}({}) at {}, deleting duplicate.", file.getName(), artifact.toString(), target.getAbsolutePath());
+                LOGGER.debug("Maven file already exists for {}({}) at {}, deleting duplicate.", file.getName(), artifact.toString(), target.getAbsolutePath());
                 file.delete();
             }
             else
             {
-                FMLLog.log.debug("Moving file {}({}) to maven repo at {}.", file.getName(), artifact.toString(), target.getAbsolutePath());
+                LOGGER.debug("Moving file {}({}) to maven repo at {}.", file.getName(), artifact.toString(), target.getAbsolutePath());
                 Files.move(file, target);
 
                 if (artifact.isSnapshot())
@@ -154,7 +157,7 @@ public class Repository
         }
         catch (IOException e)
         {
-            FMLLog.log.error(FMLLog.log.getMessageFactory().newMessage("Error moving file {} to {}", file, target.getAbsolutePath()), e);
+            LOGGER.error(LOGGER.getMessageFactory().newMessage("Error moving file {} to {}", file, target.getAbsolutePath()), e);
         }
         return file;
     }

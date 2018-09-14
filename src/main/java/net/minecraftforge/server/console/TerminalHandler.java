@@ -71,9 +71,9 @@ public final class TerminalHandler
 
                 line = line.trim();
                 if (!line.isEmpty())
-                {
+                {/* TODO Commands
                     server.addPendingCommand(line, server);
-                }
+              */}
             }
         }
         catch (UserInterruptException e)

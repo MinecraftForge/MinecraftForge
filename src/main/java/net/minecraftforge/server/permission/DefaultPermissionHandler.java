@@ -21,7 +21,6 @@ package net.minecraftforge.server.permission;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.server.permission.context.IContext;
 
 import javax.annotation.Nullable;
@@ -72,7 +71,7 @@ public enum DefaultPermissionHandler implements IPermissionHandler
             return true;
         }
 
-        MinecraftServer server = FMLCommonHandler.instance().getMinecraftServerInstance();
+        MinecraftServer server = null; // TODO FMLCommonHandler FMLCommonHandler.instance().getMinecraftServerInstance();
         return server != null && server.getPlayerList().canSendCommands(profile);
     }
 

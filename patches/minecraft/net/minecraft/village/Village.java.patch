@@ -9,7 +9,13 @@
     private World world;
     private final List<VillageDoorInfo> villageDoorInfoList = Lists.<VillageDoorInfo>newArrayList();
     private BlockPos centerHelper = BlockPos.ORIGIN;
-@@ -45,10 +45,12 @@
+@@ -40,15 +40,17 @@
+    private int tickCounter;
+    private int numVillagers;
+    private int noBreedTicks;
+-   private final Map<String, Integer> playerReputation = Maps.<String, Integer>newHashMap();
++   private final Map<UUID, Integer> playerReputation = Maps.<UUID, Integer>newHashMap();
+    private final List<Village.VillageAggressor> villageAgressors = Lists.<Village.VillageAggressor>newArrayList();
     private int numIronGolems;
  
     public Village() {
@@ -22,8 +28,83 @@
     }
  
     public void setWorld(World worldIn) {
-@@ -364,7 +366,7 @@
-             this.playerReputation.put(nbttagcompound1.getString("Name"), nbttagcompound1.getInteger("S"));
+@@ -237,9 +239,9 @@
+       double d0 = Double.MAX_VALUE;
+       EntityPlayer entityplayer = null;
+ 
+-      for(String s : this.playerReputation.keySet()) {
++      for(UUID s : this.playerReputation.keySet()) {
+          if (this.isPlayerReputationTooLow(s)) {
+-            EntityPlayer entityplayer1 = this.world.getPlayerEntityByName(s);
++            EntityPlayer entityplayer1 = this.world.getPlayerEntityByUUID(s);
+             if (entityplayer1 != null) {
+                double d1 = entityplayer1.getDistanceSq(villageDefender);
+                if (!(d1 > d0)) {
+@@ -317,12 +319,32 @@
+       }
+    }
+ 
++   @Deprecated //Hasn't worked since 1.9, use UUID version below.
+    public int getPlayerReputation(String playerName) {
++      return this.getPlayerReputation(findUUID(playerName));
++   }
++
++   public int getPlayerReputation(UUID playerName) 
++   {
+       Integer integer = this.playerReputation.get(playerName);
+       return integer == null ? 0 : integer;
+    }
++   
++   private UUID findUUID(String name)
++   {
++      if (this.world == null || this.world.getMinecraftServer() == null)
++         return EntityPlayer.getOfflineUUID(name);
++      GameProfile profile = this.world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(name);
++      return profile == null ? EntityPlayer.getOfflineUUID(name) : profile.getId();
++   }
+ 
++   @Deprecated //Hasn't worked since 1.9, use UUID version below.
+    public int modifyPlayerReputation(String playerName, int reputation) {
++      return this.modifyPlayerReputation(findUUID(playerName), reputation);
++   }
++
++   public int modifyPlayerReputation(UUID playerName, int reputation)
++   {
+       int i = this.getPlayerReputation(playerName);
+       int j = MathHelper.clamp(i + reputation, -30, 10);
+       this.playerReputation.put(playerName, j);
+@@ -330,9 +352,14 @@
+    }
+ 
+    public boolean isPlayerReputationTooLow(String playerName) {
+-      return this.getPlayerReputation(playerName) <= -15;
++      return this.isPlayerReputationTooLow(findUUID(playerName));
+    }
+ 
++   public boolean isPlayerReputationTooLow(UUID uuid)
++   {
++      return this.getPlayerReputation(uuid) <= -15;   
++   }
++
+    public void readVillageDataFromNBT(NBTTagCompound compound) {
+       this.numVillagers = compound.getInteger("PopSize");
+       this.villageRadius = compound.getInteger("Radius");
+@@ -354,17 +381,14 @@
+ 
+       for(int j = 0; j < nbttaglist1.size(); ++j) {
+          NBTTagCompound nbttagcompound1 = nbttaglist1.getCompoundTagAt(j);
+-         if (nbttagcompound1.hasKey("UUID") && this.world != null && this.world.getMinecraftServer() != null) {
+-            PlayerProfileCache playerprofilecache = this.world.getMinecraftServer().getPlayerProfileCache();
+-            GameProfile gameprofile = playerprofilecache.getProfileByUUID(UUID.fromString(nbttagcompound1.getString("UUID")));
+-            if (gameprofile != null) {
+-               this.playerReputation.put(gameprofile.getName(), nbttagcompound1.getInteger("S"));
+-            }
++         if (nbttagcompound1.hasKey("UUID")) {
++             this.playerReputation.put(UUID.fromString(nbttagcompound1.getString("UUID")), Integer.valueOf(nbttagcompound1.getInteger("S")));
+          } else {
+-            this.playerReputation.put(nbttagcompound1.getString("Name"), nbttagcompound1.getInteger("S"));
++            //World is never set here, so this will always be offline UUIDs, sadly there is no way to convert this.
++            this.playerReputation.put(findUUID(nbttagcompound1.getString("Name")), Integer.valueOf(nbttagcompound1.getInteger("S")));
           }
        }
 -
@@ -31,7 +112,25 @@
     }
  
     public void writeVillageDataToNBT(NBTTagCompound compound) {
-@@ -413,6 +415,8 @@
+@@ -396,14 +420,12 @@
+       compound.setTag("Doors", nbttaglist);
+       NBTTagList nbttaglist1 = new NBTTagList();
+ 
+-      for(String s : this.playerReputation.keySet()) {
++      for(UUID s : this.playerReputation.keySet()) {
+          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+-         PlayerProfileCache playerprofilecache = this.world.getMinecraftServer().getPlayerProfileCache();
+ 
+          try {
+-            GameProfile gameprofile = playerprofilecache.getGameProfileForUsername(s);
+-            if (gameprofile != null) {
+-               nbttagcompound1.setString("UUID", gameprofile.getId().toString());
++            {
++               nbttagcompound1.setString("UUID", s.toString());
+                nbttagcompound1.setInteger("S", this.playerReputation.get(s));
+                nbttaglist1.add((INBTBase)nbttagcompound1);
+             }
+@@ -413,6 +435,8 @@
        }
  
        compound.setTag("Players", nbttaglist1);
@@ -40,3 +139,12 @@
     }
  
     public void endMatingSeason() {
+@@ -424,7 +448,7 @@
+    }
+ 
+    public void setDefaultPlayerReputation(int defaultReputation) {
+-      for(String s : this.playerReputation.keySet()) {
++      for(UUID s : this.playerReputation.keySet()) {
+          this.modifyPlayerReputation(s, defaultReputation);
+       }
+ 

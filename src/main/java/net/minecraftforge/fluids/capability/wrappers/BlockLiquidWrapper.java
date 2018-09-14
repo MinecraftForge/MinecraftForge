@@ -1,4 +1,4 @@
-/*
+/* TODO Fluids
  * Minecraft Forge
  * Copyright (c) 2016-2018.
  *
@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.fluids.capability.wrappers;
-
+/*
 import javax.annotation.Nullable;
 
 import net.minecraft.block.BlockLiquid;
@@ -40,7 +40,7 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 /**
  * Wrapper to handle vanilla Water or Lava as an IFluidHandler.
  * Methods are modeled after {@link ItemBucket#onItemRightClick(World, EntityPlayer, EnumHand)}
- */
+ * /
 public class BlockLiquidWrapper implements IFluidHandler
 {
     protected final BlockLiquid blockLiquid;
@@ -155,3 +155,4 @@ public class BlockLiquidWrapper implements IFluidHandler
         }
     }
 }
+*/

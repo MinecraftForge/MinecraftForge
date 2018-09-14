@@ -21,25 +21,32 @@ package net.minecraftforge.common.property;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableTable;
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.state.AbstractStateHolder;
+import net.minecraft.state.IProperty;
+import net.minecraft.state.StateContainer;
 
-public class ExtendedBlockState extends BlockStateContainer
+public class ExtendedBlockState extends StateContainer<Block, IBlockState>
 {
     private final ImmutableSet<IUnlistedProperty<?>> unlistedProperties;
 
-    public ExtendedBlockState(Block blockIn, IProperty<?>[] properties, IUnlistedProperty<?>[] unlistedProperties)
+    public <A extends AbstractStateHolder<Block, IBlockState>> ExtendedBlockState(Block blockIn, StateContainer.IFactory<Block, IBlockState, ?> stateFactory, net.minecraft.state.IProperty<?>[] properties, IUnlistedProperty<?>[] unlistedProperties)
     {
-        super(blockIn, properties, buildUnlistedMap(unlistedProperties));
+        super(blockIn, stateFactory, buildListedMap(properties));// TODO Unlisted properties?, buildUnlistedMap(unlistedProperties));
         ImmutableSet.Builder<IUnlistedProperty<?>> builder = ImmutableSet.builder();
         for(IUnlistedProperty<?> property : unlistedProperties)
         {
@@ -53,6 +60,11 @@ public class ExtendedBlockState extends BlockStateContainer
         return unlistedProperties;
     }
 
+    private static Map<String, IProperty<?>> buildListedMap(IProperty<?>[] properties)
+    {
+        return Arrays.stream(properties).collect(Collectors.toMap(IProperty::getName, Function.identity()));
+    }
+    
     private static ImmutableMap<IUnlistedProperty<?>, Optional<?>> buildUnlistedMap(IUnlistedProperty<?>[] unlistedProperties)
     {
         ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.builder();

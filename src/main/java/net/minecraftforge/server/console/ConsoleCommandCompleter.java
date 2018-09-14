@@ -22,8 +22,10 @@ package net.minecraftforge.server.console;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.List;
+import java.util.Collections;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.FutureTask;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -60,7 +62,7 @@ final class ConsoleCommandCompleter implements Completer
         }
 
         final String input = buffer;
-        Future<List<String>> tabComplete = this.server.callFromMainThread(() -> this.server.getTabCompletions(this.server, input, this.server.getPosition(), false));
+        Future<List<String>> tabComplete = new FutureTask<>(() -> Collections.emptyList());// TODO commands this.server.callFromMainThread(() -> this.server.getTabCompletions(this.server, input, this.server.getPosition(), false));
 
         try
         {

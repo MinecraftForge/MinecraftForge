@@ -98,17 +98,17 @@ public class ModelLoaderErrorMessage extends SimpleMessage
         if(exception instanceof ModelLoader.ItemLoadingException)
         {
             ModelLoader.ItemLoadingException ex = (ModelLoader.ItemLoadingException)exception;
-//            FMLLog.log.error("{}, normal location exception: ", errorMsg, ex.normalException);
-//            FMLLog.log.error("{}, blockstate location exception: ", errorMsg, ex.blockstateException);
+//            LOGGER.error("{}, normal location exception: ", errorMsg, ex.normalException);
+//            LOGGER.error("{}, blockstate location exception: ", errorMsg, ex.blockstateException);
         }
         else
         {
-//            FMLLog.log.error(errorMsg, entry.getValue());
+//            LOGGER.error(errorMsg, entry.getValue());
         }
 //        ResourceLocation blockstateLocation = new ResourceLocation(resourceLocation.getResourceDomain(), resourceLocation.getResourcePath());
 //        if(loadingExceptions.containsKey(blockstateLocation) && !printedBlockStateErrors.contains(blockstateLocation))
 //        {
-//            FMLLog.log.error("Exception loading blockstate for the variant {}: ", location, loadingExceptions.get(blockstateLocation));
+//            LOGGER.error("Exception loading blockstate for the variant {}: ", location, loadingExceptions.get(blockstateLocation));
 //            printedBlockStateErrors.add(blockstateLocation);
 //        }
     }

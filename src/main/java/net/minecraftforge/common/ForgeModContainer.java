@@ -105,7 +105,7 @@ public class ForgeModContainer extends FMLModContainer
         ConfigCategory GENERAL = config.getCategory(CATEGORY_GENERAL);
         if (GENERAL.containsKey(key))
         {
-            FMLLog.log.debug("Remapping property {} from category general to client", key);
+            LOGGER.debug("Remapping property {} from category general to client", key);
             Property property = GENERAL.get(key);
             GENERAL.remove(key);
             config.getCategory(CATEGORY_CLIENT).put(key, property);
@@ -182,7 +182,7 @@ public class ForgeModContainer extends FMLModContainer
 
         if (removeErroringEntities)
         {
-            FMLLog.log.warn("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
+            LOGGER.warn("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
@@ -193,7 +193,7 @@ public class ForgeModContainer extends FMLModContainer
 
         if (removeErroringTileEntities)
         {
-            FMLLog.log.warn("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
+            LOGGER.warn("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);

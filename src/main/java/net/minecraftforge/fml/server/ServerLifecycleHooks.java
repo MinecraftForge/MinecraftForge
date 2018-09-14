@@ -133,19 +133,19 @@ public class ServerLifecycleHooks
         {
             try
             {
-                FMLLog.log.info("Waiting for the server to terminate/save.");
+                LOGGER.info("Waiting for the server to terminate/save.");
                 if (!latch.await(10, TimeUnit.SECONDS))
                 {
-                    FMLLog.log.warn("The server didn't stop within 10 seconds, exiting anyway.");
+                    LOGGER.warn("The server didn't stop within 10 seconds, exiting anyway.");
                 }
                 else
                 {
-                    FMLLog.log.info("Server terminated.");
+                    LOGGER.info("Server terminated.");
                 }
             }
             catch (InterruptedException e)
             {
-                FMLLog.log.warn("Interrupted wait, exiting.");
+                LOGGER.warn("Interrupted wait, exiting.");
             }
         }
 

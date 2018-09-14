@@ -41,12 +41,12 @@ public class TextComponentHelper
     {
         if (isVanillaClient(source))
         {
-            return new TextComponentString(LanguageMap.getInstance().translateKey(translation, args));
+            return new TextComponentString(String.format(LanguageMap.getInstance().translateKey(translation), args));
         }
         return new TextComponentTranslation(translation, args);
     }
 
-    private static boolean isVanillaClient(ICommandSender sender)
+    private static boolean isVanillaClient(ICommandSource sender)
     {
         if (sender instanceof EntityPlayerMP)
         {

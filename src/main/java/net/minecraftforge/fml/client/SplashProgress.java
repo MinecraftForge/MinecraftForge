@@ -203,7 +203,7 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.log.error("Could not save the splash.properties file", e);
+            LOGGER.error("Could not save the splash.properties file", e);
         }
 
         miscPack = createResourcePack(miscPackFile);
@@ -240,7 +240,7 @@ public class SplashProgress
         }
         catch (LWJGLException e)
         {
-            FMLLog.log.error("Error starting SplashProgress:", e);
+            LOGGER.error("Error starting SplashProgress:", e);
             disableSplash(e);
         }
 
@@ -537,7 +537,7 @@ public class SplashProgress
                 }
                 catch (LWJGLException e)
                 {
-                    FMLLog.log.error("Error setting GL context:", e);
+                    LOGGER.error("Error setting GL context:", e);
                     throw new RuntimeException(e);
                 }
                 glClearColor((float)((backgroundColor >> 16) & 0xFF) / 0xFF, (float)((backgroundColor >> 8) & 0xFF) / 0xFF, (float)(backgroundColor & 0xFF) / 0xFF, 1);
@@ -564,7 +564,7 @@ public class SplashProgress
                 }
                 catch (LWJGLException e)
                 {
-                    FMLLog.log.error("Error releasing GL context:", e);
+                    LOGGER.error("Error releasing GL context:", e);
                     throw new RuntimeException(e);
                 }
                 finally
@@ -578,7 +578,7 @@ public class SplashProgress
             @Override
             public void uncaughtException(Thread t, Throwable e)
             {
-                FMLLog.log.error("Splash thread Exception", e);
+                LOGGER.error("Splash thread Exception", e);
                 threadError = e;
             }
         });
@@ -629,7 +629,7 @@ public class SplashProgress
         }
         catch (LWJGLException e)
         {
-            FMLLog.log.error("Error setting GL context:", e);
+            LOGGER.error("Error setting GL context:", e);
             throw new RuntimeException(e);
         }
     }
@@ -650,7 +650,7 @@ public class SplashProgress
         }
         catch (LWJGLException e)
         {
-            FMLLog.log.error("Error releasing GL context:", e);
+            LOGGER.error("Error releasing GL context:", e);
             throw new RuntimeException(e);
         }
         lock.unlock();
@@ -673,7 +673,7 @@ public class SplashProgress
         }
         catch (Exception e)
         {
-            FMLLog.log.error("Error finishing SplashProgress:", e);
+            LOGGER.error("Error finishing SplashProgress:", e);
             disableSplash(e);
         }
     }
@@ -726,7 +726,7 @@ public class SplashProgress
         }
         catch(IOException e)
         {
-            FMLLog.log.error("Could not save the splash.properties file", e);
+            LOGGER.error("Could not save the splash.properties file", e);
             return false;
         }
         return true;
@@ -843,7 +843,7 @@ public class SplashProgress
             }
             catch(IOException e)
             {
-                FMLLog.log.error("Error reading texture from file: {}", location, e);
+                LOGGER.error("Error reading texture from file: {}", location, e);
                 throw new RuntimeException(e);
             }
             finally

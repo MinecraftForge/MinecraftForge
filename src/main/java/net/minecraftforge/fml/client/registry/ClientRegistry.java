@@ -44,13 +44,13 @@ public class ClientRegistry
      * @param tileEntityClass
      * @param id
      * @param specialRenderer
-     */
+     * / TODO GameRegistry
     public static <T extends TileEntity> void registerTileEntity(Class<T> tileEntityClass, String id, TileEntityRenderer<? super T> specialRenderer)
     {
         GameRegistry.registerTileEntity(tileEntityClass, id);
         bindTileEntitySpecialRenderer(tileEntityClass, specialRenderer);
     }
-
+*/
     public static <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntityRenderer<? super T> specialRenderer)
     {
         TileEntityRendererDispatcher.instance.renderers.put(tileEntityClass, specialRenderer);

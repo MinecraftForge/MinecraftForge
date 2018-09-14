@@ -65,14 +65,14 @@ class ChunkIOProvider implements Runnable
             try
             {
                 Object[] data = null;
-                try
-                {
+              /*try
+                { TODO Chunk loading
                     data = this.loader.loadChunk__Async(chunkInfo.world, chunkInfo.x, chunkInfo.z);
                 }
                 catch (IOException e)
                 {
                     throw new RuntimeException(e); // Allow exception to bubble up to afterExecute
-                }
+                }*/
     
                 if (data != null)
                 {
@@ -97,7 +97,7 @@ class ChunkIOProvider implements Runnable
             return;
         }
 
-        // Load Entities
+        /*/ Load Entities TODO Chunk loading
         this.loader.loadEntities(this.chunkInfo.world, this.nbt.getCompoundTag("Level"), this.chunk);
 
         MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(this.chunk, this.nbt)); // Don't call ChunkDataEvent.Load async
@@ -108,7 +108,7 @@ class ChunkIOProvider implements Runnable
         provider.id2ChunkMap.put(ChunkPos.asLong(this.chunkInfo.x, this.chunkInfo.z), this.chunk);
         this.chunk.onLoad();
         this.chunk.populate(provider, provider.chunkGenerator);
-
+*/
         this.runCallbacks();
     }
 

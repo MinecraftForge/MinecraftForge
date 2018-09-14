@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.google.common.io.Files;
 import com.mojang.datafixers.DataFixer;
@@ -40,6 +42,8 @@ import net.minecraft.world.WorldServer;
 
 public class WorldSpecificSaveHandler implements ISaveHandler
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private WorldServer world;
     private ISaveHandler parent;
     private File dataDir;
@@ -95,7 +99,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
             }
             catch (IOException e)
             {
-                FMLLog.log.error("A critical error occurred copying {} to world specific dat folder - new file will be created.", parentFile.getName(), e);
+                LOGGER.error("A critical error occurred copying {} to world specific dat folder - new file will be created.", parentFile.getName(), e);
             }
         }
     }

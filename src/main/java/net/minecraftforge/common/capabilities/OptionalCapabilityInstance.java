@@ -66,6 +66,11 @@ public class OptionalCapabilityInstance<T>
     {
         return instanceSupplier == null ? EMPTY.cast() : new OptionalCapabilityInstance<>(instanceSupplier);
     }
+    
+    public static <T, R> OptionalCapabilityInstance<R> orEmpty(Capability<R> cap, Capability<T> toCheck, OptionalCapabilityInstance<T> inst)
+    {
+        return cap == toCheck ? inst.cast() : EMPTY.cast();
+    }
 
     private @Nullable T getValue()
     {

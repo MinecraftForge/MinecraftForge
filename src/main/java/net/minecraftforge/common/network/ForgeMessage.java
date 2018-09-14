@@ -23,6 +23,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -30,11 +33,12 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 
 public abstract class ForgeMessage {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public static class DimensionRegisterMessage extends ForgeMessage {
         /** The dimension ID to register on client */
         int dimensionId;
@@ -108,7 +112,7 @@ public abstract class ForgeMessage {
             }
             else
             {
-                FMLLog.log.info("Legacy server message contains no default fluid list - there may be problems with fluids");
+                LOGGER.info("Legacy server message contains no default fluid list - there may be problems with fluids");
                 defaultFluids.clear();
             }
         }

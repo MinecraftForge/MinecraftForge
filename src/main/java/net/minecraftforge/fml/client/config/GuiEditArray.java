@@ -33,7 +33,8 @@ import net.minecraft.util.text.TextFormatting;
 import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
 import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 
-import net.minecraftforge.fml.common.FMLLog;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -44,6 +45,8 @@ import org.lwjgl.input.Keyboard;
  */
 public class GuiEditArray extends GuiScreen
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     protected GuiScreen parentScreen;
     protected IConfigElement configElement;
     protected GuiEditArrayEntries entryList;
@@ -129,7 +132,7 @@ public class GuiEditArray extends GuiScreen
             }
             catch (Throwable e)
             {
-                FMLLog.log.error("Error performing GuiEditArray action:", e);
+                LOGGER.error("Error performing GuiEditArray action:", e);
             }
             this.mc.displayGuiScreen(this.parentScreen);
         }

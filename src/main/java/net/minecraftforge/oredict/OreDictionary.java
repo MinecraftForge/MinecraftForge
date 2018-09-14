@@ -18,7 +18,6 @@
  */
 
 package net.minecraftforge.oredict;
-
 /*
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +52,6 @@ import net.minecraftforge.fml.common.Loader;
 
 import javax.annotation.Nonnull;
 */
-
 public class OreDictionary
 {
 /*
@@ -381,7 +379,7 @@ public class OreDictionary
             ItemStack.EMPTY //So the above can have a comma and we don't have to keep editing extra lines.
         };
 
-        FMLLog.log.info("Starts to replace vanilla recipe ingredients with ore ingredients.");
+        LOGGER.info("Starts to replace vanilla recipe ingredients with ore ingredients.");
         int replaced = 0;
         // Search vanilla recipes for recipes to replace
         for(IRecipe obj : CraftingManager.REGISTRY)
@@ -413,7 +411,7 @@ public class OreDictionary
                                 matches = true;
                                 if (oreName != null && !oreName.equals(ent.getValue()))
                                 {
-                                    FMLLog.log.info("Invalid recipe found with multiple oredict ingredients in the same ingredient..."); //TODO: Write a dumper?
+                                    LOGGER.info("Invalid recipe found with multiple oredict ingredients in the same ingredient..."); //TODO: Write a dumper?
                                     skip = true;
                                     break;
                                 }
@@ -441,14 +439,14 @@ public class OreDictionary
                         if(DEBUG && replacedIngs.add(ing))
                         {
                             String recipeName = obj.getRegistryName().getResourcePath();
-                            FMLLog.log.debug("Replaced {} of the recipe \'{}\' with \"{}\".", ing.getMatchingStacks(), recipeName, oreName);
+                            LOGGER.debug("Replaced {} of the recipe \'{}\' with \"{}\".", ing.getMatchingStacks(), recipeName, oreName);
                         }
                     }
                 }
             }
         }
 
-        FMLLog.log.info("Replaced {} ore ingredients", replaced);
+        LOGGER.info("Replaced {} ore ingredients", replaced);
     }
 
     /**
@@ -504,7 +502,7 @@ public class OreDictionary
         int id;
         if (registryName == null)
         {
-            FMLLog.log.debug("Attempted to find the oreIDs for an unregistered object ({}). This won't work very well.", stack);
+            LOGGER.debug("Attempted to find the oreIDs for an unregistered object ({}). This won't work very well.", stack);
             return new int[0];
         }
         else
@@ -736,7 +734,7 @@ public class OreDictionary
                 int hash;
                 if (name == null)
                 {
-                    FMLLog.log.debug("Defaulting unregistered ore dictionary entry for ore dictionary {}: type {} to -1", getOreName(id), ore.getItem().getClass());
+                    LOGGER.debug("Defaulting unregistered ore dictionary entry for ore dictionary {}: type {} to -1", getOreName(id), ore.getItem().getClass());
                     hash = -1;
                 }
                 else
