@@ -83,7 +83,7 @@
              {
                  potioneffect.func_76452_a(p_70690_1_);
                  this.func_70695_b(potioneffect, true);
-@@ -772,13 +778,13 @@
+@@ -772,7 +778,7 @@
      @Nullable
      public PotionEffect func_184596_c(@Nullable Potion p_184596_1_)
      {
@@ -92,13 +92,6 @@
      }
  
      public void func_184589_d(Potion p_184589_1_)
-     {
-         PotionEffect potioneffect = this.func_184596_c(p_184589_1_);
--
-+        
-         if (potioneffect != null)
-         {
-             this.func_70688_c(potioneffect);
 @@ -819,6 +825,8 @@
  
      public void func_70691_i(float p_70691_1_)
