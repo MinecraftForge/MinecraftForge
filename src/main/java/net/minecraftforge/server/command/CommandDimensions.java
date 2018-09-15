@@ -20,49 +20,30 @@
 package net.minecraftforge.server.command;
 
 import it.unimi.dsi.fastutil.ints.IntSortedSet;
-import net.minecraft.command.CommandBase;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.DimensionType;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 
 import java.util.Map;
 
-public class CommandDimensions extends CommandBase
+import com.mojang.brigadier.builder.ArgumentBuilder;
+
+public class CommandDimensions
 {
-    @Override
-    public String getName()
+    static ArgumentBuilder<CommandSource, ?> register()
     {
-        return "dimensions";
-    }
-
-    @Override
-    public String getUsage(ICommandSender sender)
-    {
-        return "commands.forge.dimensions.usage";
-    }
-
-    @Override
-    public int getRequiredPermissionLevel()
-    {
-        return 0;
-    }
-
-    @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
-    {
-        return true;
-    }
-
-    @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-    {
-        sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.dimensions.list"));
-        for (Map.Entry<DimensionType, IntSortedSet> entry : DimensionManager.getRegisteredDimensions().entrySet())
-        {
-            sender.sendMessage(new TextComponentString(entry.getKey().getName() + ": " + entry.getValue()));
-        }
+        return Commands.func_197057_a("dimensions")
+            .requires(cs->cs.func_197034_c(0)) //permission
+            .executes(ctx -> {
+                ctx.getSource().func_197030_a(new TextComponentTranslation("commands.forge.dimensions.list"), true);
+                for (Map.Entry<DimensionType, IntSortedSet> entry : DimensionManager.getRegisteredDimensions().entrySet())
+                {
+                    ctx.getSource().func_197030_a(new TextComponentString(entry.getKey().getName() + ": " + entry.getValue()), true);
+                }
+                return 0;
+            });
     }
 }

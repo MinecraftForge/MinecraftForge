@@ -22,24 +22,19 @@ package net.minecraftforge.server.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
-import net.minecraft.util.text.TextComponentString;
 
 public class ForgeCommand
 {
     public ForgeCommand(CommandDispatcher<CommandSource> dispatcher)
     {
-        dispatcher.register(LiteralArgumentBuilder.<CommandSource>literal("forge").
-                requires(cs->cs.func_197034_c(2)).
-                then(LiteralArgumentBuilder.literal("tps")).
-                executes(c->{c.getSource().func_197021_a(new TextComponentString("command.forge.tps.summary")); return 1;}));
-/*
-        super.addSubcommand(new CommandTps());
-        super.addSubcommand(new CommandTrack());
-        super.addSubcommand(new CommandGenerate());
-        super.addSubcommand(new CommandEntity());
-        super.addSubcommand(new CommandSetDimension());
-        super.addSubcommand(new CommandDimensions());
-        super.addSubcommand(new CommandTreeHelp(this));
-*/
+        dispatcher.register(
+            LiteralArgumentBuilder.<CommandSource>literal("forge")
+            .then(CommandTps.register())
+            .then(CommandTrack.register())
+            .then(CommandEntity.register())
+            .then(CommandGenerate.register())
+            .then(CommandDimensions.register())
+            .then(CommandSetDimension.register())
+        );
     }
 }

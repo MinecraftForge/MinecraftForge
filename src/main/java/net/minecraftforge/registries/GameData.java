@@ -33,6 +33,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -87,6 +88,7 @@ public class GameData
     public static final ResourceLocation POTIONTYPES  = new ResourceLocation("minecraft:potiontypes");
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
     public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
+    public static final ResourceLocation TILEENTITIES = new ResourceLocation("minecraft:tileentities");
     public static final ResourceLocation RECIPES      = new ResourceLocation("minecraft:recipes");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
     private static final int MAX_BLOCK_ID = 4095;
@@ -98,6 +100,7 @@ public class GameData
     private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
     private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
+    private static final int MAX_TILE_ENTITY_ID = Integer.MAX_VALUE; //Doesnt seem to be serialized anywhere, so no max.
     private static final int MAX_RECIPE_ID = Integer.MAX_VALUE >> 5; // Varint CPacketRecipeInfo/SPacketRecipeBook
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
 
@@ -111,6 +114,7 @@ public class GameData
         init();
     }
 
+    @SuppressWarnings("unchecked")
     public static void init()
     {
         if ( DISABLE_VANILLA_REGISTRIES)
@@ -132,6 +136,7 @@ public class GameData
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
         // TODO do we need the callback and the static field anymore?
         makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).create();
+        makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).disableSaving().create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int min, int max)

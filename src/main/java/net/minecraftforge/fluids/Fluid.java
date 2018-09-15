@@ -30,11 +30,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.item.EnumRarity;
@@ -131,7 +129,7 @@ public class Fluid
      * The default value of null should remain for any Fluid without a Block implementation.
      */
     protected Block block = null;
-    
+
     /**
      * Color used by universal bucket and the ModelFluid baked model.
      * Note that this int includes the alpha so converting this to RGB with alpha would be
@@ -245,13 +243,13 @@ public class Fluid
         this.emptySound = emptySound;
         return this;
     }
-    
+
     public Fluid setColor(Color color)
     {
         this.color = color.getRGB();
         return this;
     }
-    
+
     public Fluid setColor(int color)
     {
         this.color = color;
@@ -275,15 +273,10 @@ public class Fluid
 
     public final boolean isLighterThanAir()
     {
-        int density = this.density;
-        if (block instanceof BlockFluidBase)
-        {
-            density = ((BlockFluidBase) block).getDensity();
-        }
-        return density <= 0;
+        return this.density <= 0;
     }
 
-	/**
+    /**
      * Determines if this fluid should vaporize in dimensions where water vaporizes when placed.
      * To preserve the intentions of vanilla, fluids that can turn lava into obsidian should vaporize.
      * This prevents players from making the nether safe with a single bucket.
@@ -299,7 +292,7 @@ public class Fluid
         return block.getDefaultState().getMaterial() == Material.WATER;
     }
 
-	/**
+    /**
      * Called instead of placing the fluid block if {@link WorldProvider#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
      * Override this to make your explosive liquid blow up instead of the default smoke, etc.
      * Based on {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}

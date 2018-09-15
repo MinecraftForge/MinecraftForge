@@ -21,13 +21,13 @@ package net.minecraftforge.registries;
 
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -39,6 +39,7 @@ import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfessio
  * Created to have a central place to access the registries directly if modders need.
  * It is still advised that if you are registering things to go through {@link GameRegistry} register methods, but queries and iterations can use this.
  */
+@SuppressWarnings("unchecked")
 public class ForgeRegistries
 {
     static { init(); } // This must be above the fields so we guarantee it's run before findRegistry is called. Yay static inializers
@@ -52,6 +53,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<Enchantment>         ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
     public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
     public static final IForgeRegistry<EntityType<?>>       ENTITIES     = RegistryManager.ACTIVE.getRegistry(EntityType.class);
+    public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES = RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
     public static final IForgeRegistry<IRecipe>             RECIPES      = RegistryManager.ACTIVE.getRegistry(IRecipe.class);
 
     /**

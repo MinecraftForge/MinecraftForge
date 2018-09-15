@@ -1,0 +1,14 @@
+--- a/net/minecraft/tileentity/TileEntityType.java
++++ b/net/minecraft/tileentity/TileEntityType.java
+@@ -12,9 +12,9 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class TileEntityType<T extends TileEntity> {
++public class TileEntityType<T extends TileEntity> extends net.minecraftforge.registries.ForgeRegistryEntry<TileEntityType<T>> {
+    private static final Logger field_206866_A = LogManager.getLogger();
+-   public static final RegistryNamespaced<ResourceLocation, TileEntityType<?>> field_200970_a = new RegistryNamespaced<ResourceLocation, TileEntityType<?>>();
++   public static final RegistryNamespaced<ResourceLocation, TileEntityType<?>> field_200970_a = net.minecraftforge.registries.GameData.getWrapper(TileEntityType.class);
+    public static final TileEntityType<TileEntityFurnace> field_200971_b = func_200966_a("furnace", TileEntityType.Builder.func_200963_a(TileEntityFurnace::new));
+    public static final TileEntityType<TileEntityChest> field_200972_c = func_200966_a("chest", TileEntityType.Builder.func_200963_a(TileEntityChest::new));
+    public static final TileEntityType<TileEntityTrappedChest> field_200973_d = func_200966_a("trapped_chest", TileEntityType.Builder.func_200963_a(TileEntityTrappedChest::new));

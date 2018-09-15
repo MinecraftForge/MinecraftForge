@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -205,6 +206,11 @@ public class DimensionManager
     public static Integer[] getIDs()
     {
         return worlds.keySet().toArray(new Integer[0]); // Only loaded dims, since usually used to cycle through loaded worlds
+    }
+
+    public static Stream<Integer> getIDStream()
+    {
+        return worlds.keySet().stream();
     }
 
     public static void setWorld(int id, @Nullable WorldServer world, MinecraftServer server)
