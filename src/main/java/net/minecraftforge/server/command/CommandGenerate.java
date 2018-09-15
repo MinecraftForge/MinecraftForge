@@ -59,7 +59,7 @@ class CommandGenerate
                         )
                         .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.func_197274_b(ctx, "pos"), getInt(ctx, "count"), getInt(ctx, "dim"), -1))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.func_197274_b(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().func_197023_e().provider.getDimension(), -1))
+                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.func_197274_b(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().func_197023_e().provider.getId(), -1))
                 )
             );
     }
@@ -76,5 +76,7 @@ class CommandGenerate
         ChunkGenWorker worker = new ChunkGenWorker(source, chunkpos, count, dim, interval);
         source.func_197030_a(worker.getStartMessage(source), true);
         WorldWorkerManager.addWorker(worker);
+        
+        return 0;
     }
 }

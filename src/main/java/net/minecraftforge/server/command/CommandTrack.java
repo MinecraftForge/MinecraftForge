@@ -185,7 +185,7 @@ class CommandTrack
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "µs" : "ms");
 
-                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", entity.func_200600_R().getRegistryName(), TrackResults.getWorldName(entity.world.provider.getDimension()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", entity.func_200600_R().getRegistryName(), TrackResults.getWorldName(entity.world.provider.getId()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }
@@ -205,7 +205,7 @@ class CommandTrack
 
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "µs" : "ms");
-                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", te.func_200662_C().getRegistryName(), TrackResults.getWorldName(te.getWorld().provider.getDimension()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", te.func_200662_C().getRegistryName(), TrackResults.getWorldName(te.getWorld().provider.getId()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }

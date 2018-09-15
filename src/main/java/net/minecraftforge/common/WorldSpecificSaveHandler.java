@@ -75,7 +75,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
         File file = new File(dataDir, name + ".dat");
         if (!file.exists())
         {
-            switch (world.provider.getDimension())
+            switch (world.provider.getId())
             {
                 case -1:
                     if (name.equalsIgnoreCase("FORTRESS")) copyFile(name, file);

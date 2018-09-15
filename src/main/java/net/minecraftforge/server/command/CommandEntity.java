@@ -32,6 +32,7 @@ import com.google.common.collect.Maps;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
@@ -78,12 +79,12 @@ class CommandEntity
                         .suggests((ctx, builder) -> ISuggestionProvider.func_197013_a(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
                         .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), IntegerArgumentType.getInteger(ctx, "dim")))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().func_197023_e().provider.getDimension()))
+                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().func_197023_e().provider.getId()))
                 )
-                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().func_197023_e().provider.getDimension()));
+                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().func_197023_e().provider.getId()));
         }
 
-        private static int execute(CommandSource sender, String filter, int dim) throws CommandException
+        private static int execute(CommandSource sender, String filter, int dim) throws CommandSyntaxException
         {
             final String cleanFilter = filter.replace("?", ".?").replace("*", ".*?");
 
@@ -128,6 +129,7 @@ class CommandEntity
                     if (limit-- == 0) break;
                     sender.func_197030_a(new TextComponentString("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), true);
                 }
+                return toSort.size();
             }
             else
             {
@@ -153,6 +155,7 @@ class CommandEntity
                 int count = info.stream().mapToInt(Pair::getRight).sum();
                 sender.func_197030_a(new TextComponentTranslation("commands.forge.entity.list.multiple.header", count), true);
                 info.forEach(e -> sender.func_197030_a(new TextComponentString("  " + e.getValue() + ": " + e.getKey()), true));
+                return info.size();
             }
         }
     }
