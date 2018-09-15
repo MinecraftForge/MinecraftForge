@@ -68,6 +68,30 @@
              this.func_82142_c(this.func_70644_a(MobEffects.field_76441_p));
          }
      }
+@@ -736,12 +742,12 @@
+         {
+             PotionEffect potioneffect = this.field_70713_bf.get(p_70690_1_.func_188419_a());
+ 
+-            if (potioneffect == null)
++            if (potioneffect == null && net.minecraftforge.common.ForgeHooks.onPotionAdded(this, p_70690_1_))
+             {
+                 this.field_70713_bf.put(p_70690_1_.func_188419_a(), p_70690_1_);
+                 this.func_70670_a(p_70690_1_);
+             }
+-            else
++            else if(potioneffect != null && net.minecraftforge.common.ForgeHooks.onPotionCombined(this, potioneffect, p_70690_1_))
+             {
+                 potioneffect.func_76452_a(p_70690_1_);
+                 this.func_70695_b(potioneffect, true);
+@@ -772,7 +778,7 @@
+     @Nullable
+     public PotionEffect func_184596_c(@Nullable Potion p_184596_1_)
+     {
+-        return this.field_70713_bf.remove(p_184596_1_);
++        return net.minecraftforge.common.ForgeHooks.onPotionRemoved(this, this.field_70713_bf.remove(p_184596_1_));
+     }
+ 
+     public void func_184589_d(Potion p_184589_1_)
 @@ -819,6 +825,8 @@
  
      public void func_70691_i(float p_70691_1_)
