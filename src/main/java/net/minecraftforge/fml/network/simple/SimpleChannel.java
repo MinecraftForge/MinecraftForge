@@ -24,18 +24,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraftforge.fml.network.ICustomPacket;
 import net.minecraftforge.fml.network.NetworkDirection;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkInstance;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
 import java.util.function.Function;
-import java.util.function.IntBinaryOperator;
-import java.util.function.IntConsumer;
-import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
 public class SimpleChannel
@@ -52,42 +48,38 @@ public class SimpleChannel
 
     private void networkEventListener(final NetworkEvent networkEvent)
     {
-        if (networkEvent instanceof NetworkEvent.ILoginIndex)
-        {
-            this.indexedCodec.consume(networkEvent.getPayload(), ((NetworkEvent.ILoginIndex)networkEvent).getIndex(), networkEvent.getSource());
-        }
-        else
-        {
-            this.indexedCodec.consume(networkEvent.getPayload(), networkEvent.getSource());
-        }
+        this.indexedCodec.consume(networkEvent.getPayload(), networkEvent.getLoginIndex(), networkEvent.getSource());
     }
 
-    public <MSG> void encodeMessage(MSG message, final PacketBuffer target) {
-        this.indexedCodec.build(message, target);
+    public <MSG> int encodeMessage(MSG message, final PacketBuffer target) {
+        return this.indexedCodec.build(message, target);
     }
-    public <MSG> IndexedMessageCodec.CodecIndex<MSG> registerMessage(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
+    public <MSG> IndexedMessageCodec.MessageHandler<MSG> registerMessage(int index, Class<MSG> messageType, BiConsumer<MSG, PacketBuffer> encoder, Function<PacketBuffer, MSG> decoder, BiConsumer<MSG, Supplier<NetworkEvent.Context>> messageConsumer) {
         return this.indexedCodec.addCodecIndex(index, messageType, encoder, decoder, messageConsumer);
     }
 
-    private <MSG> PacketBuffer toBuffer(MSG msg) {
+    private <MSG> Pair<PacketBuffer,Integer> toBuffer(MSG msg) {
         final PacketBuffer bufIn = new PacketBuffer(Unpooled.buffer());
-        encodeMessage(msg, bufIn);
-        return bufIn;
+        int index = encodeMessage(msg, bufIn);
+        return Pair.of(bufIn, index);
     }
+
     public <MSG> void sendToServer(MSG message)
     {
         sendTo(message, Minecraft.getMinecraft().getConnection().getNetworkManager(), NetworkDirection.PLAY_TO_SERVER);
     }
 
-    public <MSG> void sendTo(MSG message, NetworkManager manager, NetworkDirection direction) {
-        ICustomPacket<Packet<?>> payload = direction.buildPacket(toBuffer(message), instance.getChannelName(), -1);
+    public <MSG> void sendTo(MSG message, NetworkManager manager, NetworkDirection direction)
+    {
+        ICustomPacket<Packet<?>> payload = direction.buildPacket(toBuffer(message), instance.getChannelName());
         manager.sendPacket(payload.getThis());
     }
 
-    public <MSG> void sendLogin(MSG message, NetworkManager manager, NetworkDirection direction, int packetIndex) {
-        ICustomPacket<Packet<?>> payload = direction.buildPacket(toBuffer(message), instance.getChannelName(), packetIndex);
-        manager.sendPacket(payload.getThis());
+    public <MSG> void reply(MSG msgToReply, NetworkEvent.Context context)
+    {
+        sendTo(msgToReply, context.getNetworkManager(), context.getDirection().reply());
     }
+
     public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int id) {
         return MessageBuilder.forType(this, type, id);
     }
@@ -99,7 +91,8 @@ public class SimpleChannel
         private BiConsumer<MSG, PacketBuffer> encoder;
         private Function<PacketBuffer, MSG> decoder;
         private BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer;
-        private BiConsumer<MSG, Integer> loginIndexFunction;
+        private Function<MSG, Integer> loginIndexGetter;
+        private BiConsumer<MSG, Integer> loginIndexSetter;
 
         private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
             MessageBuilder<MSG> builder = new MessageBuilder<>();
@@ -119,8 +112,9 @@ public class SimpleChannel
             return this;
         }
 
-        public MessageBuilder<MSG> loginIndex(BiConsumer<MSG, Integer> loginIndexFunction) {
-            this.loginIndexFunction = loginIndexFunction;
+        public MessageBuilder<MSG> loginIndex(Function<MSG, Integer> loginIndexGetter, BiConsumer<MSG, Integer> loginIndexSetter) {
+            this.loginIndexGetter = loginIndexGetter;
+            this.loginIndexSetter = loginIndexSetter;
             return this;
         }
         public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
@@ -129,9 +123,12 @@ public class SimpleChannel
         }
 
         public void add() {
-            final IndexedMessageCodec.CodecIndex<MSG> message = this.channel.registerMessage(this.id, this.type, this.encoder, this.decoder, this.consumer);
-            if (this.loginIndexFunction != null) {
-                message.setLoginIndexFunction(this.loginIndexFunction);
+            final IndexedMessageCodec.MessageHandler<MSG> message = this.channel.registerMessage(this.id, this.type, this.encoder, this.decoder, this.consumer);
+            if (this.loginIndexSetter != null) {
+                message.setLoginIndexSetter(this.loginIndexSetter);
+            }
+            if (this.loginIndexGetter != null) {
+                message.setLoginIndexGetter(this.loginIndexGetter);
             }
         }
     }

@@ -29,6 +29,7 @@ import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.UnsafeHacks;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -84,12 +85,12 @@ public enum NetworkDirection
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Packet<?>> ICustomPacket<T> buildPacket(PacketBuffer packetBuffer, ResourceLocation channelName, int index)
+    public <T extends Packet<?>> ICustomPacket<T> buildPacket(Pair<PacketBuffer,Integer> packetData, ResourceLocation channelName)
     {
         ICustomPacket<T> packet = (ICustomPacket<T>)UnsafeHacks.newInstance(getPacketClass());
         packet.setName(channelName);
-        packet.setData(packetBuffer);
-        packet.setIndex(index);
+        packet.setData(packetData.getLeft());
+        packet.setIndex(packetData.getRight());
         return packet;
     }
 }

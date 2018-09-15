@@ -19,10 +19,12 @@
 
 package net.minecraftforge.fml.network;
 
-import io.netty.util.AttributeKey;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.event.EventNetworkChannel;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -35,6 +37,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class NetworkRegistry
 {
@@ -69,6 +72,53 @@ public class NetworkRegistry
     static Optional<NetworkInstance> findTarget(ResourceLocation resourceLocation)
     {
         return Optional.ofNullable(instances.get(resourceLocation));
+    }
+
+    static NBTTagList buildChannelVersions() {
+        return instances.entrySet().stream().map(e-> {
+            final NBTTagCompound tag = new NBTTagCompound();
+            tag.setString("name", e.getKey().toString());
+            tag.setString("version", e.getValue().getNetworkProtocolVersion());
+            return tag;
+        }).collect(Collectors.toCollection(NBTTagList::new));
+    }
+
+    static boolean validateClientChannels(final NBTTagList channels) {
+        final List<Pair<ResourceLocation, Boolean>> results = channels.stream().map(t -> {
+            NBTTagCompound tag = (NBTTagCompound) t;
+            final ResourceLocation rl = new ResourceLocation(tag.getString("name"));
+            final String serverVersion = tag.getString("version");
+            boolean test = instances.get(rl).tryServerVersionOnClient(serverVersion);
+            LOGGER.debug(NETREGISTRY, "Channel {} : Client version test of ''{}'' from server : {}", rl, serverVersion, test);
+            return Pair.of(rl, test);
+        }).filter(p->!p.getRight()).collect(Collectors.toList());
+
+        if (!results.isEmpty()) {
+            LOGGER.error(NETREGISTRY, "Channels [{}] rejected their server side version number",
+                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+            return false;
+        }
+        LOGGER.debug(NETREGISTRY, "Accepting channel list from server");
+        return true;
+    }
+
+    static boolean validateServerChannels(final NBTTagList channels) {
+        final List<Pair<ResourceLocation, Boolean>> results = channels.stream().map(t -> {
+            NBTTagCompound tag = (NBTTagCompound) t;
+            final ResourceLocation rl = new ResourceLocation(tag.getString("name"));
+            final String clientVersion = tag.getString("version");
+            boolean test = instances.get(rl).tryClientVersionOnServer(clientVersion);
+            LOGGER.debug(NETREGISTRY, "Channel {} : Server version test of ''{}'' from client : {}", rl, clientVersion, test);
+            return Pair.of(rl, test);
+        }).filter(p->!p.getRight()).collect(Collectors.toList());
+
+        if (!results.isEmpty()) {
+            LOGGER.error(NETREGISTRY, "Channels [{}] rejected their client side version number",
+                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+            return false;
+        }
+        LOGGER.debug(NETREGISTRY, "Accepting channel list from client");
+        return true;
     }
 
     public static class ChannelBuilder {

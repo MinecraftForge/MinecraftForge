@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.network;
 
+import net.minecraft.nbt.INBTBase;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -38,7 +39,7 @@ public class NetworkInstance
     }
 
     private final ResourceLocation channelName;
-    private final Supplier<String> networkProtocolVersion;
+    private final String networkProtocolVersion;
     private final Predicate<String> clientAcceptedVersions;
     private final Predicate<String> serverAcceptedVersions;
     private final IEventBus networkEventBus;
@@ -46,7 +47,7 @@ public class NetworkInstance
     NetworkInstance(ResourceLocation channelName, Supplier<String> networkProtocolVersion, Predicate<String> clientAcceptedVersions, Predicate<String> serverAcceptedVersions)
     {
         this.channelName = channelName;
-        this.networkProtocolVersion = networkProtocolVersion;
+        this.networkProtocolVersion = networkProtocolVersion.get();
         this.clientAcceptedVersions = clientAcceptedVersions;
         this.serverAcceptedVersions = serverAcceptedVersions;
         this.networkEventBus = IEventBus.create(this::handleError);
@@ -78,4 +79,15 @@ public class NetworkInstance
     }
 
 
+    String getNetworkProtocolVersion() {
+        return networkProtocolVersion;
+    }
+
+    boolean tryServerVersionOnClient(final String serverVersion) {
+        return this.clientAcceptedVersions.test(serverVersion);
+    }
+
+    boolean tryClientVersionOnServer(final String clientVersion) {
+        return this.serverAcceptedVersions.test(clientVersion);
+    }
 }

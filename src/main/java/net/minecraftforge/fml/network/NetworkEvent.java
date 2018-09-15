@@ -32,10 +32,13 @@ public class NetworkEvent extends Event
 {
     private final PacketBuffer payload;
     private final Supplier<Context> source;
-    private NetworkEvent(ICustomPacket<?> payload, Supplier<Context> source)
+    private final int loginIndex;
+
+    private NetworkEvent(final ICustomPacket<?> payload, final Supplier<Context> source)
     {
         this.payload = payload.getData();
         this.source = source;
+        this.loginIndex = payload.getIndex();
     }
 
     public PacketBuffer getPayload()
@@ -48,9 +51,13 @@ public class NetworkEvent extends Event
         return source;
     }
 
+    public int getLoginIndex()
+    {
+        return loginIndex;
+    }
+
     public static class ServerCustomPayloadEvent extends NetworkEvent
     {
-
         ServerCustomPayloadEvent(final ICustomPacket<?> payload, final Supplier<Context> source) {
             super(payload, source);
         }
@@ -61,39 +68,20 @@ public class NetworkEvent extends Event
             super(payload, source);
         }
     }
-    public static class ServerCustomPayloadLoginEvent extends ServerCustomPayloadEvent implements ILoginIndex {
-        private final int index;
-
+    public static class ServerCustomPayloadLoginEvent extends ServerCustomPayloadEvent {
         ServerCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source)
         {
             super(payload, source);
-            this.index = payload.getIndex();
-        }
-
-        public int getIndex()
-        {
-            return index;
         }
     }
 
-    public static class ClientCustomPayloadLoginEvent extends ClientCustomPayloadEvent implements ILoginIndex {
-        private final int index;
-
+    public static class ClientCustomPayloadLoginEvent extends ClientCustomPayloadEvent {
         ClientCustomPayloadLoginEvent(ICustomPacket<?> payload, Supplier<Context> source)
         {
             super(payload, source);
-            this.index = payload.getIndex();
-        }
-
-        public int getIndex()
-        {
-            return index;
         }
     }
 
-    public interface ILoginIndex {
-        int getIndex();
-    }
     /**
      * Context for {@link NetworkEvent}
      */

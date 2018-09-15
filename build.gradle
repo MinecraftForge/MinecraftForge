@@ -87,6 +87,7 @@ project(':forge') {
                 target: 'fmldevserver'
             ]
         }
+        mcVersion = '1.13'
     }
     applyPatches {
         canonicalizeAccess true
