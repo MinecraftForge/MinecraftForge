@@ -1482,11 +1482,12 @@ public class ForgeHooks
         return !event.isCanceled();
     }
 
-    public static void onPotionRemoved(EntityLivingBase entity, PotionEffect oldEffect)
+    public static PotionEffect onPotionRemoved(EntityLivingBase entity, PotionEffect oldEffect)
     {
-        if(entity == null || oldEffect == null)
-            return;
+        if( entity == null || oldEffect == null )
+            return oldEffect;
         PotionEvent.PotionRemovedEvent event = new PotionEvent.PotionRemovedEvent(entity, oldEffect);
         MinecraftForge.EVENT_BUS.post(event);
+        return oldEffect;
     }
 }
