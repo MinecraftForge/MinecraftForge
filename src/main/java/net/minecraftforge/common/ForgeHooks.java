@@ -84,6 +84,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.network.play.server.SPacketRecipeBook;
 import net.minecraft.network.play.server.SPacketRecipeBook.State;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.StatList;
@@ -133,6 +134,7 @@ import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LootingLevelEvent;
+import net.minecraftforge.event.entity.living.PotionEvent;
 import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
@@ -1462,4 +1464,30 @@ public class ForgeHooks
         return false;
     }
 
+    public static boolean onPotionAdded(EntityLivingBase entity, PotionEffect newEffect)
+    {
+        if(entity == null || newEffect == null)
+            return false;
+        PotionEvent.PotionAddedEvent event = new PotionEvent.PotionAddedEvent(entity, newEffect);
+        MinecraftForge.EVENT_BUS.post(event);
+        return !event.isCanceled();
+    }
+
+    public static boolean onPotionCombined(EntityLivingBase entity, PotionEffect existingEffect, PotionEffect newEffect)
+    {
+        if(entity == null || newEffect == null)
+            return false;
+        PotionEvent.PotionCombinedEvent event = new PotionEvent.PotionCombinedEvent(entity, existingEffect, newEffect);
+        MinecraftForge.EVENT_BUS.post(event);
+        return !event.isCanceled();
+    }
+
+    public static PotionEffect onPotionRemoved(EntityLivingBase entity, PotionEffect oldEffect)
+    {
+        if( entity == null || oldEffect == null )
+            return oldEffect;
+        PotionEvent.PotionRemovedEvent event = new PotionEvent.PotionRemovedEvent(entity, oldEffect);
+        MinecraftForge.EVENT_BUS.post(event);
+        return oldEffect;
+    }
 }
