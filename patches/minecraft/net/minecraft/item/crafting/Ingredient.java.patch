@@ -1,0 +1,61 @@
+--- a/net/minecraft/item/crafting/Ingredient.java
++++ b/net/minecraft/item/crafting/Ingredient.java
+@@ -25,10 +25,14 @@
+ import net.minecraft.util.IItemProvider;
+ import net.minecraft.util.JsonUtils;
+ import net.minecraft.util.ResourceLocation;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public final class Ingredient implements Predicate<ItemStack> {
++   //Because Mojang caches things... we need to invalidate them.. so... here we go..
++   private static final java.util.Set<Ingredient> INSTANCES = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<Ingredient, Boolean>());
++   public static void invalidateAll() {
++      INSTANCES.stream().filter(e -> e != null).forEach(i -> i.invalidate());
++   }
++
+    private static final Predicate<? super Ingredient.IItemList> field_209362_b = (p_209361_0_) -> {
+       return !p_209361_0_.func_199799_a().stream().allMatch(ItemStack::isEmpty);
+    };
+@@ -36,14 +40,16 @@
+    private final Ingredient.IItemList[] field_199807_b;
+    private ItemStack[] matchingStacks;
+    private IntList matchingStacksPacked;
++   private final boolean isSimple;
+ 
+    private Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) {
+       this.field_199807_b = (Ingredient.IItemList[])p_i49381_1_.filter(field_209362_b).toArray((p_209360_0_) -> {
+          return new Ingredient.IItemList[p_209360_0_];
+       });
++      this.isSimple = !Arrays.stream(field_199807_b).anyMatch(list -> list.func_199799_a().stream().anyMatch(stack -> stack.getItem().isDamageable()));
++      Ingredient.INSTANCES.add(this);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public ItemStack[] getMatchingStacks() {
+       this.func_199806_d();
+       return this.matchingStacks;
+@@ -121,6 +127,15 @@
+       return this.field_199807_b.length == 0 && (this.matchingStacks == null || this.matchingStacks.length == 0) && (this.matchingStacksPacked == null || this.matchingStacksPacked.isEmpty());
+    }
+ 
++   protected void invalidate() {
++      this.matchingStacks = null;
++      this.matchingStacksPacked = null;
++   }
++
++   public boolean isSimple() {
++      return isSimple || this == EMPTY;
++   }
++
+    private static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
+       Ingredient ingredient = new Ingredient(p_209357_0_);
+       return ingredient.field_199807_b.length == 0 ? EMPTY : ingredient;
+@@ -132,7 +147,6 @@
+       }));
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public static Ingredient fromStacks(ItemStack... stacks) {
+       return func_209357_a(Arrays.stream(stacks).map((p_209356_0_) -> {
+          return new Ingredient.SingleItemList(p_209356_0_);

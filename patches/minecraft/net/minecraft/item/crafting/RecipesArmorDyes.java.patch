@@ -1,0 +1,43 @@
+--- a/net/minecraft/item/crafting/RecipesArmorDyes.java
++++ b/net/minecraft/item/crafting/RecipesArmorDyes.java
+@@ -10,8 +10,6 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class RecipesArmorDyes extends IRecipeHidden {
+    public RecipesArmorDyes(ResourceLocation p_i48173_1_) {
+@@ -35,7 +33,7 @@
+ 
+                   itemstack = itemstack1;
+                } else {
+-                  if (!(itemstack1.getItem() instanceof ItemDye)) {
++                  if (!itemstack1.getItem().func_206844_a(net.minecraft.tags.ItemTags.DYES)) {
+                      return false;
+                   }
+ 
+@@ -79,11 +77,12 @@
+                   ++j;
+                }
+             } else {
+-               if (!(item instanceof ItemDye)) {
++               net.minecraft.item.EnumDyeColor color = net.minecraft.item.EnumDyeColor.getColor(itemstack1);
++               if (color == null) {
+                   return ItemStack.EMPTY;
+                }
+ 
+-               float[] afloat = ((ItemDye)item).func_195962_g().getColorComponentValues();
++               float[] afloat = color.getColorComponentValues();
+                int l1 = (int)(afloat[0] * 255.0F);
+                int i2 = (int)(afloat[1] * 255.0F);
+                int k2 = (int)(afloat[2] * 255.0F);
+@@ -114,7 +113,6 @@
+       }
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width * height >= 2;
+    }

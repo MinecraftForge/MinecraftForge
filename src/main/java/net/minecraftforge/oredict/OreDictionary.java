@@ -174,20 +174,6 @@ public class OreDictionary
             registerOre("feather",     Items.FEATHER);
             registerOre("egg",         Items.EGG);
 
-            // records
-            registerOre("record",      Items.RECORD_13);
-            registerOre("record",      Items.RECORD_CAT);
-            registerOre("record",      Items.RECORD_BLOCKS);
-            registerOre("record",      Items.RECORD_CHIRP);
-            registerOre("record",      Items.RECORD_FAR);
-            registerOre("record",      Items.RECORD_MALL);
-            registerOre("record",      Items.RECORD_MELLOHI);
-            registerOre("record",      Items.RECORD_STAL);
-            registerOre("record",      Items.RECORD_STRAD);
-            registerOre("record",      Items.RECORD_WARD);
-            registerOre("record",      Items.RECORD_11);
-            registerOre("record",      Items.RECORD_WAIT);
-
             // blocks
             registerOre("dirt",        Blocks.DIRT);
             registerOre("grass",       Blocks.GRASS);

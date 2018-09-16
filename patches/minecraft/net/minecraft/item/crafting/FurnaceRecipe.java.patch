@@ -1,0 +1,27 @@
+--- a/net/minecraft/item/crafting/FurnaceRecipe.java
++++ b/net/minecraft/item/crafting/FurnaceRecipe.java
+@@ -10,8 +10,6 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class FurnaceRecipe implements IRecipe {
+    private final ResourceLocation field_201832_a;
+@@ -38,7 +36,6 @@
+       return this.field_201835_d.copy();
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return true;
+    }
+@@ -61,7 +58,6 @@
+       return this.field_201835_d;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public String getGroup() {
+       return this.field_201833_b;
+    }

@@ -54,8 +54,6 @@ public class ForgeRegistries
     public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
     public static final IForgeRegistry<EntityType<?>>       ENTITIES     = RegistryManager.ACTIVE.getRegistry(EntityType.class);
     public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES = RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
-    public static final IForgeRegistry<IRecipe>             RECIPES      = RegistryManager.ACTIVE.getRegistry(IRecipe.class);
-
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
      */

@@ -1,0 +1,19 @@
+--- a/net/minecraft/item/crafting/RecipesMapCloning.java
++++ b/net/minecraft/item/crafting/RecipesMapCloning.java
+@@ -6,8 +6,6 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class RecipesMapCloning extends IRecipeHidden {
+    public RecipesMapCloning(ResourceLocation p_i48165_1_) {
+@@ -76,7 +74,6 @@
+       }
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width >= 3 && height >= 3;
+    }

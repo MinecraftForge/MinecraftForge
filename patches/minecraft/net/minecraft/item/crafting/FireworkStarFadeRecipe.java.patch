@@ -1,0 +1,19 @@
+--- a/net/minecraft/item/crafting/FireworkStarFadeRecipe.java
++++ b/net/minecraft/item/crafting/FireworkStarFadeRecipe.java
+@@ -10,8 +10,6 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class FireworkStarFadeRecipe extends IRecipeHidden {
+    private static final Ingredient field_196217_a = Ingredient.func_199804_a(Items.field_196153_dF);
+@@ -73,7 +71,6 @@
+       }
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width * height >= 2;
+    }

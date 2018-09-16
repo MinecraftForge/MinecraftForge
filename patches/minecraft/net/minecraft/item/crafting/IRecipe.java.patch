@@ -1,21 +1,43 @@
 --- a/net/minecraft/item/crafting/IRecipe.java
 +++ b/net/minecraft/item/crafting/IRecipe.java
-@@ -9,7 +9,7 @@
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -1,20 +1,16 @@
+ package net.minecraft.item.crafting;
  
--public interface IRecipe {
-+public interface IRecipe extends net.minecraftforge.registries.IForgeRegistryEntry<IRecipe> {
+ import net.minecraft.inventory.IInventory;
+-import net.minecraft.item.Item;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public interface IRecipe {
     boolean matches(IInventory inv, World worldIn);
  
     ItemStack getCraftingResult(IInventory inv);
-@@ -48,4 +48,9 @@
-    ResourceLocation func_199560_c();
  
-    IRecipeSerializer<?> func_199559_b();
-+
-+   @Override
-+   default Class<IRecipe> getRegistryType() {
-+       return IRecipe.class;
- }
-+}
+-   @OnlyIn(Dist.CLIENT)
+    boolean canFit(int width, int height);
+ 
+    ItemStack getRecipeOutput();
+@@ -23,9 +19,9 @@
+       NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+ 
+       for(int i = 0; i < nonnulllist.size(); ++i) {
+-         Item item = inv.getStackInSlot(i).getItem();
++         ItemStack item = inv.getStackInSlot(i);
+          if (item.hasContainerItem()) {
+-            nonnulllist.set(i, new ItemStack(item.getContainerItem()));
++            nonnulllist.set(i, item.getContainerItem());
+          }
+       }
+ 
+@@ -40,7 +36,6 @@
+       return false;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    default String getGroup() {
+       return "";
+    }

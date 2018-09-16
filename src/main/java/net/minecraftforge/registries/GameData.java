@@ -89,7 +89,6 @@ public class GameData
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
     public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
     public static final ResourceLocation TILEENTITIES = new ResourceLocation("minecraft:tileentities");
-    public static final ResourceLocation RECIPES      = new ResourceLocation("minecraft:recipes");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
     private static final int MAX_BLOCK_ID = 4095;
     private static final int MIN_ITEM_ID = MAX_BLOCK_ID + 1;
@@ -101,7 +100,6 @@ public class GameData
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
     private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
     private static final int MAX_TILE_ENTITY_ID = Integer.MAX_VALUE; //Doesnt seem to be serialized anywhere, so no max.
-    private static final int MAX_RECIPE_ID = Integer.MAX_VALUE >> 5; // Varint CPacketRecipeInfo/SPacketRecipeBook
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
 
     private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
@@ -132,7 +130,6 @@ public class GameData
         makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
         makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
-//        makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().addCallback(RecipeCallbacks.INSTANCE).create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
         // TODO do we need the callback and the static field anymore?
         makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).create();
