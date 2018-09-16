@@ -29,94 +29,78 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
-import net.minecraft.command.CommandBase;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
+
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.Commands;
+import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.registries.ForgeRegistries;
+
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-class CommandEntity extends CommandTreeBase
+class CommandEntity
 {
-    public CommandEntity()
+    static ArgumentBuilder<CommandSource, ?> register()
     {
-        addSubcommand(new EntityListCommand());
-        addSubcommand(new CommandTreeHelp(this));
+        return Commands.func_197057_a("entity")
+                .then(EntityListCommand.register()); //TODO: //Kill, spawn, etc..
     }
 
-    @Override
-    public String getUsage(ICommandSender sender)
+    private static class EntityListCommand
     {
-        return "commands.forge.entity.usage";
-    }
-
-    @Override
-    public int getRequiredPermissionLevel()
-    {
-        return 2;
-    }
-
-    @Override
-    public String getName()
-    {
-        return "entity";
-    }
-
-    private static class EntityListCommand extends CommandBase
-    {
-        @Override
-        public String getName()
+        private static final SimpleCommandExceptionType INVALID_FILTER = new SimpleCommandExceptionType(new TextComponentTranslation("commands.forge.entity.list.invalid"));
+        private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TextComponentTranslation("commands.forge.entity.list.invalidworld", dim));
+        private static final SimpleCommandExceptionType NO_ENTITIES = new SimpleCommandExceptionType(new TextComponentTranslation("commands.forge.entity.list.none"));
+        static ArgumentBuilder<CommandSource, ?> register()
         {
-            return "list";
+            return Commands.func_197057_a("list")
+                .requires(cs->cs.func_197034_c(2)) //permission
+                .then(Commands.func_197056_a("filter", StringArgumentType.string())
+                    .suggests((ctx, builder) -> ISuggestionProvider.func_197013_a(ForgeRegistries.ENTITIES.getKeys().stream().map(id -> id.toString()), builder))
+                    .then(Commands.func_197056_a("dim", IntegerArgumentType.integer())
+                        .suggests((ctx, builder) -> ISuggestionProvider.func_197013_a(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
+                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), IntegerArgumentType.getInteger(ctx, "dim")))
+                    )
+                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().func_197023_e().provider.getId()))
+                )
+                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().func_197023_e().provider.getId()));
         }
 
-        @Override
-        public int getRequiredPermissionLevel()
+        private static int execute(CommandSource sender, String filter, int dim) throws CommandSyntaxException
         {
-            return 2;
-        }
-
-        @Override
-        public String getUsage(ICommandSender sender)
-        {
-            return "commands.forge.entity.list.usage";
-        }
-
-        @Override
-        public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
-        {
-            String filter = "*";
-            if (args.length > 0)
-            {
-                filter = args[0];
-            }
             final String cleanFilter = filter.replace("?", ".?").replace("*", ".*?");
-            Set<ResourceLocation> names = EntityList.getEntityNameList().stream().filter(n -> n.toString().matches(cleanFilter)).collect(Collectors.toSet());
+
+            Set<ResourceLocation> names = ForgeRegistries.ENTITIES.getKeys().stream().filter(n -> n.toString().matches(cleanFilter)).collect(Collectors.toSet());
 
             if (names.isEmpty())
-                throw new WrongUsageException("commands.forge.entity.list.invalid");
-
-            int dim = args.length > 1 ? parseInt(args[1]) : sender.getEntityWorld().provider.getDimension();
+                throw INVALID_FILTER.create();
 
             WorldServer world = DimensionManager.getWorld(dim);
             if (world == null)
-                throw new WrongUsageException("commands.forge.entity.list.invalidworld", dim);
+                throw INVALID_DIMENSION.create(dim);
 
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
             List<Entity> entities = world.loadedEntityList;
             entities.forEach(e -> {
-                ResourceLocation key = EntityList.getKey(e);
-
-                MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(key, k -> MutablePair.of(0, Maps.newHashMap()));
+                MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.func_200600_R().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
                 ChunkPos chunk = new ChunkPos(e.getPosition());
                 info.left++;
                 info.right.put(chunk, info.right.getOrDefault(chunk, 0) + 1);
@@ -127,26 +111,25 @@ class CommandEntity extends CommandTreeBase
                 ResourceLocation name = names.iterator().next();
                 Pair<Integer, Map<ChunkPos, Integer>> info = list.get(name);
                 if (info == null)
-                    throw new WrongUsageException("commands.forge.entity.list.none");
-                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.entity.list.single.header", name, info.getLeft()));
+                    throw NO_ENTITIES.create();
+
+                sender.func_197030_a(new TextComponentTranslation("commands.forge.entity.list.single.header", name, info.getLeft()), true);
                 List<Map.Entry<ChunkPos, Integer>> toSort = new ArrayList<>();
                 toSort.addAll(info.getRight().entrySet());
                 toSort.sort((a, b) -> {
                     if (Objects.equals(a.getValue(), b.getValue()))
-                    {
                         return a.getKey().toString().compareTo(b.getKey().toString());
-                    }
                     else
-                    {
                         return b.getValue() - a.getValue();
-                    }
                 });
+
                 long limit = 10;
                 for (Map.Entry<ChunkPos, Integer> e : toSort)
                 {
                     if (limit-- == 0) break;
-                    sender.sendMessage(new TextComponentString("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z));
+                    sender.func_197030_a(new TextComponentString("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), true);
                 }
+                return toSort.size();
             }
             else
             {
@@ -161,33 +144,20 @@ class CommandEntity extends CommandTreeBase
                 });
                 info.sort((a, b) -> {
                     if (Objects.equals(a.getRight(), b.getRight()))
-                    {
                         return a.getKey().toString().compareTo(b.getKey().toString());
-                    }
                     else
-                    {
                         return b.getRight() - a.getRight();
-                    }
                 });
 
                 if (info.size() == 0)
-                    throw new WrongUsageException("commands.forge.entity.list.none");
+                    throw NO_ENTITIES.create();
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();
-                sender.sendMessage(TextComponentHelper.createComponentTranslation(sender, "commands.forge.entity.list.multiple.header", count));
-                info.forEach(e -> sender.sendMessage(new TextComponentString("  " + e.getValue() + ": " + e.getKey())));
+                sender.func_197030_a(new TextComponentTranslation("commands.forge.entity.list.multiple.header", count), true);
+                info.forEach(e -> sender.func_197030_a(new TextComponentString("  " + e.getValue() + ": " + e.getKey()), true));
+                return info.size();
             }
-        }
-
-        @Override
-        public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
-        {
-            if (args.length == 1)
-            {
-                String[] entityNames = EntityList.getEntityNameList().stream().map(ResourceLocation::toString).sorted().toArray(String[]::new);
-                return getListOfStringsMatchingLastWord(args, entityNames);
-            }
-            return Collections.emptyList();
         }
     }
+
 }

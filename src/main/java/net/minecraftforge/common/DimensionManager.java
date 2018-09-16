@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Stream;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -48,26 +49,30 @@ import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.ServerWorldEventHandler;
-import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
+import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.FMLLog;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 
 public class DimensionManager
 {
-    private static class Dimension
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker DIMMGR = MarkerManager.getMarker("DIMS");
+    private static class DimensionData
     {
         private final DimensionType type;
         private int ticksWaited;
-        private Dimension(DimensionType type)
+        private DimensionData(DimensionType type)
         {
             this.type = type;
             this.ticksWaited = 0;
@@ -77,7 +82,7 @@ public class DimensionManager
     private static boolean hasInit = false;
 
     private static final Int2ObjectMap<WorldServer> worlds = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
-    private static final Int2ObjectMap<Dimension> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
+    private static final Int2ObjectMap<DimensionData> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final IntSet keepLoaded = IntSets.synchronize(new IntOpenHashSet());
     private static final IntSet unloadQueue = IntSets.synchronize(new IntLinkedOpenHashSet());
     private static final BitSet dimensionMap = new BitSet(Long.SIZE << 4);
@@ -91,7 +96,7 @@ public class DimensionManager
     {
         int[] ret = new int[dimensions.size()];
         int x = 0;
-        for (Int2ObjectMap.Entry<Dimension> ent : dimensions.int2ObjectEntrySet())
+        for (Int2ObjectMap.Entry<DimensionData> ent : dimensions.int2ObjectEntrySet())
         {
             if (ent.getValue().type == type)
             {
@@ -105,7 +110,7 @@ public class DimensionManager
     public static Map<DimensionType, IntSortedSet> getRegisteredDimensions()
     {
         Map<DimensionType, IntSortedSet> map = new IdentityHashMap<>();
-        for (Int2ObjectMap.Entry<Dimension> entry : dimensions.int2ObjectEntrySet())
+        for (Int2ObjectMap.Entry<DimensionData> entry : dimensions.int2ObjectEntrySet())
         {
             map.computeIfAbsent(entry.getValue().type, k -> new IntRBTreeSet()).add(entry.getIntKey());
         }
@@ -133,7 +138,7 @@ public class DimensionManager
         {
             throw new IllegalArgumentException(String.format("Failed to register dimension for id %d, One is already registered", id));
         }
-        dimensions.put(id, new Dimension(type));
+        dimensions.put(id, new DimensionData(type));
         if (id >= 0)
         {
             dimensionMap.set(id);
@@ -166,7 +171,7 @@ public class DimensionManager
         return dimensions.get(dim).type;
     }
 
-    public static WorldProvider getProvider(int dim)
+    public static Dimension getProvider(int dim)
     {
         return getWorld(dim).provider;
     }
@@ -187,11 +192,11 @@ public class DimensionManager
                 int leakCount = leakedWorlds.count(System.identityHashCode(w));
                 if (leakCount == 5)
                 {
-                    FMLLog.log.debug("The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
+                    LOGGER.debug(DIMMGR,"The world {} ({}) may have leaked: first encounter (5 occurrences).\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName());
                 }
                 else if (leakCount % 5 == 0)
                 {
-                    FMLLog.log.debug("The world {} ({}) may have leaked: seen {} times.\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName(), leakCount);
+                    LOGGER.debug(DIMMGR,"The world {} ({}) may have leaked: seen {} times.\n", Integer.toHexString(System.identityHashCode(w)), w.getWorldInfo().getWorldName(), leakCount);
                 }
             }
         }
@@ -203,6 +208,11 @@ public class DimensionManager
         return worlds.keySet().toArray(new Integer[0]); // Only loaded dims, since usually used to cycle through loaded worlds
     }
 
+    public static Stream<Integer> getIDStream()
+    {
+        return worlds.keySet().stream();
+    }
+
     public static void setWorld(int id, @Nullable WorldServer world, MinecraftServer server)
     {
         if (world != null)
@@ -210,13 +220,13 @@ public class DimensionManager
             worlds.put(id, world);
             weakWorldMap.put(world, world);
             server.worldTickTimes.put(id, new long[100]);
-            FMLLog.log.info("Loading dimension {} ({}) ({})", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
+            LOGGER.info(DIMMGR,"Loading dimension {} ({}) ({})", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
             worlds.remove(id);
             server.worldTickTimes.remove(id);
-            FMLLog.log.info("Unloading dimension {}", id);
+            LOGGER.info(DIMMGR,"Unloading dimension {}", id);
         }
 
         ArrayList<WorldServer> tmp = new ArrayList<WorldServer>();
@@ -253,7 +263,7 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLLog.log.error("Cannot Hotload Dim: {}", dim, e);
+            LOGGER.error(DIMMGR,"Cannot Hotload Dim: {}", dim, e);
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
         MinecraftServer mcServer = overworld.getMinecraftServer();
@@ -304,14 +314,14 @@ public class DimensionManager
         return dimensions.keySet().toArray(new Integer[0]);
     }
 
-    public static WorldProvider createProviderFor(int dim)
+    public static Dimension createProviderFor(int dim)
     {
         try
         {
             if (dimensions.containsKey(dim))
             {
-                WorldProvider ret = getProviderType(dim).createDimension();
-                ret.setDimension(dim);
+                Dimension ret = getProviderType(dim).createDimension();
+                ret.setId(dim);
                 return ret;
             }
             else
@@ -321,7 +331,7 @@ public class DimensionManager
         }
         catch (Exception e)
         {
-            FMLLog.log.error("An error occurred trying to create an instance of WorldProvider {} ({})",
+            LOGGER.error(DIMMGR,"An error occurred trying to create an instance of WorldProvider {} ({})",
                     dim, getProviderType(dim), e);
             throw new RuntimeException(e);
         }
@@ -343,7 +353,7 @@ public class DimensionManager
         return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
                 && world.playerEntities.isEmpty()
                 && !world.provider.getDimensionType().shouldLoadSpawn()
-                && !keepLoaded.contains(world.provider.getDimension());
+                && !keepLoaded.contains(world.provider.getId());
     }
 
     /**
@@ -357,7 +367,7 @@ public class DimensionManager
 
         if (unloadQueue.add(id))
         {
-            FMLLog.log.debug("Queueing dimension {} to unload", id);
+            LOGGER.debug(DIMMGR,"Queueing dimension {} to unload", id);
         }
     }
 
@@ -375,8 +385,8 @@ public class DimensionManager
         while (queueIterator.hasNext())
         {
             int id = queueIterator.nextInt();
-            Dimension dimension = dimensions.get(id);
-            if (dimension.ticksWaited < ForgeModContainer.dimensionUnloadQueueDelay)
+            DimensionData dimension = dimensions.get(id);
+            if (dimension.ticksWaited < ForgeMod.dimensionUnloadQueueDelay)
             {
                 dimension.ticksWaited++;
                 continue;
@@ -387,16 +397,16 @@ public class DimensionManager
             // Don't unload the world if the status changed
             if (w == null || !canUnloadWorld(w))
             {
-                FMLLog.log.debug("Aborting unload for dimension {} as status changed", id);
+                LOGGER.debug(DIMMGR,"Aborting unload for dimension {} as status changed", id);
                 continue;
             }
             try
             {
                 w.saveAllChunks(true, null);
             }
-            catch (MinecraftException e)
+            catch (Exception e)
             {
-                FMLLog.log.error("Caught an exception while saving all chunks:", e);
+                LOGGER.error(DIMMGR,"Caught an exception while saving all chunks:", e);
             }
             finally
             {

@@ -24,12 +24,13 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentString;
 
 import javax.annotation.Nonnull;
 
 public class SlotItemHandler extends Slot
 {
-    private static IInventory emptyInventory = new InventoryBasic("[Null]", true, 0);
+    private static IInventory emptyInventory = new InventoryBasic(new TextComponentString("[Null]"), 0);
     private final IItemHandler itemHandler;
     private final int index;
 
@@ -140,10 +141,10 @@ public class SlotItemHandler extends Slot
     {
         return itemHandler;
     }
-
+/* TODO Slot patches
     @Override
     public boolean isSameInventory(Slot other)
     {
         return other instanceof SlotItemHandler && ((SlotItemHandler) other).getItemHandler() == this.itemHandler;
-    }
+    }*/
 }

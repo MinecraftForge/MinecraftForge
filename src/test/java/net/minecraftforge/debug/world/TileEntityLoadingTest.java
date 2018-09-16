@@ -34,10 +34,9 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import org.apache.logging.log4j.Logger;
 
@@ -58,7 +57,7 @@ public class TileEntityLoadingTest
     @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
             if (!ENABLED) return;
@@ -66,7 +65,7 @@ public class TileEntityLoadingTest
             GameRegistry.registerTileEntity(TestTE.class, (new ResourceLocation(MODID, TestBlock.NAME)).toString());
         }
 
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
             if (!ENABLED) return;
@@ -77,7 +76,7 @@ public class TileEntityLoadingTest
     @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
             if (!ENABLED) return;

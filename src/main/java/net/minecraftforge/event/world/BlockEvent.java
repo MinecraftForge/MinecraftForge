@@ -38,8 +38,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 import com.google.common.collect.ImmutableList;
 

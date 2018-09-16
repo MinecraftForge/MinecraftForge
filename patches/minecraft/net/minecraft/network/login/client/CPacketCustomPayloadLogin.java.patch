@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/login/client/CPacketCustomPayloadLogin.java
++++ b/net/minecraft/network/login/client/CPacketCustomPayloadLogin.java
+@@ -8,7 +8,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class CPacketCustomPayloadLogin implements Packet<INetHandlerLoginServer> {
++public class CPacketCustomPayloadLogin implements Packet<INetHandlerLoginServer>, net.minecraftforge.fml.network.ICustomPacket<CPacketCustomPayloadLogin> {
+    private int field_209922_a;
+    private PacketBuffer field_209923_b;
+ 

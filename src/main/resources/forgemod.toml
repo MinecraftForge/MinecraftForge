@@ -1,0 +1,6 @@
+modId="forge"
+version="${global.forgeVersion}"
+displayName="Forge"
+description='''
+Forge, the magic
+'''

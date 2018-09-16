@@ -21,15 +21,15 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.entity.Entity;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * EntityTravelToDimensionEvent is fired before an Entity travels to a dimension.<br>
  * <br>
  * {@link #dimension} contains the id of the dimension the entity is traveling to.<br>
  * <br>
- * This event is {@link Cancelable}.<br>
+ * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * If this event is canceled, the Entity does not travel to the dimension.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>

@@ -20,8 +20,8 @@
 package net.minecraftforge.client.event;
 
 import com.google.common.base.Strings;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraft.client.gui.GuiScreen;

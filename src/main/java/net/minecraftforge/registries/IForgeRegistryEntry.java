@@ -18,9 +18,6 @@
  */
 
 package net.minecraftforge.registries;
-
-import com.google.common.reflect.TypeToken;
-
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -54,39 +51,11 @@ public interface IForgeRegistryEntry<V>
     @Nullable
     ResourceLocation getRegistryName();
 
+    /**
+     * Determines the type for this entry, used to look up the correct registry in the global registries list as there can only be one
+     * registry per concrete class.
+     *
+     * @return Root registry type.
+     */
     Class<V> getRegistryType();
-
-    // Default implementation, modders who make extra items SHOULD extend this instead of Object.
-    // So, all fields in interfaces are forced static, so even with Java8 people must still extend this.
-    @SuppressWarnings({ "serial", "unchecked" })
-    public static class Impl<T  extends IForgeRegistryEntry<T>> implements IForgeRegistryEntry<T>
-    {
-        private TypeToken<T> token = new TypeToken<T>(getClass()){};
-        public final IRegistryDelegate<T> delegate = new RegistryDelegate<T>((T)this, (Class<T>)token.getRawType());
-        private ResourceLocation registryName = null;
-
-        public final T setRegistryName(String name)
-        {
-            if (getRegistryName() != null)
-                throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
-
-            this.registryName = GameData.checkPrefix(name);
-            return (T)this;
-        }
-
-        //Helper functions
-        @Override
-        public final T setRegistryName(ResourceLocation name){ return setRegistryName(name.toString()); }
-        public final T setRegistryName(String modID, String name){ return setRegistryName(modID + ":" + name); }
-        @Override
-        @Nullable
-        public final ResourceLocation getRegistryName()
-        {
-            if (delegate.name() != null) return delegate.name();
-            return registryName != null ? registryName : null;
-        }
-
-        @Override
-        public final Class<T> getRegistryType() { return (Class<T>) token.getRawType(); };
-    }
 }

@@ -1,14 +1,11 @@
---- ../src-base/minecraft/net/minecraft/util/SoundEvent.java
-+++ ../src-work/minecraft/net/minecraft/util/SoundEvent.java
-@@ -4,9 +4,9 @@
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+--- a/net/minecraft/util/SoundEvent.java
++++ b/net/minecraft/util/SoundEvent.java
+@@ -4,7 +4,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
--public class SoundEvent
-+public class SoundEvent extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<SoundEvent>
- {
--    public static final RegistryNamespaced<ResourceLocation, SoundEvent> field_187505_a = new RegistryNamespaced<ResourceLocation, SoundEvent>();
-+    public static final RegistryNamespaced<ResourceLocation, SoundEvent> field_187505_a = net.minecraftforge.registries.GameData.getWrapper(SoundEvent.class);
-     private final ResourceLocation field_187506_b;
-     private static int field_187507_c;
+-public class SoundEvent {
++public class SoundEvent extends net.minecraftforge.registries.ForgeRegistryEntry<SoundEvent> {
+    public static final RegistryNamespaced<ResourceLocation, SoundEvent> REGISTRY = new RegistryNamespaced<ResourceLocation, SoundEvent>();
+    private final ResourceLocation soundName;
  

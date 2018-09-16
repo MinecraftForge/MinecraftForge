@@ -30,15 +30,15 @@ import net.minecraft.item.ItemShield;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.text.translation.I18n;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
 @ObjectHolder("shield_test")
 @EventBusSubscriber
@@ -95,7 +95,7 @@ public class ShieldTest
         event.getRegistry().register(new ItemHeavyDiamondSword().setUnlocalizedName("heavy_diamond_sword").setRegistryName("heavy_diamond_sword"));
     }
     
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent event)
     {

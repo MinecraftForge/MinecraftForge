@@ -25,12 +25,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.FMLLog;
 
 import static net.minecraftforge.fml.client.config.GuiUtils.RESET_CHAR;
 import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
@@ -42,6 +44,8 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
  */
 public class GuiSelectString extends GuiScreen
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     protected GuiScreen parentScreen;
     protected IConfigElement configElement;
     protected GuiSelectStringEntries entryList;
@@ -129,7 +133,7 @@ public class GuiSelectString extends GuiScreen
             }
             catch (Throwable e)
             {
-                FMLLog.log.error("Error performing GuiSelectString action:", e);
+                LOGGER.error("Error performing GuiSelectString action:", e);
             }
             this.mc.displayGuiScreen(this.parentScreen);
         }

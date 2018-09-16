@@ -48,6 +48,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeVersion;
@@ -72,11 +73,10 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
@@ -119,7 +119,7 @@ public class DynBucketTest
         GameRegistry.registerTileEntity(TileSimpleTank.class, "simpletank");
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event)
     {
         FluidRegistry.addBucketForFluid(FluidRegistry.getFluid(TestFluid.name));
@@ -132,7 +132,7 @@ public class DynBucketTest
         );
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void registerRecipes(RegistryEvent.Register<IRecipe> event)
     {
         ItemStack filledBucket = FluidUtil.getFilledBucket(new FluidStack(ModelFluidTest.FLUID, Fluid.BUCKET_VOLUME));
@@ -151,7 +151,7 @@ public class DynBucketTest
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void onBucketFill(FillBucketEvent event)
     {
         RayTraceResult target = event.getTarget();
@@ -182,7 +182,7 @@ public class DynBucketTest
     @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void setupModels(ModelRegistryEvent event)
         {
             if (!ENABLE || !ModelFluidTest.ENABLE) return;

@@ -21,10 +21,10 @@ package net.minecraftforge.common;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldReader;
 
 public interface IPlantable
 {
-    EnumPlantType getPlantType(IBlockAccess world, BlockPos pos);
-    IBlockState getPlant(IBlockAccess world, BlockPos pos);
+    EnumPlantType getPlantType(IWorldReader world, BlockPos pos);
+    IBlockState getPlant(IWorldReader world, BlockPos pos);
 }

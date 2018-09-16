@@ -31,7 +31,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.GuiOverlayDebug;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -48,12 +47,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.FoodStats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
+import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.ForgeHooks;
@@ -90,7 +92,6 @@ public class GuiIngameForge extends GuiIngame
     public static int left_height = 39;
     public static int right_height = 39;
 
-    private ScaledResolution res = null;
     private FontRenderer fontrenderer = null;
     private RenderGameOverlayEvent eventParent;
     //private static final String MC_VERSION = MinecraftForge.MC_VERSION;
@@ -105,10 +106,9 @@ public class GuiIngameForge extends GuiIngame
     @Override
     public void renderGameOverlay(float partialTicks)
     {
-        res = new ScaledResolution(mc);
-        eventParent = new RenderGameOverlayEvent(partialTicks, res);
-        int width = res.getScaledWidth();
-        int height = res.getScaledHeight();
+        this.field_194811_H = this.mc.field_195558_d.func_198107_o();
+        this.field_194812_I = this.mc.field_195558_d.func_198087_p();
+        eventParent = new RenderGameOverlayEvent(partialTicks, this.mc.field_195558_d);
         renderHealthMount = mc.player.getRidingEntity() instanceof EntityLivingBase;
         renderFood = mc.player.getRidingEntity() == null;
         renderJumpBar = mc.player.isRidingHorse();
@@ -119,12 +119,12 @@ public class GuiIngameForge extends GuiIngame
         if (pre(ALL)) return;
 
         fontrenderer = mc.fontRenderer;
-        mc.entityRenderer.setupOverlayRendering();
+        //mc.entityRenderer.setupOverlayRendering();
         GlStateManager.enableBlend();
 
         if (renderVignette && Minecraft.isFancyGraphicsEnabled())
         {
-            renderVignette(mc.player.getBrightness(), res);
+            func_194800_d(mc.player.getBrightness());
         }
         else
         {
@@ -132,55 +132,63 @@ public class GuiIngameForge extends GuiIngame
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         }
 
-        if (renderHelmet) renderHelmet(res, partialTicks);
+        if (renderHelmet) renderHelmet(partialTicks);
 
         if (renderPortal && !mc.player.isPotionActive(MobEffects.NAUSEA))
         {
-            renderPortal(res, partialTicks);
+            func_194805_e(partialTicks);
         }
 
-        if (renderHotbar) renderHotbar(res, partialTicks);
+        if (renderHotbar) func_194806_b(partialTicks);
 
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        zLevel = -90.0F;
-        rand.setSeed((long)(updateCounter * 312871));
+        if (!this.mc.gameSettings.hideGUI) {
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            zLevel = -90.0F;
+            rand.setSeed((long)(updateCounter * 312871));
 
-        if (renderCrosshairs) renderCrosshairs(partialTicks);
-        if (renderBossHealth) renderBossHealth();
+            if (renderCrosshairs) func_194798_c(partialTicks);
+            if (renderBossHealth) renderBossHealth();
 
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        if (this.mc.playerController.shouldDrawHUD() && this.mc.getRenderViewEntity() instanceof EntityPlayer)
-        {
-            if (renderHealth) renderHealth(width, height);
-            if (renderArmor)  renderArmor(width, height);
-            if (renderFood)   renderFood(width, height);
-            if (renderHealthMount) renderHealthMount(width, height);
-            if (renderAir)    renderAir(width, height);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            if (this.mc.playerController.shouldDrawHUD() && this.mc.getRenderViewEntity() instanceof EntityPlayer)
+            {
+                if (renderHealth) renderHealth(this.field_194811_H, this.field_194812_I);
+                if (renderArmor)  renderArmor(this.field_194811_H, this.field_194812_I);
+                if (renderFood)   renderFood(this.field_194811_H, this.field_194812_I);
+                if (renderHealthMount) renderHealthMount(this.field_194811_H, this.field_194812_I);
+                if (renderAir)    renderAir(this.field_194811_H, this.field_194812_I);
+            }
+
+            if (renderJumpBar)
+            {
+                func_194803_a(this.field_194811_H / 2 - 91);
+            }
+            else if (renderExperiance)
+            {
+                renderExperience(this.field_194811_H / 2 - 91);
+            }
+            if (this.mc.gameSettings.heldItemTooltips && this.mc.playerController.getCurrentGameType() != GameType.SPECTATOR) {
+                this.func_194801_c();
+             } else if (this.mc.player.isSpectator()) {
+                this.spectatorGui.func_195623_a();
+             }
         }
 
-        renderSleepFade(width, height);
+        renderSleepFade(this.field_194811_H, this.field_194812_I);
 
-        if (renderJumpBar)
-        {
-            renderJumpBar(width, height);
-        }
-        else if (renderExperiance)
-        {
-            renderExperience(width, height);
-        }
-
-        renderToolHighlight(res);
-        renderHUDText(width, height);
+        renderHUDText(this.field_194811_H, this.field_194812_I);
         renderFPSGraph();
-        renderPotionIcons(res);
-        renderRecordOverlay(width, height, partialTicks);
-        renderSubtitles(res);
-        renderTitle(width, height, partialTicks);
+        func_194809_b();
+        if (!mc.gameSettings.hideGUI) {
+            renderRecordOverlay(this.field_194811_H, this.field_194812_I, partialTicks);
+            renderSubtitles();
+            renderTitle(this.field_194811_H, this.field_194812_I, partialTicks);
+        }
 
 
         Scoreboard scoreboard = this.mc.world.getScoreboard();
         ScoreObjective objective = null;
-        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(mc.player.getName());
+        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(mc.player.func_195047_I_());
         if (scoreplayerteam != null)
         {
             int slot = scoreplayerteam.getColor().getColorIndex();
@@ -189,16 +197,16 @@ public class GuiIngameForge extends GuiIngame
         ScoreObjective scoreobjective1 = objective != null ? objective : scoreboard.getObjectiveInDisplaySlot(1);
         if (renderObjective && scoreobjective1 != null)
         {
-            this.renderScoreboard(scoreobjective1, res);
+            this.func_194802_a(scoreobjective1);
         }
 
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.disableAlpha();
 
-        renderChat(width, height);
+        renderChat(this.field_194811_H, this.field_194812_I);
 
-        renderPlayerList(width, height);
+        renderPlayerList(this.field_194811_H, this.field_194812_I);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableLighting();
@@ -207,31 +215,28 @@ public class GuiIngameForge extends GuiIngame
         post(ALL);
     }
 
-    public ScaledResolution getResolution()
-    {
-        return res;
-    }
-
-    protected void renderCrosshairs(float partialTicks)
+    @Override
+    protected void func_194798_c(float partialTicks)
     {
         if (pre(CROSSHAIRS)) return;
         bind(Gui.ICONS);
         GlStateManager.enableBlend();
-        super.renderAttackIndicator(partialTicks, res);
+        super.func_194798_c(partialTicks);
         post(CROSSHAIRS);
     }
 
-    protected void renderPotionIcons(ScaledResolution resolution)
+    @Override
+    protected void func_194809_b()
     {
         if (pre(POTION_ICONS)) return;
-        super.renderPotionEffects(resolution);
+        super.func_194809_b();
         post(POTION_ICONS);
     }
 
-    protected void renderSubtitles(ScaledResolution resolution)
+    protected void renderSubtitles()
     {
         if (pre(SUBTITLES)) return;
-        this.overlaySubtitle.renderSubtitles(res);
+        this.overlaySubtitle.func_195620_a();
         post(SUBTITLES);
     }
 
@@ -241,16 +246,16 @@ public class GuiIngameForge extends GuiIngame
         if (pre(BOSSHEALTH)) return;
         bind(Gui.ICONS);
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        mc.mcProfiler.startSection("bossHealth");
+        mc.profiler.startSection("bossHealth");
         GlStateManager.enableBlend();
         this.overlayBoss.renderBossHealth();
         GlStateManager.disableBlend();
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
         post(BOSSHEALTH);
     }
 
     @Override
-    protected void renderVignette(float lightLevel, ScaledResolution scaledRes)
+    protected void func_194800_d(float lightLevel)
     {
         if (pre(VIGNETTE))
         {
@@ -259,11 +264,11 @@ public class GuiIngameForge extends GuiIngame
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             return;
         }
-        super.renderVignette(lightLevel, scaledRes);
+        super.func_194800_d(lightLevel);
         post(VIGNETTE);
     }
 
-    private void renderHelmet(ScaledResolution res, float partialTicks)
+    private void renderHelmet(float partialTicks)
     {
         if (pre(HELMET)) return;
 
@@ -272,13 +277,13 @@ public class GuiIngameForge extends GuiIngame
         if (this.mc.gameSettings.thirdPersonView == 0 && !itemstack.isEmpty())
         {
             Item item = itemstack.getItem();
-            if (item == Item.getItemFromBlock(Blocks.PUMPKIN))
+            if (item == Blocks.field_196625_cS.func_199767_j())
             {
-                renderPumpkinOverlay(res);
+                func_194808_p();
             }
             else
             {
-                item.renderHelmetOverlay(itemstack, mc.player, res, partialTicks);
+                item.renderHelmetOverlay(itemstack, mc.player, this.field_194811_H, this.field_194812_I, partialTicks);
             }
         }
 
@@ -288,7 +293,7 @@ public class GuiIngameForge extends GuiIngame
     protected void renderArmor(int width, int height)
     {
         if (pre(ARMOR)) return;
-        mc.mcProfiler.startSection("armor");
+        mc.profiler.startSection("armor");
 
         GlStateManager.enableBlend();
         int left = width / 2 - 91;
@@ -314,11 +319,12 @@ public class GuiIngameForge extends GuiIngame
         left_height += 10;
 
         GlStateManager.disableBlend();
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
         post(ARMOR);
     }
 
-    protected void renderPortal(ScaledResolution res, float partialTicks)
+    @Override
+    protected void func_194805_e(float partialTicks)
     {
         if (pre(PORTAL)) return;
 
@@ -326,24 +332,24 @@ public class GuiIngameForge extends GuiIngame
 
         if (f1 > 0.0F)
         {
-            renderPortal(f1, res);
+            super.func_194805_e(f1);
         }
 
         post(PORTAL);
     }
 
     @Override
-    protected void renderHotbar(ScaledResolution res, float partialTicks)
+    protected void func_194806_b(float partialTicks)
     {
         if (pre(HOTBAR)) return;
 
-        if (mc.playerController.isSpectator())
+        if (mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
         {
-            this.spectatorGui.renderTooltip(res, partialTicks);
+            this.spectatorGui.func_195622_a(partialTicks);
         }
         else
         {
-            super.renderHotbar(res, partialTicks);
+            super.func_194806_b(partialTicks);
         }
 
         post(HOTBAR);
@@ -358,15 +364,15 @@ public class GuiIngameForge extends GuiIngame
     protected void renderAir(int width, int height)
     {
         if (pre(AIR)) return;
-        mc.mcProfiler.startSection("air");
+        mc.profiler.startSection("air");
         EntityPlayer player = (EntityPlayer)this.mc.getRenderViewEntity();
         GlStateManager.enableBlend();
         int left = width / 2 + 91;
         int top = height - right_height;
 
-        if (player.isInsideOfMaterial(Material.WATER))
+        int air = player.getAir();
+        if (player.func_208600_a(FluidTags.field_206959_a) || air < 300)
         {
-            int air = player.getAir();
             int full = MathHelper.ceil((double)(air - 2) * 10.0D / 300.0D);
             int partial = MathHelper.ceil((double)air * 10.0D / 300.0D) - full;
 
@@ -378,7 +384,7 @@ public class GuiIngameForge extends GuiIngame
         }
 
         GlStateManager.disableBlend();
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
         post(AIR);
     }
 
@@ -386,7 +392,7 @@ public class GuiIngameForge extends GuiIngame
     {
         bind(ICONS);
         if (pre(HEALTH)) return;
-        mc.mcProfiler.startSection("health");
+        mc.profiler.startSection("health");
         GlStateManager.enableBlend();
 
         EntityPlayer player = (EntityPlayer)this.mc.getRenderViewEntity();
@@ -395,20 +401,20 @@ public class GuiIngameForge extends GuiIngame
 
         if (health < this.playerHealth && player.hurtResistantTime > 0)
         {
-            this.lastSystemTime = Minecraft.getSystemTime();
+            this.lastSystemTime = Util.func_211177_b();
             this.healthUpdateCounter = (long)(this.updateCounter + 20);
         }
         else if (health > this.playerHealth && player.hurtResistantTime > 0)
         {
-            this.lastSystemTime = Minecraft.getSystemTime();
+            this.lastSystemTime = Util.func_211177_b();
             this.healthUpdateCounter = (long)(this.updateCounter + 10);
         }
 
-        if (Minecraft.getSystemTime() - this.lastSystemTime > 1000L)
+        if (Util.func_211177_b() - this.lastSystemTime > 1000L)
         {
             this.playerHealth = health;
             this.lastPlayerHealth = health;
-            this.lastSystemTime = Minecraft.getSystemTime();
+            this.lastSystemTime = Util.func_211177_b();
         }
 
         this.playerHealth = health;
@@ -484,14 +490,14 @@ public class GuiIngameForge extends GuiIngame
         }
 
         GlStateManager.disableBlend();
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
         post(HEALTH);
     }
 
     public void renderFood(int width, int height)
     {
         if (pre(FOOD)) return;
-        mc.mcProfiler.startSection("food");
+        mc.profiler.startSection("food");
 
         EntityPlayer player = (EntityPlayer)this.mc.getRenderViewEntity();
         GlStateManager.enableBlend();
@@ -531,7 +537,7 @@ public class GuiIngameForge extends GuiIngame
                 drawTexturedModalRect(x, y, icon + 45, 27, 9, 9);
         }
         GlStateManager.disableBlend();
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
         post(FOOD);
     }
 
@@ -539,7 +545,7 @@ public class GuiIngameForge extends GuiIngame
     {
         if (mc.player.getSleepTimer() > 0)
         {
-            mc.mcProfiler.startSection("sleep");
+            mc.profiler.startSection("sleep");
             GlStateManager.disableDepth();
             GlStateManager.disableAlpha();
             int sleepTime = mc.player.getSleepTimer();
@@ -554,11 +560,11 @@ public class GuiIngameForge extends GuiIngame
             drawRect(0, 0, width, height, color);
             GlStateManager.enableAlpha();
             GlStateManager.enableDepth();
-            mc.mcProfiler.endSection();
+            mc.profiler.endSection();
         }
     }
 
-    protected void renderExperience(int width, int height)
+    protected void renderExperience(int x)
     {
         bind(ICONS);
         if (pre(EXPERIENCE)) return;
@@ -567,41 +573,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (mc.playerController.gameIsSurvivalOrAdventure())
         {
-            mc.mcProfiler.startSection("expBar");
-            int cap = this.mc.player.xpBarCap();
-            int left = width / 2 - 91;
-
-            if (cap > 0)
-            {
-                short barWidth = 182;
-                int filled = (int)(mc.player.experience * (float)(barWidth + 1));
-                int top = height - 32 + 3;
-                drawTexturedModalRect(left, top, 0, 64, barWidth, 5);
-
-                if (filled > 0)
-                {
-                    drawTexturedModalRect(left, top, 0, 69, filled, 5);
-                }
-            }
-
-            this.mc.mcProfiler.endSection();
-
-
-            if (mc.playerController.gameIsSurvivalOrAdventure() && mc.player.experienceLevel > 0)
-            {
-                mc.mcProfiler.startSection("expLevel");
-                boolean flag1 = false;
-                int color = flag1 ? 16777215 : 8453920;
-                String text = "" + mc.player.experienceLevel;
-                int x = (width - fontrenderer.getStringWidth(text)) / 2;
-                int y = height - 31 - 4;
-                fontrenderer.drawString(text, x + 1, y, 0);
-                fontrenderer.drawString(text, x - 1, y, 0);
-                fontrenderer.drawString(text, x, y + 1, 0);
-                fontrenderer.drawString(text, x, y - 1, 0);
-                fontrenderer.drawString(text, x, y, color);
-                mc.mcProfiler.endSection();
-            }
+            super.func_194804_b(x);
         }
         GlStateManager.enableBlend();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -609,86 +581,26 @@ public class GuiIngameForge extends GuiIngame
         post(EXPERIENCE);
     }
 
-    protected void renderJumpBar(int width, int height)
+    @Override
+    public void func_194803_a(int x)
     {
         bind(ICONS);
         if (pre(JUMPBAR)) return;
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableBlend();
 
-        mc.mcProfiler.startSection("jumpBar");
-        float charge = mc.player.getHorseJumpPower();
-        final int barWidth = 182;
-        int x = (width / 2) - (barWidth / 2);
-        int filled = (int)(charge * (float)(barWidth + 1));
-        int top = height - 32 + 3;
-
-        drawTexturedModalRect(x, top, 0, 84, barWidth, 5);
-
-        if (filled > 0)
-        {
-            this.drawTexturedModalRect(x, top, 0, 89, filled, 5);
-        }
+        super.func_194803_a(x);
 
         GlStateManager.enableBlend();
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         post(JUMPBAR);
     }
 
-    protected void renderToolHighlight(ScaledResolution res)
-    {
-        if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator())
-        {
-            mc.mcProfiler.startSection("toolHighlight");
-
-            if (this.remainingHighlightTicks > 0 && !this.highlightingItemStack.isEmpty())
-            {
-                String name = this.highlightingItemStack.getDisplayName();
-                if (this.highlightingItemStack.hasDisplayName())
-                    name = TextFormatting.ITALIC + name;
-
-                name = this.highlightingItemStack.getItem().getHighlightTip(this.highlightingItemStack, name);
-
-                int opacity = (int)((float)this.remainingHighlightTicks * 256.0F / 10.0F);
-                if (opacity > 255) opacity = 255;
-
-                if (opacity > 0)
-                {
-                    int y = res.getScaledHeight() - 59;
-                    if (!mc.playerController.shouldDrawHUD()) y += 14;
-
-                    GlStateManager.pushMatrix();
-                    GlStateManager.enableBlend();
-                    GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-                    FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
-                    if (font != null)
-                    {
-                        int x = (res.getScaledWidth() - font.getStringWidth(name)) / 2;
-                        font.drawStringWithShadow(name, x, y, WHITE | (opacity << 24));
-                    }
-                    else
-                    {
-                        int x = (res.getScaledWidth() - fontrenderer.getStringWidth(name)) / 2;
-                        fontrenderer.drawStringWithShadow(name, x, y, WHITE | (opacity << 24));
-                    }
-                    GlStateManager.disableBlend();
-                    GlStateManager.popMatrix();
-                }
-            }
-
-            mc.mcProfiler.endSection();
-        }
-        else if (this.mc.player.isSpectator())
-        {
-            this.spectatorGui.renderSelectedItem(res);
-        }
-    }
-
     protected void renderHUDText(int width, int height)
     {
-        mc.mcProfiler.startSection("forgeHudText");
+        mc.profiler.startSection("forgeHudText");
         OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         ArrayList<String> listL = new ArrayList<String>();
         ArrayList<String> listR = new ArrayList<String>();
@@ -721,7 +633,7 @@ public class GuiIngameForge extends GuiIngame
             {
                 if (msg == null) continue;
                 drawRect(1, top - 1, 2 + fontrenderer.getStringWidth(msg) + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
-                fontrenderer.drawString(msg, 2, top, 14737632);
+                fontrenderer.drawStringWithShadow(msg, 2, top, 14737632);
                 top += fontrenderer.FONT_HEIGHT;
             }
 
@@ -732,12 +644,12 @@ public class GuiIngameForge extends GuiIngame
                 int w = fontrenderer.getStringWidth(msg);
                 int left = width - 2 - w;
                 drawRect(left - 1, top - 1, left + w + 1, top + fontrenderer.FONT_HEIGHT - 1, -1873784752);
-                fontrenderer.drawString(msg, left, top, 14737632);
+                fontrenderer.drawStringWithShadow(msg, left, top, 14737632);
                 top += fontrenderer.FONT_HEIGHT;
             }
         }
 
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
         post(TEXT);
     }
 
@@ -754,7 +666,7 @@ public class GuiIngameForge extends GuiIngame
     {
         if (overlayMessageTime > 0)
         {
-            mc.mcProfiler.startSection("overlayMessage");
+            mc.profiler.startSection("overlayMessage");
             float hue = (float)overlayMessageTime - partialTicks;
             int opacity = (int)(hue * 256.0F / 20.0F);
             if (opacity > 255) opacity = 255;
@@ -766,12 +678,12 @@ public class GuiIngameForge extends GuiIngame
                 GlStateManager.enableBlend();
                 GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
                 int color = (animateOverlayMessageColor ? Color.HSBtoRGB(hue / 50.0F, 0.7F, 0.6F) & WHITE : WHITE);
-                fontrenderer.drawString(overlayMessage, -fontrenderer.getStringWidth(overlayMessage) / 2, -4, color | (opacity << 24));
+                fontrenderer.drawStringWithShadow(overlayMessage, -fontrenderer.getStringWidth(overlayMessage) / 2, -4, color | (opacity << 24));
                 GlStateManager.disableBlend();
                 GlStateManager.popMatrix();
             }
 
-            mc.mcProfiler.endSection();
+            mc.profiler.endSection();
         }
     }
 
@@ -779,7 +691,7 @@ public class GuiIngameForge extends GuiIngame
     {
         if (titlesTimer > 0)
         {
-            mc.mcProfiler.startSection("titleAndSubtitle");
+            mc.profiler.startSection("titleAndSubtitle");
             float age = (float)this.titlesTimer - partialTicks;
             int opacity = 255;
 
@@ -801,23 +713,23 @@ public class GuiIngameForge extends GuiIngame
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(4.0F, 4.0F, 4.0F);
                 int l = opacity << 24 & -16777216;
-                this.getFontRenderer().drawString(this.displayedTitle, (float)(-this.getFontRenderer().getStringWidth(this.displayedTitle) / 2), -10.0F, 16777215 | l, true);
+                this.getFontRenderer().drawStringWithShadow(this.displayedTitle, (float)(-this.getFontRenderer().getStringWidth(this.displayedTitle) / 2), -10.0F, 16777215 | l);
                 GlStateManager.popMatrix();
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(2.0F, 2.0F, 2.0F);
-                this.getFontRenderer().drawString(this.displayedSubTitle, (float)(-this.getFontRenderer().getStringWidth(this.displayedSubTitle) / 2), 5.0F, 16777215 | l, true);
+                this.getFontRenderer().drawStringWithShadow(this.displayedSubTitle, (float)(-this.getFontRenderer().getStringWidth(this.displayedSubTitle) / 2), 5.0F, 16777215 | l);
                 GlStateManager.popMatrix();
                 GlStateManager.disableBlend();
                 GlStateManager.popMatrix();
             }
 
-            this.mc.mcProfiler.endSection();
+            this.mc.profiler.endSection();
         }
     }
 
     protected void renderChat(int width, int height)
     {
-        mc.mcProfiler.startSection("chat");
+        mc.profiler.startSection("chat");
 
         RenderGameOverlayEvent.Chat event = new RenderGameOverlayEvent.Chat(eventParent, 0, height - 48);
         if (MinecraftForge.EVENT_BUS.post(event)) return;
@@ -829,7 +741,7 @@ public class GuiIngameForge extends GuiIngame
 
         post(CHAT);
 
-        mc.mcProfiler.endSection();
+        mc.profiler.endSection();
     }
 
     protected void renderPlayerList(int width, int height)
@@ -863,7 +775,7 @@ public class GuiIngameForge extends GuiIngame
         boolean unused = false;
         int left_align = width / 2 + 91;
 
-        mc.mcProfiler.endStartSection("mountHealth");
+        mc.profiler.endStartSection("mountHealth");
         GlStateManager.enableBlend();
         EntityLivingBase mount = (EntityLivingBase)tmp;
         int health = (int)Math.ceil((double)mount.getHealth());
@@ -924,10 +836,10 @@ public class GuiIngameForge extends GuiIngame
             this.mc = mc;
         }
         @Override protected void renderDebugInfoLeft(){}
-        @Override protected void renderDebugInfoRight(ScaledResolution res){}
+        @Override protected void func_194819_c(){}
         private List<String> getLeft()
         {
-            List<String> ret = this.call();
+            List<String> ret = this.func_209011_c();
             ret.add("");
             ret.add("Debug: Pie [shift]: " + (this.mc.gameSettings.showDebugProfilerChart ? "visible" : "hidden") + " FPS [alt]: " + (this.mc.gameSettings.showLagometer ? "visible" : "hidden"));
             ret.add("For help: press F3 + Q");

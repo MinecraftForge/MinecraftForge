@@ -1,29 +1,19 @@
---- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
-+++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -264,6 +264,9 @@
-         };
-         BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
-         BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
-+        BlockDispenser.field_149943_a.func_82595_a(Items.field_151117_aB, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
-+        BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
-+        if (false)
-         BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
-         {
-             private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-@@ -489,6 +492,7 @@
-         if (!field_151355_a)
-         {
-             field_151355_a = true;
-+            if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
-             func_179868_d();
-             SoundEvent.func_187504_b();
-             Block.func_149671_p();
-@@ -524,6 +528,8 @@
-                     field_179871_c.error("Errors with built-in loot tables");
-                 }
-             }
+--- a/net/minecraft/init/Bootstrap.java
++++ b/net/minecraft/init/Bootstrap.java
+@@ -75,6 +75,8 @@
+ import net.minecraft.world.biome.Biome;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.registries.ForgeRegistries;
 +
-+            net.minecraftforge.registries.GameData.vanillaSnapshot();
-         }
-     }
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -421,6 +423,7 @@
+ 
+             redirectOutputToLog();
+          }
++         ForgeRegistries.ITEMS.getClass(); // TODO figure out a better way to ensure this is initialized
+       }
+    }
  

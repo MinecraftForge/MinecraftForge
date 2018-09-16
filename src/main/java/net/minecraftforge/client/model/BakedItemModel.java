@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
 import java.util.List;
+import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -66,7 +67,7 @@ public class BakedItemModel implements IBakedModel
     @Override public ItemOverrideList getOverrides() { return overrides; }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+    public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
     {
         if (side == null)
         {
@@ -104,7 +105,7 @@ public class BakedItemModel implements IBakedModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand)
+        public List<BakedQuad> func_200117_a (@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             if(side == null)
             {

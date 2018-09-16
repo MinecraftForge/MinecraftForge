@@ -22,13 +22,13 @@ package net.minecraftforge.debug.client.gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import net.minecraftforge.fml.relauncher.Side;
 
 @EventBusSubscriber(Side.CLIENT)
 @Mod (modid = "guicontainereventtest", name = "GuiContainer Event Tests!", version = "1.0", acceptableRemoteVersions = "*")

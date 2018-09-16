@@ -33,7 +33,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
@@ -54,7 +54,7 @@ public class CustomTextureAtlasSpriteTest
     @Mod.EventBusSubscriber(modid = MOD_ID)
     public static class Registration
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event)
         {
             event.getRegistry().register(new Block(Material.WOOD).setRegistryName(MOD_ID, "custom_sprite_block").setCreativeTab(CreativeTabs.MISC));
@@ -68,7 +68,7 @@ public class CustomTextureAtlasSpriteTest
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void textureStitch(TextureStitchEvent.Pre event)
     {
         DelegateSprite bottom = DelegateSprite.make("bottom", new ResourceLocation("blocks/diamond_block"));

@@ -36,17 +36,19 @@ import com.google.common.collect.Sets;
 import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
-import net.minecraftforge.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLPaths;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.common.discovery.asm.ModAnnotation.EnumHolder;
+import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation.EnumHolder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ConfigManager
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private static Map<String, Multimap<Config.Type, ASMData>> asm_data = Maps.newHashMap();
     static Map<Class<?>, ITypeAdapter> ADAPTERS = Maps.newHashMap();
     static Map<Class<?>, Class<?>> ARRAY_REMAP = Maps.newHashMap();
@@ -103,7 +105,7 @@ public class ConfigManager
 
     public static void loadData(ASMDataTable data)
     {
-        FMLLog.log.debug("Loading @Config anotation data");
+        LOGGER.debug("Loading @Config anotation data");
         for (ASMData target : data.getAll(Config.class.getName()))
         {
             String modid = (String)target.getAnnotationInfo().get("modid");
@@ -144,9 +146,9 @@ public class ConfigManager
      */
     public static void sync(String modid, Config.Type type)
     {
-        FMLLog.log.debug("Attempting to inject @Config classes into {} for type {}", modid, type);
+        LOGGER.debug("Attempting to inject @Config classes into {} for type {}", modid, type);
         ClassLoader mcl = Loader.instance().getModClassLoader();
-        File configDir = Loader.instance().getConfigDir();
+        File configDir = FMLPaths.FMLCONFIG.get().toFile();
         Multimap<Config.Type, ASMData> map = asm_data.get(modid);
 
         if (map == null)
@@ -187,7 +189,7 @@ public class ConfigManager
             }
             catch (Exception e)
             {
-                FMLLog.log.error("An error occurred trying to load a config for {} into {}", targ.getClassName(), e);
+                LOGGER.error("An error occurred trying to load a config for {} into {}", targ.getClassName(), e);
                 throw new LoaderException(e);
             }
         }
@@ -209,7 +211,7 @@ public class ConfigManager
     static Configuration getConfiguration(String modid, String name) {
         if (Strings.isNullOrEmpty(name))
             name = modid;
-        File configDir = Loader.instance().getConfigDir();
+        File configDir = FMLPaths.FMLCONFIG.get().toFile();
         File configFile = new File(configDir, name + ".cfg");
         return CONFIGS.get(configFile.getAbsolutePath());
     }

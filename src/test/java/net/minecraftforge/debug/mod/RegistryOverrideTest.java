@@ -34,7 +34,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod(modid = RegistryOverrideTest.MODID, name = "Registry override test mod", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
@@ -43,7 +43,7 @@ public class RegistryOverrideTest
     public static final String MODID = "registry_override_test";
     static final boolean ENABLED = false;
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
         if (ENABLED)

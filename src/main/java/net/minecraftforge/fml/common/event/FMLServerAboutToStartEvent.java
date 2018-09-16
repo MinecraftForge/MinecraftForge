@@ -19,34 +19,21 @@
 
 package net.minecraftforge.fml.common.event;
 
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.LoaderState.ModState;
 
 /**
  * Called before the server begins loading anything. Called after {@link FMLPostInitializationEvent} on the dedicated
  * server, and after the player has hit "Play Selected World" in the client. Called before {@link FMLServerStartingEvent}.
  *
  * You can obtain a reference to the server with this event.
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLServerAboutToStartEvent extends FMLStateEvent {
+public class FMLServerAboutToStartEvent extends ServerLifecycleEvent {
 
-    private MinecraftServer server;
-
-    public FMLServerAboutToStartEvent(Object... data)
+    public FMLServerAboutToStartEvent(MinecraftServer server)
     {
-        super(data);
-        this.server = (MinecraftServer) data[0];
-    }
-    @Override
-    public ModState getModState()
-    {
-        return ModState.AVAILABLE;
-    }
-
-    public MinecraftServer getServer()
-    {
-        return server;
+        super(server);
     }
 }

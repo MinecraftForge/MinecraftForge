@@ -37,7 +37,7 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 @Mod(modid = RotatingWrench.modID, name = "Wrench Rotate Debug", version = "0.0.0", acceptableRemoteVersions = "*")
@@ -52,7 +52,7 @@ public class RotatingWrench
     @Mod.EventBusSubscriber(modid = modID)
     public static class Registration
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
             event.getRegistry().register(new TestWrench().setRegistryName(testWrenchName));

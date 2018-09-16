@@ -24,7 +24,7 @@ import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "difficultychangeeventtest", name = "DifficultyChangeEventTest", version = "0.0.0", acceptableRemoteVersions = "*")
@@ -43,7 +43,7 @@ public class DifficultyChangeEventTest
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void onDifficultyChange(DifficultyChangeEvent event)
     {
         logger.info("Difficulty changed from {} to {}", event.getOldDifficulty(), event.getDifficulty());

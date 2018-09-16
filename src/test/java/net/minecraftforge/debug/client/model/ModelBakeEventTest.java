@@ -59,10 +59,10 @@ import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.api.distmarker.Dist;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

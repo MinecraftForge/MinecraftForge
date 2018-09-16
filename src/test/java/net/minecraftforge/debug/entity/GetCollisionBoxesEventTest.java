@@ -39,7 +39,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 @Mod(modid = GetCollisionBoxesEventTest.MODID, name = "CollisionBoxesEventTest", version = "1.0", acceptableRemoteVersions = "*")
@@ -53,7 +53,7 @@ public class GetCollisionBoxesEventTest
     private static final Block BOX_BLOCK = null;
     private static final ArrayList<BlockPos> locations = new ArrayList<>();
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public static void registerBlock(RegistryEvent.Register<Block> event)
     {
         if (ENABLED)

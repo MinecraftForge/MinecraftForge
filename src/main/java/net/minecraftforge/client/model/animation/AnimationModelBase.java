@@ -20,8 +20,8 @@
 package net.minecraftforge.client.model.animation;
 
 import java.util.List;
+import java.util.Random;
 
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -29,23 +29,21 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
+import net.minecraft.client.renderer.entity.model.ModelBase;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
 import net.minecraftforge.client.model.pipeline.VertexBufferConsumer;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
-import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 
-import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import org.apache.commons.lang3.tuple.Pair;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -68,16 +66,18 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
     @Override
     public void render(Entity entity, float limbSwing, float limbSwingSpeed, float timeAlive, float yawHead, float rotationPitch, float scale)
     {
-        IAnimationStateMachine capability = entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null);
-        if (capability == null)
-        {
-            return;
-        }
-        Pair<IModelState, Iterable<Event>> pair = capability.apply(timeAlive / 20);
-        handleEvents((T)entity, timeAlive / 20, pair.getRight());
-        IModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
-        IBakedModel bakedModel = model.bake(pair.getLeft(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+        entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
+            .map(cap -> cap.apply(timeAlive / 20))
+            .map(pair -> {
+                handleEvents((T) entity, timeAlive / 20, pair.getRight());
+                IUnbakedModel unbaked = ModelLoaderRegistry.getModelOrMissing(modelLocation);
+                // TODO where should uvlock data come from?
+                return unbaked.bake(ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter(), pair.getLeft(), false, DefaultVertexFormats.ITEM);
+            }).ifPresent(model -> drawModel(model, entity));
+    }
 
+    private void drawModel(IBakedModel bakedModel, Entity entity)
+    {
         BlockPos pos = new BlockPos(entity.posX, entity.posY + entity.height, entity.posZ);
 
         RenderHelper.disableStandardItemLighting();
@@ -93,7 +93,9 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         lighter.setState(Blocks.AIR.getDefaultState());
         lighter.setBlockPos(pos);
         boolean empty = true;
-        List<BakedQuad> quads = bakedModel.getQuads(null, null, 0);
+        Random random = new Random();
+        random.setSeed(42);
+        List<BakedQuad> quads = bakedModel.func_200117_a(null, null, random);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -105,7 +107,8 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         }
         for(EnumFacing side : EnumFacing.values())
         {
-            quads = bakedModel.getQuads(null, side, 0);
+            random.setSeed(42);
+            quads = bakedModel.func_200117_a(null, side, random);
             if(!quads.isEmpty())
             {
                 if(empty) lighter.updateBlockInfo();

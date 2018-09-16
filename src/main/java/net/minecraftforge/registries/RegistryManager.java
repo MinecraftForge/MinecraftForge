@@ -31,12 +31,14 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import net.minecraftforge.registries.IForgeRegistry.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class RegistryManager
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");
     public static final RegistryManager VANILLA = new RegistryManager("VANILLA");
     public static final RegistryManager FROZEN = new RegistryManager("FROZEN");
@@ -103,7 +105,7 @@ public class RegistryManager
         if (!overlappedTypes.isEmpty())
         {
             Class<?> foundType = overlappedTypes.iterator().next();
-            FMLLog.log.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
+            LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
         ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, validate, this, allowOverrides, isModifiable, dummyFactory, missing);

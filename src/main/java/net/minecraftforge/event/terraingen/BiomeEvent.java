@@ -20,10 +20,8 @@
 package net.minecraftforge.event.terraingen;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.Biome;
 
 /**
@@ -34,7 +32,7 @@ import net.minecraft.world.biome.Biome;
  * All children of this event are fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}
  * unless stated otherwise in their Javadocs.
  **/
-public class BiomeEvent extends Event
+public class BiomeEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final Biome biome;
 
@@ -49,50 +47,8 @@ public class BiomeEvent extends Event
     }
 
     /**
-     * CreateDecorator is fired when a BiomeDecorator is created.<br>
-     * This event is fired whenever a BiomeDecorator is created in
-     * {@link DeferredBiomeDecorator#fireCreateEventAndReplace(Biome)}.<br>
-     * <br>
-     * {@link #originalBiomeDecorator} contains the original BiomeDecorator that would be used in vanilla.
-     * {@link #newBiomeDecorator} contains the new BiomeDecoration to be used by Minecraft.
-     * <br>
-     * This event is not {@link Cancelable}.
-     * <br>
-     * This event does not have a result. {@link HasResult}
-     * <br>
-     * This event is fired on the {@link MinecraftForge#TERRAIN_GEN_BUS}.
-     **/
-    public static class CreateDecorator extends BiomeEvent
-    {
-        private final BiomeDecorator originalBiomeDecorator;
-        private BiomeDecorator newBiomeDecorator;
-
-        public CreateDecorator(Biome biome, BiomeDecorator original)
-        {
-            super(biome);
-            originalBiomeDecorator = original;
-            setNewBiomeDecorator(original);
-        }
-
-        public BiomeDecorator getOriginalBiomeDecorator()
-        {
-            return originalBiomeDecorator;
-        }
-
-        public BiomeDecorator getNewBiomeDecorator()
-        {
-            return newBiomeDecorator;
-        }
-
-        public void setNewBiomeDecorator(BiomeDecorator newBiomeDecorator)
-        {
-            this.newBiomeDecorator = newBiomeDecorator;
-        }
-    }
-
-    /**
      * BiomeColor is fired whenever an event involving biome colors occurs. <br>
-     * If a method utilizes this {@link Event} as its parameter, the method will
+     * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
      * receive every child event of this class.<br>
      * <br>
      * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.

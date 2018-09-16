@@ -1,14 +1,12 @@
---- ../src-base/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
-+++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
-@@ -108,7 +108,10 @@
-     {
-         this.field_175091_e = p_147390_1_.func_179730_a();
-         this.field_147393_d.func_150723_a(EnumConnectionState.PLAY);
--        this.field_147393_d.func_150719_a(new NetHandlerPlayClient(this.field_147394_b, this.field_147395_c, this.field_147393_d, this.field_175091_e));
-+        NetHandlerPlayClient nhpc = new NetHandlerPlayClient(this.field_147394_b, this.field_147395_c, this.field_147393_d, this.field_175091_e);
-+        this.field_147393_d.func_150719_a(nhpc);
-+        net.minecraftforge.fml.client.FMLClientHandler.instance().setPlayClient(nhpc);
-+        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlClientHandshake(this.field_147393_d);
-     }
+--- a/net/minecraft/client/network/NetHandlerLoginClient.java
++++ b/net/minecraft/client/network/NetHandlerLoginClient.java
+@@ -122,7 +122,9 @@
+    }
  
-     public void func_147231_a(ITextComponent p_147231_1_)
+    public void func_209521_a(SPacketCustomPayloadLogin p_209521_1_) {
++      if (!net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_209521_1_, this.networkManager)) {
+       this.field_209525_d.accept(new TextComponentTranslation("connect.negotiating", new Object[0]));
+       this.networkManager.sendPacket(new CPacketCustomPayloadLogin(p_209521_1_.func_209918_a(), (PacketBuffer)null));
+    }
+ }
++}

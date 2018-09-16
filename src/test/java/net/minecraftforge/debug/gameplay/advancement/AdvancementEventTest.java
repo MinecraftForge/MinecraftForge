@@ -23,7 +23,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = AdvancementEventTest.MOD_ID, name = "AdvancementEvent test mod", version = "1.0.0", acceptableRemoteVersions = "*")

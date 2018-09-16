@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/login/server/SPacketCustomPayloadLogin.java
++++ b/net/minecraft/network/login/server/SPacketCustomPayloadLogin.java
+@@ -8,7 +8,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class SPacketCustomPayloadLogin implements Packet<INetHandlerLoginClient> {
++public class SPacketCustomPayloadLogin implements Packet<INetHandlerLoginClient>, net.minecraftforge.fml.network.ICustomPacket<SPacketCustomPayloadLogin> {
+    private int field_209919_a;
+    private ResourceLocation field_209920_b;
+    private PacketBuffer field_209921_c;

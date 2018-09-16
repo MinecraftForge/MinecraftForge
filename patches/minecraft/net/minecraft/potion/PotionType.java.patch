@@ -1,16 +1,11 @@
---- ../src-base/minecraft/net/minecraft/potion/PotionType.java
-+++ ../src-work/minecraft/net/minecraft/potion/PotionType.java
-@@ -8,10 +8,11 @@
+--- a/net/minecraft/potion/PotionType.java
++++ b/net/minecraft/potion/PotionType.java
+@@ -7,7 +7,7 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
  
--public class PotionType
-+public class PotionType extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<PotionType>
- {
-+    @Deprecated // unused
-     private static final ResourceLocation field_185177_b = new ResourceLocation("empty");
--    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(field_185177_b);
-+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = net.minecraftforge.registries.GameData.getWrapperDefaulted(PotionType.class);
-     private static int field_185178_c;
-     private final String field_185179_d;
-     private final ImmutableList<PotionEffect> field_185180_e;
+-public class PotionType {
++public class PotionType extends net.minecraftforge.registries.ForgeRegistryEntry<PotionType> {
+    private static final ResourceLocation EMPTY = new ResourceLocation("empty");
+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> REGISTRY = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(EMPTY);
+    private final String baseName;

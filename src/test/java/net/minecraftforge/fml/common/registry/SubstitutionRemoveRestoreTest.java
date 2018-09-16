@@ -21,18 +21,10 @@ package net.minecraftforge.fml.common.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.DummyModContainer;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.GameData;
-import net.minecraftforge.registries.ObjectHolderRegistry;
-import net.minecraftforge.registries.RegistryManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -40,8 +32,6 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-
-import java.util.Map;
 
 /**
  * Substitution test harness - tests that substitutions behave correctly

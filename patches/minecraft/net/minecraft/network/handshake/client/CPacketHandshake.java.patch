@@ -1,0 +1,34 @@
+--- a/net/minecraft/network/handshake/client/CPacketHandshake.java
++++ b/net/minecraft/network/handshake/client/CPacketHandshake.java
+@@ -13,6 +13,7 @@
+    private String ip;
+    private int port;
+    private EnumConnectionState requestedState;
++   private String fmlVersion = net.minecraftforge.fml.network.NetworkHooks.NETVERSION;
+ 
+    public CPacketHandshake() {
+    }
+@@ -30,11 +31,13 @@
+       this.ip = buf.readString(255);
+       this.port = buf.readUnsignedShort();
+       this.requestedState = EnumConnectionState.getById(buf.readVarInt());
++      this.fmlVersion = net.minecraftforge.fml.network.NetworkHooks.getFMLVersion(this.ip);
++      this.ip = this.ip.split("\0")[0];
+    }
+ 
+    public void writePacketData(PacketBuffer buf) throws IOException {
+       buf.writeVarInt(this.protocolVersion);
+-      buf.writeString(this.ip);
++      buf.writeString(this.ip + "\0"+net.minecraftforge.fml.network.NetworkHooks.NETVERSION+"\0");
+       buf.writeShort(this.port);
+       buf.writeVarInt(this.requestedState.getId());
+    }
+@@ -50,4 +53,8 @@
+    public int getProtocolVersion() {
+       return this.protocolVersion;
+    }
++
++   public String getFMLVersion() {
++      return this.fmlVersion;
+ }
++}

@@ -20,7 +20,7 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 

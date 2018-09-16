@@ -1,50 +1,11 @@
---- ../src-base/minecraft/net/minecraft/enchantment/Enchantment.java
-+++ ../src-work/minecraft/net/minecraft/enchantment/Enchantment.java
-@@ -14,9 +14,9 @@
- import net.minecraft.util.text.TextFormatting;
- import net.minecraft.util.text.translation.I18n;
+--- a/net/minecraft/enchantment/Enchantment.java
++++ b/net/minecraft/enchantment/Enchantment.java
+@@ -18,7 +18,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
--public abstract class Enchantment
-+public abstract class Enchantment extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<Enchantment>
- {
--    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = new RegistryNamespaced<ResourceLocation, Enchantment>();
-+    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = net.minecraftforge.registries.GameData.getWrapper(Enchantment.class);
-     private final EntityEquipmentSlot[] field_185263_a;
-     private final Enchantment.Rarity field_77333_a;
-     @Nullable
-@@ -134,7 +134,7 @@
- 
-     public boolean func_92089_a(ItemStack p_92089_1_)
-     {
--        return this.field_77351_y.func_77557_a(p_92089_1_.func_77973_b());
-+        return canApplyAtEnchantingTable(p_92089_1_);
-     }
- 
-     public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_)
-@@ -155,6 +155,26 @@
-         return false;
-     }
- 
-+    /**
-+     * This applies specifically to applying at the enchanting table. The other method {@link #canApply(ItemStack)}
-+     * applies for <i>all possible</i> enchantments.
-+     * @param stack
-+     * @return
-+     */
-+    public boolean canApplyAtEnchantingTable(ItemStack stack)
-+    {
-+        return stack.func_77973_b().canApplyAtEnchantingTable(stack, this);
-+    }
-+
-+    /**
-+     * Is this enchantment allowed to be enchanted on books via Enchantment Table
-+     * @return false to disable the vanilla feature
-+     */
-+    public boolean isAllowedOnBooks()
-+    {
-+        return true;
-+    }
-+
-     public static void func_185257_f()
-     {
-         EntityEquipmentSlot[] aentityequipmentslot = new EntityEquipmentSlot[] {EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
+-public abstract class Enchantment {
++public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
+    public static final RegistryNamespaced<ResourceLocation, Enchantment> REGISTRY = new RegistryNamespaced<ResourceLocation, Enchantment>();
+    private final EntityEquipmentSlot[] applicableEquipmentTypes;
+    private final Enchantment.Rarity rarity;

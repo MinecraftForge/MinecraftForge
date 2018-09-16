@@ -1,0 +1,55 @@
+--- a/net/minecraft/item/crafting/ShulkerBoxColoringRecipe.java
++++ b/net/minecraft/item/crafting/ShulkerBoxColoringRecipe.java
+@@ -10,8 +10,6 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class ShulkerBoxColoringRecipe extends IRecipeHidden {
+    public ShulkerBoxColoringRecipe(ResourceLocation p_i48159_1_) {
+@@ -31,7 +29,7 @@
+                if (Block.getBlockFromItem(itemstack.getItem()) instanceof BlockShulkerBox) {
+                   ++i;
+                } else {
+-                  if (!(itemstack.getItem() instanceof ItemDye)) {
++                  if (!itemstack.getItem().func_206844_a(net.minecraft.tags.ItemTags.DYES)) {
+                      return false;
+                   }
+ 
+@@ -50,7 +48,7 @@
+ 
+    public ItemStack getCraftingResult(IInventory inv) {
+       ItemStack itemstack = ItemStack.EMPTY;
+-      ItemDye itemdye = (ItemDye)Items.field_196106_bc;
++      net.minecraft.item.EnumDyeColor color = net.minecraft.item.EnumDyeColor.WHITE;
+ 
+       for(int i = 0; i < inv.getSizeInventory(); ++i) {
+          ItemStack itemstack1 = inv.getStackInSlot(i);
+@@ -58,13 +56,14 @@
+             Item item = itemstack1.getItem();
+             if (Block.getBlockFromItem(item) instanceof BlockShulkerBox) {
+                itemstack = itemstack1;
+-            } else if (item instanceof ItemDye) {
+-               itemdye = (ItemDye)item;
++            } else {
++               net.minecraft.item.EnumDyeColor tmp = net.minecraft.item.EnumDyeColor.getColor(itemstack1);
++               if (tmp != null) color = tmp;
+             }
+          }
+       }
+ 
+-      ItemStack itemstack2 = BlockShulkerBox.getColoredItemStack(itemdye.func_195962_g());
++      ItemStack itemstack2 = BlockShulkerBox.getColoredItemStack(color);
+       if (itemstack.hasTagCompound()) {
+          itemstack2.setTagCompound(itemstack.getTagCompound().copy());
+       }
+@@ -72,7 +71,6 @@
+       return itemstack2;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width * height >= 2;
+    }

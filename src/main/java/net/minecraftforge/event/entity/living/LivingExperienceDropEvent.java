@@ -21,14 +21,14 @@ package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * Event for when an entity drops experience on its death, can be used to change
  * the amount of experience points dropped or completely prevent dropping of experience
  * by canceling the event.
  */
-@Cancelable
+@net.minecraftforge.eventbus.api.Cancelable
 public class LivingExperienceDropEvent extends LivingEvent 
 {
     private final EntityPlayer attackingPlayer;

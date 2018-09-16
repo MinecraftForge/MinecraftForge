@@ -1,29 +1,55 @@
---- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
-+++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
-@@ -69,7 +69,7 @@
-             if (entityplayermp == null)
-             {
-                 this.field_147328_g = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
--                this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, this.field_181025_l);
-+                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_184103_al(), this.field_147333_a, this.field_181025_l);
-                 this.field_181025_l = null;
-             }
-         }
-@@ -132,7 +132,7 @@
-             }
-             else
-             {
--                this.field_147327_f.func_184103_al().func_72355_a(this.field_147333_a, this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i));
-+                net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlServerHandshake(this.field_147327_f.func_184103_al(), this.field_147333_a, this.field_147327_f.func_184103_al().func_148545_a(this.field_147337_i));
-             }
-         }
-     }
-@@ -177,7 +177,7 @@
-             this.field_147335_k = p_147315_1_.func_149300_a(privatekey);
-             this.field_147328_g = NetHandlerLoginServer.LoginState.AUTHENTICATING;
-             this.field_147333_a.func_150727_a(this.field_147335_k);
--            (new Thread("User Authenticator #" + field_147331_b.incrementAndGet())
-+            (new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, "User Authenticator #" + field_147331_b.incrementAndGet())
-             {
-                 public void run()
-                 {
+--- a/net/minecraft/server/network/NetHandlerLoginServer.java
++++ b/net/minecraft/server/network/NetHandlerLoginServer.java
+@@ -55,6 +55,12 @@
+    }
+ 
+    public void update() {
++      if (this.currentLoginState == LoginState.NEGOTIATING) {
++         // We force the state into "NEGOTIATING" which is otherwise unused. Once we're completed we move the negotiation onto "READY_TO_ACCEPT"
++         // Might want to promote player object creation to here as well..
++         boolean negotiationComplete = net.minecraftforge.fml.network.NetworkHooks.tickNegotiation(this, this.networkManager, this.player);
++         if (negotiationComplete) this.currentLoginState = LoginState.READY_TO_ACCEPT;
++      } else
+       if (this.currentLoginState == NetHandlerLoginServer.LoginState.READY_TO_ACCEPT) {
+          this.tryAcceptPlayer();
+       } else if (this.currentLoginState == NetHandlerLoginServer.LoginState.DELAY_ACCEPT) {
+@@ -126,7 +132,7 @@
+          this.currentLoginState = NetHandlerLoginServer.LoginState.KEY;
+          this.networkManager.sendPacket(new SPacketEncryptionRequest("", this.server.getKeyPair().getPublic(), this.verifyToken));
+       } else {
+-         this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
++         this.currentLoginState = LoginState.NEGOTIATING;
+       }
+ 
+    }
+@@ -149,11 +155,11 @@
+                   NetHandlerLoginServer.this.loginGameProfile = NetHandlerLoginServer.this.server.getMinecraftSessionService().hasJoinedServer(new GameProfile((UUID)null, gameprofile.getName()), s, this.getAddress());
+                   if (NetHandlerLoginServer.this.loginGameProfile != null) {
+                      NetHandlerLoginServer.LOGGER.info("UUID of player {} is {}", NetHandlerLoginServer.this.loginGameProfile.getName(), NetHandlerLoginServer.this.loginGameProfile.getId());
+-                     NetHandlerLoginServer.this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
++                     NetHandlerLoginServer.this.currentLoginState = LoginState.NEGOTIATING;
+                   } else if (NetHandlerLoginServer.this.server.isSinglePlayer()) {
+                      NetHandlerLoginServer.LOGGER.warn("Failed to verify username but will let them in anyway!");
+                      NetHandlerLoginServer.this.loginGameProfile = NetHandlerLoginServer.this.getOfflineProfile(gameprofile);
+-                     NetHandlerLoginServer.this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
++                     NetHandlerLoginServer.this.currentLoginState = LoginState.NEGOTIATING;
+                   } else {
+                      NetHandlerLoginServer.this.disconnect(new TextComponentTranslation("multiplayer.disconnect.unverified_username", new Object[0]));
+                      NetHandlerLoginServer.LOGGER.error("Username '{}' tried to join with an invalid session", (Object)gameprofile.getName());
+@@ -162,7 +168,7 @@
+                   if (NetHandlerLoginServer.this.server.isSinglePlayer()) {
+                      NetHandlerLoginServer.LOGGER.warn("Authentication servers are down but will let them in anyway!");
+                      NetHandlerLoginServer.this.loginGameProfile = NetHandlerLoginServer.this.getOfflineProfile(gameprofile);
+-                     NetHandlerLoginServer.this.currentLoginState = NetHandlerLoginServer.LoginState.READY_TO_ACCEPT;
++                     NetHandlerLoginServer.this.currentLoginState = LoginState.NEGOTIATING;
+                   } else {
+                      NetHandlerLoginServer.this.disconnect(new TextComponentTranslation("multiplayer.disconnect.authservers_down", new Object[0]));
+                      NetHandlerLoginServer.LOGGER.error("Couldn't verify username because servers are unavailable");
+@@ -183,6 +189,7 @@
+    }
+ 
+    public void func_209526_a(CPacketCustomPayloadLogin p_209526_1_) {
++      if (!net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_209526_1_, this.networkManager))
+       this.disconnect(new TextComponentTranslation("multiplayer.disconnect.unexpected_query_response", new Object[0]));
+    }
+ 

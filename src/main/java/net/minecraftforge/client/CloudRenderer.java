@@ -28,6 +28,7 @@ import net.minecraftforge.client.resource.VanillaResourceType;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
@@ -38,12 +39,13 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.resources.IReloadableResourceManager;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
 
@@ -54,7 +56,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     // Building constants.
     private static final VertexFormat FORMAT = DefaultVertexFormats.POSITION_TEX_COLOR;
-    private static final int TOP_SECTIONS = 12;	// Number of slices a top face will span.
+    private static final int TOP_SECTIONS = 12;    // Number of slices a top face will span.
     private static final int HEIGHT = 4;
     private static final float INSET = 0.001F;
     private static final float ALPHA = 0.8F;
@@ -79,7 +81,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
     public CloudRenderer()
     {
         // Resource manager should always be reloadable.
-        ((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(this);
+        ((IReloadableResourceManager) mc.func_195551_G()).func_199006_a(this);
     }
 
     private int getScale()
@@ -270,7 +272,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     public void checkSettings()
     {
-        boolean newEnabled = ForgeModContainer.forgeCloudsEnabled
+        boolean newEnabled = ForgeMod.forgeCloudsEnabled
                 && mc.gameSettings.shouldRenderClouds() != 0
                 && mc.world != null
                 && mc.world.provider.isSurfaceWorld();
@@ -344,24 +346,14 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         float g = (float) color.y;
         float b = (float) color.z;
 
-        if (mc.gameSettings.anaglyph)
-        {
-            float tempR = r * 0.3F + g * 0.59F + b * 0.11F;
-            float tempG = r * 0.3F + g * 0.7F;
-            float tempB = r * 0.3F + b * 0.7F;
-            r = tempR;
-            g = tempG;
-            b = tempB;
-        }
-
         if (COLOR_TEX == null)
-            COLOR_TEX = new DynamicTexture(1, 1);
+            COLOR_TEX = new DynamicTexture(1, 1, false);
 
         // Apply a color multiplier through a texture upload if shaders aren't supported.
-        COLOR_TEX.getTextureData()[0] = 255 << 24
+        COLOR_TEX.func_195414_e().func_195700_a(0, 0, 255 << 24
                 | ((int) (r * 255)) << 16
                 | ((int) (g * 255)) << 8
-                | (int) (b * 255);
+                | (int) (b * 255));
         COLOR_TEX.updateDynamicTexture();
 
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -379,7 +371,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         {
             vbo.bindBuffer();
 
-            int stride = FORMAT.getNextOffset();
+            int stride = FORMAT.getSize();
             GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, stride, 0);
             GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
             GlStateManager.glTexCoordPointer(2, GL11.GL_FLOAT, stride, 12);
@@ -389,9 +381,9 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         }
         else
         {
-            buffer.limit(FORMAT.getNextOffset());
+            buffer.limit(FORMAT.getSize());
             for (int i = 0; i < FORMAT.getElementCount(); i++)
-                FORMAT.getElements().get(i).getUsage().preDraw(FORMAT, i, FORMAT.getNextOffset(), buffer);
+                FORMAT.getElements().get(i).getUsage().preDraw(FORMAT, i, FORMAT.getSize(), buffer);
             buffer.position(0);
         }
 
@@ -403,22 +395,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
             GlStateManager.callList(displayList);
 
         // Full render.
-        if (!mc.gameSettings.anaglyph)
-        {
-            GlStateManager.colorMask(true, true, true, true);
-        }
-        else
-        {
-            switch (EntityRenderer.anaglyphField)
-            {
-            case 0:
-                GlStateManager.colorMask(false, true, true, true);
-                break;
-            case 1:
-                GlStateManager.colorMask(true, false, false, true);
-                break;
-            }
-        }
+        GlStateManager.colorMask(true, true, true, true);
 
         // Wireframe for debug.
         if (WIREFRAME)
@@ -450,7 +427,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
         buffer.limit(0);
         for (int i = 0; i < FORMAT.getElementCount(); i++)
-            FORMAT.getElements().get(i).getUsage().postDraw(FORMAT, i, FORMAT.getNextOffset(), buffer);
+            FORMAT.getElements().get(i).getUsage().postDraw(FORMAT, i, FORMAT.getSize(), buffer);
         buffer.position(0);
 
         // Disable our coloring.
@@ -489,4 +466,29 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
             reloadTextures();
         }
     }
+
+    private static CloudRenderer cloudRenderer;
+    private static CloudRenderer getCloudRenderer()
+    {
+        if (cloudRenderer == null)
+            cloudRenderer = new CloudRenderer();
+        return cloudRenderer;
+    }
+
+    public static void updateCloudSettings()
+    {
+        getCloudRenderer().checkSettings();
+    }
+
+    public static boolean renderClouds(int cloudTicks, float partialTicks, WorldClient world, Minecraft client)
+    {
+        IRenderHandler renderer = world.provider.getCloudRenderer();
+        if (renderer != null)
+        {
+            renderer.render(partialTicks, world, client);
+            return true;
+        }
+        return getCloudRenderer().render(cloudTicks, partialTicks);
+    }
+
 }

@@ -21,12 +21,11 @@ package net.minecraftforge.client;
 
 import java.util.Map;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Maps;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
-import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
@@ -36,16 +35,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.registries.IRegistryDelegate;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 /**
  * Wrapper around ItemModeMesher that cleans up the internal maps to respect ID remapping.
  */
 public class ItemModelMesherForge extends ItemModelMesher
 {
-    final Map<IRegistryDelegate<Item>, Int2ObjectMap<ModelResourceLocation>> locations = Maps.newHashMap();
-    final Map<IRegistryDelegate<Item>, Int2ObjectMap<IBakedModel>> models = Maps.newHashMap();
+    final Map<IRegistryDelegate<Item>, ModelResourceLocation> locations = Maps.newHashMap();
+    final Map<IRegistryDelegate<Item>, IBakedModel> models = Maps.newHashMap();
 
     public ItemModelMesherForge(ModelManager manager)
     {
@@ -54,74 +50,32 @@ public class ItemModelMesherForge extends ItemModelMesher
 
     @Override
     @Nullable
-    protected IBakedModel getItemModel(Item item, int meta)
+    public IBakedModel func_199312_b(Item item)
     {
-        Int2ObjectMap<IBakedModel> map = models.get(item.delegate);
-        return map == null ? null : map.get(meta);
+        return models.get(item.delegate);
     }
 
     @Override
-    public void register(Item item, int meta, ModelResourceLocation location)
+    public void func_199311_a(Item item, ModelResourceLocation location)
     {
         IRegistryDelegate<Item> key = item.delegate;
-        Int2ObjectMap<ModelResourceLocation> locs = locations.get(key);
-        Int2ObjectMap<IBakedModel>           mods = models.get(key);
-        if (locs == null)
-        {
-            locs = new Int2ObjectOpenHashMap<>();
-            locations.put(key, locs);
-        }
-        if (mods == null)
-        {
-            mods = new Int2ObjectOpenHashMap<>();
-            models.put(key, mods);
-        }
-        locs.put(meta, location);
-        mods.put(meta, getModelManager().getModel(location));
+        locations.put(key, location);
+        models.put(key, getModelManager().getModel(location));
     }
 
     @Override
     public void rebuildCache()
     {
         final ModelManager manager = this.getModelManager();
-        for (Map.Entry<IRegistryDelegate<Item>, Int2ObjectMap<ModelResourceLocation>> e : locations.entrySet())
+        for (Map.Entry<IRegistryDelegate<Item>, ModelResourceLocation> e : locations.entrySet())
         {
-            Int2ObjectMap<IBakedModel> mods = models.get(e.getKey());
-            if (mods != null)
-            {
-                mods.clear();
-            }
-            else
-            {
-                mods = new Int2ObjectOpenHashMap<>();
-                models.put(e.getKey(), mods);
-            }
-            final Int2ObjectMap<IBakedModel> map = mods;
-            e.getValue().int2ObjectEntrySet().forEach(entry ->
-                map.put(entry.getIntKey(), manager.getModel(entry.getValue()))
-            );
+        	models.put(e.getKey(), manager.getModel(e.getValue()));
         }
     }
 
     public ModelResourceLocation getLocation(@Nonnull ItemStack stack)
     {
-        Item item = stack.getItem();
-        ModelResourceLocation location = null;
-
-        Int2ObjectMap<ModelResourceLocation> map = locations.get(item.delegate);
-        if (map != null)
-        {
-            location = map.get(getMetadata(stack));
-        }
-
-        if (location == null)
-        {
-            ItemMeshDefinition definition = shapers.get(item);
-            if (definition != null)
-            {
-                location = definition.getModelLocation(stack);
-            }
-        }
+        ModelResourceLocation location = locations.get(stack.getItem().delegate);
 
         if (location == null)
         {

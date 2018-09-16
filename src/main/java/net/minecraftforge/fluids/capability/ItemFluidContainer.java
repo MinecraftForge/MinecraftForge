@@ -40,8 +40,9 @@ public class ItemFluidContainer extends Item
     /**
      * @param capacity   The maximum capacity of this fluid container.
      */
-    public ItemFluidContainer(int capacity)
+    public ItemFluidContainer(Item.Builder builder, int capacity)
     {
+        super(builder);
         this.capacity = capacity;
     }
 

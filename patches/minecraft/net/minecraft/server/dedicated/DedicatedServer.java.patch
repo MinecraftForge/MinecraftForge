@@ -1,78 +1,36 @@
---- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-+++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -62,6 +62,7 @@
-     private boolean field_71338_p;
-     private GameType field_71337_q;
-     private boolean field_71335_s;
-+    public static boolean allowPlayerLogins = false;
+--- a/net/minecraft/server/dedicated/DedicatedServer.java
++++ b/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -110,6 +110,7 @@
+          LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+       }
  
-     public DedicatedServer(File p_i47086_1_, DataFixer p_i47086_2_, YggdrasilAuthenticationService p_i47086_3_, MinecraftSessionService p_i47086_4_, GameProfileRepository p_i47086_5_, PlayerProfileCache p_i47086_6_)
-     {
-@@ -95,6 +96,7 @@
-         {
-             public void run()
-             {
-+                if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
-                 BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
-                 String s4;
- 
-@@ -120,6 +122,8 @@
-             field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
-         }
- 
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStart(this);
-+
-         field_155771_h.info("Loading properties");
-         this.field_71340_o = new PropertyManager(new File("server.properties"));
-         this.field_154332_n = new ServerEula(new File("eula.txt"));
-@@ -212,6 +216,7 @@
-             }
-             else
-             {
-+                net.minecraftforge.fml.common.FMLCommonHandler.instance().onServerStarted();
-                 this.func_184105_a(new DedicatedPlayerList(this));
-                 long j = System.nanoTime();
- 
-@@ -260,11 +265,13 @@
-                 TileEntitySkull.func_184293_a(this.func_152358_ax());
-                 TileEntitySkull.func_184294_a(this.func_147130_as());
-                 PlayerProfileCache.func_187320_a(this.func_71266_T());
-+                if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
-                 field_155771_h.info("Preparing level \"{}\"", (Object)this.func_71270_I());
-                 this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
-                 long i1 = System.nanoTime() - j;
-                 String s3 = String.format("%.3fs", (double)i1 / 1.0E9D);
-                 field_155771_h.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s3);
-+                this.field_175591_ab = func_130071_aq();
- 
-                 if (this.field_71340_o.func_187239_a("announce-player-achievements"))
-                 {
-@@ -296,7 +303,8 @@
-                 }
- 
-                 Items.field_190931_a.func_150895_a(CreativeTabs.field_78027_g, NonNullList.func_191196_a());
--                return true;
-+                // <3 you Grum for this, saves us ~30 patch files! --^
-+                return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
-             }
-         }
-     }
-@@ -515,7 +523,7 @@
- 
-     public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
-     {
--        if (p_175579_1_.field_73011_w.func_186058_p().func_186068_a() != 0)
-+        if (p_175579_1_.field_73011_w.getDimension() != 0)
-         {
++      net.minecraftforge.fml.server.ServerModLoader.begin(this);
+       LOGGER.info("Loading properties");
+       this.settings = new PropertyManager(new File("server.properties"));
+       this.eula = new ServerEula(new File("eula.txt"));
+@@ -181,6 +182,7 @@
+          if (!PreYggdrasilConverter.tryConvert(this.settings)) {
              return false;
-         }
-@@ -584,6 +592,9 @@
-         return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
-     }
+          } else {
++            net.minecraftforge.fml.server.ServerModLoader.end();
+             this.setPlayerList(new DedicatedPlayerList(this));
+             long j = Util.func_211178_c();
+             if (this.getFolderName() == null) {
+@@ -218,6 +220,7 @@
+             TileEntitySkull.setProfileCache(this.getPlayerProfileCache());
+             TileEntitySkull.setSessionService(this.getMinecraftSessionService());
+             PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
++            if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+             LOGGER.info("Preparing level \"{}\"", (Object)this.getFolderName());
+             JsonObject jsonobject = new JsonObject();
+             if (worldtype == WorldType.FLAT) {
+@@ -257,7 +260,8 @@
+             }
  
-+    //Forge: Enable formated text for colors in console.
-+    @Override public void func_145747_a(net.minecraft.util.text.ITextComponent message) { field_155771_h.info(message.func_150254_d()); }
-+
-     protected boolean func_152368_aE() throws IOException
-     {
-         boolean flag = false;
+             Items.AIR.getSubItems(ItemGroup.SEARCH, NonNullList.create());
+-            return true;
++            // <3 you Grum for this, saves us ~30 patch files! --^
++            return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
+          }
+       }
+    }

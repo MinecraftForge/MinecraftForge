@@ -19,12 +19,12 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.entity.EntityLivingBase;
 
-public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Event
+public abstract class RenderLivingEvent<T extends EntityLivingBase> extends net.minecraftforge.eventbus.api.Event
 {
     private final EntityLivingBase entity;
     private final RenderLivingBase<T> renderer;
@@ -56,7 +56,7 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Even
     public double getY() { return y; }
     public double getZ() { return z; }
 
-    @Cancelable
+    @net.minecraftforge.eventbus.api.Cancelable
     public static class Pre<T extends EntityLivingBase> extends RenderLivingEvent<T>
     {
         @Deprecated
@@ -74,7 +74,7 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends Even
     {
         public Specials(EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z){ super(entity, renderer, 0, x, y, z); }
 
-        @Cancelable
+        @net.minecraftforge.eventbus.api.Cancelable
         public static class Pre<T extends EntityLivingBase> extends Specials<T>
         {
             public Pre(EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z){ super(entity, renderer, x, y, z); }

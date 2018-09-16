@@ -24,9 +24,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
 @Mod(modid = SearchableCreativeTabTest.MODID, name = "Debug Search Tab", version = "1.0", acceptableRemoteVersions = "*")
 public class SearchableCreativeTabTest
@@ -36,7 +36,7 @@ public class SearchableCreativeTabTest
 
     public static final CreativeTabs SEARCH_TAB = !ENABLED ? null : new CreativeTabs(1, "searchtab")
     {
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         public ItemStack getTabIconItem()
         {
             return new ItemStack(Items.TOTEM_OF_UNDYING);
@@ -49,7 +49,7 @@ public class SearchableCreativeTabTest
         }
         
         @Override
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         public void displayAllRelevantItems(NonNullList<ItemStack> items)
         {
         	super.displayAllRelevantItems(items);

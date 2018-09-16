@@ -19,43 +19,25 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraft.command.CommandHandler;
-import net.minecraft.command.ICommand;
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
-import net.minecraftforge.fml.common.LoaderState.ModState;
 
 /**
  * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.
  * This event allows for customizations of the server, such as loading custom commands, perhaps customizing recipes or
  * other activities.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLServerStartingEvent extends FMLStateEvent
+public class FMLServerStartingEvent extends ServerLifecycleEvent
 {
-
-    private MinecraftServer server;
-
-    public FMLServerStartingEvent(Object... data)
+    public FMLServerStartingEvent(final MinecraftServer server)
     {
-        super(data);
-        this.server = (MinecraftServer) data[0];
-    }
-    @Override
-    public ModState getModState()
-    {
-        return ModState.AVAILABLE;
+        super(server);
     }
 
-    public MinecraftServer getServer()
-    {
-        return server;
-    }
-
-    public void registerServerCommand(ICommand command)
-    {
-        CommandHandler ch = (CommandHandler) getServer().getCommandManager();
-        ch.registerCommand(command);
+    public CommandDispatcher<CommandSource> getCommandDispatcher() {
+        return server.func_195571_aL().func_197054_a();
     }
 }

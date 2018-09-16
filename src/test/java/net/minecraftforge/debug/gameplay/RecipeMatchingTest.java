@@ -29,16 +29,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
 @Mod(modid = RecipeMatchingTest.MODID, name = "Recipe test mod", version = "1.0", acceptableRemoteVersions = "*")
@@ -46,7 +44,6 @@ public class RecipeMatchingTest
 {
     public static final String MODID = "recipetest";
     private static final boolean ENABLED = true;
-    @SidedProxy
     public static CommonProxy proxy = null;
 
 

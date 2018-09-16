@@ -22,8 +22,8 @@ package net.minecraftforge.event;
 import net.minecraft.command.CommandHandler;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 
@@ -45,7 +45,7 @@ import net.minecraft.command.ICommandSender;
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
 @Cancelable
-public class CommandEvent extends Event
+public class CommandEvent extends net.minecraftforge.eventbus.api.Event
 {
 
     private final ICommand command;

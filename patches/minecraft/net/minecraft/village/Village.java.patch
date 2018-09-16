@@ -1,209 +1,150 @@
---- ../src-base/minecraft/net/minecraft/village/Village.java
-+++ ../src-work/minecraft/net/minecraft/village/Village.java
-@@ -26,7 +26,7 @@
- import net.minecraft.util.math.Vec3d;
+--- a/net/minecraft/village/Village.java
++++ b/net/minecraft/village/Village.java
+@@ -30,7 +30,7 @@
+ import net.minecraft.util.text.ITextComponent;
  import net.minecraft.world.World;
  
--public class Village
-+public class Village implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
- {
-     private World field_75586_a;
-     private final List<VillageDoorInfo> field_75584_b = Lists.<VillageDoorInfo>newArrayList();
-@@ -37,17 +37,19 @@
-     private int field_75581_g;
-     private int field_75588_h;
-     private int field_82694_i;
--    private final Map<String, Integer> field_82693_j = Maps.<String, Integer>newHashMap();
-+    private final Map<UUID, Integer> field_82693_j = Maps.<UUID, Integer>newHashMap();
-     private final List<Village.VillageAggressor> field_75589_i = Lists.<Village.VillageAggressor>newArrayList();
-     private int field_75587_j;
+-public class Village {
++public class Village extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeVillage {
+    private World world;
+    private final List<VillageDoorInfo> villageDoorInfoList = Lists.<VillageDoorInfo>newArrayList();
+    private BlockPos centerHelper = BlockPos.ORIGIN;
+@@ -40,15 +40,17 @@
+    private int tickCounter;
+    private int numVillagers;
+    private int noBreedTicks;
+-   private final Map<String, Integer> playerReputation = Maps.<String, Integer>newHashMap();
++   private final Map<UUID, Integer> playerReputation = Maps.<UUID, Integer>newHashMap();
+    private final List<Village.VillageAggressor> villageAgressors = Lists.<Village.VillageAggressor>newArrayList();
+    private int numIronGolems;
  
-     public Village()
-     {
-+        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
-     }
+    public Village() {
++       this.gatherCapabilities();
+    }
  
-     public Village(World p_i1675_1_)
-     {
-         this.field_75586_a = p_i1675_1_;
-+        this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
-     }
+    public Village(World worldIn) {
+       this.world = worldIn;
++      this.gatherCapabilities();
+    }
  
-     public void func_82691_a(World p_82691_1_)
-@@ -310,11 +312,11 @@
-         double d0 = Double.MAX_VALUE;
-         EntityPlayer entityplayer = null;
+    public void setWorld(World worldIn) {
+@@ -237,9 +239,9 @@
+       double d0 = Double.MAX_VALUE;
+       EntityPlayer entityplayer = null;
  
--        for (String s : this.field_82693_j.keySet())
-+        for (UUID s : this.field_82693_j.keySet())
-         {
--            if (this.func_82687_d(s))
-+            if (this.isPlayerReputationTooLow(s))
-             {
--                EntityPlayer entityplayer1 = this.field_75586_a.func_72924_a(s);
-+                EntityPlayer entityplayer1 = this.field_75586_a.func_152378_a(s);
+-      for(String s : this.playerReputation.keySet()) {
++      for(UUID s : this.playerReputation.keySet()) {
+          if (this.isPlayerReputationTooLow(s)) {
+-            EntityPlayer entityplayer1 = this.world.getPlayerEntityByName(s);
++            EntityPlayer entityplayer1 = this.world.getPlayerEntityByUUID(s);
+             if (entityplayer1 != null) {
+                double d1 = entityplayer1.getDistanceSq(villageDefender);
+                if (!(d1 > d0)) {
+@@ -317,12 +319,32 @@
+       }
+    }
  
-                 if (entityplayer1 != null)
-                 {
-@@ -362,6 +364,7 @@
-                 villagedoorinfo.func_75466_d();
-             }
- 
-+            if (field_75586_a.func_175667_e(villagedoorinfo.func_179852_d())) // Forge: check that the door block is loaded to avoid loading chunks
-             if (!this.func_179860_f(villagedoorinfo.func_179852_d()) || Math.abs(this.field_75581_g - villagedoorinfo.func_75473_b()) > 1200)
-             {
-                 this.field_75585_c = this.field_75585_c.func_177973_b(villagedoorinfo.func_179852_d());
-@@ -415,25 +418,51 @@
-         }
-     }
- 
-+    @Deprecated //Hasn't worked since 1.9, use UUID version below.
-     public int func_82684_a(String p_82684_1_)
-     {
-+        return this.getPlayerReputation(findUUID(p_82684_1_));
-+    }
++   @Deprecated //Hasn't worked since 1.9, use UUID version below.
+    public int getPlayerReputation(String playerName) {
++      return this.getPlayerReputation(findUUID(playerName));
++   }
 +
-+    public int getPlayerReputation(UUID p_82684_1_)
-+    {
-         Integer integer = this.field_82693_j.get(p_82684_1_);
-         return integer == null ? 0 : integer.intValue();
-     }
++   public int getPlayerReputation(UUID playerName) 
++   {
+       Integer integer = this.playerReputation.get(playerName);
+       return integer == null ? 0 : integer;
+    }
++   
++   private UUID findUUID(String name)
++   {
++      if (this.world == null || this.world.getMinecraftServer() == null)
++         return EntityPlayer.getOfflineUUID(name);
++      GameProfile profile = this.world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(name);
++      return profile == null ? EntityPlayer.getOfflineUUID(name) : profile.getId();
++   }
  
-+    private UUID findUUID(String name)
-+    {
-+        if (this.field_75586_a == null || this.field_75586_a.func_73046_m() == null)
-+            return EntityPlayer.func_175147_b(name);
-+        GameProfile profile = this.field_75586_a.func_73046_m().func_152358_ax().func_152655_a(name);
-+        return profile == null ? EntityPlayer.func_175147_b(name) : profile.getId();
-+    }
++   @Deprecated //Hasn't worked since 1.9, use UUID version below.
+    public int modifyPlayerReputation(String playerName, int reputation) {
++      return this.modifyPlayerReputation(findUUID(playerName), reputation);
++   }
 +
-+    @Deprecated //Hasn't worked since 1.9, use UUID version below.
-     public int func_82688_a(String p_82688_1_, int p_82688_2_)
-     {
--        int i = this.func_82684_a(p_82688_1_);
-+        return this.modifyPlayerReputation(findUUID(p_82688_1_), p_82688_2_);
-+    }
++   public int modifyPlayerReputation(UUID playerName, int reputation)
++   {
+       int i = this.getPlayerReputation(playerName);
+       int j = MathHelper.clamp(i + reputation, -30, 10);
+       this.playerReputation.put(playerName, j);
+@@ -330,9 +352,14 @@
+    }
+ 
+    public boolean isPlayerReputationTooLow(String playerName) {
+-      return this.getPlayerReputation(playerName) <= -15;
++      return this.isPlayerReputationTooLow(findUUID(playerName));
+    }
+ 
++   public boolean isPlayerReputationTooLow(UUID uuid)
++   {
++      return this.getPlayerReputation(uuid) <= -15;   
++   }
 +
-+    public int modifyPlayerReputation(UUID p_82688_1_, int p_82688_2_)
-+    {
-+        int i = this.getPlayerReputation(p_82688_1_);
-         int j = MathHelper.func_76125_a(i + p_82688_2_, -30, 10);
-         this.field_82693_j.put(p_82688_1_, Integer.valueOf(j));
-         return j;
-     }
+    public void readVillageDataFromNBT(NBTTagCompound compound) {
+       this.numVillagers = compound.getInteger("PopSize");
+       this.villageRadius = compound.getInteger("Radius");
+@@ -354,17 +381,14 @@
  
-+    @Deprecated //Hasn't worked since 1.9, use UUID version below.
-     public boolean func_82687_d(String p_82687_1_)
-     {
--        return this.func_82684_a(p_82687_1_) <= -15;
-+        return this.isPlayerReputationTooLow(findUUID(p_82687_1_));
-     }
- 
-+    public boolean isPlayerReputationTooLow(UUID uuid)
-+    {
-+        return this.getPlayerReputation(uuid) <= -15;
-+    }
-+
-     public void func_82690_a(NBTTagCompound p_82690_1_)
-     {
-         this.field_75588_h = p_82690_1_.func_74762_e("PopSize");
-@@ -459,21 +488,17 @@
-         {
-             NBTTagCompound nbttagcompound1 = nbttaglist1.func_150305_b(j);
- 
--            if (nbttagcompound1.func_74764_b("UUID") && this.field_75586_a != null && this.field_75586_a.func_73046_m() != null)
-+            if (nbttagcompound1.func_74764_b("UUID"))
-             {
--                PlayerProfileCache playerprofilecache = this.field_75586_a.func_73046_m().func_152358_ax();
--                GameProfile gameprofile = playerprofilecache.func_152652_a(UUID.fromString(nbttagcompound1.func_74779_i("UUID")));
+       for(int j = 0; j < nbttaglist1.size(); ++j) {
+          NBTTagCompound nbttagcompound1 = nbttaglist1.getCompoundTagAt(j);
+-         if (nbttagcompound1.hasKey("UUID") && this.world != null && this.world.getMinecraftServer() != null) {
+-            PlayerProfileCache playerprofilecache = this.world.getMinecraftServer().getPlayerProfileCache();
+-            GameProfile gameprofile = playerprofilecache.getProfileByUUID(UUID.fromString(nbttagcompound1.getString("UUID")));
+-            if (gameprofile != null) {
+-               this.playerReputation.put(gameprofile.getName(), nbttagcompound1.getInteger("S"));
+-            }
++         if (nbttagcompound1.hasKey("UUID")) {
++             this.playerReputation.put(UUID.fromString(nbttagcompound1.getString("UUID")), Integer.valueOf(nbttagcompound1.getInteger("S")));
+          } else {
+-            this.playerReputation.put(nbttagcompound1.getString("Name"), nbttagcompound1.getInteger("S"));
++            //World is never set here, so this will always be offline UUIDs, sadly there is no way to convert this.
++            this.playerReputation.put(findUUID(nbttagcompound1.getString("Name")), Integer.valueOf(nbttagcompound1.getInteger("S")));
+          }
+       }
 -
--                if (gameprofile != null)
--                {
--                    this.field_82693_j.put(gameprofile.getName(), Integer.valueOf(nbttagcompound1.func_74762_e("S")));
--                }
-+                this.field_82693_j.put(UUID.fromString(nbttagcompound1.func_74779_i("UUID")), Integer.valueOf(nbttagcompound1.func_74762_e("S")));
++      if (compound.hasKey("ForgeCaps")) this.deserializeCaps(compound.getCompoundTag("ForgeCaps"));
+    }
+ 
+    public void writeVillageDataToNBT(NBTTagCompound compound) {
+@@ -396,14 +420,12 @@
+       compound.setTag("Doors", nbttaglist);
+       NBTTagList nbttaglist1 = new NBTTagList();
+ 
+-      for(String s : this.playerReputation.keySet()) {
++      for(UUID s : this.playerReputation.keySet()) {
+          NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+-         PlayerProfileCache playerprofilecache = this.world.getMinecraftServer().getPlayerProfileCache();
+ 
+          try {
+-            GameProfile gameprofile = playerprofilecache.getGameProfileForUsername(s);
+-            if (gameprofile != null) {
+-               nbttagcompound1.setString("UUID", gameprofile.getId().toString());
++            {
++               nbttagcompound1.setString("UUID", s.toString());
+                nbttagcompound1.setInteger("S", this.playerReputation.get(s));
+                nbttaglist1.add((INBTBase)nbttagcompound1);
              }
-             else
-             {
--                this.field_82693_j.put(nbttagcompound1.func_74779_i("Name"), Integer.valueOf(nbttagcompound1.func_74762_e("S")));
-+                //World is never set here, so this will always be offline UUIDs, sadly there is no way to convert this.
-+                this.field_82693_j.put(findUUID(nbttagcompound1.func_74779_i("Name")), Integer.valueOf(nbttagcompound1.func_74762_e("S")));
-             }
-         }
-+        if (this.capabilities != null && p_82690_1_.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(p_82690_1_.func_74775_l("ForgeCaps"));
-     }
+@@ -413,6 +435,8 @@
+       }
  
-     public void func_82689_b(NBTTagCompound p_82689_1_)
-@@ -507,18 +532,14 @@
-         p_82689_1_.func_74782_a("Doors", nbttaglist);
-         NBTTagList nbttaglist1 = new NBTTagList();
+       compound.setTag("Players", nbttaglist1);
++      NBTTagCompound capTag = this.serializeCaps();
++      if (capTag != null) compound.setTag("ForgeCaps", capTag);
+    }
  
--        for (String s : this.field_82693_j.keySet())
-+        for (UUID s : this.field_82693_j.keySet())
-         {
-             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
--            PlayerProfileCache playerprofilecache = this.field_75586_a.func_73046_m().func_152358_ax();
+    public void endMatingSeason() {
+@@ -424,7 +448,7 @@
+    }
  
-             try
-             {
--                GameProfile gameprofile = playerprofilecache.func_152655_a(s);
--
--                if (gameprofile != null)
-                 {
--                    nbttagcompound1.func_74778_a("UUID", gameprofile.getId().toString());
-+                    nbttagcompound1.func_74778_a("UUID", s.toString());
-                     nbttagcompound1.func_74768_a("S", ((Integer)this.field_82693_j.get(s)).intValue());
-                     nbttaglist1.func_74742_a(nbttagcompound1);
-                 }
-@@ -530,6 +551,7 @@
-         }
+    public void setDefaultPlayerReputation(int defaultReputation) {
+-      for(String s : this.playerReputation.keySet()) {
++      for(UUID s : this.playerReputation.keySet()) {
+          this.modifyPlayerReputation(s, defaultReputation);
+       }
  
-         p_82689_1_.func_74782_a("Players", nbttaglist1);
-+        if (this.capabilities != null) p_82689_1_.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
-     }
- 
-     public void func_82692_h()
-@@ -544,9 +566,9 @@
- 
-     public void func_82683_b(int p_82683_1_)
-     {
--        for (String s : this.field_82693_j.keySet())
-+        for (UUID s : this.field_82693_j.keySet())
-         {
--            this.func_82688_a(s, p_82683_1_);
-+            this.modifyPlayerReputation(s, p_82683_1_);
-         }
-     }
- 
-@@ -561,4 +583,31 @@
-             this.field_75590_b = p_i1674_3_;
-         }
-     }
-+
-+    /* ======================================== FORGE START =====================================*/
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
-+    {
-+        return capabilities == null ? false : capabilities.hasCapability(capability, facing);
-+    }
-+
-+    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
-+    {
-+        return capabilities == null ? null : capabilities.getCapability(capability, facing);
-+    }
-+
-+    public void deserializeNBT(NBTTagCompound nbt)
-+    {
-+        this.func_82690_a(nbt);;
-+    }
-+
-+    public NBTTagCompound serializeNBT()
-+    {
-+        NBTTagCompound ret = new NBTTagCompound();
-+        this.func_82689_b(ret);
-+        return ret;
-+    }
-+
-+    /* ========================================= FORGE END ======================================*/
- }

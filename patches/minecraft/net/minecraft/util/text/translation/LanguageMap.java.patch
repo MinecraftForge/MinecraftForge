@@ -1,54 +1,42 @@
---- ../src-base/minecraft/net/minecraft/util/text/translation/LanguageMap.java
-+++ ../src-work/minecraft/net/minecraft/util/text/translation/LanguageMap.java
-@@ -23,9 +23,29 @@
+--- a/net/minecraft/util/text/translation/LanguageMap.java
++++ b/net/minecraft/util/text/translation/LanguageMap.java
+@@ -26,21 +26,34 @@
+    private long lastUpdateTimeInMilliseconds;
  
-     public LanguageMap()
-     {
-+        InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
-+        inject(this, inputstream);
-+    }
+    public LanguageMap() {
+-      try {
+          InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.json");
++         injectLanguage(this, inputstream);
++   }
 +
-+    public static void inject(InputStream inputstream)
-+    {
-+        inject(field_74817_a, inputstream);
-+    }
++   public static void injectLanguage(InputStream inputStream){
++      injectLanguage(field_197636_c, inputStream);
++   }
 +
-+    private static void inject(LanguageMap inst, InputStream inputstream)
-+    {
-+        Map<String, String> map = parseLangFile(inputstream);
-+        inst.field_74816_c.putAll(map);
-+        inst.field_150511_e = System.currentTimeMillis();
-+    }
++   private static void injectLanguage(LanguageMap inst, InputStream inputStream){
++      final Map<String, String> map = parseLanguageFile(inputStream);
++      inst.languageList.putAll(map);
++      inst.lastUpdateTimeInMilliseconds = System.currentTimeMillis();
++   }
 +
-+    public static Map<String, String> parseLangFile(InputStream inputstream)
-+    {
-+        Map<String, String> table = Maps.newHashMap();
-         try
-         {
--            InputStream inputstream = LanguageMap.class.getResourceAsStream("/assets/minecraft/lang/en_us.lang");
-+            inputstream = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(table, inputstream);
-+            if (inputstream == null) return table;
++   private static Map<String, String> parseLanguageFile(InputStream inputstream) {
++      Map<String,String> languageList = Maps.newHashMap();
++      try {
+          JsonElement jsonelement = (JsonElement)(new Gson()).fromJson(new InputStreamReader(inputstream, StandardCharsets.UTF_8), JsonElement.class);
+          JsonObject jsonobject = JsonUtils.getJsonObject(jsonelement, "strings");
  
-             for (String s : IOUtils.readLines(inputstream, StandardCharsets.UTF_8))
-             {
-@@ -37,17 +57,18 @@
-                     {
-                         String s1 = astring[0];
-                         String s2 = field_111053_a.matcher(astring[1]).replaceAll("%$1s");
--                        this.field_74816_c.put(s1, s2);
-+                        table.put(s1, s2);
-                     }
-                 }
-             }
+          for(Entry<String, JsonElement> entry : jsonobject.entrySet()) {
+             String s = NUMERIC_VARIABLE_PATTERN.matcher(JsonUtils.getString(entry.getValue(), entry.getKey())).replaceAll("%$1s");
+-            this.languageList.put(entry.getKey(), s);
++            languageList.put(entry.getKey(), s);
+          }
+-
+-         this.lastUpdateTimeInMilliseconds = Util.func_211177_b();
+       } catch (JsonParseException jsonparseexception) {
+          field_201045_a.error("Couldn't read strings from /assets/minecraft/lang/en_us.json", (Throwable)jsonparseexception);
+       }
+-
++      return languageList;
+    }
  
--            this.field_150511_e = System.currentTimeMillis();
-         }
-         catch (IOException var7)
-         {
-             ;
-         }
-+        catch (Exception ex) {}
-+        return table;
-     }
- 
-     static LanguageMap func_74808_a()
+    public static LanguageMap getInstance() {

@@ -40,20 +40,20 @@ import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -141,7 +141,7 @@ public class MapDataTest
 
         // copy of super with own map prefix and type
         @Nullable
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         public static CustomMapData loadMapData(int mapId, World worldIn)
         {
             String s = PREFIX + "_" + mapId;
@@ -237,7 +237,7 @@ public class MapDataTest
     {
         @Nullable
         @Override
-        public IMessage onMessage(CustomMapPacket message, MessageContext ctx)
+        public IMessage onMessage(CustomMapPacket message, NetworkEvent.Context ctx)
         {
             // Like NetHandlerPlayClient.handleMaps but using our custom type
             Minecraft.getMinecraft().addScheduledTask(new Runnable() {

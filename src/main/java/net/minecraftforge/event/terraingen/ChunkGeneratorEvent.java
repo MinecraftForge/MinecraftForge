@@ -19,23 +19,23 @@
 
 package net.minecraftforge.event.terraingen;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
+import net.minecraft.world.gen.IChunkGenSettings;
 import net.minecraft.world.gen.IChunkGenerator;
 
-public class ChunkGeneratorEvent extends Event
+public class ChunkGeneratorEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final IChunkGenerator gen;
+    private final IChunkGenerator<? extends IChunkGenSettings> gen;
 
-    public ChunkGeneratorEvent(IChunkGenerator gen)
+    public ChunkGeneratorEvent(IChunkGenerator<? extends IChunkGenSettings> gen)
     {
         this.gen = gen;
     }
 
-    public IChunkGenerator getGenerator() { return this.getGen(); }
+    public IChunkGenerator<? extends IChunkGenSettings> getGenerator() { return this.getGen(); }
 
-    public IChunkGenerator getGen()
+    public IChunkGenerator<? extends IChunkGenSettings> getGen()
     {
         return gen;
     }
@@ -54,7 +54,7 @@ public class ChunkGeneratorEvent extends Event
         private final ChunkPrimer primer;
         private final World world; // CAN BE NULL
 
-        public ReplaceBiomeBlocks(IChunkGenerator chunkProvider, int x, int z, ChunkPrimer primer, World world)
+        public ReplaceBiomeBlocks(IChunkGenerator<? extends IChunkGenSettings> chunkProvider, int x, int z, ChunkPrimer primer, World world)
         {
             super(chunkProvider);
             this.x = x;
@@ -85,7 +85,7 @@ public class ChunkGeneratorEvent extends Event
         private final int sizeY;
         private final int sizeZ;
 
-        public InitNoiseField(IChunkGenerator chunkProvider, double[] noisefield, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ)
+        public InitNoiseField(IChunkGenerator<? extends IChunkGenSettings> chunkProvider, double[] noisefield, int posX, int posY, int posZ, int sizeX, int sizeY, int sizeZ)
         {
             super(chunkProvider);
             this.setNoisefield(noisefield);

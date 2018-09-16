@@ -1,52 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="net.minecraftforge.server.terminalconsole.util">
+<Configuration status="WARN" packages="com.mojang.util">
     <Appenders>
+        <Console name="FmlSysOut" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%marker]: %msg%n" />
+        </Console>
         <Console name="SysOut" target="SYSTEM_OUT">
-            <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n">
-                    <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %msg%n"/>
-                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %msg%n"/>
-                </LoggerNamePatternSelector>
-            </PatternLayout>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
         </Console>
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
-            <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n">
-                    <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %msg%n"/>
-                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %msg%n"/>
-                </LoggerNamePatternSelector>
-            </PatternLayout>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
+            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level]: %msg%n" />
             <Policies>
-                <TimeBasedTriggeringPolicy/>
-                <OnStartupTriggeringPolicy/>
+                <TimeBasedTriggeringPolicy />
+                <OnStartupTriggeringPolicy />
             </Policies>
         </RollingRandomAccessFile>
-        <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.gz">
-            <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n"/>
-            <Policies>
-                <OnStartupTriggeringPolicy/>
-                <SizeBasedTriggeringPolicy size="200MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="5" fileIndex="min"/>
-        </RollingRandomAccessFile>
+        <Routing name="FmlFile">
+            <Routes pattern="$${ctx:side}">
+                <Route>
+                    <RollingRandomAccessFile name="FmlFile" fileName="logs/fml-${ctx:side}-latest.log" filePattern="logs/fml-${ctx:side}-%i.log">
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger/%X{mod}]: %msg%n" />
+                        <DefaultRolloverStrategy max="3" fileIndex="max" />
+                        <Policies>
+                            <OnStartupTriggeringPolicy />
+                        </Policies>
+                    </RollingRandomAccessFile>
+                </Route>
+                <Route key="$${ctx:side}">
+                    <RandomAccessFile name="FmlFile" fileName="logs/fml-junk-earlystartup.log" >
+                        <PatternLayout pattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %msg%n" />
+                    </RandomAccessFile>
+                </Route>
+            </Routes>
+        </Routing>
     </Appenders>
     <Loggers>
-        <!-- make sure mojang's logging is set to 'info' so that their LOGGER.isDebugEnabled() behavior isn't active -->
-        <Logger level="${sys:forge.logging.mojang.level:-info}" name="com.mojang"/>
-        <Logger level="${sys:forge.logging.mojang.level:-info}" name="net.minecraft"/>
-        <Root level="all">
+        <Logger level="info" name="com.mojang" additivity="false">
+            <AppenderRef ref="SysOut" level="INFO" />
+            <AppenderRef ref="File" />
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
+        </Logger>
+        <Logger level="info" name="net.minecraft" additivity="false">
             <filters>
-                <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL" />
             </filters>
-            <AppenderRef ref="SysOut" level="${sys:forge.logging.console.level:-info}"/>
-            <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
-            <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
-            <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-trace}"/>
+            <AppenderRef ref="SysOut" level="INFO" />
+            <AppenderRef ref="File" />
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
+        </Logger>
+        <Root level="INFO">
+            <AppenderRef ref="FmlSysOut"/>
+            <AppenderRef ref="ServerGuiConsole" level="INFO" />
+            <AppenderRef ref="FmlFile"/>
         </Root>
     </Loggers>
 </Configuration>

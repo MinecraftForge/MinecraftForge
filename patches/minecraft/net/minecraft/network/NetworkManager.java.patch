@@ -1,61 +1,19 @@
---- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
-+++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
-@@ -88,6 +88,11 @@
-         this.field_179294_g = p_i46004_1_;
-     }
+--- a/net/minecraft/network/NetworkManager.java
++++ b/net/minecraft/network/NetworkManager.java
+@@ -383,6 +383,16 @@
+       return this.field_211397_t;
+    }
  
-+    public EnumPacketDirection getDirection()
-+    {
-+        return this.field_179294_g;
-+    }
++   public Channel channel()
++   {
++      return channel;
++   }
 +
-     public void channelActive(ChannelHandlerContext p_channelActive_1_) throws Exception
-     {
-         super.channelActive(p_channelActive_1_);
-@@ -204,7 +209,7 @@
-         final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
-         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
- 
--        if (enumconnectionstate1 != enumconnectionstate)
-+        if (enumconnectionstate1 != enumconnectionstate && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
-         {
-             field_150735_g.debug("Disabled auto read");
-             this.field_150746_k.config().setAutoRead(false);
-@@ -212,7 +217,7 @@
- 
-         if (this.field_150746_k.eventLoop().inEventLoop())
-         {
--            if (enumconnectionstate != enumconnectionstate1)
-+            if (enumconnectionstate != enumconnectionstate1 && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
-             {
-                 this.func_150723_a(enumconnectionstate);
-             }
-@@ -232,7 +237,7 @@
-             {
-                 public void run()
-                 {
--                    if (enumconnectionstate != enumconnectionstate1)
-+                    if (enumconnectionstate != enumconnectionstate1  && !( p_150732_1_ instanceof net.minecraftforge.fml.common.network.internal.FMLProxyPacket))
-                     {
-                         NetworkManager.this.func_150723_a(enumconnectionstate);
-                     }
-@@ -308,6 +313,7 @@
-     @SideOnly(Side.CLIENT)
-     public static NetworkManager func_181124_a(InetAddress p_181124_0_, int p_181124_1_, boolean p_181124_2_)
-     {
-+        if (p_181124_0_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
-         final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
-         Class <? extends SocketChannel > oclass;
-         LazyLoadBase <? extends EventLoopGroup > lazyloadbase;
-@@ -454,6 +460,11 @@
-         }
-     }
- 
-+    public Channel channel()
-+    {
-+        return field_150746_k;
-+    }
++   public EnumPacketDirection getDirection()
++   {
++      return this.direction;
++   }
 +
-     static class InboundHandlerTuplePacketListener
-         {
-             private final Packet<?> field_150774_a;
+    static class QueuedPacket {
+       private final Packet<?> packet;
+       @Nullable

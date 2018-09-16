@@ -24,7 +24,7 @@ import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "playersetspawntest", name = "Player Set Spawn Test", version = "0.0.0", acceptableRemoteVersions = "*")

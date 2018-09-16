@@ -19,11 +19,11 @@
 
 package net.minecraftforge.client.event.sound;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
 
-public class SoundEvent extends Event
+public class SoundEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final SoundManager manager;
     public SoundEvent(SoundManager manager)
@@ -45,7 +45,7 @@ public class SoundEvent extends Event
         public SoundSourceEvent(SoundManager manager, ISound sound, String uuid)
         {
             super(manager);
-            this.name = sound.getSoundLocation().getResourcePath();
+            this.name = sound.getSoundLocation().getPath();
             this.sound = sound;
             this.uuid = uuid;
         }

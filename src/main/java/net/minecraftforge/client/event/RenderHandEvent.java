@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.RenderGlobal;
 
 /**
@@ -30,8 +30,8 @@ import net.minecraft.client.renderer.RenderGlobal;
  * and prevents {@link RenderSpecificHandEvent} from firing.
  * TODO This may get merged in 11 with RenderSpecificHandEvent to make a generic hand rendering
  */
-@Cancelable
-public class RenderHandEvent extends Event
+@net.minecraftforge.eventbus.api.Cancelable
+public class RenderHandEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final RenderGlobal context;
     private final float partialTicks;

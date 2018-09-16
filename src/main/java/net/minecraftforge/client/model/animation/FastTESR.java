@@ -27,14 +27,14 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 
-public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRenderer<T>
+public abstract class FastTESR<T extends TileEntity> extends TileEntityRenderer<T>
 {
     @Override
-    public final void render(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial)
+    public final void func_199341_a(T te, double x, double y, double z, float partialTicks, int destroyStage)
     {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
@@ -55,7 +55,7 @@ public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRe
 
         buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
 
-        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, partial, buffer);
+        renderTileEntityFast(te, x, y, z, partialTicks, destroyStage, buffer);
         buffer.setTranslation(0, 0, 0);
 
         tessellator.draw();
@@ -64,5 +64,5 @@ public abstract class FastTESR<T extends TileEntity> extends TileEntitySpecialRe
     }
 
     @Override
-    public abstract void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, float partial, BufferBuilder buffer);
+    public abstract void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, BufferBuilder buffer);
 }

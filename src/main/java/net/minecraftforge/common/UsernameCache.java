@@ -19,30 +19,31 @@
 
 package net.minecraftforge.common;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Charsets;
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.io.Files;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-
-import net.minecraftforge.fml.relauncher.FMLInjectionData;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 /**
  * Caches player's last known usernames
@@ -54,19 +55,18 @@ import net.minecraftforge.fml.relauncher.FMLInjectionData;
  */
 public final class UsernameCache {
 
-    private static Map<UUID, String> map = Maps.newHashMap();
+    private static Map<UUID, String> map = new HashMap<>();
 
-    private static final Charset charset = StandardCharsets.UTF_8;
-
-    private static final File saveFile = new File( /* The minecraft dir */(File) FMLInjectionData.data()[6], "usernamecache.json");
+    private static final Path saveFile = FMLLoader.getGamePath().resolve("usernamecache.json");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID + ".UsernameCache");
+    private static final Logger LOGGER = LogManager.getLogger(UsernameCache.class);
+    private static final Marker USRCACHE = MarkerManager.getMarker("USERNAMECACHE");
 
     private UsernameCache() {}
 
     /**
-     * Set a player's current username
+     * Set a player's current usernamee
      *
      * @param uuid
      *            the player's {@link java.util.UUID UUID}
@@ -75,8 +75,8 @@ public final class UsernameCache {
      */
     protected static void setUsername(UUID uuid, String username)
     {
-        checkNotNull(uuid);
-        checkNotNull(username);
+        Objects.requireNonNull(uuid);
+        Objects.requireNonNull(username);
 
         if (username.equals(map.get(uuid))) return;
 
@@ -93,7 +93,7 @@ public final class UsernameCache {
      */
     protected static boolean removeUsername(UUID uuid)
     {
-        checkNotNull(uuid);
+        Objects.requireNonNull(uuid);
 
         if (map.remove(uuid) != null)
         {
@@ -117,7 +117,7 @@ public final class UsernameCache {
     @Nullable
     public static String getLastKnownUsername(UUID uuid)
     {
-        checkNotNull(uuid);
+        Objects.requireNonNull(uuid);
         return map.get(uuid);
     }
 
@@ -130,7 +130,7 @@ public final class UsernameCache {
      */
     public static boolean containsUUID(UUID uuid)
     {
-        checkNotNull(uuid);
+        Objects.requireNonNull(uuid);
         return map.containsKey(uuid);
     }
 
@@ -157,32 +157,32 @@ public final class UsernameCache {
      */
     protected static void load()
     {
-        if (!saveFile.exists()) return;
+        if (!Files.exists(saveFile)) return;
 
-        try
+        try (final BufferedReader reader = Files.newBufferedReader(saveFile, Charsets.UTF_8))
         {
-
-            String json = Files.toString(saveFile, charset);
-            Type type = new TypeToken<Map<UUID, String>>() { private static final long serialVersionUID = 1L; }.getType();
-
-            map = gson.fromJson(json, type);
+            @SuppressWarnings("serial")
+            Type type = new TypeToken<Map<UUID, String>>(){}.getType();
+            map = gson.fromJson(reader, type);
         }
-        catch (JsonSyntaxException e)
+        catch (JsonSyntaxException | IOException e)
         {
-            log.error("Could not parse username cache file as valid json, deleting file", e);
-            saveFile.delete();
-        }
-        catch (IOException e)
-        {
-            log.error("Failed to read username cache file from disk, deleting file", e);
-            saveFile.delete();
+            LOGGER.error(USRCACHE,"Could not parse username cache file as valid json, deleting file {}", saveFile, e);
+            try
+            {
+                Files.delete(saveFile);
+            }
+            catch (IOException e1)
+            {
+                LOGGER.error(USRCACHE,"Could not delete file {}", saveFile.toString());
+            }
         }
         finally
         {
             // Can sometimes occur when the json file is malformed
             if (map == null)
             {
-                map = Maps.newHashMap();
+                map = new HashMap<>();
             }
         }
     }
@@ -209,12 +209,12 @@ public final class UsernameCache {
                 // Make sure we don't save when another thread is still saving
                 synchronized (saveFile)
                 {
-                    Files.write(data, saveFile, charset);
+                    Files.write(saveFile, data.getBytes(StandardCharsets.UTF_8));
                 }
             }
             catch (IOException e)
             {
-                log.error("Failed to save username cache to file!", e);
+                LOGGER.error(USRCACHE, "Failed to save username cache to file!", e);
             }
         }
     }

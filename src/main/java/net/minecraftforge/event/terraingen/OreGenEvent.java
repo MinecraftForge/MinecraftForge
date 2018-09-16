@@ -23,16 +23,16 @@ import java.util.Random;
 
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 
 /**
  * OreGenEvent is fired when an event involving ore generation occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #world} contains the world this event is occurring in.<br>
@@ -74,7 +74,7 @@ public class OreGenEvent extends Event
      * This event is fired just before ore generation in
      * {@link BiomeDecorator#generateOres(World, Random)}.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
@@ -93,7 +93,7 @@ public class OreGenEvent extends Event
      * This event is fired just after ore generation in
      * {@link BiomeDecorator#generateOres(World, Random)}.<br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
      * This event does not have a result. {@link HasResult} <br>
      * <br>
@@ -115,7 +115,7 @@ public class OreGenEvent extends Event
      * {@link #type} contains the enum value for the Ore attempting to be generated.<br>
      * {@link #generator} contains the WorldGenerator generating this ore. <br>
      * <br>
-     * This event is not {@link Cancelable}.<br>
+     * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
      * <br>
      * This event has a result. {@link HasResult} <br>
      * This result determines whether the ore is allowed to be generated.<br>

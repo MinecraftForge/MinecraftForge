@@ -1,363 +1,302 @@
---- ../src-base/minecraft/net/minecraft/item/ItemStack.java
-+++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -50,7 +50,7 @@
- import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+--- a/net/minecraft/item/ItemStack.java
++++ b/net/minecraft/item/ItemStack.java
+@@ -63,7 +63,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
--public final class ItemStack
-+public final class ItemStack implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>
- {
-     public static final ItemStack field_190927_a = new ItemStack((Item)null);
-     public static final DecimalFormat field_111284_a = new DecimalFormat("#.##");
-@@ -66,6 +66,10 @@
-     private Block field_179550_j;
-     private boolean field_179551_k;
+-public final class ItemStack {
++public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>, net.minecraftforge.common.extensions.IForgeItemStack {
+    private static final Logger field_199558_c = LogManager.getLogger();
+    public static final ItemStack EMPTY = new ItemStack((Item)null);
+    public static final DecimalFormat DECIMALFORMAT = func_208306_D();
+@@ -79,6 +79,9 @@
+    private BlockWorldState canPlaceOnCacheBlock;
+    private boolean canPlaceOnCacheResult;
  
-+    private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
-+    private net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
-+    private NBTTagCompound capNBT;
++   private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
++   private NBTTagCompound capNBT;
 +
-     public ItemStack(Block p_i1876_1_)
-     {
-         this(p_i1876_1_, 1);
-@@ -91,8 +95,10 @@
-         this(p_i1880_1_, p_i1880_2_, 0);
-     }
+    private static DecimalFormat func_208306_D() {
+       DecimalFormat decimalformat = new DecimalFormat("#.##");
+       decimalformat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ROOT));
+@@ -89,10 +92,13 @@
+       this(p_i48203_1_, 1);
+    }
  
--    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_)
-+    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_){ this(p_i1881_1_, p_i1881_2_, p_i1881_3_, null); }
-+    public ItemStack(Item p_i1881_1_, int p_i1881_2_, int p_i1881_3_, @Nullable NBTTagCompound capNBT)
-     {
-+        this.capNBT = capNBT;
-         this.field_151002_e = p_i1881_1_;
-         this.field_77991_e = p_i1881_3_;
-         this.field_77994_a = p_i1881_2_;
-@@ -103,6 +109,7 @@
-         }
+-   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_) {
++   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_){ this(p_i48204_1_, p_i48204_2_, null); }
++   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_, @Nullable NBTTagCompound capNBT) {
++      this.capNBT = capNBT;
+       this.item = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
+       this.stackSize = p_i48204_2_;
+       this.updateEmptyState();
++      this.forgeInit();
+    }
  
-         this.func_190923_F();
-+        this.forgeInit();
-     }
+    private void updateEmptyState() {
+@@ -101,6 +107,7 @@
+    }
  
-     private void func_190923_F()
-@@ -112,7 +119,8 @@
+    private ItemStack(NBTTagCompound compound) {
++      this.capNBT = compound.hasKey("ForgeCaps") ? compound.getCompoundTag("ForgeCaps") : null;
+       Item item = Item.REGISTRY.getObject(new ResourceLocation(compound.getString("id")));
+       this.item = item == null ? Items.AIR : item;
+       this.stackSize = compound.getByte("Count");
+@@ -114,6 +121,7 @@
+       }
  
-     public ItemStack(NBTTagCompound p_i47263_1_)
-     {
--        this.field_151002_e = Item.func_111206_d(p_i47263_1_.func_74779_i("id"));
-+        this.capNBT = p_i47263_1_.func_74764_b("ForgeCaps") ? p_i47263_1_.func_74775_l("ForgeCaps") : null;
-+        this.field_151002_e = p_i47263_1_.func_150297_b("id", 8) ? Item.func_111206_d(p_i47263_1_.func_74779_i("id")) : Items.field_190931_a; //Forge fix tons of NumberFormatExceptions that are caused by deserializing EMPTY ItemStacks.
-         this.field_77994_a = p_i47263_1_.func_74771_c("Count");
-         this.field_77991_e = Math.max(0, p_i47263_1_.func_74765_d("Damage"));
+       this.updateEmptyState();
++      this.forgeInit();
+    }
  
-@@ -127,6 +135,7 @@
-         }
+    public static ItemStack func_199557_a(NBTTagCompound p_199557_0_) {
+@@ -128,7 +136,7 @@
+    public boolean isEmpty() {
+       if (this == EMPTY) {
+          return true;
+-      } else if (this.getItem() != null && this.getItem() != Items.AIR) {
++      } else if (this.getItemRaw() != null && this.getItemRaw() != Items.AIR) {
+          return this.stackSize <= 0;
+       } else {
+          return true;
+@@ -144,10 +152,11 @@
+    }
  
-         this.func_190923_F();
-+        this.forgeInit();
-     }
+    public Item getItem() {
+-      return this.isEmpty ? Items.AIR : this.item;
++      return this.isEmpty || this.delegate == null ? Items.AIR : this.delegate.get();
+    }
  
-     public boolean func_190926_b()
-@@ -135,7 +144,7 @@
-         {
-             return true;
-         }
--        else if (this.field_151002_e != null && this.field_151002_e != Item.func_150898_a(Blocks.field_150350_a))
-+        else if (this.getItemRaw() != null && this.getItemRaw() != Items.field_190931_a)
-         {
-             if (this.field_77994_a <= 0)
-             {
-@@ -169,11 +178,12 @@
+    public EnumActionResult func_196084_a(ItemUseContext p_196084_1_) {
++      if (!p_196084_1_.field_196006_g.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
+       EntityPlayer entityplayer = p_196084_1_.func_195999_j();
+       BlockPos blockpos = p_196084_1_.func_195995_a();
+       BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);
+@@ -164,6 +173,23 @@
+       }
+    }
  
-     public Item func_77973_b()
-     {
--        return this.field_190928_g ? Item.func_150898_a(Blocks.field_150350_a) : this.field_151002_e;
-+        return this.field_190928_g || this.delegate == null ? Items.field_190931_a : this.delegate.get();
-     }
- 
-     public EnumActionResult func_179546_a(EntityPlayer p_179546_1_, World p_179546_2_, BlockPos p_179546_3_, EnumHand p_179546_4_, EnumFacing p_179546_5_, float p_179546_6_, float p_179546_7_, float p_179546_8_)
-     {
-+        if (!p_179546_2_.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(this, p_179546_1_, p_179546_2_, p_179546_3_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_, p_179546_4_);
-         EnumActionResult enumactionresult = this.func_77973_b().func_180614_a(p_179546_1_, p_179546_2_, p_179546_3_, p_179546_4_, p_179546_5_, p_179546_6_, p_179546_7_, p_179546_8_);
- 
-         if (enumactionresult == EnumActionResult.SUCCESS)
-@@ -184,6 +194,19 @@
-         return enumactionresult;
-     }
- 
-+    public EnumActionResult onItemUseFirst(EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
-+    {
-+        // copy of onitemuse but for onitemusefirst
-+        EnumActionResult enumactionresult = this.func_77973_b().onItemUseFirst(playerIn, worldIn, pos, side, hitX, hitY, hitZ, hand);
++   public EnumActionResult onItemUseFirst(ItemUseContext p_196084_1_) {
++      EntityPlayer entityplayer = p_196084_1_.func_195999_j();
++      BlockPos blockpos = p_196084_1_.func_195995_a();
++      BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);
++      if (entityplayer != null && !entityplayer.capabilities.allowEdit && !this.func_206847_b(p_196084_1_.func_195991_k().func_205772_D(), blockworldstate)) {
++         return EnumActionResult.PASS;
++      } else {
++         Item item = this.getItem();
++         EnumActionResult enumactionresult = item.onItemUseFirst(p_196084_1_);
++         if (entityplayer != null && enumactionresult == EnumActionResult.SUCCESS) {
++            entityplayer.addStat(StatList.OBJECT_USE_STATS.func_199076_b(item));
++         }
 +
-+        if (enumactionresult == EnumActionResult.SUCCESS)
-+        {
-+            playerIn.func_71029_a(StatList.func_188057_b(this.field_151002_e));
-+        }
++         return enumactionresult;
++      }
++   }
 +
-+        return enumactionresult;
-+    }
-+
-     public float func_150997_a(IBlockState p_150997_1_)
-     {
-         return this.func_77973_b().func_150893_a(this, p_150997_1_);
-@@ -211,12 +234,18 @@
-             p_77955_1_.func_74782_a("tag", this.field_77990_d);
-         }
- 
-+        if (this.capabilities != null)
-+        {
-+            NBTTagCompound cnbt = this.capabilities.serializeNBT();
-+            if (!cnbt.func_82582_d()) p_77955_1_.func_74782_a("ForgeCaps", cnbt);
-+        }
-+
-         return p_77955_1_;
-     }
- 
-     public int func_77976_d()
-     {
--        return this.func_77973_b().func_77639_j();
-+        return this.func_77973_b().getItemStackLimit(this);
-     }
- 
-     public boolean func_77985_e()
-@@ -230,7 +259,7 @@
-         {
-             return false;
-         }
--        else if (this.field_151002_e.func_77612_l() <= 0)
-+        else if (this.field_151002_e.getMaxDamage(this) <= 0)
-         {
-             return false;
-         }
-@@ -247,32 +276,27 @@
- 
-     public boolean func_77951_h()
-     {
--        return this.func_77984_f() && this.field_77991_e > 0;
-+        return this.func_77984_f() && func_77973_b().isDamaged(this);
-     }
- 
-     public int func_77952_i()
-     {
--        return this.field_77991_e;
-+        return func_77973_b().getDamage(this);
-     }
- 
-     public int func_77960_j()
-     {
--        return this.field_77991_e;
-+        return func_77973_b().getMetadata(this);
-     }
- 
-     public void func_77964_b(int p_77964_1_)
-     {
--        this.field_77991_e = p_77964_1_;
+    public float getDestroySpeed(IBlockState blockIn) {
+       return this.getItem().getDestroySpeed(this, blockIn);
+    }
+@@ -183,12 +209,15 @@
+       if (this.stackTagCompound != null) {
+          nbt.setTag("tag", this.stackTagCompound);
+       }
 -
--        if (this.field_77991_e < 0)
--        {
--            this.field_77991_e = 0;
--        }
-+        func_77973_b().setDamage(this, p_77964_1_);
-     }
++      NBTTagCompound cnbt = this.serializeCaps();
++      if (cnbt != null && !cnbt.isEmpty()) {
++         nbt.setTag("ForgeCaps", cnbt);
++      }
+       return nbt;
+    }
  
-     public int func_77958_k()
-     {
--        return this.func_77973_b().func_77612_l();
-+        return this.func_77973_b().getMaxDamage(this);
-     }
+    public int getMaxStackSize() {
+-      return this.getItem().getItemStackLimit();
++      return this.getItem().getItemStackLimit(this);
+    }
  
-     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable EntityPlayerMP p_96631_3_)
-@@ -309,8 +333,8 @@
-                 CriteriaTriggers.field_193132_s.func_193158_a(p_96631_3_, this, this.field_77991_e + p_96631_1_);
+    public boolean isStackable() {
+@@ -196,7 +225,7 @@
+    }
+ 
+    public boolean isItemStackDamageable() {
+-      if (!this.isEmpty && this.getItem().getMaxDamage() > 0) {
++      if (!this.isEmpty && this.getItem().getMaxDamage(this) > 0) {
+          NBTTagCompound nbttagcompound = this.getTagCompound();
+          return nbttagcompound == null || !nbttagcompound.getBoolean("Unbreakable");
+       } else {
+@@ -205,19 +234,19 @@
+    }
+ 
+    public boolean isItemDamaged() {
+-      return this.isItemStackDamageable() && this.getItemDamage() > 0;
++      return this.isItemStackDamageable() && getItem().isDamaged(this);
+    }
+ 
+-   public int getItemDamage() {
+-      return this.stackTagCompound == null ? 0 : this.stackTagCompound.getInteger("Damage");
++   public int getItemDamage() { // TODO evaluate the necessity of this patch
++      return this.getItem().getDamage(this);
+    }
+ 
+    public void func_196085_b(int p_196085_1_) {
+-      this.func_196082_o().setInteger("Damage", Math.max(0, p_196085_1_));
++      getItem().setDamage(this, p_196085_1_);
+    }
+ 
+    public int getMaxDamage() {
+-      return this.getItem().getMaxDamage();
++      return this.getItem().getMaxDamage(this);
+    }
+ 
+    public boolean attemptDamageItem(int amount, Random rand, @Nullable EntityPlayerMP damager) {
+@@ -285,7 +314,7 @@
+    }
+ 
+    public boolean canHarvestBlock(IBlockState blockIn) {
+-      return this.getItem().canHarvestBlock(blockIn);
++      return this.getItem().canHarvestBlock(blockIn, this);
+    }
+ 
+    public boolean interactWithEntity(EntityPlayer playerIn, EntityLivingBase entityIn, EnumHand hand) {
+@@ -293,7 +322,7 @@
+    }
+ 
+    public ItemStack copy() {
+-      ItemStack itemstack = new ItemStack(this.getItem(), this.stackSize);
++      ItemStack itemstack = new ItemStack(this.getItem(), this.stackSize, this.serializeCaps());
+       itemstack.setAnimationsToGo(this.getAnimationsToGo());
+       if (this.stackTagCompound != null) {
+          itemstack.stackTagCompound = this.stackTagCompound.copy();
+@@ -309,7 +338,7 @@
+          if (stackA.stackTagCompound == null && stackB.stackTagCompound != null) {
+             return false;
+          } else {
+-            return stackA.stackTagCompound == null || stackA.stackTagCompound.equals(stackB.stackTagCompound);
++            return stackA.stackTagCompound == null || stackA.stackTagCompound.equals(stackB.stackTagCompound) && stackA.areCapsCompatible(stackB);
+          }
+       } else {
+          return false;
+@@ -332,7 +361,7 @@
+       } else if (this.stackTagCompound == null && other.stackTagCompound != null) {
+          return false;
+       } else {
+-         return this.stackTagCompound == null || this.stackTagCompound.equals(other.stackTagCompound);
++         return this.stackTagCompound == null || this.stackTagCompound.equals(other.stackTagCompound) && this.areCapsCompatible(other);
+       }
+    }
+ 
+@@ -633,6 +662,7 @@
+          }
+       }
+ 
++      net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, playerIn, list, advanced);
+       return list;
+    }
+ 
+@@ -743,7 +773,7 @@
              }
+          }
+       } else {
+-         multimap = this.getItem().getItemAttributeModifiers(equipmentSlot);
++          multimap = this.getItem().getAttributeModifiers(equipmentSlot, this);
+       }
  
--            this.field_77991_e += p_96631_1_;
--            return this.field_77991_e > this.func_77958_k();
-+            func_77964_b(func_77952_i() + p_96631_1_); //Redirect through Item's callback if applicable.
-+            return func_77952_i() > func_77958_k();
-         }
-     }
- 
-@@ -359,7 +383,7 @@
- 
-     public boolean func_150998_b(IBlockState p_150998_1_)
-     {
--        return this.func_77973_b().func_150897_b(p_150998_1_);
-+        return this.func_77973_b().canHarvestBlock(p_150998_1_, this);
-     }
- 
-     public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_)
-@@ -369,7 +393,7 @@
- 
-     public ItemStack func_77946_l()
-     {
--        ItemStack itemstack = new ItemStack(this.field_151002_e, this.field_77994_a, this.field_77991_e);
-+        ItemStack itemstack = new ItemStack(this.field_151002_e, this.field_77994_a, this.field_77991_e, this.capabilities != null ? this.capabilities.serializeNBT() : null);
-         itemstack.func_190915_d(this.func_190921_D());
- 
-         if (this.field_77990_d != null)
-@@ -394,7 +418,7 @@
-             }
-             else
-             {
--                return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d);
-+                return (p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d)) && p_77970_0_.areCapsCompatible(p_77970_1_);
-             }
-         }
-         else
-@@ -435,7 +459,7 @@
-         }
-         else
-         {
--            return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d);
-+            return (this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d)) && this.areCapsCompatible(p_77959_1_);
-         }
-     }
- 
-@@ -862,6 +886,7 @@
-             }
-         }
- 
-+        net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, list, p_82840_2_);
-         return list;
-     }
- 
-@@ -987,7 +1012,7 @@
-         }
-         else
-         {
--            multimap = this.func_77973_b().func_111205_h(p_111283_1_);
-+            multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
-         }
- 
-         return multimap;
-@@ -1130,4 +1155,128 @@
-     {
-         this.func_190917_f(-p_190918_1_);
-     }
+       return multimap;
+@@ -874,4 +904,98 @@
+    public void shrink(int quantity) {
+       this.grow(-quantity);
+    }
 +
-+    @Override
-+    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
-+    {
-+        return this.field_190928_g  || this.capabilities == null ? false : this.capabilities.hasCapability(capability, facing);
-+    }
++   // FORGE START
 +
-+    @Override
-+    @Nullable
-+    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
-+    {
-+        return this.field_190928_g  || this.capabilities == null ? null : this.capabilities.getCapability(capability, facing);
-+    }
-+
-+    public void deserializeNBT(NBTTagCompound nbt)
-+    {
-+        // TODO do this better while respecting new rules
-+        final ItemStack itemStack = new ItemStack(nbt);
-+        this.field_77990_d = itemStack.field_77990_d;
-+        this.capNBT = itemStack.capNBT;
-+    }
-+
-+    public NBTTagCompound serializeNBT()
-+    {
-+        NBTTagCompound ret = new NBTTagCompound();
-+        this.func_77955_b(ret);
-+        return ret;
-+    }
-+
-+    public boolean areCapsCompatible(ItemStack other)
-+    {
-+        if (this.capabilities == null)
-+        {
-+            if (other.capabilities == null)
-+            {
-+                return true;
-+            }
-+            else
-+            {
-+                return other.capabilities.areCompatible(null);
-+            }
-+        }
-+        else
-+        {
-+            return this.capabilities.areCompatible(other.capabilities);
-+        }
-+    }
-+
-+    /**
-+     * Set up forge's ItemStack additions.
-+     */
-+    private void forgeInit()
-+    {
-+        Item item = getItemRaw();
-+        if (item != null)
-+        {
-+            this.delegate = item.delegate;
-+            net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
-+            this.capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this, provider);
-+            if (this.capNBT != null && this.capabilities != null) this.capabilities.deserializeNBT(this.capNBT);
-+        }
-+    }
-+
-+    /**
-+     * Internal call to get the actual item, not the delegate.
-+     * In all other methods, FML replaces calls to this.item with the item delegate.
-+     */
-+    @Nullable
-+    private Item getItemRaw()
-+    {
-+        return this.field_151002_e;
-+    }
-+
-+    /**
-+     * Modeled after ItemStack.areItemStacksEqual
-+     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
-+     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
-+     */
-+    public static boolean areItemStacksEqualUsingNBTShareTag(ItemStack stackA, ItemStack stackB)
-+    {
-+        if (stackA.func_190926_b())
-+            return stackB.func_190926_b();
-+        else
-+            return !stackB.func_190926_b() && stackA.isItemStackEqualUsingNBTShareTag(stackB);
-+    }
-+
-+    /**
-+     * Modeled after ItemStack.isItemStackEqual
-+     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
-+     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
-+     */
-+    private boolean isItemStackEqualUsingNBTShareTag(ItemStack other)
-+    {
-+        return this.field_77994_a == other.field_77994_a && this.func_77973_b() == other.func_77973_b() && this.field_77991_e == other.field_77991_e && areItemStackShareTagsEqual(this, other);
-+    }
-+
-+    /**
-+     * Modeled after ItemStack.areItemStackTagsEqual
-+     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
-+     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
-+     */
-+    public static boolean areItemStackShareTagsEqual(ItemStack stackA, ItemStack stackB)
-+    {
-+        NBTTagCompound shareTagA = stackA.func_77973_b().getNBTShareTag(stackA);
-+        NBTTagCompound shareTagB = stackB.func_77973_b().getNBTShareTag(stackB);
-+        if (shareTagA == null)
-+            return shareTagB == null;
-+        else
-+            return shareTagB != null && shareTagA.equals(shareTagB);
-+    }
-+
-+    /**
-+     *
-+     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
-+     *
-+     * @param world The world
-+     * @param pos Block position in world
-+     * @param player The Player that is wielding the item
-+     * @return
-+     */
-+    public boolean doesSneakBypassUse(net.minecraft.world.IBlockAccess world, BlockPos pos, EntityPlayer player)
-+    {
-+        return this.func_190926_b() || this.func_77973_b().doesSneakBypassUse(this, world, pos, player);
-+    }
++   public void deserializeNBT(NBTTagCompound nbt)
++   {
++       // TODO do this better while respecting new rules
++       final ItemStack itemStack = new ItemStack(nbt);
++       this.stackTagCompound = itemStack.stackTagCompound;
++       this.capNBT = itemStack.capNBT;
  }
++
++   public NBTTagCompound serializeNBT()
++   {
++       NBTTagCompound ret = new NBTTagCompound();
++       this.writeToNBT(ret);
++       return ret;
++   }
++
++   /**
++    * Set up forge's ItemStack additions.
++    */
++   private void forgeInit()
++   {
++       Item item = getItemRaw();
++       if (item != null)
++       {
++           this.delegate = item.delegate;
++           net.minecraftforge.common.capabilities.ICapabilityProvider provider = item.initCapabilities(this, this.capNBT);
++           this.gatherCapabilities(provider);
++           if (this.capNBT != null) deserializeCaps(this.capNBT);
++       }
++   }
++
++   /**
++    * Internal call to get the actual item, not the delegate.
++    * In all other methods, FML replaces calls to this.item with the item delegate.
++    */
++   @Nullable
++   private Item getItemRaw()
++   {
++       return this.item;
++   }
++
++   /**
++    * Modeled after ItemStack.areItemStacksEqual
++    * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++    * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++    */
++   public static boolean areItemStacksEqualUsingNBTShareTag(ItemStack stackA, ItemStack stackB)
++   {
++       if (stackA.isEmpty())
++           return stackB.isEmpty();
++       else
++           return !stackB.isEmpty() && stackA.isItemStackEqualUsingNBTShareTag(stackB);
++   }
++
++   /**
++    * Modeled after ItemStack.isItemStackEqual
++    * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++    * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++    */
++   private boolean isItemStackEqualUsingNBTShareTag(ItemStack other)
++   {
++       return this.stackSize == other.stackSize && this.getItem() == other.getItem() && areItemStackShareTagsEqual(this, other);
++   }
++
++   /**
++    * Modeled after ItemStack.areItemStackTagsEqual
++    * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
++    * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
++    */
++   public static boolean areItemStackShareTagsEqual(ItemStack stackA, ItemStack stackB)
++   {
++       NBTTagCompound shareTagA = stackA.getItem().getNBTShareTag(stackA);
++       NBTTagCompound shareTagB = stackB.getItem().getNBTShareTag(stackB);
++       if (shareTagA == null)
++           return shareTagB == null;
++       else
++           return shareTagB != null && shareTagA.equals(shareTagB);
++   }
++
++   /**
++    *
++    * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
++    *
++    * @param world The world
++    * @param pos Block position in world
++    * @param player The Player that is wielding the item
++    * @return
++    */
++   public boolean doesSneakBypassUse(net.minecraft.world.IWorldReader world, BlockPos pos, EntityPlayer player)
++   {
++       return this.isEmpty() || this.getItem().doesSneakBypassUse(this, world, pos, player);
++   }
++}

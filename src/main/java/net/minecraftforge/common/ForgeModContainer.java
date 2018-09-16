@@ -19,91 +19,13 @@
 
 package net.minecraftforge.common;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
-import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
-import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
+import net.minecraftforge.fml.ModLoadingClassLoader;
+import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.minecraftforge.fml.loading.DefaultModInfos;
 
-import java.io.File;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.cert.Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import net.minecraft.crash.ICrashReportDetail;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.StatList;
-import net.minecraft.world.storage.SaveHandler;
-import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.classloading.FMLForgePlugin;
-import net.minecraftforge.client.ForgeClientHandler;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
-import net.minecraftforge.common.model.animation.CapabilityAnimation;
-import net.minecraftforge.common.network.ForgeNetworkHandler;
-import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.fluids.UniversalBucket;
-import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.RecipeSorter;
-import net.minecraftforge.server.command.ForgeCommand;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
-
-import net.minecraftforge.fml.client.FMLFileResourcePack;
-import net.minecraftforge.fml.client.FMLFolderResourcePack;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
-import net.minecraftforge.fml.common.DummyModContainer;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.ICrashCallable;
-import net.minecraftforge.fml.common.LoadController;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.ModMetadata;
-import net.minecraftforge.fml.common.WorldAccessContainer;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.common.discovery.json.JsonAnnotationLoader;
-import net.minecraftforge.fml.common.event.FMLConstructionEvent;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-
-import javax.annotation.Nullable;
-
-@EventBusSubscriber(modid = "forge")
-public class ForgeModContainer extends DummyModContainer implements WorldAccessContainer
+public class ForgeModContainer extends FMLModContainer
 {
+/*
     public static final String VERSION_CHECK_CAT = "version_checking";
     public static int clumpingThreshold = 64;
     public static boolean removeErroringEntities = false;
@@ -159,7 +81,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         } catch (MalformedURLException e) {}
 
         config = null;
-        File cfgFile = new File(Loader.instance().getConfigDir(), "forge.cfg");
+        File cfgFile = new File(FMLPaths.FMLCONFIG.get().toFile(), "forge.cfg");
         config = new Configuration(cfgFile);
 
         syncConfig(true);
@@ -183,7 +105,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         ConfigCategory GENERAL = config.getCategory(CATEGORY_GENERAL);
         if (GENERAL.containsKey(key))
         {
-            FMLLog.log.debug("Remapping property {} from category general to client", key);
+            LOGGER.debug("Remapping property {} from category general to client", key);
             Property property = GENERAL.get(key);
             GENERAL.remove(key);
             config.getCategory(CATEGORY_CLIENT).put(key, property);
@@ -192,7 +114,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
     /**
      * Synchronizes the local fields with the values in the Configuration object.
-     */
+     * /
     private static void syncConfig(boolean load)
     {
         // By adding a property order list we are defining the order that the properties will appear both in the config file and on the GUIs.
@@ -260,7 +182,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         if (removeErroringEntities)
         {
-            FMLLog.log.warn("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
+            LOGGER.warn("Enabling removal of erroring Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "removeErroringTileEntities", false);
@@ -271,7 +193,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
 
         if (removeErroringTileEntities)
         {
-            FMLLog.log.warn("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
+            LOGGER.warn("Enabling removal of erroring Tile Entities - USE AT YOUR OWN RISK");
         }
 
         prop = config.get(Configuration.CATEGORY_GENERAL, "fullBoundingBoxLadders", false);
@@ -376,7 +298,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     /**
      * By subscribing to the OnConfigChangedEvent we are able to execute code when our config screens are closed.
      * This implementation uses the optional configID string to handle multiple Configurations using one event handler.
-     */
+     * /
     @SubscribeEvent
     public void onConfigChanged(OnConfigChangedEvent event)
     {
@@ -415,7 +337,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
         UsernameCache.setUsername(event.player.getPersistentID(), event.player.getGameProfile().getName());
@@ -491,7 +413,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public void registrItems(RegistryEvent.Register<Item> event)
     {
         // Add and register the forge universal bucket, if it's enabled
@@ -642,6 +564,12 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public URL getUpdateUrl()
     {
         return updateJSONUrl;
+    }
+
+    */
+    public ForgeModContainer(ModLoadingClassLoader classLoader)
+    {
+        super(DefaultModInfos.forgeModInfo, "net.minecraftforge.common.ForgeMod", classLoader, null);
     }
 
 }

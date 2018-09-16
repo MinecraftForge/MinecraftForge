@@ -24,10 +24,13 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import net.minecraft.crash.CrashReportCategory;
-import net.minecraftforge.fml.common.FMLLog;
 
 class ChunkIOThreadPoolExecutor extends ThreadPoolExecutor {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public ChunkIOThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory)
     {
@@ -41,14 +44,14 @@ class ChunkIOThreadPoolExecutor extends ThreadPoolExecutor {
         {
             try
             {
-                FMLLog.log.error("Unhandled exception loading chunk:", t);
+                LOGGER.error("Unhandled exception loading chunk:", t);
                 QueuedChunk queuedChunk = ((ChunkIOProvider) r).getChunkInfo();
-                FMLLog.log.error(queuedChunk);
-                FMLLog.log.error(CrashReportCategory.getCoordinateInfo(queuedChunk.x << 4, 64, queuedChunk.z << 4));
+                LOGGER.error(queuedChunk);
+                LOGGER.error(CrashReportCategory.getCoordinateInfo(queuedChunk.x << 4, 64, queuedChunk.z << 4));
             }
             catch (Throwable t2)
             {
-                FMLLog.log.error(t2);
+                LOGGER.error(t2);
             }
             finally
             {

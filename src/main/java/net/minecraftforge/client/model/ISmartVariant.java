@@ -19,8 +19,11 @@
 
 package net.minecraftforge.client.model;
 
+import net.minecraft.client.renderer.block.model.IUnbakedModel;
 
 public interface ISmartVariant
 {
-    IModel process(IModel base);
+    default IUnbakedModel process(IUnbakedModel base) {
+        return base;
+    }
 }

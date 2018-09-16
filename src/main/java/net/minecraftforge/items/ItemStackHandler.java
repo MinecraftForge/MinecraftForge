@@ -181,7 +181,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
                 NBTTagCompound itemTag = new NBTTagCompound();
                 itemTag.setInteger("Slot", i);
                 stacks.get(i).writeToNBT(itemTag);
-                nbtTagList.appendTag(itemTag);
+                nbtTagList.add(itemTag);
             }
         }
         NBTTagCompound nbt = new NBTTagCompound();
@@ -195,14 +195,14 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
     {
         setSize(nbt.hasKey("Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Size") : stacks.size());
         NBTTagList tagList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < tagList.tagCount(); i++)
+        for (int i = 0; i < tagList.size(); i++)
         {
             NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
             int slot = itemTags.getInteger("Slot");
 
             if (slot >= 0 && slot < stacks.size())
             {
-                stacks.set(slot, new ItemStack(itemTags));
+                stacks.set(slot, ItemStack.func_199557_a(itemTags));
             }
         }
         onLoad();

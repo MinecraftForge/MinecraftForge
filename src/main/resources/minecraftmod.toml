@@ -1,0 +1,6 @@
+modId="minecraft"
+version="${global.mcVersion}"
+displayName="Minecraft"
+description='''
+Minecraft, a modded story
+'''

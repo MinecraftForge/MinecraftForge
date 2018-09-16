@@ -21,7 +21,7 @@ package net.minecraftforge.fluids.capability;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -49,7 +49,7 @@ public class CapabilityFluidHandler
 
     private static class DefaultFluidHandlerStorage<T extends IFluidHandler> implements Capability.IStorage<T> {
         @Override
-		public NBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side)
+		public INBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side)
 		{
 			if (!(instance instanceof IFluidTank))
 				throw new RuntimeException("IFluidHandler instance does not implement IFluidTank");
@@ -69,7 +69,7 @@ public class CapabilityFluidHandler
 		}
 
         @Override
-		public void readNBT(Capability<T> capability, T instance, EnumFacing side, NBTBase nbt)
+		public void readNBT(Capability<T> capability, T instance, EnumFacing side, INBTBase nbt)
 		{
 			if (!(instance instanceof FluidTank))
 				throw new RuntimeException("IFluidHandler instance is not instance of FluidTank");

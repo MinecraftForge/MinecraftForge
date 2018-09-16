@@ -128,8 +128,8 @@ import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nonnull;
@@ -328,9 +328,9 @@ public class ForgeEventFactory
         return event.getNewState();
     }
 
-    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, @Nullable EntityPlayer entityPlayer, List<String> toolTip, ITooltipFlag flags)
+    public static ItemTooltipEvent onItemTooltip(ItemStack itemStack, @Nullable EntityPlayer entityPlayer, List<ITextComponent> list, ITooltipFlag flags)
     {
-        ItemTooltipEvent event = new ItemTooltipEvent(itemStack, entityPlayer, toolTip, flags);
+        ItemTooltipEvent event = new ItemTooltipEvent(itemStack, entityPlayer, list, flags);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -394,7 +394,7 @@ public class ForgeEventFactory
     public static void firePlayerLoadingEvent(EntityPlayer player, IPlayerFileData playerFileData, String uuidString)
     {
         SaveHandler sh = (SaveHandler) playerFileData;
-        File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
+        File dir = sh.getPlayersDirectory();
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
 
@@ -624,41 +624,18 @@ public class ForgeEventFactory
     {
         return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, renderPartialTicks, type, block, pos));
     }
-
+    
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(TileEntity tileEntity)
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<TileEntity>(TileEntity.class, tileEntity), null);
+        return gatherCapabilities(type, provider, null);
     }
-
+    
+    @SuppressWarnings("unchecked")
     @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Entity entity)
+    public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent)
     {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Entity>(Entity.class, entity), null);
-    }
-
-    @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Village village)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Village>(Village.class, village), null);
-    }
-
-    @Nullable
-    public static CapabilityDispatcher gatherCapabilities(ItemStack stack, ICapabilityProvider parent)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<ItemStack>(ItemStack.class, stack), parent);
-    }
-
-    @Nullable
-    public static CapabilityDispatcher gatherCapabilities(World world, ICapabilityProvider parent)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<World>(World.class, world), parent);
-    }
-
-    @Nullable
-    public static CapabilityDispatcher gatherCapabilities(Chunk chunk)
-    {
-        return gatherCapabilities(new AttachCapabilitiesEvent<Chunk>(Chunk.class, chunk), null);
+        return gatherCapabilities(new AttachCapabilitiesEvent<T>((Class<T>) type, provider), parent);
     }
 
     @Nullable
@@ -737,7 +714,7 @@ public class ForgeEventFactory
     {
         ChunkGeneratorEvent.ReplaceBiomeBlocks event = new ChunkGeneratorEvent.ReplaceBiomeBlocks(gen, x, z, primer, world);
         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() != net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
+        return event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY;
     }
 
     public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, Random rand, int x, int z, boolean hasVillageGenerated)

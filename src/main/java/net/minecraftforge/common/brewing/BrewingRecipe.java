@@ -20,20 +20,53 @@
 package net.minecraftforge.common.brewing;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
+import net.minecraft.item.crafting.Ingredient;
 
 import javax.annotation.Nonnull;
 
-public class BrewingRecipe extends AbstractBrewingRecipe<ItemStack> {
+public class BrewingRecipe implements IBrewingRecipe
+{
+    @Nonnull private final ItemStack input;
+    @Nonnull private final Ingredient ingredient;
+    @Nonnull private final ItemStack output;
 
-    public BrewingRecipe(@Nonnull ItemStack input, @Nonnull ItemStack ingredient, @Nonnull ItemStack output)
+    public BrewingRecipe(ItemStack input, Ingredient ingredient, ItemStack output)
     {
-        super(input, ingredient, output);
+        this.input = input;
+        this.ingredient = ingredient;
+        this.output = output;
     }
 
     @Override
-    public boolean isIngredient(@Nonnull ItemStack stack)
+    public boolean isInput(@Nonnull ItemStack stack)
     {
-        return OreDictionary.itemMatches(this.getIngredient(), stack, false);
+        return ingredient.test(stack);
+    }
+
+    @Override
+    public ItemStack getOutput(ItemStack input, ItemStack ingredient)
+    {
+        return isInput(input) && isIngredient(ingredient) ? getOutput().copy() : ItemStack.EMPTY;
+    }
+
+    public ItemStack getInput()
+    {
+        return input;
+    }
+
+    public Ingredient getIngredient()
+    {
+        return ingredient;
+    }
+
+    public ItemStack getOutput()
+    {
+        return output;
+    }
+
+    @Override
+    public boolean isIngredient(ItemStack ingredient)
+    {
+        return this.ingredient.test(ingredient);
     }
 }

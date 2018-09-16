@@ -25,8 +25,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.util.EnumHand;

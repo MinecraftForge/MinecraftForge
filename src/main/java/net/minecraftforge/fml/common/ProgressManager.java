@@ -19,11 +19,19 @@
 
 package net.minecraftforge.fml.common;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
-import com.google.common.base.Joiner;
+import net.minecraftforge.fml.SidedProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.message.MessageFormatMessage;
+
+import static net.minecraftforge.fml.Logging.SPLASH;
 
 /**
  * Not a fully fleshed out API, may change in future MC versions.
@@ -31,7 +39,9 @@ import com.google.common.base.Joiner;
  */
 public class ProgressManager
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final List<ProgressBar> bars = new CopyOnWriteArrayList<ProgressBar>();
+
     /**
      * Not a fully fleshed out API, may change in future MC versions.
      * However feel free to use and suggest additions.
@@ -52,13 +62,10 @@ public class ProgressManager
         {
             bar.timeEachStep();
         }
-        FMLCommonHandler.instance().processWindowMessages();
+//        DistExecutor.runWhenOn(Dist.CLIENT, ()->SplashProgress::processMessages);
         return bar;
     }
 
-    public static boolean isDisplayVSyncForced() {
-        return FMLCommonHandler.instance().isDisplayVSyncForced();
-    }
     /**
      * Not a fully fleshed out API, may change in future MC versions.
      * However feel free to use and suggest additions.
@@ -71,17 +78,13 @@ public class ProgressManager
         {
             long newTime = System.nanoTime();
             if (bar.timeEachStep)
-            {
-                String timeString = String.format("%.3f", ((float) (newTime - bar.lastTime) / 1000000 / 1000));
-                FMLLog.log.debug("Bar Step: {} - {} took {}s", bar.getTitle(), bar.getMessage(), timeString);
-            }
-            String timeString = String.format("%.3f", ((float) (newTime - bar.startTime) / 1000000 / 1000));
+                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Step: {0} - {1} took {2,number,0.000}ms", bar.getTitle(), bar.getMessage(), (newTime - bar.lastTime) / 1.0e6));
             if (bar.getSteps() == 1)
-                FMLLog.log.debug("Bar Finished: {} - {} took {}s", bar.getTitle(), bar.getMessage(), timeString);
+                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0} - {1} took {2,number,0.000}ms", bar.getTitle(), bar.getMessage(), (newTime - bar.lastTime) / 1.0e6));
             else
-                FMLLog.log.debug("Bar Finished: {} took {}s", bar.getTitle(), timeString);
+                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0} took {1,number,0.000}ms", bar.getTitle(), (newTime - bar.lastTime) / 1.0e6));
         }
-        FMLCommonHandler.instance().processWindowMessages();
+//        DistExecutor.runWhenOn(Dist.CLIENT, ()->SplashProgress::processMessages);
     }
 
     /*
@@ -115,7 +118,7 @@ public class ProgressManager
 
         public void step(Class<?> classToName, String... extra)
         {
-            step(ClassNameUtils.shortName(classToName)+Joiner.on(' ').join(extra));
+            step(ClassNameUtils.shortName(classToName)+ String.join(" ", extra));
         }
 
         public void step(String message)
@@ -124,12 +127,11 @@ public class ProgressManager
             if (timeEachStep && step != 0)
             {
                 long newTime = System.nanoTime();
-                FMLLog.log.debug(String.format("Bar Step: %s - %s took %.3fs", getTitle(), getMessage(), ((float)(newTime - lastTime) / 1000000 / 1000)));
+                LOGGER.debug(SPLASH,new MessageFormatMessage("Bar Step: {0} - {1} took {2,number,0.000}ms", getTitle(), getMessage(), (newTime - lastTime) / 1.0e6));
                 lastTime = newTime;
             }
-            step++;
-            this.message = FMLCommonHandler.instance().stripSpecialChars(message);
-            FMLCommonHandler.instance().processWindowMessages();
+            step += 1;
+            this.message = SidedProvider.STRIPCHARS.<Function<String, String>>get().apply(message);
         }
 
         public String getTitle()

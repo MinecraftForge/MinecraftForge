@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.gui.GuiScreen;
 
 /**
@@ -30,8 +30,8 @@ import net.minecraft.client.gui.GuiScreen;
  * 
  * @author jk-5
  */
-@Cancelable
-public class GuiOpenEvent extends Event
+@net.minecraftforge.eventbus.api.Cancelable
+public class GuiOpenEvent extends net.minecraftforge.eventbus.api.Event
 {
     private GuiScreen gui;
     public GuiOpenEvent(GuiScreen gui)

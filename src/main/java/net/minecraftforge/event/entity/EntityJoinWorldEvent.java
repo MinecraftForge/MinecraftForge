@@ -21,7 +21,7 @@ package net.minecraftforge.event.entity;
 
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
@@ -41,7 +41,7 @@ import java.util.Collection;
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
+@net.minecraftforge.eventbus.api.Cancelable
 public class EntityJoinWorldEvent extends EntityEvent
 {
 

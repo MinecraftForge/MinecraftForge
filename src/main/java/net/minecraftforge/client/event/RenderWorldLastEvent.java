@@ -19,10 +19,10 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.RenderGlobal;
 
-public class RenderWorldLastEvent extends Event
+public class RenderWorldLastEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final RenderGlobal context;
     private final float partialTicks;

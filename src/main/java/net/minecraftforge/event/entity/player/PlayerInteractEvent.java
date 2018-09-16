@@ -30,14 +30,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.api.distmarker.Dist;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT;
-import static net.minecraftforge.fml.common.eventhandler.Event.Result.DENY;
+import static net.minecraftforge.eventbus.api.Event.Result.DEFAULT;
+import static net.minecraftforge.eventbus.api.Event.Result.DENY;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
@@ -69,7 +69,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Let result be the return value of {@link Entity#applyPlayerInteraction}, or {@link #cancellationResult} if the event is cancelled.
      * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link EntityInteract}.
      */
-    @Cancelable
+    @net.minecraftforge.eventbus.api.Cancelable
     public static class EntityInteractSpecific extends PlayerInteractEvent
     {
         private final Vec3d localPos;
@@ -110,7 +110,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * or {@link #cancellationResult} if the event is cancelled.
      * If we are on the client and result is not {@link EnumActionResult#SUCCESS}, the client will then try {@link RightClickItem}.
      */
-    @Cancelable
+    @net.minecraftforge.eventbus.api.Cancelable
     public static class EntityInteract extends PlayerInteractEvent
     {
         private final Entity target;
@@ -248,7 +248,7 @@ public class PlayerInteractEvent extends PlayerEvent
      * Also note that creative mode directly breaks the block without running any other logic.
      * Therefore, in creative mode, {@link #setUseBlock} and {@link #setUseItem} have no effect.
      */
-    @Cancelable
+    @net.minecraftforge.eventbus.api.Cancelable
     public static class LeftClickBlock extends PlayerInteractEvent
     {
         private Result useBlock = DEFAULT;

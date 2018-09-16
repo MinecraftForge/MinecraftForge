@@ -19,12 +19,11 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.IContextSetter;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Fired when the {@link net.minecraftforge.client.model.ModelLoader} is ready to receive registrations
  */
-public class ModelRegistryEvent extends Event implements IContextSetter
+public class ModelRegistryEvent extends Event
 {
 }

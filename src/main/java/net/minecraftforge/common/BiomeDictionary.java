@@ -23,14 +23,16 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import net.minecraft.init.Biomes;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.*;
 import static net.minecraftforge.common.BiomeDictionary.Type.*;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -38,6 +40,7 @@ import com.google.common.collect.ImmutableList;
 public class BiomeDictionary
 {
     private static final boolean DEBUG = false;
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static final class Type
     {
@@ -106,11 +109,6 @@ public class BiomeDictionary
             byName.put(name, this);
         }
 
-        private boolean hasSubTypes()
-        {
-            return !subTypes.isEmpty();
-        }
-
         /**
          * Gets the name for this type.
          */
@@ -151,13 +149,23 @@ public class BiomeDictionary
             }
             return t;
         }
-        
+
         /**
          * @return An unmodifiable collection of all current biome types.
          */
         public static Collection<Type> getAll()
         {
             return allTypes;
+        }
+
+        @Nullable
+        public static Type fromVanilla(Biome.Category category)
+        {
+            if (category == Biome.Category.NONE)
+                return null;
+            if (category == Biome.Category.THEEND)
+                return VOID;
+            return getType(category.name());
         }
     }
 
@@ -262,28 +270,10 @@ public class BiomeDictionary
      */
     public static void makeBestGuess(Biome biome)
     {
-        if (biome.decorator.treesPerChunk >= 3)
+        Type type = Type.fromVanilla(biome.func_201856_r());
+        if (type != null)
         {
-            if (biome.isHighHumidity() && biome.getDefaultTemperature() >= 0.9F)
-            {
-                BiomeDictionary.addTypes(biome, JUNGLE);
-            }
-            else if (!biome.isHighHumidity())
-            {
-                BiomeDictionary.addTypes(biome, FOREST);
-
-                if (biome.getDefaultTemperature() <= 0.2f)
-                {
-                    BiomeDictionary.addTypes(biome, CONIFEROUS);
-                }
-            }
-        }
-        else if (biome.getHeightVariation() <= 0.3F && biome.getHeightVariation() >= 0.0F)
-        {
-            if (!biome.isHighHumidity() || biome.getBaseHeight() >= 0.0F)
-            {
-                BiomeDictionary.addTypes(biome, PLAINS);
-            }
+            BiomeDictionary.addTypes(biome, type);
         }
 
         if (biome.getRainfall() > 0.85f)
@@ -304,15 +294,6 @@ public class BiomeDictionary
         if (biome.getDefaultTemperature() < 0.15f)
         {
             BiomeDictionary.addTypes(biome, COLD);
-        }
-
-        if (biome.decorator.treesPerChunk > 0 && biome.decorator.treesPerChunk < 3)
-        {
-            BiomeDictionary.addTypes(biome, SPARSE);
-        }
-        else if (biome.decorator.treesPerChunk >= 10)
-        {
-            BiomeDictionary.addTypes(biome, DENSE);
         }
 
         if (biome.isHighHumidity() && biome.getBaseHeight() < 0.0F && (biome.getHeightVariation() <= 0.3F && biome.getHeightVariation() >= 0.0F))
@@ -341,29 +322,6 @@ public class BiomeDictionary
         {
             BiomeDictionary.addTypes(biome, MOUNTAIN);
         }
-
-        if (biome.getEnableSnow())
-        {
-            BiomeDictionary.addTypes(biome, SNOWY);
-        }
-
-        if (biome.topBlock.getBlock() != Blocks.SAND && biome.getDefaultTemperature() >= 1.0f && biome.getRainfall() < 0.2f)
-        {
-            BiomeDictionary.addTypes(biome, SAVANNA);
-        }
-
-        if (biome.topBlock.getBlock() == Blocks.SAND)
-        {
-            BiomeDictionary.addTypes(biome, SANDY);
-        }
-        else if (biome.topBlock.getBlock() == Blocks.MYCELIUM)
-        {
-            BiomeDictionary.addTypes(biome, MUSHROOM);
-        }
-        if (biome.fillerBlock.getBlock() == Blocks.HARDENED_CLAY)
-        {
-            BiomeDictionary.addTypes(biome, MESA);
-        }
     }
 
     //Internal implementation
@@ -380,7 +338,7 @@ public class BiomeDictionary
         if (!hasAnyType(biome))
         {
             makeBestGuess(biome);
-            FMLLog.log.warn("No types have been added to Biome {}, types have been assigned on a best-effort guess: {}", biome.getRegistryName(), getTypes(biome));
+            LOGGER.warn("No types have been added to Biome {}, types have been assigned on a best-effort guess: {}", biome.getRegistryName(), getTypes(biome));
         }
     }
 
@@ -446,6 +404,17 @@ public class BiomeDictionary
         addTypes(Biomes.MESA,                             MESA,     SANDY                                         );
         addTypes(Biomes.MESA_ROCK,                        MESA,     SPARSE,     SANDY                             );
         addTypes(Biomes.MESA_CLEAR_ROCK,                  MESA,     SANDY                                         );
+        addTypes(Biomes.field_201936_P,                   END                                                     );
+        addTypes(Biomes.field_201937_Q,                   END                                                     );
+        addTypes(Biomes.field_201938_R,                   END                                                     );
+        addTypes(Biomes.field_201939_S,                   END                                                     );
+        addTypes(Biomes.field_203614_T,                   OCEAN,   HOT                                            );
+        addTypes(Biomes.field_203615_U,                   OCEAN                                                   );
+        addTypes(Biomes.field_203616_V,                   OCEAN,   COLD                                           );
+        addTypes(Biomes.field_203617_W,                   OCEAN,   HOT                                            );
+        addTypes(Biomes.field_203618_X,                   OCEAN                                                   );
+        addTypes(Biomes.field_203619_Y,                   OCEAN,   COLD                                           );
+        addTypes(Biomes.field_203620_Z,                   OCEAN,   COLD                                           );
         addTypes(Biomes.VOID,                             VOID                                                    );
         addTypes(Biomes.MUTATED_PLAINS,                   PLAINS,   RARE                                          );
         addTypes(Biomes.MUTATED_DESERT,                   HOT,      DRY,        SANDY,    RARE                    );
@@ -472,13 +441,10 @@ public class BiomeDictionary
 
         if (DEBUG)
         {
-            FMLLog.log.debug("BiomeDictionary:");
-            for (Type type : Type.byName.values())
-            {
-                StringBuilder buf = new StringBuilder();
-                buf.append("    ").append(type.name).append(": ").append(type.biomes.stream().map(Biome::getBiomeName).collect(Collectors.joining(", ")));
-                FMLLog.log.debug(buf.toString());
-            }
+            StringBuilder buf = new StringBuilder();
+            buf.append("BiomeDictionary:\n");
+            Type.byName.forEach((name, type) -> buf.append("    ").append(type.name).append(": ").append(type.biomes.stream().map(b -> b.getRegistryName().toString()).collect(Collectors.joining(", "))).append('\n'));
+            LOGGER.debug(buf.toString());
         }
     }
 }

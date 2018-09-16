@@ -20,7 +20,6 @@
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -29,9 +28,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.init.Biomes;
 import net.minecraft.util.WeightedRandom;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeProvider;
-import net.minecraft.world.gen.structure.MapGenVillage;
-import net.minecraftforge.common.util.EnumHelper;
+import net.minecraft.world.biome.provider.BiomeProvider;
 
 import javax.annotation.Nullable;
 
@@ -40,9 +37,6 @@ public class BiomeManager
     private static TrackedList<BiomeEntry>[] biomes = setupBiomes();
 
     public static List<Biome> oceanBiomes = new ArrayList<Biome>();
-
-    public static ArrayList<Biome> strongHoldBiomes = new ArrayList<Biome>();
-    public static ArrayList<Biome> strongHoldBiomesBlackList = new ArrayList<Biome>();
 
     static
     {
@@ -86,55 +80,19 @@ public class BiomeManager
         return currentBiomes;
     }
 
-    public static void addVillageBiome(Biome biome, boolean canSpawn)
-    {
-        if (!MapGenVillage.VILLAGE_SPAWN_BIOMES.contains(biome))
-        {
-            ArrayList<Biome> biomes = new ArrayList<Biome>(MapGenVillage.VILLAGE_SPAWN_BIOMES);
-            biomes.add(biome);
-            MapGenVillage.VILLAGE_SPAWN_BIOMES = biomes;
-        }
-    }
-
-    public static void removeVillageBiome(Biome biome)
-    {
-        if (MapGenVillage.VILLAGE_SPAWN_BIOMES.contains(biome))
-        {
-            ArrayList<Biome> biomes = new ArrayList<Biome>(MapGenVillage.VILLAGE_SPAWN_BIOMES);
-            biomes.remove(biome);
-            MapGenVillage.VILLAGE_SPAWN_BIOMES = biomes;
-        }
-    }
-
-    public static void addStrongholdBiome(Biome biome)
-    {
-        if (!strongHoldBiomes.contains(biome))
-        {
-            strongHoldBiomes.add(biome);
-        }
-    }
-
-    public static void removeStrongholdBiome(Biome biome)
-    {
-        if (!strongHoldBiomesBlackList.contains(biome))
-        {
-            strongHoldBiomesBlackList.add(biome);
-        }
-    }
-
     public static void addSpawnBiome(Biome biome)
     {
-        if (!BiomeProvider.allowedBiomes.contains(biome))
+        if (!BiomeProvider.field_201540_a.contains(biome))
         {
-            BiomeProvider.allowedBiomes.add(biome);
+            BiomeProvider.field_201540_a.add(biome);
         }
     }
 
     public static void removeSpawnBiome(Biome biome)
     {
-        if (BiomeProvider.allowedBiomes.contains(biome))
+        if (BiomeProvider.field_201540_a.contains(biome))
         {
-            BiomeProvider.allowedBiomes.remove(biome);
+            BiomeProvider.field_201540_a.remove(biome);
         }
     }
 
@@ -179,23 +137,8 @@ public class BiomeManager
     {
         DESERT, WARM, COOL, ICY;
 
-        public static BiomeType getType(String name)
-        {
-            name = name.toUpperCase();
-
-            for (BiomeType t : values())
-            {
-                if (t.name().equals(name)) return t;
-            }
-
-            BiomeType ret = EnumHelper.addEnum(BiomeType.class, name, new Class[0], new Object[0]);
-
-            if (ret.ordinal() >= biomes.length)
-            {
-                biomes = Arrays.copyOf(biomes, ret.ordinal() + 1);
-            }
-
-            return ret;
+        public static BiomeType create(String name) {
+            return null;
         }
     }
 

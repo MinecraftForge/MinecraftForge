@@ -26,10 +26,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraftforge.fml.common.FMLLog;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class LinkRepository extends Repository
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private Map<String, File> artifact_to_file = new HashMap<>();
     private Map<String, File> filesystem = new HashMap<>();
     private Map<String, Artifact> snapshots = new HashMap<>();
@@ -46,14 +49,14 @@ public class LinkRepository extends Repository
         known.add(file);
         if (artifact_to_file.containsKey(key))
         {
-            FMLLog.log.debug("Maven file already exists for {}({}) at {}, ignoring duplicate.", file.getName(), artifact.toString(), artifact_to_file.get(key).getAbsolutePath());
+            LOGGER.debug("Maven file already exists for {}({}) at {}, ignoring duplicate.", file.getName(), artifact.toString(), artifact_to_file.get(key).getAbsolutePath());
 
             if (artifact.isSnapshot())
             {
                 Artifact old = snapshots.get(key);
                 if (old == null || old.compareVersion(artifact) < 0)
                 {
-                    FMLLog.log.debug("Overriding Snapshot {} -> {}", old == null ? "null" : old.getTimestamp(), artifact.getTimestamp());
+                    LOGGER.debug("Overriding Snapshot {} -> {}", old == null ? "null" : old.getTimestamp(), artifact.getTimestamp());
                     snapshots.put(key, artifact);
                     artifact_to_file.put(key, file);
                     filesystem.put(artifact.getPath(), file);
@@ -62,7 +65,7 @@ public class LinkRepository extends Repository
         }
         else
         {
-            FMLLog.log.debug("Making maven link for {} in memory to {}.", key, file.getAbsolutePath());
+            LOGGER.debug("Making maven link for {} in memory to {}.", key, file.getAbsolutePath());
             artifact_to_file.put(key, file);
             filesystem.put(artifact.getPath(), file);
 

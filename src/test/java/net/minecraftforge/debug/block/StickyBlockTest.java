@@ -32,16 +32,15 @@ import net.minecraft.item.ItemMultiTexture;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
 
 @Mod(modid = StickyBlockTest.MODID, name = "ForgeDebugCustomSlimeBlock", version = StickyBlockTest.VERSION, acceptableRemoteVersions = "*")
 public class StickyBlockTest
@@ -62,7 +61,7 @@ public class StickyBlockTest
     @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class BakeEventHandler
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
             Item item = Item.getItemFromBlock(CUSTOM_SLIME_BLOCK);
@@ -86,7 +85,7 @@ public class StickyBlockTest
         }
 
         @Override
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         public void getSubBlocks(CreativeTabs creativeTabs, NonNullList<ItemStack> list)
         {
             for (int i = 0; i < BlockType.values.length; ++i)

@@ -24,13 +24,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -76,6 +79,7 @@ import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTippedArrow;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -87,6 +91,8 @@ import net.minecraft.network.play.server.SPacketRecipeBook.State;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.StatList;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.util.DamageSource;
@@ -106,7 +112,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
@@ -114,7 +120,6 @@ import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -142,15 +147,18 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
 import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.ConnectionType;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.network.ConnectionType;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 
@@ -158,10 +166,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 public class ForgeHooks
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
     //TODO: Loot tables?
     static class SeedEntry extends WeightedRandom.Item
     {
@@ -198,7 +211,7 @@ public class ForgeHooks
     private static boolean toolInit = false;
     //static HashSet<List> toolEffectiveness = new HashSet<List>();
 
-    public static boolean canHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
+    public static boolean canHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, @Nonnull IWorldReader world, @Nonnull BlockPos pos)
     {
         IBlockState state = world.getBlockState(pos);
         state = state.getBlock().getActualState(state, world, pos);
@@ -223,7 +236,7 @@ public class ForgeHooks
         return toolLevel >= block.getHarvestLevel(state);
     }
 
-    public static boolean canToolHarvestBlock(IBlockAccess world, BlockPos pos, @Nonnull ItemStack stack)
+    public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
     {
         IBlockState state = world.getBlockState(pos);
         state = state.getBlock().getActualState(state, world, pos);
@@ -250,7 +263,7 @@ public class ForgeHooks
         }
     }
 
-    public static boolean isToolEffective(IBlockAccess world, BlockPos pos, @Nonnull ItemStack stack)
+    public static boolean isToolEffective(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
     {
         IBlockState state = world.getBlockState(pos);
         state = state.getBlock().getActualState(state, world, pos);
@@ -646,7 +659,7 @@ public class ForgeHooks
     {
         boolean isSpectator = (entity instanceof EntityPlayer && ((EntityPlayer)entity).isSpectator());
         if (isSpectator) return false;
-        if (!ForgeModContainer.fullBoundingBoxLadders)
+        if (!ForgeMod.fullBoundingBoxLadders)
         {
             return state.getBlock().isLadder(state, world, pos, entity);
         }
@@ -857,8 +870,11 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemStack itemstack, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EnumFacing side, float hitX, float hitY, float hitZ, @Nonnull EnumHand hand)
+    public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemUseContext context)
     {
+        ItemStack itemstack = context.func_195996_i();
+        World world = context.func_195991_k();
+
         // handle all placement events here
         int meta = itemstack.getItemDamage();
         int size = itemstack.getCount();
@@ -873,7 +889,7 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
-        EnumActionResult ret = itemstack.getItem().onItemUse(player, world, pos, hand, side, hitX, hitY, hitZ);
+        EnumActionResult ret = itemstack.getItem().func_195939_a(context);
         world.captureBlockSnapshots = false;
 
         if (ret == EnumActionResult.SUCCESS)
@@ -892,12 +908,16 @@ public class ForgeHooks
             world.capturedBlockSnapshots.clear();
 
             // make sure to set pre-placement item data for event
-            itemstack.setItemDamage(meta);
+            itemstack.func_196085_b(meta);
             itemstack.setCount(size);
             if (nbt != null)
             {
                 itemstack.setTagCompound(nbt);
             }
+
+            EntityPlayer player = context.func_195999_j();
+            EnumFacing side = context.func_196000_l();
+
             if (blockSnapshots.size() > 1)
             {
                 placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(player, blockSnapshots, side, hand);
@@ -921,7 +941,7 @@ public class ForgeHooks
             else
             {
                 // Change the stack to its new content
-                itemstack.setItemDamage(newMeta);
+                itemstack.func_196085_b(newMeta);
                 itemstack.setCount(newSize);
                 if (nbt != null)
                 {
@@ -977,23 +997,6 @@ public class ForgeHooks
         }
         te.note = (byte)e.getVanillaNoteId();
         return true;
-    }
-
-    /**
-     * Default implementation of IRecipe.func_179532_b {getRemainingItems} because
-     * this is just copy pasted over a lot of recipes.
-     *
-     * @param inv Crafting inventory
-     * @return Crafting inventory contents after the recipe.
-     */
-    public static NonNullList<ItemStack> defaultRecipeGetRemainingItems(InventoryCrafting inv)
-    {
-        NonNullList<ItemStack> ret = NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
-        for (int i = 0; i < ret.size(); i++)
-        {
-            ret.set(i, getContainerItem(inv.getStackInSlot(i)));
-        }
-        return ret;
     }
 
     private static ThreadLocal<EntityPlayer> craftingPlayer = new ThreadLocal<EntityPlayer>();
@@ -1191,7 +1194,7 @@ public class ForgeHooks
         {
             this.name = name;
             this.custom = custom;
-            this.vanilla = "minecraft".equals(this.name.getResourceDomain());
+            this.vanilla = "minecraft".equals(this.name.getNamespace());
         }
 
         private void resetPoolCtx()
@@ -1279,7 +1282,7 @@ public class ForgeHooks
     {
         BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(worldIn,pos,state);
         MinecraftForge.EVENT_BUS.post(ev);
-        return (ev.getResult() == Event.Result.ALLOW || (ev.getResult() == Event.Result.DEFAULT && def));
+        return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
     }
 
     public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
@@ -1305,13 +1308,10 @@ public class ForgeHooks
     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
     {
         boolean errored = false;
-        setActiveModContainer(null);
-        //Loader.instance().getActiveModList().forEach((mod) -> loadFactories(mod));
-        for (ModContainer mod : Loader.instance().getActiveModList())
+        for (ModFileInfo mod : ModList.get().getModFiles())
         {
-            errored |= !loadAdvancements(map, mod);
+            errored |= !loadAdvancements(map, mod.getFile());
         }
-        setActiveModContainer(null);
         return errored;
     }
 
@@ -1320,14 +1320,14 @@ public class ForgeHooks
     {
         CriticalHitEvent hitResult = new CriticalHitEvent(player, target, damageModifier, vanillaCritical);
         MinecraftForge.EVENT_BUS.post(hitResult);
-        if (hitResult.getResult() == Event.Result.ALLOW || (vanillaCritical && hitResult.getResult() == Event.Result.DEFAULT))
+        if (hitResult.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (vanillaCritical && hitResult.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT))
         {
             return hitResult;
         }
         return null;
     }
 
-    private static void setActiveModContainer(ModContainer mod)
+    private static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map, ModFile mod)
     {
         if (Loader.instance().getLoaderState() != LoaderState.NOINIT) //Unit Tests..
             Loader.instance().setActiveModContainer(mod);
@@ -1358,12 +1358,12 @@ public class ForgeHooks
                     }
                     catch (JsonParseException jsonparseexception)
                     {
-                        FMLLog.log.error("Parsing error loading built-in advancement " + key, (Throwable)jsonparseexception);
+                        LOGGER.error("Parsing error loading built-in advancement " + key, (Throwable)jsonparseexception);
                         return false;
                     }
                     catch (IOException ioexception)
                     {
-                        FMLLog.log.error("Couldn't read advancement " + key + " from " + file, (Throwable)ioexception);
+                        LOGGER.error("Couldn't read advancement " + key + " from " + file, (Throwable)ioexception);
                         return false;
                     }
                     finally
@@ -1386,13 +1386,11 @@ public class ForgeHooks
         if (type == ConnectionType.VANILLA)
         {
             IForgeRegistry<IRecipe> vanilla = RegistryManager.VANILLA.getRegistry(IRecipe.class);
-            if (recipes.size() > 0)
-                recipes = recipes.stream().filter(e -> vanilla.containsValue(e)).collect(Collectors.toList());
-            if (display.size() > 0)
-                display = display.stream().filter(e -> vanilla.containsValue(e)).collect(Collectors.toList());
+            recipes = recipes.stream().filter(vanilla::containsValue).collect(Collectors.toList());
+            display = display.stream().filter(vanilla::containsValue).collect(Collectors.toList());
         }
 
-        if (recipes.size() > 0 || display.size() > 0)
+        if (!recipes.isEmpty() || !display.isEmpty())
             connection.sendPacket(new SPacketRecipeBook(state, recipes, display, isGuiOpen, isFilteringCraftable));
     }
 
@@ -1409,7 +1407,7 @@ public class ForgeHooks
     {
         Item item = itemStack.getItem();
         ResourceLocation registryName = item.getRegistryName();
-        String modId = registryName == null ? null : registryName.getResourceDomain();
+        String modId = registryName == null ? null : registryName.getNamespace();
         if ("minecraft".equals(modId))
         {
             if (item instanceof ItemEnchantedBook)
@@ -1424,7 +1422,7 @@ public class ForgeHooks
                         ResourceLocation resourceLocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
                         if (resourceLocation != null)
                         {
-                            return resourceLocation.getResourceDomain();
+                            return resourceLocation.getNamespace();
                         }
                     }
                 }
@@ -1435,7 +1433,7 @@ public class ForgeHooks
                 ResourceLocation resourceLocation = ForgeRegistries.POTION_TYPES.getKey(potionType);
                 if (resourceLocation != null)
                 {
-                    return resourceLocation.getResourceDomain();
+                    return resourceLocation.getNamespace();
                 }
             }
             else if (item instanceof ItemMonsterPlacer)
@@ -1443,7 +1441,7 @@ public class ForgeHooks
                 ResourceLocation resourceLocation = ItemMonsterPlacer.getNamedIdFrom(itemStack);
                 if (resourceLocation != null)
                 {
-                    return resourceLocation.getResourceDomain();
+                    return resourceLocation.getNamespace();
                 }
             }
         }
@@ -1461,5 +1459,4 @@ public class ForgeHooks
         }
         return false;
     }
-
 }

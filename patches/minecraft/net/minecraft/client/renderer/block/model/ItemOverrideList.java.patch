@@ -1,33 +1,21 @@
---- ../src-base/minecraft/net/minecraft/client/renderer/block/model/ItemOverrideList.java
-+++ ../src-work/minecraft/net/minecraft/client/renderer/block/model/ItemOverrideList.java
-@@ -29,6 +29,7 @@
-     }
+--- a/net/minecraft/client/renderer/block/model/ItemOverrideList.java
++++ b/net/minecraft/client/renderer/block/model/ItemOverrideList.java
+@@ -25,7 +25,8 @@
+       this.field_209582_c = Collections.<IBakedModel>emptyList();
+    }
  
-     @Nullable
-+    @Deprecated
-     public ResourceLocation func_188021_a(ItemStack p_188021_1_, @Nullable World p_188021_2_, @Nullable EntityLivingBase p_188021_3_)
-     {
-         if (!this.field_188023_b.isEmpty())
-@@ -44,4 +45,22 @@
+-   public ItemOverrideList(ModelBlock p_i49525_1_, Function<ResourceLocation, IUnbakedModel> p_i49525_2_, Function<ResourceLocation, TextureAtlasSprite> p_i49525_3_, List<ItemOverride> p_i49525_4_) {
++   // FORGE: No reason for first param to be limited to ModelBlock
++   public ItemOverrideList(IUnbakedModel p_i49525_1_, Function<ResourceLocation, IUnbakedModel> p_i49525_2_, Function<ResourceLocation, TextureAtlasSprite> p_i49525_3_, List<ItemOverride> p_i49525_4_) {
+       this.field_209582_c = (List)p_i49525_4_.stream().<IBakedModel>map((p_209580_3_) -> {
+          IUnbakedModel iunbakedmodel = p_i49525_2_.apply(p_209580_3_.getLocation());
+          return Objects.equals(iunbakedmodel, p_i49525_1_) ? null : iunbakedmodel.func_209558_a(p_i49525_2_, p_i49525_3_, ModelRotation.X0_Y0, false);
+@@ -56,4 +57,8 @@
  
-         return null;
-     }
-+
-+    public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
-+    {
-+        if (!stack.func_190926_b() && stack.func_77973_b().func_185040_i())
-+        {
-+            ResourceLocation location = func_188021_a(stack, world, entity);
-+            if (location != null)
-+            {
-+                return net.minecraft.client.Minecraft.func_71410_x().func_175599_af().func_175037_a().func_178083_a().func_174953_a(net.minecraftforge.client.model.ModelLoader.getInventoryVariant(location.toString()));
-+            }
-+        }
-+        return originalModel;
-+    }
-+
-+    public com.google.common.collect.ImmutableList<ItemOverride> getOverrides()
-+    {
-+        return com.google.common.collect.ImmutableList.copyOf(field_188023_b);
-+    }
+       return p_209581_1_;
+    }
++   
++   public com.google.common.collect.ImmutableList<ItemOverride> getOverrides() {
++       return com.google.common.collect.ImmutableList.copyOf(overrides);
  }
++}

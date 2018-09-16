@@ -29,7 +29,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldReader;
 
 import java.util.Objects;
 
@@ -109,7 +109,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     private static VertexFormat withNormal(VertexFormat format)
     {
-        if (format == null || format.hasNormal()) return format;
+        if (format == null || format.func_207751_b()) return format;
         return new VertexFormat(format).addElement(NORMAL_4F);
     }
 
@@ -190,10 +190,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                     color[v][i] *= d;
                 }
             }
-            if(EntityRenderer.anaglyphEnable)
-            {
-                applyAnaglyph(color[v]);
-            }
 
             // no need for remapping cause all we could've done is add 1 element to the end
             for(int e = 0; e < count; e++)
@@ -229,14 +225,6 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             }
         }
         tint = -1;
-    }
-
-    protected void applyAnaglyph(float[] color)
-    {
-        float r = color[0];
-        color[0] = (r * 30 + color[1] * 59 + color[2] * 11) / 100;
-        color[1] = (r * 3 + color[1] * 7) / 10;
-        color[2] = (r * 3 + color[2] * 7) / 10;
     }
 
     protected void updateLightmap(float[] normal, float[] lightmap, float x, float y, float z)
@@ -287,7 +275,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         this.diffuse = diffuse;
     }
 
-    public void setWorld(IBlockAccess world)
+    public void setWorld(IWorldReader world)
     {
         blockInfo.setWorld(world);
     }

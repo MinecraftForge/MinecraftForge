@@ -74,10 +74,11 @@ public class ItemHandlerHelper
 
         // Metadata value only matters when the item has subtypes
         // Vanilla stacks non-subtype items with different metadata together
-        // e.g. a stick with metadata 0 and a stick with metadata 1 stack
+        // TODO Item subtypes, is this still necessary?
+        /* e.g. a stick with metadata 0 and a stick with metadata 1 stack
         if (a.getHasSubtypes() && a.getMetadata() != b.getMetadata())
             return false;
-
+*/
         if (a.hasTagCompound() != b.hasTagCompound())
             return false;
 

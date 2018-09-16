@@ -1,21 +1,11 @@
---- ../src-base/minecraft/net/minecraft/network/play/server/SPacketCustomPayload.java
-+++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketCustomPayload.java
-@@ -46,12 +46,18 @@
-     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
-     {
-         p_148840_1_.func_180714_a(this.field_149172_a);
-+        synchronized(this.field_149171_b) { //This may be access multiple times, from multiple threads, lets be safe.
-+        this.field_149171_b.markReaderIndex();
-         p_148840_1_.writeBytes((ByteBuf)this.field_149171_b);
-+        this.field_149171_b.resetReaderIndex();
-+        }
-     }
+--- a/net/minecraft/network/play/server/SPacketCustomPayload.java
++++ b/net/minecraft/network/play/server/SPacketCustomPayload.java
+@@ -8,7 +8,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
-     public void func_148833_a(INetHandlerPlayClient p_148833_1_)
-     {
-         p_148833_1_.func_147240_a(this);
-+        // Forge: fix network buffer leaks (MC-121884)
-+        if (this.field_149171_b != null) this.field_149171_b.release();
-     }
- 
-     @SideOnly(Side.CLIENT)
+-public class SPacketCustomPayload implements Packet<INetHandlerPlayClient> {
++public class SPacketCustomPayload implements Packet<INetHandlerPlayClient>, net.minecraftforge.fml.network.ICustomPacket<SPacketCustomPayload> {
+    public static final ResourceLocation field_209910_a = new ResourceLocation("minecraft:trader_list");
+    public static final ResourceLocation field_209911_b = new ResourceLocation("minecraft:brand");
+    public static final ResourceLocation field_209912_c = new ResourceLocation("minecraft:book_open");

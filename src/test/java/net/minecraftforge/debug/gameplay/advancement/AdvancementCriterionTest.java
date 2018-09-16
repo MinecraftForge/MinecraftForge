@@ -23,11 +23,11 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.PositionTrigger;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.relauncher.Side;
 
 @Mod(name = "advancementcriteriontest", modid = "advancementcriteriontest", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber

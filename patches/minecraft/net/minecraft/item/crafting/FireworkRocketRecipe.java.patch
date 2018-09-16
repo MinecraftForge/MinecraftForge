@@ -1,0 +1,19 @@
+--- a/net/minecraft/item/crafting/FireworkRocketRecipe.java
++++ b/net/minecraft/item/crafting/FireworkRocketRecipe.java
+@@ -9,8 +9,6 @@
+ import net.minecraft.nbt.NBTTagList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class FireworkRocketRecipe extends IRecipeHidden {
+    private static final Ingredient field_196209_a = Ingredient.func_199804_a(Items.PAPER);
+@@ -80,7 +78,6 @@
+       return itemstack;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width * height >= 2;
+    }

@@ -38,7 +38,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -148,13 +148,13 @@ public class ChunkCapabilityTest
 
     public static class EventBusHandler
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public void onAttachChunkCapabilities(AttachCapabilitiesEvent<Chunk> event)
         {
             event.addCapability(new ResourceLocation(MODID, "pollution"), new PollutionProvider(event.getObject()));
         }
 
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public void onUseItem(PlayerInteractEvent.RightClickBlock event)
         {
             if (!event.getWorld().isRemote) {

@@ -1,0 +1,19 @@
+--- a/net/minecraft/item/crafting/BannerDuplicateRecipe.java
++++ b/net/minecraft/item/crafting/BannerDuplicateRecipe.java
+@@ -10,8 +10,6 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class BannerDuplicateRecipe extends IRecipeHidden {
+    public BannerDuplicateRecipe(ResourceLocation p_i48171_1_) {
+@@ -94,7 +92,6 @@
+       return RecipeSerializers.field_199586_l;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width * height >= 2;
+    }

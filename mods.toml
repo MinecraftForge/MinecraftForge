@@ -1,0 +1,62 @@
+# The name of the mod loader type to load
+modLoader="javafml"
+# A version range to match for said mod loader
+loaderVersion="[2.0,)"
+# A URL to query for updates
+updateJSONURL="http://myurl.me/"
+# A URL to refer people to when problems occur with this mod
+issueTrackerURL="http://my.issue.tracker/"
+# Extra mod loader property
+randomScalaProperty=fishy
+# Arbitrary key-value property pairs available to mods
+[properties]
+key="value"
+
+# A list of mods - how many allowed here is determined by the individual mod loader
+[[mods]]
+    # The modid of the mod
+    modId="inventorysorter"
+    # The version number of the mod
+    version="1.1"
+     # A display name for the mod
+    displayName="Inventory Sorter"
+    # The description text for the mod (multi line!)
+    description='''
+    This is my mod, there may be
+    others, but this one is mine
+    '''
+    # A random extra property for a mod loader
+    randomExtraProperty=somevalue
+     # Arbitrary key-value pairs
+    [inventorysorter.properties]
+        key="value"
+    # A list of dependencies
+    [[inventorysorter.dependencies]]
+        # the modid of the dependency
+        modid="forge"
+        # Does this dependency have to exist - if not, ordering below must be specified
+        mandatory=true
+        # The version range of the dependency
+        versionRange="[14.23.2.0,)"
+        # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
+        ordering=NONE
+        # Side this dependency is applied on - BOTH, CLIENT or SERVER
+        side=BOTH
+    # Here's another dependency
+    [[inventorysorter.dependencies]]
+        modid="minecraft"
+        mandatory=true
+        versionRange="[1.12.2]"
+        ordering=NONE
+        side=BOTH
+# Here's another mod in this jar
+[[mods]]
+    # Note that other mod types may want to add additional key-value pairs in here
+    modId="inventorysortertoo"
+    # ${jarVersion} will read the Implementation-Version of the jar file
+    version="${jarVersion}"
+    displayName="Inventory Sorter as well"
+    description='''
+    This is also my mod, there may be
+    others, but this one is mine
+    '''

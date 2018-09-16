@@ -22,9 +22,9 @@ package net.minecraftforge.fluids;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 
-public class FluidEvent extends Event
+public class FluidEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final FluidStack fluid;
     private final World world;

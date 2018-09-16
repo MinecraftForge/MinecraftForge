@@ -20,30 +20,26 @@
 package net.minecraftforge.common.crafting;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BooleanSupplier;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.client.util.RecipeBookClient;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.DistExecutor;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -59,7 +55,6 @@ import com.google.gson.JsonSyntaxException;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.ShapedRecipes;
@@ -70,26 +65,28 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreIngredient;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.RegistryManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 public class CraftingHelper {
 
     private static final boolean DEBUG_LOAD_MINECRAFT = false;
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker CRAFTHELPER = MarkerManager.getMarker("CRAFTHELPER");
     private static Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-    private static Map<ResourceLocation, IConditionFactory> conditions = Maps.newHashMap();
-    private static Map<ResourceLocation, IIngredientFactory> ingredients = Maps.newHashMap();
-    private static Map<ResourceLocation, IRecipeFactory> recipes = Maps.newHashMap();
+    private static Map<ResourceLocation, IConditionFactory> conditions = new HashMap<>();
+    private static Map<ResourceLocation, IIngredientFactory> ingredients = new HashMap<>();
+    private static Map<ResourceLocation, IRecipeFactory> recipes = new HashMap<>();
 
     static {
         init();
@@ -422,7 +419,7 @@ public class CraftingHelper {
 
         registerC("forge:mod_loaded", (context, json) -> {
             String modid = JsonUtils.getString(json, "modid");
-            return () -> Loader.isModLoaded(modid);
+            return () -> ModList.get().isLoaded(modid);
         });
         registerC("minecraft:item_exists", (context, json) -> {
             String itemName = context.appendModId(JsonUtils.getString(json, "item"));
@@ -550,7 +547,7 @@ public class CraftingHelper {
         register(new ResourceLocation(name), fac);
     }
 
-    static void loadFactories(JsonObject json, JsonContext context)
+    private static void loadFactories(JsonObject json, JsonContext context)
     {
         if (json.has("ingredients"))
         {
@@ -583,11 +580,12 @@ public class CraftingHelper {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> T getClassInstance(String clsName, Class<T> expected)
     {
         try
         {
-            Class<?> cls = Class.forName(clsName);
+            Class<?> cls = Class.forName(clsName, true, Thread.currentThread().getContextClassLoader());
             if (!expected.isAssignableFrom(cls))
                 throw new JsonSyntaxException("Class '" + clsName + "' is not an " + expected.getSimpleName());
             return (T)cls.newInstance();
@@ -614,229 +612,94 @@ public class CraftingHelper {
             reg.clear();
         else if (revertFrozen)
             GameData.revert(RegistryManager.FROZEN, GameData.RECIPES, false);
-        //ModContainer old = Loader.instance().activeModContainer();
-        Loader.instance().setActiveModContainer(null);
-        Loader.instance().getActiveModList().forEach(CraftingHelper::loadFactories);
-        Loader.instance().getActiveModList().forEach(CraftingHelper::loadRecipes);
-        Loader.instance().setActiveModContainer(null);
+
+        ModList.get().forEachModFile(CraftingHelper::loadFactories);
+        ModList.get().forEachModFile(CraftingHelper::loadRecipes);
 
         GameData.fireRegistryEvents(rl -> rl.equals(GameData.RECIPES));
 
         //reg.freeze();
-        FMLCommonHandler.instance().resetClientRecipeBook();
+        DistExecutor.runWhenOn(Dist.CLIENT, ()-> RecipeBookClient::rebuildTable);
     }
 
-    private static void loadFactories(ModContainer mod)
+    private static void loadFactories(final ModFile modFile)
     {
-        FileSystem fs = null;
-        BufferedReader reader = null;
-        try
-        {
-            JsonContext ctx = new JsonContext(mod.getModId());
-            Path fPath = null;
-            if (mod.getSource().isFile())
-            {
-                fs = FileSystems.newFileSystem(mod.getSource().toPath(), null);
-                fPath = fs.getPath("/assets/" + ctx.getModId() + "/recipes/_factories.json");
-            }
-            else if (mod.getSource().isDirectory())
-            {
-                fPath = mod.getSource().toPath().resolve("assets/" + ctx.getModId() + "/recipes/_factories.json");
-            }
+        modFile.getModInfos().forEach(modInfo-> {
+            final String modId = modInfo.getModId();
+            JsonContext ctx = new JsonContext(modId);
+            final Path fPath = modFile.getLocator().findPath(modFile, "assets", modId, "recipes","_factories.json");
             if (fPath != null && Files.exists(fPath))
             {
-                reader = Files.newBufferedReader(fPath);
-                JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                loadFactories(json, ctx);
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        finally
-        {
-            IOUtils.closeQuietly(fs);
-            IOUtils.closeQuietly(reader);
-        }
-    }
-
-    private static boolean loadRecipes(ModContainer mod)
-    {
-        JsonContext ctx = new JsonContext(mod.getModId());
-
-        return findFiles(mod, "assets/" + mod.getModId() + "/recipes",
-            root ->
-            {
-                Path fPath = root.resolve("_constants.json");
-                if (fPath != null && Files.exists(fPath))
+                try (final BufferedReader reader = Files.newBufferedReader(fPath))
                 {
-                    BufferedReader reader = null;
-                    try
-                    {
-                        reader = Files.newBufferedReader(fPath);
-                        JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
-                        ctx.loadConstants(json);
-                    }
-                    catch (IOException e)
-                    {
-                        FMLLog.log.error("Error loading _constants.json: ", e);
-                        return false;
-                    }
-                    finally
-                    {
-                        IOUtils.closeQuietly(reader);
-                    }
-                }
-                return true;
-            },
-            (root, file) ->
-            {
-                Loader.instance().setActiveModContainer(mod);
-
-                String relative = root.relativize(file).toString();
-                if (!"json".equals(FilenameUtils.getExtension(file.toString())) || relative.startsWith("_"))
-                    return true;
-
-                String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
-                ResourceLocation key = new ResourceLocation(ctx.getModId(), name);
-
-                BufferedReader reader = null;
-                try
-                {
-                    reader = Files.newBufferedReader(file);
                     JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                    if (json.has("conditions") && !CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), ctx))
-                        return true;
-                    IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
-                    ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
+                    loadFactories(json, ctx);
                 }
-                catch (JsonParseException e)
+                catch (final IOException e)
                 {
-                    FMLLog.log.error("Parsing error loading recipe {}", key, e);
-                    return false;
+                    LOGGER.error(CRAFTHELPER,"Encountered error reading recipe factories for {}", modId, e);
                 }
-                catch (IOException e)
-                {
-                    FMLLog.log.error("Couldn't read recipe {} from {}", key, file, e);
-                    return false;
-                }
-                finally
-                {
-                    IOUtils.closeQuietly(reader);
-                }
-                return true;
-            },
-            true, true
-        );
+            }
+        });
     }
 
-    /**
-     * @deprecated Use {@link CraftingHelper#findFiles(ModContainer, String, Function, BiFunction, boolean, boolean)} instead.
-     */
-    @Deprecated
-    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor)
+    private static boolean loadRecipes(final ModFile modFile)
     {
-        return findFiles(mod, base, preprocessor, processor, false, false);
-    }
-
-    /**
-     * @deprecated Use {@link CraftingHelper#findFiles(ModContainer, String, Function, BiFunction, boolean, boolean)} instead.
-     */
-    @Deprecated
-    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot)
-    {
-        return findFiles(mod, base, preprocessor, processor, defaultUnfoundRoot, false);
-    }
-
-    public static boolean findFiles(ModContainer mod, String base, Function<Path, Boolean> preprocessor, BiFunction<Path, Path, Boolean> processor, boolean defaultUnfoundRoot, boolean visitAllFiles)
-    {
-        FileSystem fs = null;
-        try
-        {
-            File source = mod.getSource();
-
-            if ("minecraft".equals(mod.getModId()))
+        final AtomicBoolean errored = new AtomicBoolean(false);
+        modFile.getModInfos().forEach(modInfo-> {
+            final String modId = modInfo.getModId();
+            JsonContext ctx = new JsonContext(modId);
+            final Path root = modFile.getLocator().findPath(modFile, "assets", modId, "recipes");
+            if (!Files.exists(root)) return;
+            final Path constants = modFile.getLocator().findPath(modFile, "assets", modId, "recipes", "_constants.json");
+            if (Files.exists(constants))
             {
-                if (!DEBUG_LOAD_MINECRAFT)
-                    return true;
-
-                try
+                try (BufferedReader reader = Files.newBufferedReader(constants))
                 {
-                    URI tmp = CraftingManager.class.getResource("/assets/.mcassetsroot").toURI();
-                    source = new File(tmp.resolve("..").getPath());
+                    JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
+                    ctx.loadConstants(json);
                 }
-                catch (URISyntaxException e)
+                catch (final IOException e)
                 {
-                    FMLLog.log.error("Error finding Minecraft jar: ", e);
-                    return false;
+                    LOGGER.error(CRAFTHELPER, "Error loading _constants.json: ", e);
+                    errored.set(true);
                 }
             }
-
-            Path root = null;
-            if (source.isFile())
+            try
             {
-                try
-                {
-                    fs = FileSystems.newFileSystem(source.toPath(), null);
-                    root = fs.getPath("/" + base);
-                }
-                catch (IOException e)
-                {
-                    FMLLog.log.error("Error loading FileSystem from jar: ", e);
-                    return false;
-                }
+                Files.walk(root).
+                        filter(p -> p.getFileName().toString().startsWith("_") || Objects.equals(FilenameUtils.getExtension(p.getFileName().toString()), "json")).
+                        forEach(p -> {
+                            final String relative = root.relativize(p).toString();
+                            final String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
+                            final ResourceLocation key = new ResourceLocation(modId, name);
+                            try (BufferedReader reader = Files.newBufferedReader(constants))
+                            {
+                                JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
+                                if (json.has("conditions") && !CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), ctx))
+                                    return;
+                                IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
+                                ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
+                            }
+                            catch (final JsonParseException e)
+                            {
+                                LOGGER.error(CRAFTHELPER, "Parsing error loading recipe {}", key, e);
+                                errored.set(true);
+                            }
+                            catch (final IOException e)
+                            {
+                                LOGGER.error(CRAFTHELPER, "Couldn't read recipe {} from {}", key, p, e);
+                                errored.set(true);
+                            }
+
+                        });
             }
-            else if (source.isDirectory())
+            catch (final IOException e)
             {
-                root = source.toPath().resolve(base);
+                LOGGER.error(CRAFTHELPER, "Error occurred walking file tree", e);
+                errored.set(true);
             }
-
-            if (root == null || !Files.exists(root))
-                return defaultUnfoundRoot;
-
-            if (preprocessor != null)
-            {
-                Boolean cont = preprocessor.apply(root);
-                if (cont == null || !cont.booleanValue())
-                    return false;
-            }
-
-            boolean success = true;
-
-            if (processor != null)
-            {
-                Iterator<Path> itr = null;
-                try
-                {
-                    itr = Files.walk(root).iterator();
-                }
-                catch (IOException e)
-                {
-                    FMLLog.log.error("Error iterating filesystem for: {}", mod.getModId(), e);
-                    return false;
-                }
-
-                while (itr != null && itr.hasNext())
-                {
-                    Boolean cont = processor.apply(root, itr.next());
-
-                    if (visitAllFiles)
-                    {
-                        success &= cont != null && cont;
-                    }
-                    else if (cont == null || !cont)
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return success;
-        }
-        finally
-        {
-            IOUtils.closeQuietly(fs);
-        }
+        });
+        return errored.get();
     }
 }

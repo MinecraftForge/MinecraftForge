@@ -22,13 +22,13 @@ package net.minecraftforge.debug.client.model;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
 
 @Mod.EventBusSubscriber
 @Mod(modid = ItemModelGenerationTest.MOD_ID, name = "Item model generation test", version = "1.0", acceptableRemoteVersions = "*")
@@ -81,7 +81,7 @@ public class ItemModelGenerationTest
     @Mod.EventBusSubscriber(modid = MOD_ID, value = Side.CLIENT)
     public static class ClientEventHandler
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
             setCustomMRL(ANIMATION_TEST);

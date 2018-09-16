@@ -23,7 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * PlayerSleepInBedEvent is fired when a player sleeps in a bed.
@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * <br>
  * {@link #result} contains whether the player is able to sleep. <br>
  * <br>
- * This event is not {@link Cancelable}.
+ * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
  * <br>
  * This event does not have a result. {@link HasResult}
  * <br>

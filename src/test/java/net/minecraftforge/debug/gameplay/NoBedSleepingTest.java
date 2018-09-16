@@ -49,8 +49,8 @@ import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
 import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import javax.annotation.Nonnull;

@@ -27,7 +27,7 @@ package net.minecraftforge.fml.common.versioning;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class InvalidVersionSpecificationException extends Exception
+public class InvalidVersionSpecificationException extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
 

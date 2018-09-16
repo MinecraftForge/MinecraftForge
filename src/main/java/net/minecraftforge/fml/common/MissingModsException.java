@@ -22,50 +22,31 @@ package net.minecraftforge.fml.common;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
-
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.GuiModsMissing;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.gui.GuiModsMissing;
 import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MissingModsException extends EnhancedRuntimeException implements IDisplayableError
 {
     private static final long serialVersionUID = 1L;
     private final String id;
     private final String name;
-    /** @deprecated use {@link #getMissingModInfos()} */
-    @Deprecated // TODO remove in 1.13
-    public final Set<ArtifactVersion> missingMods;
     private final List<MissingModInfo> missingModsInfos;
     private final String modName;
 
     public MissingModsException(String id, String name)
     {
-        this(new HashSet<>(), id, name);
-    }
-
-    /**
-     * @deprecated use {@link #MissingModsException(String, String)}
-     */
-    @Deprecated // TODO remove in 1.13
-    public MissingModsException(Set<ArtifactVersion> missingMods, String id, String name)
-    {
         this.id = id;
         this.name = name;
-        this.missingMods = missingMods;
         this.missingModsInfos = new ArrayList<>();
-        for (ArtifactVersion artifactVersion : missingMods)
-        {
-            missingModsInfos.add(new MissingModInfo(artifactVersion, null, true));
-        }
         this.modName = name;
     }
 
@@ -80,7 +61,6 @@ public class MissingModsException extends EnhancedRuntimeException implements ID
     {
         MissingModInfo missingModInfo = new MissingModInfo(acceptedVersion, currentVersion, required);
         this.missingModsInfos.add(missingModInfo);
-        this.missingMods.add(acceptedVersion);
     }
 
     public String getModName()
@@ -108,7 +88,7 @@ public class MissingModsException extends EnhancedRuntimeException implements ID
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public GuiScreen createGui()
     {
         return new GuiModsMissing(this);

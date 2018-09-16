@@ -1,75 +1,14 @@
---- ../src-base/minecraft/net/minecraft/server/integrated/IntegratedServer.java
-+++ ../src-work/minecraft/net/minecraft/server/integrated/IntegratedServer.java
-@@ -68,8 +68,6 @@
-     public void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, String p_71247_6_)
-     {
-         this.func_71237_c(p_71247_1_);
--        this.field_71305_c = new WorldServer[3];
--        this.field_71312_k = new long[this.field_71305_c.length][100];
-         ISaveHandler isavehandler = this.func_71254_M().func_75804_a(p_71247_1_, true);
-         this.func_175584_a(this.func_71270_I(), isavehandler);
-         WorldInfo worldinfo = isavehandler.func_75757_d();
-@@ -83,6 +81,7 @@
-             worldinfo.func_76062_a(p_71247_2_);
-         }
+--- a/net/minecraft/server/integrated/IntegratedServer.java
++++ b/net/minecraft/server/integrated/IntegratedServer.java
+@@ -121,9 +121,10 @@
+       this.setAllowFlight(true);
+       LOGGER.info("Generating keypair");
+       this.setKeyPair(CryptManager.generateKeyPair());
++      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
+       this.loadAllWorlds(this.getFolderName(), this.getWorldName(), this.worldSettings.getSeed(), this.worldSettings.getTerrainType(), this.worldSettings.func_205391_j());
+       this.setMOTD(this.getServerOwner() + " - " + this.worlds[0].getWorldInfo().getWorldName());
+-      return true;
++      return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
+    }
  
-+        if (false) { //Forge: Dead Code, implement below.
-         for (int i = 0; i < this.field_71305_c.length; ++i)
-         {
-             int j = 0;
-@@ -117,10 +116,25 @@
- 
-             this.field_71305_c[i].func_72954_a(new ServerWorldEventHandler(this, this.field_71305_c[i]));
-         }
-+        }// Forge: End Dead Code
- 
--        this.func_184103_al().func_72364_a(this.field_71305_c);
-+        WorldServer overWorld = (func_71242_L() ? (WorldServer)(new WorldServerDemo(this, isavehandler, worldinfo, 0, this.field_71304_b)).func_175643_b() :
-+                                            (WorldServer)(new WorldServer(this, isavehandler, worldinfo, 0, this.field_71304_b)).func_175643_b());
-+        overWorld.func_72963_a(this.field_71350_m);
-+        for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs())
-+        {
-+            WorldServer world = (dim == 0 ? overWorld : (WorldServer)(new WorldServerMulti(this, isavehandler, dim, overWorld, this.field_71304_b)).func_175643_b());
-+            world.func_72954_a(new ServerWorldEventHandler(this, world));
-+            if (!this.func_71264_H())
-+            {
-+                world.func_72912_H().func_76060_a(func_71265_f());
-+            }
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
-+        }
- 
--        if (this.field_71305_c[0].func_72912_H().func_176130_y() == null)
-+        this.func_184103_al().func_72364_a(new WorldServer[]{ overWorld });
-+
-+        if (overWorld.func_72912_H().func_176130_y() == null)
-         {
-             this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M);
-         }
-@@ -138,9 +152,10 @@
-         this.func_71245_h(true);
-         field_147148_h.info("Generating keypair");
-         this.func_71253_a(CryptManager.func_75891_b());
-+        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerAboutToStart(this)) return false;
-         this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_82749_j());
-         this.func_71205_p(this.func_71214_G() + " - " + this.field_71305_c[0].func_72912_H().func_76065_j());
--        return true;
-+        return net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerStarting(this);
-     }
- 
-     public void func_71217_p()
-@@ -213,6 +228,7 @@
- 
-     public EnumDifficulty func_147135_j()
-     {
-+        if (this.field_71349_l.field_71441_e == null) return this.field_71349_l.field_71474_y.field_74318_M; // Fix NPE just in case.
-         return this.field_71349_l.field_71441_e.func_72912_H().func_176130_y();
-     }
- 
-@@ -364,6 +380,7 @@
- 
-     public void func_71263_m()
-     {
-+        if (func_71278_l())
-         Futures.getUnchecked(this.func_152344_a(new Runnable()
-         {
-             public void run()
+    public void tick() {

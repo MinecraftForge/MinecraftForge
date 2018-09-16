@@ -22,14 +22,14 @@ package net.minecraftforge.client.event;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Event that hooks into EntityRenderer, allowing any feature to customize visual attributes
  *  the player sees.
  */
-public abstract class EntityViewRenderEvent extends Event
+public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final EntityRenderer renderer;
     private final Entity entity;

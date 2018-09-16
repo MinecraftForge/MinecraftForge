@@ -33,6 +33,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.event.RegistryEvent;
@@ -44,9 +45,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import net.minecraftforge.fml.relauncher.Side;
 
 @EventBusSubscriber
 @Mod(modid = MaterialFogColorTest.MODID, name = "FogColor inside material debug.", version = "1.0", acceptableRemoteVersions = "*")
@@ -93,7 +93,7 @@ public class MaterialFogColorTest
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
         if (ENABLED)
@@ -113,7 +113,7 @@ public class MaterialFogColorTest
         }
     }
 
-    @SubscribeEvent
+    @net.minecraftforge.eventbus.api.SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event)
     {
         if (ENABLED)

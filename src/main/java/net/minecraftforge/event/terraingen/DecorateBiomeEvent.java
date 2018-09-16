@@ -28,8 +28,8 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * DecorateBiomeEvent is fired when a BiomeDecorator is created.
@@ -41,7 +41,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * {@link #rand} contains an instance of Random to be used. <br>
  * {@link #chunkPos} contains the original chunk for the decorator. <br>
  * <br>
- * This event is not {@link Cancelable}.
+ * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.
  * <br>
  * This event does not have a result. {@link HasResult}
  * <br>
@@ -51,26 +51,13 @@ public class DecorateBiomeEvent extends Event
 {
     private final World world;
     private final Random rand;
-    /** @deprecated use {@link #chunkPos} */
-    @Deprecated // TODO remove in 1.13
-    private final BlockPos pos;
     private final ChunkPos chunkPos;
 
     public DecorateBiomeEvent(World world, Random rand, ChunkPos chunkPos)
     {
         this.world = world;
         this.rand = rand;
-        this.pos = chunkPos.getBlock(0, 0, 0);
         this.chunkPos = chunkPos;
-    }
-
-    @Deprecated // TODO: remove in 1.13
-    public DecorateBiomeEvent(World world, Random rand, BlockPos pos)
-    {
-        this.world = world;
-        this.rand = rand;
-        this.pos = pos;
-        this.chunkPos = new ChunkPos(pos);
     }
 
     public World getWorld()
@@ -81,15 +68,6 @@ public class DecorateBiomeEvent extends Event
     public Random getRand()
     {
         return rand;
-    }
-
-    /**
-     * @deprecated use {@link #getChunkPos()} or {@link Decorate#getPlacementPos} instead.
-     */
-    @Deprecated
-    public BlockPos getPos()
-    {
-        return pos;
     }
 
     public ChunkPos getChunkPos()
@@ -106,12 +84,6 @@ public class DecorateBiomeEvent extends Event
         {
             super(world, rand, chunkPos);
         }
-
-        @Deprecated // TODO: remove in 1.13
-        public Pre(World world, Random rand, BlockPos pos)
-        {
-            this(world, rand, new ChunkPos(pos));
-        }
     }
 
     /**
@@ -122,12 +94,6 @@ public class DecorateBiomeEvent extends Event
         public Post(World world, Random rand, ChunkPos chunkPos)
         {
             super(world, rand, chunkPos);
-        }
-
-        @Deprecated //TODO: remove in 1.13
-        public Post(World world, Random rand, BlockPos pos)
-        {
-            this(world, rand, new ChunkPos(pos));
         }
     }
 
@@ -156,14 +122,6 @@ public class DecorateBiomeEvent extends Event
             super(world, rand, chunkPos);
             this.type = type;
             this.placementPos = placementPos;
-        }
-
-        @Deprecated // TODO: remove in 1.13
-        public Decorate(World world, Random rand, BlockPos pos, EventType type)
-        {
-            super(world, rand, pos);
-            this.type = type;
-            this.placementPos = null;
         }
 
         public EventType getType()

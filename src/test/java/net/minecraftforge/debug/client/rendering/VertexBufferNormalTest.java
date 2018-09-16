@@ -27,12 +27,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
@@ -42,30 +42,11 @@ public class VertexBufferNormalTest
     @Instance("wrnormal")
     public static VertexBufferNormalTest instance;
 
-    @SidedProxy
-    public static ServerProxy proxy;
-
     @EventHandler
     public void init(FMLPreInitializationEvent event)
     {
         EntityRegistry.registerModEntity(new ResourceLocation("wrnormal", "scale_test"), EntityScaleTest.class, "scale_test", 0, instance, 60, 3, true);
-        proxy.registerRenders();
-    }
-
-    public static class ServerProxy
-    {
-        public void registerRenders()
-        {
-        }
-    }
-
-    public static class ClientProxy extends ServerProxy
-    {
-        @Override
-        public void registerRenders()
-        {
-            RenderingRegistry.registerEntityRenderingHandler(EntityScaleTest.class, new RenderScaleTestFactory());
-        }
+        DistExecutor.runWhenOn(Dist.CLIENT, ()-> () -> RenderingRegistry.registerEntityRenderingHandler(EntityScaleTest.class, RenderScaleTest::new));
     }
 
     public static class RenderScaleTestFactory implements IRenderFactory<EntityScaleTest>

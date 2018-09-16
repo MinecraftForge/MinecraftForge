@@ -33,10 +33,6 @@ import java.util.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ContainerType;
-import net.minecraftforge.fml.common.discovery.ModCandidate;
-import net.minecraftforge.fml.common.discovery.asm.ASMModParser;
 import net.minecraftforge.fml.common.discovery.json.JsonAnnotationLoader;
 import org.junit.jupiter.api.Test;
 

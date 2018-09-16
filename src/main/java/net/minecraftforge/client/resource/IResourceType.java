@@ -19,13 +19,13 @@
 
 package net.minecraftforge.client.resource;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 /**
  * Represents a generic type of reloadable resource. Used for resource reload filtering.
  */
-@SideOnly(Side.CLIENT)
+@OnlyIn(Dist.CLIENT)
 public interface IResourceType
 {
 }

@@ -20,11 +20,11 @@
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface IDisplayableError
 {
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     GuiScreen createGui();
 }

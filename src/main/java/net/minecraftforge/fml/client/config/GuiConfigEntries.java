@@ -27,7 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiListExtended;
@@ -35,10 +35,12 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
+import net.minecraftforge.fml.ModList;
 
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -49,6 +51,8 @@ import org.lwjgl.input.Keyboard;
  */
 public class GuiConfigEntries extends GuiListExtended
 {
+    private static final Logger LOGGER = LogManager.getLogger();
+
     public final GuiConfig owningScreen;
     public final Minecraft mc;
     public List<IConfigEntry> listEntries;
@@ -129,7 +133,7 @@ public class GuiConfigEntries extends GuiListExtended
                     }
                     catch (Throwable e)
                     {
-                        FMLLog.log.error("There was a critical error instantiating the custom IConfigEntry for config element {}.", configElement.getName(), e);
+                        LOGGER.error("There was a critical error instantiating the custom IConfigEntry for config element {}.", configElement.getName(), e);
                     }
                 else if (configElement.isProperty())
                 {
@@ -150,10 +154,7 @@ public class GuiConfigEntries extends GuiListExtended
                     }
                     else if (configElement.getType() == ConfigGuiType.MOD_ID)
                     {
-                        Map<Object, String> values = new TreeMap<Object, String>();
-                        for (ModContainer mod : Loader.instance().getActiveModList())
-                            values.put(mod.getModId(), mod.getName());
-                        values.put("minecraft", "Minecraft");
+                        Map<Object, String> values = ModList.get().getMods().stream().collect(Collectors.toMap(ModInfo::getModId, ModInfo::getDisplayName));
                         this.listEntries.add(new SelectValueEntry(this.owningScreen, this, configElement, values));
                     }
                     else if (configElement.getType() == ConfigGuiType.STRING)
@@ -1687,7 +1688,7 @@ public class GuiConfigEntries extends GuiListExtended
     /**
      * Provides an interface for defining GuiConfigEntry.listEntry objects.
      */
-    public static interface IConfigEntry extends GuiListExtended.IGuiListEntry
+    public static interface IConfigEntry
     {
         /**
          * Gets the IConfigElement object owned by this entry.

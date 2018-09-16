@@ -40,19 +40,20 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.ITimeValue;
 import net.minecraftforge.common.animation.TimeValues;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.util.JsonUtils;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -67,6 +68,7 @@ import java.util.function.Function;
 
 public final class AnimationStateMachine implements IAnimationStateMachine
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ImmutableMap<String, ITimeValue> parameters;
     private final ImmutableMap<String, IClip> clips;
     private final ImmutableList<String> states;
@@ -163,7 +165,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
                     }
                     else
                     {
-                        FMLLog.log.error("Unknown special event \"{}\", ignoring.", event.event());
+                        LOGGER.error("Unknown special event \"{}\", ignoring.", event.event());
                     }
                 }
             }
@@ -213,16 +215,16 @@ public final class AnimationStateMachine implements IAnimationStateMachine
     /**
      * Load a new instance if AnimationStateMachine at specified location, with specified custom parameters.
      */
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public static IAnimationStateMachine load(IResourceManager manager, ResourceLocation location, ImmutableMap<String, ITimeValue> customParameters)
     {
-        try (IResource resource = manager.getResource(location))
+        try (IResource resource = manager.func_199002_a(location))
         {
             ClipResolver clipResolver = new ClipResolver();
             ParameterResolver parameterResolver = new ParameterResolver(customParameters);
             Clips.CommonClipTypeAdapterFactory.INSTANCE.setClipResolver(clipResolver);
             TimeValues.CommonTimeValueTypeAdapterFactory.INSTANCE.setValueResolver(parameterResolver);
-            AnimationStateMachine asm = asmGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), AnimationStateMachine.class);
+            AnimationStateMachine asm = asmGson.fromJson(new InputStreamReader(resource.func_199027_b(), StandardCharsets.UTF_8), AnimationStateMachine.class);
             clipResolver.asm = asm;
             parameterResolver.asm = asm;
             asm.initialize();
@@ -232,7 +234,7 @@ public final class AnimationStateMachine implements IAnimationStateMachine
         }
         catch(IOException | JsonParseException e)
         {
-            FMLLog.log.error("Exception loading Animation State Machine {}, skipping", location, e);
+            LOGGER.error("Exception loading Animation State Machine {}, skipping", location, e);
             return missing;
         }
         finally

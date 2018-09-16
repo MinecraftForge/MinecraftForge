@@ -1,76 +1,34 @@
---- ../src-base/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-+++ ../src-work/minecraft/net/minecraft/client/gui/GuiMainMenu.java
-@@ -70,6 +70,8 @@
-     private GuiScreen field_183503_M;
-     private int field_193978_M;
-     private int field_193979_N;
-+    private GuiButton modButton;
-+    private net.minecraftforge.client.gui.NotificationModUpdateScreen modUpdateNotification;
+--- a/net/minecraft/client/gui/GuiMainMenu.java
++++ b/net/minecraft/client/gui/GuiMainMenu.java
+@@ -192,12 +192,18 @@
+             GuiMainMenu.this.mc.displayGuiScreen(new GuiMultiplayer(GuiMainMenu.this));
+          }
+       });
+-      this.addButton(new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online")) {
++      this.addButton(new GuiButton(14, this.width / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("menu.online")) {
+          public void func_194829_a(double p_194829_1_, double p_194829_3_) {
+             GuiMainMenu.this.switchToRealms();
+          }
+       });
++      this.addButton(new GuiButton(6, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.format("fml.menu.mods")) {
++         @Override
++         public void func_194829_a(double x, double y) {
++            GuiMainMenu.this.mc.displayGuiScreen(new net.minecraftforge.fml.client.gui.GuiModList(GuiMainMenu.this));
+    }
++      });
++   }
  
-     public GuiMainMenu()
-     {
-@@ -212,13 +214,15 @@
-             this.field_183503_M.func_183500_a(this.field_146294_l, this.field_146295_m);
-             this.field_183503_M.func_73866_w_();
-         }
-+        modUpdateNotification = net.minecraftforge.client.gui.NotificationModUpdateScreen.init(this, modButton);
-     }
+    private void addDemoButtons(int p_73972_1_, int p_73972_2_) {
+       this.addButton(new GuiButton(11, this.width / 2 - 100, p_73972_1_, I18n.format("menu.playdemo")) {
+@@ -283,7 +289,10 @@
+          s = s + ("release".equalsIgnoreCase(this.mc.getVersionType()) ? "" : "/" + this.mc.getVersionType());
+       }
  
-     private void func_73969_a(int p_73969_1_, int p_73969_2_)
-     {
-         this.field_146292_n.add(new GuiButton(1, this.field_146294_l / 2 - 100, p_73969_1_, I18n.func_135052_a("menu.singleplayer")));
-         this.field_146292_n.add(new GuiButton(2, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 1, I18n.func_135052_a("menu.multiplayer")));
--        this.field_175372_K = this.func_189646_b(new GuiButton(14, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.func_135052_a("menu.online")));
-+        this.field_175372_K = this.func_189646_b(new GuiButton(14, this.field_146294_l / 2 + 2, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("menu.online").replace("Minecraft", "").trim()));
-+        this.field_146292_n.add(modButton = new GuiButton(6, this.field_146294_l / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 98, 20, I18n.func_135052_a("fml.menu.mods")));
-     }
- 
-     private void func_73972_b(int p_73972_1_, int p_73972_2_)
-@@ -266,6 +270,11 @@
-             this.field_146297_k.func_71400_g();
-         }
- 
-+        if (p_146284_1_.field_146127_k == 6)
-+        {
-+            this.field_146297_k.func_147108_a(new net.minecraftforge.fml.client.GuiModList(this));
-+        }
+-      this.drawString(this.fontRenderer, s, 2, this.height - 10, -1);
++      net.minecraftforge.fml.BrandingControl.forEachLine(true, true, (brdline, brd) ->
++              this.drawString(this.fontRenderer, brd, 2, this.height - ( 10 + brdline * (this.fontRenderer.FONT_HEIGHT + 1)), 16777215)
++      );
 +
-         if (p_146284_1_.field_146127_k == 11)
-         {
-             this.field_146297_k.func_71371_a("Demo_World", "Demo_World", WorldServerDemo.field_73071_a);
-@@ -500,6 +509,9 @@
- 
-         this.field_146297_k.func_110434_K().func_110577_a(field_194400_H);
-         func_146110_a(j + 88, 67, 0.0F, 0.0F, 98, 14, 128.0F, 16.0F);
-+
-+        this.field_73975_c = net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.field_146289_q, this.field_146294_l, this.field_146295_m, this.field_73975_c);
-+
-         GlStateManager.func_179094_E();
-         GlStateManager.func_179109_b((float)(this.field_146294_l / 2 + 90), 70.0F, 0.0F);
-         GlStateManager.func_179114_b(-20.0F, 0.0F, 0.0F, 1.0F);
-@@ -519,7 +531,16 @@
-             s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
-         }
- 
--        this.func_73731_b(this.field_146289_q, s, 2, this.field_146295_m - 10, -1);
-+        java.util.List<String> brandings = com.google.common.collect.Lists.reverse(net.minecraftforge.fml.common.FMLCommonHandler.instance().getBrandings(true));
-+        for (int brdline = 0; brdline < brandings.size(); brdline++)
-+        {
-+            String brd = brandings.get(brdline);
-+            if (!com.google.common.base.Strings.isNullOrEmpty(brd))
-+            {
-+                this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + brdline * (this.field_146289_q.field_78288_b + 1)), 16777215);
-+            }
-+        }
-+
-         this.func_73731_b(this.field_146289_q, "Copyright Mojang AB. Do not distribute!", this.field_193979_N, this.field_146295_m - 10, -1);
- 
-         if (p_73863_1_ > this.field_193979_N && p_73863_1_ < this.field_193979_N + this.field_193978_M && p_73863_2_ > this.field_146295_m - 10 && p_73863_2_ < this.field_146295_m && Mouse.isInsideWindow())
-@@ -540,6 +561,7 @@
-         {
-             this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
-         }
-+        modUpdateNotification.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
-     }
- 
-     protected void func_73864_a(int p_73864_1_, int p_73864_2_, int p_73864_3_) throws IOException
+       this.drawString(this.fontRenderer, "Copyright Mojang AB. Do not distribute!", this.widthCopyrightRest, this.height - 10, -1);
+       if (mouseX > this.widthCopyrightRest && mouseX < this.widthCopyrightRest + this.widthCopyright && mouseY > this.height - 10 && mouseY < this.height) {
+          drawRect(this.widthCopyrightRest, this.height - 1, this.widthCopyrightRest + this.widthCopyright, this.height, -1);

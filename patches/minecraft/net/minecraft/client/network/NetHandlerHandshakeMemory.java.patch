@@ -1,10 +1,10 @@
---- ../src-base/minecraft/net/minecraft/client/network/NetHandlerHandshakeMemory.java
-+++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerHandshakeMemory.java
-@@ -23,6 +23,7 @@
+--- a/net/minecraft/client/network/NetHandlerHandshakeMemory.java
++++ b/net/minecraft/client/network/NetHandlerHandshakeMemory.java
+@@ -20,6 +20,7 @@
+    }
  
-     public void func_147383_a(C00Handshake p_147383_1_)
-     {
-+        if (!net.minecraftforge.fml.common.FMLCommonHandler.instance().handleServerHandshake(p_147383_1_, this.field_147384_b)) return;
-         this.field_147384_b.func_150723_a(p_147383_1_.func_149594_c());
-         this.field_147384_b.func_150719_a(new NetHandlerLoginServer(this.field_147385_a, this.field_147384_b));
-     }
+    public void processHandshake(CPacketHandshake packetIn) {
++      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerLogin(packetIn, this.networkManager)) return;
+       this.networkManager.setConnectionState(packetIn.getRequestedState());
+       this.networkManager.setNetHandler(new NetHandlerLoginServer(this.server, this.networkManager));
+    }

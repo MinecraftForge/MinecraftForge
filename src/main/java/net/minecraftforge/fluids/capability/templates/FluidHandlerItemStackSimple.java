@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -42,6 +43,8 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabilityProvider
 {
     public static final String FLUID_NBT_KEY = "Fluid";
+    
+    private final OptionalCapabilityInstance<IFluidHandlerItem> holder = OptionalCapabilityInstance.of(() -> this);
 
     @Nonnull
     protected ItemStack container;
@@ -178,17 +181,10 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
     }
 
     @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
+    @Nonnull
+    public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
-    {
-        return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY ? (T) this : null;
+        return OptionalCapabilityInstance.orEmpty(capability, CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, holder);
     }
 
     /**

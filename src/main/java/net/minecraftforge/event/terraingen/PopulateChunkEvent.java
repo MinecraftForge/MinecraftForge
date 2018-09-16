@@ -24,12 +24,12 @@ import java.util.Random;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * PopulateChunkEvent is fired when an event involving chunk terrain feature population occurs.<br>
- * If a method utilizes this {@link Event} as its parameter, the method will
+ * If a method utilizes this {@link net.minecraftforge.eventbus.api.Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
  * {@link #world} contains the world this event is occurring in.<br>

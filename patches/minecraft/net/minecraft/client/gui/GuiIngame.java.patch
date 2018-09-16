@@ -1,35 +1,16 @@
---- ../src-base/minecraft/net/minecraft/client/gui/GuiIngame.java
-+++ ../src-work/minecraft/net/minecraft/client/gui/GuiIngame.java
-@@ -379,7 +379,8 @@
- 
-                 BlockPos blockpos = raytraceresult.func_178782_a();
- 
--                if (!this.field_73839_d.field_71441_e.func_180495_p(blockpos).func_177230_c().func_149716_u() || !(this.field_73839_d.field_71441_e.func_175625_s(blockpos) instanceof IInventory))
-+                net.minecraft.block.state.IBlockState state = this.field_73839_d.field_71441_e.func_180495_p(blockpos);
-+                if (!state.func_177230_c().hasTileEntity(state) || !(this.field_73839_d.field_71441_e.func_175625_s(blockpos) instanceof IInventory))
-                 {
-                     return;
-                 }
-@@ -449,7 +450,10 @@
-             {
-                 Potion potion = potioneffect.func_188419_a();
- 
--                if (potion.func_76400_d() && potioneffect.func_188418_e())
-+                if (!potion.shouldRenderHUD(potioneffect)) continue;
-+                // Rebind in case previous renderHUDEffect changed texture
-+                this.field_73839_d.func_110434_K().func_110577_a(GuiContainer.field_147001_a);
-+                if (potioneffect.func_188418_e())
-                 {
-                     int k = p_184048_1_.func_78326_a();
-                     int l = 1;
-@@ -492,7 +496,10 @@
-                     }
- 
-                     GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, f);
-+                    // FORGE - Move status icon check down from above so renderHUDEffect will still be called without a status icon
-+                    if (potion.func_76400_d())
-                     this.func_73729_b(k + 3, l + 3, i1 % 8 * 18, 198 + i1 / 8 * 18, 18, 18);
-+                    potion.renderHUDEffect(k, l, potioneffect, field_73839_d, f);
-                 }
-             }
-         }
+--- a/net/minecraft/client/gui/GuiIngame.java
++++ b/net/minecraft/client/gui/GuiIngame.java
+@@ -548,7 +548,13 @@
+             GlStateManager.pushMatrix();
+             GlStateManager.enableBlend();
+             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++            FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
++            if (font == null) {
+             this.getFontRenderer().drawStringWithShadow(s, (float)i, (float)j, 16777215 + (k << 24));
++            } else {
++                i = (this.field_194811_H - font.getStringWidth(s)) / 2;
++                font.drawStringWithShadow(s, (float)i, (float)j, 16777215 + (k << 24));
++            }
+             GlStateManager.disableBlend();
+             GlStateManager.popMatrix();
+          }

@@ -24,11 +24,11 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 @Mod(modid = CanApplyAtEnchantingTableTest.MODID, name = "CanApplyAtEnchantingTableTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class CanApplyAtEnchantingTableTest
@@ -76,7 +76,7 @@ public class CanApplyAtEnchantingTableTest
     @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
-        @SubscribeEvent
+        @net.minecraftforge.eventbus.api.SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
             if (ENABLE)

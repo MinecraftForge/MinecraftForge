@@ -31,7 +31,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate;
-import net.minecraftforge.fml.common.eventhandler.Event.Result;
+import net.minecraftforge.eventbus.api.Event.Result;
 
 public abstract class TerrainGen
 {

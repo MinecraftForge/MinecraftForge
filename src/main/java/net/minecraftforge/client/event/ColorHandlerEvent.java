@@ -21,7 +21,7 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Use these events to register block/item

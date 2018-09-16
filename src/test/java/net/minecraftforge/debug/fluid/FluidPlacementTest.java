@@ -37,6 +37,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,9 +53,8 @@ import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.api.distmarker.Dist;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -271,7 +271,7 @@ public class FluidPlacementTest
         }
 
         @Override
-        @SideOnly(Side.CLIENT)
+        @OnlyIn(Dist.CLIENT)
         public void addInformation(ItemStack stack, @Nullable World playerIn, List<String> tooltip, ITooltipFlag advanced)
         {
             FluidStack fluid = getFluid(stack);

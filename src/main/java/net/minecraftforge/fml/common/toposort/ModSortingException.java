@@ -22,12 +22,12 @@ package net.minecraftforge.fml.common.toposort;
 import java.util.Set;
 
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.GuiSortingProblem;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.client.IDisplayableError;
+import net.minecraftforge.fml.client.gui.GuiSortingProblem;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModSortingException extends EnhancedRuntimeException implements IDisplayableError
 {
@@ -59,7 +59,7 @@ public class ModSortingException extends EnhancedRuntimeException implements IDi
     public <T> ModSortingException(String string, T node, Set<T> visitedNodes)
     {
         super(string);
-        this.sortingExceptionData = new SortingExceptionData<T>(node, visitedNodes);
+        this.sortingExceptionData = new SortingExceptionData<>(node, visitedNodes);
     }
 
     @SuppressWarnings("unchecked")
@@ -76,14 +76,14 @@ public class ModSortingException extends EnhancedRuntimeException implements IDi
         stream.println("The first mod in the cycle is " + exceptionData.getFirstBadNode());
         stream.println("The mod cycle involves:");
         for (ModContainer mc : exceptionData.getVisitedNodes())
-        {
+        {/* TODO Mod dependencies
             stream.println(String.format("\t%s : before: %s, after: %s", mc.toString(), mc.getDependants(), mc.getDependencies()));
-        }
+      */}
     }
 
 
     @Override
-    @SideOnly(Side.CLIENT)
+    @OnlyIn(Dist.CLIENT)
     public GuiScreen createGui()
     {
         return new GuiSortingProblem(this);

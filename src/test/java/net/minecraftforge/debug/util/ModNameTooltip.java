@@ -25,19 +25,17 @@ import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.ModContainer;
 
 @Mod(modid = "forgemodnametooltip", name = "ForgeModNameTooltip", version = "1.0", clientSideOnly = true)
 @Mod.EventBusSubscriber(Side.CLIENT)
 public class ModNameTooltip
 {
-    @SubscribeEvent(priority = EventPriority.LOW)
+    @net.minecraftforge.eventbus.api.SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOW)
     public static void onToolTip(ItemTooltipEvent event)
     {
         ItemStack itemStack = event.getItemStack();

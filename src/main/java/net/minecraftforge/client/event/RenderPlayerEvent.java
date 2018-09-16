@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -51,7 +51,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
     public double getY() { return y; }
     public double getZ() { return z; }
 
-    @Cancelable
+    @net.minecraftforge.eventbus.api.Cancelable
     public static class Pre extends RenderPlayerEvent
     {
         public Pre(EntityPlayer player, RenderPlayer renderer, float tick, double x, double y, double z){ super(player, renderer, tick, x, y, z); }
@@ -74,7 +74,7 @@ public abstract class RenderPlayerEvent extends PlayerEvent
             super(player, renderer, partialTicks, 0D, 0D, 0D);
         }
 
-        @Cancelable
+        @net.minecraftforge.eventbus.api.Cancelable
         public static class Pre extends Specials
         {
             private boolean renderHelmet = true;

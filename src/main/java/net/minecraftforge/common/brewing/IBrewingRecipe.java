@@ -21,8 +21,6 @@ package net.minecraftforge.common.brewing;
 
 import net.minecraft.item.ItemStack;
 
-import javax.annotation.Nonnull;
-
 public interface IBrewingRecipe {
 
     /**
@@ -30,19 +28,18 @@ public interface IBrewingRecipe {
      * being the item that goes in one of the three bottom slots of the brewing
      * stand (e.g: water bottle)
      */
-    boolean isInput(@Nonnull ItemStack input);
+    boolean isInput(ItemStack input);
 
     /**
      * Returns true if the passed ItemStack is an ingredient for this recipe.
      * "Ingredient" being the item that goes in the top slot of the brewing
      * stand (e.g: nether wart)
      */
-    boolean isIngredient(@Nonnull ItemStack ingredient);
+    boolean isIngredient(ItemStack ingredient);
 
     /**
      * Returns the output when the passed input is brewed with the passed
      * ingredient. Empty if invalid input or ingredient.
      */
-    @Nonnull
-    ItemStack getOutput(@Nonnull ItemStack input, @Nonnull ItemStack ingredient);
+    ItemStack getOutput(ItemStack input, ItemStack ingredient);
 }

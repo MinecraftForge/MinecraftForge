@@ -1,0 +1,77 @@
+--- a/net/minecraft/item/crafting/ShapelessRecipe.java
++++ b/net/minecraft/item/crafting/ShapelessRecipe.java
+@@ -12,20 +12,20 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class ShapelessRecipe implements IRecipe {
+    private final ResourceLocation field_199562_a;
+    private final String group;
+    private final ItemStack recipeOutput;
+    private final NonNullList<Ingredient> recipeItems;
++   private final boolean isSimple;
+ 
+    public ShapelessRecipe(ResourceLocation p_i48161_1_, String p_i48161_2_, ItemStack p_i48161_3_, NonNullList<Ingredient> p_i48161_4_) {
+       this.field_199562_a = p_i48161_1_;
+       this.group = p_i48161_2_;
+       this.recipeOutput = p_i48161_3_;
+       this.recipeItems = p_i48161_4_;
++      this.isSimple = p_i48161_4_.stream().allMatch(Ingredient::isSimple);
+    }
+ 
+    public ResourceLocation func_199560_c() {
+@@ -36,7 +36,6 @@
+       return RecipeSerializers.field_199576_b;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public String getGroup() {
+       return this.group;
+    }
+@@ -54,6 +53,7 @@
+          return false;
+       } else {
+          RecipeItemHelper recipeitemhelper = new RecipeItemHelper();
++         java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
+          int i = 0;
+ 
+          for(int j = 0; j < inv.getHeight(); ++j) {
+@@ -61,12 +61,15 @@
+                ItemStack itemstack = inv.getStackInSlot(k + j * inv.getWidth());
+                if (!itemstack.isEmpty()) {
+                   ++i;
++                  if (isSimple)
+                   recipeitemhelper.accountStack(new ItemStack(itemstack.getItem()));
++                  else
++                     inputs.add(itemstack);
+                }
+             }
+          }
+ 
+-         return i == this.recipeItems.size() && recipeitemhelper.canCraft(this, (IntList)null);
++         return i == this.recipeItems.size() && (isSimple ? recipeitemhelper.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
+       }
+    }
+ 
+@@ -74,7 +77,6 @@
+       return this.recipeOutput.copy();
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width * height >= this.recipeItems.size();
+    }
+@@ -85,8 +87,8 @@
+          NonNullList<Ingredient> nonnulllist = func_199568_a(JsonUtils.getJsonArray(p_199425_2_, "ingredients"));
+          if (nonnulllist.isEmpty()) {
+             throw new JsonParseException("No ingredients for shapeless recipe");
+-         } else if (nonnulllist.size() > 9) {
+-            throw new JsonParseException("Too many ingredients for shapeless recipe");
++         } else if (nonnulllist.size() > ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT) {
++            throw new JsonParseException("Too many ingredients for shapeless recipe the max is " + (ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT));
+          } else {
+             ItemStack itemstack = ShapedRecipe.func_199798_a(JsonUtils.getJsonObject(p_199425_2_, "result"));
+             return new ShapelessRecipe(p_199425_1_, s, itemstack, nonnulllist);

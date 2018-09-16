@@ -32,6 +32,11 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -49,11 +54,8 @@ import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
+import net.minecraftforge.fml.ModContainer;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -87,11 +89,11 @@ import com.google.common.collect.Sets;
  * The chunkloading is configurable at runtime. The file "config/forgeChunkLoading.cfg" contains both default configuration for chunkloading, and a sample individual mod
  * specific override section.
  *
- * @author cpw
- *
  */
 public class ForgeChunkManager
 {
+    public static Marker CHUNK_MANAGER = MarkerManager.getMarker("CHUNKMANAGER");
+    private static Logger LOGGER = LogManager.getLogger();
     private static int defaultMaxCount;
     private static int defaultMaxChunks;
     private static boolean overridesEnabled;
@@ -143,7 +145,7 @@ public class ForgeChunkManager
         final ImmutableSetMultimap<ChunkPos, Ticket> persistentChunksFor = getPersistentChunksFor(world);
         final ImmutableSet.Builder<Chunk> builder = ImmutableSet.builder();
         world.profiler.startSection("forcedChunkLoading");
-        builder.addAll(persistentChunksFor.keys().stream().filter(Objects::nonNull).map(input -> world.getChunkFromChunkCoords(input.x, input.z)).iterator());
+        builder.addAll(persistentChunksFor.keys().stream().filter(Objects::nonNull).map(input -> world.getChunk(input.x, input.z)).iterator());
         world.profiler.endStartSection("regularChunkLoading");
         builder.addAll(chunkIterator);
         world.profiler.endSection();
@@ -265,7 +267,7 @@ public class ForgeChunkManager
             }
             else
             {
-                FMLLog.log.error("Attempt to create a player ticket without a valid player");
+                LOGGER.error(CHUNK_MANAGER, "Attempt to create a player ticket without a valid player");
                 throw new RuntimeException();
             }
         }
@@ -279,7 +281,7 @@ public class ForgeChunkManager
         {
             if (depth > getMaxChunkDepthFor(modId) || (depth <= 0 && getMaxChunkDepthFor(modId) > 0))
             {
-                FMLLog.log.warn("The mod {} tried to modify the chunk ticket depth to: {}, its allowed maximum is: {}", modId, depth, getMaxChunkDepthFor(modId));
+                LOGGER.warn(CHUNK_MANAGER, "The mod {} tried to modify the chunk ticket depth to: {}, its allowed maximum is: {}", modId, depth, getMaxChunkDepthFor(modId));
             }
             else
             {
@@ -390,7 +392,8 @@ public class ForgeChunkManager
         }
     }
 
-    public static class ForceChunkEvent extends Event {
+    public static class ForceChunkEvent extends net.minecraftforge.eventbus.api.Event
+    {
         private final Ticket ticket;
         private final ChunkPos location;
 
@@ -411,7 +414,8 @@ public class ForgeChunkManager
         }
     }
 
-    public static class UnforceChunkEvent extends Event {
+    public static class UnforceChunkEvent extends net.minecraftforge.eventbus.api.Event
+    {
         private final Ticket ticket;
         private final ChunkPos location;
 
@@ -451,7 +455,7 @@ public class ForgeChunkManager
             try
             {
                 NBTTagCompound forcedChunkData = CompressedStreamTools.read(chunkLoaderData);
-                return forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND).tagCount() > 0;
+                return forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND).size() > 0;
             }
             catch (IOException e)
             {
@@ -491,11 +495,11 @@ public class ForgeChunkManager
             }
             catch (IOException e)
             {
-                FMLLog.log.warn("Unable to read forced chunk data at {} - it will be ignored", chunkLoaderData.getAbsolutePath(), e);
+                LOGGER.warn(CHUNK_MANAGER, "Unable to read forced chunk data at {} - it will be ignored", chunkLoaderData.getAbsolutePath(), e);
                 return;
             }
             NBTTagList ticketList = forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND);
-            for (int i = 0; i < ticketList.tagCount(); i++)
+            for (int i = 0; i < ticketList.size(); i++)
             {
                 NBTTagCompound ticketHolder = ticketList.getCompoundTagAt(i);
                 String modId = ticketHolder.getString("Owner");
@@ -503,18 +507,18 @@ public class ForgeChunkManager
 
                 if (!isPlayer && !Loader.isModLoaded(modId))
                 {
-                    FMLLog.log.warn("Found chunkloading data for mod {} which is currently not available or active - it will be removed from the world save", modId);
+                    LOGGER.warn(CHUNK_MANAGER, "Found chunkloading data for mod {} which is currently not available or active - it will be removed from the world save", modId);
                     continue;
                 }
 
                 if (!isPlayer && !callbacks.containsKey(modId))
                 {
-                    FMLLog.log.warn("The mod {} has registered persistent chunkloading data but doesn't seem to want to be called back with it - it will be removed from the world save", modId);
+                    LOGGER.warn(CHUNK_MANAGER, "The mod {} has registered persistent chunkloading data but doesn't seem to want to be called back with it - it will be removed from the world save", modId);
                     continue;
                 }
 
                 NBTTagList tickets = ticketHolder.getTagList("Tickets", Constants.NBT.TAG_COMPOUND);
-                for (int j = 0; j < tickets.tagCount(); j++)
+                for (int j = 0; j < tickets.size(); j++)
                 {
                     NBTTagCompound ticket = tickets.getCompoundTagAt(j);
                     modId = ticket.hasKey("ModId") ? ticket.getString("ModId") : modId;
@@ -556,14 +560,14 @@ public class ForgeChunkManager
                     // force the world to load the entity's chunk
                     // the load will come back through the loadEntity method and attach the entity
                     // to the ticket
-                    world.getChunkFromChunkCoords(tick.entityChunkX, tick.entityChunkZ);
+                    world.getChunk(tick.entityChunkX, tick.entityChunkZ);
                 }
             }
             for (Ticket tick : ImmutableSet.copyOf(pendingEntities.values()))
             {
                 if (tick.ticketType == Type.ENTITY && tick.entity == null)
                 {
-                    FMLLog.log.warn("Failed to load persistent chunkloading entity {} from store.", pendingEntities.inverse().get(tick));
+                    LOGGER.warn(CHUNK_MANAGER, "Failed to load persistent chunkloading entity {} from store.", pendingEntities.inverse().get(tick));
                     loadedTickets.remove(tick.modId, tick);
                 }
             }
@@ -585,7 +589,7 @@ public class ForgeChunkManager
                 }
                 if (tickets.size() > maxTicketLength)
                 {
-                    FMLLog.log.warn("The mod {} has too many open chunkloading tickets {}. Excess will be dropped", modId, tickets.size());
+                    LOGGER.warn(CHUNK_MANAGER, "The mod {} has too many open chunkloading tickets {}. Excess will be dropped", modId, tickets.size());
                     tickets.subList(maxTicketLength, tickets.size()).clear();
                 }
                 ForgeChunkManager.tickets.get(world).putAll(modId, tickets);
@@ -625,7 +629,7 @@ public class ForgeChunkManager
             dormantChunkCache.remove(world);
         }
         // integrated server is shutting down
-        if (!FMLCommonHandler.instance().getMinecraftServerInstance().isServerRunning())
+        if (!ServerLifecycleHooks.getCurrentServer().isServerRunning())
         {
             playerTickets.clear();
             tickets.clear();
@@ -643,7 +647,7 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container == null)
         {
-            FMLLog.log.warn("Unable to register a callback for an unknown mod {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
+            LOGGER.warn(CHUNK_MANAGER, "Unable to register a callback for an unknown mod {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
             return;
         }
 
@@ -701,12 +705,12 @@ public class ForgeChunkManager
         ModContainer mc = getContainer(mod);
         if (mc == null)
         {
-            FMLLog.log.error("Failed to locate the container for mod instance {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
+            LOGGER.error(CHUNK_MANAGER, "Failed to locate the container for mod instance {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
             return null;
         }
         if (playerTickets.get(player).size()>playerTicketLength)
         {
-            FMLLog.log.warn("Unable to assign further chunkloading tickets to player {} (on behalf of mod {})", player, mc.getModId());
+            LOGGER.warn(CHUNK_MANAGER, "Unable to assign further chunkloading tickets to player {} (on behalf of mod {})", player, mc.getModId());
             return null;
         }
         Ticket ticket = new Ticket(mc.getModId(),type,world,player);
@@ -728,13 +732,13 @@ public class ForgeChunkManager
         ModContainer container = getContainer(mod);
         if (container == null)
         {
-            FMLLog.log.error("Failed to locate the container for mod instance {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
+            LOGGER.error(CHUNK_MANAGER, "Failed to locate the container for mod instance {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
             return null;
         }
         String modId = container.getModId();
         if (!callbacks.containsKey(modId))
         {
-            FMLLog.log.fatal("The mod {} has attempted to request a ticket without a listener in place", modId);
+            LOGGER.fatal(CHUNK_MANAGER, "The mod {} has attempted to request a ticket without a listener in place", modId);
             throw new RuntimeException("Invalid ticket request");
         }
 
@@ -744,7 +748,7 @@ public class ForgeChunkManager
         {
             if (!warnedMods.contains(modId))
             {
-                FMLLog.log.info("The mod {} has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum: {}", modId, allowedCount);
+                LOGGER.info(CHUNK_MANAGER, "The mod {} has attempted to allocate a chunkloading ticket beyond it's currently allocated maximum: {}", modId, allowedCount);
                 warnedMods.add(modId);
             }
             return null;
@@ -808,7 +812,7 @@ public class ForgeChunkManager
         }
         if (ticket.isPlayerTicket() ? !playerTickets.containsValue(ticket) : !tickets.get(ticket.world).containsEntry(ticket.modId, ticket))
         {
-            FMLLog.log.fatal("The mod {} attempted to force load a chunk with an invalid ticket. This is not permitted.", ticket.modId);
+            LOGGER.fatal(CHUNK_MANAGER, "The mod {} attempted to force load a chunk with an invalid ticket. This is not permitted.", ticket.modId);
             return;
         }
         ticket.requestedChunks.add(chunk);
@@ -911,7 +915,7 @@ public class ForgeChunkManager
         for (String modId : ticketSet.keySet())
         {
             NBTTagCompound ticketHolder = new NBTTagCompound();
-            ticketList.appendTag(ticketHolder);
+            ticketList.add(ticketHolder);
 
             ticketHolder.setString("Owner", modId);
             NBTTagList tickets = new NBTTagList();
@@ -937,11 +941,11 @@ public class ForgeChunkManager
                     ticket.setInteger("chunkZ", MathHelper.floor(tick.entity.chunkCoordZ));
                     ticket.setLong("PersistentIDMSB", tick.entity.getPersistentID().getMostSignificantBits());
                     ticket.setLong("PersistentIDLSB", tick.entity.getPersistentID().getLeastSignificantBits());
-                    tickets.appendTag(ticket);
+                    tickets.add(ticket);
                 }
                 else if (tick.ticketType != Type.ENTITY)
                 {
-                    tickets.appendTag(ticket);
+                    tickets.add(ticket);
                 }
             }
         }
@@ -954,7 +958,7 @@ public class ForgeChunkManager
             }
             catch (IOException e)
             {
-                FMLLog.log.warn("Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
+                LOGGER.warn(CHUNK_MANAGER, "Unable to write forced chunk data to {} - chunkloading won't work", chunkLoaderData.getAbsolutePath(), e);
             }
             return false;
         });
@@ -1023,14 +1027,14 @@ public class ForgeChunkManager
     private static void loadChunkEntities(Chunk chunk, NBTTagCompound nbt, World world)
     {
         NBTTagList entities = nbt.getTagList("Entities", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < entities.tagCount(); ++i)
+        for (int i = 0; i < entities.size(); ++i)
         {
             AnvilChunkLoader.readChunkEntity(entities.getCompoundTagAt(i), world, chunk);
             chunk.setHasEntities(true);
         }
 
         NBTTagList tileEntities = nbt.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < tileEntities.tagCount(); ++i)
+        for (int i = 0; i < tileEntities.size(); ++i)
         {
             TileEntity tileEntity = TileEntity.create(world, tileEntities.getCompoundTagAt(i));
             if (tileEntity != null) chunk.addTileEntity(tileEntity);
@@ -1053,7 +1057,7 @@ public class ForgeChunkManager
                 dest.delete();
             }
             cfgFile.renameTo(dest);
-            FMLLog.log.error("A critical error occurred reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak", e);
+            LOGGER.error(CHUNK_MANAGER, "A critical error occurred reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak", e);
         }
         syncConfigDefaults();
     }
@@ -1106,7 +1110,7 @@ public class ForgeChunkManager
         temp.setMinValue(0);
         dormantChunkCacheSize = temp.getInt(0);
         propOrder.add("dormantChunkCacheSize");
-        FMLLog.log.info("Configured a dormant chunk cache size of {}", temp.getInt(0));
+        LOGGER.info(CHUNK_MANAGER, "Configured a dormant chunk cache size of {}", temp.getInt(0));
 
         temp = config.get("defaults", "asyncChunkLoading", true);
         temp.setComment("Load chunks asynchronously for players, reducing load on the server thread.\n" +

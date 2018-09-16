@@ -1,0 +1,10 @@
+--- a/net/minecraft/init/MobEffects.java
++++ b/net/minecraft/init/MobEffects.java
+@@ -4,6 +4,7 @@
+ import net.minecraft.potion.Potion;
+ import net.minecraft.util.ResourceLocation;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class MobEffects {
+    public static final Potion SPEED;
+    public static final Potion SLOWNESS;

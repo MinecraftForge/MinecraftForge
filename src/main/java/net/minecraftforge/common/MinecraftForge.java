@@ -19,18 +19,12 @@
 
 package net.minecraftforge.common;
 
-import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ICrashCallable;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.discovery.ASMDataTable;
-import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
-import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.eventbus.api.IEventBus;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.logging.log4j.Level;
 
 import com.google.common.collect.Lists;
 
@@ -39,7 +33,10 @@ import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.oredict.OreDictionary;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nonnull;
 
@@ -53,12 +50,13 @@ public class MinecraftForge
      * ORE_GEN_BUS for ore gen events
      * EVENT_BUS for everything else
      */
-    public static final EventBus EVENT_BUS = new EventBus();
-    public static final EventBus TERRAIN_GEN_BUS = new EventBus();
-    public static final EventBus ORE_GEN_BUS = new EventBus();
-    public static final String MC_VERSION = Loader.MC_VERSION;
+    public static final IEventBus EVENT_BUS = IEventBus.create();
+    public static final IEventBus TERRAIN_GEN_BUS = IEventBus.create();
+    public static final IEventBus ORE_GEN_BUS = IEventBus.create();
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
+    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Marker FORGE = MarkerManager.getMarker("FORGE");
 
     /**
      * Register a new seed to be dropped when breaking tall grass.
@@ -83,9 +81,7 @@ public class MinecraftForge
     */
    public static void initialize()
    {
-       FMLLog.log.info("MinecraftForge v{} Initialized", ForgeVersion.getVersion());
-
-       OreDictionary.getOreName(0);
+       LOGGER.info(FORGE,"MinecraftForge v{} Initialized", ForgeVersion.getVersion());
 
        UsernameCache.load();
        // Load before all the mods, so MC owns the MC fluids
@@ -99,6 +95,7 @@ public class MinecraftForge
 
 
 
+/*
    public static void preloadCrashClasses(ASMDataTable table, String modID, Set<String> classes)
    {
        //Find all ICrashReportDetail's handlers and preload them.
@@ -113,19 +110,20 @@ public class MinecraftForge
        if (all.size() == 0)
         return;
 
-       ForgeModContainer.log.debug("Preloading CrashReport Classes");
+       ForgeMod.log.debug("Preloading CrashReport Classes");
        Collections.sort(all); //Sort it because I like pretty output ;)
        for (String name : all)
        {
-           ForgeModContainer.log.debug("\t{}", name);
+           ForgeMod.log.debug("\t{}", name);
            try
            {
                Class.forName(name.replace('/', '.'), false, MinecraftForge.class.getClassLoader());
            }
            catch (Exception e)
            {
-               FMLLog.log.error("Could not find class for name '{}'.", name, e);
+               LOGGER.error("Could not find class for name '{}'.", name, e);
            }
        }
    }
+*/
 }

@@ -1,14 +1,12 @@
---- ../src-base/minecraft/net/minecraft/network/play/client/CPacketCustomPayload.java
-+++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketCustomPayload.java
-@@ -47,7 +47,11 @@
-     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
-     {
-         p_148840_1_.func_180714_a(this.field_149562_a);
-+        synchronized(this.field_149561_c) { //This may be access multiple times, from multiple threads, lets be safe.
-+        this.field_149561_c.markReaderIndex();
-         p_148840_1_.writeBytes((ByteBuf)this.field_149561_c);
-+        this.field_149561_c.resetReaderIndex();
-+        }
-     }
+--- a/net/minecraft/network/play/client/CPacketCustomPayload.java
++++ b/net/minecraft/network/play/client/CPacketCustomPayload.java
+@@ -9,7 +9,8 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
-     public void func_148833_a(INetHandlerPlayServer p_148833_1_)
+-public class CPacketCustomPayload implements Packet<INetHandlerPlayServer> {
++public class CPacketCustomPayload implements Packet<INetHandlerPlayServer>, net.minecraftforge.fml.network.ICustomPacket<CPacketCustomPayload>
++{
+    public static final ResourceLocation field_210344_a = new ResourceLocation("minecraft:brand");
+    private ResourceLocation channel;
+    private PacketBuffer data;

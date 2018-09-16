@@ -22,7 +22,7 @@ package net.minecraftforge.event.entity.minecart;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * MinecartCollisionEvent is fired when a minecart collides with an Entity.

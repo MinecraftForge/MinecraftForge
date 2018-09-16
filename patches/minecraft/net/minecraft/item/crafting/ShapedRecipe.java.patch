@@ -1,0 +1,62 @@
+--- a/net/minecraft/item/crafting/ShapedRecipe.java
++++ b/net/minecraft/item/crafting/ShapedRecipe.java
+@@ -20,10 +20,21 @@
+ import net.minecraft.util.NonNullList;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class ShapedRecipe implements IRecipe {
++   static int MAX_WIDTH = 3;
++   static int MAX_HEIGHT = 3;
++   /**
++    * Expand the max width and height allowed in the deserializer.
++    * This should be called by modders who add custom crafting tables that are larger than the vanilla 3x3.
++    * @param width your max recipe width
++    * @param height your max recipe height
++    */
++   public static void setCraftingSize(int width, int height) {
++      if (MAX_WIDTH < width) MAX_WIDTH = width;
++      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
++   }
++
+    private final int recipeWidth;
+    private final int recipeHeight;
+    private final NonNullList<Ingredient> recipeItems;
+@@ -48,7 +59,6 @@
+       return RecipeSerializers.field_199575_a;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public String getGroup() {
+       return this.group;
+    }
+@@ -61,7 +71,6 @@
+       return this.recipeItems;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width >= this.recipeWidth && height >= this.recipeHeight;
+    }
+@@ -202,15 +211,15 @@
+ 
+    private static String[] patternFromJson(JsonArray jsonArr) {
+       String[] astring = new String[jsonArr.size()];
+-      if (astring.length > 3) {
+-         throw new JsonSyntaxException("Invalid pattern: too many rows, 3 is maximum");
++      if (astring.length > MAX_HEIGHT) {
++         throw new JsonSyntaxException("Invalid pattern: too many rows, " + MAX_HEIGHT + " is maximum");
+       } else if (astring.length == 0) {
+          throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
+       } else {
+          for(int i = 0; i < astring.length; ++i) {
+             String s = JsonUtils.getString(jsonArr.get(i), "pattern[" + i + "]");
+-            if (s.length() > 3) {
+-               throw new JsonSyntaxException("Invalid pattern: too many columns, 3 is maximum");
++            if (s.length() > MAX_WIDTH) {
++               throw new JsonSyntaxException("Invalid pattern: too many columns, " + MAX_WIDTH + " is maximum");
+             }
+ 
+             if (i > 0 && astring[0].length() != s.length()) {

@@ -19,12 +19,8 @@
 
 package net.minecraftforge.event.entity.minecart;
 
-import net.minecraft.entity.item.EntityMinecartContainer;
-import net.minecraft.entity.item.EntityMinecartEmpty;
-import net.minecraft.entity.item.EntityMinecartFurnace;
-import net.minecraft.entity.item.EntityMinecartHopper;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -40,14 +36,14 @@ import javax.annotation.Nonnull;
  * <br>
  * {@link #player} contains the EntityPlayer that is involved with this minecart interaction.<br>
  * <br>
- * This event is {@link Cancelable}.<br>
+ * This event is {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
  * If this event is canceled, the player does not interact with the minecart.<br>
  * <br>
  * This event does not have a result. {@link HasResult}<br>
  * <br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@Cancelable
+@net.minecraftforge.eventbus.api.Cancelable
 public class MinecartInteractEvent extends MinecartEvent
 {
     private final EntityPlayer player;

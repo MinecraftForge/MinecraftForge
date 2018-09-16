@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.common.event;
 
-import net.minecraftforge.fml.common.LoaderState.ModState;
+import net.minecraftforge.fml.ModContainer;
 
 /**
  * This is a mostly internal event fired to mod containers that indicates that loading is complete. Mods should not
@@ -27,18 +27,10 @@ import net.minecraftforge.fml.common.LoaderState.ModState;
  *
  * @author cpw
  */
-public class FMLLoadCompleteEvent extends FMLStateEvent
+public class FMLLoadCompleteEvent extends ModLifecycleEvent
 {
-
-    public FMLLoadCompleteEvent(Object... data)
+    public FMLLoadCompleteEvent(final ModContainer container)
     {
-        super(data);
+        super(container);
     }
-    
-    @Override
-    public ModState getModState()
-    {
-        return ModState.AVAILABLE;
-    }
-
 }

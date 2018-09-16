@@ -19,8 +19,7 @@
 
 package net.minecraftforge.event.terraingen;
 
-import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraft.world.gen.MapGenBase;
+import net.minecraftforge.eventbus.api.Event;
 
 public class InitMapGenEvent extends Event
 {
@@ -28,6 +27,7 @@ public class InitMapGenEvent extends Event
      */
     public static enum EventType { CAVE, MINESHAFT, NETHER_BRIDGE, NETHER_CAVE, RAVINE, SCATTERED_FEATURE, STRONGHOLD, VILLAGE, OCEAN_MONUMENT, WOODLAND_MANSION, END_CITY, CUSTOM }
 
+    /* TODO: Re-Evaluate
     private final EventType type;
     private final MapGenBase originalGen;
     private MapGenBase newGen;
@@ -42,4 +42,5 @@ public class InitMapGenEvent extends Event
     public MapGenBase getOriginalGen() { return originalGen; }
     public MapGenBase getNewGen() { return newGen; }
     public void setNewGen(MapGenBase newGen) { this.newGen = newGen; }
+    */
 }

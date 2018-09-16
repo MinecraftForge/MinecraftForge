@@ -1,0 +1,79 @@
+--- a/net/minecraft/world/dimension/Dimension.java
++++ b/net/minecraft/world/dimension/Dimension.java
+@@ -13,7 +13,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public abstract class Dimension {
++public abstract class Dimension implements net.minecraftforge.common.extensions.IForgeDimension {
+    public static final float[] MOON_PHASE_FACTORS = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
+    protected World world;
+    protected boolean doesWaterVaporize;
+@@ -141,4 +141,67 @@
+    public abstract boolean doesXZShowFog(int x, int z);
+ 
+    public abstract DimensionType getDimensionType();
++   
++   /*======================================= Forge Start =========================================*/
++   private net.minecraftforge.client.IRenderHandler skyRenderer = null;
++   private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
++   private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
++   private int dimensionId;
++
++   @Override
++   public void setId(int id)
++   {
++       this.dimensionId = id;
++   }
++
++   @Override
++   public int getId()
++   {
++       return this.dimensionId;
++   }
++
++   @Nullable
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public net.minecraftforge.client.IRenderHandler getSkyRenderer()
++   {
++      return this.skyRenderer;
++   }
++   
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer)
++   {
++      this.skyRenderer = skyRenderer;
++   }
++   
++   @Nullable
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public net.minecraftforge.client.IRenderHandler getCloudRenderer()
++   {
++      return cloudRenderer;
++   }
++   
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public void setCloudRenderer(net.minecraftforge.client.IRenderHandler renderer)
++   {
++      cloudRenderer = renderer;
++   }
++   
++   @Nullable
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public net.minecraftforge.client.IRenderHandler getWeatherRenderer()
++   {
++      return weatherRenderer;
++   }
++   
++   @OnlyIn(Dist.CLIENT)
++   @Override
++   public void setWeatherRenderer(net.minecraftforge.client.IRenderHandler renderer)
++   {
++      weatherRenderer = renderer;
++   }
+ }

@@ -19,14 +19,16 @@
 
 package net.minecraftforge.common.capabilities;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
 import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.Lists;
 
-import net.minecraft.nbt.NBTBase;
+import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
@@ -42,10 +44,12 @@ import net.minecraftforge.common.util.INBTSerializable;
  * Internally the handlers are baked into arrays for fast iteration.
  * The ResourceLocations will be used for the NBT Key when serializing.
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider
 {
     private ICapabilityProvider[] caps;
-    private INBTSerializable<NBTBase>[] writers;
+    private INBTSerializable<INBTBase>[] writers;
     private String[] names;
 
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list)
@@ -57,7 +61,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, @Nullable ICapabilityProvider parent)
     {
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
-        List<INBTSerializable<NBTBase>> lstWriters = Lists.newArrayList();
+        List<INBTSerializable<INBTBase>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
 
         if (parent != null) // Parents go first!
@@ -65,7 +69,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             lstCaps.add(parent);
             if (parent instanceof INBTSerializable)
             {
-                lstWriters.add((INBTSerializable<NBTBase>)parent);
+                lstWriters.add((INBTSerializable<INBTBase>)parent);
                 lstNames.add("Parent");
             }
         }
@@ -76,7 +80,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             lstCaps.add(prov);
             if (prov instanceof INBTSerializable)
             {
-                lstWriters.add((INBTSerializable<NBTBase>)prov);
+                lstWriters.add((INBTSerializable<INBTBase>)prov);
                 lstNames.add(entry.getKey().toString());
             }
         }
@@ -86,32 +90,18 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         names = lstNames.toArray(new String[lstNames.size()]);
     }
 
-    @Override
-    public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing)
-    {
-        for (ICapabilityProvider cap : caps)
-        {
-            if (cap.hasCapability(capability, facing))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
 
     @Override
-    @Nullable
-    public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> OptionalCapabilityInstance<T> getCapability(Capability<T> cap, @Nullable EnumFacing side)
     {
-        for (ICapabilityProvider cap : caps)
+        for (ICapabilityProvider c : caps)
         {
-            T ret = cap.getCapability(capability, facing);
-            if (ret != null)
-            {
+            OptionalCapabilityInstance<T> ret = c.getCapability(cap, side);
+            if (ret.isPresent()) {
                 return ret;
             }
         }
-        return null;
+        return OptionalCapabilityInstance.empty();
     }
 
     @Override
@@ -137,7 +127,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         }
     }
 
-    public boolean areCompatible(CapabilityDispatcher other) //Called from ItemStack to compare equality.
+    public boolean areCompatible(@Nullable CapabilityDispatcher other) //Called from ItemStack to compare equality.
     {                                                        // Only compares serializeable caps.
         if (other == null) return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
         if (this.writers.length == 0) return other.writers.length == 0;

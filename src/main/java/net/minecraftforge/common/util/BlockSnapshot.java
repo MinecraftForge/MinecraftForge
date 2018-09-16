@@ -29,7 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -64,7 +64,7 @@ public class BlockSnapshot
     public BlockSnapshot(World world, BlockPos pos, IBlockState state, @Nullable NBTTagCompound nbt)
     {
         this.setWorld(world);
-        this.dimId = world.provider.getDimension();
+        this.dimId = world.provider.getId();
         this.pos = pos.toImmutable();
         this.setReplacedBlock(state);
         this.registryName = state.getBlock().getRegistryName();

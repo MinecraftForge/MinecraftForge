@@ -1,0 +1,40 @@
+--- a/net/minecraft/item/EnumDyeColor.java
++++ b/net/minecraft/item/EnumDyeColor.java
+@@ -44,6 +44,7 @@
+    private final int field_196066_w;
+    private final float[] colorComponentValues;
+    private final int field_196067_y;
++   private final net.minecraft.tags.Tag<Item> tag;
+ 
+    private EnumDyeColor(int p_i47810_3_, String p_i47810_4_, int p_i47810_5_, MapColor p_i47810_6_, int p_i47810_7_) {
+       this.field_196064_s = p_i47810_3_;
+@@ -56,6 +57,7 @@
+       this.field_196066_w = k << 16 | j << 8 | i << 0;
+       this.colorComponentValues = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
+       this.field_196067_y = p_i47810_7_;
++      this.tag = new net.minecraft.tags.ItemTags.Wrapper(new net.minecraft.util.ResourceLocation("minecraft", "dyes_" + p_i47810_4_));
+    }
+ 
+    public int func_196059_a() {
+@@ -114,4 +116,21 @@
+    public String getName() {
+       return this.translationKey;
+    }
++
++   public net.minecraft.tags.Tag<Item> getTag() {
++      return tag;
++   }
++
++   @Nullable
++   public static EnumDyeColor getColor(ItemStack stack) {
++      if (stack.getItem() instanceof ItemDye)
++         return ((ItemDye)stack.getItem()).func_195962_g();
++
++      for (EnumDyeColor color : field_196062_q) {
++         if (stack.getItem().func_206844_a(color.getTag()))
++             return color;
++      }
++
++      return null;
++   }
+ }

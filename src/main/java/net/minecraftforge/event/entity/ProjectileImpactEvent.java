@@ -26,7 +26,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
+import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * This event is fired when a projectile entity impacts something.

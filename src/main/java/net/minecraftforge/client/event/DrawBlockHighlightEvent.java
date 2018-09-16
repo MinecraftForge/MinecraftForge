@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraftforge.fml.common.eventhandler.Cancelable;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import net.minecraftforge.eventbus.api.Cancelable;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.client.renderer.RenderGlobal;

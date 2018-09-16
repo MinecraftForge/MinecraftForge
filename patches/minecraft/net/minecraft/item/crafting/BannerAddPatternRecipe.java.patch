@@ -1,0 +1,19 @@
+--- a/net/minecraft/item/crafting/BannerAddPatternRecipe.java
++++ b/net/minecraft/item/crafting/BannerAddPatternRecipe.java
+@@ -15,8 +15,6 @@
+ import net.minecraft.tileentity.TileEntityBanner;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.world.World;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class BannerAddPatternRecipe extends IRecipeHidden {
+    public BannerAddPatternRecipe(ResourceLocation p_i48172_1_) {
+@@ -167,7 +165,6 @@
+       return null;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean canFit(int width, int height) {
+       return width >= 3 && height >= 3;
+    }
