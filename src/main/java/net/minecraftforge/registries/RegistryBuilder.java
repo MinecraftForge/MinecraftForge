@@ -30,11 +30,13 @@ import javax.annotation.Nullable;
 
 public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 {
+    private static final int MAX_ID = Integer.MAX_VALUE - 1;
+
     private ResourceLocation registryName;
     private Class<T> registryType;
     private ResourceLocation optionalDefaultKey;
     private int minId = 0;
-    private int maxId = Integer.MAX_VALUE - 1;
+    private int maxId = MAX_ID;
     private List<AddCallback<T>> addCallback = Lists.newArrayList();
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
@@ -59,8 +61,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 
     public RegistryBuilder<T> setIDRange(int min, int max)
     {
-        this.minId = min;
-        this.maxId = max;
+        this.minId = Math.max(min, 0);
+        this.maxId = Math.min(max, MAX_ID);
         return this;
     }
 
