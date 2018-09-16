@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:dusts/prismarine",
+    "#forge:dusts/redstone",
+    "#forge:dusts/glowstone"
+  ]
+}

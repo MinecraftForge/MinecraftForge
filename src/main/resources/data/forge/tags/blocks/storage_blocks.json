@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:storage_blocks/coal",
+    "#forge:storage_blocks/diamond",
+    "#forge:storage_blocks/emerald",
+    "#forge:storage_blocks/gold",
+    "#forge:storage_blocks/iron",
+    "#forge:storage_blocks/lapis",
+    "#forge:storage_blocks/quartz",
+    "#forge:storage_blocks/redstone"
+  ]
+}
