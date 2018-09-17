@@ -3,12 +3,16 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.NetherDimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IRenderHandler;
 
 public interface IForgeDimension
 {
+    default Dimension getDimension() { return (Dimension) this; }
+
     /**
      * Called from {@link World#initCapabilities()}, to gather capabilities for this
      * world. It's safe to access world here since this is called after world is
@@ -24,6 +28,22 @@ public interface IForgeDimension
     default net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities()
     {
         return null;
+    }
+
+    /**
+     * The dimension's movement factor.
+     * Whenever a player or entity changes dimension from world A to world B, their coordinates are multiplied by
+     * worldA.provider.getMovementFactor() / worldB.provider.getMovementFactor()
+     * Example: Overworld factor is 1, nether factor is 8. Traveling from overworld to nether multiplies coordinates by 1/8.
+     * @return The movement factor
+     */
+    default double getMovementFactor()
+    {
+       if (getDimension() instanceof NetherDimension)
+       {
+          return 8.0;
+       }
+       return 1.0;
     }
 
     /**
