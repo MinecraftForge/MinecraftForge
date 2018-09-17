@@ -1,6 +1,34 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -523,6 +523,7 @@
+@@ -130,7 +130,7 @@
+    private final DataFixer dataFixer;
+    private String hostname;
+    private int serverPort = -1;
+-   public WorldServer[] worlds;
++   public WorldServer[] worlds = new WorldServer[0];
+    private PlayerList playerList;
+    private boolean serverRunning = true;
+    private boolean serverStopped;
+@@ -148,7 +148,8 @@
+    private int buildLimit;
+    private int maxPlayerIdleMinutes;
+    public final long[] tickTimeArray = new long[100];
+-   public long[][] timeOfLastDimensionTick;
++   //public long[][] timeOfLastDimensionTick;
++   public java.util.Hashtable<Integer, long[]> worldTickTimes = new java.util.Hashtable<Integer, long[]>();
+    private KeyPair serverKeyPair;
+    private String serverOwner;
+    private String folderName;
+@@ -287,8 +288,6 @@
+    public void loadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, JsonElement generatorOptions) {
+       this.convertMapIfNeeded(saveName);
+       this.func_200245_b(new TextComponentTranslation("menu.loadingLevel", new Object[0]));
+-      this.worlds = new WorldServer[3];
+-      this.timeOfLastDimensionTick = new long[this.worlds.length][100];
+       ISaveHandler isavehandler = this.anvilConverterForAnvilFile.func_197715_a(saveName, this);
+       this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
+       WorldInfo worldinfo = isavehandler.loadWorldInfo();
+@@ -523,6 +522,7 @@
     public void run() {
        try {
           if (this.init()) {
@@ -8,7 +36,7 @@
              this.field_211151_aa = Util.func_211177_b();
              this.statusResponse.setServerDescription(new TextComponentString(this.motd));
              this.statusResponse.setVersion(new ServerStatusResponse.Version("1.13", 393));
-@@ -546,7 +547,10 @@
+@@ -546,7 +546,10 @@
  
                 this.serverIsRunning = true;
              }
@@ -19,7 +47,7 @@
              this.finalTick((CrashReport)null);
           }
        } catch (Throwable throwable1) {
-@@ -565,6 +569,7 @@
+@@ -565,6 +568,7 @@
              LOGGER.error("We were unable to save this crash report to disk.");
           }
  
@@ -27,7 +55,7 @@
           this.finalTick(crashreport);
        } finally {
           try {
-@@ -573,6 +578,7 @@
+@@ -573,6 +577,7 @@
           } catch (Throwable throwable) {
              LOGGER.error("Exception stopping the server", throwable);
           } finally {
@@ -35,3 +63,28 @@
              this.systemExitNow();
           }
  
+@@ -686,10 +691,12 @@
+       this.getFunctionManager().update();
+       this.profiler.endStartSection("levels");
+ 
+-      for(int i = 0; i < this.worlds.length; ++i) {
++      Integer[] ids = net.minecraftforge.common.DimensionManager.getIDs(this.tickCounter % 200 == 0);
++      for(int x = 0; x < ids.length; ++x) {
++         int id = ids[x];
+          long j = Util.func_211178_c();
+-         if (i == 0 || this.getAllowNether()) {
+-            WorldServer worldserver = this.worlds[i];
++         if (id == 0 || this.getAllowNether()) {
++            WorldServer worldserver = net.minecraftforge.common.DimensionManager.getWorld(id);
+             this.profiler.func_194340_a(() -> {
+                return worldserver.getWorldInfo().getWorldName();
+             });
+@@ -724,7 +731,7 @@
+             this.profiler.endSection();
+          }
+ 
+-         this.timeOfLastDimensionTick[i][this.tickCounter % 100] = Util.func_211178_c() - j;
++         worldTickTimes.get(id)[this.tickCounter % 100] = Util.func_211178_c() - j;
+       }
+ 
+       this.profiler.endStartSection("connection");

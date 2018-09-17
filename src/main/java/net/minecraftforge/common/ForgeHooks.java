@@ -77,6 +77,7 @@ import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemSpade;
+import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTippedArrow;
 import net.minecraft.item.ItemUseContext;
@@ -120,6 +121,7 @@ import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -1283,21 +1285,6 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
 
-    private static final ClassValue<String> registryNames = new ClassValue<String>()
-    {
-        @Override
-        @SuppressWarnings("unchecked")
-        protected String computeValue(Class<?> type)
-        {
-            return String.valueOf(TileEntity.getKey((Class<? extends TileEntity>) type));
-        }
-    };
-
-    public static String getRegistryName(Class<? extends TileEntity> type)
-    {
-        return registryNames.get(type);
-    }
-
     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
     {
         boolean errored = false;
@@ -1370,7 +1357,7 @@ public class ForgeHooks
             true, true
         );
     }
-
+/* TODO this should be unnecessary now?
     public static void sendRecipeBook(NetHandlerPlayServer connection, State state, List<IRecipe> recipes, List<IRecipe> display, boolean isGuiOpen, boolean isFilteringCraftable)
     {
         NetworkDispatcher disp = NetworkDispatcher.get(connection.getNetworkManager());
@@ -1386,7 +1373,7 @@ public class ForgeHooks
         if (!recipes.isEmpty() || !display.isEmpty())
             connection.sendPacket(new SPacketRecipeBook(state, recipes, display, isGuiOpen, isFilteringCraftable));
     }
-
+*/
     public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
     {
         MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
@@ -1406,7 +1393,7 @@ public class ForgeHooks
             if (item instanceof ItemEnchantedBook)
             {
                 NBTTagList enchantmentsNbt = ItemEnchantedBook.getEnchantments(itemStack);
-                if (enchantmentsNbt.tagCount() == 1)
+                if (enchantmentsNbt.size() == 1)
                 {
                     NBTTagCompound nbttagcompound = enchantmentsNbt.getCompoundTagAt(0);
                     Enchantment enchantment = Enchantment.getEnchantmentByID(nbttagcompound.getShort("id"));
@@ -1429,9 +1416,9 @@ public class ForgeHooks
                     return resourceLocation.getNamespace();
                 }
             }
-            else if (item instanceof ItemMonsterPlacer)
+            else if (item instanceof ItemSpawnEgg)
             {
-                ResourceLocation resourceLocation = ItemMonsterPlacer.getNamedIdFrom(itemStack);
+                ResourceLocation resourceLocation = ((ItemSpawnEgg)item).func_208076_b(null).getRegistryName();
                 if (resourceLocation != null)
                 {
                     return resourceLocation.getNamespace();

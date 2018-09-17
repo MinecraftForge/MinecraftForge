@@ -428,7 +428,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         NBTTagCompound forgeData = new NBTTagCompound();
         NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
         forgeData.setTag("DimensionData", dimData);
-        FluidRegistry.writeDefaultFluidList(forgeData);
+        // TODO fluids FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
 
@@ -436,7 +436,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
     {
         DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
-        FluidRegistry.loadFluidDefaults(tag);
+        // TODO fluids FluidRegistry.loadFluidDefaults(tag);
     }
 
     public void mappingChanged(FMLModIdMappingEvent evt)

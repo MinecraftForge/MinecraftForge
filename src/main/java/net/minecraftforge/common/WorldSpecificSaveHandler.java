@@ -34,6 +34,7 @@ import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.gen.feature.template.TemplateManager;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraft.world.storage.SessionLockException;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraft.world.WorldServer;
@@ -55,7 +56,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     }
 
     @Override public WorldInfo loadWorldInfo() { return parent.loadWorldInfo(); }
-    @Override public void checkSessionLock() throws MinecraftException { parent.checkSessionLock(); }
+    @Override public void checkSessionLock() throws SessionLockException { parent.checkSessionLock(); }
     @Override public IChunkLoader getChunkLoader(Dimension var1) { return parent.getChunkLoader(var1); }
     @Override public void saveWorldInfoWithPlayer(WorldInfo var1, NBTTagCompound var2) { parent.saveWorldInfoWithPlayer(var1, var2); }
     @Override public void saveWorldInfo(WorldInfo var1){ parent.saveWorldInfo(var1); }

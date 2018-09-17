@@ -1,0 +1,34 @@
+--- a/net/minecraft/world/dimension/DimensionType.java
++++ b/net/minecraft/world/dimension/DimensionType.java
+@@ -11,12 +11,19 @@
+    private final String name;
+    private final String suffix;
+    private final Supplier<? extends Dimension> field_201038_g;
++   private final boolean shouldLoadSpawn;
+ 
+    private DimensionType(int p_i48278_3_, String p_i48278_4_, String p_i48278_5_, Supplier<? extends Dimension> p_i48278_6_) {
++      this(p_i48278_3_, p_i48278_4_, p_i48278_5_, p_i48278_6_, p_i48278_3_ == 0);
++   }
++   
++   private DimensionType(int p_i48278_3_, String p_i48278_4_, String p_i48278_5_, Supplier<? extends Dimension> p_i48278_6_, boolean shouldLoadSpawn)
++   {
+       this.id = p_i48278_3_;
+       this.name = p_i48278_4_;
+       this.suffix = p_i48278_5_;
+       this.field_201038_g = p_i48278_6_;
++      this.shouldLoadSpawn = shouldLoadSpawn;
+    }
+ 
+    public int getId() {
+@@ -54,4 +61,11 @@
+ 
+       throw new IllegalArgumentException("Invalid dimension " + nameIn);
+    }
++   
++   public boolean shouldLoadSpawn(){ return this.shouldLoadSpawn; }
++   
++   public static DimensionType create(int id, String name, String suffix, Supplier<? extends Dimension> provider, boolean shouldLoadSpawn)
++   {
++      return null;
++   }
+ }
