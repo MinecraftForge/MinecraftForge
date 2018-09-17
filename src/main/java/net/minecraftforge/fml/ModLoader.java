@@ -96,7 +96,6 @@ public class ModLoader
         GameData.fireCreateRegistryEvents();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         LifecycleEventProvider.PREINIT.dispatch();
-        GameData.fireRegistryEvents(rl -> !Objects.equals(rl, GameData.RECIPES));
         Boolean result = DistExecutor.callWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
         LifecycleEventProvider.SIDEDINIT.dispatch();
     }
