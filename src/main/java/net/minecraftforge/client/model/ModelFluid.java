@@ -49,7 +49,6 @@ import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -69,8 +68,8 @@ import com.google.gson.JsonParser;
 public final class ModelFluid implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final ModelFluid WATER = new ModelFluid(FluidRegistry.WATER);
-    public static final ModelFluid LAVA = new ModelFluid(FluidRegistry.LAVA);
+    public static final ModelFluid WATER = null; // TODO fluids new ModelFluid(FluidRegistry.WATER);
+    public static final ModelFluid LAVA = null; // TODO fluids new ModelFluid(FluidRegistry.LAVA);
 
     private final Fluid fluid;
 
@@ -180,7 +179,7 @@ public final class ModelFluid implements IUnbakedModel
                 IExtendedBlockState state = stateOption.get();
                 for (int i = 0; i < 4; i++)
                 {
-                    Float level = state.getValue(BlockFluidBase.LEVEL_CORNERS[i]);
+                    Float level = null; // TODO fluids state.getValue(BlockFluidBase.LEVEL_CORNERS[i]);
                     cornerRound[i] = Math.round((level == null ? 8f / 9f : level) * 864);
                 }
             }
@@ -199,7 +198,7 @@ public final class ModelFluid implements IUnbakedModel
             Float flow = -1000f;
             if (stateOption.isPresent())
             {
-                flow = stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION);
+                flow = null; // TODO fluids stateOption.get().getValue(BlockFluidBase.FLOW_DIRECTION);
                 if (flow == null) flow = -1000f;
             }
             int flowRound = (int) Math.round(Math.toDegrees(flow));
@@ -222,7 +221,7 @@ public final class ModelFluid implements IUnbakedModel
                 IExtendedBlockState state = stateOption.get();
                 for (int i = 0; i < 4; i++)
                 {
-                    Boolean overlay = state.getValue(BlockFluidBase.SIDE_OVERLAYS[i]);
+                    Boolean overlay = null; // TODO fluids state.getValue(BlockFluidBase.SIDE_OVERLAYS[i]);
                     if (overlay != null) overlaySides[i] = overlay;
                 }
             }
@@ -510,12 +509,13 @@ public final class ModelFluid implements IUnbakedModel
 
         String fluidStr = customData.get("fluid");
         JsonElement e = new JsonParser().parse(fluidStr);
-        String fluid = e.getAsString();
+        String fluid = e.getAsString();/* TODO fluids
         if(!FluidRegistry.isFluidRegistered(fluid))
         {
             LOGGER.fatal("fluid '{}' not found", fluid);
             return WATER;
         }
-        return new ModelFluid(FluidRegistry.getFluid(fluid));
+        return new ModelFluid(FluidRegistry.getFluid(fluid));*/
+        return this;
     }
 }

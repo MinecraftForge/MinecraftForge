@@ -198,7 +198,7 @@ public final class ModelDynBucket implements IUnbakedModel
     public ModelDynBucket process(ImmutableMap<String, String> customData)
     {
         String fluidName = customData.get("fluid");
-        Fluid fluid = FluidRegistry.getFluid(fluidName);
+        Fluid fluid = null; // TODO fluids FluidRegistry.getFluid(fluidName);
 
         if (fluid == null) fluid = this.fluid;
 
