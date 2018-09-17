@@ -35,7 +35,7 @@ import static net.minecraftforge.fml.client.config.GuiUtils.UNDO_CHAR;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * This class is the base screen used for editing an array-type property. It provides a list of array entries for the user to edit.
@@ -107,6 +107,7 @@ public class GuiEditArray extends GuiScreen
     public void initGui()
     {
         this.entryList = createEditArrayEntries();
+        this.field_195124_j.add(entryList);
 
         int undoGlyphWidth = mc.fontRenderer.getStringWidth(UNDO_CHAR) * 2;
         int resetGlyphWidth = mc.fontRenderer.getStringWidth(RESET_CHAR) * 2;
@@ -114,78 +115,47 @@ public class GuiEditArray extends GuiScreen
         int undoWidth = mc.fontRenderer.getStringWidth(" " + I18n.format("fml.configgui.tooltip.undoChanges")) + undoGlyphWidth + 20;
         int resetWidth = mc.fontRenderer.getStringWidth(" " + I18n.format("fml.configgui.tooltip.resetToDefault")) + resetGlyphWidth + 20;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth) / 2;
-        this.buttonList.add(btnDone = new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
+        this.buttonList.add(btnDone = new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done"))
+        {
+            @Override
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                try
+                {
+                    entryList.saveListChanges();
+                }
+                catch (Throwable e)
+                {
+                    LOGGER.error("Error performing GuiEditArray action:", e);
+                }
+                Minecraft.getMinecraft().displayGuiScreen(parentScreen);
+            }
+        });
         this.buttonList.add(btnDefault = new GuiUnicodeGlyphButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5,
-                this.height - 29, resetWidth, 20, " " + I18n.format("fml.configgui.tooltip.resetToDefault"), RESET_CHAR, 2.0F));
+                this.height - 29, resetWidth, 20, " " + I18n.format("fml.configgui.tooltip.resetToDefault"), RESET_CHAR, 2.0F) 
+        {
+            @Override
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                currentValues = configElement.getDefaults();
+                entryList = createEditArrayEntries();
+            }
+        });
         this.buttonList.add(btnUndoChanges = new GuiUnicodeGlyphButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5,
-                this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F));
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.id == 2000)
+                this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F)
         {
-            try
+            @Override
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
             {
-                this.entryList.saveListChanges();
+                currentValues = Arrays.copyOf(beforeValues, beforeValues.length);
+                entryList = createEditArrayEntries();
             }
-            catch (Throwable e)
-            {
-                LOGGER.error("Error performing GuiEditArray action:", e);
-            }
-            this.mc.displayGuiScreen(this.parentScreen);
-        }
-        else if (button.id == 2001)
-        {
-            this.currentValues = configElement.getDefaults();
-            this.entryList = createEditArrayEntries();
-        }
-        else if (button.id == 2002)
-        {
-            this.currentValues = Arrays.copyOf(beforeValues, beforeValues.length);
-            this.entryList = createEditArrayEntries();
-        }
+        });
     }
 
     protected GuiEditArrayEntries createEditArrayEntries()
     {
         return new GuiEditArrayEntries(this, this.mc, this.configElement, this.beforeValues, this.currentValues);
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException
-    {
-        super.handleMouseInput();
-        this.entryList.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseClicked(int x, int y, int mouseEvent) throws IOException
-    {
-        if (mouseEvent != 0 || !this.entryList.mouseClicked(x, y, mouseEvent))
-        {
-            this.entryList.mouseClickedPassThru(x, y, mouseEvent);
-            super.mouseClicked(x, y, mouseEvent);
-        }
-    }
-
-    @Override
-    protected void mouseReleased(int x, int y, int mouseEvent)
-    {
-        if (mouseEvent != 0 || !this.entryList.mouseReleased(x, y, mouseEvent))
-        {
-            super.mouseReleased(x, y, mouseEvent);
-        }
-    }
-
-    @Override
-    protected void keyTyped(char eventChar, int eventKey)
-    {
-        if (eventKey == Keyboard.KEY_ESCAPE)
-            this.mc.displayGuiScreen(parentScreen);
-        else
-            this.entryList.keyTyped(eventChar, eventKey);
     }
 
     @Override

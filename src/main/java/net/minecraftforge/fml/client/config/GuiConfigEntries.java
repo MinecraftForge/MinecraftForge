@@ -38,10 +38,11 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.ModList;
 
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * This class implements the scrolling list functionality of the config GUI screens. It also provides all the default control handlers
@@ -49,7 +50,7 @@ import org.lwjgl.input.Keyboard;
  *
  * @author bspkrs
  */
-public class GuiConfigEntries extends GuiListExtended
+public class GuiConfigEntries extends GuiListExtended<IConfigEntry>
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -375,7 +376,7 @@ public class GuiConfigEntries extends GuiListExtended
         public void updateValueButtonText()
         {
             this.btnValue.displayString = I18n.format(String.valueOf(currentValue));
-            btnValue.packedFGColour = currentValue ? GuiUtils.getColorCode('2', true) : GuiUtils.getColorCode('4', true);
+            btnValue.packedFGColor = currentValue ? GuiUtils.getColorCode('2', true) : GuiUtils.getColorCode('4', true);
         }
 
         @Override
@@ -565,7 +566,7 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            this.btnValue.packedFGColour = GuiUtils.getColorCode(this.configElement.getValidValues()[currentIndex].charAt(0), true);
+            this.btnValue.packedFGColor = GuiUtils.getColorCode(this.configElement.getValidValues()[currentIndex].charAt(0), true);
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
         }
 
@@ -918,7 +919,7 @@ public class GuiConfigEntries extends GuiListExtended
             this.btnValue.x = this.owningScreen.entryList.controlX;
             this.btnValue.y = y;
             this.btnValue.enabled = enabled();
-            this.btnValue.drawButton(this.mc, mouseX, mouseY, partial);
+            this.btnValue.func_194828_a(mouseX, mouseY, partial);
         }
 
         /**
@@ -979,15 +980,15 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (enabled() || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (enabled() || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
             {
                 String validChars = "0123456789";
                 String before = this.textFieldValue.getText();
                 if (validChars.contains(String.valueOf(eventChar))
                         || (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
-                        || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE
-                        || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
-                    this.textFieldValue.textboxKeyTyped((enabled() ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                        || eventKey == GLFW.GLFW_KEY_BACK || eventKey == GLFW.GLFW_KEY_DELETE
+                        || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
+                    this.textFieldValue.textboxKeyTyped((enabled() ? eventChar : GLFW.GLFW_CHAR_NONE), eventKey);
 
                 if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
                 {
@@ -1084,16 +1085,16 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (enabled() || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (enabled() || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
             {
                 String validChars = "0123456789";
                 String before = this.textFieldValue.getText();
                 if (validChars.contains(String.valueOf(eventChar)) ||
                         (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
                         || (!before.contains(".") && eventChar == '.')
-                        || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                        || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
-                    this.textFieldValue.textboxKeyTyped((enabled() ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                        || eventKey == GLFW.GLFW_KEY_BACK || eventKey == GLFW.GLFW_KEY_DELETE || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT
+                        || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
+                    this.textFieldValue.textboxKeyTyped((enabled() ? eventChar : GLFW.GLFW_CHAR_NONE), eventKey);
 
                 if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
                 {
@@ -1204,9 +1205,9 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (enabled() || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (enabled() || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
             {
-                this.textFieldValue.textboxKeyTyped((enabled() ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                this.textFieldValue.textboxKeyTyped((enabled() ? eventChar : GLFW.GLFW_CHAR_NONE), eventKey);
 
                 if (configElement.getValidationPattern() != null)
                 {
@@ -1243,7 +1244,7 @@ public class GuiConfigEntries extends GuiListExtended
             if (enabled())
             {
                 this.textFieldValue.setText(this.configElement.getDefault().toString());
-                keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_HOME);
+                keyTyped((char) GLFW.GLFW_KEY_UNKNOWN, GLFW.GLFW_KEY_HOME);
             }
         }
 

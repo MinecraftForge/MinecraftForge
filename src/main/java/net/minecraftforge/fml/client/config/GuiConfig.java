@@ -34,16 +34,16 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.PostConfigChangedEvent;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.eventbus.api.Event.Result;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 
@@ -204,22 +204,22 @@ public class GuiConfig extends GuiScreen
     public static String getAbridgedConfigPath(String path)
     {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.mcDataDir.getAbsolutePath().endsWith("."))
-            return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/").substring(0, mc.mcDataDir.getAbsolutePath().length() - 1), "/.minecraft/");
+        if (mc.gameDir.getAbsolutePath().endsWith("."))
+            return path.replace("\\", "/").replace(mc.gameDir.getAbsolutePath().replace("\\", "/").substring(0, mc.gameDir.getAbsolutePath().length() - 1), "/.minecraft/");
         else
-            return path.replace("\\", "/").replace(mc.mcDataDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
+            return path.replace("\\", "/").replace(mc.gameDir.getAbsolutePath().replace("\\", "/"), "/.minecraft");
     }
 
     @Override
     public void initGui()
     {
-        Keyboard.enableRepeatEvents(true);
-
         if (this.entryList == null || this.needsRefresh)
         {
             this.entryList = new GuiConfigEntries(this, mc);
             this.needsRefresh = false;
         }
+        
+        this.field_195124_j.add(entryList);
 
         int undoGlyphWidth = mc.fontRenderer.getStringWidth(UNDO_CHAR) * 2;
         int resetGlyphWidth = mc.fontRenderer.getStringWidth(RESET_CHAR) * 2;
@@ -228,11 +228,65 @@ public class GuiConfig extends GuiScreen
         int resetWidth = mc.fontRenderer.getStringWidth(" " + I18n.format("fml.configgui.tooltip.resetToDefault")) + resetGlyphWidth + 20;
         int checkWidth = mc.fontRenderer.getStringWidth(I18n.format("fml.configgui.applyGlobally")) + 13;
         int buttonWidthHalf = (doneWidth + 5 + undoWidth + 5 + resetWidth + 5 + checkWidth) / 2;
-        this.buttonList.add(new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")));
+        this.buttonList.add(new GuiButtonExt(2000, this.width / 2 - buttonWidthHalf, this.height - 29, doneWidth, 20, I18n.format("gui.done")) 
+        {
+            @Override
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                boolean flag = true;
+                try
+                {
+                    if ((configID != null || parentScreen == null || !(parentScreen instanceof GuiConfig))
+                            && (entryList.hasChangedEntry(true)))
+                    {
+                        boolean requiresMcRestart = entryList.saveConfigElements();
+
+                        if (ModList.get().isLoaded(modID))
+                        {
+                            ConfigChangedEvent event = new OnConfigChangedEvent(modID, configID, isWorldRunning, requiresMcRestart);
+                            MinecraftForge.EVENT_BUS.post(event);
+                            if (!event.getResult().equals(Result.DENY))
+                                MinecraftForge.EVENT_BUS.post(new PostConfigChangedEvent(modID, configID, isWorldRunning, requiresMcRestart));
+
+                            if (requiresMcRestart)
+                            {
+                                flag = false;
+                                mc.displayGuiScreen(new GuiMessageDialog(parentScreen, "fml.configgui.gameRestartTitle",
+                                        new TextComponentString(I18n.format("fml.configgui.gameRestartRequired")), "fml.configgui.confirmRestartMessage"));
+                            }
+
+                            if (parentScreen instanceof GuiConfig)
+                                ((GuiConfig) parentScreen).needsRefresh = true;
+                        }
+                    }
+                }
+                catch (Throwable e)
+                {
+                    LOGGER.error("Error performing GuiConfig action:", e);
+                }
+
+                if (flag)
+                    Minecraft.getMinecraft().displayGuiScreen(parentScreen);
+            }
+        });
         this.buttonList.add(this.btnDefaultAll = new GuiUnicodeGlyphButton(2001, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5,
-                this.height - 29, resetWidth, 20, " " + I18n.format("fml.configgui.tooltip.resetToDefault"), RESET_CHAR, 2.0F));
+                this.height - 29, resetWidth, 20, " " + I18n.format("fml.configgui.tooltip.resetToDefault"), RESET_CHAR, 2.0F)
+        {
+            @Override
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                entryList.setAllToDefault(chkApplyGlobally.isChecked());
+            }
+        });
         this.buttonList.add(btnUndoAll = new GuiUnicodeGlyphButton(2002, this.width / 2 - buttonWidthHalf + doneWidth + 5,
-                this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F));
+                this.height - 29, undoWidth, 20, " " + I18n.format("fml.configgui.tooltip.undoChanges"), UNDO_CHAR, 2.0F) 
+        {
+            @Override
+            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            {
+                entryList.undoAllChanges(chkApplyGlobally.isChecked());
+            }
+        });
         this.buttonList.add(chkApplyGlobally = new GuiCheckBox(2003, this.width / 2 - buttonWidthHalf + doneWidth + 5 + undoWidth + 5 + resetWidth + 5,
                 this.height - 24, I18n.format("fml.configgui.applyGlobally"), false));
 
@@ -253,94 +307,6 @@ public class GuiConfig extends GuiScreen
             parentGuiConfig.needsRefresh = true;
             parentGuiConfig.initGui();
         }
-
-        if (!(this.parentScreen instanceof GuiConfig))
-            Keyboard.enableRepeatEvents(false);
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button)
-    {
-        if (button.id == 2000)
-        {
-            boolean flag = true;
-            try
-            {
-                if ((configID != null || this.parentScreen == null || !(this.parentScreen instanceof GuiConfig))
-                        && (this.entryList.hasChangedEntry(true)))
-                {
-                    boolean requiresMcRestart = this.entryList.saveConfigElements();
-
-                    if (Loader.isModLoaded(modID))
-                    {
-                        ConfigChangedEvent event = new OnConfigChangedEvent(modID, configID, isWorldRunning, requiresMcRestart);
-                        MinecraftForge.EVENT_BUS.post(event);
-                        if (!event.getResult().equals(Result.DENY))
-                            MinecraftForge.EVENT_BUS.post(new PostConfigChangedEvent(modID, configID, isWorldRunning, requiresMcRestart));
-
-                        if (requiresMcRestart)
-                        {
-                            flag = false;
-                            mc.displayGuiScreen(new GuiMessageDialog(parentScreen, "fml.configgui.gameRestartTitle",
-                                    new TextComponentString(I18n.format("fml.configgui.gameRestartRequired")), "fml.configgui.confirmRestartMessage"));
-                        }
-
-                        if (this.parentScreen instanceof GuiConfig)
-                            ((GuiConfig) this.parentScreen).needsRefresh = true;
-                    }
-                }
-            }
-            catch (Throwable e)
-            {
-                LOGGER.error("Error performing GuiConfig action:", e);
-            }
-
-            if (flag)
-                this.mc.displayGuiScreen(this.parentScreen);
-        }
-        else if (button.id == 2001)
-        {
-            this.entryList.setAllToDefault(this.chkApplyGlobally.isChecked());
-        }
-        else if (button.id == 2002)
-        {
-            this.entryList.undoAllChanges(this.chkApplyGlobally.isChecked());
-        }
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException
-    {
-        super.handleMouseInput();
-        this.entryList.handleMouseInput();
-    }
-
-    @Override
-    protected void mouseClicked(int x, int y, int mouseEvent) throws IOException
-    {
-        if (mouseEvent != 0 || !this.entryList.mouseClicked(x, y, mouseEvent))
-        {
-            this.entryList.mouseClickedPassThru(x, y, mouseEvent);
-            super.mouseClicked(x, y, mouseEvent);
-        }
-    }
-
-    @Override
-    protected void mouseReleased(int x, int y, int mouseEvent)
-    {
-        if (mouseEvent != 0 || !this.entryList.mouseReleased(x, y, mouseEvent))
-        {
-            super.mouseReleased(x, y, mouseEvent);
-        }
-    }
-
-    @Override
-    protected void keyTyped(char eventChar, int eventKey)
-    {
-        if (eventKey == Keyboard.KEY_ESCAPE)
-            this.mc.displayGuiScreen(parentScreen);
-        else
-            this.entryList.keyTyped(eventChar, eventKey);
     }
 
     @Override

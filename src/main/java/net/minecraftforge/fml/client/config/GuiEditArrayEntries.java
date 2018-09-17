@@ -32,7 +32,7 @@ import net.minecraftforge.fml.client.config.GuiConfigEntries.ArrayEntry;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
+import org.lwjgl.glfw.GLFW;
 
 import static net.minecraftforge.fml.client.config.GuiUtils.INVALID;
 import static net.minecraftforge.fml.client.config.GuiUtils.VALID;
@@ -171,7 +171,7 @@ public class GuiEditArrayEntries extends GuiListExtended
             listEntries.add(index, new StringEntry(this.owningGui, this, this.configElement, ""));
         this.canAddMoreEntries = !configElement.isListLengthFixed()
                 && (configElement.getMaxListLength() == -1 || this.listEntries.size() - 1 < configElement.getMaxListLength());
-        keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
+        keyTyped((char) GLFW.GLFW_KEY_UNKNOWN, GLFW.GLFW_KEY_END);
     }
 
     public void removeEntry(int index)
@@ -179,7 +179,7 @@ public class GuiEditArrayEntries extends GuiListExtended
         this.listEntries.remove(index);
         this.canAddMoreEntries = !configElement.isListLengthFixed()
                 && (configElement.getMaxListLength() == -1 || this.listEntries.size() - 1 < configElement.getMaxListLength());
-        keyTyped((char) Keyboard.CHAR_NONE, Keyboard.KEY_END);
+        keyTyped((char) GLFW.GLFW_KEY_UNKNOWN, GLFW.GLFW_KEY_END);
     }
 
     public boolean isChanged()
@@ -328,17 +328,17 @@ public class GuiEditArrayEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (owningScreen.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                    || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (owningScreen.enabled || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT
+                    || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
             {
                 String validChars = "0123456789";
                 String before = this.textFieldValue.getText();
                 if (validChars.contains(String.valueOf(eventChar)) ||
                         (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
                         || (!before.contains(".") && eventChar == '.')
-                        || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                        || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
-                    this.textFieldValue.textboxKeyTyped((owningScreen.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                        || /* TODO What is this now? eventKey == GLFW.GLFW_KEY_BACK || */eventKey == GLFW.GLFW_KEY_DELETE || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT
+                        || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
+                    this.textFieldValue.textboxKeyTyped((owningScreen.enabled ? eventChar : GLFW.GLFW_KEY_UNKNOWN), eventKey);
 
                 if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
                 {
@@ -385,16 +385,16 @@ public class GuiEditArrayEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (owningScreen.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                    || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (owningScreen.enabled || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT
+                    || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
             {
                 String validChars = "0123456789";
                 String before = this.textFieldValue.getText();
                 if (validChars.contains(String.valueOf(eventChar))
                         || (!before.startsWith("-") && this.textFieldValue.getCursorPosition() == 0 && eventChar == '-')
-                        || eventKey == Keyboard.KEY_BACK || eventKey == Keyboard.KEY_DELETE
-                        || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
-                    this.textFieldValue.textboxKeyTyped((owningScreen.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                        || /* TODO what is this now? eventKey == GLFW.GLFW_KEY_BACK ||*/ eventKey == GLFW.GLFW_KEY_DELETE
+                        || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
+                    this.textFieldValue.textboxKeyTyped((owningScreen.enabled ? eventChar : GLFW.GLFW_CHAR_NONE), eventKey);
 
                 if (!textFieldValue.getText().trim().isEmpty() && !textFieldValue.getText().trim().equals("-"))
                 {
@@ -468,10 +468,10 @@ public class GuiEditArrayEntries extends GuiListExtended
         @Override
         public void keyTyped(char eventChar, int eventKey)
         {
-            if (owningScreen.enabled || eventKey == Keyboard.KEY_LEFT || eventKey == Keyboard.KEY_RIGHT
-                    || eventKey == Keyboard.KEY_HOME || eventKey == Keyboard.KEY_END)
+            if (owningScreen.enabled || eventKey == GLFW.GLFW_KEY_LEFT || eventKey == GLFW.GLFW_KEY_RIGHT
+                    || eventKey == GLFW.GLFW_KEY_HOME || eventKey == GLFW.GLFW_KEY_END)
             {
-                this.textFieldValue.textboxKeyTyped((owningScreen.enabled ? eventChar : Keyboard.CHAR_NONE), eventKey);
+                this.textFieldValue.textboxKeyTyped((owningScreen.enabled ? eventChar : GLFW.GLFW_KEY_UNKNOWN), eventKey);
 
                 if (configElement.getValidationPattern() != null)
                 {
@@ -529,7 +529,7 @@ public class GuiEditArrayEntries extends GuiListExtended
                 this.btnValue.displayString = trans;
             else
                 this.btnValue.displayString = String.valueOf(value);
-            btnValue.packedFGColour = value ? GuiUtils.getColorCode('2', true) : GuiUtils.getColorCode('4', true);
+            btnValue.packedFGColor = value ? GuiUtils.getColorCode('2', true) : GuiUtils.getColorCode('4', true);
 
             this.btnValue.drawButton(owningEntryList.getMC(), mouseX, mouseY, partial);
         }
