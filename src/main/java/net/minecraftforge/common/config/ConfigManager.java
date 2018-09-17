@@ -22,6 +22,7 @@ package net.minecraftforge.common.config;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -37,8 +38,8 @@ import net.minecraftforge.common.config.Config.Comment;
 import net.minecraftforge.common.config.Config.LangKey;
 import net.minecraftforge.common.config.Config.Name;
 import net.minecraftforge.fml.common.FMLPaths;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
+import net.minecraftforge.fml.language.ModFileScanData;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation.EnumHolder;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +50,7 @@ public class ConfigManager
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    private static Map<String, Multimap<Config.Type, ASMData>> asm_data = Maps.newHashMap();
+    private static Map<String, Multimap<Config.Type, ModFileScanData>> asm_data = Maps.newHashMap();
     static Map<Class<?>, ITypeAdapter> ADAPTERS = Maps.newHashMap();
     static Map<Class<?>, Class<?>> ARRAY_REMAP = Maps.newHashMap();
     private static Map<String, Configuration> CONFIGS = Maps.newHashMap();
@@ -103,10 +104,10 @@ public class ConfigManager
         ADAPTERS.put(cls, adpt);
     }
 
-    public static void loadData(ASMDataTable data)
-    {
+    public static void loadData(List<ModFileScanData> data)
+    {/* TODO annotation data
         LOGGER.debug("Loading @Config anotation data");
-        for (ASMData target : data.getAll(Config.class.getName()))
+        for (ModFileScanData target : data.getAll(Config.class.getName()))
         {
             String modid = (String)target.getAnnotationInfo().get("modid");
             Multimap<Config.Type, ASMData> map = asm_data.computeIfAbsent(modid, k -> ArrayListMultimap.create());
@@ -115,7 +116,7 @@ public class ConfigManager
             Config.Type type = tholder == null ? Config.Type.INSTANCE : Config.Type.valueOf(tholder.getValue());
 
             map.put(type, target);
-        }
+        }*/
     }
 
     /**
@@ -145,7 +146,7 @@ public class ConfigManager
      * @param type the configuration type, currently always {@code Config.Type.INSTANCE}
      */
     public static void sync(String modid, Config.Type type)
-    {
+    {/* TODO Annotation data
         LOGGER.debug("Attempting to inject @Config classes into {} for type {}", modid, type);
         ClassLoader mcl = Loader.instance().getModClassLoader();
         File configDir = FMLPaths.FMLCONFIG.get().toFile();
@@ -153,7 +154,6 @@ public class ConfigManager
 
         if (map == null)
             return;
-
         for (ASMData targ : map.get(type))
         {
             try
@@ -192,7 +192,7 @@ public class ConfigManager
                 LOGGER.error("An error occurred trying to load a config for {} into {}", targ.getClassName(), e);
                 throw new LoaderException(e);
             }
-        }
+        }*/
     }
 
     public static Class<?>[] getModConfigClasses(String modid)

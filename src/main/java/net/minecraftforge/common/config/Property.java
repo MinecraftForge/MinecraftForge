@@ -23,13 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-import net.minecraftforge.fml.client.config.GuiConfig;
-import net.minecraftforge.fml.client.config.GuiConfigEntries;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
-import net.minecraftforge.fml.client.config.GuiEditArray;
-import net.minecraftforge.fml.client.config.GuiEditArrayEntries;
-import net.minecraftforge.fml.client.config.GuiEditArrayEntries.IArrayEntry;
+import net.minecraftforge.fml.client.config.IArrayEntry;
 import net.minecraftforge.fml.client.config.IConfigElement;
+import net.minecraftforge.fml.client.config.IConfigEntry;
 
 public class Property
 {

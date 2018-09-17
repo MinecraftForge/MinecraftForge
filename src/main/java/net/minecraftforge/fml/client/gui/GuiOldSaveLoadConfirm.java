@@ -16,26 +16,22 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
-
+/* TODO error GUIs
 package net.minecraftforge.fml.client.gui;
 
 import java.io.File;
 import java.io.IOException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiYesNo;
 import net.minecraft.client.gui.GuiYesNoCallback;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.ZipperUtil;
 
 public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback {
-
-    private static final Logger LOGGER = LogManager.getLogger();
 
     private String dirName;
     private String saveName;
@@ -111,3 +107,4 @@ public class GuiOldSaveLoadConfirm extends GuiYesNo implements GuiYesNoCallback 
         }
     }
 }
+*/
