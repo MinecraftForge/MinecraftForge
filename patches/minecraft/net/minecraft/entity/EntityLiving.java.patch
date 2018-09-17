@@ -26,7 +26,7 @@
          {
              this.field_70708_bq = 0;
          }
-+        else if ((this.field_70708_bq & 0x1F) == 0x1F && (result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this)) != net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT)
++        else if ((result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this)) != net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT)
 +        {
 +            if (result == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +            {
