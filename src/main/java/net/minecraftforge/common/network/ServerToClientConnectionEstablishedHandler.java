@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.common.network;
-
+/* TODO handshake
 import net.minecraftforge.fml.common.network.NetworkHandshakeEstablished;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -36,3 +36,4 @@ public class ServerToClientConnectionEstablishedHandler extends ChannelInboundHa
         ctx.fireUserEventTriggered(evt);
     }
 }
+*/

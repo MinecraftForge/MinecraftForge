@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.common.network;
-
+/* TODO handshake
 import java.util.EnumMap;
 
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -56,3 +56,4 @@ public class ForgeNetworkHandler
         clientChannel.pipeline().addAfter(handlerName, "FluidIdRegistryHandler", new FluidIdRegistryMessageHandler());
     }
 }
+*/
