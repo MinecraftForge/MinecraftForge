@@ -19,14 +19,15 @@
 
 package net.minecraftforge.fml.network;
 
-import net.minecraft.nbt.INBTBase;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -63,6 +64,11 @@ public class NetworkInstance
         this.networkEventBus.addListener(eventListener);
     }
 
+    public void addGatherListener(Consumer<NetworkEvent.GatherLoginPayloadsEvent> eventListener)
+    {
+        this.networkEventBus.addListener(eventListener);
+    }
+
     public void registerObject(final Object object) {
         this.networkEventBus.register(object);
     }
@@ -73,7 +79,7 @@ public class NetworkInstance
 
     boolean dispatch(final NetworkDirection side, final ICustomPacket<?> packet, final NetworkManager manager)
     {
-        final NetworkEvent.Context context = new NetworkEvent.Context(manager, side);
+        final NetworkEvent.Context context = new NetworkEvent.Context(manager, side, packet.getIndex());
         this.networkEventBus.post(side.getEvent(packet, () -> context));
         return context.getPacketHandled();
     }
@@ -89,5 +95,13 @@ public class NetworkInstance
 
     boolean tryClientVersionOnServer(final String clientVersion) {
         return this.serverAcceptedVersions.test(clientVersion);
+    }
+
+    void dispatchGatherLogin(final List<NetworkRegistry.LoginPayload> loginPayloadList) {
+        this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(loginPayloadList));
+    }
+
+    void dispatchLoginPacket(final NetworkEvent.LoginPayloadEvent loginPayloadEvent) {
+        this.networkEventBus.post(loginPayloadEvent);
     }
 }

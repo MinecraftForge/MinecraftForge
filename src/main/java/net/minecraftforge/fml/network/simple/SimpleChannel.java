@@ -24,12 +24,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.ICustomPacket;
-import net.minecraftforge.fml.network.NetworkDirection;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkInstance;
+import net.minecraftforge.fml.network.*;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -38,14 +38,26 @@ public class SimpleChannel
 {
     private final NetworkInstance instance;
     private final IndexedMessageCodec indexedCodec;
+    private List<Supplier<? extends List<? extends Pair<String,?>>>> loginPackets;
 
     public SimpleChannel(NetworkInstance instance)
     {
         this.instance = instance;
         this.indexedCodec = new IndexedMessageCodec();
+        this.loginPackets = new ArrayList<>();
         instance.addListener(this::networkEventListener);
+        instance.addGatherListener(this::networkLoginGather);
     }
 
+    private void networkLoginGather(final NetworkEvent.GatherLoginPayloadsEvent gatherEvent) {
+        loginPackets.forEach(packetGenerator->{
+            packetGenerator.get().forEach(p->{
+                PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
+                this.indexedCodec.build(p.getRight(), pb);
+                gatherEvent.add(pb, this.instance.getChannelName(), p.getLeft());
+            });
+        });
+    }
     private void networkEventListener(final NetworkEvent networkEvent)
     {
         this.indexedCodec.consume(networkEvent.getPayload(), networkEvent.getLoginIndex(), networkEvent.getSource());
@@ -77,7 +89,7 @@ public class SimpleChannel
 
     public <MSG> void reply(MSG msgToReply, NetworkEvent.Context context)
     {
-        sendTo(msgToReply, context.getNetworkManager(), context.getDirection().reply());
+        context.getPacketDispatcher().sendPacket(instance.getChannelName(), toBuffer(msgToReply).getLeft());
     }
 
     public <M> MessageBuilder<M> messageBuilder(final Class<M> type, int id) {
@@ -93,6 +105,7 @@ public class SimpleChannel
         private BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer;
         private Function<MSG, Integer> loginIndexGetter;
         private BiConsumer<MSG, Integer> loginIndexSetter;
+        private Supplier<List<Pair<String,MSG>>> loginPacketGenerators;
 
         private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
             MessageBuilder<MSG> builder = new MessageBuilder<>();
@@ -117,6 +130,24 @@ public class SimpleChannel
             this.loginIndexSetter = loginIndexSetter;
             return this;
         }
+
+        public MessageBuilder<MSG> buildLoginPacketList(Supplier<List<Pair<String,MSG>>> loginPacketGenerators) {
+            this.loginPacketGenerators = loginPacketGenerators;
+            return this;
+        }
+
+        public MessageBuilder<MSG> markAsLoginPacket()
+        {
+            this.loginPacketGenerators = () -> {
+                try {
+                    return Collections.singletonList(Pair.of(type.getName(), type.newInstance()));
+                } catch (InstantiationException | IllegalAccessException e) {
+                    throw new RuntimeException("Inaccessible no-arg constructor for message "+type.getName(),e);
+                }
+            };
+            return this;
+        }
+
         public MessageBuilder<MSG> consumer(BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer) {
             this.consumer = consumer;
             return this;
@@ -129,6 +160,9 @@ public class SimpleChannel
             }
             if (this.loginIndexGetter != null) {
                 message.setLoginIndexGetter(this.loginIndexGetter);
+            }
+            if (this.loginPacketGenerators != null) {
+                this.channel.loginPackets.add(this.loginPacketGenerators);
             }
         }
     }

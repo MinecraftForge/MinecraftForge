@@ -45,6 +45,11 @@ public class IndexedMessageCodec
         return (MessageHandler<MSG>) types.get(msgToReply.getClass());
     }
 
+    @SuppressWarnings("unchecked")
+    <MSG> MessageHandler<MSG> findIndex(final short i) {
+        return (MessageHandler<MSG>) indicies.get(i);
+    }
+
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     class MessageHandler<MSG>
     {
@@ -84,6 +89,15 @@ public class IndexedMessageCodec
 
         public Optional<Function<MSG, Integer>> getLoginIndexGetter() {
             return this.loginIndexGetter;
+        }
+
+        MSG newInstance() {
+            try {
+                return messageType.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                LOGGER.error("Invalid login message", e);
+                throw new RuntimeException(e);
+            }
         }
     }
 

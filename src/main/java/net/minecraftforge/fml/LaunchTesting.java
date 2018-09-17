@@ -45,9 +45,9 @@ public class LaunchTesting
         logcontext.getConfiguration().addFilter(axformFilter);
         logcontext.getConfiguration().addFilter(eventbusFilter);
         logcontext.updateLoggers();
-        File invsorter = new File("/home/cpw/projects/mods/inventorysorter/classes");
+        File invsorter = new File("/home/cpw/projects/minecraft/inventorysorter/classes");
         if (invsorter.exists()) {
-            System.setProperty("fml.explodedDir", "/home/cpw/projects/mods/inventorysorter/classes"); //TODO: Move this to a example included in our tests, not a random location...
+            System.setProperty("fml.explodedDir", "/home/cpw/projects/minecraft/inventorysorter/classes"); //TODO: Move this to a example included in our tests, not a random location...
         }
         String assets = System.getenv().getOrDefault("assetDirectory", "assets");
         String target = System.getenv().get("target");

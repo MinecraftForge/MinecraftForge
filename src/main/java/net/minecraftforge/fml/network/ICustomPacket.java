@@ -61,7 +61,7 @@ public interface ICustomPacket<T extends Packet<?>> {
     }
 
     default ResourceLocation getName() {
-        return Fields.lookup.get(this.getClass()).channel.map(f->UnsafeHacks.<ResourceLocation>getField(f, this)).orElse(NetworkHooks.FMLHANDSHAKE);
+        return Fields.lookup.get(this.getClass()).channel.map(f->UnsafeHacks.<ResourceLocation>getField(f, this)).orElse(FMLLoginWrapper.WRAPPER);
     }
 
     default int getIndex() {

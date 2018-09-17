@@ -20,12 +20,18 @@
 package net.minecraftforge.fml.network;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import io.netty.util.Attribute;
+import io.netty.util.AttributeKey;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSidedProvider;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 public class NetworkEvent extends Event
@@ -39,6 +45,13 @@ public class NetworkEvent extends Event
         this.payload = payload.getData();
         this.source = source;
         this.loginIndex = payload.getIndex();
+    }
+
+    private NetworkEvent(final PacketBuffer payload, final Supplier<Context> source, final int loginIndex)
+    {
+        this.payload = payload;
+        this.source = source;
+        this.loginIndex = loginIndex;
     }
 
     public PacketBuffer getPayload()
@@ -82,6 +95,23 @@ public class NetworkEvent extends Event
         }
     }
 
+    public static class GatherLoginPayloadsEvent extends Event {
+        private final List<NetworkRegistry.LoginPayload> collected;
+
+        public GatherLoginPayloadsEvent(final List<NetworkRegistry.LoginPayload> loginPayloadList) {
+            this.collected = loginPayloadList;
+        }
+
+        public void add(PacketBuffer buffer, ResourceLocation channelName, String context) {
+            collected.add(new NetworkRegistry.LoginPayload(buffer, channelName, context));
+        }
+    }
+
+    public static class LoginPayloadEvent extends NetworkEvent {
+        LoginPayloadEvent(final PacketBuffer payload, final Supplier<Context> source, final int loginIndex) {
+            super(payload, source, loginIndex);
+        }
+    }
     /**
      * Context for {@link NetworkEvent}
      */
@@ -96,20 +126,34 @@ public class NetworkEvent extends Event
          * The {@link NetworkDirection} this message has been received on.
          */
         private final NetworkDirection side;
+
+        /**
+         * The packet dispatcher for this event. Sends back to the origin.
+         */
+        private final PacketDispatcher packetDispatcher;
         private boolean packetHandled;
 
-        Context(NetworkManager netHandler, NetworkDirection side)
+        Context(NetworkManager netHandler, NetworkDirection side, int index)
         {
-            this.networkManager = netHandler;
+            this(netHandler, side, new PacketDispatcher.NetworkManagerDispatcher(netHandler, index, side.reply()::buildPacket));
+        }
+
+        Context(NetworkManager networkManager, NetworkDirection side, PacketDispatcher dispatcher) {
+            this.networkManager = networkManager;
             this.side = side;
+            this.packetDispatcher = dispatcher;
         }
 
         public NetworkDirection getDirection() {
             return side;
         }
 
-        public NetworkManager getNetworkManager() {
-            return networkManager;
+        public PacketDispatcher getPacketDispatcher() {
+            return packetDispatcher;
+        }
+
+        public <T> Attribute<T> attr(AttributeKey<T> key) {
+            return networkManager.channel().attr(key);
         }
 
         public void setPacketHandled(boolean packetHandled) {
@@ -124,6 +168,10 @@ public class NetworkEvent extends Event
         @SuppressWarnings("unchecked")
         public <V> ListenableFuture<V> enqueueWork(Runnable runnable) {
             return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().getLogicalSide()).addScheduledTask(runnable);
+        }
+
+        NetworkManager getNetworkManager() {
+            return networkManager;
         }
     }
 }

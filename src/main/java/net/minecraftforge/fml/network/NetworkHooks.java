@@ -25,7 +25,6 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.handshake.client.CPacketHandshake;
-import net.minecraft.network.login.client.CPacketCustomPayloadLogin;
 import net.minecraft.server.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
 
@@ -35,7 +34,7 @@ public class NetworkHooks
 {
     public static final String NETVERSION = "FML1";
     public static final String NOVERSION = "NONE";
-    static final ResourceLocation FMLHANDSHAKE = new ResourceLocation("fml", "handshake");
+
     public static String getFMLVersion(final String ip)
     {
         return ip.contains("\0") ? Objects.equals(ip.split("\0")[1], NETVERSION) ? NETVERSION : ip.split("\0")[1] : NOVERSION;
@@ -43,7 +42,7 @@ public class NetworkHooks
 
     public static boolean accepts(final CPacketHandshake packet)
     {
-        return Objects.equals(packet.getFMLVersion(), NETVERSION);
+        return Objects.equals(packet.getFMLVersion(), NETVERSION) || NetworkRegistry.acceptsVanillaConnections();
     }
 
     public static ConnectionType getConnectionType(final NetHandlerPlayServer connection)
@@ -64,17 +63,17 @@ public class NetworkHooks
     public static void registerServerLoginChannel(NetworkManager manager, CPacketHandshake packet)
     {
         manager.channel().attr(FMLNetworking.FML_MARKER).set(packet.getFMLVersion());
-        FMLNetworking.registerHandshake(manager, NetworkDirection.LOGIN_TO_CLIENT);
+        FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_CLIENT);
     }
 
     public static void registerClientLoginChannel(NetworkManager manager)
     {
         manager.channel().attr(FMLNetworking.FML_MARKER).set(NETVERSION);
-        FMLNetworking.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
+        FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
     }
 
     public static boolean tickNegotiation(NetHandlerLoginServer netHandlerLoginServer, NetworkManager networkManager, EntityPlayerMP player)
     {
-        return FMLNetworking.dispatch(networkManager);
+        return FMLHandshakeHandler.tickLogin(networkManager);
     }
 }

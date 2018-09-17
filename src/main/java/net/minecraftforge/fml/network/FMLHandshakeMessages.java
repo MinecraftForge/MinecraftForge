@@ -5,35 +5,37 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-class FMLHandshakeMessage
+public class FMLHandshakeMessages
 {
-    // Login index sequence number
-    private int index;
-    void setPacketIndexSequence(int i)
-    {
-        this.index = i;
-    }
+    static class LoginIndexedMessage {
+        private int loginIndex;
 
-    int getPacketIndexSequence()
-    {
-        return index;
-    }
+        void setLoginIndex(final int loginIndex) {
+            this.loginIndex = loginIndex;
+        }
 
+        int getLoginIndex() {
+            return loginIndex;
+        }
+    }
     /**
      * Server to client "list of mods". Always first handshake message.
      */
-    static class S2CModList extends FMLHandshakeMessage
+    public static class S2CModList extends LoginIndexedMessage
     {
         private NBTTagList channels;
         private List<String> modList;
 
-        S2CModList() {
+        public S2CModList() {
             this.modList = ModList.get().getMods().stream().map(ModInfo::getModId).collect(Collectors.toList());
         }
 
@@ -43,13 +45,13 @@ class FMLHandshakeMessage
             this.channels = nbtTagCompound.getTagList("channels", 10);
         }
 
-        static S2CModList decode(PacketBuffer packetBuffer)
+        public static S2CModList decode(PacketBuffer packetBuffer)
         {
             final NBTTagCompound nbtTagCompound = packetBuffer.readCompoundTag();
             return new S2CModList(nbtTagCompound);
         }
 
-        void encode(PacketBuffer packetBuffer)
+        public void encode(PacketBuffer packetBuffer)
         {
             NBTTagCompound tag = new NBTTagCompound();
             tag.setTag("modlist",modList.stream().map(NBTTagString::new).collect(Collectors.toCollection(NBTTagList::new)));
@@ -66,9 +68,9 @@ class FMLHandshakeMessage
         }
     }
 
-    static class C2SModListReply extends S2CModList
+    public static class C2SModListReply extends S2CModList
     {
-        C2SModListReply() {
+        public C2SModListReply() {
             super();
         }
 
@@ -76,7 +78,7 @@ class FMLHandshakeMessage
             super(buffer);
         }
 
-        static C2SModListReply decode(PacketBuffer buffer)
+        public static C2SModListReply decode(PacketBuffer buffer)
         {
             return new C2SModListReply(buffer.readCompoundTag());
         }
@@ -84,6 +86,32 @@ class FMLHandshakeMessage
         public void encode(PacketBuffer buffer)
         {
             super.encode(buffer);
+        }
+    }
+
+    public static class C2SAcknowledge extends LoginIndexedMessage {
+        public void encode(PacketBuffer buf) {
+
+        }
+
+        public static C2SAcknowledge decode(PacketBuffer buf) {
+            return new C2SAcknowledge();
+        }
+    }
+
+    public static class S2CRegistry extends LoginIndexedMessage {
+
+        public S2CRegistry(final ResourceLocation key, final ForgeRegistry<? extends IForgeRegistryEntry<?>> registry) {
+        }
+
+        S2CRegistry() {
+        }
+
+        void encode(final PacketBuffer buffer) {
+        }
+
+        public static S2CRegistry decode(final PacketBuffer buffer) {
+            return new S2CRegistry();
         }
     }
 }

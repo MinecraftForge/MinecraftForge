@@ -49,6 +49,7 @@ project(':clean') {
 
 project(':forge') {
     evaluationDependsOn(':clean')
+    apply plugin: 'java-library'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.forgedev.patcher'
     sourceSets {
@@ -95,17 +96,17 @@ project(':forge') {
         maxFuzz 3
     }
     dependencies {
-        implementation 'net.minecraft:client:1.13:extra'
-        implementation 'cpw.mods:modlauncher:0.1.0-rc.3' //Pinned until cpw fixes getCommonSupertype
-        implementation 'net.minecraftforge:accesstransformers:0.10+:shadowed'
-        implementation 'net.minecraftforge:eventbus:0.1+:service'
-        implementation 'net.minecraftforge:forgespi:0.1+'
-        implementation 'net.minecraftforge:coremods:0.1+'
-        implementation 'com.electronwill.night-config:core:3.4.0'
-        implementation 'com.electronwill.night-config:toml:3.4.0'
-        implementation 'org.jline:jline:3.5.1'
-        implementation 'org.apache.maven:maven-artifact:3.5.3'
-        implementation 'java3d:vecmath:1.5.2'
+        api 'net.minecraft:client:1.13:extra'
+        api 'cpw.mods:modlauncher:0.1.0-rc.3' //Pinned until cpw fixes getCommonSupertype
+        api 'net.minecraftforge:accesstransformers:0.10+:shadowed'
+        api 'net.minecraftforge:eventbus:0.1+:service'
+        api 'net.minecraftforge:forgespi:0.1+'
+        api 'net.minecraftforge:coremods:0.1+'
+        api 'com.electronwill.night-config:core:3.4.0'
+        api 'com.electronwill.night-config:toml:3.4.0'
+        api 'org.jline:jline:3.5.1'
+        api 'org.apache.maven:maven-artifact:3.5.3'
+        api 'java3d:vecmath:1.5.2'
     }
 
     configurations {
