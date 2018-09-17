@@ -25,3 +25,23 @@
     public String getGroup() {
        return this.field_201833_b;
     }
+@@ -75,6 +71,7 @@
+    }
+ 
+    public static class Serializer implements IRecipeSerializer<FurnaceRecipe> {
++      private static ResourceLocation NAME = new ResourceLocation("minecraft", "smelting");
+       public FurnaceRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
+          String s = JsonUtils.getString(p_199425_2_, "group", "");
+          Ingredient ingredient;
+@@ -113,8 +110,9 @@
+          p_199427_1_.writeVarInt(p_199427_2_.field_201837_f);
+       }
+ 
+-      public String func_199567_a() {
+-         return "smelting";
++      @Override
++      public ResourceLocation getName() {
++         return NAME;
+       }
+    }
+ }

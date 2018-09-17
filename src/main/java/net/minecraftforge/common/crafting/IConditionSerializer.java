@@ -23,6 +23,8 @@ import java.util.function.BooleanSupplier;
 
 import com.google.gson.JsonObject;
 
-public interface IConditionFactory {
-    BooleanSupplier parse(JsonContext context, JsonObject json);
+@FunctionalInterface
+public interface IConditionSerializer
+{
+    BooleanSupplier parse(JsonObject json);
 }

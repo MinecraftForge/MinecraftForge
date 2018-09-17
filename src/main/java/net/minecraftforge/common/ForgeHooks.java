@@ -1014,7 +1014,7 @@ public class ForgeHooks
         if (stack.getItem().hasContainerItem(stack))
         {
             stack = stack.getItem().getContainerItem(stack);
-            if (!stack.isEmpty() && stack.isItemStackDamageable() && stack.getMetadata() > stack.getMaxDamage())
+            if (!stack.isEmpty() && stack.isItemStackDamageable() && stack.getItemDamage() > stack.getMaxDamage())
             {
                 ForgeEventFactory.onPlayerDestroyItem(craftingPlayer.get(), stack, null);
                 return ItemStack.EMPTY;
@@ -1035,10 +1035,10 @@ public class ForgeHooks
         {
             filled = ((IFluidBlock)block).getFilledPercentage(entity.world, pos);
         }
-        else if (block instanceof BlockLiquid)
+        /*else if (block instanceof BlockLiquid)
         {
             filled = 1.0 - (BlockLiquid.getLiquidHeightPercent(block.getMetaFromState(state)) - (1.0 / 9.0));
-        }
+        }*/
 
         if (filled < 0)
         {
@@ -1270,13 +1270,6 @@ public class ForgeHooks
     //TODO: Some registry to support custom LootEntry types?
     public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
     public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
-
-    /** @deprecated use {@link ForgeEventFactory#onProjectileImpact(EntityThrowable, RayTraceResult)} */
-    @Deprecated // TODO: remove (1.13)
-    public static boolean onThrowableImpact(EntityThrowable throwable, RayTraceResult ray)
-    {
-        return ForgeEventFactory.onProjectileImpact(throwable, ray);
-    }
 
     public static boolean onCropsGrowPre(World worldIn, BlockPos pos, IBlockState state, boolean def)
     {

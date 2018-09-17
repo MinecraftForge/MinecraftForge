@@ -7,7 +7,7 @@
 -import net.minecraftforge.api.distmarker.Dist;
 -import net.minecraftforge.api.distmarker.OnlyIn;
  
- public final class Ingredient implements Predicate<ItemStack> {
+ public class Ingredient implements Predicate<ItemStack> {
 +   //Because Mojang caches things... we need to invalidate them.. so... here we go..
 +   private static final java.util.Set<Ingredient> INSTANCES = java.util.Collections.newSetFromMap(new java.util.WeakHashMap<Ingredient, Boolean>());
 +   public static void invalidateAll() {
@@ -23,7 +23,7 @@
     private IntList matchingStacksPacked;
 +   private final boolean isSimple;
  
-    private Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) {
+    protected Ingredient(Stream<? extends Ingredient.IItemList> p_i49381_1_) {
        this.field_199807_b = (Ingredient.IItemList[])p_i49381_1_.filter(field_209362_b).toArray((p_209360_0_) -> {
           return new Ingredient.IItemList[p_209360_0_];
        });
@@ -35,7 +35,18 @@
     public ItemStack[] getMatchingStacks() {
        this.func_199806_d();
        return this.matchingStacks;
-@@ -121,6 +127,15 @@
+@@ -95,6 +101,10 @@
+ 
+    public final void func_199564_a(PacketBuffer p_199564_1_) {
+       this.func_199806_d();
++      if (!this.isVanilla()) {
++         net.minecraftforge.common.crafting.CraftingHelper.write(p_199564_1_, this);
++         return;
++      }
+       p_199564_1_.writeVarInt(this.matchingStacks.length);
+ 
+       for(int i = 0; i < this.matchingStacks.length; ++i) {
+@@ -121,6 +131,25 @@
        return this.field_199807_b.length == 0 && (this.matchingStacks == null || this.matchingStacks.length == 0) && (this.matchingStacksPacked == null || this.matchingStacksPacked.isEmpty());
     }
  
@@ -48,10 +59,20 @@
 +      return isSimple || this == EMPTY;
 +   }
 +
-    private static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
++   private final boolean isVanilla = this.getClass() == Ingredient.class;
++   public final boolean isVanilla() {
++       return isVanilla;
++   }
++
++   public net.minecraftforge.common.crafting.IIngredientSerializer<? extends Ingredient> getSerializer() {
++      if (!isVanilla()) throw new IllegalStateException("Modderrs must implement Ingredient.getSerializer in their custom Ingredients: " + this);
++      return net.minecraftforge.common.crafting.CraftingHelper.INGREDIENT_VANILLA;
++   }
++
+    public static Ingredient func_209357_a(Stream<? extends Ingredient.IItemList> p_209357_0_) {
        Ingredient ingredient = new Ingredient(p_209357_0_);
        return ingredient.field_199807_b.length == 0 ? EMPTY : ingredient;
-@@ -132,7 +147,6 @@
+@@ -132,7 +161,6 @@
        }));
     }
  
@@ -59,3 +80,50 @@
     public static Ingredient fromStacks(ItemStack... stacks) {
        return func_209357_a(Arrays.stream(stacks).map((p_209356_0_) -> {
           return new Ingredient.SingleItemList(p_209356_0_);
+@@ -144,7 +172,12 @@
+    }
+ 
+    public static Ingredient func_199566_b(PacketBuffer p_199566_0_) {
++      p_199566_0_.markReaderIndex();
+       int i = p_199566_0_.readVarInt();
++      if (i == -1) {
++         p_199566_0_.resetReaderIndex();
++         return net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_199566_0_.readResourceLocation(), p_199566_0_);
++      }
+       return func_209357_a(Stream.generate(() -> {
+          return new Ingredient.SingleItemList(p_199566_0_.readItemStack());
+       }).limit((long)i));
+@@ -152,6 +185,8 @@
+ 
+    public static Ingredient func_199802_a(@Nullable JsonElement p_199802_0_) {
+       if (p_199802_0_ != null && !p_199802_0_.isJsonNull()) {
++         Ingredient ret = net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_199802_0_);
++         if (ret != null) return ret;
+          if (p_199802_0_.isJsonObject()) {
+             return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
+          } else if (p_199802_0_.isJsonArray()) {
+@@ -172,6 +207,11 @@
+    }
+ 
+    public static Ingredient.IItemList func_199803_a(JsonObject p_199803_0_) {
++      if (p_199803_0_.has("constant")) {
++         Ingredient.IItemList ret = net.minecraftforge.common.crafting.CraftingHelper.getConstant(new ResourceLocation(JsonUtils.getString(p_199803_0_, "constant")));
++         if (ret == null) throw new JsonSyntaxException("Ingredient referenced invalid constant: " + JsonUtils.getString(p_199803_0_, "constant"));
++         return ret;
++      }
+       if (p_199803_0_.has("item") && p_199803_0_.has("tag")) {
+          throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
+       } else if (p_199803_0_.has("item")) {
+@@ -195,6 +235,12 @@
+       }
+    }
+ 
++   //Merges several vanilla Ingredients together. As a qwerk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and remerge here.
++   //Only public for internal use, so we can access a private field in here.
++   public static Ingredient merge(Collection<Ingredient> parts) {
++      return func_209357_a(parts.stream().flatMap(i -> Arrays.stream(i.field_199807_b)));
++   }
++
+    public interface IItemList {
+       Collection<ItemStack> func_199799_a();
+ 

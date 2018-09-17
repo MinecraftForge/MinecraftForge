@@ -7,7 +7,8 @@
 -import net.minecraftforge.api.distmarker.Dist;
 -import net.minecraftforge.api.distmarker.OnlyIn;
  
- public class ShapedRecipe implements IRecipe {
+-public class ShapedRecipe implements IRecipe {
++public class ShapedRecipe implements IRecipe, net.minecraftforge.common.crafting.IShapedRecipe {
 +   static int MAX_WIDTH = 3;
 +   static int MAX_HEIGHT = 3;
 +   /**
@@ -40,7 +41,28 @@
     public boolean canFit(int width, int height) {
        return width >= this.recipeWidth && height >= this.recipeHeight;
     }
-@@ -202,15 +211,15 @@
+@@ -117,10 +126,20 @@
+       return this.recipeWidth;
+    }
+ 
++   @Override
++   public int getRecipeWidth() {
++      return getWidth();
++   }
++
+    public int getHeight() {
+       return this.recipeHeight;
+    }
+ 
++   @Override
++   public int getRecipeHeight() {
++      return getHeight();
++   }
++
+    private static NonNullList<Ingredient> deserializeIngredients(String[] pattern, Map<String, Ingredient> keys, int patternWidth, int patternHeight) {
+       NonNullList<Ingredient> nonnulllist = NonNullList.<Ingredient>withSize(patternWidth * patternHeight, Ingredient.EMPTY);
+       Set<String> set = Sets.newHashSet(keys.keySet());
+@@ -202,15 +221,15 @@
  
     private static String[] patternFromJson(JsonArray jsonArr) {
        String[] astring = new String[jsonArr.size()];
@@ -60,3 +82,23 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
+@@ -257,6 +276,7 @@
+    }
+ 
+    public static class Serializer implements IRecipeSerializer<ShapedRecipe> {
++      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shaped");
+       public ShapedRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
+          String s = JsonUtils.getString(p_199425_2_, "group", "");
+          Map<String, Ingredient> map = ShapedRecipe.deserializeKey(JsonUtils.getJsonObject(p_199425_2_, "key"));
+@@ -268,8 +288,9 @@
+          return new ShapedRecipe(p_199425_1_, s, i, j, nonnulllist, itemstack);
+       }
+ 
+-      public String func_199567_a() {
+-         return "crafting_shaped";
++      @Override
++      public ResourceLocation getName() {
++         return NAME;
+       }
+ 
+       public ShapedRecipe func_199426_a_(ResourceLocation p_199426_1_, PacketBuffer p_199426_2_) {

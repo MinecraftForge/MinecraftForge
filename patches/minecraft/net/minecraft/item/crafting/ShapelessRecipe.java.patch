@@ -56,7 +56,7 @@
        }
     }
  
-@@ -74,7 +77,6 @@
+@@ -74,19 +77,19 @@
        return this.recipeOutput.copy();
     }
  
@@ -64,7 +64,11 @@
     public boolean canFit(int width, int height) {
        return width * height >= this.recipeItems.size();
     }
-@@ -85,8 +87,8 @@
+ 
+    public static class Serializer implements IRecipeSerializer<ShapelessRecipe> {
++      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shapeless");
+       public ShapelessRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
+          String s = JsonUtils.getString(p_199425_2_, "group", "");
           NonNullList<Ingredient> nonnulllist = func_199568_a(JsonUtils.getJsonArray(p_199425_2_, "ingredients"));
           if (nonnulllist.isEmpty()) {
              throw new JsonParseException("No ingredients for shapeless recipe");
@@ -75,3 +79,15 @@
           } else {
              ItemStack itemstack = ShapedRecipe.func_199798_a(JsonUtils.getJsonObject(p_199425_2_, "result"));
              return new ShapelessRecipe(p_199425_1_, s, itemstack, nonnulllist);
+@@ -106,8 +109,9 @@
+          return nonnulllist;
+       }
+ 
+-      public String func_199567_a() {
+-         return "crafting_shapeless";
++      @Override
++      public ResourceLocation getName() {
++         return NAME;
+       }
+ 
+       public ShapelessRecipe func_199426_a_(ResourceLocation p_199426_1_, PacketBuffer p_199426_2_) {

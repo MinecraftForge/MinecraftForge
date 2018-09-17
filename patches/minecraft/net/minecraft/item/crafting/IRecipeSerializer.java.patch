@@ -1,0 +1,15 @@
+--- a/net/minecraft/item/crafting/IRecipeSerializer.java
++++ b/net/minecraft/item/crafting/IRecipeSerializer.java
+@@ -11,5 +11,11 @@
+ 
+    void func_199427_a_(PacketBuffer p_199427_1_, T p_199427_2_);
+ 
+-   String func_199567_a();
++   @Deprecated //Modders, do not use, this is un-namespaced and thus could cause clashes.
++   default String func_199567_a() {
++       ResourceLocation name = getName(); //To keep compatibility with vanilla, anything in the "minecraft" namespace doesn't get a prefix.
++       return name.getNamespace().equals("minecraft") ? name.getPath() : name.toString();
++   }
++
++   ResourceLocation getName();
+ }

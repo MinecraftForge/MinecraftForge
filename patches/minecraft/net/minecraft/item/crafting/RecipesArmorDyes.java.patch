@@ -14,7 +14,7 @@
                    itemstack = itemstack1;
                 } else {
 -                  if (!(itemstack1.getItem() instanceof ItemDye)) {
-+                  if (!itemstack1.getItem().func_206844_a(net.minecraft.tags.ItemTags.DYES)) {
++                  if (!itemstack1.getItem().func_206844_a(net.minecraftforge.common.Tags.Items.DYES)) {
                       return false;
                    }
  

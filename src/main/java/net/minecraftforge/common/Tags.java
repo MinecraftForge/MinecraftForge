@@ -106,7 +106,7 @@ public class Tags
         public static final Tag<Item> GEMS_PRISMARINE = tag("gems/prismarine");
         public static final Tag<Item> GEMS_QUARRTZ = tag("gems/quartz");
         public static final Tag<Item> INGOTS = tag("ingots");
-        public static final Tag<Item> INGOTS_BRICK = tag("ingots/brrick");
+        public static final Tag<Item> INGOTS_BRICK = tag("ingots/brick");
         public static final Tag<Item> INGOTS_GOLD = tag("ingots/gold");
         public static final Tag<Item> INGOTS_IRON = tag("ingots/iron");
         public static final Tag<Item> INGOTS_NETHER_BRICK = tag("ingots/nether_brick");

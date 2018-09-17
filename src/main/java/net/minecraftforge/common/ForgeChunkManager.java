@@ -939,8 +939,8 @@ public class ForgeChunkManager
                 {
                     ticket.setInteger("chunkX", MathHelper.floor(tick.entity.chunkCoordX));
                     ticket.setInteger("chunkZ", MathHelper.floor(tick.entity.chunkCoordZ));
-                    ticket.setLong("PersistentIDMSB", tick.entity.getPersistentID().getMostSignificantBits());
-                    ticket.setLong("PersistentIDLSB", tick.entity.getPersistentID().getLeastSignificantBits());
+                    ticket.setLong("PersistentIDMSB", tick.entity.getUniqueID().getMostSignificantBits());
+                    ticket.setLong("PersistentIDLSB", tick.entity.getUniqueID().getLeastSignificantBits());
                     tickets.add(ticket);
                 }
                 else if (tick.ticketType != Type.ENTITY)
@@ -966,7 +966,7 @@ public class ForgeChunkManager
 
     static void loadEntity(Entity entity)
     {
-        UUID id = entity.getPersistentID();
+        UUID id = entity.getUniqueID();
         Ticket tick = pendingEntities.get(id);
         if (tick != null)
         {

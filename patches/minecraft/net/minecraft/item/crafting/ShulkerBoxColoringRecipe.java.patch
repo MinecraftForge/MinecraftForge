@@ -14,7 +14,7 @@
                    ++i;
                 } else {
 -                  if (!(itemstack.getItem() instanceof ItemDye)) {
-+                  if (!itemstack.getItem().func_206844_a(net.minecraft.tags.ItemTags.DYES)) {
++                  if (!itemstack.getItem().func_206844_a(net.minecraftforge.common.Tags.Items.DYES)) {
                       return false;
                    }
  

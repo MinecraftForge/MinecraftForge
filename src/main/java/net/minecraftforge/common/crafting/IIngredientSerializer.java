@@ -19,14 +19,16 @@
 
 package net.minecraftforge.common.crafting;
 
-import javax.annotation.Nonnull;
-
 import com.google.gson.JsonObject;
 
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.network.PacketBuffer;
 
-public interface IIngredientFactory
+public interface IIngredientSerializer<T extends Ingredient>
 {
-    @Nonnull //If you would return null throw JsonSyntaxException to explain why
-    Ingredient parse(JsonContext context, JsonObject json);
+    T parse(PacketBuffer buffer);
+
+    T parse(JsonObject json);
+
+    void write(PacketBuffer buffer, T ingredient);
 }
