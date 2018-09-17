@@ -704,7 +704,7 @@ public class FluidUtil
      */
     @Nonnull
     public static ItemStack getFilledBucket(@Nonnull FluidStack fluidStack)
-    {
+    {/* TODO fluids
         Fluid fluid = fluidStack.getFluid();
 
         if (fluidStack.tag == null || fluidStack.tag.isEmpty())
@@ -735,7 +735,7 @@ public class FluidUtil
 
             return filledBucket;
         }
-
+*/
         return ItemStack.EMPTY;
     }
 }

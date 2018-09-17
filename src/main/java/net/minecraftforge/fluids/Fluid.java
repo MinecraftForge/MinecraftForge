@@ -29,10 +29,12 @@ import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Particles;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.item.EnumRarity;
@@ -308,7 +310,7 @@ public class Fluid
 
         for (int l = 0; l < 8; ++l)
         {
-            worldIn.spawnParticle(EnumParticleTypes.SMOKE_LARGE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
+            worldIn.func_195589_b(Particles.field_197594_E, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
         }
     }
 
@@ -318,7 +320,7 @@ public class Fluid
     public String getLocalizedName(FluidStack stack)
     {
         String s = this.getUnlocalizedName();
-        return s == null ? "" : I18n.translateToLocal(s);
+        return s == null ? "" : LanguageMap.getInstance().translateKey(s); // TODO Server translation
     }
 
     /**

@@ -64,18 +64,19 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     }
 
     public boolean canFillFluidType(FluidStack fluid)
-    {
+    {/* TODO fluids
         if (fluid.getFluid() == FluidRegistry.WATER || fluid.getFluid() == FluidRegistry.LAVA || fluid.getFluid().getName().equals("milk"))
         {
             return true;
         }
         return FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid.getFluid());
+        */ return false;
     }
 
     @Nullable
     public FluidStack getFluid()
     {
-        Item item = container.getItem();
+        Item item = container.getItem();/* TODO fluids
         if (item == Items.WATER_BUCKET)
         {
             return new FluidStack(FluidRegistry.WATER, Fluid.BUCKET_VOLUME);
@@ -88,7 +89,7 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         {
             return FluidRegistry.getFluidStack("milk", Fluid.BUCKET_VOLUME);
         }
-        else if (item == ForgeMod.getInstance().universalBucket)
+        else*/ if (item == ForgeMod.getInstance().universalBucket)
         {
             return ForgeMod.getInstance().universalBucket.getFluid(container);
         }

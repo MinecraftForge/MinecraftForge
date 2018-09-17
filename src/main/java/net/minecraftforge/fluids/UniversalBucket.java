@@ -20,10 +20,10 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.block.BlockDispenser;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
@@ -33,7 +33,9 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.text.translation.I18n;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
@@ -59,9 +61,9 @@ public class UniversalBucket extends Item
     private final ItemStack empty; // empty item to return and recognize when filling
     private final boolean nbtSensitive;
 
-    public UniversalBucket()
+    public UniversalBucket(Builder builder)
     {
-        this(Fluid.BUCKET_VOLUME, new ItemStack(Items.BUCKET), false);
+        this(builder, Fluid.BUCKET_VOLUME, new ItemStack(Items.BUCKET), false);
     }
 
     /**
@@ -69,17 +71,19 @@ public class UniversalBucket extends Item
      * @param empty           Item used for filling with the bucket event and returned when emptied
      * @param nbtSensitive    Whether the empty item is NBT sensitive (usually true if empty and full are the same items)
      */
-    public UniversalBucket(int capacity, @Nonnull ItemStack empty, boolean nbtSensitive)
+    public UniversalBucket(Builder builder, int capacity, @Nonnull ItemStack empty, boolean nbtSensitive)
     {
+        super(builder);
         this.capacity = capacity;
         this.empty = empty;
         this.nbtSensitive = nbtSensitive;
-
+        
+        /* TODO move to builder construction
         this.setMaxStackSize(1);
 
         this.setCreativeTab(CreativeTabs.MISC);
-
-        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(this, DispenseFluidContainer.getInstance());
+*/
+        BlockDispenser.func_199774_a(this, DispenseFluidContainer.getInstance());
     }
 
     @Override
@@ -101,10 +105,10 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public void getSubItems(@Nullable CreativeTabs tab, @Nonnull NonNullList<ItemStack> subItems)
+    public void getSubItems(@Nullable ItemGroup tab, @Nonnull NonNullList<ItemStack> subItems)
     {
         if (!this.isInCreativeTab(tab))
-            return;
+            return;/* TODO fluids
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {
             if (fluid != FluidRegistry.WATER && fluid != FluidRegistry.LAVA && !fluid.getName().equals("milk"))
@@ -119,31 +123,32 @@ public class UniversalBucket extends Item
                     subItems.add(filled);
                 }
             }
-        }
+        }*/
     }
 
     @Override
     @Nonnull
-    public String getItemStackDisplayName(@Nonnull ItemStack stack)
+    public ITextComponent func_200295_i(@Nonnull ItemStack stack)
     {
         FluidStack fluidStack = getFluid(stack);
         if (fluidStack == null)
         {
             if(!getEmpty().isEmpty())
             {
-                return getEmpty().getDisplayName();
+                return getEmpty().func_200301_q();
             }
-            return super.getItemStackDisplayName(stack);
+            return super.func_200295_i(stack);
         }
 
-        String unloc = this.getUnlocalizedNameInefficiently(stack);
+        String unloc = this.getTranslationKey();
 
-        if (I18n.canTranslate(unloc + "." + fluidStack.getFluid().getName()))
+        // TODO this is not reliable on the server
+        if (LanguageMap.getInstance().func_210813_b(unloc + "." + fluidStack.getFluid().getName()))
         {
-            return I18n.translateToLocal(unloc + "." + fluidStack.getFluid().getName());
+            return new TextComponentTranslation(unloc + "." + fluidStack.getFluid().getName());
         }
 
-        return I18n.translateToLocalFormatted(unloc + ".name", fluidStack.getLocalizedName());
+        return new TextComponentTranslation(unloc + ".name", fluidStack.getLocalizedName());
     }
 
     @Override
@@ -291,7 +296,7 @@ public class UniversalBucket extends Item
     public String getCreatorModId(@Nonnull ItemStack itemStack)
     {
         FluidStack fluidStack = getFluid(itemStack);
-        String modId = FluidRegistry.getModId(fluidStack);
+        String modId = null; // TODO fluids FluidRegistry.getModId(fluidStack);
         return modId != null ? modId : super.getCreatorModId(itemStack);
     }
 
