@@ -133,7 +133,7 @@
  
        public Item.Builder func_200917_a(int p_200917_1_) {
           if (this.field_200921_b > 0) {
-@@ -1181,5 +1231,27 @@
+@@ -1181,5 +1231,10 @@
           this.field_208104_e = p_208103_1_;
           return this;
        }
@@ -141,23 +141,6 @@
 +      public Item.Builder setNoRepair() {
 +          canRepair = false;
 +          return this;
++      }
     }
-+
-+      /**
-+       * Sets or removes the harvest level for the specified tool class.
-+       *
-+       * @param toolClass Class
-+       * @param level     Harvest level: Wood: 0 Stone: 1 Iron: 2 Diamond: 3 Gold: 0
-+       */
-+      public void setHarvestLevel(String toolClass, int level) {
-+          if (level < 0)
-+              toolClasses.remove(toolClass);
-+          else
-+              toolClasses.put(toolClass, level);
-+      }
-+
-+      public void setTileEntityItemStackRenderer(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer>> teisrSupplier) {
-+          this.teisr = teisrSupplier;
-+      }
-+   }
  }
