@@ -199,7 +199,7 @@ public class CraftingHelper
             if (ingredients.size() == 1)
                 return ingredients.get(0);
 
-            return new CompoundIngredient(ingredients.stream());
+            return new CompoundIngredient(ingredients);
         }
 
         if (!json.isJsonObject())

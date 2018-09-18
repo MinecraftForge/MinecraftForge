@@ -46,11 +46,11 @@ public class CompoundIngredient extends Ingredient
     private IntList itemIds;
     private final boolean isSimple;
 
-    protected CompoundIngredient(Stream<Ingredient> children)
+    protected CompoundIngredient(Collection<Ingredient> children)
     {
         super(Stream.of());
-        this.isSimple = children.allMatch(Ingredient::isSimple);
-        this.children = children.collect(Collectors.toList());
+        this.children = children;
+        this.isSimple = children.stream().allMatch(Ingredient::isSimple);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class CompoundIngredient extends Ingredient
         @Override
         public CompoundIngredient parse(PacketBuffer buffer)
         {
-            return new CompoundIngredient(Stream.generate(() -> Ingredient.func_199566_b(buffer)).limit(buffer.readVarInt()));
+            return new CompoundIngredient(Stream.generate(() -> Ingredient.func_199566_b(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
         }
 
         @Override
