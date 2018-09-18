@@ -38,21 +38,31 @@ import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.state.AbstractStateHolder;
 import net.minecraft.state.IProperty;
+import net.minecraft.state.IStateHolder;
 import net.minecraft.state.StateContainer;
 
-public class ExtendedBlockState extends StateContainer<Block, IBlockState>
+public class ExtendedStateContainer<O, S extends IExtendedState<S>> extends StateContainer<O, S>
 {
     private final ImmutableSet<IUnlistedProperty<?>> unlistedProperties;
 
-    public <A extends AbstractStateHolder<Block, IBlockState>> ExtendedBlockState(Block blockIn, StateContainer.IFactory<Block, IBlockState, ?> stateFactory, net.minecraft.state.IProperty<?>[] properties, IUnlistedProperty<?>[] unlistedProperties)
+    public <A extends AbstractStateHolder<O, S>> ExtendedStateContainer(O blockIn, StateContainer.IFactory<O, S, A> stateFactory, net.minecraft.state.IProperty<?>[] properties, IUnlistedProperty<?>[] unlistedProperties)
     {
-        super(blockIn, stateFactory, buildListedMap(properties));// TODO Unlisted properties?, buildUnlistedMap(unlistedProperties));
+        super(blockIn, getProxyFactory(unlistedProperties, stateFactory), buildListedMap(properties));// TODO Unlisted properties?, buildUnlistedMap(unlistedProperties));
         ImmutableSet.Builder<IUnlistedProperty<?>> builder = ImmutableSet.builder();
         for(IUnlistedProperty<?> property : unlistedProperties)
         {
             builder.add(property);
         }
         this.unlistedProperties = builder.build();
+    }
+    
+    private static <O, S extends IExtendedState<S>, A extends AbstractStateHolder<O, S>> 
+        StateContainer.IFactory<O, S, AbstractStateHolder<O,S>> getProxyFactory(IUnlistedProperty<?>[] unlistedProperties, StateContainer.IFactory<O, S, A> proxy)
+    {
+        return (o, props) -> {
+            if (unlistedProperties == null || unlistedProperties.length == 0) return proxy.create(o, props);
+            return new ExtendedStateHolder<O, S>(o, props, buildUnlistedMap(unlistedProperties), null);
+        };
     }
 
     public Collection<IUnlistedProperty<?>> getUnlistedProperties()
@@ -75,33 +85,25 @@ public class ExtendedBlockState extends StateContainer<Block, IBlockState>
         return builder.build();
     }
 
-    @Override
-    @Nonnull
-    protected StateImplementation createState(@Nonnull Block block, @Nonnull  ImmutableMap<IProperty<?>, Comparable<?>> properties, @Nullable ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties)
-    {
-        if (unlistedProperties == null || unlistedProperties.isEmpty()) return super.createState(block, properties, unlistedProperties);
-        return new ExtendedStateImplementation(block, properties, unlistedProperties, null, null);
-    }
-
-    protected static class ExtendedStateImplementation extends StateImplementation implements IExtendedBlockState
+    protected static class ExtendedStateHolder<O, S extends IExtendedState<S>> extends AbstractStateHolder<O, S> implements IExtendedState<S>
     {
         private final ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties;
-        private IBlockState cleanState;
+        private S cleanState;
 
-        protected ExtendedStateImplementation(Block block, ImmutableMap<IProperty<?>, Comparable<?>> properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, @Nullable ImmutableTable<IProperty<?>, Comparable<?>, IBlockState> table, IBlockState clean)
+        protected ExtendedStateHolder(O block, ImmutableMap<IProperty<?>, Comparable<?>> properties, ImmutableMap<IUnlistedProperty<?>, Optional<?>> unlistedProperties, S clean)
         {
-            super(block, properties, table);
+            super(block, properties);
             this.unlistedProperties = unlistedProperties;
-            this.cleanState = clean == null ? this : clean;
+            this.cleanState = clean == null ? (S) this : clean;
         }
 
         @Override
         @Nonnull
-        public <T extends Comparable<T>, V extends T> IBlockState withProperty(@Nonnull IProperty<T> property, @Nonnull V value)
+        public <T extends Comparable<T>, V extends T> S func_206870_a(@Nonnull IProperty<T> property, @Nonnull V value)
         {
-            IBlockState clean = super.withProperty(property, value);
+            S clean = super.func_206870_a(property, value);
             if (clean == this.cleanState) {
-                return this;
+                return (S) this;
             }
 
             if (this == this.cleanState)
@@ -109,24 +111,24 @@ public class ExtendedBlockState extends StateContainer<Block, IBlockState>
                 return clean;
             }
 
-            return new ExtendedStateImplementation(getBlock(), clean.getProperties(), unlistedProperties, ((StateImplementation)clean).getPropertyValueTable(), this.cleanState);
+            return (S) new ExtendedStateHolder(field_206876_a, ((BlockState)clean).func_206871_b(), unlistedProperties, this.cleanState);
         }
 
         @Override
-        public <V> IExtendedBlockState withProperty(IUnlistedProperty<V> property, @Nullable V value)
+        public <V> S withProperty(IUnlistedProperty<V> property, @Nullable V value)
         {
             Optional<?> oldValue = unlistedProperties.get(property);
             if (oldValue == null)
             {
-                throw new IllegalArgumentException("Cannot set unlisted property " + property + " as it does not exist in " + getBlock().getBlockState());
+                throw new IllegalArgumentException("Cannot set unlisted property " + property + " as it does not exist in " + this);
             }
             if (Objects.equals(oldValue.orElse(null), value))
             {
-                return this;
+                return (S) this;
             }
             if (!property.isValid(value))
             {
-                throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on block " + Block.REGISTRY.getNameForObject(getBlock()) + ", it is not an allowed value");
+                throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on object " + field_206876_a + ", it is not an allowed value");
             }
             boolean clean = true;
             ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.builder();
@@ -139,9 +141,9 @@ public class ExtendedBlockState extends StateContainer<Block, IBlockState>
             }
             if (clean)
             { // no dynamic properties, lookup normal state
-                return (IExtendedBlockState) cleanState;
+                return (S) cleanState;
             }
-            return new ExtendedStateImplementation(getBlock(), getProperties(), builder.build(), propertyValueTable, this.cleanState);
+            return (S) new ExtendedStateHolder(field_206876_a, func_206871_b(), builder.build(), this.cleanState);
         }
 
         @Override
@@ -157,7 +159,7 @@ public class ExtendedBlockState extends StateContainer<Block, IBlockState>
             Optional<?> value = unlistedProperties.get(property);
             if (value == null)
             {
-                throw new IllegalArgumentException("Cannot get unlisted property " + property + " as it does not exist in " + getBlock().getBlockState());
+                throw new IllegalArgumentException("Cannot get unlisted property " + property + " as it does not exist in " + this);
             }
             return property.getType().cast(value.orElse(null));
         }
@@ -168,7 +170,7 @@ public class ExtendedBlockState extends StateContainer<Block, IBlockState>
         }
 
         @Override
-        public IBlockState getClean()
+        public S getClean()
         {
             return cleanState;
         }
