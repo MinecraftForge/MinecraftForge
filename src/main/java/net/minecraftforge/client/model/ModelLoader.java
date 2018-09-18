@@ -523,7 +523,7 @@ public final class ModelLoader extends ModelBakery
                         if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
                         {
                             IModelState newState = exState.getValue(Properties.AnimationProperty);
-                            IExtendedBlockState newExState = exState.withProperty(Properties.AnimationProperty, null);
+                            IExtendedBlockState newExState = (IExtendedBlockState) exState.withProperty(Properties.AnimationProperty, null);
                             if(newState != null)
                             {
                                 return VanillaModelWrapper.this.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(modelState, newState), uvlock, format).func_200117_a(newExState, side, rand);

@@ -37,7 +37,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
+import net.minecraftforge.fml.client.config.IConfigEntry;
 
 public class ConfigCategory implements Map<String, Property>
 {

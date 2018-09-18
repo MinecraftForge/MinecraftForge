@@ -17,11 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.util;
+package net.minecraftforge.common.property;
 
-import net.minecraft.util.datafix.IDataFixer;
+import java.util.Collection;
 
-public interface IDataFixerData extends IDataFixer
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.state.IStateHolder;
+
+import java.util.Optional;
+import com.google.common.collect.ImmutableMap;
+
+public interface IExtendedState<C> extends IStateHolder<C>
 {
-    int getVersion(String mod);
+    Collection<IUnlistedProperty<?>> getUnlistedNames();
+
+    <V>V getValue(IUnlistedProperty<V> property);
+
+    <V>C withProperty(IUnlistedProperty<V> property, V value);
+
+    ImmutableMap<IUnlistedProperty<?>, Optional<?>> getUnlistedProperties();
+    
+    C getClean();
 }

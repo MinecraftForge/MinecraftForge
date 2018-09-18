@@ -56,6 +56,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -505,7 +506,7 @@ public class ForgeChunkManager
                 String modId = ticketHolder.getString("Owner");
                 boolean isPlayer = ForgeVersion.MOD_ID.equals(modId);
 
-                if (!isPlayer && !Loader.isModLoaded(modId))
+                if (!isPlayer && !ModList.get().isLoaded(modId))
                 {
                     LOGGER.warn(CHUNK_MANAGER, "Found chunkloading data for mod {} which is currently not available or active - it will be removed from the world save", modId);
                     continue;
@@ -678,7 +679,7 @@ public class ForgeChunkManager
 
     private static ModContainer getContainer(Object mod)
     {
-        ModContainer container = Loader.instance().getModObjectList().inverse().get(mod);
+        ModContainer container = ModList.get().getModContainerByObject(mod).orElse(null);
         return container;
     }
 
@@ -1036,7 +1037,7 @@ public class ForgeChunkManager
         NBTTagList tileEntities = nbt.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tileEntities.size(); ++i)
         {
-            TileEntity tileEntity = TileEntity.create(world, tileEntities.getCompoundTagAt(i));
+            TileEntity tileEntity = TileEntity.func_203403_c(tileEntities.getCompoundTagAt(i));
             if (tileEntity != null) chunk.addTileEntity(tileEntity);
         }
     }

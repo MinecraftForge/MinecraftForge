@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/WorldServer.java
 +++ b/net/minecraft/world/WorldServer.java
+@@ -85,7 +85,7 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+-public class WorldServer extends World implements IThreadListener {
++public class WorldServer extends World implements IThreadListener, net.minecraftforge.common.extensions.IForgeWorldServer {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private final MinecraftServer server;
+    private final EntityTracker entityTracker;
 @@ -150,6 +150,7 @@
           this.getWorldBorder().setTransition(this.worldInfo.getBorderSize());
        }

@@ -51,12 +51,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
 import com.google.common.primitives.Floats;
-import net.minecraftforge.fml.client.config.GuiConfig;
-import net.minecraftforge.fml.client.config.GuiConfigEntries;
-import net.minecraftforge.fml.client.config.GuiConfigEntries.IConfigEntry;
-import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.fml.common.FMLPaths;
-import net.minecraftforge.fml.common.Loader;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -112,7 +107,7 @@ public class Configuration
 
     /**
      * Create a configuration file for the file given in parameter with the provided config version number.
-     */
+     * /
     private void runConfiguration(File file, String configVersion)
     {
         this.file = file;
@@ -143,16 +138,16 @@ public class Configuration
             }
         }
     }
-
+*/
     public Configuration(File file, String configVersion)
     {
-        runConfiguration(file, configVersion);
+//        runConfiguration(file, configVersion);
     }
 
     public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories)
     {
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
-        runConfiguration(file, configVersion);
+//        runConfiguration(file, configVersion);
     }
 
     public Configuration(File file, boolean caseSensitiveCustomCategories)
@@ -1233,13 +1228,13 @@ public class Configuration
      * @see GuiConfigEntries.BooleanEntry
      * @see GuiConfigEntries.DoubleEntry
      * @see GuiConfigEntries.IntegerEntry
-     */
+     * /
     public Configuration setCategoryConfigEntryClass(String category, Class<? extends IConfigEntry> clazz)
     {
         getCategory(category).setConfigEntryClass(clazz);
         return this;
     }
-
+*/
     /**
      * Sets the flag for whether or not this category can be edited while a world is running. Care should be taken to ensure
      * that only properties that are truly dynamic can be changed from the in-game options menu. Only set this flag to

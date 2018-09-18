@@ -128,19 +128,11 @@ public class GuiSlider extends GuiButtonExt
      * e).
      */
     @Override
-    public boolean mousePressed(Minecraft par1Minecraft, int par2, int par3)
+    public void func_194829_a(double mouseX, double mouseY)
     {
-        if (super.mousePressed(par1Minecraft, par2, par3))
-        {
-            this.sliderValue = (float)(par2 - (this.x + 4)) / (float)(this.width - 8);
-            updateSlider();
-            this.dragging = true;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        this.sliderValue = (mouseX - (this.x + 4)) / (this.width - 8);
+        updateSlider();
+        this.dragging = true;
     }
 
     public void updateSlider()
@@ -198,7 +190,7 @@ public class GuiSlider extends GuiButtonExt
      * Fired when the mouse button is released. Equivalent of MouseListener.mouseReleased(MouseEvent e).
      */
     @Override
-    public void mouseReleased(int par1, int par2)
+    public void func_194831_b(double mouseX, double mouseY)
     {
         this.dragging = false;
     }

@@ -59,9 +59,9 @@ public class GuiButtonExt extends GuiButton
             this.mouseDragged(mc, mouseX, mouseY);
             int color = 14737632;
 
-            if (packedFGColour != 0)
+            if (packedFGColor != 0)
             {
-                color = packedFGColour;
+                color = packedFGColor;
             }
             else if (!this.enabled)
             {

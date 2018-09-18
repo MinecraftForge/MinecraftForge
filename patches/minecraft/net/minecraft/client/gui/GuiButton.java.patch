@@ -1,0 +1,22 @@
+--- a/net/minecraft/client/gui/GuiButton.java
++++ b/net/minecraft/client/gui/GuiButton.java
+@@ -22,6 +22,7 @@
+    public boolean visible;
+    protected boolean hovered;
+    private boolean field_194832_o;
++   public int packedFGColor; // FML
+ 
+    public GuiButton(int buttonId, int x, int y, String buttonText) {
+       this(buttonId, x, y, 200, 20, buttonText);
+@@ -66,6 +67,11 @@
+          this.drawTexturedModalRect(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
+          this.mouseDragged(minecraft, p_194828_1_, p_194828_2_);
+          int j = 14737632;
++         if (packedFGColor != 0)
++         {
++            j = packedFGColor;
++         }
++         else
+          if (!this.enabled) {
+             j = 10526880;
+          } else if (this.hovered) {

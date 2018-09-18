@@ -70,7 +70,7 @@ public abstract class ForgeMessage {
             providerId = new String(data, StandardCharsets.UTF_8);
         }
     }
-
+/* TODO fluids
     public static class FluidIdMapMessage extends ForgeMessage {
         BiMap<Fluid, Integer> fluidIds = HashBiMap.create();
         Set<String> defaultFluids = Sets.newHashSet();
@@ -117,7 +117,7 @@ public abstract class ForgeMessage {
             }
         }
     }
-
+*/
     abstract void toBytes(ByteBuf bytes);
     abstract void fromBytes(ByteBuf bytes);
 }

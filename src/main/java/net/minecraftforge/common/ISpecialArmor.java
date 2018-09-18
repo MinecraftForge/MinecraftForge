@@ -169,8 +169,8 @@ public interface ISpecialArmor
                 {
                     ItemArmor armor = (ItemArmor)stack.getItem();
                     prop = new ArmorProperties(0, 0, Integer.MAX_VALUE);
-                    prop.Armor = armor.damageReduceAmount;
-                    prop.Toughness = armor.toughness;
+                    prop.Armor = armor.func_200881_e();
+                    prop.Toughness = armor.getToughness();
                 }
                 if (prop != null)
                 {

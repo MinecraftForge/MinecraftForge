@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
+/* TODO fluids
 public class FluidIdRegistryMessageHandler extends SimpleChannelInboundHandler<ForgeMessage.FluidIdMapMessage> {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -44,3 +44,4 @@ public class FluidIdRegistryMessageHandler extends SimpleChannelInboundHandler<F
     }
 
 }
+*/

@@ -126,6 +126,11 @@ public class ModList
     {
         return Optional.ofNullable(this.indexedMods.get(modId));
     }
+    
+    public Optional<? extends ModContainer> getModContainerByObject(Object obj)
+    {
+        return mods.stream().filter(mc -> mc.getMod() == obj).findFirst();
+    }
 
     public List<ModInfo> getMods()
     {

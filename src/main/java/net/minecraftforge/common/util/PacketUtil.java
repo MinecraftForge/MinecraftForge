@@ -45,7 +45,6 @@ public class PacketUtil
         {
             buffer.writeShort(Item.getIdFromItem(stack.getItem()));
             buffer.writeByte(stack.getCount());
-            buffer.writeShort(stack.getMetadata());
             NBTTagCompound nbttagcompound = null;
 
             if (stack.getItem().isDamageable() || stack.getItem().getShareTag())

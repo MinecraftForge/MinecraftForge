@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/ItemArmor.java
++++ b/net/minecraft/item/ItemArmor.java
+@@ -105,4 +105,8 @@
+    public int func_200881_e() {
+       return this.damageReduceAmount;
+    }
++   
++   public float getToughness() {
++       return this.toughness;
++   }
+ }

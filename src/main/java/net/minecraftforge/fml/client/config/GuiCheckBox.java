@@ -42,18 +42,19 @@ public class GuiCheckBox extends GuiButton
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial)
+    public void func_194828_a(int mouseX, int mouseY, float partial)
     {
         if (this.visible)
         {
+            Minecraft mc = Minecraft.getMinecraft();
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.boxWidth && mouseY < this.y + this.height;
             GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, this.x, this.y, 0, 46, this.boxWidth, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
             this.mouseDragged(mc, mouseX, mouseY);
             int color = 14737632;
 
-            if (packedFGColour != 0)
+            if (packedFGColor != 0)
             {
-                color = packedFGColour;
+                color = packedFGColor;
             }
             else if (!this.enabled)
             {
@@ -68,15 +69,9 @@ public class GuiCheckBox extends GuiButton
     }
 
     @Override
-    public boolean mousePressed(Minecraft mc, int mouseX, int mouseY)
+    public void func_194829_a(double mouseX, double mouseY)
     {
-        if (this.enabled && this.visible && mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height)
-        {
-            this.isChecked = !this.isChecked;
-            return true;
-        }
-
-        return false;
+        this.isChecked = !this.isChecked;
     }
 
     public boolean isChecked()

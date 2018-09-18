@@ -18,7 +18,7 @@
  */
 
 package net.minecraftforge.common.network;
-
+/* TODO handshake
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
@@ -41,3 +41,4 @@ public class ForgeRuntimeCodec extends FMLIndexedMessageToMessageCodec<ForgeMess
         msg.fromBytes(source);
     }
 }
+*/

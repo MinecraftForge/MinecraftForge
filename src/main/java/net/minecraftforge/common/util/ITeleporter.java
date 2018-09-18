@@ -22,7 +22,6 @@ package net.minecraftforge.common.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
 
 /**
  * Interface for handling the placement of entities during dimension change.

@@ -39,6 +39,7 @@ import javax.annotation.Nullable;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
@@ -68,7 +69,7 @@ public class CommandSetDimension
             );
     }
 
-    private static int execute(CommandSource sender, Collection<? extends Entity> entities, int dim, BlockPos pos) throws CommandException
+    private static int execute(CommandSource sender, Collection<? extends Entity> entities, int dim, BlockPos pos) throws CommandSyntaxException
     {
         entities.removeIf(CommandSetDimension::checkEntity);
         if (entities.isEmpty())
