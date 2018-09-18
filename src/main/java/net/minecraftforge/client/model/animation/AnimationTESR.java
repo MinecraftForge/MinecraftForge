@@ -77,7 +77,7 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
 
                         // TODO: caching?
                         IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(exState.getClean());
-                        IExtendedBlockState animState = exState.withProperty(Properties.AnimationProperty, pair.getLeft());
+                        IExtendedBlockState animState = (IExtendedBlockState) exState.withProperty(Properties.AnimationProperty, pair.getLeft());
 
                         renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
 

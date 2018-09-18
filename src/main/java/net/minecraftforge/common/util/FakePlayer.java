@@ -22,7 +22,6 @@ package net.minecraftforge.common.util;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.entity.Entity;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.client.CPacketClientSettings;

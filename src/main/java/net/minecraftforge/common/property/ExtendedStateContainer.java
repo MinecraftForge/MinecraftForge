@@ -40,7 +40,7 @@ import net.minecraft.state.AbstractStateHolder;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.IStateHolder;
 import net.minecraft.state.StateContainer;
-
+// TODO Extended states gotta go, I doubt this works at all
 public class ExtendedStateContainer<O, S extends IExtendedState<S>> extends StateContainer<O, S>
 {
     private final ImmutableSet<IUnlistedProperty<?>> unlistedProperties;

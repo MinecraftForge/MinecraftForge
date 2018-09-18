@@ -33,7 +33,7 @@ public interface IExtendedState<C> extends IStateHolder<C>
 
     <V>V getValue(IUnlistedProperty<V> property);
 
-    <V>IExtendedState<C> withProperty(IUnlistedProperty<V> property, V value);
+    <V>C withProperty(IUnlistedProperty<V> property, V value);
 
     ImmutableMap<IUnlistedProperty<?>, Optional<?>> getUnlistedProperties();
     
