@@ -22,6 +22,7 @@ package net.minecraftforge.common;
 import static net.minecraftforge.fml.Logging.CORE;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -29,84 +30,91 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 
 import net.minecraftforge.common.config.ForgeConfigSpec;
-import net.minecraftforge.fml.common.FMLPaths;
 
 public class ForgeConfig
 {
     private static ForgeConfig INSTANCE = new ForgeConfig();
     private static ForgeConfigSpec spec = new ForgeConfigSpec.Builder()
          //General
-        .comment("Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.")
-        .translation("forge.configgui.disableVersionCheck")
-        .define("general.disableVersionCheck", false)
+        .comment("General settings that effect both the client and server")
+        .push("general")
+            .comment("Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.")
+            .translation("forge.configgui.disableVersionCheck")
+            .define("disableVersionCheck", false)
 
-        .comment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-        .translation("forge.configgui.removeErroringEntities")
-        .worldRestart()
-        .define("general.removeErroringEntities", false)
+            .comment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
+            .translation("forge.configgui.removeErroringEntities")
+            .worldRestart()
+            .define("removeErroringEntities", false)
 
-        .comment("Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
-        .translation("forge.configgui.removeErroringTileEntities")
-        .worldRestart()
-        .define("general.removeErroringTileEntities", false)
+            .comment("Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
+            .translation("forge.configgui.removeErroringTileEntities")
+            .worldRestart()
+            .define("removeErroringTileEntities", false)
 
-        .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false")
-        .translation("forge.configgui.fullBoundingBoxLadders")
-        .worldRestart()
-        .define("general.fullBoundingBoxLadders", false)
+            .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false")
+            .translation("forge.configgui.fullBoundingBoxLadders")
+            .worldRestart()
+            .define("fullBoundingBoxLadders", false)
 
-        .comment("Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.")
-        .translation("forge.configgui.zombieBaseSummonChance")
-        .worldRestart()
-        .defineInRange("general.zombieBaseSummonChance", 0.1D, 0.0D, 1.0D)
+            .comment("Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.")
+            .translation("forge.configgui.zombieBaseSummonChance")
+            .worldRestart()
+            .defineInRange("zombieBaseSummonChance", 0.1D, 0.0D, 1.0D)
 
-        .comment("Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.")
-        .translation("forge.configgui.zombieBabyChance")
-        .worldRestart()
-        .defineInRange("general.zombieBabyChance", 0.05D, 0.0D, 1.0D)
+            .comment("Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.")
+            .translation("forge.configgui.zombieBabyChance")
+            .worldRestart()
+            .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D)
 
-        .comment("Log cascading chunk generation issues during terrain population.")
-        .translation("forge.configgui.logCascadingWorldGeneration")
-        .define("general.logCascadingWorldGeneration", true)
+            .comment("Log cascading chunk generation issues during terrain population.")
+            .translation("forge.configgui.logCascadingWorldGeneration")
+            .define("logCascadingWorldGeneration", true)
 
-        .comment("Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.")
-        .translation("forge.configgui.fixVanillaCascading")
-        .define("general.fixVanillaCascading", false)
+            .comment("Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.")
+            .translation("forge.configgui.fixVanillaCascading")
+            .define("fixVanillaCascading", false)
 
 
-        .comment("The time in ticks the server will wait when a dimension was queued to unload. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.")
-        .translation("forge.configgui.dimensionUnloadQueueDelay")
-        .defineInRange("general.dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE)
+            .comment("The time in ticks the server will wait when a dimension was queued to unload. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.")
+            .translation("forge.configgui.dimensionUnloadQueueDelay")
+            .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE)
+        .pop()
 
         //Client
-        .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024")
-        .translation("forge.configgui.clumpingThreshold")
-        .worldRestart()
-        .defineInRange("client.clumpingThreshold", 64, 64, 1024)
+        .comment("Client only settings, mostly things related to rendering")
+        .push("client")
+            .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024")
+            .translation("forge.configgui.clumpingThreshold")
+            .worldRestart()
+            .defineInRange("clumpingThreshold", 64, 64, 1024)
 
-        .comment("Toggle off to make missing model text in the gui fit inside the slot.")
-        .translation("forge.configgui.zoomInMissingModelTextInGui")
-        .define("client.zoomInMissingModelTextInGui", false)
+            .comment("Toggle off to make missing model text in the gui fit inside the slot.")
+            .translation("forge.configgui.zoomInMissingModelTextInGui")
+            .define("zoomInMissingModelTextInGui", false)
 
-        .comment("Enable uploading cloud geometry to the GPU for faster rendering.")
-        .translation("forge.configgui.forgeCloudsEnabled")
-        .define("client.forgeCloudsEnabled", true)
+            .comment("Enable uploading cloud geometry to the GPU for faster rendering.")
+            .translation("forge.configgui.forgeCloudsEnabled")
+            .define("forgeCloudsEnabled", true)
 
-        .comment("Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.")
-        .translation("forge.configgui.disableStairSlabCulling")
-        .define("client.disableStairSlabCulling", false)
+            .comment("Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.")
+            .translation("forge.configgui.disableStairSlabCulling")
+            .define("disableStairSlabCulling", false)
 
-        .comment("Enable forge to queue all chunk updates to the Chunk Update thread. May increase FPS significantly, but may also cause weird rendering lag. Not recommended for computers without a significant number of cores available.")
-        .translation("forge.configgui.alwaysSetupTerrainOffThread")
-        .define("client.alwaysSetupTerrainOffThread", false)
+            .comment("Enable forge to queue all chunk updates to the Chunk Update thread.",
+                    "May increase FPS significantly, but may also cause weird rendering lag.",
+                    "Not recommended for computers without a significant number of cores available.")
+            .translation("forge.configgui.alwaysSetupTerrainOffThread")
+            .define("alwaysSetupTerrainOffThread", false)
 
-        .comment("Enable the forge block rendering pipeline - fixes the lighting of custom models.")
-        .translation("forge.configgui.forgeLightPipelineEnabled")
-        .define("client.forgeLightPipelineEnabled", true)
+            .comment("Enable the forge block rendering pipeline - fixes the lighting of custom models.")
+            .translation("forge.configgui.forgeLightPipelineEnabled")
+            .define("forgeLightPipelineEnabled", true)
 
-        .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
-        .translation("forge.configgui.selectiveResourceReloadEnabled")
-        .define("client.selectiveResourceReloadEnabled", true)
+            .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
+            .translation("forge.configgui.selectiveResourceReloadEnabled")
+            .define("selectiveResourceReloadEnabled", true)
+        .pop()
 
 
         .build();
@@ -114,22 +122,23 @@ public class ForgeConfig
     private CommentedFileConfig configData;
     private void loadFrom(final Path configFile)
     {
-        configData = CommentedFileConfig.builder(configFile).sync().
-                autosave().autoreload().
-                writingMode(WritingMode.REPLACE).
-                build();
+        configData = CommentedFileConfig.builder(configFile).sync()
+                .autosave()
+                //.autoreload()
+                .writingMode(WritingMode.REPLACE)
+                .build();
         configData.load();
         if (!spec.isCorrect(configData)) {
             LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
             spec.correct(configData, (action, path, incorrectValue, correctedValue) ->
                     LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
+            configData.save();
         }
-        configData.save();
     }
 
     public static void load()
     {
-        Path configFile = FMLPaths.CONFIGDIR.get().resolve("forge.toml");
+        Path configFile = Paths.get("config").resolve("forge.toml");
         INSTANCE.loadFrom(configFile);
         LogManager.getLogger().debug(CORE, "Loaded FML config from {}", configFile);
     }
@@ -195,20 +204,6 @@ public class ForgeConfig
             }
         }
     }
-
-    @SubscribeEvent
-    public void missingMapping(RegistryEvent.MissingMappings<Item> event)
-    {
-        for (MissingMappings.Mapping<Item> entry : event.getAllMappings())
-        {
-            if (entry.key.toString().equals("minecraft:totem")) //This item changed from 1.11 -> 1.11.2
-            {
-                ResourceLocation newTotem = new ResourceLocation("minecraft:totem_of_undying");
-                entry.remap(ForgeRegistries.ITEMS.getValue(newTotem));
-            }
-        }
-    }
-
     @net.minecraftforge.eventbus.api.SubscribeEvent
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {

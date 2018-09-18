@@ -22,9 +22,11 @@ import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.ADD;
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REMOVE;
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REPLACE;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,9 +52,10 @@ import com.google.common.collect.Lists;
 public class ForgeConfigSpec
 {
     private final Config storage;
-    private ForgeConfigSpec(Config storage)
-    {
+    private Map<List<String>, String> levelComments = new HashMap<>();
+    private ForgeConfigSpec(Config storage, Map<List<String>, String> levelComments) {
         this.storage = storage;
+        this.levelComments = levelComments;
     }
 
     public boolean isCorrect(CommentedConfig config) {
@@ -102,6 +105,18 @@ public class ForgeConfigSpec
                     configMap.put(key, newValue);
                     listener.onCorrect(action, parentPathUnmodifiable, configValue, newValue);
                     count++;
+                    count += correct((Config)specValue, newValue, parentPath, parentPathUnmodifiable, listener, dryRun);
+                }
+
+                String newComment = levelComments.get(parentPath);
+                String oldComment = config.getComment(key);
+                if (!Objects.equals(oldComment, newComment))
+                {
+                    if (dryRun)
+                        return 1;
+
+                    //TODO: Comment correction listener?
+                    config.setComment(key, newComment);
                 }
             }
             else
@@ -154,6 +169,8 @@ public class ForgeConfigSpec
     {
         private final Config storage = InMemoryFormat.withUniversalSupport().createConfig();
         private BuilderContext context = new BuilderContext();
+        private Map<List<String>, String> levelComments = new HashMap<>();
+        private List<String> currentPath = new ArrayList<>();
 
         //Object
         public Builder define(String path, Object defaultValue) {
@@ -176,6 +193,12 @@ public class ForgeConfigSpec
             return define(path, defaultSupplier, validator, Object.class);
         }
         public Builder define(List<String> path, Supplier<?> defaultSupplier, Predicate<Object> validator, Class<?> clazz) { // This is the root where everything at the end of the day ends up.
+            if (!currentPath.isEmpty()) {
+                List<String> tmp = new ArrayList<>(currentPath.size() + path.size());
+                tmp.addAll(currentPath);
+                tmp.addAll(path);
+                path = tmp;
+            }
             context.setClazz(clazz);
             storage.set(path, new ValueSpec(defaultSupplier, validator, context));
             context = new BuilderContext();
@@ -325,10 +348,37 @@ public class ForgeConfigSpec
             return this;
         }
 
+        public Builder push(String path) {
+            return push(split(path));
+        }
+
+        public Builder push(List<String> path) {
+            currentPath.addAll(path);
+            if (context.getComment() != null) {
+
+                levelComments.put(new ArrayList<String>(currentPath), LINE_JOINER.join(context.getComment()));
+                context.setComment((String[])null);
+            }
+            context.ensureEmpty();
+            return this;
+        }
+
+        public Builder pop() {
+            return pop(1);
+        }
+
+        public Builder pop(int count) {
+            if (count > currentPath.size())
+                throw new IllegalArgumentException("Attempted to pop " + count + " elements when we only had: " + currentPath);
+            for (int x = 0; x < count; x++)
+                currentPath.remove(currentPath.size() - 1);
+            return this;
+        }
+
         public ForgeConfigSpec build()
         {
             context.ensureEmpty();
-            return new ForgeConfigSpec(storage);
+            return new ForgeConfigSpec(storage, levelComments);
         }
     }
 
@@ -419,7 +469,7 @@ public class ForgeConfigSpec
             Objects.requireNonNull(supplier, "Default supplier can not be null");
             Objects.requireNonNull(validator, "Validator can not be null");
 
-            this.comment = Joiner.on("\n").join(context.getComment());
+            this.comment = LINE_JOINER.join(context.getComment());
             this.langKey = context.getTranslationKey();
             this.range = context.getRange();
             this.worldRestart = context.needsWorldRestart();
@@ -444,6 +494,7 @@ public class ForgeConfigSpec
         }
     }
 
+    private static final Joiner LINE_JOINER = Joiner.on("\n");
     private static final Splitter DOT_SPLITTER = Splitter.on(".");
     private static List<String> split(String path)
     {
