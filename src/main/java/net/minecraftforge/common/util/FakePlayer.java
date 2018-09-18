@@ -39,11 +39,10 @@ public class FakePlayer extends EntityPlayerMP
 {
     public FakePlayer(WorldServer world, GameProfile name)
     {
-        super(FMLCommonHandler.instance().getMinecraftServerInstance(), world, name, new PlayerInteractionManager(world));
+        super(world.getMinecraftServer(), world, name, new PlayerInteractionManager(world));
     }
 
     @Override public Vec3d getPositionVector(){ return new Vec3d(0, 0, 0); }
-    @Override public boolean canUseCommand(int i, String s){ return false; }
     @Override public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar){}
     @Override public void sendMessage(ITextComponent component) {}
     @Override public void addStat(StatBase par1StatBase, int par2){}

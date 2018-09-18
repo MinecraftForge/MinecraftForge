@@ -28,7 +28,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -54,7 +53,7 @@ public class BlockSnapshot
     @Nullable
     private WeakReference<World> world;
     private final ResourceLocation registryName;
-    private final int meta;
+    private final int meta = 0; // TODO BlockSnapshot needs a total refactor for the absence of metadata
 
     public BlockSnapshot(World world, BlockPos pos, IBlockState state)
     {
@@ -68,7 +67,6 @@ public class BlockSnapshot
         this.pos = pos.toImmutable();
         this.setReplacedBlock(state);
         this.registryName = state.getBlock().getRegistryName();
-        this.meta = state.getBlock().getMetaFromState(state);
         this.setFlag(3);
         this.nbt = nbt;
         if (DEBUG)
@@ -99,7 +97,6 @@ public class BlockSnapshot
         this.pos = pos.toImmutable();
         this.setFlag(flag);
         this.registryName = registryName;
-        this.meta = meta;
         this.nbt = nbt;
     }
 
@@ -143,7 +140,7 @@ public class BlockSnapshot
         World world = this.world != null ? this.world.get() : null;
         if (world == null)
         {
-            world = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(getDimId());
+            world = null; // TODO Server static access? FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(getDimId());
             this.world = new WeakReference<World>(world);
         }
         return world;
@@ -153,7 +150,7 @@ public class BlockSnapshot
     {
         if (this.replacedBlock == null)
         {
-            this.replacedBlock = ForgeRegistries.BLOCKS.getValue(getRegistryName()).getStateFromMeta(getMeta());
+            this.replacedBlock = ForgeRegistries.BLOCKS.getValue(getRegistryName()).func_196257_b(getMeta());
         }
         return this.replacedBlock;
     }
@@ -161,7 +158,7 @@ public class BlockSnapshot
     @Nullable
     public TileEntity getTileEntity()
     {
-        return getNbt() != null ? TileEntity.create(getWorld(), getNbt()) : null;
+        return getNbt() != null ? TileEntity.func_203403_c(getNbt()) : null;
     }
 
     public boolean restore()
@@ -184,7 +181,7 @@ public class BlockSnapshot
         IBlockState current = getCurrentBlock();
         IBlockState replaced = getReplacedBlock();
 
-        if (current.getBlock() != replaced.getBlock() || current.getBlock().getMetaFromState(current) != replaced.getBlock().getMetaFromState(replaced))
+        if (current != replaced)
         {
             if (force)
             {
@@ -212,15 +209,15 @@ public class BlockSnapshot
 
         if (DEBUG)
         {
-            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][Meta: %d ][Block: %s ][TileEntity: %s ][force: %s ][notifyNeighbors: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced.getBlock().getMetaFromState(replaced), replaced.getBlock().delegate.name(), te, force, notifyNeighbors);
+            System.out.printf("Restored BlockSnapshot with data [World: %s ][Location: %d,%d,%d ][State: %s ][Block: %s ][TileEntity: %s ][force: %s ][notifyNeighbors: %s]", world.getWorldInfo().getWorldName(), pos.getX(), pos.getY(), pos.getZ(), replaced, replaced.getBlock().delegate.name(), te, force, notifyNeighbors);
         }
         return true;
     }
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        compound.setString("blockMod", getRegistryName().getResourceDomain());
-        compound.setString("blockName", getRegistryName().getResourcePath());
+        compound.setString("blockMod", getRegistryName().getNamespace());
+        compound.setString("blockName", getRegistryName().getPath());
         compound.setInteger("posX", getPos().getX());
         compound.setInteger("posY", getPos().getY());
         compound.setInteger("posZ", getPos().getZ());
