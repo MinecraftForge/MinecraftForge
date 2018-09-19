@@ -1,22 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -7,6 +7,7 @@
- import java.util.UUID;
- import javax.annotation.Nullable;
- import net.minecraft.block.state.IBlockState;
-+import net.minecraft.client.Minecraft;
- import net.minecraft.enchantment.EnchantmentHelper;
- import net.minecraft.entity.ai.EntityAITasks;
- import net.minecraft.entity.ai.EntityJumpHelper;
-@@ -49,6 +50,7 @@
- import net.minecraft.util.datafix.walkers.ItemStackDataLists;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MathHelper;
-+import net.minecraft.util.text.TextComponentString;
- import net.minecraft.world.DifficultyInstance;
- import net.minecraft.world.EnumDifficulty;
- import net.minecraft.world.World;
-@@ -84,6 +86,8 @@
+@@ -84,6 +84,8 @@
      private boolean field_110169_bv;
      private Entity field_110168_bw;
      private NBTTagCompound field_110170_bx;
@@ -25,7 +9,7 @@
  
      public EntityLiving(World p_i1595_1_)
      {
-@@ -170,6 +174,7 @@
+@@ -170,6 +172,7 @@
      public void func_70624_b(@Nullable EntityLivingBase p_70624_1_)
      {
          this.field_70696_bz = p_70624_1_;
@@ -33,7 +17,7 @@
      }
  
      public boolean func_70686_a(Class <? extends EntityLivingBase > p_70686_1_)
-@@ -576,7 +581,7 @@
+@@ -576,7 +579,7 @@
          super.func_70636_d();
          this.field_70170_p.field_72984_F.func_76320_a("looting");
  
@@ -42,7 +26,7 @@
          {
              for (EntityItem entityitem : this.field_70170_p.func_72872_a(EntityItem.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D)))
              {
-@@ -702,10 +707,36 @@
+@@ -702,10 +705,36 @@
  
      protected void func_70623_bb()
      {
@@ -79,7 +63,7 @@
          else
          {
              Entity entity = this.field_70170_p.func_72890_a(this, -1.0D);
-@@ -839,7 +870,6 @@
+@@ -839,7 +868,6 @@
          return !this.field_70170_p.func_72953_d(this.func_174813_aQ()) && this.field_70170_p.func_184144_a(this, this.func_174813_aQ()).isEmpty() && this.field_70170_p.func_72917_a(this.func_174813_aQ(), this);
      }
  
@@ -87,7 +71,7 @@
      public float func_70603_bj()
      {
          return 1.0F;
-@@ -991,6 +1021,8 @@
+@@ -991,6 +1019,8 @@
  
      public static EntityEquipmentSlot func_184640_d(ItemStack p_184640_0_)
      {
@@ -96,7 +80,7 @@
          if (p_184640_0_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_184640_0_.func_77973_b() != Items.field_151144_bL)
          {
              if (p_184640_0_.func_77973_b() instanceof ItemArmor)
-@@ -1003,7 +1035,7 @@
+@@ -1003,7 +1033,7 @@
              }
              else
              {
@@ -105,7 +89,7 @@
              }
          }
          else
-@@ -1434,5 +1466,19 @@
+@@ -1434,5 +1464,19 @@
          ON_GROUND,
          IN_AIR,
          IN_WATER;
