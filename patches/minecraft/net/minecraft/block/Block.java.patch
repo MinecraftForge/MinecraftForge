@@ -9,7 +9,7 @@
     protected static final Logger field_196273_d = LogManager.getLogger();
     private static final ResourceLocation AIR_ID = new ResourceLocation("air");
     public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> REGISTRY = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(AIR_ID);
-@@ -1604,4 +1604,23 @@
+@@ -1604,4 +1604,29 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }
@@ -31,5 +31,11 @@
 +      return ret;
 +   }
 +
++   @Override
++   public void onBlockExploded(World world, BlockPos pos, Explosion explosion)
++   {
++      world.setBlockToAir(pos);
++      onExplosionDestroy(world, pos, explosion);
++   }
 +   /* ========================================= FORGE END ======================================*/
  }

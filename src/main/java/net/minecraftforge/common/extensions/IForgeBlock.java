@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Collection;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
@@ -31,10 +32,11 @@ import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.state.IProperty;
 import net.minecraft.state.properties.BedPart;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -49,8 +51,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.fluids.capability.wrappers.BlockLiquidWrapper;
-import org.lwjgl.system.CallbackI;
 
 public interface IForgeBlock
 {
@@ -629,5 +629,120 @@ public interface IForgeBlock
     {
        return 0;
     }
+
+    default boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
+    {
+        IBlockState state = world.getBlockState(pos);
+
+        state.func_206871_b().keySet().forEach(prop ->
+        {
+            if (prop.getName().equals("facing") || prop.getName().equals("rotation") && prop.getValueClass() == EnumFacing.class)
+            {
+                Block block = state.getBlock();
+                if (!(block instanceof BlockBed) && !(block instanceof BlockPistonExtension))
+                {
+                    IBlockState newState;
+                    @SuppressWarnings("unchecked")
+                    IProperty<EnumFacing> facingIProperty = (IProperty<EnumFacing>) prop;
+                    EnumFacing facing = state.getValue(facingIProperty);
+                    Collection<EnumFacing> validFacing = facingIProperty.getAllowedValues();
+
+                    // rotate horizontal facings clockwise
+                    if (validFacing.size() == 4 && !validFacing.contains(EnumFacing.UP) && !validFacing.contains(EnumFacing.DOWN))
+                    {
+                        newState = state.func_206870_a(facingIProperty, facing.rotateY());
+                    }
+                    else
+                    {
+                        // rotate other facings about the axis
+                        EnumFacing rotatedFacing = facing.rotateAround(axis.getAxis());
+                        if (validFacing.contains(rotatedFacing))
+                        {
+                            newState = state.func_206870_a(facingIProperty, rotatedFacing);
+                        }
+                        else // abnormal facing property, just cycle it
+                        {
+                            newState = state.cycleProperty(facingIProperty);
+                        }
+                    }
+
+                    world.setBlockState(pos, newState);
+                }
+
+            }
+        });
+        return false;
+    }
+
+
+   /**
+    * Determines the amount of enchanting power this block can provide to an enchanting table.
+    * @param world The World
+    * @param pos Block position in world
+    * @return The amount of enchanting power this block produces.
+    */
+    default float getEnchantPowerBouns(World world, BlockPos pos)
+    {
+        return this.getBlock() == Blocks.BOOKSHELF ? 1: 0;
+    }
+
+   /**
+    * Gathers how much experience this block drops when broken.
+    *
+    * @param state The current state
+    * @param world The world
+    * @param pos Block position
+    * @param fortune
+    * @return Amount of XP from breaking this block.
+    */
+    default boolean recolorBlock(World world, BlockPos pos, EnumFacing facing, EnumDyeColor color)
+    {
+        IBlockState state = world.getBlockState(pos);
+        state.func_206871_b().keySet().forEach(prop ->
+        {
+            if (prop.getName().equals("color") && prop.getValueClass() == net.minecraft.item.EnumDyeColor.class)
+            {
+                EnumDyeColor current = (EnumDyeColor)state.getValue(prop);
+                if (current != color && prop.getAllowedValues().contains(color))
+                {
+                }
+            }
+        });
+
+        return false;
+    }
+
+   /**
+    * Called when a tile entity on a side of this block changes is created or is destroyed.
+    * @param world The world
+    * @param pos Block position in world
+    * @param neighbor Block position of neighbor
+    */
+    default void onNeighborChange(IWorldReader world, BlockPos pos, BlockPos neighbor){}
+
+   /**
+    * Called on an Observer block whenever an update for an Observer is received.
+    *
+    * @param observerState The Observer block's state.
+    * @param world The current world.
+    * @param observerPos The Observer block's position.
+    * @param changedBlock The updated block.
+    * @param changedBlockPos The updated block's position.
+    */
+    default void observedNeighborChange(IBlockState observerState, World world, BlockPos observerPos, Block changedBlock, BlockPos changedBlockPos){}
+
+   /**
+    * Called to determine whether to allow the a block to handle its own indirect power rather than using the default rules.
+    * @param world The world
+    * @param pos Block position in world
+    * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
+    * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
+    */
+    default boolean shouldCheckWeakPower(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing side)
+    {
+        return state.isTopSolid();
+    }
+
+
 
 }
