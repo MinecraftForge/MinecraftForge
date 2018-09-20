@@ -29,18 +29,25 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.state.EnumProperty;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.properties.BedPart;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.*;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -687,6 +694,7 @@ public interface IForgeBlock
     }
 
    /**
+    * //TODO: Re-Evaluate
     * Gathers how much experience this block drops when broken.
     *
     * @param state The current state
@@ -697,18 +705,6 @@ public interface IForgeBlock
     */
     default boolean recolorBlock(World world, BlockPos pos, EnumFacing facing, EnumDyeColor color)
     {
-        IBlockState state = world.getBlockState(pos);
-        state.func_206871_b().keySet().forEach(prop ->
-        {
-            if (prop.getName().equals("color") && prop.getValueClass() == net.minecraft.item.EnumDyeColor.class)
-            {
-                EnumDyeColor current = (EnumDyeColor)state.getValue(prop);
-                if (current != color && prop.getAllowedValues().contains(color))
-                {
-                }
-            }
-        });
-
         return false;
     }
 
@@ -743,6 +739,261 @@ public interface IForgeBlock
         return state.isTopSolid();
     }
 
+  /**
+   * If this block should be notified of weak changes.
+   * Weak changes are changes 1 block away through a solid block.
+   * Similar to comparators.
+   *
+   * @param world The current world
+   * @param pos Block position in world
+   * @return true To be notified of changes
+   */
+   default boolean getWeakChanges(IWorldReader world, BlockPos pos)
+   {
+       return false;
+   }
+  /**
+   * Queries the class of tool required to harvest this block, if null is returned
+   * we assume that anything can harvest this block.
+   */
+   String getHarvestTool(IBlockState state);
 
+  /**
+   * Queries the harvest level of this item stack for the specified tool class,
+   * Returns -1 if this tool is not of the specified type
+   *
+   * @return Harvest level, or -1 if not the specified tool type.
+   */
+   int getHarvestLevel(IBlockState state);
+
+  /**
+   * Checks if the specified tool type is efficient on this block,
+   * meaning that it digs at full speed.
+   */
+   default boolean isToolEffective(String type, IBlockState state)
+   {
+       if ("pickaxe".equals(type) && (this.getBlock() == Blocks.REDSTONE_ORE || this.getBlock() == Blocks.REDSTONE_LAMP
+               || this.getBlock() == Blocks.OBSIDIAN))
+       {
+           return false;
+       }
+        return type != null && type.equals(getHarvestTool(state));
+   }
+
+   /**
+    * Can return IExtendedBlockState
+    */
+   default IBlockState getExtendedState(IBlockState state, IBlockReader world, BlockPos pos)
+   {
+       return state;
+   }
+
+    /**
+     * Called when the entity is inside this block, may be used to determined if the entity can breathing,
+     * display material overlays, or if the entity can swim inside a block.
+     *
+     * @param world that is being tested.
+     * @param blockpos position thats being tested.
+     * @param iblockstate state at world/blockpos
+     * @param entity that is being tested.
+     * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
+     * @param materialIn to test for.
+     * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
+     * @return null for default behavior, true if the entity is within the material, false if it was not.
+     */
+    @Nullable
+    default Boolean isEntityInsideMaterial(IWorldReader world, BlockPos blockpos, IBlockState iblockstate, Entity entity, double yToTest, Material materialIn, boolean testingHead)
+    {
+        return null;
+    }
+
+    /**
+     * Called when boats or fishing hooks are inside the block to check if they are inside
+     * the material requested.
+     *
+     * @param world world that is being tested.
+     * @param pos block thats being tested.
+     * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
+     * @param materialIn to check for.
+     * @return null for default behavior, true if the box is within the material, false if it was not.
+     */
+    @Nullable
+    default Boolean isAABBInsideMaterial(World world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
+    {
+        return null;
+    }
+
+    /**
+     * Called when entities are moving to check if they are inside a liquid
+     *
+     * @param world world that is being tested.
+     * @param pos block thats being tested.
+     * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
+     * @return null for default behavior, true if the box is within the material, false if it was not.
+     */
+    @Nullable
+    default Boolean isAABBInsideLiquid(World world, BlockPos pos, AxisAlignedBB boundingBox)
+    {
+        return null;
+    }
+
+    /**
+     * Queries if this block should render in a given layer.
+     * ISmartBlockModel can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
+     */
+    default boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer)
+    {
+        return this.getBlock().getRenderLayer() == layer;
+    }
+    // For Internal use only to capture droped items inside getDrops
+
+    /**
+     * Sensitive version of getSoundType
+     * @param state The state
+     * @param world The world
+     * @param pos The position. Note that the world may not necessarily have {@code state} here!
+     * @param entity The entity that is breaking/stepping on/placing/hitting/falling on this block, or null if no entity is in this context
+     * @return A SoundType to use
+     */
+    default SoundType getSoundType(IBlockState state, World world, BlockPos pos, @Nullable Entity entity)
+    {
+        return this.getBlock().getSoundType();
+    }
+
+    /**
+     * @param state The state
+     * @param world The world
+     * @param pos The position of this state
+     * @param beaconPos The position of the beacon
+     * @return A float RGB [0.0, 1.0] array to be averaged with a beacon's existing beam color, or null to do nothing to the beam
+     */
+    @Nullable
+    default float[] getBeaconColorMultiplier(IBlockState state, World world, BlockPos pos, BlockPos beaconPos)
+    {
+        return null;
+    }
+
+    /**
+     * Use this to change the fog color used when the entity is "inside" a material.
+     * Vec3d is used here as "r/g/b" 0 - 1 values.
+     *
+     * @param world         The world.
+     * @param pos           The position at the entity viewport.
+     * @param state         The state at the entity viewport.
+     * @param entity        the entity
+     * @param originalColor The current fog color, You are not expected to use this, Return as the default if applicable.
+     * @return The new fog color.
+     */
+    @OnlyIn(Dist.CLIENT)
+    default Vec3d getFogColor(World world, BlockPos pos, IBlockState state, Entity entity, Vec3d originalColor, float partialTicks)
+    {
+        if (state.getMaterial() == Material.WATER)
+        {
+            float f12 = 0.0F;
+
+            if (entity instanceof EntityLivingBase)
+            {
+                EntityLivingBase ent = (EntityLivingBase)entity;
+                f12 = (float) EnchantmentHelper.getRespirationModifier(ent) * 0.2F;
+
+                if (ent.isPotionActive(MobEffects.WATER_BREATHING))
+                {
+                    f12 = f12 * 0.3F + 0.6F;
+                }
+            }
+            return new Vec3d(0.02F + f12, 0.02F + f12, 0.2F + f12);
+        }
+        else if (state.getMaterial() == Material.LAVA)
+        {
+            return new Vec3d(0.6F, 0.1F, 0.0F);
+        }
+        return originalColor;
+    }
+
+    /**
+     * Used to determine the state 'viewed' by an entity (see
+     * {@link ActiveRenderInfo#getBlockStateAtEntityViewpoint(World, Entity, float)}).
+     * Can be used by fluid blocks to determine if the viewpoint is within the fluid or not.
+     *
+     * @param state     the state
+     * @param world     the world
+     * @param pos       the position
+     * @param viewpoint the viewpoint
+     * @return the block state that should be 'seen'
+     */
+    default IBlockState getStateAtViewpoint(IBlockState state, IWorldReader world, BlockPos pos, Vec3d viewpoint)
+    {
+        return state;
+    }
+
+    /** //TODO: Re-Evaluate
+     * Gets the {@link IBlockState} to place
+     * @param world The world the block is being placed in
+     * @param pos The position the block is being placed at
+     * @param facing The side the block is being placed on
+     * @param hitX The X coordinate of the hit vector
+     * @param hitY The Y coordinate of the hit vector
+     * @param hitZ The Z coordinate of the hit vector
+     * @param meta The metadata of {@link ItemStack} as processed by {@link Item#getMetadata(int)}
+     * @param placer The entity placing the block
+     * @param hand The player hand used to place this block
+     * @return The state to be placed in the world
+     */
+    default IBlockState getStateForPlacement(IBlockState state, EnumFacing facing, IBlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, EnumHand hand)
+    {
+        return this.getBlock().func_196271_a(state, facing, state2, world, pos1, pos2);
+    }
+
+
+    /**
+     * Determines if another block can connect to this block
+     *
+     * @param world The current world
+     * @param pos The position of this block
+     * @param facing The side the connecting block is on
+     * @return True to allow another block to connect to this block
+     */
+    default boolean canBeConnectedTo(IWorldReader world, BlockPos pos, EnumFacing facing)
+    {
+        return false;
+    }
+
+    /**
+     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     *
+     * @return the PathNodeType
+     */
+    @Nullable
+    default PathNodeType getAiPathNodeType(IBlockState state, IWorldReader world, BlockPos pos)
+    {
+        return isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
+    }
+
+    /**
+     * @param blockState The state for this block
+     * @param world The world this block is in
+     * @param pos The position of this block
+     * @param side The side of this block that the chest lid is trying to open into
+     * @return true if the chest should be prevented from opening by this block
+     */
+    default boolean doesSideBlockChestOpening(IBlockState blockState, IWorldReader world, BlockPos pos, EnumFacing side)
+    {
+        ResourceLocation registryName = this.getBlock().getRegistryName();
+        if (registryName != null && "minecraft".equals(registryName.getNamespace()))
+        {
+            // maintain the vanilla behavior of https://bugs.mojang.com/browse/MC-378
+            return isNormalCube(blockState, world, pos);
+        }
+        return this.getBlock().isTopSolid(blockState);
+    }
+
+    /**
+     * @param state The state
+     * @return true if the block is sticky block which used for pull or push adjacent blocks (use by piston)
+     */
+    default boolean isStickyBlock(IBlockState state)
+    {
+        return state.getBlock() == Blocks.SLIME_BLOCK;
+    }
 
 }
