@@ -25,11 +25,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.IChunkGenerator;
-import net.minecraft.world.gen.MapGenBase;
-import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.terraingen.DecorateBiomeEvent.Decorate;
-import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
+//import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate;
 import net.minecraftforge.eventbus.api.Event.Result;
 
@@ -42,12 +40,14 @@ public abstract class TerrainGen
         return event.getNewValues();
     }
 
+    /* TODO Re-Evaluate
     public static MapGenBase getModdedMapGen(MapGenBase original, InitMapGenEvent.EventType type)
     {
         InitMapGenEvent event = new InitMapGenEvent(type, original);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);
         return event.getNewGen();
     }
+    */
 
     public static boolean populate(IChunkGenerator chunkProvider, World world, Random rand, int chunkX, int chunkZ, boolean hasVillageGenerated, Populate.EventType type)
     {
@@ -95,12 +95,14 @@ public abstract class TerrainGen
         return decorate(world, rand, new ChunkPos(pos), type);
     }
 
+    /* TODO Re-Evaluate
     public static boolean generateOre(World world, Random rand, WorldGenerator generator, BlockPos pos, GenerateMinable.EventType type)
     {
         GenerateMinable event = new GenerateMinable(world, rand, generator, pos, type);
         MinecraftForge.ORE_GEN_BUS.post(event);
         return event.getResult() != Result.DENY;
     }
+    */
 
     public static boolean saplingGrowTree(World world, Random rand, BlockPos pos)
     {

@@ -19,14 +19,8 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.server.management.PlayerChunkMapEntry;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
-import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 /**
@@ -36,38 +30,33 @@ import net.minecraft.world.chunk.Chunk;
  * <br>
  * {@link #chunk} contains the ChunkPos of the Chunk this event is affecting.<br>
  * {@link #player} contains the EntityPlayer that is involved with this chunk being watched. <br>
- * {@link #chunkInstance} contains the instance of the Chunk. <br>
  * <br>
  * The {@link #player}'s world may not be the same as the world of the chunk
  * when the player is teleporting to another dimension.<br>
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
+public class ChunkWatchEvent extends ChunkEvent
 {
+
     private final EntityPlayerMP player;
-    private final Chunk chunkInstance;
+    private final ChunkPos pos;
 
     public ChunkWatchEvent(Chunk chunk, EntityPlayerMP player)
     {
-        this.chunk = chunk.getPos();
+        super(chunk);
         this.player = player;
-        this.chunkInstance = chunk;
+        this.pos = chunk.getPos();
     }
 
     public EntityPlayerMP getPlayer()
     {
-        return player;
+        return this.player;
     }
 
-    /**
-     * The affected chunk.
-     * @return The affected chunk.
-     */
-    @Nullable
-    public Chunk getChunkInstance()
+    public ChunkPos getPos()
     {
-        return chunkInstance;
+        return this.pos;
     }
 
     /**
@@ -83,7 +72,7 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
      **/
     public static class Watch extends ChunkWatchEvent
     {
-        public Watch(Chunk chunk, EntityPlayerMP player) { super(chunk, player); }
+        public Watch(Chunk chunk, EntityPlayerMP player) {super(chunk, player);}
     }
 
     /**
@@ -99,6 +88,6 @@ public class ChunkWatchEvent extends Event //TODO: extend ChunkEvent in 1.13
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
-        public UnWatch(Chunk chunk, EntityPlayerMP player) { super(chunk, player); }
+        public UnWatch(Chunk chunk, EntityPlayerMP player) {super(chunk, player);}
     }
 }

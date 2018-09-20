@@ -22,7 +22,7 @@ package net.minecraftforge.event.entity.player;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * This event is fired when the game checks if players can sleep at this time.<br>
