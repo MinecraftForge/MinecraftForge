@@ -4,8 +4,8 @@
      private boolean field_110169_bv;
      private Entity field_110168_bw;
      private NBTTagCompound field_110170_bx;
-+    protected int despawnHndlrWaitTime;
-+    protected boolean forceNodespawn;
++    protected int despawnHandlerWaitTime;
++    protected boolean forceNoDespawn;
  
      public EntityLiving(World p_i1595_1_)
      {
@@ -34,16 +34,16 @@
          if (this.field_82179_bU)
          {
              this.field_70708_bq = 0;
-+            this.forceNodespawn = false;
-+            this.despawnHndlrWaitTime = 0;
++            this.forceNoDespawn = false;
++            this.despawnHandlerWaitTime = 0;
 +            return;
          }
-+        else if(this.despawnHndlrWaitTime == 0)
++        else if(this.despawnHandlerWaitTime == 0)
 +        {
 +            result = net.minecraftforge.event.ForgeEventFactory.canEntityDespawn(this);
 +            if (result == net.minecraftforge.fml.common.eventhandler.Event.Result.DENY)
 +            {
-+                this.forceNodespawn = true; //skip default behavior and no despawn until set to false
++                this.forceNoDespawn = true; //skip default behavior and no despawn until set to false
 +            }
 +            else if(result == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW)
 +            {
@@ -51,12 +51,12 @@
 +                return;
 +            }
 +
-+            this.despawnHndlrWaitTime = 33; //Event handler check not called for 32 ticks
++            this.despawnHandlerWaitTime = 33; //Event handler check not called for 32 ticks
 +        }
 +
-+        --this.despawnHndlrWaitTime;
++        --this.despawnHandlerWaitTime;
 +
-+        if(this.forceNodespawn)
++        if(this.forceNoDespawn)
 +        {
 +            this.field_70708_bq = 0;
 +        }
