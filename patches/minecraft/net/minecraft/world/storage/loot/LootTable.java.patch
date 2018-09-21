@@ -1,0 +1,57 @@
+--- a/net/minecraft/world/storage/loot/LootTable.java
++++ b/net/minecraft/world/storage/loot/LootTable.java
+@@ -23,10 +23,10 @@
+ public class LootTable {
+    private static final Logger LOGGER = LogManager.getLogger();
+    public static final LootTable EMPTY_LOOT_TABLE = new LootTable(new LootPool[0]);
+-   private final LootPool[] pools;
++   private final List<LootPool> pools;
+ 
+    public LootTable(LootPool[] poolsIn) {
+-      this.pools = poolsIn;
++      this.pools = Lists.newArrayList(poolsIn);
+    }
+ 
+    public List<ItemStack> generateLootForPools(Random rand, LootContext context) {
+@@ -112,6 +112,41 @@
+       return list;
+    }
+ 
++   //======================== FORGE START =============================================
++   private boolean isFrozen = false;
++   public void freeze() {
++      this.isFrozen = true;
++      this.pools.forEach(LootPool::freeze);
++   }
++   public boolean isFrozen(){ return this.isFrozen; }
++   private void checkFrozen() {
++      if (this.isFrozen())
++         throw new RuntimeException("Attempted to modify LootTable after being finalized!");
++   }
++
++   public LootPool getPool(String name) {
++      return pools.stream().filter(e -> name.equals(e.getName())).findFirst().orElse(null);
++   }
++
++   public LootPool removePool(String name) {
++      checkFrozen();
++      for (LootPool pool : this.pools) {
++         if (name.equals(pool.getName())) {
++            this.pools.remove(pool);
++            return pool;
++         }
++      }
++      return null;
++   }
++
++   public void addPool(LootPool pool) {
++      checkFrozen();
++      if (pools.stream().anyMatch(e -> e == pool || e.getName().equals(pool.getName())))
++         throw new RuntimeException("Attempted to add a duplicate pool to loot table: " + pool.getName());
++      this.pools.add(pool);
++   }
++   //======================== FORGE END ===============================================
++
+    public static class Serializer implements JsonDeserializer<LootTable>, JsonSerializer<LootTable> {
+       public LootTable deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
+          JsonObject jsonobject = JsonUtils.getJsonObject(p_deserialize_1_, "loot table");

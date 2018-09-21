@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/Explosion.java
++++ b/net/minecraft/world/Explosion.java
+@@ -92,7 +92,7 @@
+                      BlockPos blockpos = new BlockPos(d4, d6, d8);
+                      IBlockState iblockstate = this.world.getBlockState(blockpos);
+                      IFluidState ifluidstate = this.world.func_204610_c(blockpos);
+-                     float f2 = Math.max(iblockstate.getBlock().getExplosionResistance(), ifluidstate.func_210200_l());
++                     float f2 = Math.max(iblockstate.getExplosionResistance(world, blockpos, exploder, this), ifluidstate.getExplosionResistance(world, blockpos, exploder, this));
+                      if (f2 > 0.0F) {
+                         if (this.exploder != null) {
+                            f2 = this.exploder.getExplosionResistance(this, this.world, blockpos, iblockstate, ifluidstate, f2);

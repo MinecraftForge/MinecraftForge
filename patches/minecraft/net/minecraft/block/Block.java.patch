@@ -28,7 +28,15 @@
     protected boolean canSilkHarvest() {
        return this.getDefaultState().isFullCube() && !this.hasTileEntity();
     }
-@@ -1604,4 +1605,56 @@
+@@ -755,6 +756,7 @@
+       }
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version {@link IForgeBlockState#getSoundType(IWorldReader, BlockPos, Entity) }
+    public SoundType getSoundType() {
+       return this.blockSoundType;
+    }
+@@ -1604,4 +1606,56 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }

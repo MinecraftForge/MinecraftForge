@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -53,6 +54,7 @@ import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -591,13 +593,9 @@ public class ForgeHooks
     {
         int looting = 0;
         if (killer instanceof EntityLivingBase)
-        {
             looting = EnchantmentHelper.getLootingModifier((EntityLivingBase)killer);
-        }
         if (target instanceof EntityLivingBase)
-        {
             looting = getLootingLevel((EntityLivingBase)target, cause, looting);
-        }
         return looting;
     }
 
@@ -657,26 +655,19 @@ public class ForgeHooks
     @Nullable
     public static EntityItem onPlayerTossEvent(@Nonnull EntityPlayer player, @Nonnull ItemStack item, boolean includeName)
     {
-        player.captureDrops = true;
+        player.captureDrops(Lists.newArrayList());
         EntityItem ret = player.dropItem(item, false, includeName);
-        player.capturedDrops.clear();
-        player.captureDrops = false;
+        player.captureDrops(null);
 
         if (ret == null)
-        {
             return null;
-        }
 
         ItemTossEvent event = new ItemTossEvent(ret, player);
         if (MinecraftForge.EVENT_BUS.post(event))
-        {
             return null;
-        }
 
         if (!player.world.isRemote)
-        {
             player.getEntityWorld().spawnEntity(event.getEntityItem());
-        }
         return event.getEntityItem();
     }
 
@@ -792,7 +783,7 @@ public class ForgeHooks
 
             if (!entityPlayer.isAllowEdit())
             {
-                if (itemstack.isEmpty() || !itemstack.canDestroy(world.getBlockState(pos).getBlock()))
+                if (itemstack.isEmpty() || !itemstack.func_206848_a(world.func_205772_D(), new BlockWorldState(world, pos, false)))
                     preCancelEvent = true;
             }
         }
@@ -971,32 +962,6 @@ public class ForgeHooks
             return stack;
         }
         return ItemStack.EMPTY;
-    }
-
-    public static boolean isInsideOfMaterial(Material material, Entity entity, BlockPos pos)
-    {
-        IBlockState state = entity.world.getBlockState(pos);
-        Block block = state.getBlock();
-        double eyes = entity.posY + (double)entity.getEyeHeight();
-
-        double filled = 1.0f; //If it's not a liquid assume it's a solid block
-        if (block instanceof IFluidBlock)
-        {
-            filled = ((IFluidBlock)block).getFilledPercentage(entity.world, pos);
-        }
-        /*else if (block instanceof BlockLiquid)
-        {
-            filled = 1.0 - (BlockLiquid.getLiquidHeightPercent(block.getMetaFromState(state)) - (1.0 / 9.0));
-        }*/
-
-        if (filled < 0)
-        {
-            return eyes > pos.getY() + (filled + 1);
-        }
-        else
-        {
-            return eyes < pos.getY() + filled;
-        }
     }
 
     public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
@@ -1215,7 +1180,6 @@ public class ForgeHooks
         return ctx.validateEntryName(name);
     }
 
-
     //TODO: Some registry to support custom LootEntry types?
     public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
     public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
@@ -1318,7 +1282,7 @@ public class ForgeHooks
     public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
     {
 
-        if (entity.canTrample(world, state.getBlock(), pos, fallDistance))
+        if (entity.canTrample(state, pos, fallDistance))
         {
             BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
             MinecraftForge.EVENT_BUS.post(event);

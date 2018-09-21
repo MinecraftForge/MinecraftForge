@@ -642,54 +642,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Called when the entity is inside this block, may be used to determined if the entity can breathing,
-     * display material overlays, or if the entity can swim inside a block.
-     *
-     * @param world that is being tested.
-     * @param pos position thats being tested.
-     * @param entity that is being tested.
-     * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
-     * @param material to test for.
-     * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
-     * @return null for default behavior, true if the entity is within the material, false if it was not.
-     */
-    @Nullable
-    default Boolean isEntityInsideMaterial(IWorldReader world, BlockPos pos, Entity entity, double yToTest, Material material, boolean testingHead)
-    {
-        return getBlockState().getBlock().isEntityInsideMaterial(getBlockState(), world, pos, entity, yToTest, material, testingHead);
-    }
-
-    /**
-     * Called when boats or fishing hooks are inside the block to check if they are inside
-     * the material requested.
-     *
-     * @param world world that is being tested.
-     * @param pos block thats being tested.
-     * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
-     * @param material to check for.
-     * @return null for default behavior, true if the box is within the material, false if it was not.
-     */
-    @Nullable
-    default Boolean isAABBInsideMaterial(IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox, Material material)
-    {
-        return getBlockState().getBlock().isAABBInsideMaterial(getBlockState(), world, pos, boundingBox, material);
-    }
-
-    /**
-     * Called when entities are moving to check if they are inside a liquid
-     *
-     * @param world world that is being tested.
-     * @param pos block thats being tested.
-     * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
-     * @return null for default behavior, true if the box is within the material, false if it was not.
-     */
-    @Nullable
-    default Boolean isAABBInsideLiquid(IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox)
-    {
-        return getBlockState().getBlock().isAABBInsideLiquid(getBlockState(), world, pos, boundingBox);
-    }
-
-    /**
      * Queries if this block should render in a given layer.
      * ISmartBlockModel can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter their model based on layer.
      */

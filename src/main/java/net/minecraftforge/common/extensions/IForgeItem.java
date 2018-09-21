@@ -105,7 +105,7 @@ public interface IForgeItem
      *
      * @return Return PASS to allow vanilla handling, any other to skip normal code.
      */
-    default EnumActionResult onItemUseFirst(ItemUseContext context)
+    default EnumActionResult onItemUseFirst(ItemStack stack, ItemUseContext context)
     {
         return EnumActionResult.PASS;
     }

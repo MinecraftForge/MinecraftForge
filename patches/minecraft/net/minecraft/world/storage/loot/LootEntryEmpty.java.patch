@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/storage/loot/LootEntryEmpty.java
++++ b/net/minecraft/world/storage/loot/LootEntryEmpty.java
+@@ -9,8 +9,8 @@
+ import net.minecraft.world.storage.loot.conditions.LootCondition;
+ 
+ public class LootEntryEmpty extends LootEntry {
+-   public LootEntryEmpty(int weightIn, int qualityIn, LootCondition[] conditionsIn) {
+-      super(weightIn, qualityIn, conditionsIn);
++   public LootEntryEmpty(int weightIn, int qualityIn, LootCondition[] conditionsIn, String entryName) {
++      super(weightIn, qualityIn, conditionsIn, entryName);
+    }
+ 
+    public void addLoot(Collection<ItemStack> stacks, Random rand, LootContext context) {
+@@ -20,6 +20,6 @@
+    }
+ 
+    public static LootEntryEmpty deserialize(JsonObject object, JsonDeserializationContext deserializationContext, int weightIn, int qualityIn, LootCondition[] conditionsIn) {
+-      return new LootEntryEmpty(weightIn, qualityIn, conditionsIn);
++      return new LootEntryEmpty(weightIn, qualityIn, conditionsIn, net.minecraftforge.common.ForgeHooks.readLootEntryName(object, "empty"));
+    }
+ }

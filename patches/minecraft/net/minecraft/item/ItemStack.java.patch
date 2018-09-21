@@ -72,31 +72,7 @@
        EntityPlayer entityplayer = p_196084_1_.func_195999_j();
        BlockPos blockpos = p_196084_1_.func_195995_a();
        BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);
-@@ -164,6 +173,23 @@
-       }
-    }
- 
-+   public EnumActionResult onItemUseFirst(ItemUseContext p_196084_1_) {
-+      EntityPlayer entityplayer = p_196084_1_.func_195999_j();
-+      BlockPos blockpos = p_196084_1_.func_195995_a();
-+      BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);
-+      if (entityplayer != null && !entityplayer.capabilities.allowEdit && !this.func_206847_b(p_196084_1_.func_195991_k().func_205772_D(), blockworldstate)) {
-+         return EnumActionResult.PASS;
-+      } else {
-+         Item item = this.getItem();
-+         EnumActionResult enumactionresult = item.onItemUseFirst(p_196084_1_);
-+         if (entityplayer != null && enumactionresult == EnumActionResult.SUCCESS) {
-+            entityplayer.addStat(StatList.OBJECT_USE_STATS.func_199076_b(item));
-+         }
-+
-+         return enumactionresult;
-+      }
-+   }
-+
-    public float getDestroySpeed(IBlockState blockIn) {
-       return this.getItem().getDestroySpeed(this, blockIn);
-    }
-@@ -183,12 +209,15 @@
+@@ -183,12 +192,15 @@
        if (this.stackTagCompound != null) {
           nbt.setTag("tag", this.stackTagCompound);
        }
@@ -114,7 +90,7 @@
     }
  
     public boolean isStackable() {
-@@ -196,7 +225,7 @@
+@@ -196,7 +208,7 @@
     }
  
     public boolean isItemStackDamageable() {
@@ -123,7 +99,7 @@
           NBTTagCompound nbttagcompound = this.getTagCompound();
           return nbttagcompound == null || !nbttagcompound.getBoolean("Unbreakable");
        } else {
-@@ -205,19 +234,19 @@
+@@ -205,7 +217,7 @@
     }
  
     public boolean isItemDamaged() {
@@ -131,15 +107,8 @@
 +      return this.isItemStackDamageable() && getItem().isDamaged(this);
     }
  
--   public int getItemDamage() {
--      return this.stackTagCompound == null ? 0 : this.stackTagCompound.getInteger("Damage");
-+   public int getItemDamage() { // TODO evaluate the necessity of this patch
-+      return this.getItem().getDamage(this);
-    }
- 
-    public void func_196085_b(int p_196085_1_) {
--      this.func_196082_o().setInteger("Damage", Math.max(0, p_196085_1_));
-+      getItem().setDamage(this, p_196085_1_);
+    public int getItemDamage() {
+@@ -217,7 +229,7 @@
     }
  
     public int getMaxDamage() {
@@ -148,7 +117,7 @@
     }
  
     public boolean attemptDamageItem(int amount, Random rand, @Nullable EntityPlayerMP damager) {
-@@ -285,7 +314,7 @@
+@@ -285,7 +297,7 @@
     }
  
     public boolean canHarvestBlock(IBlockState blockIn) {
@@ -157,7 +126,7 @@
     }
  
     public boolean interactWithEntity(EntityPlayer playerIn, EntityLivingBase entityIn, EnumHand hand) {
-@@ -293,7 +322,7 @@
+@@ -293,7 +305,7 @@
     }
  
     public ItemStack copy() {
@@ -166,7 +135,7 @@
        itemstack.setAnimationsToGo(this.getAnimationsToGo());
        if (this.stackTagCompound != null) {
           itemstack.stackTagCompound = this.stackTagCompound.copy();
-@@ -309,7 +338,7 @@
+@@ -309,7 +321,7 @@
           if (stackA.stackTagCompound == null && stackB.stackTagCompound != null) {
              return false;
           } else {
@@ -175,7 +144,7 @@
           }
        } else {
           return false;
-@@ -332,7 +361,7 @@
+@@ -332,7 +344,7 @@
        } else if (this.stackTagCompound == null && other.stackTagCompound != null) {
           return false;
        } else {
@@ -184,7 +153,7 @@
        }
     }
  
-@@ -633,6 +662,7 @@
+@@ -633,6 +645,7 @@
           }
        }
  
@@ -192,35 +161,26 @@
        return list;
     }
  
-@@ -743,7 +773,7 @@
+@@ -743,7 +756,7 @@
              }
           }
        } else {
 -         multimap = this.getItem().getItemAttributeModifiers(equipmentSlot);
-+          multimap = this.getItem().getAttributeModifiers(equipmentSlot, this);
++         multimap = this.getItem().getAttributeModifiers(equipmentSlot, this);
        }
  
        return multimap;
-@@ -874,4 +904,98 @@
+@@ -874,4 +887,89 @@
     public void shrink(int quantity) {
        this.grow(-quantity);
     }
 +
 +   // FORGE START
-+
 +   public void deserializeNBT(NBTTagCompound nbt)
 +   {
-+       // TODO do this better while respecting new rules
-+       final ItemStack itemStack = new ItemStack(nbt);
-+       this.stackTagCompound = itemStack.stackTagCompound;
-+       this.capNBT = itemStack.capNBT;
- }
-+
-+   public NBTTagCompound serializeNBT()
-+   {
-+       NBTTagCompound ret = new NBTTagCompound();
-+       this.writeToNBT(ret);
-+       return ret;
++       final ItemStack itemStack = ItemStack.func_199557_a(nbt);
++       getStack().setTagCompound(itemStack.getTagCompound());
++       if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
 +   }
 +
 +   /**
@@ -299,4 +259,4 @@
 +   {
 +       return this.isEmpty() || this.getItem().doesSneakBypassUse(this, world, pos, player);
 +   }
-+}
+ }

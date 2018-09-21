@@ -670,7 +670,6 @@ public interface IForgeBlock
         return false;
     }
 
-
    /**
     * Determines the amount of enchanting power this block can provide to an enchanting table.
     * @param world The World
@@ -728,98 +727,51 @@ public interface IForgeBlock
         return state.isTopSolid();
     }
 
-  /**
-   * If this block should be notified of weak changes.
-   * Weak changes are changes 1 block away through a solid block.
-   * Similar to comparators.
-   *
-   * @param world The current world
-   * @param pos Block position in world
-   * @return true To be notified of changes
-   */
-   default boolean getWeakChanges(IBlockState state, IWorldReader world, BlockPos pos)
-   {
-       return false;
-   }
-  /**
-   * Queries the class of tool required to harvest this block, if null is returned
-   * we assume that anything can harvest this block.
-   */
-   ToolType getHarvestTool(IBlockState state);
-
-  /**
-   * Queries the harvest level of this item stack for the specified tool class,
-   * Returns -1 if this tool is not of the specified type
-   *
-   * @return Harvest level, or -1 if not the specified tool type.
-   */
-   int getHarvestLevel(IBlockState state);
-
-  /**
-   * Checks if the specified tool type is efficient on this block,
-   * meaning that it digs at full speed.
-   */
-   default boolean isToolEffective(IBlockState state, ToolType tool)
-   {
-       if (tool == ToolType.PICKAXE && (this.getBlock() == Blocks.REDSTONE_ORE || this.getBlock() == Blocks.REDSTONE_LAMP || this.getBlock() == Blocks.OBSIDIAN))
-           return false;
-       return tool == getHarvestTool(state);
-   }
-
-   /**
-    * Can return IExtendedBlockState
-    */
-   default IBlockState getExtendedState(IBlockState state, IBlockReader world, BlockPos pos)
-   {
-       return state;
-   }
-
     /**
-     * Called when the entity is inside this block, may be used to determined if the entity can breathing,
-     * display material overlays, or if the entity can swim inside a block.
+     * If this block should be notified of weak changes.
+     * Weak changes are changes 1 block away through a solid block.
+     * Similar to comparators.
      *
-     * @param world that is being tested.
-     * @param blockpos position thats being tested.
-     * @param entity that is being tested.
-     * @param yToTest, primarily for testingHead, which sends the the eye level of the entity, other wise it sends a y that can be tested vs liquid height.
-     * @param materialIn to test for.
-     * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
-     * @return null for default behavior, true if the entity is within the material, false if it was not.
+     * @param world The current world
+     * @param pos Block position in world
+     * @return true To be notified of changes
      */
-    @Nullable
-    default Boolean isEntityInsideMaterial(IBlockState state, IWorldReader world, BlockPos blockpos, Entity entity, double yToTest, Material materialIn, boolean testingHead)
+    default boolean getWeakChanges(IBlockState state, IWorldReader world, BlockPos pos)
     {
-        return null;
+        return false;
     }
 
     /**
-     * Called when boats or fishing hooks are inside the block to check if they are inside
-     * the material requested.
-     *
-     * @param world world that is being tested.
-     * @param pos block thats being tested.
-     * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
-     * @param materialIn to check for.
-     * @return null for default behavior, true if the box is within the material, false if it was not.
+     * Queries the class of tool required to harvest this block, if null is returned
+     * we assume that anything can harvest this block.
      */
-    @Nullable
-    default Boolean isAABBInsideMaterial(IBlockState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox, Material materialIn)
+    ToolType getHarvestTool(IBlockState state);
+
+    /**
+     * Queries the harvest level of this item stack for the specified tool class,
+     * Returns -1 if this tool is not of the specified type
+     *
+     * @return Harvest level, or -1 if not the specified tool type.
+     */
+    int getHarvestLevel(IBlockState state);
+
+    /**
+     * Checks if the specified tool type is efficient on this block,
+     * meaning that it digs at full speed.
+     */
+    default boolean isToolEffective(IBlockState state, ToolType tool)
     {
-        return null;
+        if (tool == ToolType.PICKAXE && (this.getBlock() == Blocks.REDSTONE_ORE || this.getBlock() == Blocks.REDSTONE_LAMP || this.getBlock() == Blocks.OBSIDIAN))
+            return false;
+        return tool == getHarvestTool(state);
     }
 
     /**
-     * Called when entities are moving to check if they are inside a liquid
-     *
-     * @param world world that is being tested.
-     * @param pos block thats being tested.
-     * @param boundingBox box to test, generally the bounds of an entity that are besting tested.
-     * @return null for default behavior, true if the box is within the material, false if it was not.
+     * Can return IExtendedBlockState
      */
-    @Nullable
-    default Boolean isAABBInsideLiquid(IBlockState state, IWorldReader world, BlockPos pos, AxisAlignedBB boundingBox)
+    default IBlockState getExtendedState(IBlockState state, IBlockReader world, BlockPos pos)
     {
-        return null;
+        return state;
     }
 
     /**

@@ -1,0 +1,13 @@
+--- a/net/minecraft/world/storage/loot/LootContext.java
++++ b/net/minecraft/world/storage/loot/LootContext.java
+@@ -91,6 +91,10 @@
+       }
+    }
+ 
++   public int getLootingModifier() {
++      return net.minecraftforge.common.ForgeHooks.getLootingLevel(getLootedEntity(), getKiller(), damageSource);
++   }
++
+    public static class Builder {
+       private final WorldServer world;
+       private float luck;

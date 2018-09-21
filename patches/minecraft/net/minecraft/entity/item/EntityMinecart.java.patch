@@ -1,0 +1,18 @@
+--- a/net/minecraft/entity/item/EntityMinecart.java
++++ b/net/minecraft/entity/item/EntityMinecart.java
+@@ -808,4 +808,15 @@
+          return idIn >= 0 && idIn < BY_ID.length ? BY_ID[idIn] : RIDEABLE;
+       }
+    }
++
++   public ItemStack getCartItem() {
++      switch (getType()) {
++         case FURNACE: return new ItemStack(Items.FURNACE_MINECART);
++         case CHEST:   return new ItemStack(Items.CHEST_MINECART);
++         case TNT:     return new ItemStack(Items.TNT_MINECART);
++         case HOPPER:  return new ItemStack(Items.HOPPER_MINECART);
++         case COMMAND_BLOCK: return new ItemStack(Items.COMMAND_BLOCK_MINECART);
++         default:      return new ItemStack(Items.MINECART);
++      }
++   }
+ }

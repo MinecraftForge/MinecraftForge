@@ -295,7 +295,7 @@ public class CraftingHelper
         for(ResourceLocation key : manager.func_199003_a("recipes", filename -> filename.equals("_constants.json")))
         {
             String path = key.getPath();
-            if (!path.equals("rrecipes/_constants.json")) //Top level only
+            if (!path.equals("recipes/_constants.json")) //Top level only
                 continue;
 
             try (IResource iresource = manager.func_199002_a(key))

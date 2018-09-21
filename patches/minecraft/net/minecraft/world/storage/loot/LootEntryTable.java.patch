@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/storage/loot/LootEntryTable.java
++++ b/net/minecraft/world/storage/loot/LootEntryTable.java
+@@ -13,8 +13,8 @@
+ public class LootEntryTable extends LootEntry {
+    protected final ResourceLocation table;
+ 
+-   public LootEntryTable(ResourceLocation tableIn, int weightIn, int qualityIn, LootCondition[] conditionsIn) {
+-      super(weightIn, qualityIn, conditionsIn);
++   public LootEntryTable(ResourceLocation tableIn, int weightIn, int qualityIn, LootCondition[] conditionsIn, String entryName) {
++      super(weightIn, qualityIn, conditionsIn, entryName);
+       this.table = tableIn;
+    }
+ 
+@@ -29,6 +29,6 @@
+ 
+    public static LootEntryTable deserialize(JsonObject object, JsonDeserializationContext deserializationContext, int weightIn, int qualityIn, LootCondition[] conditionsIn) {
+       ResourceLocation resourcelocation = new ResourceLocation(JsonUtils.getString(object, "name"));
+-      return new LootEntryTable(resourcelocation, weightIn, qualityIn, conditionsIn);
++      return new LootEntryTable(resourcelocation, weightIn, qualityIn, conditionsIn, net.minecraftforge.common.ForgeHooks.readLootEntryName(object, "loot_table"));
+    }
+ }

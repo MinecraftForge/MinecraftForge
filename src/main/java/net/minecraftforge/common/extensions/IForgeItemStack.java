@@ -23,10 +23,16 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.stats.StatList;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
@@ -91,6 +97,31 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
 
     default Set<ToolType> getToolTypes() {
         return getStack().getItem().getToolTypes(getStack());
+    }
+
+    default EnumActionResult onItemUseFirst(ItemUseContext context)
+    {
+       EntityPlayer entityplayer = context.func_195999_j();
+       BlockPos blockpos = context.func_195995_a();
+       BlockWorldState blockworldstate = new BlockWorldState(context.func_195991_k(), blockpos, false);
+       if (entityplayer != null && !entityplayer.capabilities.allowEdit && !getStack().func_206847_b(context.func_195991_k().func_205772_D(), blockworldstate)) {
+          return EnumActionResult.PASS;
+       } else {
+          Item item = getStack().getItem();
+          EnumActionResult enumactionresult = item.onItemUseFirst(getStack(), context);
+          if (entityplayer != null && enumactionresult == EnumActionResult.SUCCESS) {
+             entityplayer.addStat(StatList.OBJECT_USE_STATS.func_199076_b(item));
+          }
+
+          return enumactionresult;
+       }
+    }
+
+    default NBTTagCompound serializeNBT()
+    {
+        NBTTagCompound ret = new NBTTagCompound();
+        getStack().writeToNBT(ret);
+        return ret;
     }
 
 }

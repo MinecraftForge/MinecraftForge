@@ -1,0 +1,11 @@
+--- a/net/minecraft/fluid/IFluidState.java
++++ b/net/minecraft/fluid/IFluidState.java
+@@ -16,7 +16,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public interface IFluidState extends IStateHolder<IFluidState> {
++public interface IFluidState extends IStateHolder<IFluidState>, net.minecraftforge.common.extensions.IForgeFluidState {
+    Fluid func_206886_c();
+ 
+    default boolean func_206889_d() {

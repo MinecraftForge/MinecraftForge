@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/storage/loot/LootEntryItem.java
++++ b/net/minecraft/world/storage/loot/LootEntryItem.java
+@@ -17,8 +17,8 @@
+    protected final Item item;
+    protected final LootFunction[] functions;
+ 
+-   public LootEntryItem(Item itemIn, int weightIn, int qualityIn, LootFunction[] functionsIn, LootCondition[] conditionsIn) {
+-      super(weightIn, qualityIn, conditionsIn);
++   public LootEntryItem(Item itemIn, int weightIn, int qualityIn, LootFunction[] functionsIn, LootCondition[] conditionsIn, String entryName) {
++      super(weightIn, qualityIn, conditionsIn, entryName);
+       this.item = itemIn;
+       this.functions = functionsIn;
+    }
+@@ -33,7 +33,7 @@
+       }
+ 
+       if (!itemstack.isEmpty()) {
+-         if (itemstack.getCount() < this.item.getItemStackLimit()) {
++         if (itemstack.getCount() < itemstack.getMaxStackSize()) {
+             stacks.add(itemstack);
+          } else {
+             int i = itemstack.getCount();
+@@ -71,6 +71,6 @@
+          alootfunction = new LootFunction[0];
+       }
+ 
+-      return new LootEntryItem(item, weightIn, qualityIn, alootfunction, conditionsIn);
++      return new LootEntryItem(item, weightIn, qualityIn, alootfunction, conditionsIn, net.minecraftforge.common.ForgeHooks.readLootEntryName(object, "item"));
+    }
+ }
