@@ -21,18 +21,19 @@ package net.minecraftforge.client.settings;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.InputMappings;
 
 import org.lwjgl.glfw.GLFW;
 
 public enum KeyModifier {
     CONTROL {
         @Override
-        public boolean matches(int keyCode)
+        public boolean matches(InputMappings.Input key)
         {
+            int keyCode = key.func_197937_c();
             if (Minecraft.IS_RUNNING_ON_MAC)
             {
                 return keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT;
@@ -56,18 +57,18 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(int keyCode)
+        public String getLocalizedComboName(InputMappings.Input key)
         {
-            String keyName = GLFW.glfwGetKeyName(keyCode, 0);
+            String keyName = GLFW.glfwGetKeyName(key.func_197937_c(), 0);
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
             return I18n.format(localizationFormatKey, keyName);
         }
     },
     SHIFT {
         @Override
-        public boolean matches(int keyCode)
+        public boolean matches(InputMappings.Input key)
         {
-            return keyCode == GLFW.GLFW_KEY_LEFT_SHIFT || keyCode == GLFW.GLFW_KEY_RIGHT_SHIFT;
+            return key.func_197937_c() == GLFW.GLFW_KEY_LEFT_SHIFT || key.func_197937_c() == GLFW.GLFW_KEY_RIGHT_SHIFT;
         }
 
         @Override
@@ -83,17 +84,17 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(int keyCode)
+        public String getLocalizedComboName(InputMappings.Input key)
         {
-            String keyName = GLFW.glfwGetKeyName(keyCode, 0);
+            String keyName = GLFW.glfwGetKeyName(key.func_197937_c(), 0);
             return I18n.format("forge.controlsgui.shift", keyName);
         }
     },
     ALT {
         @Override
-        public boolean matches(int keyCode)
+        public boolean matches(InputMappings.Input key)
         {
-            return keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT;
+            return key.func_197937_c() == GLFW.GLFW_KEY_LEFT_ALT || key.func_197937_c() == GLFW.GLFW_KEY_RIGHT_ALT;
         }
 
         @Override
@@ -109,15 +110,15 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(int keyCode)
+        public String getLocalizedComboName(InputMappings.Input keyCode)
         {
-            String keyName = GLFW.glfwGetKeyName(keyCode, 0);
+            String keyName = GLFW.glfwGetKeyName(keyCode.func_197937_c(), 0);
             return I18n.format("forge.controlsgui.alt", keyName);
         }
     },
     NONE {
         @Override
-        public boolean matches(int keyCode)
+        public boolean matches(InputMappings.Input key)
         {
             return false;
         }
@@ -145,9 +146,9 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(int keyCode)
+        public String getLocalizedComboName(InputMappings.Input key)
         {
-            return GLFW.glfwGetKeyName(keyCode, 0);
+            return GLFW.glfwGetKeyName(key.func_197937_c(), 0);
         }
     };
 
@@ -165,11 +166,11 @@ public enum KeyModifier {
         return NONE;
     }
 
-    public static boolean isKeyCodeModifier(int keyCode)
+    public static boolean isKeyCodeModifier(InputMappings.Input key)
     {
         for (KeyModifier keyModifier : MODIFIER_VALUES)
         {
-            if (keyModifier.matches(keyCode))
+            if (keyModifier.matches(key))
             {
                 return true;
             }
@@ -189,7 +190,7 @@ public enum KeyModifier {
         }
     }
 
-    public abstract boolean matches(int keyCode);
+    public abstract boolean matches(InputMappings.Input key);
 
     /**
      * @deprecated use {@link #isActive(IKeyConflictContext)}
@@ -199,5 +200,5 @@ public enum KeyModifier {
 
     public abstract boolean isActive(@Nullable IKeyConflictContext conflictContext);
 
-    public abstract String getLocalizedComboName(int keyCode);
+    public abstract String getLocalizedComboName(InputMappings.Input key);
 }
