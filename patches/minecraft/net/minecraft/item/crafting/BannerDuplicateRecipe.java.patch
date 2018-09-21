@@ -9,6 +9,17 @@
  
  public class BannerDuplicateRecipe extends IRecipeHidden {
     public BannerDuplicateRecipe(ResourceLocation p_i48171_1_) {
+@@ -77,8 +75,8 @@
+       for(int i = 0; i < nonnulllist.size(); ++i) {
+          ItemStack itemstack = inv.getStackInSlot(i);
+          if (!itemstack.isEmpty()) {
+-            if (itemstack.getItem().hasContainerItem()) {
+-               nonnulllist.set(i, new ItemStack(itemstack.getItem().getContainerItem()));
++            if (itemstack.hasContainerItem()) {
++               nonnulllist.set(i, itemstack.getContainerItem());
+             } else if (itemstack.hasTagCompound() && TileEntityBanner.getPatterns(itemstack) > 0) {
+                ItemStack itemstack1 = itemstack.copy();
+                itemstack1.setCount(1);
 @@ -94,7 +92,6 @@
        return RecipeSerializers.field_199586_l;
     }

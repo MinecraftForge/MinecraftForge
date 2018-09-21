@@ -10,6 +10,9 @@ buildscript {
     }
 }
 
+plugins {
+    id 'net.minecrell.licenser' version '0.4'
+}
 apply plugin: 'eclipse'
 
 group = 'net.minecraftforge'
@@ -52,6 +55,7 @@ project(':forge') {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.forgedev.patcher'
+    apply plugin: 'net.minecrell.licenser'
     sourceSets {
         main {
             java {
@@ -160,6 +164,26 @@ project(':forge') {
         args 'nogui'
         environment target:'fmldevserver'
         workingDir 'runserver'
+    }
+    
+    license {
+        header = file("$rootDir/LICENSE-header.txt")
+
+        include 'net/minecraftforge/'
+        exclude 'net/minecraftforge/server/terminalconsole/'
+        exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
+        exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
+        exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
+        exclude 'net/minecraftforge/fml/common/versioning/VersionRange.java'
+
+        tasks {
+            main {
+                files = files("$rootDir/src/main/java")
+            }
+            test {
+                files = files("$rootDir/src/test/java")
+            }
+        }
     }
 }
 

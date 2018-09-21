@@ -45,7 +45,7 @@ public class FakePlayer extends EntityPlayerMP
     @Override public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar){}
     @Override public void sendMessage(ITextComponent component) {}
     @Override public void addStat(StatBase par1StatBase, int par2){}
-    @Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
+    //@Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
     @Override public boolean isEntityInvulnerable(DamageSource source){ return true; }
     @Override public boolean canAttackPlayer(EntityPlayer player){ return false; }
     @Override public void onDeath(DamageSource source){ return; }

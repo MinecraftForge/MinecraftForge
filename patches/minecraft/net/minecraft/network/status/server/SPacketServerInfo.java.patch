@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/status/server/SPacketServerInfo.java
++++ b/net/minecraft/network/status/server/SPacketServerInfo.java
+@@ -30,7 +30,7 @@
+    }
+ 
+    public void writePacketData(PacketBuffer buf) throws IOException {
+-      buf.writeString(GSON.toJson(this.response));
++      buf.writeString(this.response.getJson()); //Forge: Let the response cache the JSON
+    }
+ 
+    public void processPacket(INetHandlerStatusClient handler) {

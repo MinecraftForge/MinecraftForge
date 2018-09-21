@@ -1,34 +1,67 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -130,7 +130,7 @@
-    private final DataFixer dataFixer;
-    private String hostname;
-    private int serverPort = -1;
--   public WorldServer[] worlds;
-+   public WorldServer[] worlds = new WorldServer[0];
-    private PlayerList playerList;
-    private boolean serverRunning = true;
-    private boolean serverStopped;
-@@ -148,7 +148,8 @@
+@@ -148,7 +148,6 @@
     private int buildLimit;
     private int maxPlayerIdleMinutes;
     public final long[] tickTimeArray = new long[100];
 -   public long[][] timeOfLastDimensionTick;
-+   //public long[][] timeOfLastDimensionTick;
-+   public java.util.Hashtable<Integer, long[]> worldTickTimes = new java.util.Hashtable<Integer, long[]>();
     private KeyPair serverKeyPair;
     private String serverOwner;
     private String folderName;
-@@ -287,8 +288,6 @@
+@@ -287,8 +286,7 @@
     public void loadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, JsonElement generatorOptions) {
        this.convertMapIfNeeded(saveName);
        this.func_200245_b(new TextComponentTranslation("menu.loadingLevel", new Object[0]));
 -      this.worlds = new WorldServer[3];
 -      this.timeOfLastDimensionTick = new long[this.worlds.length][100];
++      this.worlds = new WorldServer[1]; //Forge only initialize overworld, we will do the rest.
        ISaveHandler isavehandler = this.anvilConverterForAnvilFile.func_197715_a(saveName, this);
        this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
        WorldInfo worldinfo = isavehandler.loadWorldInfo();
-@@ -523,6 +522,7 @@
+@@ -340,6 +338,18 @@
+          }
+       }
+ 
++      for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs()) {
++         WorldServer world = this.worlds[0];
++         if (dim != 0) {
++            world = (WorldServer)(new WorldServerMulti(this, isavehandler, dim, this.worlds[0], this.profiler).init());
++            world.addEventListener(new ServerWorldEventHandler(this, world));
++            if (!this.isSinglePlayer()) {
++               world.getWorldInfo().setGameType(getGameType());
++            }
++         }
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
++      }
++
+       this.playerList.setPlayerManager(this.worlds);
+       if (worldinfo.func_201357_P() != null) {
+          this.func_201300_aS().func_201381_a(worldinfo.func_201357_P());
+@@ -378,7 +388,7 @@
+       this.func_200245_b(new TextComponentTranslation("menu.generatingTerrain", new Object[0]));
+       int j1 = 0;
+       LOGGER.info("Preparing start region for level 0");
+-      WorldServer worldserver = this.worlds[0];
++      WorldServer worldserver = getWorld(0);
+       BlockPos blockpos = worldserver.getSpawnPoint();
+       List<ChunkPos> list = Lists.<ChunkPos>newArrayList();
+       Set<ChunkPos> set = Sets.<ChunkPos>newConcurrentHashSet();
+@@ -493,9 +503,14 @@
+ 
+          for(WorldServer worldserver1 : this.worlds) {
+             if (worldserver1 != null) {
++               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver1));
+                worldserver1.close();
+             }
+          }
++
++         WorldServer[] tmp = this.worlds;
++         for (WorldServer world : tmp)
++             net.minecraftforge.common.DimensionManager.setWorld(world.provider.getId(), null, this);
+       }
+ 
+       if (this.usageSnooper.isSnooperRunning()) {
+@@ -523,6 +538,7 @@
     public void run() {
        try {
           if (this.init()) {
@@ -36,7 +69,7 @@
              this.field_211151_aa = Util.func_211177_b();
              this.statusResponse.setServerDescription(new TextComponentString(this.motd));
              this.statusResponse.setVersion(new ServerStatusResponse.Version("1.13", 393));
-@@ -546,7 +546,10 @@
+@@ -546,7 +562,10 @@
  
                 this.serverIsRunning = true;
              }
@@ -47,7 +80,7 @@
              this.finalTick((CrashReport)null);
           }
        } catch (Throwable throwable1) {
-@@ -565,6 +568,7 @@
+@@ -565,6 +584,7 @@
              LOGGER.error("We were unable to save this crash report to disk.");
           }
  
@@ -55,7 +88,7 @@
           this.finalTick(crashreport);
        } finally {
           try {
-@@ -573,6 +577,7 @@
+@@ -573,6 +593,7 @@
           } catch (Throwable throwable) {
              LOGGER.error("Exception stopping the server", throwable);
           } finally {
@@ -63,7 +96,15 @@
              this.systemExitNow();
           }
  
-@@ -686,10 +691,12 @@
+@@ -648,6 +669,7 @@
+ 
+          Collections.shuffle(Arrays.asList(agameprofile));
+          this.statusResponse.getPlayers().setPlayers(agameprofile);
++         this.statusResponse.invalidateJson();
+       }
+ 
+       if (this.tickCounter % 900 == 0) {
+@@ -686,16 +708,18 @@
        this.getFunctionManager().update();
        this.profiler.endStartSection("levels");
  
@@ -74,17 +115,74 @@
           long j = Util.func_211178_c();
 -         if (i == 0 || this.getAllowNether()) {
 -            WorldServer worldserver = this.worlds[i];
++         WorldServer worldserver = getWorld(id);
 +         if (id == 0 || this.getAllowNether()) {
-+            WorldServer worldserver = net.minecraftforge.common.DimensionManager.getWorld(id);
              this.profiler.func_194340_a(() -> {
                 return worldserver.getWorldInfo().getWorldName();
              });
-@@ -724,7 +731,7 @@
+             if (this.tickCounter % 20 == 0) {
+                this.profiler.startSection("timeSync");
+-               this.playerList.sendPacketToAllPlayersInDimension(new SPacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(), worldserver.getGameRules().getBoolean("doDaylightCycle")), worldserver.provider.getDimensionType().getId());
++               this.playerList.sendPacketToAllPlayersInDimension(new SPacketTimeUpdate(worldserver.getTotalWorldTime(), worldserver.getWorldTime(), worldserver.getGameRules().getBoolean("doDaylightCycle")), worldserver.provider.getId());
+                this.profiler.endSection();
+             }
+ 
+@@ -724,9 +748,11 @@
              this.profiler.endSection();
           }
  
 -         this.timeOfLastDimensionTick[i][this.tickCounter % 100] = Util.func_211178_c() - j;
-+         worldTickTimes.get(id)[this.tickCounter % 100] = Util.func_211178_c() - j;
++         worldserver.setTickTime(this.tickCounter, Util.func_211178_c() - j);
        }
  
++      this.profiler.endStartSection("dim_unloading");
++      net.minecraftforge.common.DimensionManager.unloadWorlds();
        this.profiler.endStartSection("connection");
+       this.getNetworkSystem().networkTick();
+       this.profiler.endStartSection("players");
+@@ -749,6 +775,14 @@
+    }
+ 
+    public static void main(String[] p_main_0_) {
++      //Forge: Copied from DedicatedServer.init as to run as early as possible, Old code left in place intentionally.
++      //Done in good faith with permission: https://github.com/MinecraftForge/MinecraftForge/issues/3659#issuecomment-390467028
++      ServerEula eula = new ServerEula(new File("eula.txt"));
++      if (!eula.hasAcceptedEULA()) {
++          LOGGER.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
++          eula.createEULAFile();
++          return;
++      }
+       Bootstrap.register();
+ 
+       try {
+@@ -851,7 +885,7 @@
+    }
+ 
+    public void startServerThread() {
+-      this.serverThread = new Thread(this, "Server thread");
++      this.serverThread = new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, this, "Server thread");
+       this.serverThread.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
+          LOGGER.error(p_195574_1_);
+       });
+@@ -871,11 +905,7 @@
+    }
+ 
+    public WorldServer getWorld(int dimension) {
+-      if (dimension == -1) {
+-         return this.worlds[1];
+-      } else {
+-         return dimension == 1 ? this.worlds[2] : this.worlds[0];
+-      }
++      return net.minecraftforge.common.DimensionManager.getWorld(dimension, true, true);
+    }
+ 
+    public WorldServer func_200667_a(DimensionType p_200667_1_) {
+@@ -918,7 +948,7 @@
+    }
+ 
+    public String getServerModName() {
+-      return "vanilla";
++      return net.minecraftforge.common.ForgeHooks.getServerModName();
+    }
+ 
+    public CrashReport addServerInfoToCrashReport(CrashReport report) {

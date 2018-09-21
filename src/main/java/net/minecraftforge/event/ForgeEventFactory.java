@@ -89,7 +89,6 @@ import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
@@ -127,7 +126,6 @@ import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -180,27 +178,6 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
-    /**
-     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)} instead
-     */
-    @Deprecated // TODO remove in 1.13
-    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z)
-    {
-        return canEntitySpawn(entity, world, x, y, z, true);
-    }
-    /**
-     * @deprecated use {@link #canEntitySpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)} instead
-     */
-    @Deprecated // Still used in base game for non-spawner spawns, which is safe
-    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
-    {
-        if (entity == null)
-            return Result.DEFAULT;
-        LivingSpawnEvent.CheckSpawn event = new LivingSpawnEvent.CheckSpawn(entity, world, x, y, z, isSpawner); // TODO: replace isSpawner with null in 1.13
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult();
-    }
-
     public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)
     {
         if (entity == null)
@@ -223,32 +200,6 @@ public class ForgeEventFactory
         }
     }
 
-    /**
-     * @deprecated Use {@link #canEntitySpawnSpawner(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
-     */
-    @Deprecated // TODO remove in 1.13
-    public static boolean canEntitySpawnSpawner(EntityLiving entity, World world, float x, float y, float z)
-    {
-        Result result = canEntitySpawn(entity, world, x, y, z, true);
-        if (result == Result.DEFAULT)
-        {
-            return entity.getCanSpawnHere() && entity.isNotColliding(); // vanilla logic
-        }
-        else
-        {
-            return result == Result.ALLOW;
-        }
-    }
-
-    /**
-     * @deprecated Use {@link #canEntitySpawnSpawner(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
-     */
-    @Deprecated // Still used in base game for non-spawner spawns, which is safe
-    public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z)
-    {
-        return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, null));
-    }
-
     public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingSpawnEvent.SpecialSpawn(entity, world, x, y, z, spawner));
@@ -261,21 +212,10 @@ public class ForgeEventFactory
         return event.getResult();
     }
 
-    public static int getItemBurnTime(@Nonnull ItemStack itemStack)
+    public static int getItemBurnTime(@Nonnull ItemStack itemStack, int burnTime)
     {
-        Item item = itemStack.getItem();
-        int burnTime = item.getItemBurnTime(itemStack);
         FurnaceFuelBurnTimeEvent event = new FurnaceFuelBurnTimeEvent(itemStack, burnTime);
         MinecraftForge.EVENT_BUS.post(event);
-        if (event.getBurnTime() < 0)
-        {
-            // legacy handling
-            int fuelValue = GameRegistry.getFuelValueLegacy(itemStack);
-            if (fuelValue > 0)
-            {
-                return fuelValue;
-            }
-        }
         return event.getBurnTime();
     }
 
@@ -393,9 +333,7 @@ public class ForgeEventFactory
 
     public static void firePlayerLoadingEvent(EntityPlayer player, IPlayerFileData playerFileData, String uuidString)
     {
-        SaveHandler sh = (SaveHandler) playerFileData;
-        File dir = sh.getPlayersDirectory();
-        MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, ((SaveHandler)playerFileData).playersDirectory, uuidString));
     }
 
     @Nullable
@@ -624,13 +562,13 @@ public class ForgeEventFactory
     {
         return MinecraftForge.EVENT_BUS.post(new RenderBlockOverlayEvent(player, renderPartialTicks, type, block, pos));
     }
-    
+
     @Nullable
     public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider)
     {
         return gatherCapabilities(type, provider, null);
     }
-    
+
     @SuppressWarnings("unchecked")
     @Nullable
     public static <T extends ICapabilityProvider> CapabilityDispatcher gatherCapabilities(Class<? extends T> type, T provider, @Nullable ICapabilityProvider parent)
@@ -705,9 +643,7 @@ public class ForgeEventFactory
 
     public static boolean onProjectileImpact(EntityThrowable throwable, RayTraceResult ray)
     {
-        boolean oldEvent = MinecraftForge.EVENT_BUS.post(new ThrowableImpactEvent(throwable, ray));
-        boolean newEvent = MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
-        return oldEvent || newEvent; // TODO: clean up when old event is removed
+        return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
     }
 
     public static boolean onReplaceBiomeBlocks(IChunkGenerator gen, int x, int z, ChunkPrimer primer, World world)

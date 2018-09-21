@@ -9,3 +9,24 @@
     private static final DataParameter<Float> ABSORPTION = EntityDataManager.<Float>createKey(EntityPlayer.class, DataSerializers.FLOAT);
     private static final DataParameter<Integer> PLAYER_SCORE = EntityDataManager.<Integer>createKey(EntityPlayer.class, DataSerializers.VARINT);
     protected static final DataParameter<Byte> PLAYER_MODEL_FLAG = EntityDataManager.<Byte>createKey(EntityPlayer.class, DataSerializers.BYTE);
+@@ -663,7 +665,12 @@
+       return p_184816_1_.getItem();
+    }
+ 
++   @Deprecated //Use location sensitive version below
+    public float getDigSpeed(IBlockState state) {
++      return getDigSpeed(state, null);
++   }
++
++   public float getDigSpeed(IBlockState state, @Nullable BlockPos pos) {
+       float f = this.inventory.getDestroySpeed(state);
+       if (f > 1.0F) {
+          int i = EnchantmentHelper.getEfficiencyModifier(this);
+@@ -705,6 +712,7 @@
+          f /= 5.0F;
+       }
+ 
++      f = net.minecraftforge.event.ForgeEventFactory.getBreakSpeed(this, state, f, pos);
+       return f;
+    }
+ 

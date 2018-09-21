@@ -1,0 +1,105 @@
+--- a/net/minecraft/tileentity/TileEntityFurnace.java
++++ b/net/minecraft/tileentity/TileEntityFurnace.java
+@@ -185,9 +185,9 @@
+       super.readFromNBT(compound);
+       this.furnaceItemStacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
+       ItemStackHelper.loadAllItems(compound, this.furnaceItemStacks);
+-      this.furnaceBurnTime = compound.getShort("BurnTime");
+-      this.cookTime = compound.getShort("CookTime");
+-      this.totalCookTime = compound.getShort("CookTimeTotal");
++      this.furnaceBurnTime = compound.getInteger("BurnTime");
++      this.cookTime = compound.getInteger("CookTime");
++      this.totalCookTime = compound.getInteger("CookTimeTotal");
+       this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks.get(1));
+       int i = compound.getShort("RecipesUsedSize");
+ 
+@@ -205,9 +205,9 @@
+ 
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+       super.writeToNBT(compound);
+-      compound.setShort("BurnTime", (short)this.furnaceBurnTime);
+-      compound.setShort("CookTime", (short)this.cookTime);
+-      compound.setShort("CookTimeTotal", (short)this.totalCookTime);
++      compound.setInteger("BurnTime", this.furnaceBurnTime);
++      compound.setInteger("CookTime", this.cookTime);
++      compound.setInteger("CookTimeTotal", this.totalCookTime);
+       ItemStackHelper.saveAllItems(compound, this.furnaceItemStacks);
+       compound.setShort("RecipesUsedSize", (short)this.field_203901_m.size());
+       int i = 0;
+@@ -254,6 +254,10 @@
+                this.currentItemBurnTime = this.furnaceBurnTime;
+                if (this.isBurning()) {
+                   flag1 = true;
++                  if (itemstack.hasContainerItem()) {
++                     this.furnaceItemStacks.set(1, itemstack.getContainerItem());
++                  }
++                  else
+                   if (!itemstack.isEmpty()) {
+                      Item item = itemstack.getItem();
+                      itemstack.shrink(1);
+@@ -308,10 +312,10 @@
+                return true;
+             } else if (!itemstack1.isItemEqual(itemstack)) {
+                return false;
+-            } else if (itemstack1.getCount() < this.getInventoryStackLimit() && itemstack1.getCount() < itemstack1.getMaxStackSize()) {
++            } else if (itemstack1.getCount() + itemstack.getCount() <= this.getInventoryStackLimit() && itemstack1.getCount() < itemstack1.getMaxStackSize()) { // Forge fix: make furnace respect stack sizes in furnace recipes
+                return true;
+             } else {
+-               return itemstack1.getCount() < itemstack.getMaxStackSize();
++               return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix: make furnace respect stack sizes in furnace recipes
+             }
+          }
+       } else {
+@@ -327,7 +331,7 @@
+          if (itemstack2.isEmpty()) {
+             this.furnaceItemStacks.set(2, itemstack1.copy());
+          } else if (itemstack2.getItem() == itemstack1.getItem()) {
+-            itemstack2.grow(1);
++            itemstack2.grow(itemstack1.getCount());
+          }
+ 
+          if (!this.world.isRemote) {
+@@ -347,12 +351,13 @@
+          return 0;
+       } else {
+          Item item = stack.getItem();
+-         return func_201564_p().getOrDefault(item, 0);
++         int ret = stack.getBurnTime();
++         return net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(stack, ret == -1 ? func_201564_p().getOrDefault(item, 0) : ret);
+       }
+    }
+ 
+    public static boolean isItemFuel(ItemStack stack) {
+-      return func_201564_p().containsKey(stack.getItem());
++      return getItemBurnTime(stack) > 0;
+    }
+ 
+    public boolean isUsableByPlayer(EntityPlayer player) {
+@@ -501,4 +506,27 @@
+ 
+       this.field_203901_m.clear();
+    }
++
++   net.minecraftforge.common.capabilities.OptionalCapabilityInstance<? extends net.minecraftforge.items.IItemHandler>[] handlers =
++           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, EnumFacing.UP, EnumFacing.DOWN, EnumFacing.NORTH);
++
++   @Override
++   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
++      if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++         if (facing == EnumFacing.UP)
++            return handlers[0].cast();
++         else if (facing == EnumFacing.UP)
++            return handlers[1].cast();
++         else
++            return handlers[2].cast();
++      }
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void invalidate() {
++      super.invalidate();
++      for (int x = 0; x < handlers.length; x++)
++          handlers[x].invalidate();
++   }
+ }

@@ -1,0 +1,25 @@
+--- a/net/minecraft/item/ItemPickaxe.java
++++ b/net/minecraft/item/ItemPickaxe.java
+@@ -17,18 +17,11 @@
+    public boolean canHarvestBlock(IBlockState blockIn) {
+       Block block = blockIn.getBlock();
+       int i = this.func_200891_e().func_200925_d();
+-      if (block == Blocks.OBSIDIAN) {
+-         return i == 3;
+-      } else if (block != Blocks.DIAMOND_BLOCK && block != Blocks.DIAMOND_ORE && block != Blocks.EMERALD_ORE && block != Blocks.EMERALD_BLOCK && block != Blocks.GOLD_BLOCK && block != Blocks.GOLD_ORE && block != Blocks.REDSTONE_ORE) {
+-         if (block != Blocks.IRON_BLOCK && block != Blocks.IRON_ORE && block != Blocks.LAPIS_BLOCK && block != Blocks.LAPIS_ORE) {
+-            Material material = blockIn.getMaterial();
+-            return material == Material.ROCK || material == Material.IRON || material == Material.ANVIL;
+-         } else {
+-            return i >= 1;
+-         }
+-      } else {
+-         return i >= 2;
++      if (blockIn.getHarvestTool() == net.minecraftforge.common.ToolType.PICKAXE) {
++         return i >= blockIn.getHarvestLevel();
+       }
++      Material material = blockIn.getMaterial();
++      return material == Material.ROCK || material == Material.IRON || material == Material.ANVIL;
+    }
+ 
+    public float getDestroySpeed(ItemStack stack, IBlockState state) {

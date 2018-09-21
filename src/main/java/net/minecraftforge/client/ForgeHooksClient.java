@@ -40,9 +40,9 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.GameSettings;
+import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundHandler;
@@ -138,33 +138,19 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL11;
 
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    
+
     //private static final ResourceLocation ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
     public static String getArmorTexture(Entity entity, ItemStack armor, String _default, EntityEquipmentSlot slot, String type)
     {
         String result = armor.getItem().getArmorTexture(armor, entity, slot, type);
         return result != null ? result : _default;
-    }
-
-    //Optifine Helper Functions u.u, these are here specifically for Optifine
-    //Note: When using Optifine, these methods are invoked using reflection, which
-    //incurs a major performance penalty.
-    public static void orientBedCamera(IWorldReader world, BlockPos pos, IBlockState state, Entity entity)
-    {
-        Block block = state.getBlock();
-
-        if (block != null && block.isBed(state, world, pos, entity))
-        {
-            glRotatef((float)(block.getBedDirection(state, world, pos).getHorizontalIndex() * 90), 0.0F, 1.0F, 0.0F);
-        }
     }
 
     public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, RayTraceResult target, int subID, float partialTicks)
@@ -729,7 +715,7 @@ public class ForgeHooksClient
         return new BlockFaceUV(new float[]{ uMin, vMin, uMax, vMax }, angle);
     }
 
-    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(ScaledResolution res, BossInfoClient bossInfo, int x, int y, int increment)
+    public static RenderGameOverlayEvent.BossInfo bossBarRenderPre(MainWindow res, BossInfoClient bossInfo, int x, int y, int increment)
     {
         RenderGameOverlayEvent.BossInfo evt = new RenderGameOverlayEvent.BossInfo(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res),
                 BOSSINFO, bossInfo, x, y, increment);
@@ -737,7 +723,7 @@ public class ForgeHooksClient
         return evt;
     }
 
-    public static void bossBarRenderPost(ScaledResolution res)
+    public static void bossBarRenderPost(MainWindow res)
     {
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res), BOSSINFO));
     }

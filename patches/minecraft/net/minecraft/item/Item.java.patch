@@ -73,7 +73,7 @@
        ItemGroup itemgroup = this.getCreativeTab();
        return itemgroup != null && (targetTab == ItemGroup.SEARCH || targetTab == itemgroup);
     }
-@@ -310,10 +318,49 @@
+@@ -310,10 +318,48 @@
        return false;
     }
  
@@ -87,7 +87,7 @@
 +   @Nullable
 +   private final java.util.function.Supplier<net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer> teisr;
 +
-+   private final java.util.Map<String, Integer> toolClasses = new java.util.HashMap<String, Integer>();
++   private final java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
 +
 +   protected final boolean canRepair;
 +
@@ -98,16 +98,15 @@
 +   }
 +
 +   @Override
-+   public java.util.Set<String> getToolClasses(ItemStack stack)
++   public java.util.Set<net.minecraftforge.common.ToolType> getToolTypes(ItemStack stack)
 +   {
 +       return toolClasses.keySet();
 +   }
 +
 +   @Override
-+   public int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState)
++   public int getHarvestLevel(ItemStack stack, net.minecraftforge.common.ToolType tool, @Nullable EntityPlayer player, @Nullable IBlockState blockState)
 +   {
-+       Integer ret = toolClasses.get(toolClass);
-+       return ret == null ? -1 : ret;
++       return toolClasses.getOrDefault(tool, -1);
 +   }
 +
 +   @OnlyIn(Dist.CLIENT)
@@ -123,24 +122,34 @@
     public static void registerItems() {
        registerItemBlock(Blocks.AIR, new ItemAir(Blocks.AIR, new Item.Builder()));
        func_200879_a(Blocks.STONE, ItemGroup.BUILDING_BLOCKS);
-@@ -1147,6 +1194,9 @@
+@@ -1147,6 +1193,9 @@
        private Item field_200922_c;
        private ItemGroup field_200923_d;
        private EnumRarity field_208104_e = EnumRarity.COMMON;
 +      private boolean canRepair = true;
-+      private java.util.Map<String, Integer> toolClasses = new java.util.HashMap<String, Integer>();
++      private java.util.Map<net.minecraftforge.common.ToolType, Integer> toolClasses = Maps.newHashMap();
 +      private java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer>> teisr;
  
        public Item.Builder func_200917_a(int p_200917_1_) {
           if (this.field_200921_b > 0) {
-@@ -1181,5 +1231,10 @@
+@@ -1181,5 +1230,20 @@
           this.field_208104_e = p_208103_1_;
           return this;
        }
 +
 +      public Item.Builder setNoRepair() {
-+          canRepair = false;
-+          return this;
++         canRepair = false;
++         return this;
++      }
++
++      public Item.Builder addToolType(net.minecraftforge.common.ToolType type, int level) {
++         toolClasses.put(type, level);
++         return this;
++      }
++
++      public Item.Builder setTEISR(java.util.function.Supplier<java.util.concurrent.Callable<net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer>> teisr) {
++         this.teisr = teisr;
++         return this;
 +      }
     }
  }

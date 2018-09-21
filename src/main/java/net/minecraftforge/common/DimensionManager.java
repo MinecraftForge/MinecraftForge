@@ -219,13 +219,11 @@ public class DimensionManager
         {
             worlds.put(id, world);
             weakWorldMap.put(world, world);
-            server.worldTickTimes.put(id, new long[100]);
             LOGGER.info(DIMMGR,"Loading dimension {} ({}) ({})", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
         }
         else
         {
             worlds.remove(id);
-            server.worldTickTimes.remove(id);
             LOGGER.info(DIMMGR,"Unloading dimension {}", id);
         }
 
@@ -288,11 +286,22 @@ public class DimensionManager
 
     public static WorldServer getWorld(int id, boolean resetUnloadDelay)
     {
+        return getWorld(id, resetUnloadDelay, false);
+    }
+
+    public static WorldServer getWorld(int id, boolean resetUnloadDelay, boolean forceLoad)
+    {
         if (resetUnloadDelay && unloadQueue.contains(id))
         {
             dimensions.get(id).ticksWaited = 0;
         }
-        return worlds.get(id);
+        WorldServer ret = worlds.get(id);
+        if (ret != null && forceLoad)
+        {
+            initDimension(id);
+            ret = worlds.get(id);
+        }
+        return ret;
     }
 
     public static WorldServer[] getWorlds()
@@ -379,7 +388,7 @@ public class DimensionManager
     /*
      * To be called by the server at the appropriate time, do not call from mod code.
      */
-    public static void unloadWorlds(Hashtable<Integer, long[]> worldTickTimes)
+    public static void unloadWorlds()
     {
         IntIterator queueIterator = unloadQueue.iterator();
         while (queueIterator.hasNext())

@@ -17,3 +17,16 @@
        return this;
     }
  
+@@ -957,4 +958,12 @@
+    public NetworkTagManager func_205772_D() {
+       return this.server.func_199731_aO();
+    }
++
++   private long[] tickTime = new long[100];
++   public void setTickTime(int tick, long time) {
++      this.tickTime[tick % 100] = time;
++   }
++   public long[] getTickTimes() {
++      return this.tickTime;
++   }
+ }

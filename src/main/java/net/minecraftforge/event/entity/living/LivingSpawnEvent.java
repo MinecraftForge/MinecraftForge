@@ -23,13 +23,12 @@ import javax.annotation.Nullable;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 
 /**
- * LivingSpawnEvent is fired for any events associated with Living Enttnies spawn status. <br>
+ * LivingSpawnEvent is fired for any events associated with Living Entities spawn status. <br>
  * If a method utilizes this {@link Event} as its parameter, the method will
  * receive every child event of this class.<br>
  * <br>
@@ -72,7 +71,6 @@ public class LivingSpawnEvent extends LivingEvent
     @HasResult
     public static class CheckSpawn extends LivingSpawnEvent
     {
-        private final boolean isSpawner; // TODO: remove in 1.13
         @Nullable
         private final MobSpawnerBaseLogic spawner;
 
@@ -90,42 +88,12 @@ public class LivingSpawnEvent extends LivingEvent
         public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
         {
             super(entity, world, x, y, z);
-            this.isSpawner = spawner != null;
             this.spawner = spawner;
-        }
-
-        /**
-         * @deprecated Use {@link CheckSpawn##CheckSpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
-         *   with a spawner instance, or null if not a spawner
-         * CheckSpawn is fired when an Entity is about to be spawned.
-         * @param entity the spawning entity
-         * @param world the world to spawn in
-         * @param x x coordinate
-         * @param y y coordinate
-         * @param z z coordinate
-         * @param isSpawner true if this spawn is done by a MobSpawner,
-         *                  false if it this spawn is coming from a WorldSpawner
-         */
-        @Deprecated // TODO: Remove in 1.13
-        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, boolean isSpawner)
-        {
-            super(entity, world, x, y, z);
-            this.isSpawner = isSpawner;
-            spawner = null;
-        }
-
-        /**
-         * @deprecated Use {@link CheckSpawn#CheckSpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)} instead
-         */
-        @Deprecated // TODO: Remove in 1.13
-        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z)
-        {
-            this(entity, world, x, y, z, true);
         }
 
         public boolean isSpawner()
         {
-            return isSpawner; // TODO: replace with spawner null check in 1.13
+            return spawner != null; // TODO: replace with spawner null check in 1.13
         }
 
         @Nullable
@@ -153,17 +121,6 @@ public class LivingSpawnEvent extends LivingEvent
     {
         @Nullable
         private final MobSpawnerBaseLogic spawner;
-
-        /**
-         * @deprecated Use {@link SpecialSpawn#SpecialSpawn(EntityLiving, World, float, float, float, MobSpawnerBaseLogic)}
-         *   with originating spawner instance or null
-         */
-        @Deprecated // TODO: remove in 1.13
-        public SpecialSpawn(EntityLiving entity, World world, float x, float y, float z)
-        {
-            super(entity, world, x, y, z);
-            spawner = null;
-        }
 
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any

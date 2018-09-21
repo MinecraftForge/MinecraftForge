@@ -5,7 +5,7 @@
  import org.apache.logging.log4j.Logger;
  
 -public final class ItemStack {
-+public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.capabilities.ICapabilitySerializable<NBTTagCompound>, net.minecraftforge.common.extensions.IForgeItemStack {
++public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeItemStack {
     private static final Logger field_199558_c = LogManager.getLogger();
     public static final ItemStack EMPTY = new ItemStack((Item)null);
     public static final DecimalFormat DECIMALFORMAT = func_208306_D();
@@ -68,7 +68,7 @@
     }
  
     public EnumActionResult func_196084_a(ItemUseContext p_196084_1_) {
-+      if (!p_196084_1_.field_196006_g.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
++      //if (!p_196084_1_.field_196006_g.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
        EntityPlayer entityplayer = p_196084_1_.func_195999_j();
        BlockPos blockpos = p_196084_1_.func_195995_a();
        BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);
@@ -153,7 +153,7 @@
  
     public boolean canHarvestBlock(IBlockState blockIn) {
 -      return this.getItem().canHarvestBlock(blockIn);
-+      return this.getItem().canHarvestBlock(blockIn, this);
++      return this.getItem().canHarvestBlock(this, blockIn);
     }
  
     public boolean interactWithEntity(EntityPlayer playerIn, EntityLivingBase entityIn, EnumHand hand) {

@@ -9,66 +9,79 @@
     protected static final Logger field_196273_d = LogManager.getLogger();
     private static final ResourceLocation AIR_ID = new ResourceLocation("air");
     public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> REGISTRY = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(AIR_ID);
-@@ -1604,4 +1604,62 @@
+@@ -502,8 +502,8 @@
+       if (f == -1.0F) {
+          return 0.0F;
+       } else {
+-         int i = player.canHarvestBlock(state) ? 30 : 100;
+-         return player.getDigSpeed(state) / f / (float)i;
++         int i = net.minecraftforge.common.ForgeHooks.canHarvestBlock(state, player, worldIn, pos) ? 30 : 100;
++         return player.getDigSpeed(state, pos) / f / (float)i;
+       }
+    }
+ 
+@@ -625,6 +625,7 @@
+ 
+    }
+ 
++   @Deprecated //Use state sensitive version
+    protected boolean canSilkHarvest() {
+       return this.getDefaultState().isFullCube() && !this.hasTileEntity();
+    }
+@@ -1604,4 +1605,56 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }
 +   /* ======================================== FORGE START =====================================*/
-+
 +   private ThreadLocal<IBlockState> silkCheck = new ThreadLocal<>();
-+   private String[] harvestTool = new String[16];
-+   private int[] harvestLevel = new int[]{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
++   private net.minecraftforge.common.ToolType harvestTool;
++   private int harvestLevel;
 +   protected static ThreadLocal<Boolean> captureDrops = ThreadLocal.withInitial(() -> false);
 +   protected static ThreadLocal<NonNullList<ItemStack>> capturedDrops = ThreadLocal.withInitial(NonNullList::create);
 +   protected NonNullList<ItemStack> captureDrops(boolean start)
 +   {
-+      if (start)
-+      {
++      if (start) {
 +         captureDrops.set(true);
 +         capturedDrops.get().clear();
 +         return NonNullList.create();
-+      }
-+      else
-+      {
++      } else {
 +         captureDrops.set(false);
 +         return capturedDrops.get();
 +      }
 +   }
 +
 +   @Override
-+   public float getSlipperiness(IBlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity)
-+   {
++   public float getSlipperiness(IBlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity) {
 +      return this.slipperiness;
 +   }
 +
 +   @Override
-+   public boolean canSilkHarvest(IWorldReader world, BlockPos pos, IBlockState state, EntityPlayer player)
-+   {
-+      silkCheck.set(state);
-+      boolean ret = this.canSilkHarvest();
-+      return ret;
++   public boolean canSilkHarvest(IBlockState state, IWorldReader world, BlockPos pos, EntityPlayer player) {
++      return this.canSilkHarvest() && !state.hasTileEntity();
 +   }
 +
 +   @Override
-+   public void onBlockExploded(World world, BlockPos pos, Explosion explosion)
-+   {
++   public void onBlockExploded(IBlockState state, World world, BlockPos pos, Explosion explosion) {
 +      world.setBlockToAir(pos);
 +      onExplosionDestroy(world, pos, explosion);
 +   }
 +
 +   @Nullable
 +   @Override
-+   public String getHarvestTool(IBlockState state)
-+   {
-+     return harvestTool[0]; //TODO: RE-Evaluate
++   public net.minecraftforge.common.ToolType getHarvestTool(IBlockState state) {
++      return harvestTool; //TODO: RE-Evaluate
 +   }
 +
 +   @Override
-+   public int getHarvestLevel(IBlockState state)
-+   {
-+
-+      return harvestLevel[0]; //TODO: RE-Evaluate
++   public int getHarvestLevel(IBlockState state) {
++      return harvestLevel; //TODO: RE-Evaluate
 +   }
 +
++   static {
++      net.minecraftforge.common.ForgeHooks.setBlockToolSetter((block, tool, level) -> {
++         block.harvestTool = tool;
++         block.harvestLevel = level;
++      });
++   }
 +   /* ========================================= FORGE END ======================================*/
  }

@@ -1,14 +1,18 @@
 package net.minecraftforge.common.extensions;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -30,6 +34,7 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ToolType;
 
 // TODO review most of the methods in this "patch"
 public interface IForgeItem
@@ -43,6 +48,7 @@ public interface IForgeItem
     /**
      * ItemStack sensitive version of getItemAttributeModifiers
      */
+    @SuppressWarnings("deprecation")
     default Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
     {
         return getItem().getItemAttributeModifiers(slot);
@@ -87,7 +93,7 @@ public interface IForgeItem
 
     /**
      * Called by CraftingManager to determine if an item is reparable.
-     * 
+     *
      * @return True if reparable
      */
     boolean isRepairable();
@@ -114,7 +120,7 @@ public interface IForgeItem
     /**
      * Override this method to decide what to do with the NBT data received from
      * getNBTShareTag().
-     * 
+     *
      * @param stack The stack that received NBT
      * @param nbt   Received NBT, can be null
      */
@@ -141,7 +147,7 @@ public interface IForgeItem
 
     /**
      * Called each tick while using an item.
-     * 
+     *
      * @param stack  The Item being used
      * @param player The Player using the item
      * @param count  The amount of time in tick the item has been used for
@@ -184,10 +190,11 @@ public interface IForgeItem
 
     /**
      * ItemStack sensitive version of hasContainerItem
-     * 
+     *
      * @param stack The current item stack
      * @return True if this item has a 'container'
      */
+    @SuppressWarnings("deprecation")
     default boolean hasContainerItem(ItemStack stack)
     {
         return getItem().hasContainerItem();
@@ -220,7 +227,7 @@ public interface IForgeItem
     {
         return false;
     }
-    
+
     /**
      * This function should return a new entity to replace the dropped item.
      * Returning null here will not kill the EntityItem and will leave it to
@@ -476,6 +483,7 @@ public interface IForgeItem
      * @param stack The itemstack that is damaged
      * @return the damage value
      */
+    @SuppressWarnings("deprecation")
     default int getMaxDamage(ItemStack stack)
     {
         return getItem().getMaxDamage();
@@ -484,7 +492,7 @@ public interface IForgeItem
     /**
      * Return if this itemstack is damaged. Note only called if
      * {@link #isDamageable()} is true.
-     * 
+     *
      * @param stack the stack
      * @return if the stack is damaged
      */
@@ -496,7 +504,7 @@ public interface IForgeItem
     /**
      * Set the damage for this itemstack. Note, this method is responsible for zero
      * checking.
-     * 
+     *
      * @param stack  the stack
      * @param damage the new damage value
      */
@@ -512,7 +520,7 @@ public interface IForgeItem
      * a block with this item. Also checked from
      * {@link net.minecraftforge.common.ForgeHooks#onBlockBreakEvent(World, GameType, EntityPlayerMP, BlockPos)
      * ForgeHooks.onBlockBreakEvent()} to prevent sending an event.
-     * 
+     *
      * @return true if the given player can destroy specified block in creative mode
      *         with this item
      */
@@ -523,12 +531,12 @@ public interface IForgeItem
 
     /**
      * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
-     * 
-     * @param state The block trying to harvest
+     *
      * @param stack The itemstack used to harvest the block
+     * @param state The block trying to harvest
      * @return true if can harvest the block
      */
-    default boolean canHarvestBlock(IBlockState state, ItemStack stack)
+    default boolean canHarvestBlock(ItemStack stack, IBlockState state)
     {
         return getItem().canHarvestBlock(state);
     }
@@ -540,12 +548,13 @@ public interface IForgeItem
      * @param stack The ItemStack
      * @return The maximum number this item can be stacked to
      */
+    @SuppressWarnings("deprecation")
     default int getItemStackLimit(ItemStack stack)
     {
         return getItem().getItemStackLimit();
     }
 
-    java.util.Set<String> getToolClasses(ItemStack stack);
+    Set<ToolType> getToolTypes(ItemStack stack);
 
     /**
      * Queries the harvest level of this item stack for the specified tool class,
@@ -557,7 +566,7 @@ public interface IForgeItem
      * @param blockState The block to harvest
      * @return Harvest level, or -1 if not the specified tool type.
      */
-    int getHarvestLevel(ItemStack stack, String toolClass, @Nullable EntityPlayer player, @Nullable IBlockState blockState);
+    int getHarvestLevel(ItemStack stack, ToolType tool, @Nullable EntityPlayer player, @Nullable IBlockState blockState);
 
     /**
      * ItemStack sensitive version of getItemEnchantability
@@ -578,7 +587,7 @@ public interface IForgeItem
      * {@link net.minecraft.enchantment.Enchantment#canApplyAtEnchantingTable(ItemStack)};
      * check the individual implementation for reference. By default this will check
      * if the enchantment type is valid for this item type.
-     * 
+     *
      * @param stack       the item stack to be enchanted
      * @param enchantment the enchantment to be applied
      * @return true if the enchantment can be applied to this item
@@ -590,7 +599,7 @@ public interface IForgeItem
 
     /**
      * Whether this Item can be used as a payment to activate the vanilla beacon.
-     * 
+     *
      * @param stack the ItemStack
      * @return true if this Item can be used
      */
@@ -601,7 +610,7 @@ public interface IForgeItem
 
     /**
      * Determine if the player switching between these two item stacks
-     * 
+     *
      * @param oldStack    The old stack that was equipped
      * @param newStack    The new stack
      * @param slotChanged If the current equipped slot was changed, Vanilla does not
@@ -617,7 +626,7 @@ public interface IForgeItem
     /**
      * Called when the player is mining a block and the item in his hand changes.
      * Allows to not reset blockbreaking if only NBT or similar changes.
-     * 
+     *
      * @param oldStack The old stack that was used for mining. Item in players main
      *                 hand
      * @param newStack The new stack
@@ -684,7 +693,7 @@ public interface IForgeItem
 
     /**
      * Can this Item disable a shield
-     * 
+     *
      * @param stack    The ItemStack
      * @param shield   The shield in question
      * @param entity   The EntityLivingBase holding the shield
@@ -698,7 +707,7 @@ public interface IForgeItem
 
     /**
      * Is this Item a shield
-     * 
+     *
      * @param stack  The ItemStack
      * @param entity The Entity holding the ItemStack
      * @return True if the ItemStack is considered a shield
@@ -713,7 +722,7 @@ public interface IForgeItem
      *         it not act as a fuel. Return -1 to let the default vanilla logic
      *         decide.
      */
-    default int getItemBurnTime(ItemStack itemStack)
+    default int getBurnTime(ItemStack itemStack)
     {
         return -1;
     }
@@ -722,17 +731,17 @@ public interface IForgeItem
      * Returns an enum constant of type {@code HorseArmorType}. The returned enum
      * constant will be used to determine the armor value and texture of this item
      * when equipped.
-     * 
+     *
      * @param stack the armor stack
      * @return an enum constant of type {@code HorseArmorType}. Return
      *         HorseArmorType.NONE if this is not horse armor
      */
-    default net.minecraft.entity.passive.HorseArmorType getHorseArmorType(ItemStack stack)
+    default HorseArmorType getHorseArmorType(ItemStack stack)
     {
-        return net.minecraft.entity.passive.HorseArmorType.getByItem(stack.getItem());
+        return HorseArmorType.getByItem(stack.getItem());
     }
 
-    default String getHorseArmorTexture(net.minecraft.entity.EntityLiving wearer, ItemStack stack)
+    default String getHorseArmorTexture(EntityLiving wearer, ItemStack stack)
     {
         return getHorseArmorType(stack).getTextureName();
     }
@@ -740,12 +749,12 @@ public interface IForgeItem
     /**
      * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
      * armor slot.
-     * 
+     *
      * @param world the world the horse is in
      * @param horse the horse wearing this armor
      * @param armor the armor itemstack
      */
-    default void onHorseArmorTick(World world, net.minecraft.entity.EntityLiving horse, ItemStack armor)
+    default void onHorseArmorTick(World world, EntityLiving horse, ItemStack armor)
     {
     }
 

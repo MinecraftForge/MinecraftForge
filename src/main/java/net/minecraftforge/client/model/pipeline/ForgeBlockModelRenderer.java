@@ -22,6 +22,7 @@ package net.minecraftforge.client.model.pipeline;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -113,7 +114,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             quads = model.func_200117_a(state, side, rand);
             if(!quads.isEmpty())
             {
-                if(!checkSides || state.shouldSideBeRendered(world, pos, side))
+                if(!checkSides || Block.shouldSideBeRendered(state, world, pos, side))
                 {
                     if(empty) lighter.updateBlockInfo();
                     empty = false;

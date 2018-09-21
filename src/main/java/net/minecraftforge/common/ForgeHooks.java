@@ -21,8 +21,10 @@ package net.minecraftforge.common;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -38,6 +40,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
@@ -49,7 +52,6 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFarmland;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -64,7 +66,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Fluids;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
@@ -73,7 +77,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemEnchantedBook;
-import net.minecraft.item.ItemMonsterPlacer;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemSpade;
@@ -91,11 +94,12 @@ import net.minecraft.network.play.server.SPacketRecipeBook;
 import net.minecraft.network.play.server.SPacketRecipeBook.State;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.stats.StatList;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityNote;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
@@ -117,6 +121,7 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
@@ -149,17 +154,12 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher;
-import net.minecraftforge.fml.common.network.handshake.NetworkDispatcher.ConnectionType;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.ConnectionType;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.network.NetworkHooks;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
@@ -168,10 +168,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+import org.apache.logging.log4j.util.TriConsumer;
 
 public class ForgeHooks
 {
@@ -210,20 +212,16 @@ public class ForgeHooks
         return entry.getStack(rand, fortune);
     }
 
-    private static boolean toolInit = false;
-    //static HashSet<List> toolEffectiveness = new HashSet<List>();
-
-    public static boolean canHarvestBlock(@Nonnull Block block, @Nonnull EntityPlayer player, @Nonnull IWorldReader world, @Nonnull BlockPos pos)
+    public static boolean canHarvestBlock(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
     {
-        IBlockState state = world.getBlockState(pos);
-        state = state.getBlock().getActualState(state, world, pos);
+        //state = state.getActualState(world, pos);
         if (state.getMaterial().isToolNotRequired())
         {
             return true;
         }
 
         ItemStack stack = player.getHeldItemMainhand();
-        String tool = block.getHarvestTool(state);
+        ToolType tool = state.getHarvestTool();
         if (stack.isEmpty() || tool == null)
         {
             return player.canHarvestBlock(state);
@@ -235,89 +233,50 @@ public class ForgeHooks
             return player.canHarvestBlock(state);
         }
 
-        return toolLevel >= block.getHarvestLevel(state);
+        return toolLevel >= state.getHarvestLevel();
     }
 
     public static boolean canToolHarvestBlock(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
     {
         IBlockState state = world.getBlockState(pos);
-        state = state.getBlock().getActualState(state, world, pos);
-        String tool = state.getBlock().getHarvestTool(state);
+        //state = state.getActualState(world, pos);
+        ToolType tool = state.getHarvestTool();
         if (stack.isEmpty() || tool == null) return false;
-        return stack.getItem().getHarvestLevel(stack, tool, null, null) >= state.getBlock().getHarvestLevel(state);
-    }
-
-    public static float blockStrength(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos)
-    {
-        float hardness = state.getBlockHardness(world, pos);
-        if (hardness < 0.0F)
-        {
-            return 0.0F;
-        }
-
-        if (!canHarvestBlock(state.getBlock(), player, world, pos))
-        {
-            return player.getDigSpeed(state, pos) / hardness / 100F;
-        }
-        else
-        {
-            return player.getDigSpeed(state, pos) / hardness / 30F;
-        }
+        return stack.getHarvestLevel(tool, null, null) >= state.getHarvestLevel();
     }
 
     public static boolean isToolEffective(IWorldReader world, BlockPos pos, @Nonnull ItemStack stack)
     {
         IBlockState state = world.getBlockState(pos);
-        state = state.getBlock().getActualState(state, world, pos);
-        for (String type : stack.getItem().getToolClasses(stack))
+        //state = state.getActualState(world, pos);
+        for (ToolType type : stack.getToolTypes())
         {
-            if (state.getBlock().isToolEffective(type, state))
+            if (state.isToolEffective(type))
                 return true;
         }
         return false;
     }
 
+    private static boolean toolInit = false;
     static void initTools()
     {
         if (toolInit)
-        {
             return;
-        }
         toolInit = true;
 
-        Set<Block> blocks = ReflectionHelper.getPrivateValue(ItemPickaxe.class, null, 0);
-        for (Block block : blocks)
-        {
-            block.setHarvestLevel("pickaxe", 0);
-        }
+        Set<Block> blocks = getPrivateValue(ItemPickaxe.class, null, 0);
+        blocks.forEach(block -> blockToolSetter.accept(block, ToolType.PICKAXE, 0));
+        blocks = getPrivateValue(ItemSpade.class, null, 0);
+        blocks.forEach(block -> blockToolSetter.accept(block, ToolType.SHOVEL, 0));
+        blocks = getPrivateValue(ItemAxe.class, null, 0);
+        blocks.forEach(block -> blockToolSetter.accept(block, ToolType.AXE, 0));
 
-        blocks = ReflectionHelper.getPrivateValue(ItemSpade.class, null, 0);
-        for (Block block : blocks)
-        {
-            block.setHarvestLevel("shovel", 0);
-        }
-
-        blocks = ReflectionHelper.getPrivateValue(ItemAxe.class, null, 0);
-        for (Block block : blocks)
-        {
-            block.setHarvestLevel("axe", 0);
-        }
-
-        Blocks.OBSIDIAN.setHarvestLevel("pickaxe", 3);
-        Blocks.ENCHANTING_TABLE.setHarvestLevel("pickaxe", 0);
-        Block[] oreBlocks = new Block[] {
-                Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.DIAMOND_ORE, Blocks.DIAMOND_BLOCK,
-                Blocks.GOLD_ORE, Blocks.GOLD_BLOCK, Blocks.REDSTONE_ORE, Blocks.LIT_REDSTONE_ORE
-        };
-        for (Block block : oreBlocks)
-        {
-            block.setHarvestLevel("pickaxe", 2);
-        }
-        Blocks.IRON_ORE.setHarvestLevel("pickaxe", 1);
-        Blocks.IRON_BLOCK.setHarvestLevel("pickaxe", 1);
-        Blocks.LAPIS_ORE.setHarvestLevel("pickaxe", 1);
-        Blocks.LAPIS_BLOCK.setHarvestLevel("pickaxe", 1);
-        Blocks.QUARTZ_ORE.setHarvestLevel("pickaxe", 0);
+        //This is taken from ItemAxe, if that changes update here.
+        blockToolSetter.accept(Blocks.OBSIDIAN, ToolType.PICKAXE, 3);
+        for (Block block : new Block[]{Blocks.DIAMOND_BLOCK, Blocks.DIAMOND_ORE, Blocks.EMERALD_ORE, Blocks.EMERALD_BLOCK, Blocks.GOLD_BLOCK, Blocks.GOLD_ORE, Blocks.REDSTONE_ORE})
+            blockToolSetter.accept(block, ToolType.PICKAXE, 2);
+        for (Block block : new Block[]{Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE})
+            blockToolSetter.accept(block, ToolType.PICKAXE, 1);
     }
 
     public static int getTotalArmorValue(EntityPlayer player)
@@ -723,7 +682,7 @@ public class ForgeHooks
 
     public static float getEnchantPower(@Nonnull World world, @Nonnull BlockPos pos)
     {
-        return world.getBlockState(pos).getBlock().getEnchantPowerBonus(world, pos);
+        return world.getBlockState(pos).getEnchantPowerBonus(world, pos);
     }
 
     @Nullable
@@ -841,9 +800,7 @@ public class ForgeHooks
         // Tell client the block is gone immediately then process events
         if (world.getTileEntity(pos) == null)
         {
-            SPacketBlockChange packet = new SPacketBlockChange(world, pos);
-            packet.blockState = Blocks.AIR.getDefaultState();
-            entityPlayer.connection.sendPacket(packet);
+            entityPlayer.connection.sendPacket(new SPacketBlockChange(DUMMY_WORLD, pos));
         }
 
         // Post the block break event
@@ -872,6 +829,7 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
+    /* TODO: Talk to Sponge folk about World rollbacks.
     public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemUseContext context)
     {
         ItemStack itemstack = context.func_195996_i();
@@ -969,6 +927,7 @@ public class ForgeHooks
 
         return ret;
     }
+    */
 
     public static boolean onAnvilChange(ContainerRepair container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
@@ -987,18 +946,6 @@ public class ForgeHooks
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
         return e.getBreakChance();
-    }
-
-    public static boolean onNoteChange(TileEntityNote te, byte old)
-    {
-        NoteBlockEvent.Change e = new NoteBlockEvent.Change(te.getWorld(), te.getPos(), te.getWorld().getBlockState(te.getPos()), old, te.note);
-        if (MinecraftForge.EVENT_BUS.post(e))
-        {
-            te.note = old;
-            return false;
-        }
-        te.note = (byte)e.getVanillaNoteId();
-        return true;
     }
 
     private static ThreadLocal<EntityPlayer> craftingPlayer = new ThreadLocal<EntityPlayer>();
@@ -1285,16 +1232,6 @@ public class ForgeHooks
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
 
-    public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
-    {
-        boolean errored = false;
-        for (ModFileInfo mod : ModList.get().getModFiles())
-        {
-            errored |= !loadAdvancements(map, mod.getFile());
-        }
-        return errored;
-    }
-
     @Nullable
     public static CriticalHitEvent getCriticalHit(EntityPlayer player, Entity target, boolean vanillaCritical, float damageModifier)
     {
@@ -1307,56 +1244,6 @@ public class ForgeHooks
         return null;
     }
 
-    private static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map, ModFile mod)
-    {
-        if (Loader.instance().getLoaderState() != LoaderState.NOINIT) //Unit Tests..
-            Loader.instance().setActiveModContainer(mod);
-    }
-
-    private static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map, ModContainer mod)
-    {
-        return CraftingHelper.findFiles(mod, "assets/" + mod.getModId() + "/advancements", null,
-            (root, file) ->
-            {
-
-                String relative = root.relativize(file).toString();
-                if (!"json".equals(FilenameUtils.getExtension(file.toString())) || relative.startsWith("_"))
-                    return true;
-
-                String name = FilenameUtils.removeExtension(relative).replaceAll("\\\\", "/");
-                ResourceLocation key = new ResourceLocation(mod.getModId(), name);
-
-                if (!map.containsKey(key))
-                {
-                    BufferedReader reader = null;
-
-                    try
-                    {
-                        reader = Files.newBufferedReader(file);
-                        Advancement.Builder builder = JsonUtils.fromJson(AdvancementManager.GSON, reader, Advancement.Builder.class);
-                        map.put(key, builder);
-                    }
-                    catch (JsonParseException jsonparseexception)
-                    {
-                        LOGGER.error("Parsing error loading built-in advancement " + key, (Throwable)jsonparseexception);
-                        return false;
-                    }
-                    catch (IOException ioexception)
-                    {
-                        LOGGER.error("Couldn't read advancement " + key + " from " + file, (Throwable)ioexception);
-                        return false;
-                    }
-                    finally
-                    {
-                        IOUtils.closeQuietly(reader);
-                    }
-                }
-
-                return true;
-            },
-            true, true
-        );
-    }
 /* TODO this should be unnecessary now?
     public static void sendRecipeBook(NetHandlerPlayServer connection, State state, List<IRecipe> recipes, List<IRecipe> display, boolean isGuiOpen, boolean isFilteringCraftable)
     {
@@ -1438,5 +1325,53 @@ public class ForgeHooks
             return !event.isCanceled();
         }
         return false;
+    }
+
+    public static String getServerModName()
+    {
+        //TODO: Branding Properties: snooperbranding
+        return "forge";
+    }
+
+    private static TriConsumer<Block, ToolType, Integer> blockToolSetter;
+    //Internal use only Modders, this is specifically hidden from you, as you shouldn't be editing other people's blocks.
+    public static void setBlockToolSetter(TriConsumer<Block, ToolType, Integer> setter)
+    {
+        blockToolSetter = setter;
+    }
+    @SuppressWarnings("unchecked")
+    private static <T, E> T getPrivateValue(Class <? super E > classToAccess, @Nullable E instance, int fieldIndex)
+    {
+        try
+        {
+            Field f = classToAccess.getDeclaredFields()[fieldIndex];
+            f.setAccessible(true);
+            return (T) f.get(instance);
+        }
+        catch (Exception e)
+        {
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static final DummyBlockReader DUMMY_WORLD = new DummyBlockReader();
+    private static class DummyBlockReader implements IBlockReader {
+
+        @Override
+        public TileEntity getTileEntity(BlockPos pos) {
+            return null;
+        }
+
+        @Override
+        public IBlockState getBlockState(BlockPos pos) {
+            return Blocks.AIR.getDefaultState();
+        }
+
+        @Override
+        public IFluidState func_204610_c(BlockPos p_204610_1_) {
+            return Fluids.field_204541_a.func_207188_f();
+        }
+
     }
 }

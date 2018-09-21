@@ -1,6 +1,35 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
-@@ -121,9 +121,10 @@
+@@ -62,8 +62,7 @@
+ 
+    public void loadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, JsonElement generatorOptions) {
+       this.convertMapIfNeeded(saveName);
+-      this.worlds = new WorldServer[3];
+-      this.timeOfLastDimensionTick = new long[this.worlds.length][100];
++      this.worlds = new WorldServer[1]; //Forge only initialize overworld, we will do the rest.
+       ISaveHandler isavehandler = this.getActiveAnvilConverter().func_197715_a(saveName, this);
+       this.setResourcePackFromWorld(this.getFolderName(), isavehandler);
+       WorldInfo worldinfo = isavehandler.loadWorldInfo();
+@@ -100,6 +99,18 @@
+          this.worlds[i].addEventListener(new ServerWorldEventHandler(this, this.worlds[i]));
+       }
+ 
++      for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs()) {
++         WorldServer world = this.worlds[0];
++         if (dim != 0) {
++            world = (WorldServer)(new WorldServerMulti(this, isavehandler, dim, this.worlds[0], this.profiler).init());
++            world.addEventListener(new ServerWorldEventHandler(this, world));
++            if (!this.isSinglePlayer()) {
++               world.getWorldInfo().setGameType(getGameType());
++            }
++         }
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
++      }
++
+       this.getPlayerList().setPlayerManager(this.worlds);
+       if (worldinfo.func_201357_P() != null) {
+          this.func_201300_aS().func_201381_a(worldinfo.func_201357_P());
+@@ -121,9 +132,10 @@
        this.setAllowFlight(true);
        LOGGER.info("Generating keypair");
        this.setKeyPair(CryptManager.generateKeyPair());
@@ -12,3 +41,19 @@
     }
  
     public void tick() {
+@@ -176,6 +188,7 @@
+    }
+ 
+    public EnumDifficulty getDifficulty() {
++      if (this.mc.world == null) return this.mc.gameSettings.difficulty; // Fix NPE just in case.
+       return this.mc.world.getWorldInfo().getDifficulty();
+    }
+ 
+@@ -275,6 +288,7 @@
+    }
+ 
+    public void initiateShutdown() {
++      if (isServerRunning())
+       Futures.getUnchecked(this.addScheduledTask(() -> {
+          for(EntityPlayerMP entityplayermp : Lists.newArrayList(this.getPlayerList().getPlayers())) {
+             if (!entityplayermp.getUniqueID().equals(this.field_211528_n)) {

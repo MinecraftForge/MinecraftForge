@@ -27,6 +27,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -98,13 +99,13 @@ public class FluidUtil
         {
             return player.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
                 .map(playerInventory -> {
-    
+
                     FluidActionResult fluidActionResult = tryFillContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, true);
                     if (!fluidActionResult.isSuccess())
                     {
                         fluidActionResult = tryEmptyContainerAndStow(heldItem, handler, playerInventory, Integer.MAX_VALUE, player, true);
                     }
-    
+
                     if (fluidActionResult.isSuccess())
                     {
                         player.setHeldItem(hand, fluidActionResult.getResult());
@@ -151,7 +152,7 @@ public class FluidUtil
                         {
                             containerFluidHandler.fill(simulatedTransfer, true);
                         }
-        
+
                         ItemStack resultContainer = containerFluidHandler.getContainer();
                         return new FluidActionResult(resultContainer);
                     }
@@ -615,11 +616,13 @@ public class FluidUtil
             return false;
         }
 
+        BlockItemUseContext context = new BlockItemUseContext(world, player, ItemStack.EMPTY, pos, EnumFacing.UP, 0, 0, 0); //TODO: This neds proper context...
+
         // check that we can place the fluid at the destination
         IBlockState destBlockState = world.getBlockState(pos);
         Material destMaterial = destBlockState.getMaterial();
         boolean isDestNonSolid = !destMaterial.isSolid();
-        boolean isDestReplaceable = destBlockState.getBlock().isReplaceable(world, pos);
+        boolean isDestReplaceable = destBlockState.func_196953_a(context);
         if (!world.isAirBlock(pos) && !isDestNonSolid && !isDestReplaceable)
         {
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
@@ -688,7 +691,7 @@ public class FluidUtil
             IBlockState destBlockState = world.getBlockState(pos);
             Material destMaterial = destBlockState.getMaterial();
             boolean isDestNonSolid = !destMaterial.isSolid();
-            boolean isDestReplaceable = destBlockState.getBlock().isReplaceable(world, pos);
+            boolean isDestReplaceable = false; //TODO: Needs BlockItemUseContext destBlockState.getBlock().isReplaceable(world, pos);
             if ((isDestNonSolid || isDestReplaceable) && !destMaterial.isLiquid())
             {
                 world.destroyBlock(pos, true);
