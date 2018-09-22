@@ -58,7 +58,7 @@
     }
  
     public String getKeyCategory() {
-@@ -122,14 +122,20 @@
+@@ -122,17 +122,41 @@
     }
  
     public int compareTo(KeyBinding p_compareTo_1_) {
@@ -77,11 +77,44 @@
        return keybinding == null ? () -> {
           return key;
 -      } : keybinding::func_197978_k;
-+      } : () -> keybinding.getDisplayName();
++      } : () -> keybinding.func_197978_k();
     }
  
     public boolean func_197983_b(KeyBinding p_197983_1_) {
-@@ -163,4 +169,84 @@
++      if (getKeyConflictContext().conflicts(p_197983_1_.getKeyConflictContext()) || p_197983_1_.getKeyConflictContext().conflicts(getKeyConflictContext()))
++      {
++         net.minecraftforge.client.settings.KeyModifier keyModifier = getKeyModifier();
++         net.minecraftforge.client.settings.KeyModifier otherKeyModifier = p_197983_1_.getKeyModifier();
++         if (keyModifier.matches(p_197983_1_.getKey()) || otherKeyModifier.matches(getKey()))
++         {
++            return true;
++         }
++         else if (getKey().equals(p_197983_1_.getKey()))
++         {
++            return keyModifier == otherKeyModifier ||
++                    // IN_GAME key contexts have a conflict when at least one modifier is NONE.
++                    // For example: If you hold shift to crouch, you can still press E to open your inventory. This means that a Shift+E hotkey is in conflict with E.
++                    // GUI and other key contexts do not have this limitation.
++                    (getKeyConflictContext().conflicts(net.minecraftforge.client.settings.KeyConflictContext.IN_GAME) &&
++                            (keyModifier == net.minecraftforge.client.settings.KeyModifier.NONE || otherKeyModifier == net.minecraftforge.client.settings.KeyModifier.NONE));
++         }
++      }
+       return this.keyCode.equals(p_197983_1_.keyCode);
+    }
+ 
+@@ -153,14 +177,94 @@
+    }
+ 
+    public String func_197978_k() {
+-      return this.keyCode.func_197936_a();
++      return getKeyModifier().getLocalizedComboName(this.keyCode);
+    }
+ 
+    public boolean func_197985_l() {
+-      return this.keyCode.equals(this.keyCodeDefault);
++       return getKey().equals(this.keyCodeDefault) && getKeyModifier() == getKeyModifierDefault();
+    }
+ 
     public String func_197982_m() {
        return this.keyCode.func_197935_d();
     }
