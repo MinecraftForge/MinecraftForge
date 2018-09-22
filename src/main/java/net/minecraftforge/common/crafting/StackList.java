@@ -37,13 +37,13 @@ public class StackList implements IItemList
     }
 
     @Override
-    public Collection<ItemStack> func_199799_a()
+    public Collection<ItemStack> getStacks()
     {
         return items;
     }
 
     @Override
-    public JsonObject func_200303_b()
+    public JsonObject toJson()
     {
         if (items.size() == 1)
             return toJson(items.iterator().next());
@@ -61,8 +61,8 @@ public class StackList implements IItemList
         ret.addProperty("item", stack.getItem().getRegistryName().toString());
         if (stack.getCount() != 1)
             ret.addProperty("count", stack.getCount());
-        if (stack.getTagCompound() != null)
-            ret.addProperty("nbt", stack.getTagCompound().toString()); //TODO: Better serialization?
+        if (stack.getTag() != null)
+            ret.addProperty("nbt", stack.getTag().toString()); //TODO: Better serialization?
         return ret;
     }
 

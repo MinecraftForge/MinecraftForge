@@ -61,7 +61,7 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
     }
 
     @Override
-    public void putObject(ResourceLocation key, V value)
+    public void put(ResourceLocation key, V value)
     {
         register(-1, key, value);
     }
@@ -70,14 +70,14 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
     // Reading Functions
     @Override
     @Nullable
-    public V getObject(@Nullable ResourceLocation name)
+    public V get(@Nullable ResourceLocation name)
     {
         return this.delegate.getValue(name);
     }
 
     @Override
     @Nullable
-    public ResourceLocation getNameForObject(V value)
+    public ResourceLocation getKey(V value)
     {
         return this.delegate.getKey(value);
     }
@@ -89,14 +89,14 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
     }
 
     @Override
-    public int getIDForObject(@Nullable V value)
+    public int getId(@Nullable V value)
     {
         return this.delegate.getID(value);
     }
 
     @Override
     @Nullable
-    public V getObjectById(int id)
+    public V get(int id)
     {
         return this.delegate.getValue(id);
     }
@@ -115,7 +115,7 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
 
     @Override
     @Nullable
-    public V getRandomObject(Random random)
+    public V getRandom(Random random)
     {
         Collection<V> values = this.delegate.getValues();
         return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(null);

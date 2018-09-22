@@ -63,7 +63,7 @@ import com.google.common.collect.Sets;
 public final class MultiModel implements IUnbakedModel
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    
+
     private static final class Baked implements IBakedModel
     {
         private final ResourceLocation location;
@@ -76,7 +76,7 @@ public final class MultiModel implements IUnbakedModel
         private final ItemOverrideList overrides = new ItemOverrideList()
         {
             @Override
-            public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+            public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
             {
                 if(originalModel != Baked.this)
                 {
@@ -87,7 +87,7 @@ public final class MultiModel implements IUnbakedModel
 
                 if(base != null)
                 {
-                    newBase = base.getOverrides().func_209581_a(base, stack, world, entity);
+                    newBase = base.getOverrides().getModelWithOverrides(base, stack, world, entity);
                     if(base != newBase)
                     {
                         dirty = true;
@@ -96,7 +96,7 @@ public final class MultiModel implements IUnbakedModel
                 ImmutableMap.Builder<String, IBakedModel> builder = ImmutableMap.builder();
                 for(Map.Entry<String, IBakedModel> entry : parts.entrySet())
                 {
-                     IBakedModel newPart = entry.getValue().getOverrides().func_209581_a(entry.getValue(), stack, world, entity);
+                     IBakedModel newPart = entry.getValue().getOverrides().getModelWithOverrides(entry.getValue(), stack, world, entity);
                      builder.put(entry.getKey(), newPart);
                      if(entry.getValue() != newPart)
                      {
@@ -188,16 +188,16 @@ public final class MultiModel implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
             if (base != null)
             {
-                quads.addAll(base.func_200117_a(state, side, rand));
+                quads.addAll(base.getQuads(state, side, rand));
             }
             for (IBakedModel bakedPart : parts.values())
             {
-                quads.addAll(bakedPart.func_200117_a(state, side, rand));
+                quads.addAll(bakedPart.getQuads(state, side, rand));
             }
             return quads.build();
         }
@@ -207,7 +207,7 @@ public final class MultiModel implements IUnbakedModel
         {
             Pair<Baked, TRSRTransformation> p = transforms.get(cameraTransformType);
             if (p == null) return Pair.of(this, null);
-            return Pair.of(p.getLeft(), p.getRight().getMatrix());
+            return Pair.of(p.getLeft(), p.getRight().getMatrixVec());
         }
 
         @Override
@@ -247,9 +247,9 @@ public final class MultiModel implements IUnbakedModel
     {
         this(location, base, ImmutableMap.copyOf(parts));
     }
-    
+
     @Override
-    public Collection<ResourceLocation> getOverrideLocations() 
+    public Collection<ResourceLocation> getOverrideLocations()
     {
         Set<ResourceLocation> deps = Sets.newHashSet();
 
@@ -261,17 +261,17 @@ public final class MultiModel implements IUnbakedModel
 
         return deps;
     }
-    
+
     @Override
-    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextures) 
+    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextures)
     {
         Set<ResourceLocation> deps = Sets.newHashSet();
 
         if (base != null)
-            deps.addAll(base.func_209559_a(modelGetter, missingTextures));
+            deps.addAll(base.getTextures(modelGetter, missingTextures));
 
         for (Pair<IUnbakedModel, IModelState> pair : parts.values())
-            deps.addAll(pair.getLeft().func_209559_a(modelGetter, missingTextures));
+            deps.addAll(pair.getLeft().getTextures(modelGetter, missingTextures));
 
         return deps;
     }

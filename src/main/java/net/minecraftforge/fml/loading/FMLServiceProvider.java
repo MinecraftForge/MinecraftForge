@@ -37,6 +37,8 @@ import java.util.function.BiFunction;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
+import cpw.mods.modlauncher.api.ITransformationService.OptionResult;
+
 public class FMLServiceProvider implements ITransformationService
 {
 

@@ -323,7 +323,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
                 if (event.isWorldRunning() && tmpStairs != disableStairSlabCulling)
                 {
-                    DistExecutor.runWhenOn(Dist.CLIENT,()->()-> Minecraft.getMinecraft().renderGlobal.loadRenderers());
+                    DistExecutor.runWhenOn(Dist.CLIENT,()->()-> Minecraft.getInstance().renderGlobal.loadRenderers());
                 }
 
             }
@@ -435,7 +435,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     @Override
     public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
     {
-        DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompoundTag("DimensionData") : null);
+        DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompound("DimensionData") : null);
         // TODO fluids FluidRegistry.loadFluidDefaults(tag);
     }
 

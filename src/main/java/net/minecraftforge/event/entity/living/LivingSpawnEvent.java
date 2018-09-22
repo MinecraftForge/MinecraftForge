@@ -27,6 +27,8 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 
+import net.minecraftforge.eventbus.api.Event.HasResult;
+
 /**
  * LivingSpawnEvent is fired for any events associated with Living Entities spawn status. <br>
  * If a method utilizes this {@link Event} as its parameter, the method will

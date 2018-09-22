@@ -49,34 +49,34 @@ public class ModFileResourcePack extends AbstractResourcePack
     }
 
     @Override
-    public String func_195762_a()
+    public String getName()
     {
         return modFile.getFileName();
     }
 
     @Override
-    protected InputStream func_195766_a(String name) throws IOException
+    protected InputStream getInputStream(String name) throws IOException
     {
         return Files.newInputStream(modFile.getLocator().findPath(modFile, name));
     }
 
     @Override
-    protected boolean func_195768_c(String name)
+    protected boolean resourceExists(String name)
     {
         return Files.exists(modFile.getLocator().findPath(modFile, name));
     }
 
     @Override
-    public Collection<ResourceLocation> func_195758_a(ResourcePackType p_195758_1_, String p_195758_2_, int p_195758_3_, Predicate<String> p_195758_4_)
+    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String pathIn, int maxDepth, Predicate<String> filter)
     {
 
         try
         {
-            return Files.walk(modFile.getLocator().findPath(modFile, p_195758_1_.func_198956_a())).
+            return Files.walk(modFile.getLocator().findPath(modFile, type.getDirectoryName())).
                     filter(path -> !path.toString().endsWith(".mcmeta")).
-                    filter(path -> path.getNameCount() > 2 && p_195758_2_.equals(path.getName(2).toString())).
-                    filter(path -> p_195758_4_.test(path.subpath(3, Math.min(p_195758_3_+3, path.getNameCount())).toString())).
-                    map(path -> new ResourceLocation(path.getName(1).toString(),path.subpath(3,Math.min(p_195758_3_+3, path.getNameCount())).toString())).
+                    filter(path -> path.getNameCount() > 2 && pathIn.equals(path.getName(2).toString())).
+                    filter(path -> filter.test(path.subpath(3, Math.min(maxDepth+3, path.getNameCount())).toString())).
+                    map(path -> new ResourceLocation(path.getName(1).toString(),path.subpath(3,Math.min(maxDepth+3, path.getNameCount())).toString())).
                     collect(Collectors.toList());
         }
         catch (IOException e)
@@ -86,10 +86,10 @@ public class ModFileResourcePack extends AbstractResourcePack
     }
 
     @Override
-    public Set<String> func_195759_a(ResourcePackType p_195759_1_)
+    public Set<String> getResourceNamespaces(ResourcePackType type)
     {
         try {
-            return Files.walk(modFile.getLocator().findPath(modFile, p_195759_1_.func_198956_a()),1).map(p->p.getFileName().toString()).collect(Collectors.toSet());
+            return Files.walk(modFile.getLocator().findPath(modFile, type.getDirectoryName()),1).map(p->p.getFileName().toString()).collect(Collectors.toSet());
         }
         catch (IOException e)
         {

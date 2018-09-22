@@ -33,6 +33,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
+import com.google.common.base.Joiner;
+
 /**
  * Construct a version range from a specification.
  *

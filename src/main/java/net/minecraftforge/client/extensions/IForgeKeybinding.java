@@ -18,12 +18,12 @@ public interface IForgeKeybinding
      */
     default boolean isActiveAndMatches(InputMappings.Input keyCode)
     {
-        return keyCode.func_197937_c() != 0 && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
+        return keyCode.getKeyCode() != 0 && keyCode.equals(getKey()) && getKeyConflictContext().isActive() && getKeyModifier().isActive(getKeyConflictContext());
     }
     
     default void setToDefault()
     {
-        setKeyModifierAndCode(getKeyModifierDefault(), getKeyBinding().func_197977_i());
+        setKeyModifierAndCode(getKeyModifierDefault(), getKeyBinding().getDefault());
     }
 
     void setKeyConflictContext(IKeyConflictContext keyConflictContext);

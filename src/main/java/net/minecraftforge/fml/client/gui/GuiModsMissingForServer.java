@@ -39,9 +39,9 @@ public class GuiModsMissingForServer extends GuiScreen
     @Override
     public void initGui()
     {
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done"))
+        this.buttons.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done"))
         {
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 GuiModsMissingForServer.this.mc.displayGuiScreen(null);
             }
@@ -49,7 +49,7 @@ public class GuiModsMissingForServer extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         List<MissingModsException.MissingModInfo> missingModsVersions = modsMissing.getMissingModInfos();
@@ -66,6 +66,6 @@ public class GuiModsMissingForServer extends GuiScreen
             offset += 10;
             this.drawCenteredString(this.fontRenderer, String.format("%s : %s", v.getLabel(), v.getRangeString()), this.width / 2, offset, 0xEEEEEE);
         }
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 }

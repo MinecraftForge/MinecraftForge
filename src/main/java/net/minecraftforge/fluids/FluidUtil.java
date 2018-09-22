@@ -258,7 +258,7 @@ public class FluidUtil
             return FluidActionResult.FAILURE;
         }
 
-        if (player != null && player.capabilities.isCreativeMode)
+        if (player != null && player.abilities.isCreativeMode)
         {
             FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, doFill);
             if (filledReal.isSuccess())
@@ -349,7 +349,7 @@ public class FluidUtil
             return FluidActionResult.FAILURE;
         }
 
-        if (player != null && player.capabilities.isCreativeMode)
+        if (player != null && player.abilities.isCreativeMode)
         {
             FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, doDrain);
             if (emptiedReal.isSuccess())
@@ -622,13 +622,13 @@ public class FluidUtil
         IBlockState destBlockState = world.getBlockState(pos);
         Material destMaterial = destBlockState.getMaterial();
         boolean isDestNonSolid = !destMaterial.isSolid();
-        boolean isDestReplaceable = destBlockState.func_196953_a(context);
+        boolean isDestReplaceable = destBlockState.isReplaceable(context);
         if (!world.isAirBlock(pos) && !isDestNonSolid && !isDestReplaceable)
         {
             return false; // Non-air, solid, unreplacable block. We can't put fluid here.
         }
 
-        if (world.provider.doesWaterVaporize() && fluid.doesVaporize(resource))
+        if (world.dimension.doesWaterVaporize() && fluid.doesVaporize(resource))
         {
             FluidStack result = fluidSource.drain(resource, true);
             if (result != null)

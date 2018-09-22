@@ -384,7 +384,7 @@ public class ForgeEventFactory
 
         if (event.getResult() == Result.ALLOW)
         {
-            if (player.capabilities.isCreativeMode)
+            if (player.abilities.isCreativeMode)
                 return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
 
             stack.shrink(1);
@@ -499,7 +499,7 @@ public class ForgeEventFactory
         {
             Entity e = itr.next();
             double dist = e.getDistance(p.xCoord, p.yCoord, p.zCoord) / diameter;
-            if (e.func_180427_aV() || dist > 1.0F) itr.remove();
+            if (e.isImmuneToExplosions() || dist > 1.0F) itr.remove();
         }
         */
         MinecraftForge.EVENT_BUS.post(new ExplosionEvent.Detonate(world, explosion, list));

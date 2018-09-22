@@ -456,10 +456,10 @@ public class ForgeHooks
             }
          */
         ItemStack result;
-        boolean isCreative = player.capabilities.isCreativeMode;
+        boolean isCreative = player.abilities.isCreativeMode;
         TileEntity te = null;
 
-        if (target.typeOfHit == RayTraceResult.Type.BLOCK)
+        if (target.type == RayTraceResult.Type.BLOCK)
         {
             IBlockState state = world.getBlockState(target.getBlockPos());
 
@@ -475,12 +475,12 @@ public class ForgeHooks
         }
         else
         {
-            if (target.typeOfHit != RayTraceResult.Type.ENTITY || target.entityHit == null || !isCreative)
+            if (target.type != RayTraceResult.Type.ENTITY || target.entity == null || !isCreative)
             {
                 return false;
             }
 
-            result = target.entityHit.getPickedResult(target);
+            result = target.entity.getPickedResult(target);
         }
 
         if (result.isEmpty())
@@ -490,13 +490,13 @@ public class ForgeHooks
 
         if (te != null)
         {
-            Minecraft.getMinecraft().storeTEInStack(result, te);
+            Minecraft.getInstance().storeTEInStack(result, te);
         }
 
         if (isCreative)
         {
             player.inventory.setPickedItemStack(result);
-            Minecraft.getMinecraft().playerController.sendSlotPacket(player.getHeldItem(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
+            Minecraft.getInstance().playerController.sendSlotPacket(player.getHeldItem(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
             return true;
         }
         int slot = player.inventory.getSlotFor(result);
@@ -505,7 +505,7 @@ public class ForgeHooks
             if (InventoryPlayer.isHotbar(slot))
                 player.inventory.currentItem = slot;
             else
-                Minecraft.getMinecraft().playerController.pickItem(slot);
+                Minecraft.getInstance().playerController.pickItem(slot);
             return true;
         }
         return false;
@@ -610,7 +610,7 @@ public class ForgeHooks
         }
         else
         {
-            AxisAlignedBB bb = entity.getEntityBoundingBox();
+            AxisAlignedBB bb = entity.getBoundingBox();
             int mX = MathHelper.floor(bb.minX);
             int mY = MathHelper.floor(bb.minY);
             int mZ = MathHelper.floor(bb.minZ);
@@ -769,7 +769,7 @@ public class ForgeHooks
 
             if (!entityPlayer.isAllowEdit())
             {
-                if (itemstack.isEmpty() || !itemstack.func_206848_a(world.func_205772_D(), new BlockWorldState(world, pos, false)))
+                if (itemstack.isEmpty() || !itemstack.canDestroy(world.getTags(), new BlockWorldState(world, pos, false)))
                     preCancelEvent = true;
             }
         }
@@ -809,8 +809,8 @@ public class ForgeHooks
     /* TODO: Talk to Sponge folk about World rollbacks.
     public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemUseContext context)
     {
-        ItemStack itemstack = context.func_195996_i();
-        World world = context.func_195991_k();
+        ItemStack itemstack = context.getItem();
+        World world = context.getWorld();
 
         // handle all placement events here
         int meta = itemstack.getItemDamage();
@@ -826,7 +826,7 @@ public class ForgeHooks
             world.captureBlockSnapshots = true;
         }
 
-        EnumActionResult ret = itemstack.getItem().func_195939_a(context);
+        EnumActionResult ret = itemstack.getItem().onItemUse(context);
         world.captureBlockSnapshots = false;
 
         if (ret == EnumActionResult.SUCCESS)
@@ -845,15 +845,15 @@ public class ForgeHooks
             world.capturedBlockSnapshots.clear();
 
             // make sure to set pre-placement item data for event
-            itemstack.func_196085_b(meta);
+            itemstack.setDamage(meta);
             itemstack.setCount(size);
             if (nbt != null)
             {
                 itemstack.setTagCompound(nbt);
             }
 
-            EntityPlayer player = context.func_195999_j();
-            EnumFacing side = context.func_196000_l();
+            EntityPlayer player = context.getPlayer();
+            EnumFacing side = context.getFace();
 
             if (blockSnapshots.size() > 1)
             {
@@ -878,7 +878,7 @@ public class ForgeHooks
             else
             {
                 // Change the stack to its new content
-                itemstack.func_196085_b(newMeta);
+                itemstack.setDamage(newMeta);
                 itemstack.setCount(newSize);
                 if (nbt != null)
                 {
@@ -940,7 +940,7 @@ public class ForgeHooks
         if (stack.getItem().hasContainerItem(stack))
         {
             stack = stack.getItem().getContainerItem(stack);
-            if (!stack.isEmpty() && stack.isItemStackDamageable() && stack.getItemDamage() > stack.getMaxDamage())
+            if (!stack.isEmpty() && stack.isDamageable() && stack.getDamage() > stack.getMaxDamage())
             {
                 ForgeEventFactory.onPlayerDestroyItem(craftingPlayer.get(), stack, null);
                 return ItemStack.EMPTY;
@@ -1232,7 +1232,7 @@ public class ForgeHooks
                 NBTTagList enchantmentsNbt = ItemEnchantedBook.getEnchantments(itemStack);
                 if (enchantmentsNbt.size() == 1)
                 {
-                    NBTTagCompound nbttagcompound = enchantmentsNbt.getCompoundTagAt(0);
+                    NBTTagCompound nbttagcompound = enchantmentsNbt.getCompound(0);
                     Enchantment enchantment = Enchantment.getEnchantmentByID(nbttagcompound.getShort("id"));
                     if (enchantment != null)
                     {
@@ -1255,7 +1255,7 @@ public class ForgeHooks
             }
             else if (item instanceof ItemSpawnEgg)
             {
-                ResourceLocation resourceLocation = ((ItemSpawnEgg)item).func_208076_b(null).getRegistryName();
+                ResourceLocation resourceLocation = ((ItemSpawnEgg)item).getType(null).getRegistryName();
                 if (resourceLocation != null)
                 {
                     return resourceLocation.getNamespace();
@@ -1319,8 +1319,8 @@ public class ForgeHooks
         }
 
         @Override
-        public IFluidState func_204610_c(BlockPos p_204610_1_) {
-            return Fluids.field_204541_a.func_207188_f();
+        public IFluidState getFluidState(BlockPos pos) {
+            return Fluids.EMPTY.getDefaultState();
         }
 
     }

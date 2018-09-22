@@ -87,7 +87,7 @@ public class FluidStack
         {
             return null;
         }
-        if (!nbt.hasKey("FluidName", Constants.NBT.TAG_STRING))
+        if (!nbt.contains("FluidName", Constants.NBT.TAG_STRING))
         {
             return null;
         }
@@ -109,7 +109,7 @@ public class FluidStack
     public NBTTagCompound writeToNBT(NBTTagCompound nbt)
     {
         // TODO fluids bt.setString("FluidName", FluidRegistry.getFluidName(getFluid()));
-        nbt.setInteger("Amount", amount);
+        nbt.setInt("Amount", amount);
 
         if (tag != null)
         {

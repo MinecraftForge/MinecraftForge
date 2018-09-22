@@ -109,7 +109,7 @@ public class InvWrapper implements IItemHandlerModifiable
                 stack = stack.copy();
                 if (!simulate)
                 {
-                    ItemStack copy = stack.splitStack(m);
+                    ItemStack copy = stack.split(m);
                     copy.grow(stackInSlot.getCount());
                     getInv().setInventorySlotContents(slot, copy);
                     getInv().markDirty();
@@ -134,7 +134,7 @@ public class InvWrapper implements IItemHandlerModifiable
                 stack = stack.copy();
                 if (!simulate)
                 {
-                    getInv().setInventorySlotContents(slot, stack.splitStack(m));
+                    getInv().setInventorySlotContents(slot, stack.split(m));
                     getInv().markDirty();
                     return stack;
                 }

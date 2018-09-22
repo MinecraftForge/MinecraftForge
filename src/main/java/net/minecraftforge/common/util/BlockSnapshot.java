@@ -63,7 +63,7 @@ public class BlockSnapshot
     public BlockSnapshot(World world, BlockPos pos, IBlockState state, @Nullable NBTTagCompound nbt)
     {
         this.setWorld(world);
-        this.dimId = world.provider.getId();
+        this.dimId = world.dimension.getId();
         this.pos = pos.toImmutable();
         this.setReplacedBlock(state);
         this.registryName = state.getBlock().getRegistryName();
@@ -113,12 +113,12 @@ public class BlockSnapshot
     public static BlockSnapshot readFromNBT(NBTTagCompound tag)
     {
         return new BlockSnapshot(
-                tag.getInteger("dimension"),
-                new BlockPos(tag.getInteger("posX"), tag.getInteger("posY"), tag.getInteger("posZ")),
+                tag.getInt("dimension"),
+                new BlockPos(tag.getInt("posX"), tag.getInt("posY"), tag.getInt("posZ")),
                 new ResourceLocation(tag.getString("blockMod"), tag.getString("blockName")),
-                tag.getInteger("metadata"),
-                tag.getInteger("flag"),
-                tag.getBoolean("hasTE") ? tag.getCompoundTag("tileEntity") : null);
+                tag.getInt("metadata"),
+                tag.getInt("flag"),
+                tag.getBoolean("hasTE") ? tag.getCompound("tileEntity") : null);
     }
 
     @Nullable
@@ -126,7 +126,7 @@ public class BlockSnapshot
     {
         if (te == null) return null;
         NBTTagCompound nbt = new NBTTagCompound();
-        te.writeToNBT(nbt);
+        te.write(nbt);
         return nbt;
     }
 
@@ -150,7 +150,7 @@ public class BlockSnapshot
     {
         if (this.replacedBlock == null)
         {
-            this.replacedBlock = ForgeRegistries.BLOCKS.getValue(getRegistryName()).func_196257_b(getMeta());
+            this.replacedBlock = ForgeRegistries.BLOCKS.getValue(getRegistryName()).getStateById(getMeta());
         }
         return this.replacedBlock;
     }
@@ -158,7 +158,7 @@ public class BlockSnapshot
     @Nullable
     public TileEntity getTileEntity()
     {
-        return getNbt() != null ? TileEntity.func_203403_c(getNbt()) : null;
+        return getNbt() != null ? TileEntity.create(getNbt()) : null;
     }
 
     public boolean restore()
@@ -202,7 +202,7 @@ public class BlockSnapshot
             te = world.getTileEntity(pos);
             if (te != null)
             {
-                te.readFromNBT(getNbt());
+                te.read(getNbt());
                 te.markDirty();
             }
         }
@@ -218,12 +218,12 @@ public class BlockSnapshot
     {
         compound.setString("blockMod", getRegistryName().getNamespace());
         compound.setString("blockName", getRegistryName().getPath());
-        compound.setInteger("posX", getPos().getX());
-        compound.setInteger("posY", getPos().getY());
-        compound.setInteger("posZ", getPos().getZ());
-        compound.setInteger("flag", getFlag());
-        compound.setInteger("dimension", getDimId());
-        compound.setInteger("metadata", getMeta());
+        compound.setInt("posX", getPos().getX());
+        compound.setInt("posY", getPos().getY());
+        compound.setInt("posZ", getPos().getZ());
+        compound.setInt("flag", getFlag());
+        compound.setInt("dimension", getDimId());
+        compound.setInt("metadata", getMeta());
 
         compound.setBoolean("hasTE", getNbt() != null);
 

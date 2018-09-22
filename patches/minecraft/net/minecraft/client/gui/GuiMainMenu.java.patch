@@ -20,6 +20,15 @@
  
     private void func_73972_b(int p_73972_1_, int p_73972_2_) {
        this.func_189646_b(new GuiButton(11, this.field_146294_l / 2 - 100, p_73972_1_, I18n.func_135052_a("menu.playdemo")) {
+@@ -206,7 +212,7 @@
+          }
+       });
+       this.field_73973_d = this.func_189646_b(new GuiButton(12, this.field_146294_l / 2 - 100, p_73972_1_ + p_73972_2_ * 1, I18n.func_135052_a("menu.resetdemo")) {
+-         public void func_194829_a(double p_194829_1_, double p_194829_3_) {
++         public void func_194829_a(double mouseX, double mouseY) {
+             ISaveFormat isaveformat1 = GuiMainMenu.this.field_146297_k.func_71359_d();
+             WorldInfo worldinfo1 = isaveformat1.func_75803_c("Demo_World");
+             if (worldinfo1 != null) {
 @@ -283,7 +289,10 @@
           s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
        }

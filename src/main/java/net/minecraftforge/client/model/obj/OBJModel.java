@@ -83,8 +83,8 @@ import com.google.common.collect.Maps;
 
 public class OBJModel implements IUnbakedModel
 {
-	private static final Logger LOGGER = LogManager.getLogger();
-	
+    private static final Logger LOGGER = LogManager.getLogger();
+
     //private Gson GSON = new GsonBuilder().create();
     private MaterialLibrary matLib;
     private final ResourceLocation modelLocation;
@@ -103,7 +103,7 @@ public class OBJModel implements IUnbakedModel
     }
 
     @Override
-    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_)
+    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
     {
         Iterator<Material> materialIterator = this.matLib.materials.values().iterator();
         List<ResourceLocation> textures = Lists.newArrayList();
@@ -116,11 +116,11 @@ public class OBJModel implements IUnbakedModel
         }
         return textures;
     }
-    
+
     @Override
-    public Collection<ResourceLocation> getOverrideLocations() 
+    public Collection<ResourceLocation> getOverrideLocations()
     {
-    	return Collections.emptyList();
+        return Collections.emptyList();
     }
 
     @Override
@@ -216,8 +216,8 @@ public class OBJModel implements IUnbakedModel
         public Parser(IResource from, IResourceManager manager) throws IOException
         {
             this.manager = manager;
-            this.objFrom = from.func_199029_a();
-            this.objStream = new InputStreamReader(from.func_199027_b(), StandardCharsets.UTF_8);
+            this.objFrom = from.getLocation();
+            this.objStream = new InputStreamReader(from.getInputStream(), StandardCharsets.UTF_8);
             this.objReader = new BufferedReader(objStream);
         }
 
@@ -517,7 +517,7 @@ public class OBJModel implements IUnbakedModel
             String domain = from.getNamespace();
             if (!path.contains("/"))
                 path = from.getPath().substring(0, from.getPath().lastIndexOf("/") + 1) + path;
-            mtlStream = new InputStreamReader(manager.func_199002_a(new ResourceLocation(domain, path)).func_199027_b(), StandardCharsets.UTF_8);
+            mtlStream = new InputStreamReader(manager.getResource(new ResourceLocation(domain, path)).getInputStream(), StandardCharsets.UTF_8);
             mtlReader = new BufferedReader(mtlStream);
 
             String currentLine = "";
@@ -857,7 +857,7 @@ public class OBJModel implements IUnbakedModel
 
         public Face bake(TRSRTransformation transform)
         {
-            Matrix4f m = transform.getMatrix();
+            Matrix4f m = transform.getMatrixVec();
             Matrix3f mn = null;
             Vertex[] vertices = new Vertex[verts.length];
 //            Normal[] normals = norms != null ? new Normal[norms.length] : null;
@@ -1318,7 +1318,7 @@ public class OBJModel implements IUnbakedModel
 
         // FIXME: merge with getQuads
         @Override
-        public List<BakedQuad> func_200117_a(IBlockState blockState, EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, Random rand)
         {
             if (side != null) return ImmutableList.of();
             if (quads == null)
@@ -1598,7 +1598,7 @@ public class OBJModel implements IUnbakedModel
         @Override
         public ItemOverrideList getOverrides()
         {
-            return ItemOverrideList.NONE;
+            return ItemOverrideList.EMPTY;
         }
     }
 

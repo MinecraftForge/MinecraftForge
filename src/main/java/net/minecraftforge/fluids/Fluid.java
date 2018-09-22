@@ -310,7 +310,7 @@ public class Fluid
 
         for (int l = 0; l < 8; ++l)
         {
-            worldIn.func_195589_b(Particles.field_197594_E, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
+            worldIn.addOptionalParticle(Particles.LARGE_SMOKE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
         }
     }
 

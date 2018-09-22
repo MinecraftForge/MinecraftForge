@@ -53,7 +53,7 @@ public class MinecraftForgeClient
      */
     public static Locale getLocale()
     {
-        return Minecraft.getMinecraft().getLanguageManager().getCurrentLanguage().getJavaLocale();
+        return Minecraft.getInstance().getLanguageManager().getCurrentLanguage().getJavaLocale();
     }
 
     private static BitSet stencilBits = new BitSet(8);

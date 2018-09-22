@@ -52,7 +52,7 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
 
     default void deserializeNBT(NBTTagCompound nbt)
     {
-        getEntity().readFromNBT(nbt);
+        getEntity().read(nbt);
     }
 
     default NBTTagCompound serializeNBT()
@@ -63,7 +63,7 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
         {
             ret.setString("id", getEntity().getEntityString());
         }
-        return getEntity().writeToNBT(ret);
+        return getEntity().writeWithoutTypeId(ret);
     }
 
     boolean canUpdate();
@@ -125,7 +125,7 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
         }
         else
         {
-            ItemSpawnEgg egg = ItemSpawnEgg.func_200889_b(getEntity().func_200600_R());
+            ItemSpawnEgg egg = ItemSpawnEgg.getEgg(getEntity().getType());
             if (egg != null) return new ItemStack(egg);
         }
         return ItemStack.EMPTY;

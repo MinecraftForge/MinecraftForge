@@ -39,7 +39,7 @@ public class GuiSortingProblem extends GuiScreen {
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - (failedList.getVisitedNodes().size() + 3) * 10, 10);

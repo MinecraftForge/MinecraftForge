@@ -173,7 +173,7 @@ public class DimensionManager
 
     public static Dimension getProvider(int dim)
     {
-        return getWorld(dim).provider;
+        return getWorld(dim).dimension;
     }
 
     public static Integer[] getIDs(boolean check)
@@ -219,7 +219,7 @@ public class DimensionManager
         {
             worlds.put(id, world);
             weakWorldMap.put(world, world);
-            LOGGER.info(DIMMGR,"Loading dimension {} ({}) ({})", id, world.getWorldInfo().getWorldName(), world.getMinecraftServer());
+            LOGGER.info(DIMMGR,"Loading dimension {} ({}) ({})", id, world.getWorldInfo().getWorldName(), world.getServer());
         }
         else
         {
@@ -264,7 +264,7 @@ public class DimensionManager
             LOGGER.error(DIMMGR,"Cannot Hotload Dim: {}", dim, e);
             return; // If a provider hasn't been registered then we can't hotload the dim
         }
-        MinecraftServer mcServer = overworld.getMinecraftServer();
+        MinecraftServer mcServer = overworld.getServer();
         ISaveHandler savehandler = overworld.getSaveHandler();
         //WorldSettings worldSettings = new WorldSettings(overworld.getWorldInfo());
 
@@ -329,7 +329,7 @@ public class DimensionManager
         {
             if (dimensions.containsKey(dim))
             {
-                Dimension ret = getProviderType(dim).createDimension();
+                Dimension ret = getProviderType(dim).create();
                 ret.setId(dim);
                 return ret;
             }
@@ -361,8 +361,8 @@ public class DimensionManager
     {
         return ForgeChunkManager.getPersistentChunksFor(world).isEmpty()
                 && world.playerEntities.isEmpty()
-                && !world.provider.getDimensionType().shouldLoadSpawn()
-                && !keepLoaded.contains(world.provider.getId());
+                && !world.dimension.getType().shouldLoadSpawn()
+                && !keepLoaded.contains(world.dimension.getId());
     }
 
     /**
@@ -421,7 +421,7 @@ public class DimensionManager
             {
                 MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
                 w.close();
-                setWorld(id, null, w.getMinecraftServer());
+                setWorld(id, null, w.getServer());
             }
         }
     }

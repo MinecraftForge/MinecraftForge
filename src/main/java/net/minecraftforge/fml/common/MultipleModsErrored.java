@@ -27,6 +27,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.IDisplayableError;
 import net.minecraftforge.fml.client.gui.GuiMultipleModsErrored;
 
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
+
 public class MultipleModsErrored extends EnhancedRuntimeException implements IDisplayableError
 {
     public final List<MissingModsException> missingModsExceptions;

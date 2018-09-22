@@ -34,9 +34,9 @@ public class GuiNotification extends GuiScreen
     @Override
     public void initGui()
     {
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height - 38, I18n.format("gui.done"))
+        this.buttons.add(new GuiButton(0, this.width / 2 - 100, this.height - 38, I18n.format("gui.done"))
         {
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 GuiNotification.this.mc.displayGuiScreen(null);
                 query.finish();
@@ -45,7 +45,7 @@ public class GuiNotification extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
 
@@ -70,7 +70,7 @@ public class GuiNotification extends GuiScreen
             }
         }
 
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 
     protected final StartupQuery query;

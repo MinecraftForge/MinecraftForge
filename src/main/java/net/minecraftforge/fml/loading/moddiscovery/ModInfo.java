@@ -32,6 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.fml.language.IModInfo.ModVersion;
+
 public class ModInfo implements IModInfo
 {
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");

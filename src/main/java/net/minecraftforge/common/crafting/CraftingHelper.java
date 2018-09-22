@@ -111,11 +111,11 @@ public class CraftingHelper
     public static final IIngredientSerializer<CompoundIngredient> INGREDIENT_COMPOUND = register(new ResourceLocation("forge", "compound"), new CompoundIngredient.Serializer());
     public static final IIngredientSerializer<Ingredient> INGREDIENT_VANILLA = register(new ResourceLocation("minecraft", "item"), new IIngredientSerializer<Ingredient>() {
                         public Ingredient parse(PacketBuffer buffer) {
-                            return Ingredient.func_209357_a(Stream.generate(() -> new Ingredient.SingleItemList(buffer.readItemStack())).limit(buffer.readVarInt()));
+                            return Ingredient.fromItemListStream(Stream.generate(() -> new Ingredient.SingleItemList(buffer.readItemStack())).limit(buffer.readVarInt()));
                         }
 
                         public Ingredient parse(JsonObject json) {
-                           return Ingredient.func_209357_a(Stream.of(Ingredient.func_199803_a(json)));
+                           return Ingredient.fromItemListStream(Stream.of(Ingredient.deserializeItemList(json)));
                         }
 
                         public void write(PacketBuffer buffer, Ingredient ingredient) {
@@ -248,9 +248,9 @@ public class CraftingHelper
 
                 tmp.setTag("tag", nbt);
                 tmp.setString("id", itemName);
-                tmp.setInteger("Count", JsonUtils.getInt(json, "count", 1));
+                tmp.setInt("Count", JsonUtils.getInt(json, "count", 1));
 
-                return ItemStack.func_199557_a(tmp);
+                return ItemStack.read(tmp);
             }
             catch (CommandSyntaxException e)
             {
@@ -292,15 +292,15 @@ public class CraftingHelper
 
     public static void reloadConstants(IResourceManager manager) {
         Map<ResourceLocation, IItemList> ret = new HashMap<>();
-        for(ResourceLocation key : manager.func_199003_a("recipes", filename -> filename.equals("_constants.json")))
+        for(ResourceLocation key : manager.getAllResourceLocations("recipes", filename -> filename.equals("_constants.json")))
         {
             String path = key.getPath();
             if (!path.equals("recipes/_constants.json")) //Top level only
                 continue;
 
-            try (IResource iresource = manager.func_199002_a(key))
+            try (IResource iresource = manager.getResource(key))
             {
-                JsonObject[] elements = JsonUtils.gsonDeserialize(GSON, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), JsonObject[].class);
+                JsonObject[] elements = JsonUtils.fromJson(GSON, IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8), JsonObject[].class);
                 for (int x = 0; x < elements.length; x++)
                 {
                     JsonObject json = elements[x];
@@ -328,7 +328,7 @@ public class CraftingHelper
                             constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), new StackList(items));
                     }
                     else if (json.has("tag"))
-                        constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), Ingredient.func_199803_a(json));
+                        constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), Ingredient.deserializeItemList(json));
                     else if (json.has("item"))
                         constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), new StackList(Lists.newArrayList(getItemStack(JsonUtils.getJsonObject(json, "item"), true))));
                     else

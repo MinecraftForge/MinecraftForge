@@ -79,13 +79,13 @@ public final class ModelFluid implements IUnbakedModel
     }
 
     @Override
-    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> p_209559_2_)
+    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
     {
         return fluid.getOverlay() != null
                 ? ImmutableSet.of(fluid.getStill(), fluid.getFlowing(), fluid.getOverlay())
                 : ImmutableSet.of(fluid.getStill(), fluid.getFlowing());
     }
-    
+
     @Override
     public Collection<ResourceLocation> getOverrideLocations() {
         return Collections.emptyList();
@@ -112,7 +112,7 @@ public final class ModelFluid implements IUnbakedModel
         INSTANCE;
 
         @Override
-        public void func_195410_a(IResourceManager resourceManager) {}
+        public void onResourceManagerReload(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
@@ -229,7 +229,7 @@ public final class ModelFluid implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             if (side != null && state instanceof IExtendedBlockState)
             {
@@ -255,10 +255,10 @@ public final class ModelFluid implements IUnbakedModel
                 key <<= 1;
                 key |= 1;
 
-                return modelCache.getUnchecked(key).func_200117_a(state, side, rand);
+                return modelCache.getUnchecked(key).getQuads(state, side, rand);
             }
 
-            return super.func_200117_a(state, side, rand);
+            return super.getQuads(state, side, rand);
         }
     }
 
@@ -432,7 +432,7 @@ public final class ModelFluid implements IUnbakedModel
                     if(transformation.isPresent() && !transformation.get().isIdentity())
                     {
                         Vector4f vec = new Vector4f(data);
-                        transformation.get().getMatrix().transform(vec);
+                        transformation.get().getMatrixVec().transform(vec);
                         vec.get(data);
                     }
                     builder.put(e, data);
@@ -484,7 +484,7 @@ public final class ModelFluid implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             return side == null ? ImmutableList.of() : faceQuads.get(side);
         }
@@ -492,7 +492,7 @@ public final class ModelFluid implements IUnbakedModel
         @Override
         public ItemOverrideList getOverrides()
         {
-            return ItemOverrideList.NONE;
+            return ItemOverrideList.EMPTY;
         }
 
         @Override

@@ -82,7 +82,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
 
         RenderHelper.disableStandardItemLighting();
         GlStateManager.pushMatrix();
-        GlStateManager.rotate(180, 0, 0, 1);
+        GlStateManager.rotatef(180, 0, 0, 1);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
         builder.begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -95,7 +95,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         boolean empty = true;
         Random random = new Random();
         random.setSeed(42);
-        List<BakedQuad> quads = bakedModel.func_200117_a(null, null, random);
+        List<BakedQuad> quads = bakedModel.getQuads(null, null, random);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -108,7 +108,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         for(EnumFacing side : EnumFacing.values())
         {
             random.setSeed(42);
-            quads = bakedModel.func_200117_a(null, side, random);
+            quads = bakedModel.getQuads(null, side, random);
             if(!quads.isEmpty())
             {
                 if(empty) lighter.updateBlockInfo();

@@ -31,14 +31,14 @@ import net.minecraft.util.ResourceLocation;
 public interface ICustomModelLoader extends ISelectiveResourceReloadListener
 {
     @Override
-    void func_195410_a(IResourceManager resourceManager);
+    void onResourceManagerReload(IResourceManager resourceManager);
 
     @Override
     default void onResourceManagerReload(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate)
     {
         if (resourcePredicate.test(VanillaResourceType.MODELS))
         {
-            func_195410_a(resourceManager);
+            onResourceManagerReload(resourceManager);
         }
     }
 

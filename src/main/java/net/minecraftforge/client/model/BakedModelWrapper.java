@@ -43,9 +43,9 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     }
 
     @Override
-    public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
     {
-        return originalModel.func_200117_a(state, side, rand);
+        return originalModel.getQuads(state, side, rand);
     }
 
     @Override

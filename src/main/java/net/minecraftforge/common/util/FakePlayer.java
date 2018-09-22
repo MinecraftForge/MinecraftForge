@@ -38,7 +38,7 @@ public class FakePlayer extends EntityPlayerMP
 {
     public FakePlayer(WorldServer world, GameProfile name)
     {
-        super(world.getMinecraftServer(), world, name, new PlayerInteractionManager(world));
+        super(world.getServer(), world, name, new PlayerInteractionManager(world));
     }
 
     @Override public Vec3d getPositionVector(){ return new Vec3d(0, 0, 0); }
@@ -46,10 +46,10 @@ public class FakePlayer extends EntityPlayerMP
     @Override public void sendMessage(ITextComponent component) {}
     @Override public void addStat(StatBase par1StatBase, int par2){}
     //@Override public void openGui(Object mod, int modGuiId, World world, int x, int y, int z){}
-    @Override public boolean isEntityInvulnerable(DamageSource source){ return true; }
+    @Override public boolean isInvulnerableTo(DamageSource source){ return true; }
     @Override public boolean canAttackPlayer(EntityPlayer player){ return false; }
     @Override public void onDeath(DamageSource source){ return; }
-    @Override public void onUpdate(){ return; }
+    @Override public void tick(){ return; }
     @Override public Entity changeDimension(int dim, ITeleporter teleporter){ return this; }
     @Override public void handleClientSettings(CPacketClientSettings pkt){ return; }
 }

@@ -56,15 +56,15 @@ public class CommandSetDimension
     private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TextComponentTranslation("commands.forge.setdim.invalid.dim", dim));
     static ArgumentBuilder<CommandSource, ?> register()
     {
-        return Commands.func_197057_a("setdimension")
-            .requires(cs->cs.func_197034_c(2)) //permission
-            .then(Commands.func_197056_a("targets", EntityArgument.func_197093_b())
-                .then(Commands.func_197056_a("dim", IntegerArgumentType.integer())
-                    .suggests((ctx, builder) -> ISuggestionProvider.func_197013_a(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
-                    .then(Commands.func_197056_a("pos", BlockPosArgument.func_197276_a())
-                        .executes(ctx -> execute(ctx.getSource(), EntityArgument.func_197087_c(ctx, "targets"), IntegerArgumentType.getInteger(ctx, "dim"), BlockPosArgument.func_197274_b(ctx, "pos")))
+        return Commands.literal("setdimension")
+            .requires(cs->cs.hasPermissionLevel(2)) //permission
+            .then(Commands.argument("targets", EntityArgument.multipleEntities())
+                .then(Commands.argument("dim", IntegerArgumentType.integer())
+                    .suggests((ctx, builder) -> ISuggestionProvider.suggest(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
+                    .then(Commands.argument("pos", BlockPosArgument.blockPos())
+                        .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), IntegerArgumentType.getInteger(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), EntityArgument.func_197087_c(ctx, "targets"), IntegerArgumentType.getInteger(ctx, "dim"), new BlockPos(ctx.getSource().func_197036_d())))
+                    .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), IntegerArgumentType.getInteger(ctx, "dim"), new BlockPos(ctx.getSource().getPos())))
                 )
             );
     }
@@ -79,7 +79,7 @@ public class CommandSetDimension
             throw INVALID_DIMENSION.create(dim);
 
         final ITeleporter teleporter = new CommandTeleporter(pos);
-        entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.func_197030_a(new TextComponentTranslation("commands.forge.setdim.invalid.nochange", e.getDisplayName(), dim), true));
+        entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TextComponentTranslation("commands.forge.setdim.invalid.nochange", e.getDisplayName(), dim), true));
         entities.stream().filter(e -> e.dimension != dim).forEach(e -> e.changeDimension(dim, teleporter));
 
         return 0;
@@ -88,7 +88,7 @@ public class CommandSetDimension
     private static boolean checkEntity(Entity entity)
     {
         // use vanilla portal logic, try to avoid doing anything too silly
-        return entity.isRiding() || entity.isBeingRidden() || entity.isNonBoss();
+        return entity.isPassenger() || entity.isBeingRidden() || entity.isNonBoss();
     }
 
     private static class CommandTeleporter implements ITeleporter

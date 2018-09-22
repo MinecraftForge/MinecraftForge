@@ -44,7 +44,7 @@ public class WorldPersistenceHooks
     {
         if (EffectiveSide.get() == LogicalSide.SERVER)
         {
-            worldPersistenceHooks.forEach(wac->wac.readData(handler, worldInfo, tagCompound.getCompoundTag(wac.getModId())));
+            worldPersistenceHooks.forEach(wac->wac.readData(handler, worldInfo, tagCompound.getCompound(wac.getModId())));
         }
     }
 

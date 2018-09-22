@@ -57,8 +57,8 @@ class QueuedChunk {
         result.append(" x: " + x + NEW_LINE);
         result.append(" z: " + z + NEW_LINE);
         result.append(" world: " + world.getWorldInfo().getWorldName() + NEW_LINE);
-        result.append(" dimension: " + world.provider.getId() + NEW_LINE);
-        result.append(" provider: " + world.provider.getClass().getName() + NEW_LINE);
+        result.append(" dimension: " + world.dimension.getId() + NEW_LINE);
+        result.append(" provider: " + world.dimension.getClass().getName() + NEW_LINE);
         result.append("}");
 
         return result.toString();

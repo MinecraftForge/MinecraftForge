@@ -124,7 +124,7 @@ public class ChunkIOExecutor
         ChunkIOProvider task = tasks.get(key);
         if (task == null)
         {
-            LOGGER.warn("Attempted to dequeue chunk that wasn't queued? {} @ ({}, {})", world.provider.getId(), x, z);
+            LOGGER.warn("Attempted to dequeue chunk that wasn't queued? {} @ ({}, {})", world.dimension.getId(), x, z);
             return;
         }
 

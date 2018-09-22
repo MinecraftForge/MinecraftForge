@@ -59,13 +59,13 @@ public class GuiMultipleModsErrored extends GuiErrorBase
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         this.list.drawScreen(mouseX, mouseY, partialTicks);
         String missingMultipleModsText = I18n.format("fml.messages.mod.missing.multiple", missingModsExceptions.size());
         this.drawCenteredString(this.fontRenderer, missingMultipleModsText, this.width / 2, 10, 0xFFFFFF);
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 
     @Override
@@ -118,11 +118,11 @@ public class GuiMultipleModsErrored extends GuiErrorBase
             FontRenderer renderer = GuiMultipleModsErrored.this.fontRenderer;
             if (!missingModsExceptions.isEmpty())
             {
-                renderer.func_211126_b(I18n.format("fml.messages.mod.missing.dependencies.multiple.issues"), this.left, offset, 0xFFFFFF);
+                renderer.drawString(I18n.format("fml.messages.mod.missing.dependencies.multiple.issues"), this.left, offset, 0xFFFFFF);
                 offset += 15;
                 for (MissingModsException exception : missingModsExceptions)
                 {
-                    renderer.func_211126_b(exception.getModName() + ":", this.left, offset, 0xFFFFFF);
+                    renderer.drawString(exception.getModName() + ":", this.left, offset, 0xFFFFFF);
                     for (MissingModsException.MissingModInfo versionInfo : exception.getMissingModInfos())
                     {
                         ArtifactVersion acceptedVersion = versionInfo.getAcceptedVersion();
@@ -159,7 +159,7 @@ public class GuiMultipleModsErrored extends GuiErrorBase
                             message = I18n.format("fml.messages.mod.missing.dependencies.compatible.with", versionInfoText);
                         }
                         offset += 10;
-                        renderer.func_211126_b(message, this.left, offset, 0xEEEEEE);
+                        renderer.drawString(message, this.left, offset, 0xEEEEEE);
                     }
 
                     offset += 15;

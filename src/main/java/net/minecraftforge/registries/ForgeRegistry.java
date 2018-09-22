@@ -56,6 +56,13 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import net.minecraftforge.registries.IForgeRegistry.AddCallback;
+import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
+import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
+import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
+import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
+import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
+
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
@@ -782,7 +789,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             {
                 NBTTagCompound tag = new NBTTagCompound();
                 tag.setString("K", e.getKey().toString());
-                tag.setInteger("V", e.getValue());
+                tag.setInt("V", e.getValue());
                 ids.add(tag);
             });
             data.setTag("ids", ids);
@@ -825,21 +832,21 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 return ret;
             }
 
-            NBTTagList list = nbt.getTagList("ids", 10);
+            NBTTagList list = nbt.getList("ids", 10);
             list.forEach(e ->
             {
                 NBTTagCompound comp = (NBTTagCompound)e;
-                ret.ids.put(new ResourceLocation(comp.getString("K")), comp.getInteger("V"));
+                ret.ids.put(new ResourceLocation(comp.getString("K")), comp.getInt("V"));
             });
 
-            list = nbt.getTagList("aliases", 10);
+            list = nbt.getList("aliases", 10);
             list.forEach(e ->
             {
                 NBTTagCompound comp = (NBTTagCompound)e;
                 ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
             });
 
-            list = nbt.getTagList("overrides", 10);
+            list = nbt.getList("overrides", 10);
             list.forEach(e ->
             {
                 NBTTagCompound comp = (NBTTagCompound)e;
@@ -852,10 +859,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 ret.blocked.add(i);
             }
 
-            list = nbt.getTagList("dummied", 10); //10 - NBTTagCompound, Old format. New format is String list. For now we will just merge the old and new. TODO: Remove in 1.13
+            list = nbt.getList("dummied", 10); //10 - NBTTagCompound, Old format. New format is String list. For now we will just merge the old and new. TODO: Remove in 1.13
             list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagCompound)e).getString("K"))));
 
-            list = nbt.getTagList("dummied", 8); //8 - NBTTagString, New format, less redundant/verbose
+            list = nbt.getList("dummied", 8); //8 - NBTTagString, New format, less redundant/verbose
             list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagString)e).getString())));
 
             return ret;

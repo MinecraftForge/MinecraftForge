@@ -34,7 +34,7 @@ import net.minecraft.tileentity.TileEntity;
 public abstract class FastTESR<T extends TileEntity> extends TileEntityRenderer<T>
 {
     @Override
-    public final void func_199341_a(T te, double x, double y, double z, float partialTicks, int destroyStage)
+    public final void render(T te, double x, double y, double z, float partialTicks, int destroyStage)
     {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();

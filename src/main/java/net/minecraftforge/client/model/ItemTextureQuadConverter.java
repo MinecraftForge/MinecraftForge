@@ -80,8 +80,8 @@ public final class ItemTextureQuadConverter
      */
     public static List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color, int tint)
     {
-        int w = template.getIconWidth();
-        int h = template.getIconHeight();
+        int w = template.getWidth();
+        int h = template.getHeight();
         float wScale = 16f / (float)w;
         float hScale = 16f / (float)h;
         List<UnpackedBakedQuad> quads = Lists.newArrayList();
@@ -93,7 +93,7 @@ public final class ItemTextureQuadConverter
             for (int x = 0; x < w; x++)
             {
                 // current pixel
-                boolean isVisible = !template.func_195662_a(0, x, y);
+                boolean isVisible = !template.isPixelTransparent(0, x, y);
 
                 // no current quad but found a new one
                 if (start < 0 && isVisible)
@@ -111,7 +111,7 @@ public final class ItemTextureQuadConverter
                     {
                         for (int i = 0; i < w; i++)
                         {
-                            if (template.func_195662_a(0, i, y) != template.func_195662_a(0, i, endY))
+                            if (template.isPixelTransparent(0, i, y) != template.isPixelTransparent(0, i, endY))
                             {
                                 sameRow = false;
                                 break;
@@ -158,8 +158,8 @@ public final class ItemTextureQuadConverter
      */
     public static List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color, int tint)
     {
-        int w = template.getIconWidth();
-        int h = template.getIconHeight();
+        int w = template.getWidth();
+        int h = template.getHeight();
         float wScale = 16f / (float)w;
         float hScale = 16f / (float)h;
         List<UnpackedBakedQuad> quads = Lists.newArrayList();
@@ -171,7 +171,7 @@ public final class ItemTextureQuadConverter
             for (int y = 0; y < h; y++)
             {
                 // current pixel
-                boolean isVisible = !sprite.func_195662_a(0, x, y);
+                boolean isVisible = !sprite.isPixelTransparent(0, x, y);
 
                 // no current quad but found a new one
                 if (start < 0 && isVisible)
@@ -189,7 +189,7 @@ public final class ItemTextureQuadConverter
                     {
                         for (int i = 0; i < h; i++)
                         {
-                            if (sprite.func_195662_a(0, x, i) != sprite.func_195662_a(0, endX, i))
+                            if (sprite.isPixelTransparent(0, x, i) != sprite.isPixelTransparent(0, endX, i))
                             {
                                 sameColumn = false;
                                 break;
@@ -305,7 +305,7 @@ public final class ItemTextureQuadConverter
                         vec.y = y;
                         vec.z = z;
                         vec.w = 1;
-                        transform.getMatrix().transform(vec);
+                        transform.getMatrixVec().transform(vec);
                         builder.put(e, vec.x, vec.y, vec.z, vec.w);
                     }
                     break;

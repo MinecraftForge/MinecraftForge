@@ -37,22 +37,22 @@ public class TileFluidHandler extends TileEntity
     
     private final OptionalCapabilityInstance<IFluidHandler> holder = OptionalCapabilityInstance.of(() -> tank);
 
-    public TileFluidHandler(@Nonnull TileEntityType<?> p_i48289_1_)
+    public TileFluidHandler(@Nonnull TileEntityType<?> tileEntityTypeIn)
     {
-        super(p_i48289_1_);
+        super(tileEntityTypeIn);
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound tag)
+    public void read(NBTTagCompound tag)
     {
-        super.readFromNBT(tag);
+        super.read(tag);
         tank.readFromNBT(tag);
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound tag)
+    public NBTTagCompound write(NBTTagCompound tag)
     {
-        tag = super.writeToNBT(tag);
+        tag = super.write(tag);
         tank.writeToNBT(tag);
         return tag;
     }

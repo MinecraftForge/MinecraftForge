@@ -64,7 +64,7 @@ public final class ItemLayerModel implements IUnbakedModel
 
     public ItemLayerModel(ImmutableList<ResourceLocation> textures)
     {
-        this(textures, ItemOverrideList.NONE);
+        this(textures, ItemOverrideList.EMPTY);
     }
 
     public ItemLayerModel(ImmutableList<ResourceLocation> textures, ItemOverrideList overrides)
@@ -75,7 +75,7 @@ public final class ItemLayerModel implements IUnbakedModel
 
     public ItemLayerModel(ModelBlock model)
     {
-        this(getTextures(model), model.func_209568_a(model, ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter()));
+        this(getTextures(model), model.getOverrides(model, ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter()));
     }
 
     private static ImmutableList<ResourceLocation> getTextures(ModelBlock model)
@@ -87,17 +87,17 @@ public final class ItemLayerModel implements IUnbakedModel
         }
         return builder.build();
     }
-    
+
     @Override
-    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) 
+    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
     {
         return textures;
     }
-    
+
     @Override
-    public Collection<ResourceLocation> getOverrideLocations() 
+    public Collection<ResourceLocation> getOverrideLocations()
     {
-    	return Collections.emptyList();
+        return Collections.emptyList();
     }
 
     @Override
@@ -117,9 +117,9 @@ public final class ItemLayerModel implements IUnbakedModel
         }
         return new ItemLayerModel(builder.build(), overrides);
     }
-    
+
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean p_209558_4_, VertexFormat format) {
+    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format) {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         Optional<TRSRTransformation> transform = state.apply(Optional.empty());
         for(int i = 0; i < textures.size(); i++)
@@ -136,8 +136,8 @@ public final class ItemLayerModel implements IUnbakedModel
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
-        int uMax = sprite.getIconWidth();
-        int vMax = sprite.getIconHeight();
+        int uMax = sprite.getWidth();
+        int vMax = sprite.getHeight();
 
         FaceData faceData = new FaceData(uMax, vMax);
         boolean translucent = false;
@@ -343,8 +343,8 @@ public final class ItemLayerModel implements IUnbakedModel
     {
         final float eps = 1e-2f;
 
-        int width = sprite.getIconWidth();
-        int height = sprite.getIconHeight();
+        int width = sprite.getWidth();
+        int height = sprite.getHeight();
 
         float x0 = (float) u / width;
         float y0 = (float) v / height;
@@ -424,7 +424,7 @@ public final class ItemLayerModel implements IUnbakedModel
                     vec.y = y;
                     vec.z = z;
                     vec.w = 1;
-                    transform.get().getMatrix().transform(vec);
+                    transform.get().getMatrixVec().transform(vec);
                     builder.put(e, vec.x, vec.y, vec.z, vec.w);
                 }
                 else
@@ -455,7 +455,7 @@ public final class ItemLayerModel implements IUnbakedModel
         INSTANCE;
 
         @Override
-        public void func_195410_a(IResourceManager resourceManager) {}
+        public void onResourceManagerReload(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)

@@ -32,18 +32,18 @@ public class GuiConfirmation extends GuiNotification
     @Override
     public void initGui()
     {
-        this.buttonList.add(new GuiOptionButton(0, this.width / 2 - 155, this.height - 38, I18n.format("gui.yes"))
+        this.buttons.add(new GuiOptionButton(0, this.width / 2 - 155, this.height - 38, I18n.format("gui.yes"))
         {
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 GuiConfirmation.this.mc.displayGuiScreen(null);
                 query.setResult(true);
                 query.finish();
             }
         });
-        this.buttonList.add(new GuiOptionButton(1, this.width / 2 - 155 + 160, this.height - 38, I18n.format("gui.no"))
+        this.buttons.add(new GuiOptionButton(1, this.width / 2 - 155 + 160, this.height - 38, I18n.format("gui.no"))
         {
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 GuiConfirmation.this.mc.displayGuiScreen(null);
                 query.setResult(false);

@@ -61,15 +61,15 @@ public class NotificationModUpdateScreen extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         if (showNotification == null || !showNotification.shouldDraw() || ForgeMod.disableVersionCheck)
         {
             return;
         }
 
-        Minecraft.getMinecraft().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
-        GlStateManager.color(1, 1, 1, 1);
+        Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
+        GlStateManager.color4f(1, 1, 1, 1);
         GlStateManager.pushMatrix();
 
         int x = modButton.x;

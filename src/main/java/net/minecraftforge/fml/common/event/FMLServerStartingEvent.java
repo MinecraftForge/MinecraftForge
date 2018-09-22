@@ -38,6 +38,6 @@ public class FMLServerStartingEvent extends ServerLifecycleEvent
     }
 
     public CommandDispatcher<CommandSource> getCommandDispatcher() {
-        return server.func_195571_aL().func_197054_a();
+        return server.getCommandManager().getDispatcher();
     }
 }

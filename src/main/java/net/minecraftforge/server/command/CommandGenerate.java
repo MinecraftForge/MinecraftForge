@@ -48,18 +48,18 @@ class CommandGenerate
 {
     static ArgumentBuilder<CommandSource, ?> register()
     {
-        return Commands.func_197057_a("generate")
-            .requires(cs->cs.func_197034_c(4)) //permission
-            .then(Commands.func_197056_a("pos", BlockPosArgument.func_197276_a())
-                .then(Commands.func_197056_a("count", IntegerArgumentType.integer(1))
-                    .then(Commands.func_197056_a("dim", IntegerArgumentType.integer())
-                        .suggests((ctx, builder) -> ISuggestionProvider.func_197013_a(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
-                        .then(Commands.func_197056_a("interval", IntegerArgumentType.integer())
-                            .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.func_197274_b(ctx, "pos"), getInt(ctx, "count"), getInt(ctx, "dim"), getInt(ctx, "interval")))
+        return Commands.literal("generate")
+            .requires(cs->cs.hasPermissionLevel(4)) //permission
+            .then(Commands.argument("pos", BlockPosArgument.blockPos())
+                .then(Commands.argument("count", IntegerArgumentType.integer(1))
+                    .then(Commands.argument("dim", IntegerArgumentType.integer())
+                        .suggests((ctx, builder) -> ISuggestionProvider.suggest(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
+                        .then(Commands.argument("interval", IntegerArgumentType.integer())
+                            .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), getInt(ctx, "dim"), getInt(ctx, "interval")))
                         )
-                        .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.func_197274_b(ctx, "pos"), getInt(ctx, "count"), getInt(ctx, "dim"), -1))
+                        .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), getInt(ctx, "dim"), -1))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.func_197274_b(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().func_197023_e().provider.getId(), -1))
+                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().getWorld().dimension.getId(), -1))
                 )
             );
     }
@@ -74,7 +74,7 @@ class CommandGenerate
         BlockPos chunkpos = new BlockPos(pos.getX() >> 4, 0, pos.getZ() >> 4);
 
         ChunkGenWorker worker = new ChunkGenWorker(source, chunkpos, count, dim, interval);
-        source.func_197030_a(worker.getStartMessage(source), true);
+        source.sendFeedback(worker.getStartMessage(source), true);
         WorldWorkerManager.addWorker(worker);
         
         return 0;

@@ -52,10 +52,10 @@ public class GuiErrorBase extends GuiErrorScreen
     public void initGui()
     {
         super.initGui();
-        this.buttonList.clear();
-        this.buttonList.add(new GuiButton(10, 50, this.height - 38, this.width / 2 - 55, 20, translateOrDefault("fml.button.open.mods.folder", "Open Mods Folder"))
+        this.buttons.clear();
+        this.buttons.add(new GuiButton(10, 50, this.height - 38, this.width / 2 - 55, 20, translateOrDefault("fml.button.open.mods.folder", "Open Mods Folder"))
         {
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 try
                 {
@@ -69,9 +69,9 @@ public class GuiErrorBase extends GuiErrorScreen
             }
         });
         String openFileText = translateOrDefault("fml.button.open.file", "Open %s", logFile.getName());
-        this.buttonList.add(new GuiButton(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText)
+        this.buttons.add(new GuiButton(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20, openFileText)
         {
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 try
                 {
@@ -86,11 +86,11 @@ public class GuiErrorBase extends GuiErrorScreen
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
-        for (GuiButton button : buttonList)
+        for (GuiButton button : buttons)
         {
-            button.func_194828_a(mouseX, mouseY, partialTicks);
+            button.render(mouseX, mouseY, partialTicks);
         }
     }
 }

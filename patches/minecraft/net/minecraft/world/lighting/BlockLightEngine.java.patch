@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/lighting/BlockLightEngine.java
++++ b/net/minecraft/world/lighting/BlockLightEngine.java
+@@ -12,7 +12,7 @@
+ 
+    public void func_202677_a(WorldGenRegion p_202677_1_, IChunk p_202677_2_) {
+       for(BlockPos blockpos : p_202677_2_.func_201582_h()) {
+-         this.func_202667_a(p_202677_1_, blockpos, this.func_202670_c(p_202677_1_, blockpos));
++         this.func_202667_a(p_202677_1_, blockpos, this.func_202670_c((net.minecraft.world.IBlockReader)p_202677_1_, blockpos)); //Forge add typecast to fix obf issue.
+          this.func_202659_a(p_202677_2_.func_76632_l(), blockpos, this.func_202666_a(p_202677_1_, blockpos));
+       }
+ 

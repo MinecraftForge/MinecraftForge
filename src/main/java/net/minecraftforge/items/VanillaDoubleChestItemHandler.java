@@ -59,9 +59,9 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         if (world == null || pos == null || !world.isBlockLoaded(pos))
             return null; // Still loading
 
-        IBlockState state = chest.func_195044_w();
+        IBlockState state = chest.getBlockState();
 
-        EnumFacing[] horizontals = EnumFacing.HORIZONTALS;
+        EnumFacing[] horizontals = EnumFacing.BY_HORIZONTAL_INDEX;
         for (int i = horizontals.length - 1; i >= 0; i--)   // Use reverse order so we can return early
         {
             EnumFacing enumfacing = horizontals[i];
@@ -99,7 +99,7 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
     private TileEntityChest getOtherChest()
     {
         TileEntityChest tileEntityChest = get();
-        return tileEntityChest != null && !tileEntityChest.isInvalid() ? tileEntityChest : null;
+        return tileEntityChest != null && !tileEntityChest.isRemoved() ? tileEntityChest : null;
     }
 
     @Override
@@ -232,6 +232,6 @@ public class VanillaDoubleChestItemHandler extends WeakReference<TileEntityChest
         if (this == NO_ADJACENT_CHESTS_INSTANCE)
             return false;
         TileEntityChest tileEntityChest = get();
-        return tileEntityChest == null || tileEntityChest.isInvalid();
+        return tileEntityChest == null || tileEntityChest.isRemoved();
     }
 }

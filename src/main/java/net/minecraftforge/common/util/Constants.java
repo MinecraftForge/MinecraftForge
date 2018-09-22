@@ -29,7 +29,7 @@ public class Constants
      * NBT Tag type IDS, used when storing the nbt to disc, Should align with NBTBase.getId, 
      * table used in NBTBase.func_150283_g
      * 
-     * Main use is checking tag type in NBTTagCompound.func_150297_b(String, int)
+     * Main use is checking tag type in NBTTagCompound.contains(String, int)
      *
      */
     public static class NBT

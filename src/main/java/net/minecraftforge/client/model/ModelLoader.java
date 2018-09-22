@@ -162,45 +162,45 @@ public final class ModelLoader extends ModelBakery
             return bakedRegistry;
 
         isLoading = true;
-        
+
         missingModel = ModelLoaderRegistry.getMissingModel();
         stateModels.put(MODEL_MISSING, missingModel);
 
         final Set<ResourceLocation> textures = Sets.newHashSet(ModelLoaderRegistry.getTextures());
-        textures.remove(MissingTextureSprite.func_195675_b());
+        textures.remove(MissingTextureSprite.getLocation());
         textures.addAll(LOCATIONS_BUILTIN_TEXTURES);
 
-        textureMap.func_195426_a(resourceManager, textures);
-  
+        textureMap.stitch(resourceManager, textures);
+
         field_209607_C.forEach((p_209602_2_, p_209602_3_) -> {
            p_209602_3_.getValidStates().forEach((p_209601_3_) -> {
-              this.func_209594_a(map, BlockModelShapes.func_209553_a(p_209602_2_, p_209601_3_));
+              this.getUnbakedModel(map, BlockModelShapes.getModelLocation(p_209602_2_, p_209601_3_));
            });
         });
 
         for(ResourceLocation resourcelocation : Item.REGISTRY.getKeys()) {
-           this.func_209594_a(map, new ModelResourceLocation(resourcelocation, "inventory"));
+           this.getUnbakedModel(map, new ModelResourceLocation(resourcelocation, "inventory"));
         }
 
-        this.func_209594_a(map, new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
+        this.getUnbakedModel(map, new ModelResourceLocation("minecraft:trident_in_hand#inventory"));
         Set<String> set = Sets.<String>newLinkedHashSet();
         Set<ResourceLocation> set1 = (Set)map.values().stream().<ResourceLocation>flatMap((p_209595_2_) -> {
-           return p_209595_2_.func_209559_a(this::func_209597_a, set).stream();
+           return p_209595_2_.getTextures(this::getUnbakedModel, set).stream();
         }).collect(Collectors.toSet());
         set1.addAll(LOCATIONS_BUILTIN_TEXTURES);
         set.forEach((p_209588_0_) -> {
            LOGGER.warn("Unable to resolve texture reference: {}", (Object)p_209588_0_);
         });
-        this.textureMap.func_195426_a(this.resourceManager, set1);
+        this.textureMap.stitch(this.resourceManager, set1);
         map.forEach((p_209599_1_, p_209599_2_) -> {
-           IBakedModel ibakedmodel = p_209599_2_.func_209558_a(this::func_209597_a, this.textureMap::func_195424_a, ModelRotation.X0_Y0, false);
+           IBakedModel ibakedmodel = p_209599_2_.bake(this::getUnbakedModel, this.textureMap::getSprite, ModelRotation.X0_Y0, false);
            if (ibakedmodel != null) {
               this.bakedRegistry.putObject(p_209599_1_, ibakedmodel);
            }
 
         });
         return this.bakedRegistry;
-     
+
         IBakedModel missingBaked = missingModel.bake(defaultModelGetter(), defaultTextureGetter(), missingModel.getDefaultState(), false, DefaultVertexFormats.ITEM);
         Map<IUnbakedModel, IBakedModel> bakedModels = Maps.newHashMap();
         HashMultimap<IUnbakedModel, ModelResourceLocation> models = HashMultimap.create();
@@ -356,8 +356,8 @@ public final class ModelLoader extends ModelBakery
 
     private final class VanillaModelWrapper implements IUnbakedModel
     {
-    	private final FaceBakery faceBakery = new FaceBakery();
-    	
+        private final FaceBakery faceBakery = new FaceBakery();
+
         private final ResourceLocation location;
         private final ModelBlock model;
         private final boolean uvlock;
@@ -390,9 +390,9 @@ public final class ModelLoader extends ModelBakery
             }
             return ImmutableSet.copyOf(set);
         }
-        
+
         @Override
-        public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) 
+        public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
         {
             // setting parent here to make textures resolve properly
             if(model.getParentLocation() != null)
@@ -471,7 +471,7 @@ public final class ModelLoader extends ModelBakery
             {
                 return new ItemLayerModel(model).bake(modelGetter, bakedTextureGetter, perState, uvlock, format);
             }
-            if(model == ModelBakery.MODEL_ENTITY) return new BuiltInModel(transforms, model.func_209568_a(model, modelGetter, bakedTextureGetter));
+            if(model == ModelBakery.MODEL_ENTITY) return new BuiltInModel(transforms, model.getOverrides(model, modelGetter, bakedTextureGetter));
             return bakeNormal(model, perState, state, newTransforms, format, modelGetter, bakedTextureGetter, uvlock);
         }
 
@@ -479,7 +479,7 @@ public final class ModelLoader extends ModelBakery
         {
             final TRSRTransformation baseState = modelState.apply(Optional.empty()).orElse(TRSRTransformation.identity());
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
-            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.func_209568_a(model, modelGetter, bakedTextureGetter))).setTexture(particle);
+            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.getOverrides(model, modelGetter, bakedTextureGetter))).setTexture(particle);
             for(int i = 0; i < model.getElements().size(); i++)
             {
                 if(modelState.apply(Optional.of(Models.getHiddenModelPart(ImmutableList.of(Integer.toString(i))))).isPresent())
@@ -499,7 +499,7 @@ public final class ModelLoader extends ModelBakery
                 {
                     TextureAtlasSprite textureatlassprite1 = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName(e.getValue().texture)));
 
-                    if (e.getValue().cullFace == null || !TRSRTransformation.isInteger(transformation.getMatrix()))
+                    if (e.getValue().cullFace == null || !TRSRTransformation.isInteger(transformation.getMatrixVec()))
                     {
                         builder.addGeneralQuad(ModelBlock.makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), transformation, uvLocked));
                     }
@@ -510,12 +510,12 @@ public final class ModelLoader extends ModelBakery
                 }
             }
 
-            return new PerspectiveMapWrapper(builder.makeBakedModel(), perState)
+            return new PerspectiveMapWrapper(builder.build(), perState)
             {
                 private final ItemOverrideList overrides = new AnimationItemOverrideList(VanillaModelWrapper.this, modelState, format, bakedTextureGetter, super.getOverrides());
 
                 @Override
-                public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+                public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
                 {
                     if(state instanceof IExtendedBlockState)
                     {
@@ -526,11 +526,11 @@ public final class ModelLoader extends ModelBakery
                             IExtendedBlockState newExState = (IExtendedBlockState) exState.withProperty(Properties.AnimationProperty, null);
                             if(newState != null)
                             {
-                                return VanillaModelWrapper.this.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(modelState, newState), uvlock, format).func_200117_a(newExState, side, rand);
+                                return VanillaModelWrapper.this.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(modelState, newState), uvlock, format).getQuads(newExState, side, rand);
                             }
                         }
                     }
-                    return super.func_200117_a(state, side, rand);
+                    return super.getQuads(state, side, rand);
                 }
 
                 @Override
@@ -675,7 +675,7 @@ public final class ModelLoader extends ModelBakery
                     ModelLoaderRegistry.getModelOrMissing(location);
                 }
                 //FMLLog.getLogger().error("Exception resolving indirect dependencies for model" + loc, e);
-                textures.addAll(model.func_209559_a(ModelLoader.defaultModelGetter(), new HashSet<>())); // Kick this, just in case.
+                textures.addAll(model.getTextures(ModelLoader.defaultModelGetter(), new HashSet<>())); // Kick this, just in case.
 
                 models.add(model);
 
@@ -703,15 +703,15 @@ public final class ModelLoader extends ModelBakery
             this.models = models;
             this.defaultState = defaultState;
         }
-        
+
         @Override
-        public Collection<ResourceLocation> getOverrideLocations() 
+        public Collection<ResourceLocation> getOverrideLocations()
         {
             return ImmutableList.copyOf(locations);
         }
-        
+
         @Override
-        public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_)
+        public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
         {
             return ImmutableSet.copyOf(textures);
         }
@@ -734,7 +734,7 @@ public final class ModelLoader extends ModelBakery
                 IUnbakedModel model = models.get(i);
                 builder.add(model.bake(modelGetter, bakedTextureGetter, MultiModelState.getPartState(state, model, i), uvlock, format), variants.get(i).getWeight());
             }
-            return builder.func_209614_a();
+            return builder.build();
         }
 
         @Override
@@ -757,7 +757,7 @@ public final class ModelLoader extends ModelBakery
             for(int i = 0; i < this.variants.size(); i++)
             {
                 IUnbakedModel retextured = this.models.get(i).retexture(textures);
-                modelTextures.addAll(retextured.func_209559_a(ModelLoader.defaultModelGetter(), new HashSet<>()));
+                modelTextures.addAll(retextured.getTextures(ModelLoader.defaultModelGetter(), new HashSet<>()));
                 retexturedModels.add(retextured);
                 builder.add(Pair.of(retextured, this.variants.get(i).getState()));
             }
@@ -850,7 +850,7 @@ public final class ModelLoader extends ModelBakery
 
         // NOOP, handled in loader
         @Override
-        public void func_195410_a(IResourceManager resourceManager) {}
+        public void onResourceManagerReload(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
@@ -887,17 +887,17 @@ public final class ModelLoader extends ModelBakery
             return "VanillaLoader.INSTANCE";
         }
     }
-    
+
     // Temporary to compile things
     public static final class White {
-    	public static final ResourceLocation LOCATION = new ResourceLocation("white");
-    	public static final TextureAtlasSprite INSTANCE = MissingTextureSprite.func_195677_a();
+        public static final ResourceLocation LOCATION = new ResourceLocation("white");
+        public static final TextureAtlasSprite INSTANCE = MissingTextureSprite.getSprite();
     }
 
     /**
      * 16x16 pure white sprite.
      */
-    /*/ TODO Custom TAS 
+    /*/ TODO Custom TAS
     public static final class White extends TextureAtlasSprite
     {
         public static final ResourceLocation LOCATION = new ResourceLocation("white");
@@ -955,7 +955,7 @@ public final class ModelLoader extends ModelBakery
      */
     public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
     {
-        IBakedModel missingModel = modelRegistry.getObject(MODEL_MISSING);
+        IBakedModel missingModel = modelRegistry.get(MODEL_MISSING);
         for(Map.Entry<ResourceLocation, Exception> entry : loadingExceptions.entrySet())
         {
             // ignoring pure ResourceLocation arguments, all things we care about pass ModelResourceLocation
@@ -963,23 +963,23 @@ public final class ModelLoader extends ModelBakery
             {
                 LOGGER.debug(MODELLOADING, ()-> new ModelLoaderErrorMessage((ModelResourceLocation)entry.getKey(), entry.getValue()));
                 final ModelResourceLocation location = (ModelResourceLocation)entry.getKey();
-                final IBakedModel model = modelRegistry.getObject(location);
+                final IBakedModel model = modelRegistry.get(location);
                 if(model == null)
                 {
-                    modelRegistry.putObject(location, missingModel);
+                    modelRegistry.put(location, missingModel);
                 }
             }
         }
         for(ModelResourceLocation missing : missingVariants)
         {
-            IBakedModel model = modelRegistry.getObject(missing);
+            IBakedModel model = modelRegistry.get(missing);
             if(model == null || model == missingModel)
             {
                 LOGGER.debug(MODELLOADING, ()-> new ModelLoaderErrorMessage(missing, null));
             }
             if(model == null)
             {
-                modelRegistry.putObject(missing, missingModel);
+                modelRegistry.put(missing, missingModel);
             }
         }
         loadingExceptions.clear();
@@ -1047,7 +1047,7 @@ public final class ModelLoader extends ModelBakery
     {
         for (Entry<Pair<IRegistryDelegate<Item>, Integer>, ModelResourceLocation> e : customModels.entrySet())
         {
-            mesher.func_199311_a(e.getKey().getLeft().get(), e.getValue());
+            mesher.register(e.getKey().getLeft().get(), e.getValue());
         }
     }
 */
@@ -1058,10 +1058,10 @@ public final class ModelLoader extends ModelBakery
         @Override
         public TextureAtlasSprite apply(ResourceLocation location)
         {
-            return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+            return Minecraft.getInstance().getTextureMap().getAtlasSprite(location.toString());
         }
     }
-    
+
     private static final Function<ResourceLocation, IUnbakedModel> DEFAULT_MODEL_GETTER = ModelLoaderRegistry::getModelOrMissing;
 
     /**
@@ -1071,10 +1071,10 @@ public final class ModelLoader extends ModelBakery
     {
         return DefaultTextureGetter.INSTANCE;
     }
-    
+
     public static Function<ResourceLocation, IUnbakedModel> defaultModelGetter()
     {
-    	return DEFAULT_MODEL_GETTER;
+        return DEFAULT_MODEL_GETTER;
     }
 
     protected static enum VariantLoader implements ICustomModelLoader
@@ -1090,7 +1090,7 @@ public final class ModelLoader extends ModelBakery
 
         // NOOP, handled in loader
         @Override
-        public void func_195410_a(IResourceManager resourceManager) {}
+        public void onResourceManagerReload(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)
@@ -1101,7 +1101,7 @@ public final class ModelLoader extends ModelBakery
         @Override
         public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
         {
-            return loader.func_209597_a(modelLocation);
+            return loader.getUnbakedModel(modelLocation);
         }
 
         @Override

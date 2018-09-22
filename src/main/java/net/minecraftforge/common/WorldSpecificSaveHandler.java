@@ -63,7 +63,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
     @Override public IPlayerFileData getPlayerNBTManager() { return parent.getPlayerNBTManager(); }
     @Override public void flush() { parent.flush(); }
     @Override public File getWorldDirectory() { return parent.getWorldDirectory(); }
-    @Override public DataFixer func_197718_i() { return parent.func_197718_i(); }
+    @Override public DataFixer getFixer() { return parent.getFixer(); }
 
     @Override
     public File getMapFileFromName(String name)
@@ -76,7 +76,7 @@ public class WorldSpecificSaveHandler implements ISaveHandler
         File file = new File(dataDir, name + ".dat");
         if (!file.exists())
         {
-            switch (world.provider.getId())
+            switch (world.dimension.getId())
             {
                 case -1:
                     if (name.equalsIgnoreCase("FORTRESS")) copyFile(name, file);

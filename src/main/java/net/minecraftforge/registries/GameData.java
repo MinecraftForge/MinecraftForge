@@ -71,6 +71,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
+
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -356,7 +358,7 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            Block ret = new BlockDummyAir(Block.Builder.func_200945_a(Material.AIR));
+            Block ret = new BlockDummyAir(Block.Builder.create(Material.AIR));
             GameData.forceRegistryName(ret, key);
             return ret;
         }
@@ -386,7 +388,7 @@ public class GameData
             {
                 @SuppressWarnings("unchecked")
                 Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
-                ((ItemBlock)item).func_195946_a(blockToItem, item);
+                ((ItemBlock)item).addToBlockToItemMap(blockToItem, item);
             }
         }
 

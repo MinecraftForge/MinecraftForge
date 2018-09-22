@@ -56,13 +56,13 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
         {
             return;
         }
-        if(blockRenderer == null) blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        if(blockRenderer == null) blockRenderer = Minecraft.getInstance().getBlockRendererDispatcher();
         BlockPos pos = te.getPos();
         IWorldReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
         IBlockState state = world.getBlockState(pos);
-        if(state.getBlock().getBlockState().getProperties().contains(Properties.StaticProperty))
+        if(state.getBlock().getStateContainer().getProperties().contains(Properties.StaticProperty))
         {
-            state = state.func_206870_a(Properties.StaticProperty, false);
+            state = state.with(Properties.StaticProperty, false);
         }
         if(state instanceof IExtendedBlockState)
         {
@@ -76,12 +76,12 @@ public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements 
                         handleEvents(te, time, pair.getRight());
 
                         // TODO: caching?
-                        IBakedModel model = blockRenderer.getBlockModelShapes().getModelForState(exState.getClean());
+                        IBakedModel model = blockRenderer.getBlockModelShapes().getModel(exState.getClean());
                         IExtendedBlockState animState = (IExtendedBlockState) exState.withProperty(Properties.AnimationProperty, pair.getLeft());
 
                         renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
 
-                        blockRenderer.getBlockModelRenderer().func_199324_a(world, model, animState, pos, renderer, false, new Random(), 42);
+                        blockRenderer.getBlockModelRenderer().renderModel(world, model, animState, pos, renderer, false, new Random(), 42);
                     });
             }
         }

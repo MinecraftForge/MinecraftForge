@@ -88,7 +88,7 @@ public class PerspectiveMapWrapper implements IBakedModel
         TRSRTransformation tr = transforms.getOrDefault(cameraTransformType, TRSRTransformation.identity());
         if (!tr.isIdentity())
         {
-            return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrix());
+            return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrixVec());
         }
         return Pair.of(model, null);
     }
@@ -98,7 +98,7 @@ public class PerspectiveMapWrapper implements IBakedModel
         TRSRTransformation tr = state.apply(Optional.of(cameraTransformType)).orElse(TRSRTransformation.identity());
         if (!tr.isIdentity())
         {
-            return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrix());
+            return Pair.of(model, TRSRTransformation.blockCornerToCenter(tr).getMatrixVec());
         }
         return Pair.of(model, null);
     }
@@ -110,7 +110,7 @@ public class PerspectiveMapWrapper implements IBakedModel
     @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
     @SuppressWarnings("deprecation")
     @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
-    @Override public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand) { return parent.func_200117_a(state, side, rand); }
+    @Override public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand) { return parent.getQuads(state, side, rand); }
     @Override public ItemOverrideList getOverrides() { return parent.getOverrides(); }
 
     @Override

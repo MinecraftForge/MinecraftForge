@@ -40,6 +40,6 @@ public class GuiMessageDialog extends GuiDisconnected
     public void initGui()
     {
         super.initGui();
-        buttonList.get(0).displayString = I18n.format(buttonText);
+        buttons.get(0).displayString = I18n.format(buttonText);
     }
 }

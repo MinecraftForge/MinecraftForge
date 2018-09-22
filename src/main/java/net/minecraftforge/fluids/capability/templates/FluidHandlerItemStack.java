@@ -73,24 +73,24 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     @Nullable
     public FluidStack getFluid()
     {
-        NBTTagCompound tagCompound = container.getTagCompound();
+        NBTTagCompound tagCompound = container.getTag();
         if (tagCompound == null || !tagCompound.hasKey(FLUID_NBT_KEY))
         {
             return null;
         }
-        return FluidStack.loadFluidStackFromNBT(tagCompound.getCompoundTag(FLUID_NBT_KEY));
+        return FluidStack.loadFluidStackFromNBT(tagCompound.getCompound(FLUID_NBT_KEY));
     }
 
     protected void setFluid(FluidStack fluid)
     {
-        if (!container.hasTagCompound())
+        if (!container.hasTag())
         {
-            container.setTagCompound(new NBTTagCompound());
+            container.setTag(new NBTTagCompound());
         }
 
         NBTTagCompound fluidTag = new NBTTagCompound();
         fluid.writeToNBT(fluidTag);
-        container.getTagCompound().setTag(FLUID_NBT_KEY, fluidTag);
+        container.getTag().setTag(FLUID_NBT_KEY, fluidTag);
     }
 
     @Override
@@ -200,7 +200,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
      */
     protected void setContainerToEmpty()
     {
-        container.getTagCompound().removeTag(FLUID_NBT_KEY);
+        container.getTag().removeTag(FLUID_NBT_KEY);
     }
 
     @Override

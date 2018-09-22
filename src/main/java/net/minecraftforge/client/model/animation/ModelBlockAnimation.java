@@ -71,8 +71,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class ModelBlockAnimation
 {
-	private static final Logger LOGGER = LogManager.getLogger();
-	
+    private static final Logger LOGGER = LogManager.getLogger();
+
     private final ImmutableMap<String, ImmutableMap<String, float[]>> joints;
     private final ImmutableMap<String, MBClip> clips;
     private transient ImmutableMultimap<Integer, MBJointWeight> jointIndexMap;
@@ -534,7 +534,7 @@ public class ModelBlockAnimation
                     if(trOp.isPresent() && !trOp.get().isIdentity())
                     {
                         float w = info.getWeights().get(i)[0];
-                        tmp = trOp.get().getMatrix();
+                        tmp = trOp.get().getMatrixVec();
                         tmp.mul(w);
                         m.add(tmp);
                         weight += w;
@@ -557,9 +557,9 @@ public class ModelBlockAnimation
     {
         try
         {
-            try (IResource resource = manager.func_199002_a(armatureLocation))
+            try (IResource resource = manager.getResource(armatureLocation))
             {
-                ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.func_199027_b(), StandardCharsets.UTF_8), ModelBlockAnimation.class);
+                ModelBlockAnimation mba = mbaGson.fromJson(new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8), ModelBlockAnimation.class);
                 //String json = mbaGson.toJson(mba);
                 return mba;
             }

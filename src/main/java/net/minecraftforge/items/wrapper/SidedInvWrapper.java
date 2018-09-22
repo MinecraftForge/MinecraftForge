@@ -137,7 +137,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 stack = stack.copy();
                 if (!simulate)
                 {
-                    ItemStack copy = stack.splitStack(m);
+                    ItemStack copy = stack.split(m);
                     copy.grow(stackInSlot.getCount());
                     setInventorySlotContents(slot1, copy);
                     return stack;
@@ -161,7 +161,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
                 stack = stack.copy();
                 if (!simulate)
                 {
-                    setInventorySlotContents(slot1, stack.splitStack(m));
+                    setInventorySlotContents(slot1, stack.split(m));
                     return stack;
                 }
                 else

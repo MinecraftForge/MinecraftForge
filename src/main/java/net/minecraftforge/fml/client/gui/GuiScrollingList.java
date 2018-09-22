@@ -198,8 +198,8 @@ public abstract class GuiScrollingList
         int viewHeight = this.bottom - this.top;
         int border = 4;
 
-        Minecraft minecraft = Minecraft.getMinecraft();
-        if (minecraft.mouseHelper.func_198030_b())
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.mouseHelper.isLeftDown())
         {
             if (this.initialMouseClickY == -1.0F)
             {
@@ -261,11 +261,11 @@ public abstract class GuiScrollingList
         Tessellator tess = Tessellator.getInstance();
         BufferBuilder worldr = tess.getBuffer();
 
-        MainWindow window = client.field_195558_d;
-        double scaleW = window.func_198107_o();
-        double scaleH = window.func_198087_p();
+        MainWindow window = client.mainWindow;
+        double scaleW = window.getScaledWidth();
+        double scaleH = window.getScaledHeight();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor((int) (left * scaleW), (int) (window.func_198107_o() - (bottom * scaleH)),
+        GL11.glScissor((int) (left * scaleW), (int) (window.getScaledWidth() - (bottom * scaleH)),
             (int) (listWidth * scaleW), (int) (viewHeight * scaleH));
 
         if (this.client.world != null)
@@ -276,8 +276,8 @@ public abstract class GuiScrollingList
         {
             GlStateManager.disableLighting();
             GlStateManager.disableFog();
-            this.client.renderEngine.bindTexture(Gui.OPTIONS_BACKGROUND);
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            this.client.textureManager.bindTexture(Gui.OPTIONS_BACKGROUND);
+            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             final float scale = 32.0F;
             worldr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
             worldr.pos(this.left, this.bottom, 0.0D).tex(this.left / scale, (this.bottom + (int) this.scrollDistance) / scale).color(0x20, 0x20, 0x20, 0xFF).endVertex();
@@ -305,7 +305,7 @@ public abstract class GuiScrollingList
                 {
                     int min = this.left;
                     int max = entryRight;
-                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                     GlStateManager.disableTexture2D();
                     worldr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
                     worldr.pos(min, slotTop + slotBuffer + 2, 0).tex(0, 1).color(0x80, 0x80, 0x80, 0xFF).endVertex();
@@ -324,7 +324,7 @@ public abstract class GuiScrollingList
             }
         }
 
-        GlStateManager.disableDepth();
+        GlStateManager.disableDepthTest();
 
         int extraHeight = (this.getContentHeight() + border) - viewHeight;
         if (extraHeight > 0)
@@ -366,7 +366,7 @@ public abstract class GuiScrollingList
         this.drawScreen(mouseX, mouseY);
         GlStateManager.enableTexture2D();
         GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.enableAlpha();
+        GlStateManager.enableAlphaTest();
         GlStateManager.disableBlend();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }

@@ -79,7 +79,7 @@ public class ModelLoaderRegistry
     public static void registerLoader(ICustomModelLoader loader)
     {
         loaders.add(loader);
-        ((IReloadableResourceManager) Minecraft.getMinecraft().func_195551_G()).func_199006_a(loader);
+        ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
     }
 
     public static boolean loaded(ResourceLocation location)
@@ -174,7 +174,7 @@ public class ModelLoaderRegistry
             {
                 throw new LoaderException(String.format("Loader %s returned null while loading model %s", accepted, location));
             }
-            textures.addAll(model.func_209559_a(ModelLoader.defaultModelGetter(), new HashSet<>()));
+            textures.addAll(model.getTextures(ModelLoader.defaultModelGetter(), new HashSet<>()));
         }
         finally
         {
@@ -237,7 +237,7 @@ public class ModelLoaderRegistry
     {
         //IModel model =  new FancyMissingModel(ExceptionUtils.getStackTrace(cause).replaceAll("\\t", "    "));
         IUnbakedModel model = new FancyMissingModel(getMissingModel(), location.toString());
-        textures.addAll(model.func_209559_a(null, null));
+        textures.addAll(model.getTextures(null, null));
         return model;
     }
 

@@ -116,7 +116,7 @@ public class GuiModList extends GuiScreen
         }
 
         @Override
-        public void func_194829_a(double p_194829_1_, double p_194829_3_)
+        public void onClick(double mouseX, double mouseY)
         {
             GuiModList.this.sortType = this.type;
             resortMods();
@@ -166,13 +166,13 @@ public class GuiModList extends GuiScreen
 
         void setInfo(Info info)
         {
-            this.func_195086_c();
-            this.func_195085_a(info);
+            this.clearEntries();
+            this.addEntry(info);
         }
 
         public void clear()
         {
-            this.func_195086_c();
+            this.clearEntries();
         }
     }
     @Override
@@ -191,22 +191,22 @@ public class GuiModList extends GuiScreen
 
         this.addButton(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")){
             @Override
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 GuiModList.this.mc.displayGuiScreen(GuiModList.this.mainMenu);
             }
         });
         this.addButton(this.configButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, I18n.format("fml.menu.mods.config")){
             @Override
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 GuiModList.this.displayModConfig();
             }
         });
 
         search = new GuiTextField(0, getFontRenderer(), 12, modList.bottom + 17, modList.width - 4, 14);
-        field_195124_j.add(search);
-        field_195124_j.add(modList);
+        children.add(search);
+        children.add(modList);
         search.setFocused(true);
         search.setCanLoseFocus(true);
 
@@ -235,9 +235,9 @@ public class GuiModList extends GuiScreen
     }
 
     @Override
-    public void updateScreen()
+    public void tick()
     {
-        search.updateCursorCounter();
+        search.tick();
 
         if (!search.getText().equals(lastFilterText))
         {
@@ -269,7 +269,7 @@ public class GuiModList extends GuiScreen
 
     private void resortMods()
     {
-        for (GuiButton b : buttonList)
+        for (GuiButton b : buttons)
         {
             if (b instanceof SortButton) {
                 b.enabled = sortType.button != b;
@@ -279,18 +279,18 @@ public class GuiModList extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.modList.drawScreen(mouseX, mouseY, partialTicks);
         this.modInfo.drawScreen(mouseX, mouseY, partialTicks);
 
         int left = ((this.width - this.listWidth - 38) / 2) + this.listWidth + 30;
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
         int x = ((10 + modList.right) / 2) - (getFontRenderer().getStringWidth(text) / 2);
-        getFontRenderer().func_211126_b(text, x, modList.bottom + 5, 0xFFFFFF);
-        this.search.func_195608_a(mouseX, mouseY, partialTicks);
+        getFontRenderer().drawString(text, x, modList.bottom + 5, 0xFFFFFF);
+        this.search.drawTextField(mouseX, mouseY, partialTicks);
     }
 
     Minecraft getMinecraftInstance()
@@ -341,10 +341,10 @@ public class GuiModList extends GuiScreen
                 NativeImage logo = null;
                 InputStream logoResource = getClass().getResourceAsStream(logoFile);
                 if (logoResource != null)
-                    logo = NativeImage.func_195713_a(logoResource);
+                    logo = NativeImage.read(logoResource);
                 if (logo != null)
                 {
-                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Dimension(logo.func_195702_a(), logo.func_195714_b()));
+                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Dimension(logo.getWidth(), logo.getHeight()));
                 }
             }
             catch (IOException e) { }
@@ -396,7 +396,7 @@ public class GuiModList extends GuiScreen
 
         public Info(GuiListExtended<Info> parent, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims)
         {
-            this.field_195004_a = parent;
+            this.list = parent;
             this.lines    = resizeContent(lines);
             this.logoPath = logoPath;
             this.logoDims = logoDims;
@@ -415,7 +415,7 @@ public class GuiModList extends GuiScreen
 
 //                ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
                 ITextComponent chat = new TextComponentString(line);
-                int maxTextLength = this.func_195002_d() - 8;
+                int maxTextLength = this.getX() - 8;
                 if (maxTextLength >= 0)
                 {
                     ret.addAll(GuiUtilRenderComponents.splitText(chat, maxTextLength, GuiModList.this.fontRenderer, false, true));
@@ -426,10 +426,10 @@ public class GuiModList extends GuiScreen
 
 
         @Override
-        public void func_194999_a(int p_194999_1_, int p_194999_2_, int p_194999_3_, int p_194999_4_, boolean p_194999_5_, float p_194999_6_)
+        public void drawEntry(int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
         {
-            int top = this.func_195001_c();
-            int left = this.func_195002_d();
+            int top = this.getY();
+            int left = this.getX();
 /*
             int top = this.
 
@@ -457,7 +457,7 @@ public class GuiModList extends GuiScreen
                 {
                     GlStateManager.enableBlend();
                     GuiModList.this.fontRenderer.drawStringWithShadow(line.getFormattedText(), left + 4, top, 0xFFFFFF);
-                    GlStateManager.disableAlpha();
+                    GlStateManager.disableAlphaTest();
                     GlStateManager.disableBlend();
                 }
                 top += fontRenderer.FONT_HEIGHT + 1;

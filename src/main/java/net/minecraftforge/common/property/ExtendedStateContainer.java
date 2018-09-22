@@ -99,9 +99,9 @@ public class ExtendedStateContainer<O, S extends IExtendedState<S>> extends Stat
 
         @Override
         @Nonnull
-        public <T extends Comparable<T>, V extends T> S func_206870_a(@Nonnull IProperty<T> property, @Nonnull V value)
+        public <T extends Comparable<T>, V extends T> S with(@Nonnull IProperty<T> property, @Nonnull V value)
         {
-            S clean = super.func_206870_a(property, value);
+            S clean = super.with(property, value);
             if (clean == this.cleanState) {
                 return (S) this;
             }
@@ -111,7 +111,7 @@ public class ExtendedStateContainer<O, S extends IExtendedState<S>> extends Stat
                 return clean;
             }
 
-            return (S) new ExtendedStateHolder(field_206876_a, ((IStateHolder)clean).func_206871_b(), unlistedProperties, this.cleanState);
+            return (S) new ExtendedStateHolder(object, ((IStateHolder)clean).getValues(), unlistedProperties, this.cleanState);
         }
 
         @Override
@@ -128,7 +128,7 @@ public class ExtendedStateContainer<O, S extends IExtendedState<S>> extends Stat
             }
             if (!property.isValid(value))
             {
-                throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on object " + field_206876_a + ", it is not an allowed value");
+                throw new IllegalArgumentException("Cannot set unlisted property " + property + " to " + value + " on object " + object + ", it is not an allowed value");
             }
             boolean clean = true;
             ImmutableMap.Builder<IUnlistedProperty<?>, Optional<?>> builder = ImmutableMap.builder();
@@ -143,7 +143,7 @@ public class ExtendedStateContainer<O, S extends IExtendedState<S>> extends Stat
             { // no dynamic properties, lookup normal state
                 return (S) cleanState;
             }
-            return (S) new ExtendedStateHolder(field_206876_a, func_206871_b(), builder.build(), this.cleanState);
+            return (S) new ExtendedStateHolder(object, getValues(), builder.build(), this.cleanState);
         }
 
         @Override

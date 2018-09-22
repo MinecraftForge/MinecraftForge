@@ -77,7 +77,7 @@ public final class MultiLayerModel implements IUnbakedModel
     }
     
     @Override
-    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) 
+    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors) 
     {
     	return Collections.emptyList();
     }
@@ -154,7 +154,7 @@ public final class MultiLayerModel implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
             if (layer == null)
@@ -162,12 +162,12 @@ public final class MultiLayerModel implements IUnbakedModel
                 ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
                 for (IBakedModel model : models.values())
                 {
-                    builder.addAll(model.func_200117_a(state, side, rand));
+                    builder.addAll(model.getQuads(state, side, rand));
                 }
                 return builder.build();
             }
             // assumes that child model will handle this state properly. FIXME?
-            return models.getOrDefault(Optional.of(layer), missing).func_200117_a(state, side, rand);
+            return models.getOrDefault(Optional.of(layer), missing).getQuads(state, side, rand);
         }
 
         @Override
@@ -209,7 +209,7 @@ public final class MultiLayerModel implements IUnbakedModel
         @Override
         public ItemOverrideList getOverrides()
         {
-            return ItemOverrideList.NONE;
+            return ItemOverrideList.EMPTY;
         }
     }
 
@@ -218,7 +218,7 @@ public final class MultiLayerModel implements IUnbakedModel
         INSTANCE;
 
         @Override
-        public void func_195410_a(IResourceManager resourceManager) {}
+        public void onResourceManagerReload(IResourceManager resourceManager) {}
 
         @Override
         public boolean accepts(ResourceLocation modelLocation)

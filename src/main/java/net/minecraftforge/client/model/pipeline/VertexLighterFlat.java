@@ -109,7 +109,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
 
     private static VertexFormat withNormal(VertexFormat format)
     {
-        if (format == null || format.func_207751_b()) return format;
+        if (format == null || format.hasNormal()) return format;
         return new VertexFormat(format).addElement(NORMAL_4F);
     }
 

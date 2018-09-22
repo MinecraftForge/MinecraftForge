@@ -52,7 +52,7 @@ public class ResourcePackLoader
 
     @SuppressWarnings("unchecked")
     public static <T extends ResourcePackInfo> T getResourcePackInfo(String modId) {
-        return (T)resourcePackList.func_198981_a(modId);
+        return (T)resourcePackList.getPackInfo(modId);
     }
 
     public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks) {
@@ -63,13 +63,13 @@ public class ResourcePackLoader
         forgePack = Files.isDirectory(FMLLoader.getForgePath()) ?
                 new FolderPack(FMLLoader.getForgePath().toFile()) :
                 new FilePack(FMLLoader.getForgePath().toFile());
-        resourcePacks.func_198982_a(new ModPackFinder());
+        resourcePacks.addPackFinder(new ModPackFinder());
     }
 
     private static class ModPackFinder implements net.minecraft.resources.IPackFinder
     {
         @Override
-        public <T extends ResourcePackInfo> void func_195730_a(Map<String, T> packList, ResourcePackInfo.IFactory<T> factory)
+        public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packList, ResourcePackInfo.IFactory<T> factory)
         {
             packList.put("forge", ResourcePackInfo.func_195793_a("forge", true, ()->forgePack, factory, ResourcePackInfo.Priority.BOTTOM));
         }

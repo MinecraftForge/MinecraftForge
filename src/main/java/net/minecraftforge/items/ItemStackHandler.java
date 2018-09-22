@@ -179,30 +179,30 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
             if (!stacks.get(i).isEmpty())
             {
                 NBTTagCompound itemTag = new NBTTagCompound();
-                itemTag.setInteger("Slot", i);
-                stacks.get(i).writeToNBT(itemTag);
+                itemTag.setInt("Slot", i);
+                stacks.get(i).write(itemTag);
                 nbtTagList.add(itemTag);
             }
         }
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setTag("Items", nbtTagList);
-        nbt.setInteger("Size", stacks.size());
+        nbt.setInt("Size", stacks.size());
         return nbt;
     }
 
     @Override
     public void deserializeNBT(NBTTagCompound nbt)
     {
-        setSize(nbt.hasKey("Size", Constants.NBT.TAG_INT) ? nbt.getInteger("Size") : stacks.size());
-        NBTTagList tagList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
+        setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : stacks.size());
+        NBTTagList tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tagList.size(); i++)
         {
-            NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
-            int slot = itemTags.getInteger("Slot");
+            NBTTagCompound itemTags = tagList.getCompound(i);
+            int slot = itemTags.getInt("Slot");
 
             if (slot >= 0 && slot < stacks.size())
             {
-                stacks.set(slot, ItemStack.func_199557_a(itemTags));
+                stacks.set(slot, ItemStack.read(itemTags));
             }
         }
         onLoad();

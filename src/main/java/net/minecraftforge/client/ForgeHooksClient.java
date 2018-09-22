@@ -266,7 +266,7 @@ public class ForgeHooksClient
         }
         skyInit = true;
 
-        GameSettings settings = Minecraft.getMinecraft().gameSettings;
+        GameSettings settings = Minecraft.getInstance().gameSettings;
         int[] ranges = ForgeMod.blendRanges;
         int distance = 0;
         if (settings.fancyGraphics && ranges.length > 0)
@@ -360,7 +360,7 @@ public class ForgeHooksClient
     public static void drawScreen(GuiScreen screen, int mouseX, int mouseY, float partialTicks)
     {
         if (!MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Pre(screen, mouseX, mouseY, partialTicks)))
-            screen.drawScreen(mouseX, mouseY, partialTicks);
+            screen.render(mouseX, mouseY, partialTicks);
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
     }
 
@@ -389,18 +389,18 @@ public class ForgeHooksClient
         m.setIdentity();
         m.setTranslation(TRSRTransformation.toVecmath(transform.translation));
         t.setIdentity();
-        t.rotY(transform.rotation.func_195900_b());
+        t.rotY(transform.rotation.getY());
         m.mul(t);
         t.setIdentity();
-        t.rotX(transform.rotation.func_195899_a());
+        t.rotX(transform.rotation.getX());
         m.mul(t);
         t.setIdentity();
-        t.rotZ(transform.rotation.func_195902_c());
+        t.rotZ(transform.rotation.getZ());
         m.mul(t);
         t.setIdentity();
-        t.m00 = transform.scale.func_195899_a();
-        t.m11 = transform.scale.func_195900_b();
-        t.m22 = transform.scale.func_195902_c();
+        t.m00 = transform.scale.getX();
+        t.m11 = transform.scale.getY();
+        t.m22 = transform.scale.getZ();
         m.mul(t);
         return m;
     }
@@ -471,10 +471,10 @@ public class ForgeHooksClient
                 glEnableClientState(GL_COLOR_ARRAY);
                 break;
             case UV:
-                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
+                OpenGlHelper.glClientActiveTexture(OpenGlHelper.GL_TEXTURE0 + attr.getIndex());
                 glTexCoordPointer(count, constant, stride, buffer);
                 glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                OpenGlHelper.glClientActiveTexture(OpenGlHelper.GL_TEXTURE0);
                 break;
             case PADDING:
                 break;
@@ -503,9 +503,9 @@ public class ForgeHooksClient
                 GlStateManager.resetColor();
                 break;
             case UV:
-                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit + attr.getIndex());
+                OpenGlHelper.glClientActiveTexture(OpenGlHelper.GL_TEXTURE0 + attr.getIndex());
                 glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-                OpenGlHelper.setClientActiveTexture(OpenGlHelper.defaultTexUnit);
+                OpenGlHelper.glClientActiveTexture(OpenGlHelper.GL_TEXTURE0);
                 break;
             case PADDING:
                 break;
@@ -518,15 +518,15 @@ public class ForgeHooksClient
 
     public static void transform(net.minecraft.client.renderer.Vector3f vec, Matrix4f m)
     {
-        Vector4f tmp = new Vector4f(vec.func_195899_a(), vec.func_195900_b(), vec.func_195902_c(), 1f);
+        Vector4f tmp = new Vector4f(vec.getX(), vec.getY(), vec.getZ(), 1f);
         m.transform(tmp);
         if(Math.abs(tmp.w - 1f) > 1e-5) tmp.scale(1f / tmp.w);
-        vec.func_195905_a(tmp.x, tmp.y, tmp.z);
+        vec.set(tmp.x, tmp.y, tmp.z);
     }
 
     public static Matrix4f getMatrix(ModelRotation modelRotation)
     {
-        Matrix4f ret = new Matrix4f(TRSRTransformation.toVecmath(modelRotation.func_195820_a()), new Vector3f(), 1), tmp = new Matrix4f();
+        Matrix4f ret = new Matrix4f(TRSRTransformation.toVecmath(modelRotation.getMatrix()), new Vector3f(), 1), tmp = new Matrix4f();
         tmp.setIdentity();
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
         ret.mul(tmp, ret);
@@ -570,7 +570,7 @@ public class ForgeHooksClient
             TileEntityRenderer<?> r = TileEntityRendererDispatcher.instance.getRenderer(tileClass);
             if (r != null)
             {
-                r.func_199341_a(null, 0, 0, 0, 0, -1);
+                r.render(null, 0, 0, 0, 0, -1);
             }
         }
     }
@@ -646,7 +646,7 @@ public class ForgeHooksClient
     public static IBakedModel getDamageModel(IBakedModel ibakedmodel, TextureAtlasSprite texture, IBlockState state, IWorldReader world, BlockPos pos)
     {
         state = state.getBlock().getExtendedState(state, world, pos);
-        return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, new Random(), 42)).makeBakedModel();
+        return (new SimpleBakedModel.Builder(state, ibakedmodel, texture, new Random(), 42)).build();
     }
 
     private static int slotMainHand = 0;
@@ -675,8 +675,8 @@ public class ForgeHooksClient
 
     public static BlockFaceUV applyUVLock(BlockFaceUV blockFaceUV, EnumFacing originalSide, ITransformation rotation)
     {
-        TRSRTransformation global = new TRSRTransformation(rotation.getMatrix());
-        Matrix4f uv = global.getUVLockTransform(originalSide).getMatrix();
+        TRSRTransformation global = new TRSRTransformation(rotation.getMatrixVec());
+        Matrix4f uv = global.getUVLockTransform(originalSide).getMatrixVec();
         Vector4f vec = new Vector4f(0, 0, 0, 1);
         float u0 = blockFaceUV.getVertexU(blockFaceUV.getVertexRotatedRev(0));
         float v0 = blockFaceUV.getVertexV(blockFaceUV.getVertexRotatedRev(0));
@@ -740,7 +740,7 @@ public class ForgeHooksClient
     {
         TRSRTransformation tr = TRSRTransformation.from(model.getItemCameraTransforms().getTransform(type));
         Matrix4f mat = null;
-        if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrix();
+        if(!tr.equals(TRSRTransformation.identity())) mat = tr.getMatrixVec();
         return Pair.of(model, mat);
     }
 

@@ -43,7 +43,7 @@ import net.minecraftforge.common.model.animation.IClip;
 public interface IModel<T extends IModel<T>>
 {    
     @Nullable
-    IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, IModelState state, boolean uvlock, VertexFormat format);
+    IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, IModelState state, boolean uvlock, VertexFormat format);
 
     /*
      * Default state this model will be baked with.

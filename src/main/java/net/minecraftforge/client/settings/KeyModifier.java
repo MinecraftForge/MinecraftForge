@@ -33,7 +33,7 @@ public enum KeyModifier {
         @Override
         public boolean matches(InputMappings.Input key)
         {
-            int keyCode = key.func_197937_c();
+            int keyCode = key.getKeyCode();
             if (Minecraft.IS_RUNNING_ON_MAC)
             {
                 return keyCode == GLFW.GLFW_KEY_LEFT_ALT || keyCode == GLFW.GLFW_KEY_RIGHT_ALT;
@@ -59,7 +59,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(InputMappings.Input key)
         {
-            String keyName = key.func_197936_a();
+            String keyName = key.getName();
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
             return I18n.format(localizationFormatKey, keyName);
         }
@@ -68,7 +68,7 @@ public enum KeyModifier {
         @Override
         public boolean matches(InputMappings.Input key)
         {
-            return key.func_197937_c() == GLFW.GLFW_KEY_LEFT_SHIFT || key.func_197937_c() == GLFW.GLFW_KEY_RIGHT_SHIFT;
+            return key.getKeyCode() == GLFW.GLFW_KEY_LEFT_SHIFT || key.getKeyCode() == GLFW.GLFW_KEY_RIGHT_SHIFT;
         }
 
         @Override
@@ -86,14 +86,14 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(InputMappings.Input key)
         {
-            return I18n.format("forge.controlsgui.shift", key.func_197936_a());
+            return I18n.format("forge.controlsgui.shift", key.getName());
         }
     },
     ALT {
         @Override
         public boolean matches(InputMappings.Input key)
         {
-            return key.func_197937_c() == GLFW.GLFW_KEY_LEFT_ALT || key.func_197937_c() == GLFW.GLFW_KEY_RIGHT_ALT;
+            return key.getKeyCode() == GLFW.GLFW_KEY_LEFT_ALT || key.getKeyCode() == GLFW.GLFW_KEY_RIGHT_ALT;
         }
 
         @Override
@@ -111,7 +111,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(InputMappings.Input keyCode)
         {
-            return I18n.format("forge.controlsgui.alt", keyCode.func_197936_a());
+            return I18n.format("forge.controlsgui.alt", keyCode.getName());
         }
     },
     NONE {
@@ -146,7 +146,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(InputMappings.Input key)
         {
-            return key.func_197936_a();
+            return key.getName();
         }
     };
 

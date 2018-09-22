@@ -68,9 +68,9 @@ final class FancyMissingModel implements IUnbakedModel
             m.m33 = 1;
             m.setTranslation(new Vector3f(1, 1 + 1f / 0x100, 0));
             return new SimpleModelFontRenderer(
-                Minecraft.getMinecraft().gameSettings,
+                Minecraft.getInstance().gameSettings,
                 font,
-                Minecraft.getMinecraft().getTextureManager(),
+                Minecraft.getInstance().getTextureManager(),
                 false,
                 m,
                 format
@@ -92,15 +92,15 @@ final class FancyMissingModel implements IUnbakedModel
         this.missingModel = missingModel;
         this.message = message;
     }
-    
+
     @Override
-    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_) 
+    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
     {
         return ImmutableList.of(font2);
     }
-    
+
     @Override
-    public Collection<ResourceLocation> getOverrideLocations() 
+    public Collection<ResourceLocation> getOverrideLocations()
     {
         return Collections.emptyList();
     }
@@ -145,7 +145,7 @@ final class FancyMissingModel implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             if (side == null)
             {
@@ -161,16 +161,16 @@ final class FancyMissingModel implements IUnbakedModel
                     }
                     for (int y = 0; y < splitLines.size(); y++)
                     {
-                        fontRenderer.func_211126_b(splitLines.get(y), 0, ((y - splitLines.size() / 2f) * fontRenderer.FONT_HEIGHT) + 0x40, 0xFF00FFFF);
+                        fontRenderer.drawString(splitLines.get(y), 0, ((y - splitLines.size() / 2f) * fontRenderer.FONT_HEIGHT) + 0x40, 0xFF00FFFF);
                     }
                     ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                    builder.addAll(missingModel.func_200117_a (state, side, rand));
+                    builder.addAll(missingModel.getQuads (state, side, rand));
                     builder.addAll(fontRenderer.build());
                     quads = builder.build();
                 }
                 return quads;
             }
-            return missingModel.func_200117_a (state, side, rand);
+            return missingModel.getQuads (state, side, rand);
         }
 
         @Override
@@ -186,7 +186,7 @@ final class FancyMissingModel implements IUnbakedModel
         public TextureAtlasSprite getParticleTexture() { return fontTexture; }
 
         @Override
-        public ItemOverrideList getOverrides() { return ItemOverrideList.NONE; }
+        public ItemOverrideList getOverrides() { return ItemOverrideList.EMPTY; }
 
         @Override
         public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)
@@ -230,9 +230,9 @@ final class FancyMissingModel implements IUnbakedModel
             }
             if (big != this.big)
             {
-                return Pair.of(otherModel, transform.getMatrix());
+                return Pair.of(otherModel, transform.getMatrixVec());
             }
-            return Pair.of(this, transform.getMatrix());
+            return Pair.of(this, transform.getMatrixVec());
         }
     }
 }

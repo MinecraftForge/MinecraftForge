@@ -320,7 +320,7 @@ public class VillagerRegistry
 
     public static void setRandomProfession(EntityVillager entity, Random rand)
     {
-        entity.setProfession(INSTANCE.REGISTRY.getRandomObject(rand));
+        entity.setProfession(INSTANCE.REGISTRY.getRandom(rand));
     }
 
 
@@ -333,8 +333,8 @@ public class VillagerRegistry
     //Below this is INTERNAL USE ONLY DO NOT USE MODDERS
     public static void onSetProfession(EntityVillager entity, int network)
     {
-        VillagerProfession prof = INSTANCE.REGISTRY.getObjectById(network);
-        if (prof == null || INSTANCE.REGISTRY.getIDForObject(prof) != network)
+        VillagerProfession prof = INSTANCE.REGISTRY.get(network);
+        if (prof == null || INSTANCE.REGISTRY.getId(prof) != network)
         {
             throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
         }
@@ -345,8 +345,8 @@ public class VillagerRegistry
 
     public static void onSetProfession(EntityZombieVillager entity, int network)
     {
-        VillagerProfession prof = INSTANCE.REGISTRY.getObjectById(network);
-        if (prof == null && network != -1 || INSTANCE.REGISTRY.getIDForObject(prof) != network)
+        VillagerProfession prof = INSTANCE.REGISTRY.get(network);
+        if (prof == null && network != -1 || INSTANCE.REGISTRY.getId(prof) != network)
         {
             throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
         }
@@ -355,8 +355,8 @@ public class VillagerRegistry
             entity.setForgeProfession(prof);
     }
 
-    @Deprecated public static VillagerProfession getById(int network){ return INSTANCE.REGISTRY.getObjectById(network); }
-    @Deprecated public static int getId(@Nullable VillagerProfession prof){ return INSTANCE.REGISTRY.getIDForObject(prof); }
+    @Deprecated public static VillagerProfession getById(int network){ return INSTANCE.REGISTRY.get(network); }
+    @Deprecated public static int getId(@Nullable VillagerProfession prof){ return INSTANCE.REGISTRY.getId(prof); }
 
     //TODO: Figure out a good generic system for this. Put on hold for Patches.
 

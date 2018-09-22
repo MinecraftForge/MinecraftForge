@@ -107,7 +107,7 @@ public class GuiSlider extends GuiButtonExt
      * Fired when the mouse button is dragged. Equivalent of MouseListener.mouseDragged(MouseEvent e).
      */
     @Override
-    protected void mouseDragged(Minecraft par1Minecraft, int par2, int par3)
+    protected void renderBg(Minecraft par1Minecraft, int par2, int par3)
     {
         if (this.visible)
         {
@@ -117,7 +117,7 @@ public class GuiSlider extends GuiButtonExt
                 updateSlider();
             }
 
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
             this.drawTexturedModalRect(this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 4, 20);
             this.drawTexturedModalRect(this.x + (int)(this.sliderValue * (float)(this.width - 8)) + 4, this.y, 196, 66, 4, 20);
         }
@@ -128,7 +128,7 @@ public class GuiSlider extends GuiButtonExt
      * e).
      */
     @Override
-    public void func_194829_a(double mouseX, double mouseY)
+    public void onClick(double mouseX, double mouseY)
     {
         this.sliderValue = (mouseX - (this.x + 4)) / (this.width - 8);
         updateSlider();
@@ -190,7 +190,7 @@ public class GuiSlider extends GuiButtonExt
      * Fired when the mouse button is released. Equivalent of MouseListener.mouseReleased(MouseEvent e).
      */
     @Override
-    public void func_194831_b(double mouseX, double mouseY)
+    public void onRelease(double mouseX, double mouseY)
     {
         this.dragging = false;
     }

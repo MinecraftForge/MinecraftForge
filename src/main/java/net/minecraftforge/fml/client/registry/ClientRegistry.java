@@ -59,7 +59,7 @@ public class ClientRegistry
 
     public static void registerKeyBinding(KeyBinding key)
     {
-        Minecraft.getMinecraft().gameSettings.keyBindings = ArrayUtils.add(Minecraft.getMinecraft().gameSettings.keyBindings, key);
+        Minecraft.getInstance().gameSettings.keyBindings = ArrayUtils.add(Minecraft.getInstance().gameSettings.keyBindings, key);
     }
 
     /**

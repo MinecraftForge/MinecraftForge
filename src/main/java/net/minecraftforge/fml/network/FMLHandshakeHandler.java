@@ -59,7 +59,7 @@ import java.util.function.Supplier;
  *
  * <p>The collected {@link net.minecraftforge.fml.network.NetworkRegistry.LoginPayload} are sent, one per tick, via
  * the {@link FMLLoginWrapper#wrapPacket(ResourceLocation, PacketBuffer)} mechanism to the incoming client connection. Each
- * packet is indexed via {@link net.minecraft.network.login.client.CPacketCustomPayloadLogin#field_209922_a}, which is
+ * packet is indexed via {@link net.minecraft.network.login.client.CPacketCustomPayloadLogin#transaction}, which is
  * the only mechanism available for tracking request/response pairs.
  *
  * <p>Each packet sent from the server should be replied by the client, though not necessarily in sent order. The reply

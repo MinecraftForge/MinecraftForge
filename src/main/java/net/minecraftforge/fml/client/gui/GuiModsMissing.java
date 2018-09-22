@@ -43,7 +43,7 @@ public class GuiModsMissing extends GuiErrorBase
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         List<MissingModsException.MissingModInfo> missingModsVersions = modsMissing.getMissingModInfos();
@@ -89,6 +89,6 @@ public class GuiModsMissing extends GuiErrorBase
             offset += 10;
             this.drawCenteredString(this.fontRenderer, message, this.width / 2, offset, 0xEEEEEE);
         }
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 }

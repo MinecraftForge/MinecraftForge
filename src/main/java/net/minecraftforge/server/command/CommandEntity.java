@@ -60,7 +60,7 @@ class CommandEntity
 {
     static ArgumentBuilder<CommandSource, ?> register()
     {
-        return Commands.func_197057_a("entity")
+        return Commands.literal("entity")
                 .then(EntityListCommand.register()); //TODO: //Kill, spawn, etc..
     }
 
@@ -71,17 +71,17 @@ class CommandEntity
         private static final SimpleCommandExceptionType NO_ENTITIES = new SimpleCommandExceptionType(new TextComponentTranslation("commands.forge.entity.list.none"));
         static ArgumentBuilder<CommandSource, ?> register()
         {
-            return Commands.func_197057_a("list")
-                .requires(cs->cs.func_197034_c(2)) //permission
-                .then(Commands.func_197056_a("filter", StringArgumentType.string())
-                    .suggests((ctx, builder) -> ISuggestionProvider.func_197013_a(ForgeRegistries.ENTITIES.getKeys().stream().map(id -> id.toString()), builder))
-                    .then(Commands.func_197056_a("dim", IntegerArgumentType.integer())
-                        .suggests((ctx, builder) -> ISuggestionProvider.func_197013_a(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
+            return Commands.literal("list")
+                .requires(cs->cs.hasPermissionLevel(2)) //permission
+                .then(Commands.argument("filter", StringArgumentType.string())
+                    .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(id -> id.toString()), builder))
+                    .then(Commands.argument("dim", IntegerArgumentType.integer())
+                        .suggests((ctx, builder) -> ISuggestionProvider.suggest(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
                         .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), IntegerArgumentType.getInteger(ctx, "dim")))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().func_197023_e().provider.getId()))
+                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().dimension.getId()))
                 )
-                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().func_197023_e().provider.getId()));
+                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getWorld().dimension.getId()));
         }
 
         private static int execute(CommandSource sender, String filter, int dim) throws CommandSyntaxException
@@ -100,7 +100,7 @@ class CommandEntity
             Map<ResourceLocation, MutablePair<Integer, Map<ChunkPos, Integer>>> list = Maps.newHashMap();
             List<Entity> entities = world.loadedEntityList;
             entities.forEach(e -> {
-                MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.func_200600_R().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
+                MutablePair<Integer, Map<ChunkPos, Integer>> info = list.computeIfAbsent(e.getType().getRegistryName(), k -> MutablePair.of(0, Maps.newHashMap()));
                 ChunkPos chunk = new ChunkPos(e.getPosition());
                 info.left++;
                 info.right.put(chunk, info.right.getOrDefault(chunk, 0) + 1);
@@ -113,7 +113,7 @@ class CommandEntity
                 if (info == null)
                     throw NO_ENTITIES.create();
 
-                sender.func_197030_a(new TextComponentTranslation("commands.forge.entity.list.single.header", name, info.getLeft()), true);
+                sender.sendFeedback(new TextComponentTranslation("commands.forge.entity.list.single.header", name, info.getLeft()), true);
                 List<Map.Entry<ChunkPos, Integer>> toSort = new ArrayList<>();
                 toSort.addAll(info.getRight().entrySet());
                 toSort.sort((a, b) -> {
@@ -127,7 +127,7 @@ class CommandEntity
                 for (Map.Entry<ChunkPos, Integer> e : toSort)
                 {
                     if (limit-- == 0) break;
-                    sender.func_197030_a(new TextComponentString("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), true);
+                    sender.sendFeedback(new TextComponentString("  " + e.getValue() + ": " + e.getKey().x + ", " + e.getKey().z), true);
                 }
                 return toSort.size();
             }
@@ -153,8 +153,8 @@ class CommandEntity
                     throw NO_ENTITIES.create();
 
                 int count = info.stream().mapToInt(Pair::getRight).sum();
-                sender.func_197030_a(new TextComponentTranslation("commands.forge.entity.list.multiple.header", count), true);
-                info.forEach(e -> sender.func_197030_a(new TextComponentString("  " + e.getValue() + ": " + e.getKey()), true));
+                sender.sendFeedback(new TextComponentTranslation("commands.forge.entity.list.multiple.header", count), true);
+                info.forEach(e -> sender.sendFeedback(new TextComponentString("  " + e.getValue() + ": " + e.getKey()), true));
                 return info.size();
             }
         }

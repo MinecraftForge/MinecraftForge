@@ -155,7 +155,7 @@ public class ClientHooks
         {
             return null;
         }
-        Minecraft.getMinecraft().getTextureManager().bindTexture(iconSheet);
+        Minecraft.getInstance().getTextureManager().bindTexture(iconSheet);
         Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, (float)idx, 16, 16, 256.0f, 256.0f);
         if (blocked)
         {
@@ -172,14 +172,14 @@ public class ClientHooks
 
     static File getSavesDir()
     {
-        return new File(Minecraft.getMinecraft().gameDir, "saves");
+        return new File(Minecraft.getInstance().gameDir, "saves");
     }
 
     public static void tryLoadExistingWorld(GuiWorldSelection selectWorldGUI, WorldSummary comparator)
     {
         try
         {
-            Minecraft.getMinecraft().launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), null);
+            Minecraft.getInstance().launchIntegratedServer(comparator.getFileName(), comparator.getDisplayName(), null);
         }
         catch (StartupQuery.AbortedException e)
         {
@@ -189,7 +189,7 @@ public class ClientHooks
 
     private static NetworkManager getClientToServerNetworkManager()
     {
-        return Minecraft.getMinecraft().getConnection()!=null ? Minecraft.getMinecraft().getConnection().getNetworkManager() : null;
+        return Minecraft.getInstance().getConnection()!=null ? Minecraft.getInstance().getConnection().getNetworkManager() : null;
     }
 
     public static void handleClientWorldClosing(WorldClient world)
@@ -207,11 +207,11 @@ public class ClientHooks
         ExtendedServerListData extendedData = serverDataTag.get(serverEntry);
         if (extendedData != null && extendedData.isBlocked)
         {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiAccessDenied(guiMultiplayer, serverEntry));
+            Minecraft.getInstance().displayGuiScreen(new GuiAccessDenied(guiMultiplayer, serverEntry));
         }
         else
         {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiConnecting(guiMultiplayer, Minecraft.getMinecraft(), serverEntry));
+            Minecraft.getInstance().displayGuiScreen(new GuiConnecting(guiMultiplayer, Minecraft.getInstance(), serverEntry));
         }
     }
 

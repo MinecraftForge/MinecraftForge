@@ -86,10 +86,10 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
     {
         if (tag.hasKey("LoadingModList"))
         {
-            NBTTagList modList = tag.getTagList("LoadingModList", (byte)10);
+            NBTTagList modList = tag.getList("LoadingModList", (byte)10);
             for (int i = 0; i < modList.size(); i++)
             {
-                NBTTagCompound mod = modList.getCompoundTagAt(i);
+                NBTTagCompound mod = modList.getCompound(i);
                 String modId = mod.getString("ModId");
                 String modVersion = mod.getString("ModVersion");
                 Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
@@ -115,10 +115,10 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
         else if (tag.hasKey("Registries")) // 1.8, genericed out the 'registries' list
         {
             Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
-            NBTTagCompound regs = tag.getCompoundTag("Registries");
-            for (String key : regs.getKeySet())
+            NBTTagCompound regs = tag.getCompound("Registries");
+            for (String key : regs.keySet())
             {
-                snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompoundTag(key)));
+                snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompound(key)));
             }
             failedElements = GameData.injectSnapshot(snapshot, true, true);
         }

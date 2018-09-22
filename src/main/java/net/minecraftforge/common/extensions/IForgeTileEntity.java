@@ -30,14 +30,14 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
     @Override
     default void deserializeNBT(NBTTagCompound nbt)
     {
-        getTileEntity().readFromNBT(nbt);
+        getTileEntity().read(nbt);
     }
 
     @Override
     default NBTTagCompound serializeNBT()
     {
         NBTTagCompound ret = new NBTTagCompound();
-        getTileEntity().writeToNBT(ret);
+        getTileEntity().write(ret);
         return ret;
     }
 }

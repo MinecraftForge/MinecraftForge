@@ -66,8 +66,8 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
     }
 
     void refreshList() {
-        this.func_195086_c();
-        parent.buildModList(this::func_195085_a, mod->new ModEntry(mod, this.parent));
+        this.clearEntries();
+        parent.buildModList(this::addEntry, mod->new ModEntry(mod, this.parent));
     }
 
     @Override
@@ -92,21 +92,21 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
         }
 
         @Override
-        public void func_194999_a(int p_194999_1_, int p_194999_2_, int p_194999_3_, int p_194999_4_, boolean p_194999_5_, float p_194999_6_)
+        public void drawEntry(int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
         {
-            int top = this.func_195001_c();
-            int left = this.func_195002_d();
+            int top = this.getY();
+            int left = this.getX();
             String name = stripControlCodes(modInfo.getDisplayName());
             String version = stripControlCodes(modInfo.getVersion().getVersionString());
             VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();
-            font.func_211126_b(font.trimStringToWidth(name, listWidth),left + 3, top + 2, 0xFFFFFF);
-            font.func_211126_b(font.trimStringToWidth(version, listWidth), left + 3 , top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
+            font.drawString(font.trimStringToWidth(name, listWidth),left + 3, top + 2, 0xFFFFFF);
+            font.drawString(font.trimStringToWidth(version, listWidth), left + 3 , top + 2 + font.FONT_HEIGHT, 0xCCCCCC);
             if (vercheck.status.shouldDraw())
             {
                 //TODO: Consider adding more icons for visualization
-                Minecraft.getMinecraft().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
-                GlStateManager.color(1, 1, 1, 1);
+                Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
+                GlStateManager.color4f(1, 1, 1, 1);
                 GlStateManager.pushMatrix();
                 Gui.drawModalRectWithCustomSizedTexture(right - (height / 2 + 4), GuiSlotModList.this.top + (height / 2 - 4), vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
                 GlStateManager.popMatrix();
@@ -116,7 +116,7 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
         @Override
         public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
         {
-            parent.selectModIndex(this.func_195003_b());
+            parent.selectModIndex(this.getIndex());
             return false;
         }
     }

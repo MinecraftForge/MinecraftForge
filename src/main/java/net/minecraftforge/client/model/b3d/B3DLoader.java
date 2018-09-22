@@ -98,8 +98,8 @@ import com.google.gson.JsonParser;
 public enum B3DLoader implements ICustomModelLoader
 {
     INSTANCE;
-	
-	private static final Logger LOGGER = LogManager.getLogger();
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private IResourceManager manager;
 
@@ -112,7 +112,7 @@ public enum B3DLoader implements ICustomModelLoader
     }
 
     @Override
-    public void func_195410_a(IResourceManager manager)
+    public void onResourceManagerReload(IResourceManager manager)
     {
         this.manager = manager;
         cache.clear();
@@ -136,17 +136,17 @@ public enum B3DLoader implements ICustomModelLoader
             {
                 try
                 {
-                    resource = manager.func_199002_a(file);
+                    resource = manager.getResource(file);
                 }
                 catch(FileNotFoundException e)
                 {
                     if(modelLocation.getPath().startsWith("models/block/"))
-                        resource = manager.func_199002_a(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
+                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
                     else if(modelLocation.getPath().startsWith("models/item/"))
-                        resource = manager.func_199002_a(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
+                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
                     else throw e;
                 }
-                B3DModel.Parser parser = new B3DModel.Parser(resource.func_199027_b());
+                B3DModel.Parser parser = new B3DModel.Parser(resource.getInputStream());
                 B3DModel model = parser.parse();
                 cache.put(file, model);
             }
@@ -365,7 +365,7 @@ public enum B3DLoader implements ICustomModelLoader
         @Override
         public TRSRTransformation getInvBindPose()
         {
-            Matrix4f m = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrix();
+            Matrix4f m = new TRSRTransformation(node.getPos(), node.getRot(), node.getScale(), null).getMatrixVec();
             m.invert();
             TRSRTransformation pose = new TRSRTransformation(m);
 
@@ -452,17 +452,17 @@ public enum B3DLoader implements ICustomModelLoader
             if(path.endsWith(".png")) path = path.substring(0, path.length() - ".png".length());
             return path;
         }
-        
+
         @Override
-        public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_)
+        public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
         {
             return Collections2.filter(textures.values(), loc -> !loc.getPath().startsWith("#"));
         }
-        
+
         @Override
-        public Collection<ResourceLocation> getOverrideLocations() 
+        public Collection<ResourceLocation> getOverrideLocations()
         {
-        	return Collections.emptyList();
+            return Collections.emptyList();
         }
 
         @Override
@@ -647,7 +647,7 @@ public enum B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             if(side != null) return ImmutableList.of();
             IModelState modelState = this.state;
@@ -723,7 +723,7 @@ public enum B3DLoader implements ICustomModelLoader
                     @Override
                     public Matrix4f apply(Node<?> node)
                     {
-                        return global.compose(localCache.getUnchecked(node)).getMatrix();
+                        return global.compose(localCache.getUnchecked(node)).getMatrixVec();
                     }
                 });
                 for(Face f : faces)
@@ -834,7 +834,7 @@ public enum B3DLoader implements ICustomModelLoader
         public ItemOverrideList getOverrides()
         {
             // TODO handle items
-            return ItemOverrideList.NONE;
+            return ItemOverrideList.EMPTY;
         }
     }
 }

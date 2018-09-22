@@ -41,15 +41,15 @@ public class GuiUnicodeGlyphButton extends GuiButtonExt
     }
 
     @Override
-    public void func_194828_a(int mouseX, int mouseY, float partial)
+    public void render(int mouseX, int mouseY, float partial)
     {
         if (this.visible)
         {
-            Minecraft mc = Minecraft.getMinecraft();
+            Minecraft mc = Minecraft.getInstance();
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int k = this.getHoverState(this.hovered);
             GuiUtils.drawContinuousTexturedBox(GuiButton.BUTTON_TEXTURES, this.x, this.y, 0, 46 + k * 20, this.width, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
-            this.mouseDragged(mc, mouseX, mouseY);
+            this.renderBg(mc, mouseX, mouseY);
             int color = 14737632;
 
             if (packedFGColor != 0)
@@ -78,7 +78,7 @@ public class GuiUnicodeGlyphButton extends GuiButtonExt
             totalWidth = glyphWidth + strWidth;
 
             GlStateManager.pushMatrix();
-            GlStateManager.scale(glyphScale, glyphScale, 1.0F);
+            GlStateManager.scalef(glyphScale, glyphScale, 1.0F);
             this.drawCenteredString(mc.fontRenderer, glyph,
                     (int) (((this.x + (this.width / 2) - (strWidth / 2)) / glyphScale) - (glyphWidth / (2 * glyphScale)) + 2),
                     (int) (((this.y + ((this.height - 8) / glyphScale) / 2) - 1) / glyphScale), color);

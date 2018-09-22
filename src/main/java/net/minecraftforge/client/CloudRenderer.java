@@ -65,7 +65,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
     private static final boolean WIREFRAME = false;
 
     // Instance fields
-    private final Minecraft mc = Minecraft.getMinecraft();
+    private final Minecraft mc = Minecraft.getInstance();
     private final ResourceLocation texture = new ResourceLocation("textures/environment/clouds.png");
 
     private int displayList = -1;
@@ -81,7 +81,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
     public CloudRenderer()
     {
         // Resource manager should always be reloadable.
-        ((IReloadableResourceManager) mc.func_195551_G()).func_199006_a(this);
+        ((IReloadableResourceManager) mc.getResourceManager()).addReloadListener(this);
     }
 
     private int getScale()
@@ -243,7 +243,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         if (OpenGlHelper.useVbo())
             vbo = new VertexBuffer(FORMAT);
         else
-            GlStateManager.glNewList(displayList = GLAllocation.generateDisplayLists(1), GL11.GL_COMPILE);
+            GlStateManager.newList(displayList = GLAllocation.generateDisplayLists(1), GL11.GL_COMPILE);
 
         vertices(buffer);
 
@@ -256,7 +256,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         else
         {
             tess.draw();
-            GlStateManager.glEndList();
+            GlStateManager.endList();
         }
     }
 
@@ -275,7 +275,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         boolean newEnabled = ForgeMod.forgeCloudsEnabled
                 && mc.gameSettings.shouldRenderClouds() != 0
                 && mc.world != null
-                && mc.world.provider.isSurfaceWorld();
+                && mc.world.dimension.isSurfaceWorld();
 
         if (isBuilt()
                     && (!newEnabled
@@ -305,7 +305,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
         double x = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks
                 + totalOffset * 0.03;
-        double y = mc.world.provider.getCloudHeight()
+        double y = mc.world.dimension.getCloudHeight()
                 - (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks)
                 + 0.33;
         double z = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * partialTicks;
@@ -322,7 +322,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         GlStateManager.pushMatrix();
 
         // Translate by the remainder after the UV offset.
-        GlStateManager.translate((offU * scale) - x, y, (offV * scale) - z);
+        GlStateManager.translated((offU * scale) - x, y, (offV * scale) - z);
 
         // Modulo to prevent texture samples becoming inaccurate at extreme offsets.
         offU = offU % texW;
@@ -330,13 +330,13 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
         // Translate the texture.
         GlStateManager.matrixMode(GL11.GL_TEXTURE);
-        GlStateManager.translate(offU * PX_SIZE, offV * PX_SIZE, 0);
+        GlStateManager.translatef(offU * PX_SIZE, offV * PX_SIZE, 0);
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 
         GlStateManager.disableCull();
 
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(
+        GlStateManager.blendFuncSeparate(
                 GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
                 GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
@@ -350,19 +350,19 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
             COLOR_TEX = new DynamicTexture(1, 1, false);
 
         // Apply a color multiplier through a texture upload if shaders aren't supported.
-        COLOR_TEX.func_195414_e().func_195700_a(0, 0, 255 << 24
+        COLOR_TEX.getTextureData().setPixelRGBA(0, 0, 255 << 24
                 | ((int) (r * 255)) << 16
                 | ((int) (g * 255)) << 8
                 | (int) (b * 255));
         COLOR_TEX.updateDynamicTexture();
 
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GlStateManager.activeTexture(OpenGlHelper.GL_TEXTURE1);
         GlStateManager.bindTexture(COLOR_TEX.getGlTextureId());
         GlStateManager.enableTexture2D();
 
         // Bind the clouds texture last so the shader's sampler2D is correct.
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-        mc.renderEngine.bindTexture(texture);
+        GlStateManager.activeTexture(OpenGlHelper.GL_TEXTURE0);
+        mc.textureManager.bindTexture(texture);
 
         ByteBuffer buffer = Tessellator.getInstance().getBuffer().getByteBuffer();
 
@@ -372,12 +372,12 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
             vbo.bindBuffer();
 
             int stride = FORMAT.getSize();
-            GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, stride, 0);
-            GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GlStateManager.glTexCoordPointer(2, GL11.GL_FLOAT, stride, 12);
-            GlStateManager.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            GlStateManager.glColorPointer(4, GL11.GL_UNSIGNED_BYTE, stride, 20);
-            GlStateManager.glEnableClientState(GL11.GL_COLOR_ARRAY);
+            GlStateManager.vertexPointer(3, GL11.GL_FLOAT, stride, 0);
+            GlStateManager.enableClientState(GL11.GL_VERTEX_ARRAY);
+            GlStateManager.texCoordPointer(2, GL11.GL_FLOAT, stride, 12);
+            GlStateManager.enableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
+            GlStateManager.colorPointer(4, GL11.GL_UNSIGNED_BYTE, stride, 20);
+            GlStateManager.enableClientState(GL11.GL_COLOR_ARRAY);
         }
         else
         {
@@ -400,8 +400,8 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         // Wireframe for debug.
         if (WIREFRAME)
         {
-            GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
-            GlStateManager.glLineWidth(2.0F);
+            GlStateManager.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+            GlStateManager.lineWidth(2.0F);
             GlStateManager.disableTexture2D();
             GlStateManager.depthMask(false);
             GlStateManager.disableFog();
@@ -409,7 +409,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
                 vbo.drawArrays(GL11.GL_QUADS);
             else
                 GlStateManager.callList(displayList);
-            GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+            GlStateManager.polygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
             GlStateManager.depthMask(true);
             GlStateManager.enableTexture2D();
             GlStateManager.enableFog();
@@ -431,9 +431,9 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         buffer.position(0);
 
         // Disable our coloring.
-        GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+        GlStateManager.activeTexture(OpenGlHelper.GL_TEXTURE1);
         GlStateManager.disableTexture2D();
-        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        GlStateManager.activeTexture(OpenGlHelper.GL_TEXTURE0);
 
         // Reset texture matrix.
         GlStateManager.matrixMode(GL11.GL_TEXTURE);
@@ -450,9 +450,9 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     private void reloadTextures()
     {
-        if (mc.renderEngine != null)
+        if (mc.textureManager != null)
         {
-            mc.renderEngine.bindTexture(texture);
+            mc.textureManager.bindTexture(texture);
             texW = GlStateManager.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
             texH = GlStateManager.glGetTexLevelParameteri(GL11.GL_TEXTURE_2D, 0, GL11.GL_TEXTURE_HEIGHT);
         }
@@ -482,7 +482,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     public static boolean renderClouds(int cloudTicks, float partialTicks, WorldClient world, Minecraft client)
     {
-        IRenderHandler renderer = world.provider.getCloudRenderer();
+        IRenderHandler renderer = world.dimension.getCloudRenderer();
         if (renderer != null)
         {
             renderer.render(partialTicks, world, client);

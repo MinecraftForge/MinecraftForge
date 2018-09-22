@@ -52,7 +52,7 @@ public interface IForgeFluid
      */
     default boolean isEntityInside(IFluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
     {
-        return state.func_206884_a(tag) && yToTest - pos.getY() < state.func_206885_f() + 0.1F;
+        return state.isTagged(tag) && yToTest - pos.getY() < state.getHeight() + 0.1F;
     }
 
     /**
@@ -96,6 +96,6 @@ public interface IForgeFluid
      */
     default float getExplosionResistance(IFluidState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
     {
-        return state.func_210200_l();
+        return state.getExplosionResistance();
     }
 }

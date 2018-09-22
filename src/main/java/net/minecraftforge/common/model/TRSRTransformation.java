@@ -116,7 +116,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     @OnlyIn(Dist.CLIENT)
     public static Matrix4f getMatrix(EnumFacing facing)
     {
-        return getRotation(facing).getMatrix();
+        return getRotation(facing).getMatrixVec();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -153,15 +153,15 @@ public final class TRSRTransformation implements IModelState, ITransformation
     {
         if (this.isIdentity()) return b;
         if (b.isIdentity()) return this;
-        Matrix4f m = getMatrix();
-        m.mul(b.getMatrix());
+        Matrix4f m = getMatrixVec();
+        m.mul(b.getMatrixVec());
         return new TRSRTransformation(m);
     }
 
     public TRSRTransformation inverse()
     {
         if (this.isIdentity()) return this;
-        Matrix4f m = getMatrix();
+        Matrix4f m = getMatrixVec();
         m.invert();
         return new TRSRTransformation(m);
     }
@@ -547,7 +547,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     }
 
     @Override
-    public Matrix4f getMatrix()
+    public Matrix4f getMatrixVec()
     {
         return (Matrix4f)matrix.clone();
     }
@@ -645,7 +645,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     {
         if (transform.isIdentity()) return transform;
 
-        Matrix4f ret = new Matrix4f(transform.getMatrix()), tmp = new Matrix4f();
+        Matrix4f ret = new Matrix4f(transform.getMatrixVec()), tmp = new Matrix4f();
         tmp.setIdentity();
         tmp.m03 = tmp.m13 = tmp.m23 = .5f;
         ret.mul(tmp, ret);
@@ -661,7 +661,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     {
         if (transform.isIdentity()) return transform;
 
-        Matrix4f ret = new Matrix4f(transform.getMatrix()), tmp = new Matrix4f();
+        Matrix4f ret = new Matrix4f(transform.getMatrixVec()), tmp = new Matrix4f();
         tmp.setIdentity();
         tmp.m03 = tmp.m13 = tmp.m23 = -.5f;
         ret.mul(tmp, ret);
@@ -692,28 +692,28 @@ public final class TRSRTransformation implements IModelState, ITransformation
     @OnlyIn(Dist.CLIENT)
     public static Vector3f toVecmath(net.minecraft.client.renderer.Vector3f vec)
     {
-        return new Vector3f(vec.func_195899_a(), vec.func_195900_b(), vec.func_195902_c());
+        return new Vector3f(vec.getX(), vec.getY(), vec.getZ());
     }
 
     @OnlyIn(Dist.CLIENT)
     public static Vector4f toVecmath(net.minecraft.client.renderer.Vector4f vec)
     {
-        return new Vector4f(vec.func_195910_a(), vec.func_195913_b(), vec.func_195914_c(), vec.func_195915_d());
+        return new Vector4f(vec.getX(), vec.getY(), vec.getZ(), vec.getW());
     }
 
     @OnlyIn(Dist.CLIENT)
     public static Matrix4f toVecmath(net.minecraft.client.renderer.Matrix4f m)
     {
         return new Matrix4f(
-            m.func_195885_a(0, 0), m.func_195885_a(1, 0), m.func_195885_a(2, 0), m.func_195885_a(3, 0),
-            m.func_195885_a(0, 1), m.func_195885_a(1, 1), m.func_195885_a(2, 1), m.func_195885_a(3, 1),
-            m.func_195885_a(0, 2), m.func_195885_a(1, 2), m.func_195885_a(2, 2), m.func_195885_a(3, 2),
-            m.func_195885_a(0, 3), m.func_195885_a(1, 3), m.func_195885_a(2, 3), m.func_195885_a(3, 3));
+            m.get(0, 0), m.get(1, 0), m.get(2, 0), m.get(3, 0),
+            m.get(0, 1), m.get(1, 1), m.get(2, 1), m.get(3, 1),
+            m.get(0, 2), m.get(1, 2), m.get(2, 2), m.get(3, 2),
+            m.get(0, 3), m.get(1, 3), m.get(2, 3), m.get(3, 3));
     }
 
     public static Quat4f toVecmath(net.minecraft.client.renderer.Quaternion q)
     {
-        return new Quat4f(q.func_195889_a(), q.func_195891_b(), q.func_195893_c(), q.func_195894_d());
+        return new Quat4f(q.getX(), q.getY(), q.getZ(), q.getW());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -738,7 +738,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
             m.getRow(x, row);
             for (int y = 0; y < 4; y++)
             {
-                r.func_195878_a(x, y, row[y]);
+                r.set(x, y, row[y]);
             }
         }
         return r;

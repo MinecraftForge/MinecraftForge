@@ -47,10 +47,10 @@ public enum Animation
     {
         if (worldRef == null || worldRef.get() != world)
         {
-            epochTime = world.getTotalWorldTime();
+            epochTime = world.getGameTime();
             worldRef = new WeakReference<>(world);
         }
-        return (world.getTotalWorldTime() - epochTime + tickProgress) / 20;
+        return (world.getGameTime() - epochTime + tickProgress) / 20;
     }
 
     /**

@@ -29,7 +29,7 @@ import net.minecraft.util.EnumFacing;
  */
 public interface ITransformation
 {
-    Matrix4f getMatrix();
+    Matrix4f getMatrixVec();
 
     EnumFacing rotate(EnumFacing facing);
 

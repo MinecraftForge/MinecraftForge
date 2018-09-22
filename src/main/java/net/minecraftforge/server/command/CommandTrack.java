@@ -58,7 +58,7 @@ class CommandTrack
 
     static ArgumentBuilder<CommandSource, ?> register()
     {
-        return Commands.func_197057_a("track")
+        return Commands.literal("track")
             .then(StartTrackingCommand.register())
             .then(ResetTrackingCommand.register())
             .then(TrackResultsEntity.register())
@@ -70,26 +70,26 @@ class CommandTrack
     {
         static ArgumentBuilder<CommandSource, ?> register()
         {
-            return Commands.func_197057_a("start")
-                .requires(cs->cs.func_197034_c(2)) //permission
-                .then(Commands.func_197057_a("te")
-                    .then(Commands.func_197056_a("duration", IntegerArgumentType.integer(1))
+            return Commands.literal("start")
+                .requires(cs->cs.hasPermissionLevel(2)) //permission
+                .then(Commands.literal("te")
+                    .then(Commands.argument("duration", IntegerArgumentType.integer(1))
                         .executes(ctx -> {
                             int duration = IntegerArgumentType.getInteger(ctx, "duration");
                             TimeTracker.TILE_ENTITY_UPDATE.reset();
                             TimeTracker.TILE_ENTITY_UPDATE.enable(duration);
-                            ctx.getSource().func_197030_a(new TextComponentTranslation("commands.forge.tracking.te.enabled", duration), true);
+                            ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tracking.te.enabled", duration), true);
                             return 0;
                         })
                     )
                 )
-                .then(Commands.func_197057_a("entity")
-                    .then(Commands.func_197056_a("duration", IntegerArgumentType.integer(1))
+                .then(Commands.literal("entity")
+                    .then(Commands.argument("duration", IntegerArgumentType.integer(1))
                         .executes(ctx -> {
                             int duration = IntegerArgumentType.getInteger(ctx, "duration");
                             TimeTracker.ENTITY_UPDATE.reset();
                             TimeTracker.ENTITY_UPDATE.enable(duration);
-                            ctx.getSource().func_197030_a(new TextComponentTranslation("commands.forge.tracking.entity.enabled", duration), true);
+                            ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tracking.entity.enabled", duration), true);
                             return 0;
                         })
                     )
@@ -101,19 +101,19 @@ class CommandTrack
     {
         static ArgumentBuilder<CommandSource, ?> register()
         {
-            return Commands.func_197057_a("reset")
-                .requires(cs->cs.func_197034_c(2)) //permission
-                .then(Commands.func_197057_a("te")
+            return Commands.literal("reset")
+                .requires(cs->cs.hasPermissionLevel(2)) //permission
+                .then(Commands.literal("te")
                     .executes(ctx -> {
                         TimeTracker.TILE_ENTITY_UPDATE.reset();
-                        ctx.getSource().func_197030_a(new TextComponentTranslation("commands.forge.tracking.te.reset"), true);
+                        ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tracking.te.reset"), true);
                         return 0;
                     })
                 )
-                .then(Commands.func_197057_a("entity")
+                .then(Commands.literal("entity")
                     .executes(ctx -> {
                         TimeTracker.ENTITY_UPDATE.reset();
-                        ctx.getSource().func_197030_a(new TextComponentTranslation("commands.forge.tracking.entity.reset"), true);
+                        ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tracking.entity.reset"), true);
                         return 0;
                     })
                 );
@@ -143,14 +143,14 @@ class CommandTrack
             List<ForgeTimings<T>> timingsList = getSortedTimings(tracker);
             if (timingsList.isEmpty())
             {
-                source.func_197030_a(new TextComponentTranslation("commands.forge.tracking.no_data"), true);
+                source.sendFeedback(new TextComponentTranslation("commands.forge.tracking.no_data"), true);
             }
             else
             {
                 timingsList.stream()
                         .filter(timings -> timings.getObject().get() != null)
                         .limit(10)
-                        .forEach(timings -> source.func_197030_a(toString.apply(timings), true));
+                        .forEach(timings -> source.sendFeedback(toString.apply(timings), true));
             }
             return 0;
         }
@@ -175,7 +175,7 @@ class CommandTrack
     {
         static ArgumentBuilder<CommandSource, ?> register()
         {
-            return Commands.func_197057_a("entity").executes(ctx -> TrackResults.execute(ctx.getSource(), TimeTracker.ENTITY_UPDATE, data ->
+            return Commands.literal("entity").executes(ctx -> TrackResults.execute(ctx.getSource(), TimeTracker.ENTITY_UPDATE, data ->
                 {
                     Entity entity = data.getObject().get();
                     if (entity == null)
@@ -183,9 +183,9 @@ class CommandTrack
 
                     BlockPos pos = entity.getPosition();
                     double averageTimings = data.getAverageTimings();
-                    String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "µs" : "ms");
+                    String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "ï¿½s" : "ms");
 
-                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", entity.func_200600_R().getRegistryName(), TrackResults.getWorldName(entity.world.provider.getId()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), TrackResults.getWorldName(entity.world.dimension.getId()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }
@@ -195,7 +195,7 @@ class CommandTrack
     {
         static ArgumentBuilder<CommandSource, ?> register()
         {
-            return Commands.func_197057_a("te").executes(ctx -> TrackResults.execute(ctx.getSource(), TimeTracker.TILE_ENTITY_UPDATE, data ->
+            return Commands.literal("te").executes(ctx -> TrackResults.execute(ctx.getSource(), TimeTracker.TILE_ENTITY_UPDATE, data ->
                 {
                     TileEntity te = data.getObject().get();
                     if (te == null)
@@ -204,8 +204,8 @@ class CommandTrack
                     BlockPos pos = te.getPos();
 
                     double averageTimings = data.getAverageTimings();
-                    String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "µs" : "ms");
-                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", te.func_200662_C().getRegistryName(), TrackResults.getWorldName(te.getWorld().provider.getId()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "ï¿½s" : "ms");
+                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), TrackResults.getWorldName(te.getWorld().dimension.getId()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }

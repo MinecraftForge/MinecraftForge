@@ -52,25 +52,25 @@ public class BiomeManager
         List<BiomeEntry> list = new ArrayList<BiomeEntry>();
 
         list.add(new BiomeEntry(Biomes.FOREST, 10));
-        list.add(new BiomeEntry(Biomes.ROOFED_FOREST, 10));
-        list.add(new BiomeEntry(Biomes.EXTREME_HILLS, 10));
+        list.add(new BiomeEntry(Biomes.DARK_FOREST, 10));
+        list.add(new BiomeEntry(Biomes.MOUNTAINS, 10));
         list.add(new BiomeEntry(Biomes.PLAINS, 10));
         list.add(new BiomeEntry(Biomes.BIRCH_FOREST, 10));
-        list.add(new BiomeEntry(Biomes.SWAMPLAND, 10));
+        list.add(new BiomeEntry(Biomes.SWAMP, 10));
 
         currentBiomes[BiomeType.WARM.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
 
         list.add(new BiomeEntry(Biomes.FOREST, 10));
-        list.add(new BiomeEntry(Biomes.EXTREME_HILLS, 10));
+        list.add(new BiomeEntry(Biomes.MOUNTAINS, 10));
         list.add(new BiomeEntry(Biomes.TAIGA, 10));
         list.add(new BiomeEntry(Biomes.PLAINS, 10));
 
         currentBiomes[BiomeType.COOL.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
 
-        list.add(new BiomeEntry(Biomes.ICE_PLAINS, 30));
-        list.add(new BiomeEntry(Biomes.COLD_TAIGA, 10));
+        list.add(new BiomeEntry(Biomes.SNOWY_TUNDRA, 30));
+        list.add(new BiomeEntry(Biomes.SNOWY_TAIGA, 10));
 
         currentBiomes[BiomeType.ICY.ordinal()] = new TrackedList<BiomeEntry>(list);
         list.clear();
@@ -82,17 +82,17 @@ public class BiomeManager
 
     public static void addSpawnBiome(Biome biome)
     {
-        if (!BiomeProvider.field_201540_a.contains(biome))
+        if (!BiomeProvider.BIOMES_TO_SPAWN_IN.contains(biome))
         {
-            BiomeProvider.field_201540_a.add(biome);
+            BiomeProvider.BIOMES_TO_SPAWN_IN.add(biome);
         }
     }
 
     public static void removeSpawnBiome(Biome biome)
     {
-        if (BiomeProvider.field_201540_a.contains(biome))
+        if (BiomeProvider.BIOMES_TO_SPAWN_IN.contains(biome))
         {
-            BiomeProvider.field_201540_a.remove(biome);
+            BiomeProvider.BIOMES_TO_SPAWN_IN.remove(biome);
         }
     }
 

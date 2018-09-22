@@ -40,19 +40,19 @@ class CommandTps
 
     static ArgumentBuilder<CommandSource, ?> register()
     {
-        return Commands.func_197057_a("tps")
-            .requires(cs->cs.func_197034_c(0)) //permission
-            .then(Commands.func_197056_a("dim", IntegerArgumentType.integer())
-                .suggests((ctx, builder) -> ISuggestionProvider.func_197013_a(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
+        return Commands.literal("tps")
+            .requires(cs->cs.hasPermissionLevel(0)) //permission
+            .then(Commands.argument("dim", IntegerArgumentType.integer())
+                .suggests((ctx, builder) -> ISuggestionProvider.suggest(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
                 .executes(ctx -> sendTime(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "dim")))
             )
             .executes(ctx -> {
                 for (Integer dim : (Iterable<Integer>)DimensionManager.getIDStream().sorted()::iterator)
                     sendTime(ctx.getSource(), dim);
 
-                double meanTickTime = mean(ctx.getSource().func_197028_i().tickTimeArray) * 1.0E-6D;
+                double meanTickTime = mean(ctx.getSource().getServer().tickTimeArray) * 1.0E-6D;
                 double meanTPS = Math.min(1000.0/meanTickTime, 20);
-                ctx.getSource().func_197030_a(new TextComponentTranslation("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), true);
+                ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), true);
 
                 return 0;
             }
@@ -76,9 +76,9 @@ class CommandTps
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
         DimensionType type = DimensionManager.getProviderType(dim);
         if (type == null)
-            cs.func_197030_a(new TextComponentTranslation("commands.forge.tps.summary.basic", dim, TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
+            cs.sendFeedback(new TextComponentTranslation("commands.forge.tps.summary.basic", dim, TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
         else
-            cs.func_197030_a(new TextComponentTranslation("commands.forge.tps.summary.named", dim, type.getName(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
+            cs.sendFeedback(new TextComponentTranslation("commands.forge.tps.summary.named", dim, type.getName(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
 
         return 1;
     }

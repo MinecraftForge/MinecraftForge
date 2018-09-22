@@ -45,6 +45,8 @@ import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
 
+import net.minecraftforge.eventbus.api.Event.HasResult;
+
 public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));

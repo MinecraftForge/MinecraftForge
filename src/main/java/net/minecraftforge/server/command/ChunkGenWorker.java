@@ -106,7 +106,7 @@ public class ChunkGenWorker implements IWorker
             world = DimensionManager.getWorld(dim);
             if (world == null)
             {
-                listener.func_197030_a(new TextComponentTranslation("commands.forge.gen.dim_fail", dim), true);
+                listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.dim_fail", dim), true);
                 queue.clear();
                 return false;
             }
@@ -118,7 +118,7 @@ public class ChunkGenWorker implements IWorker
 
             if (lastNotifcationTime < System.currentTimeMillis() - 10*1000)
             {
-                listener.func_197030_a(new TextComponentTranslation("commands.forge.gen.progress", total - queue.size(), total), true);
+                listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.progress", total - queue.size(), total), true);
                 lastNotifcationTime = System.currentTimeMillis();
             }
             return false;
@@ -136,7 +136,7 @@ public class ChunkGenWorker implements IWorker
 
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
             {
-                listener.func_197030_a(new TextComponentTranslation("commands.forge.gen.progress", total - queue.size(), total), true);
+                listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.progress", total - queue.size(), total), true);
                 lastNotification = 0;
                 lastNotifcationTime = System.currentTimeMillis();
             }
@@ -164,7 +164,7 @@ public class ChunkGenWorker implements IWorker
                 }
                 catch (IOException | SessionLockException e)
                 {
-                    listener.func_197030_a(new TextComponentTranslation("commands.forge.gen.saveerror", e.getMessage()), true);
+                    listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.saveerror", e.getMessage()), true);
                 }
                 genned++;
             }
@@ -179,7 +179,7 @@ public class ChunkGenWorker implements IWorker
 
         if (queue.size() == 0)
         {
-            listener.func_197030_a(new TextComponentTranslation("commands.forge.gen.complete", genned, total, dim), true);
+            listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.complete", genned, total, dim), true);
             if (keepingLoaded != null && keepingLoaded)
             {
                 DimensionManager.keepDimensionLoaded(dim, false);

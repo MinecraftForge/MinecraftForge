@@ -50,13 +50,13 @@ public class ItemModelMesherForge extends ItemModelMesher
 
     @Override
     @Nullable
-    public IBakedModel func_199312_b(Item item)
+    public IBakedModel getItemModel(Item item)
     {
         return models.get(item.delegate);
     }
 
     @Override
-    public void func_199311_a(Item item, ModelResourceLocation location)
+    public void register(Item item, ModelResourceLocation location)
     {
         IRegistryDelegate<Item> key = item.delegate;
         locations.put(key, location);

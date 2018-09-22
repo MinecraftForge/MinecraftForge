@@ -58,7 +58,7 @@ public enum OBJLoader implements ICustomModelLoader {
     }
 
     @Override
-    public void func_195410_a(IResourceManager resourceManager)
+    public void onResourceManagerReload(IResourceManager resourceManager)
     {
         this.manager = resourceManager;
         cache.clear();
@@ -82,14 +82,14 @@ public enum OBJLoader implements ICustomModelLoader {
             {
                 try
                 {
-                    resource = manager.func_199002_a(file);
+                    resource = manager.getResource(file);
                 }
                 catch (FileNotFoundException e)
                 {
                     if (modelLocation.getPath().startsWith("models/block/"))
-                        resource = manager.func_199002_a(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
+                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/item/" + file.getPath().substring("models/block/".length())));
                     else if (modelLocation.getPath().startsWith("models/item/"))
-                        resource = manager.func_199002_a(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
+                        resource = manager.getResource(new ResourceLocation(file.getNamespace(), "models/block/" + file.getPath().substring("models/item/".length())));
                     else throw e;
                 }
                 OBJModel.Parser parser = new OBJModel.Parser(resource, manager);

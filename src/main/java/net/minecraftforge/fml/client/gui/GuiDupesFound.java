@@ -38,7 +38,7 @@ public class GuiDupesFound extends GuiErrorBase
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - dupes.dupes.size() * 10, 10);
@@ -53,6 +53,6 @@ public class GuiDupesFound extends GuiErrorBase
             offset += 10;
             this.drawCenteredString(this.fontRenderer, String.format("%s : %s", mc.getKey().getModId(), mc.getValue().getName()), this.width / 2, offset, 0xEEEEEE);
         }
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 }

@@ -35,13 +35,13 @@ public class CommandDimensions
 {
     static ArgumentBuilder<CommandSource, ?> register()
     {
-        return Commands.func_197057_a("dimensions")
-            .requires(cs->cs.func_197034_c(0)) //permission
+        return Commands.literal("dimensions")
+            .requires(cs->cs.hasPermissionLevel(0)) //permission
             .executes(ctx -> {
-                ctx.getSource().func_197030_a(new TextComponentTranslation("commands.forge.dimensions.list"), true);
+                ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.dimensions.list"), true);
                 for (Map.Entry<DimensionType, IntSortedSet> entry : DimensionManager.getRegisteredDimensions().entrySet())
                 {
-                    ctx.getSource().func_197030_a(new TextComponentString(entry.getKey().getName() + ": " + entry.getValue()), true);
+                    ctx.getSource().sendFeedback(new TextComponentString(entry.getKey().getName() + ": " + entry.getValue()), true);
                 }
                 return 0;
             });

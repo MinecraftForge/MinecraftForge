@@ -67,7 +67,7 @@ public class BakedItemModel implements IBakedModel
     @Override public ItemOverrideList getOverrides() { return overrides; }
 
     @Override
-    public List<BakedQuad> func_200117_a(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
     {
         if (side == null)
         {
@@ -105,7 +105,7 @@ public class BakedItemModel implements IBakedModel
         }
 
         @Override
-        public List<BakedQuad> func_200117_a (@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads (@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
         {
             if(side == null)
             {

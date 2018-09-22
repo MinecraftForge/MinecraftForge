@@ -139,7 +139,7 @@ public interface IForgeBlock
      */
     default boolean doesSideBlockRendering(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing face)
     {
-       return state.func_200015_d(world, pos);
+       return state.isOpaqueCube(world, pos);
     }
 
     /**
@@ -237,7 +237,7 @@ public interface IForgeBlock
     {
         if (world instanceof IWorldWriter)
         {
-            ((IWorldWriter)world).setBlockState(pos, state.func_206870_a(BlockBed.OCCUPIED,occupied), 4);
+            ((IWorldWriter)world).setBlockState(pos, state.with(BlockBed.OCCUPIED,occupied), 4);
         }
     }
 
@@ -252,7 +252,7 @@ public interface IForgeBlock
     */
     default EnumFacing getBedDirection(IBlockState state, IWorldReader world, BlockPos pos)
     {
-        return state.getValue(BlockHorizontal.FACING);
+        return state.get(BlockHorizontal.HORIZONTAL_FACING);
     }
 
     /**
@@ -264,7 +264,7 @@ public interface IForgeBlock
      */
     default boolean isBedFoot(IBlockState state, IWorldReader world, BlockPos pos)
     {
-        return state.getValue(BlockBed.PART) == BedPart.FOOT;
+        return state.get(BlockBed.PART) == BedPart.FOOT;
     }
 
     /**
@@ -408,7 +408,7 @@ public interface IForgeBlock
     default boolean canPlaceTorchOnTop(IBlockState state, IWorldReader world, BlockPos pos)
     {
         if (state.isTopSolid() || state.getBlockFaceShape(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
-            return this.getBlock() != Blocks.END_GATEWAY && this.getBlock() != Blocks.field_196628_cT;
+            return this.getBlock() != Blocks.END_GATEWAY && this.getBlock() != Blocks.JACK_O_LANTERN;
         else
             return this.getBlock() instanceof BlockFence || this.getBlock() == Blocks.COBBLESTONE_WALL || this.getBlock() instanceof BlockGlass;
     }
@@ -514,19 +514,19 @@ public interface IForgeBlock
             return this.getBlock() == Blocks.CACTUS && this.getBlock() == Blocks.SAND;
         }
 
-        if (plant.getBlock() == Blocks.field_196608_cF)
+        if (plant.getBlock() == Blocks.SUGAR_CANE)
         {
             return true;
         }
 
-        if (plantable instanceof BlockBush && ((BlockBush)plantable).func_196260_a(state, world, pos))
+        if (plantable instanceof BlockBush && ((BlockBush)plantable).isValidPosition(state, world, pos))
         {
             return true;
         }
 
         switch (type)
         {
-            case Desert: return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.HARDENED_CLAY ||
+            case Desert: return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.TERRACOTTA ||
                     this.getBlock() instanceof BlockGlazedTerracotta;
             case Nether: return this.getBlock() == Blocks.SOUL_SAND;
             case Crop: return this.getBlock() == Blocks.FARMLAND;
@@ -578,7 +578,7 @@ public interface IForgeBlock
     default boolean isFertile(IBlockState state, IWorldReader world, BlockPos pos)
     {
         if (this.getBlock() == Blocks.FARMLAND)
-            return state.getValue(BlockFarmland.MOISTURE) > 0;
+            return state.get(BlockFarmland.MOISTURE) > 0;
 
         return  false;
     }
@@ -598,7 +598,7 @@ public interface IForgeBlock
     */
     default int getLightOpacity(IBlockState state, IWorldReader world, BlockPos pos)
     {
-        return state.func_200016_a(world, pos);
+        return state.getOpacity(world, pos);
     }
 
    /**
@@ -630,7 +630,7 @@ public interface IForgeBlock
 
     default boolean rotateBlock(IBlockState state, IWorld world, BlockPos pos, EnumFacing axis)
     {
-        state.func_206871_b().keySet().forEach(prop ->
+        state.getValues().keySet().forEach(prop ->
         {
             if (prop.getName().equals("facing") || prop.getName().equals("rotation") && prop.getValueClass() == EnumFacing.class)
             {
@@ -640,13 +640,13 @@ public interface IForgeBlock
                     IBlockState newState;
                     @SuppressWarnings("unchecked")
                     IProperty<EnumFacing> facingIProperty = (IProperty<EnumFacing>) prop;
-                    EnumFacing facing = state.getValue(facingIProperty);
+                    EnumFacing facing = state.get(facingIProperty);
                     Collection<EnumFacing> validFacing = facingIProperty.getAllowedValues();
 
                     // rotate horizontal facings clockwise
                     if (validFacing.size() == 4 && !validFacing.contains(EnumFacing.UP) && !validFacing.contains(EnumFacing.DOWN))
                     {
-                        newState = state.func_206870_a(facingIProperty, facing.rotateY());
+                        newState = state.with(facingIProperty, facing.rotateY());
                     }
                     else
                     {
@@ -654,11 +654,11 @@ public interface IForgeBlock
                         EnumFacing rotatedFacing = facing.rotateAround(axis.getAxis());
                         if (validFacing.contains(rotatedFacing))
                         {
-                            newState = state.func_206870_a(facingIProperty, rotatedFacing);
+                            newState = state.with(facingIProperty, rotatedFacing);
                         }
                         else // abnormal facing property, just cycle it
                         {
-                            newState = state.cycleProperty(facingIProperty);
+                            newState = state.cycle(facingIProperty);
                         }
                     }
 
@@ -879,7 +879,7 @@ public interface IForgeBlock
     @SuppressWarnings("deprecation")
     default IBlockState getStateForPlacement(IBlockState state, EnumFacing facing, IBlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, EnumHand hand)
     {
-        return this.getBlock().func_196271_a(state, facing, state2, world, pos1, pos2);
+        return this.getBlock().updatePostPlacement(state, facing, state2, world, pos1, pos2);
     }
 
 

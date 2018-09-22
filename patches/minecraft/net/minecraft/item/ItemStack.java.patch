@@ -68,7 +68,7 @@
     }
  
     public EnumActionResult func_196084_a(ItemUseContext p_196084_1_) {
-+      //if (!p_196084_1_.field_196006_g.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
++      //if (!context.world.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(context);
        EntityPlayer entityplayer = p_196084_1_.func_195999_j();
        BlockPos blockpos = p_196084_1_.func_195995_a();
        BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);

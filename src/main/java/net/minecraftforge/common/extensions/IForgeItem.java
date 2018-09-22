@@ -70,7 +70,7 @@ public interface IForgeItem
     @SuppressWarnings("deprecation")
     default Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
     {
-        return getItem().getItemAttributeModifiers(slot);
+        return getItem().getAttributeModifiers(slot);
     }
 
     /**
@@ -133,7 +133,7 @@ public interface IForgeItem
     @Nullable
     default NBTTagCompound getNBTShareTag(ItemStack stack)
     {
-        return stack.getTagCompound();
+        return stack.getTag();
     }
 
     /**
@@ -145,7 +145,7 @@ public interface IForgeItem
      */
     default void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt)
     {
-        stack.setTagCompound(nbt);
+        stack.setTag(nbt);
     }
 
     /**
@@ -286,7 +286,7 @@ public interface IForgeItem
      */
     default java.util.Collection<ItemGroup> getCreativeTabs()
     {
-        return java.util.Collections.singletonList(getItem().getCreativeTab());
+        return java.util.Collections.singletonList(getItem().getGroup());
     }
 
     /**
@@ -454,7 +454,7 @@ public interface IForgeItem
      */
     default int getDamage(ItemStack stack)
     {
-        return !stack.hasTagCompound() ? 0 : stack.getTagCompound().getInteger("Damage");
+        return !stack.hasTag() ? 0 : stack.getTag().getInt("Damage");
     }
 
     /**
@@ -467,7 +467,7 @@ public interface IForgeItem
      */
     default boolean showDurabilityBar(ItemStack stack)
     {
-        return stack.isItemDamaged();
+        return stack.isDamaged();
     }
 
     /**
@@ -479,7 +479,7 @@ public interface IForgeItem
      */
     default double getDurabilityForDisplay(ItemStack stack)
     {
-        return (double) stack.getItemDamage() / (double) stack.getMaxDamage();
+        return (double) stack.getDamage() / (double) stack.getMaxDamage();
     }
 
     /**
@@ -517,7 +517,7 @@ public interface IForgeItem
      */
     default boolean isDamaged(ItemStack stack)
     {
-        return stack.getItemDamage() > 0;
+        return stack.getDamage() > 0;
     }
 
     /**
@@ -529,7 +529,7 @@ public interface IForgeItem
      */
     default void setDamage(ItemStack stack, int damage)
     {
-        stack.func_196082_o().setInteger("Damage", Math.max(0, damage));
+        stack.getOrCreateTag().setInt("Damage", Math.max(0, damage));
     }
 
     /**
@@ -570,7 +570,7 @@ public interface IForgeItem
     @SuppressWarnings("deprecation")
     default int getItemStackLimit(ItemStack stack)
     {
-        return getItem().getItemStackLimit();
+        return getItem().getMaxStackSize();
     }
 
     Set<ToolType> getToolTypes(ItemStack stack);
@@ -654,7 +654,7 @@ public interface IForgeItem
     default boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack)
     {
         return !(newStack.getItem() == oldStack.getItem() && ItemStack.areItemStackTagsEqual(newStack, oldStack)
-                && (newStack.isItemStackDamageable() || newStack.getItemDamage() == oldStack.getItemDamage()));
+                && (newStack.isDamageable() || newStack.getDamage() == oldStack.getDamage()));
     }
 
     /**
@@ -704,7 +704,7 @@ public interface IForgeItem
                 .builder();
         for (ResourceLocation location : ((RegistrySimple<ResourceLocation, IItemPropertyGetter>) getItem().properties).getKeys())
         {
-            final IItemPropertyGetter parameter = getItem().properties.getObject(location);
+            final IItemPropertyGetter parameter = getItem().properties.get(location);
             builder.put(location.toString(), input -> parameter.call(stack, world, entity));
         }
         return builder.build();

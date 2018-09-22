@@ -111,7 +111,7 @@ public final class ModelDynBucket implements IUnbakedModel
     }
     
     @Override
-    public Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_)
+    public Collection<ResourceLocation> getTextures(Function<ResourceLocation, IUnbakedModel> modelGetter, Set<String> missingTextureErrors)
     {
         ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
 
@@ -160,7 +160,7 @@ public final class ModelDynBucket implements IUnbakedModel
             // build base (insidest)
             IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(modelGetter, bakedTextureGetter, state, uvlock, format);
             random.setSeed(42);
-            builder.addAll(model.func_200117_a(null, null, random));
+            builder.addAll(model.getQuads(null, null, random));
             particleSprite = model.getParticleTexture();
         }
         if (liquidLocation != null && fluidSprite != null)
@@ -260,7 +260,7 @@ public final class ModelDynBucket implements IUnbakedModel
     {
         try
         {
-            return Minecraft.getMinecraft().func_195551_G().func_199002_a(resourceLocation);
+            return Minecraft.getInstance().getResourceManager().getResource(resourceLocation);
         }
         catch (IOException ignored)
         {
@@ -298,7 +298,7 @@ public final class ModelDynBucket implements IUnbakedModel
         }
 
         @Override
-        public void func_195410_a(IResourceManager resourceManager)
+        public void onResourceManagerReload(IResourceManager resourceManager)
         {
             // no need to clear cache since we create a new model instance
         }
@@ -331,7 +331,7 @@ public final class ModelDynBucket implements IUnbakedModel
 
         private BucketBaseSprite(IResource resource)
         {
-            super(resource.func_199029_a(), getSizeInfo(resource), resource.func_199028_a(AnimationMetadataSection.field_195817_a));
+            super(resource.getLocation(), getSizeInfo(resource), resource.getMetadata(AnimationMetadataSection.SERIALIZER));
         }
 
         /* TODO Custom TAS
@@ -373,7 +373,7 @@ public final class ModelDynBucket implements IUnbakedModel
 
         private BucketCoverSprite(IResource resource)
         {
-            super(resource.func_199029_a(), getSizeInfo(resource), resource.func_199028_a(AnimationMetadataSection.field_195817_a));
+            super(resource.getLocation(), getSizeInfo(resource), resource.getMetadata(AnimationMetadataSection.SERIALIZER));
         }
 
         /* TODO Custom TAS
@@ -404,7 +404,7 @@ public final class ModelDynBucket implements IUnbakedModel
                  IResource mask = getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/vanilla_bucket_cover_mask.png"))
             ) {
                 // use the alpha mask if it fits, otherwise leave the cover texture blank
-                if (empty != null && mask != null && Objects.equals(empty.func_199026_d(), mask.func_199026_d()) &&
+                if (empty != null && mask != null && Objects.equals(empty.getPackName(), mask.getPackName()) &&
                         alphaMask.getIconWidth() == width && alphaMask.getIconHeight() == height)
                 {
                     final int[][] oldPixels = sprite.getFrameTextureData(0);
@@ -437,7 +437,7 @@ public final class ModelDynBucket implements IUnbakedModel
         private BakedDynBucketOverrideHandler() {}
 
         @Override
-        public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+        public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
         {
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {
@@ -450,7 +450,7 @@ public final class ModelDynBucket implements IUnbakedModel
                         {
                             IUnbakedModel parent = model.parent.process(ImmutableMap.of("fluid", name));
                             Function<ResourceLocation, TextureAtlasSprite> textureGetter;
-                            textureGetter = location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+                            textureGetter = location -> Minecraft.getInstance().getTextureMap().getAtlasSprite(location.toString());
 
                             IBakedModel bakedModel = parent.bake(ModelLoader.defaultModelGetter(), textureGetter, new SimpleModelState(model.transforms), false, model.format);
                             model.cache.put(name, bakedModel);

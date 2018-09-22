@@ -54,10 +54,10 @@ public class ItemHandlerHelper
 
     public static boolean canItemStacksStack(@Nonnull ItemStack a, @Nonnull ItemStack b)
     {
-        if (a.isEmpty() || !a.isItemEqual(b) || a.hasTagCompound() != b.hasTagCompound())
+        if (a.isEmpty() || !a.isItemEqual(b) || a.hasTag() != b.hasTag())
             return false;
 
-        return (!a.hasTagCompound() || a.getTagCompound().equals(b.getTagCompound())) && a.areCapsCompatible(b);
+        return (!a.hasTag() || a.getTag().equals(b.getTag())) && a.areCapsCompatible(b);
     }
 
     /**
@@ -79,10 +79,10 @@ public class ItemHandlerHelper
         if (a.getHasSubtypes() && a.getMetadata() != b.getMetadata())
             return false;
 */
-        if (a.hasTagCompound() != b.hasTagCompound())
+        if (a.hasTag() != b.hasTag())
             return false;
 
-        return (!a.hasTagCompound() || a.getTagCompound().equals(b.getTagCompound())) && a.areCapsCompatible(b);
+        return (!a.hasTag() || a.getTag().equals(b.getTag())) && a.areCapsCompatible(b);
     }
 
     @Nonnull

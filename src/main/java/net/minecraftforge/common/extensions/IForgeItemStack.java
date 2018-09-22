@@ -101,16 +101,16 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
 
     default EnumActionResult onItemUseFirst(ItemUseContext context)
     {
-       EntityPlayer entityplayer = context.func_195999_j();
-       BlockPos blockpos = context.func_195995_a();
-       BlockWorldState blockworldstate = new BlockWorldState(context.func_195991_k(), blockpos, false);
-       if (entityplayer != null && !entityplayer.capabilities.allowEdit && !getStack().func_206847_b(context.func_195991_k().func_205772_D(), blockworldstate)) {
+       EntityPlayer entityplayer = context.getPlayer();
+       BlockPos blockpos = context.getPos();
+       BlockWorldState blockworldstate = new BlockWorldState(context.getWorld(), blockpos, false);
+       if (entityplayer != null && !entityplayer.abilities.allowEdit && !getStack().canPlaceOn(context.getWorld().getTags(), blockworldstate)) {
           return EnumActionResult.PASS;
        } else {
           Item item = getStack().getItem();
           EnumActionResult enumactionresult = item.onItemUseFirst(getStack(), context);
           if (entityplayer != null && enumactionresult == EnumActionResult.SUCCESS) {
-             entityplayer.addStat(StatList.OBJECT_USE_STATS.func_199076_b(item));
+             entityplayer.addStat(StatList.ITEM_USED.get(item));
           }
 
           return enumactionresult;
@@ -120,7 +120,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
     default NBTTagCompound serializeNBT()
     {
         NBTTagCompound ret = new NBTTagCompound();
-        getStack().writeToNBT(ret);
+        getStack().write(ret);
         return ret;
     }
 

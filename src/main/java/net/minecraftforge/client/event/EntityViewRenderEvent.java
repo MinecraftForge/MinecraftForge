@@ -25,6 +25,8 @@ import net.minecraft.entity.Entity;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
+import net.minecraftforge.eventbus.api.Event.HasResult;
+
 /**
  * Event that hooks into EntityRenderer, allowing any feature to customize visual attributes
  *  the player sees.

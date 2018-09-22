@@ -21,6 +21,10 @@ package net.minecraftforge.event.terraingen;
 
 import java.util.Random;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
+import net.minecraftforge.eventbus.api.Event;
+
 //import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;

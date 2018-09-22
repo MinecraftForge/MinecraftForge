@@ -49,7 +49,7 @@ public class PacketUtil
 
             if (stack.getItem().isDamageable() || stack.getItem().getShareTag())
             {
-                nbttagcompound = stack.getTagCompound();
+                nbttagcompound = stack.getTag();
             }
 
             buffer.writeCompoundTag(nbttagcompound);

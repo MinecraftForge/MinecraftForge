@@ -65,7 +65,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     }
 
     @Override
-    public IBakedModel func_209581_a(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+    public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
     {
         return stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
             .map(asm -> 
@@ -78,12 +78,12 @@ public final class AnimationItemOverrideList extends ItemOverrideList
                 }
                 if(world == null)
                 {
-                    w = Minecraft.getMinecraft().world;
+                    w = Minecraft.getInstance().world;
                 }
                 return asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             })
             // TODO where should uvlock data come from?
             .map(state -> model.bake(ModelLoader.defaultModelGetter(), bakedTextureGetter, new ModelStateComposition(state, this.state), false, format))
-            .orElseGet(() -> super.func_209581_a(originalModel, stack, world, entity));
+            .orElseGet(() -> super.getModelWithOverrides(originalModel, stack, world, entity));
     }
 }

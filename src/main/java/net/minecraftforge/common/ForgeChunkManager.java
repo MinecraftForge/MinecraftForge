@@ -456,7 +456,7 @@ public class ForgeChunkManager
             try
             {
                 NBTTagCompound forcedChunkData = CompressedStreamTools.read(chunkLoaderData);
-                return forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND).size() > 0;
+                return forcedChunkData.getList("TicketList", Constants.NBT.TAG_COMPOUND).size() > 0;
             }
             catch (IOException e)
             {
@@ -499,10 +499,10 @@ public class ForgeChunkManager
                 LOGGER.warn(CHUNK_MANAGER, "Unable to read forced chunk data at {} - it will be ignored", chunkLoaderData.getAbsolutePath(), e);
                 return;
             }
-            NBTTagList ticketList = forcedChunkData.getTagList("TicketList", Constants.NBT.TAG_COMPOUND);
+            NBTTagList ticketList = forcedChunkData.getList("TicketList", Constants.NBT.TAG_COMPOUND);
             for (int i = 0; i < ticketList.size(); i++)
             {
-                NBTTagCompound ticketHolder = ticketList.getCompoundTagAt(i);
+                NBTTagCompound ticketHolder = ticketList.getCompound(i);
                 String modId = ticketHolder.getString("Owner");
                 boolean isPlayer = ForgeVersion.MOD_ID.equals(modId);
 
@@ -518,17 +518,17 @@ public class ForgeChunkManager
                     continue;
                 }
 
-                NBTTagList tickets = ticketHolder.getTagList("Tickets", Constants.NBT.TAG_COMPOUND);
+                NBTTagList tickets = ticketHolder.getList("Tickets", Constants.NBT.TAG_COMPOUND);
                 for (int j = 0; j < tickets.size(); j++)
                 {
-                    NBTTagCompound ticket = tickets.getCompoundTagAt(j);
+                    NBTTagCompound ticket = tickets.getCompound(j);
                     modId = ticket.hasKey("ModId") ? ticket.getString("ModId") : modId;
                     Type type = Type.values()[ticket.getByte("Type")];
                     //byte ticketChunkDepth = ticket.getByte("ChunkListDepth");
                     Ticket tick = new Ticket(modId, type, world);
                     if (ticket.hasKey("ModData"))
                     {
-                        tick.modData = ticket.getCompoundTag("ModData");
+                        tick.modData = ticket.getCompound("ModData");
                     }
                     if (ticket.hasKey("Player"))
                     {
@@ -545,8 +545,8 @@ public class ForgeChunkManager
                     }
                     if (type == Type.ENTITY)
                     {
-                        tick.entityChunkX = ticket.getInteger("chunkX");
-                        tick.entityChunkZ = ticket.getInteger("chunkZ");
+                        tick.entityChunkX = ticket.getInt("chunkX");
+                        tick.entityChunkZ = ticket.getInt("chunkZ");
                         UUID uuid = new UUID(ticket.getLong("PersistentIDMSB"), ticket.getLong("PersistentIDLSB"));
                         // add the ticket to the "pending entity" list
                         pendingEntities.put(uuid, tick);
@@ -936,10 +936,10 @@ public class ForgeChunkManager
                 {
                     ticket.setTag("ModData", tick.modData);
                 }
-                if (tick.ticketType == Type.ENTITY && tick.entity != null && tick.entity.writeToNBTOptional(new NBTTagCompound()))
+                if (tick.ticketType == Type.ENTITY && tick.entity != null && tick.entity.writeUnlessPassenger(new NBTTagCompound()))
                 {
-                    ticket.setInteger("chunkX", MathHelper.floor(tick.entity.chunkCoordX));
-                    ticket.setInteger("chunkZ", MathHelper.floor(tick.entity.chunkCoordZ));
+                    ticket.setInt("chunkX", MathHelper.floor(tick.entity.chunkCoordX));
+                    ticket.setInt("chunkZ", MathHelper.floor(tick.entity.chunkCoordZ));
                     ticket.setLong("PersistentIDMSB", tick.entity.getUniqueID().getMostSignificantBits());
                     ticket.setLong("PersistentIDLSB", tick.entity.getUniqueID().getLeastSignificantBits());
                     tickets.add(ticket);
@@ -996,8 +996,8 @@ public class ForgeChunkManager
         ChunkEntry entry = cache.getIfPresent(ChunkPos.asLong(chunk.x, chunk.z));
         if (entry != null)
         {
-            entry.nbt.setTag("Entities", nbt.getTagList("Entities", Constants.NBT.TAG_COMPOUND));
-            entry.nbt.setTag("TileEntities", nbt.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND));
+            entry.nbt.setTag("Entities", nbt.getList("Entities", Constants.NBT.TAG_COMPOUND));
+            entry.nbt.setTag("TileEntities", nbt.getList("TileEntities", Constants.NBT.TAG_COMPOUND));
 
             ClassInheritanceMultiMap<Entity>[] entityLists = chunk.getEntityLists();
             for (int i = 0; i < entityLists.length; ++i)
@@ -1027,17 +1027,17 @@ public class ForgeChunkManager
 
     private static void loadChunkEntities(Chunk chunk, NBTTagCompound nbt, World world)
     {
-        NBTTagList entities = nbt.getTagList("Entities", Constants.NBT.TAG_COMPOUND);
+        NBTTagList entities = nbt.getList("Entities", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < entities.size(); ++i)
         {
-            AnvilChunkLoader.readChunkEntity(entities.getCompoundTagAt(i), world, chunk);
+            AnvilChunkLoader.readChunkEntity(entities.getCompound(i), world, chunk);
             chunk.setHasEntities(true);
         }
 
-        NBTTagList tileEntities = nbt.getTagList("TileEntities", Constants.NBT.TAG_COMPOUND);
+        NBTTagList tileEntities = nbt.getList("TileEntities", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tileEntities.size(); ++i)
         {
-            TileEntity tileEntity = TileEntity.func_203403_c(tileEntities.getCompoundTagAt(i));
+            TileEntity tileEntity = TileEntity.create(tileEntities.getCompound(i));
             if (tileEntity != null) chunk.addTileEntity(tileEntity);
         }
     }

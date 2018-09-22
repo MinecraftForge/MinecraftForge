@@ -50,8 +50,8 @@ public class CapabilityItemHandler
                     if (!stack.isEmpty())
                     {
                         NBTTagCompound itemTag = new NBTTagCompound();
-                        itemTag.setInteger("Slot", i);
-                        stack.writeToNBT(itemTag);
+                        itemTag.setInt("Slot", i);
+                        stack.write(itemTag);
                         nbtTagList.add(itemTag);
                     }
                 }
@@ -67,12 +67,12 @@ public class CapabilityItemHandler
                 NBTTagList tagList = (NBTTagList) base;
                 for (int i = 0; i < tagList.size(); i++)
                 {
-                    NBTTagCompound itemTags = tagList.getCompoundTagAt(i);
-                    int j = itemTags.getInteger("Slot");
+                    NBTTagCompound itemTags = tagList.getCompound(i);
+                    int j = itemTags.getInt("Slot");
 
                     if (j >= 0 && j < instance.getSlots())
                     {
-                        itemHandlerModifiable.setStackInSlot(j, ItemStack.func_199557_a(itemTags));
+                        itemHandlerModifiable.setStackInSlot(j, ItemStack.read(itemTags));
                     }
                 }
             }

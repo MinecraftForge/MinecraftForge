@@ -137,7 +137,7 @@ public interface ISpecialArmor
             }
             
             double totalArmor = entity.getTotalArmorValue();
-            double totalToughness = entity.getEntityAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getAttributeValue();
+            double totalToughness = entity.getAttribute(SharedMonsterAttributes.ARMOR_TOUGHNESS).getValue();
 
             if (source.isUnblockable())
             {
@@ -169,7 +169,7 @@ public interface ISpecialArmor
                 {
                     ItemArmor armor = (ItemArmor)stack.getItem();
                     prop = new ArmorProperties(0, 0, Integer.MAX_VALUE);
-                    prop.Armor = armor.func_200881_e();
+                    prop.Armor = armor.getDamageReduceAmount();
                     prop.Toughness = armor.getToughness();
                 }
                 if (prop != null)

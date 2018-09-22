@@ -48,8 +48,8 @@ public class ModelLoaderErrorMessage extends SimpleMessage
         if (!reverseBlockMap.isEmpty()) return;
         
         ForgeRegistries.BLOCKS.getValues().stream()
-        	.flatMap(block -> block.getBlockState().getValidStates().stream())
-        	.forEach(state -> reverseBlockMap.put(BlockModelShapes.func_209554_c(state), state));
+        	.flatMap(block -> block.getStateContainer().getValidStates().stream())
+        	.forEach(state -> reverseBlockMap.put(BlockModelShapes.getModelLocation(state), state));
 
         ForgeRegistries.ITEMS.forEach(item ->
         {

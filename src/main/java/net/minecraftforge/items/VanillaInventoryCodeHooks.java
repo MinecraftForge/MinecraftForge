@@ -87,13 +87,13 @@ public class VanillaInventoryCodeHooks
      */
     public static boolean dropperInsertHook(World world, BlockPos pos, TileEntityDispenser dropper, int slot, @Nonnull ItemStack stack)
     {
-        EnumFacing enumfacing = world.getBlockState(pos).getValue(BlockDropper.FACING);
+        EnumFacing enumfacing = world.getBlockState(pos).get(BlockDropper.FACING);
         BlockPos blockpos = pos.offset(enumfacing);
         return getItemHandler(world, (double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), enumfacing.getOpposite())
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();
                     Object destination = destinationResult.getValue();
-                    ItemStack dispensedStack = stack.copy().splitStack(1);
+                    ItemStack dispensedStack = stack.copy().split(1);
                     ItemStack remainder = putStackInInventoryAllSlots(dropper, destination, itemHandler, dispensedStack);
         
                     if (remainder.isEmpty())
@@ -117,7 +117,7 @@ public class VanillaInventoryCodeHooks
      */
     public static boolean insertHook(TileEntityHopper hopper)
     {
-        EnumFacing hopperFacing = hopper.func_195044_w().getValue(BlockHopper.FACING);
+        EnumFacing hopperFacing = hopper.getBlockState().get(BlockHopper.FACING);
         return getItemHandler(hopper, hopperFacing)
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();

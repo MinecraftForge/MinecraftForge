@@ -52,7 +52,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean func_199325_c(IWorldReader world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed)
+    public boolean renderModelFlat(IWorldReader world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed)
     {
         if(ForgeMod.forgeLightPipelineEnabled)
         {
@@ -68,12 +68,12 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         else
         {
-            return super.func_199325_c(world, model, state, pos, buffer, checkSides, rand, seed);
+            return super.renderModelFlat(world, model, state, pos, buffer, checkSides, rand, seed);
         }
     }
 
     @Override
-    public boolean func_199326_b(IWorldReader world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed)
+    public boolean renderModelSmooth(IWorldReader world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed)
     {
         if(ForgeMod.forgeLightPipelineEnabled)
         {
@@ -89,7 +89,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         else
         {
-            return super.func_199326_b(world, model, state, pos, buffer, checkSides, rand, seed);
+            return super.renderModelSmooth(world, model, state, pos, buffer, checkSides, rand, seed);
         }
     }
 
@@ -99,7 +99,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         lighter.setState(state);
         lighter.setBlockPos(pos);
         boolean empty = true;
-        List<BakedQuad> quads = model.func_200117_a(state, null, rand);
+        List<BakedQuad> quads = model.getQuads(state, null, rand);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -111,7 +111,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         for(EnumFacing side : EnumFacing.values())
         {
-            quads = model.func_200117_a(state, side, rand);
+            quads = model.getQuads(state, side, rand);
             if(!quads.isEmpty())
             {
                 if(!checkSides || Block.shouldSideBeRendered(state, world, pos, side))

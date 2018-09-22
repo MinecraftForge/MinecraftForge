@@ -64,7 +64,7 @@ public class CapabilityFluidHandler
 			{
 				nbt.setString("Empty", "");
 			}
-			nbt.setInteger("Capacity", tank.getCapacity());
+			nbt.setInt("Capacity", tank.getCapacity());
 			return nbt;
 		}
 
@@ -75,7 +75,7 @@ public class CapabilityFluidHandler
 				throw new RuntimeException("IFluidHandler instance is not instance of FluidTank");
 			NBTTagCompound tags = (NBTTagCompound) nbt;
 			FluidTank tank = (FluidTank) instance;
-			tank.setCapacity(tags.getInteger("Capacity"));
+			tank.setCapacity(tags.getInt("Capacity"));
 			tank.readFromNBT(tags);
 		}
     }

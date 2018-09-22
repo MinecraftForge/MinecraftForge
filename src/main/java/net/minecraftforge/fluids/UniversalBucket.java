@@ -50,6 +50,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.item.Item.Builder;
+
 /**
  * A universal bucket that can hold any liquid
  */
@@ -83,7 +85,7 @@ public class UniversalBucket extends Item
 
         this.setCreativeTab(CreativeTabs.MISC);
 */
-        BlockDispenser.func_199774_a(this, DispenseFluidContainer.getInstance());
+        BlockDispenser.registerDispenseBehavior(this, DispenseFluidContainer.getInstance());
     }
 
     @Override
@@ -105,9 +107,9 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public void getSubItems(@Nullable ItemGroup tab, @Nonnull NonNullList<ItemStack> subItems)
+    public void fillItemGroup(@Nullable ItemGroup tab, @Nonnull NonNullList<ItemStack> subItems)
     {
-        if (!this.isInCreativeTab(tab))
+        if (!this.isInGroup(tab))
             return;/* TODO fluids
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values())
         {
@@ -128,22 +130,22 @@ public class UniversalBucket extends Item
 
     @Override
     @Nonnull
-    public ITextComponent func_200295_i(@Nonnull ItemStack stack)
+    public ITextComponent getDisplayName(@Nonnull ItemStack stack)
     {
         FluidStack fluidStack = getFluid(stack);
         if (fluidStack == null)
         {
             if(!getEmpty().isEmpty())
             {
-                return getEmpty().func_200301_q();
+                return getEmpty().getDisplayName();
             }
-            return super.func_200295_i(stack);
+            return super.getDisplayName(stack);
         }
 
         String unloc = this.getTranslationKey();
 
         // TODO this is not reliable on the server
-        if (LanguageMap.getInstance().func_210813_b(unloc + "." + fluidStack.getFluid().getName()))
+        if (LanguageMap.getInstance().exists(unloc + "." + fluidStack.getFluid().getName()))
         {
             return new TextComponentTranslation(unloc + "." + fluidStack.getFluid().getName());
         }
@@ -169,7 +171,7 @@ public class UniversalBucket extends Item
         ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack, mop);
         if (ret != null) return ret;
 
-        if(mop == null || mop.typeOfHit != RayTraceResult.Type.BLOCK)
+        if(mop == null || mop.type != RayTraceResult.Type.BLOCK)
         {
             return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
         }
@@ -186,10 +188,10 @@ public class UniversalBucket extends Item
             {
                 // try placing liquid
                 FluidActionResult result = FluidUtil.tryPlaceFluid(player, world, targetPos, itemstack, fluidStack);
-                if (result.isSuccess() && !player.capabilities.isCreativeMode)
+                if (result.isSuccess() && !player.abilities.isCreativeMode)
                 {
                     // success!
-                    player.addStat(StatList.OBJECT_USE_STATS.func_199076_b(this));
+                    player.addStat(StatList.ITEM_USED.get(this));
 
                     itemstack.shrink(1);
                     ItemStack drained = result.getResult();
@@ -234,7 +236,7 @@ public class UniversalBucket extends Item
 
         // needs to target a block
         RayTraceResult target = event.getTarget();
-        if (target == null || target.typeOfHit != RayTraceResult.Type.BLOCK)
+        if (target == null || target.type != RayTraceResult.Type.BLOCK)
         {
             return;
         }
@@ -272,7 +274,7 @@ public class UniversalBucket extends Item
     @Nullable
     public FluidStack getFluid(@Nonnull ItemStack container)
     {
-        return FluidStack.loadFluidStackFromNBT(container.getTagCompound());
+        return FluidStack.loadFluidStackFromNBT(container.getTag());
     }
 
     public int getCapacity()

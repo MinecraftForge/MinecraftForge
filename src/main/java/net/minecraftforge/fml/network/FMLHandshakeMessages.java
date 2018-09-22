@@ -60,8 +60,8 @@ public class FMLHandshakeMessages
 
         S2CModList(NBTTagCompound nbtTagCompound)
         {
-            this.modList = nbtTagCompound.getTagList("modlist", 8).stream().map(INBTBase::getString).collect(Collectors.toList());
-            this.channels = nbtTagCompound.getTagList("channels", 10);
+            this.modList = nbtTagCompound.getList("modlist", 8).stream().map(INBTBase::getString).collect(Collectors.toList());
+            this.channels = nbtTagCompound.getList("channels", 10);
         }
 
         public static S2CModList decode(PacketBuffer packetBuffer)

@@ -37,9 +37,9 @@ public class GuiAccessDenied extends GuiScreen
     @Override
     public void initGui()
     {
-        this.buttonList.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done"))
+        this.buttons.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done"))
         {
-            public void func_194829_a(double p_194829_1_, double p_194829_3_)
+            public void onClick(double mouseX, double mouseY)
             {
                 GuiAccessDenied.this.mc.displayGuiScreen(parent);
             }
@@ -47,13 +47,13 @@ public class GuiAccessDenied extends GuiScreen
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks)
+    public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
         int offset = Math.max(85 - 2 * 10, 10);
         this.drawCenteredString(this.fontRenderer, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
         offset += 10;
         this.drawCenteredString(this.fontRenderer, String.format("The server %s has forbidden modded access", data.serverName), this.width / 2, offset, 0xFFFFFF);
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 }
