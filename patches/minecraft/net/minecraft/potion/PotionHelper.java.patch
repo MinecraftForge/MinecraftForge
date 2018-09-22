@@ -1,46 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/potion/PotionHelper.java
 +++ ../src-work/minecraft/net/minecraft/potion/PotionHelper.java
-@@ -13,8 +13,8 @@
- 
- public class PotionHelper
- {
--    private static final List<PotionHelper.MixPredicate<PotionType>> field_185213_a = Lists.<PotionHelper.MixPredicate<PotionType>>newArrayList();
--    private static final List<PotionHelper.MixPredicate<Item>> field_185214_b = Lists.<PotionHelper.MixPredicate<Item>>newArrayList();
-+    private static final List<PotionHelper.MixPredicate<net.minecraftforge.registries.IRegistryDelegate<PotionType>>> field_185213_a = Lists.newArrayList();
-+    private static final List<PotionHelper.MixPredicate<net.minecraftforge.registries.IRegistryDelegate<Item>>> field_185214_b = Lists.newArrayList();
-     private static final List<Ingredient> field_185215_c = Lists.<Ingredient>newArrayList();
-     private static final Predicate<ItemStack> field_185216_d = new Predicate<ItemStack>()
-     {
-@@ -86,9 +86,9 @@
- 
-         for (int j = field_185214_b.size(); i < j; ++i)
+@@ -88,7 +88,7 @@
          {
--            PotionHelper.MixPredicate<Item> mixpredicate = (PotionHelper.MixPredicate)field_185214_b.get(i);
-+            PotionHelper.MixPredicate<net.minecraftforge.registries.IRegistryDelegate<Item>> mixpredicate = (PotionHelper.MixPredicate)field_185214_b.get(i);
+             PotionHelper.MixPredicate<Item> mixpredicate = (PotionHelper.MixPredicate)field_185214_b.get(i);
  
 -            if (mixpredicate.field_185198_a == item && mixpredicate.field_185199_b.apply(p_185206_1_))
 +            if (mixpredicate.field_185198_a.get() == item && mixpredicate.field_185199_b.apply(p_185206_1_))
              {
                  return true;
              }
-@@ -104,9 +104,9 @@
- 
-         for (int j = field_185213_a.size(); i < j; ++i)
+@@ -106,7 +106,7 @@
          {
--            PotionHelper.MixPredicate<PotionType> mixpredicate = (PotionHelper.MixPredicate)field_185213_a.get(i);
-+            PotionHelper.MixPredicate<net.minecraftforge.registries.IRegistryDelegate<PotionType>> mixpredicate = (PotionHelper.MixPredicate)field_185213_a.get(i);
+             PotionHelper.MixPredicate<PotionType> mixpredicate = (PotionHelper.MixPredicate)field_185213_a.get(i);
  
 -            if (mixpredicate.field_185198_a == potiontype && mixpredicate.field_185199_b.apply(p_185209_1_))
 +            if (mixpredicate.field_185198_a.get() == potiontype && mixpredicate.field_185199_b.apply(p_185209_1_))
              {
                  return true;
              }
-@@ -125,11 +125,11 @@
- 
-             for (int j = field_185214_b.size(); i < j; ++i)
+@@ -127,9 +127,9 @@
              {
--                PotionHelper.MixPredicate<Item> mixpredicate = (PotionHelper.MixPredicate)field_185214_b.get(i);
-+                PotionHelper.MixPredicate<net.minecraftforge.registries.IRegistryDelegate<Item>> mixpredicate = (PotionHelper.MixPredicate)field_185214_b.get(i);
+                 PotionHelper.MixPredicate<Item> mixpredicate = (PotionHelper.MixPredicate)field_185214_b.get(i);
  
 -                if (mixpredicate.field_185198_a == item && mixpredicate.field_185199_b.apply(p_185212_0_))
 +                if (mixpredicate.field_185198_a.get() == item && mixpredicate.field_185199_b.apply(p_185212_0_))
@@ -50,12 +30,9 @@
                  }
              }
  
-@@ -137,11 +137,11 @@
- 
-             for (int k = field_185213_a.size(); i < k; ++i)
+@@ -139,9 +139,9 @@
              {
--                PotionHelper.MixPredicate<PotionType> mixpredicate1 = (PotionHelper.MixPredicate)field_185213_a.get(i);
-+                PotionHelper.MixPredicate<net.minecraftforge.registries.IRegistryDelegate<PotionType>> mixpredicate1 = (PotionHelper.MixPredicate)field_185213_a.get(i);
+                 PotionHelper.MixPredicate<PotionType> mixpredicate1 = (PotionHelper.MixPredicate)field_185213_a.get(i);
  
 -                if (mixpredicate1.field_185198_a == potiontype && mixpredicate1.field_185199_b.apply(p_185212_0_))
 +                if (mixpredicate1.field_185198_a.get() == potiontype && mixpredicate1.field_185199_b.apply(p_185212_0_))
@@ -65,21 +42,26 @@
                  }
              }
          }
-@@ -209,7 +209,7 @@
- 
-     public static void func_193355_a(ItemPotion p_193355_0_, Item p_193355_1_, ItemPotion p_193355_2_)
-     {
--        field_185214_b.add(new PotionHelper.MixPredicate(p_193355_0_, Ingredient.func_193368_a(p_193355_1_), p_193355_2_));
-+        field_185214_b.add(new PotionHelper.MixPredicate(p_193355_0_.delegate, Ingredient.func_193368_a(p_193355_1_), p_193355_2_.delegate));
+@@ -227,17 +227,17 @@
+         field_185213_a.add(new PotionHelper.MixPredicate(p_193356_0_, p_193356_1_, p_193356_2_));
      }
  
-     public static void func_193354_a(ItemPotion p_193354_0_)
-@@ -224,7 +224,7 @@
+-    static class MixPredicate<T>
++    static class MixPredicate<T extends net.minecraftforge.registries.IForgeRegistryEntry.Impl<T>>
+         {
+-            final T field_185198_a;
++            final net.minecraftforge.registries.IRegistryDelegate<T> field_185198_a;
+             final Ingredient field_185199_b;
+-            final T field_185200_c;
++            final net.minecraftforge.registries.IRegistryDelegate<T> field_185200_c;
  
-     public static void func_193356_a(PotionType p_193356_0_, Ingredient p_193356_1_, PotionType p_193356_2_)
-     {
--        field_185213_a.add(new PotionHelper.MixPredicate(p_193356_0_, p_193356_1_, p_193356_2_));
-+        field_185213_a.add(new PotionHelper.MixPredicate(p_193356_0_.delegate, p_193356_1_, p_193356_2_.delegate));
-     }
- 
-     public static class MixPredicate<T>
+             public MixPredicate(T p_i47570_1_, Ingredient p_i47570_2_, T p_i47570_3_)
+             {
+-                this.field_185198_a = p_i47570_1_;
++                this.field_185198_a = p_i47570_1_.delegate;
+                 this.field_185199_b = p_i47570_2_;
+-                this.field_185200_c = p_i47570_3_;
++                this.field_185200_c = p_i47570_3_.delegate;
+             }
+         }
+ }
