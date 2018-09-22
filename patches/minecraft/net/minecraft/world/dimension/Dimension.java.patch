@@ -9,7 +9,7 @@
     public static final float[] MOON_PHASE_FACTORS = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
     protected World world;
     protected boolean doesWaterVaporize;
-@@ -141,4 +141,67 @@
+@@ -141,4 +141,76 @@
     public abstract boolean doesXZShowFog(int x, int z);
  
     public abstract DimensionType getDimensionType();
@@ -75,5 +75,14 @@
 +   public void setWeatherRenderer(net.minecraftforge.client.IRenderHandler renderer)
 +   {
 +      weatherRenderer = renderer;
++   }
++   
++   @Override
++   public void resetRainAndThunder()
++   {
++      world.getWorldInfo().setRainTime(0);
++      world.getWorldInfo().setRaining(false);
++      world.getWorldInfo().setThunderTime(0);
++      world.getWorldInfo().setThundering(false);
 +   }
  }

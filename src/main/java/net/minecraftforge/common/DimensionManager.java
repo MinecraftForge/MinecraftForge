@@ -296,7 +296,7 @@ public class DimensionManager
             dimensions.get(id).ticksWaited = 0;
         }
         WorldServer ret = worlds.get(id);
-        if (ret != null && forceLoad)
+        if (ret == null && forceLoad)
         {
             initDimension(id);
             ret = worlds.get(id);
