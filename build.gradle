@@ -176,6 +176,7 @@ project(':forge') {
         header = file("$rootDir/LICENSE-header.txt")
 
         include 'net/minecraftforge/'
+        exclude 'net/minecraftforge/api'
         exclude 'net/minecraftforge/server/terminalconsole/'
         exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
         exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
