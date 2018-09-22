@@ -59,7 +59,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(InputMappings.Input key)
         {
-            String keyName = GLFW.glfwGetKeyName(key.func_197937_c(), 0);
+            String keyName = key.func_197936_a();
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
             return I18n.format(localizationFormatKey, keyName);
         }
@@ -86,8 +86,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(InputMappings.Input key)
         {
-            String keyName = GLFW.glfwGetKeyName(key.func_197937_c(), 0);
-            return I18n.format("forge.controlsgui.shift", keyName);
+            return I18n.format("forge.controlsgui.shift", key.func_197936_a());
         }
     },
     ALT {
@@ -112,8 +111,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(InputMappings.Input keyCode)
         {
-            String keyName = GLFW.glfwGetKeyName(keyCode.func_197937_c(), 0);
-            return I18n.format("forge.controlsgui.alt", keyName);
+            return I18n.format("forge.controlsgui.alt", keyCode.func_197936_a());
         }
     },
     NONE {
@@ -148,7 +146,7 @@ public enum KeyModifier {
         @Override
         public String getLocalizedComboName(InputMappings.Input key)
         {
-            return GLFW.glfwGetKeyName(key.func_197937_c(), 0);
+            return key.func_197936_a();
         }
     };
 

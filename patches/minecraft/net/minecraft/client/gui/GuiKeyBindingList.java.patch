@@ -1,0 +1,61 @@
+--- a/net/minecraft/client/gui/GuiKeyBindingList.java
++++ b/net/minecraft/client/gui/GuiKeyBindingList.java
+@@ -41,7 +41,7 @@
+    }
+ 
+    protected int getScrollBarX() {
+-      return super.getScrollBarX() + 15;
++      return super.getScrollBarX() + 35;
+    }
+ 
+    public int getListWidth() {
+@@ -77,13 +77,14 @@
+       private KeyEntry(final KeyBinding name) {
+          this.keybinding = name;
+          this.keyDesc = I18n.format(name.getKeyDescription());
+-         this.btnChangeKeyBinding = new GuiButton(0, 0, 0, 75, 20, I18n.format(name.getKeyDescription())) {
++         this.btnChangeKeyBinding = new GuiButton(0, 0, 0, 95, 20, I18n.format(name.getDisplayName())) {
+             public void func_194829_a(double p_194829_1_, double p_194829_3_) {
+                GuiKeyBindingList.this.controlsScreen.buttonId = name;
+             }
+          };
+          this.btnReset = new GuiButton(0, 0, 0, 50, 20, I18n.format("controls.reset")) {
+             public void func_194829_a(double p_194829_1_, double p_194829_3_) {
++               keybinding.setToDefault();
+                GuiKeyBindingList.this.mc.gameSettings.func_198014_a(name, name.func_197977_i());
+                KeyBinding.resetKeyBindingArrayAndHash();
+             }
+@@ -95,19 +96,20 @@
+          int j = this.func_195002_d();
+          boolean flag = GuiKeyBindingList.this.controlsScreen.buttonId == this.keybinding;
+          GuiKeyBindingList.this.mc.fontRenderer.func_211126_b(this.keyDesc, (float)(j + 90 - GuiKeyBindingList.this.maxListLabelWidth), (float)(i + p_194999_2_ / 2 - GuiKeyBindingList.this.mc.fontRenderer.FONT_HEIGHT / 2), 16777215);
+-         this.btnReset.x = j + 190;
++         this.btnReset.x = j + 210;
+          this.btnReset.y = i;
+          this.btnReset.enabled = !this.keybinding.func_197985_l();
+          this.btnReset.func_194828_a(p_194999_3_, p_194999_4_, p_194999_6_);
+          this.btnChangeKeyBinding.x = j + 105;
+          this.btnChangeKeyBinding.y = i;
+-         this.btnChangeKeyBinding.displayString = this.keybinding.func_197978_k();
++         this.btnChangeKeyBinding.displayString = this.keybinding.getDisplayName();
+          boolean flag1 = false;
++         boolean keyCodeModifierConflict = true; // less severe form of conflict, like SHIFT conflicting with SHIFT+G
+          if (!this.keybinding.func_197986_j()) {
+             for(KeyBinding keybinding : GuiKeyBindingList.this.mc.gameSettings.keyBindings) {
+-               if (keybinding != this.keybinding && this.keybinding.func_197983_b(keybinding)) {
++               if (keybinding != this.keybinding && this.keybinding.conflicts(keybinding)) {
+                   flag1 = true;
+-                  break;
++                  keyCodeModifierConflict &= keybinding.hasKeyCodeModifierConflict(this.keybinding);
+                }
+             }
+          }
+@@ -115,7 +117,7 @@
+          if (flag) {
+             this.btnChangeKeyBinding.displayString = TextFormatting.WHITE + "> " + TextFormatting.YELLOW + this.btnChangeKeyBinding.displayString + TextFormatting.WHITE + " <";
+          } else if (flag1) {
+-            this.btnChangeKeyBinding.displayString = TextFormatting.RED + this.btnChangeKeyBinding.displayString;
++            this.btnChangeKeyBinding.displayString = (keyCodeModifierConflict ? TextFormatting.GOLD : TextFormatting.RED) + this.btnChangeKeyBinding.displayString;
+          }
+ 
+          this.btnChangeKeyBinding.func_194828_a(p_194999_3_, p_194999_4_, p_194999_6_);
