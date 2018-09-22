@@ -47,7 +47,6 @@ public interface IForgeFluidState
      * @param material to test for.
      * @param testingHead when true, its testing the entities head for vision, breathing ect... otherwise its testing the body, for swimming and movement adjustment.
      */
-    @Nullable
     default boolean isEntityInside(IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
     {
         return getFluidState().func_206886_c().isEntityInside(getFluidState(), world, pos, entity, yToTest, tag, testingHead);

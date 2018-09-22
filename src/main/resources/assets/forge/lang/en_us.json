@@ -64,6 +64,11 @@
   "forge.configgui.alwaysSetupTerrainOffThread": "Force threaded chunk rendering",
   "forge.configgui.forgeLightPipelineEnabled": "Forge Light Pipeline Enabled",
   "forge.configgui.selectiveResourceReloadEnabled.tooltip": "When enabled, makes specific reload tasks such as language changing quicker to run.",
-  "forge.configgui.selectiveResourceReloadEnabled": "Enable Selective Resource Loading"
+  "forge.configgui.selectiveResourceReloadEnabled": "Enable Selective Resource Loading",
+  
+  "forge.controlsgui.shift": "SHIFT + %s",
+  "forge.controlsgui.control": "CTRL + %s",
+  "forge.controlsgui.control.mac": "CMD + %s",
+  "forge.controlsgui.alt": "ALT + %s"
 
 }

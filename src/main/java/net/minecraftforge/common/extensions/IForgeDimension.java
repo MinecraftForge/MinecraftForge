@@ -30,7 +30,10 @@ import net.minecraftforge.client.IRenderHandler;
 
 public interface IForgeDimension
 {
-    default Dimension getDimension() { return (Dimension) this; }
+    default Dimension getDimension()
+    {
+        return (Dimension) this;
+    }
 
     /**
      * Called from {@link World#initCapabilities()}, to gather capabilities for this
@@ -50,19 +53,21 @@ public interface IForgeDimension
     }
 
     /**
-     * The dimension's movement factor.
-     * Whenever a player or entity changes dimension from world A to world B, their coordinates are multiplied by
+     * The dimension's movement factor. Whenever a player or entity changes
+     * dimension from world A to world B, their coordinates are multiplied by
      * worldA.provider.getMovementFactor() / worldB.provider.getMovementFactor()
-     * Example: Overworld factor is 1, nether factor is 8. Traveling from overworld to nether multiplies coordinates by 1/8.
+     * Example: Overworld factor is 1, nether factor is 8. Traveling from overworld
+     * to nether multiplies coordinates by 1/8.
+     * 
      * @return The movement factor
      */
     default double getMovementFactor()
     {
-       if (getDimension() instanceof NetherDimension)
-       {
-          return 8.0;
-       }
-       return 1.0;
+        if (getDimension() instanceof NetherDimension)
+        {
+            return 8.0;
+        }
+        return 1.0;
     }
 
     /**
@@ -96,4 +101,16 @@ public interface IForgeDimension
 
     @OnlyIn(Dist.CLIENT)
     void setWeatherRenderer(IRenderHandler renderer);
+
+    void resetRainAndThunder();
+    
+    default boolean canDoLightning(net.minecraft.world.chunk.Chunk chunk)
+    {
+        return true;
+    }
+
+    default boolean canDoRainSnowIce(net.minecraft.world.chunk.Chunk chunk)
+    {
+        return true;
+    }
 }

@@ -108,7 +108,7 @@ public class CraftingHelper
     public static final IConditionSerializer CONDITION_FALSE = condition("false", json -> () -> false);
 
     public static final IIngredientSerializer<IngredientNBT> INGREDIENT_NBT = register(new ResourceLocation("forge", "nbt"), new IngredientNBT.Serializer());
-    public static final IIngredientSerializer<CompoundIngredient> INGREDIENT_COMPOUND = register(new ResourceLocation("forge", "nbt"), new CompoundIngredient.Serializer());
+    public static final IIngredientSerializer<CompoundIngredient> INGREDIENT_COMPOUND = register(new ResourceLocation("forge", "compound"), new CompoundIngredient.Serializer());
     public static final IIngredientSerializer<Ingredient> INGREDIENT_VANILLA = register(new ResourceLocation("minecraft", "item"), new IIngredientSerializer<Ingredient>() {
                         public Ingredient parse(PacketBuffer buffer) {
                             return Ingredient.func_209357_a(Stream.generate(() -> new Ingredient.SingleItemList(buffer.readItemStack())).limit(buffer.readVarInt()));

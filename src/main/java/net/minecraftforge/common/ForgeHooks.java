@@ -295,20 +295,6 @@ public class ForgeHooks
         return ret;
     }
 
-    static
-    {
-        seedList.add(new SeedEntry(new ItemStack(Items.WHEAT_SEEDS), 10)
-        {
-            @Override
-            @Nonnull
-            public ItemStack getStack(Random rand, int fortune)
-            {
-                return new ItemStack(Items.WHEAT_SEEDS, 1 + rand.nextInt(fortune * 2 + 1));
-            }
-        });
-        initTools();
-    }
-
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
