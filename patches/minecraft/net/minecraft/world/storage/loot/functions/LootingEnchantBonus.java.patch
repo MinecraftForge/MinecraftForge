@@ -1,11 +1,11 @@
 --- a/net/minecraft/world/storage/loot/functions/LootingEnchantBonus.java
 +++ b/net/minecraft/world/storage/loot/functions/LootingEnchantBonus.java
 @@ -27,7 +27,7 @@
-    public ItemStack apply(ItemStack stack, Random rand, LootContext context) {
-       Entity entity = context.getKiller();
+    public ItemStack func_186553_a(ItemStack p_186553_1_, Random p_186553_2_, LootContext p_186553_3_) {
+       Entity entity = p_186553_3_.func_186492_c();
        if (entity instanceof EntityLivingBase) {
--         int i = EnchantmentHelper.getLootingModifier((EntityLivingBase)entity);
-+         int i = context.getLootingModifier();
+-         int i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
++         int i = p_186553_3_.getLootingModifier();
           if (i == 0) {
-             return stack;
+             return p_186553_1_;
           }

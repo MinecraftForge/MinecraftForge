@@ -6,5 +6,5 @@
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class SoundEvents {
-    public static final SoundEvent AMBIENT_CAVE;
+    public static final SoundEvent field_187674_a;
     public static final SoundEvent field_204326_e;

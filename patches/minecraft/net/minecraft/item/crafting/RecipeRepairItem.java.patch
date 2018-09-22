@@ -16,24 +16,24 @@
 @@ -59,11 +56,10 @@
           ItemStack itemstack3 = list.get(0);
           ItemStack itemstack4 = list.get(1);
-          if (itemstack3.getItem() == itemstack4.getItem() && itemstack3.getCount() == 1 && itemstack4.getCount() == 1 && itemstack3.getItem().isDamageable()) {
--            Item item = itemstack3.getItem();
--            int j = item.getMaxDamage() - itemstack3.getItemDamage();
--            int k = item.getMaxDamage() - itemstack4.getItemDamage();
--            int l = j + k + item.getMaxDamage() * 5 / 100;
--            int i1 = item.getMaxDamage() - l;
-+            int j = itemstack3.getMaxDamage() - itemstack3.getItemDamage();
-+            int k = itemstack3.getMaxDamage() - itemstack4.getItemDamage();
-+            int l = j + k + itemstack3.getMaxDamage() * 5 / 100;
-+            int i1 = itemstack3.getMaxDamage() - l;
+          if (itemstack3.func_77973_b() == itemstack4.func_77973_b() && itemstack3.func_190916_E() == 1 && itemstack4.func_190916_E() == 1 && itemstack3.func_77973_b().func_77645_m()) {
+-            Item item = itemstack3.func_77973_b();
+-            int j = item.func_77612_l() - itemstack3.func_77952_i();
+-            int k = item.func_77612_l() - itemstack4.func_77952_i();
+-            int l = j + k + item.func_77612_l() * 5 / 100;
+-            int i1 = item.func_77612_l() - l;
++            int j = itemstack3.func_77958_k() - itemstack3.func_77952_i();
++            int k = itemstack3.func_77958_k() - itemstack4.func_77952_i();
++            int l = j + k + itemstack3.func_77958_k() * 5 / 100;
++            int i1 = itemstack3.func_77958_k() - l;
              if (i1 < 0) {
                 i1 = 0;
              }
 @@ -77,7 +73,6 @@
-       return ItemStack.EMPTY;
+       return ItemStack.field_190927_a;
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean canFit(int width, int height) {
-       return width * height >= 2;
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ * p_194133_2_ >= 2;
     }

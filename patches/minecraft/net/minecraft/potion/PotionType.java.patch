@@ -6,6 +6,6 @@
  
 -public class PotionType {
 +public class PotionType extends net.minecraftforge.registries.ForgeRegistryEntry<PotionType> {
-    private static final ResourceLocation EMPTY = new ResourceLocation("empty");
-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> REGISTRY = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(EMPTY);
-    private final String baseName;
+    private static final ResourceLocation field_185177_b = new ResourceLocation("empty");
+    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(field_185177_b);
+    private final String field_185179_d;

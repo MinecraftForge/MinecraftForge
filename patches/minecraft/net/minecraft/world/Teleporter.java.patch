@@ -6,11 +6,11 @@
  
 -public class Teleporter {
 +public class Teleporter implements net.minecraftforge.common.util.ITeleporter {
-    private static final BlockPortal field_196236_a = (BlockPortal)Blocks.PORTAL;
-    protected final WorldServer world;
-    protected final Random random;
+    private static final BlockPortal field_196236_a = (BlockPortal)Blocks.field_150427_aO;
+    protected final WorldServer field_85192_a;
+    protected final Random field_77187_a;
 @@ -334,4 +334,13 @@
-          this.lastUpdateTime = lastUpdate;
+          this.field_85087_d = p_i45747_3_;
        }
     }
 +   
@@ -18,8 +18,8 @@
 +   public void placeEntity(World world, Entity entity, float yaw)
 +   {
 +      if (entity instanceof EntityPlayerMP)
-+         placeInPortal(entity, yaw);
++         func_180266_a(entity, yaw);
 +      else
-+         placeInExistingPortal(entity, yaw);
++         func_180620_b(entity, yaw);
 +   }
  }

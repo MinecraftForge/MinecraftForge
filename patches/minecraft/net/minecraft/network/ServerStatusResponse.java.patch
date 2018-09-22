@@ -2,34 +2,34 @@
 +++ b/net/minecraft/network/ServerStatusResponse.java
 @@ -26,6 +26,7 @@
  
-    public void setServerDescription(ITextComponent descriptionIn) {
-       this.description = descriptionIn;
+    public void func_151315_a(ITextComponent p_151315_1_) {
+       this.field_151326_a = p_151315_1_;
 +      invalidateJson();
     }
  
-    public ServerStatusResponse.Players getPlayers() {
+    public ServerStatusResponse.Players func_151318_b() {
 @@ -34,6 +35,7 @@
  
-    public void setPlayers(ServerStatusResponse.Players playersIn) {
-       this.players = playersIn;
+    public void func_151319_a(ServerStatusResponse.Players p_151319_1_) {
+       this.field_151324_b = p_151319_1_;
 +      invalidateJson();
     }
  
-    public ServerStatusResponse.Version getVersion() {
+    public ServerStatusResponse.Version func_151322_c() {
 @@ -42,16 +44,51 @@
  
-    public void setVersion(ServerStatusResponse.Version versionIn) {
-       this.version = versionIn;
+    public void func_151321_a(ServerStatusResponse.Version p_151321_1_) {
+       this.field_151325_c = p_151321_1_;
 +      invalidateJson();
     }
  
-    public void setFavicon(String faviconBlob) {
-       this.favicon = faviconBlob;
+    public void func_151320_a(String p_151320_1_) {
+       this.field_151323_d = p_151320_1_;
 +      invalidateJson();
     }
  
-    public String getFavicon() {
-       return this.favicon;
+    public String func_151316_d() {
+       return this.field_151323_d;
     }
  
 +   private java.util.concurrent.Semaphore mutex = new java.util.concurrent.Semaphore(1);
@@ -49,7 +49,7 @@
 +         mutex.acquireUninterruptibly();
 +         ret = this.json;
 +         if (ret == null) {
-+            ret = net.minecraft.network.status.server.SPacketServerInfo.GSON.toJson(this);
++            ret = net.minecraft.network.status.server.SPacketServerInfo.field_149297_a.toJson(this);
 +            this.json = ret;
 +         }
 +         mutex.release();
@@ -66,5 +66,5 @@
 +   }
 +
     public static class Players {
-       private final int maxPlayers;
-       private final int onlinePlayerCount;
+       private final int field_151336_a;
+       private final int field_151334_b;

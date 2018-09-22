@@ -12,15 +12,15 @@
 +public abstract class World extends net.minecraftforge.common.capabilities.CapabilityProvider implements IWorld, IWorldReader, AutoCloseable, net.minecraftforge.common.extensions.IForgeWorld {
     protected static final Logger field_195596_d = LogManager.getLogger();
     private static final EnumFacing[] field_200007_a = EnumFacing.values();
-    private int seaLevel = 63;
+    private int field_181546_a = 63;
 @@ -121,6 +122,7 @@
-       this.provider = providerIn;
-       this.isRemote = client;
-       this.worldBorder = providerIn.createWorldBorder();
+       this.field_73011_w = p_i45749_3_;
+       this.field_72995_K = p_i45749_5_;
+       this.field_175728_M = p_i45749_3_.func_177501_r();
 +      perWorldStorage = new WorldSavedDataStorage((ISaveHandler)null);
     }
  
-    public IWorld init() {
+    public IWorld func_175643_b() {
 @@ -2397,4 +2399,31 @@
     public abstract RecipeManager func_199532_z();
  
@@ -32,18 +32,18 @@
 +   
 +   protected void initCapabilities()
 +   {
-+       net.minecraftforge.common.capabilities.ICapabilityProvider parent = provider.initCapabilities();
++       net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
 +       this.gatherCapabilities(parent);
 +       net.minecraftforge.common.util.WorldCapabilityData data = (net.minecraftforge.common.util.WorldCapabilityData)perWorldStorage.func_201067_a(net.minecraftforge.common.util.WorldCapabilityData::new, net.minecraftforge.common.util.WorldCapabilityData.ID);
 +       if (data == null)
 +       {
 +           capabilityData = new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities());
-+           perWorldStorage.setData(capabilityData.func_195925_e(), capabilityData);
++           perWorldStorage.func_75745_a(capabilityData.func_195925_e(), capabilityData);
  }
 +       else
 +       {
 +           capabilityData = data;
-+           capabilityData.setCapabilities(provider, getCapabilities());
++           capabilityData.setCapabilities(field_73011_w, getCapabilities());
 +       }
 +   }
 +   

@@ -6,13 +6,13 @@
  
 -public class Chunk implements IChunk {
 +public class Chunk extends net.minecraftforge.common.capabilities.CapabilityProvider implements IChunk, net.minecraftforge.common.extensions.IForgeChunk {
-    private static final Logger LOGGER = LogManager.getLogger();
-    public static final ChunkSection NULL_BLOCK_STORAGE = null;
-    private final ChunkSection[] storageArrays;
+    private static final Logger field_150817_t = LogManager.getLogger();
+    public static final ChunkSection field_186036_a = null;
+    private final ChunkSection[] field_76652_q;
 @@ -125,6 +125,7 @@
        this.field_201621_s = p_i49379_6_;
        this.field_205325_u = p_i49379_7_;
-       this.inhabitedTime = p_i49379_8_;
+       this.field_111204_q = p_i49379_8_;
 +      this.gatherCapabilities();
     }
  

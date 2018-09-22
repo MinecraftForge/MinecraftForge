@@ -2,13 +2,13 @@
 +++ b/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 @@ -445,6 +445,16 @@
  
-       compound.setTag("Heightmaps", nbttagcompound2);
-       compound.setTag("Structures", this.func_202160_a(chunkIn.x, chunkIn.z, chunkIn.func_201609_c(), chunkIn.func_201604_d()));
+       p_75820_3_.func_74782_a("Heightmaps", nbttagcompound2);
+       p_75820_3_.func_74782_a("Structures", this.func_202160_a(p_75820_1_.field_76635_g, p_75820_1_.field_76647_h, p_75820_1_.func_201609_c(), p_75820_1_.func_201604_d()));
 +
 +      try
 +      {
-+          final NBTTagCompound capTag = chunkIn.writeCapsToNBT();
-+          if (capTag != null) compound.setTag("ForgeCaps", capTag);
++          final NBTTagCompound capTag = p_75820_1_.writeCapsToNBT();
++          if (capTag != null) p_75820_3_.func_74782_a("ForgeCaps", capTag);
 +      }
 +      catch (Exception exception)
 +      {
@@ -16,13 +16,13 @@
 +      }
     }
  
-    private Chunk readChunkFromNBT(IWorld worldIn, NBTTagCompound compound) {
+    private Chunk func_75823_a(IWorld p_75823_1_, NBTTagCompound p_75823_2_) {
 @@ -511,6 +521,10 @@
-          chunk.setModified(true);
+          chunk.func_177427_f(true);
        }
  
-+      if (compound.hasKey("ForgeCaps")) {
-+          chunk.readCapsFromNBT(compound.getCompoundTag("ForgeCaps"));
++      if (p_75823_2_.func_74764_b("ForgeCaps")) {
++          chunk.readCapsFromNBT(p_75823_2_.func_74775_l("ForgeCaps"));
 +      }
 +
        return chunk;
@@ -34,6 +34,6 @@
     }
 +
 +   public int getPendingSaveCount() {
-+      return this.chunksToSave.size();
++      return this.field_75828_a.size();
 +   }
  }

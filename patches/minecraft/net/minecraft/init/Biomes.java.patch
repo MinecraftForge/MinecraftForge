@@ -6,5 +6,5 @@
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public abstract class Biomes {
-    public static final Biome OCEAN;
-    public static final Biome DEFAULT;
+    public static final Biome field_76771_b;
+    public static final Biome field_180279_ad;

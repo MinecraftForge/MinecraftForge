@@ -1,7 +1,7 @@
 --- a/net/minecraft/world/WorldServerMulti.java
 +++ b/net/minecraft/world/WorldServerMulti.java
 @@ -60,6 +60,7 @@
-          this.villageCollection.setWorldsForAll(this);
+          this.field_72982_D.func_82566_a(this);
        }
  
 +      this.initCapabilities();

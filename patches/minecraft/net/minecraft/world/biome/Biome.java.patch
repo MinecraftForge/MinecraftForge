@@ -6,6 +6,6 @@
  
 -public abstract class Biome {
 +public abstract class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> {
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger field_150586_aC = LogManager.getLogger();
     public static final WorldCarver<ProbabilityConfig> field_201907_b = new CaveWorldCarver();
     public static final WorldCarver<ProbabilityConfig> field_201908_c = new NetherCaveWorldCarver();

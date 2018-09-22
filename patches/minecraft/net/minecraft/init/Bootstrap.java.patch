@@ -10,7 +10,7 @@
  
 @@ -421,6 +422,8 @@
  
-             redirectOutputToLog();
+             func_179868_d();
           }
 +         net.minecraftforge.registries.ForgeRegistries.ITEMS.getClass(); // TODO figure out a better way to ensure these are initialized
 +         net.minecraft.tileentity.TileEntityType.field_200970_a.getClass();

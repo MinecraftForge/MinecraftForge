@@ -6,5 +6,5 @@
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class PotionTypes {
-    private static final Set<PotionType> CACHE;
-    public static final PotionType EMPTY;
+    private static final Set<PotionType> field_185228_K;
+    public static final PotionType field_185229_a;

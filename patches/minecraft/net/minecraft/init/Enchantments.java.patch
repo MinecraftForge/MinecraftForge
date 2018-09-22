@@ -6,5 +6,5 @@
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class Enchantments {
-    public static final Enchantment PROTECTION = getRegisteredEnchantment("protection");
-    public static final Enchantment FIRE_PROTECTION = getRegisteredEnchantment("fire_protection");
+    public static final Enchantment field_180310_c = func_185295_a("protection");
+    public static final Enchantment field_77329_d = func_185295_a("fire_protection");

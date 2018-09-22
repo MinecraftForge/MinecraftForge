@@ -6,22 +6,22 @@
  @OnlyIn(Dist.CLIENT)
 -public class Variant {
 +public class Variant implements net.minecraftforge.client.model.ISmartVariant {
-    private final ResourceLocation modelLocation;
-    private final ModelRotation rotation;
-    private final boolean uvLock;
+    private final ResourceLocation field_188050_a;
+    private final ModelRotation field_188051_b;
+    private final boolean field_188052_c;
 @@ -29,10 +29,15 @@
-       return this.modelLocation;
+       return this.field_188050_a;
     }
  
 +   @Deprecated
-    public ModelRotation getRotation() {
-       return this.rotation;
+    public ModelRotation func_188048_b() {
+       return this.field_188051_b;
     }
  
 +   public net.minecraftforge.common.model.IModelState getState() {
-+      return this.rotation;
++      return this.field_188051_b;
 +   }
 +
-    public boolean isUvLock() {
-       return this.uvLock;
+    public boolean func_188049_c() {
+       return this.field_188052_c;
     }

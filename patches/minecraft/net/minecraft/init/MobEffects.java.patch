@@ -6,5 +6,5 @@
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class MobEffects {
-    public static final Potion SPEED;
-    public static final Potion SLOWNESS;
+    public static final Potion field_76424_c;
+    public static final Potion field_76421_d;

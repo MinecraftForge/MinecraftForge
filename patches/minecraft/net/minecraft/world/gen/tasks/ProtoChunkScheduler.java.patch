@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/tasks/ProtoChunkScheduler.java
++++ b/net/minecraft/world/gen/tasks/ProtoChunkScheduler.java
+@@ -21,6 +21,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import net.minecraft.util.Scheduler.FutureWrapper;
++
+ public class ProtoChunkScheduler extends Scheduler<ChunkPos, ChunkStatus, ChunkPrimer> {
+    private static final Logger field_202873_b = LogManager.getLogger();
+    private final World field_202874_c;

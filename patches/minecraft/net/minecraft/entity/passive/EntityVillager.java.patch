@@ -1,71 +1,80 @@
 --- a/net/minecraft/entity/passive/EntityVillager.java
 +++ b/net/minecraft/entity/passive/EntityVillager.java
 @@ -105,7 +105,7 @@
-    private boolean needsInitilization;
-    private boolean isWillingToMate;
-    private int wealth;
--   private String lastBuyingPlayer;
-+   private java.util.UUID lastBuyingPlayer;
-    private int careerId;
-    private int careerLevel;
-    private boolean isLookingForHome;
+    private boolean field_70959_by;
+    private boolean field_175565_bs;
+    private int field_70956_bz;
+-   private String field_82189_bL;
++   private java.util.UUID field_82189_bL;
+    private int field_175563_bv;
+    private int field_175562_bw;
+    private boolean field_82190_bM;
+@@ -203,7 +203,7 @@
+                this.field_70959_by = false;
+                if (this.field_70954_d != null && this.field_82189_bL != null) {
+                   this.field_70170_p.func_72960_a(this, (byte)14);
+-                  this.field_70954_d.func_82688_a(this.field_82189_bL, 1);
++                  this.field_70954_d.modifyPlayerReputation(this.field_82189_bL, 1);
+                }
+             }
+ 
 @@ -220,7 +220,7 @@
        if (flag) {
-          itemstack.interactWithEntity(player, this, hand);
+          itemstack.func_111282_a(p_184645_1_, this, p_184645_2_);
           return true;
--      } else if (itemstack.getItem() != Items.field_196172_da && this.isEntityAlive() && !this.isTrading() && !this.isChild()) {
-+      } else if (itemstack.getItem() != Items.field_196172_da && this.isEntityAlive() && !this.isTrading() && !this.isChild() && !player.isSneaking()) {
-          if (this.buyingList == null) {
-             this.populateBuyingList();
+-      } else if (itemstack.func_77973_b() != Items.field_196172_da && this.func_70089_S() && !this.func_70940_q() && !this.func_70631_g_()) {
++      } else if (itemstack.func_77973_b() != Items.field_196172_da && this.func_70089_S() && !this.func_70940_q() && !this.func_70631_g_() && !p_184645_1_.func_70093_af()) {
+          if (this.field_70963_i == null) {
+             this.func_175554_cu();
           }
 @@ -250,6 +250,7 @@
-    public void writeEntityToNBT(NBTTagCompound compound) {
-       super.writeEntityToNBT(compound);
-       compound.setInteger("Profession", this.getProfession());
-+      compound.setString("ProfessionName", this.getProfessionForge().getRegistryName().toString());
-       compound.setInteger("Riches", this.wealth);
-       compound.setInteger("Career", this.careerId);
-       compound.setInteger("CareerLevel", this.careerLevel);
+    public void func_70014_b(NBTTagCompound p_70014_1_) {
+       super.func_70014_b(p_70014_1_);
+       p_70014_1_.func_74768_a("Profession", this.func_70946_n());
++      p_70014_1_.func_74778_a("ProfessionName", this.getProfessionForge().getRegistryName().toString());
+       p_70014_1_.func_74768_a("Riches", this.field_70956_bz);
+       p_70014_1_.func_74768_a("Career", this.field_175563_bv);
+       p_70014_1_.func_74768_a("CareerLevel", this.field_175562_bw);
 @@ -273,6 +274,14 @@
-    public void readEntityFromNBT(NBTTagCompound compound) {
-       super.readEntityFromNBT(compound);
-       this.setProfession(compound.getInteger("Profession"));
-+      if (compound.hasKey("ProfessionName"))
+    public void func_70037_a(NBTTagCompound p_70037_1_) {
+       super.func_70037_a(p_70037_1_);
+       this.func_70938_b(p_70037_1_.func_74762_e("Profession"));
++      if (p_70037_1_.func_74764_b("ProfessionName"))
 +      {
 +         net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p =
-+         net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation(compound.getString("ProfessionName")));
++         net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation(p_70037_1_.func_74779_i("ProfessionName")));
 +         if (p == null)
 +            p = net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation("minecraft:farmer"));
 +         this.setProfession(p);
 +      }
-       this.wealth = compound.getInteger("Riches");
-       this.careerId = compound.getInteger("Career");
-       this.careerLevel = compound.getInteger("CareerLevel");
+       this.field_70956_bz = p_70037_1_.func_74762_e("Riches");
+       this.field_175563_bv = p_70037_1_.func_74762_e("Career");
+       this.field_175562_bw = p_70037_1_.func_74762_e("CareerLevel");
 @@ -318,12 +327,42 @@
  
-    public void setProfession(int professionId) {
-       this.dataManager.set(PROFESSION, professionId);
-+      net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, professionId);
+    public void func_70938_b(int p_70938_1_) {
+       this.field_70180_af.func_187227_b(field_184752_bw, p_70938_1_);
++      net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, p_70938_1_);
     }
  
 +   @Deprecated // Use Forge Variant below
-    public int getProfession() {
--      return Math.max(this.dataManager.get(PROFESSION) % 6, 0);
-+      return Math.max(this.dataManager.get(PROFESSION), 0);
+    public int func_70946_n() {
+-      return Math.max(this.field_70180_af.func_187225_a(field_184752_bw) % 6, 0);
++      return Math.max(this.field_70180_af.func_187225_a(field_184752_bw), 0);
     }
  
 +   private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;
 +   public void setProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
 +   {
 +      this.prof = prof;
-+      this.setProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
++      this.func_70938_b(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
 +   }
 +
 +   public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getProfessionForge()
 +   {
 +      if (this.prof == null)
 +      {
-+         this.prof = net.minecraftforge.fml.common.registry.VillagerRegistry.getById(this.getProfession());
++         this.prof = net.minecraftforge.fml.common.registry.VillagerRegistry.getById(this.func_70946_n());
 +         if (this.prof == null)
 +            return net.minecraftforge.fml.common.registry.VillagerRegistry.getById(0); //Farmer
 +      }
@@ -73,56 +82,56 @@
 +   }
 +
 +   @Override
-+   public void notifyDataManagerChange(DataParameter<?> key)
++   public void func_184206_a(DataParameter<?> key)
 +   {
-+      super.notifyDataManagerChange(key);
-+      if (key.equals(PROFESSION))
++      super.func_184206_a(key);
++      if (key.equals(field_184752_bw))
 +      {
-+         net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, this.dataManager.get(PROFESSION));
++         net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, this.field_70180_af.func_187225_a(field_184752_bw));
 +      }
 +   }
 +
-    public boolean isMating() {
-       return this.isMating;
+    public boolean func_70941_o() {
+       return this.field_70952_f;
     }
 @@ -433,7 +472,7 @@
-          this.needsInitilization = true;
-          this.isWillingToMate = true;
-          if (this.buyingPlayer != null) {
--            this.lastBuyingPlayer = this.buyingPlayer.getGameProfile().getName();
-+            this.lastBuyingPlayer = this.buyingPlayer.getUniqueID();
+          this.field_70959_by = true;
+          this.field_175565_bs = true;
+          if (this.field_70962_h != null) {
+-            this.field_82189_bL = this.field_70962_h.func_146103_bH().getName();
++            this.field_82189_bL = this.field_70962_h.func_110124_au();
           } else {
-             this.lastBuyingPlayer = null;
+             this.field_82189_bL = null;
           }
 @@ -473,11 +512,10 @@
     }
  
-    private void populateBuyingList() {
--      EntityVillager.ITradeList[][][] aentityvillager$itradelist = DEFAULT_TRADE_LIST_MAP[this.getProfession()];
-       if (this.careerId != 0 && this.careerLevel != 0) {
-          ++this.careerLevel;
+    private void func_175554_cu() {
+-      EntityVillager.ITradeList[][][] aentityvillager$itradelist = field_175561_bA[this.func_70946_n()];
+       if (this.field_175563_bv != 0 && this.field_175562_bw != 0) {
+          ++this.field_175562_bw;
        } else {
--         this.careerId = this.rand.nextInt(aentityvillager$itradelist.length) + 1;
-+         this.careerId = this.getProfessionForge().getRandomCareer(this.rand) + 1;
-          this.careerLevel = 1;
+-         this.field_175563_bv = this.field_70146_Z.nextInt(aentityvillager$itradelist.length) + 1;
++         this.field_175563_bv = this.getProfessionForge().getRandomCareer(this.field_70146_Z) + 1;
+          this.field_175562_bw = 1;
        }
  
 @@ -487,16 +525,11 @@
  
-       int i = this.careerId - 1;
-       int j = this.careerLevel - 1;
+       int i = this.field_175563_bv - 1;
+       int j = this.field_175562_bw - 1;
 -      if (i >= 0 && i < aentityvillager$itradelist.length) {
 -         EntityVillager.ITradeList[][] aentityvillager$itradelist1 = aentityvillager$itradelist[i];
 -         if (j >= 0 && j < aentityvillager$itradelist1.length) {
 -            EntityVillager.ITradeList[] aentityvillager$itradelist2 = aentityvillager$itradelist1[j];
 -
 -            for(EntityVillager.ITradeList entityvillager$itradelist : aentityvillager$itradelist2) {
--               entityvillager$itradelist.addMerchantRecipe(this, this.buyingList, this.rand);
+-               entityvillager$itradelist.func_190888_a(this, this.field_70963_i, this.field_70146_Z);
 -            }
 +      java.util.List<EntityVillager.ITradeList> trades = this.getProfessionForge().getCareer(i).getTrades(j);
 +      if (i >= 0 && trades != null) {
 +         for (EntityVillager.ITradeList entityvillager$itradelist : trades) {
-+            entityvillager$itradelist.addMerchantRecipe(this, this.buyingList, this.rand);
++            entityvillager$itradelist.func_190888_a(this, this.field_70963_i, this.field_70146_Z);
           }
 -
        }
@@ -133,37 +142,37 @@
           }
  
 -         if (s != null) {
-+         s = this.getProfessionForge().getCareer(this.careerId-1).getName();
++         s = this.getProfessionForge().getCareer(this.field_175563_bv-1).getName();
              ITextComponent itextcomponent1 = (new TextComponentTranslation(this.func_200600_R().func_210760_d() + '.' + s, new Object[0])).func_211710_a((p_211520_1_) -> {
-                p_211520_1_.setHoverEvent(this.getHoverEvent()).setInsertion(this.getCachedUniqueIdString());
+                p_211520_1_.func_150209_a(this.func_174823_aP()).func_179989_a(this.func_189512_bd());
              });
 @@ -576,9 +609,6 @@
              }
  
              return itextcomponent1;
 -         } else {
--            return super.getDisplayName();
+-            return super.func_145748_c_();
 -         }
        }
     }
  
 @@ -619,7 +649,7 @@
-    public IEntityLivingData finalizeMobSpawn(DifficultyInstance p_190672_1_, @Nullable IEntityLivingData p_190672_2_, @Nullable NBTTagCompound p_190672_3_, boolean p_190672_4_) {
+    public IEntityLivingData func_190672_a(DifficultyInstance p_190672_1_, @Nullable IEntityLivingData p_190672_2_, @Nullable NBTTagCompound p_190672_3_, boolean p_190672_4_) {
        p_190672_2_ = super.func_204210_a(p_190672_1_, p_190672_2_, p_190672_3_);
        if (p_190672_4_) {
--         this.setProfession(this.world.rand.nextInt(6));
-+         net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.world.rand);
+-         this.func_70938_b(this.field_70170_p.field_73012_v.nextInt(6));
++         net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70170_p.field_73012_v);
        }
  
-       this.setAdditionalAItasks();
+       this.func_175552_ct();
 @@ -817,6 +847,10 @@
-          recipeList.add(new MerchantRecipe(itemstack, itemstack1));
+          p_190888_2_.add(new MerchantRecipe(itemstack, itemstack1));
        }
     }
 +   
 +   //MODDERS DO NOT USE OR EDIT THIS IN ANY WAY IT WILL HAVE NO EFFECT, THIS IS JUST IN HERE TO ALLOW FORGE TO ACCESS IT
 +   @Deprecated
-+   public static ITradeList[][][][] GET_TRADES_DONT_USE(){ return DEFAULT_TRADE_LIST_MAP; }
++   public static ITradeList[][][][] GET_TRADES_DONT_USE(){ return field_175561_bA; }
  
     public static class ListItemForEmeralds implements EntityVillager.ITradeList {
-       public ItemStack itemToBuy;
+       public ItemStack field_179403_a;

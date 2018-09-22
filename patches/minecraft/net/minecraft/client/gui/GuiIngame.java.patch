@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/gui/GuiIngame.java
 +++ b/net/minecraft/client/gui/GuiIngame.java
 @@ -548,7 +548,13 @@
-             GlStateManager.pushMatrix();
-             GlStateManager.enableBlend();
-             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-+            FontRenderer font = highlightingItemStack.getItem().getFontRenderer(highlightingItemStack);
+             GlStateManager.func_179094_E();
+             GlStateManager.func_179147_l();
+             GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
++            FontRenderer font = field_92016_l.func_77973_b().getFontRenderer(field_92016_l);
 +            if (font == null) {
-             this.getFontRenderer().drawStringWithShadow(s, (float)i, (float)j, 16777215 + (k << 24));
+             this.func_175179_f().func_175063_a(s, (float)i, (float)j, 16777215 + (k << 24));
 +            } else {
-+                i = (this.field_194811_H - font.getStringWidth(s)) / 2;
-+                font.drawStringWithShadow(s, (float)i, (float)j, 16777215 + (k << 24));
++                i = (this.field_194811_H - font.func_78256_a(s)) / 2;
++                font.func_175063_a(s, (float)i, (float)j, 16777215 + (k << 24));
 +            }
-             GlStateManager.disableBlend();
-             GlStateManager.popMatrix();
+             GlStateManager.func_179084_k();
+             GlStateManager.func_179121_F();
           }

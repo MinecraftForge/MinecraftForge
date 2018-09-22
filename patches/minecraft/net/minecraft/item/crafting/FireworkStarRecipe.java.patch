@@ -8,12 +8,12 @@
 -import net.minecraftforge.api.distmarker.OnlyIn;
  
  public class FireworkStarRecipe extends IRecipeHidden {
-    private static final Ingredient field_196212_a = Ingredient.func_199804_a(Items.FIRE_CHARGE, Items.FEATHER, Items.GOLD_NUGGET, Items.field_196182_dv, Items.field_196183_dw, Items.field_196185_dy, Items.field_196184_dx, Items.field_196151_dA, Items.field_196186_dz);
+    private static final Ingredient field_196212_a = Ingredient.func_199804_a(Items.field_151059_bz, Items.field_151008_G, Items.field_151074_bl, Items.field_196182_dv, Items.field_196183_dw, Items.field_196185_dy, Items.field_196184_dx, Items.field_196151_dA, Items.field_196186_dz);
 @@ -116,7 +114,6 @@
        return itemstack;
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean canFit(int width, int height) {
-       return width * height >= 2;
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ * p_194133_2_ >= 2;
     }

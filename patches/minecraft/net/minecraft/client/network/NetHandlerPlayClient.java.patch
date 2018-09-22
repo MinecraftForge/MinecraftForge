@@ -1,10 +1,10 @@
 --- a/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ b/net/minecraft/client/network/NetHandlerPlayClient.java
 @@ -1598,6 +1598,7 @@
-             ((DebugRendererWorldGenAttempts)this.client.debugRenderer.field_201750_j).func_201734_a(packetbuffer.readBlockPos(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat());
-             LOGGER.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
+             ((DebugRendererWorldGenAttempts)this.field_147299_f.field_184132_p.field_201750_j).func_201734_a(packetbuffer.func_179259_c(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat());
+             field_147301_d.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
           } else {
-+            if (!net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(packetIn, this.netManager))
-             LOGGER.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
++            if (!net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147240_1_, this.field_147302_e))
+             field_147301_d.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
           }
        } finally {

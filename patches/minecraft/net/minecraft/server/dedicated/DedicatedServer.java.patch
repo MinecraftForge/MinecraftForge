@@ -1,33 +1,33 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
 @@ -110,6 +110,7 @@
-          LOGGER.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
+          field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
        }
  
 +      net.minecraftforge.fml.server.ServerModLoader.begin(this);
-       LOGGER.info("Loading properties");
-       this.settings = new PropertyManager(new File("server.properties"));
-       this.eula = new ServerEula(new File("eula.txt"));
+       field_155771_h.info("Loading properties");
+       this.field_71340_o = new PropertyManager(new File("server.properties"));
+       this.field_154332_n = new ServerEula(new File("eula.txt"));
 @@ -181,6 +182,7 @@
-          if (!PreYggdrasilConverter.tryConvert(this.settings)) {
+          if (!PreYggdrasilConverter.func_152714_a(this.field_71340_o)) {
              return false;
           } else {
 +            net.minecraftforge.fml.server.ServerModLoader.end();
-             this.setPlayerList(new DedicatedPlayerList(this));
+             this.func_184105_a(new DedicatedPlayerList(this));
              long j = Util.func_211178_c();
-             if (this.getFolderName() == null) {
+             if (this.func_71270_I() == null) {
 @@ -218,6 +220,7 @@
-             TileEntitySkull.setProfileCache(this.getPlayerProfileCache());
-             TileEntitySkull.setSessionService(this.getMinecraftSessionService());
-             PlayerProfileCache.setOnlineMode(this.isServerInOnlineMode());
+             TileEntitySkull.func_184293_a(this.func_152358_ax());
+             TileEntitySkull.func_184294_a(this.func_147130_as());
+             PlayerProfileCache.func_187320_a(this.func_71266_T());
 +            if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
-             LOGGER.info("Preparing level \"{}\"", (Object)this.getFolderName());
+             field_155771_h.info("Preparing level \"{}\"", (Object)this.func_71270_I());
              JsonObject jsonobject = new JsonObject();
-             if (worldtype == WorldType.FLAT) {
+             if (worldtype == WorldType.field_77138_c) {
 @@ -257,7 +260,8 @@
              }
  
-             Items.AIR.getSubItems(ItemGroup.SEARCH, NonNullList.create());
+             Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
 -            return true;
 +            // <3 you Grum for this, saves us ~30 patch files! --^
 +            return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);

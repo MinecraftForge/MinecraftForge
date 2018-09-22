@@ -10,26 +10,26 @@
  public class ShulkerBoxColoringRecipe extends IRecipeHidden {
     public ShulkerBoxColoringRecipe(ResourceLocation p_i48159_1_) {
 @@ -31,7 +29,7 @@
-                if (Block.getBlockFromItem(itemstack.getItem()) instanceof BlockShulkerBox) {
+                if (Block.func_149634_a(itemstack.func_77973_b()) instanceof BlockShulkerBox) {
                    ++i;
                 } else {
--                  if (!(itemstack.getItem() instanceof ItemDye)) {
-+                  if (!itemstack.getItem().func_206844_a(net.minecraftforge.common.Tags.Items.DYES)) {
+-                  if (!(itemstack.func_77973_b() instanceof ItemDye)) {
++                  if (!itemstack.func_77973_b().func_206844_a(net.minecraftforge.common.Tags.Items.DYES)) {
                       return false;
                    }
  
 @@ -50,7 +48,7 @@
  
-    public ItemStack getCraftingResult(IInventory inv) {
-       ItemStack itemstack = ItemStack.EMPTY;
+    public ItemStack func_77572_b(IInventory p_77572_1_) {
+       ItemStack itemstack = ItemStack.field_190927_a;
 -      ItemDye itemdye = (ItemDye)Items.field_196106_bc;
 +      net.minecraft.item.EnumDyeColor color = net.minecraft.item.EnumDyeColor.WHITE;
  
-       for(int i = 0; i < inv.getSizeInventory(); ++i) {
-          ItemStack itemstack1 = inv.getStackInSlot(i);
+       for(int i = 0; i < p_77572_1_.func_70302_i_(); ++i) {
+          ItemStack itemstack1 = p_77572_1_.func_70301_a(i);
 @@ -58,13 +56,14 @@
-             Item item = itemstack1.getItem();
-             if (Block.getBlockFromItem(item) instanceof BlockShulkerBox) {
+             Item item = itemstack1.func_77973_b();
+             if (Block.func_149634_a(item) instanceof BlockShulkerBox) {
                 itemstack = itemstack1;
 -            } else if (item instanceof ItemDye) {
 -               itemdye = (ItemDye)item;
@@ -40,16 +40,16 @@
           }
        }
  
--      ItemStack itemstack2 = BlockShulkerBox.getColoredItemStack(itemdye.func_195962_g());
-+      ItemStack itemstack2 = BlockShulkerBox.getColoredItemStack(color);
-       if (itemstack.hasTagCompound()) {
-          itemstack2.setTagCompound(itemstack.getTagCompound().copy());
+-      ItemStack itemstack2 = BlockShulkerBox.func_190953_b(itemdye.func_195962_g());
++      ItemStack itemstack2 = BlockShulkerBox.func_190953_b(color);
+       if (itemstack.func_77942_o()) {
+          itemstack2.func_77982_d(itemstack.func_77978_p().func_74737_b());
        }
 @@ -72,7 +71,6 @@
        return itemstack2;
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean canFit(int width, int height) {
-       return width * height >= 2;
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ * p_194133_2_ >= 2;
     }

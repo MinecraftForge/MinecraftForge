@@ -6,79 +6,81 @@
  
 -public class Village {
 +public class Village extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeVillage {
-    private World world;
-    private final List<VillageDoorInfo> villageDoorInfoList = Lists.<VillageDoorInfo>newArrayList();
-    private BlockPos centerHelper = BlockPos.ORIGIN;
+    private World field_75586_a;
+    private final List<VillageDoorInfo> field_75584_b = Lists.<VillageDoorInfo>newArrayList();
+    private BlockPos field_75585_c = BlockPos.field_177992_a;
 @@ -40,15 +40,17 @@
-    private int tickCounter;
-    private int numVillagers;
-    private int noBreedTicks;
--   private final Map<String, Integer> playerReputation = Maps.<String, Integer>newHashMap();
-+   private final Map<UUID, Integer> playerReputation = Maps.<UUID, Integer>newHashMap();
-    private final List<Village.VillageAggressor> villageAgressors = Lists.<Village.VillageAggressor>newArrayList();
-    private int numIronGolems;
+    private int field_75581_g;
+    private int field_75588_h;
+    private int field_82694_i;
+-   private final Map<String, Integer> field_82693_j = Maps.<String, Integer>newHashMap();
++   private final Map<UUID, Integer> field_82693_j = Maps.<UUID, Integer>newHashMap();
+    private final List<Village.VillageAggressor> field_75589_i = Lists.<Village.VillageAggressor>newArrayList();
+    private int field_75587_j;
  
     public Village() {
 +       this.gatherCapabilities();
     }
  
-    public Village(World worldIn) {
-       this.world = worldIn;
+    public Village(World p_i1675_1_) {
+       this.field_75586_a = p_i1675_1_;
 +      this.gatherCapabilities();
     }
  
-    public void setWorld(World worldIn) {
+    public void func_82691_a(World p_82691_1_) {
 @@ -237,9 +239,9 @@
        double d0 = Double.MAX_VALUE;
        EntityPlayer entityplayer = null;
  
--      for(String s : this.playerReputation.keySet()) {
-+      for(UUID s : this.playerReputation.keySet()) {
-          if (this.isPlayerReputationTooLow(s)) {
--            EntityPlayer entityplayer1 = this.world.getPlayerEntityByName(s);
-+            EntityPlayer entityplayer1 = this.world.getPlayerEntityByUUID(s);
+-      for(String s : this.field_82693_j.keySet()) {
+-         if (this.func_82687_d(s)) {
+-            EntityPlayer entityplayer1 = this.field_75586_a.func_72924_a(s);
++      for(UUID s : this.field_82693_j.keySet()) {
++         if (this.isPlayerReputationTooLow(s)) {
++            EntityPlayer entityplayer1 = this.field_75586_a.func_152378_a(s);
              if (entityplayer1 != null) {
-                double d1 = entityplayer1.getDistanceSq(villageDefender);
+                double d1 = entityplayer1.func_70068_e(p_82685_1_);
                 if (!(d1 > d0)) {
-@@ -317,12 +319,32 @@
+@@ -317,22 +319,47 @@
        }
     }
  
 +   @Deprecated //Hasn't worked since 1.9, use UUID version below.
-    public int getPlayerReputation(String playerName) {
-+      return this.getPlayerReputation(findUUID(playerName));
+    public int func_82684_a(String p_82684_1_) {
++      return this.getPlayerReputation(findUUID(p_82684_1_));
 +   }
 +
-+   public int getPlayerReputation(UUID playerName) 
++   public int getPlayerReputation(UUID p_82684_1_) 
 +   {
-       Integer integer = this.playerReputation.get(playerName);
+       Integer integer = this.field_82693_j.get(p_82684_1_);
        return integer == null ? 0 : integer;
     }
 +   
 +   private UUID findUUID(String name)
 +   {
-+      if (this.world == null || this.world.getMinecraftServer() == null)
-+         return EntityPlayer.getOfflineUUID(name);
-+      GameProfile profile = this.world.getMinecraftServer().getPlayerProfileCache().getGameProfileForUsername(name);
-+      return profile == null ? EntityPlayer.getOfflineUUID(name) : profile.getId();
++      if (this.field_75586_a == null || this.field_75586_a.func_73046_m() == null)
++         return EntityPlayer.func_175147_b(name);
++      GameProfile profile = this.field_75586_a.func_73046_m().func_152358_ax().func_152655_a(name);
++      return profile == null ? EntityPlayer.func_175147_b(name) : profile.getId();
 +   }
  
 +   @Deprecated //Hasn't worked since 1.9, use UUID version below.
-    public int modifyPlayerReputation(String playerName, int reputation) {
-+      return this.modifyPlayerReputation(findUUID(playerName), reputation);
+    public int func_82688_a(String p_82688_1_, int p_82688_2_) {
+-      int i = this.func_82684_a(p_82688_1_);
++      return this.modifyPlayerReputation(findUUID(p_82688_1_), p_82688_2_);
 +   }
 +
-+   public int modifyPlayerReputation(UUID playerName, int reputation)
++   public int modifyPlayerReputation(UUID p_82688_1_, int p_82688_2_)
 +   {
-       int i = this.getPlayerReputation(playerName);
-       int j = MathHelper.clamp(i + reputation, -30, 10);
-       this.playerReputation.put(playerName, j);
-@@ -330,9 +352,14 @@
++      int i = this.getPlayerReputation(p_82688_1_);
+       int j = MathHelper.func_76125_a(i + p_82688_2_, -30, 10);
+       this.field_82693_j.put(p_82688_1_, j);
+       return j;
     }
  
-    public boolean isPlayerReputationTooLow(String playerName) {
--      return this.getPlayerReputation(playerName) <= -15;
-+      return this.isPlayerReputationTooLow(findUUID(playerName));
+    public boolean func_82687_d(String p_82687_1_) {
+-      return this.func_82684_a(p_82687_1_) <= -15;
++      return this.isPlayerReputationTooLow(findUUID(p_82687_1_));
     }
  
 +   public boolean isPlayerReputationTooLow(UUID uuid)
@@ -86,65 +88,67 @@
 +      return this.getPlayerReputation(uuid) <= -15;   
 +   }
 +
-    public void readVillageDataFromNBT(NBTTagCompound compound) {
-       this.numVillagers = compound.getInteger("PopSize");
-       this.villageRadius = compound.getInteger("Radius");
+    public void func_82690_a(NBTTagCompound p_82690_1_) {
+       this.field_75588_h = p_82690_1_.func_74762_e("PopSize");
+       this.field_75583_e = p_82690_1_.func_74762_e("Radius");
 @@ -354,17 +381,14 @@
  
        for(int j = 0; j < nbttaglist1.size(); ++j) {
-          NBTTagCompound nbttagcompound1 = nbttaglist1.getCompoundTagAt(j);
--         if (nbttagcompound1.hasKey("UUID") && this.world != null && this.world.getMinecraftServer() != null) {
--            PlayerProfileCache playerprofilecache = this.world.getMinecraftServer().getPlayerProfileCache();
--            GameProfile gameprofile = playerprofilecache.getProfileByUUID(UUID.fromString(nbttagcompound1.getString("UUID")));
+          NBTTagCompound nbttagcompound1 = nbttaglist1.func_150305_b(j);
+-         if (nbttagcompound1.func_74764_b("UUID") && this.field_75586_a != null && this.field_75586_a.func_73046_m() != null) {
+-            PlayerProfileCache playerprofilecache = this.field_75586_a.func_73046_m().func_152358_ax();
+-            GameProfile gameprofile = playerprofilecache.func_152652_a(UUID.fromString(nbttagcompound1.func_74779_i("UUID")));
 -            if (gameprofile != null) {
--               this.playerReputation.put(gameprofile.getName(), nbttagcompound1.getInteger("S"));
+-               this.field_82693_j.put(gameprofile.getName(), nbttagcompound1.func_74762_e("S"));
 -            }
-+         if (nbttagcompound1.hasKey("UUID")) {
-+             this.playerReputation.put(UUID.fromString(nbttagcompound1.getString("UUID")), Integer.valueOf(nbttagcompound1.getInteger("S")));
++         if (nbttagcompound1.func_74764_b("UUID")) {
++             this.field_82693_j.put(UUID.fromString(nbttagcompound1.func_74779_i("UUID")), Integer.valueOf(nbttagcompound1.func_74762_e("S")));
           } else {
--            this.playerReputation.put(nbttagcompound1.getString("Name"), nbttagcompound1.getInteger("S"));
+-            this.field_82693_j.put(nbttagcompound1.func_74779_i("Name"), nbttagcompound1.func_74762_e("S"));
 +            //World is never set here, so this will always be offline UUIDs, sadly there is no way to convert this.
-+            this.playerReputation.put(findUUID(nbttagcompound1.getString("Name")), Integer.valueOf(nbttagcompound1.getInteger("S")));
++            this.field_82693_j.put(findUUID(nbttagcompound1.func_74779_i("Name")), Integer.valueOf(nbttagcompound1.func_74762_e("S")));
           }
        }
 -
-+      if (compound.hasKey("ForgeCaps")) this.deserializeCaps(compound.getCompoundTag("ForgeCaps"));
++      if (p_82690_1_.func_74764_b("ForgeCaps")) this.deserializeCaps(p_82690_1_.func_74775_l("ForgeCaps"));
     }
  
-    public void writeVillageDataToNBT(NBTTagCompound compound) {
+    public void func_82689_b(NBTTagCompound p_82689_1_) {
 @@ -396,14 +420,12 @@
-       compound.setTag("Doors", nbttaglist);
+       p_82689_1_.func_74782_a("Doors", nbttaglist);
        NBTTagList nbttaglist1 = new NBTTagList();
  
--      for(String s : this.playerReputation.keySet()) {
-+      for(UUID s : this.playerReputation.keySet()) {
+-      for(String s : this.field_82693_j.keySet()) {
++      for(UUID s : this.field_82693_j.keySet()) {
           NBTTagCompound nbttagcompound1 = new NBTTagCompound();
--         PlayerProfileCache playerprofilecache = this.world.getMinecraftServer().getPlayerProfileCache();
+-         PlayerProfileCache playerprofilecache = this.field_75586_a.func_73046_m().func_152358_ax();
  
           try {
--            GameProfile gameprofile = playerprofilecache.getGameProfileForUsername(s);
+-            GameProfile gameprofile = playerprofilecache.func_152655_a(s);
 -            if (gameprofile != null) {
--               nbttagcompound1.setString("UUID", gameprofile.getId().toString());
+-               nbttagcompound1.func_74778_a("UUID", gameprofile.getId().toString());
 +            {
-+               nbttagcompound1.setString("UUID", s.toString());
-                nbttagcompound1.setInteger("S", this.playerReputation.get(s));
++               nbttagcompound1.func_74778_a("UUID", s.toString());
+                nbttagcompound1.func_74768_a("S", this.field_82693_j.get(s));
                 nbttaglist1.add((INBTBase)nbttagcompound1);
              }
 @@ -413,6 +435,8 @@
        }
  
-       compound.setTag("Players", nbttaglist1);
+       p_82689_1_.func_74782_a("Players", nbttaglist1);
 +      NBTTagCompound capTag = this.serializeCaps();
-+      if (capTag != null) compound.setTag("ForgeCaps", capTag);
++      if (capTag != null) p_82689_1_.func_74782_a("ForgeCaps", capTag);
     }
  
-    public void endMatingSeason() {
-@@ -424,7 +448,7 @@
+    public void func_82692_h() {
+@@ -424,8 +448,8 @@
     }
  
-    public void setDefaultPlayerReputation(int defaultReputation) {
--      for(String s : this.playerReputation.keySet()) {
-+      for(UUID s : this.playerReputation.keySet()) {
-          this.modifyPlayerReputation(s, defaultReputation);
+    public void func_82683_b(int p_82683_1_) {
+-      for(String s : this.field_82693_j.keySet()) {
+-         this.func_82688_a(s, p_82683_1_);
++      for(UUID s : this.field_82693_j.keySet()) {
++         this.modifyPlayerReputation(s, p_82683_1_);
        }
  
+    }

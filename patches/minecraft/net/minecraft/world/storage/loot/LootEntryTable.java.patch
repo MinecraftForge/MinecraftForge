@@ -2,20 +2,20 @@
 +++ b/net/minecraft/world/storage/loot/LootEntryTable.java
 @@ -13,8 +13,8 @@
  public class LootEntryTable extends LootEntry {
-    protected final ResourceLocation table;
+    protected final ResourceLocation field_186371_a;
  
--   public LootEntryTable(ResourceLocation tableIn, int weightIn, int qualityIn, LootCondition[] conditionsIn) {
--      super(weightIn, qualityIn, conditionsIn);
-+   public LootEntryTable(ResourceLocation tableIn, int weightIn, int qualityIn, LootCondition[] conditionsIn, String entryName) {
-+      super(weightIn, qualityIn, conditionsIn, entryName);
-       this.table = tableIn;
+-   public LootEntryTable(ResourceLocation p_i46639_1_, int p_i46639_2_, int p_i46639_3_, LootCondition[] p_i46639_4_) {
+-      super(p_i46639_2_, p_i46639_3_, p_i46639_4_);
++   public LootEntryTable(ResourceLocation p_i46639_1_, int p_i46639_2_, int p_i46639_3_, LootCondition[] p_i46639_4_, String entryName) {
++      super(p_i46639_2_, p_i46639_3_, p_i46639_4_, entryName);
+       this.field_186371_a = p_i46639_1_;
     }
  
 @@ -29,6 +29,6 @@
  
-    public static LootEntryTable deserialize(JsonObject object, JsonDeserializationContext deserializationContext, int weightIn, int qualityIn, LootCondition[] conditionsIn) {
-       ResourceLocation resourcelocation = new ResourceLocation(JsonUtils.getString(object, "name"));
--      return new LootEntryTable(resourcelocation, weightIn, qualityIn, conditionsIn);
-+      return new LootEntryTable(resourcelocation, weightIn, qualityIn, conditionsIn, net.minecraftforge.common.ForgeHooks.readLootEntryName(object, "loot_table"));
+    public static LootEntryTable func_186370_a(JsonObject p_186370_0_, JsonDeserializationContext p_186370_1_, int p_186370_2_, int p_186370_3_, LootCondition[] p_186370_4_) {
+       ResourceLocation resourcelocation = new ResourceLocation(JsonUtils.func_151200_h(p_186370_0_, "name"));
+-      return new LootEntryTable(resourcelocation, p_186370_2_, p_186370_3_, p_186370_4_);
++      return new LootEntryTable(resourcelocation, p_186370_2_, p_186370_3_, p_186370_4_, net.minecraftforge.common.ForgeHooks.readLootEntryName(p_186370_0_, "loot_table"));
     }
  }

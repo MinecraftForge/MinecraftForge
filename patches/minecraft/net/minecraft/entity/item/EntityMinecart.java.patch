@@ -1,18 +1,18 @@
 --- a/net/minecraft/entity/item/EntityMinecart.java
 +++ b/net/minecraft/entity/item/EntityMinecart.java
 @@ -808,4 +808,15 @@
-          return idIn >= 0 && idIn < BY_ID.length ? BY_ID[idIn] : RIDEABLE;
+          return p_184955_0_ >= 0 && p_184955_0_ < field_184965_h.length ? field_184965_h[p_184955_0_] : RIDEABLE;
        }
     }
 +
 +   public ItemStack getCartItem() {
-+      switch (getType()) {
-+         case FURNACE: return new ItemStack(Items.FURNACE_MINECART);
-+         case CHEST:   return new ItemStack(Items.CHEST_MINECART);
-+         case TNT:     return new ItemStack(Items.TNT_MINECART);
-+         case HOPPER:  return new ItemStack(Items.HOPPER_MINECART);
-+         case COMMAND_BLOCK: return new ItemStack(Items.COMMAND_BLOCK_MINECART);
-+         default:      return new ItemStack(Items.MINECART);
++      switch (func_184264_v()) {
++         case FURNACE: return new ItemStack(Items.field_151109_aJ);
++         case CHEST:   return new ItemStack(Items.field_151108_aI);
++         case TNT:     return new ItemStack(Items.field_151142_bV);
++         case HOPPER:  return new ItemStack(Items.field_151140_bW);
++         case COMMAND_BLOCK: return new ItemStack(Items.field_151095_cc);
++         default:      return new ItemStack(Items.field_151143_au);
 +      }
 +   }
  }

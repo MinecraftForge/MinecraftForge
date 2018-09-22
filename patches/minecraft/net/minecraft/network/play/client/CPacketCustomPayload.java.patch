@@ -8,5 +8,5 @@
 +public class CPacketCustomPayload implements Packet<INetHandlerPlayServer>, net.minecraftforge.fml.network.ICustomPacket<CPacketCustomPayload>
 +{
     public static final ResourceLocation field_210344_a = new ResourceLocation("minecraft:brand");
-    private ResourceLocation channel;
-    private PacketBuffer data;
+    private ResourceLocation field_149562_a;
+    private PacketBuffer field_149561_c;

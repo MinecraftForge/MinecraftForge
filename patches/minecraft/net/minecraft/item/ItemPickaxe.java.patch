@@ -1,25 +1,25 @@
 --- a/net/minecraft/item/ItemPickaxe.java
 +++ b/net/minecraft/item/ItemPickaxe.java
 @@ -17,18 +17,11 @@
-    public boolean canHarvestBlock(IBlockState blockIn) {
-       Block block = blockIn.getBlock();
+    public boolean func_150897_b(IBlockState p_150897_1_) {
+       Block block = p_150897_1_.func_177230_c();
        int i = this.func_200891_e().func_200925_d();
--      if (block == Blocks.OBSIDIAN) {
+-      if (block == Blocks.field_150343_Z) {
 -         return i == 3;
--      } else if (block != Blocks.DIAMOND_BLOCK && block != Blocks.DIAMOND_ORE && block != Blocks.EMERALD_ORE && block != Blocks.EMERALD_BLOCK && block != Blocks.GOLD_BLOCK && block != Blocks.GOLD_ORE && block != Blocks.REDSTONE_ORE) {
--         if (block != Blocks.IRON_BLOCK && block != Blocks.IRON_ORE && block != Blocks.LAPIS_BLOCK && block != Blocks.LAPIS_ORE) {
--            Material material = blockIn.getMaterial();
--            return material == Material.ROCK || material == Material.IRON || material == Material.ANVIL;
+-      } else if (block != Blocks.field_150484_ah && block != Blocks.field_150482_ag && block != Blocks.field_150412_bA && block != Blocks.field_150475_bE && block != Blocks.field_150340_R && block != Blocks.field_150352_o && block != Blocks.field_150450_ax) {
+-         if (block != Blocks.field_150339_S && block != Blocks.field_150366_p && block != Blocks.field_150368_y && block != Blocks.field_150369_x) {
+-            Material material = p_150897_1_.func_185904_a();
+-            return material == Material.field_151576_e || material == Material.field_151573_f || material == Material.field_151574_g;
 -         } else {
 -            return i >= 1;
 -         }
 -      } else {
 -         return i >= 2;
-+      if (blockIn.getHarvestTool() == net.minecraftforge.common.ToolType.PICKAXE) {
-+         return i >= blockIn.getHarvestLevel();
++      if (p_150897_1_.getHarvestTool() == net.minecraftforge.common.ToolType.PICKAXE) {
++         return i >= p_150897_1_.getHarvestLevel();
        }
-+      Material material = blockIn.getMaterial();
-+      return material == Material.ROCK || material == Material.IRON || material == Material.ANVIL;
++      Material material = p_150897_1_.func_185904_a();
++      return material == Material.field_151576_e || material == Material.field_151573_f || material == Material.field_151574_g;
     }
  
-    public float getDestroySpeed(ItemStack stack, IBlockState state) {
+    public float func_150893_a(ItemStack p_150893_1_, IBlockState p_150893_2_) {

@@ -13,8 +13,8 @@
  
                    itemstack = itemstack1;
                 } else {
--                  if (!(itemstack1.getItem() instanceof ItemDye)) {
-+                  if (!itemstack1.getItem().func_206844_a(net.minecraftforge.common.Tags.Items.DYES)) {
+-                  if (!(itemstack1.func_77973_b() instanceof ItemDye)) {
++                  if (!itemstack1.func_77973_b().func_206844_a(net.minecraftforge.common.Tags.Items.DYES)) {
                       return false;
                    }
  
@@ -25,11 +25,11 @@
 -               if (!(item instanceof ItemDye)) {
 +               net.minecraft.item.EnumDyeColor color = net.minecraft.item.EnumDyeColor.getColor(itemstack1);
 +               if (color == null) {
-                   return ItemStack.EMPTY;
+                   return ItemStack.field_190927_a;
                 }
  
--               float[] afloat = ((ItemDye)item).func_195962_g().getColorComponentValues();
-+               float[] afloat = color.getColorComponentValues();
+-               float[] afloat = ((ItemDye)item).func_195962_g().func_193349_f();
++               float[] afloat = color.func_193349_f();
                 int l1 = (int)(afloat[0] * 255.0F);
                 int i2 = (int)(afloat[1] * 255.0F);
                 int k2 = (int)(afloat[2] * 255.0F);
@@ -38,6 +38,6 @@
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean canFit(int width, int height) {
-       return width * height >= 2;
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ * p_194133_2_ >= 2;
     }

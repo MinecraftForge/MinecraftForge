@@ -6,13 +6,13 @@
  
 -public abstract class Dimension {
 +public abstract class Dimension implements net.minecraftforge.common.extensions.IForgeDimension {
-    public static final float[] MOON_PHASE_FACTORS = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
-    protected World world;
-    protected boolean doesWaterVaporize;
+    public static final float[] field_111203_a = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
+    protected World field_76579_a;
+    protected boolean field_76575_d;
 @@ -141,4 +141,76 @@
-    public abstract boolean doesXZShowFog(int x, int z);
+    public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  
-    public abstract DimensionType getDimensionType();
+    public abstract DimensionType func_186058_p();
 +   
 +   /*======================================= Forge Start =========================================*/
 +   private net.minecraftforge.client.IRenderHandler skyRenderer = null;
@@ -80,9 +80,9 @@
 +   @Override
 +   public void resetRainAndThunder()
 +   {
-+      world.getWorldInfo().setRainTime(0);
-+      world.getWorldInfo().setRaining(false);
-+      world.getWorldInfo().setThunderTime(0);
-+      world.getWorldInfo().setThundering(false);
++      field_76579_a.func_72912_H().func_76080_g(0);
++      field_76579_a.func_72912_H().func_76084_b(false);
++      field_76579_a.func_72912_H().func_76090_f(0);
++      field_76579_a.func_72912_H().func_76069_a(false);
 +   }
  }

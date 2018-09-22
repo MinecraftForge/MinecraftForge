@@ -6,6 +6,6 @@
  
 +   public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, net.minecraft.client.renderer.BufferBuilder buffer) {}
 +
-    protected void drawNameplate(T te, String str, double x, double y, double z, int maxDistance) {
-       Entity entity = this.rendererDispatcher.entity;
-       double d0 = te.getDistanceSq(entity.posX, entity.posY, entity.posZ);
+    protected void func_190052_a(T p_190052_1_, String p_190052_2_, double p_190052_3_, double p_190052_5_, double p_190052_7_, int p_190052_9_) {
+       Entity entity = this.field_147501_a.field_147551_g;
+       double d0 = p_190052_1_.func_145835_a(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v);

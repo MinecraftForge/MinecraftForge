@@ -111,7 +111,7 @@ public class ExtendedStateContainer<O, S extends IExtendedState<S>> extends Stat
                 return clean;
             }
 
-            return (S) new ExtendedStateHolder(field_206876_a, ((BlockState)clean).func_206871_b(), unlistedProperties, this.cleanState);
+            return (S) new ExtendedStateHolder(field_206876_a, ((IStateHolder)clean).func_206871_b(), unlistedProperties, this.cleanState);
         }
 
         @Override

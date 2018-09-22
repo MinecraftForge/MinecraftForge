@@ -56,6 +56,9 @@ project(':forge') {
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.forgedev.patcher'
     apply plugin: 'net.minecrell.licenser'
+    
+    compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.    
+    
     sourceSets {
         main {
             java {
@@ -75,7 +78,8 @@ project(':forge') {
         patches = file("$rootDir/patches/minecraft")
         patchedSrc = file('src/main/java')
         accessTransformer = file("$rootDir/src/main/resources/forge_at.cfg")
-        srgPatches = false
+        exc = file("$rootDir/src/main/resources/forge.exc")
+        srgPatches = true
         clientRun {
             main = 'net.minecraftforge.fml.LaunchTesting'
             environment = [
@@ -121,6 +125,7 @@ project(':forge') {
         ecj 'org.eclipse.jdt.core.compiler:ecj:4.6.1'
     }
 
+    /* Forge compiles, no longer need eclipse compiler
     compileJava {
         options.fork = true
         options.failOnError = false
@@ -129,6 +134,7 @@ project(':forge') {
             jvmArgs = ['-classpath', project.configurations.ecj.asPath, 'org.eclipse.jdt.internal.compiler.batch.Main', '-nowarn', '-proceedOnError', '-preserveAllLocals', '-parameters']
         }
     }
+    */
 
     task runclient(type: JavaExec, dependsOn: [":forge:downloadAssets", ":forge:extractNatives"]) {
         doFirst {

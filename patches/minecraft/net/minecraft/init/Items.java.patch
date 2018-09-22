@@ -6,5 +6,5 @@
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class Items {
-    public static final Item AIR;
-    public static final Item IRON_SHOVEL;
+    public static final Item field_190931_a;
+    public static final Item field_151037_a;

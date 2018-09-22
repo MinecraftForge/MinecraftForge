@@ -6,14 +6,14 @@
  
 +   public Channel channel()
 +   {
-+      return channel;
++      return field_150746_k;
 +   }
 +
 +   public EnumPacketDirection getDirection()
 +   {
-+      return this.direction;
++      return this.field_179294_g;
 +   }
 +
     static class QueuedPacket {
-       private final Packet<?> packet;
+       private final Packet<?> field_150774_a;
        @Nullable

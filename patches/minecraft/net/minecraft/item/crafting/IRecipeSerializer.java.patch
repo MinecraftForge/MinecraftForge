@@ -8,7 +8,7 @@
 +   @Deprecated //Modders, do not use, this is un-namespaced and thus could cause clashes.
 +   default String func_199567_a() {
 +       ResourceLocation name = getName(); //To keep compatibility with vanilla, anything in the "minecraft" namespace doesn't get a prefix.
-+       return name.getNamespace().equals("minecraft") ? name.getPath() : name.toString();
++       return name.func_110624_b().equals("minecraft") ? name.func_110623_a() : name.toString();
 +   }
 +
 +   ResourceLocation getName();

@@ -2,7 +2,7 @@
 +++ b/net/minecraft/item/ArmorMaterial.java
 @@ -77,4 +77,8 @@
     public float func_200901_e() {
-       return this.toughness;
+       return this.field_189417_k;
     }
 +
 +   public static ArmorMaterial create(String name, String p_i48533_3_, int p_i48533_4_, int[] p_i48533_5_, int p_i48533_6_, SoundEvent p_i48533_7_, float p_i48533_8_, Supplier<Ingredient> p_i48533_9_) {

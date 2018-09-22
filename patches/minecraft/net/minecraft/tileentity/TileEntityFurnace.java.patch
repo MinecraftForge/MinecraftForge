@@ -1,80 +1,80 @@
 --- a/net/minecraft/tileentity/TileEntityFurnace.java
 +++ b/net/minecraft/tileentity/TileEntityFurnace.java
 @@ -185,9 +185,9 @@
-       super.readFromNBT(compound);
-       this.furnaceItemStacks = NonNullList.<ItemStack>withSize(this.getSizeInventory(), ItemStack.EMPTY);
-       ItemStackHelper.loadAllItems(compound, this.furnaceItemStacks);
--      this.furnaceBurnTime = compound.getShort("BurnTime");
--      this.cookTime = compound.getShort("CookTime");
--      this.totalCookTime = compound.getShort("CookTimeTotal");
-+      this.furnaceBurnTime = compound.getInteger("BurnTime");
-+      this.cookTime = compound.getInteger("CookTime");
-+      this.totalCookTime = compound.getInteger("CookTimeTotal");
-       this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks.get(1));
-       int i = compound.getShort("RecipesUsedSize");
+       super.func_145839_a(p_145839_1_);
+       this.field_145957_n = NonNullList.<ItemStack>func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
+       ItemStackHelper.func_191283_b(p_145839_1_, this.field_145957_n);
+-      this.field_145956_a = p_145839_1_.func_74765_d("BurnTime");
+-      this.field_174906_k = p_145839_1_.func_74765_d("CookTime");
+-      this.field_174905_l = p_145839_1_.func_74765_d("CookTimeTotal");
++      this.field_145956_a = p_145839_1_.func_74762_e("BurnTime");
++      this.field_174906_k = p_145839_1_.func_74762_e("CookTime");
++      this.field_174905_l = p_145839_1_.func_74762_e("CookTimeTotal");
+       this.field_145963_i = func_145952_a(this.field_145957_n.get(1));
+       int i = p_145839_1_.func_74765_d("RecipesUsedSize");
  
 @@ -205,9 +205,9 @@
  
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-       super.writeToNBT(compound);
--      compound.setShort("BurnTime", (short)this.furnaceBurnTime);
--      compound.setShort("CookTime", (short)this.cookTime);
--      compound.setShort("CookTimeTotal", (short)this.totalCookTime);
-+      compound.setInteger("BurnTime", this.furnaceBurnTime);
-+      compound.setInteger("CookTime", this.cookTime);
-+      compound.setInteger("CookTimeTotal", this.totalCookTime);
-       ItemStackHelper.saveAllItems(compound, this.furnaceItemStacks);
-       compound.setShort("RecipesUsedSize", (short)this.field_203901_m.size());
+    public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_) {
+       super.func_189515_b(p_189515_1_);
+-      p_189515_1_.func_74777_a("BurnTime", (short)this.field_145956_a);
+-      p_189515_1_.func_74777_a("CookTime", (short)this.field_174906_k);
+-      p_189515_1_.func_74777_a("CookTimeTotal", (short)this.field_174905_l);
++      p_189515_1_.func_74768_a("BurnTime", this.field_145956_a);
++      p_189515_1_.func_74768_a("CookTime", this.field_174906_k);
++      p_189515_1_.func_74768_a("CookTimeTotal", this.field_174905_l);
+       ItemStackHelper.func_191282_a(p_189515_1_, this.field_145957_n);
+       p_189515_1_.func_74777_a("RecipesUsedSize", (short)this.field_203901_m.size());
        int i = 0;
 @@ -254,6 +254,10 @@
-                this.currentItemBurnTime = this.furnaceBurnTime;
-                if (this.isBurning()) {
+                this.field_145963_i = this.field_145956_a;
+                if (this.func_145950_i()) {
                    flag1 = true;
 +                  if (itemstack.hasContainerItem()) {
-+                     this.furnaceItemStacks.set(1, itemstack.getContainerItem());
++                     this.field_145957_n.set(1, itemstack.getContainerItem());
 +                  }
 +                  else
-                   if (!itemstack.isEmpty()) {
-                      Item item = itemstack.getItem();
-                      itemstack.shrink(1);
+                   if (!itemstack.func_190926_b()) {
+                      Item item = itemstack.func_77973_b();
+                      itemstack.func_190918_g(1);
 @@ -308,10 +312,10 @@
                 return true;
-             } else if (!itemstack1.isItemEqual(itemstack)) {
+             } else if (!itemstack1.func_77969_a(itemstack)) {
                 return false;
--            } else if (itemstack1.getCount() < this.getInventoryStackLimit() && itemstack1.getCount() < itemstack1.getMaxStackSize()) {
-+            } else if (itemstack1.getCount() + itemstack.getCount() <= this.getInventoryStackLimit() && itemstack1.getCount() < itemstack1.getMaxStackSize()) { // Forge fix: make furnace respect stack sizes in furnace recipes
+-            } else if (itemstack1.func_190916_E() < this.func_70297_j_() && itemstack1.func_190916_E() < itemstack1.func_77976_d()) {
++            } else if (itemstack1.func_190916_E() + itemstack.func_190916_E() <= this.func_70297_j_() && itemstack1.func_190916_E() < itemstack1.func_77976_d()) { // Forge fix: make furnace respect stack sizes in furnace recipes
                 return true;
              } else {
--               return itemstack1.getCount() < itemstack.getMaxStackSize();
-+               return itemstack1.getCount() + itemstack.getCount() <= itemstack.getMaxStackSize(); // Forge fix: make furnace respect stack sizes in furnace recipes
+-               return itemstack1.func_190916_E() < itemstack.func_77976_d();
++               return itemstack1.func_190916_E() + itemstack.func_190916_E() <= itemstack.func_77976_d(); // Forge fix: make furnace respect stack sizes in furnace recipes
              }
           }
        } else {
 @@ -327,7 +331,7 @@
-          if (itemstack2.isEmpty()) {
-             this.furnaceItemStacks.set(2, itemstack1.copy());
-          } else if (itemstack2.getItem() == itemstack1.getItem()) {
--            itemstack2.grow(1);
-+            itemstack2.grow(itemstack1.getCount());
+          if (itemstack2.func_190926_b()) {
+             this.field_145957_n.set(2, itemstack1.func_77946_l());
+          } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
+-            itemstack2.func_190917_f(1);
++            itemstack2.func_190917_f(itemstack1.func_190916_E());
           }
  
-          if (!this.world.isRemote) {
+          if (!this.field_145850_b.field_72995_K) {
 @@ -347,12 +351,13 @@
           return 0;
        } else {
-          Item item = stack.getItem();
+          Item item = p_145952_0_.func_77973_b();
 -         return func_201564_p().getOrDefault(item, 0);
-+         int ret = stack.getBurnTime();
-+         return net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(stack, ret == -1 ? func_201564_p().getOrDefault(item, 0) : ret);
++         int ret = p_145952_0_.getBurnTime();
++         return net.minecraftforge.event.ForgeEventFactory.getItemBurnTime(p_145952_0_, ret == -1 ? func_201564_p().getOrDefault(item, 0) : ret);
        }
     }
  
-    public static boolean isItemFuel(ItemStack stack) {
--      return func_201564_p().containsKey(stack.getItem());
-+      return getItemBurnTime(stack) > 0;
+    public static boolean func_145954_b(ItemStack p_145954_0_) {
+-      return func_201564_p().containsKey(p_145954_0_.func_77973_b());
++      return func_145952_a(p_145954_0_) > 0;
     }
  
-    public boolean isUsableByPlayer(EntityPlayer player) {
+    public boolean func_70300_a(EntityPlayer p_70300_1_) {
 @@ -501,4 +506,27 @@
  
        this.field_203901_m.clear();
@@ -97,8 +97,8 @@
 +   }
 +
 +   @Override
-+   public void invalidate() {
-+      super.invalidate();
++   public void func_145843_s() {
++      super.func_145843_s();
 +      for (int x = 0; x < handlers.length; x++)
 +          handlers[x].invalidate();
 +   }

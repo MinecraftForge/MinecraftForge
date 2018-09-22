@@ -22,50 +22,50 @@
 +      if (MAX_HEIGHT < height) MAX_HEIGHT = height;
 +   }
 +
-    private final int recipeWidth;
-    private final int recipeHeight;
-    private final NonNullList<Ingredient> recipeItems;
+    private final int field_77576_b;
+    private final int field_77577_c;
+    private final NonNullList<Ingredient> field_77574_d;
 @@ -48,7 +59,6 @@
        return RecipeSerializers.field_199575_a;
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public String getGroup() {
-       return this.group;
+    public String func_193358_e() {
+       return this.field_194137_e;
     }
 @@ -61,7 +71,6 @@
-       return this.recipeItems;
+       return this.field_77574_d;
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean canFit(int width, int height) {
-       return width >= this.recipeWidth && height >= this.recipeHeight;
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ >= this.field_77576_b && p_194133_2_ >= this.field_77577_c;
     }
 @@ -117,10 +126,20 @@
-       return this.recipeWidth;
+       return this.field_77576_b;
     }
  
 +   @Override
 +   public int getRecipeWidth() {
-+      return getWidth();
++      return func_192403_f();
 +   }
 +
-    public int getHeight() {
-       return this.recipeHeight;
+    public int func_192404_g() {
+       return this.field_77577_c;
     }
  
 +   @Override
 +   public int getRecipeHeight() {
-+      return getHeight();
++      return func_192404_g();
 +   }
 +
-    private static NonNullList<Ingredient> deserializeIngredients(String[] pattern, Map<String, Ingredient> keys, int patternWidth, int patternHeight) {
-       NonNullList<Ingredient> nonnulllist = NonNullList.<Ingredient>withSize(patternWidth * patternHeight, Ingredient.EMPTY);
-       Set<String> set = Sets.newHashSet(keys.keySet());
+    private static NonNullList<Ingredient> func_192402_a(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
+       NonNullList<Ingredient> nonnulllist = NonNullList.<Ingredient>func_191197_a(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
+       Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
 @@ -202,15 +221,15 @@
  
-    private static String[] patternFromJson(JsonArray jsonArr) {
-       String[] astring = new String[jsonArr.size()];
+    private static String[] func_192407_a(JsonArray p_192407_0_) {
+       String[] astring = new String[p_192407_0_.size()];
 -      if (astring.length > 3) {
 -         throw new JsonSyntaxException("Invalid pattern: too many rows, 3 is maximum");
 +      if (astring.length > MAX_HEIGHT) {
@@ -74,7 +74,7 @@
           throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
        } else {
           for(int i = 0; i < astring.length; ++i) {
-             String s = JsonUtils.getString(jsonArr.get(i), "pattern[" + i + "]");
+             String s = JsonUtils.func_151206_a(p_192407_0_.get(i), "pattern[" + i + "]");
 -            if (s.length() > 3) {
 -               throw new JsonSyntaxException("Invalid pattern: too many columns, 3 is maximum");
 +            if (s.length() > MAX_WIDTH) {
@@ -88,8 +88,8 @@
     public static class Serializer implements IRecipeSerializer<ShapedRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shaped");
        public ShapedRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
-          String s = JsonUtils.getString(p_199425_2_, "group", "");
-          Map<String, Ingredient> map = ShapedRecipe.deserializeKey(JsonUtils.getJsonObject(p_199425_2_, "key"));
+          String s = JsonUtils.func_151219_a(p_199425_2_, "group", "");
+          Map<String, Ingredient> map = ShapedRecipe.func_192408_a(JsonUtils.func_152754_s(p_199425_2_, "key"));
 @@ -268,8 +288,9 @@
           return new ShapedRecipe(p_199425_1_, s, i, j, nonnulllist, itemstack);
        }

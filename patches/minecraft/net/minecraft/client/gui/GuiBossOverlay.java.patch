@@ -2,20 +2,20 @@
 +++ b/net/minecraft/client/gui/GuiBossOverlay.java
 @@ -28,12 +28,17 @@
  
-          for(BossInfoClient bossinfoclient : this.mapBossInfos.values()) {
+          for(BossInfoClient bossinfoclient : this.field_184060_g.values()) {
              int k = i / 2 - 91;
 +            net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo event =
-+                    net.minecraftforge.client.ForgeHooksClient.bossBarRenderPre(this.client.field_195558_d, bossinfoclient, k, j, 10 + this.client.fontRenderer.FONT_HEIGHT);
++                    net.minecraftforge.client.ForgeHooksClient.bossBarRenderPre(this.field_184059_f.field_195558_d, bossinfoclient, k, j, 10 + this.field_184059_f.field_71466_p.field_78288_b);
 +            if (!event.isCanceled()) {
-             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-             this.client.getTextureManager().bindTexture(GUI_BARS_TEXTURES);
-             this.render(k, j, bossinfoclient);
-             String s = bossinfoclient.getName().getFormattedText();
-             this.client.fontRenderer.drawStringWithShadow(s, (float)(i / 2 - this.client.fontRenderer.getStringWidth(s) / 2), (float)(j - 9), 16777215);
--            j += 10 + this.client.fontRenderer.FONT_HEIGHT;
+             GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+             this.field_184059_f.func_110434_K().func_110577_a(field_184058_a);
+             this.func_184052_a(k, j, bossinfoclient);
+             String s = bossinfoclient.func_186744_e().func_150254_d();
+             this.field_184059_f.field_71466_p.func_175063_a(s, (float)(i / 2 - this.field_184059_f.field_71466_p.func_78256_a(s) / 2), (float)(j - 9), 16777215);
+-            j += 10 + this.field_184059_f.field_71466_p.field_78288_b;
 +            }
 +            j += event.getIncrement();
-+            net.minecraftforge.client.ForgeHooksClient.bossBarRenderPost(this.client.field_195558_d);
-             if (j >= this.client.field_195558_d.func_198087_p() / 3) {
++            net.minecraftforge.client.ForgeHooksClient.bossBarRenderPost(this.field_184059_f.field_195558_d);
+             if (j >= this.field_184059_f.field_195558_d.func_198087_p() / 3) {
                 break;
              }

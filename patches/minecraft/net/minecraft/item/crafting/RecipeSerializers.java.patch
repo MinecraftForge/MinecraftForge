@@ -28,17 +28,17 @@
     }
  
     public static IRecipe func_199572_a(ResourceLocation p_199572_0_, JsonObject p_199572_1_) {
--      String s = JsonUtils.getString(p_199572_1_, "type");
-+      ResourceLocation s = new ResourceLocation(JsonUtils.getString(p_199572_1_, "type"));
+-      String s = JsonUtils.func_151200_h(p_199572_1_, "type");
++      ResourceLocation s = new ResourceLocation(JsonUtils.func_151200_h(p_199572_1_, "type"));
        IRecipeSerializer<?> irecipeserializer = field_199590_p.get(s);
        if (irecipeserializer == null) {
           throw new JsonSyntaxException("Invalid or unsupported recipe type '" + s + "'");
 @@ -49,7 +50,7 @@
  
     public static IRecipe func_199571_a(PacketBuffer p_199571_0_) {
-       ResourceLocation resourcelocation = p_199571_0_.readResourceLocation();
--      String s = p_199571_0_.readString(32767);
-+      ResourceLocation s = new ResourceLocation(p_199571_0_.readString(32767));
+       ResourceLocation resourcelocation = p_199571_0_.func_192575_l();
+-      String s = p_199571_0_.func_150789_c(32767);
++      ResourceLocation s = new ResourceLocation(p_199571_0_.func_150789_c(32767));
        IRecipeSerializer<?> irecipeserializer = field_199590_p.get(s);
        if (irecipeserializer == null) {
           throw new IllegalArgumentException("Unknown recipe serializer " + s);

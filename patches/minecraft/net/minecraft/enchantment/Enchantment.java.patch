@@ -6,6 +6,6 @@
  
 -public abstract class Enchantment {
 +public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
-    public static final RegistryNamespaced<ResourceLocation, Enchantment> REGISTRY = new RegistryNamespaced<ResourceLocation, Enchantment>();
-    private final EntityEquipmentSlot[] applicableEquipmentTypes;
-    private final Enchantment.Rarity rarity;
+    public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = new RegistryNamespaced<ResourceLocation, Enchantment>();
+    private final EntityEquipmentSlot[] field_185263_a;
+    private final Enchantment.Rarity field_77333_a;

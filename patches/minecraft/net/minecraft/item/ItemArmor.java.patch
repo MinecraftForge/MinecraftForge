@@ -2,10 +2,10 @@
 +++ b/net/minecraft/item/ItemArmor.java
 @@ -105,4 +105,8 @@
     public int func_200881_e() {
-       return this.damageReduceAmount;
+       return this.field_77879_b;
     }
 +   
 +   public float getToughness() {
-+       return this.toughness;
++       return this.field_189415_e;
 +   }
  }

@@ -3,13 +3,13 @@
 @@ -20,11 +20,7 @@
     }
  
-    public boolean testCondition(Random rand, LootContext context) {
+    public boolean func_186618_a(Random p_186618_1_, LootContext p_186618_2_) {
 -      int i = 0;
--      if (context.getKiller() instanceof EntityLivingBase) {
--         i = EnchantmentHelper.getLootingModifier((EntityLivingBase)context.getKiller());
+-      if (p_186618_2_.func_186492_c() instanceof EntityLivingBase) {
+-         i = EnchantmentHelper.func_185283_h((EntityLivingBase)p_186618_2_.func_186492_c());
 -      }
 -
-+      int i = context.getLootingModifier();
-       return rand.nextFloat() < this.chance + (float)i * this.lootingMultiplier;
++      int i = p_186618_2_.getLootingModifier();
+       return p_186618_1_.nextFloat() < this.field_186627_a + (float)i * this.field_186628_b;
     }
  

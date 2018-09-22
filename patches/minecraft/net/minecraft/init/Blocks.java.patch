@@ -6,5 +6,5 @@
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class Blocks {
-    private static final Set<Block> CACHE;
-    public static final Block AIR;
+    private static final Set<Block> field_185780_dg;
+    public static final Block field_150350_a;

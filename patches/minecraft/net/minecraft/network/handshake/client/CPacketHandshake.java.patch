@@ -1,31 +1,31 @@
 --- a/net/minecraft/network/handshake/client/CPacketHandshake.java
 +++ b/net/minecraft/network/handshake/client/CPacketHandshake.java
 @@ -13,6 +13,7 @@
-    private String ip;
-    private int port;
-    private EnumConnectionState requestedState;
+    private String field_149598_b;
+    private int field_149599_c;
+    private EnumConnectionState field_149597_d;
 +   private String fmlVersion = net.minecraftforge.fml.network.NetworkHooks.NETVERSION;
  
     public CPacketHandshake() {
     }
 @@ -30,11 +31,13 @@
-       this.ip = buf.readString(255);
-       this.port = buf.readUnsignedShort();
-       this.requestedState = EnumConnectionState.getById(buf.readVarInt());
-+      this.fmlVersion = net.minecraftforge.fml.network.NetworkHooks.getFMLVersion(this.ip);
-+      this.ip = this.ip.split("\0")[0];
+       this.field_149598_b = p_148837_1_.func_150789_c(255);
+       this.field_149599_c = p_148837_1_.readUnsignedShort();
+       this.field_149597_d = EnumConnectionState.func_150760_a(p_148837_1_.func_150792_a());
++      this.fmlVersion = net.minecraftforge.fml.network.NetworkHooks.getFMLVersion(this.field_149598_b);
++      this.field_149598_b = this.field_149598_b.split("\0")[0];
     }
  
-    public void writePacketData(PacketBuffer buf) throws IOException {
-       buf.writeVarInt(this.protocolVersion);
--      buf.writeString(this.ip);
-+      buf.writeString(this.ip + "\0"+net.minecraftforge.fml.network.NetworkHooks.NETVERSION+"\0");
-       buf.writeShort(this.port);
-       buf.writeVarInt(this.requestedState.getId());
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+       p_148840_1_.func_150787_b(this.field_149600_a);
+-      p_148840_1_.func_180714_a(this.field_149598_b);
++      p_148840_1_.func_180714_a(this.field_149598_b + "\0"+net.minecraftforge.fml.network.NetworkHooks.NETVERSION+"\0");
+       p_148840_1_.writeShort(this.field_149599_c);
+       p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
     }
 @@ -50,4 +53,8 @@
-    public int getProtocolVersion() {
-       return this.protocolVersion;
+    public int func_149595_d() {
+       return this.field_149600_a;
     }
 +
 +   public String getFMLVersion() {

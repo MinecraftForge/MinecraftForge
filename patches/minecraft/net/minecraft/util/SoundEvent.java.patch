@@ -6,6 +6,6 @@
  
 -public class SoundEvent {
 +public class SoundEvent extends net.minecraftforge.registries.ForgeRegistryEntry<SoundEvent> {
-    public static final RegistryNamespaced<ResourceLocation, SoundEvent> REGISTRY = new RegistryNamespaced<ResourceLocation, SoundEvent>();
-    private final ResourceLocation soundName;
+    public static final RegistryNamespaced<ResourceLocation, SoundEvent> field_187505_a = new RegistryNamespaced<ResourceLocation, SoundEvent>();
+    private final ResourceLocation field_187506_b;
  

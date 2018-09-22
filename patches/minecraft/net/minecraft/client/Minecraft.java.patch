@@ -1,27 +1,27 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
 @@ -405,6 +405,7 @@
-       this.languageManager = new LanguageManager(this.gameSettings.language);
-       this.resourceManager.func_199006_a(this.languageManager);
-       this.gameSettings.func_198017_a(this.resourcePackRepository);
-+      net.minecraftforge.fml.client.ClientModLoader.begin(this, this.resourcePackRepository, this.resourceManager, this.field_195554_ax);
-       this.refreshResources();
-       this.renderEngine = new TextureManager(this.resourceManager);
-       this.resourceManager.func_199006_a(this.renderEngine);
+       this.field_135017_as = new LanguageManager(this.field_71474_y.field_74363_ab);
+       this.field_110451_am.func_199006_a(this.field_135017_as);
+       this.field_71474_y.func_198017_a(this.field_110448_aq);
++      net.minecraftforge.fml.client.ClientModLoader.begin(this, this.field_110448_aq, this.field_110451_am, this.field_195554_ax);
+       this.func_110436_a();
+       this.field_71446_o = new TextureManager(this.field_110451_am);
+       this.field_110451_am.func_199006_a(this.field_71446_o);
 @@ -461,6 +462,7 @@
-       this.resourceManager.func_199006_a(this.searchTreeManager);
-       GlStateManager.viewport(0, 0, this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l());
-       this.effectRenderer = new ParticleManager(this.world, this.renderEngine);
+       this.field_110451_am.func_199006_a(this.field_193995_ae);
+       GlStateManager.func_179083_b(0, 0, this.field_195558_d.func_198109_k(), this.field_195558_d.func_198091_l());
+       this.field_71452_i = new ParticleManager(this.field_71441_e, this.field_71446_o);
 +      net.minecraftforge.fml.client.ClientModLoader.end();
-       this.ingameGUI = new GuiIngame(this);
-       if (this.serverName != null) {
-          this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
+       this.field_71456_v = new GuiIngame(this);
+       if (this.field_71475_ae != null) {
+          this.func_147108_a(new GuiConnecting(new GuiMainMenu(), this, this.field_71475_ae, this.field_71477_af));
 @@ -470,6 +472,7 @@
  
-       this.debugRenderer = new DebugRenderer(this);
+       this.field_184132_p = new DebugRenderer(this);
        GLFW.glfwSetErrorCallback(this::func_195545_a).free();
 +      net.minecraftforge.fml.client.ClientModLoader.complete();
-       if (this.gameSettings.fullScreen && !this.field_195558_d.func_198113_j()) {
+       if (this.field_71474_y.field_74353_u && !this.field_195558_d.func_198113_j()) {
           this.field_195558_d.func_198077_g();
        }
 @@ -485,7 +488,7 @@
@@ -34,10 +34,10 @@
        if (!GLFW.glfwInit()) {
           throw new IllegalStateException("Failed to initialize GLFW, errors: " + Joiner.on(",").join(list));
 @@ -1392,6 +1395,7 @@
-       NetworkManager networkmanager = NetworkManager.provideLocalClient(socketaddress);
-       networkmanager.setNetHandler(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null, (p_209507_0_) -> {
+       NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
+       networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null, (p_209507_0_) -> {
        }));
 +      net.minecraftforge.fml.network.NetworkHooks.registerClientLoginChannel(networkmanager);
-       networkmanager.sendPacket(new CPacketHandshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN));
-       networkmanager.sendPacket(new CPacketLoginStart(this.getSession().getProfile()));
-       this.networkManager = networkmanager;
+       networkmanager.func_179290_a(new CPacketHandshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN));
+       networkmanager.func_179290_a(new CPacketLoginStart(this.func_110432_I().func_148256_e()));
+       this.field_71453_ak = networkmanager;

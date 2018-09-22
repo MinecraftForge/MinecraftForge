@@ -16,6 +16,6 @@
 +      public void preDraw(VertexFormat format, int element, int stride, java.nio.ByteBuffer buffer) { net.minecraftforge.client.ForgeHooksClient.preDraw(this, format, element, stride, buffer); }
 +      public void postDraw(VertexFormat format, int element, int stride, java.nio.ByteBuffer buffer) { net.minecraftforge.client.ForgeHooksClient.postDraw(this, format, element, stride, buffer); }
 +
-       private final String displayName;
+       private final String field_177392_h;
  
-       private EnumUsage(String displayNameIn) {
+       private EnumUsage(String p_i46094_3_) {

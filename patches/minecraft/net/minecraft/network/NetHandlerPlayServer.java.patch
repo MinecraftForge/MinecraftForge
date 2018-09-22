@@ -3,8 +3,8 @@
 @@ -1265,5 +1265,7 @@
     }
  
-    public void processCustomPayload(CPacketCustomPayload packetIn) {
-+      PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.player.getServerWorld());
-+      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(packetIn, this.netManager);
+    public void func_147349_a(CPacketCustomPayload p_147349_1_) {
++      PacketThreadUtil.func_180031_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
++      net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_147349_1_, this.field_147371_a);
     }
  }

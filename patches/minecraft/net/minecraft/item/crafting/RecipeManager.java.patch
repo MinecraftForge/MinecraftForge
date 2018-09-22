@@ -10,10 +10,10 @@
           return p_199516_0_.endsWith(".json");
        })) {
 @@ -47,6 +49,8 @@
-             JsonObject jsonobject = (JsonObject)JsonUtils.gsonDeserialize(gson, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), JsonObject.class);
+             JsonObject jsonobject = (JsonObject)JsonUtils.func_188178_a(gson, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), JsonObject.class);
              if (jsonobject == null) {
                 field_199521_c.error("Couldn't load recipe {} as it's null or empty", (Object)resourcelocation1);
-+            } else if (jsonobject.has("conditions") && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(JsonUtils.getJsonArray(jsonobject, "conditions"))) {
++            } else if (jsonobject.has("conditions") && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(JsonUtils.func_151214_t(jsonobject, "conditions"))) {
 +               field_199521_c.info("Skipping loading recipe {} as it's conditions were not met", resourcelocation1);
              } else {
                 this.func_199509_a(RecipeSerializers.func_199572_a(resourcelocation1, jsonobject));

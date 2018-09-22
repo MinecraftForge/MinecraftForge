@@ -11,20 +11,20 @@
     public BannerDuplicateRecipe(ResourceLocation p_i48171_1_) {
 @@ -77,8 +75,8 @@
        for(int i = 0; i < nonnulllist.size(); ++i) {
-          ItemStack itemstack = inv.getStackInSlot(i);
-          if (!itemstack.isEmpty()) {
--            if (itemstack.getItem().hasContainerItem()) {
--               nonnulllist.set(i, new ItemStack(itemstack.getItem().getContainerItem()));
+          ItemStack itemstack = p_179532_1_.func_70301_a(i);
+          if (!itemstack.func_190926_b()) {
+-            if (itemstack.func_77973_b().func_77634_r()) {
+-               nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
 +            if (itemstack.hasContainerItem()) {
 +               nonnulllist.set(i, itemstack.getContainerItem());
-             } else if (itemstack.hasTagCompound() && TileEntityBanner.getPatterns(itemstack) > 0) {
-                ItemStack itemstack1 = itemstack.copy();
-                itemstack1.setCount(1);
+             } else if (itemstack.func_77942_o() && TileEntityBanner.func_175113_c(itemstack) > 0) {
+                ItemStack itemstack1 = itemstack.func_77946_l();
+                itemstack1.func_190920_e(1);
 @@ -94,7 +92,6 @@
        return RecipeSerializers.field_199586_l;
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean canFit(int width, int height) {
-       return width * height >= 2;
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ * p_194133_2_ >= 2;
     }

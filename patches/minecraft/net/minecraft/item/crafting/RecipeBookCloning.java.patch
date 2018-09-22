@@ -12,19 +12,19 @@
 @@ -86,8 +84,8 @@
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
-          ItemStack itemstack = inv.getStackInSlot(i);
--         if (itemstack.getItem().hasContainerItem()) {
--            nonnulllist.set(i, new ItemStack(itemstack.getItem().getContainerItem()));
+          ItemStack itemstack = p_179532_1_.func_70301_a(i);
+-         if (itemstack.func_77973_b().func_77634_r()) {
+-            nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
 +         if (itemstack.hasContainerItem()) {
 +            nonnulllist.set(i, itemstack.getContainerItem());
-          } else if (itemstack.getItem() instanceof ItemWrittenBook) {
-             ItemStack itemstack1 = itemstack.copy();
-             itemstack1.setCount(1);
+          } else if (itemstack.func_77973_b() instanceof ItemWrittenBook) {
+             ItemStack itemstack1 = itemstack.func_77946_l();
+             itemstack1.func_190920_e(1);
 @@ -103,7 +101,6 @@
        return RecipeSerializers.field_199578_d;
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean canFit(int width, int height) {
-       return width >= 3 && height >= 3;
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ >= 3 && p_194133_2_ >= 3;
     }

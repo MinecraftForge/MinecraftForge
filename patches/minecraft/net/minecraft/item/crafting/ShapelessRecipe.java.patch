@@ -9,16 +9,16 @@
  
  public class ShapelessRecipe implements IRecipe {
     private final ResourceLocation field_199562_a;
-    private final String group;
-    private final ItemStack recipeOutput;
-    private final NonNullList<Ingredient> recipeItems;
+    private final String field_194138_c;
+    private final ItemStack field_77580_a;
+    private final NonNullList<Ingredient> field_77579_b;
 +   private final boolean isSimple;
  
     public ShapelessRecipe(ResourceLocation p_i48161_1_, String p_i48161_2_, ItemStack p_i48161_3_, NonNullList<Ingredient> p_i48161_4_) {
        this.field_199562_a = p_i48161_1_;
-       this.group = p_i48161_2_;
-       this.recipeOutput = p_i48161_3_;
-       this.recipeItems = p_i48161_4_;
+       this.field_194138_c = p_i48161_2_;
+       this.field_77580_a = p_i48161_3_;
+       this.field_77579_b = p_i48161_4_;
 +      this.isSimple = p_i48161_4_.stream().allMatch(Ingredient::isSimple);
     }
  
@@ -28,8 +28,8 @@
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public String getGroup() {
-       return this.group;
+    public String func_193358_e() {
+       return this.field_194138_c;
     }
 @@ -54,6 +53,7 @@
           return false;
@@ -38,38 +38,38 @@
 +         java.util.List<ItemStack> inputs = new java.util.ArrayList<>();
           int i = 0;
  
-          for(int j = 0; j < inv.getHeight(); ++j) {
+          for(int j = 0; j < p_77569_1_.func_174923_h(); ++j) {
 @@ -61,12 +61,15 @@
-                ItemStack itemstack = inv.getStackInSlot(k + j * inv.getWidth());
-                if (!itemstack.isEmpty()) {
+                ItemStack itemstack = p_77569_1_.func_70301_a(k + j * p_77569_1_.func_174922_i());
+                if (!itemstack.func_190926_b()) {
                    ++i;
 +                  if (isSimple)
-                   recipeitemhelper.accountStack(new ItemStack(itemstack.getItem()));
+                   recipeitemhelper.func_194112_a(new ItemStack(itemstack.func_77973_b()));
 +                  else
 +                     inputs.add(itemstack);
                 }
              }
           }
  
--         return i == this.recipeItems.size() && recipeitemhelper.canCraft(this, (IntList)null);
-+         return i == this.recipeItems.size() && (isSimple ? recipeitemhelper.canCraft(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs, this.recipeItems) != null);
+-         return i == this.field_77579_b.size() && recipeitemhelper.func_194116_a(this, (IntList)null);
++         return i == this.field_77579_b.size() && (isSimple ? recipeitemhelper.func_194116_a(this, (IntList)null) : net.minecraftforge.common.util.RecipeMatcher.findMatches(inputs, this.field_77579_b) != null);
        }
     }
  
 @@ -74,19 +77,19 @@
-       return this.recipeOutput.copy();
+       return this.field_77580_a.func_77946_l();
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean canFit(int width, int height) {
-       return width * height >= this.recipeItems.size();
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ * p_194133_2_ >= this.field_77579_b.size();
     }
  
     public static class Serializer implements IRecipeSerializer<ShapelessRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shapeless");
        public ShapelessRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
-          String s = JsonUtils.getString(p_199425_2_, "group", "");
-          NonNullList<Ingredient> nonnulllist = func_199568_a(JsonUtils.getJsonArray(p_199425_2_, "ingredients"));
+          String s = JsonUtils.func_151219_a(p_199425_2_, "group", "");
+          NonNullList<Ingredient> nonnulllist = func_199568_a(JsonUtils.func_151214_t(p_199425_2_, "ingredients"));
           if (nonnulllist.isEmpty()) {
              throw new JsonParseException("No ingredients for shapeless recipe");
 -         } else if (nonnulllist.size() > 9) {
@@ -77,7 +77,7 @@
 +         } else if (nonnulllist.size() > ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT) {
 +            throw new JsonParseException("Too many ingredients for shapeless recipe the max is " + (ShapedRecipe.MAX_WIDTH * ShapedRecipe.MAX_HEIGHT));
           } else {
-             ItemStack itemstack = ShapedRecipe.func_199798_a(JsonUtils.getJsonObject(p_199425_2_, "result"));
+             ItemStack itemstack = ShapedRecipe.func_199798_a(JsonUtils.func_152754_s(p_199425_2_, "result"));
              return new ShapelessRecipe(p_199425_1_, s, itemstack, nonnulllist);
 @@ -106,8 +109,9 @@
           return nonnulllist;

@@ -5,54 +5,54 @@
           bitset.set(i1);
        }
 -
-+      this.rawIntBuffer.limit(this.rawIntBuffer.capacity());
-+      this.rawIntBuffer.position(this.getBufferSize());
++      this.field_178999_b.limit(this.field_178999_b.capacity());
++      this.field_178999_b.position(this.func_181664_j());
     }
  
-    public BufferBuilder.State getVertexState() {
+    public BufferBuilder.State func_181672_a() {
 @@ -438,15 +439,15 @@
           break;
        case USHORT:
        case SHORT:
--         this.byteBuffer.putShort(i, (short)((int)x * 32767 & '\uffff'));
--         this.byteBuffer.putShort(i + 2, (short)((int)y * 32767 & '\uffff'));
--         this.byteBuffer.putShort(i + 4, (short)((int)z * 32767 & '\uffff'));
-+         this.byteBuffer.putShort(i, (short)((int)(x * Short.MAX_VALUE) & 0xFFFF));
-+         this.byteBuffer.putShort(i + 2, (short)((int)(y * Short.MAX_VALUE) & 0xFFFF));
-+         this.byteBuffer.putShort(i + 4, (short)((int)(z * Short.MAX_VALUE) & 0xFFFF));
+-         this.field_179001_a.putShort(i, (short)((int)p_181663_1_ * 32767 & '\uffff'));
+-         this.field_179001_a.putShort(i + 2, (short)((int)p_181663_2_ * 32767 & '\uffff'));
+-         this.field_179001_a.putShort(i + 4, (short)((int)p_181663_3_ * 32767 & '\uffff'));
++         this.field_179001_a.putShort(i, (short)((int)(p_181663_1_ * Short.MAX_VALUE) & 0xFFFF));
++         this.field_179001_a.putShort(i + 2, (short)((int)(p_181663_2_ * Short.MAX_VALUE) & 0xFFFF));
++         this.field_179001_a.putShort(i + 4, (short)((int)(p_181663_3_ * Short.MAX_VALUE) & 0xFFFF));
           break;
        case UBYTE:
        case BYTE:
--         this.byteBuffer.put(i, (byte)((int)x * 127 & 255));
--         this.byteBuffer.put(i + 1, (byte)((int)y * 127 & 255));
--         this.byteBuffer.put(i + 2, (byte)((int)z * 127 & 255));
-+         this.byteBuffer.put(i, (byte)((int)(x * Byte.MAX_VALUE) & 0xFF));
-+         this.byteBuffer.put(i + 1, (byte)((int)(y * Byte.MAX_VALUE) & 0xFF));
-+         this.byteBuffer.put(i + 2, (byte)((int)(z * Byte.MAX_VALUE) & 0xFF));
+-         this.field_179001_a.put(i, (byte)((int)p_181663_1_ * 127 & 255));
+-         this.field_179001_a.put(i + 1, (byte)((int)p_181663_2_ * 127 & 255));
+-         this.field_179001_a.put(i + 2, (byte)((int)p_181663_3_ * 127 & 255));
++         this.field_179001_a.put(i, (byte)((int)(p_181663_1_ * Byte.MAX_VALUE) & 0xFF));
++         this.field_179001_a.put(i + 1, (byte)((int)(p_181663_2_ * Byte.MAX_VALUE) & 0xFF));
++         this.field_179001_a.put(i + 2, (byte)((int)(p_181663_3_ * Byte.MAX_VALUE) & 0xFF));
        }
  
-       this.nextVertexFormatIndex();
+       this.func_181667_k();
 @@ -521,4 +522,23 @@
-          return this.stateVertexFormat;
+          return this.field_179018_e;
        }
     }
 +   
 +   //For some unknown reason Mojang changed the vanilla function to hardcode alpha as 255.... So lets re-add the parameter -.-
 +   public void putColorRGBA(int index, int red, int green, int blue, int alpha) {
 +       if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
-+           this.rawIntBuffer.put(index, alpha << 24 | blue << 16 | green << 8 | red);
++           this.field_178999_b.put(index, alpha << 24 | blue << 16 | green << 8 | red);
 +       else
-+           this.rawIntBuffer.put(index, red << 24 | green << 16 | blue << 8 | alpha);
++           this.field_178999_b.put(index, red << 24 | green << 16 | blue << 8 | alpha);
  }
 +   
 +   public boolean isColorDisabled() {
-+       return noColor;
++       return field_78939_q;
 +   }
 +   
 +   public void putBulkData(ByteBuffer buffer) {
-+       growBuffer(buffer.limit() + this.vertexFormat.getSize());
-+       this.byteBuffer.position(this.vertexCount * this.vertexFormat.getSize());
-+       this.byteBuffer.put(buffer);
-+       this.vertexCount += buffer.limit() / this.vertexFormat.getSize();
++       func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
++       this.field_179001_a.position(this.field_178997_d * this.field_179011_q.func_177338_f());
++       this.field_179001_a.put(buffer);
++       this.field_178997_d += buffer.limit() / this.field_179011_q.func_177338_f();
 +   }
 +}

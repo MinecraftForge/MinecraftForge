@@ -7,11 +7,11 @@
 -public final class ItemStack {
 +public final class ItemStack extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeItemStack {
     private static final Logger field_199558_c = LogManager.getLogger();
-    public static final ItemStack EMPTY = new ItemStack((Item)null);
-    public static final DecimalFormat DECIMALFORMAT = func_208306_D();
+    public static final ItemStack field_190927_a = new ItemStack((Item)null);
+    public static final DecimalFormat field_111284_a = func_208306_D();
 @@ -79,6 +79,9 @@
-    private BlockWorldState canPlaceOnCacheBlock;
-    private boolean canPlaceOnCacheResult;
+    private BlockWorldState field_179550_j;
+    private boolean field_179551_k;
  
 +   private net.minecraftforge.registries.IRegistryDelegate<Item> delegate;
 +   private NBTTagCompound capNBT;
@@ -27,44 +27,44 @@
 +   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_){ this(p_i48204_1_, p_i48204_2_, null); }
 +   public ItemStack(IItemProvider p_i48204_1_, int p_i48204_2_, @Nullable NBTTagCompound capNBT) {
 +      this.capNBT = capNBT;
-       this.item = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
-       this.stackSize = p_i48204_2_;
-       this.updateEmptyState();
+       this.field_151002_e = p_i48204_1_ == null ? null : p_i48204_1_.func_199767_j();
+       this.field_77994_a = p_i48204_2_;
+       this.func_190923_F();
 +      this.forgeInit();
     }
  
-    private void updateEmptyState() {
+    private void func_190923_F() {
 @@ -101,6 +107,7 @@
     }
  
-    private ItemStack(NBTTagCompound compound) {
-+      this.capNBT = compound.hasKey("ForgeCaps") ? compound.getCompoundTag("ForgeCaps") : null;
-       Item item = Item.REGISTRY.getObject(new ResourceLocation(compound.getString("id")));
-       this.item = item == null ? Items.AIR : item;
-       this.stackSize = compound.getByte("Count");
+    private ItemStack(NBTTagCompound p_i47263_1_) {
++      this.capNBT = p_i47263_1_.func_74764_b("ForgeCaps") ? p_i47263_1_.func_74775_l("ForgeCaps") : null;
+       Item item = Item.field_150901_e.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
+       this.field_151002_e = item == null ? Items.field_190931_a : item;
+       this.field_77994_a = p_i47263_1_.func_74771_c("Count");
 @@ -114,6 +121,7 @@
        }
  
-       this.updateEmptyState();
+       this.func_190923_F();
 +      this.forgeInit();
     }
  
     public static ItemStack func_199557_a(NBTTagCompound p_199557_0_) {
 @@ -128,7 +136,7 @@
-    public boolean isEmpty() {
-       if (this == EMPTY) {
+    public boolean func_190926_b() {
+       if (this == field_190927_a) {
           return true;
--      } else if (this.getItem() != null && this.getItem() != Items.AIR) {
-+      } else if (this.getItemRaw() != null && this.getItemRaw() != Items.AIR) {
-          return this.stackSize <= 0;
+-      } else if (this.func_77973_b() != null && this.func_77973_b() != Items.field_190931_a) {
++      } else if (this.getItemRaw() != null && this.getItemRaw() != Items.field_190931_a) {
+          return this.field_77994_a <= 0;
        } else {
           return true;
 @@ -144,10 +152,11 @@
     }
  
-    public Item getItem() {
--      return this.isEmpty ? Items.AIR : this.item;
-+      return this.isEmpty || this.delegate == null ? Items.AIR : this.delegate.get();
+    public Item func_77973_b() {
+-      return this.field_190928_g ? Items.field_190931_a : this.field_151002_e;
++      return this.field_190928_g || this.delegate == null ? Items.field_190931_a : this.delegate.get();
     }
  
     public EnumActionResult func_196084_a(ItemUseContext p_196084_1_) {
@@ -73,83 +73,83 @@
        BlockPos blockpos = p_196084_1_.func_195995_a();
        BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);
 @@ -183,12 +192,15 @@
-       if (this.stackTagCompound != null) {
-          nbt.setTag("tag", this.stackTagCompound);
+       if (this.field_77990_d != null) {
+          p_77955_1_.func_74782_a("tag", this.field_77990_d);
        }
 -
 +      NBTTagCompound cnbt = this.serializeCaps();
 +      if (cnbt != null && !cnbt.isEmpty()) {
-+         nbt.setTag("ForgeCaps", cnbt);
++         p_77955_1_.func_74782_a("ForgeCaps", cnbt);
 +      }
-       return nbt;
+       return p_77955_1_;
     }
  
-    public int getMaxStackSize() {
--      return this.getItem().getItemStackLimit();
-+      return this.getItem().getItemStackLimit(this);
+    public int func_77976_d() {
+-      return this.func_77973_b().func_77639_j();
++      return this.func_77973_b().getItemStackLimit(this);
     }
  
-    public boolean isStackable() {
+    public boolean func_77985_e() {
 @@ -196,7 +208,7 @@
     }
  
-    public boolean isItemStackDamageable() {
--      if (!this.isEmpty && this.getItem().getMaxDamage() > 0) {
-+      if (!this.isEmpty && this.getItem().getMaxDamage(this) > 0) {
-          NBTTagCompound nbttagcompound = this.getTagCompound();
-          return nbttagcompound == null || !nbttagcompound.getBoolean("Unbreakable");
+    public boolean func_77984_f() {
+-      if (!this.field_190928_g && this.func_77973_b().func_77612_l() > 0) {
++      if (!this.field_190928_g && this.func_77973_b().getMaxDamage(this) > 0) {
+          NBTTagCompound nbttagcompound = this.func_77978_p();
+          return nbttagcompound == null || !nbttagcompound.func_74767_n("Unbreakable");
        } else {
 @@ -205,7 +217,7 @@
     }
  
-    public boolean isItemDamaged() {
--      return this.isItemStackDamageable() && this.getItemDamage() > 0;
-+      return this.isItemStackDamageable() && getItem().isDamaged(this);
+    public boolean func_77951_h() {
+-      return this.func_77984_f() && this.func_77952_i() > 0;
++      return this.func_77984_f() && func_77973_b().isDamaged(this);
     }
  
-    public int getItemDamage() {
+    public int func_77952_i() {
 @@ -217,7 +229,7 @@
     }
  
-    public int getMaxDamage() {
--      return this.getItem().getMaxDamage();
-+      return this.getItem().getMaxDamage(this);
+    public int func_77958_k() {
+-      return this.func_77973_b().func_77612_l();
++      return this.func_77973_b().getMaxDamage(this);
     }
  
-    public boolean attemptDamageItem(int amount, Random rand, @Nullable EntityPlayerMP damager) {
+    public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable EntityPlayerMP p_96631_3_) {
 @@ -285,7 +297,7 @@
     }
  
-    public boolean canHarvestBlock(IBlockState blockIn) {
--      return this.getItem().canHarvestBlock(blockIn);
-+      return this.getItem().canHarvestBlock(this, blockIn);
+    public boolean func_150998_b(IBlockState p_150998_1_) {
+-      return this.func_77973_b().func_150897_b(p_150998_1_);
++      return this.func_77973_b().canHarvestBlock(this, p_150998_1_);
     }
  
-    public boolean interactWithEntity(EntityPlayer playerIn, EntityLivingBase entityIn, EnumHand hand) {
+    public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_) {
 @@ -293,7 +305,7 @@
     }
  
-    public ItemStack copy() {
--      ItemStack itemstack = new ItemStack(this.getItem(), this.stackSize);
-+      ItemStack itemstack = new ItemStack(this.getItem(), this.stackSize, this.serializeCaps());
-       itemstack.setAnimationsToGo(this.getAnimationsToGo());
-       if (this.stackTagCompound != null) {
-          itemstack.stackTagCompound = this.stackTagCompound.copy();
+    public ItemStack func_77946_l() {
+-      ItemStack itemstack = new ItemStack(this.func_77973_b(), this.field_77994_a);
++      ItemStack itemstack = new ItemStack(this.func_77973_b(), this.field_77994_a, this.serializeCaps());
+       itemstack.func_190915_d(this.func_190921_D());
+       if (this.field_77990_d != null) {
+          itemstack.field_77990_d = this.field_77990_d.func_74737_b();
 @@ -309,7 +321,7 @@
-          if (stackA.stackTagCompound == null && stackB.stackTagCompound != null) {
+          if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
              return false;
           } else {
--            return stackA.stackTagCompound == null || stackA.stackTagCompound.equals(stackB.stackTagCompound);
-+            return stackA.stackTagCompound == null || stackA.stackTagCompound.equals(stackB.stackTagCompound) && stackA.areCapsCompatible(stackB);
+-            return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d);
++            return p_77970_0_.field_77990_d == null || p_77970_0_.field_77990_d.equals(p_77970_1_.field_77990_d) && p_77970_0_.areCapsCompatible(p_77970_1_);
           }
        } else {
           return false;
 @@ -332,7 +344,7 @@
-       } else if (this.stackTagCompound == null && other.stackTagCompound != null) {
+       } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
           return false;
        } else {
--         return this.stackTagCompound == null || this.stackTagCompound.equals(other.stackTagCompound);
-+         return this.stackTagCompound == null || this.stackTagCompound.equals(other.stackTagCompound) && this.areCapsCompatible(other);
+-         return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d);
++         return this.field_77990_d == null || this.field_77990_d.equals(p_77959_1_.field_77990_d) && this.areCapsCompatible(p_77959_1_);
        }
     }
  
@@ -157,7 +157,7 @@
           }
        }
  
-+      net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, playerIn, list, advanced);
++      net.minecraftforge.event.ForgeEventFactory.onItemTooltip(this, p_82840_1_, list, p_82840_2_);
        return list;
     }
  
@@ -165,21 +165,21 @@
              }
           }
        } else {
--         multimap = this.getItem().getItemAttributeModifiers(equipmentSlot);
-+         multimap = this.getItem().getAttributeModifiers(equipmentSlot, this);
+-         multimap = this.func_77973_b().func_111205_h(p_111283_1_);
++         multimap = this.func_77973_b().getAttributeModifiers(p_111283_1_, this);
        }
  
        return multimap;
 @@ -874,4 +887,89 @@
-    public void shrink(int quantity) {
-       this.grow(-quantity);
+    public void func_190918_g(int p_190918_1_) {
+       this.func_190917_f(-p_190918_1_);
     }
 +
 +   // FORGE START
 +   public void deserializeNBT(NBTTagCompound nbt)
 +   {
 +       final ItemStack itemStack = ItemStack.func_199557_a(nbt);
-+       getStack().setTagCompound(itemStack.getTagCompound());
++       getStack().func_77982_d(itemStack.func_77978_p());
 +       if (itemStack.capNBT != null) deserializeCaps(itemStack.capNBT);
 +   }
 +
@@ -205,7 +205,7 @@
 +   @Nullable
 +   private Item getItemRaw()
 +   {
-+       return this.item;
++       return this.field_151002_e;
 +   }
 +
 +   /**
@@ -215,10 +215,10 @@
 +    */
 +   public static boolean areItemStacksEqualUsingNBTShareTag(ItemStack stackA, ItemStack stackB)
 +   {
-+       if (stackA.isEmpty())
-+           return stackB.isEmpty();
++       if (stackA.func_190926_b())
++           return stackB.func_190926_b();
 +       else
-+           return !stackB.isEmpty() && stackA.isItemStackEqualUsingNBTShareTag(stackB);
++           return !stackB.func_190926_b() && stackA.isItemStackEqualUsingNBTShareTag(stackB);
 +   }
 +
 +   /**
@@ -228,7 +228,7 @@
 +    */
 +   private boolean isItemStackEqualUsingNBTShareTag(ItemStack other)
 +   {
-+       return this.stackSize == other.stackSize && this.getItem() == other.getItem() && areItemStackShareTagsEqual(this, other);
++       return this.field_77994_a == other.field_77994_a && this.func_77973_b() == other.func_77973_b() && areItemStackShareTagsEqual(this, other);
 +   }
 +
 +   /**
@@ -238,8 +238,8 @@
 +    */
 +   public static boolean areItemStackShareTagsEqual(ItemStack stackA, ItemStack stackB)
 +   {
-+       NBTTagCompound shareTagA = stackA.getItem().getNBTShareTag(stackA);
-+       NBTTagCompound shareTagB = stackB.getItem().getNBTShareTag(stackB);
++       NBTTagCompound shareTagA = stackA.func_77973_b().getNBTShareTag(stackA);
++       NBTTagCompound shareTagB = stackB.func_77973_b().getNBTShareTag(stackB);
 +       if (shareTagA == null)
 +           return shareTagB == null;
 +       else
@@ -257,6 +257,6 @@
 +    */
 +   public boolean doesSneakBypassUse(net.minecraft.world.IWorldReader world, BlockPos pos, EntityPlayer player)
 +   {
-+       return this.isEmpty() || this.getItem().doesSneakBypassUse(this, world, pos, player);
++       return this.func_190926_b() || this.func_77973_b().doesSneakBypassUse(this, world, pos, player);
 +   }
  }

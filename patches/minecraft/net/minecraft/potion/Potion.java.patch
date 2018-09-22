@@ -6,6 +6,6 @@
  
 -public class Potion {
 +public class Potion extends net.minecraftforge.registries.ForgeRegistryEntry<Potion> {
-    public static final RegistryNamespaced<ResourceLocation, Potion> REGISTRY = new RegistryNamespaced<ResourceLocation, Potion>();
-    private final Map<IAttribute, AttributeModifier> attributeModifierMap = Maps.<IAttribute, AttributeModifier>newHashMap();
-    private final boolean isBadEffect;
+    public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = new RegistryNamespaced<ResourceLocation, Potion>();
+    private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.<IAttribute, AttributeModifier>newHashMap();
+    private final boolean field_76418_K;

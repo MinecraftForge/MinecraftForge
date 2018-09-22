@@ -13,22 +13,23 @@
 -import net.minecraftforge.api.distmarker.OnlyIn;
  
  public interface IRecipe {
-    boolean matches(IInventory inv, World worldIn);
+    boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_);
  
-    ItemStack getCraftingResult(IInventory inv);
+    ItemStack func_77572_b(IInventory p_77572_1_);
  
 -   @OnlyIn(Dist.CLIENT)
-    boolean canFit(int width, int height);
+    boolean func_194133_a(int p_194133_1_, int p_194133_2_);
  
-    ItemStack getRecipeOutput();
+    ItemStack func_77571_b();
 @@ -23,9 +19,9 @@
-       NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+       NonNullList<ItemStack> nonnulllist = NonNullList.<ItemStack>func_191197_a(p_179532_1_.func_70302_i_(), ItemStack.field_190927_a);
  
        for(int i = 0; i < nonnulllist.size(); ++i) {
--         Item item = inv.getStackInSlot(i).getItem();
-+         ItemStack item = inv.getStackInSlot(i);
-          if (item.hasContainerItem()) {
--            nonnulllist.set(i, new ItemStack(item.getContainerItem()));
+-         Item item = p_179532_1_.func_70301_a(i).func_77973_b();
+-         if (item.func_77634_r()) {
+-            nonnulllist.set(i, new ItemStack(item.func_77668_q()));
++         ItemStack item = p_179532_1_.func_70301_a(i);
++         if (item.hasContainerItem()) {
 +            nonnulllist.set(i, item.getContainerItem());
           }
        }
@@ -38,6 +39,6 @@
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    default String getGroup() {
+    default String func_193358_e() {
        return "";
     }

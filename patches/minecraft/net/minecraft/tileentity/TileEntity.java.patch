@@ -10,9 +10,9 @@
  
 -public abstract class TileEntity {
 +public abstract class TileEntity extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeTileEntity {
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger field_145852_a = LogManager.getLogger();
     private final TileEntityType<?> field_200663_e;
-    protected World world;
+    protected World field_145850_b;
 @@ -26,6 +27,7 @@
  
     public TileEntity(TileEntityType<?> p_i48289_1_) {
