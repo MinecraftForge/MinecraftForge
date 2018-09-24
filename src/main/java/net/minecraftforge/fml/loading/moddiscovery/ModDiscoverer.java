@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class ModDiscoverer {
 
         FMLLoader.getLanguageLoadingProvider().addAdditionalLanguages(modFiles.get(ModFile.Type.LANGPROVIDER));
         BackgroundScanHandler backgroundScanHandler = new BackgroundScanHandler();
-        final List<ModFile> mods = modFiles.get(ModFile.Type.MOD);
+        final List<ModFile> mods = modFiles.getOrDefault(ModFile.Type.MOD, Collections.emptyList());
         for (Iterator<ModFile> iterator = mods.iterator(); iterator.hasNext(); )
         {
             ModFile mod = iterator.next();

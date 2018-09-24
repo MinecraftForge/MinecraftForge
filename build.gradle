@@ -105,7 +105,7 @@ project(':forge') {
     }
     dependencies {
         api 'net.minecraft:client:1.13:extra'
-        api 'cpw.mods:modlauncher:0.1.0-rc.3' //Pinned until cpw fixes getCommonSupertype
+        api 'cpw.mods:modlauncher:0.1.0-rc.4+' //Pinned until cpw fixes getCommonSupertype
         api 'net.minecraftforge:accesstransformers:0.10+:shadowed'
         api 'net.minecraftforge:eventbus:0.1+:service'
         api 'net.minecraftforge:forgespi:0.1+'
@@ -117,6 +117,7 @@ project(':forge') {
         api 'java3d:vecmath:1.5.2'
     }
 
+/*
     configurations {
         ecj
     }
@@ -124,6 +125,7 @@ project(':forge') {
     dependencies {
         ecj 'org.eclipse.jdt.core.compiler:ecj:4.6.1'
     }
+*/
 
     /* Forge compiles, no longer need eclipse compiler
     compileJava {
@@ -177,6 +179,7 @@ project(':forge') {
 
         include 'net/minecraftforge/'
         exclude 'net/minecraftforge/server/terminalconsole/'
+        exclude 'net/minecraftforge/api/' // exclude API here because it's validated in the SPI build
         exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
         exclude 'net/minecraftforge/fml/common/versioning/InvalidVersionSpecificationException.java'
         exclude 'net/minecraftforge/fml/common/versioning/Restriction.java'
