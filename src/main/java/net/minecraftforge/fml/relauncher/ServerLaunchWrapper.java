@@ -67,6 +67,11 @@ public class ServerLaunchWrapper {
             allArgs[0] = "--tweakClass";
             allArgs[1] = "net.minecraftforge.fml.common.launcher.FMLServerTweaker";
             System.arraycopy(args, 0, allArgs, 2, args.length);
+
+            if (allArgs[allArgs.length - 1].endsWith("\r")) {
+                allArgs[allArgs.length - 1] = allArgs[allArgs.length - 1].substring(0, allArgs[allArgs.length - 1].length() - 1);
+            }
+
             main.invoke(null,(Object)allArgs);
         }
         catch (Exception e)
