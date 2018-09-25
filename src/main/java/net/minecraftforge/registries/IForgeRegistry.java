@@ -61,6 +61,8 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      */
     <T> T getSlaveMap(ResourceLocation slaveMapName, Class<T> type);
 
+    TagDelegate<V> getTagDelegate();
+
     /**
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt
      * on the client side from a server side synchronization, or when a world is loaded.

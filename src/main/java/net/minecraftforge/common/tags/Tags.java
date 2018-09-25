@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common;
+package net.minecraftforge.common.tags;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;

@@ -39,7 +39,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -55,13 +54,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import net.minecraftforge.registries.IForgeRegistry.AddCallback;
-import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
-import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
-import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
-import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
-import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
@@ -90,11 +82,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
+    private TagDelegate<V> tagDelegate;
 
     private V defaultValue = null;
     boolean isFrozen = false;
 
-    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
+    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing, @Nullable TagDelegate<V> tagDelegate)
     {
         this.stage = stage;
         this.superType = superType;
@@ -111,8 +104,17 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.allowOverrides = allowOverrides;
         this.isModifiable = isModifiable;
         this.dummyFactory = dummyFactory;
+        this.tagDelegate = tagDelegate;
+        if (this.tagDelegate!=null)
+            this.tagDelegate.setReg(this);
         if (this.create != null)
             this.create.onCreate(this, stage);
+    }
+
+    @Override
+    @Nullable
+    public TagDelegate<V> getTagDelegate() {
+        return tagDelegate;
     }
 
     @Override
@@ -268,7 +270,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     ForgeRegistry<V> copy(RegistryManager stage)
     {
-        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, stage, allowOverrides, isModifiable, dummyFactory, missing);
+        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, stage, allowOverrides, isModifiable, dummyFactory, missing, tagDelegate);
     }
 
     int add(int id, V value)
@@ -538,8 +540,6 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             throw new RuntimeException("One of more entry values did not copy to the correct id. Check log for details!");
     }
 
-
-
     @Override
     public void clear()
     {
@@ -747,7 +747,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     //Public for tests
-    public Snapshot makeSnapshot()
+    public Snapshot makeSnapshot(boolean savingToDisc)
     {
         Snapshot ret = new Snapshot();
         this.ids.forEach((id, value) -> ret.ids.put(getKey(value), id));
@@ -755,7 +755,20 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         ret.blocked.addAll(this.blocked);
         ret.dummied.addAll(this.dummies);
         ret.overrides.putAll(getOverrideOwners());
+        TagDelegate<V> delegate = getTagDelegate();
+        if (!savingToDisc && delegate!=null && !delegate.isVanillaHandled())
+        {
+            ret.tagDelegateRepresentation = delegate.serializeNBT();
+        }
         return ret;
+    }
+
+    void injectTags(NBTTagCompound tagRepresentation)
+    {
+        if (tagRepresentation == null)
+            return;
+        tagDelegate = new TagDelegate<>(new ResourceLocation("placeholder"),getTagDelegate()!=null?getTagDelegate().getWrapperFactory():null);
+        tagDelegate.deserializeNBT(tagRepresentation);
     }
 
     Map<ResourceLocation, String> getOverrideOwners()
@@ -779,6 +792,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         public final Set<Integer> blocked = Sets.newHashSet();
         public final Set<ResourceLocation> dummied = Sets.newHashSet();
         public final Map<ResourceLocation, String> overrides = Maps.newHashMap();
+        NBTTagCompound tagDelegateRepresentation = null;
 
         public NBTTagCompound write()
         {
@@ -820,6 +834,11 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             NBTTagList dummied = new NBTTagList();
             this.dummied.stream().sorted().forEach(e -> dummied.add(new NBTTagString(e.toString())));
             data.setTag("dummied", dummied);
+
+            if (tagDelegateRepresentation !=null)
+            {
+                data.setTag("tags",tagDelegateRepresentation);
+            }
 
             return data;
         }
@@ -865,6 +884,10 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             list = nbt.getList("dummied", 8); //8 - NBTTagString, New format, less redundant/verbose
             list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagString)e).getString())));
 
+            if (nbt.hasKey("tags"))
+            {
+                ret.tagDelegateRepresentation = nbt.getCompound("tags");
+            }
             return ret;
         }
     }
