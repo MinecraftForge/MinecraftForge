@@ -9,9 +9,19 @@ buildscript {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
     }
 }
+import groovy.json.JsonSlurper
+import groovy.json.JsonBuilder
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.security.MessageDigest
+import net.minecraftforge.gradle.common.task.SignJar
+import org.apache.tools.ant.filters.ReplaceTokens
+import de.undercouch.gradle.tasks.download.Download
 
 plugins {
     id 'net.minecrell.licenser' version '0.4'
+    id 'org.ajoberstar.grgit' version '2.3.0'
+    id 'de.undercouch.download' version '3.3.0'
 }
 apply plugin: 'eclipse'
 
@@ -50,12 +60,14 @@ project(':clean') {
     }
 }
 
-project(':forge') {
+project(':forge') {    
     evaluationDependsOn(':clean')
     apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
     apply plugin: 'net.minecraftforge.gradle.forgedev.patcher'
     apply plugin: 'net.minecrell.licenser'
+    apply plugin: 'de.undercouch.download'
     
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.    
     
@@ -98,6 +110,8 @@ project(':forge') {
         }
         mcVersion = '1.13'
     }
+    group = 'net.minecraftforge'
+    version = getVersionFromJava(file("$rootDir/src/main/java/net/minecraftforge/common/ForgeVersion.java"), patcher.mcVersion)
     applyPatches {
         canonicalizeAccess true
         canonicalizeWhitespace true
@@ -105,7 +119,10 @@ project(':forge') {
     }
     dependencies {
         api 'net.minecraft:client:1.13:extra'
-        api 'cpw.mods:modlauncher:0.1.0-rc.4+' //Pinned until cpw fixes getCommonSupertype
+        api 'org.ow2.asm:asm:6.2'
+        api 'org.ow2.asm:asm-commons:6.2'
+        api 'org.ow2.asm:asm-tree:6.2'
+        api 'cpw.mods:modlauncher:0.1.0-rc.+'
         api 'net.minecraftforge:accesstransformers:0.10+:shadowed'
         api 'net.minecraftforge:eventbus:0.1+:service'
         api 'net.minecraftforge:forgespi:0.1+'
@@ -117,27 +134,6 @@ project(':forge') {
         api 'java3d:vecmath:1.5.2'
     }
 
-/*
-    configurations {
-        ecj
-    }
-
-    dependencies {
-        ecj 'org.eclipse.jdt.core.compiler:ecj:4.6.1'
-    }
-*/
-
-    /* Forge compiles, no longer need eclipse compiler
-    compileJava {
-        options.fork = true
-        options.failOnError = false
-        options.forkOptions.with {
-            executable = 'java'
-            jvmArgs = ['-classpath', project.configurations.ecj.asPath, 'org.eclipse.jdt.internal.compiler.batch.Main', '-nowarn', '-proceedOnError', '-preserveAllLocals', '-parameters']
-        }
-    }
-    */
-
     task runclient(type: JavaExec, dependsOn: [":forge:downloadAssets", ":forge:extractNatives"]) {
         doFirst {
             mkdir 'runclient'
@@ -148,7 +144,7 @@ project(':forge') {
                 into "$buildDir/classes/java/main"
             }
         }
-//        jvmArgs = ['-verbose:class']
+        //jvmArgs = ['-verbose:class']
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
         systemProperties = [
@@ -174,6 +170,284 @@ project(':forge') {
         workingDir 'runserver'
     }
     
+    task ciWriteBuildNumber << {
+        def file = file("$rootDir/src/main/java/net/minecraftforge/common/ForgeVersion.java")
+        def bn = System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0
+        def outfile = ''
+
+        file.eachLine{ String s ->
+            if (s.matches('^    public static final int buildVersion    = [\\d]+;\$'))
+                s = "    public static final int buildVersion    = ${bn};"
+            if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
+                s = "    public static final String mcVersion = \"${patcher.mcVersion}\";"
+            outfile += (s+'\n')
+        }
+        file.write(outfile)
+    }
+    
+    
+    def extraTxts = [
+        rootProject.file('CREDITS.txt'),
+        rootProject.file('LICENSE.txt')
+    ]
+    /* TODO: Changelog
+    if (project.hasProperty('forgeJenkinsPass'))
+        extraTxts += changelog
+    */
+    
+    task downloadCrowdin() {
+        ext {
+            output = file('build/crowdin_raw.zip')
+            update = file('build/crowdin.json')
+            id = 'minecraft-forge'
+        }
+        onlyIf {
+            project.hasProperty('crowdinKey') && !project.gradle.startParameter.isOffline()
+        }
+        doLast {
+            download {
+                src "https://api.crowdin.com/api/project/${id}/export?key=${project.crowdinKey}&json"
+                dest update
+                overwrite true
+            }
+            if (!update.text.contains('success')) {
+                throw new RuntimeException("Crowdin export failed, see ${update} for more info")
+            }
+            download {
+                src "https://api.crowdin.com/api/project/${id}/download/all.zip?key=${project.crowdinKey}"
+                dest output
+                overwrite true
+            }
+        }
+    }
+    
+    task crowdin(type: Zip) {
+        dependsOn downloadCrowdin
+        baseName = project.name
+        version = project.version
+        classifier = 'crowdin'
+        destinationDir = file('build/distributions')
+        from(zipTree(downloadCrowdin.output)){
+            eachFile { //Tired of waiting for crowdin API, rename things myself. Remove once crowdin stops being dumb
+                if (it.name.equals('en_us.json') && !it.path.startsWith('assets/')) {
+                    it.name = it.path.split('/')[0] + '.json'
+                    it.path = 'assets/forge/lang/' + it.name
+                }
+            }
+            exclude { it.isDirectory() }
+            rename { it.toLowerCase() }//Minecraft needs it lowercase.
+            exclude '**/*.lang' //Pre-1.13 format
+        }
+    }
+    
+    task launcherJson() {
+        ext {
+            output = file('build/libs/version.json')
+            vanilla = project(':mcp').file('build/mcp/downloadJson/version.json')
+            timestamp = dateToIso8601(new Date())
+            comment = [
+                "Please do not automate the download and installation of Forge.",
+                "Our efforts are supported by ads from the download page.",
+                "If you MUST automate this, please consider supporting the project through https://www.patreon.com/LexManos/"
+            ]
+        }
+        inputs.file vanilla
+        outputs.file output
+        doLast {
+            def json_vanilla = new JsonSlurper().parseText(vanilla.text)
+            def json = [            
+                _comment_: comment,
+                id: project.version.split('-')[0] + '-forge-' + project.version.split('-')[1],
+                time: timestamp,
+                releaseTime: timestamp,
+                type: 'release',
+                mainClass: 'cpw.mods.modlauncher.Launcher',
+                inheritsFrom: patcher.mcVersion,
+                logging: [],
+                arguments: [
+                    game: json_vanilla.arguments.game + ['--launchTarget', 'fmlclient']
+                ],
+                libraries: [
+                    [ name: "${project.group}:${project.name}:${project.version}" ]
+                ]
+            ]
+            
+            //TODO: There should be a way to mark this in the config declaration... 
+            def forge = [
+                'cpw.mods:modlauncher',
+                'org.ow2.asm:asm',
+                'org.ow2.asm:asm-commons',
+                'org.ow2.asm:asm-tree',
+                'net.minecraftforge:accesstransformers',
+                'net.minecraftforge:eventbus',
+                'net.minecraftforge:forgespi',
+                'net.minecraftforge:coremods',
+                'com.electronwill.night-config:core',
+                'com.electronwill.night-config:toml',
+                'org.jline:jline',
+                'org.apache.maven:maven-artifact',
+                'java3d:vecmath'
+            ]
+            def mojang = []
+            
+            project.configurations.compileClasspath.resolvedConfiguration.resolvedArtifacts.each {
+                def art = [
+                    group: it.moduleVersion.id.group,
+                    name: it.moduleVersion.id.name,
+                    version: it.moduleVersion.id.version,
+                    classifier: it.classifier,
+                    extension: it.extension,
+                    file: it.file
+                ]
+                def key = art.group + ':' + art.name
+                if (forge.contains(key) || mojang.contains(key)){
+                    def url = forge.contains(key) ? "https://files.minecraftforge.net/maven/" :  "https://libraries.minecraft.net/"
+                    def path = "${art.group.replace('.', '/')}/${art.name}/${art.version}/${art.name}-${art.version}"
+                    if (art.classifier != null)
+                        path += "-${art.classifier}"
+                    path += ".${art.extension}"
+                    def lib = [
+                        name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),
+                        downloads: [
+                            path: path,
+                            url: url + path,
+                            sha1: sha1(art.file),
+                            size: art.file.length()
+                        ]
+                    ]
+                    json.libraries.add(lib)
+                }
+            }
+            
+            output.text = new JsonBuilder(json).toPrettyString()
+        }
+    }
+      
+    task installerJson() {
+        ext {
+            output = file('build/libs/installer.json')
+        }
+        dependsOn launcherJson
+        inputs.file launcherJson.output
+        outputs.file output
+        doLast {
+            def json = [
+                install: [
+                    _comment_: launcherJson.comment,
+                    profileName: project.name,
+                    version: project.version.split('-')[0] + '-forge-' + project.version.split('-')[1],
+                    json: '/version.json',
+                    logo: '/big_logo.png'
+                ]
+            ]
+            output.text = new JsonBuilder(json).toPrettyString()
+        }
+    }
+    
+    universalJar {
+        dependsOn launcherJson
+        from(launcherJson.output) {
+            rename { 'version.json' }
+        }
+        from extraTxts
+        
+        /* TODO: Annotation Cache? need to talk to cpw about his new design.        
+        from(fixAnnotationsJson){
+            into 'META-INF'
+        }
+        dependsOn fixAnnotationsJson
+        */
+        
+        // add crowdin locales
+        from { crowdin.getDidWork() ? zipTree(crowdin.archivePath) : null}
+        dependsOn crowdin
+
+        doFirst {
+            def json = new JsonSlurper().parseText(launcherJson.output.text)
+            def classpath = new StringBuilder()
+            json.libraries.each { lib ->
+                if (!lib.name.startsWith("${project.group}:${project.name}")) {
+                    // group : artifact : version [: classifier][@extension]
+                    def split = lib.name.split(':')
+                    def ext = 'jar'
+                    if (split[split.length-1].indexOf('@') != -1) {
+                        ext = split[split.length-1].split('@')[1]
+                        split[split.length-1] = split[split.length-1].split('@')[0]
+                    }
+                    
+                    def group = split[0].replace('.', '/')
+                    def artifact = split[1]
+                    def version = split[2]
+                    def classifier = split.length > 3 ? split[3] : null
+                    
+                    if (classifier == null)
+                        classpath += "libraries/$group/$artifact/$version/$artifact-${version}.${ext} "
+                    else
+                        classpath += "libraries/$group/$artifact/$version/$artifact-${version}-${classifier}.${ext} "
+                }
+            }
+            classpath += "minecraft_server.${patcher.mcVersion}.jar"
+            
+            manifest.attributes([
+                "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
+                "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
+                "Class-Path": classpath.toString()
+            ])
+        }
+    }
+
+    task signUniversal(type: SignJar, dependsOn: universalJar) {
+        onlyIf {
+            project.hasProperty('jarsigner')
+        }
+
+        def jarsigner = [:];
+
+        if (project.hasProperty('jarsigner'))
+            jarsigner = project.jarsigner;
+
+        alias = 'forge'
+        storePass = jarsigner.storepass
+        keyPass = jarsigner.keypass
+        keyStore = jarsigner.keystore
+        inputFile = universalJar.archivePath
+        outputFile = universalJar.archivePath
+    }
+    publish.dependsOn signUniversal
+    build.dependsOn signUniversal
+    
+    /*
+    installer {
+        dependsOn signUniversal
+        classifier = 'installer'
+        from extraTxts
+        from "src/main/resources/forge_logo.png"
+        from "src/main/resources/url.png"
+        rename "forge_logo\\.png", "big_logo.png"
+    }
+    */
+    
+    task makeMdk(type: Zip) {
+        baseName = project.name
+        classifier = 'mdk'
+        version = project.version
+        destinationDir = file('build/distributions')
+
+        from rootProject.file('gradlew')
+        from rootProject.file('gradlew.bat')
+        from extraTxts
+        from(rootProject.file('gradle/')){
+            into('gradle/')
+        }
+        from(rootProject.file('mdk/')){
+         /*   filter(ReplaceTokens, tokens: [
+                VERSION: project.version
+            ])
+            */
+            rename 'gitignore\\.txt', '.gitignore'
+        }
+    }
+    
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
@@ -193,7 +467,101 @@ project(':forge') {
                 files = files("$rootDir/src/test/java")
             }
         }
+    }    
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact universalJar
+                //TODO: changelog
+                //TODO: installer
+                //TODO: installer-win
+                artifact makeMdk
+                artifact userdevJar
+
+                pom {
+                    name = 'forge'
+                    description = 'Modifactions to Minecraft to enable mod developers.'
+                    url = 'https://github.com/MinecraftForge/MinecraftForge'
+
+                    scm {
+                        url = 'https://github.com/MinecraftForge/MinecraftForge'
+                        connection = 'scm:git:git://github.com/MinecraftForge/MinecraftForge.git'
+                        developerConnection = 'scm:git:git@github.com:MinecraftForge/MinecraftForge.git'
+                    }
+
+                    issueManagement {
+                        system = 'github'
+                        url = 'https://github.com/MinecraftForge/MinecraftForge/issues'
+                    }
+
+                    licenses {
+                        license {
+                            name = 'LGPL 2.1'
+                            url = 'https://github.com/MinecraftForge/MinecraftForge/blob/1.13-pre/LICENSE.txt'
+                            distribution = 'repo'
+                        }
+                    }
+                }
+            }
+        }
+        repositories {
+            maven {
+                if (project.hasProperty('forgeMavenPassword')) {
+                    credentials {
+                        username project.properties.forgeMavenUser
+                        password project.properties.forgeMavenPassword
+                    }
+                    url 'http://files.minecraftforge.net/maven/manage/upload'
+                } else {
+                    url 'file://' + rootProject.file('repo').getAbsolutePath()
+                }
+            }
+        }
     }
+}
+
+def getVersionFromJava(def file, def mcver) {
+    def major, minor, revision, build = '0'
+    def prefix = 'public static final int'
+    file.eachLine{ String s ->
+        s = s.trim()
+        if (s.startsWith(prefix)) {
+            s = s.substring(prefix.length(), s.length() - 1)
+            s = s.replace('=', ' ').replace('Version', '').replaceAll(' +', ' ').trim()
+            String[] pts = s.split(' ')
+            if (pts[0].equals('major')) major = pts[pts.length - 1]
+            else if (pts[0] == 'minor') minor = pts[pts.length - 1]
+            else if (pts[0] == 'revision') revision = pts[pts.length - 1]
+        }
+    }
+    build = System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0
+    String branch = null
+    if (!System.getenv().containsKey('GIT_BRANCH')) {
+        branch = grgit.branch.current().name
+    } else {
+        branch = System.getenv('GIT_BRANCH')
+        branch = branch.substring(branch.lastIndexOf('/') + 1)
+    }
+    def out = "${mcver.replace('-', '_')}-$major.$minor.$revision.$build"
+    if (branch && branch != 'master' && branch != 'HEAD' && branch != mcver && branch != mcver + '.0') {
+        if (!(branch.endsWith('.x') && mcver.startsWith(branch.substring(0, branch.length() -2))))
+            out += "-$branch"
+    }
+    return out
+}
+
+def dateToIso8601(date) {
+    def format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ")
+    def result = format.format(date)
+    return result[0..21] + ':' + result[22..-1]
+}
+def sha1(file) {
+    MessageDigest md = MessageDigest.getInstance("SHA-1");
+    file.eachByte 4096, {bytes, size ->
+        md.update(bytes, 0, size);
+    }
+    return md.digest().collect {String.format "%02x", it}.join();
 }
 
 //evaluationDependsOnChildren()

@@ -35,3 +35,4 @@ changelog.txt
 /logs/
 
 /.project
+gradle.properties
