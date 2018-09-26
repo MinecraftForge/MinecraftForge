@@ -50,11 +50,17 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class RenderChunkEventTest {
 
     static final String MODID = "render_chunk_event_test";
+    
+    static enum RenderType {
+        VANILLA, MODDED_VANILLA_BEHAVIOUR, UPSIDE_DOWN, 
+    }
 
     @SubscribeEvent
     public static void onRenderChunkEvent(final RebuildChunkBlocksEvent event) {
 
-        final boolean cancel = true;
+        final RenderType renderType = RenderType.VANILLA;
+        
+        final boolean cancel = renderType!=RenderType.VANILLA;
 
         event.setCanceled(cancel);
 
