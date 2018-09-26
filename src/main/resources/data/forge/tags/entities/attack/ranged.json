@@ -1,6 +1,16 @@
 {
   "replace":false,
   "values": [
-
+    "minecraft:villager",
+    "minecraft:ender_dragon",
+    "minecraft:wither",
+    "minecraft:snow_golem",
+    "minecraft:skeleton",
+    "minecraft:stray",
+    "minecraft:wither_skeleton",
+    "minecraft:witch",
+    "minecraft:ghast",
+    "minecraft:guardian",
+    "minecraft:elder_guardian"
   ]
 }

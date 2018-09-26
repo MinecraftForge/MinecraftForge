@@ -1,7 +1,8 @@
 {
   "replace":false,
   "values": [
-    "#forge:spiders",
+    "minecraft:cave_spider",
+    "minecraft:spider",
     "minecraft:enderman",
     "minecraft:zombie_pigman"
   ]

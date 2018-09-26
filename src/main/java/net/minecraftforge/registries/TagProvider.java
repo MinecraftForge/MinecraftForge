@@ -5,8 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import net.minecraft.entity.EntityType;
-import net.minecraft.init.Enchantments;
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -23,8 +21,6 @@ import net.minecraft.tags.Tag.ListEntry;
 import net.minecraft.tags.Tag.TagEntry;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraftforge.common.tags.ForgeTagWrapper;
 import net.minecraftforge.common.tags.Tags.Blocks;
 import net.minecraftforge.common.tags.Tags.Items;
 import net.minecraftforge.common.tags.UnmodifiableTagWrapper;
@@ -42,6 +38,7 @@ import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceManagerReloadListener/*implements INBTSerializable<NBTTagCompound>*/ {  //doesn't implement NBTSerializable, as it isn't really meant to be saved to Disc
@@ -241,14 +238,29 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         return tags;
     }
 
-    public Collection<Tag<T>> getOwningTags(ResourceLocation id)
+    /**
+     *
+     * @param id The Tag id to retrieve
+     * @return
+     */
+    public List<Tag<T>> getOwningTags(ResourceLocation id)
     {
         return getOwningTags(reg.getValue(id));
     }
 
-    public Collection<Tag<T>> getOwningTags(T thing)
+    public List<Tag<T>> getOwningTags(T thing)
     {
         return tags.getOwningTagObjects(thing);
+    }
+
+    public List<Tag<T>> getMatchingTags(Predicate<Tag<T>> predicate)
+    {
+        return tags.getMatchingTags(predicate);
+    }
+
+    public boolean matchesTag(Predicate<Tag<T>> predicate)
+    {
+        return tags.tagMatch(predicate);
     }
 
     public Collection<ResourceLocation> getOwningTagIDs(ResourceLocation id)
@@ -306,17 +318,19 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
             throw new AssertionError("Network write access to the ForgeTagCollection should be routed through the TagProvider! Failed to read from PacketBuffer!");
         }
 
-        public Collection<Tag<T>> getOwningTagObjects(T thing)
+        public List<Tag<T>> getOwningTagObjects(final T thing)
         {
-            List<Tag<T>> list = Lists.newArrayList();
+            //with possibly large amounts of forge tags, consider a reverse Mapping of T->List<Tag<T>>? (Multimap)
+            //especially if they might be used to control gameplay related stuff?
+            return getMatchingTags(tag -> tag.contains(thing));
+        }
 
-            for(Entry<ResourceLocation, Tag<T>> entry : getTagMap().entrySet()) {
-                if (entry.getValue().contains(thing)) {
-                    list.add(entry.getValue());
-                }
-            }
+        public List<Tag<T>> getMatchingTags(Predicate<Tag<T>> predicate) {
+            return getTagMap().values().stream().filter(predicate).collect(Collectors.toList());
+        }
 
-            return list;
+        public boolean tagMatch(Predicate<Tag<T>> tagPredicate) {
+            return getTagMap().values().stream().anyMatch(tagPredicate);
         }
 
         private ImmutableList<String> getLocationPrefixes()

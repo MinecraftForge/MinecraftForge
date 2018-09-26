@@ -1,0 +1,8 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:category/hostile",
+    "#forge:category/boss",
+    "#forge:category/neutral_monsters"
+  ]
+}

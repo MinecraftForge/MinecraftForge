@@ -1,5 +1,6 @@
 package net.minecraftforge.common.tags;
 
+import net.minecraft.entity.EntityType;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeTagManager;

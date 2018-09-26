@@ -1,18 +1,27 @@
 {
   "replace":false,
   "values": [
-    "#forge:zombies",
+    "minecraft:zombie",
+    "minecraft:zombie_villager",
+    "minecraft:zombie_pigman",
+    "minecraft:drowned",
+    "minecraft:husk",
     "minecraft:dolphin",
     "minecraft:pufferfish",
     "minecraft:iron_golem",
     "minecraft:polar_bear",
     "minecraft:wolf",
-    "#forge:spiders",
+    "minecraft:cave_spider",
+    "minecraft:spider",
     "minecraft:enderman",
     "minecraft:endermite",
-    "#forge:slimy",
+    "minecraft:slime",
+    "minecraft:magma_cube",
     "minecraft:vex",
+    "minecraft:wither_skeleton",
+    "minecraft:phantom",
     "minecraft:guardian",
-    "minecraft:wither_skeleton"
+    "minecraft:elder_guardian",
+    "minecraft:villager"
   ]
 }
