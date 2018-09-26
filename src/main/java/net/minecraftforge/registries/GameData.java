@@ -19,6 +19,7 @@
 
 package net.minecraftforge.registries;
 
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -44,26 +45,10 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.StartupQuery;
-
-import com.google.common.collect.ArrayListMultimap;
-
-import java.lang.reflect.Field;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
+import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -71,25 +56,31 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import javax.annotation.Nullable;
+import java.lang.reflect.Field;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
  */
-public class GameData
-{
+public class GameData {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker GD = MarkerManager.getMarker("GAMEDATA");
 
-    public static final ResourceLocation BLOCKS       = new ResourceLocation("minecraft:blocks");
-    public static final ResourceLocation ITEMS        = new ResourceLocation("minecraft:items");
-    public static final ResourceLocation POTIONS      = new ResourceLocation("minecraft:potions");
-    public static final ResourceLocation BIOMES       = new ResourceLocation("minecraft:biomes");
-    public static final ResourceLocation SOUNDEVENTS  = new ResourceLocation("minecraft:soundevents");
-    public static final ResourceLocation POTIONTYPES  = new ResourceLocation("minecraft:potiontypes");
+    public static final ResourceLocation BLOCKS = new ResourceLocation("minecraft:blocks");
+    public static final ResourceLocation ITEMS = new ResourceLocation("minecraft:items");
+    public static final ResourceLocation POTIONS = new ResourceLocation("minecraft:potions");
+    public static final ResourceLocation BIOMES = new ResourceLocation("minecraft:biomes");
+    public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("minecraft:soundevents");
+    public static final ResourceLocation POTIONTYPES = new ResourceLocation("minecraft:potiontypes");
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
-    public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
+    public static final ResourceLocation ENTITIES = new ResourceLocation("minecraft:entities");
     public static final ResourceLocation TILEENTITIES = new ResourceLocation("minecraft:tileentities");
-    public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
+    public static final ResourceLocation PROFESSIONS = new ResourceLocation("minecraft:villagerprofessions");
     private static final int MAX_BLOCK_ID = 4095;
     private static final int MIN_ITEM_ID = MAX_BLOCK_ID + 1;
     private static final int MAX_ITEM_ID = 31999;
@@ -102,20 +93,21 @@ public class GameData
     private static final int MAX_TILE_ENTITY_ID = Integer.MAX_VALUE; //Doesnt seem to be serialized anywhere, so no max.
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
 
-    private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
+    private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
-    private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
+    private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry) o).lock());
 
-    static {
+    static
+    {
         init();
     }
 
     @SuppressWarnings("unchecked")
     public static void init()
     {
-        if ( DISABLE_VANILLA_REGISTRIES)
+        if (DISABLE_VANILLA_REGISTRIES)
         {
             LOGGER.warn(GD, "DISABLING VANILLA REGISTRY CREATION AS PER SYSTEM VARIABLE SETTING! forge.disableVanillaGameData");
             return;
@@ -123,16 +115,16 @@ public class GameData
         if (hasInit)
             return;
         hasInit = true;
-        makeRegistry(BLOCKS,       Block.class,       MAX_BLOCK_ID, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).enableTagging(BlockTags.Wrapper::new).create();
-        makeRegistry(ITEMS,        Item.class,        MIN_ITEM_ID, MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).enableTagging(ItemTags.Wrapper::new).create();
-        makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).enableTagging().create();
-        makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).enableTagging().create();
-        makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).enableTagging().create();
-        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).enableTagging().create();
+        makeRegistry(BLOCKS, Block.class, MAX_BLOCK_ID, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).enableTagging(BlockTags.Wrapper::new).create();
+        makeRegistry(ITEMS, Item.class, MIN_ITEM_ID, MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).enableTagging(ItemTags.Wrapper::new).create();
+        makeRegistry(POTIONS, Potion.class, MAX_POTION_ID).enableTagging().create();
+        makeRegistry(BIOMES, Biome.class, MAX_BIOME_ID).enableTagging().create();
+        makeRegistry(SOUNDEVENTS, SoundEvent.class, MAX_SOUND_ID).enableTagging().create();
+        makeRegistry(POTIONTYPES, PotionType.class, MAX_POTIONTYPE_ID, new ResourceLocation("empty")).enableTagging().create();
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).enableTagging().create();
-        makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).enableTagging().create();
+        makeRegistry(PROFESSIONS, VillagerProfession.class, MAX_PROFESSION_ID).enableTagging().create();
         // TODO do we need the callback and the static field anymore?
-        makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).enableTagging().create();
+        makeRegistry(ENTITIES, EntityType.class, MAX_ENTITY_ID).enableTagging().create();
         makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).enableTagging().disableSaving().create();
     }
 
@@ -140,10 +132,12 @@ public class GameData
     {
         return new RegistryBuilder<T>().setName(name).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
     }
+
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max)
     {
         return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedWrapper.Factory<T>());
     }
+
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max, ResourceLocation _default)
     {
         return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(_default);
@@ -170,7 +164,7 @@ public class GameData
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<Block,Item> getBlockItemMap()
+    public static Map<Block, Item> getBlockItemMap()
     {
         return RegistryManager.ACTIVE.getRegistry(Item.class).getSlaveMap(BLOCK_TO_ITEM, Map.class);
     }
@@ -191,7 +185,7 @@ public class GameData
         return value;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void vanillaSnapshot()
     {
         LOGGER.debug("Creating vanilla freeze snapshot");
@@ -210,7 +204,7 @@ public class GameData
         LOGGER.debug("Vanilla freeze snapshot created");
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static void freezeData()
     {
         LOGGER.debug(GD, "Freezing registries");
@@ -232,7 +226,7 @@ public class GameData
         LOGGER.debug(GD, "All registries frozen");
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void revertToFrozen()
     {
         if (RegistryManager.FROZEN.registries.isEmpty())
@@ -255,7 +249,7 @@ public class GameData
         LOGGER.debug("Frozen state restored.");
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public static void revert(RegistryManager state, ResourceLocation registry, boolean lock)
     {
         LOGGER.debug(GD, "Reverting {} to {}", registry, state.getName());
@@ -265,8 +259,7 @@ public class GameData
     }
 
     //Lets us clear the map so we can rebuild it.
-    static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I>
-    {
+    static class ClearableObjectIntIdentityMap<I> extends ObjectIntIdentityMap<I> {
         void clear()
         {
             this.identityMap.clear();
@@ -275,8 +268,7 @@ public class GameData
     }
 
 
-    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
-    {
+    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block> {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
         @SuppressWarnings("deprecation")
@@ -360,6 +352,7 @@ public class GameData
             GameData.forceRegistryName(ret, key);
             return ret;
         }
+
         private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
             private BlockDummyAir(Block.Builder builder)
@@ -375,8 +368,7 @@ public class GameData
         }
     }
 
-    private static class ItemCallbacks implements IForgeRegistry.AddCallback<Item>, IForgeRegistry.ClearCallback<Item>, IForgeRegistry.CreateCallback<Item>
-    {
+    private static class ItemCallbacks implements IForgeRegistry.AddCallback<Item>, IForgeRegistry.ClearCallback<Item>, IForgeRegistry.CreateCallback<Item> {
         static final ItemCallbacks INSTANCE = new ItemCallbacks();
 
         @Override
@@ -386,7 +378,7 @@ public class GameData
             {
                 @SuppressWarnings("unchecked")
                 Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
-                ((ItemBlock)item).addToBlockToItemMap(blockToItem, item);
+                ((ItemBlock) item).addToBlockToItemMap(blockToItem, item);
             }
         }
 
@@ -481,8 +473,9 @@ public class GameData
             ForgeRegistry<T> toRegistry = to.getRegistry(registryName);
             if (toRegistry == null)
             {
-                throw new EnhancedRuntimeException("Could not find registry to load: " + registryName){
+                throw new EnhancedRuntimeException("Could not find registry to load: " + registryName) {
                     private static final long serialVersionUID = 1L;
+
                     @Override
                     protected void printStackTrace(WrappedPrintStream stream)
                     {
@@ -502,8 +495,7 @@ public class GameData
             // We must however, re-fire the callbacks as some internal data may be corrupted {potions}
             //TODO: With my rework of how registries add callbacks are done.. I don't think this is necessary.
             //fire addCallback for each entry
-        }
-        else
+        } else
         {
             ForgeRegistry<T> toRegistry = to.getRegistry(registryName, from);
             toRegistry.sync(registryName, fromRegistry);
@@ -513,7 +505,7 @@ public class GameData
     }
 
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static Multimap<ResourceLocation, ResourceLocation> injectSnapshot(Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
         LOGGER.info(GD, "Injecting existing registry data into this {} instance", EffectiveSide.get());
@@ -562,12 +554,10 @@ public class GameData
                 {
                     if (reg.markDummy(dummy, m.get(dummy)))
                         m.remove(dummy);
-                }
-                else if (isLocalWorld)
+                } else if (isLocalWorld)
                 {
-                   LOGGER.debug("Registry {}: Resuscitating dummy entry {}", key, dummy);
-                }
-                else
+                    LOGGER.debug("Registry {}: Resuscitating dummy entry {}", key, dummy);
+                } else
                 {
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
@@ -582,7 +572,7 @@ public class GameData
         int count = missing.values().stream().mapToInt(Map::size).sum();
         if (count > 0)
         {
-            LOGGER.debug(GD,"There are {} mappings missing - attempting a mod remap", count);
+            LOGGER.debug(GD, "There are {} mappings missing - attempting a mod remap", count);
             Multimap<ResourceLocation, ResourceLocation> defaulted = ArrayListMultimap.create();
             Multimap<ResourceLocation, ResourceLocation> failed = ArrayListMultimap.create();
 
@@ -596,7 +586,7 @@ public class GameData
                 List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).sorted((a, b) -> a.toString().compareTo(b.toString())).collect(Collectors.toList());
                 if (!lst.isEmpty())
                 {
-                    LOGGER.error(GD,"Unidentified mapping from registry {}", name);
+                    LOGGER.error(GD, "Unidentified mapping from registry {}", name);
                     lst.forEach(map -> LOGGER.error("    {}: {}", map.key, map.id));
                 }
                 event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
@@ -612,9 +602,9 @@ public class GameData
             {
                 StringBuilder buf = new StringBuilder();
                 buf.append("Forge Mod Loader detected missing registry entries.\n\n")
-                   .append("There are ").append(defaulted.size()).append(" missing entries in this save.\n")
-                   .append("If you continue the missing entries will get removed.\n")
-                   .append("A world backup will be automatically created in your saves directory.\n\n");
+                        .append("There are ").append(defaulted.size()).append(" missing entries in this save.\n")
+                        .append("If you continue the missing entries will get removed.\n")
+                        .append("A world backup will be automatically created in your saves directory.\n\n");
 
                 defaulted.asMap().forEach((name, entries) ->
                 {
@@ -703,7 +693,7 @@ public class GameData
     //Has to be split because of generics, Yay!
     private static <T extends IForgeRegistryEntry<T>> void loadPersistentDataToStagingRegistry(RegistryManager pool, RegistryManager to, Map<ResourceLocation, Integer[]> remaps, Map<ResourceLocation, Integer> missing, ResourceLocation name, ForgeRegistry.Snapshot snap, Class<T> regType)
     {
-        ForgeRegistry<T> active  = pool.getRegistry(name);
+        ForgeRegistry<T> active = pool.getRegistry(name);
         if (active == null)
             return; // We've already asked the user if they wish to continue. So if the reg isnt found just assume the user knows and accepted it.
         ForgeRegistry<T> _new = to.getRegistry(name, RegistryManager.ACTIVE);
@@ -718,7 +708,7 @@ public class GameData
     @SuppressWarnings("unchecked")
     private static <T extends IForgeRegistryEntry<T>> void processMissing(Class<T> clazz, ResourceLocation name, RegistryManager STAGING, MissingMappings<?> e, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remaps, Collection<ResourceLocation> defaulted, Collection<ResourceLocation> failed, boolean injectNetworkDummies)
     {
-        List<MissingMappings.Mapping<T>> mappings = ((MissingMappings<T>)e).getAllMappings();
+        List<MissingMappings.Mapping<T>> mappings = ((MissingMappings<T>) e).getAllMappings();
         ForgeRegistry<T> active = RegistryManager.ACTIVE.getRegistry(name);
         ForgeRegistry<T> staging = STAGING.getRegistry(name);
         staging.processMissingEvent(name, active, mappings, missing, remaps, defaulted, failed, injectNetworkDummies);
@@ -742,6 +732,7 @@ public class GameData
     {
         fireRegistryEvents(rl -> true);
     }
+
     public static void fireRegistryEvents(Predicate<ResourceLocation> filter)
     {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
@@ -792,6 +783,7 @@ public class GameData
     }
 
     private static Field regName;
+
     private static void forceRegistryName(IForgeRegistryEntry<?> entry, ResourceLocation name)
     {
         if (regName == null)
@@ -800,8 +792,7 @@ public class GameData
             {
                 regName = ForgeRegistryEntry.class.getDeclaredField("registryName");
                 regName.setAccessible(true);
-            }
-            catch (NoSuchFieldException | SecurityException e)
+            } catch (NoSuchFieldException | SecurityException e)
             {
                 LOGGER.error(GD, "Could not get `registryName` field from IForgeRegistryEntry.Impl", e);
                 throw new RuntimeException(e);
@@ -810,10 +801,9 @@ public class GameData
         try
         {
             regName.set(entry, name);
-        }
-        catch (IllegalArgumentException | IllegalAccessException e)
+        } catch (IllegalArgumentException | IllegalAccessException e)
         {
-            LOGGER.error(GD,"Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", name.toString(), e);
+            LOGGER.error(GD, "Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", name.toString(), e);
             throw new RuntimeException(e);
         }
 

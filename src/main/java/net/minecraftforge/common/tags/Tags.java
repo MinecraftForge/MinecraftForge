@@ -26,10 +26,8 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 
-public class Tags
-{
-    public static class Blocks
-    {
+public class Tags {
+    public static class Blocks {
         public static final Tag<Block> CHESTS = tag("chests");
         public static final Tag<Block> CHESTS_ENDER = tag("chests/ender");
         public static final Tag<Block> CHESTS_TRAPPED = tag("chests/trapped");
@@ -66,8 +64,7 @@ public class Tags
         }
     }
 
-    public static class Items
-    {
+    public static class Items {
         public static final Tag<Item> CHESTS = tag("chests");
         public static final Tag<Item> CHESTS_ENDER = tag("chests/ender");
         public static final Tag<Item> CHESTS_TRAPPED = tag("chests/trapped");

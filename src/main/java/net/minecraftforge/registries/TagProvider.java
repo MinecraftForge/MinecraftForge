@@ -48,32 +48,35 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     private ForgeRegistry<T> reg;
     private ForgeTagCollection<T> tags;
     private ResourceLocation regName;
-    private BiFunction<ResourceLocation,IForgeRegistry<T>,? extends Tag<T>> wrapperFactory;
-    TagProvider(@Nullable ForgeRegistry<T> reg, @Nullable BiFunction<ResourceLocation,IForgeRegistry<T>,? extends Tag<T>> wrapperFactory, ResourceLocation regName)
+    private BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory;
+
+    TagProvider(@Nullable ForgeRegistry<T> reg, @Nullable BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, ResourceLocation regName)
     {
         this.regName = Objects.requireNonNull(regName);
         setReg(reg);
         this.wrapperFactory = wrapperFactory;
-        if (this.wrapperFactory == null) {
+        if (this.wrapperFactory == null)
+        {
             LOGGER.warn("No Wrapper Factory specified for this TagProvider. Using default ForgeTagWrapper implementation!");
             this.wrapperFactory = UnmodifiableTagWrapper::new;
         }
     }
 
-    TagProvider(ResourceLocation regName, BiFunction<ResourceLocation,IForgeRegistry<T>,? extends Tag<T>> wrapperFactory)
+    TagProvider(ResourceLocation regName, BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory)
     {
-        this(null, wrapperFactory,regName);
+        this(null, wrapperFactory, regName);
     }
 
-    BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> getWrapperFactory() {
+    BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> getWrapperFactory()
+    {
         return wrapperFactory;
     }
 
     void setReg(ForgeRegistry<T> reg)
     {
         this.reg = reg;
-        if (reg!=null)
-            tags = new ForgeTagCollection<>(reg::containsKey,reg::getValue,regName.toString(),regName);
+        if (reg != null)
+            tags = new ForgeTagCollection<>(reg::containsKey, reg::getValue, regName.toString(), regName);
     }
 
     @Override
@@ -89,7 +92,8 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         tags.reload(manager);
     }
 
-    boolean isVanillaHandled() {
+    boolean isVanillaHandled()
+    {
         return reg.getRegistrySuperType().equals(Blocks.class) || reg.getRegistrySuperType().equals(Items.class);
     }
 
@@ -98,12 +102,14 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         clear();
         int i = buf.readVarInt();
 
-        for(int j = 0; j < i; ++j) {
+        for (int j = 0; j < i; ++j)
+        {
             ResourceLocation resourcelocation = buf.readResourceLocation();
             int k = buf.readVarInt();
             List<T> list = Lists.newArrayList();
 
-            for(int l = 0; l < k; ++l) {
+            for (int l = 0; l < k; ++l)
+            {
                 list.add(this.reg.getValue(buf.readVarInt()));
             }
 
@@ -115,11 +121,13 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     {
         buf.writeVarInt(tags.getTagMap().size());
 
-        for(Entry<ResourceLocation, Tag<T>> entry : this.tags.getTagMap().entrySet()) {
+        for (Entry<ResourceLocation, Tag<T>> entry : this.tags.getTagMap().entrySet())
+        {
             buf.writeResourceLocation(entry.getKey());
-            buf.writeVarInt(((Tag)entry.getValue()).getAllElements().size());
+            buf.writeVarInt(((Tag) entry.getValue()).getAllElements().size());
 
-            for(T t : (entry.getValue()).getAllElements()) {
+            for (T t : (entry.getValue()).getAllElements())
+            {
                 buf.writeVarInt(this.reg.getID(t));
             }
         }
@@ -135,28 +143,33 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     { //this should never be used to try to persist tags
         NBTTagCompound resCompound = new NBTTagCompound();
         NBTTagList nbtTagList = new NBTTagList();
-        for (Map.Entry<ResourceLocation,Tag<T>> tag: tags.getTagMap().entrySet()) {
+        for (Map.Entry<ResourceLocation, Tag<T>> tag : tags.getTagMap().entrySet())
+        {
             NBTTagCompound compound = new NBTTagCompound();
-            compound.setString("K",tag.getKey().toString());
-            compound.setTag("V",serializeTagEntries(tag.getValue().getEntries()));
+            compound.setString("K", tag.getKey().toString());
+            compound.setTag("V", serializeTagEntries(tag.getValue().getEntries()));
         }
-        resCompound.setTag("data",nbtTagList);
-        resCompound.setString("name",regName.toString());
+        resCompound.setTag("data", nbtTagList);
+        resCompound.setString("name", regName.toString());
         return resCompound;
     }
 
     private NBTTagList serializeTagEntries(Iterable<ITagEntry<T>> c)
     {
         NBTTagList entries = new NBTTagList();
-        for (ITagEntry<? extends T> tagEntry : c) {
+        for (ITagEntry<? extends T> tagEntry : c)
+        {
             NBTTagCompound entryCompound = new NBTTagCompound();
-            if (tagEntry instanceof Tag.TagEntry) {
+            if (tagEntry instanceof Tag.TagEntry)
+            {
                 entryCompound.setBoolean("tag", true);
                 entryCompound.setString("V", ((TagEntry<? extends T>) tagEntry).getSerializedId().toString());
-            } else if (tagEntry instanceof Tag.ListEntry) {
+            } else if (tagEntry instanceof Tag.ListEntry)
+            {
                 entryCompound.setBoolean("tag", false);
                 entryCompound.setTag("V", serializeTagListEntry((ListEntry<? extends T>) tagEntry));
-            } else {
+            } else
+            {
                 LOGGER.error("Cannot serialize ITagEntry because it's class is unkown {}. It will not be synced!", tagEntry.getClass().getName());
             }
             entries.add(entryCompound);
@@ -167,12 +180,14 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     private NBTTagList serializeTagListEntry(Tag.ListEntry<? extends T> entry)
     {
         NBTTagList items = new NBTTagList();
-        for (T thing: entry.getTaggedItems()) {
-            if (reg.containsValue(thing)) {
+        for (T thing : entry.getTaggedItems())
+        {
+            if (reg.containsValue(thing))
+            {
                 items.add(new NBTTagInt(reg.getID(thing)));
-            }
-            else {
-                LOGGER.warn("Could not serialize tagged Item with name {}, because it is not registered.",thing.getRegistryName()!=null?thing.getRegistryName():"unknown");
+            } else
+            {
+                LOGGER.warn("Could not serialize tagged Item with name {}, because it is not registered.", thing.getRegistryName() != null ? thing.getRegistryName() : "unknown");
             }
         }
         return items;
@@ -182,11 +197,13 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     { //this should never be used to try to persist tags
         clear();
         NBTTagList list = (NBTTagList) compound.getTag("data");
-        for (INBTBase nbtPair: list) {
+        for (INBTBase nbtPair : list)
+        {
             assert nbtPair instanceof NBTTagCompound;
             NBTTagCompound entryCompound = (NBTTagCompound) nbtPair;
-            if (!entryCompound.hasKey("K") || !entryCompound.hasKey("V")) {
-                LOGGER.warn("Tried to deserialize incomplete NBT-Data. Found K={}, V={}. Both are required.",entryCompound.hasKey("K"),entryCompound.hasKey("V"));
+            if (!entryCompound.hasKey("K") || !entryCompound.hasKey("V"))
+            {
+                LOGGER.warn("Tried to deserialize incomplete NBT-Data. Found K={}, V={}. Both are required.", entryCompound.hasKey("K"), entryCompound.hasKey("V"));
                 continue;
             }
             //like Vanilla, we assume that only completely resolved tags are synced
@@ -195,51 +212,58 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         regName = new ResourceLocation(compound.getString("name"));
     }
 
-    private Tag.Builder<T> deserializeTagEntries(@Nonnull INBTBase nbt) {
+    private Tag.Builder<T> deserializeTagEntries(@Nonnull INBTBase nbt)
+    {
         assert nbt instanceof NBTTagList;
         NBTTagList nbtTagList = (NBTTagList) nbt;
         Tag.Builder<T> builder = Tag.Builder.create();
-        for (INBTBase tagEntry: nbtTagList) {
+        for (INBTBase tagEntry : nbtTagList)
+        {
             assert tagEntry instanceof NBTTagCompound;
             NBTTagCompound entryCompound = (NBTTagCompound) tagEntry;
-            if (!entryCompound.hasKey("tag") || !entryCompound.hasKey("V")) {
-                LOGGER.warn("Expected {} to have 'tag' and 'V' keys. Skipping, whilst deserializing {} tags.",tagEntry.getClass().getName(),getRegName());
+            if (!entryCompound.hasKey("tag") || !entryCompound.hasKey("V"))
+            {
+                LOGGER.warn("Expected {} to have 'tag' and 'V' keys. Skipping, whilst deserializing {} tags.", tagEntry.getClass().getName(), getRegName());
                 continue;
             }
-            if (entryCompound.getBoolean("tag")) {
+            if (entryCompound.getBoolean("tag"))
+            {
                 builder.add(new ResourceLocation(entryCompound.getString("V")));
-            }
-            else {
+            } else
+            {
                 builder.addAll(deserializeTagListEntry(entryCompound));
             }
         }
         return builder;
     }
 
-    private List<T> deserializeTagListEntry(NBTTagCompound entryCompound) {
+    private List<T> deserializeTagListEntry(NBTTagCompound entryCompound)
+    {
         INBTBase valTag = entryCompound.getTag("V");
         assert valTag instanceof NBTTagList;
         NBTTagList list = (NBTTagList) valTag;
         List<T> res = new ArrayList<>(list.size());
-        for (INBTBase nbt: list) {
+        for (INBTBase nbt : list)
+        {
             assert nbt instanceof NBTTagInt;
-            NBTTagInt tagInt = (NBTTagInt)nbt;
+            NBTTagInt tagInt = (NBTTagInt) nbt;
             res.add(reg.getValue(tagInt.getId()));
         }
         return res;
     }
 
-    void clear() {
+    void clear()
+    {
         tags.clear();
     }
 
     @Nonnull
-    NetworkTagCollection<T> asTagCollection() {
+    NetworkTagCollection<T> asTagCollection()
+    {
         return tags;
     }
 
     /**
-     *
      * @param id The Tag id to retrieve
      * @return
      */
@@ -274,12 +298,14 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     @Nonnull
-    public Tag<T> getOrCreate(ResourceLocation location) {
+    public Tag<T> getOrCreate(ResourceLocation location)
+    {
         return tags.getOrCreate(location);
     }
 
-    public Tag<T> createWrapper(ResourceLocation location) {
-        return wrapperFactory.apply(location,reg);
+    public Tag<T> createWrapper(ResourceLocation location)
+    {
+        return wrapperFactory.apply(location, reg);
     }
 
     private static class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends NetworkTagCollection<T> {
@@ -288,6 +314,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         private static final int JSON_EXTENSION_LENGTH = ".json".length();
 
         private final ResourceLocation regName;
+
         private ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, String resourceLocationPrefixIn, boolean preserveOrderIn, ResourceLocation registryId)
         {
             super(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, preserveOrderIn, registryId.toString());
@@ -302,7 +329,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         @Override
         public void reload(IResourceManager resourceManager)
         {
-            Map<ResourceLocation, Builder<T>> map = deserializeTags(getLoadingParameters(resourceManager),resourceManager);
+            Map<ResourceLocation, Builder<T>> map = deserializeTags(getLoadingParameters(resourceManager), resourceManager);
             registerUnbuildTags(map);
         }
 
@@ -325,53 +352,64 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
             return getMatchingTags(tag -> tag.contains(thing));
         }
 
-        public List<Tag<T>> getMatchingTags(Predicate<Tag<T>> predicate) {
+        public List<Tag<T>> getMatchingTags(Predicate<Tag<T>> predicate)
+        {
             return getTagMap().values().stream().filter(predicate).collect(Collectors.toList());
         }
 
-        public boolean tagMatch(Predicate<Tag<T>> tagPredicate) {
+        public boolean tagMatch(Predicate<Tag<T>> tagPredicate)
+        {
             return getTagMap().values().stream().anyMatch(tagPredicate);
         }
 
         private ImmutableList<String> getLocationPrefixes()
         {
-            String regPath = regName.getNamespace()+'/'+regName.getPath();
-            return regName.getNamespace().equals("minecraft") ? ImmutableList.of(TAG_FOLDER+regName.getPath(),TAG_FOLDER+regPath,TAG_FOLDER+FORGE_TAG_SUBFOLDER+regPath):ImmutableList.of(TAG_FOLDER+FORGE_TAG_SUBFOLDER+regPath);
+            String regPath = regName.getNamespace() + '/' + regName.getPath();
+            return regName.getNamespace().equals("minecraft") ? ImmutableList.of(TAG_FOLDER + regName.getPath(), TAG_FOLDER + regPath, TAG_FOLDER + FORGE_TAG_SUBFOLDER + regPath) : ImmutableList.of(TAG_FOLDER + FORGE_TAG_SUBFOLDER + regPath);
         }
 
         private Stream<TagLoadingParameter> getLoadingParameters(IResourceManager resourceManager)
         {
             ImmutableList<String> prefixes = getLocationPrefixes();
             Stream<TagLoadingParameter> resources = Stream.of();
-            for (String s:prefixes) {
-                resources = Stream.concat(resources,resourceManager.getAllResourceLocations(s,s1 -> s1.endsWith(".json")).stream().map(location -> new TagLoadingParameter(s,location)));
+            for (String s : prefixes)
+            {
+                resources = Stream.concat(resources, resourceManager.getAllResourceLocations(s, s1 -> s1.endsWith(".json")).stream().map(location -> new TagLoadingParameter(s, location)));
             }
             return resources;
         }
 
-        private Map<ResourceLocation, Tag.Builder<T>> deserializeTags(Stream<TagLoadingParameter> stream,IResourceManager resourceManager)
+        private Map<ResourceLocation, Tag.Builder<T>> deserializeTags(Stream<TagLoadingParameter> stream, IResourceManager resourceManager)
         {
             Map<ResourceLocation, Tag.Builder<T>> map = Maps.newHashMap();
             stream.forEach(tagLoadingParameter ->
             {
-                try {
-                    for(IResource iresource : resourceManager.getAllResources(tagLoadingParameter.getLocation())) {
-                        try {
+                try
+                {
+                    for (IResource iresource : resourceManager.getAllResources(tagLoadingParameter.getLocation()))
+                    {
+                        try
+                        {
                             JsonObject jsonobject = (JsonObject) JsonUtils.fromJson(GSON, IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8), JsonObject.class);
-                            if (jsonobject == null) {
+                            if (jsonobject == null)
+                            {
                                 LOGGER.error("Couldn't load {} tag list {} from {} in data pack {} as it's empty or null", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName());
-                            } else {
+                            } else
+                            {
                                 Tag.Builder<T> builder = map.getOrDefault(tagLoadingParameter.getTagId(), Tag.Builder.create());
                                 builder.deserialize(this.isValueKnownPredicate, this.resourceLocationToItem, jsonobject);
                                 map.put(tagLoadingParameter.getTagId(), builder);
                             }
-                        } catch (RuntimeException | IOException ioexception) {
+                        } catch (RuntimeException | IOException ioexception)
+                        {
                             LOGGER.error("Couldn't read {} tag list {} from {} in data pack {}", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName(), ioexception);
-                        } finally {
-                            IOUtils.closeQuietly((Closeable)iresource);
+                        } finally
+                        {
+                            IOUtils.closeQuietly((Closeable) iresource);
                         }
                     }
-                } catch (IOException ioexception1) {
+                } catch (IOException ioexception1)
+                {
                     LOGGER.error("Couldn't read {} tag list {} from {}", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), ioexception1);
                 }
             });
@@ -380,21 +418,26 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
 
         private void registerUnbuildTags(Map<ResourceLocation, Tag.Builder<T>> map)
         {
-            while(!map.isEmpty()) {
+            while (!map.isEmpty())
+            {
                 boolean flag = false;
                 Iterator<Entry<ResourceLocation, Builder<T>>> iterator = map.entrySet().iterator();
 
-                while(iterator.hasNext()) {
+                while (iterator.hasNext())
+                {
                     Entry<ResourceLocation, Tag.Builder<T>> entry1 = iterator.next();
-                    if ((entry1.getValue()).resolve(this::get)) {
+                    if ((entry1.getValue()).resolve(this::get))
+                    {
                         flag = true;
                         this.register((entry1.getValue()).build(entry1.getKey()));
                         iterator.remove();
                     }
                 }
 
-                if (!flag) {
-                    for(Entry<ResourceLocation, Tag.Builder<T>> entry2 : map.entrySet()) {
+                if (!flag)
+                {
+                    for (Entry<ResourceLocation, Tag.Builder<T>> entry2 : map.entrySet())
+                    {
                         LOGGER.error("Couldn't load {} tag {} as it either references another tag that doesn't exist, or ultimately references itself", this.regName, entry2.getKey());
                     }
                     break;
@@ -402,7 +445,8 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
             }
             //I have no idea why vanilla does this - it's the only reason preserveOrder is protected
             //if everything is well, the tag-list is empty, if not then some tag 'either references another tag that doesn't exist, or ultimately references itself'
-            for(Entry<ResourceLocation, Tag.Builder<T>> entry : map.entrySet()) {  //so why register tags that are invalid?!?
+            for (Entry<ResourceLocation, Tag.Builder<T>> entry : map.entrySet())
+            {  //so why register tags that are invalid?!?
                 this.register((entry.getValue()).ordered(this.preserveOrder).build(entry.getKey()));
             }
         }
@@ -412,7 +456,8 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
             private final ResourceLocation location;
             private final ResourceLocation tagId;
 
-            public TagLoadingParameter(String prefix, ResourceLocation location) {
+            public TagLoadingParameter(String prefix, ResourceLocation location)
+            {
                 this.prefix = prefix;
                 this.location = location;
                 String path = location.getPath();
@@ -420,15 +465,18 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
                 tagId = new ResourceLocation(location.getNamespace(), path.substring(prefix.length() + 1, path.length() - JSON_EXTENSION_LENGTH));
             }
 
-            public String getPrefix() {
+            public String getPrefix()
+            {
                 return prefix;
             }
 
-            public ResourceLocation getLocation() {
+            public ResourceLocation getLocation()
+            {
                 return location;
             }
 
-            public ResourceLocation getTagId() {
+            public ResourceLocation getTagId()
+            {
                 return tagId;
             }
         }
