@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityShulker.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityShulker.java
-@@ -426,6 +426,13 @@
+@@ -311,6 +311,7 @@
+             this.field_70165_t = (double)blockpos.func_177958_n() + 0.5D;
+             this.field_70163_u = (double)blockpos.func_177956_o();
+             this.field_70161_v = (double)blockpos.func_177952_p() + 0.5D;
++            if (this.isAddedToWorld()) this.field_70170_p.func_72866_a(this, false); // Forge - Process chunk registration after moving.
+             this.field_70169_q = this.field_70165_t;
+             this.field_70167_r = this.field_70163_u;
+             this.field_70166_s = this.field_70161_v;
+@@ -426,6 +427,13 @@
  
                      if (flag)
                      {
