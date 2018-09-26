@@ -1,0 +1,18 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketRemoveEntityEffect.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketRemoveEntityEffect.java
+@@ -29,13 +29,13 @@
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {
+         this.field_149079_a = p_148837_1_.func_150792_a();
+-        this.field_149078_b = Potion.func_188412_a(p_148837_1_.readUnsignedByte());
++        this.field_149078_b = Potion.func_188412_a(p_148837_1_.func_150792_a());
+     }
+ 
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
+     {
+         p_148840_1_.func_150787_b(this.field_149079_a);
+-        p_148840_1_.writeByte(Potion.func_188409_a(this.field_149078_b));
++        p_148840_1_.func_150787_b(Potion.func_188409_a(this.field_149078_b));
+     }
+ 
+     public void func_148833_a(INetHandlerPlayClient p_148833_1_)

@@ -87,7 +87,7 @@
          if (entity instanceof EntityLivingBase)
          {
 -            Potion potion = Potion.func_188412_a(p_147260_1_.func_149427_e());
-+            Potion potion = Potion.func_188412_a(p_147260_1_.func_149427_e() & 0xFF);
++            Potion potion = Potion.func_188412_a(p_147260_1_.getEffectId());
  
              if (potion != null)
              {
