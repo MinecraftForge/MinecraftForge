@@ -1,0 +1,15 @@
+--- a/net/minecraft/util/math/Vec3d.java
++++ b/net/minecraft/util/math/Vec3d.java
+@@ -136,12 +136,10 @@
+       return new Vec3d(d0, d1, d2);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public static Vec3d func_189984_a(Vec2f p_189984_0_) {
+       return func_189986_a(p_189984_0_.field_189982_i, p_189984_0_.field_189983_j);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public static Vec3d func_189986_a(float p_189986_0_, float p_189986_1_) {
+       float f = MathHelper.func_76134_b(-p_189986_1_ * ((float)Math.PI / 180F) - (float)Math.PI);
+       float f1 = MathHelper.func_76126_a(-p_189986_1_ * ((float)Math.PI / 180F) - (float)Math.PI);

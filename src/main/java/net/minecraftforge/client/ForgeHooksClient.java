@@ -70,6 +70,7 @@ import net.minecraft.client.renderer.block.model.SimpleBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.model.ModelBiped;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -728,7 +729,7 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res), BOSSINFO));
     }
 
-    public static ScreenshotEvent onScreenshot(BufferedImage image, File screenshotFile)
+    public static ScreenshotEvent onScreenshot(NativeImage image, File screenshotFile)
     {
         ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
         MinecraftForge.EVENT_BUS.post(event);

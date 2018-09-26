@@ -1,0 +1,10 @@
+--- a/net/minecraft/util/SharedConstants.java
++++ b/net/minecraft/util/SharedConstants.java
+@@ -29,6 +29,7 @@
+    }
+ 
+    static {
++      if (System.getProperty("io.netty.leakDetection.level") == null) // Forge: allow level to be manually specified
+       ResourceLeakDetector.setLevel(field_184877_a);
+       CommandSyntaxException.ENABLE_COMMAND_STACK_TRACES = false;
+       CommandSyntaxException.BUILT_IN_EXCEPTIONS = new TranslatableExceptionProvider();

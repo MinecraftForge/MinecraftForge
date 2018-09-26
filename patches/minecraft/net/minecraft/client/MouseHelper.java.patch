@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/MouseHelper.java
++++ b/net/minecraft/client/MouseHelper.java
+@@ -241,6 +241,7 @@
+    }
+ 
+    public void func_198034_i() {
++      if (Boolean.parseBoolean(System.getProperty("fml.noGrab","false"))) return;
+       if (this.field_198036_a.func_195544_aj()) {
+          if (!this.field_198051_p) {
+             if (!Minecraft.field_142025_a) {

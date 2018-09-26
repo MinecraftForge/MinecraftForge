@@ -1,0 +1,40 @@
+--- a/net/minecraft/util/Session.java
++++ b/net/minecraft/util/Session.java
+@@ -18,6 +18,8 @@
+    private final String field_148257_b;
+    private final String field_148258_c;
+    private final Session.Type field_152429_d;
++   // Forge: Cache of the local session's GameProfile properties.
++   private com.mojang.authlib.properties.PropertyMap properties;
+ 
+    public Session(String p_i1098_1_, String p_i1098_2_, String p_i1098_3_, String p_i1098_4_) {
+       this.field_74286_b = p_i1098_1_;
+@@ -45,12 +47,27 @@
+    public GameProfile func_148256_e() {
+       try {
+          UUID uuid = UUIDTypeAdapter.fromString(this.func_148255_b());
+-         return new GameProfile(uuid, this.func_111285_a());
++         GameProfile ret = new GameProfile(uuid, this.func_111285_a());    //Forge: Adds cached GameProfile properties to returned GameProfile.
++         if (properties != null) ret.getProperties().putAll(properties); // Helps to cut down on calls to the session service,
++         return ret;                                                     // which helps to fix MC-52974.
+       } catch (IllegalArgumentException var2) {
+          return new GameProfile((UUID)null, this.func_111285_a());
+       }
+    }
+ 
++   /* ======================================== FORGE START ===================================== */
++   //For internal use only. Modders should never need to use this.
++   public void setProperties(com.mojang.authlib.properties.PropertyMap properties)
++   {
++      if(this.properties == null) this.properties = properties;
++   }
++
++   public boolean hasCachedProperties()
++   {
++      return properties != null;
++   }
++   /* ========================================= FORGE END ====================================== */
++
+    @OnlyIn(Dist.CLIENT)
+    public static enum Type {
+       LEGACY("legacy"),

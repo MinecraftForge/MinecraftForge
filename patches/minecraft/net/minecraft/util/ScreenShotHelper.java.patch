@@ -1,0 +1,20 @@
+--- a/net/minecraft/util/ScreenShotHelper.java
++++ b/net/minecraft/util/ScreenShotHelper.java
+@@ -39,10 +39,16 @@
+             file2 = new File(file1, p_148259_1_);
+          }
+ 
++         file2 = file2.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
++         net.minecraftforge.client.event.ScreenshotEvent event = net.minecraftforge.client.ForgeHooksClient.onScreenshot(nativeimage, file2);
++         if (event.isCanceled()) return event.getCancelMessage();
++         else file2 = event.getScreenshotFile();
+          nativeimage.func_209271_a(file2);
++         File finalFile = file2; //Forge: need new var because lambda needs final value
+          ITextComponent itextcomponent = (new TextComponentString(file2.getName())).func_211708_a(TextFormatting.UNDERLINE).func_211710_a((p_211564_1_) -> {
+-            p_211564_1_.func_150241_a(new ClickEvent(ClickEvent.Action.OPEN_FILE, file2.getAbsolutePath()));
++            p_211564_1_.func_150241_a(new ClickEvent(ClickEvent.Action.OPEN_FILE, finalFile.getAbsolutePath()));
+          });
++         if (event.getResultMessage() != null) return event.getResultMessage();
+          TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("screenshot.success", new Object[]{itextcomponent});
+          return textcomponenttranslation;
+       } catch (Exception exception) {
