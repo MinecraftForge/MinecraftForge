@@ -41,7 +41,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.ChunkCache;
-import net.minecraftforge.client.event.RenderChunkEvent;
+import net.minecraftforge.client.event.RebuildChunkEvent.RebuildChunkBlocksEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -52,7 +52,7 @@ public class RenderChunkEventTest {
     static final String MODID = "render_chunk_event_test";
 
     @SubscribeEvent
-    public static void onRenderChunkEvent(final RenderChunkEvent event) {
+    public static void onRenderChunkEvent(final RebuildChunkBlocksEvent event) {
 
         final boolean cancel = true;
 
@@ -61,8 +61,6 @@ public class RenderChunkEventTest {
         if (!cancel) {
             return;
         }
-
-//        final ChunkPos chunkPos = new ChunkPos(event.getChunkBlockPositions().iterator().next());
 
         final ChunkCache cache = event.getWorldView();
         final BlockRendererDispatcher blockRendererDispatcher = event.getBlockRendererDispatcher();
@@ -75,7 +73,6 @@ public class RenderChunkEventTest {
         final int y = 0;
         final int z_size = 1;
         final int z = 0;
-//
 
         final boolean[] aboolean = new boolean[BlockRenderLayer.values().length];
         for (final BlockPos.MutableBlockPos blockpos$mutableblockpos : event.getChunkBlockPositions()) {
@@ -109,16 +106,13 @@ public class RenderChunkEventTest {
             }
 
             if (compiledChunk.isLayerStarted(blockrenderlayer)) {
-                event.postRenderBlocks(blockrenderlayer, generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(blockrenderlayer), compiledChunk);
+                event.postRenderBlocks(blockrenderlayer, event.getX(), event.getY(), event.getZ(), generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(blockrenderlayer), compiledChunk);
             }
         }
         if (true) {
             return;
         }
-
-        if (true) {
-            return;
-        }
+        final IBlockState blahblah = cache.getBlockState(event.getPosition());
 
         for (final MutableBlockPos pos : event.getChunkBlockPositions()) {
 

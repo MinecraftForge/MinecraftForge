@@ -102,7 +102,16 @@
                  {
                      this.field_175009_l.add(renderchunk4);
                  }
-@@ -1253,6 +1268,13 @@
+@@ -1057,6 +1072,8 @@
+ 
+     public int func_174977_a(BlockRenderLayer p_174977_1_, double p_174977_2_, int p_174977_4_, Entity p_174977_5_)
+     {
++        final net.minecraftforge.client.event.RenderBlockLayerEvent event = net.minecraftforge.client.ForgeHooksClient.onRenderBlockLayerEvent(this, p_174977_1_, p_174977_2_, p_174977_4_, p_174977_5_, 0);
++        if (event.isCanceled()) return event.getChunksRendered();
+         RenderHelper.func_74518_a();
+ 
+         if (p_174977_1_ == BlockRenderLayer.TRANSLUCENT)
+@@ -1253,6 +1270,13 @@
  
      public void func_174976_a(float p_174976_1_, int p_174976_2_)
      {
@@ -116,7 +125,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p().func_186068_a() == 1)
          {
              this.func_180448_r();
-@@ -1470,6 +1492,7 @@
+@@ -1470,6 +1494,7 @@
  
      public void func_180447_b(float p_180447_1_, int p_180447_2_, double p_180447_3_, double p_180447_5_, double p_180447_7_)
      {
@@ -124,7 +133,7 @@
          if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d())
          {
              if (this.field_72777_q.field_71474_y.func_181147_e() == 2)
-@@ -1852,7 +1875,8 @@
+@@ -1852,7 +1877,8 @@
          GlStateManager.func_187428_a(GlStateManager.SourceFactor.DST_COLOR, GlStateManager.DestFactor.SRC_COLOR, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
          GlStateManager.func_179147_l();
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 0.5F);
@@ -134,7 +143,7 @@
          GlStateManager.func_179088_q();
          GlStateManager.func_179092_a(516, 0.1F);
          GlStateManager.func_179141_d();
-@@ -1892,8 +1916,11 @@
+@@ -1892,8 +1918,11 @@
                  double d7 = (double)blockpos.func_177956_o() - d4;
                  double d8 = (double)blockpos.func_177952_p() - d5;
                  Block block = this.field_72769_h.func_180495_p(blockpos).func_177230_c();
@@ -147,7 +156,7 @@
                  {
                      if (d6 * d6 + d7 * d7 + d8 * d8 > 1024.0D)
                      {
-@@ -2388,7 +2415,7 @@
+@@ -2388,7 +2417,7 @@
  
                  if (block.func_176223_P().func_185904_a() != Material.field_151579_a)
                  {

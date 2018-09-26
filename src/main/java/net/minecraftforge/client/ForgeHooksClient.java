@@ -115,8 +115,8 @@ import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RebuildChunkEvent;
+import net.minecraftforge.client.event.RebuildChunkEvent.RebuildChunkBlocksEvent;
 import net.minecraftforge.client.event.RenderBlockLayerEvent;
-import net.minecraftforge.client.event.RenderChunkEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
@@ -795,14 +795,14 @@ public class ForgeHooksClient
         return event;
     }
 
-    public static RebuildChunkEvent onRebuildChunkEvent(RenderGlobal renderGlobal, ChunkCache worldView, ChunkCompileTaskGenerator generator, CompiledChunk compiledChunk, float x, float y, float z) {
-        final RebuildChunkEvent event = new RebuildChunkEvent(renderGlobal, worldView, generator, compiledChunk,x,y,z);
+    public static RebuildChunkEvent onRebuildChunkEvent(RenderGlobal renderGlobal, ChunkCache worldView, ChunkCompileTaskGenerator generator, CompiledChunk compiledChunk, MutableBlockPos position, float x, float y, float z) {
+        final RebuildChunkEvent event = new RebuildChunkEvent(renderGlobal, worldView, generator, compiledChunk, position, x, y, z);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
-    public static RenderChunkEvent onRenderChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final Iterable<MutableBlockPos> chunkBlockPositions, final BlockRendererDispatcher blockRendererDispatcher, float x, float y, float z) {
-        final RenderChunkEvent event = new RenderChunkEvent(renderGlobal, worldView, generator, compiledChunk, chunkBlockPositions, blockRendererDispatcher,x,y,z);
+    public static RebuildChunkBlocksEvent onRebuildChunkBlocksEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final Iterable<MutableBlockPos> chunkBlockPositions, final BlockRendererDispatcher blockRendererDispatcher, MutableBlockPos position, float x, float y, float z) {
+        final RebuildChunkBlocksEvent event = new RebuildChunkBlocksEvent(renderGlobal, worldView, generator, compiledChunk, chunkBlockPositions, blockRendererDispatcher,null, x,y,z);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

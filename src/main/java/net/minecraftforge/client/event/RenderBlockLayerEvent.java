@@ -24,6 +24,12 @@ import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
+/**
+ * Called when a block layer is going to be rendered in the world.
+ * This event is fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
+ * before a block layer is rendered.
+ * Canceling this event prevents the block layer from being rendered.
+ */
 @Cancelable
 public class RenderBlockLayerEvent extends Event {
 
