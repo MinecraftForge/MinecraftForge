@@ -1,0 +1,47 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketEntityEffect.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketEntityEffect.java
+@@ -12,7 +12,7 @@
+ public class SPacketEntityEffect implements Packet<INetHandlerPlayClient>
+ {
+     private int field_149434_a;
+-    private byte field_149432_b;
++    private int field_149432_b;
+     private byte field_149433_c;
+     private int field_149431_d;
+     private byte field_186985_e;
+@@ -24,7 +24,7 @@
+     public SPacketEntityEffect(int p_i46891_1_, PotionEffect p_i46891_2_)
+     {
+         this.field_149434_a = p_i46891_1_;
+-        this.field_149432_b = (byte)(Potion.func_188409_a(p_i46891_2_.func_188419_a()) & 255);
++        this.field_149432_b = Potion.func_188409_a(p_i46891_2_.func_188419_a());
+         this.field_149433_c = (byte)(p_i46891_2_.func_76458_c() & 255);
+ 
+         if (p_i46891_2_.func_76459_b() > 32767)
+@@ -52,7 +52,7 @@
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {
+         this.field_149434_a = p_148837_1_.func_150792_a();
+-        this.field_149432_b = p_148837_1_.readByte();
++        this.field_149432_b = p_148837_1_.func_150792_a();
+         this.field_149433_c = p_148837_1_.readByte();
+         this.field_149431_d = p_148837_1_.func_150792_a();
+         this.field_186985_e = p_148837_1_.readByte();
+@@ -61,7 +61,7 @@
+     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException
+     {
+         p_148840_1_.func_150787_b(this.field_149434_a);
+-        p_148840_1_.writeByte(this.field_149432_b);
++        p_148840_1_.func_150787_b(this.field_149432_b);
+         p_148840_1_.writeByte(this.field_149433_c);
+         p_148840_1_.func_150787_b(this.field_149431_d);
+         p_148840_1_.writeByte(this.field_186985_e);
+@@ -85,7 +85,7 @@
+     }
+ 
+     @SideOnly(Side.CLIENT)
+-    public byte func_149427_e()
++    public int getEffectId()
+     {
+         return this.field_149432_b;
+     }

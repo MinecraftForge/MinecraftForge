@@ -17,7 +17,13 @@
      }
  
      public void func_76452_a(PotionEffect p_76452_1_)
-@@ -195,12 +198,13 @@
+@@ -190,17 +193,18 @@
+ 
+     public NBTTagCompound func_82719_a(NBTTagCompound p_82719_1_)
+     {
+-        p_82719_1_.func_74774_a("Id", (byte)Potion.func_188409_a(this.func_188419_a()));
++        p_82719_1_.func_74768_a("Id", Potion.func_188409_a(this.func_188419_a()));
+         p_82719_1_.func_74774_a("Amplifier", (byte)this.func_76458_c());
          p_82719_1_.func_74768_a("Duration", this.func_76459_b());
          p_82719_1_.func_74757_a("Ambient", this.func_82720_e());
          p_82719_1_.func_74757_a("ShowParticles", this.func_188418_e());
@@ -28,7 +34,7 @@
      public static PotionEffect func_82722_b(NBTTagCompound p_82722_0_)
      {
 -        int i = p_82722_0_.func_74771_c("Id");
-+        int i = p_82722_0_.func_74771_c("Id") & 0xFF;
++        int i = p_82722_0_.func_74762_e("Id");
          Potion potion = Potion.func_188412_a(i);
  
          if (potion == null)
