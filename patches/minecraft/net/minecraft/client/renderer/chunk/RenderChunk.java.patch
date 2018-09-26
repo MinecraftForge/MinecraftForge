@@ -4,12 +4,12 @@
          {
              p_178581_4_.func_178540_f().unlock();
          }
-+        if (net.minecraftforge.client.ForgeHooksClient.onRebuildChunkEvent(field_178589_e, field_189564_r, p_178581_4_, compiledchunk,p_178581_1_,p_178581_2_,p_178581_3_).isCanceled()) return;
++        if (net.minecraftforge.client.ForgeHooksClient.onRebuildChunkEvent(field_178589_e, field_189564_r, p_178581_4_, compiledchunk, this.field_178586_f, p_178581_1_, p_178581_2_, p_178581_3_).isCanceled()) return;
  
          VisGraph lvt_9_1_ = new VisGraph();
          HashSet lvt_10_1_ = Sets.newHashSet();
  
-+        final net.minecraftforge.client.event.RenderChunkEvent renderEvent = net.minecraftforge.client.ForgeHooksClient.onRenderChunkEvent(field_178589_e, field_189564_r, p_178581_4_, compiledchunk, BlockPos.func_177975_b(blockpos, blockpos1),Minecraft.func_71410_x().func_175602_ab(),p_178581_1_,p_178581_2_,p_178581_3_);
++        final net.minecraftforge.client.event.RebuildChunkEvent.RebuildChunkBlocksEvent rebuildBlocksEvent = net.minecraftforge.client.ForgeHooksClient.onRebuildChunkBlocksEvent(field_178589_e, field_189564_r, p_178581_4_, compiledchunk, BlockPos.func_177975_b(blockpos, blockpos1),Minecraft.func_71410_x().func_175602_ab(), this.field_178586_f, p_178581_1_, p_178581_2_, p_178581_3_);
          if (!this.field_189564_r.func_72806_N())
          {
              ++field_178592_a;
@@ -38,7 +38,7 @@
                  }
  
 -                BlockRenderLayer blockrenderlayer1 = block.func_180664_k();
-+                if (renderEvent.isCanceled()) continue;
++                if (rebuildBlocksEvent.isCanceled()) continue;
 +                for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
 +                     if(!block.canRenderInLayer(iblockstate, blockrenderlayer1)) continue;
 +                     net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
@@ -55,7 +55,7 @@
  
              for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
              {
-+                if (renderEvent.isCanceled()) continue;
++                if (rebuildBlocksEvent.isCanceled()) continue;
                  if (aboolean[blockrenderlayer.ordinal()])
                  {
                      compiledchunk.func_178486_a(blockrenderlayer);
