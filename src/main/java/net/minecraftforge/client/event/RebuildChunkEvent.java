@@ -32,24 +32,25 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * Called when a {@link net.minecraft.client.renderer.chunk.RenderChunk#rebuildChunk RenderChunk.rebuildChunk} is called. 
- * This event is fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
- * right after the CompiledChunk is generated and before any rebuilding is done.
- * Canceling this event prevents all Blocks and Tile Entities from being rebuild (and therefore rendered)
+ * Called when a {@link net.minecraft.client.renderer.chunk.RenderChunk#rebuildChunk RenderChunk.rebuildChunk} is called. This event is fired on
+ * {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} right after the CompiledChunk is generated and before any rebuilding is done. Canceling this event prevents all Blocks
+ * and Tile Entities from being rebuild (and therefore rendered)
  */
 @Cancelable
-public class RebuildChunkEvent extends Event {
+public class RebuildChunkEvent extends Event
+{
 
-    private final RenderGlobal              context;
-    private final ChunkCache                worldView;
+    private final RenderGlobal context;
+    private final ChunkCache worldView;
     private final ChunkCompileTaskGenerator generator;
-    private final CompiledChunk             compiledChunk;
-    private final MutableBlockPos           position;
-    private final float                     x;
-    private final float                     y;
-    private final float                     z;
+    private final CompiledChunk compiledChunk;
+    private final MutableBlockPos position;
+    private final float x;
+    private final float y;
+    private final float z;
 
-    public RebuildChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final MutableBlockPos position, final float x, final float y, final float z) {
+    public RebuildChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final MutableBlockPos position, final float x, final float y, final float z)
+    {
         this.context = renderGlobal;
         this.worldView = worldView;
         this.generator = generator;
@@ -60,60 +61,68 @@ public class RebuildChunkEvent extends Event {
         this.z = z;
     }
 
-    public RenderGlobal getContext() {
+    public RenderGlobal getContext()
+    {
         return this.context;
     }
 
-    public ChunkCache getWorldView() {
+    public ChunkCache getWorldView()
+    {
         return this.worldView;
     }
 
-    public ChunkCompileTaskGenerator getGenerator() {
+    public ChunkCompileTaskGenerator getGenerator()
+    {
         return this.generator;
     }
 
-    public CompiledChunk getCompiledChunk() {
+    public CompiledChunk getCompiledChunk()
+    {
         return this.compiledChunk;
     }
-    
-    public MutableBlockPos getPosition() {
-        return position;
+
+    public MutableBlockPos getPosition()
+    {
+        return this.position;
     }
-    
-    public float getX() {
-        return x;
+
+    public float getX()
+    {
+        return this.x;
     }
-    
-    public float getY() {
-        return y;
+
+    public float getY()
+    {
+        return this.y;
     }
-    
-    public float getZ() {
-        return z;
+
+    public float getZ()
+    {
+        return this.z;
     }
-    
+
     /**
-     * Called when a {@link net.minecraft.client.renderer.chunk.RenderChunk#rebuildChunk RenderChunk.rebuildChunk} is called. 
-     * This event is fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
-     * right before any rebuilding is done.
-     * Canceling this event prevents all Blocks from being rebuild (and therefore rendered).
-     * TileEntities will still be rendered if this event is cancelled
+     * Called when a {@link net.minecraft.client.renderer.chunk.RenderChunk#rebuildChunk RenderChunk.rebuildChunk} is called. This event is fired on
+     * {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} right before any rebuilding is done. Canceling this event prevents all Blocks from being rebuild (and therefore
+     * rendered). TileEntities will still be rendered if this event is cancelled
      */
     @Cancelable
-    public static class RebuildChunkBlocksEvent extends Event {
+    public static class RebuildChunkBlocksEvent extends Event
+    {
 
-        private final RenderGlobal              context;
-        private final ChunkCache                worldView;
+        private final RenderGlobal context;
+        private final ChunkCache worldView;
         private final ChunkCompileTaskGenerator generator;
-        private final CompiledChunk             compiledChunk;
+        private final CompiledChunk compiledChunk;
         private final Iterable<MutableBlockPos> chunkBlockPositions;
-        private final BlockRendererDispatcher   blockRendererDispatcher;
-        private final MutableBlockPos           position;
-        private final float                     x;
-        private final float                     y;
-        private final float                     z;
+        private final BlockRendererDispatcher blockRendererDispatcher;
+        private final MutableBlockPos position;
+        private final float x;
+        private final float y;
+        private final float z;
 
-        public RebuildChunkBlocksEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final Iterable<MutableBlockPos> chunkBlockPositions, final BlockRendererDispatcher blockRendererDispatcher, final MutableBlockPos position, final float x, final float y, final float z) {
+        public RebuildChunkBlocksEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final Iterable<MutableBlockPos> chunkBlockPositions, final BlockRendererDispatcher blockRendererDispatcher, final MutableBlockPos position, final float x, final float y, final float z)
+        {
             this.context = renderGlobal;
             this.worldView = worldView;
             this.generator = generator;
@@ -126,58 +135,73 @@ public class RebuildChunkEvent extends Event {
             this.z = z;
         }
 
-        public RenderGlobal getContext() {
+        public RenderGlobal getContext()
+        {
             return this.context;
         }
 
-        public ChunkCache getWorldView() {
+        public ChunkCache getWorldView()
+        {
             return this.worldView;
         }
 
-        public ChunkCompileTaskGenerator getGenerator() {
+        public ChunkCompileTaskGenerator getGenerator()
+        {
             return this.generator;
         }
 
-        public CompiledChunk getCompiledChunk() {
+        public CompiledChunk getCompiledChunk()
+        {
             return this.compiledChunk;
         }
 
-        public Iterable<MutableBlockPos> getChunkBlockPositions() {
+        public Iterable<MutableBlockPos> getChunkBlockPositions()
+        {
             return this.chunkBlockPositions;
         }
 
-        public BlockRendererDispatcher getBlockRendererDispatcher() {
+        public BlockRendererDispatcher getBlockRendererDispatcher()
+        {
             return this.blockRendererDispatcher;
         }
-        
-        public MutableBlockPos getPosition() {
-            return position;
-        }
-        
-        public float getX() {
-            return x;
-        }
-        
-        public float getY() {
-            return y;
-        }
-        
-        public float getZ() {
-            return z;
+
+        public MutableBlockPos getPosition()
+        {
+            return this.position;
         }
 
-        public BufferBuilder getBufferBuilder(final BlockRenderLayer blockRenderLayer) {
+        public float getX()
+        {
+            return this.x;
+        }
+
+        public float getY()
+        {
+            return this.y;
+        }
+
+        public float getZ()
+        {
+            return this.z;
+        }
+
+        public BufferBuilder getBufferBuilder(final BlockRenderLayer blockRenderLayer)
+        {
             return this.getGenerator().getRegionRenderCacheBuilder().getWorldRendererByLayer(blockRenderLayer);
         }
 
-        public void preRenderBlocks(final BufferBuilder bufferBuilderIn, final BlockPos pos) {
-            bufferBuilderIn.begin(7, DefaultVertexFormats.BLOCK);
-            bufferBuilderIn.setTranslation((double) (-pos.getX()), (double) (-pos.getY()), (double) (-pos.getZ()));
-        }
-        
-        public void postRenderBlocks(BlockRenderLayer layer, float x, float y, float z, BufferBuilder bufferBuilderIn, CompiledChunk compiledChunkIn)
+        public void preRenderBlocks(final BufferBuilder bufferBuilderIn, final BlockPos pos)
         {
-            if (layer == BlockRenderLayer.TRANSLUCENT && !compiledChunkIn.isLayerEmpty(layer))
+            bufferBuilderIn.begin(7, DefaultVertexFormats.BLOCK);
+            bufferBuilderIn.setTranslation(
+                    (double) (-pos.getX()),
+                    (double) (-pos.getY()),
+                    (double) (-pos.getZ()));
+        }
+
+        public void postRenderBlocks(final BlockRenderLayer layer, final float x, final float y, final float z, final BufferBuilder bufferBuilderIn, final CompiledChunk compiledChunkIn)
+        {
+            if ((layer == BlockRenderLayer.TRANSLUCENT) && !compiledChunkIn.isLayerEmpty(layer))
             {
                 bufferBuilderIn.sortVertexData(x, y, z);
                 compiledChunkIn.setState(bufferBuilderIn.getVertexState());
@@ -185,7 +209,7 @@ public class RebuildChunkEvent extends Event {
 
             bufferBuilderIn.finishDrawing();
         }
-        
+
     }
 
 }
