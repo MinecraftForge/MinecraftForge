@@ -62,48 +62,61 @@ public class TagHelper {
         return registry.getTagProvider().matchesTag(predicate);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Predicate<Tag<T>> pathEqualsPredicate(String path)
+    public static <V> Predicate<Tag<V>> containsObjectPredicate(V object)
+    {
+        return tag -> tag.contains(object);
+    }
+
+    public static Predicate<Tag<?>> pathEqualsPredicate(String path)
     {
         return tag -> tag.getId().getPath().equals(path);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Predicate<Tag<T>> pathContainsPredicate(String path)
+    public static Predicate<Tag<?>> pathContainsPredicate(String path)
     {
         return tag -> tag.getId().getPath().contains(path);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Predicate<Tag<T>> pathMatchesPattern(String pattern)
+    public static Predicate<Tag<?>> pathMatchesPattern(String pattern)
     {
         return tag -> tag.getId().getPath().matches(pattern);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Predicate<Tag<T>> pathStartsWithPredicate(String s)
+    public static Predicate<Tag<?>> pathStartsWithPredicate(String s)
     {
         return tag -> tag.getId().getPath().startsWith(s);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Predicate<Tag<T>> byModPredicate(String modId)
+    public static Predicate<Tag<?>> byModPredicate(String modId)
     {
         return tag -> tag.getId().getNamespace().equals(modId);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsWithExactPath(IForgeRegistry<T> registry, String path)
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsWithExactPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingPredicate(registry, pathEqualsPredicate(path));
+        return anyTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathEqualsPredicate(path).test(t));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsContainingPath(IForgeRegistry<T> registry, String path)
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsContainingPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingPredicate(registry, pathContainsPredicate(path));
+        return anyTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathContainsPredicate(path).test(t));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsStartingWithPath(IForgeRegistry<T> registry, String path)
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsStartingWithPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingPredicate(registry, pathStartsWithPredicate(path));
+        return anyTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathStartsWithPredicate(path).test(t));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsFromMod(IForgeRegistry<T> registry, String modId)
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsFromMod(IForgeRegistry<T> registry, T object, String modId)
     {
-        return anyTagsMatchingPredicate(registry, byModPredicate(modId));
+        return anyTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && byModPredicate(modId).test(t));
+    }
+
+    public static <T> Tag.Builder<T> addAll(Tag.Builder<T> builder, Iterable<ResourceLocation> iterable) {
+        for (ResourceLocation thing: iterable)
+        {
+            builder.add(thing);
+        }
+        return builder;
     }
 }

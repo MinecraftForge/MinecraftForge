@@ -1,13 +1,6 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -1,6 +1,5 @@
- package net.minecraft.tags;
- 
--import java.util.Collection;
- import net.minecraft.item.Item;
- import net.minecraft.util.ResourceLocation;
- 
-@@ -47,47 +46,22 @@
+@@ -47,47 +47,22 @@
        ++field_199907_d;
     }
  

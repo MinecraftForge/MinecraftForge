@@ -11,12 +11,14 @@ import javax.annotation.Nonnull;
 public class ForgeTagManager extends NetworkTagManager {
     private static int generation = 0;
 
-    public static int getGeneration() {
+    public static int getGeneration()
+    {
         return generation;
     }
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(IResourceManager resourceManager)
+    {
         clear();
         getBlockTags().onReload(resourceManager);
         getItemTags().onReload(resourceManager);
@@ -30,31 +32,36 @@ public class ForgeTagManager extends NetworkTagManager {
     }
 
     @Nonnull
-    private static TagProvider<Block> getBlockTags() {
+    private static TagProvider<Block> getBlockTags()
+    {
         assert ForgeRegistries.BLOCKS.supportsTagging();
         return ForgeRegistries.BLOCKS.getTagProvider();
     }
 
     @Nonnull
-    private static TagProvider<Item> getItemTags() {
+    private static TagProvider<Item> getItemTags()
+    {
         assert ForgeRegistries.ITEMS.supportsTagging();
         return ForgeRegistries.ITEMS.getTagProvider();
     }
 
     @Override
     @Nonnull
-    public NetworkTagCollection<Block> getBlocks() {
+    public NetworkTagCollection<Block> getBlocks()
+    {
         return getBlockTags().asTagCollection();
     }
 
     @Override
     @Nonnull
-    public NetworkTagCollection<Item> getItems() {
+    public NetworkTagCollection<Item> getItems()
+    {
         return getItemTags().asTagCollection();
     }
 
     @Override
-    public void clear() { //vanilla only needs to clear vanilla...
+    public void clear()
+    { //vanilla only needs to clear vanilla...
         TagProvider<Block> blockTagProvider = getBlockTags();
         TagProvider<Item> itemTagProvider = getItemTags();
         blockTagProvider.clear();
@@ -63,7 +70,8 @@ public class ForgeTagManager extends NetworkTagManager {
     }
 
     @Override
-    public void write(@Nonnull PacketBuffer buffer) {
+    public void write(@Nonnull PacketBuffer buffer)
+    {
         TagProvider<Block> blockTagProvider = getBlockTags();
         TagProvider<Item> itemTagProvider = getItemTags();
         blockTagProvider.onWriteVanillaPacket(buffer);
@@ -71,7 +79,8 @@ public class ForgeTagManager extends NetworkTagManager {
         getFluids().write(buffer);
     }
 
-    private void readInternal(PacketBuffer buffer) {
+    private void readInternal(PacketBuffer buffer)
+    {
         TagProvider<Block> blockTagProvider = getBlockTags();
         TagProvider<Item> itemTagProvider = getItemTags();
         blockTagProvider.onReadVanillaPacket(buffer);
@@ -80,7 +89,8 @@ public class ForgeTagManager extends NetworkTagManager {
     }
 
     @Nonnull
-    public static ForgeTagManager read(@Nonnull PacketBuffer buffer) {
+    public static ForgeTagManager read(@Nonnull PacketBuffer buffer)
+    {
         ForgeTagManager tagManager = new ForgeTagManager();
         tagManager.readInternal(buffer);
         return tagManager;

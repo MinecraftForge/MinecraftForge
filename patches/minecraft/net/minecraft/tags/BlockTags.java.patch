@@ -1,13 +1,6 @@
 --- a/net/minecraft/tags/BlockTags.java
 +++ b/net/minecraft/tags/BlockTags.java
-@@ -1,6 +1,5 @@
- package net.minecraft.tags;
- 
--import java.util.Collection;
- import net.minecraft.block.Block;
- import net.minecraft.util.ResourceLocation;
- 
-@@ -53,47 +52,22 @@
+@@ -53,47 +53,22 @@
        ++field_199900_d;
     }
  

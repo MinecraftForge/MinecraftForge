@@ -18,3 +18,24 @@
     }
  
     public Collection<T> func_199885_a() {
+@@ -238,5 +238,20 @@
+       public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
+          p_200576_1_.add("#" + this.func_200577_a());
+       }
++
++      @Override public boolean equals(Object o) //Forge: allow usage in Hash based collections/maps
++      {
++         if (this == o) return true;
++         if (!(o instanceof TagEntry)) return false;
++
++         TagEntry<?> tagEntry = (TagEntry<?>) o;
++
++         return this.func_200577_a().equals(tagEntry.func_200577_a());
++      }
++
++      @Override public int hashCode()
++      {
++         return func_200577_a().hashCode();
++      }
+    }
+ }

@@ -1,8 +1,6 @@
 package net.minecraftforge.registries;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.google.common.collect.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import net.minecraft.nbt.INBTBase;
@@ -21,6 +19,8 @@ import net.minecraft.tags.Tag.ListEntry;
 import net.minecraft.tags.Tag.TagEntry;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
+import net.minecraftforge.common.tags.TagHelper;
 import net.minecraftforge.common.tags.Tags.Blocks;
 import net.minecraftforge.common.tags.Tags.Items;
 import net.minecraftforge.common.tags.UnmodifiableTagWrapper;
@@ -323,13 +323,14 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
 
         private ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, String resourceLocationPrefixIn, ResourceLocation registryId)
         {
-            this(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, false, registryId);
+            this(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, true, registryId);
         }
 
         @Override
         public void reload(IResourceManager resourceManager)
         {
             Map<ResourceLocation, Builder<T>> map = deserializeTags(getLoadingParameters(resourceManager), resourceManager);
+            collectToMinecraftTags(map);
             registerUnbuildTags(map);
         }
 
@@ -416,13 +417,31 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
             return map;
         }
 
+        private void collectToMinecraftTags(Map<ResourceLocation,Tag.Builder<T>> map) {
+            Map<String, Set<ResourceLocation>> flattener = Maps.newHashMap();
+            for (Map.Entry<ResourceLocation,Tag.Builder<T>> unbuildTag: map.entrySet())
+            {
+                if (!unbuildTag.getKey().getNamespace().equals("minecraft"))
+                {
+                    Set<ResourceLocation> current = flattener.getOrDefault(unbuildTag.getKey().getPath(),new HashSet<>());
+                    current.add(unbuildTag.getKey());
+                    flattener.put(unbuildTag.getKey().getPath(), current);
+                }
+            }
+            for (Map.Entry<String,Set<ResourceLocation>> flattenedEntry:flattener.entrySet())
+            {
+                ResourceLocation collected = new ResourceLocation("minecraft:"+flattenedEntry.getKey());
+                Tag.Builder<T> builder = map.get(collected); //ensure that we don't delete existing minecraft tags
+                map.put(collected, TagHelper.addAll(builder!=null?builder:Tag.Builder.create(),flattenedEntry.getValue()));
+            }
+        }
+
         private void registerUnbuildTags(Map<ResourceLocation, Tag.Builder<T>> map)
         {
             while (!map.isEmpty())
             {
                 boolean flag = false;
                 Iterator<Entry<ResourceLocation, Builder<T>>> iterator = map.entrySet().iterator();
-
                 while (iterator.hasNext())
                 {
                     Entry<ResourceLocation, Tag.Builder<T>> entry1 = iterator.next();
