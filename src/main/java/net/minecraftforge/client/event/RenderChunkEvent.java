@@ -19,9 +19,13 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator;
 import net.minecraft.client.renderer.chunk.CompiledChunk;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
@@ -36,14 +40,20 @@ public class RenderChunkEvent extends Event {
     private final CompiledChunk             compiledChunk;
     private final Iterable<MutableBlockPos> chunkBlockPositions;
     private final BlockRendererDispatcher   blockRendererDispatcher;
+    private final float                     x;
+    private final float                     y;
+    private final float                     z;
 
-    public RenderChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final Iterable<MutableBlockPos> chunkBlockPositions, final BlockRendererDispatcher blockRendererDispatcher) {
+    public RenderChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final Iterable<MutableBlockPos> chunkBlockPositions, final BlockRendererDispatcher blockRendererDispatcher, final float x, final float y, final float z) {
         this.context = renderGlobal;
         this.worldView = worldView;
         this.generator = generator;
         this.compiledChunk = compiledChunk;
         this.chunkBlockPositions = chunkBlockPositions;
         this.blockRendererDispatcher = blockRendererDispatcher;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public RenderGlobal getContext() {
@@ -68,6 +78,23 @@ public class RenderChunkEvent extends Event {
 
     public BlockRendererDispatcher getBlockRendererDispatcher() {
         return this.blockRendererDispatcher;
+    }
+
+    public BufferBuilder getBufferBuilder(final BlockRenderLayer blockRenderLayer) {
+        return this.getGenerator().getRegionRenderCacheBuilder().getWorldRendererByLayer(blockRenderLayer);
+    }
+
+    public void preRenderBlocks(final BufferBuilder bufferBuilderIn, final BlockPos pos) {
+        bufferBuilderIn.begin(7, DefaultVertexFormats.BLOCK);
+        bufferBuilderIn.setTranslation((double) (-pos.getX()), (double) (-pos.getY()), (double) (-pos.getZ()));
+    }
+
+    public void postRenderBlocks(final BlockRenderLayer layer, final BufferBuilder bufferBuilderIn, final CompiledChunk compiledChunkIn) {
+        if ((layer == BlockRenderLayer.TRANSLUCENT) && !this.compiledChunk.isLayerEmpty(layer)) {
+            bufferBuilderIn.sortVertexData(this.x, this.y, this.z);
+            compiledChunkIn.setState(bufferBuilderIn.getVertexState());
+        }
+        bufferBuilderIn.finishDrawing();
     }
 
 }

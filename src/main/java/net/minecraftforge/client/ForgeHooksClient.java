@@ -795,14 +795,14 @@ public class ForgeHooksClient
         return event;
     }
 
-    public static RebuildChunkEvent onRebuildChunkEvent(RenderGlobal renderGlobal, ChunkCache worldView, ChunkCompileTaskGenerator generator, CompiledChunk compiledChunk) {
-        final RebuildChunkEvent event = new RebuildChunkEvent(renderGlobal, worldView, generator, compiledChunk);
+    public static RebuildChunkEvent onRebuildChunkEvent(RenderGlobal renderGlobal, ChunkCache worldView, ChunkCompileTaskGenerator generator, CompiledChunk compiledChunk, float x, float y, float z) {
+        final RebuildChunkEvent event = new RebuildChunkEvent(renderGlobal, worldView, generator, compiledChunk,x,y,z);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
 
-    public static RenderChunkEvent onRenderChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final Iterable<MutableBlockPos> chunkBlockPositions, final BlockRendererDispatcher blockRendererDispatcher) {
-        final RenderChunkEvent event = new RenderChunkEvent(renderGlobal, worldView, generator, compiledChunk, chunkBlockPositions, blockRendererDispatcher);
+    public static RenderChunkEvent onRenderChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final Iterable<MutableBlockPos> chunkBlockPositions, final BlockRendererDispatcher blockRendererDispatcher, float x, float y, float z) {
+        final RenderChunkEvent event = new RenderChunkEvent(renderGlobal, worldView, generator, compiledChunk, chunkBlockPositions, blockRendererDispatcher,x,y,z);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

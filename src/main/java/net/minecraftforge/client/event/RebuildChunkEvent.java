@@ -32,12 +32,18 @@ public class RebuildChunkEvent extends Event {
     private final CompiledChunk             compiledChunk;
     private final ChunkCompileTaskGenerator generator;
     private final ChunkCache                worldView;
+    private final float                     x;
+    private final float                     y;
+    private final float                     z;
 
-    public RebuildChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk) {
+    public RebuildChunkEvent(final RenderGlobal renderGlobal, final ChunkCache worldView, final ChunkCompileTaskGenerator generator, final CompiledChunk compiledChunk, final float x, final float y, final float z) {
         this.context = renderGlobal;
         this.worldView = worldView;
         this.generator = generator;
         this.compiledChunk = compiledChunk;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public RenderGlobal getContext() {
