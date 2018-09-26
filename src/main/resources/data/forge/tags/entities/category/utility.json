@@ -1,0 +1,7 @@
+{
+  "replace":false,
+  "values": [
+    "minecraft:iron_golem",
+    "minecraft:snow_golem"
+  ]
+}

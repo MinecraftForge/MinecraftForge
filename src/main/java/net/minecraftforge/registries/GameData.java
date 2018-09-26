@@ -125,15 +125,15 @@ public class GameData
         hasInit = true;
         makeRegistry(BLOCKS,       Block.class,       MAX_BLOCK_ID, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).enableTagging(BlockTags.Wrapper::new).create();
         makeRegistry(ITEMS,        Item.class,        MIN_ITEM_ID, MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).enableTagging(ItemTags.Wrapper::new).create();
-        makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).create();
-        makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).create();
-        makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
-        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
-        makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
+        makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).enableTagging().create();
+        makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).enableTagging().create();
+        makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).enableTagging().create();
+        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).enableTagging().create();
+        makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).enableTagging().create();
+        makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).enableTagging().create();
         // TODO do we need the callback and the static field anymore?
-        makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).create();
-        makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).disableSaving().create();
+        makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).enableTagging().create();
+        makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).enableTagging().disableSaving().create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int min, int max)
@@ -576,7 +576,7 @@ public class GameData
                     reg.markDummy(dummy, id);
                 }
             });
-            reg.injectTags(value.tagDelegateRepresentation);
+            reg.injectTags(value.tagProviderRepresentation);
         });
 
         int count = missing.values().stream().mapToInt(Map::size).sum();

@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import net.minecraft.entity.EntityType;
+import net.minecraft.init.Enchantments;
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -21,9 +23,11 @@ import net.minecraft.tags.Tag.ListEntry;
 import net.minecraft.tags.Tag.TagEntry;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.tags.ForgeTagWrapper;
 import net.minecraftforge.common.tags.Tags.Blocks;
 import net.minecraftforge.common.tags.Tags.Items;
+import net.minecraftforge.common.tags.UnmodifiableTagWrapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,30 +44,31 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class TagDelegate<T extends IForgeRegistryEntry<T>> implements IResourceManagerReloadListener/*implements INBTSerializable<NBTTagCompound>*/ {  //doesn't implement NBTSerializable, as it isn't really meant to be saved to Disc
+public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceManagerReloadListener/*implements INBTSerializable<NBTTagCompound>*/ {  //doesn't implement NBTSerializable, as it isn't really meant to be saved to Disc
     private static final Logger LOGGER = LogManager.getLogger();
     public static final String TAG_FOLDER = "tags/";
     public static final String FORGE_TAG_SUBFOLDER = "forge/";
     private ForgeRegistry<T> reg;
     private ForgeTagCollection<T> tags;
     private ResourceLocation regName;
-    private BiFunction<ResourceLocation,IForgeRegistry<T>,? extends ForgeTagWrapper<T>> wrapperFactory;
-    TagDelegate(@Nullable ForgeRegistry<T> reg, @Nullable BiFunction<ResourceLocation,IForgeRegistry<T>,? extends ForgeTagWrapper<T>> wrapperFactory, ResourceLocation regName)
+    private BiFunction<ResourceLocation,IForgeRegistry<T>,? extends Tag<T>> wrapperFactory;
+    TagProvider(@Nullable ForgeRegistry<T> reg, @Nullable BiFunction<ResourceLocation,IForgeRegistry<T>,? extends Tag<T>> wrapperFactory, ResourceLocation regName)
     {
         this.regName = Objects.requireNonNull(regName);
         setReg(reg);
         this.wrapperFactory = wrapperFactory;
-        if (this.wrapperFactory == null)
-            LOGGER.warn("No Wrapper Factory specified for this TagDelegate. Using default ForgeTagWrapper implementation!");
-        this.wrapperFactory = ForgeTagWrapper::new;
+        if (this.wrapperFactory == null) {
+            LOGGER.warn("No Wrapper Factory specified for this TagProvider. Using default ForgeTagWrapper implementation!");
+            this.wrapperFactory = UnmodifiableTagWrapper::new;
+        }
     }
 
-    TagDelegate(ResourceLocation regName, BiFunction<ResourceLocation,IForgeRegistry<T>,? extends ForgeTagWrapper<T>> wrapperFactory)
+    TagProvider(ResourceLocation regName, BiFunction<ResourceLocation,IForgeRegistry<T>,? extends Tag<T>> wrapperFactory)
     {
         this(null, wrapperFactory,regName);
     }
 
-    BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends ForgeTagWrapper<T>> getWrapperFactory() {
+    BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> getWrapperFactory() {
         return wrapperFactory;
     }
 
@@ -93,6 +98,7 @@ public class TagDelegate<T extends IForgeRegistryEntry<T>> implements IResourceM
 
     void onReadVanillaPacket(PacketBuffer buf)
     {
+        clear();
         int i = buf.readVarInt();
 
         for(int j = 0; j < i; ++j) {
@@ -149,10 +155,10 @@ public class TagDelegate<T extends IForgeRegistryEntry<T>> implements IResourceM
             NBTTagCompound entryCompound = new NBTTagCompound();
             if (tagEntry instanceof Tag.TagEntry) {
                 entryCompound.setBoolean("tag", true);
-                entryCompound.setString("V", ((TagEntry<T>) tagEntry).getSerializedId().toString());
+                entryCompound.setString("V", ((TagEntry<? extends T>) tagEntry).getSerializedId().toString());
             } else if (tagEntry instanceof Tag.ListEntry) {
                 entryCompound.setBoolean("tag", false);
-                entryCompound.setTag("V", serializeTagListEntry((ListEntry<T>) tagEntry));
+                entryCompound.setTag("V", serializeTagListEntry((ListEntry<? extends T>) tagEntry));
             } else {
                 LOGGER.error("Cannot serialize ITagEntry because it's class is unkown {}. It will not be synced!", tagEntry.getClass().getName());
             }
@@ -161,7 +167,7 @@ public class TagDelegate<T extends IForgeRegistryEntry<T>> implements IResourceM
         return entries;
     }
 
-    private NBTTagList serializeTagListEntry(Tag.ListEntry<T> entry)
+    private NBTTagList serializeTagListEntry(Tag.ListEntry<? extends T> entry)
     {
         NBTTagList items = new NBTTagList();
         for (T thing: entry.getTaggedItems()) {
@@ -177,7 +183,7 @@ public class TagDelegate<T extends IForgeRegistryEntry<T>> implements IResourceM
 
     public void deserializeNBT(@Nonnull NBTTagCompound compound)
     { //this should never be used to try to persist tags
-        tags.clear();
+        clear();
         NBTTagList list = (NBTTagList) compound.getTag("data");
         for (INBTBase nbtPair: list) {
             assert nbtPair instanceof NBTTagCompound;
@@ -260,7 +266,7 @@ public class TagDelegate<T extends IForgeRegistryEntry<T>> implements IResourceM
         return tags.getOrCreate(location);
     }
 
-    public ForgeTagWrapper<T> createWrapper(ResourceLocation location) {
+    public Tag<T> createWrapper(ResourceLocation location) {
         return wrapperFactory.apply(location,reg);
     }
 
@@ -291,13 +297,13 @@ public class TagDelegate<T extends IForgeRegistryEntry<T>> implements IResourceM
         @Override
         public void write(PacketBuffer buf)
         {
-            throw new AssertionError("Network write access to the ForgeTagCollection should be routed through the TagDelegate! Failed to write to PacketBuffer!");
+            throw new AssertionError("Network write access to the ForgeTagCollection should be routed through the TagProvider! Failed to write to PacketBuffer!");
         }
 
         @Override
         public void read(PacketBuffer buf)
         {
-            throw new AssertionError("Network write access to the ForgeTagCollection should be routed through the TagDelegate! Failed to read from PacketBuffer!");
+            throw new AssertionError("Network write access to the ForgeTagCollection should be routed through the TagProvider! Failed to read from PacketBuffer!");
         }
 
         public Collection<Tag<T>> getOwningTagObjects(T thing)

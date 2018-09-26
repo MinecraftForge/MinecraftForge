@@ -82,12 +82,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final int max;
     private final boolean allowOverrides;
     private final boolean isModifiable;
-    private TagDelegate<V> tagDelegate;
+    private TagProvider<V> tagProvider;
 
     private V defaultValue = null;
     boolean isFrozen = false;
 
-    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing, @Nullable TagDelegate<V> tagDelegate)
+    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing, @Nullable TagProvider<V> tagProvider)
     {
         this.stage = stage;
         this.superType = superType;
@@ -104,17 +104,25 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.allowOverrides = allowOverrides;
         this.isModifiable = isModifiable;
         this.dummyFactory = dummyFactory;
-        this.tagDelegate = tagDelegate;
-        if (this.tagDelegate!=null)
-            this.tagDelegate.setReg(this);
+        this.tagProvider = tagProvider;
+        if (this.tagProvider !=null)
+            this.tagProvider.setReg(this);
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
 
     @Override
-    @Nullable
-    public TagDelegate<V> getTagDelegate() {
-        return tagDelegate;
+    @Nonnull
+    public TagProvider<V> getTagProvider() {
+        if (!supportsTagging())
+            throw new IllegalStateException("Tried to retrieve an TagProvider for Registry which doesn't support tagging!");
+        return tagProvider;
+    }
+
+    @Override
+    public boolean supportsTagging()
+    {
+        return tagProvider!=null;
     }
 
     @Override
@@ -270,7 +278,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     ForgeRegistry<V> copy(RegistryManager stage)
     {
-        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, stage, allowOverrides, isModifiable, dummyFactory, missing, tagDelegate);
+        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, stage, allowOverrides, isModifiable, dummyFactory, missing, tagProvider);
     }
 
     int add(int id, V value)
@@ -755,10 +763,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         ret.blocked.addAll(this.blocked);
         ret.dummied.addAll(this.dummies);
         ret.overrides.putAll(getOverrideOwners());
-        TagDelegate<V> delegate = getTagDelegate();
-        if (!savingToDisc && delegate!=null && !delegate.isVanillaHandled())
+        if (!savingToDisc && supportsTagging() && getTagProvider().isVanillaHandled())
         {
-            ret.tagDelegateRepresentation = delegate.serializeNBT();
+            ret.tagProviderRepresentation = getTagProvider().serializeNBT();
         }
         return ret;
     }
@@ -767,8 +774,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         if (tagRepresentation == null)
             return;
-        tagDelegate = new TagDelegate<>(new ResourceLocation("placeholder"),getTagDelegate()!=null?getTagDelegate().getWrapperFactory():null);
-        tagDelegate.deserializeNBT(tagRepresentation);
+        tagProvider = new TagProvider<>(new ResourceLocation("placeholder"), tagProvider!=null? tagProvider.getWrapperFactory():null);
+        tagProvider.setReg(this);
+        tagProvider.deserializeNBT(tagRepresentation);
     }
 
     Map<ResourceLocation, String> getOverrideOwners()
@@ -792,7 +800,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         public final Set<Integer> blocked = Sets.newHashSet();
         public final Set<ResourceLocation> dummied = Sets.newHashSet();
         public final Map<ResourceLocation, String> overrides = Maps.newHashMap();
-        NBTTagCompound tagDelegateRepresentation = null;
+        NBTTagCompound tagProviderRepresentation = null;
 
         public NBTTagCompound write()
         {
@@ -835,9 +843,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             this.dummied.stream().sorted().forEach(e -> dummied.add(new NBTTagString(e.toString())));
             data.setTag("dummied", dummied);
 
-            if (tagDelegateRepresentation !=null)
+            if (tagProviderRepresentation !=null)
             {
-                data.setTag("tags",tagDelegateRepresentation);
+                data.setTag("tags", tagProviderRepresentation);
             }
 
             return data;
@@ -886,7 +894,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
             if (nbt.hasKey("tags"))
             {
-                ret.tagDelegateRepresentation = nbt.getCompound("tags");
+                ret.tagProviderRepresentation = nbt.getCompound("tags");
             }
             return ret;
         }

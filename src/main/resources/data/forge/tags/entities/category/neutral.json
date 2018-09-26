@@ -1,0 +1,7 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:category/neutral_animals",
+    "#forge:category/neutral_monsters"
+  ]
+}

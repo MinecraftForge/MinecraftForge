@@ -1,0 +1,7 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:hostile-zombies",
+    "minecraft:zombie_pigman"
+  ]
+}

@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tags.*;
 
 import javax.annotation.Nonnull;
@@ -31,15 +30,15 @@ public class ForgeTagManager extends NetworkTagManager {
     }
 
     @Nonnull
-    private static TagDelegate<Block> getBlockTags() {
-        assert ForgeRegistries.BLOCKS.getTagDelegate()!=null;
-        return ForgeRegistries.BLOCKS.getTagDelegate();
+    private static TagProvider<Block> getBlockTags() {
+        assert ForgeRegistries.BLOCKS.supportsTagging();
+        return ForgeRegistries.BLOCKS.getTagProvider();
     }
 
     @Nonnull
-    private static TagDelegate<Item> getItemTags() {
-        assert ForgeRegistries.ITEMS.getTagDelegate()!=null;
-        return ForgeRegistries.ITEMS.getTagDelegate();
+    private static TagProvider<Item> getItemTags() {
+        assert ForgeRegistries.ITEMS.supportsTagging();
+        return ForgeRegistries.ITEMS.getTagProvider();
     }
 
     @Override
@@ -56,27 +55,27 @@ public class ForgeTagManager extends NetworkTagManager {
 
     @Override
     public void clear() { //vanilla only needs to clear vanilla...
-        TagDelegate<Block> blockTagDelegate = getBlockTags();
-        TagDelegate<Item> itemTagDelegate = getItemTags();
-        blockTagDelegate.clear();
-        itemTagDelegate.clear();
+        TagProvider<Block> blockTagProvider = getBlockTags();
+        TagProvider<Item> itemTagProvider = getItemTags();
+        blockTagProvider.clear();
+        itemTagProvider.clear();
         getFluids().clear();
     }
 
     @Override
     public void write(@Nonnull PacketBuffer buffer) {
-        TagDelegate<Block> blockTagDelegate = getBlockTags();
-        TagDelegate<Item> itemTagDelegate = getItemTags();
-        blockTagDelegate.onWriteVanillaPacket(buffer);
-        itemTagDelegate.onWriteVanillaPacket(buffer);
+        TagProvider<Block> blockTagProvider = getBlockTags();
+        TagProvider<Item> itemTagProvider = getItemTags();
+        blockTagProvider.onWriteVanillaPacket(buffer);
+        itemTagProvider.onWriteVanillaPacket(buffer);
         getFluids().write(buffer);
     }
 
     private void readInternal(PacketBuffer buffer) {
-        TagDelegate<Block> blockTagDelegate = getBlockTags();
-        TagDelegate<Item> itemTagDelegate = getItemTags();
-        blockTagDelegate.onReadVanillaPacket(buffer);
-        itemTagDelegate.onReadVanillaPacket(buffer);
+        TagProvider<Block> blockTagProvider = getBlockTags();
+        TagProvider<Item> itemTagProvider = getItemTags();
+        blockTagProvider.onReadVanillaPacket(buffer);
+        itemTagProvider.onReadVanillaPacket(buffer);
         getFluids().read(buffer);
     }
 

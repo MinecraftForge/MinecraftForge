@@ -1,0 +1,17 @@
+{
+  "replace":false,
+  "values": [
+    "minecraft:bat",
+    "minecraft:cod",
+    "#forge:ridable",
+    "#forge:farm-animals",
+    "minecraft:ocelot",
+    "minecraft:parrot",
+    "minecraft:rabbit",
+    "minecraft:salmon",
+    "minecraft:squid",
+    "minecraft:turtle",
+    "minecraft:tropical_fish",
+    "minecraft:villager"
+  ]
+}

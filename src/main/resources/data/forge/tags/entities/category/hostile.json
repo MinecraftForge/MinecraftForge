@@ -1,0 +1,20 @@
+{
+  "replace":false,
+  "values": [
+    "minecraft:blaze",
+    "minecraft:creeper",
+    "#forge:dead",
+    "minecraft:elder_guardian",
+    "minecraft:endermite",
+    "minecraft:evoker",
+    "minecraft:ghast",
+    "minecraft:guardian",
+    "#forge:slimy",
+    "minecraft:phantom",
+    "minecraft:shulker",
+    "minecraft:silverfish",
+    "minecraft:vex",
+    "minecraft:vindicator",
+    "minecraft:witch"
+  ]
+}

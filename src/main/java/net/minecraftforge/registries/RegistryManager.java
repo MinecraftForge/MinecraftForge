@@ -35,6 +35,7 @@ import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
 
 import net.minecraft.resources.IResourceManager;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.tags.ForgeTagWrapper;
 import net.minecraftforge.fml.network.FMLHandshakeMessages;
@@ -44,6 +45,7 @@ import net.minecraftforge.registries.IForgeRegistry.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.system.CallbackI.I;
 
 public class RegistryManager
 {
@@ -107,7 +109,7 @@ public class RegistryManager
     <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(ResourceLocation name, Class<V> type, ResourceLocation defaultKey, int min, int max,
                                                                        @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable CreateCallback<V> create, @Nullable ValidateCallback<V> validate,
                                                                        boolean persisted, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing,
-                                                                       boolean enableTagging, BiFunction<ResourceLocation,IForgeRegistry<V>,? extends ForgeTagWrapper<V>> wrapperFactory)
+                                                                       boolean enableTagging, @Nullable BiFunction<ResourceLocation, IForgeRegistry<V>, ? extends Tag<V>> wrapperFactory)
     {
         Set<Class<?>> parents = Sets.newHashSet();
         findSuperTypes(type, parents);
@@ -118,7 +120,8 @@ public class RegistryManager
             LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
-        ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, validate, this, allowOverrides, isModifiable, dummyFactory, missing, enableTagging?new TagDelegate<>(name,wrapperFactory):null);
+        ForgeRegistry<V> reg =
+                new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, validate, this, allowOverrides, isModifiable, dummyFactory, missing, enableTagging?new TagProvider<>(name,wrapperFactory):null);
         registries.put(name, reg);
         superTypes.put(type, name);
         if (persisted)
@@ -128,8 +131,8 @@ public class RegistryManager
 
     void onTagReload(IResourceManager manager) {
         for (ForgeRegistry<?> reg: registries.values()) {
-            if (reg.getTagDelegate() != null)
-                reg.getTagDelegate().onResourceManagerReload(manager);
+            if (reg.supportsTagging())
+                reg.getTagProvider().onResourceManagerReload(manager);
         }
     }
 

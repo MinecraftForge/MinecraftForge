@@ -1,0 +1,18 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:zombies",
+    "minecraft:dolphin",
+    "minecraft:pufferfish",
+    "minecraft:iron_golem",
+    "minecraft:polar_bear",
+    "minecraft:wolf",
+    "#forge:spiders",
+    "minecraft:enderman",
+    "minecraft:endermite",
+    "#forge:slimy",
+    "minecraft:vex",
+    "minecraft:guardian",
+    "minecraft:wither_skeleton"
+  ]
+}

@@ -61,7 +61,15 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
      */
     <T> T getSlaveMap(ResourceLocation slaveMapName, Class<T> type);
 
-    TagDelegate<V> getTagDelegate();
+    /**
+     *
+     * @return The TagProvider responsible for this Registry.
+     * @throws IllegalStateException if tagging is not supported by this Registry, e.g. {@link #supportsTagging()} returns false
+     */
+    @Nonnull
+    TagProvider<V> getTagProvider();
+
+    boolean supportsTagging();
 
     /**
      * Callback fired when objects are added to the registry. This will fire when the registry is rebuilt

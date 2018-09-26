@@ -1,33 +1,31 @@
 --- a/net/minecraft/tags/BlockTags.java
 +++ b/net/minecraft/tags/BlockTags.java
-@@ -4,6 +4,8 @@
+@@ -1,6 +1,5 @@
+ package net.minecraft.tags;
+ 
+-import java.util.Collection;
  import net.minecraft.block.Block;
  import net.minecraft.util.ResourceLocation;
  
-+import javax.annotation.Nonnull;
-+
- public class BlockTags {
-    private static TagCollection<Block> field_199899_c = new TagCollection<Block>((p_203641_0_) -> {
-       return false;
-@@ -53,47 +55,22 @@
+@@ -53,47 +52,22 @@
        ++field_199900_d;
     }
  
-+   @Deprecated //use Methods from TagDelegate (ForgeRegistries.BLOCKS.getTagDelegate())
++   @Deprecated //use Methods from TagProvider (ForgeRegistries.BLOCKS.getTagProvider())
     public static TagCollection<Block> func_199896_a() {
        return field_199899_c;
     }
  
     private static Tag<Block> func_199894_a(String p_199894_0_) {
 -      return new BlockTags.Wrapper(new ResourceLocation(p_199894_0_));
-+      return net.minecraftforge.registries.ForgeRegistries.BLOCKS.getTagDelegate().createWrapper(new ResourceLocation(p_199894_0_));
++      return net.minecraftforge.registries.ForgeRegistries.BLOCKS.getTagProvider().createWrapper(new ResourceLocation(p_199894_0_));
     }
  
 -   public static class Wrapper extends Tag<Block> {
 -      private int field_199892_a = -1;
 -      private Tag<Block> field_199893_b;
 -
-+   public static class Wrapper extends net.minecraftforge.common.tags.ForgeTagWrapper<Block> {
++   public static class Wrapper extends net.minecraftforge.common.tags.UnmodifiableTagWrapper<Block> {
        public Wrapper(ResourceLocation p_i48217_1_) {
 -         super(p_i48217_1_);
 +         this(p_i48217_1_, net.minecraftforge.registries.ForgeRegistries.BLOCKS);
@@ -40,7 +38,7 @@
 -         }
 -
 -         return this.field_199893_b.func_199685_a_(p_199685_1_);
-+      public Wrapper(@Nonnull ResourceLocation resourceLocationIn, net.minecraftforge.registries.IForgeRegistry<Block> registry) {
++      public Wrapper(@javax.annotation.Nonnull ResourceLocation resourceLocationIn, net.minecraftforge.registries.IForgeRegistry<Block> registry) {
 +         super(resourceLocationIn, registry);
        }
 -

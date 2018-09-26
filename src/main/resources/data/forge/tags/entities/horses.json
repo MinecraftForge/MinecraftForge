@@ -1,0 +1,8 @@
+{
+   "replace":false,
+   "values": [
+      "minecraft:horse",
+      "minecraft:zombie_horse",
+      "minecraft:skeleton_horse"
+   ]
+}

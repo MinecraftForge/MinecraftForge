@@ -1,33 +1,31 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -4,6 +4,8 @@
+@@ -1,6 +1,5 @@
+ package net.minecraft.tags;
+ 
+-import java.util.Collection;
  import net.minecraft.item.Item;
  import net.minecraft.util.ResourceLocation;
  
-+import javax.annotation.Nonnull;
-+
- public class ItemTags {
-    private static TagCollection<Item> field_199906_c = new TagCollection<Item>((p_203643_0_) -> {
-       return false;
-@@ -47,47 +49,22 @@
+@@ -47,47 +46,22 @@
        ++field_199907_d;
     }
  
-+   @Deprecated //use Methods from TagDelegate (ForgeRegistries.ITEMS.getTagDelegate())
++   @Deprecated //use Methods from TagProvider (ForgeRegistries.ITEMS.getTagProvider())
     public static TagCollection<Item> func_199903_a() {
        return field_199906_c;
     }
  
     private static Tag<Item> func_199901_a(String p_199901_0_) {
 -      return new ItemTags.Wrapper(new ResourceLocation(p_199901_0_));
-+      return net.minecraftforge.registries.ForgeRegistries.ITEMS.getTagDelegate().createWrapper(new ResourceLocation(p_199901_0_));
++      return net.minecraftforge.registries.ForgeRegistries.ITEMS.getTagProvider().createWrapper(new ResourceLocation(p_199901_0_));
     }
  
 -   public static class Wrapper extends Tag<Item> {
 -      private int field_199890_a = -1;
 -      private Tag<Item> field_199891_b;
 -
-+   public static class Wrapper extends net.minecraftforge.common.tags.ForgeTagWrapper<Item> {
++   public static class Wrapper extends net.minecraftforge.common.tags.UnmodifiableTagWrapper<Item> {
        public Wrapper(ResourceLocation p_i48212_1_) {
 -         super(p_i48212_1_);
 +         this(p_i48212_1_, net.minecraftforge.registries.ForgeRegistries.ITEMS);
@@ -40,7 +38,7 @@
 -         }
 -
 -         return this.field_199891_b.func_199685_a_(p_199685_1_);
-+      public Wrapper(@Nonnull ResourceLocation resourceLocationIn, net.minecraftforge.registries.IForgeRegistry<Item> registry) {
++      public Wrapper(@javax.annotation.Nonnull ResourceLocation resourceLocationIn, net.minecraftforge.registries.IForgeRegistry<Item> registry) {
 +         super(resourceLocationIn, registry);
        }
 -
