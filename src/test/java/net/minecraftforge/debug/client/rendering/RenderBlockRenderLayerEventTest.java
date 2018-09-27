@@ -20,20 +20,20 @@
 package net.minecraftforge.debug.client.rendering;
 
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraftforge.client.event.RenderBlockLayerEvent;
+import net.minecraftforge.client.event.RenderBlockRenderLayerEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
-@Mod(modid = RenderBlockLayerEventTest.MODID, name = "RenderBlockLayerEventTest", version = "1.0", acceptableRemoteVersions = "*", clientSideOnly = true)
-public class RenderBlockLayerEventTest
+@Mod(modid = RenderBlockRenderLayerEventTest.MODID, name = "RenderBlockRenderLayerEventTest", version = "1.0", acceptableRemoteVersions = "*", clientSideOnly = true)
+public class RenderBlockRenderLayerEventTest
 {
 
-    public static final String MODID = "render_block_layer_event_test";
+    public static final String MODID = "render_block_render_layer_event_test";
     private static final boolean ENABLED = false;
 
     @SubscribeEvent
-    public static void onRenderBlockLayerEvent(final RenderBlockLayerEvent event)
+    public static void onRenderBlockRenderLayerrEvent(final RenderBlockRenderLayerEvent event)
     {
         if (!ENABLED)
         {

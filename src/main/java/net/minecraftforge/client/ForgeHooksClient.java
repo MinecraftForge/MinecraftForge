@@ -118,7 +118,7 @@ import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RebuildChunkEvent;
 import net.minecraftforge.client.event.RebuildChunkEvent.RebuildChunkBlocksEvent;
-import net.minecraftforge.client.event.RenderBlockLayerEvent;
+import net.minecraftforge.client.event.RenderBlockRenderLayerEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderSpecificHandEvent;
@@ -791,8 +791,8 @@ public class ForgeHooksClient
         return true;
    }
     
-    public static RenderBlockLayerEvent onRenderBlockLayerEvent(final RenderGlobal renderGlobal, final BlockRenderLayer blockRenderLayer, final double partialTicks, final int pass, final Entity entity, final int chunksRendered) {
-        final RenderBlockLayerEvent event = new RenderBlockLayerEvent(renderGlobal, blockRenderLayer, partialTicks, pass, entity, chunksRendered);
+    public static RenderBlockRenderLayerEvent onRenderBlockRenderLayerEvent(final RenderGlobal renderGlobal, final BlockRenderLayer blockRenderLayer, final double partialTicks, final int pass, final Entity entity, final int chunksRendered) {
+        final RenderBlockRenderLayerEvent event = new RenderBlockRenderLayerEvent(renderGlobal, blockRenderLayer, partialTicks, pass, entity, chunksRendered);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

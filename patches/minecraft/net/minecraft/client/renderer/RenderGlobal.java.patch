@@ -106,7 +106,7 @@
  
      public int func_174977_a(BlockRenderLayer p_174977_1_, double p_174977_2_, int p_174977_4_, Entity p_174977_5_)
      {
-+        final net.minecraftforge.client.event.RenderBlockLayerEvent event = net.minecraftforge.client.ForgeHooksClient.onRenderBlockLayerEvent(this, p_174977_1_, p_174977_2_, p_174977_4_, p_174977_5_, 0);
++        final net.minecraftforge.client.event.RenderBlockRenderLayerEvent event = net.minecraftforge.client.ForgeHooksClient.onRenderBlockRenderLayerEvent(this, p_174977_1_, p_174977_2_, p_174977_4_, p_174977_5_, 0);
 +        if (event.isCanceled()) return event.getChunksRendered();
          RenderHelper.func_74518_a();
  

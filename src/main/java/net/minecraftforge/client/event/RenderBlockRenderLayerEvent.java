@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Canceling this event prevents the block layer from being rendered.
  */
 @Cancelable
-public class RenderBlockLayerEvent extends Event {
+public class RenderBlockRenderLayerEvent extends Event {
 
     private final RenderGlobal     context;
     private final BlockRenderLayer blockRenderLayer;
@@ -41,7 +41,7 @@ public class RenderBlockLayerEvent extends Event {
 
     private int chunksRendered;
 
-    public RenderBlockLayerEvent(final RenderGlobal renderGlobal, final BlockRenderLayer blockRenderLayer, final double partialTicks, final int pass, final Entity entity, final int chunksRendered) {
+    public RenderBlockRenderLayerEvent(final RenderGlobal renderGlobal, final BlockRenderLayer blockRenderLayer, final double partialTicks, final int pass, final Entity entity, final int chunksRendered) {
         this.context = renderGlobal;
         this.blockRenderLayer = blockRenderLayer;
         this.partialTicks = partialTicks;
