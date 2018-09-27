@@ -42,6 +42,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.event.RebuildChunkEvent.RebuildChunkBlocksEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
@@ -70,7 +71,7 @@ public class RenderChunkEventTest
     @SubscribeEvent
     public static void rebuildChunkSetup(final RebuildChunkBlocksEvent event)
     {
-        rebuildOptions = new RebuildOptions[] { RebuildOptions.VANILLA };
+        rebuildOptions = new RebuildOptions[] { RebuildOptions.VANILLA, RebuildOptions.FACING, RebuildOptions.MARCHING_CUBES };
 
         fragmentFacings = new EnumFacing[] {
                 EnumFacing.DOWN,
@@ -87,14 +88,14 @@ public class RenderChunkEventTest
 
     }
 
-    // @SubscribeEvent(priority = EventPriority.LOWEST)
-    // public static void cancelVanillaRebuildChunkIfNecessary(final RebuildChunkBlocksEvent event)
-    // {
-    // if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.VANILLA))
-    // {
-    // event.setCanceled(true);
-    // }
-    // }
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void cancelVanillaRebuildChunkIfNecessary(final RebuildChunkBlocksEvent event)
+    {
+        if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.VANILLA))
+        {
+            event.setCanceled(true);
+        }
+    }
 
     @SubscribeEvent
     public static void rebuildChunkVanillaModded(final RebuildChunkBlocksEvent event)
