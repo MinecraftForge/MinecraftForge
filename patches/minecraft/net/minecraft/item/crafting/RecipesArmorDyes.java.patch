@@ -1,16 +1,11 @@
 --- a/net/minecraft/item/crafting/RecipesArmorDyes.java
 +++ b/net/minecraft/item/crafting/RecipesArmorDyes.java
-@@ -6,12 +6,10 @@
- import net.minecraft.inventory.InventoryCrafting;
- import net.minecraft.item.Item;
- import net.minecraft.item.ItemArmorDyeable;
--import net.minecraft.item.ItemDye;
+@@ -10,8 +10,6 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.world.World;
 -import net.minecraftforge.api.distmarker.Dist;
 -import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.common.tags.Tags;
  
  public class RecipesArmorDyes extends IRecipeHidden {
     public RecipesArmorDyes(ResourceLocation p_i48173_1_) {
@@ -19,7 +14,7 @@
                    itemstack = itemstack1;
                 } else {
 -                  if (!(itemstack1.func_77973_b() instanceof ItemDye)) {
-+                  if (!itemstack1.func_77973_b().func_206844_a(Tags.Items.DYES)) {
++                  if (!itemstack1.func_77973_b().func_206844_a(net.minecraftforge.common.tags.Tags.Items.DYES)) {
                       return false;
                    }
  
