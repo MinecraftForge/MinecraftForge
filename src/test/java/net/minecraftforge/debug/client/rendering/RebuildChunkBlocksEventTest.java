@@ -253,46 +253,6 @@ public class RebuildChunkBlocksEventTest
         }
     }
 
-    @SubscribeEvent
-    public static void rebuildChunkMarchingCubes(final RebuildChunkBlocksEvent event)
-    {
-        if (!ENABLED)
-        {
-            return;
-        }
-
-        if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.MARCHING_CUBES))
-        {
-            return;
-        }
-
-        for (final BlockPos.MutableBlockPos blockpos$mutableblockpos : event.getChunkBlockPositions())
-        {
-            final IBlockState iblockstate = event.getWorldView().getBlockState(blockpos$mutableblockpos);
-            final Block block = iblockstate.getBlock();
-
-            for (final BlockRenderLayer blockRenderLayer : BlockRenderLayer.values())
-            {
-                if (!block.canRenderInLayer(iblockstate, blockRenderLayer))
-                {
-                    continue;
-                }
-                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockRenderLayer);
-
-                if (block.getDefaultState().getRenderType() != EnumBlockRenderType.INVISIBLE)
-                {
-                    final BufferBuilder bufferbuilder = event.startOrContinueLayer(blockRenderLayer);
-
-                    final boolean used = event.getBlockRendererDispatcher().renderBlock(iblockstate, blockpos$mutableblockpos, event.getWorldView(), bufferbuilder);
-
-                    event.setBlockRenderLayerUsedWithOrOpperation(blockRenderLayer, used);
-
-                }
-            }
-            net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
-        }
-    }
-
     private static boolean renderBlockEnumFacing(IBlockState state, final BlockPos pos, final IBlockAccess blockAccess, final BufferBuilder bufferBuilderIn, final BlockRendererDispatcher blockRendererDispatcher, final EnumFacing side)
     {
 
