@@ -28,8 +28,8 @@ import net.minecraftforge.fml.common.Mod;
 public class RenderBlockLayerEventTest
 {
 
-    static final String MODID = "render_block_layer_event_test";
-    static final boolean ENABLED = true;
+    public static final String MODID = "render_block_layer_event_test";
+    private static final boolean ENABLED = true;
 
     public static void sad(final RenderBlockLayerEvent event)
     {
