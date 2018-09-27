@@ -52,7 +52,7 @@ public class RebuildChunkBlocksEventTest
 {
 
     public static final String MODID = "rebuild_chunk_blocks_event_test";
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     private static enum RebuildOptions
     {
@@ -369,10 +369,23 @@ public class RebuildChunkBlocksEventTest
             return false;
         }
 
-        final int colorMultiplier = Minecraft.getMinecraft().getBlockColors().colorMultiplier(stateIn, worldIn, posIn, 0);
-        final float redFloat = ((colorMultiplier >> 16) & 255) / 255.0F;
-        final float greenFloat = ((colorMultiplier >> 8) & 255) / 255.0F;
-        final float blueFloat = (colorMultiplier & 255) / 255.0F;
+        final float redFloat;
+        final float greenFloat;
+        final float blueFloat;
+
+        if (quad.hasTintIndex())
+        {
+            final int colorMultiplier = Minecraft.getMinecraft().getBlockColors().colorMultiplier(stateIn, worldIn, posIn, 0);
+            redFloat = ((colorMultiplier >> 16) & 255) / 255.0F;
+            greenFloat = ((colorMultiplier >> 8) & 255) / 255.0F;
+            blueFloat = (colorMultiplier & 255) / 255.0F;
+        }
+        else
+        {
+            redFloat = 1;
+            greenFloat = 1;
+            blueFloat = 1;
+        }
 
         final double x_size = 1 / 2d;
         final double y_size = 1 / 2d;
@@ -412,33 +425,28 @@ public class RebuildChunkBlocksEventTest
             buffer.pos(x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
             break;
         case NORTH:
-            // LEFT
-            buffer.pos(x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
+            buffer.pos(-x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+            buffer.pos(-x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
+            buffer.pos(x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
             buffer.pos(x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
-            buffer.pos(x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
-            buffer.pos(x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
             break;
         case SOUTH:
-            // RIGHT
+            buffer.pos(x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
+            buffer.pos(x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+            buffer.pos(-x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+            buffer.pos(-x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
+            break;
+        case WEST:
             buffer.pos(-x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
             buffer.pos(-x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
             buffer.pos(-x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
             buffer.pos(-x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
             break;
-        case WEST:
-            // BACK
-            buffer.pos(-x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
-            buffer.pos(-x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
-            buffer.pos(x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
-            buffer.pos(x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
-
-            break;
-        case EAST:// FRONT
+        case EAST:
             buffer.pos(x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
-            buffer.pos(x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
-            buffer.pos(-x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
-            buffer.pos(-x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
-
+            buffer.pos(x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+            buffer.pos(x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+            buffer.pos(x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
             break;
         default:
             return false;

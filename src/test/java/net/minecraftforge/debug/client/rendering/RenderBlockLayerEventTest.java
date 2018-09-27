@@ -30,7 +30,7 @@ public class RenderBlockLayerEventTest
 {
 
     public static final String MODID = "render_block_layer_event_test";
-    private static final boolean ENABLED = true;
+    private static final boolean ENABLED = false;
 
     @SubscribeEvent
     public static void onRenderBlockLayerEvent(final RenderBlockLayerEvent event)
@@ -40,7 +40,7 @@ public class RenderBlockLayerEventTest
             return;
         }
 
-        if (event.getBlockRenderLayer() == BlockRenderLayer.SOLID)
+        if (event.getBlockRenderLayer() == BlockRenderLayer.TRANSLUCENT)
         {
             event.setCanceled(true);
         }
