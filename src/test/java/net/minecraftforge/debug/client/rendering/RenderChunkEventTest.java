@@ -47,11 +47,11 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
-@Mod(modid = RenderChunkEventTest.MODID, name = "RenderChunkEventTest", version = "1.0", acceptableRemoteVersions = "*", clientSideOnly = true)
+@Mod(modid = RenderChunkEventTest.MODID, name = "RebuildChunkBlocksEventTest", version = "1.0", acceptableRemoteVersions = "*", clientSideOnly = true)
 public class RenderChunkEventTest
 {
 
-    static final String MODID = "render_chunk_event_test";
+    static final String MODID = "rebuild_chunk_blocks_event_test";
 
     static enum RebuildOptions
     {

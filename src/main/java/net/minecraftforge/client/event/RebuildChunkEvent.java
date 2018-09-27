@@ -37,7 +37,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 /**
  * Called when a {@link net.minecraft.client.renderer.chunk.RenderChunk#rebuildChunk RenderChunk.rebuildChunk} is called. This event is fired on
  * {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} right after the CompiledChunk is generated and before any rebuilding is done. Canceling this event prevents all Blocks
- * and Tile Entities from being rebuild (and therefore rendered)
+ * and Tile Entities from being rebuilt to the chunk (and therefore rendered)
  */
 @Cancelable
 public class RebuildChunkEvent extends Event
@@ -106,9 +106,22 @@ public class RebuildChunkEvent extends Event
 
     /**
      * Called when a {@link net.minecraft.client.renderer.chunk.RenderChunk#rebuildChunk RenderChunk.rebuildChunk} is called. This event is fired on
-     * {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} right before any rebuilding is done. Canceling this event prevents all Blocks from being rebuild (and therefore
-     * rendered). TileEntities will still be rendered if this event is cancelled<br>
-     * When multiple mods are all using the event the mod that cancels the event HAS to call event#postRenderBlocks and is the only mod that can call this method
+     * {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} right before any rebuilding is done. Canceling this event prevents all Blocks from being rebuilt to the chunk (and
+     * therefore rendered). TileEntities will still be rendered if this event is cancelled<br>
+     *
+     * To rebuild blocks using this event<br>
+     * Itterate over all the positions in getChunkBlockPositions()<br>
+     * for each block you want to render<br>
+     * 1) get the Block's BlockRenderLayer<br>
+     * 2) call {@link net.minecraftforge.client.ForgeHooksClient#setRenderLayer(BlockRenderLayer) net.minecraftforge.client.ForgeHooksClient#setRenderLayer(Block's
+     * BlockRenderLayer)};<br>
+     * 3) get a BufferBuilder instance with {@link RebuildChunkBlocksEvent#startOrContinueLayer(BlockRenderLayer) RebuildChunkBlocksEvent#startOrContinueLayer(Block's
+     * BlockRenderLayer)};<br>
+     * 4) put any data into the BufferBuilder<br>
+     * 5) call {@link RebuildChunkBlocksEvent#setBlockRenderLayerUsed(BlockRenderLayer, boolean) RebuildChunkBlocksEvent#setBlockRenderLayerUsed(Block's BlockRenderLayer, boolean)}
+     * with true if you want all the data in this BlockRenderLayer to be rendered or with false if you want none of the data in this BlockRenderLayer to be rendered
+     *
+     * @see net.minecraft.client.renderer.chunk.RenderChunk#rebuildChunk(float, float, float, ChunkCompileTaskGenerator)
      */
     @Cancelable
     public static class RebuildChunkBlocksEvent extends Event
@@ -238,24 +251,14 @@ public class RebuildChunkEvent extends Event
         private void preRenderBlocks(final BufferBuilder bufferBuilderIn, final BlockPos pos)
         {
             bufferBuilderIn.begin(7, DefaultVertexFormats.BLOCK);
-            bufferBuilderIn.setTranslation(
-                    (double) (-pos.getX()),
-                    (double) (-pos.getY()),
-                    (double) (-pos.getZ()));
+            bufferBuilderIn.setTranslation(-pos.getX(), -pos.getY(), -pos.getZ());
         }
-        //
-        // public void postRenderBlocks(final BlockRenderLayer layer, final float x, final float y, final float z, final BufferBuilder bufferBuilderIn, final CompiledChunk
-        // compiledChunkIn)
-        // {
-        // if ((layer == BlockRenderLayer.TRANSLUCENT) && !compiledChunkIn.isLayerEmpty(layer))
-        // {
-        // bufferBuilderIn.sortVertexData(x, y, z);
-        // compiledChunkIn.setState(bufferBuilderIn.getVertexState());
-        // }
-        //
-        // bufferBuilderIn.finishDrawing();
-        // }
 
+        /**
+         * if the boolean is true then the {@link BlockRenderLayer} will be rendered
+         * 
+         * @return an array of booleans mapped to {@link BlockRenderLayer#ordinal()}
+         */
         public boolean[] getUsedBlockRenderLayers()
         {
             return this.usedBlockRenderLayers;
