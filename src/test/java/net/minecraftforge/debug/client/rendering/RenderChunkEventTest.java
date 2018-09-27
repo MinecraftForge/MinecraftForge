@@ -20,7 +20,6 @@
 package net.minecraftforge.debug.client.rendering;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -31,7 +30,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockFluidRenderer;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -77,7 +75,7 @@ public class RenderChunkEventTest
     @SubscribeEvent
     public static void rebuildChunkSetup(final RebuildChunkBlocksEvent event)
     {
-        rebuildOptions = new RebuildOptions[] { RebuildOptions.FACING };
+        rebuildOptions = new RebuildOptions[] { RebuildOptions.VANILLA };
 
         fragmentFacings = new EnumFacing[] {
                 EnumFacing.DOWN,
@@ -282,65 +280,9 @@ public class RenderChunkEventTest
 
                     final IBakedModel model = blockRendererDispatcher.getModelForState(state);
 
-                    renderCube(bufferBuilderIn, model, blockAccess, pos, state);
+                    return renderCube(bufferBuilderIn, model, blockAccess, pos, state);
 
-                    // DefaultVertexFormats.BLOCK;
-                    //
-                    // BLOCK.addElement(POSITION_3F);
-                    // BLOCK.addElement(COLOR_4UB);
-                    // BLOCK.addElement(TEX_2F);
-                    // BLOCK.addElement(TEX_2S);
-
-                    final int x_size = 0;
-                    final int y_size = 0;
-                    final int z_size = 0;
-
-                    // bufferbuilder.pos(-x_size, y_size, -z_size).tex(maxU, maxV).endVertex();
-                    // bufferbuilder.pos(-x_size, y_size, z_size).tex(maxU, minV).endVertex();
-                    // bufferbuilder.pos(x_size, y_size, z_size).tex(minU, minV).endVertex();
-                    // bufferbuilder.pos(x_size, y_size, -z_size).tex(minU, maxV).endVertex();
-
-                    // bufferBuilderIn.pos(-x_size, y_size, -z_size).color(0xff, 0xff, 0xff, 0xff).tex(1, 1).endVertex();
-                    // bufferBuilderIn.pos(-x_size, y_size, z_size).color(0xff, 0xff, 0xff, 0xff).tex(1, 1).endVertex();
-                    // bufferBuilderIn.pos(x_size, y_size, z_size).color(0xff, 0xff, 0xff, 0xff).tex(1, 1).endVertex();
-                    // bufferBuilderIn.pos(x_size, y_size, -z_size).color(0xff, 0xff, 0xff, 0xff).tex(1, 1).endVertex();
-
-                    // state = state.getBlock().getExtendedState(state, blockAccess, pos);
-                    //
-                    // boolean flag = false;
-                    //
-                    // final List<BakedQuad> list1 = model.getQuads(state, facing, 0);
-                    //
-                    // if (!list1.isEmpty())
-                    // {
-                    //
-                    // Method method = null;
-                    // try
-                    // {
-                    // method = ReflectionHelper.findMethod(BlockModelRenderer.class, "renderModelFlat", null, IBlockAccess.class, IBakedModel.class, IBlockState.class,
-                    // BlockPos.class,
-                    // BufferBuilder.class, boolean.class, long.class);
-                    // }
-                    // catch (final Throwable eh)
-                    // {
-                    // }
-                    //
-                    // if (method != null)
-                    // {
-                    // method.invoke(blockRendererDispatcher.getBlockModelRenderer(), blockAccess, model, state, pos, bufferBuilderIn, true, MathHelper.getPositionRandom(pos));
-                    // }
-                    // // this.renderQuadsFlat(blockAccess, state, pos, -1, true, bufferBuilderIn, list1, bitset);
-                    // flag = true;
-                    // }
-                    //
-
-                    blockRendererDispatcher.
-
-                    //
-
-                            getBlockModelRenderer().renderModel(blockAccess, model, state, pos, bufferBuilderIn, true);
-
-                    return true;
+                // return blockRendererDispatcher.getBlockModelRenderer().renderModel(blockAccess, model, state, pos, bufferBuilderIn, true);
 
                 case ENTITYBLOCK_ANIMATED:
                     return false;
@@ -364,24 +306,58 @@ public class RenderChunkEventTest
         }
     }
 
-    private static void renderCube(final BufferBuilder buffer, final IBakedModel model, final IBlockAccess blockAccessIn, final BlockPos posIn, final IBlockState stateIn)
+    public static boolean renderModel(final IBlockAccess blockAccessIn, final IBakedModel modelIn, final IBlockState blockStateIn, final BlockPos blockPosIn, final BufferBuilder buffer, final boolean checkSides, final EnumFacing side)
     {
+        return renderModel(blockAccessIn, modelIn, blockStateIn, blockPosIn, buffer, checkSides, side, MathHelper.getPositionRandom(blockPosIn));
+    }
 
-        final List<BakedQuad> quads = model.getQuads(stateIn, EnumFacing.UP, MathHelper.getPositionRandom(posIn));
+    public static boolean renderModel(final IBlockAccess worldIn, final IBakedModel modelIn, final IBlockState stateIn, final BlockPos posIn, final BufferBuilder buffer, final boolean checkSides, final EnumFacing side, final long rand)
+    {
+        if (checkSides && !stateIn.shouldSideBeRendered(worldIn, posIn, side))
+        {
+            return false;
+        }
+
+        final List<BakedQuad> quads = modelIn.getQuads(stateIn, side, MathHelper.getPositionRandom(posIn));
         if (quads.size() <= 0)
         {
-            return;
+            return false;
         }
         final BakedQuad quad = quads.get(0);
         if (quad == null)
         {
-            return;
+            return false;
         }
         final TextureAtlasSprite sprite = quad.getSprite();
         if (sprite == null)
         {
-            return;
+            return false;
         }
+
+    }
+
+    private static boolean renderCube(final BufferBuilder buffer, final IBakedModel model, final IBlockAccess blockAccessIn, final BlockPos posIn, final IBlockState stateIn)
+    {
+
+        state.shouldSideBeRendered(world, pos, side))
+
+         final List<BakedQuad> quads = model.getQuads(stateIn, EnumFacing.UP, MathHelper.getPositionRandom(posIn));
+         if (quads.size() <= 0)
+         {
+         return;
+         }
+         final BakedQuad quad = quads.get(0);
+         if (quad == null)
+         {
+         return;
+         }
+         final TextureAtlasSprite sprite = quad.getSprite();
+         if (sprite == null)
+         {
+         return;
+         }
+
+        final TextureAtlasSprite sprite = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("minecraft:blocks/lava_flow");
 
         final double posX = posIn.getX();
         final double posY = posIn.getY();
@@ -418,8 +394,6 @@ public class RenderChunkEventTest
         // final int packedLightmapCoords = stateIn.getPackedLightmapCoords(blockAccessIn, posIn);
         // final int packedLightmapCoordsShifted16And65535 = (packedLightmapCoords >> 16) & 65535;
         // final int packedLightmapCoordsAnd65535_________ = packedLightmapCoords & 65535;
-        
-        
 
         final int packedLightmapCoordsShifted16And65535 = 240;
         final int packedLightmapCoordsAnd65535_________ = 0;
@@ -428,24 +402,88 @@ public class RenderChunkEventTest
         final int green = 0xFF;
         final int blue = 0xFF;
         final int alpha = 0xFF;
-        buffer.pos(posX + 0.0D, posY + fluidHeight_________, posZ + 0.0D).color(red, green, blue, alpha).tex(minInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
-        buffer.pos(posX + 0.0D, posY + fluidHeightSouth____, posZ + 1.0D).color(red, green, blue, alpha).tex(minInterpolatedU, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
-        buffer.pos(posX + 1.0D, posY + fluidHeightEastSouth, posZ + 1.0D).color(red, green, blue, alpha).tex(maxInterpolatedU, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
-        buffer.pos(posX + 1.0D, posY + fluidHeightEast_____, posZ + 0.0D).color(red, green, blue, alpha).tex(maxInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
 
-        buffer.pos(posX + 0.0D, posY + fluidHeight_________, posZ + 0.0D).color(red, green, blue, alpha).tex(minInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
-        buffer.pos(posX + 1.0D, posY + fluidHeightEast_____, posZ + 0.0D).color(red, green, blue, alpha).tex(maxInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
-        buffer.pos(posX + 1.0D, posY + fluidHeightEastSouth, posZ + 1.0D).color(red, green, blue, alpha).tex(maxInterpolatedU, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
-        buffer.pos(posX + 0.0D, posY + fluidHeightSouth____, posZ + 1.0D).color(red, green, blue, alpha).tex(minInterpolatedU, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        buffer.pos(posX + 0, posY + 1, posZ + 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 0).lightmap(240, 0).endVertex();
+        buffer.pos(posX + 0, posY + 1, posZ + 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 1).lightmap(240, 0).endVertex();
+        buffer.pos(posX + 1, posY + 1, posZ + 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
+        buffer.pos(posX + 1, posY + 1, posZ + 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();
+
+        final BufferBuilder bufferbuilder = buffer;
+        final double x_size = 1 / 2d;
+        final double y_size = 1 / 2d;
+        final double z_size = 1 / 2d;
+        final double x = posX + x_size;
+        final double y = posY + y_size;
+        final double z = posZ + z_size;
+        final double minU = textureatlassprite.getMinU();
+        final double maxU = textureatlassprite.getMaxU();
+        final double minV = textureatlassprite.getMinV();
+        final double maxV = textureatlassprite.getMaxV();
+        final int lightmap1 = 240;
+        final int lightmap2 = 0;
+
+        // UP
+        bufferbuilder.pos(-x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(-x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+
+        // DOWN
+        bufferbuilder.pos(-x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(-x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
+
+        // LEFT
+        bufferbuilder.pos(x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
+
+        // RIGHT
+        bufferbuilder.pos(-x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(-x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(-x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(-x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+
+        // BACK
+        bufferbuilder.pos(-x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(-x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, -y_size + y, -z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+
+        // FRONT
+        bufferbuilder.pos(x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, minV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(maxU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(-x_size + x, y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, maxV).lightmap(lightmap1, lightmap2).endVertex();
+        bufferbuilder.pos(-x_size + x, -y_size + y, z_size + z).color(red, green, blue, alpha).tex(minU, minV).lightmap(lightmap1, lightmap2).endVertex();
+
+        // buffer.pos(posX + 0.0D, posY + fluidHeight_________, posZ + 0.0D).color(red, green, blue, alpha).tex(minInterpolatedU,
+        // minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        // buffer.pos(posX + 0.0D, posY + fluidHeightSouth____, posZ + 1.0D).color(red, green, blue, alpha).tex(minInterpolatedU,
+        // maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        // buffer.pos(posX + 1.0D, posY + fluidHeightEastSouth, posZ + 1.0D).color(red, green, blue, alpha).tex(maxInterpolatedU,
+        // maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        // buffer.pos(posX + 1.0D, posY + fluidHeightEast_____, posZ + 0.0D).color(red, green, blue, alpha).tex(maxInterpolatedU,
+        // minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        //
+        // buffer.pos(posX + 0.0D, posY + fluidHeight_________, posZ + 0.0D).color(red, green, blue, alpha).tex(minInterpolatedU,
+        // minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        // buffer.pos(posX + 1.0D, posY + fluidHeightEast_____, posZ + 0.0D).color(red, green, blue, alpha).tex(maxInterpolatedU,
+        // minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        // buffer.pos(posX + 1.0D, posY + fluidHeightEastSouth, posZ + 1.0D).color(red, green, blue, alpha).tex(maxInterpolatedU,
+        // maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        // buffer.pos(posX + 0.0D, posY + fluidHeightSouth____, posZ + 1.0D).color(red, green, blue, alpha).tex(minInterpolatedU,
+        // maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
 
     }
 
     // debug quad
-    /*VertexBuffer.pos(0, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 0).lightmap(240, 0).endVertex();
-    VertexBuffer.pos(0, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 1).lightmap(240, 0).endVertex();
-    VertexBuffer.pos(1, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
-    VertexBuffer.pos(1, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();*/
-    
+    // VertexBuffer.pos(0, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 0).lightmap(240, 0).endVertex();
+    // VertexBuffer.pos(0, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 1).lightmap(240, 0).endVertex();
+    // VertexBuffer.pos(1, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
+    // VertexBuffer.pos(1, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();
+
     public boolean renderFluid(final IBlockAccess blockAccess, final IBlockState blockStateIn, final BlockPos blockPosIn, final BufferBuilder bufferBuilderIn)
     {
 
