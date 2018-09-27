@@ -1,6 +1,5 @@
 package net.minecraftforge.registries;
 
-import com.google.common.collect.*;
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -24,10 +23,14 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+/**
+ * @implNote All Methods except {@link #getOrCreate(ResourceLocation)} return TagWrappers (created by this TagProviders wrapper Factory).
+ * This means you can safely cache all tags you request, but modification might not be possible.
+ * @param <T> The Type of RegistryEntry this TagProvider is responsible for
+ */
 public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceManagerReloadListener/*implements INBTSerializable<NBTTagCompound>*/ {  //doesn't implement NBTSerializable, as it isn't really meant to be saved to Disc
     private static final Logger LOGGER = LogManager.getLogger();
     public static final String TAG_FOLDER = "tags/";
@@ -35,17 +38,19 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     private ForgeRegistry<T> reg;
     private ForgeTagCollection<T> tags;
     private ResourceLocation regName;
-    private BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory;
+    private final BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory;
 
     TagProvider(@Nullable ForgeRegistry<T> reg, @Nullable BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, ResourceLocation regName)
     {
         this.regName = Objects.requireNonNull(regName);
         setReg(reg);
-        this.wrapperFactory = wrapperFactory;
-        if (this.wrapperFactory == null)
+        if (wrapperFactory == null)
         {
             LOGGER.warn("No Wrapper Factory specified for this TagProvider. Using default ForgeTagWrapper implementation!");
             this.wrapperFactory = UnmodifiableTagWrapper::new;
+        }
+        else {
+            this.wrapperFactory = wrapperFactory;
         }
     }
 
@@ -63,7 +68,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     {
         this.reg = reg;
         if (reg != null)
-            tags = new ForgeTagCollection<>(reg::containsKey, reg::getValue, regName.toString(), regName);
+            tags = new ForgeTagCollection<>(reg::containsKey, reg::getValue, wrapperFactory,regName.toString(), regName);
     }
 
     @Override
@@ -86,38 +91,12 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
 
     void onReadVanillaPacket(PacketBuffer buf)
     {
-        clear();
-        int i = buf.readVarInt();
-
-        for (int j = 0; j < i; ++j)
-        {
-            ResourceLocation resourcelocation = buf.readResourceLocation();
-            int k = buf.readVarInt();
-            List<T> list = Lists.newArrayList();
-
-            for (int l = 0; l < k; ++l)
-            {
-                list.add(this.reg.getValue(buf.readVarInt()));
-            }
-
-            tags.register(Tag.Builder.<T>create().addAll(list).build(resourcelocation));
-        }
+        tags.read(buf);
     }
 
     void onWriteVanillaPacket(PacketBuffer buf)
     {
-        buf.writeVarInt(tags.getTagMap().size());
-
-        for (Entry<ResourceLocation, Tag<T>> entry : this.tags.getTagMap().entrySet())
-        {
-            buf.writeResourceLocation(entry.getKey());
-            buf.writeVarInt(((Tag) entry.getValue()).getAllElements().size());
-
-            for (T t : (entry.getValue()).getAllElements())
-            {
-                buf.writeVarInt(this.reg.getID(t));
-            }
-        }
+        tags.write(buf);
     }
 
     private ResourceLocation getRegName()
@@ -183,6 +162,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     public void deserializeNBT(@Nonnull NBTTagCompound compound)
     { //this should never be used to try to persist tags
         clear();
+        regName = new ResourceLocation(compound.getString("name"));
         NBTTagList list = (NBTTagList) compound.getTag("data");
         for (INBTBase nbtPair : list)
         {
@@ -195,7 +175,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
             //like Vanilla, we assume that only completely resolved tags are synced
             tags.register(deserializeTagEntries(entryCompound.getTag("V")).build(new ResourceLocation(entryCompound.getString("K"))));
         }
-        regName = new ResourceLocation(compound.getString("name"));
+        tags.updateOwningTags();
     }
 
     private Tag.Builder<T> deserializeTagEntries(@Nonnull INBTBase nbt)
@@ -247,45 +227,105 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     /**
-     * @param id The Tag id to retrieve
-     * @return
+     * @param id The Tag id for which to retrieve Tags for
+     * @return All Tags on the object represented by id, sorted by their ID'S
      */
-    public List<Tag<T>> getOwningTags(ResourceLocation id)
+    public SortedSet<Tag<T>> getOwningTags(ResourceLocation id)
     {
-        return getOwningTags(reg.getValue(id));
+        return tags.getOwningTagObjects(id);
     }
 
-    public List<Tag<T>> getOwningTags(T thing)
+    /**
+     *
+     * @param thing The thing for which to retrieve Tags for
+     * @return All Tags on thing, sorted by their ID'S
+     */
+    public SortedSet<Tag<T>> getOwningTags(T thing)
     {
-        return tags.getOwningTagObjects(thing);
+        if (thing.getRegistryName() == null) return Collections.emptySortedSet();
+        return getOwningTags(thing.getRegistryName());
     }
 
+    /**
+     *
+     * @param predicate Predicate to test
+     * @return All Tags matching the given Predicate in undefined ordering
+     */
     public List<Tag<T>> getMatchingTags(Predicate<Tag<T>> predicate)
     {
         return tags.getMatchingTags(predicate);
     }
 
+    /**
+     *
+     * @param predicate Predicate to test
+     * @return Whether there is any Tag which matches the given Predicate or not
+     */
     public boolean matchesTag(Predicate<Tag<T>> predicate)
     {
         return tags.tagMatch(predicate);
     }
 
-    public Collection<ResourceLocation> getOwningTagIDs(ResourceLocation id)
+    /**
+     *
+     * @param id The item to test
+     * @param predicate the Predicate to use
+     * @return All tags on the item matching the Predicate, sorted by their ID'S
+     */
+    public SortedSet<Tag<T>> getMatchingTagsOnItem(ResourceLocation id, Predicate<Tag<T>> predicate)
     {
-        return getOwningTagIDs(reg.getValue(id));
+        return tags.getMatchingTagsForItem(id,predicate);
     }
 
-    public Collection<ResourceLocation> getOwningTagIDs(T thing)
+    /**
+     *
+     * @param id The item to test
+     * @param predicate the Predicate to use
+     * @return whether any tag on the Item represented by id matches the Predicate or not
+     */
+    public boolean matchesTagOnItem(ResourceLocation id, Predicate<Tag<T>> predicate)
+    {
+        return tags.tagMatchForItem(id,predicate);
+    }
+
+    /**
+     *
+     * @implNote because the Tags have to be mapped to ResourceLocations first, slightly less performant than {@link #getOwningTags(ResourceLocation)} (more of a vanilla compat...)
+     * @param id The id of an RegistryEntry for which to request TagID's for
+     * @return The id's of all Tags which contain this RegistryEntry, sorted by their ID'S
+     */
+    public SortedSet<ResourceLocation> getOwningTagIDs(ResourceLocation id)
+    {
+        return tags.getOwningTags(id);
+    }
+
+    /**
+     *
+     * @implNote because the Tags have to be mapped to ResourceLocations first, slightly less performant than {@link #getOwningTags(IForgeRegistryEntry)} (more of a vanilla compat...)
+     * @param thing An RegistryEntry for which to request TagID's for
+     * @return The id's of all Tags which contain this RegistryEntry, sorted by their ID'S
+     */
+    public SortedSet<ResourceLocation> getOwningTagIDs(T thing)
     {
         return tags.getOwningTags(thing);
     }
 
+    /**
+     * @implNote Notice, that this is the only method which does not return a Wrapper Tag, which could safely be cached!
+     * @param location The location for which to retrieve the Tag
+     * @return the underlying tag
+     */
     @Nonnull
     public Tag<T> getOrCreate(ResourceLocation location)
     {
         return tags.getOrCreate(location);
     }
 
+    /**
+     *
+     * @param location The tag to retrieve
+     * @return A lazily initialized TagWrapper
+     */
     public Tag<T> createWrapper(ResourceLocation location)
     {
         return wrapperFactory.apply(location, reg);

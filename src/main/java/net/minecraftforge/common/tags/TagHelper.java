@@ -1,5 +1,6 @@
 package net.minecraftforge.common.tags;
 
+import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.Tag.ITagEntry;
@@ -14,6 +15,7 @@ import net.minecraftforge.registries.TagProvider;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +24,11 @@ public class TagHelper {
     public static <T extends IForgeRegistryEntry<T>> Ordering<T> registryNameComparator()
     {
         return Ordering.natural().nullsFirst().onResultOf(entry -> entry != null ? entry.getRegistryName() : null);
+    }
+
+    public static Ordering<Tag<?>> tagComparator()
+    {
+        return Ordering.natural().onResultOf((Function<Tag<?>, ResourceLocation>) input -> input!=null ?input.getId():null).<Tag<?>>nullsFirst();
     }
 
     public static <T extends IForgeRegistryEntry<T>> Ordering<Tag.TagEntry<T>> tagEntryComparator()
@@ -34,9 +41,9 @@ public class TagHelper {
      *
      * @param entries The Entries to sort
      * @param <T>     The type of the entries
-     * @return A sorted Set which contains all {@link Tag.TagEntry} that were in entries, whilst all other Entries are flattened out with {{@link #singletonEntry(Object)}}
+     * @return Whatever the collector wants to have...
      */
-    public static <T extends IForgeRegistryEntry<T>> Set<ITagEntry<T>> sortTagEntries(Collection<ITagEntry<T>> entries)
+    public static <T extends IForgeRegistryEntry<T>, R> R sortTagEntries(Collection<ITagEntry<T>> entries, Collector<? super Tag.ITagEntry<T>,?,R> collector)
     {
         return entries.stream().flatMap(tagentry ->
         {
@@ -50,7 +57,19 @@ public class TagHelper {
                 return list.stream().filter(entry -> entry.getRegistryName() != null).map(entry -> new Tuple<>(singletonEntry(entry), entry.getRegistryName()));
             }
             return Stream.of();
-        }).sorted(Ordering.natural().onResultOf(Tuple::getB)).map(Tuple::getA).collect(Collectors.toCollection(LinkedHashSet::new));
+        }).sorted(Ordering.natural().onResultOf(Tuple::getB)).map(Tuple::getA).collect(collector);
+    }
+
+    /**
+     * Sorts the entry Collection by there Registry names. Notice that {@link Tag.TagEntry#getSerializedId()} will be used for comparisons with the flattened out Elements of all other Entries.
+     *
+     * @param entries The Entries to sort
+     * @param <T>     The type of the entries
+     * @return A sorted Set which contains all {@link Tag.TagEntry} that were in entries, whilst all other Entries are flattened out with {{@link #singletonEntry(Object)}}
+     */
+    public static <T extends IForgeRegistryEntry<T>> Set<ITagEntry<T>> sortTagEntries(Collection<ITagEntry<T>> entries)
+    {
+        return sortTagEntries(entries,Collectors.toCollection(LinkedHashSet::new));
     }
 
     public static <T> Tag.ListEntry<T> singletonEntry(T object)
@@ -110,10 +129,22 @@ public class TagHelper {
         return registry.getTagProvider().getMatchingTags(predicate);
     }
 
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> getTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
+    {
+        if (!registry.supportsTagging()) return Collections.emptySortedSet();
+        return registry.getTagProvider().getMatchingTagsOnItem(id,predicate);
+    }
+
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsMatchingPredicate(IForgeRegistry<T> registry, Predicate<Tag<T>> predicate)
     {
         if (!registry.supportsTagging()) return false;
         return registry.getTagProvider().matchesTag(predicate);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
+    {
+        if (!registry.supportsTagging()) return false;
+        return registry.getTagProvider().matchesTagOnItem(id,predicate);
     }
 
     public static <V> Predicate<Tag<V>> containsObjectPredicate(V object)
@@ -146,23 +177,23 @@ public class TagHelper {
         return tag -> tag.getId().getNamespace().equals(modId);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsWithExactPath(IForgeRegistry<T> registry, T object, String path)
+    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> tagsWithExactPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathEqualsPredicate(path).test(t));
+        return getTagsMatchingPredicate(registry, t -> (containsObjectPredicate(object).test(t) && pathEqualsPredicate(path).test(t)));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsContainingPath(IForgeRegistry<T> registry, T object, String path)
+    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> tagsContainingPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathContainsPredicate(path).test(t));
+        return getTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathContainsPredicate(path).test(t));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsStartingWithPath(IForgeRegistry<T> registry, T object, String path)
+    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> tagsStartingWithPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathStartsWithPredicate(path).test(t));
+        return getTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathStartsWithPredicate(path).test(t));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsFromMod(IForgeRegistry<T> registry, T object, String modId)
+    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> tagsFromMod(IForgeRegistry<T> registry, T object, String modId)
     {
-        return anyTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && byModPredicate(modId).test(t));
+        return getTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && byModPredicate(modId).test(t));
     }
 }

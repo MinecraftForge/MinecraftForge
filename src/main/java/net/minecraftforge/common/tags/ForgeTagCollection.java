@@ -1,6 +1,7 @@
 package net.minecraftforge.common.tags;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -11,8 +12,7 @@ import net.minecraft.tags.NetworkTagCollection;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistryEntry;
-import net.minecraftforge.registries.TagProvider;
+import net.minecraftforge.registries.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,27 +21,38 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends NetworkTagCollection<T> {
+public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends NetworkTagCollection<T> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
     private static final int JSON_EXTENSION_LENGTH = ".json".length();
 
     private final ResourceLocation regName;
+    //with possibly large amounts of Tags iterating over these all the time will be costly
+    //therefore cache them, so that using these every tick, doesn't hurt so much
+    private Map<ResourceLocation,SortedSet<Tag<T>>> owningTags;
+    private BiFunction<ResourceLocation, ResourceLocation, ? extends Tag<T>> wrapperFactory;
 
-    private ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, String resourceLocationPrefixIn, boolean preserveOrderIn, ResourceLocation registryId)
+    private ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory,String resourceLocationPrefixIn, boolean preserveOrderIn, ResourceLocation registryId)
     {
         super(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, preserveOrderIn, registryId.toString());
         regName = registryId;
+        setWrapperFactory(wrapperFactory);
+        owningTags = new HashMap<>();
     }
 
-    public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, String resourceLocationPrefixIn, ResourceLocation registryId)
+    public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, String resourceLocationPrefixIn, ResourceLocation registryId)
     {
-        this(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, true, registryId);
+        this(isValueKnownPredicateIn, resourceLocationToItemIn, wrapperFactory, resourceLocationPrefixIn,true, registryId);
+    }
+
+    private void setWrapperFactory(BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory) {
+        this.wrapperFactory = (BiFunction<ResourceLocation, ResourceLocation, Tag<T>>) (location, location2) -> wrapperFactory.apply(location,Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(location)));
     }
 
     @Override
@@ -50,35 +61,94 @@ public class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends Networ
         Map<ResourceLocation, Tag.Builder<T>> map = deserializeTags(getLoadingParameters(resourceManager), resourceManager);
         collectToMinecraftTags(map);
         registerUnbuildTags(map);
+        updateOwningTags();
     }
 
     @Override
-    public void write(PacketBuffer buf)
+    public SortedSet<ResourceLocation> getOwningTags(T itemIn)
     {
-        throw new AssertionError("Network write access to the ForgeTagCollection should be routed through the TagProvider! Failed to write to PacketBuffer!");
+        if (itemIn.getRegistryName() == null) return Collections.emptySortedSet();
+        return getOwningTags(itemIn.getRegistryName());
     }
 
-    @Override
-    public void read(PacketBuffer buf)
+    public SortedSet<ResourceLocation> getOwningTags(ResourceLocation id)
     {
-        throw new AssertionError("Network write access to the ForgeTagCollection should be routed through the TagProvider! Failed to read from PacketBuffer!");
+        return owningTags.getOrDefault(id,Collections.emptySortedSet()).stream().map(Tag::getId).collect(Collectors.toCollection(TreeSet::new));
     }
 
-    public List<Tag<T>> getOwningTagObjects(final T thing)
+    public SortedSet<Tag<T>> getOwningTagObjects(ResourceLocation id)
     {
-        //with possibly large amounts of forge tags, consider a reverse Mapping of T->List<Tag<T>>? (Multimap)
-        //especially if they might be used to control gameplay related stuff?
-        return getMatchingTags(tag -> tag.contains(thing));
+        return Collections.unmodifiableSortedSet(owningTags.getOrDefault(id,Collections.emptySortedSet()));
+    }
+
+    public SortedSet<Tag<T>> getMatchingTagsForItem(ResourceLocation id, Predicate<Tag<T>> predicate)
+    {
+        return getOwningTagObjects(id).stream().filter(predicate).collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    public boolean tagMatchForItem(ResourceLocation id, Predicate<Tag<T>> tagPredicate)
+    {
+        return getOwningTagObjects(id).stream().anyMatch(tagPredicate);
     }
 
     public List<Tag<T>> getMatchingTags(Predicate<Tag<T>> predicate)
     {
-        return getTagMap().values().stream().filter(predicate).collect(Collectors.toList());
+        return getTagMap().values().stream().filter(predicate).map((tag) -> new UnmodifiableTagWrapper<>(tag,regName)).collect(Collectors.toList());
     }
 
     public boolean tagMatch(Predicate<Tag<T>> tagPredicate)
     {
         return getTagMap().values().stream().anyMatch(tagPredicate);
+    }
+
+    @Override
+    public void write(PacketBuffer buf)
+    {
+        ForgeRegistry<T> reg = Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(Objects.requireNonNull(regName,"Cannot write without Registry data, which requires an identifier")),"Cannot write without Registry data.");
+
+        buf.writeVarInt(getTagMap().size());
+
+        for (Map.Entry<ResourceLocation, Tag<T>> entry : this.getTagMap().entrySet())
+        {
+            buf.writeResourceLocation(entry.getKey());
+            buf.writeVarInt(((Tag) entry.getValue()).getAllElements().size());
+
+            for (T t : (entry.getValue()).getAllElements())
+            {
+                buf.writeVarInt(reg.getID(t));
+            }
+        }
+    }
+
+    @Override
+    public void read(PacketBuffer buf)
+    {
+        ForgeRegistry<T> reg = Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(Objects.requireNonNull(regName,"Cannot write without Registry data, which requires an identifier")),"Cannot write without Registry data.");
+
+        clear();
+        int i = buf.readVarInt();
+
+        for (int j = 0; j < i; ++j)
+        {
+            ResourceLocation resourcelocation = buf.readResourceLocation();
+            int k = buf.readVarInt();
+            List<T> list = Lists.newArrayList();
+
+            for (int l = 0; l < k; ++l)
+            {
+                list.add(reg.getValue(buf.readVarInt()));
+            }
+
+            register(Tag.Builder.<T>create().addAll(list).build(resourcelocation));
+        }
+
+        updateOwningTags();
+    }
+
+    @Override
+    public Map<ResourceLocation, Tag<T>> getTagMap()
+    {
+        return Collections.unmodifiableMap(super.getTagMap());
     }
 
     private ImmutableList<String> getLocationPrefixes()
@@ -185,6 +255,26 @@ public class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends Networ
         for (Map.Entry<ResourceLocation, Tag.Builder<T>> entry : map.entrySet())
         {  //so why register tags that are invalid?!?
             this.register((entry.getValue()).ordered(this.preserveOrder).build(entry.getKey()));
+        }
+    }
+
+    public void updateOwningTags()
+    {
+        owningTags.clear();
+        for (Map.Entry<ResourceLocation,Tag<T>> entry:getTagMap().entrySet())
+        {
+            Tag<T> tag = entry.getValue();
+            for (T element:tag.getAllElements())
+            {
+                if (element == null) continue;
+                if (element.getRegistryName() == null) {
+                    LOGGER.warn("Could not update Tag Data for {} (Element of type {}) because RegistryName wasn't set. Failed to add to owningTagCache.",element,element.getClass());
+                    continue;
+                }
+                SortedSet<Tag<T>> set = owningTags.getOrDefault(element.getRegistryName(),new TreeSet<>(TagHelper.tagComparator()));
+                set.add(wrapperFactory.apply(tag.getId(),regName)); //use Wrappers, so that Wrappers are returned
+                owningTags.put(element.getRegistryName(),set);
+            }
         }
     }
 

@@ -9,13 +9,14 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.Function;
 
-public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
-    private final IForgeRegistry<T> reg;
+public class ForgeTagWrapper<V extends IForgeRegistryEntry<V>> extends Tag<V> {
+    private final IForgeRegistry<V> reg;
     private int lastGeneration;
-    private Tag<T> cachedTag;
-
-    public ForgeTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<T> registry)
+    private Tag<V> cachedTag;
+    private Function<Tag<V>,? extends Tag<V>> tagTransformer;
+    public ForgeTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<V> registry, @Nullable Function<Tag<V>,? extends Tag<V>> tagTransformer)
     {
         super(resourceLocationIn);
         reg = Objects.requireNonNull(registry);
@@ -25,9 +26,15 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
         }
         lastGeneration = -1;
         cachedTag = null;
+        this.tagTransformer = tagTransformer!= null ? tagTransformer:Function.identity();
     }
 
-    protected IForgeRegistry<T> getRegistry()
+    public ForgeTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<V> registry)
+    {
+        this(resourceLocationIn,registry,null);
+    }
+
+    protected IForgeRegistry<V> getRegistry()
     {
         return reg;
     }
@@ -38,7 +45,7 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
     }
 
     @Nullable
-    protected Tag<T> getCachedTag()
+    protected Tag<V> getCachedTag()
     {
         return cachedTag;
     }
@@ -48,13 +55,27 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
         this.lastGeneration = lastGeneration;
     }
 
-    protected void setCachedTag(Tag<T> cachedTag)
+    protected void setCachedTag(Tag<V> cachedTag)
     {
         this.cachedTag = cachedTag;
     }
 
+    protected void setCachedTagTransformed(Tag<V> cachedTag)
+    {
+        setCachedTag(applyTransformer(cachedTag));
+    }
+
+    protected Tag<V> applyTransformer(Tag<V> tag) {
+        return tagTransformer.apply(tag);
+    }
+
+    protected void setTagTransformer(Function<Tag<V>, ? extends Tag<V>> tagTransformer)
+    {
+        this.tagTransformer = tagTransformer;
+    }
+
     @Override
-    public Collection<T> getAllElements()
+    public Collection<V> getAllElements()
     {
         updateTag();
         assert getCachedTag() != null;
@@ -62,7 +83,7 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
     }
 
     @Override
-    public Collection<ITagEntry<T>> getEntries()
+    public Collection<ITagEntry<V>> getEntries()
     {
         updateTag();
         assert getCachedTag() != null;
@@ -71,7 +92,7 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
 
     /* Tag patch makes this call getAllElements - no need to override it
     @Override
-    public boolean contains(T itemIn)
+    public boolean contains(V itemIn)
     {
         updateTag();
         assert getCachedTag()!=null;
@@ -80,7 +101,7 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
 
     /* Tag patch makes this call getEntries - no need to override it
     @Override
-    public JsonObject serialize(Function<T, ResourceLocation> getNameForObject)
+    public JsonObject serialize(Function<V, ResourceLocation> getNameForObject)
     {
         updateTag();
         assert getCachedTag()!=null;
@@ -89,7 +110,7 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
 
     /* Because super implementation calls getAllElements() there is no need to override it (left here for documentation)
     @Override
-    public T getRandomElement(Random random)
+    public V getRandomElement(Random random)
     {
         updateTag();
         assert getCachedTag()!=null;
@@ -101,7 +122,7 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
         if (getCachedTag() == null || ForgeTagManager.getGeneration() != getLastGeneration())
         {
             assert getRegistry().supportsTagging(); //should not have changed, since it was constructed
-            setCachedTag(getRegistry().getTagProvider().getOrCreate(getId()));
+            setCachedTagTransformed(getRegistry().getTagProvider().getOrCreate(getId()));
         }
     }
 }
