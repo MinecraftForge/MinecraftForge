@@ -67,7 +67,7 @@ public final class Tags {
 
         private static Tag<Block> tag(String name)
         {
-            return new BlockTags.Wrapper(new ResourceLocation("forge", name));
+            return new BlockTags.Wrapper(new ResourceLocation("minecraft", name));
         }
 
         private Blocks()
@@ -147,7 +147,7 @@ public final class Tags {
 
         private static Tag<Item> tag(String name)
         {
-            return new ItemTags.Wrapper(new ResourceLocation("forge", name));
+            return new ItemTags.Wrapper(new ResourceLocation("minecraft", name));
         }
 
         private Items()
@@ -194,7 +194,7 @@ public final class Tags {
 
         private static Tag<EntityType<?>> tag(String name)
         {
-            return new UnmodifiableTagWrapper<>(new ResourceLocation("forge", name), ForgeRegistries.ENTITIES);
+            return new UnmodifiableTagWrapper<>(new ResourceLocation("minecraft", name), ForgeRegistries.ENTITIES);
         }
 
         private Entities()
@@ -207,7 +207,7 @@ public final class Tags {
 
         private static Tag<TileEntityType<?>> tag(String name)
         {
-            return new UnmodifiableTagWrapper<>(new ResourceLocation("forge", name), ForgeRegistries.TILE_ENTITIES);
+            return new UnmodifiableTagWrapper<>(new ResourceLocation("minecraft", name), ForgeRegistries.TILE_ENTITIES);
         }
 
         private TileEntities()

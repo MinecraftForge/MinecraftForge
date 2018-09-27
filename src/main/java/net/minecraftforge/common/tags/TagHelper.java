@@ -104,52 +104,76 @@ public class TagHelper {
         return null;
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Collection<ResourceLocation> getTagIDsFor(IForgeRegistry<T> registry, ResourceLocation object)
+    public static <T extends IForgeRegistryEntry<T>> boolean isTagPresent(IForgeRegistry<T> registry, ResourceLocation object, ResourceLocation id)
     {
-        if (!registry.supportsTagging()) return Collections.emptyList();
+        if (!registry.supportsTagging()) return false;
+        T obj = registry.getValue(object);
+        return obj != null && registry.getTagProvider().getOrCreate(id).contains(obj);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> boolean isTagPresent(IForgeRegistry<T> registry, T object, ResourceLocation id)
+    {
+        if (!registry.supportsTagging()) return false;
+        return registry.getTagProvider().getOrCreate(id).contains(object);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> boolean isTagPresent(IForgeRegistry<T> registry, ResourceLocation object, Tag<T> tag)
+    {
+        T obj = registry.getValue(object);
+        return obj != null && tag.contains(obj);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> boolean isTagPresent(T object, Tag<T> tag)
+    {
+        return tag.contains(object);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<ResourceLocation> getTagIDsFor(IForgeRegistry<T> registry, ResourceLocation object)
+    {
+        if (!registry.supportsTagging()) return Collections.emptySortedSet();
         return registry.getTagProvider().getOwningTagIDs(object);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Collection<ResourceLocation> getTagIDsFor(IForgeRegistry<T> registry, T object)
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<ResourceLocation> getTagIDsFor(IForgeRegistry<T> registry, T object)
     {
-        if (!registry.supportsTagging()) return Collections.emptyList();
+        if (!registry.supportsTagging()) return Collections.emptySortedSet();
         return registry.getTagProvider().getOwningTagIDs(object);
     }
 
     public static <T extends IForgeRegistryEntry<T>> Collection<T> getTaggedObjects(IForgeRegistry<T> registry, ResourceLocation tagId)
     {
-        if (!registry.supportsTagging()) return Collections.emptyList();
+        if (!registry.supportsTagging()) return Collections.emptySortedSet();
         return registry.getTagProvider().getOrCreate(tagId).getAllElements();
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Collection<Tag<T>> getTagsFor(IForgeRegistry<T> registry, ResourceLocation object)
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> getTagsFor(IForgeRegistry<T> registry, ResourceLocation object)
     {
-        if (!registry.supportsTagging()) return Collections.emptyList();
+        if (!registry.supportsTagging()) return Collections.emptySortedSet();
         return registry.getTagProvider().getOwningTags(object);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Collection<Tag<T>> getTagsFor(IForgeRegistry<T> registry, T object)
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> getTagsFor(IForgeRegistry<T> registry, T object)
     {
-        if (!registry.supportsTagging()) return Collections.emptyList();
+        if (!registry.supportsTagging()) return Collections.emptySortedSet();
         return registry.getTagProvider().getOwningTags(object);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> getTagsMatchingPredicate(IForgeRegistry<T> registry, Predicate<Tag<T>> predicate)
+    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> getTagsMatching(IForgeRegistry<T> registry, Predicate<Tag<T>> predicate)
     {
         if (!registry.supportsTagging()) return Collections.emptyList();
         return registry.getTagProvider().getMatchingTags(predicate);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> getTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
-    {
-        if (!registry.supportsTagging()) return Collections.emptySortedSet();
-        return registry.getTagProvider().getMatchingTagsOnItem(id, predicate);
-    }
-
-    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsMatchingPredicate(IForgeRegistry<T> registry, Predicate<Tag<T>> predicate)
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsMatching(IForgeRegistry<T> registry, Predicate<Tag<T>> predicate)
     {
         if (!registry.supportsTagging()) return false;
         return registry.getTagProvider().matchesTag(predicate);
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> getTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
+    {
+        if (!registry.supportsTagging()) return Collections.emptySortedSet();
+        return registry.getTagProvider().getMatchingTagsOnItem(id,predicate);
     }
 
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
@@ -163,48 +187,73 @@ public class TagHelper {
         return tag -> tag.contains(object);
     }
 
-    public static Predicate<Tag<?>> pathEqualsPredicate(String path)
+    public static <T> Predicate<Tag<T>> idEqualsPredicate(ResourceLocation id)
+    {
+        return tag -> tag.getId().equals(id);
+    }
+
+    public static <T> Predicate<Tag<T>> pathEqualsPredicate(String path)
     {
         return tag -> tag.getId().getPath().equals(path);
     }
 
-    public static Predicate<Tag<?>> pathContainsPredicate(String path)
+    public static <T> Predicate<Tag<T>> pathContainsPredicate(String path)
     {
         return tag -> tag.getId().getPath().contains(path);
     }
 
-    public static Predicate<Tag<?>> pathMatchesPattern(String pattern)
+    public static <T> Predicate<Tag<T>> pathMatchesPattern(String pattern)
     {
         return tag -> tag.getId().getPath().matches(pattern);
     }
 
-    public static Predicate<Tag<?>> pathStartsWithPredicate(String s)
+    public static <T> Predicate<Tag<T>> pathStartsWithPredicate(String s)
     {
         return tag -> tag.getId().getPath().startsWith(s);
     }
 
-    public static Predicate<Tag<?>> byModPredicate(String modId)
+    public static <T> Predicate<Tag<T>> byModPredicate(String modId)
     {
         return tag -> tag.getId().getNamespace().equals(modId);
     }
 
-    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> tagsWithExactPath(IForgeRegistry<T> registry, T object, String path)
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> tagsWithExactPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return getTagsMatchingPredicate(registry, t -> (containsObjectPredicate(object).test(t) && pathEqualsPredicate(path).test(t)));
+        return getTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathEqualsPredicate(path));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> tagsContainingPath(IForgeRegistry<T> registry, T object, String path)
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> tagsContainingPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return getTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathContainsPredicate(path).test(t));
+        return getTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathContainsPredicate(path));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> tagsStartingWithPath(IForgeRegistry<T> registry, T object, String path)
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> tagsStartingWithPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return getTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && pathStartsWithPredicate(path).test(t));
+        return getTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathStartsWithPredicate(path));
     }
 
-    public static <T extends IForgeRegistryEntry<T>> List<Tag<T>> tagsFromMod(IForgeRegistry<T> registry, T object, String modId)
+    public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> tagsFromMod(IForgeRegistry<T> registry, T object, String modId)
     {
-        return getTagsMatchingPredicate(registry, t -> containsObjectPredicate(object).test(t) && byModPredicate(modId).test(t));
+        return getTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),byModPredicate(modId));
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsWithExactPath(IForgeRegistry<T> registry, T object, String path)
+    {
+        return anyTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathEqualsPredicate(path));
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsContainingPath(IForgeRegistry<T> registry, T object, String path)
+    {
+        return anyTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathContainsPredicate(path));
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsStartingWithPath(IForgeRegistry<T> registry, T object, String path)
+    {
+        return anyTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathStartsWithPredicate(path));
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> boolean anyTagsFromMod(IForgeRegistry<T> registry, T object, String modId)
+    {
+        return anyTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),byModPredicate(modId));
     }
 }
