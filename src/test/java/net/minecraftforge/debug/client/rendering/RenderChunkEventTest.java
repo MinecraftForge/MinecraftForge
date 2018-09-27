@@ -51,14 +51,15 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class RenderChunkEventTest
 {
 
-    static final String MODID = "rebuild_chunk_blocks_event_test";
+    public static final String MODID = "rebuild_chunk_blocks_event_test";
+    private static final boolean ENABLED = true;
 
-    static enum RebuildOptions
+    private static enum RebuildOptions
     {
         VANILLA, VANILLA_MODDED, FRAGMENTED, FACING, MARCHING_CUBES;
     }
 
-    static RebuildOptions[] rebuildOptions = new RebuildOptions[RebuildOptions.values().length];
+    private static RebuildOptions[] rebuildOptions = new RebuildOptions[RebuildOptions.values().length];
 
     private static EnumFacing[] fragmentFacings = new EnumFacing[] {
             EnumFacing.DOWN,
@@ -78,6 +79,11 @@ public class RenderChunkEventTest
     @SubscribeEvent
     public static void rebuildChunkSetup(final RebuildChunkBlocksEvent event)
     {
+        if (!ENABLED)
+        {
+            return;
+        }
+
         rebuildOptions = new RebuildOptions[] { RebuildOptions.FACING };
 
         fragmentFacings = new EnumFacing[] {
@@ -105,6 +111,11 @@ public class RenderChunkEventTest
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public static void cancelVanillaRebuildChunkIfNecessary(final RebuildChunkBlocksEvent event)
     {
+        if (!ENABLED)
+        {
+            return;
+        }
+
         if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.VANILLA))
         {
             event.setCanceled(true);
@@ -114,6 +125,11 @@ public class RenderChunkEventTest
     @SubscribeEvent
     public static void rebuildChunkVanillaModded(final RebuildChunkBlocksEvent event)
     {
+        if (!ENABLED)
+        {
+            return;
+        }
+
         if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.VANILLA_MODDED))
         {
             return;
@@ -149,6 +165,11 @@ public class RenderChunkEventTest
     @SubscribeEvent
     public static void rebuildChunkFragmented(final RebuildChunkBlocksEvent event)
     {
+        if (!ENABLED)
+        {
+            return;
+        }
+
         if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.FRAGMENTED))
         {
             return;
@@ -192,6 +213,11 @@ public class RenderChunkEventTest
     @SubscribeEvent
     public static void rebuildChunkFacing(final RebuildChunkBlocksEvent event)
     {
+        if (!ENABLED)
+        {
+            return;
+        }
+
         if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.FACING))
         {
             return;
@@ -230,6 +256,11 @@ public class RenderChunkEventTest
     @SubscribeEvent
     public static void rebuildChunkMarchingCubes(final RebuildChunkBlocksEvent event)
     {
+        if (!ENABLED)
+        {
+            return;
+        }
+
         if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.MARCHING_CUBES))
         {
             return;
@@ -262,7 +293,7 @@ public class RenderChunkEventTest
         }
     }
 
-    public static boolean renderBlockEnumFacing(IBlockState state, final BlockPos pos, final IBlockAccess blockAccess, final BufferBuilder bufferBuilderIn, final BlockRendererDispatcher blockRendererDispatcher, final EnumFacing side)
+    private static boolean renderBlockEnumFacing(IBlockState state, final BlockPos pos, final IBlockAccess blockAccess, final BufferBuilder bufferBuilderIn, final BlockRendererDispatcher blockRendererDispatcher, final EnumFacing side)
     {
 
         try
@@ -310,12 +341,12 @@ public class RenderChunkEventTest
         }
     }
 
-    public static boolean renderModel(final IBlockAccess blockAccessIn, final IBakedModel modelIn, final IBlockState blockStateIn, final BlockPos blockPosIn, final BufferBuilder buffer, final boolean checkSides, final EnumFacing side)
+    private static boolean renderModel(final IBlockAccess blockAccessIn, final IBakedModel modelIn, final IBlockState blockStateIn, final BlockPos blockPosIn, final BufferBuilder buffer, final boolean checkSides, final EnumFacing side)
     {
         return renderModel(blockAccessIn, modelIn, blockStateIn, blockPosIn, buffer, checkSides, side, MathHelper.getPositionRandom(blockPosIn));
     }
 
-    public static boolean renderModel(final IBlockAccess worldIn, final IBakedModel modelIn, final IBlockState stateIn, final BlockPos posIn, final BufferBuilder buffer, final boolean checkSides, final EnumFacing side, final long rand)
+    private static boolean renderModel(final IBlockAccess worldIn, final IBakedModel modelIn, final IBlockState stateIn, final BlockPos posIn, final BufferBuilder buffer, final boolean checkSides, final EnumFacing side, final long rand)
     {
         if (checkSides && !stateIn.shouldSideBeRendered(worldIn, posIn, side))
         {
