@@ -19,7 +19,9 @@
 
 package net.minecraftforge.debug.client.rendering;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -31,8 +33,6 @@ import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.chunk.ChunkCompileTaskGenerator;
-import net.minecraft.client.renderer.chunk.CompiledChunk;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -44,8 +44,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.event.RebuildChunkEvent.RebuildChunkBlocksEvent;
@@ -60,78 +58,197 @@ public class RenderChunkEventTest
 
     static final String MODID = "render_chunk_event_test";
 
-    @SubscribeEvent
-    public static void renderChunkMarchingCubes(final RebuildChunkBlocksEvent event)
+    static enum RebuildOptions
     {
+        VANILLA, VANILLA_MODDED, FRAGMENTED, FACING, MARCHING_CUBES;
+    }
 
-        event.setCanceled(true);
+    static RebuildOptions[] rebuildOptions = new RebuildOptions[RebuildOptions.values().length];
 
-        final ChunkCache cache = event.getWorldView();
-        final BlockRendererDispatcher blockRendererDispatcher = event.getBlockRendererDispatcher();
-        final ChunkCompileTaskGenerator generator = event.getGenerator();
-        final CompiledChunk compiledChunk = event.getCompiledChunk();
+    private static EnumFacing[] fragmentFacings = new EnumFacing[] {
+            EnumFacing.DOWN,
+            EnumFacing.UP
+    };
+    private static int fragmentRange;
+    private static Random fragmentRandom = new Random();
 
-        //
+    private static EnumFacing facingFacing = EnumFacing.UP;
 
-        //
+    @SubscribeEvent
+    public static void rebuildChunkSetup(final RebuildChunkBlocksEvent event)
+    {
+        rebuildOptions = new RebuildOptions[] { RebuildOptions.FACING };
 
-        final boolean[] isBlockRenderLayerActive = new boolean[BlockRenderLayer.values().length];
+        fragmentFacings = new EnumFacing[] {
+                EnumFacing.DOWN,
+                EnumFacing.UP,
+                EnumFacing.NORTH,
+                EnumFacing.SOUTH,
+                EnumFacing.EAST,
+                EnumFacing.WEST
+        };
+        fragmentRange = 15;
+        // fragmentRandom = new Random();
+
+        facingFacing = EnumFacing.UP;
+
+    }
+
+    // @SubscribeEvent(priority = EventPriority.LOWEST)
+    // public static void cancelVanillaRebuildChunkIfNecessary(final RebuildChunkBlocksEvent event)
+    // {
+    // if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.VANILLA))
+    // {
+    // event.setCanceled(true);
+    // }
+    // }
+
+    @SubscribeEvent
+    public static void rebuildChunkVanillaModded(final RebuildChunkBlocksEvent event)
+    {
+        if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.VANILLA_MODDED))
+        {
+            return;
+        }
 
         for (final BlockPos.MutableBlockPos blockpos$mutableblockpos : event.getChunkBlockPositions())
         {
+            final IBlockState iblockstate = event.getWorldView().getBlockState(blockpos$mutableblockpos);
+            final Block block = iblockstate.getBlock();
 
-            final IBlockState state = event.getWorldView().getBlockState(blockpos$mutableblockpos);
-            final Block block = state.getBlock();
-            for (final BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values())
+            for (final BlockRenderLayer blockRenderLayer : BlockRenderLayer.values())
             {
-                if (!block.canRenderInLayer(state, blockrenderlayer1))
+                if (!block.canRenderInLayer(iblockstate, blockRenderLayer))
                 {
                     continue;
                 }
-                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
-                final int j = blockrenderlayer1.ordinal();
+                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockRenderLayer);
 
                 if (block.getDefaultState().getRenderType() != EnumBlockRenderType.INVISIBLE)
                 {
-                    final BufferBuilder bufferbuilder = generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(blockrenderlayer1);
+                    final BufferBuilder bufferbuilder = event.startOrContinueLayer(blockRenderLayer);
 
-                    if (!compiledChunk.isLayerStarted(blockrenderlayer1))
+                    final boolean used = event.getBlockRendererDispatcher().renderBlock(iblockstate, blockpos$mutableblockpos, event.getWorldView(), bufferbuilder);
+
+                    event.setBlockRenderLayerUsedWithOrOpperation(blockRenderLayer, used);
+
+                }
+            }
+            net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+        }
+    }
+
+    @SubscribeEvent
+    public static void rebuildChunkFragmented(final RebuildChunkBlocksEvent event)
+    {
+        if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.FRAGMENTED))
+        {
+            return;
+        }
+
+        for (final BlockPos.MutableBlockPos blockpos$mutableblockpos : event.getChunkBlockPositions())
+        {
+            final IBlockState iblockstate = event.getWorldView().getBlockState(blockpos$mutableblockpos);
+            final Block block = iblockstate.getBlock();
+
+            for (final BlockRenderLayer blockRenderLayer : BlockRenderLayer.values())
+            {
+                if (!block.canRenderInLayer(iblockstate, blockRenderLayer))
+                {
+                    continue;
+                }
+                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockRenderLayer);
+
+                if (block.getDefaultState().getRenderType() != EnumBlockRenderType.INVISIBLE)
+                {
+                    final BufferBuilder bufferbuilder = event.startOrContinueLayer(blockRenderLayer);
+
+                    BlockPos offsetPos = blockpos$mutableblockpos;
+
+                    for (final EnumFacing facing : fragmentFacings)
                     {
-                        compiledChunk.setLayerStarted(blockrenderlayer1);
-
-                        event.preRenderBlocks(bufferbuilder, event.getPosition());
-
+                        offsetPos = offsetPos.offset(facing, fragmentRandom.nextInt(fragmentRange));
                     }
 
-                    isBlockRenderLayerActive[j] |= renderBlockEnumFacing(state, blockpos$mutableblockpos, event.getWorldView(), bufferbuilder, blockRendererDispatcher,
-                            EnumFacing.UP);
+                    final boolean used = event.getBlockRendererDispatcher().renderBlock(iblockstate, offsetPos, event.getWorldView(), bufferbuilder);
+
+                    event.setBlockRenderLayerUsedWithOrOpperation(blockRenderLayer, used);
+
                 }
             }
             net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
         }
 
-        for (final BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
-        {
-            if (!event.isCanceled())
-            {
-                continue;
-            }
-            if (isBlockRenderLayerActive[blockrenderlayer.ordinal()])
-            {
-                compiledChunk.setLayerUsed(blockrenderlayer);
-            }
+    }
 
-            if (compiledChunk.isLayerStarted(blockrenderlayer))
-            {
-                event.postRenderBlocks(blockrenderlayer, event.getX(), event.getY(), event.getZ(), generator.getRegionRenderCacheBuilder().getWorldRendererByLayer(blockrenderlayer), compiledChunk);
-            }
-        }
-
-        if (true)
+    @SubscribeEvent
+    public static void rebuildChunkFacing(final RebuildChunkBlocksEvent event)
+    {
+        if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.FACING))
         {
             return;
         }
 
+        for (final BlockPos.MutableBlockPos blockpos$mutableblockpos : event.getChunkBlockPositions())
+        {
+            final IBlockState iblockstate = event.getWorldView().getBlockState(blockpos$mutableblockpos);
+            final Block block = iblockstate.getBlock();
+
+            for (final BlockRenderLayer blockRenderLayer : BlockRenderLayer.values())
+            {
+                if (!block.canRenderInLayer(iblockstate, blockRenderLayer))
+                {
+                    continue;
+                }
+                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockRenderLayer);
+
+                if (block.getDefaultState().getRenderType() != EnumBlockRenderType.INVISIBLE)
+                {
+                    final BufferBuilder bufferbuilder = event.startOrContinueLayer(blockRenderLayer);
+
+                    final boolean used = renderBlockEnumFacing(iblockstate, blockpos$mutableblockpos, event.getWorldView(), bufferbuilder, event.getBlockRendererDispatcher(), facingFacing);
+
+                    event.setBlockRenderLayerUsedWithOrOpperation(blockRenderLayer, used);
+
+                }
+            }
+            net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+        }
+    }
+
+    @SubscribeEvent
+    public static void rebuildChunkMarchingCubes(final RebuildChunkBlocksEvent event)
+    {
+        if (!Arrays.asList(rebuildOptions).contains(RebuildOptions.MARCHING_CUBES))
+        {
+            return;
+        }
+
+        for (final BlockPos.MutableBlockPos blockpos$mutableblockpos : event.getChunkBlockPositions())
+        {
+            final IBlockState iblockstate = event.getWorldView().getBlockState(blockpos$mutableblockpos);
+            final Block block = iblockstate.getBlock();
+
+            for (final BlockRenderLayer blockRenderLayer : BlockRenderLayer.values())
+            {
+                if (!block.canRenderInLayer(iblockstate, blockRenderLayer))
+                {
+                    continue;
+                }
+                net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockRenderLayer);
+
+                if (block.getDefaultState().getRenderType() != EnumBlockRenderType.INVISIBLE)
+                {
+                    final BufferBuilder bufferbuilder = event.startOrContinueLayer(blockRenderLayer);
+
+                    final boolean used = event.getBlockRendererDispatcher().renderBlock(iblockstate, blockpos$mutableblockpos, event.getWorldView(), bufferbuilder);
+
+                    event.setBlockRenderLayerUsedWithOrOpperation(blockRenderLayer, used);
+
+                }
+            }
+            net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+        }
     }
 
     public static boolean renderBlockEnumFacing(IBlockState state, final BlockPos pos, final IBlockAccess blockAccess, final BufferBuilder bufferBuilderIn, final BlockRendererDispatcher blockRendererDispatcher, final EnumFacing facing)
@@ -266,61 +383,69 @@ public class RenderChunkEventTest
             return;
         }
 
-        // position, color, texf, texs;
+        final double posX = posIn.getX();
+        final double posY = posIn.getY();
+        final double posZ = posIn.getZ();
 
-        final Vec3d vec3d = stateIn.getOffset(blockAccessIn, posIn);
-        final double d0 = (double) posIn.getX() + vec3d.x;
-        final double d1 = (double) posIn.getY() + vec3d.y;
-        final double d2 = (double) posIn.getZ() + vec3d.z;
+        // final Material material = stateIn.getMaterial();
 
-        final double x_size = 1;
-        final double y_size = 1;
-        final double z_size = 1;
+        final Material material = Material.LAVA;
 
-        final double x = d0;
-        final double y = d1;
-        final double z = d2;
+        float fluidHeight_________ = getFluidHeight(blockAccessIn, posIn, material);
+        float fluidHeightSouth____ = getFluidHeight(blockAccessIn, posIn.south(), material);
+        float fluidHeightEastSouth = getFluidHeight(blockAccessIn, posIn.east().south(), material);
+        float fluidHeightEast_____ = getFluidHeight(blockAccessIn, posIn.east(), material);
 
-        final double minU = sprite.getMinU();
-        final double maxU = sprite.getMaxU();
-        final double minV = sprite.getMinV();
-        final double maxV = sprite.getMaxV();
+        // final float slopeAngle = BlockLiquid.getSlopeAngle(blockAccessIn, posIn, material, stateIn);
 
-        buffer.pos(-x_size + x, y_size + y, -z_size + z).color(0xff, 0xff, 0xff, 0xff).tex(maxU, maxV).endVertex();
-        buffer.pos(-x_size + x, y_size + y, z_size + z).color(0xff, 0xff, 0xff, 0xff).tex(maxU, minV).endVertex();
-        buffer.pos(x_size + x, y_size + y, z_size + z).color(0xff, 0xff, 0xff, 0xff).tex(minU, minV).endVertex();
-        buffer.pos(x_size + x, y_size + y, -z_size + z).color(0xff, 0xff, 0xff, 0xff).tex(minU, maxV).endVertex();
+        final float slopeAngle = -1000;
 
-        final List<BakedQuad> list = model.getQuads(stateIn, EnumFacing.DOWN, 0);
-        for (int i = 0; i < 4; i++)
-        {
-            // buffer.pos(d0, d1, d2).color(0, 0, 0, 0).tex(0, 1).tex(1, 0).endVertex();
-        }
+        // final TextureAtlasSprite textureatlassprite = slopeAngle > -999.0F ? atextureatlassprite[1] : atextureatlassprite[0];
 
-        final float offset = -0.5f;
-        final float spacing = (4.0f - (3.0f)) / 2.0f;
+        final TextureAtlasSprite textureatlassprite = sprite;
 
-        final float minX = -0.5f;
-        final float minY = -0.5f;
-        final float minZ = -0.5f;
+        fluidHeight_________ -= 0.001F;
+        fluidHeightSouth____ -= 0.001F;
+        fluidHeightEastSouth -= 0.001F;
+        fluidHeightEast_____ -= 0.001F;
 
-        final float maxZ = 0.5f;
-        final float maxY = 0.5f;
-        final float maxX = 0.5f;
+        final float minInterpolatedU = textureatlassprite.getInterpolatedU(0.0D);
+        final float minInterpolatedV = textureatlassprite.getInterpolatedV(0.0D);
 
-        final float uA = (0 / 4f) * 16;
-        final float uB = (1 / 4f) * 16;
-        final float uC = (2 / 4f) * 16;
-        final float uD = (3 / 4f) * 16;
-        final float uE = (4 / 4f) * 16;
+        final float maxInterpolatedV = textureatlassprite.getInterpolatedV(16.0D);
+        final float maxInterpolatedU = textureatlassprite.getInterpolatedU(16.0D);
 
-        final float vA = (3 / 4f) * 16;
-        final float vB = (2 / 4f) * 16;
-        final float vC = (1 / 4f) * 16;
-        final float vD = (0 / 4f) * 16;
+        // final int packedLightmapCoords = stateIn.getPackedLightmapCoords(blockAccessIn, posIn);
+        // final int packedLightmapCoordsShifted16And65535 = (packedLightmapCoords >> 16) & 65535;
+        // final int packedLightmapCoordsAnd65535_________ = packedLightmapCoords & 65535;
+        
+        
+
+        final int packedLightmapCoordsShifted16And65535 = 240;
+        final int packedLightmapCoordsAnd65535_________ = 0;
+
+        final int red = 0xFF;
+        final int green = 0xFF;
+        final int blue = 0xFF;
+        final int alpha = 0xFF;
+        buffer.pos(posX + 0.0D, posY + fluidHeight_________, posZ + 0.0D).color(red, green, blue, alpha).tex(minInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        buffer.pos(posX + 0.0D, posY + fluidHeightSouth____, posZ + 1.0D).color(red, green, blue, alpha).tex(minInterpolatedU, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        buffer.pos(posX + 1.0D, posY + fluidHeightEastSouth, posZ + 1.0D).color(red, green, blue, alpha).tex(maxInterpolatedU, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        buffer.pos(posX + 1.0D, posY + fluidHeightEast_____, posZ + 0.0D).color(red, green, blue, alpha).tex(maxInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+
+        buffer.pos(posX + 0.0D, posY + fluidHeight_________, posZ + 0.0D).color(red, green, blue, alpha).tex(minInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        buffer.pos(posX + 1.0D, posY + fluidHeightEast_____, posZ + 0.0D).color(red, green, blue, alpha).tex(maxInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        buffer.pos(posX + 1.0D, posY + fluidHeightEastSouth, posZ + 1.0D).color(red, green, blue, alpha).tex(maxInterpolatedU, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+        buffer.pos(posX + 0.0D, posY + fluidHeightSouth____, posZ + 1.0D).color(red, green, blue, alpha).tex(minInterpolatedU, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
 
     }
 
+    // debug quad
+    /*VertexBuffer.pos(0, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 0).lightmap(240, 0).endVertex();
+    VertexBuffer.pos(0, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 1).lightmap(240, 0).endVertex();
+    VertexBuffer.pos(1, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
+    VertexBuffer.pos(1, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();*/
+    
     public boolean renderFluid(final IBlockAccess blockAccess, final IBlockState blockStateIn, final BlockPos blockPosIn, final BufferBuilder bufferBuilderIn)
     {
 
@@ -353,9 +478,9 @@ public class RenderChunkEventTest
         final boolean isLava = blockStateIn.getMaterial() == Material.LAVA;
         final TextureAtlasSprite[] atextureatlassprite = isLava ? atlasSpritesLava : atlasSpritesWater;
         final int colorMultiplier = blockColors.colorMultiplier(blockStateIn, blockAccess, blockPosIn, 0);
-        final float f = (float) ((colorMultiplier >> 16) & 255) / 255.0F;
-        final float f1 = (float) ((colorMultiplier >> 8) & 255) / 255.0F;
-        final float f2 = (float) (colorMultiplier & 255) / 255.0F;
+        final float colorMultiplierRed = ((colorMultiplier >> 16) & 255) / 255.0F;
+        final float colorMultiplierGreen = ((colorMultiplier >> 8) & 255) / 255.0F;
+        final float colorMultiplierBlue = (colorMultiplier & 255) / 255.0F;
         final boolean shouldRenderTop = blockStateIn.shouldSideBeRendered(blockAccess, blockPosIn, EnumFacing.UP);
         final boolean shouldRenderBottom = blockStateIn.shouldSideBeRendered(blockAccess, blockPosIn, EnumFacing.DOWN);
         final boolean[] aboolean = new boolean[] { blockStateIn.shouldSideBeRendered(blockAccess, blockPosIn, EnumFacing.NORTH), blockStateIn.shouldSideBeRendered(blockAccess, blockPosIn, EnumFacing.SOUTH), blockStateIn.shouldSideBeRendered(blockAccess, blockPosIn, EnumFacing.WEST), blockStateIn.shouldSideBeRendered(blockAccess, blockPosIn, EnumFacing.EAST) };
@@ -366,82 +491,77 @@ public class RenderChunkEventTest
         }
         else
         {
-            boolean flag3 = false;
-            final float f3 = 0.5F;
-            final float f4 = 1.0F;
-            final float f5 = 0.8F;
-            final float f6 = 0.6F;
+            boolean didRender = false;
             final Material material = blockStateIn.getMaterial();
-            float f7 = this.getFluidHeight(blockAccess, blockPosIn, material);
-            float f8 = this.getFluidHeight(blockAccess, blockPosIn.south(), material);
-            float f9 = this.getFluidHeight(blockAccess, blockPosIn.east().south(), material);
-            float f10 = this.getFluidHeight(blockAccess, blockPosIn.east(), material);
-            final double d0 = (double) blockPosIn.getX();
-            final double d1 = (double) blockPosIn.getY();
-            final double d2 = (double) blockPosIn.getZ();
-            final float f11 = 0.001F;
+            float fluidHeight_________ = this.getFluidHeight(blockAccess, blockPosIn, material);
+            float fluidHeightSouth____ = this.getFluidHeight(blockAccess, blockPosIn.south(), material);
+            float fluidHeightEastSouth = this.getFluidHeight(blockAccess, blockPosIn.east().south(), material);
+            float fluidHeightEast_____ = this.getFluidHeight(blockAccess, blockPosIn.east(), material);
+            final double posX = blockPosIn.getX();
+            final double posY = blockPosIn.getY();
+            final double posZ = blockPosIn.getZ();
 
             if (shouldRenderTop)
             {
-                flag3 = true;
-                final float f12 = BlockLiquid.getSlopeAngle(blockAccess, blockPosIn, material, blockStateIn);
-                final TextureAtlasSprite textureatlassprite = f12 > -999.0F ? atextureatlassprite[1] : atextureatlassprite[0];
-                f7 -= 0.001F;
-                f8 -= 0.001F;
-                f9 -= 0.001F;
-                f10 -= 0.001F;
-                float f13;
-                float f14;
-                float f15;
-                float f16;
-                float f17;
-                float f18;
-                float f19;
-                float f20;
+                didRender = true;
+                final float slopeAngle = BlockLiquid.getSlopeAngle(blockAccess, blockPosIn, material, blockStateIn);
+                final TextureAtlasSprite textureatlassprite = slopeAngle > -999.0F ? atextureatlassprite[1] : atextureatlassprite[0];
+                fluidHeight_________ -= 0.001F;
+                fluidHeightSouth____ -= 0.001F;
+                fluidHeightEastSouth -= 0.001F;
+                fluidHeightEast_____ -= 0.001F;
+                float minInterpolatedU;
+                float f14_____________;
+                float maxInterpolatedU;
+                float f16_____________;
+                float minInterpolatedV;
+                float maxInterpolatedV;
+                float f19_____________;
+                float f20_____________;
 
-                if (f12 < -999.0F)
+                if (slopeAngle < -999.0F)
                 {
-                    f13 = textureatlassprite.getInterpolatedU(0.0D);
-                    f17 = textureatlassprite.getInterpolatedV(0.0D);
-                    f14 = f13;
-                    f18 = textureatlassprite.getInterpolatedV(16.0D);
-                    f15 = textureatlassprite.getInterpolatedU(16.0D);
-                    f19 = f18;
-                    f16 = f15;
-                    f20 = f17;
+                    minInterpolatedU = textureatlassprite.getInterpolatedU(0.0D);
+                    minInterpolatedV = textureatlassprite.getInterpolatedV(0.0D);
+                    f14_____________ = minInterpolatedU;
+                    maxInterpolatedV = textureatlassprite.getInterpolatedV(16.0D);
+                    maxInterpolatedU = textureatlassprite.getInterpolatedU(16.0D);
+                    f19_____________ = maxInterpolatedV;
+                    f16_____________ = maxInterpolatedU;
+                    f20_____________ = minInterpolatedV;
                 }
                 else
                 {
-                    final float f21 = MathHelper.sin(f12) * 0.25F;
-                    final float f22 = MathHelper.cos(f12) * 0.25F;
+                    final float f21 = MathHelper.sin(slopeAngle) * 0.25F;
+                    final float f22 = MathHelper.cos(slopeAngle) * 0.25F;
                     final float f23 = 8.0F;
-                    f13 = textureatlassprite.getInterpolatedU((double) (8.0F + ((-f22 - f21) * 16.0F)));
-                    f17 = textureatlassprite.getInterpolatedV((double) (8.0F + ((-f22 + f21) * 16.0F)));
-                    f14 = textureatlassprite.getInterpolatedU((double) (8.0F + ((-f22 + f21) * 16.0F)));
-                    f18 = textureatlassprite.getInterpolatedV((double) (8.0F + ((f22 + f21) * 16.0F)));
-                    f15 = textureatlassprite.getInterpolatedU((double) (8.0F + ((f22 + f21) * 16.0F)));
-                    f19 = textureatlassprite.getInterpolatedV((double) (8.0F + ((f22 - f21) * 16.0F)));
-                    f16 = textureatlassprite.getInterpolatedU((double) (8.0F + ((f22 - f21) * 16.0F)));
-                    f20 = textureatlassprite.getInterpolatedV((double) (8.0F + ((-f22 - f21) * 16.0F)));
+                    minInterpolatedU = textureatlassprite.getInterpolatedU(8.0F + ((-f22 - f21) * 16.0F));
+                    minInterpolatedV = textureatlassprite.getInterpolatedV(8.0F + ((-f22 + f21) * 16.0F));
+                    f14_____________ = textureatlassprite.getInterpolatedU(8.0F + ((-f22 + f21) * 16.0F));
+                    maxInterpolatedV = textureatlassprite.getInterpolatedV(8.0F + ((f22 + f21) * 16.0F));
+                    maxInterpolatedU = textureatlassprite.getInterpolatedU(8.0F + ((f22 + f21) * 16.0F));
+                    f19_____________ = textureatlassprite.getInterpolatedV(8.0F + ((f22 - f21) * 16.0F));
+                    f16_____________ = textureatlassprite.getInterpolatedU(8.0F + ((f22 - f21) * 16.0F));
+                    f20_____________ = textureatlassprite.getInterpolatedV(8.0F + ((-f22 - f21) * 16.0F));
                 }
 
-                final int k2 = blockStateIn.getPackedLightmapCoords(blockAccess, blockPosIn);
-                final int l2 = (k2 >> 16) & 65535;
-                final int i3 = k2 & 65535;
-                final float f24 = 1.0F * f;
-                final float f25 = 1.0F * f1;
-                final float f26 = 1.0F * f2;
-                bufferBuilderIn.pos(d0 + 0.0D, d1 + (double) f7, d2 + 0.0D).color(f24, f25, f26, 1.0F).tex((double) f13, (double) f17).lightmap(l2, i3).endVertex();
-                bufferBuilderIn.pos(d0 + 0.0D, d1 + (double) f8, d2 + 1.0D).color(f24, f25, f26, 1.0F).tex((double) f14, (double) f18).lightmap(l2, i3).endVertex();
-                bufferBuilderIn.pos(d0 + 1.0D, d1 + (double) f9, d2 + 1.0D).color(f24, f25, f26, 1.0F).tex((double) f15, (double) f19).lightmap(l2, i3).endVertex();
-                bufferBuilderIn.pos(d0 + 1.0D, d1 + (double) f10, d2 + 0.0D).color(f24, f25, f26, 1.0F).tex((double) f16, (double) f20).lightmap(l2, i3).endVertex();
+                final int packedLightmapCoords = blockStateIn.getPackedLightmapCoords(blockAccess, blockPosIn);
+                final int packedLightmapCoordsShifted16And65535 = (packedLightmapCoords >> 16) & 65535;
+                final int packedLightmapCoordsAnd65535_________ = packedLightmapCoords & 65535;
+                final float red = 1.0F * colorMultiplierRed;
+                final float green = 1.0F * colorMultiplierGreen;
+                final float blue = 1.0F * colorMultiplierBlue;
+                bufferBuilderIn.pos(posX + 0.0D, posY + fluidHeight_________, posZ + 0.0D).color(red, green, blue, 1.0F).tex(minInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+                bufferBuilderIn.pos(posX + 0.0D, posY + fluidHeightSouth____, posZ + 1.0D).color(red, green, blue, 1.0F).tex(f14_____________, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+                bufferBuilderIn.pos(posX + 1.0D, posY + fluidHeightEastSouth, posZ + 1.0D).color(red, green, blue, 1.0F).tex(maxInterpolatedU, f19_____________).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+                bufferBuilderIn.pos(posX + 1.0D, posY + fluidHeightEast_____, posZ + 0.0D).color(red, green, blue, 1.0F).tex(f16_____________, f20_____________).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
 
                 if (blockliquid.shouldRenderSides(blockAccess, blockPosIn.up()))
                 {
-                    bufferBuilderIn.pos(d0 + 0.0D, d1 + (double) f7, d2 + 0.0D).color(f24, f25, f26, 1.0F).tex((double) f13, (double) f17).lightmap(l2, i3).endVertex();
-                    bufferBuilderIn.pos(d0 + 1.0D, d1 + (double) f10, d2 + 0.0D).color(f24, f25, f26, 1.0F).tex((double) f16, (double) f20).lightmap(l2, i3).endVertex();
-                    bufferBuilderIn.pos(d0 + 1.0D, d1 + (double) f9, d2 + 1.0D).color(f24, f25, f26, 1.0F).tex((double) f15, (double) f19).lightmap(l2, i3).endVertex();
-                    bufferBuilderIn.pos(d0 + 0.0D, d1 + (double) f8, d2 + 1.0D).color(f24, f25, f26, 1.0F).tex((double) f14, (double) f18).lightmap(l2, i3).endVertex();
+                    bufferBuilderIn.pos(posX + 0.0D, posY + fluidHeight_________, posZ + 0.0D).color(red, green, blue, 1.0F).tex(minInterpolatedU, minInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+                    bufferBuilderIn.pos(posX + 1.0D, posY + fluidHeightEast_____, posZ + 0.0D).color(red, green, blue, 1.0F).tex(f16_____________, f20_____________).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+                    bufferBuilderIn.pos(posX + 1.0D, posY + fluidHeightEastSouth, posZ + 1.0D).color(red, green, blue, 1.0F).tex(maxInterpolatedU, f19_____________).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
+                    bufferBuilderIn.pos(posX + 0.0D, posY + fluidHeightSouth____, posZ + 1.0D).color(red, green, blue, 1.0F).tex(f14_____________, maxInterpolatedV).lightmap(packedLightmapCoordsShifted16And65535, packedLightmapCoordsAnd65535_________).endVertex();
                 }
             }
 
@@ -451,14 +571,14 @@ public class RenderChunkEventTest
                 final float maxU = atextureatlassprite[0].getMaxU();
                 final float minV = atextureatlassprite[0].getMinV();
                 final float maxV = atextureatlassprite[0].getMaxV();
-                final int lightMapCoordsDown = blockStateIn.getPackedLightmapCoords(blockAccess, blockPosIn.down());
-                final int i2 = (lightMapCoordsDown >> 16) & 65535;
-                final int j2 = lightMapCoordsDown & 65535;
-                bufferBuilderIn.pos(d0, d1, d2 + 1.0D).color(0.5F, 0.5F, 0.5F, 1.0F).tex((double) minU, (double) maxV).lightmap(i2, j2).endVertex();
-                bufferBuilderIn.pos(d0, d1, d2).color(0.5F, 0.5F, 0.5F, 1.0F).tex((double) minU, (double) minV).lightmap(i2, j2).endVertex();
-                bufferBuilderIn.pos(d0 + 1.0D, d1, d2).color(0.5F, 0.5F, 0.5F, 1.0F).tex((double) maxU, (double) minV).lightmap(i2, j2).endVertex();
-                bufferBuilderIn.pos(d0 + 1.0D, d1, d2 + 1.0D).color(0.5F, 0.5F, 0.5F, 1.0F).tex((double) maxU, (double) maxV).lightmap(i2, j2).endVertex();
-                flag3 = true;
+                final int packedLightmapCoordsDown = blockStateIn.getPackedLightmapCoords(blockAccess, blockPosIn.down());
+                final int packedLightmapCoordsDownShifted16And65535 = (packedLightmapCoordsDown >> 16) & 65535;
+                final int packedLightmapCoordsDownAnd65535_________ = packedLightmapCoordsDown & 65535;
+                bufferBuilderIn.pos(posX, posY, posZ + 1.0D).color(0.5F, 0.5F, 0.5F, 1.0F).tex(minU, maxV).lightmap(packedLightmapCoordsDownShifted16And65535, packedLightmapCoordsDownAnd65535_________).endVertex();
+                bufferBuilderIn.pos(posX, posY, posZ).color(0.5F, 0.5F, 0.5F, 1.0F).tex(minU, minV).lightmap(packedLightmapCoordsDownShifted16And65535, packedLightmapCoordsDownAnd65535_________).endVertex();
+                bufferBuilderIn.pos(posX + 1.0D, posY, posZ).color(0.5F, 0.5F, 0.5F, 1.0F).tex(maxU, minV).lightmap(packedLightmapCoordsDownShifted16And65535, packedLightmapCoordsDownAnd65535_________).endVertex();
+                bufferBuilderIn.pos(posX + 1.0D, posY, posZ + 1.0D).color(0.5F, 0.5F, 0.5F, 1.0F).tex(maxU, maxV).lightmap(packedLightmapCoordsDownShifted16And65535, packedLightmapCoordsDownAnd65535_________).endVertex();
+                didRender = true;
             }
 
             for (int i1 = 0; i1 < 4; ++i1)
@@ -510,74 +630,74 @@ public class RenderChunkEventTest
 
                     if (i1 == 0)
                     {
-                        f39 = f7;
-                        f40 = f10;
-                        d3 = d0;
-                        d5 = d0 + 1.0D;
-                        d4 = d2 + 0.0010000000474974513D;
-                        d6 = d2 + 0.0010000000474974513D;
+                        f39 = fluidHeight_________;
+                        f40 = fluidHeightEast_____;
+                        d3 = posX;
+                        d5 = posX + 1.0D;
+                        d4 = posZ + 0.0010000000474974513D;
+                        d6 = posZ + 0.0010000000474974513D;
                     }
                     else if (i1 == 1)
                     {
-                        f39 = f9;
-                        f40 = f8;
-                        d3 = d0 + 1.0D;
-                        d5 = d0;
-                        d4 = (d2 + 1.0D) - 0.0010000000474974513D;
-                        d6 = (d2 + 1.0D) - 0.0010000000474974513D;
+                        f39 = fluidHeightEastSouth;
+                        f40 = fluidHeightSouth____;
+                        d3 = posX + 1.0D;
+                        d5 = posX;
+                        d4 = (posZ + 1.0D) - 0.0010000000474974513D;
+                        d6 = (posZ + 1.0D) - 0.0010000000474974513D;
                     }
                     else if (i1 == 2)
                     {
-                        f39 = f8;
-                        f40 = f7;
-                        d3 = d0 + 0.0010000000474974513D;
-                        d5 = d0 + 0.0010000000474974513D;
-                        d4 = d2 + 1.0D;
-                        d6 = d2;
+                        f39 = fluidHeightSouth____;
+                        f40 = fluidHeight_________;
+                        d3 = posX + 0.0010000000474974513D;
+                        d5 = posX + 0.0010000000474974513D;
+                        d4 = posZ + 1.0D;
+                        d6 = posZ;
                     }
                     else
                     {
-                        f39 = f10;
-                        f40 = f9;
-                        d3 = (d0 + 1.0D) - 0.0010000000474974513D;
-                        d5 = (d0 + 1.0D) - 0.0010000000474974513D;
-                        d4 = d2;
-                        d6 = d2 + 1.0D;
+                        f39 = fluidHeightEast_____;
+                        f40 = fluidHeightEastSouth;
+                        d3 = (posX + 1.0D) - 0.0010000000474974513D;
+                        d5 = (posX + 1.0D) - 0.0010000000474974513D;
+                        d4 = posZ;
+                        d6 = posZ + 1.0D;
                     }
 
-                    flag3 = true;
+                    didRender = true;
                     final float f41 = textureatlassprite1.getInterpolatedU(0.0D);
                     final float f27 = textureatlassprite1.getInterpolatedU(8.0D);
-                    final float f28 = textureatlassprite1.getInterpolatedV((double) ((1.0F - f39) * 16.0F * 0.5F));
-                    final float f29 = textureatlassprite1.getInterpolatedV((double) ((1.0F - f40) * 16.0F * 0.5F));
+                    final float f28 = textureatlassprite1.getInterpolatedV((1.0F - f39) * 16.0F * 0.5F);
+                    final float f29 = textureatlassprite1.getInterpolatedV((1.0F - f40) * 16.0F * 0.5F);
                     final float f30 = textureatlassprite1.getInterpolatedV(8.0D);
                     final int j = blockStateIn.getPackedLightmapCoords(blockAccess, blockpos);
                     final int k = (j >> 16) & 65535;
                     final int l = j & 65535;
                     final float f31 = i1 < 2 ? 0.8F : 0.6F;
-                    final float f32 = 1.0F * f31 * f;
-                    final float f33 = 1.0F * f31 * f1;
-                    final float f34 = 1.0F * f31 * f2;
-                    bufferBuilderIn.pos(d3, d1 + (double) f39, d4).color(f32, f33, f34, 1.0F).tex((double) f41, (double) f28).lightmap(k, l).endVertex();
-                    bufferBuilderIn.pos(d5, d1 + (double) f40, d6).color(f32, f33, f34, 1.0F).tex((double) f27, (double) f29).lightmap(k, l).endVertex();
-                    bufferBuilderIn.pos(d5, d1 + 0.0D, d6).color(f32, f33, f34, 1.0F).tex((double) f27, (double) f30).lightmap(k, l).endVertex();
-                    bufferBuilderIn.pos(d3, d1 + 0.0D, d4).color(f32, f33, f34, 1.0F).tex((double) f41, (double) f30).lightmap(k, l).endVertex();
+                    final float f32 = 1.0F * f31 * colorMultiplierRed;
+                    final float f33 = 1.0F * f31 * colorMultiplierGreen;
+                    final float f34 = 1.0F * f31 * colorMultiplierBlue;
+                    bufferBuilderIn.pos(d3, posY + f39, d4).color(f32, f33, f34, 1.0F).tex(f41, f28).lightmap(k, l).endVertex();
+                    bufferBuilderIn.pos(d5, posY + f40, d6).color(f32, f33, f34, 1.0F).tex(f27, f29).lightmap(k, l).endVertex();
+                    bufferBuilderIn.pos(d5, posY + 0.0D, d6).color(f32, f33, f34, 1.0F).tex(f27, f30).lightmap(k, l).endVertex();
+                    bufferBuilderIn.pos(d3, posY + 0.0D, d4).color(f32, f33, f34, 1.0F).tex(f41, f30).lightmap(k, l).endVertex();
 
                     if (textureatlassprite1 != atlasSpriteWaterOverlay)
                     {
-                        bufferBuilderIn.pos(d3, d1 + 0.0D, d4).color(f32, f33, f34, 1.0F).tex((double) f41, (double) f30).lightmap(k, l).endVertex();
-                        bufferBuilderIn.pos(d5, d1 + 0.0D, d6).color(f32, f33, f34, 1.0F).tex((double) f27, (double) f30).lightmap(k, l).endVertex();
-                        bufferBuilderIn.pos(d5, d1 + (double) f40, d6).color(f32, f33, f34, 1.0F).tex((double) f27, (double) f29).lightmap(k, l).endVertex();
-                        bufferBuilderIn.pos(d3, d1 + (double) f39, d4).color(f32, f33, f34, 1.0F).tex((double) f41, (double) f28).lightmap(k, l).endVertex();
+                        bufferBuilderIn.pos(d3, posY + 0.0D, d4).color(f32, f33, f34, 1.0F).tex(f41, f30).lightmap(k, l).endVertex();
+                        bufferBuilderIn.pos(d5, posY + 0.0D, d6).color(f32, f33, f34, 1.0F).tex(f27, f30).lightmap(k, l).endVertex();
+                        bufferBuilderIn.pos(d5, posY + f40, d6).color(f32, f33, f34, 1.0F).tex(f27, f29).lightmap(k, l).endVertex();
+                        bufferBuilderIn.pos(d3, posY + f39, d4).color(f32, f33, f34, 1.0F).tex(f41, f28).lightmap(k, l).endVertex();
                     }
                 }
             }
 
-            return flag3;
+            return didRender;
         }
     }
 
-    private float getFluidHeight(final IBlockAccess blockAccess, final BlockPos blockPosIn, final Material blockMaterial)
+    private static float getFluidHeight(final IBlockAccess blockAccess, final BlockPos blockPosIn, final Material blockMaterial)
     {
         int i = 0;
         float f = 0.0F;
@@ -604,7 +724,7 @@ public class RenderChunkEventTest
             }
             else
             {
-                final int k = ((Integer) iblockstate.getValue(BlockLiquid.LEVEL)).intValue();
+                final int k = iblockstate.getValue(BlockLiquid.LEVEL).intValue();
 
                 if ((k >= 8) || (k == 0))
                 {
@@ -617,7 +737,7 @@ public class RenderChunkEventTest
             }
         }
 
-        return 1.0F - (f / (float) i);
+        return 1.0F - (f / i);
     }
 
 }
