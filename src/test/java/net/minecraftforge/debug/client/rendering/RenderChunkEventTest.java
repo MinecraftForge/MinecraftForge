@@ -25,6 +25,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -66,25 +67,38 @@ public class RenderChunkEventTest
     private static int fragmentRange;
     private static Random fragmentRandom = new Random();
 
-    private static EnumFacing facingFacing = EnumFacing.UP;
+    private static EnumFacing[] facingFacings = new EnumFacing[] {
+            EnumFacing.NORTH,
+            EnumFacing.SOUTH,
+            EnumFacing.WEST,
+            EnumFacing.EAST
+    };
 
+    /** this exists to allow easy hotswapping of values (requires IDE debug mode for code Hot Swap) */
     @SubscribeEvent
     public static void rebuildChunkSetup(final RebuildChunkBlocksEvent event)
     {
-        rebuildOptions = new RebuildOptions[] { RebuildOptions.VANILLA, RebuildOptions.FACING, RebuildOptions.MARCHING_CUBES };
+        rebuildOptions = new RebuildOptions[] { RebuildOptions.FACING };
 
         fragmentFacings = new EnumFacing[] {
                 EnumFacing.DOWN,
                 EnumFacing.UP,
                 EnumFacing.NORTH,
                 EnumFacing.SOUTH,
-                EnumFacing.EAST,
-                EnumFacing.WEST
+                EnumFacing.WEST,
+                EnumFacing.EAST
         };
         fragmentRange = 15;
         // fragmentRandom = new Random();
 
-        facingFacing = EnumFacing.UP;
+        facingFacings = new EnumFacing[] {
+                EnumFacing.DOWN,
+                EnumFacing.UP,
+                EnumFacing.NORTH,
+                EnumFacing.SOUTH,
+                EnumFacing.WEST,
+                EnumFacing.EAST,
+        };
 
     }
 
@@ -200,9 +214,12 @@ public class RenderChunkEventTest
                 {
                     final BufferBuilder bufferbuilder = event.startOrContinueLayer(blockRenderLayer);
 
-                    final boolean used = renderBlockEnumFacing(iblockstate, blockpos$mutableblockpos, event.getWorldView(), bufferbuilder, event.getBlockRendererDispatcher(), facingFacing);
+                    for (final EnumFacing side : facingFacings)
+                    {
+                        final boolean used = renderBlockEnumFacing(iblockstate, blockpos$mutableblockpos, event.getWorldView(), bufferbuilder, event.getBlockRendererDispatcher(), side);
 
-                    event.setBlockRenderLayerUsedWithOrOpperation(blockRenderLayer, used);
+                        event.setBlockRenderLayerUsedWithOrOpperation(blockRenderLayer, used);
+                    }
 
                 }
             }
@@ -245,7 +262,7 @@ public class RenderChunkEventTest
         }
     }
 
-    public static boolean renderBlockEnumFacing(IBlockState state, final BlockPos pos, final IBlockAccess blockAccess, final BufferBuilder bufferBuilderIn, final BlockRendererDispatcher blockRendererDispatcher, final EnumFacing facing)
+    public static boolean renderBlockEnumFacing(IBlockState state, final BlockPos pos, final IBlockAccess blockAccess, final BufferBuilder bufferBuilderIn, final BlockRendererDispatcher blockRendererDispatcher, final EnumFacing side)
     {
 
         try
@@ -274,7 +291,7 @@ public class RenderChunkEventTest
                 {
                 case MODEL:
                     final IBakedModel model = blockRendererDispatcher.getModelForState(state);
-                    return renderModel(blockAccess, model, state, pos, bufferBuilderIn, true, facing);
+                    return renderModel(blockAccess, model, state, pos, bufferBuilderIn, true, side);
                 case ENTITYBLOCK_ANIMATED:
                     return false;
                 case LIQUID:
@@ -321,15 +338,26 @@ public class RenderChunkEventTest
             return false;
         }
 
+        final int colorMultiplier = Minecraft.getMinecraft().getBlockColors().colorMultiplier(stateIn, worldIn, posIn, 0);
+        final float redFloat = ((colorMultiplier >> 16) & 255) / 255.0F;
+        final float greenFloat = ((colorMultiplier >> 8) & 255) / 255.0F;
+        final float blueFloat = (colorMultiplier & 255) / 255.0F;
+
         final double x_size = 1 / 2d;
         final double y_size = 1 / 2d;
         final double z_size = 1 / 2d;
         final double x = posIn.getX() + x_size;
         final double y = posIn.getY() + y_size;
         final double z = posIn.getZ() + z_size;
-        final int red = 0xFF;
-        final int green = 0xFF;
-        final int blue = 0xFF;
+        // final int red = 0xFF;
+        // final int green = 0xFF;
+        // final int blue = 0xFF;
+        // final int red = new Random().nextInt(0xFF);
+        // final int green = new Random().nextInt(0xFF);
+        // final int blue = new Random().nextInt(0xFF);
+        final int red = (int) (0xFF * redFloat);
+        final int green = (int) (0xFF * greenFloat);
+        final int blue = (int) (0xFF * blueFloat);
         final int alpha = 0xFF;
         final double minU = sprite.getMinU();
         final double maxU = sprite.getMaxU();
