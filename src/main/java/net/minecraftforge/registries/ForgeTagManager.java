@@ -34,14 +34,12 @@ public class ForgeTagManager extends NetworkTagManager {
     @Nonnull
     private static TagProvider<Block> getBlockTags()
     {
-        assert ForgeRegistries.BLOCKS.supportsTagging();
         return ForgeRegistries.BLOCKS.getTagProvider();
     }
 
     @Nonnull
     private static TagProvider<Item> getItemTags()
     {
-        assert ForgeRegistries.ITEMS.supportsTagging();
         return ForgeRegistries.ITEMS.getTagProvider();
     }
 

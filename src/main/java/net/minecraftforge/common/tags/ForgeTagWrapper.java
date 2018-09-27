@@ -20,11 +20,12 @@ public class ForgeTagWrapper<T extends IForgeRegistryEntry<T>> extends Tag<T> {
         super(resourceLocationIn);
         reg = Objects.requireNonNull(registry);
         if (!reg.supportsTagging())
+        {
             throw new IllegalArgumentException("Cannot construct ForgeTagWrapper for Registry without tags!");
+        }
         lastGeneration = -1;
         cachedTag = null;
     }
-
 
     protected IForgeRegistry<T> getRegistry()
     {
