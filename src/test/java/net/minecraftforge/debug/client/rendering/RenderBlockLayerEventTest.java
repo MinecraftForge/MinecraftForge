@@ -22,6 +22,7 @@ package net.minecraftforge.debug.client.rendering;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraftforge.client.event.RenderBlockLayerEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 @Mod.EventBusSubscriber
 @Mod(modid = RenderBlockLayerEventTest.MODID, name = "RenderBlockLayerEventTest", version = "1.0", acceptableRemoteVersions = "*", clientSideOnly = true)
@@ -31,7 +32,8 @@ public class RenderBlockLayerEventTest
     public static final String MODID = "render_block_layer_event_test";
     private static final boolean ENABLED = true;
 
-    public static void sad(final RenderBlockLayerEvent event)
+    @SubscribeEvent
+    public static void onRenderBlockLayerEvent(final RenderBlockLayerEvent event)
     {
         if (!ENABLED)
         {
