@@ -1,0 +1,8 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:melee",
+    "#forge:ranged",
+    "#forge:magic"
+  ]
+}

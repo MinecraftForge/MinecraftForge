@@ -35,10 +35,10 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     private final ResourceLocation regName;
     //with possibly large amounts of Tags iterating over these all the time will be costly
     //therefore cache them, so that using these every tick, doesn't hurt so much
-    private Map<ResourceLocation,SortedSet<Tag<T>>> owningTags;
+    private Map<ResourceLocation, SortedSet<Tag<T>>> owningTags;
     private BiFunction<ResourceLocation, ResourceLocation, ? extends Tag<T>> wrapperFactory;
 
-    private ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory,String resourceLocationPrefixIn, boolean preserveOrderIn, ResourceLocation registryId)
+    private ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, String resourceLocationPrefixIn, boolean preserveOrderIn, ResourceLocation registryId)
     {
         super(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, preserveOrderIn, registryId.toString());
         regName = registryId;
@@ -48,11 +48,12 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
 
     public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, String resourceLocationPrefixIn, ResourceLocation registryId)
     {
-        this(isValueKnownPredicateIn, resourceLocationToItemIn, wrapperFactory, resourceLocationPrefixIn,true, registryId);
+        this(isValueKnownPredicateIn, resourceLocationToItemIn, wrapperFactory, resourceLocationPrefixIn, true, registryId);
     }
 
-    private void setWrapperFactory(BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory) {
-        this.wrapperFactory = (BiFunction<ResourceLocation, ResourceLocation, Tag<T>>) (location, location2) -> wrapperFactory.apply(location,Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(location)));
+    private void setWrapperFactory(BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory)
+    {
+        this.wrapperFactory = (BiFunction<ResourceLocation, ResourceLocation, Tag<T>>) (location, location2) -> wrapperFactory.apply(location, Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(location)));
     }
 
     @Override
@@ -73,12 +74,12 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
 
     public SortedSet<ResourceLocation> getOwningTags(ResourceLocation id)
     {
-        return owningTags.getOrDefault(id,Collections.emptySortedSet()).stream().map(Tag::getId).collect(Collectors.toCollection(TreeSet::new));
+        return owningTags.getOrDefault(id, Collections.emptySortedSet()).stream().map(Tag::getId).collect(Collectors.toCollection(TreeSet::new));
     }
 
     public SortedSet<Tag<T>> getOwningTagObjects(ResourceLocation id)
     {
-        return Collections.unmodifiableSortedSet(owningTags.getOrDefault(id,Collections.emptySortedSet()));
+        return Collections.unmodifiableSortedSet(owningTags.getOrDefault(id, Collections.emptySortedSet()));
     }
 
     public SortedSet<Tag<T>> getMatchingTagsForItem(ResourceLocation id, Predicate<Tag<T>> predicate)
@@ -93,7 +94,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
 
     public List<Tag<T>> getMatchingTags(Predicate<Tag<T>> predicate)
     {
-        return getTagMap().values().stream().filter(predicate).map((tag) -> new UnmodifiableTagWrapper<>(tag,regName)).collect(Collectors.toList());
+        return getTagMap().values().stream().filter(predicate).map((tag) -> new UnmodifiableTagWrapper<>(tag, regName)).collect(Collectors.toList());
     }
 
     public boolean tagMatch(Predicate<Tag<T>> tagPredicate)
@@ -104,7 +105,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     @Override
     public void write(PacketBuffer buf)
     {
-        ForgeRegistry<T> reg = Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(Objects.requireNonNull(regName,"Cannot write without Registry data, which requires an identifier")),"Cannot write without Registry data.");
+        ForgeRegistry<T> reg = Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(Objects.requireNonNull(regName, "Cannot write without Registry data, which requires an identifier")), "Cannot write without Registry data.");
 
         buf.writeVarInt(getTagMap().size());
 
@@ -123,7 +124,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     @Override
     public void read(PacketBuffer buf)
     {
-        ForgeRegistry<T> reg = Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(Objects.requireNonNull(regName,"Cannot write without Registry data, which requires an identifier")),"Cannot write without Registry data.");
+        ForgeRegistry<T> reg = Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(Objects.requireNonNull(regName, "Cannot write without Registry data, which requires an identifier")), "Cannot write without Registry data.");
 
         clear();
         int i = buf.readVarInt();
@@ -205,22 +206,23 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
         return map;
     }
 
-    private void collectToMinecraftTags(Map<ResourceLocation,Tag.Builder<T>> map) {
+    private void collectToMinecraftTags(Map<ResourceLocation, Tag.Builder<T>> map)
+    {
         Map<String, Set<ResourceLocation>> flattener = Maps.newHashMap();
-        for (Map.Entry<ResourceLocation,Tag.Builder<T>> unbuildTag: map.entrySet())
+        for (Map.Entry<ResourceLocation, Tag.Builder<T>> unbuildTag : map.entrySet())
         {
             if (!unbuildTag.getKey().getNamespace().equals("minecraft"))
             {
-                Set<ResourceLocation> current = flattener.getOrDefault(unbuildTag.getKey().getPath(),new HashSet<>());
+                Set<ResourceLocation> current = flattener.getOrDefault(unbuildTag.getKey().getPath(), new HashSet<>());
                 current.add(unbuildTag.getKey());
                 flattener.put(unbuildTag.getKey().getPath(), current);
             }
         }
-        for (Map.Entry<String,Set<ResourceLocation>> flattenedEntry:flattener.entrySet())
+        for (Map.Entry<String, Set<ResourceLocation>> flattenedEntry : flattener.entrySet())
         {
-            ResourceLocation collected = new ResourceLocation("minecraft:"+flattenedEntry.getKey());
+            ResourceLocation collected = new ResourceLocation("minecraft:" + flattenedEntry.getKey());
             Tag.Builder<T> builder = map.get(collected); //ensure that we don't delete existing minecraft tags
-            map.put(collected, TagHelper.addAll(builder!=null?builder:Tag.Builder.create(),flattenedEntry.getValue()));
+            map.put(collected, TagHelper.addAll(builder != null ? builder : Tag.Builder.create(), flattenedEntry.getValue()));
         }
     }
 
@@ -261,19 +263,20 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     public void updateOwningTags()
     {
         owningTags.clear();
-        for (Map.Entry<ResourceLocation,Tag<T>> entry:getTagMap().entrySet())
+        for (Map.Entry<ResourceLocation, Tag<T>> entry : getTagMap().entrySet())
         {
             Tag<T> tag = entry.getValue();
-            for (T element:tag.getAllElements())
+            for (T element : tag.getAllElements())
             {
                 if (element == null) continue;
-                if (element.getRegistryName() == null) {
-                    LOGGER.warn("Could not update Tag Data for {} (Element of type {}) because RegistryName wasn't set. Failed to add to owningTagCache.",element,element.getClass());
+                if (element.getRegistryName() == null)
+                {
+                    LOGGER.warn("Could not update Tag Data for {} (Element of type {}) because RegistryName wasn't set. Failed to add to owningTagCache.", element, element.getClass());
                     continue;
                 }
-                SortedSet<Tag<T>> set = owningTags.getOrDefault(element.getRegistryName(),new TreeSet<>(TagHelper.tagComparator()));
-                set.add(wrapperFactory.apply(tag.getId(),regName)); //use Wrappers, so that Wrappers are returned
-                owningTags.put(element.getRegistryName(),set);
+                SortedSet<Tag<T>> set = owningTags.getOrDefault(element.getRegistryName(), new TreeSet<>(TagHelper.tagComparator()));
+                set.add(wrapperFactory.apply(tag.getId(), regName)); //use Wrappers, so that Wrappers are returned
+                owningTags.put(element.getRegistryName(), set);
             }
         }
     }

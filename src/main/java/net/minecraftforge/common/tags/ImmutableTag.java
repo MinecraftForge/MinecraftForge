@@ -20,31 +20,39 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
      */
     public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> copyOf(Tag<T> tag)
     {
-        ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf(TagHelper.registryNameComparator(), tag.getAllElements());
+        return asTag(tag.getId(), tag.getAllElements());
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> asTag(ResourceLocation id, Iterable<T> elements)
+    {
+        ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf(TagHelper.registryNameComparator(), elements);
         ImmutableList.Builder<Tag.ITagEntry<T>> tagEntryBuilder = ImmutableList.builder();
         for (T item : items)
         {
             tagEntryBuilder.add(new Tag.ListEntry<>(Collections.singleton(item)));
         }
-        return new ImmutableTag<>(tag.getId(), items, tagEntryBuilder.build());
+        return new ImmutableTag<>(id, items, tagEntryBuilder.build());
     }
+
 
     /**
      * @param entries The entries to copy
      * @param <T>     The entry type
      * @return An Immutable copy of the given tag
      */
-    public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> copyOf(ResourceLocation id, Collection<ITagEntry<T>> entries)
+    public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> copyPreserveShallowTagStructure(ResourceLocation id, Collection<ITagEntry<T>> entries)
     {
-        ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf
-                (TagHelper.registryNameComparator(), entries.stream().flatMap(tagentry ->
+        //This kind of Sorting (immutableShallowCopyTransformer) will flatten out the Tag Structure contained in Tag.TagEntries - more efficient
+        Set<ITagEntry<T>> sortedEntries = TagHelper.sortTagEntries(entries, TagHelper.immutableShallowCopyTransformer(), Collectors.toCollection(LinkedHashSet::new));
+        ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf(
+                TagHelper.registryNameComparator(), sortedEntries.stream().flatMap(tagentry ->
                 {
-                    List<T> internalEntries = new ArrayList<>();
-                    tagentry.populate(internalEntries);
-                    return internalEntries.stream();
+                    List<T> tagEntries = new ArrayList<>();
+                    tagentry.populate(tagEntries);
+                    return tagEntries.stream();
                 })
                         .collect(Collectors.toList()));
-        return new ImmutableTag<>(id, items, ImmutableList.copyOf(entries));
+        return new ImmutableTag<>(id, items, ImmutableList.copyOf(sortedEntries));
     }
 
     /**
@@ -55,64 +63,115 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
      * @param <T> The entry type
      * @return An Immutable copy of the given tag
      */
-    public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> copyPreserveTagEntries(Tag<T> tag)
+    public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> copyPreserveShallowTagStructure(Tag<T> tag)
     {
-        Set<ITagEntry<T>> sortedEntries = TagHelper.sortTagEntries(tag.getEntries());
-        ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf
-                (TagHelper.registryNameComparator(), sortedEntries.stream().flatMap(tagentry ->
-                {
-                    List<T> entries = new ArrayList<>();
-                    tagentry.populate(entries);
-                    return entries.stream();
-                })
-                        .collect(Collectors.toList()));
-        return new ImmutableTag<>(tag.getId(), items, ImmutableList.copyOf(sortedEntries));
+        return copyPreserveShallowTagStructure(tag.getId(), tag.getEntries());
     }
 
+    /**
+     * @param entries The entries to copy
+     * @param <T>     The entry type
+     * @return An Immutable copy of the given tag
+     */
+    public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> copyPreserveTagStructure(ResourceLocation id, Collection<ITagEntry<T>> entries)
+    {
+        //This kind of Sorting (immutableDeepCopyTransformer) will recursively call copyPreserveTagStructure forEach Tag.TagEntry in there, and there by recursively copy that tag too... etc.
+        Set<ITagEntry<T>> sortedEntries = TagHelper.sortTagEntries(entries, TagHelper.immutableDeepCopyTransformer(), Collectors.toCollection(LinkedHashSet::new));
+        ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf(
+                TagHelper.registryNameComparator(), sortedEntries.stream().flatMap(tagentry ->
+                {
+                    List<T> tagEntries = new ArrayList<>();
+                    tagentry.populate(tagEntries);
+                    return tagEntries.stream();
+                })
+                        .collect(Collectors.toList()));
+        return new ImmutableTag<>(id, items, ImmutableList.copyOf(sortedEntries));
+    }
+
+    /**
+     * Like {@link #copyOf(Tag)} except that {@link Tag.TagEntry}'s won't be flattened out into Singleton {@link Tag.ListEntry}, but preserved and sorted.
+     * Hereby sorting is
+     *
+     * @param tag The tag to copy
+     * @param <T> The entry type
+     * @return An Immutable copy of the given tag
+     */
+    public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> copyPreserveTagStructure(Tag<T> tag)
+    {
+        return copyPreserveTagStructure(tag.getId(), tag.getEntries());
+    }
 
     public static <T extends IForgeRegistryEntry<T>> Builder<T> builder()
     {
         return new Builder<>();
     }
 
-    private ImmutableSortedSet<T> sortedElements;
-    private ImmutableList<ITagEntry<T>> entries;
-
     private ImmutableTag(ResourceLocation resourceLocationIn, ImmutableSortedSet<T> sortedItems, ImmutableList<ITagEntry<T>> entriesIn)
     {
-        super(resourceLocationIn, ImmutableList.of(), true);
-        this.sortedElements = sortedItems;
-        this.entries = entriesIn;
+        super(resourceLocationIn, sortedItems, entriesIn);
     }
 
     @Override
     public ImmutableSortedSet<T> getAllElements()
     {
-        return sortedElements;
+        return (ImmutableSortedSet<T>) super.getAllElements();
     }
 
     @Override
     public ImmutableList<ITagEntry<T>> getEntries()
     {
-        return entries;
+        return (ImmutableList<ITagEntry<T>>) super.getEntries();
     }
 
     @Override
-    public boolean contains(T itemIn)
+    public String toString()
     {
-        return sortedElements.contains(itemIn);
+        StringBuilder builder = new StringBuilder("ImmutableTag{\n");
+        ImmutableList<ITagEntry<T>> entries = getEntries();
+        for (int i = 0; i<entries.size(); ++i)
+        {
+            ITagEntry<T> entry = entries.get(i);
+            builder.append('"');
+            if (entry instanceof Tag.TagEntry) {
+                builder.append('#');
+                builder.append(((TagEntry<T>) entry).getSerializedId());
+            }
+            else {
+                Collection<T> subElements = new LinkedList<>();
+                entry.populate(subElements);
+                for (T object: subElements)
+                {
+                    if (object.getRegistryName()!=null)
+                    {
+                        builder.append(object.getRegistryName());
+                        builder.append(';');
+                    }
+                }
+            }
+            builder.append('"');
+            if (i < entries.size()-1) {
+                builder.append(',');
+            }
+            builder.append("\n");
+        }
+        builder.append("}");
+        return builder.toString();
     }
 
     public static final class Builder<T extends IForgeRegistryEntry<T>> extends SortedTagBuilder<T> {
         private Builder()
         {
-            super(ImmutableTag::copyOf);
+            super(ImmutableTag::copyPreserveTagStructure);
         }
 
         @Override
         public Builder<T> add(ITagEntry<T> entry)
         {
-            return (Builder<T>) super.add(entry);
+            if (entry instanceof Tag.TagEntry)
+                super.add(new Tag.TagEntry<>(ImmutableTag.copyPreserveTagStructure(((TagEntry<T>) entry).getTag())));
+            else
+                super.add(entry);
+            return this;
         }
 
         @Override
@@ -142,7 +201,7 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         @Override
         public Builder<T> add(Tag<T> tagIn)
         {
-            return (Builder<T>) super.add(tagIn);
+            return (Builder<T>) super.add(ImmutableTag.copyPreserveTagStructure(tagIn));
         }
 
         /**
@@ -165,6 +224,7 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         @Override
         public ImmutableTag<T> build(ResourceLocation resourceLocationIn)
         {
+            this.ordered(true); //whatever the case, the Immutable tag will order itself, so don't apply any special ordering
             return (ImmutableTag<T>) super.build(resourceLocationIn);
         }
     }

@@ -1,6 +1,19 @@
 --- a/net/minecraft/tags/Tag.java
 +++ b/net/minecraft/tags/Tag.java
-@@ -43,7 +43,7 @@
+@@ -28,6 +28,12 @@
+       this.field_200150_c = Collections.<Tag.ITagEntry<T>>emptyList();
+    }
+ 
++   public Tag(ResourceLocation resourceLocationIn, Set<T> taggedItems, Collection<Tag.ITagEntry<T>> entries) {
++      this.field_199888_a = resourceLocationIn;
++      this.field_199889_b = java.util.Objects.requireNonNull(taggedItems);
++      this.field_200150_c = java.util.Objects.requireNonNull(entries);
++   }
++
+    public Tag(ResourceLocation p_i48224_1_, Collection<Tag.ITagEntry<T>> p_i48224_2_, boolean p_i48224_3_) {
+       this.field_199888_a = p_i48224_1_;
+       this.field_199889_b = (Set<T>)(p_i48224_3_ ? Sets.newLinkedHashSet() : Sets.newHashSet());
+@@ -43,7 +49,7 @@
        JsonObject jsonobject = new JsonObject();
        JsonArray jsonarray = new JsonArray();
  
@@ -9,7 +22,7 @@
           itagentry.func_200576_a(jsonarray, p_200571_1_);
        }
  
-@@ -53,7 +53,7 @@
+@@ -53,7 +59,7 @@
     }
  
     public boolean func_199685_a_(T p_199685_1_) {
@@ -18,24 +31,38 @@
     }
  
     public Collection<T> func_199885_a() {
-@@ -238,5 +238,20 @@
+@@ -73,9 +79,24 @@
+       return this.field_199888_a;
+    }
+ 
++   @Override public boolean equals(Object o) //Forge: allow usage in Hash based collections/maps
++   {
++      if (this == o) return true;
++      if (!(o instanceof Tag)) return false;
++
++      Tag<?> tag = (Tag<?>) o;
++
++      return this.func_199886_b().equals(tag.func_199886_b());
++   }
++
++   @Override public int hashCode()
++   {
++      return func_199886_b().hashCode();
++   }
++
+    public static class Builder<T> {
+-      private final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
+-      private boolean field_200053_b;
++      protected final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
++      protected boolean field_200053_b;
+ 
+       public static <T> Tag.Builder<T> func_200047_a() {
+          return new Tag.Builder<T>();
+@@ -238,5 +259,7 @@
        public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
           p_200576_1_.add("#" + this.func_200577_a());
        }
 +
-+      @Override public boolean equals(Object o) //Forge: allow usage in Hash based collections/maps
-+      {
-+         if (this == o) return true;
-+         if (!(o instanceof TagEntry)) return false;
-+
-+         TagEntry<?> tagEntry = (TagEntry<?>) o;
-+
-+         return this.func_200577_a().equals(tagEntry.func_200577_a());
-+      }
-+
-+      @Override public int hashCode()
-+      {
-+         return func_200577_a().hashCode();
-+      }
++      public Tag<T> getTag() { return field_200164_b;}
     }
  }

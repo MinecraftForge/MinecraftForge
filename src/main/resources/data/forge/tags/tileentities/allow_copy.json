@@ -1,0 +1,8 @@
+{
+  "replace":false,
+  "values": [
+    "minecraft:sign",
+    "minecraft:skull",
+    "minecraft:banner"
+  ]
+}

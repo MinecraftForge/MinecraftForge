@@ -4,7 +4,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.Tag.ITagEntry;
-import net.minecraft.tags.Tag.ListEntry;
 import net.minecraft.tags.Tag.TagEntry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -15,6 +14,7 @@ import net.minecraftforge.registries.TagProvider;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,12 +28,22 @@ public class TagHelper {
 
     public static Ordering<Tag<?>> tagComparator()
     {
-        return Ordering.natural().onResultOf((Function<Tag<?>, ResourceLocation>) input -> input!=null ?input.getId():null).<Tag<?>>nullsFirst();
+        return Ordering.natural().onResultOf((Function<Tag<?>, ResourceLocation>) input -> input != null ? input.getId() : null).<Tag<?>>nullsFirst();
     }
 
     public static <T extends IForgeRegistryEntry<T>> Ordering<Tag.TagEntry<T>> tagEntryComparator()
     {
         return Ordering.natural().nullsFirst().<TagEntry<T>>onResultOf(TagEntry::getSerializedId).nullsFirst();
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> UnaryOperator<Tag.TagEntry<T>> immutableShallowCopyTransformer()
+    {
+        return (tagEntry -> new Tag.TagEntry<>(ImmutableTag.copyOf(tagEntry.getTag())));
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> UnaryOperator<Tag.TagEntry<T>> immutableDeepCopyTransformer()
+    {
+        return (tagEntry -> new Tag.TagEntry<>(ImmutableTag.copyPreserveTagStructure(tagEntry.getTag())));
     }
 
     /**
@@ -43,13 +53,14 @@ public class TagHelper {
      * @param <T>     The type of the entries
      * @return Whatever the collector wants to have...
      */
-    public static <T extends IForgeRegistryEntry<T>, R> R sortTagEntries(Collection<ITagEntry<T>> entries, Collector<? super Tag.ITagEntry<T>,?,R> collector)
+    public static <T extends IForgeRegistryEntry<T>, R> R sortTagEntries(Collection<ITagEntry<T>> entries, UnaryOperator<Tag.TagEntry<T>> tagTransformer, Collector<? super Tag.ITagEntry<T>, ?, R> collector)
     {
         return entries.stream().flatMap(tagentry ->
         {
             if (tagentry instanceof Tag.TagEntry)
             {
-                return Stream.of(new Tuple<>(tagentry, ((TagEntry<T>) tagentry).getSerializedId()));
+                Tag.TagEntry<T> transformed = tagTransformer.apply((Tag.TagEntry<T>) tagentry);
+                return Stream.of(new Tuple<>(transformed, transformed.getSerializedId()));
             } else if (tagentry != null)
             {
                 List<T> list = new ArrayList<>();
@@ -69,7 +80,7 @@ public class TagHelper {
      */
     public static <T extends IForgeRegistryEntry<T>> Set<ITagEntry<T>> sortTagEntries(Collection<ITagEntry<T>> entries)
     {
-        return sortTagEntries(entries,Collectors.toCollection(LinkedHashSet::new));
+        return sortTagEntries(entries, UnaryOperator.identity(), Collectors.toCollection(LinkedHashSet::new));
     }
 
     public static <T> Tag.ListEntry<T> singletonEntry(T object)
@@ -132,7 +143,7 @@ public class TagHelper {
     public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> getTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
     {
         if (!registry.supportsTagging()) return Collections.emptySortedSet();
-        return registry.getTagProvider().getMatchingTagsOnItem(id,predicate);
+        return registry.getTagProvider().getMatchingTagsOnItem(id, predicate);
     }
 
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsMatchingPredicate(IForgeRegistry<T> registry, Predicate<Tag<T>> predicate)
@@ -144,7 +155,7 @@ public class TagHelper {
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
     {
         if (!registry.supportsTagging()) return false;
-        return registry.getTagProvider().matchesTagOnItem(id,predicate);
+        return registry.getTagProvider().matchesTagOnItem(id, predicate);
     }
 
     public static <V> Predicate<Tag<V>> containsObjectPredicate(V object)
