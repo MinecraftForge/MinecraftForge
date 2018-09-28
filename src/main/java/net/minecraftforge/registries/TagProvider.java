@@ -47,7 +47,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         setReg(reg);
         if (wrapperFactory == null)
         {
-            LOGGER.warn("No Wrapper Factory specified for this TagProvider. Using default ForgeTagWrapper implementation!");
+            LOGGER.debug("No Wrapper Factory specified for {} TagProvider. Using default ForgeTagWrapper implementation!",regName);
             this.wrapperFactory = UnmodifiableTagWrapper::new;
         } else
         {
@@ -110,6 +110,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     @Nonnull
     public NBTTagCompound serializeNBT()
     { //this should never be used to try to persist tags
+        if (isVanillaHandled()) return new NBTTagCompound(); //if vanilla does networking, no need to do anything ourselves
         LOGGER.debug("Preparing {} Forge TagData",regName);
         NBTTagCompound resCompound = new NBTTagCompound();
         NBTTagList nbtTagList = new NBTTagList();
@@ -127,17 +128,17 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     private NBTTagList serializeTagEntries(Iterable<ITagEntry<T>> c)
     {
         NBTTagList entries = new NBTTagList();
-        for (ITagEntry<? extends T> tagEntry : c)
+        for (ITagEntry<T> tagEntry : c)
         {
             NBTTagCompound entryCompound = new NBTTagCompound();
             if (tagEntry instanceof Tag.TagEntry)
             {
                 entryCompound.setBoolean("tag", true);
-                entryCompound.setString("V", ((TagEntry<? extends T>) tagEntry).getSerializedId().toString());
+                entryCompound.setString("V", ((TagEntry<T>) tagEntry).getSerializedId().toString());
             } else if (tagEntry instanceof Tag.ListEntry)
             {
                 entryCompound.setBoolean("tag", false);
-                entryCompound.setTag("V", serializeTagListEntry((ListEntry<? extends T>) tagEntry));
+                entryCompound.setTag("V", serializeTagListEntry((ListEntry<T>) tagEntry));
             } else
             {
                 LOGGER.error("Cannot serialize ITagEntry because it's class is unkown {}. It will not be synced!", tagEntry.getClass().getName());
@@ -147,7 +148,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         return entries;
     }
 
-    private NBTTagList serializeTagListEntry(Tag.ListEntry<? extends T> entry)
+    private NBTTagList serializeTagListEntry(Tag.ListEntry<T> entry)
     {
         NBTTagList items = new NBTTagList();
         for (T thing : entry.getTaggedItems())
@@ -165,6 +166,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
 
     public void deserializeNBT(@Nonnull NBTTagCompound compound)
     { //this should never be used to try to persist tags
+        if (isVanillaHandled()) return; //if vanilla does networking, no need to do anything ourselves
         LOGGER.debug("Receiving {} Forge TagData",regName);
         clear();
         regName = new ResourceLocation(compound.getString("name"));
@@ -226,7 +228,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     @Nonnull
-    NetworkTagCollection<T> asTagCollection()
+    ForgeTagCollection<T> asTagCollection()
     {
         return tags;
     }
