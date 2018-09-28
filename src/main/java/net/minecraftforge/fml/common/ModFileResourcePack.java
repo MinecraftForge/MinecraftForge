@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client;
+package net.minecraftforge.fml.common;
 
 import net.minecraft.resources.AbstractResourcePack;
 import net.minecraft.resources.ResourcePackType;
