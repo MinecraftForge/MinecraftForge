@@ -105,7 +105,7 @@ project(':forge') {
     }
     dependencies {
         api 'net.minecraft:client:1.13:extra'
-        api 'cpw.mods:modlauncher:0.1.0-rc.4+' //Pinned until cpw fixes getCommonSupertype
+        api 'cpw.mods:modlauncher:0.1.0' //Pinned until cpw fixes getCommonSupertype
         api 'net.minecraftforge:accesstransformers:0.10+:shadowed'
         api 'net.minecraftforge:eventbus:0.1+:service'
         api 'net.minecraftforge:forgespi:0.1+'

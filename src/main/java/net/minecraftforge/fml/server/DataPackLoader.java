@@ -1,30 +1,6 @@
-/*
- * Minecraft Forge
- * Copyright (c) 2016-2018.
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation version 2.1
- * of the License.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+package net.minecraftforge.fml.server;
 
-package net.minecraftforge.fml.client;
-
-import net.minecraft.resources.AbstractResourcePack;
-import net.minecraft.resources.FilePack;
-import net.minecraft.resources.FolderPack;
-import net.minecraft.resources.IResourcePack;
-import net.minecraft.resources.ResourcePackInfo;
-import net.minecraft.resources.ResourcePackList;
+import net.minecraft.resources.*;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.ModFileResourcePack;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -35,15 +11,14 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class ResourcePackLoader
-{
+public class DataPackLoader {
     private static Map<ModFile, ModFileResourcePack> modResourcePacks;
     private static AbstractResourcePack forgePack;
     private static ResourcePackList<?> resourcePackList;
 
     public static IResourcePack getResourcePackFor(String modId)
     {
-        if (modId == "forge") return forgePack;
+        if (modId.equals("forge")) return forgePack;
         else return modResourcePacks.get(ModList.get().getModFileById(modId).getFile());
     }
 
@@ -52,7 +27,7 @@ public class ResourcePackLoader
         return (T)resourcePackList.getPackInfo(modId);
     }
 
-    public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks) {
+    public static <T extends ResourcePackInfo> void loadDataPacks(ResourcePackList<T> resourcePacks) {
         resourcePackList = resourcePacks;
         modResourcePacks = ModList.get().getModFiles().stream().
                 map(mf -> new ModFileResourcePack(mf.getFile())).
