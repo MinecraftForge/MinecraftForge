@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.client.event;
 
 import net.minecraft.client.renderer.RenderGlobal;
@@ -25,23 +26,23 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * Called when a block layer is going to be rendered in the world.
- * This event is fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
- * before a block layer is rendered.
- * Canceling this event prevents the block layer from being rendered.
+ * Called when a block layer is going to be rendered in the world. This event is fired on {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} before a block layer is
+ * rendered. Canceling this event prevents the block layer from being rendered.
  */
 @Cancelable
-public class RenderBlockRenderLayerEvent extends Event {
+public class RenderBlockRenderLayerEvent extends Event
+{
 
-    private final RenderGlobal     context;
+    private final RenderGlobal context;
     private final BlockRenderLayer blockRenderLayer;
-    private final int              pass;
-    private final double           partialTicks;
-    private final Entity           entity;
+    private final int pass;
+    private final double partialTicks;
+    private final Entity entity;
 
     private int chunksRendered;
 
-    public RenderBlockRenderLayerEvent(final RenderGlobal renderGlobal, final BlockRenderLayer blockRenderLayer, final double partialTicks, final int pass, final Entity entity, final int chunksRendered) {
+    public RenderBlockRenderLayerEvent(final RenderGlobal renderGlobal, final BlockRenderLayer blockRenderLayer, final double partialTicks, final int pass, final Entity entity, final int chunksRendered)
+    {
         this.context = renderGlobal;
         this.blockRenderLayer = blockRenderLayer;
         this.partialTicks = partialTicks;
@@ -50,31 +51,38 @@ public class RenderBlockRenderLayerEvent extends Event {
         this.chunksRendered = chunksRendered;
     }
 
-    public RenderGlobal getContext() {
+    public RenderGlobal getContext()
+    {
         return this.context;
     }
 
-    public BlockRenderLayer getBlockRenderLayer() {
+    public BlockRenderLayer getBlockRenderLayer()
+    {
         return this.blockRenderLayer;
     }
 
-    public double getPartialTicks() {
+    public double getPartialTicks()
+    {
         return this.partialTicks;
     }
 
-    public int getPass() {
+    public int getPass()
+    {
         return this.pass;
     }
 
-    public Entity getEntity() {
+    public Entity getEntity()
+    {
         return this.entity;
     }
 
-    public void incrementChunksRendered() {
+    public void incrementChunksRendered()
+    {
         this.chunksRendered++;
     }
 
-    public int getChunksRendered() {
+    public int getChunksRendered()
+    {
         return this.chunksRendered;
     }
 

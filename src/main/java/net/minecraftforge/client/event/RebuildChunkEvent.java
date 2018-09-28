@@ -16,6 +16,7 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
+
 package net.minecraftforge.client.event;
 
 import java.util.HashSet;
@@ -256,7 +257,7 @@ public class RebuildChunkEvent extends Event
 
         /**
          * if the boolean is true then the {@link BlockRenderLayer} will be rendered
-         * 
+         *
          * @return an array of booleans mapped to {@link BlockRenderLayer#ordinal()}
          */
         public boolean[] getUsedBlockRenderLayers()
