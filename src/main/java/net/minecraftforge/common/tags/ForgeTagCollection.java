@@ -219,8 +219,8 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
 
     private void printMissingEntriesError(TagLoadingParameter tagLoadingParameter, MissingEntriesException e)
     {
-        LOGGER.error("Failed to parse tag {} because the Registry didn't contain required Entries.", tagLoadingParameter.getTagId());
         Set<ResourceLocation> missingEntries = e.getMissingEntries();
+        LOGGER.error("Failed to parse tag {} because 1 or more Entries could not be resolved", tagLoadingParameter.getTagId());
         LOGGER.warn("###################################");
         LOGGER.warn("Missing {} {}",missingEntries.size(),missingEntries.size() == 1 ? "Entry":"Entries");
         for (ResourceLocation missingEntry: missingEntries)
