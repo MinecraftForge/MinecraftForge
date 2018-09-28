@@ -1,5 +1,7 @@
 package net.minecraftforge.registries;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagInt;
@@ -15,8 +17,6 @@ import net.minecraft.tags.Tag.TagEntry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.tags.ForgeTagCollection;
 import net.minecraftforge.common.tags.ImmutableTag;
-import net.minecraftforge.common.tags.Tags.Blocks;
-import net.minecraftforge.common.tags.Tags.Items;
 import net.minecraftforge.common.tags.UnmodifiableTagWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,16 +87,18 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
 
     boolean isVanillaHandled()
     {
-        return reg.getRegistrySuperType().equals(Blocks.class) || reg.getRegistrySuperType().equals(Items.class);
+        return reg.getRegistrySuperType().equals(Block.class) || reg.getRegistrySuperType().equals(Item.class);
     }
 
     void onReadVanillaPacket(PacketBuffer buf)
     {
+        LOGGER.debug("Receiving {} Vanilla TagData",regName);
         tags.read(buf);
     }
 
     void onWriteVanillaPacket(PacketBuffer buf)
     {
+        LOGGER.debug("Preparing {} Vanilla TagData",regName);
         tags.write(buf);
     }
 
@@ -108,6 +110,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     @Nonnull
     public NBTTagCompound serializeNBT()
     { //this should never be used to try to persist tags
+        LOGGER.debug("Preparing {} Forge TagData",regName);
         NBTTagCompound resCompound = new NBTTagCompound();
         NBTTagList nbtTagList = new NBTTagList();
         for (Map.Entry<ResourceLocation, Tag<T>> tag : tags.getTagMap().entrySet())
@@ -162,6 +165,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
 
     public void deserializeNBT(@Nonnull NBTTagCompound compound)
     { //this should never be used to try to persist tags
+        LOGGER.debug("Receiving {} Forge TagData",regName);
         clear();
         regName = new ResourceLocation(compound.getString("name"));
         NBTTagList list = (NBTTagList) compound.getTag("data");

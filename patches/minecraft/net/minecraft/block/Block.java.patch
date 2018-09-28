@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -74,7 +74,7 @@
+@@ -74,10 +74,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,7 +8,11 @@
 +public class Block extends net.minecraftforge.registries.ForgeRegistryEntry<Block> implements IItemProvider, net.minecraftforge.common.extensions.IForgeBlock {
     protected static final Logger field_196273_d = LogManager.getLogger();
     private static final ResourceLocation field_176230_a = new ResourceLocation("air");
-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(field_176230_a);
+-   public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(field_176230_a);
++   public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = net.minecraftforge.registries.GameData.getWrapperDefaulted(Block.class);
+    public static final ObjectIntIdentityMap<IBlockState> field_176229_d = new ObjectIntIdentityMap<IBlockState>();
+    protected final int field_149784_t;
+    protected final float field_149782_v;
 @@ -502,8 +502,8 @@
        if (f == -1.0F) {
           return 0.0F;
