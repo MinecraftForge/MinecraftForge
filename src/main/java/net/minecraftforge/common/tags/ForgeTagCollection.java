@@ -14,7 +14,6 @@ import net.minecraft.tags.Tag;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraftforge.fml.client.ModFileResourcePack;
 import net.minecraftforge.registries.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -178,7 +177,6 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     {
         LOGGER.debug("Parsing {} Tag Data.",regName);
         Map<ResourceLocation, UnbakedTag<T>> map = Maps.newHashMap();
-        Set<Tuple<ResourceLocation, String>> parsingFailedTags = new LinkedHashSet<>();
         ForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(regName);
         final Predicate<ResourceLocation> isValueKnownPredicate = registry::containsKey;
         final Function<ResourceLocation, T> resourceLocationToItem = registry::getValue;
@@ -193,19 +191,19 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
                         JsonObject jsonobject = JsonUtils.fromJson(GSON, IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8), JsonObject.class);
                         if (jsonobject == null)
                         {
-                            LOGGER.error("Couldn't load {} tag list {} from {} in data pack {} as it's empty or null", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName());
+                            LOGGER.error("Couldn't load {} Rag list {} from {} in data pack {} as it's empty or null", this.regName.toString(), tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName());
                         } else
                         {
                             UnbakedTag<T> builder = map.getOrDefault(tagLoadingParameter.getTagId(), new UnbakedTag<>(tagLoadingParameter));
                             builder.deserialize(isValueKnownPredicate, resourceLocationToItem, jsonobject);
                             map.put(tagLoadingParameter.getTagId(), builder);
                         }
-                    } catch (JsonParseException e)
+                    } catch (MissingEntriesException e)
                     {
-                        parsingFailedTags.add(new Tuple<>(tagLoadingParameter.getTagId(), e.getMessage()));
+                        LOGGER.error("Failed to parse tag {} because the Registry didn't contain required Entries.", tagLoadingParameter.getTagId(),e);
                     } catch (RuntimeException | IOException ioexception)
                     {
-                        LOGGER.error("Couldn't read {} tag {} from {} in data pack {}", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName(), ioexception);
+                        LOGGER.error("Couldn't read {} Tag {} from {} in Data Pack {}", this.regName.toString(), tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName(), ioexception);
                     } finally
                     {
                         IOUtils.closeQuietly((Closeable) iresource);
@@ -213,13 +211,9 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
                 }
             } catch (IOException ioexception1)
             {
-                LOGGER.error("Couldn't read {} tag {} from {}", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), ioexception1);
+                LOGGER.error("Couldn't read {} Tag {} from {}", this.regName.toString(), tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), ioexception1);
             }
         });
-        for (Tuple<ResourceLocation, String> failedToLoadTag : parsingFailedTags)
-        {
-            LOGGER.error("Failed to parse tag {}. Suppressed JsonParseException with message: {}.", failedToLoadTag.getA(), failedToLoadTag.getB());
-        }
         return map;
     }
 
@@ -251,7 +245,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
 
     private void registerUnbakedTags(Map<ResourceLocation, UnbakedTag<T>> map)
     {
-        LOGGER.debug("Baking {} {} for Registry with name {].",map.size(),map.size() == 1? "UnbakedTag":"UnbakedTags",regName);
+        LOGGER.debug("Baking {} {} for Registry with name {].",map.size(),map.size() == 1? "UnbakedTag":"UnbakedTags",regName.toString());
         while (!map.isEmpty())
         {
             boolean registeredAny = false;
@@ -289,7 +283,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
             {
                 failedTags.put(entry.getKey(), entry.getValue().getFailingTags(this::get));
             }
-            throw new TagBuildingException(failedTags);
+            throw new MissingTagsException(regName,failedTags);
         }
         LOGGER.debug("Successfully baked {} Tags.",map.size());
     }
@@ -306,7 +300,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
                 if (element == null) continue;
                 if (element.getRegistryName() == null)
                 {
-                    LOGGER.warn("Could not update Tag Data for {} (Element of type {}) because RegistryName wasn't set. Failed to add to owningTagCache.", element, element.getClass());
+                    LOGGER.warn("Could not update Tag Data for {} (Element of type {}) because RegistryName wasn't set. Failed to add to owningTagCache.", element, element.getClass().getName());
                     continue;
                 }
                 SortedSet<Tag<T>> set = owningTags.getOrDefault(element.getRegistryName(), new TreeSet<>(TagHelper.tagComparator()));
