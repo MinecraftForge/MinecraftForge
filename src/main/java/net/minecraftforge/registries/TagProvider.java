@@ -14,6 +14,7 @@ import net.minecraft.tags.Tag.ListEntry;
 import net.minecraft.tags.Tag.TagEntry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.tags.ForgeTagCollection;
+import net.minecraftforge.common.tags.ImmutableTag;
 import net.minecraftforge.common.tags.Tags.Blocks;
 import net.minecraftforge.common.tags.Tags.Items;
 import net.minecraftforge.common.tags.UnmodifiableTagWrapper;
@@ -181,7 +182,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     private Tag.Builder<T> deserializeTagEntries(@Nonnull INBTBase nbt)
     {
         NBTTagList nbtTagList = (NBTTagList) nbt;
-        Tag.Builder<T> builder = Tag.Builder.create();
+        Tag.Builder<T> builder = ImmutableTag.builder();
         for (INBTBase tagEntry : nbtTagList)
         {
             NBTTagCompound entryCompound = (NBTTagCompound) tagEntry;

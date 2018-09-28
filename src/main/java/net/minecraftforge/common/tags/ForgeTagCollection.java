@@ -59,7 +59,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     @Override
     public void reload(IResourceManager resourceManager)
     {
-        Map<ResourceLocation, Tag.Builder<T>> map = deserializeTags(getLoadingParameters(resourceManager), resourceManager);
+        Map<ResourceLocation, UnbakedTag<T>> map = deserializeTags(getLoadingParameters(resourceManager), resourceManager);
         collectToMinecraftTags(map);
         registerUnbuildTags(map);
         updateOwningTags();
@@ -140,7 +140,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
                 list.add(reg.getValue(buf.readVarInt()));
             }
 
-            register(Tag.Builder.<T>create().addAll(list).build(resourcelocation));
+            register(ImmutableTag.<T>builder().addAll(list).build(resourcelocation));
         }
 
         updateOwningTags();
@@ -169,9 +169,9 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
         return resources;
     }
 
-    private Map<ResourceLocation, Tag.Builder<T>> deserializeTags(Stream<TagLoadingParameter> stream, IResourceManager resourceManager)
+    private Map<ResourceLocation, UnbakedTag<T>> deserializeTags(Stream<TagLoadingParameter> stream, IResourceManager resourceManager)
     {
-        Map<ResourceLocation, Tag.Builder<T>> map = Maps.newHashMap();
+        Map<ResourceLocation, UnbakedTag<T>> map = Maps.newHashMap();
         stream.forEach(tagLoadingParameter ->
         {
             try
@@ -186,7 +186,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
                             LOGGER.error("Couldn't load {} tag list {} from {} in data pack {} as it's empty or null", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName());
                         } else
                         {
-                            Tag.Builder<T> builder = map.getOrDefault(tagLoadingParameter.getTagId(), Tag.Builder.create());
+                            UnbakedTag<T> builder = map.getOrDefault(tagLoadingParameter.getTagId(), new UnbakedTag<>(tagLoadingParameter));
                             builder.deserialize(this.isValueKnownPredicate, this.resourceLocationToItem, jsonobject);
                             map.put(tagLoadingParameter.getTagId(), builder);
                         }
@@ -206,10 +206,10 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
         return map;
     }
 
-    private void collectToMinecraftTags(Map<ResourceLocation, Tag.Builder<T>> map)
+    private void collectToMinecraftTags(Map<ResourceLocation, UnbakedTag<T>> map)
     {
         Map<String, Set<ResourceLocation>> flattener = Maps.newHashMap();
-        for (Map.Entry<ResourceLocation, Tag.Builder<T>> unbuildTag : map.entrySet())
+        for (Map.Entry<ResourceLocation, UnbakedTag<T>> unbuildTag : map.entrySet())
         {
             if (!unbuildTag.getKey().getNamespace().equals("minecraft"))
             {
@@ -221,43 +221,52 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
         for (Map.Entry<String, Set<ResourceLocation>> flattenedEntry : flattener.entrySet())
         {
             ResourceLocation collected = new ResourceLocation("minecraft:" + flattenedEntry.getKey());
-            Tag.Builder<T> builder = map.get(collected); //ensure that we don't delete existing minecraft tags
-            map.put(collected, TagHelper.addAll(builder != null ? builder : Tag.Builder.create(), flattenedEntry.getValue()));
+            UnbakedTag<T> builder = map.getOrDefault(collected,new UnbakedTag<>(collected)); //ensure that we don't delete existing minecraft tags
+            map.put(collected, builder.addAllDummyEntries(flattenedEntry.getValue()));
         }
     }
 
-    private void registerUnbuildTags(Map<ResourceLocation, Tag.Builder<T>> map)
+    private void registerUnbuildTags(Map<ResourceLocation, UnbakedTag<T>> map)
     {
         while (!map.isEmpty())
         {
             boolean flag = false;
-            Iterator<Map.Entry<ResourceLocation, Tag.Builder<T>>> iterator = map.entrySet().iterator();
+            Iterator<Map.Entry<ResourceLocation, UnbakedTag<T>>> iterator = map.entrySet().iterator();
             while (iterator.hasNext())
             {
-                Map.Entry<ResourceLocation, Tag.Builder<T>> entry1 = iterator.next();
+                Map.Entry<ResourceLocation, UnbakedTag<T>> entry1 = iterator.next();
                 if ((entry1.getValue()).resolve(this::get))
                 {
                     flag = true;
-                    this.register((entry1.getValue()).build(entry1.getKey()));
+                    this.register((entry1.getValue()).bake());
                     iterator.remove();
                 }
             }
 
             if (!flag)
             {
-                for (Map.Entry<ResourceLocation, Tag.Builder<T>> entry2 : map.entrySet())
+                for (Map.Entry<ResourceLocation, UnbakedTag<T>> entry2 : map.entrySet())
                 {
                     LOGGER.error("Couldn't load {} tag {} as it either references another tag that doesn't exist, or ultimately references itself", this.regName, entry2.getKey());
                 }
                 break;
             }
         }
-        //I have no idea why vanilla does this - it's the only reason preserveOrder is protected
-        //if everything is well, the tag-list is empty, if not then some tag 'either references another tag that doesn't exist, or ultimately references itself'
-        for (Map.Entry<ResourceLocation, Tag.Builder<T>> entry : map.entrySet())
-        {  //so why register tags that are invalid?!?
-            this.register((entry.getValue()).ordered(this.preserveOrder).build(entry.getKey()));
+        /* Vanilla does this inorder to make Tag.TagEntry#populate throw an not precious IllegalStateException
+         * so let's just throw our own nicer Exception if it fails
+        for (Map.Entry<ResourceLocation, UnbakedTag<T>> entry : map.entrySet())
+        {
+            this.register((entry.getValue()).bake(this.preserveOrder));
+        }*/
+        if (!map.isEmpty()) {
+            Map<ResourceLocation,Set<ResourceLocation>> failedTags = new HashMap<>();
+            for (Map.Entry<ResourceLocation, UnbakedTag<T>> entry: map.entrySet())
+            {
+                failedTags.put(entry.getKey(),entry.getValue().getFailingTags(this::get));
+            }
+            throw new TagBuildingException(failedTags);
         }
+
     }
 
     public void updateOwningTags()
@@ -308,6 +317,73 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
         public ResourceLocation getTagId()
         {
             return tagId;
+        }
+    }
+
+    private static class UnbakedTag<T extends IForgeRegistryEntry<T>> {
+        private final ImmutableTag.Builder<T> builder; //Use Immutable Tags - this should ensure that we always have a quite fast contains check
+        private final ResourceLocation id;
+        private boolean replacesDummyAdds; //prevents dummy Adds to be performed on replace=true minecraft Tags
+
+        private UnbakedTag(TagLoadingParameter descriptor)
+        {
+            this(descriptor.getTagId());
+        }
+
+        private UnbakedTag(ResourceLocation id)
+        {
+            this.builder = ImmutableTag.builder();
+            this.id = id;
+            this.replacesDummyAdds = false;
+        }
+
+        private ImmutableTag.Builder<T> getBuilder()
+        {
+            return builder;
+        }
+
+        private ResourceLocation getId()
+        {
+            return id;
+        }
+
+        private boolean replacesDummyAdds()
+        {
+            return replacesDummyAdds;
+        }
+
+        private Set<ResourceLocation> getFailingTags(Function<ResourceLocation,Tag<T>> resourceLocationToTagFunction) {
+            return getBuilder().findResolveFailures(resourceLocationToTagFunction);
+        }
+
+        private UnbakedTag<T> deserialize(Predicate<ResourceLocation> isValueKnownPredicate, Function<ResourceLocation, T> objectGetter, JsonObject json) {
+            if (JsonUtils.getBoolean(json,"replace",false) && id.getNamespace().equals("minecraft"))
+                this.replacesDummyAdds = true;
+            getBuilder().deserialize(isValueKnownPredicate,objectGetter,json);
+            return this;
+        }
+
+        private UnbakedTag<T> addAllDummyEntries(Iterable<ResourceLocation> tagEntries) {
+            if (!replacesDummyAdds())
+                getBuilder().addAllTags(tagEntries);
+            return this;
+        }
+
+        private boolean resolve(Function<ResourceLocation, Tag<T>> resourceLocationToTag)
+        {
+            return getBuilder().resolve(resourceLocationToTag);
+        }
+
+
+
+        private Tag<T> bake()
+        {
+            return getBuilder().build(getId());
+        }
+
+        private Tag<T> bake(boolean preserveOrder)
+        {
+            return getBuilder().ordered(preserveOrder).build(getId());
         }
     }
 }

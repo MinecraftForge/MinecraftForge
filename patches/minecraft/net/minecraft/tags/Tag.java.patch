@@ -58,11 +58,12 @@
  
        public static <T> Tag.Builder<T> func_200047_a() {
           return new Tag.Builder<T>();
-@@ -238,5 +259,7 @@
+@@ -238,5 +259,8 @@
        public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
           p_200576_1_.add("#" + this.func_200577_a());
        }
 +
++      @Nullable
 +      public Tag<T> getTag() { return field_200164_b;}
     }
  }

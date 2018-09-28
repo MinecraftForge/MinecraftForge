@@ -67,7 +67,7 @@ public final class Tags {
 
         private static Tag<Block> tag(String name)
         {
-            return new BlockTags.Wrapper(new ResourceLocation("minecraft", name));
+            return new UnmodifiableTagWrapper<>(new ResourceLocation("minecraft", name),ForgeRegistries.BLOCKS);
         }
 
         private Blocks()
@@ -147,7 +147,7 @@ public final class Tags {
 
         private static Tag<Item> tag(String name)
         {
-            return new ItemTags.Wrapper(new ResourceLocation("minecraft", name));
+            return new UnmodifiableTagWrapper<>(new ResourceLocation("minecraft", name),ForgeRegistries.ITEMS);
         }
 
         private Items()

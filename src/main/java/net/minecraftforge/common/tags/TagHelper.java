@@ -46,6 +46,18 @@ public class TagHelper {
         return (tagEntry -> new Tag.TagEntry<>(ImmutableTag.copyPreserveTagStructure(tagEntry.getTag())));
     }
 
+    public static <T, R> R collectTagEntries(Collector<? super T, ?, R> collector, Collection<Tag.ITagEntry<T>> collection)
+    {
+        return collection.stream().flatMap(tagentry ->
+        {
+            List<T> tagEntries = new ArrayList<>();
+            if (!(tagentry instanceof Tag.TagEntry) || ((TagEntry<T>) tagentry).getTag()!=null) //verify, so that populate doesn't cause IllegalStateException
+                tagentry.populate(tagEntries);
+            return tagEntries.stream();
+        })
+                .collect(collector);
+    }
+
     /**
      * Sorts the entry Collection by there Registry names. Notice that {@link Tag.TagEntry#getSerializedId()} will be used for comparisons with the flattened out Elements of all other Entries.
      *
@@ -173,7 +185,7 @@ public class TagHelper {
     public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> getTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
     {
         if (!registry.supportsTagging()) return Collections.emptySortedSet();
-        return registry.getTagProvider().getMatchingTagsOnItem(id,predicate);
+        return registry.getTagProvider().getMatchingTagsOnItem(id, predicate);
     }
 
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsMatchingOnItem(IForgeRegistry<T> registry, ResourceLocation id, Predicate<Tag<T>> predicate)
@@ -219,41 +231,41 @@ public class TagHelper {
 
     public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> tagsWithExactPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return getTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathEqualsPredicate(path));
+        return getTagsMatchingOnItem(registry, Objects.requireNonNull(object.getRegistryName()), pathEqualsPredicate(path));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> tagsContainingPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return getTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathContainsPredicate(path));
+        return getTagsMatchingOnItem(registry, Objects.requireNonNull(object.getRegistryName()), pathContainsPredicate(path));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> tagsStartingWithPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return getTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathStartsWithPredicate(path));
+        return getTagsMatchingOnItem(registry, Objects.requireNonNull(object.getRegistryName()), pathStartsWithPredicate(path));
     }
 
     public static <T extends IForgeRegistryEntry<T>> SortedSet<Tag<T>> tagsFromMod(IForgeRegistry<T> registry, T object, String modId)
     {
-        return getTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),byModPredicate(modId));
+        return getTagsMatchingOnItem(registry, Objects.requireNonNull(object.getRegistryName()), byModPredicate(modId));
     }
 
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsWithExactPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathEqualsPredicate(path));
+        return anyTagsMatchingOnItem(registry, Objects.requireNonNull(object.getRegistryName()), pathEqualsPredicate(path));
     }
 
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsContainingPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathContainsPredicate(path));
+        return anyTagsMatchingOnItem(registry, Objects.requireNonNull(object.getRegistryName()), pathContainsPredicate(path));
     }
 
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsStartingWithPath(IForgeRegistry<T> registry, T object, String path)
     {
-        return anyTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),pathStartsWithPredicate(path));
+        return anyTagsMatchingOnItem(registry, Objects.requireNonNull(object.getRegistryName()), pathStartsWithPredicate(path));
     }
 
     public static <T extends IForgeRegistryEntry<T>> boolean anyTagsFromMod(IForgeRegistry<T> registry, T object, String modId)
     {
-        return anyTagsMatchingOnItem(registry,Objects.requireNonNull(object.getRegistryName()),byModPredicate(modId));
+        return anyTagsMatchingOnItem(registry, Objects.requireNonNull(object.getRegistryName()), byModPredicate(modId));
     }
 }

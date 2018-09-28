@@ -8,6 +8,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -81,6 +83,16 @@ public class SortedTagBuilder<T extends IForgeRegistryEntry<T>> extends Builder<
     @Override
     public SortedTagBuilder<T> deserialize(Predicate<ResourceLocation> isValueKnownPredicate, Function<ResourceLocation, T> objectGetter, JsonObject json) {
         return (SortedTagBuilder<T>) super.deserialize(isValueKnownPredicate, objectGetter, json);
+    }
+
+    public Set<ResourceLocation> findResolveFailures(Function<ResourceLocation, Tag<T>> resourceLocationToTag) {
+        Set<ResourceLocation> tags = new LinkedHashSet<>(); //preserve Order
+        for (Tag.ITagEntry<T> entry: this.entries)
+        {
+            if ((entry instanceof Tag.TagEntry) && !entry.resolve(resourceLocationToTag))
+                tags.add(((Tag.TagEntry<T>) entry).getSerializedId());
+        }
+        return tags;
     }
 
     @Override
