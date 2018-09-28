@@ -50,7 +50,7 @@
          this.field_70165_t = p_70107_1_;
          this.field_70163_u = p_70107_3_;
          this.field_70161_v = p_70107_5_;
-+        if (this.isAddedToWorld) this.field_70170_p.func_72866_a(this, false); // Forge - Process chunk registration after moving.
++        if (!this.field_70170_p.field_72995_K && this.isAddedToWorld()) this.field_70170_p.func_72866_a(this, false); // Forge - Process chunk registration after moving.
          float f = this.field_70130_N / 2.0F;
          float f1 = this.field_70131_O;
          this.func_174826_a(new AxisAlignedBB(p_70107_1_ - (double)f, p_70107_3_, p_70107_5_ - (double)f, p_70107_1_ + (double)f, p_70107_3_ + (double)f1, p_70107_5_ + (double)f));
@@ -58,7 +58,7 @@
          this.field_70165_t = (axisalignedbb.field_72340_a + axisalignedbb.field_72336_d) / 2.0D;
          this.field_70163_u = axisalignedbb.field_72338_b;
          this.field_70161_v = (axisalignedbb.field_72339_c + axisalignedbb.field_72334_f) / 2.0D;
-+        if (this.isAddedToWorld) this.field_70170_p.func_72866_a(this, false); // Forge - Process chunk registration after moving.
++        if (!this.field_70170_p.field_72995_K && this.isAddedToWorld()) this.field_70170_p.func_72866_a(this, false); // Forge - Process chunk registration after moving.
      }
  
      protected SoundEvent func_184184_Z()
@@ -100,7 +100,7 @@
              this.field_70126_B -= 360.0F;
          }
  
-+        this.field_70170_p.func_72964_e((int) Math.floor(this.field_70165_t) >> 4, (int) Math.floor(this.field_70161_v) >> 4); // Forge - ensure target chunk is loaded.
++        if (!this.field_70170_p.field_72995_K) this.field_70170_p.func_72964_e((int) Math.floor(this.field_70165_t) >> 4, (int) Math.floor(this.field_70161_v) >> 4); // Forge - ensure target chunk is loaded.
          this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
          this.func_70101_b(p_70080_7_, p_70080_8_);
      }
