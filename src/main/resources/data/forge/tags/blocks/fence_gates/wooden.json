@@ -2,7 +2,7 @@
   "replace": false,
   "values": [
     "minecraft:oak_fence_gate",
-    "minecraft:spruce_fence_gate"
+    "minecraft:spruce_fence_gate",
     "minecraft:birch_fence_gate",
     "minecraft:jungle_fence_gate",
     "minecraft:acacia_fence_gate",
