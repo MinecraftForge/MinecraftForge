@@ -1,0 +1,11 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:fish",
+    "minecraft:drowned",
+    "minecraft:squid",
+    "minecraft:guardian",
+    "minecraft:elder_guardian",
+    "minecraft:turtle"
+  ]
+}
