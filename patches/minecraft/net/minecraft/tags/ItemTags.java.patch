@@ -21,7 +21,7 @@
 +   public static class Wrapper extends net.minecraftforge.common.tags.UnmodifiableTagWrapper<Item> {
        public Wrapper(ResourceLocation p_i48212_1_) {
 -         super(p_i48212_1_);
-+         this(p_i48212_1_, net.minecraftforge.registries.ForgeRegistries.ITEMS);
++         super(p_i48212_1_, new ResourceLocation("minecraft:items"));
        }
  
 -      public boolean func_199685_a_(Item p_199685_1_) {

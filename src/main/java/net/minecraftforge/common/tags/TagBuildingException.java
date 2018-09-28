@@ -23,13 +23,13 @@ public class TagBuildingException extends EnhancedRuntimeException {
     @Override
     protected void printStackTrace(WrappedPrintStream stream)
     {
+        stream.println(" ");
         stream.println("###################################");
         Set<Map.Entry<ResourceLocation, Set<ResourceLocation>>> entries = failedTags.entrySet();
         stream.println("Failed to build "+entries.size()+ (entries.size() == 1?" Tag:":" Tags:"));
-        stream.println(" ");
         for (Map.Entry<ResourceLocation, Set<ResourceLocation>> entry: entries)
         {
-            stream.println(entry.getKey() + " failed. It is missing"+entry.getValue().size()+(entry.getValue().size() == 1?" Tag:":" Tags:"));
+            stream.println(entry.getKey() + " failed. It is missing "+entry.getValue().size()+(entry.getValue().size() == 1?" Tag:":" Tags:"));
             for (ResourceLocation id: entry.getValue())
             {
                 stream.println(" - "+id);

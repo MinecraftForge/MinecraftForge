@@ -9,11 +9,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.TagProvider;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
@@ -34,6 +36,14 @@ public class TagHelper {
     public static <T extends IForgeRegistryEntry<T>> Ordering<Tag.TagEntry<T>> tagEntryComparator()
     {
         return Ordering.natural().nullsFirst().<TagEntry<T>>onResultOf(TagEntry::getSerializedId).nullsFirst();
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> Supplier<IForgeRegistry<T>> staticRegistrySupplier(IForgeRegistry<T> registry) {
+        return () -> registry;
+    }
+
+    public static <T extends IForgeRegistryEntry<T>> Supplier<IForgeRegistry<T>> lazyRegistrySupplier(ResourceLocation registry) {
+        return () -> RegistryManager.ACTIVE.getRegistry(registry);
     }
 
     public static <T extends IForgeRegistryEntry<T>> UnaryOperator<Tag.TagEntry<T>> immutableShallowCopyTransformer()

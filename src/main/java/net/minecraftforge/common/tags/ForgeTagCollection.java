@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import jdk.nashorn.internal.parser.JSONParser;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
@@ -12,6 +14,7 @@ import net.minecraft.tags.NetworkTagCollection;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.registries.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -38,17 +41,17 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     private Map<ResourceLocation, SortedSet<Tag<T>>> owningTags;
     private BiFunction<ResourceLocation, ResourceLocation, ? extends Tag<T>> wrapperFactory;
 
-    private ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, String resourceLocationPrefixIn, boolean preserveOrderIn, ResourceLocation registryId)
+    private ForgeTagCollection(BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, String resourceLocationPrefixIn, boolean preserveOrderIn, ResourceLocation registryId)
     {
-        super(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, preserveOrderIn, registryId.toString());
+        super(null,null, resourceLocationPrefixIn, preserveOrderIn, registryId.toString());
         regName = registryId;
         setWrapperFactory(wrapperFactory);
         owningTags = new HashMap<>();
     }
 
-    public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, String resourceLocationPrefixIn, ResourceLocation registryId)
+    public ForgeTagCollection(BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory, String resourceLocationPrefixIn, ResourceLocation registryId)
     {
-        this(isValueKnownPredicateIn, resourceLocationToItemIn, wrapperFactory, resourceLocationPrefixIn, true, registryId);
+        this(wrapperFactory, resourceLocationPrefixIn, true, registryId);
     }
 
     private void setWrapperFactory(BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory)
@@ -172,6 +175,10 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     private Map<ResourceLocation, UnbakedTag<T>> deserializeTags(Stream<TagLoadingParameter> stream, IResourceManager resourceManager)
     {
         Map<ResourceLocation, UnbakedTag<T>> map = Maps.newHashMap();
+        Set<Tuple<ResourceLocation,String>> parsingFailedTags = new LinkedHashSet<>();
+        ForgeRegistry<T> registry = RegistryManager.ACTIVE.getRegistry(regName);
+        final Predicate<ResourceLocation> isValueKnownPredicate = registry::containsKey;
+        final Function<ResourceLocation,T> resourceLocationToItem= registry::getValue;
         stream.forEach(tagLoadingParameter ->
         {
             try
@@ -187,12 +194,16 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
                         } else
                         {
                             UnbakedTag<T> builder = map.getOrDefault(tagLoadingParameter.getTagId(), new UnbakedTag<>(tagLoadingParameter));
-                            builder.deserialize(this.isValueKnownPredicate, this.resourceLocationToItem, jsonobject);
+                            builder.deserialize(isValueKnownPredicate, resourceLocationToItem, jsonobject);
                             map.put(tagLoadingParameter.getTagId(), builder);
                         }
-                    } catch (RuntimeException | IOException ioexception)
+                    }
+                    catch (JsonParseException e) {
+                        parsingFailedTags.add(new Tuple<>(tagLoadingParameter.getTagId(),e.getMessage()));
+                    }
+                    catch (RuntimeException | IOException ioexception)
                     {
-                        LOGGER.error("Couldn't read {} tag list {} from {} in data pack {}", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName(), ioexception);
+                        LOGGER.error("Couldn't read {} tag {} from {} in data pack {}", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName(), ioexception);
                     } finally
                     {
                         IOUtils.closeQuietly((Closeable) iresource);
@@ -200,9 +211,13 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
                 }
             } catch (IOException ioexception1)
             {
-                LOGGER.error("Couldn't read {} tag list {} from {}", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), ioexception1);
+                LOGGER.error("Couldn't read {} tag {} from {}", this.regName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), ioexception1);
             }
         });
+        for (Tuple<ResourceLocation,String> failedToLoadTag: parsingFailedTags)
+        {
+            LOGGER.error("Failed to parse tag {}. Suppressed JsonParseException with message: {}.",failedToLoadTag.getA(),failedToLoadTag.getB());
+        }
         return map;
     }
 
@@ -272,6 +287,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
 
     public void updateOwningTags()
     {
+        LOGGER.info("Updating Tag Data");
         owningTags.clear();
         for (Map.Entry<ResourceLocation, Tag<T>> entry : getTagMap().entrySet())
         {
@@ -288,6 +304,8 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
                 set.add(wrapperFactory.apply(tag.getId(), regName)); //use Wrappers, so that Wrappers are returned
                 owningTags.put(element.getRegistryName(), set);
             }
+            //DEBUG: dump Tags
+            LOGGER.info(tag.toString());
         }
     }
 

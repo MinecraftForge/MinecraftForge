@@ -69,7 +69,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     {
         this.reg = reg;
         if (reg != null)
-            tags = new ForgeTagCollection<>(reg::containsKey, reg::getValue, wrapperFactory, regName.toString(), regName);
+            tags = new ForgeTagCollection<>(wrapperFactory, regName.toString(), regName);
     }
 
     @Override

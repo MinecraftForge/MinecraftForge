@@ -10,34 +10,50 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public class UnmodifiableTagWrapper<T extends IForgeRegistryEntry<T>> extends ForgeTagWrapper<T> {
 
-    public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<T> registry, @Nullable UnaryOperator<Tag<T>> tagTransformer)
+    public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, Supplier<IForgeRegistry<T>> registry, @Nullable UnaryOperator<Tag<T>> tagTransformer)
     {
         super(resourceLocationIn, registry, tagTransformer);
     }
 
-    public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<T> registry)
+    public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, Supplier<IForgeRegistry<T>> registry)
     {
         super(resourceLocationIn, registry);
     }
 
+    public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<T> registry, @Nullable UnaryOperator<Tag<T>> tagTransformer)
+    {
+        super(resourceLocationIn, TagHelper.staticRegistrySupplier(registry),tagTransformer);
+    }
+
+    public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, ResourceLocation registry, @Nullable UnaryOperator<Tag<T>> tagTransformer)
+    {
+        this(resourceLocationIn, TagHelper.lazyRegistrySupplier(Objects.requireNonNull(registry, "Registry is required for updating the cachedTag")), tagTransformer);
+    }
+
+    public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<T> registry)
+    {
+        super(resourceLocationIn, TagHelper.staticRegistrySupplier(registry));
+    }
+
     public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, ResourceLocation registry)
     {
-        this(resourceLocationIn, Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(registry), "Registry is required for updating the cachedTag"));
+        this(resourceLocationIn, TagHelper.lazyRegistrySupplier(Objects.requireNonNull(registry, "Registry is required for updating the cachedTag")));
     }
 
     public UnmodifiableTagWrapper(Tag<T> tag, IForgeRegistry<T> registry)
     {
-        super(tag.getId(), registry);
+        this(tag.getId(), registry);
         setCachedTagTransformed(tag);
     }
 
     public UnmodifiableTagWrapper(Tag<T> tag, ResourceLocation registry)
     {
-        this(tag, Objects.requireNonNull(RegistryManager.ACTIVE.getRegistry(registry), "Registry is required for updating the cachedTag"));
+        this(tag.getId(), registry);
     }
 
     @Override
