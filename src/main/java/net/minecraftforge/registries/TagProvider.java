@@ -28,9 +28,9 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 /**
+ * @param <T> The Type of RegistryEntry this TagProvider is responsible for
  * @implNote All Methods except {@link #getOrCreate(ResourceLocation)} return TagWrappers (created by this TagProviders wrapper Factory).
  * This means you can safely cache all tags you request, but modification might not be possible.
- * @param <T> The Type of RegistryEntry this TagProvider is responsible for
  */
 public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceManagerReloadListener/*implements INBTSerializable<NBTTagCompound>*/ {  //doesn't implement NBTSerializable, as it isn't really meant to be saved to Disc
     private static final Logger LOGGER = LogManager.getLogger();
@@ -49,8 +49,8 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         {
             LOGGER.warn("No Wrapper Factory specified for this TagProvider. Using default ForgeTagWrapper implementation!");
             this.wrapperFactory = UnmodifiableTagWrapper::new;
-        }
-        else {
+        } else
+        {
             this.wrapperFactory = wrapperFactory;
         }
     }
@@ -69,7 +69,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     {
         this.reg = reg;
         if (reg != null)
-            tags = new ForgeTagCollection<>(reg::containsKey, reg::getValue, wrapperFactory,regName.toString(), regName);
+            tags = new ForgeTagCollection<>(reg::containsKey, reg::getValue, wrapperFactory, regName.toString(), regName);
     }
 
     @Override
@@ -237,7 +237,6 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     /**
-     *
      * @param thing The thing for which to retrieve Tags for
      * @return All Tags on thing, sorted by their ID'S
      */
@@ -248,7 +247,6 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     /**
-     *
      * @param predicate Predicate to test
      * @return All Tags matching the given Predicate in undefined ordering
      */
@@ -258,7 +256,6 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     /**
-     *
      * @param predicate Predicate to test
      * @return Whether there is any Tag which matches the given Predicate or not
      */
@@ -268,32 +265,29 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     /**
-     *
-     * @param id The item to test
+     * @param id        The item to test
      * @param predicate the Predicate to use
      * @return All tags on the item matching the Predicate, sorted by their ID'S
      */
     public SortedSet<Tag<T>> getMatchingTagsOnItem(ResourceLocation id, Predicate<Tag<T>> predicate)
     {
-        return tags.getMatchingTagsForItem(id,predicate);
+        return tags.getMatchingTagsForItem(id, predicate);
     }
 
     /**
-     *
-     * @param id The item to test
+     * @param id        The item to test
      * @param predicate the Predicate to use
      * @return whether any tag on the Item represented by id matches the Predicate or not
      */
     public boolean matchesTagOnItem(ResourceLocation id, Predicate<Tag<T>> predicate)
     {
-        return tags.tagMatchForItem(id,predicate);
+        return tags.tagMatchForItem(id, predicate);
     }
 
     /**
-     *
-     * @implNote because the Tags have to be mapped to ResourceLocations first, slightly less performant than {@link #getOwningTags(ResourceLocation)} (more of a vanilla compat...)
      * @param id The id of an RegistryEntry for which to request TagID's for
      * @return The id's of all Tags which contain this RegistryEntry, sorted by their ID'S
+     * @implNote because the Tags have to be mapped to ResourceLocations first, slightly less performant than {@link #getOwningTags(ResourceLocation)} (more of a vanilla compat...)
      */
     public SortedSet<ResourceLocation> getOwningTagIDs(ResourceLocation id)
     {
@@ -301,10 +295,9 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     /**
-     *
-     * @implNote because the Tags have to be mapped to ResourceLocations first, slightly less performant than {@link #getOwningTags(IForgeRegistryEntry)} (more of a vanilla compat...)
      * @param thing An RegistryEntry for which to request TagID's for
      * @return The id's of all Tags which contain this RegistryEntry, sorted by their ID'S
+     * @implNote because the Tags have to be mapped to ResourceLocations first, slightly less performant than {@link #getOwningTags(IForgeRegistryEntry)} (more of a vanilla compat...)
      */
     public SortedSet<ResourceLocation> getOwningTagIDs(T thing)
     {
@@ -312,9 +305,9 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     /**
-     * @implNote Notice, that this is the only method which does not return a Wrapper Tag, which could safely be cached!
      * @param location The location for which to retrieve the Tag
      * @return the underlying tag
+     * @implNote Notice, that this is the only method which does not return a Wrapper Tag, which could safely be cached!
      */
     @Nonnull
     public Tag<T> getOrCreate(ResourceLocation location)
@@ -323,7 +316,6 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     /**
-     *
      * @param location The tag to retrieve
      * @return A lazily initialized TagWrapper
      */

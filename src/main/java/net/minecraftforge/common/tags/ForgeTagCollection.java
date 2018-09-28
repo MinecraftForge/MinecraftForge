@@ -221,7 +221,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
         for (Map.Entry<String, Set<ResourceLocation>> flattenedEntry : flattener.entrySet())
         {
             ResourceLocation collected = new ResourceLocation("minecraft:" + flattenedEntry.getKey());
-            UnbakedTag<T> builder = map.getOrDefault(collected,new UnbakedTag<>(collected)); //ensure that we don't delete existing minecraft tags
+            UnbakedTag<T> builder = map.getOrDefault(collected, new UnbakedTag<>(collected)); //ensure that we don't delete existing minecraft tags
             map.put(collected, builder.addAllDummyEntries(flattenedEntry.getValue()));
         }
     }
@@ -258,11 +258,12 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
         {
             this.register((entry.getValue()).bake(this.preserveOrder));
         }*/
-        if (!map.isEmpty()) {
-            Map<ResourceLocation,Set<ResourceLocation>> failedTags = new HashMap<>();
-            for (Map.Entry<ResourceLocation, UnbakedTag<T>> entry: map.entrySet())
+        if (!map.isEmpty())
+        {
+            Map<ResourceLocation, Set<ResourceLocation>> failedTags = new HashMap<>();
+            for (Map.Entry<ResourceLocation, UnbakedTag<T>> entry : map.entrySet())
             {
-                failedTags.put(entry.getKey(),entry.getValue().getFailingTags(this::get));
+                failedTags.put(entry.getKey(), entry.getValue().getFailingTags(this::get));
             }
             throw new TagBuildingException(failedTags);
         }
@@ -352,18 +353,21 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
             return replacesDummyAdds;
         }
 
-        private Set<ResourceLocation> getFailingTags(Function<ResourceLocation,Tag<T>> resourceLocationToTagFunction) {
+        private Set<ResourceLocation> getFailingTags(Function<ResourceLocation, Tag<T>> resourceLocationToTagFunction)
+        {
             return getBuilder().findResolveFailures(resourceLocationToTagFunction);
         }
 
-        private UnbakedTag<T> deserialize(Predicate<ResourceLocation> isValueKnownPredicate, Function<ResourceLocation, T> objectGetter, JsonObject json) {
-            if (JsonUtils.getBoolean(json,"replace",false) && id.getNamespace().equals("minecraft"))
+        private UnbakedTag<T> deserialize(Predicate<ResourceLocation> isValueKnownPredicate, Function<ResourceLocation, T> objectGetter, JsonObject json)
+        {
+            if (JsonUtils.getBoolean(json, "replace", false) && getId().getNamespace().equals("minecraft"))
                 this.replacesDummyAdds = true;
-            getBuilder().deserialize(isValueKnownPredicate,objectGetter,json);
+            getBuilder().deserialize(isValueKnownPredicate, objectGetter, json);
             return this;
         }
 
-        private UnbakedTag<T> addAllDummyEntries(Iterable<ResourceLocation> tagEntries) {
+        private UnbakedTag<T> addAllDummyEntries(Iterable<ResourceLocation> tagEntries)
+        {
             if (!replacesDummyAdds())
                 getBuilder().addAllTags(tagEntries);
             return this;
@@ -373,8 +377,6 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
         {
             return getBuilder().resolve(resourceLocationToTag);
         }
-
-
 
         private Tag<T> bake()
         {

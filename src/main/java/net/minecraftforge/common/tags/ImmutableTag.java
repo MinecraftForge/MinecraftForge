@@ -11,7 +11,6 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T> {
     /**
@@ -37,13 +36,7 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
 
     public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> asTag(ResourceLocation id, Collection<ITagEntry<T>> entries)
     {
-        ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf(TagHelper.registryNameComparator(), TagHelper.collectTagEntries(Collectors.toList(),entries));
-        ImmutableList.Builder<Tag.ITagEntry<T>> tagEntryBuilder = ImmutableList.builder();
-        for (T item : items)
-        {
-            tagEntryBuilder.add(new Tag.ListEntry<>(Collections.singleton(item)));
-        }
-        return new ImmutableTag<>(id, items, tagEntryBuilder.build());
+        return asTag(id, TagHelper.collectTagEntries(Collectors.toList(), entries));
     }
 
 
@@ -57,7 +50,7 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         //This kind of Sorting (immutableShallowCopyTransformer) will flatten out the Tag Structure contained in Tag.TagEntries - more efficient
         Set<ITagEntry<T>> sortedEntries = TagHelper.sortTagEntries(entries, TagHelper.immutableShallowCopyTransformer(), Collectors.toCollection(LinkedHashSet::new));
         ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf(
-                TagHelper.registryNameComparator(), TagHelper.collectTagEntries(Collectors.toList(),entries));
+                TagHelper.registryNameComparator(), TagHelper.collectTagEntries(Collectors.toList(), entries));
         return new ImmutableTag<>(id, items, ImmutableList.copyOf(sortedEntries));
     }
 
@@ -134,20 +127,21 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
     {
         StringBuilder builder = new StringBuilder("ImmutableTag{\n");
         ImmutableList<ITagEntry<T>> entries = getEntries();
-        for (int i = 0; i<entries.size(); ++i)
+        for (int i = 0; i < entries.size(); ++i)
         {
             ITagEntry<T> entry = entries.get(i);
             builder.append('"');
-            if (entry instanceof Tag.TagEntry) {
+            if (entry instanceof Tag.TagEntry)
+            {
                 builder.append('#');
                 builder.append(((TagEntry<T>) entry).getSerializedId());
-            }
-            else {
+            } else
+            {
                 Collection<T> subElements = new LinkedList<>();
                 entry.populate(subElements);
-                for (T object: subElements)
+                for (T object : subElements)
                 {
-                    if (object.getRegistryName()!=null)
+                    if (object.getRegistryName() != null)
                     {
                         builder.append(object.getRegistryName());
                         builder.append(';');
@@ -155,7 +149,8 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
                 }
             }
             builder.append('"');
-            if (i < entries.size()-1) {
+            if (i < entries.size() - 1)
+            {
                 builder.append(',');
             }
             builder.append("\n");
@@ -166,6 +161,7 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
 
     public static final class Builder<T extends IForgeRegistryEntry<T>> extends SortedTagBuilder<T> {
         private boolean resolved;
+
         private Builder()
         {
             super(ImmutableTag::copyPreserveTagStructure);
@@ -237,12 +233,13 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         @Override
         public boolean resolve(Function<ResourceLocation, Tag<T>> resourceLocationToTag)
         {
-            this.resolved =  super.resolve(resourceLocationToTag);
+            this.resolved = super.resolve(resourceLocationToTag);
             return resolved;
         }
 
         /**
          * Using this build will be preserve the TagStructure, if this Builder was resolved. Otherwise {@link #buildCopy(ResourceLocation)} will be used to prevent NPE's from copying unresolved Tags.
+         *
          * @param resourceLocationIn The new TagId
          * @return An ImmutableTag created via {@link #copyPreserveTagStructure(ResourceLocation, Collection)} or {@link #asTag(ResourceLocation, Collection)}
          */
@@ -256,13 +253,14 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
 
         /**
          * Using this build, the TagStructure will be lost, but there won't be the overhead of {@link #copyPreserveTagStructure(ResourceLocation, Collection)}.
+         *
          * @param resourceLocationIn The new TagId
          * @return An ImmutableTag created via {@link #asTag(ResourceLocation, Collection)}
          */
         public ImmutableTag<T> buildCopy(ResourceLocation resourceLocationIn)
         {
             this.ordered(true); //whatever the case, the Immutable tag will order itself, so don't apply any special ordering
-            return ImmutableTag.asTag(resourceLocationIn,this.entries);
+            return ImmutableTag.asTag(resourceLocationIn, this.entries);
         }
     }
 }

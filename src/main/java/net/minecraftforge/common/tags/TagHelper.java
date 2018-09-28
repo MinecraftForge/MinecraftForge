@@ -51,7 +51,7 @@ public class TagHelper {
         return collection.stream().flatMap(tagentry ->
         {
             List<T> tagEntries = new ArrayList<>();
-            if (!(tagentry instanceof Tag.TagEntry) || ((TagEntry<T>) tagentry).getTag()!=null) //verify, so that populate doesn't cause IllegalStateException
+            if (!(tagentry instanceof Tag.TagEntry) || ((TagEntry<T>) tagentry).getTag() != null) //verify, so that populate doesn't cause IllegalStateException
                 tagentry.populate(tagEntries);
             return tagEntries.stream();
         })
