@@ -21,7 +21,7 @@ package net.minecraftforge.fml;
 
 import net.minecraftforge.fml.language.IModInfo;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -50,13 +50,11 @@ public abstract class ModContainer
     protected ModLoadingStage modLoadingStage;
     protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
     protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
-    protected final List<Throwable> modLoadingError;
     public ModContainer(IModInfo info)
     {
         this.modId = info.getModId();
         this.modInfo = info;
         this.triggerMap = new HashMap<>();
-        this.modLoadingError = new ArrayList<>();
         this.modLoadingStage = ModLoadingStage.CONSTRUCT;
     }
 
@@ -88,19 +86,18 @@ public abstract class ModContainer
      * Transition the mod to this event if possible.
      * @param event to transition to
      */
-    public final void transitionState(LifecycleEventProvider.LifecycleEvent event)
+    public final void transitionState(LifecycleEventProvider.LifecycleEvent event, Consumer<List<ModLoadingException>> errorHandler)
     {
         if (modLoadingStage == event.fromStage())
         {
             try
             {
                 triggerMap.getOrDefault(modLoadingStage, e->{}).accept(event);
-                modLoadingStage = event.toStage();
             }
-            catch (RuntimeException e)
+            catch (ModLoadingException e)
             {
-                modLoadingError.add(e);
                 modLoadingStage = ModLoadingStage.ERROR;
+                errorHandler.accept(Collections.singletonList(e));
             }
         }
     }

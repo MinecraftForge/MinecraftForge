@@ -23,6 +23,7 @@ import org.apache.commons.lang3.text.StrSubstitutor;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,7 +33,11 @@ import java.util.Optional;
 public class StringUtils
 {
     public static String toLowerCase(final String str) {
-        return str.toLowerCase(java.util.Locale.ROOT);
+        return str.toLowerCase(Locale.ROOT);
+    }
+
+    public static String toUpperCase(final String str) {
+        return str.toUpperCase(Locale.ROOT);
     }
 
     public static boolean endsWith(final String search, final String... endings) {

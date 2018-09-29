@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fml.common.FMLPaths;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

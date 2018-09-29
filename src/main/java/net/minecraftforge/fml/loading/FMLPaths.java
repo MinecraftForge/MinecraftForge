@@ -17,13 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common;
+package net.minecraftforge.fml.loading;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import net.minecraftforge.fml.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -72,6 +73,12 @@ public enum FMLPaths
         for (FMLPaths path : FMLPaths.values())
         {
             path.absolutePath = rootPath.resolve(path.relativePath).toAbsolutePath();
+            try {
+                path.absolutePath = path.absolutePath.toRealPath();
+            } catch (IOException e) {
+                LOGGER.error("Unable to resolve path {}", path.absolutePath, e);
+                throw new RuntimeException(e);
+            }
             LOGGER.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
             if (path.isDirectory)
             {

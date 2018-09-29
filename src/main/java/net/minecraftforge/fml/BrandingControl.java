@@ -45,8 +45,7 @@ public class BrandingControl
             brd.add("MCP " + ForgeVersion.mcpVersion);
             brd.add("Forge " + ForgeVersion.getVersion());
             int tModCount = ModList.get().size();
-
-            brd.add(MessageFormat.format(ForgeI18n.getPattern("fml.menu.loadingmods"), tModCount));
+            brd.add(ForgeI18n.parseMessage("fml.menu.loadingmods", tModCount));
             brandings = brd.build();
             brandingsNoMC = brandings.subList(1, brandings.size());
         }
@@ -68,11 +67,11 @@ public class BrandingControl
     }
     private static final List<String> defaultClientBranding = Stream.of("fml", "forge").collect(Collectors.toList());
     public static String getClientBranding() {
-        return defaultClientBranding.stream().collect(Collectors.joining(","));
+        return String.join(",", defaultClientBranding);
     }
 
     public static final List<String> defaultServerBranding = Arrays.asList("fml", "forge");
     public static String getServerBranding() {
-        return defaultServerBranding.stream().collect(Collectors.joining(","));
+        return String.join(",", defaultServerBranding);
     }
 }
