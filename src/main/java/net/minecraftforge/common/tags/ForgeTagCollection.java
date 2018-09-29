@@ -11,6 +11,7 @@ import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.tags.NetworkTagCollection;
 import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagCollection;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
@@ -63,8 +64,15 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
     {
         LOGGER.info("Loading Tags for Registry {}.",regName);
         Map<ResourceLocation, UnbakedTag<T>> map = deserializeTags(getLoadingParameters(resourceManager), resourceManager);
-        collectToMinecraftTags(map);
-        registerUnbakedTags(map);
+        clear(); //clear existing Tag Data before registering new, so that removed tags aren't kept after reload. Vanilla bug?
+        if (!map.isEmpty()) 
+        {
+            collectToMinecraftTags(map);
+            registerUnbakedTags(map);
+        }
+        else {
+            LOGGER.debug("Skipping Registration because there were no {} Tags added");
+        }
         updateOwningTags();
         LOGGER.info("Finished loading {} Tags for Registry {}.",getTagMap().size(),regName);
     }
