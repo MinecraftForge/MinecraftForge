@@ -23,7 +23,6 @@ import com.electronwill.nightconfig.core.ConfigSpec;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.common.FMLPaths;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 

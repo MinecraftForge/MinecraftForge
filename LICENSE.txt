@@ -57,12 +57,6 @@ This software contains a partial repackaging of javaxdelta, a BSD licensed progr
 binary differences and applying them, sourced from the subversion at http://sourceforge.net/projects/javaxdelta/
 authored by genman, heikok, pivot.
 The only changes are to replace some Trove collection types with standard Java collections, and repackaged.
-
-This software contains potions of Paulscodee IBXM library, a BSD liceensed library for
-loading and playing IBXM formated auto. No modifications havee beeen made. The associated 
-licenses can be found along side this one, or at
-https://github.com/MinecraftForge/MinecraftForge/blob/1.12.x/LICENSE-Paulscode%20IBXM%20Library.txt
-https://github.com/MinecraftForge/MinecraftForge/blob/1.12.x/LICENSE-Paulscode%20SoundSystem%20CodecIBXM.txt
 =========================================================================
 
 

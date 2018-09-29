@@ -62,7 +62,7 @@ public class ModList
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
         this.modFiles = modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).collect(Collectors.toList());
-        this.sortedList = Streams.concat(DefaultModInfos.getModInfos().stream(), sortedList.stream()).
+        this.sortedList = sortedList.stream().
                 map(ModInfo.class::cast).
                 collect(Collectors.toList());
         this.fileById = this.modFiles.stream().map(ModFileInfo::getMods).flatMap(Collection::stream).
@@ -91,23 +91,21 @@ public class ModList
         return this.fileById.get(modid);
     }
 
-    public void dispatchLifeCycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
+    public void dispatchLifeCycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.preLifecycleEvent(lifecycleEvent));
         DeferredWorkQueue.deferredWorkQueue.clear();
         try
         {
-            modLoadingThreadPool.submit(()->this.mods.parallelStream().forEach(m->m.transitionState(lifecycleEvent))).get();
+            modLoadingThreadPool.submit(()->this.mods.parallelStream().forEach(m->m.transitionState(lifecycleEvent, errorHandler))).get();
         }
         catch (InterruptedException | ExecutionException e)
         {
             LOGGER.error(LOADING, "Encountered an exception during parallel processing", e);
         }
+        LOGGER.debug(LOADING, "Dispatching synchronous work, {} jobs", DeferredWorkQueue.deferredWorkQueue.size());
         DeferredWorkQueue.deferredWorkQueue.forEach(FutureTask::run);
+        LOGGER.debug(LOADING, "Synchronous work queue complete");
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.postLifecycleEvent(lifecycleEvent));
-        final List<ModContainer> erroredContainers = this.mods.stream().filter(m -> m.getCurrentState() == ModLoadingStage.ERROR).collect(Collectors.toList());
-        if (!erroredContainers.isEmpty()) {
-            throw new RuntimeException("Errored containers found!", erroredContainers.get(0).modLoadingError.get(0));
-        }
     }
 
     public void setLoadedMods(final List<ModContainer> modContainers)

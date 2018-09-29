@@ -19,6 +19,39 @@
 
 package net.minecraftforge.fml.client.gui;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiListExtended;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.GuiUtilRenderComponents;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.client.resources.ResourcePackInfoClient;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.ForgeI18n;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.client.ConfigGuiHandler;
+import net.minecraftforge.fml.client.ResourcePackLoader;
+import net.minecraftforge.fml.common.versioning.ComparableVersion;
+import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nullable;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,39 +64,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiListExtended;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.GuiUtilRenderComponents;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.NativeImage;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.ResourcePackInfoClient;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.client.ConfigGuiHandler;
-import net.minecraftforge.fml.client.ResourcePackLoader;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.common.versioning.ComparableVersion;
-
 import static net.minecraft.util.StringUtils.stripControlCodes;
-
-import net.minecraftforge.fml.language.IModInfo;
-import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * @author cpw
@@ -137,6 +138,7 @@ public class GuiModList extends GuiScreen
 
     private boolean sorted = false;
     private SortType sortType = SortType.NORMAL;
+
     /**
      * @param mainMenu
      */
@@ -147,7 +149,7 @@ public class GuiModList extends GuiScreen
         this.unsortedMods = Collections.unmodifiableList(this.mods);
     }
 
-    class InfoPanel extends GuiListExtended<Info> {
+    class InfoPanel extends GuiListExtended<InfoPanel.Info> {
         InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int slotHeightIn)
         {
             super(mcIn, widthIn, heightIn, topIn, bottomIn, slotHeightIn);
@@ -156,7 +158,12 @@ public class GuiModList extends GuiScreen
         @Override
         protected int getScrollBarX()
         {
-            return this.width - 6;
+            return this.right - 6;
+        }
+
+        @Override
+        public int getListWidth() {
+            return this.width;
         }
 
         void setInfo(Info info)
@@ -169,6 +176,113 @@ public class GuiModList extends GuiScreen
         {
             this.clearEntries();
         }
+        class Info extends GuiListExtended.IGuiListEntry<Info>
+        {
+            private ResourceLocation logoPath;
+            private Dimension logoDims;
+            private List<ITextComponent> lines;
+
+            public Info(GuiListExtended<Info> parent, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims)
+            {
+                this.list = parent;
+                this.lines    = resizeContent(lines);
+                this.logoPath = logoPath;
+                this.logoDims = logoDims;
+            }
+
+            private List<ITextComponent> resizeContent(List<String> lines)
+            {
+                List<ITextComponent> ret = new ArrayList<ITextComponent>();
+                for (String line : lines)
+                {
+                    if (line == null)
+                    {
+                        ret.add(null);
+                        continue;
+                    }
+
+                    ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
+                    int maxTextLength = InfoPanel.this.width - 8;
+                    if (maxTextLength >= 0)
+                    {
+                        ret.addAll(GuiUtilRenderComponents.splitText(chat, maxTextLength, GuiModList.this.fontRenderer, false, true));
+                    }
+                }
+                return ret;
+            }
+
+
+            @Override
+            public void drawEntry(int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
+            {
+                int top = this.getY();
+                int left = this.getX();
+
+                if (logoPath != null) {
+                    mc.getTextureManager().bindTexture(logoPath);
+                    GlStateManager.enableBlend();
+                    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                    Gui.drawModalRectWithCustomSizedTexture(left, top, 0.0F, 0.0F, logoDims.width, logoDims.height, logoDims.width, logoDims.height);
+                    top += logoDims.height + 10;
+                }
+
+                for (ITextComponent line : lines)
+                {
+                    if (line != null)
+                    {
+                        GlStateManager.enableBlend();
+                        GuiModList.this.fontRenderer.drawStringWithShadow(line.getFormattedText(), left + 4, top, 0xFFFFFF);
+                        GlStateManager.disableAlphaTest();
+                        GlStateManager.disableBlend();
+                    }
+                    top += fontRenderer.FONT_HEIGHT;
+                }
+
+                final ITextComponent component = findTextLine(mouseX, mouseY, 0, 0);
+                if (component!=null) {
+                    GuiModList.this.handleComponentHover(component, mouseX, mouseY);
+                }
+            }
+
+            private ITextComponent findTextLine(final int mouseX, final int mouseY, final int offX, final int offY) {
+                int offset = mouseY - offY;
+                if (logoPath != null) {
+                    offset -= logoDims.height + 10;
+                }
+                if (offset <= 0)
+                    return null;
+
+                int lineIdx = offset / fontRenderer.FONT_HEIGHT;
+                if (lineIdx >= lines.size() || lineIdx < 1)
+                    return null;
+
+                ITextComponent line = lines.get(lineIdx-1);
+                if (line != null)
+                {
+                    int k = offX;
+                    for (ITextComponent part : line) {
+                        if (!(part instanceof TextComponentString))
+                            continue;
+                        k += GuiModList.this.fontRenderer.getStringWidth(((TextComponentString)part).getText());
+                        if (k >= mouseX)
+                        {
+                            return part;
+                        }
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            public boolean mouseClicked(final double mouseX, final double mouseY, final int buttonmask) {
+                final ITextComponent component = findTextLine((int) mouseX, (int) mouseY, InfoPanel.this.left, InfoPanel.this.top);
+                if (component != null) {
+                    GuiModList.this.handleComponentClick(component);
+                    return true;
+                }
+                return false;
+            }
+        }
     }
     @Override
     public void initGui()
@@ -179,34 +293,26 @@ public class GuiModList extends GuiScreen
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion().getVersionString()) + 5);
         }
         listWidth = Math.min(listWidth, 150);
+        listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
         this.modList = new GuiSlotModList(this, listWidth);
         this.modList.setSlotXBoundsFromLeft(6);
-        this.modInfo = new InfoPanel(this.mc, this.width - this.listWidth - 30, this.height, 32, this.height - 88 + 4, 1);
-        this.modInfo.setSlotXBoundsFromLeft(this.listWidth + 24);
+        this.modInfo = new InfoPanel(this.mc, this.width - this.listWidth - 20, this.height, 10, this.height - 30, this.height - 46);
+        this.modInfo.setSlotXBoundsFromLeft(this.listWidth + 14);
 
-        this.addButton(new GuiButton(6, ((modList.right + this.width) / 2) - 100, this.height - 38, I18n.format("gui.done")){
-            @Override
-            public void onClick(double mouseX, double mouseY)
-            {
-                GuiModList.this.mc.displayGuiScreen(GuiModList.this.mainMenu);
-            }
-        });
-        this.addButton(this.configButton = new GuiButton(20, 10, this.height - 49, this.listWidth, 20, I18n.format("fml.menu.mods.config")){
-            @Override
-            public void onClick(double mouseX, double mouseY)
-            {
-                GuiModList.this.displayModConfig();
-            }
-        });
+        this.addButton(new GuiButtonClickConsumer(6, ((modList.right + this.width) / 2) - 100, this.height - 24,
+                I18n.format("gui.done"), (x, y) -> GuiModList.this.mc.displayGuiScreen(GuiModList.this.mainMenu)));
+        this.addButton(this.configButton = new GuiButtonClickConsumer(20, 6, this.height - 24, this.listWidth, 20,
+                I18n.format("fml.menu.mods.config"), (x,y)-> GuiModList.this.displayModConfig()));
 
-        search = new GuiTextField(0, getFontRenderer(), 12, modList.bottom + 17, modList.width - 4, 14);
+        search = new GuiTextField(0, getFontRenderer(), 8, modList.bottom + 17, listWidth - 4, 14);
         children.add(search);
         children.add(modList);
+        children.add(modInfo);
         search.setFocused(true);
         search.setCanLoseFocus(true);
 
-        final int width = (modList.width / numButtons);
-        int x = 10, y = 10;
+        final int width = listWidth / numButtons;
+        int x = 6, y = 10;
         addButton(SortType.NORMAL.button = new SortButton(SortType.NORMAL.buttonID, x, y, width - buttonMargin, 20, SortType.NORMAL));
         x += width + buttonMargin;
         addButton(SortType.A_TO_Z.button = new SortButton(SortType.NORMAL.buttonID, x, y, width - buttonMargin, 20, SortType.A_TO_Z));
@@ -280,12 +386,12 @@ public class GuiModList extends GuiScreen
         this.modInfo.drawScreen(mouseX, mouseY, partialTicks);
 
         int left = ((this.width - this.listWidth - 38) / 2) + this.listWidth + 30;
-        super.render(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
         int x = ((10 + modList.right) / 2) - (getFontRenderer().getStringWidth(text) / 2);
         getFontRenderer().drawString(text, x, modList.bottom + 5, 0xFFFFFF);
         this.search.drawTextField(mouseX, mouseY, partialTicks);
+        super.render(mouseX, mouseY, partialTicks);
     }
 
     Minecraft getMinecraftInstance()
@@ -334,7 +440,7 @@ public class GuiModList extends GuiScreen
             try
             {
                 NativeImage logo = null;
-                InputStream logoResource = getClass().getResourceAsStream(logoFile);
+                InputStream logoResource = pack.getResourcePack().getRootResourceStream(logoFile);
                 if (logoResource != null)
                     logo = NativeImage.read(logoResource);
                 if (logo != null)
@@ -347,23 +453,23 @@ public class GuiModList extends GuiScreen
         }).orElse(Pair.of(null, new Dimension(0, 0)));
 
         lines.add(selectedMod.getDisplayName());
-        lines.add(String.format("Version: %s", selectedMod.getVersion().getVersionString()));
-        lines.add(String.format("Mod ID: '%s' Mod State: %s", selectedMod.getModId(), ModList.get().getModContainerById(selectedMod.getModId()).
+        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.version", selectedMod.getVersion().getVersionString()));
+        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.idstate", selectedMod.getModId(), ModList.get().getModContainerById(selectedMod.getModId()).
                 map(ModContainer::getCurrentState).map(Object::toString).orElse("NONE")));
 
         selectedMod.getModConfig().getOptional("credits").ifPresent(credits->
-                lines.add("Credits: " + credits));
+                lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.credits", credits)));
         selectedMod.getModConfig().getOptional("authors").ifPresent(authors ->
-                lines.add("Authors: " + authors));
+                lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.authors", authors)));
         selectedMod.getModConfig().getOptional("displayURL").ifPresent(displayURL ->
-                lines.add("URL: " + displayURL));
+                lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.displayurl", displayURL)));
         if (selectedMod.getOwningFile() == null || selectedMod.getOwningFile().getMods().size()==1)
-            lines.add("No child mods for this mod");
+            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.nochildmods"));
         else
-            lines.add("Child mods: " + selectedMod.getOwningFile().getMods().stream().map(IModInfo::getDisplayName).collect(Collectors.joining(",")));
+            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.childmods", selectedMod.getOwningFile().getMods().stream().map(IModInfo::getDisplayName).collect(Collectors.joining(","))));
 
         if (vercheck.status == VersionChecker.Status.OUTDATED || vercheck.status == VersionChecker.Status.BETA_OUTDATED)
-            lines.add("Update Available: " + (vercheck.url == null ? "" : vercheck.url));
+            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.updateavailable", vercheck.url == null ? "" : vercheck.url));
 
         lines.add(null);
         lines.add(selectedMod.getDescription());
@@ -371,7 +477,7 @@ public class GuiModList extends GuiScreen
         if ((vercheck.status == VersionChecker.Status.OUTDATED || vercheck.status == VersionChecker.Status.BETA_OUTDATED) && vercheck.changes.size() > 0)
         {
             lines.add(null);
-            lines.add("Changes:");
+            lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.changelogheader"));
             for (Entry<ComparableVersion, String> entry : vercheck.changes.entrySet())
             {
                 lines.add("  " + entry.getKey() + ":");
@@ -380,84 +486,6 @@ public class GuiModList extends GuiScreen
             }
         }
 
-        modInfo.setInfo(new Info(modInfo, lines, logoData.getLeft(), logoData.getRight()));
-    }
-
-    class Info extends GuiListExtended.IGuiListEntry<Info>
-    {
-        private ResourceLocation logoPath;
-        private Dimension logoDims;
-        private List<ITextComponent> lines = null;
-
-        public Info(GuiListExtended<Info> parent, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims)
-        {
-            this.list = parent;
-            this.lines    = resizeContent(lines);
-            this.logoPath = logoPath;
-            this.logoDims = logoDims;
-        }
-
-        private List<ITextComponent> resizeContent(List<String> lines)
-        {
-            List<ITextComponent> ret = new ArrayList<ITextComponent>();
-            for (String line : lines)
-            {
-                if (line == null)
-                {
-                    ret.add(null);
-                    continue;
-                }
-
-//                ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                ITextComponent chat = new TextComponentString(line);
-                int maxTextLength = this.getX() - 8;
-                if (maxTextLength >= 0)
-                {
-                    ret.addAll(GuiUtilRenderComponents.splitText(chat, maxTextLength, GuiModList.this.fontRenderer, false, true));
-                }
-            }
-            return ret;
-        }
-
-
-        @Override
-        public void drawEntry(int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
-        {
-            int top = this.getY();
-            int left = this.getX();
-/*
-            int top = this.
-
-            if (logoPath != null)
-            {
-                GlStateManager.enableBlend();
-                GuiModList.this.mc.renderEngine.bindTexture(logoPath);
-                GlStateManager.draw
-                BufferBuilder wr = tess.getBuffer();
-                int offset = (this.left + this.listWidth/2) - (logoDims.width / 2);
-                wr.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-                wr.pos(offset,                  top + logoDims.height, zLevel).tex(0, 1).endVertex();
-                wr.pos(offset + logoDims.width, top + logoDims.height, zLevel).tex(1, 1).endVertex();
-                wr.pos(offset + logoDims.width, top,                   zLevel).tex(1, 0).endVertex();
-                wr.pos(offset,                  top,                   zLevel).tex(0, 0).endVertex();
-                tess.draw();
-                GlStateManager.disableBlend();
-                top += logoDims.height + 10;
-            }
-
-*/
-            for (ITextComponent line : lines)
-            {
-                if (line != null)
-                {
-                    GlStateManager.enableBlend();
-                    GuiModList.this.fontRenderer.drawStringWithShadow(line.getFormattedText(), left + 4, top, 0xFFFFFF);
-                    GlStateManager.disableAlphaTest();
-                    GlStateManager.disableBlend();
-                }
-                top += fontRenderer.FONT_HEIGHT + 1;
-            }
-
-        }
+        modInfo.setInfo(modInfo.new Info(modInfo, lines, logoData.getLeft(), logoData.getRight()));
     }
 }

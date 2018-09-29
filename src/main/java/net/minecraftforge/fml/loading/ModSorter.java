@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.Java9BackportUtils;
-import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.language.IModInfo;
@@ -56,10 +55,15 @@ public class ModSorter
     public static LoadingModList sort(List<ModFile> mods)
     {
         final ModSorter ms = new ModSorter(mods);
-        ms.buildUniqueList();
-        ms.verifyDependencyVersions();
-        ms.sort();
-        return LoadingModList.of(ms.modFiles, ms.sortedList);
+        EarlyLoadingException earlyLoadingException = null;
+        try {
+            ms.buildUniqueList();
+            ms.verifyDependencyVersions();
+            ms.sort();
+        } catch (EarlyLoadingException ele) {
+            earlyLoadingException = ele;
+        }
+        return LoadingModList.of(ms.modFiles, ms.sortedList, earlyLoadingException);
     }
 
     private void sort()
@@ -77,7 +81,7 @@ public class ModSorter
         {
             TopologicalSort.TopoSortException.TopoSortExceptionData<Supplier<ModInfo>> data = e.getData();
             LOGGER.error(LOADING, ()-> data);
-            throw e;
+            throw new EarlyLoadingException("Sorting error", "fml.modloading.sortingerror", e, e.getData());
         }
         this.sortedList = sorted.stream().map(Supplier::get).map(ModFileInfo::getMods).
                 flatMap(Collection::stream).map(ModInfo.class::cast).collect(Collectors.toList());
@@ -107,7 +111,7 @@ public class ModSorter
         final List<Map.Entry<String, List<ModInfo>>> dupedMods = modIds.entrySet().stream().filter(e -> e.getValue().size() > 1).collect(Collectors.toList());
 
         if (!dupedMods.isEmpty()) {
-            throw new DuplicateModsFoundException(null);
+            throw new EarlyLoadingException("Duplicate mods found", "fml.modloading.dupesfound", null,  dupedMods);
         }
 
         modIdNameLookup = modIds.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0)));
@@ -127,7 +131,7 @@ public class ModSorter
         LOGGER.debug(LOADING, "Found {} mandatory mod requirements missing", missingVersions.size());
 
         if (!missingVersions.isEmpty()) {
-            throw new RuntimeException("Missing mods");
+            throw new EarlyLoadingException("Missing mods", "fml.modloading.missingmods", null, missingVersions);
         }
     }
 

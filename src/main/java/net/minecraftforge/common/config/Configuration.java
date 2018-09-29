@@ -35,9 +35,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PushbackInputStream;
 import java.io.Reader;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -51,7 +49,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableSet;
 
 import com.google.common.primitives.Floats;
-import net.minecraftforge.fml.common.FMLPaths;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
