@@ -171,19 +171,21 @@ project(':forge') {
         workingDir 'runserver'
     }
     
-    task ciWriteBuildNumber << {
-        def file = file("$rootDir/src/main/java/net/minecraftforge/common/ForgeVersion.java")
-        def bn = System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0
-        def outfile = ''
+    task ciWriteBuildNumber {
+        doLast {
+            def file = file("$rootDir/src/main/java/net/minecraftforge/common/ForgeVersion.java")
+            def bn = System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0
+            def outfile = ''
 
-        file.eachLine{ String s ->
-            if (s.matches('^    public static final int buildVersion    = [\\d]+;\$'))
-                s = "    public static final int buildVersion    = ${bn};"
-            if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
-                s = "    public static final String mcVersion = \"${patcher.mcVersion}\";"
-            outfile += (s+'\n')
+            file.eachLine{ String s ->
+                if (s.matches('^    public static final int buildVersion    = [\\d]+;\$'))
+                    s = "    public static final int buildVersion    = ${bn};"
+                if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
+                    s = "    public static final String mcVersion = \"${patcher.mcVersion}\";"
+                outfile += (s+'\n')
+            }
+            file.write(outfile)
         }
-        file.write(outfile)
     }
     
     

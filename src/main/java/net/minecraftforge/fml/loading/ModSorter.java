@@ -20,7 +20,6 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.Java9BackportUtils;
-import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
 import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.language.IModInfo;

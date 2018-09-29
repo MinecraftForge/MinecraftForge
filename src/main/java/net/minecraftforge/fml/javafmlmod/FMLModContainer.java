@@ -87,7 +87,6 @@ public class FMLModContainer extends ModContainer
     private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
     {
         LOGGER.error(new EventBusErrorMessage(event, i, iEventListeners, throwable));
-
     }
 
     private void beforeEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
@@ -97,11 +96,11 @@ public class FMLModContainer extends ModContainer
 
     private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
         final ModLifecycleEvent event = lifecycleEvent.buildModEvent(this);
-        LOGGER.debug(LOADING, "Firing event for modid {} : {} @ {}", this.getModId(), event, System.identityHashCode(event.getClass()));
+        LOGGER.debug(LOADING, "Firing event for modid {} : {}", this.getModId(), event.getClass().getName());
         try
         {
             eventBus.post(event);
-            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), event);
+            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), event.getClass().getName());
         }
         catch (Throwable e)
         {

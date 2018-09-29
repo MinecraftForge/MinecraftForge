@@ -93,6 +93,7 @@ public abstract class ModContainer
             try
             {
                 triggerMap.getOrDefault(modLoadingStage, e->{}).accept(event);
+                modLoadingStage = event.toStage();
             }
             catch (ModLoadingException e)
             {

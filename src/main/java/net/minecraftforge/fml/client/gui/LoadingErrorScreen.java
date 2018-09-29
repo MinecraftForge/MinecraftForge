@@ -122,7 +122,7 @@ public class LoadingErrorScreen extends GuiErrorScreen {
                 final List<String> strings = font.listFormattedStringToWidth(error.formatToString(), LoadingErrorList.this.width);
                 float f = (float)top + 2;
                 for (int i = 0; i < Math.min(strings.size(), 2); i++) {
-                    font.drawString(strings.get(i), left + 5, f, 0xFFFFFFFF);
+                    font.drawString(strings.get(i), left + 5, f, 0xFFFFFF);
                     f += font.FONT_HEIGHT;
                 }
             }
