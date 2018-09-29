@@ -13,6 +13,22 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T> {
+    private ImmutableTag(ResourceLocation resourceLocationIn, ImmutableSortedSet<T> sortedItems, ImmutableList<ITagEntry<T>> entriesIn)
+    {
+        super(resourceLocationIn, sortedItems, entriesIn);
+    }
+
+    /**
+     *
+     * @param id Te id for the Tag
+     * @param <T> The entry type
+     * @return an Empty ImmutableTag with the specified id
+     */
+    public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> empty(ResourceLocation id)
+    {
+        return new ImmutableTag<>(id, ImmutableSortedSet.of(), ImmutableList.of());
+    }
+
     /**
      * @param tag The tag to copy
      * @param <T> The entry type
@@ -23,6 +39,13 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         return asTag(tag.getId(), tag.getAllElements());
     }
 
+    /**
+     *
+     * @param elements The elements to use
+     * @param id The tag to copy
+     * @param <T> The entry type
+     * @return An immutable Tag representation of the given elements
+     */
     public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> asTag(ResourceLocation id, Iterable<T> elements)
     {
         ImmutableSortedSet<T> items = ImmutableSortedSet.copyOf(TagHelper.registryNameComparator(), elements);
@@ -34,11 +57,17 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         return new ImmutableTag<>(id, items, tagEntryBuilder.build());
     }
 
+    /**
+     *
+     * @param entries The elements to use
+     * @param id The tag to copy
+     * @param <T> The entry type
+     * @return An immutable Tag representation of the given elements
+     */
     public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> asTag(ResourceLocation id, Collection<ITagEntry<T>> entries)
     {
         return asTag(id, TagHelper.collectTagEntries(Collectors.toList(), entries));
     }
-
 
     /**
      * @param entries The entries to copy
@@ -103,11 +132,6 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
     public static <T extends IForgeRegistryEntry<T>> Builder<T> builder()
     {
         return new Builder<>();
-    }
-
-    private ImmutableTag(ResourceLocation resourceLocationIn, ImmutableSortedSet<T> sortedItems, ImmutableList<ITagEntry<T>> entriesIn)
-    {
-        super(resourceLocationIn, sortedItems, entriesIn);
     }
 
     @Override

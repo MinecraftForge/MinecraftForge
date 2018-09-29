@@ -1,5 +1,6 @@
 package net.minecraftforge.common.tags;
 
+import com.google.common.base.Suppliers;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.IForgeRegistry;
@@ -27,7 +28,7 @@ public class UnmodifiableTagWrapper<T extends IForgeRegistryEntry<T>> extends Fo
 
     public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<T> registry, @Nullable UnaryOperator<Tag<T>> tagTransformer)
     {
-        super(resourceLocationIn, TagHelper.staticRegistrySupplier(registry),tagTransformer);
+        super(resourceLocationIn, Suppliers.ofInstance(registry),tagTransformer);
     }
 
     public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, ResourceLocation registry, @Nullable UnaryOperator<Tag<T>> tagTransformer)
@@ -37,7 +38,7 @@ public class UnmodifiableTagWrapper<T extends IForgeRegistryEntry<T>> extends Fo
 
     public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<T> registry)
     {
-        super(resourceLocationIn, TagHelper.staticRegistrySupplier(registry));
+        super(resourceLocationIn, Suppliers.ofInstance(registry));
     }
 
     public UnmodifiableTagWrapper(ResourceLocation resourceLocationIn, ResourceLocation registry)

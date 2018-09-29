@@ -11,9 +11,12 @@ import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.registries.TagProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class TagHelper {
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static <T extends IForgeRegistryEntry<T>> Ordering<T> registryNameComparator()
     {
@@ -33,34 +37,38 @@ public class TagHelper {
         return Ordering.natural().onResultOf((Function<Tag<?>, ResourceLocation>) input -> input != null ? input.getId() : null).<Tag<?>>nullsFirst();
     }
 
-    public static <T extends IForgeRegistryEntry<T>> Ordering<Tag.TagEntry<T>> tagEntryComparator()
+    public static <T extends IForgeRegistryEntry<T>> Supplier<IForgeRegistry<T>> lazyRegistrySupplier(ResourceLocation registry)
     {
-        return Ordering.natural().nullsFirst().<TagEntry<T>>onResultOf(TagEntry::getSerializedId).nullsFirst();
-    }
-
-    public static <T extends IForgeRegistryEntry<T>> Supplier<IForgeRegistry<T>> staticRegistrySupplier(IForgeRegistry<T> registry) {
-        return () -> registry;
-    }
-
-    public static <T extends IForgeRegistryEntry<T>> Supplier<IForgeRegistry<T>> lazyRegistrySupplier(ResourceLocation registry) {
         return () -> RegistryManager.ACTIVE.getRegistry(registry);
     }
 
     public static <T extends IForgeRegistryEntry<T>> UnaryOperator<Tag.TagEntry<T>> immutableShallowCopyTransformer()
     {
-        return (tagEntry -> new Tag.TagEntry<>(ImmutableTag.copyOf(tagEntry.getTag())));
+        return (tagEntry ->
+        {
+            if (tagEntry.getTag() == null)
+                return new Tag.TagEntry<T>(tagEntry.getSerializedId());
+            return new Tag.TagEntry<>(ImmutableTag.copyOf(tagEntry.getTag()));
+        });
     }
 
     public static <T extends IForgeRegistryEntry<T>> UnaryOperator<Tag.TagEntry<T>> immutableDeepCopyTransformer()
     {
-        return (tagEntry -> new Tag.TagEntry<>(ImmutableTag.copyPreserveTagStructure(tagEntry.getTag())));
+        return (tagEntry ->
+        {
+            if (tagEntry.getTag() == null)
+                return new Tag.TagEntry<T>(tagEntry.getSerializedId());
+            return new Tag.TagEntry<>(ImmutableTag.copyPreserveTagStructure(tagEntry.getTag()));
+        });
     }
 
-    public static <T> int tagHashCode(Tag<T> tag) {
+    public static <T> int tagHashCode(Tag<T> tag)
+    {
         return tag.getId().hashCode();
     }
 
-    public static <T> boolean tagEquals(Tag<T> tag1, Object o) {
+    public static <T> boolean tagEquals(Tag<T> tag1, Object o)
+    {
         if (tag1 == o) return true;
         if (!(o instanceof Tag)) return false;
 
@@ -68,6 +76,74 @@ public class TagHelper {
 
         return tag1.getId().equals(tag.getId());
     }
+
+    /**
+     * Execute consumer on every Item in this tag's entries and enterTag on every {@link Tag.TagEntry}.
+     * Will recursively be invoked on {@link Tag.TagEntry}'s if enterTag returns true.
+     * Mainly for debug purposes.
+     *
+     * @param tag      The tag
+     * @param consumer The consumer
+     * @param enterTag Predicate deciding whether a Tag should be analyzed
+     * @param <T>      The type
+     */
+    public static <T> void inspectTagStructure(Tag<T> tag, Consumer<? super T> consumer, Predicate<Tag<T>> enterTag)
+    {
+        for (Tag.ITagEntry<T> entry : tag.getEntries())
+        {
+            if (entry instanceof Tag.TagEntry && ((TagEntry<T>) entry).getTag() != null && enterTag.test(((TagEntry<T>) entry).getTag()))
+            {
+                inspectTagStructure(((TagEntry<T>) entry).getTag(), consumer, enterTag);
+            } else
+            {
+                List<T> list = new LinkedList<>();
+                entry.populate(list);
+                for (T thing : list)
+                {
+                    consumer.accept(thing);
+                }
+            }
+        }
+    }
+
+    /*
+    public static void immutableTagTest()
+    {
+        StringBuilder builder = new StringBuilder("\n");
+        Map<ResourceLocation, Tag<Item>> resolveMap = new HashMap<>();
+        Tag<Item> bones = ImmutableTag.<Item>builder().add(Items.BONE_MEAL).add(Items.BONE).build(new ResourceLocation("bones"));
+        resolveMap.put(new ResourceLocation("bones"), bones);
+        Tag<Item> potato = ImmutableTag.<Item>builder().add(Items.BAKED_POTATO).add(Items.POTATO).build(new ResourceLocation("potatoes"));
+        resolveMap.put(new ResourceLocation("potato"), potato);
+        Tag.Builder<Item> compoundBuilder = ImmutableTag.<Item>builder().add(bones).add(potato).add(Items.BREAD);
+        compoundBuilder.resolve(resolveMap::get);
+        Tag<Item> compound = compoundBuilder.build(new ResourceLocation("compound"));
+        resolveMap.put(new ResourceLocation("compound"), compound);
+        Tag.Builder<Item> moreBuilder = ImmutableTag.<Item>builder().add(compound).add(Items.CARROT);
+        moreBuilder.resolve(resolveMap::get);
+        Tag<Item> someMore = moreBuilder.build(new ResourceLocation("more"));
+        Tag<Item> someMoreUnresolved = ImmutableTag.<Item>builder().add(compound).add(Items.CARROT).build(new ResourceLocation("more")); //should
+        Consumer<Item> printItem = item -> builder.append("Found item ").append(item.getRegistryName()).append("\n");
+        Predicate<Tag<Item>> printTag = tag ->
+        {
+            builder.append("Found Tag #").append(tag.getId()).append("\n");
+            return true;
+        };
+        builder.append("bones:\n").append(bones.toString()).append("\n");
+        TagHelper.inspectTagStructure(bones, printItem, printTag);
+        builder.append("potato:\n").append(potato.toString()).append("\n");
+        TagHelper.inspectTagStructure(potato, printItem, printTag);
+        builder.append("compound:\n").append(compound.toString()).append("\n");
+        TagHelper.inspectTagStructure(compound, printItem, printTag);
+        builder.append("more:\n").append(someMore.toString()).append("\n");
+        TagHelper.inspectTagStructure(someMore, printItem, printTag);
+        builder.append("moreUnresolved:\n").append(someMoreUnresolved.toString()).append("\n");
+        TagHelper.inspectTagStructure(someMoreUnresolved, printItem, printTag);
+        Tag<Item> oneLevelCopy = ImmutableTag.copyPreserveShallowTagStructure(someMore);
+        builder.append("oneLevelCopy:\n").append(oneLevelCopy.toString()).append("\n");
+        TagHelper.inspectTagStructure(oneLevelCopy, printItem, printTag);
+        LOGGER.info(builder.toString());
+    }*/
 
     public static <T, R> R collectTagEntries(Collector<? super T, ?, R> collector, Collection<Tag.ITagEntry<T>> collection)
     {
