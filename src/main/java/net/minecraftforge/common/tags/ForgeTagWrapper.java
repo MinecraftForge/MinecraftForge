@@ -1,5 +1,6 @@
 package net.minecraftforge.common.tags;
 
+import com.google.common.base.Suppliers;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeTagManager;
@@ -33,6 +34,32 @@ public class ForgeTagWrapper<V extends IForgeRegistryEntry<V>> extends Tag<V> {
         this(resourceLocationIn, registry, null);
     }
 
+    public ForgeTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<V> registry, @Nullable UnaryOperator<Tag<V>> tagTransformer)
+    {
+        this(resourceLocationIn, Suppliers.ofInstance(registry), tagTransformer);
+    }
+
+    public ForgeTagWrapper(ResourceLocation resourceLocationIn, ResourceLocation registry, @Nullable UnaryOperator<Tag<V>> tagTransformer)
+    {
+        this(resourceLocationIn, TagHelper.lazyRegistrySupplier(Objects.requireNonNull(registry, "Registry is required for updating the cachedTag")), tagTransformer);
+    }
+
+    public ForgeTagWrapper(ResourceLocation resourceLocationIn, IForgeRegistry<V> registry)
+    {
+        this(resourceLocationIn, Suppliers.ofInstance(registry));
+    }
+
+    public ForgeTagWrapper(ResourceLocation resourceLocationIn, ResourceLocation registry)
+    {
+        this(resourceLocationIn, TagHelper.lazyRegistrySupplier(Objects.requireNonNull(registry, "Registry is required for updating the cachedTag")));
+    }
+
+    public ForgeTagWrapper(Tag<V> tag, IForgeRegistry<V> registry)
+    {
+        this(tag.getId(), registry);
+        setCachedTagTransformed(tag);
+    }
+
     public Supplier<IForgeRegistry<V>> getRegGetter()
     {
         return regGetter;
@@ -40,7 +67,8 @@ public class ForgeTagWrapper<V extends IForgeRegistryEntry<V>> extends Tag<V> {
 
     protected IForgeRegistry<V> getRegistry()
     {
-        if (reg == null) {
+        if (reg == null)
+        {
             reg = regGetter.get();
             if (!reg.supportsTagging())
                 throw new IllegalStateException("Cannot use a Registry without tags for tagging");

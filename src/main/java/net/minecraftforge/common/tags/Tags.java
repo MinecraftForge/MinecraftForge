@@ -19,12 +19,9 @@
 
 package net.minecraftforge.common.tags;
 
-import com.google.common.base.Suppliers;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ResourceLocation;
@@ -68,7 +65,7 @@ public final class Tags {
 
         private static Tag<Block> tag(String name)
         {
-            return new ForgeTagWrapper<>(new ResourceLocation("minecraft", name), Suppliers.ofInstance(ForgeRegistries.BLOCKS));  // no need for the UnmodifiableWrapper - We already use ImmutableTags
+            return ForgeRegistries.BLOCKS.getTagProvider().createWrapper(new ResourceLocation("minecraft", name));  // no need for the UnmodifiableWrapper - We already use ImmutableTags
         }
 
         private Blocks()
@@ -149,7 +146,7 @@ public final class Tags {
 
         private static Tag<Item> tag(String name)
         {
-            return new ForgeTagWrapper<>(new ResourceLocation("minecraft", name), Suppliers.ofInstance(ForgeRegistries.ITEMS)); // no need for the UnmodifiableWrapper - We already use ImmutableTags
+            return ForgeRegistries.ITEMS.getTagProvider().createWrapper(new ResourceLocation("minecraft", name)); // no need for the UnmodifiableWrapper - We already use ImmutableTags
         }
 
         private Items()
@@ -201,7 +198,8 @@ public final class Tags {
         public static final Tag<EntityType<?>> MOVEMENT_WATER = tag("movement/water");
 
         private static Tag<EntityType<?>> tag(String name)
-        {return new ForgeTagWrapper<>(new ResourceLocation("minecraft", name), Suppliers.ofInstance(ForgeRegistries.ENTITIES));  // no need for the UnmodifiableWrapper - We already use ImmutableTags
+        {
+            return ForgeRegistries.ENTITIES.getTagProvider().createWrapper(new ResourceLocation("minecraft", name));  // no need for the UnmodifiableWrapper - We already use ImmutableTags
         }
 
         private Entities()
@@ -214,7 +212,8 @@ public final class Tags {
         public static final Tag<TileEntityType<?>> ALLOW_COPY = tag("allow_copy");
 
         private static Tag<TileEntityType<?>> tag(String name)
-        {return new ForgeTagWrapper<>(new ResourceLocation("minecraft", name), Suppliers.ofInstance(ForgeRegistries.TILE_ENTITIES));  // no need for the UnmodifiableWrapper - We already use ImmutableTags
+        {
+            return ForgeRegistries.TILE_ENTITIES.getTagProvider().createWrapper(new ResourceLocation("minecraft", name));  // no need for the UnmodifiableWrapper - We already use ImmutableTags
         }
 
         private TileEntities()

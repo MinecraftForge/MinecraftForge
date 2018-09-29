@@ -42,22 +42,38 @@ public class TagHelper {
         return () -> RegistryManager.ACTIVE.getRegistry(registry);
     }
 
+    /**
+     * The {@link UnaryOperator} returned by this Method creates {@link ImmutableTag}s from all Entries passed to it.
+     * TagEntries with null Tag's will simply returned to the caller.
+     * The copy Function used is {@link ImmutableTag#copyOf(Tag)}, which does not preserve any TagStructuring the Tag might have.
+     *
+     * @param <T> The type of the Tag
+     * @return An UnaryOperator
+     */
     public static <T extends IForgeRegistryEntry<T>> UnaryOperator<Tag.TagEntry<T>> immutableShallowCopyTransformer()
     {
         return (tagEntry ->
         {
             if (tagEntry.getTag() == null)
-                return new Tag.TagEntry<T>(tagEntry.getSerializedId());
+                return tagEntry;
             return new Tag.TagEntry<>(ImmutableTag.copyOf(tagEntry.getTag()));
         });
     }
 
+    /**
+     * The {@link UnaryOperator} returned by this Method creates {@link ImmutableTag}s from all Entries passed to it.
+     * TagEntries with null Tag's will simply returned to the caller.
+     * The copy Function used is {@link ImmutableTag#copyPreserveTagStructure(ResourceLocation, Collection)}, which does preserve the Tags TagStructure.
+     *
+     * @param <T> The type of the Tag
+     * @return An UnaryOperator
+     */
     public static <T extends IForgeRegistryEntry<T>> UnaryOperator<Tag.TagEntry<T>> immutableDeepCopyTransformer()
     {
         return (tagEntry ->
         {
             if (tagEntry.getTag() == null)
-                return new Tag.TagEntry<T>(tagEntry.getSerializedId());
+                return tagEntry;
             return new Tag.TagEntry<>(ImmutableTag.copyPreserveTagStructure(tagEntry.getTag()));
         });
     }
@@ -194,6 +210,11 @@ public class TagHelper {
         return sortTagEntries(entries, UnaryOperator.identity(), Collectors.toCollection(LinkedHashSet::new));
     }
 
+    /**
+     * @param object The Object to create
+     * @param <T>    The type of the resulting TagEntry
+     * @return a {@link Tag.ListEntry} containing only this Object
+     */
     public static <T> Tag.ListEntry<T> singletonEntry(T object)
     {
         return new Tag.ListEntry<>(Collections.singleton(object));
@@ -208,6 +229,11 @@ public class TagHelper {
         return builder;
     }
 
+    /**
+     * @param registry The registry
+     * @param <T>      The Type
+     * @return The Registries {@link TagProvider}, or null if it doesn't support tagging
+     */
     @Nullable
     public static <T extends IForgeRegistryEntry<T>> TagProvider<T> getTagsIfPresent(IForgeRegistry<T> registry)
     {

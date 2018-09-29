@@ -110,7 +110,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
 
     public List<Tag<T>> getMatchingTags(Predicate<Tag<T>> predicate)
     {
-        return getTagMap().values().stream().filter(predicate).map((tag) -> new UnmodifiableTagWrapper<>(tag, regName)).collect(Collectors.toList());
+        return getTagMap().values().stream().filter(predicate).collect(Collectors.toList());
     }
 
     public boolean tagMatch(Predicate<Tag<T>> tagPredicate)
@@ -270,7 +270,7 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
 
     private void registerUnbakedTags(Map<ResourceLocation, UnbakedTag<T>> map)
     {
-        LOGGER.debug("Baking {} {} for Registry with name {}.", map.size(), map.size() == 1 ? "UnbakedTag" : "UnbakedTags", regName.toString());
+        LOGGER.debug("Baking {} {} for Registry {}.", map.size(), map.size() == 1 ? "UnbakedTag" : "UnbakedTags", regName.toString());
         while (!map.isEmpty())
         {
             boolean registeredAny = false;

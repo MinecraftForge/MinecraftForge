@@ -10,6 +10,8 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T> {
@@ -19,14 +21,13 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
     }
 
     /**
-     *
-     * @param id Te id for the Tag
+     * @param id  Te id for the Tag
      * @param <T> The entry type
-     * @return an Empty ImmutableTag with the specified id
+     * @return an empty ImmutableTag with the specified id
      */
     public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> empty(ResourceLocation id)
     {
-        return new ImmutableTag<>(id, ImmutableSortedSet.of(), ImmutableList.of());
+        return new ImmutableTag<>(id, ImmutableSortedSet.<T>of(), ImmutableList.<Tag.ITagEntry<T>>of());
     }
 
     /**
@@ -40,10 +41,9 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
     }
 
     /**
-     *
      * @param elements The elements to use
-     * @param id The tag to copy
-     * @param <T> The entry type
+     * @param id       The tag to copy
+     * @param <T>      The entry type
      * @return An immutable Tag representation of the given elements
      */
     public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> asTag(ResourceLocation id, Iterable<T> elements)
@@ -52,16 +52,17 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         ImmutableList.Builder<Tag.ITagEntry<T>> tagEntryBuilder = ImmutableList.builder();
         for (T item : items)
         {
-            tagEntryBuilder.add(new Tag.ListEntry<>(Collections.singleton(item)));
+            tagEntryBuilder.add(TagHelper.singletonEntry(item));
         }
         return new ImmutableTag<>(id, items, tagEntryBuilder.build());
     }
 
     /**
+     * Creates an ImmutableTag from the given Elements, flattening out any Sub-Tags that might be contained in entries into Singleton {@link Tag.ListEntry} entries via {@link TagHelper#singletonEntry(Object)}.
      *
      * @param entries The elements to use
-     * @param id The tag to copy
-     * @param <T> The entry type
+     * @param id      The tag to copy
+     * @param <T>     The entry type
      * @return An immutable Tag representation of the given elements
      */
     public static <T extends IForgeRegistryEntry<T>> ImmutableTag<T> asTag(ResourceLocation id, Collection<ITagEntry<T>> entries)
@@ -70,6 +71,10 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
     }
 
     /**
+     * Like {@link #copyOf(Tag)} except that the first Layer {@link Tag.TagEntry}'s won't be flattened out into Singleton {@link Tag.ListEntry}, but preserved and sorted.
+     * Deeper TagStructures aren't preserved.
+     * Hereby sorting is done via {@link TagHelper#sortTagEntries(Collection, UnaryOperator, Collector)}.
+     *
      * @param entries The entries to copy
      * @param <T>     The entry type
      * @return An Immutable copy of the given tag
@@ -84,8 +89,9 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
     }
 
     /**
-     * Like {@link #copyOf(Tag)} except that {@link Tag.TagEntry}'s won't be flattened out into Singleton {@link Tag.ListEntry}, but preserved and sorted.
-     * Hereby sorting is
+     * Like {@link #copyOf(Tag)} except that the first Layer {@link Tag.TagEntry}'s won't be flattened out into Singleton {@link Tag.ListEntry}, but preserved and sorted.
+     * Deeper TagStructures aren't preserved.
+     * Hereby sorting is done via {@link TagHelper#sortTagEntries(Collection, UnaryOperator, Collector)}.
      *
      * @param tag The tag to copy
      * @param <T> The entry type
@@ -97,6 +103,9 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
     }
 
     /**
+     * Like {@link #copyOf(Tag)} except that {@link Tag.TagEntry}'s won't be flattened out into Singleton {@link Tag.ListEntry}, but preserved and sorted.
+     * Hereby sorting is done via {@link TagHelper#sortTagEntries(Collection, UnaryOperator, Collector)}.
+     *
      * @param entries The entries to copy
      * @param <T>     The entry type
      * @return An Immutable copy of the given tag
@@ -118,7 +127,7 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
 
     /**
      * Like {@link #copyOf(Tag)} except that {@link Tag.TagEntry}'s won't be flattened out into Singleton {@link Tag.ListEntry}, but preserved and sorted.
-     * Hereby sorting is
+     * Hereby sorting is done via {@link TagHelper#sortTagEntries(Collection, UnaryOperator, Collector)}.
      *
      * @param tag The tag to copy
      * @param <T> The entry type
@@ -129,23 +138,36 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         return copyPreserveTagStructure(tag.getId(), tag.getEntries());
     }
 
+    /**
+     * @param <T> The Tag Type
+     * @return An {@link ImmutableTag.Builder} which can be used to create an ImmutableTag
+     */
     public static <T extends IForgeRegistryEntry<T>> Builder<T> builder()
     {
         return new Builder<>();
     }
 
+    /**
+     * @return The {@link ImmutableSortedSet} backing this ImmutableTag
+     */
     @Override
     public ImmutableSortedSet<T> getAllElements()
     {
         return (ImmutableSortedSet<T>) super.getAllElements();
     }
 
+    /**
+     * @return The {@link ImmutableList} backing this ImmutableTag. Notice that it will be sorted as defined by {@link TagHelper#sortTagEntries(Collection, UnaryOperator, Collector)}
+     */
     @Override
     public ImmutableList<ITagEntry<T>> getEntries()
     {
         return (ImmutableList<ITagEntry<T>>) super.getEntries();
     }
 
+    /**
+     * @return A String representation of this ImmutableTag representing {@link #getEntries()}.
+     */
     @Override
     public String toString()
     {
@@ -192,6 +214,9 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
             this.resolved = false;
         }
 
+        /**
+         * @return Whether or not this Builder could be resolved
+         */
         public boolean isResolved()
         {
             return resolved;
@@ -262,7 +287,8 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         }
 
         /**
-         * Using this build will be preserve the TagStructure, if this Builder was resolved. Otherwise {@link #buildCopy(ResourceLocation)} will be used to prevent NPE's from copying unresolved Tags.
+         * Using this build will be preserve the TagStructure, if this Builder was resolved.
+         * Otherwise {@link #buildCopy(ResourceLocation)} will be used to prevent mutation of {@link Tag.TagEntry} by resolving them after the ImmutableTag was build.
          *
          * @param resourceLocationIn The new TagId
          * @return An ImmutableTag created via {@link #copyPreserveTagStructure(ResourceLocation, Collection)} or {@link #asTag(ResourceLocation, Collection)}
@@ -270,13 +296,15 @@ public final class ImmutableTag<T extends IForgeRegistryEntry<T>> extends Tag<T>
         @Override
         public ImmutableTag<T> build(ResourceLocation resourceLocationIn)
         {
-            if (!this.isResolved()) return buildCopy(resourceLocationIn); //Prevent NPE from unbuild Tags
+            if (!this.isResolved())
+                return buildCopy(resourceLocationIn); //Prevent mutation by resolving Tag.TagEntries after the ImmutableTag was build
             this.ordered(true); //whatever the case, the Immutable tag will order itself, so don't apply any special ordering
             return (ImmutableTag<T>) super.build(resourceLocationIn);
         }
 
         /**
          * Using this build, the TagStructure will be lost, but there won't be the overhead of {@link #copyPreserveTagStructure(ResourceLocation, Collection)}.
+         * Additionally, the behaviour doesn't change no matter whether this Builder was resolved, or not.
          *
          * @param resourceLocationIn The new TagId
          * @return An ImmutableTag created via {@link #asTag(ResourceLocation, Collection)}

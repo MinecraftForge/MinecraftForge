@@ -18,7 +18,7 @@
 -      private int field_199890_a = -1;
 -      private Tag<Item> field_199891_b;
 -
-+   public static class Wrapper extends net.minecraftforge.common.tags.UnmodifiableTagWrapper<Item> {
++   public static class Wrapper extends net.minecraftforge.common.tags.ForgeTagWrapper<Item> {
        public Wrapper(ResourceLocation p_i48212_1_) {
 -         super(p_i48212_1_);
 +         super(p_i48212_1_, new ResourceLocation("minecraft:items"));

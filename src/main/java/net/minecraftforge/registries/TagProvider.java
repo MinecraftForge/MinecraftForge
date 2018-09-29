@@ -16,8 +16,8 @@ import net.minecraft.tags.Tag.ListEntry;
 import net.minecraft.tags.Tag.TagEntry;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.tags.ForgeTagCollection;
+import net.minecraftforge.common.tags.ForgeTagWrapper;
 import net.minecraftforge.common.tags.ImmutableTag;
-import net.minecraftforge.common.tags.UnmodifiableTagWrapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,8 +47,8 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
         setReg(reg);
         if (wrapperFactory == null)
         {
-            LOGGER.debug("No Wrapper Factory specified for {} TagProvider. Using default ForgeTagWrapper implementation!",regName);
-            this.wrapperFactory = UnmodifiableTagWrapper::new;
+            LOGGER.trace("No Wrapper Factory specified for {} TagProvider. Using default ForgeTagWrapper implementation.",regName);
+            this.wrapperFactory = ForgeTagWrapper::new;
         } else
         {
             this.wrapperFactory = wrapperFactory;
