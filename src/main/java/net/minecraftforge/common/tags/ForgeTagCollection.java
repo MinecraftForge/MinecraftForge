@@ -296,8 +296,8 @@ public final class ForgeTagCollection<T extends IForgeRegistryEntry<T>> extends 
             {
                 failedTags.put(entry.getKey(), entry.getValue().getFailingTags(this::get));
             }
-            //throw new MissingTagsException(regName,failedTags);
-            LOGGER.error("debug purpose",new MissingTagsException(regName,failedTags));
+            throw new MissingTagsException(regName,failedTags);
+            //LOGGER.error("debug purpose",new MissingTagsException(regName,failedTags));
         }
         LOGGER.debug("Successfully baked Tags. {} failures remaining.",map.size());
     }

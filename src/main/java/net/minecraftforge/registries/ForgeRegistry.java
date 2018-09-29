@@ -763,7 +763,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         ret.blocked.addAll(this.blocked);
         ret.dummied.addAll(this.dummies);
         ret.overrides.putAll(getOverrideOwners());
-        if (!savingToDisc && supportsTagging() && getTagProvider().isVanillaHandled())
+        if (!savingToDisc && supportsTagging() && !getTagProvider().isVanillaHandled())
         {
             ret.tagProviderRepresentation = getTagProvider().serializeNBT();
         }

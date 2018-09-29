@@ -56,6 +56,19 @@ public class TagHelper {
         return (tagEntry -> new Tag.TagEntry<>(ImmutableTag.copyPreserveTagStructure(tagEntry.getTag())));
     }
 
+    public static <T> int tagHashCode(Tag<T> tag) {
+        return tag.getId().hashCode();
+    }
+
+    public static <T> boolean tagEquals(Tag<T> tag1, Object o) {
+        if (tag1 == o) return true;
+        if (!(o instanceof Tag)) return false;
+
+        Tag<?> tag = (Tag<?>) o;
+
+        return tag1.getId().equals(tag.getId());
+    }
+
     public static <T, R> R collectTagEntries(Collector<? super T, ?, R> collector, Collection<Tag.ITagEntry<T>> collection)
     {
         return collection.stream().flatMap(tagentry ->

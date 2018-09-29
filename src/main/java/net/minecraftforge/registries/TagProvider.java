@@ -110,7 +110,6 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     @Nonnull
     public NBTTagCompound serializeNBT()
     { //this should never be used to try to persist tags
-        if (isVanillaHandled()) return new NBTTagCompound(); //if vanilla does networking, no need to do anything ourselves
         LOGGER.debug("Preparing {} Forge TagData",regName);
         NBTTagCompound resCompound = new NBTTagCompound();
         NBTTagList nbtTagList = new NBTTagList();
@@ -165,8 +164,7 @@ public class TagProvider<T extends IForgeRegistryEntry<T>> implements IResourceM
     }
 
     public void deserializeNBT(@Nonnull NBTTagCompound compound)
-    { //this should never be used to try to persist tags
-        if (isVanillaHandled()) return; //if vanilla does networking, no need to do anything ourselves
+        { //this should never be used to try to persist tags
         LOGGER.debug("Receiving {} Forge TagData",regName);
         clear();
         regName = new ResourceLocation(compound.getString("name"));

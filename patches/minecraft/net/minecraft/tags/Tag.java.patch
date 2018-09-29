@@ -1,6 +1,14 @@
 --- a/net/minecraft/tags/Tag.java
 +++ b/net/minecraft/tags/Tag.java
-@@ -28,6 +28,12 @@
+@@ -16,6 +16,7 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.util.JsonUtils;
+ import net.minecraft.util.ResourceLocation;
++import net.minecraftforge.common.tags.TagHelper;
+ 
+ public class Tag<T> {
+    private final ResourceLocation field_199888_a;
+@@ -28,6 +29,12 @@
        this.field_200150_c = Collections.<Tag.ITagEntry<T>>emptyList();
     }
  
@@ -13,7 +21,7 @@
     public Tag(ResourceLocation p_i48224_1_, Collection<Tag.ITagEntry<T>> p_i48224_2_, boolean p_i48224_3_) {
        this.field_199888_a = p_i48224_1_;
        this.field_199889_b = (Set<T>)(p_i48224_3_ ? Sets.newLinkedHashSet() : Sets.newHashSet());
-@@ -43,7 +49,7 @@
+@@ -43,7 +50,7 @@
        JsonObject jsonobject = new JsonObject();
        JsonArray jsonarray = new JsonArray();
  
@@ -22,7 +30,7 @@
           itagentry.func_200576_a(jsonarray, p_200571_1_);
        }
  
-@@ -53,7 +59,7 @@
+@@ -53,7 +60,7 @@
     }
  
     public boolean func_199685_a_(T p_199685_1_) {
@@ -31,25 +39,16 @@
     }
  
     public Collection<T> func_199885_a() {
-@@ -73,9 +79,24 @@
+@@ -72,10 +79,15 @@
+    public ResourceLocation func_199886_b() {
        return this.field_199888_a;
     }
- 
-+   @Override public boolean equals(Object o) //Forge: allow usage in Hash based collections/maps
-+   {
-+      if (this == o) return true;
-+      if (!(o instanceof Tag)) return false;
-+
-+      Tag<?> tag = (Tag<?>) o;
-+
-+      return this.func_199886_b().equals(tag.func_199886_b());
-+   }
-+
++   @Override public boolean equals(Object o)  { return TagHelper.tagEquals(this,o); }
 +   @Override public int hashCode()
 +   {
-+      return func_199886_b().hashCode();
++      return TagHelper.tagHashCode(this);
 +   }
-+
+ 
     public static class Builder<T> {
 -      private final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
 -      private boolean field_200053_b;
@@ -58,7 +57,7 @@
  
        public static <T> Tag.Builder<T> func_200047_a() {
           return new Tag.Builder<T>();
-@@ -238,5 +259,6 @@
+@@ -238,5 +250,6 @@
        public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
           p_200576_1_.add("#" + this.func_200577_a());
        }
