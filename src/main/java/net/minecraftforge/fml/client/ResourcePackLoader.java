@@ -19,12 +19,9 @@
 
 package net.minecraftforge.fml.client;
 
-import net.minecraft.client.resources.ResourcePackInfoClient;
 import net.minecraft.resources.AbstractResourcePack;
 import net.minecraft.resources.FilePack;
 import net.minecraft.resources.FolderPack;
-import net.minecraft.resources.IPackFinder;
-import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackList;
@@ -33,7 +30,6 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;

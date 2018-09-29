@@ -29,11 +29,13 @@ import net.minecraft.resources.ResourcePackList;
 import net.minecraft.resources.data.IMetadataSectionSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.LogicalSidedProvider;
+import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.client.gui.GuiNotification;
+import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import java.io.IOException;
@@ -44,6 +46,7 @@ public class ClientModLoader
 {
     private static boolean loading;
     private static Minecraft mc;
+    private static LoadingFailedException error;
 
     public static void begin(final Minecraft minecraft, final ResourcePackList<ResourcePackInfoClient> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
     {
@@ -51,13 +54,21 @@ public class ClientModLoader
         ClientModLoader.mc = minecraft;
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
-        ModLoader.get().loadMods();
+        try {
+            ModLoader.get().loadMods();
+        } catch (LoadingFailedException e) {
+            error = e;
+        }
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
     }
 
     public static void end()
     {
-        ModLoader.get().finishMods();
+        try {
+            ModLoader.get().finishMods();
+        } catch (LoadingFailedException e) {
+            if (error == null) error = e;
+        }
         loading = false;
         mc.gameSettings.loadOptions();
     }
@@ -71,11 +82,9 @@ public class ClientModLoader
     {
         GlStateManager.disableTexture2D();
         GlStateManager.enableTexture2D();
-    }
-
-    public static boolean isErrored()
-    {
-        return false;
+        if (error != null) {
+            mc.displayGuiScreen(new LoadingErrorScreen(error));
+        }
     }
 
     public static boolean isLoading()

@@ -1,6 +1,8 @@
 modId="forge"
 version="${global.forgeVersion}"
 displayName="Forge"
+logoFile="forge_logo.png"
+displayURL="https://files.minecraftforge.net/"
 description='''
 Forge, the magic
 '''

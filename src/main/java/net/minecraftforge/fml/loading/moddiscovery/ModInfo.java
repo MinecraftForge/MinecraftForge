@@ -105,7 +105,7 @@ public class ModInfo implements IModInfo
 
     public Optional<String> getLogoFile()
     {
-        return this.owningFile != null ? this.owningFile.getConfig().getOptional("logoFile") : Optional.empty();
+        return this.owningFile != null ? this.owningFile.getConfig().getOptional("logoFile") : this.modConfig.getOptional("logoFile");
     }
 
     public boolean hasConfigUI()
