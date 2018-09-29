@@ -30,10 +30,10 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -48,6 +48,7 @@ public class LoadingModList
     private final List<ModInfo> sortedList;
     private final Map<String, ModFileInfo> fileById;
     private BackgroundScanHandler scanner;
+    private final List<EarlyLoadingException> preLoadErrors;
 
     private LoadingModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
@@ -58,11 +59,16 @@ public class LoadingModList
         this.fileById = this.modFiles.stream().map(ModFileInfo::getMods).flatMap(Collection::stream).
                 map(ModInfo.class::cast).
                 collect(Collectors.toMap(ModInfo::getModId, ModInfo::getOwningFile));
+        this.preLoadErrors = new ArrayList<>();
     }
 
-    public static LoadingModList of(List<ModFile> modFiles, List<ModInfo> sortedList)
+    public static LoadingModList of(List<ModFile> modFiles, List<ModInfo> sortedList, final EarlyLoadingException earlyLoadingException)
     {
         INSTANCE = new LoadingModList(modFiles, sortedList);
+        if (earlyLoadingException != null)
+        {
+            INSTANCE.preLoadErrors.add(earlyLoadingException);
+        }
         return INSTANCE;
     }
 
@@ -108,5 +114,9 @@ public class LoadingModList
     public List<ModInfo> getMods()
     {
         return this.sortedList;
+    }
+
+    public List<EarlyLoadingException> getErrors() {
+        return preLoadErrors;
     }
 }

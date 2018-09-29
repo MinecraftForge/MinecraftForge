@@ -19,9 +19,11 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.ForgeVersion;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -44,7 +46,7 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     static {
         try {
             forgePath = Paths.get(FMLClientLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            mcPath = forgePath.resolveSibling("minecraft.jar");
+            mcPath = forgePath.resolveSibling("forge-"+ForgeVersion.getVersion()+"-srg.jar");
         } catch (URISyntaxException e) {
             throw new RuntimeException("Unable to locate myself!");
         }
@@ -70,6 +72,10 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
             Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };
+    }
+
+    @Override
+    public void setup(final IEnvironment environment) {
     }
 
     @Override

@@ -14,6 +14,7 @@ import groovy.json.JsonBuilder
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.security.MessageDigest
+import java.net.URL
 import net.minecraftforge.gradle.common.task.SignJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
@@ -122,7 +123,7 @@ project(':forge') {
         api 'org.ow2.asm:asm:6.2'
         api 'org.ow2.asm:asm-commons:6.2'
         api 'org.ow2.asm:asm-tree:6.2'
-        api 'cpw.mods:modlauncher:0.1.0-rc.+'
+        api 'cpw.mods:modlauncher:0.1.0'
         api 'net.minecraftforge:accesstransformers:0.10+:shadowed'
         api 'net.minecraftforge:eventbus:0.1+:service'
         api 'net.minecraftforge:forgespi:0.1+'
@@ -170,19 +171,21 @@ project(':forge') {
         workingDir 'runserver'
     }
     
-    task ciWriteBuildNumber << {
-        def file = file("$rootDir/src/main/java/net/minecraftforge/common/ForgeVersion.java")
-        def bn = System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0
-        def outfile = ''
+    task ciWriteBuildNumber {
+        doLast {
+            def file = file("$rootDir/src/main/java/net/minecraftforge/common/ForgeVersion.java")
+            def bn = System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0
+            def outfile = ''
 
-        file.eachLine{ String s ->
-            if (s.matches('^    public static final int buildVersion    = [\\d]+;\$'))
-                s = "    public static final int buildVersion    = ${bn};"
-            if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
-                s = "    public static final String mcVersion = \"${patcher.mcVersion}\";"
-            outfile += (s+'\n')
+            file.eachLine{ String s ->
+                if (s.matches('^    public static final int buildVersion    = [\\d]+;\$'))
+                    s = "    public static final int buildVersion    = ${bn};"
+                if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
+                    s = "    public static final String mcVersion = \"${patcher.mcVersion}\";"
+                outfile += (s+'\n')
+            }
+            file.write(outfile)
         }
-        file.write(outfile)
     }
     
     
@@ -289,32 +292,9 @@ project(':forge') {
                 'java3d:vecmath'
             ]
             def mojang = []
-            
-            project.configurations.compileClasspath.resolvedConfiguration.resolvedArtifacts.each {
-                def art = [
-                    group: it.moduleVersion.id.group,
-                    name: it.moduleVersion.id.name,
-                    version: it.moduleVersion.id.version,
-                    classifier: it.classifier,
-                    extension: it.extension,
-                    file: it.file
-                ]
-                def key = art.group + ':' + art.name
+            def artifacts = getArtifacts(project, project.configurations.compileClasspath)
+            artifacts.each { key, lib ->
                 if (forge.contains(key) || mojang.contains(key)){
-                    def url = forge.contains(key) ? "https://files.minecraftforge.net/maven/" :  "https://libraries.minecraft.net/"
-                    def path = "${art.group.replace('.', '/')}/${art.name}/${art.version}/${art.name}-${art.version}"
-                    if (art.classifier != null)
-                        path += "-${art.classifier}"
-                    path += ".${art.extension}"
-                    def lib = [
-                        name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),
-                        downloads: [
-                            path: path,
-                            url: url + path,
-                            sha1: sha1(art.file),
-                            size: art.file.length()
-                        ]
-                    ]
                     json.libraries.add(lib)
                 }
             }
@@ -325,21 +305,87 @@ project(':forge') {
       
     task installerJson() {
         ext {
-            output = file('build/libs/installer.json')
+            output = file('build/libs/install_profile.json')
         }
         dependsOn launcherJson
         inputs.file launcherJson.output
         outputs.file output
         doLast {
+            def idx = project.version.indexOf('-')
             def json = [
-                install: [
-                    _comment_: launcherJson.comment,
-                    profileName: project.name,
-                    version: project.version.split('-')[0] + '-forge-' + project.version.split('-')[1],
-                    json: '/version.json',
-                    logo: '/big_logo.png'
+                _comment_: launcherJson.comment,
+                profile: project.name,
+                version: project.version.substring(0, idx) + "-${project.name}" + project.version.substring(idx),
+                json: '/version.json',
+                path: "${project.group}:${project.name}:${project.version}",
+                logo: '/big_logo.png',
+                minecraft: patcher.mcVersion,
+                welcome: "Welcome to the simple ${project.name.capitalize()} installer.",
+                processors: [],
+                data: [
+                    MAPPINGS: [
+                        client: '/data/joined.tsrg',
+                        server: '/data/joined.tsrg'
+                    ],
+                    BINPATCH: [
+                        client: '/data/client.lzma',
+                        server: '/data/server.lzma'
+                    ],
+                    MC_SLIM: [
+                        client: "[net.minecraft:client:${patcher.mcVersion}:slim]",
+                        server: "[net.minecraft:server:${patcher.mcVersion}:slim]"
+                    ],
+                    MC_DATA: [
+                        client: "[net.minecraft:client:${patcher.mcVersion}:data]",
+                        server: "[net.minecraft:server:${patcher.mcVersion}:data]"
+                    ],
+                    MC_EXTRA: [
+                        client: "[net.minecraft:client:${patcher.mcVersion}:extra]",
+                        server: "[net.minecraft:server:${patcher.mcVersion}:extra]"
+                    ],
+                    PATCHED: [
+                        client: "[${project.group}:${project.name}:${project.version}:client-patched]",
+                        server: "[${project.group}:${project.name}:${project.version}:server-patched]"
+                    ],
+                    REMAPPED: [
+                        client: "[${project.group}:${project.name}:${project.version}:client-srg]",
+                        server: "[${project.group}:${project.name}:${project.version}:server-srg]"
+                    ]
                 ]
             ]
+            def libs = [:]
+            json.processors.add([
+                jar: 'net.minecraftforge:jarsplitter:1.0.3',
+                classpath: getClasspath(project, libs, 'net.minecraftforge:jarsplitter:1.0.3'),
+                args: [
+                    '--input', '{MINECRAFT_JAR}',
+                    '--slim',  "{MC_SLIM}",
+                    '--data',  "{MC_DATA}",
+                    '--extra', "{MC_EXTRA}",
+                    '--srg', '{MAPPINGS}'
+                ]
+            ])
+            json.processors.add([
+                jar: 'net.minecraftforge:binarypatcher:1.0.3',
+                classpath: getClasspath(project, libs, 'net.minecraftforge:binarypatcher:1.0.3'),
+                args: [
+                    '--clean', '{MC_SLIM}',
+                    '--output', '{PATCHED}',
+                    '--apply', '{BINPATCH}'
+                ]
+            ])
+            json.processors.add([
+                jar: 'net.md-5:SpecialSource:1.8.3',
+                classpath: getClasspath(project, libs, 'net.md-5:SpecialSource:1.8.3'),
+                args: [
+                    '--in-jar', '{PATCHED}',
+                    '--out-jar', '{REMAPPED}',
+                    '--srg-in', '{MAPPINGS}'
+                ]
+            ])
+            
+            json.libraries = libs.values()
+            
             output.text = new JsonBuilder(json).toPrettyString()
         }
     }
@@ -556,12 +602,90 @@ def dateToIso8601(date) {
     def result = format.format(date)
     return result[0..21] + ':' + result[22..-1]
 }
+
 def sha1(file) {
-    MessageDigest md = MessageDigest.getInstance("SHA-1");
+    MessageDigest md = MessageDigest.getInstance('SHA-1')
     file.eachByte 4096, {bytes, size ->
-        md.update(bytes, 0, size);
+        md.update(bytes, 0, size)
     }
-    return md.digest().collect {String.format "%02x", it}.join();
+    return md.digest().collect {String.format "%02x", it}.join()
+}
+
+def artifactTree(project, artifact) {
+    if (!project.ext.has('tree_resolver'))
+        project.ext.tree_resolver = 1
+    def cfg = project.configurations.create('tree_resolver_' + project.ext.tree_resolver++)
+    def dep = project.dependencies.create(artifact)
+    cfg.dependencies.add(dep)
+    def files = cfg.resolve()
+    return getArtifacts(project, cfg)
+}
+
+def getArtifacts(project, config) {
+    def ret = [:]
+    config.resolvedConfiguration.resolvedArtifacts.each {
+        def art = [
+            group: it.moduleVersion.id.group,
+            name: it.moduleVersion.id.name,
+            version: it.moduleVersion.id.version,
+            classifier: it.classifier,
+            extension: it.extension,
+            file: it.file
+        ]
+        def key = art.group + ':' + art.name
+        def folder = "${art.group.replace('.', '/')}/${art.name}/${art.version}/"
+        def filename = "${art.name}-${art.version}"
+        if (art.classifier != null)
+            filename += "-${art.classifier}"
+        filename += ".${art.extension}"
+        def path = "${folder}${filename}"
+        def url = "https://libraries.minecraft.net/${path}"
+        if (!checkExists(url)) {
+            url = "https://files.minecraftforge.net/maven/${path}"
+            /*
+            project.logger.lifecycle("Artifact: ${path}")
+            def repo = project.file("build/dep_repo/${folder}")
+            repo.mkdirs()
+            copy {
+                from art.file
+                into folder
+                rename { filename }
+            }
+            project.file("build/dep_repo/${path}.sha1").text = sha1(it.file)
+            */
+        }
+        ret[key] = [
+            name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),
+            downloads: [
+                artifact: [
+                    path: path,
+                    url: url,
+                    sha1: sha1(art.file),
+                    size: art.file.length()
+                ]
+            ]
+        ]
+    }
+    return ret
+}
+
+def checkExists(url) {
+    def code = new URL(url).openConnection().with {
+        requestMethod = 'HEAD'
+        connect()
+        responseCode
+    }
+    return code == 200
+}
+
+def getClasspath(project, libs, artifact) {
+    def ret = []
+    artifactTree(project, artifact).each { key, lib ->
+        libs[lib.name] = lib
+        if (lib.name != artifact)
+            ret.add(lib.name)
+    }
+    return ret
 }
 
 //evaluationDependsOnChildren()

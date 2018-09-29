@@ -31,6 +31,7 @@ import java.util.function.Supplier;
 public enum ModLoadingStage
 {
     ERROR(null),
+    VALIDATE(null),
     CONSTRUCT(null),
     PREINIT(()->FMLPreInitializationEvent::new),
     SIDEDINIT(SidedProvider.SIDEDINIT::get),

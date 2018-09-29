@@ -19,16 +19,60 @@
 
 package net.minecraftforge.fml;
 
-import java.util.ArrayList;
+import com.google.common.collect.ObjectArrays;
+import com.google.common.collect.Streams;
+import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.loading.EarlyLoadingException;
+
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
- * Accumulates errors during loading for compact handling
+ * General purpose mod loading error message
  */
 public class ModLoadingException extends RuntimeException
 {
-    private List<ErrorEvent> errorEvents = new ArrayList<>();
-    public static class ErrorEvent {
+    /**
+     * Mod Info for mod with issue
+     */
+    private final IModInfo modInfo;
+    /**
+     * The stage where this error was encountered
+     */
+    private final ModLoadingStage errorStage;
 
+    /**
+     * I18N message to use for display
+     */
+    private final String i18nMessage;
+
+    /**
+     * Context for message display
+     */
+    private final List<Object> context;
+
+    public ModLoadingException(final IModInfo modInfo, final ModLoadingStage errorStage, final String i18nMessage, final Throwable originalException, Object... context) {
+        super(ForgeI18n.getPattern(i18nMessage), originalException);
+        this.modInfo = modInfo;
+        this.errorStage = errorStage;
+        this.i18nMessage = i18nMessage;
+        this.context = Arrays.asList(context);
+    }
+
+    static ModLoadingException fromEarlyException(final EarlyLoadingException e) {
+        return new ModLoadingException(null, ModLoadingStage.VALIDATE, e.getI18NMessage(), e, e.getContext().toArray());
+    }
+
+    public String getI18NMessage() {
+        return i18nMessage;
+    }
+
+    public Object[] getContext() {
+        return context.toArray();
+    }
+
+    public String formatToString() {
+        return ForgeI18n.parseMessage(i18nMessage, Streams.concat(Stream.of(modInfo, errorStage, getCause()), context.stream()).toArray());
     }
 }
