@@ -126,6 +126,7 @@ project(':forge') {
     }
     dependencies {
         api 'net.minecraft:client:1.13:extra'
+        api 'com.paulscode:soundsystem:2018+'
         api 'org.ow2.asm:asm:6.2'
         api 'org.ow2.asm:asm-commons:6.2'
         api 'org.ow2.asm:asm-tree:6.2'

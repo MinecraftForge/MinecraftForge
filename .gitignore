@@ -36,3 +36,4 @@ changelog.txt
 
 /.project
 gradle.properties
+!/mdk/gradle.properties
