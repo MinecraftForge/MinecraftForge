@@ -82,7 +82,7 @@
      {
 +        net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(this, p_70687_1_);
 +        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-+        if (event.getResult()!=net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT) return event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW;
++        if (event.getResult() != net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT) return event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW;
          if (this.func_70668_bt() == EnumCreatureAttribute.UNDEAD)
          {
              Potion potion = p_70687_1_.func_188419_a();
