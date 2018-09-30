@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.security.MessageDigest
 import java.net.URL
+import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.task.SignJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
@@ -32,7 +33,7 @@ version = '1.0.0'
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.forgedev.mcp'
     mcp {
-        config = 'de.oceanlabs.mcp:mcp_config:1.13-2018.09.12.04.11.00@zip'
+        config = '1.13-2018.09.12.04.11.00'
         pipeline = 'joined'
     }
 }
@@ -86,6 +87,10 @@ project(':forge') {
         mavenLocal()
         mavenCentral()
     }
+    ext {
+        MCP_ARTIFACT = project(':mcp').mcp.config
+        MCP_VERSION = project(':mcp').mcp.config.version.split('-')[1] // The timestamp only.
+    }
     patcher {
         parent = project(':clean')
         patches = file("$rootDir/patches/minecraft")
@@ -93,6 +98,7 @@ project(':forge') {
         accessTransformer = file("$rootDir/src/main/resources/forge_at.cfg")
         exc = file("$rootDir/src/main/resources/forge.exc")
         srgPatches = true
+        srgUniversal = true
         clientRun {
             main = 'net.minecraftforge.fml.LaunchTesting'
             environment = [
@@ -303,29 +309,32 @@ project(':forge') {
         }
     }
       
-    task installerJson() {
+    task installerJson(dependsOn: [launcherJson, genClientBinPatches]) {
         ext {
             output = file('build/libs/install_profile.json')
+            INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.0.3'
         }
-        dependsOn launcherJson
+        doFirst {
+            ext.BIN_PATCHER = 'net.minecraftforge:binarypatcher:' + genClientBinPatches.resolvedVersion
+        }
         inputs.file launcherJson.output
         outputs.file output
         doLast {
             def idx = project.version.indexOf('-')
+            def libs = [:]
             def json = [
                 _comment_: launcherJson.comment,
                 profile: project.name,
                 version: project.version.substring(0, idx) + "-${project.name}" + project.version.substring(idx),
                 json: '/version.json',
-                path: "${project.group}:${project.name}:${project.version}",
+                path: "${project.group}:${project.name}:${project.version}:universal",
                 logo: '/big_logo.png',
                 minecraft: patcher.mcVersion,
                 welcome: "Welcome to the simple ${project.name.capitalize()} installer.",
-                processors: [],
                 data: [
                     MAPPINGS: [
-                        client: '/data/joined.tsrg',
-                        server: '/data/joined.tsrg'
+                        client: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@txt]",
+                        server: "[${MCP_ARTIFACT.group}:${MCP_ARTIFACT.name}:${MCP_ARTIFACT.version}:mappings@txt]"
                     ],
                     BINPATCH: [
                         client: '/data/client.lzma',
@@ -343,48 +352,63 @@ project(':forge') {
                         client: "[net.minecraft:client:${patcher.mcVersion}:extra]",
                         server: "[net.minecraft:server:${patcher.mcVersion}:extra]"
                     ],
-                    PATCHED: [
-                        client: "[${project.group}:${project.name}:${project.version}:client-patched]",
-                        server: "[${project.group}:${project.name}:${project.version}:server-patched]"
+                    MC_SRG: [
+                        client: "[net.minecraft:client:${patcher.mcVersion}-${MCP_VERSION}:srg]",
+                        server: "[net.minecraft:server:${patcher.mcVersion}-${MCP_VERSION}:srg]"
                     ],
-                    REMAPPED: [
-                        client: "[${project.group}:${project.name}:${project.version}:client-srg]",
-                        server: "[${project.group}:${project.name}:${project.version}:server-srg]"
+                    PATCHED: [
+                        client: "[${project.group}:${project.name}:${project.version}:client]",
+                        server: "[${project.group}:${project.name}:${project.version}:server]"
+                    ]
+                ],
+                processors: [
+                    [
+                        jar: INSTALLER_TOOLS,
+                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                        args: [
+                            '--task', 'MCP_DATA',
+                            '--input', "[${MCP_ARTIFACT.descriptor}]",
+                            '--output', '{MAPPINGS}',
+                            '--key', 'mappings'
+                        ]
+                    ], [
+                        jar: 'net.minecraftforge:jarsplitter:1.0.3',
+                        classpath: getClasspath(project, libs, 'net.minecraftforge:jarsplitter:1.0.3'),
+                        args: [
+                            '--input', '{MINECRAFT_JAR}',
+                            '--slim',  '{MC_SLIM}',
+                            '--data',  '{MC_DATA}',
+                            '--extra', '{MC_EXTRA}',
+                            '--srg', '{MAPPINGS}'
+                        ]
+                    ], [ // SpecialSource has a bug where it won't create the nessasary directories, remove when they fix that.
+                        jar: INSTALLER_TOOLS,
+                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
+                        args: [
+                            '--task', 'CREATE_PARENTS',
+                            '--target', '{MC_SRG}'
+                        ]
+                    ], [
+                        jar: 'net.md-5:SpecialSource:1.8.3',
+                        classpath: getClasspath(project, libs, 'net.md-5:SpecialSource:1.8.3'),
+                        args: [
+                            '--in-jar', '{MC_SLIM}',
+                            '--out-jar', '{MC_SRG}',
+                            '--srg-in', '{MAPPINGS}'
+                        ]
+                    ], [
+                        jar: BIN_PATCHER,
+                        classpath: getClasspath(project, libs, BIN_PATCHER),
+                        args: [
+                            '--clean', '{MC_SRG}',
+                            '--output', '{PATCHED}',
+                            '--apply', '{BINPATCH}'
+                        ]
                     ]
                 ]
             ]
-            def libs = [:]
-            json.processors.add([
-                jar: 'net.minecraftforge:jarsplitter:1.0.3',
-                classpath: getClasspath(project, libs, 'net.minecraftforge:jarsplitter:1.0.3'),
-                args: [
-                    '--input', '{MINECRAFT_JAR}',
-                    '--slim',  "{MC_SLIM}",
-                    '--data',  "{MC_DATA}",
-                    '--extra', "{MC_EXTRA}",
-                    '--srg', '{MAPPINGS}'
-                ]
-            ])
-            json.processors.add([
-                jar: 'net.minecraftforge:binarypatcher:1.0.3',
-                classpath: getClasspath(project, libs, 'net.minecraftforge:binarypatcher:1.0.3'),
-                args: [
-                    '--clean', '{MC_SLIM}',
-                    '--output', '{PATCHED}',
-                    '--apply', '{BINPATCH}'
-                ]
-            ])
-            json.processors.add([
-                jar: 'net.md-5:SpecialSource:1.8.3',
-                classpath: getClasspath(project, libs, 'net.md-5:SpecialSource:1.8.3'),
-                args: [
-                    '--in-jar', '{PATCHED}',
-                    '--out-jar', '{REMAPPED}',
-                    '--srg-in', '{MAPPINGS}'
-                ]
-            ])
-            
-            json.libraries = libs.values()
+            getClasspath(project, libs, MCP_ARTIFACT.descriptor) //Tell it to download mcp_config
+            json.libraries = libs.values().sort{a,b -> a.name.compareTo(b.name)}
             
             output.text = new JsonBuilder(json).toPrettyString()
         }
@@ -444,11 +468,10 @@ project(':forge') {
 
     task signUniversal(type: SignJar, dependsOn: universalJar) {
         onlyIf {
-            project.hasProperty('jarsigner')
+            project.hasProperty('jarsigner') && universalJar.state.failure == null
         }
 
         def jarsigner = [:];
-
         if (project.hasProperty('jarsigner'))
             jarsigner = project.jarsigner;
 
@@ -458,20 +481,59 @@ project(':forge') {
         keyStore = jarsigner.keystore
         inputFile = universalJar.archivePath
         outputFile = universalJar.archivePath
+        doFirst {
+            project.logger.lifecycle('Signing: ' + inputFile)
+        }
     }
-    publish.dependsOn signUniversal
-    build.dependsOn signUniversal
+    universalJar.finalizedBy(signUniversal)
     
-    /*
-    installer {
-        dependsOn signUniversal
-        classifier = 'installer'
-        from extraTxts
-        from "src/main/resources/forge_logo.png"
-        from "src/main/resources/url.png"
-        rename "forge_logo\\.png", "big_logo.png"
+    task downloadInstaller(type: DownloadMavenArtifact) {
+        artifact = 'net.minecraftforge:installer:2.+:shrunk'
     }
-    */
+    
+    task installerJar(type: Zip, dependsOn: [downloadInstaller, universalJar, installerJson, launcherJson, genClientBinPatches, genServerBinPatches]) {
+        classifier = 'installer'
+        extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
+        from(extraTxts)
+        from(rootProject.file('/src/main/resources/forge_logo.png')) {
+            rename{'big_logo.png'}
+        }
+        from(rootProject.file('/src/main/resources/url.png'))
+        from(genClientBinPatches.output) {
+            rename{'data/client.lzma'}
+        }
+        from(genServerBinPatches.output) {
+            rename{'data/server.lzma'}
+        }
+        from(universalJar) {
+            into "/maven/${project.group.replace('.', '/')}/${project.name}/${project.version}/"
+        }
+        from(installerJson.output)
+        from(launcherJson.output)
+        from(zipTree(downloadInstaller.output)) {
+            duplicatesStrategy = 'exclude'
+        }
+    }
+    task signInstaller(type: SignJar, dependsOn: installerJar) {
+        onlyIf {
+            project.hasProperty('jarsigner') && installerJar.state.failure == null
+        }
+
+        def jarsigner = [:];
+        if (project.hasProperty('jarsigner'))
+            jarsigner = project.jarsigner;
+
+        alias = 'forge'
+        storePass = jarsigner.storepass
+        keyPass = jarsigner.keypass
+        keyStore = jarsigner.keystore
+        inputFile = installerJar.archivePath
+        outputFile = installerJar.archivePath
+        doFirst {
+            project.logger.lifecycle('Signing: ' + inputFile)
+        }
+    }
+    signInstaller.finalizedBy(signInstaller)
     
     task makeMdk(type: Zip) {
         baseName = project.name
