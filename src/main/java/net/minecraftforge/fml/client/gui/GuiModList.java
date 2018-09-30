@@ -437,6 +437,7 @@ public class GuiModList extends GuiScreen
         {
             TextureManager tm = mc.getTextureManager();
             ResourcePackInfoClient pack = ResourcePackLoader.getResourcePackInfo(selectedMod.getModId());
+            if (pack == null) pack = ResourcePackLoader.getResourcePackInfo("forge");
             try
             {
                 NativeImage logo = null;
