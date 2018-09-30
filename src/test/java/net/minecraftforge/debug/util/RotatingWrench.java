@@ -82,7 +82,8 @@ public class RotatingWrench
         {
             if (!player.world.isRemote)
             {
-                player.sendStatusMessage(new TextComponentString("Facing before rotation: " + worldIn.getBlockState(pos).getBlock().getRotation(worldIn, pos)), false);
+                IBlockState state = worldIn.getBlockState(pos);
+                player.sendStatusMessage(new TextComponentString("Facing before rotation: " + state.getBlock().getRotation(state, worldIn, pos)), false);
             }
 
             ItemStack wrench = player.getHeldItem(hand);

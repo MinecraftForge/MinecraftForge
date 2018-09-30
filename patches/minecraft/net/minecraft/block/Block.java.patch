@@ -1180,14 +1180,14 @@
 +
 +    /**
 +     * Get current rotation of the block at the specified coordinates. Null means block doesn't support rotating.
-+     * @param world The world
++     * @param state The current state
++     * @param blockAccess The blockAccess
 +     * @param pos Block position in world
 +     * @return EnumFacing representing rotation, or null for unknown
 +     */
 +    @Nullable
-+    public EnumFacing getRotation(World world, BlockPos pos)
++    public EnumFacing getRotation(IBlockState state, IBlockAccess blockAccess, BlockPos pos)
 +    {
-+        IBlockState state = world.func_180495_p(pos);
 +        for (IProperty<?> prop : state.func_177228_b().keySet())
 +        {
 +            if ((prop.func_177701_a().equals("facing") || prop.func_177701_a().equals("rotation")) && prop.func_177699_b() == EnumFacing.class)
