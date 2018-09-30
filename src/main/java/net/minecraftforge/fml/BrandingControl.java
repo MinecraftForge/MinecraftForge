@@ -51,7 +51,7 @@ public class BrandingControl
         }
     }
 
-    public static List<String> getBrandings(boolean includeMC, boolean reverse)
+    private static List<String> getBrandings(boolean includeMC, boolean reverse)
     {
         computeBranding();
         if (includeMC) {
@@ -65,13 +65,12 @@ public class BrandingControl
         final List<String> brandings = getBrandings(includeMC, reverse);
         IntStream.range(0, brandings.size()).boxed().forEachOrdered(idx -> lineConsumer.accept(idx, brandings.get(idx)));
     }
-    private static final List<String> defaultClientBranding = Stream.of("fml", "forge").collect(Collectors.toList());
+
     public static String getClientBranding() {
-        return String.join(",", defaultClientBranding);
+        return "forge";
     }
 
-    public static final List<String> defaultServerBranding = Arrays.asList("fml", "forge");
     public static String getServerBranding() {
-        return String.join(",", defaultServerBranding);
+        return "forge";
     }
 }
