@@ -32,6 +32,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -79,6 +80,12 @@ public class RotatingWrench
         @Override
         public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
         {
+            if (!player.world.isRemote)
+            {
+                IBlockState state = worldIn.getBlockState(pos);
+                player.sendStatusMessage(new TextComponentString("Facing before rotation: " + state.getBlock().getRotation(state, worldIn, pos)), false);
+            }
+
             ItemStack wrench = player.getHeldItem(hand);
             if (player.canPlayerEdit(pos, facing, wrench) && worldIn.isBlockModifiable(player, pos))
             {
