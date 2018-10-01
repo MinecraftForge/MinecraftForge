@@ -15,8 +15,10 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.security.MessageDigest
 import java.net.URL
+import net.minecraftforge.gradle.common.task.ArchiveChecksum
 import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.task.SignJar
+import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
 import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
 
@@ -118,28 +120,34 @@ project(':forge') {
         mcVersion = '1.13'
     }
     group = 'net.minecraftforge'
-    version = getVersionFromJava(file("$rootDir/src/main/java/net/minecraftforge/common/ForgeVersion.java"), patcher.mcVersion)
+    version = getVersion(patcher.mcVersion, '15.24.0')
     applyPatches {
         canonicalizeAccess true
         canonicalizeWhitespace true
         maxFuzz 3
     }
+    configurations {
+        installer {
+            transitive = false //Don't pull all libraries, if we're missing something, add it to the installer list so the installer knows to download it.
+        }
+        api.extendsFrom(installer)
+    }
     dependencies {
         api 'net.minecraft:client:1.13:extra'
-        api 'com.paulscode:soundsystem:2018+'
-        api 'org.ow2.asm:asm:6.2'
-        api 'org.ow2.asm:asm-commons:6.2'
-        api 'org.ow2.asm:asm-tree:6.2'
-        api 'cpw.mods:modlauncher:0.1.0'
-        api 'net.minecraftforge:accesstransformers:0.10+:shadowed'
-        api 'net.minecraftforge:eventbus:0.1+:service'
-        api 'net.minecraftforge:forgespi:0.1+'
-        api 'net.minecraftforge:coremods:0.1+'
-        api 'com.electronwill.night-config:core:3.4.0'
-        api 'com.electronwill.night-config:toml:3.4.0'
-        api 'org.jline:jline:3.5.1'
-        api 'org.apache.maven:maven-artifact:3.5.3'
-        api 'java3d:vecmath:1.5.2'
+        installer 'com.paulscode:soundsystem:2018+'
+        installer 'org.ow2.asm:asm:6.2'
+        installer 'org.ow2.asm:asm-commons:6.2'
+        installer 'org.ow2.asm:asm-tree:6.2'
+        installer 'cpw.mods:modlauncher:0.1.0'
+        installer 'net.minecraftforge:accesstransformers:0.10+:shadowed'
+        installer 'net.minecraftforge:eventbus:0.1+:service'
+        installer 'net.minecraftforge:forgespi:0.1+'
+        installer 'net.minecraftforge:coremods:0.1+'
+        installer 'com.electronwill.night-config:core:3.4.0'
+        installer 'com.electronwill.night-config:toml:3.4.0'
+        installer 'org.jline:jline:3.5.1'
+        installer 'org.apache.maven:maven-artifact:3.5.3'
+        installer 'java3d:vecmath:1.5.2'
     }
 
     task runclient(type: JavaExec, dependsOn: [":forge:downloadAssets", ":forge:extractNatives"]) {
@@ -233,6 +241,9 @@ project(':forge') {
     
     task crowdin(type: Zip) {
         dependsOn downloadCrowdin
+        onlyIf {
+            !downloadCrowdin.state.skipped
+        }
         baseName = project.name
         version = project.version
         classifier = 'crowdin'
@@ -250,7 +261,63 @@ project(':forge') {
         }
     }
     
-    task launcherJson() {
+    // We apply the bin patches we just created to make a jar that is JUST our changes
+    task applyClientBinPatches(type: ApplyBinPatches, dependsOn: genClientBinPatches) {
+        clean = { genClientBinPatches.cleanJar }
+        input = genClientBinPatches.output
+    }
+    task applyServerBinPatches(type: ApplyBinPatches, dependsOn: genServerBinPatches) {
+        clean = { genServerBinPatches.cleanJar }
+        input = genServerBinPatches.output
+    }
+    task applyJoinedBinPatches(type: ApplyBinPatches, dependsOn: genJoinedBinPatches) {
+        clean = { genJoinedBinPatches.cleanJar }
+        input = genJoinedBinPatches.output
+    }
+    // Checksum tasks so that we can know if the vanilla classes are what we expect them to do!
+    task clientBaseChecksum(type: ArchiveChecksum, dependsOn: genClientBinPatches) {
+        input = { genClientBinPatches.cleanJar} //Lazy because Patcher Plugin sets the value afterEvaluate
+        name = 'client'
+    }
+    task serverBaseChecksum(type: ArchiveChecksum, dependsOn: genServerBinPatches) {
+        input = { genServerBinPatches.cleanJar }
+        name = 'server'
+    }
+    task joinedBaseChecksum(type: ArchiveChecksum, dependsOn: genJoinedBinPatches) {
+        input = { genJoinedBinPatches.cleanJar }
+        name = 'joined'
+    }
+    task clientPatchedChecksum(type: ArchiveChecksum, dependsOn: applyClientBinPatches) {
+        input = applyClientBinPatches.output
+        name = 'client_patched'
+    }
+    task serverPatchedChecksum(type: ArchiveChecksum, dependsOn: applyServerBinPatches) {
+        input = applyServerBinPatches.output
+        name = 'server_patched'
+    }
+    task joinedPatchedChecksum(type: ArchiveChecksum, dependsOn: applyJoinedBinPatches) {
+        input = applyJoinedBinPatches.output
+        name = 'joined_patched'
+    }
+    // Utility methods for testing checksums
+    task cleanChecksums() {
+        ['client', 'server', 'joined'].each { side ->
+            ['Base', 'Patched'].each { type -> 
+                def clean = "clean${side.capitalize()}${type}Checksum"
+                dependsOn(clean)
+                tasks.findByName("${side}${type}Checksum").mustRunAfter(clean)
+            }
+        }
+    }
+    task checksums() {
+        ['client', 'server', 'joined'].each { side ->
+            ['Base', 'Patched'].each { type -> 
+                dependsOn("${side}${type}Checksum")
+            }
+        }
+    }
+    
+    task launcherJson(dependsOn: universalJar) {
         ext {
             output = file('build/libs/version.json')
             vanilla = project(':mcp').file('build/mcp/downloadJson/version.json')
@@ -260,6 +327,8 @@ project(':forge') {
                 "Our efforts are supported by ads from the download page.",
                 "If you MUST automate this, please consider supporting the project through https://www.patreon.com/LexManos/"
             ]
+            def idx = project.version.indexOf('-')
+            id = project.version.substring(0, idx) + "-${project.name}" + project.version.substring(idx)
         }
         inputs.file vanilla
         outputs.file output
@@ -267,43 +336,34 @@ project(':forge') {
             def json_vanilla = new JsonSlurper().parseText(vanilla.text)
             def json = [            
                 _comment_: comment,
-                id: project.version.split('-')[0] + '-forge-' + project.version.split('-')[1],
+                id: id,
                 time: timestamp,
                 releaseTime: timestamp,
                 type: 'release',
                 mainClass: 'cpw.mods.modlauncher.Launcher',
                 inheritsFrom: patcher.mcVersion,
-                logging: [],
+                logging: [:],
                 arguments: [
                     game: json_vanilla.arguments.game + ['--launchTarget', 'fmlclient']
                 ],
                 libraries: [
-                    [ name: "${project.group}:${project.name}:${project.version}" ]
+                    [
+                        name: "${project.group}:${project.name}:${project.version}",
+                        downloads: [
+                            artifact: [
+                                path: "${project.group.replace('.', '/')}/${project.name}/${project.version}/${project.name}-${project.version}.jar",
+                                url: null, //Do not include the URL so that the installer/launcher won't grab it. This is also why we don't have the universal classifier
+                                sha1: sha1(universalJar.archivePath),
+                                size: universalJar.archivePath.length()
+                            ]
+                        ]
+                    ] 
                 ]
             ]
             
-            //TODO: There should be a way to mark this in the config declaration... 
-            def forge = [
-                'cpw.mods:modlauncher',
-                'org.ow2.asm:asm',
-                'org.ow2.asm:asm-commons',
-                'org.ow2.asm:asm-tree',
-                'net.minecraftforge:accesstransformers',
-                'net.minecraftforge:eventbus',
-                'net.minecraftforge:forgespi',
-                'net.minecraftforge:coremods',
-                'com.electronwill.night-config:core',
-                'com.electronwill.night-config:toml',
-                'org.jline:jline',
-                'org.apache.maven:maven-artifact',
-                'java3d:vecmath'
-            ]
-            def mojang = []
-            def artifacts = getArtifacts(project, project.configurations.compileClasspath)
+            def artifacts = getArtifacts(project, project.configurations.installer, false)
             artifacts.each { key, lib ->
-                if (forge.contains(key) || mojang.contains(key)){
-                    json.libraries.add(lib)
-                }
+                json.libraries.add(lib)
             }
             
             output.text = new JsonBuilder(json).toPrettyString()
@@ -314,21 +374,22 @@ project(':forge') {
         ext {
             output = file('build/libs/install_profile.json')
             INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.0.3'
+            JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.0.4'
         }
         doFirst {
             ext.BIN_PATCHER = 'net.minecraftforge:binarypatcher:' + genClientBinPatches.resolvedVersion
         }
+        inputs.file genClientBinPatches.toolJar
         inputs.file launcherJson.output
         outputs.file output
         doLast {
-            def idx = project.version.indexOf('-')
             def libs = [:]
             def json = [
                 _comment_: launcherJson.comment,
                 profile: project.name,
-                version: project.version.substring(0, idx) + "-${project.name}" + project.version.substring(idx),
+                version: launcherJson.id,
                 json: '/version.json',
-                path: "${project.group}:${project.name}:${project.version}:universal",
+                path: "${project.group}:${project.name}:${project.version}",
                 logo: '/big_logo.png',
                 minecraft: patcher.mcVersion,
                 welcome: "Welcome to the simple ${project.name.capitalize()} installer.",
@@ -373,8 +434,8 @@ project(':forge') {
                             '--key', 'mappings'
                         ]
                     ], [
-                        jar: 'net.minecraftforge:jarsplitter:1.0.3',
-                        classpath: getClasspath(project, libs, 'net.minecraftforge:jarsplitter:1.0.3'),
+                        jar: JAR_SPLITTER,
+                        classpath: getClasspath(project, libs, JAR_SPLITTER),
                         args: [
                             '--input', '{MINECRAFT_JAR}',
                             '--slim',  '{MC_SLIM}',
@@ -416,10 +477,6 @@ project(':forge') {
     }
     
     universalJar {
-        dependsOn launcherJson
-        from(launcherJson.output) {
-            rename { 'version.json' }
-        }
         from extraTxts
         
         /* TODO: Annotation Cache? need to talk to cpw about his new design.        
@@ -429,40 +486,35 @@ project(':forge') {
         dependsOn fixAnnotationsJson
         */
         
+        // Add checksum files of clean and patched vanilla classes.
+        ['client', 'server'].each { side ->
+            ['Base', 'Patched'].each { type -> 
+                from(tasks.getByName("${side}${type}Checksum").output) {
+                    into 'checksums/'
+                }
+            }
+        }
+        dependsOn checksums
+        
         // add crowdin locales
-        from { crowdin.getDidWork() ? zipTree(crowdin.archivePath) : null}
+        from { !crowdin.state.skipped ? zipTree(crowdin.archivePath) : null}
         dependsOn crowdin
 
         doFirst {
-            def json = new JsonSlurper().parseText(launcherJson.output.text)
             def classpath = new StringBuilder()
-            json.libraries.each { lib ->
-                if (!lib.name.startsWith("${project.group}:${project.name}")) {
-                    // group : artifact : version [: classifier][@extension]
-                    def split = lib.name.split(':')
-                    def ext = 'jar'
-                    if (split[split.length-1].indexOf('@') != -1) {
-                        ext = split[split.length-1].split('@')[1]
-                        split[split.length-1] = split[split.length-1].split('@')[0]
-                    }
-                    
-                    def group = split[0].replace('.', '/')
-                    def artifact = split[1]
-                    def version = split[2]
-                    def classifier = split.length > 3 ? split[3] : null
-                    
-                    if (classifier == null)
-                        classpath += "libraries/$group/$artifact/$version/$artifact-${version}.${ext} "
-                    else
-                        classpath += "libraries/$group/$artifact/$version/$artifact-${version}-${classifier}.${ext} "
-                }
+            def artifacts = getArtifacts(project, project.configurations.installer, false)
+            artifacts.each { key, lib ->
+                classpath += "libraries/${lib.downloads.artifact.path} "
             }
             classpath += "minecraft_server.${patcher.mcVersion}.jar"
             
             manifest.attributes([
                 "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
                 "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
-                "Class-Path": classpath.toString()
+                "Class-Path": classpath.toString(),
+                "Minecraft-Version": patcher.mcVersion,
+                "Forge-Version": project.version.substring(patcher.mcVersion.length() + 1),
+                "MCP-Version": MCP_VERSION
             ])
         }
     }
@@ -534,7 +586,7 @@ project(':forge') {
             project.logger.lifecycle('Signing: ' + inputFile)
         }
     }
-    signInstaller.finalizedBy(signInstaller)
+    installerJar.finalizedBy(signInstaller)
     
     task makeMdk(type: Zip) {
         baseName = project.name
@@ -583,7 +635,7 @@ project(':forge') {
             mavenJava(MavenPublication) {
                 artifact universalJar
                 //TODO: changelog
-                //TODO: installer
+                artifact installerJar
                 //TODO: installer-win
                 artifact makeMdk
                 artifact userdevJar
@@ -630,33 +682,14 @@ project(':forge') {
     }
 }
 
-def getVersionFromJava(def file, def mcver) {
-    def major, minor, revision, build = '0'
-    def prefix = 'public static final int'
-    file.eachLine{ String s ->
-        s = s.trim()
-        if (s.startsWith(prefix)) {
-            s = s.substring(prefix.length(), s.length() - 1)
-            s = s.replace('=', ' ').replace('Version', '').replaceAll(' +', ' ').trim()
-            String[] pts = s.split(' ')
-            if (pts[0].equals('major')) major = pts[pts.length - 1]
-            else if (pts[0] == 'minor') minor = pts[pts.length - 1]
-            else if (pts[0] == 'revision') revision = pts[pts.length - 1]
-        }
-    }
-    build = System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0
-    String branch = null
-    if (!System.getenv().containsKey('GIT_BRANCH')) {
-        branch = grgit.branch.current().name
-    } else {
-        branch = System.getenv('GIT_BRANCH')
-        branch = branch.substring(branch.lastIndexOf('/') + 1)
-    }
-    def out = "${mcver.replace('-', '_')}-$major.$minor.$revision.$build"
-    if (branch && branch != 'master' && branch != 'HEAD' && branch != mcver && branch != mcver + '.0') {
+def getVersion(mcver, ver) {
+    def out = mcver.replace('-', '_') + '-' + ver + '.' + (System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0)
+    def branch = grgit.branch.current().name
+    if (branch != null && branch != 'master' && branch != 'HEAD' && branch != mcver && branch != mcver + '.0') {
         if (!(branch.endsWith('.x') && mcver.startsWith(branch.substring(0, branch.length() -2))))
             out += "-$branch"
     }
+    println('Version: ' + out)
     return out
 }
 
@@ -681,10 +714,10 @@ def artifactTree(project, artifact) {
     def dep = project.dependencies.create(artifact)
     cfg.dependencies.add(dep)
     def files = cfg.resolve()
-    return getArtifacts(project, cfg)
+    return getArtifacts(project, cfg, true)
 }
 
-def getArtifacts(project, config) {
+def getArtifacts(project, config, classifiers) {
     def ret = [:]
     config.resolvedConfiguration.resolvedArtifacts.each {
         def art = [
@@ -705,17 +738,13 @@ def getArtifacts(project, config) {
         def url = "https://libraries.minecraft.net/${path}"
         if (!checkExists(url)) {
             url = "https://files.minecraftforge.net/maven/${path}"
-            /*
-            project.logger.lifecycle("Artifact: ${path}")
-            def repo = project.file("build/dep_repo/${folder}")
-            repo.mkdirs()
-            copy {
-                from art.file
-                into folder
-                rename { filename }
-            }
-            project.file("build/dep_repo/${path}.sha1").text = sha1(it.file)
-            */
+        }
+        //TODO remove when Mojang launcher is updated
+        if (!classifiers && art.classifier != null) { //Mojang launcher doesn't currently support classifiers, so... move it to part of the version, and force the extension to 'jar'
+            art.version = "${art.version}-${art.classifier}"
+            art.classifier = null
+            art.extension = 'jar'
+            path = "${art.group.replace('.', '/')}/${art.name}/${art.version}/${art.name}-${art.version}.jar"
         }
         ret[key] = [
             name: "${art.group}:${art.name}:${art.version}" + (art.classifier == null ? '' : ":${art.classifier}") + (art.extension == 'jar' ? '' : "@${art.extension}"),
