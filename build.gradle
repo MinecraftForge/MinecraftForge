@@ -13,6 +13,7 @@ import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.LinkedHashMap
 import java.security.MessageDigest
 import java.net.URL
 import net.minecraftforge.gradle.common.task.ArchiveChecksum
@@ -90,6 +91,8 @@ project(':forge') {
         mavenCentral()
     }
     ext {
+        MC_VERSION = '1.13'
+        SPEC_VERSION = '15.24.0'
         MCP_ARTIFACT = project(':mcp').mcp.config
         MCP_VERSION = project(':mcp').mcp.config.version.split('-')[1] // The timestamp only.
     }
@@ -117,10 +120,21 @@ project(':forge') {
                 target: 'fmldevserver'
             ]
         }
-        mcVersion = '1.13'
     }
+    
+    def getVersion = {
+        def out = MC_VERSION.replace('-', '_') + '-' + SPEC_VERSION + '.' + (System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0)
+        def branch = grgit.branch.current().name
+        if (branch != null && branch != 'master' && branch != 'HEAD' && branch != MC_VERSION && branch != MC_VERSION + '.0') {
+            if (!(branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() -2))))
+                out += "-${branch}"
+        }
+        println('Version: ' + out)
+        return out
+    }
+    
     group = 'net.minecraftforge'
-    version = getVersion(patcher.mcVersion, '15.24.0')
+    version = getVersion()
     applyPatches {
         canonicalizeAccess true
         canonicalizeWhitespace true
@@ -185,24 +199,6 @@ project(':forge') {
         environment target:'fmldevserver'
         workingDir 'runserver'
     }
-    
-    task ciWriteBuildNumber {
-        doLast {
-            def file = file("$rootDir/src/main/java/net/minecraftforge/common/ForgeVersion.java")
-            def bn = System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0
-            def outfile = ''
-
-            file.eachLine{ String s ->
-                if (s.matches('^    public static final int buildVersion    = [\\d]+;\$'))
-                    s = "    public static final int buildVersion    = ${bn};"
-                if (s.matches('^    public static final String mcVersion = "[^\\"]+";'))
-                    s = "    public static final String mcVersion = \"${patcher.mcVersion}\";"
-                outfile += (s+'\n')
-            }
-            file.write(outfile)
-        }
-    }
-    
     
     def extraTxts = [
         rootProject.file('CREDITS.txt'),
@@ -341,7 +337,7 @@ project(':forge') {
                 releaseTime: timestamp,
                 type: 'release',
                 mainClass: 'cpw.mods.modlauncher.Launcher',
-                inheritsFrom: patcher.mcVersion,
+                inheritsFrom: MC_VERSION,
                 logging: [:],
                 arguments: [
                     game: json_vanilla.arguments.game + ['--launchTarget', 'fmlclient']
@@ -391,7 +387,7 @@ project(':forge') {
                 json: '/version.json',
                 path: "${project.group}:${project.name}:${project.version}",
                 logo: '/big_logo.png',
-                minecraft: patcher.mcVersion,
+                minecraft: MC_VERSION,
                 welcome: "Welcome to the simple ${project.name.capitalize()} installer.",
                 data: [
                     MAPPINGS: [
@@ -403,20 +399,20 @@ project(':forge') {
                         server: '/data/server.lzma'
                     ],
                     MC_SLIM: [
-                        client: "[net.minecraft:client:${patcher.mcVersion}:slim]",
-                        server: "[net.minecraft:server:${patcher.mcVersion}:slim]"
+                        client: "[net.minecraft:client:${MC_VERSION}:slim]",
+                        server: "[net.minecraft:server:${MC_VERSION}:slim]"
                     ],
                     MC_DATA: [
-                        client: "[net.minecraft:client:${patcher.mcVersion}:data]",
-                        server: "[net.minecraft:server:${patcher.mcVersion}:data]"
+                        client: "[net.minecraft:client:${MC_VERSION}:data]",
+                        server: "[net.minecraft:server:${MC_VERSION}:data]"
                     ],
                     MC_EXTRA: [
-                        client: "[net.minecraft:client:${patcher.mcVersion}:extra]",
-                        server: "[net.minecraft:server:${patcher.mcVersion}:extra]"
+                        client: "[net.minecraft:client:${MC_VERSION}:extra]",
+                        server: "[net.minecraft:server:${MC_VERSION}:extra]"
                     ],
                     MC_SRG: [
-                        client: "[net.minecraft:client:${patcher.mcVersion}-${MCP_VERSION}:srg]",
-                        server: "[net.minecraft:server:${patcher.mcVersion}-${MCP_VERSION}:srg]"
+                        client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:srg]",
+                        server: "[net.minecraft:server:${MC_VERSION}-${MCP_VERSION}:srg]"
                     ],
                     PATCHED: [
                         client: "[${project.group}:${project.name}:${project.version}:client]",
@@ -479,7 +475,7 @@ project(':forge') {
     universalJar {
         from extraTxts
         
-        /* TODO: Annotation Cache? need to talk to cpw about his new design.        
+        /* TODO: Annotation Cache? need to talk to cpw about his new design.
         from(fixAnnotationsJson){
             into 'META-INF'
         }
@@ -506,16 +502,31 @@ project(':forge') {
             artifacts.each { key, lib ->
                 classpath += "libraries/${lib.downloads.artifact.path} "
             }
-            classpath += "minecraft_server.${patcher.mcVersion}.jar"
+            classpath += "minecraft_server.${MC_VERSION}.jar"
             
             manifest.attributes([
-                "Main-Class": "net.minecraftforge.fml.relauncher.ServerLaunchWrapper",
-                "TweakClass": "net.minecraftforge.fml.common.launcher.FMLTweaker",
-                "Class-Path": classpath.toString(),
-                "Minecraft-Version": patcher.mcVersion,
-                "Forge-Version": project.version.substring(patcher.mcVersion.length() + 1),
-                "MCP-Version": MCP_VERSION
-            ])
+                'Main-Class': 'net.minecraftforge.server.ServerMain',
+                'Class-Path': classpath.toString(),
+                'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'GitCommit': grgit.head().getAbbreviatedId(8),
+                'Git-Branch': grgit.branch.current().getName()
+            ] as LinkedHashMap)
+            manifest.attributes([
+                'Specification-Title':      'Forge',
+                'Specification-Vendor':     'Forge Development LLC',
+                'Specification-Version':    SPEC_VERSION,
+                'Implementation-Title':     'Forge',
+                'Implementation-Version':   project.version.substring(MC_VERSION.length() + 1),
+                'Implementation-Vendor':    'Forge Development LLC'
+            ] as LinkedHashMap, 'net/minecraftforge/common/')
+            manifest.attributes([
+                'Specification-Title':      'Minecraft',
+                'Specification-Vendor':     'Mojang',
+                'Specification-Version':    MC_VERSION,
+                'Implementation-Title':     'MCP',
+                'Implementation-Version':   MCP_VERSION,
+                'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap, 'net/minecraftforge/mcp/')
         }
     }
 
@@ -680,17 +691,6 @@ project(':forge') {
             }
         }
     }
-}
-
-def getVersion(mcver, ver) {
-    def out = mcver.replace('-', '_') + '-' + ver + '.' + (System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0)
-    def branch = grgit.branch.current().name
-    if (branch != null && branch != 'master' && branch != 'HEAD' && branch != mcver && branch != mcver + '.0') {
-        if (!(branch.endsWith('.x') && mcver.startsWith(branch.substring(0, branch.length() -2))))
-            out += "-$branch"
-    }
-    println('Version: ' + out)
-    return out
 }
 
 def dateToIso8601(date) {
