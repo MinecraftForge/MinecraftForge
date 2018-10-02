@@ -161,6 +161,7 @@ project(':forge') {
         installer 'com.electronwill.night-config:toml:3.4.0'
         installer 'org.jline:jline:3.5.1'
         installer 'org.apache.maven:maven-artifact:3.5.3'
+        installer 'net.jodah:typetools:0.5.0'
         installer 'java3d:vecmath:1.5.2'
     }
 
@@ -246,16 +247,16 @@ project(':forge') {
         destinationDir = file('build/distributions')
         from(zipTree(downloadCrowdin.output)){
             eachFile { //Tired of waiting for crowdin API, rename things myself. Remove once crowdin stops being dumb
-                if (it.name.equals('en_us.json') && !it.path.startsWith('assets/')) {
-                    it.name = it.path.split('/')[0] + '.json'
-                    it.path = 'assets/forge/lang/' + it.name
+                    if (it.name.equals('en_us.json') && !it.path.startsWith('assets/')) {
+                        it.name = it.path.split('/')[0] + '.json'
+                        it.path = 'assets/forge/lang/' + it.name
+                    }
                 }
+                exclude { it.isDirectory() }
+                rename { it.toLowerCase() }//Minecraft needs it lowercase.
+                exclude '**/*.lang' //Pre-1.13 format
             }
-            exclude { it.isDirectory() }
-            rename { it.toLowerCase() }//Minecraft needs it lowercase.
-            exclude '**/*.lang' //Pre-1.13 format
         }
-    }
     
     // We apply the bin patches we just created to make a jar that is JUST our changes
     task applyClientBinPatches(type: ApplyBinPatches, dependsOn: genClientBinPatches) {
@@ -314,6 +315,7 @@ project(':forge') {
     }
     
     task launcherJson(dependsOn: universalJar) {
+        inputs.file universalJar.archivePath
         ext {
             output = file('build/libs/version.json')
             vanilla = project(':mcp').file('build/mcp/downloadJson/version.json')

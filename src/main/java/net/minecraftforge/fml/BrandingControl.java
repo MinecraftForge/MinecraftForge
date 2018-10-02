@@ -22,6 +22,7 @@ package net.minecraftforge.fml;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.mcp.MCPVersion;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -41,8 +42,8 @@ public class BrandingControl
         if (brandings == null)
         {
             ImmutableList.Builder<String> brd = ImmutableList.builder();
-            brd.add("Minecraft " + ForgeVersion.mcVersion);
-            brd.add("MCP " + ForgeVersion.mcpVersion);
+            brd.add("Minecraft " + MCPVersion.getMCVersion());
+            brd.add("MCP " + MCPVersion.getMCPVersion());
             brd.add("Forge " + ForgeVersion.getVersion());
             int tModCount = ModList.get().size();
             brd.add(ForgeI18n.parseMessage("fml.menu.loadingmods", tModCount));

@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -72,18 +73,12 @@ public enum FMLPaths
     {
         for (FMLPaths path : FMLPaths.values())
         {
-            path.absolutePath = rootPath.resolve(path.relativePath).toAbsolutePath();
-            try {
-                path.absolutePath = path.absolutePath.toRealPath();
-            } catch (IOException e) {
-                LOGGER.error("Unable to resolve path {}", path.absolutePath, e);
-                throw new RuntimeException(e);
-            }
-            LOGGER.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
+            path.absolutePath = rootPath.resolve(path.relativePath).toAbsolutePath().normalize();
             if (path.isDirectory)
             {
                 FileUtils.getOrCreateDirectory(path.absolutePath, path.name());
             }
+            LOGGER.debug(CORE,"Path {} is {}", ()-> path, ()-> path.absolutePath);
         }
     }
 

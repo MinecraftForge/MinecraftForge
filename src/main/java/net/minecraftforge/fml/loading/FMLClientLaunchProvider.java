@@ -24,6 +24,11 @@ import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.mcp.MCPVersion;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 
 import java.net.URISyntaxException;
 import java.nio.file.Path;
@@ -34,8 +39,10 @@ import java.util.concurrent.Callable;
 
 public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final Path forgePath;
-    private static final Path mcPath;
+    private static final Path patchedBinariesPath;
+    private static final Path srgMcPath;
     private static final List<String> SKIPPACKAGES = Arrays.asList(
             "joptsimple.", "org.lwjgl.", "com.mojang.", "com.google.",
             "org.apache.commons.", "io.netty.", "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.",
@@ -46,7 +53,9 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     static {
         try {
             forgePath = Paths.get(FMLClientLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            mcPath = forgePath.resolveSibling("forge-"+ForgeVersion.getVersion()+"-srg.jar");
+            patchedBinariesPath = forgePath.resolveSibling("forge-"+MCPVersion.getMCVersion()+"-"+ForgeVersion.getVersion()+"-client.jar");
+            Path libs = forgePath.getParent().getParent().getParent().getParent().getParent();
+            srgMcPath = libs.resolve(Paths.get("net","minecraft", "client", MCPVersion.getMCPandMCVersion(), "client-"+MCPVersion.getMCPandMCVersion()+"-srg.jar")).toAbsolutePath();
         } catch (URISyntaxException e) {
             throw new RuntimeException("Unable to locate myself!");
         }
@@ -60,7 +69,10 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     @Override
     public Path[] identifyTransformationTargets()
     {
-        return new Path[] {mcPath, forgePath};
+        LOGGER.info("Found SRG MC at {}", srgMcPath.toString());
+        LOGGER.info("Found Forge patches at {}", patchedBinariesPath.toString());
+        LOGGER.info("Found Forge at {}", forgePath.toString());
+        return new Path[] {forgePath, patchedBinariesPath, srgMcPath};
     }
 
     @Override
