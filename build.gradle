@@ -314,7 +314,7 @@ project(':forge') {
         }
     }
     
-    task launcherJson(dependsOn: universalJar) {
+    task launcherJson(dependsOn: 'signUniversal') {
         inputs.file universalJar.archivePath
         ext {
             output = file('build/libs/version.json')
@@ -368,7 +368,7 @@ project(':forge') {
         }
     }
       
-    task installerJson(dependsOn: [launcherJson, genClientBinPatches]) {
+    task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches]) {
         ext {
             output = file('build/libs/install_profile.json')
             INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.0.3'
@@ -377,6 +377,8 @@ project(':forge') {
         doFirst {
             ext.BIN_PATCHER = 'net.minecraftforge:binarypatcher:' + genClientBinPatches.resolvedVersion
         }
+        inputs.file applyClientBinPatches.output
+        inputs.file applyServerBinPatches.output
         inputs.file genClientBinPatches.toolJar
         inputs.file launcherJson.output
         outputs.file output
@@ -404,13 +406,25 @@ project(':forge') {
                         client: "[net.minecraft:client:${MC_VERSION}:slim]",
                         server: "[net.minecraft:server:${MC_VERSION}:slim]"
                     ],
+                    MC_SLIM_SHA: [
+                        client: "'${sha1(tasks.getByName('downloadClientSlim').output)}'",
+                        server: "'${sha1(tasks.getByName('downloadServerSlim').output)}'"
+                    ],
                     MC_DATA: [
                         client: "[net.minecraft:client:${MC_VERSION}:data]",
                         server: "[net.minecraft:server:${MC_VERSION}:data]"
                     ],
+                    MC_DATA_SHA: [
+                        client: "'${sha1(tasks.getByName('downloadClientData').output)}'",
+                        server: "'${sha1(tasks.getByName('downloadServerData').output)}'"
+                    ],
                     MC_EXTRA: [
                         client: "[net.minecraft:client:${MC_VERSION}:extra]",
                         server: "[net.minecraft:server:${MC_VERSION}:extra]"
+                    ],
+                    MC_EXTRA_SHA: [
+                        client: "'${sha1(tasks.getByName('downloadClientExtra').output)}'",
+                        server: "'${sha1(tasks.getByName('downloadServerExtra').output)}'"
                     ],
                     MC_SRG: [
                         client: "[net.minecraft:client:${MC_VERSION}-${MCP_VERSION}:srg]",
@@ -419,6 +433,10 @@ project(':forge') {
                     PATCHED: [
                         client: "[${project.group}:${project.name}:${project.version}:client]",
                         server: "[${project.group}:${project.name}:${project.version}:server]"
+                    ],
+                    PATCHED_SHA: [
+                        client: "'${sha1(applyClientBinPatches.output)}'",
+                        server: "'${sha1(applyServerBinPatches.output)}'"
                     ]
                 ],
                 processors: [
@@ -440,6 +458,11 @@ project(':forge') {
                             '--data',  '{MC_DATA}',
                             '--extra', '{MC_EXTRA}',
                             '--srg', '{MAPPINGS}'
+                        ],
+                        outputs: [
+                            '{MC_SLIM}': '{MC_SLIM_SHA}',
+                            '{MC_DATA}': '{MC_DATA_SHA}',
+                            '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [ // SpecialSource has a bug where it won't create the nessasary directories, remove when they fix that.
                         jar: INSTALLER_TOOLS,
@@ -463,6 +486,9 @@ project(':forge') {
                             '--clean', '{MC_SRG}',
                             '--output', '{PATCHED}',
                             '--apply', '{BINPATCH}'
+                        ],
+                        outputs: [
+                            '{PATCHED}': '{PATCHED_SHA}'
                         ]
                     ]
                 ]
@@ -471,6 +497,17 @@ project(':forge') {
             json.libraries = libs.values().sort{a,b -> a.name.compareTo(b.name)}
             
             output.text = new JsonBuilder(json).toPrettyString()
+        }
+    }
+    
+    ['client', 'server'].each { side ->
+        ['slim', 'extra', 'data'].each { type -> 
+            def name = "download${side.capitalize()}${type.capitalize()}"
+            task "${name}"(type: DownloadMavenArtifact) {
+                artifact = "net.minecraft:${side}:${MC_VERSION}:${type}"
+            }
+            installerJson.dependsOn(name)
+            installerJson.inputs.file(tasks.getByName(name).output)
         }
     }
     
@@ -557,7 +594,7 @@ project(':forge') {
         artifact = 'net.minecraftforge:installer:2.+:shrunk'
     }
     
-    task installerJar(type: Zip, dependsOn: [downloadInstaller, universalJar, installerJson, launcherJson, genClientBinPatches, genServerBinPatches]) {
+    task installerJar(type: Zip, dependsOn: [downloadInstaller, signUniversal, installerJson, launcherJson, genClientBinPatches, genServerBinPatches]) {
         classifier = 'installer'
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
         from(extraTxts)
