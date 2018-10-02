@@ -340,7 +340,7 @@ project(':forge') {
                 inheritsFrom: MC_VERSION,
                 logging: [:],
                 arguments: [
-                    game: json_vanilla.arguments.game + ['--launchTarget', 'fmlclient']
+                    game: ['--launchTarget', 'fmlclient']
                 ],
                 libraries: [
                     [
@@ -348,7 +348,7 @@ project(':forge') {
                         downloads: [
                             artifact: [
                                 path: "${project.group.replace('.', '/')}/${project.name}/${project.version}/${project.name}-${project.version}.jar",
-                                url: null, //Do not include the URL so that the installer/launcher won't grab it. This is also why we don't have the universal classifier
+                                url: "", //Do not include the URL so that the installer/launcher won't grab it. This is also why we don't have the universal classifier
                                 sha1: sha1(universalJar.archivePath),
                                 size: universalJar.archivePath.length()
                             ]
@@ -506,10 +506,10 @@ project(':forge') {
             
             manifest.attributes([
                 'Main-Class': 'net.minecraftforge.server.ServerMain',
-                'Class-Path': classpath.toString(),
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
                 'GitCommit': grgit.head().getAbbreviatedId(8),
-                'Git-Branch': grgit.branch.current().getName()
+                'Git-Branch': grgit.branch.current().getName(),
+                'Class-Path': classpath.toString()
             ] as LinkedHashMap)
             manifest.attributes([
                 'Specification-Title':      'Forge',
@@ -571,6 +571,7 @@ project(':forge') {
         }
         from(universalJar) {
             into "/maven/${project.group.replace('.', '/')}/${project.name}/${project.version}/"
+            rename { "${project.name}-${project.version}.jar" }
         }
         from(installerJson.output)
         from(launcherJson.output)
