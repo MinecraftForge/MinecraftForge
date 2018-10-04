@@ -24,12 +24,27 @@ import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 
 public abstract class FMLCommonLaunchHandler
 {
+    private static final List<String> SKIPPACKAGES = Arrays.asList(
+            // standard libs
+            "joptsimple.", "org.lwjgl.", "com.mojang.", "com.google.", "org.apache.commons.", "io.netty.",
+            "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig.",
+            "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.", "net.minecraftforge.versions.",
+            "net.minecraftforge.eventbus.", "net.minecraftforge.api."
+    );
+
+    protected Predicate<String> getPackagePredicate() {
+        return cn -> SKIPPACKAGES.stream().noneMatch(cn::startsWith);
+    }
+
     public void setup(final IEnvironment environment)
     {
-        // We need to check for deobf and patched jar here and if not, build one.
+
     }
 
     public abstract Dist getDist();

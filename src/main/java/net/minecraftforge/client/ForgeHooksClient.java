@@ -126,7 +126,7 @@ import net.minecraftforge.client.resource.IResourceType;
 import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.client.resource.VanillaResourceType;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.ITransformation;

@@ -27,7 +27,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.api.distmarker.Dist;

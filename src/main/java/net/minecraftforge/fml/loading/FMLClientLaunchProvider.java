@@ -23,19 +23,15 @@ import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.mcp.MCPVersion;
-import org.apache.logging.log4j.Level;
+import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.config.Configurator;
 
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
@@ -44,13 +40,7 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     private static final Path forgePath;
     private static final Path patchedBinariesPath;
     private static final Path srgMcPath;
-    private static final List<String> SKIPPACKAGES = Arrays.asList(
-            "joptsimple.", "org.lwjgl.", "com.mojang.", "com.google.",
-            "org.apache.commons.", "io.netty.", "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.",
-            "net.minecraftforge.eventbus.", "it.unimi.dsi.fastutil.", "net.minecraftforge.api.",
-            "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig.",
-            "net.minecraftforge.fml.common.versioning."
-    );
+
     static {
         Path forgePath1 = null;
         Path patchedBinariesPath1 = null;
@@ -90,7 +80,7 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     {
         return () -> {
             super.beforeStart(launchClassLoader, forgePath);
-            launchClassLoader.addTargetPackageFilter(cn -> SKIPPACKAGES.stream().noneMatch(cn::startsWith));
+            launchClassLoader.addTargetPackageFilter(getPackagePredicate());
             Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };

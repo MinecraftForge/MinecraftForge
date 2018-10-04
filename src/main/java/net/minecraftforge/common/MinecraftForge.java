@@ -19,20 +19,12 @@
 
 package net.minecraftforge.common;
 
-import net.minecraftforge.fml.common.ICrashCallable;
 import net.minecraftforge.eventbus.api.IEventBus;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import com.google.common.collect.Lists;
-
 import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.ICrashReportDetail;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
-import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;

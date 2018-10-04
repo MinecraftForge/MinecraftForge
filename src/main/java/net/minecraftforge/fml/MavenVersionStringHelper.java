@@ -13,7 +13,7 @@ public class MavenVersionStringHelper {
     }
 
     public static String versionRangeToString(final VersionRange range) {
-        return range.getRestrictions().stream().map(MavenVersionStringHelper::restrictionToString).collect(Collectors.joining(","));
+        return range.getRestrictions().stream().map(MavenVersionStringHelper::restrictionToString).collect(Collectors.joining(", "));
     }
 
     public static String restrictionToString(final Restriction restriction) {

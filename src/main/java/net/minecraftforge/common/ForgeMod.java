@@ -20,14 +20,12 @@
 package net.minecraftforge.common;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
+
 import static net.minecraftforge.common.config.Configuration.CATEGORY_CLIENT;
 import static net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
@@ -36,6 +34,7 @@ import net.minecraftforge.fml.WorldPersistenceHooks;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
 import net.minecraftforge.server.command.ForgeCommand;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +46,6 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;

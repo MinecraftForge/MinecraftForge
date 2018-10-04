@@ -1,4 +1,4 @@
-package net.minecraftforge.mcp;
+package net.minecraftforge.versions.mcp;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

@@ -25,7 +25,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;

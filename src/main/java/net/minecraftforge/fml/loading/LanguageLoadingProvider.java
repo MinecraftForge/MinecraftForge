@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;

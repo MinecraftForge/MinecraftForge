@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common;
+package net.minecraftforge.versions.forge;
 
 import net.minecraftforge.fml.VersionChecker;
 import org.apache.logging.log4j.LogManager;

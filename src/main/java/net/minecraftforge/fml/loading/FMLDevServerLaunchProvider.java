@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Predicate;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
@@ -46,14 +47,6 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     {
         return "fmldevserver";
     }
-
-    private static final List<String> SKIPPACKAGES = Arrays.asList(
-            "joptsimple.", "org.lwjgl.", "com.mojang.", "com.google.",
-            "org.apache.commons.", "io.netty.", "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.",
-            "net.minecraftforge.eventbus.", "it.unimi.dsi.fastutil.", "net.minecraftforge.api.",
-            "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig.",
-            "net.minecraftforge.fml.common.versioning."
-    );
 
     private static final Path myPath;
 
@@ -81,10 +74,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
         return () -> {
             LOGGER.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
             super.beforeStart(launchClassLoader, myPath);
-            launchClassLoader.addTargetPackageFilter(cn -> SKIPPACKAGES.stream().noneMatch(cn::startsWith));
-            Field scl = ClassLoader.class.getDeclaredField("scl"); // Get system class loader
-            scl.setAccessible(true); // Set accessible
-            scl.set(null, launchClassLoader.getInstance()); // Update it to your class loader
+            launchClassLoader.addTargetPackageFilter(getPackagePredicate());
             Thread.currentThread().setContextClassLoader(launchClassLoader.getInstance());
             Class.forName("net.minecraft.server.MinecraftServer", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;

@@ -561,7 +561,7 @@ project(':forge') {
                 'Implementation-Title':     'Forge',
                 'Implementation-Version':   project.version.substring(MC_VERSION.length() + 1),
                 'Implementation-Vendor':    'Forge Development LLC'
-            ] as LinkedHashMap, 'net/minecraftforge/common/')
+            ] as LinkedHashMap, 'net/minecraftforge/versions/forge/')
             manifest.attributes([
                 'Specification-Title':      'Minecraft',
                 'Specification-Vendor':     'Mojang',
@@ -569,7 +569,7 @@ project(':forge') {
                 'Implementation-Title':     'MCP',
                 'Implementation-Version':   MCP_VERSION,
                 'Implementation-Vendor':    'Forge'
-            ] as LinkedHashMap, 'net/minecraftforge/mcp/')
+            ] as LinkedHashMap, 'net/minecraftforge/versions/mcp/')
         }
     }
 
