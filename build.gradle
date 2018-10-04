@@ -180,7 +180,11 @@ project(':forge') {
         main 'net.minecraftforge.fml.LaunchTesting'
         systemProperties = [
                 "org.lwjgl.util.Debug": "true",
-                "org.lwjgl.util.DebugLoader": "true"
+                "org.lwjgl.util.DebugLoader": "true",
+                "mc.version": "${MC_VERSION}",
+                "mcp.version": "${MCP_VERSION}",
+                "forge.version": "${project.version}",
+                "forge.spec":"${SPEC_VERSION}"
         ]
         environment += [
                 target:'fmldevclient',

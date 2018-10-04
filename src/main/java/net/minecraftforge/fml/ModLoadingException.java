@@ -59,8 +59,8 @@ public class ModLoadingException extends RuntimeException
         this.context = Arrays.asList(context);
     }
 
-    static ModLoadingException fromEarlyException(final EarlyLoadingException e) {
-        return new ModLoadingException(null, ModLoadingStage.VALIDATE, e.getI18NMessage(), e, e.getContext().toArray());
+    static Stream<ModLoadingException> fromEarlyException(final EarlyLoadingException e) {
+        return e.getAllData().stream().map(ed->new ModLoadingException(null, ModLoadingStage.VALIDATE, ed.getI18message(), e.getCause(), ed.getArgs()));
     }
 
     public String getI18NMessage() {

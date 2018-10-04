@@ -23,6 +23,7 @@
   "fml.modloading.failedtoloadmod":"{0,modinfo,name} ({0,modinfo,id}) has failed to load correctly\n\u00a77{2,exc,msg}",
   "fml.modloading.errorduringevent":"{0,modinfo,name} ({0,modinfo,id}) encountered an error during the {1,lower} event phase\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadforge": "Failed to load forge",
+  "fml.modloading.missingdependency": "Mod {4} has missing dependency {3}\n\u00a77Want {5,vr}, have {6}",
 
   "fml.messages.version.restriction.any":"any",
   "fml.messages.version.restriction.lower.inclusive":"{0} or above",

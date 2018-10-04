@@ -60,7 +60,7 @@ public class ModLoader
         this.loadingModList = FMLLoader.getLoadingModList();
         this.modClassLoader = new ModLoadingClassLoader(this.launchClassLoader);
         this.loadingExceptions = FMLLoader.getLoadingModList().
-                getErrors().stream().map(ModLoadingException::fromEarlyException).collect(Collectors.toList());
+                getErrors().stream().flatMap(ModLoadingException::fromEarlyException).collect(Collectors.toList());
         Thread.currentThread().setContextClassLoader(this.modClassLoader);
     }
 
@@ -75,9 +75,6 @@ public class ModLoader
     }
 
     public void loadMods() {
-        if (!this.loadingExceptions.isEmpty()) {
-            throw new LoadingFailedException(loadingExceptions);
-        }
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
         ModContainer forgeModContainer;
         try
@@ -88,8 +85,11 @@ public class ModLoader
         catch (ClassNotFoundException | IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e)
         {
             LOGGER.error(CORE,"Unable to load the Forge Mod Container", e);
-            loadingExceptions.add(new ModLoadingException(DefaultModInfos.forgeModInfo, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadforge", e));
+            loadingExceptions.add(new ModLoadingException(DefaultModInfos.forgeModInfo, ModLoadingStage.VALIDATE, "fml.modloading.failedtoloadforge", e));
             forgeModContainer = null;
+        }
+        if (!this.loadingExceptions.isEmpty()) {
+            throw new LoadingFailedException(loadingExceptions);
         }
         final Stream<ModContainer> modContainerStream = loadingModList.getModFiles().stream().
                 map(ModFileInfo::getFile).

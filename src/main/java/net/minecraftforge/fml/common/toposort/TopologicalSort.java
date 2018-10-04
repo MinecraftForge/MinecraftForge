@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.common.toposort;
 
 import com.google.common.collect.Sets;
+import net.minecraftforge.fml.loading.EarlyLoadingException;
 import org.apache.logging.log4j.message.Message;
 import org.apache.logging.log4j.util.StringBuilderFormattable;
 
@@ -35,6 +36,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Topological sort for mod loading
@@ -249,6 +252,13 @@ public class TopologicalSort
                 buffer.append("Visited set for this node : {}\n").append(String.valueOf(visitedNodes));
                 buffer.append("Explored node set : {}\n").append(expandedNodes);
                 buffer.append("Likely cycle is in : {}\n").append(Sets.difference(visitedNodes, expandedNodes));
+            }
+
+            public List<EarlyLoadingException.ExceptionData> toExceptionData(Function<T, String> nodeMapper) {
+                return Collections.singletonList(
+                        new EarlyLoadingException.ExceptionData("fml.messages.cycleproblem",
+                                nodeMapper.apply(node),
+                                visitedNodes.stream().map(nodeMapper).collect(Collectors.joining(","))));
             }
         }
 

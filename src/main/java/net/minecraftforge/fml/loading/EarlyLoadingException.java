@@ -8,20 +8,34 @@ import java.util.List;
  * or server.
  */
 public class EarlyLoadingException extends RuntimeException {
-    private final String i18nMessage;
-    private final List<Object> context;
+    public static class ExceptionData {
 
-    public EarlyLoadingException(final String message, final String i18nMessage, final Throwable originalException, Object... context) {
+
+        private final String i18message;
+        private final Object[] args;
+        public ExceptionData(final String message, Object... args) {
+            this.i18message = message;
+            this.args = args;
+        }
+
+        public String getI18message() {
+            return i18message;
+        }
+
+        public Object[] getArgs() {
+            return args;
+        }
+    }
+    private final List<ExceptionData> errorMessages;
+
+    public List<ExceptionData> getAllData() {
+        return errorMessages;
+    }
+
+    EarlyLoadingException(final String message, final Throwable originalException, List<ExceptionData> errorMessages) {
         super(message, originalException);
-        this.i18nMessage = i18nMessage;
-        this.context = Arrays.asList(context);
+        this.errorMessages = errorMessages;
     }
 
-    public String getI18NMessage() {
-        return this.i18nMessage;
-    }
 
-    public List<Object> getContext() {
-        return this.context;
-    }
 }

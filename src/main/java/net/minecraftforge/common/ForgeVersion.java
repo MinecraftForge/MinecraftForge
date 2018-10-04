@@ -39,14 +39,23 @@ public class ForgeVersion
 
     private static final String forgeVersion;
 
+    private static final String forgeSpec;
+
     static {
         String vers = ForgeVersion.class.getPackage().getImplementationVersion();
         if (vers == null) {
             vers = System.getProperty("forge.version");
         }
         if (vers == null) throw new RuntimeException("Missing forge version, cannot continue");
+        String spec = ForgeVersion.class.getPackage().getSpecificationVersion();
+        if (spec == null) {
+            spec = System.getProperty("forge.spec");
+        }
+        if (spec == null) throw new RuntimeException("Missing forge spec, cannot continue");
         forgeVersion = vers;
+        forgeSpec = spec;
         LOGGER.info(CORE, "Found Forge version {}", forgeVersion);
+        LOGGER.info(CORE, "Found Forge spec {}", forgeSpec);
     }
 
     public static String getVersion()
@@ -63,6 +72,10 @@ public class ForgeVersion
     public static String getTarget()
     {
         return "";
+    }
+
+    public static String getSpec() {
+        return forgeSpec;
     }
 }
 

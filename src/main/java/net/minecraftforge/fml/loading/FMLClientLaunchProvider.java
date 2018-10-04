@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -51,14 +52,20 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
             "net.minecraftforge.fml.common.versioning."
     );
     static {
+        Path forgePath1 = null;
+        Path patchedBinariesPath1 = null;
+        Path srgMcPath1 = null;
         try {
-            forgePath = Paths.get(FMLClientLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            patchedBinariesPath = forgePath.resolveSibling("forge-"+MCPVersion.getMCVersion()+"-"+ForgeVersion.getVersion()+"-client.jar");
-            Path libs = forgePath.getParent().getParent().getParent().getParent().getParent();
-            srgMcPath = libs.resolve(Paths.get("net","minecraft", "client", MCPVersion.getMCPandMCVersion(), "client-"+MCPVersion.getMCPandMCVersion()+"-srg.jar")).toAbsolutePath();
+            forgePath1 = Paths.get(FMLClientLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            patchedBinariesPath1 = forgePath1.resolveSibling("forge-"+MCPVersion.getMCVersion()+"-"+ForgeVersion.getVersion()+"-client.jar");
+            Path libs = forgePath1.getParent().getParent().getParent().getParent().getParent();
+            srgMcPath1 = libs.resolve(Paths.get("net","minecraft", "client", MCPVersion.getMCPandMCVersion(), "client-"+MCPVersion.getMCPandMCVersion()+"-srg.jar")).toAbsolutePath();
         } catch (URISyntaxException e) {
-            throw new RuntimeException("Unable to locate myself!");
+
         }
+        forgePath = forgePath1;
+        patchedBinariesPath = patchedBinariesPath1;
+        srgMcPath = srgMcPath1;
     }
     @Override
     public String name()
@@ -69,9 +76,12 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     @Override
     public Path[] identifyTransformationTargets()
     {
-        LOGGER.info("Found SRG MC at {}", srgMcPath.toString());
-        LOGGER.info("Found Forge patches at {}", patchedBinariesPath.toString());
-        LOGGER.info("Found Forge at {}", forgePath.toString());
+        LOGGER.info("SRG MC at {} is {}", srgMcPath.toString(), Files.exists(srgMcPath) ? "present" : "missing");
+        LOGGER.info("Forge patches at {} is {}", patchedBinariesPath.toString(), Files.exists(patchedBinariesPath) ? "present" : "missing");
+        LOGGER.info("Forge at {} is {}", forgePath.toString(), Files.exists(forgePath) ? "present" : "missing");
+        if (!(Files.exists(srgMcPath) && Files.exists(patchedBinariesPath) && Files.exists(forgePath))) {
+            throw new RuntimeException("Failed to find patched jars");
+        }
         return new Path[] {forgePath, patchedBinariesPath, srgMcPath};
     }
 

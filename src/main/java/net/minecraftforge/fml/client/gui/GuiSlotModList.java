@@ -19,16 +19,14 @@
 
 package net.minecraftforge.fml.client.gui;
 
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
@@ -97,7 +95,7 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
             int top = this.getY();
             int left = this.getX();
             String name = stripControlCodes(modInfo.getDisplayName());
-            String version = stripControlCodes(modInfo.getVersion().getVersionString());
+            String version = stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion()));
             VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
             FontRenderer font = this.parent.getFontRenderer();
             font.drawString(font.trimStringToWidth(name, listWidth),left + 3, top + 2, 0xFFFFFF);

@@ -79,7 +79,7 @@ public class LanguageLoadingProvider
             final Package pkg = lp.getClass().getPackage();
             String implementationVersion = pkg.getImplementationVersion();
             if (implementationVersion == null) {
-                implementationVersion = ForgeVersion.getVersion();
+                implementationVersion = ForgeVersion.getSpec();
             }
             LOGGER.debug(CORE, "Found system classpath language provider {}, version {}", lp.name(), implementationVersion);
             languageProviderMap.put(lp.name(), new ModLanguageWrapper(lp, new DefaultArtifactVersion(implementationVersion)));
