@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/chunk/CompiledChunk.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/CompiledChunk.java
+@@ -14,7 +14,7 @@
+ {
+     public static final CompiledChunk field_178502_a = new CompiledChunk()
+     {
+-        protected void func_178486_a(BlockRenderLayer p_178486_1_)
++        public void func_178486_a(BlockRenderLayer p_178486_1_)
+         {
+             throw new UnsupportedOperationException();
+         }
+@@ -39,7 +39,7 @@
+         return this.field_178498_d;
+     }
+ 
+-    protected void func_178486_a(BlockRenderLayer p_178486_1_)
++    public void func_178486_a(BlockRenderLayer p_178486_1_)
+     {
+         this.field_178498_d = false;
+         this.field_178500_b[p_178486_1_.ordinal()] = true;

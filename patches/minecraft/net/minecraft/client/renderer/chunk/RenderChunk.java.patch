@@ -1,6 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -162,7 +162,7 @@
+@@ -142,14 +142,16 @@
+         {
+             p_178581_4_.func_178540_f().unlock();
+         }
++        if (net.minecraftforge.client.ForgeHooksClient.onRebuildChunkEvent(field_178589_e, field_189564_r, p_178581_4_, compiledchunk, this.field_178586_f, p_178581_1_, p_178581_2_, p_178581_3_).isCanceled()) return;
+ 
+         VisGraph lvt_9_1_ = new VisGraph();
+         HashSet lvt_10_1_ = Sets.newHashSet();
+ 
+         if (!this.field_189564_r.func_72806_N())
+         {
++            final net.minecraftforge.client.event.RebuildChunkEvent.RebuildChunkBlocksEvent rebuildBlocksEvent = net.minecraftforge.client.ForgeHooksClient.onRebuildChunkBlocksEvent(field_178589_e, field_189564_r, p_178581_4_, compiledchunk, BlockPos.func_177975_b(blockpos, blockpos1),Minecraft.func_71410_x().func_175602_ab(), this.field_178586_f, p_178581_1_, p_178581_2_, p_178581_3_, lvt_10_1_, lvt_9_1_);
+             ++field_178592_a;
+-            boolean[] aboolean = new boolean[BlockRenderLayer.values().length];
++            boolean[] aboolean = rebuildBlocksEvent.getUsedBlockRenderLayers();
+             BlockRendererDispatcher blockrendererdispatcher = Minecraft.func_71410_x().func_175602_ab();
+ 
+             for (BlockPos.MutableBlockPos blockpos$mutableblockpos : BlockPos.func_177975_b(blockpos, blockpos1))
+@@ -162,7 +164,7 @@
                      lvt_9_1_.func_178606_a(blockpos$mutableblockpos);
                  }
  
@@ -9,7 +27,7 @@
                  {
                      TileEntity tileentity = this.field_189564_r.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
  
-@@ -172,17 +172,19 @@
+@@ -172,17 +174,19 @@
  
                          if (tileentityspecialrenderer != null)
                          {
@@ -31,8 +49,11 @@
                  int j = blockrenderlayer1.ordinal();
  
                  if (block.func_176223_P().func_185901_i() != EnumBlockRenderType.INVISIBLE)
-@@ -197,6 +199,8 @@
+@@ -195,8 +199,11 @@
+                         this.func_178573_a(bufferbuilder, blockpos);
+                     }
  
++                    if (!rebuildBlocksEvent.isCanceled())
                      aboolean[j] |= blockrendererdispatcher.func_175018_a(iblockstate, blockpos$mutableblockpos, this.field_189564_r, bufferbuilder);
                  }
 +                }
@@ -40,7 +61,7 @@
              }
  
              for (BlockRenderLayer blockrenderlayer : BlockRenderLayer.values())
-@@ -278,7 +282,9 @@
+@@ -278,7 +285,9 @@
      private void func_189563_q()
      {
          int i = 1;
@@ -51,7 +72,7 @@
      }
  
      @Nullable
-@@ -427,6 +433,26 @@
+@@ -427,6 +436,26 @@
          return this.field_178593_n && this.field_188284_q;
      }
  
