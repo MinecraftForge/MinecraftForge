@@ -72,6 +72,7 @@ public class LoadingErrorScreen extends GuiErrorScreen {
         this.addButton(new GuiButtonClickConsumer(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20,
                 ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName()), this::openLogFile));
         this.errorList = new LoadingErrorList(this, this.loadingFailedException.getErrors());
+        this.children.add(this.errorList);
     }
 
     @Override
