@@ -22,8 +22,6 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.StringSubstitutor;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -32,7 +30,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import net.minecraftforge.fml.language.IModInfo.ModVersion;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 public class ModInfo implements IModInfo
 {

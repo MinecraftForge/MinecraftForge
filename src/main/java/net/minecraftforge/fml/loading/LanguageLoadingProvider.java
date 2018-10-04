@@ -20,13 +20,13 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.DefaultArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionRange;
 import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

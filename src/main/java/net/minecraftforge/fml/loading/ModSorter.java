@@ -21,13 +21,13 @@ package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.Java9BackportUtils;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
 
 import java.util.Collection;
 import java.util.List;

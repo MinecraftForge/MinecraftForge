@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import javax.annotation.Nullable;
 import java.net.URL;

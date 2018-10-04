@@ -20,15 +20,16 @@
 package net.minecraftforge.fml.language;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
-import net.minecraftforge.fml.common.versioning.VersionRange;
+import net.minecraftforge.fml.loading.MavenVersionAdapter;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.util.List;
 
 public interface IModInfo
 {
-    VersionRange UNBOUNDED = VersionRange.createFromVersionSpec("");
+    VersionRange UNBOUNDED = MavenVersionAdapter.createFromVersionSpec("");
 
     IModFileInfo getOwningFile();
 
@@ -69,7 +70,7 @@ public interface IModInfo
             this.owner = owner;
             this.modId = config.get("modId");
             this.versionRange = config.getOptional("versionRange").map(String.class::cast).
-                    map(VersionRange::createFromVersionSpec).orElse(UNBOUNDED);
+                    map(MavenVersionAdapter::createFromVersionSpec).orElse(UNBOUNDED);
             this.mandatory = config.get("mandatory");
             this.ordering = config.getOptional("ordering").map(String.class::cast).
                     map(Ordering::valueOf).orElse(Ordering.NONE);

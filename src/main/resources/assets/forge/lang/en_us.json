@@ -24,6 +24,17 @@
   "fml.modloading.errorduringevent":"{0,modinfo,name} ({0,modinfo,id}) encountered an error during the {1,lower} event phase\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadforge": "Failed to load forge",
 
+  "fml.messages.version.restriction.any":"any",
+  "fml.messages.version.restriction.lower.inclusive":"{0} or above",
+  "fml.messages.version.restriction.lower.exclusive":"above {0}",
+  "fml.messages.version.restriction.upper.inclusive":"{0} or below",
+  "fml.messages.version.restriction.upper.exclusive":"below {0}",
+  "fml.messages.version.restriction.bounded":"between {0} and {1}",
+  "fml.messages.version.restriction.bounded.inclusive":"between {0} and {1} (inclusive)",
+  "fml.messages.version.restriction.bounded.exclusive":"between {0} and {1} (exclusive)",
+  "fml.messages.version.restriction.bounded.lowerexclusive":"above {0}, and {1} or below",
+  "fml.messages.version.restriction.bounded.upperexclusive":"{0} or above, and below {1}",
+
   "commands.forge.dimensions.list": "Currently registered dimensions by type:",
   "commands.forge.entity.list.invalid": "Invalid filter, does not match any entities. Use /forge entity list for a proper list",
   "commands.forge.entity.list.invalidworld": "Could not load world for dimension {0}. Please select a valid dimension.",

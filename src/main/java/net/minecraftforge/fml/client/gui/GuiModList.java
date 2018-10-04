@@ -43,13 +43,14 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
 import net.minecraftforge.fml.client.ResourcePackLoader;
-import net.minecraftforge.fml.common.versioning.ComparableVersion;
 import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.loading.MavenVersionAdapter;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.artifact.versioning.ComparableVersion;
 
 import javax.annotation.Nullable;
 import java.awt.Dimension;
@@ -290,7 +291,7 @@ public class GuiModList extends GuiScreen
         for (ModInfo mod : mods)
         {
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getDisplayName()) + 10);
-            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getVersion().getVersionString()) + 5);
+            listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(MavenVersionAdapter.artifactVersionToString(mod.getVersion())) + 5);
         }
         listWidth = Math.min(listWidth, 150);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
@@ -454,7 +455,7 @@ public class GuiModList extends GuiScreen
         }).orElse(Pair.of(null, new Dimension(0, 0)));
 
         lines.add(selectedMod.getDisplayName());
-        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.version", selectedMod.getVersion().getVersionString()));
+        lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.version", MavenVersionAdapter.artifactVersionToString(selectedMod.getVersion())));
         lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.idstate", selectedMod.getModId(), ModList.get().getModContainerById(selectedMod.getModId()).
                 map(ModContainer::getCurrentState).map(Object::toString).orElse("NONE")));
 

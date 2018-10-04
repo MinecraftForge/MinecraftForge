@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import com.google.common.collect.ObjectArrays;
 import com.google.common.collect.Streams;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException;

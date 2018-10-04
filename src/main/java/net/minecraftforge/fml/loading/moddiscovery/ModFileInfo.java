@@ -20,10 +20,11 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraftforge.fml.common.versioning.VersionRange;
+import net.minecraftforge.fml.loading.MavenVersionAdapter;
 import net.minecraftforge.fml.language.IModFileInfo;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.StringUtils;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class ModFileInfo implements IModFileInfo
         this.modLoader = config.<String>getOptional("modLoader").
                 orElseThrow(()->new InvalidModFileException("Missing ModLoader in file", this));
         this.modLoaderVersion = config.<String>getOptional("loaderVersion").
-                map(VersionRange::createFromVersionSpec).
+                map(MavenVersionAdapter::createFromVersionSpec).
                 orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
         this.properties = config.<UnmodifiableConfig>getOptional("properties").
                 map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
