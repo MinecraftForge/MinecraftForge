@@ -38,11 +38,20 @@ public class ForgeI18n {
 
     static {
         customFactories = new HashMap<>();
+        // {0,modinfo,id} -> modid from ModInfo object; {0,modinfo,name} -> displayname from ModInfo object
         customFactories.put("modinfo", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> parseModInfo(formatString, stringBuffer, objectToParse)));
+        // {0,lower} -> lowercase supplied string
         customFactories.put("lower", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toLowerCase((String)objectToParse))));
+        // {0,upper> -> uppercase supplied string
         customFactories.put("upper", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toUpperCase((String)objectToParse))));
+        // {0,exc,class} -> class of exception; {0,exc,msg} -> message from exception
         customFactories.put("exc", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> parseException(formatString, stringBuffer, objectToParse)));
+        // {0,vr} -> transform VersionRange into cleartext string using fml.messages.version.restriction.* strings
         customFactories.put("vr", (name, formatString, locale) -> new CustomReadOnlyFormat(((stringBuffer, o) -> MavenVersionStringHelper.parseVersionRange(formatString, stringBuffer, o))));
+        // {0,i18n,fml.message} -> pass object to i18n string 'fml.message'
+        customFactories.put("i18n", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, o) -> stringBuffer.append(ForgeI18n.parseMessage(formatString, o))));
+        // {0,ornull,fml.absent} -> append String value of o, or i18n string 'fml.absent' (message format transforms nulls into the string literal "null")
+        customFactories.put("ornull", ((name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, o) -> stringBuffer.append(Objects.equals(String.valueOf(o),"null") ? ForgeI18n.parseMessage(formatString) : String.valueOf(o)))));
     }
 
     private static void parseException(final String formatString, final StringBuffer stringBuffer, final Object objectToParse) {

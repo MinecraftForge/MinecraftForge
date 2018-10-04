@@ -55,6 +55,7 @@ public class ModSorter
         final ModSorter ms = new ModSorter(mods);
         EarlyLoadingException earlyLoadingException = null;
         try {
+            ms.findLanguages();
             ms.buildUniqueList();
             ms.verifyDependencyVersions();
             ms.sort();
@@ -63,6 +64,10 @@ public class ModSorter
             ms.sortedList = Collections.emptyList();
         }
         return LoadingModList.of(ms.modFiles, ms.sortedList, earlyLoadingException);
+    }
+
+    private void findLanguages() {
+        modFiles.stream().forEach(mf->mf.identifyLanguage());
     }
 
     private void sort()
@@ -136,8 +141,7 @@ public class ModSorter
         if (!missingVersions.isEmpty()) {
             final List<EarlyLoadingException.ExceptionData> exceptionData = missingVersions.stream().map(mv ->
                     new EarlyLoadingException.ExceptionData("fml.modloading.missingdependency", mv.getModId(),
-                            mv.getOwner().getModId(), mv.getVersionRange(),
-                            modVersions.containsKey(mv.getModId()) ? modVersions.get(mv.getModId()) : "NONE" )).
+                            mv.getOwner().getModId(), mv.getVersionRange(), modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null")))).
                     collect(Collectors.toList());
             throw new EarlyLoadingException("Missing mods", null, exceptionData);
         }

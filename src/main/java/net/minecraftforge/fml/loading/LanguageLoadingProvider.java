@@ -21,6 +21,7 @@ package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.language.IModLanguageProvider;
+import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,11 +30,7 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -93,13 +90,16 @@ public class LanguageLoadingProvider
         serviceLoader.reload();
     }
 
-    public IModLanguageProvider findLanguage(String modLoader, VersionRange modLoaderVersion) {
+    public IModLanguageProvider findLanguage(ModFile mf, String modLoader, VersionRange modLoaderVersion) {
+        final String languageFileName = mf.getLocator() instanceof ExplodedDirectoryLocator ? "in-development" : mf.getFileName();
         final ModLanguageWrapper mlw = languageProviderMap.get(modLoader);
         if (mlw == null) {
-            throw new MissingLanguageException("Missing language "+modLoader);
+            LOGGER.error("Missing language {} version {} wanted by {}", modLoader, modLoaderVersion, languageFileName);
+            throw new EarlyLoadingException("Missing language "+modLoader, null, Collections.singletonList(new EarlyLoadingException.ExceptionData("fml.language.missingversion", modLoader, modLoaderVersion, languageFileName, "null")));
         }
         if (!modLoaderVersion.containsVersion(mlw.getVersion())) {
-            throw new MissingLanguageException("Missing language "+ modLoader + " matching range "+modLoaderVersion + " found "+mlw.getVersion());
+            LOGGER.error("Missing language {} version {} wanted by {}, found {}", modLoader, modLoaderVersion, languageFileName, mlw.getVersion());
+            throw new EarlyLoadingException("Missing language "+ modLoader + " matching range "+modLoaderVersion + " found "+mlw.getVersion(), null, Collections.singletonList(new EarlyLoadingException.ExceptionData("fml.language.missingversion", modLoader, modLoaderVersion, languageFileName, mlw.getVersion())));
         }
 
         return mlw.getModLanguageProvider();
