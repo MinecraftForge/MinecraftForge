@@ -183,7 +183,7 @@ project(':forge') {
                 "org.lwjgl.util.DebugLoader": "true",
                 "mc.version": "${MC_VERSION}",
                 "mcp.version": "${MCP_VERSION}",
-                "forge.version": "${project.version}",
+                "forge.version": "${project.version.substring(MC_VERSION.length() + 1)}",
                 "forge.spec":"${SPEC_VERSION}"
         ]
         environment += [
