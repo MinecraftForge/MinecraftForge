@@ -163,6 +163,8 @@ project(':forge') {
         installer 'org.apache.maven:maven-artifact:3.5.3'
         installer 'net.jodah:typetools:0.5.0'
         installer 'java3d:vecmath:1.5.2'
+        installer 'org.apache.logging.log4j:log4j-api:2.11.1'
+        installer 'org.apache.logging.log4j:log4j-core:2.11.1'
     }
 
     task runclient(type: JavaExec, dependsOn: [":forge:downloadAssets", ":forge:extractNatives"]) {
@@ -344,7 +346,16 @@ project(':forge') {
                 type: 'release',
                 mainClass: 'cpw.mods.modlauncher.Launcher',
                 inheritsFrom: MC_VERSION,
-                logging: [:],
+                logging: [ client: [
+                        argument: '-Dlog4j.configurationFile=${path}',
+                        file: [
+                                id:'client-1.12.xml',
+                                sha1:'ef4f57b922df243d0cef096efe808c72db042149',
+                                size:877,
+                                url:'https://launcher.mojang.com/v1/objects/ef4f57b922df243d0cef096efe808c72db042149/client-1.12.xml'
+                        ],
+                        type: 'log4j2-xml'
+                ]],
                 arguments: [
                     game: ['--launchTarget', 'fmlclient']
                 ],
@@ -545,7 +556,9 @@ project(':forge') {
             artifacts.each { key, lib ->
                 classpath += "libraries/${lib.downloads.artifact.path} "
             }
-            classpath += "minecraft_server.${MC_VERSION}.jar"
+            classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-data.jar "
+            classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
+            
             
             manifest.attributes([
                 'Main-Class': 'net.minecraftforge.server.ServerMain',
