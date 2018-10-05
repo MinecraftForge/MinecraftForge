@@ -63,7 +63,7 @@ public class FMLModContainer extends ModContainer
         try
         {
             modClass = Class.forName(className, true, modClassLoader);
-            LOGGER.error(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
+            LOGGER.debug(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
         }
         catch (Throwable e)
         {

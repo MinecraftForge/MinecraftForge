@@ -23,6 +23,7 @@ import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.relauncher.libraries.LibraryManager;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.logging.log4j.LogManager;
@@ -37,26 +38,7 @@ import java.util.concurrent.Callable;
 public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Path forgePath;
-    private static final Path patchedBinariesPath;
-    private static final Path srgMcPath;
 
-    static {
-        Path forgePath1 = null;
-        Path patchedBinariesPath1 = null;
-        Path srgMcPath1 = null;
-        try {
-            forgePath1 = Paths.get(FMLClientLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-            patchedBinariesPath1 = forgePath1.resolveSibling("forge-"+MCPVersion.getMCVersion()+"-"+ForgeVersion.getVersion()+"-client.jar");
-            Path libs = forgePath1.getParent().getParent().getParent().getParent().getParent();
-            srgMcPath1 = libs.resolve(Paths.get("net","minecraft", "client", MCPVersion.getMCPandMCVersion(), "client-"+MCPVersion.getMCPandMCVersion()+"-srg.jar")).toAbsolutePath();
-        } catch (URISyntaxException e) {
-
-        }
-        forgePath = forgePath1;
-        patchedBinariesPath = patchedBinariesPath1;
-        srgMcPath = srgMcPath1;
-    }
     @Override
     public String name()
     {
@@ -66,20 +48,23 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     @Override
     public Path[] identifyTransformationTargets()
     {
+        Path libsPath = findLibsPath();
+        Path patchedBinariesPath = libsPath.resolve(Paths.get("net","minecraftforge","forge",MCPVersion.getMCVersion()+"-"+ForgeVersion.getVersion(),"forge-"+MCPVersion.getMCVersion()+"-"+ForgeVersion.getVersion()+"-client.jar"));
+        Path srgMcPath = libsPath.resolve(Paths.get("net","minecraft", "client", MCPVersion.getMCPandMCVersion(), "client-"+MCPVersion.getMCPandMCVersion()+"-srg.jar"));
         LOGGER.info("SRG MC at {} is {}", srgMcPath.toString(), Files.exists(srgMcPath) ? "present" : "missing");
         LOGGER.info("Forge patches at {} is {}", patchedBinariesPath.toString(), Files.exists(patchedBinariesPath) ? "present" : "missing");
-        LOGGER.info("Forge at {} is {}", forgePath.toString(), Files.exists(forgePath) ? "present" : "missing");
-        if (!(Files.exists(srgMcPath) && Files.exists(patchedBinariesPath) && Files.exists(forgePath))) {
+        LOGGER.info("Forge at {} is {}", getForgePath().toString(), Files.exists(getForgePath()) ? "present" : "missing");
+        if (!(Files.exists(srgMcPath) && Files.exists(patchedBinariesPath) && Files.exists(getForgePath()))) {
             throw new RuntimeException("Failed to find patched jars");
         }
-        return new Path[] {forgePath, patchedBinariesPath, srgMcPath};
+        return super.commonLibPaths(new Path[] {getForgePath(), patchedBinariesPath, srgMcPath});
     }
 
     @Override
     public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
     {
         return () -> {
-            super.beforeStart(launchClassLoader, forgePath);
+            super.beforeStart(launchClassLoader);
             launchClassLoader.addTargetPackageFilter(getPackagePredicate());
             Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;

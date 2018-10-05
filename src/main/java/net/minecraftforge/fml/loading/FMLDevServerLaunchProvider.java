@@ -39,7 +39,6 @@ import static net.minecraftforge.fml.Logging.CORE;
 
 public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
-
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
@@ -48,24 +47,10 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
         return "fmldevserver";
     }
 
-    private static final Path myPath;
-
-    static
-    {
-        try
-        {
-            myPath = Paths.get(FMLDevServerLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException("HUH?");
-        }
-    }
-
     @Override
     public Path[] identifyTransformationTargets()
     {
-            return new Path[] { myPath };
+            return super.commonLibPaths(new Path[] { getForgePath() });
     }
 
     @Override
@@ -73,7 +58,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     {
         return () -> {
             LOGGER.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
-            super.beforeStart(launchClassLoader, myPath);
+            super.beforeStart(launchClassLoader);
             launchClassLoader.addTargetPackageFilter(getPackagePredicate());
             Thread.currentThread().setContextClassLoader(launchClassLoader.getInstance());
             Class.forName("net.minecraft.server.MinecraftServer", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);

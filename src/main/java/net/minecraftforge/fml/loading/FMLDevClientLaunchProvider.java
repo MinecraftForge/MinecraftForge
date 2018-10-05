@@ -47,24 +47,10 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
         return "fmldevclient";
     }
 
-    private static final Path myPath;
-
-    static
-    {
-        try
-        {
-            myPath = Paths.get(FMLDevClientLaunchProvider.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        }
-        catch (URISyntaxException e)
-        {
-            throw new RuntimeException("HUH?");
-        }
-    }
-
     @Override
     public Path[] identifyTransformationTargets()
     {
-            return new Path[] { myPath };
+        return super.commonLibPaths(new Path[] {getForgePath()});
     }
 
     @Override
@@ -72,7 +58,7 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     {
         return () -> {
             LOGGER.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
-            super.beforeStart(launchClassLoader, myPath);
+            super.beforeStart(launchClassLoader);
             launchClassLoader.addTargetPackageFilter(getPackagePredicate());
             Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
