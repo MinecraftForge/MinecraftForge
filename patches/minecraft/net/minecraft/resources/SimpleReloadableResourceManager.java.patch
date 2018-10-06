@@ -1,0 +1,10 @@
+--- a/net/minecraft/resources/SimpleReloadableResourceManager.java
++++ b/net/minecraft/resources/SimpleReloadableResourceManager.java
+@@ -45,7 +45,6 @@
+ 
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public Set<String> func_199001_a() {
+       return this.field_199016_e;
+    }

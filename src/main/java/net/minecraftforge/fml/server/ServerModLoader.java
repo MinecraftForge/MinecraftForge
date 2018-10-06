@@ -23,6 +23,7 @@ import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.SidedProvider;
+import net.minecraftforge.fml.packs.ResourcePackLoader;
 
 public class ServerModLoader
 {

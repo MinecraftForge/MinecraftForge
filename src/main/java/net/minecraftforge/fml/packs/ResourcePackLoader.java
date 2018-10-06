@@ -17,18 +17,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client;
+package net.minecraftforge.fml.packs;
 
-import net.minecraft.resources.AbstractResourcePack;
-import net.minecraft.resources.FilePack;
-import net.minecraft.resources.FolderPack;
-import net.minecraft.resources.IResourcePack;
-import net.minecraft.resources.ResourcePackInfo;
-import net.minecraft.resources.ResourcePackList;
+import net.minecraft.resources.*;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.function.Function;
@@ -57,12 +56,56 @@ public class ResourcePackLoader
                 map(mf -> new ModFileResourcePack(mf.getFile())).
                 collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity()));
         forgePack = Files.isDirectory(FMLLoader.getForgePath()) ?
-                new FolderPack(FMLLoader.getForgePath().toFile()) :
-                new FilePack(FMLLoader.getForgePath().toFile());
+                new ForgeFolderPack(FMLLoader.getForgePath().toFile()) :
+                new ForgeFilePack(FMLLoader.getForgePath().toFile());
         resourcePacks.addPackFinder(new ModPackFinder());
     }
 
-    private static class ModPackFinder implements net.minecraft.resources.IPackFinder
+    private static class ForgeFolderPack extends FolderPack {
+        public ForgeFolderPack(final File folder) {
+            super(folder);
+        }
+
+        public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
+            if (location.getPath().startsWith("lang/")) {
+                return super.getResourceStream(ResourcePackType.CLIENT_RESOURCES, location);
+            } else {
+                return super.getResourceStream(type, location);
+            }
+        }
+
+        public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
+            if (location.getPath().startsWith("lang/")) {
+                return super.resourceExists(ResourcePackType.CLIENT_RESOURCES, location);
+            } else {
+                return super.resourceExists(type, location);
+            }
+        }
+    }
+
+    private static class ForgeFilePack extends FilePack {
+        public ForgeFilePack(final File folder) {
+            super(folder);
+        }
+
+        public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
+            if (location.getPath().startsWith("lang/")) {
+                return super.getResourceStream(ResourcePackType.CLIENT_RESOURCES, location);
+            } else {
+                return super.getResourceStream(type, location);
+            }
+        }
+
+        public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
+            if (location.getPath().startsWith("lang/")) {
+                return super.resourceExists(ResourcePackType.CLIENT_RESOURCES, location);
+            } else {
+                return super.resourceExists(type, location);
+            }
+        }
+
+    }
+    private static class ModPackFinder implements IPackFinder
     {
         @Override
         public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packList, ResourcePackInfo.IFactory<T> factory)

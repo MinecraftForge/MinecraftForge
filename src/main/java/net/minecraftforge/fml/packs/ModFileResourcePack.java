@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.client;
+package net.minecraftforge.fml.packs;
 
 import net.minecraft.resources.AbstractResourcePack;
 import net.minecraft.resources.ResourcePackType;
@@ -69,7 +69,6 @@ public class ModFileResourcePack extends AbstractResourcePack
     @Override
     public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String pathIn, int maxDepth, Predicate<String> filter)
     {
-
         try
         {
             return Files.walk(modFile.getLocator().findPath(modFile, type.getDirectoryName())).
@@ -96,6 +95,23 @@ public class ModFileResourcePack extends AbstractResourcePack
             return Collections.emptySet();
         }
     }
+
+    public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
+        if (location.getPath().startsWith("lang/")) {
+            return super.getResourceStream(ResourcePackType.CLIENT_RESOURCES, location);
+        } else {
+            return super.getResourceStream(type, location);
+        }
+    }
+
+    public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
+        if (location.getPath().startsWith("lang/")) {
+            return super.resourceExists(ResourcePackType.CLIENT_RESOURCES, location);
+        } else {
+            return super.resourceExists(type, location);
+        }
+    }
+
 
     @Override
     public void close() throws IOException

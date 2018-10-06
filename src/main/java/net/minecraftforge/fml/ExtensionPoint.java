@@ -22,10 +22,9 @@ package net.minecraftforge.fml;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.resources.IResourcePack;
-import net.minecraftforge.fml.client.ModFileResourcePack;
+import net.minecraftforge.fml.packs.ModFileResourcePack;
 
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public class ExtensionPoint<T>
 {

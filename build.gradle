@@ -200,11 +200,24 @@ project(':forge') {
         doFirst {
             mkdir 'runserver'
         }
+        doFirst {
+            copy {
+                from sourceSets.main.resources
+                into "$buildDir/classes/java/main"
+            }
+        }
         classpath sourceSets.main.runtimeClasspath
         main 'net.minecraftforge.fml.LaunchTesting'
         args 'nogui'
+        systemProperties = [
+                "mc.version": "${MC_VERSION}",
+                "mcp.version": "${MCP_VERSION}",
+                "forge.version": "${project.version.substring(MC_VERSION.length() + 1)}",
+                "forge.spec":"${SPEC_VERSION}"
+        ]
         environment target:'fmldevserver'
         workingDir 'runserver'
+        standardInput = System.in
     }
     
     def extraTxts = [

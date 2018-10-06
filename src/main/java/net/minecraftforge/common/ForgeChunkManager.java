@@ -19,8 +19,7 @@
 
 package net.minecraftforge.common;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -32,6 +31,7 @@ import java.util.UUID;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -491,9 +491,9 @@ public class ForgeChunkManager
             ArrayListMultimap<String, Ticket> loadedTickets = ArrayListMultimap.create();
             Map<String,ListMultimap<String,Ticket>> playerLoadedTickets = Maps.newHashMap();
             NBTTagCompound forcedChunkData;
-            try
+            try (DataInputStream datainputstream = new DataInputStream(new FileInputStream(chunkLoaderData)))
             {
-                forcedChunkData = CompressedStreamTools.read(chunkLoaderData);
+                forcedChunkData = CompressedStreamTools.read(datainputstream, NBTSizeTracker.INFINITE);
             }
             catch (IOException e)
             {
@@ -954,9 +954,8 @@ public class ForgeChunkManager
 
         // Write the actual file on the IO thread rather than blocking the server thread
         ThreadedFileIOBase.getThreadedIOInstance().queueIO(() -> {
-            try
-            {
-                CompressedStreamTools.write(forcedChunkData, chunkLoaderData);
+            try (DataOutputStream dataoutputstream = new DataOutputStream(new FileOutputStream(chunkLoaderData))) {
+                CompressedStreamTools.write(forcedChunkData, dataoutputstream);
             }
             catch (IOException e)
             {

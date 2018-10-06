@@ -24,9 +24,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.DownloadingPackFinder;
 import net.minecraft.client.resources.ResourcePackInfoClient;
 import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.ResourcePackList;
-import net.minecraft.resources.data.IMetadataSectionSerializer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LoadingFailedException;
@@ -34,12 +32,8 @@ import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.client.gui.GuiNotification;
 import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
-import net.minecraftforge.fml.client.registry.RenderingRegistry;
-
-import java.io.IOException;
-import java.util.List;
+import net.minecraftforge.fml.packs.ResourcePackLoader;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientModLoader

@@ -39,7 +39,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
-import net.minecraftforge.fml.client.ResourcePackLoader;
+import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
