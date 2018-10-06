@@ -26,6 +26,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
@@ -147,7 +148,7 @@ public class FMLInterModComms {
         /**
          * Get the ResourceLocation value from this message.
          * @throws ClassCastException if this message doesn't contain a ResourceLocation value
-         * @return The string value
+         * @return The ResourceLocation value
          */
         public ResourceLocation getResourceLocationValue()
         {
@@ -173,6 +174,16 @@ public class FMLInterModComms {
         public ItemStack getItemStackValue()
         {
             return (ItemStack) value;
+        }
+
+        /**
+         * Get the {@link FluidStack} value from this message
+         * @throws ClassCastException if this message doesn't contain a FluidStack value
+         * @return The FluidStack value
+         */
+        public FluidStack getFluidStackValue()
+        {
+            return (FluidStack) value;
         }
 
         /**
@@ -236,8 +247,17 @@ public class FMLInterModComms {
         }
 
         /**
+         * Is this a {@link FluidStack} type message
+         * @return if this is a FluidStack type message
+         */
+        public boolean isFluidStackMessage()
+        {
+            return FluidStack.class.isAssignableFrom(getMessageType());
+        }
+
+        /**
          * Is this an {@link IBlockState} type message
-         * @return if this is an blockstate type message
+         * @return if this is an IBlockState type message
          */
         public boolean isBlockStateMessage()
         {
@@ -255,7 +275,7 @@ public class FMLInterModComms {
 
         /**
          * Is this an {@link ResourceLocation} type message
-         * @return if this is an NBT type message
+         * @return if this is a ResourceLocation type message
          */
         public boolean isResourceLocationMessage()
         {
@@ -289,6 +309,18 @@ public class FMLInterModComms {
      * @return if the message was enqueued successfully and will be processed during startup
      */
     public static boolean sendMessage(String modId, String key, ItemStack value)
+    {
+        return enqueueStartupMessage(modId, new IMCMessage(key, value));
+    }
+
+    /**
+     * Send a startup time message
+     * @param modId The modid to send it to
+     * @param key The mod specific key
+     * @param value A FluidStack value
+     * @return if the message was enqueued successfully and will be processed during startup
+     */
+    public static boolean sendMessage(String modId, String key, FluidStack value)
     {
         return enqueueStartupMessage(modId, new IMCMessage(key, value));
     }
@@ -370,6 +402,18 @@ public class FMLInterModComms {
      * @param sourceMod The mod sending the message
      * @param modId The modid to send it to
      * @param key The mod specific key
+     * @param value A FluidStack value
+     */
+    public static void sendRuntimeMessage(Object sourceMod, String modId, String key, FluidStack value)
+    {
+        enqueueMessage(sourceMod, modId, new IMCMessage(key, value));
+    }
+
+    /**
+     * Send a post-startup message
+     * @param sourceMod The mod sending the message
+     * @param modId The modid to send it to
+     * @param key The mod specific key
      * @param value An IBlockState value
      */
     public static void sendRuntimeMessage(Object sourceMod, String modId, String key, IBlockState value)
@@ -394,7 +438,7 @@ public class FMLInterModComms {
      * @param sourceMod The mod sending the message
      * @param modId The modid to send it to
      * @param key The mod specific key
-     * @param value A string value
+     * @param value A ResourceLocation value
      */
     public static void sendRuntimeMessage(Object sourceMod, String modId, String key, ResourceLocation value)
     {
