@@ -1,0 +1,14 @@
+--- a/net/minecraft/tags/NetworkTagCollection.java
++++ b/net/minecraft/tags/NetworkTagCollection.java
+@@ -15,6 +15,11 @@
+       this.field_200044_a = p_i48237_1_;
+    }
+ 
++   public NetworkTagCollection(java.util.function.Predicate<ResourceLocation> isValueKnownPredicateIn, java.util.function.Function<ResourceLocation, T> resourceLocationToItemIn, String resourceLocationPrefixIn, boolean preserveOrderIn, String itemTypeNameIn) {
++      super(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, preserveOrderIn, itemTypeNameIn);
++      this.field_200044_a = new RegistryNamespaced<>();
++   }
++
+    public void func_200042_a(PacketBuffer p_200042_1_) {
+       p_200042_1_.func_150787_b(this.func_200039_c().size());
+ 

@@ -1,0 +1,8 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:spiders",
+    "minecraft:silverfish",
+    "minecraft:endermite"
+  ]
+}

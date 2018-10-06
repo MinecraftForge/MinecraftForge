@@ -19,17 +19,17 @@
 
 package net.minecraftforge.registries;
 
-import java.util.List;
-
 import com.google.common.collect.Lists;
-
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.tags.ForgeTagWrapper;
 import net.minecraftforge.registries.IForgeRegistry.*;
 
 import javax.annotation.Nullable;
+import java.util.List;
+import java.util.function.BiFunction;
 
-public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
-{
+public class RegistryBuilder<T extends IForgeRegistryEntry<T>> {
     private static final int MAX_ID = Integer.MAX_VALUE - 1;
 
     private ResourceLocation registryName;
@@ -46,6 +46,31 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowModifications = false;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
+    private BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory;
+    private boolean enableTagging = false;
+
+    /**
+     * Enables tagging.
+     *
+     * @return The builder
+     */
+    public RegistryBuilder<T> enableTagging()
+    {
+        this.enableTagging = true;
+        return this;
+    }
+
+    /**
+     * Like {@link #enableTagging()}, but it specifies an optional Factory for Wrapper implementations.
+     *
+     * @param wrapperFactory A Wrapper Factory. If null {@link ForgeTagWrapper}::new will be used.
+     * @return The builder
+     */
+    public RegistryBuilder<T> enableTagging(@Nullable BiFunction<ResourceLocation, IForgeRegistry<T>, ? extends Tag<T>> wrapperFactory)
+    {
+        this.wrapperFactory = wrapperFactory;
+        return enableTagging();
+    }
 
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
@@ -81,17 +106,17 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public RegistryBuilder<T> addCallback(Object inst)
     {
         if (inst instanceof AddCallback)
-            this.add((AddCallback<T>)inst);
+            this.add((AddCallback<T>) inst);
         if (inst instanceof ClearCallback)
-            this.add((ClearCallback<T>)inst);
+            this.add((ClearCallback<T>) inst);
         if (inst instanceof CreateCallback)
-            this.add((CreateCallback<T>)inst);
+            this.add((CreateCallback<T>) inst);
         if (inst instanceof ValidateCallback)
-            this.add((ValidateCallback<T>)inst);
+            this.add((ValidateCallback<T>) inst);
         if (inst instanceof DummyFactory)
-            this.set((DummyFactory<T>)inst);
+            this.set((DummyFactory<T>) inst);
         if (inst instanceof MissingFactory)
-            this.set((MissingFactory<T>)inst);
+            this.set((MissingFactory<T>) inst);
         return this;
     }
 
@@ -152,7 +177,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public IForgeRegistry<T> create()
     {
         return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getAdd(), getClear(), getCreate(), getValidate(), saveToDisc, allowOverrides, allowModifications, dummyFactory, missingFactory);
+                getAdd(), getClear(), getCreate(), getValidate(), saveToDisc, allowOverrides, allowModifications,
+                dummyFactory, missingFactory, enableTagging, wrapperFactory);
     }
 
     @Nullable

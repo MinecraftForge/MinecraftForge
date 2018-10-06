@@ -1,0 +1,56 @@
+--- a/net/minecraft/tags/ItemTags.java
++++ b/net/minecraft/tags/ItemTags.java
+@@ -47,47 +47,22 @@
+       ++field_199907_d;
+    }
+ 
++   @Deprecated //use Methods from TagProvider (ForgeRegistries.ITEMS.getTagProvider())
+    public static TagCollection<Item> func_199903_a() {
+       return field_199906_c;
+    }
+ 
+    private static Tag<Item> func_199901_a(String p_199901_0_) {
+-      return new ItemTags.Wrapper(new ResourceLocation(p_199901_0_));
++      return net.minecraftforge.registries.ForgeRegistries.ITEMS.getTagProvider().createWrapper(new ResourceLocation(p_199901_0_));
+    }
+ 
+-   public static class Wrapper extends Tag<Item> {
+-      private int field_199890_a = -1;
+-      private Tag<Item> field_199891_b;
+-
++   public static class Wrapper extends net.minecraftforge.common.tags.ForgeTagWrapper<Item> {
+       public Wrapper(ResourceLocation p_i48212_1_) {
+-         super(p_i48212_1_);
++         super(p_i48212_1_, new ResourceLocation("minecraft:items"));
+       }
+ 
+-      public boolean func_199685_a_(Item p_199685_1_) {
+-         if (this.field_199890_a != ItemTags.field_199907_d) {
+-            this.field_199891_b = ItemTags.field_199906_c.func_199915_b(this.func_199886_b());
+-            this.field_199890_a = ItemTags.field_199907_d;
+-         }
+-
+-         return this.field_199891_b.func_199685_a_(p_199685_1_);
++      public Wrapper(@javax.annotation.Nonnull ResourceLocation resourceLocationIn, net.minecraftforge.registries.IForgeRegistry<Item> registry) {
++         super(resourceLocationIn, registry);
+       }
+-
+-      public Collection<Item> func_199885_a() {
+-         if (this.field_199890_a != ItemTags.field_199907_d) {
+-            this.field_199891_b = ItemTags.field_199906_c.func_199915_b(this.func_199886_b());
+-            this.field_199890_a = ItemTags.field_199907_d;
+-         }
+-
+-         return this.field_199891_b.func_199885_a();
+-      }
+-
+-      public Collection<Tag.ITagEntry<Item>> func_200570_b() {
+-         if (this.field_199890_a != ItemTags.field_199907_d) {
+-            this.field_199891_b = ItemTags.field_199906_c.func_199915_b(this.func_199886_b());
+-            this.field_199890_a = ItemTags.field_199907_d;
+-         }
+-
+-         return this.field_199891_b.func_200570_b();
+-      }
+    }
+ }

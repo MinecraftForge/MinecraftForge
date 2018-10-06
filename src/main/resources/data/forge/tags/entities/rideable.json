@@ -1,0 +1,7 @@
+{
+  "replace":false,
+  "values":[
+    "#forge:rideable_living",
+    "#forge:rideable_undead"
+  ]
+}

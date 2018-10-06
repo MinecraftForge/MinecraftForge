@@ -19,20 +19,13 @@
 
 package net.minecraftforge.registries;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Sets.SetView;
-
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.FMLHandshakeMessages;
 import net.minecraftforge.fml.network.NetworkEvent;
@@ -42,8 +35,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class RegistryManager
-{
+import javax.annotation.Nullable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+public class RegistryManager {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final RegistryManager ACTIVE = new RegistryManager("ACTIVE");
     public static final RegistryManager VANILLA = new RegistryManager("VANILLA");
@@ -67,13 +67,13 @@ public class RegistryManager
     @SuppressWarnings("unchecked")
     public <V extends IForgeRegistryEntry<V>> Class<V> getSuperType(ResourceLocation key)
     {
-        return (Class<V>)superTypes.inverse().get(key);
+        return (Class<V>) superTypes.inverse().get(key);
     }
 
     @SuppressWarnings("unchecked")
     public <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> getRegistry(ResourceLocation key)
     {
-        return (ForgeRegistry<V>)this.registries.get(key);
+        return (ForgeRegistry<V>) this.registries.get(key);
     }
 
     public <V extends IForgeRegistryEntry<V>> IForgeRegistry<V> getRegistry(Class<V> cls)
@@ -102,8 +102,9 @@ public class RegistryManager
     }
 
     <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(ResourceLocation name, Class<V> type, ResourceLocation defaultKey, int min, int max,
-            @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable CreateCallback<V> create, @Nullable ValidateCallback<V> validate,
-            boolean persisted, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
+                                                                       @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable CreateCallback<V> create, @Nullable ValidateCallback<V> validate,
+                                                                       boolean persisted, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing,
+                                                                       boolean enableTagging, @Nullable BiFunction<ResourceLocation, IForgeRegistry<V>, ? extends Tag<V>> wrapperFactory)
     {
         Set<Class<?>> parents = Sets.newHashSet();
         findSuperTypes(type, parents);
@@ -114,12 +115,22 @@ public class RegistryManager
             LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
-        ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, validate, this, allowOverrides, isModifiable, dummyFactory, missing);
+        ForgeRegistry<V> reg =
+                new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, validate, this, allowOverrides, isModifiable, dummyFactory, missing, enableTagging ? new TagProvider<>(name, wrapperFactory) : null);
         registries.put(name, reg);
         superTypes.put(type, name);
         if (persisted)
             this.persisted.add(name);
         return getRegistry(name);
+    }
+
+    void onTagReload(IResourceManager manager)
+    {
+        for (ForgeRegistry<?> reg : registries.values())
+        {
+            if (reg.supportsTagging())
+                reg.getTagProvider().onResourceManagerReload(manager);
+        }
     }
 
     private void findSuperTypes(Class<?> type, Set<Class<?>> types)
@@ -140,7 +151,7 @@ public class RegistryManager
     {
         Map<ResourceLocation, Snapshot> ret = Maps.newHashMap();
         Set<ResourceLocation> keys = savingToDisc ? this.persisted : this.registries.keySet();
-        keys.forEach(name -> ret.put(name, getRegistry(name).makeSnapshot()));
+        keys.forEach(name -> ret.put(name, getRegistry(name).makeSnapshot(savingToDisc)));
         return ret;
     }
 
@@ -152,13 +163,15 @@ public class RegistryManager
         this.superTypes.clear();
     }
 
-    public static List<Pair<String, FMLHandshakeMessages.S2CRegistry>> generateRegistryPackets() {
+    public static List<Pair<String, FMLHandshakeMessages.S2CRegistry>> generateRegistryPackets()
+    {
         return ACTIVE.registries.entrySet().stream().
-                map(e->Pair.of("Registry "+e.getKey(), new FMLHandshakeMessages.S2CRegistry(e.getKey(), e.getValue()))).
+                map(e -> Pair.of("Registry " + e.getKey(), new FMLHandshakeMessages.S2CRegistry(e.getKey(), e.getValue()))).
                 collect(Collectors.toList());
     }
 
-    public static void acceptRegistry(final FMLHandshakeMessages.S2CRegistry registryUpdate, final Supplier<NetworkEvent.Context> contextSupplier) {
+    public static void acceptRegistry(final FMLHandshakeMessages.S2CRegistry registryUpdate, final Supplier<NetworkEvent.Context> contextSupplier)
+    {
         LOGGER.debug("Received registry packet");
     }
 }

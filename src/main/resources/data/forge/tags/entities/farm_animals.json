@@ -1,0 +1,9 @@
+{
+  "replace":false,
+  "values": [
+    "minecraft:chicken",
+    "#forge:cows",
+    "minecraft:pig",
+    "minecraft:sheep"
+  ]
+}

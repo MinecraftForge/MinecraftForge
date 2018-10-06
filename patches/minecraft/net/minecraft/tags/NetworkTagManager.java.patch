@@ -1,0 +1,14 @@
+--- a/net/minecraft/tags/NetworkTagManager.java
++++ b/net/minecraft/tags/NetworkTagManager.java
+@@ -47,10 +47,6 @@
+    }
+ 
+    public static NetworkTagManager func_199714_b(PacketBuffer p_199714_0_) {
+-      NetworkTagManager networktagmanager = new NetworkTagManager();
+-      networktagmanager.func_199717_a().func_200043_b(p_199714_0_);
+-      networktagmanager.func_199715_b().func_200043_b(p_199714_0_);
+-      networktagmanager.func_205704_c().func_200043_b(p_199714_0_);
+-      return networktagmanager;
++      return net.minecraftforge.registries.ForgeTagManager.read(p_199714_0_);
+    }
+ }

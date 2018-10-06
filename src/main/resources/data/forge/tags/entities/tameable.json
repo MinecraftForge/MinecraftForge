@@ -1,0 +1,10 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:rideable",
+    "minecraft:llama",
+    "minecraft:ocelot",
+    "minecraft:parrot",
+    "minecraft:wolf"
+  ]
+}

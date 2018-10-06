@@ -1,0 +1,66 @@
+--- a/net/minecraft/tags/Tag.java
++++ b/net/minecraft/tags/Tag.java
+@@ -16,6 +16,7 @@
+ import javax.annotation.Nullable;
+ import net.minecraft.util.JsonUtils;
+ import net.minecraft.util.ResourceLocation;
++import net.minecraftforge.common.tags.TagHelper;
+ 
+ public class Tag<T> {
+    private final ResourceLocation field_199888_a;
+@@ -28,6 +29,12 @@
+       this.field_200150_c = Collections.<Tag.ITagEntry<T>>emptyList();
+    }
+ 
++   public Tag(ResourceLocation resourceLocationIn, Set<T> taggedItems, Collection<Tag.ITagEntry<T>> entries) {
++      this.field_199888_a = resourceLocationIn;
++      this.field_199889_b = java.util.Objects.requireNonNull(taggedItems);
++      this.field_200150_c = java.util.Objects.requireNonNull(entries);
++   }
++
+    public Tag(ResourceLocation p_i48224_1_, Collection<Tag.ITagEntry<T>> p_i48224_2_, boolean p_i48224_3_) {
+       this.field_199888_a = p_i48224_1_;
+       this.field_199889_b = (Set<T>)(p_i48224_3_ ? Sets.newLinkedHashSet() : Sets.newHashSet());
+@@ -43,7 +50,7 @@
+       JsonObject jsonobject = new JsonObject();
+       JsonArray jsonarray = new JsonArray();
+ 
+-      for(Tag.ITagEntry<T> itagentry : this.field_200150_c) {
++      for(Tag.ITagEntry<T> itagentry : this.func_200570_b()) {
+          itagentry.func_200576_a(jsonarray, p_200571_1_);
+       }
+ 
+@@ -53,7 +60,7 @@
+    }
+ 
+    public boolean func_199685_a_(T p_199685_1_) {
+-      return this.field_199889_b.contains(p_199685_1_);
++      return this.func_199885_a().contains(p_199685_1_);
+    }
+ 
+    public Collection<T> func_199885_a() {
+@@ -72,10 +79,15 @@
+    public ResourceLocation func_199886_b() {
+       return this.field_199888_a;
+    }
++   @Override public boolean equals(Object o)  { return TagHelper.tagEquals(this,o); }
++   @Override public int hashCode()
++   {
++      return TagHelper.tagHashCode(this);
++   }
+ 
+    public static class Builder<T> {
+-      private final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
+-      private boolean field_200053_b;
++      protected final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
++      protected boolean field_200053_b;
+ 
+       public static <T> Tag.Builder<T> func_200047_a() {
+          return new Tag.Builder<T>();
+@@ -238,5 +250,6 @@
+       public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
+          p_200576_1_.add("#" + this.func_200577_a());
+       }
++      @Nullable public Tag<T> getTag() { return field_200164_b;}
+    }
+ }

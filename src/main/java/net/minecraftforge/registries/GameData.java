@@ -19,7 +19,6 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -33,6 +32,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
@@ -49,7 +50,6 @@ import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.StartupQuery;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
@@ -70,8 +70,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 
 /**
  * INTERNAL ONLY
@@ -125,17 +123,17 @@ public class GameData
         if (hasInit)
             return;
         hasInit = true;
-        makeRegistry(BLOCKS,       Block.class,       MAX_BLOCK_ID, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).create();
-        makeRegistry(ITEMS,        Item.class,        MIN_ITEM_ID, MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).create();
-        makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).create();
-        makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).create();
-        makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
-        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
-        makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
+        makeRegistry(BLOCKS,       Block.class,       MAX_BLOCK_ID, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).enableTagging(BlockTags.Wrapper::new).create();
+        makeRegistry(ITEMS,        Item.class,        MIN_ITEM_ID, MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).enableTagging(ItemTags.Wrapper::new).create();
+        makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).enableTagging().create();
+        makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).enableTagging().create();
+        makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).enableTagging().create();
+        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).enableTagging().create();
+        makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).enableTagging().create();
+        makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).enableTagging().create();
         // TODO do we need the callback and the static field anymore?
-        makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).create();
-        makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).disableSaving().create();
+        makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).enableTagging().create();
+        makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).disableSaving().enableTagging().create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int min, int max)
@@ -554,10 +552,10 @@ public class GameData
 
         snapshot.forEach((key, value) ->
         {
+            ForgeRegistry<?> reg = STAGING.getRegistry(key);
             value.dummied.forEach(dummy ->
             {
                 Map<ResourceLocation, Integer> m = missing.get(key);
-                ForgeRegistry<?> reg = STAGING.getRegistry(key);
 
                 // Currently missing locally, we just inject and carry on
                 if (m.containsKey(dummy))
@@ -578,6 +576,7 @@ public class GameData
                     reg.markDummy(dummy, id);
                 }
             });
+            reg.injectTags(value.tagProviderRepresentation);
         });
 
         int count = missing.values().stream().mapToInt(Map::size).sum();

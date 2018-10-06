@@ -1,0 +1,10 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:zombies",
+    "#forge:skeletons",
+    "#forge:rideable_undead",
+    "minecraft:phantom",
+    "minecraft:wither"
+  ]
+}

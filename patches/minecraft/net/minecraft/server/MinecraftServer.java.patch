@@ -8,6 +8,15 @@
     private KeyPair field_71292_I;
     private String field_71293_J;
     private String field_71294_K;
+@@ -178,7 +177,7 @@
+    private FolderPackFinder field_195578_ae;
+    private final Commands field_195579_af;
+    private final RecipeManager field_199530_ag = new RecipeManager();
+-   private final NetworkTagManager field_199736_ah = new NetworkTagManager();
++   private final NetworkTagManager field_199736_ah = new net.minecraftforge.registries.ForgeTagManager();
+    private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
+    private final CustomBossEvents field_201301_aj = new CustomBossEvents(this);
+    private final LootTableManager field_200256_aj = new LootTableManager();
 @@ -287,8 +286,7 @@
     public void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, JsonElement p_71247_6_) {
        this.func_71237_c(p_71247_1_);

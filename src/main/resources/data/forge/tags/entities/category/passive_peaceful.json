@@ -1,0 +1,25 @@
+{
+  "replace":false,
+  "values": [
+    "minecraft:bat",
+    "minecraft:cod",
+    "minecraft:horse",
+    "minecraft:donkey",
+    "minecraft:mule",
+    "minecraft:zombie_horse",
+    "minecraft:skeleton_horse",
+    "minecraft:chicken",
+    "minecraft:cow",
+    "minecraft:mooshroom",
+    "minecraft:pig",
+    "minecraft:sheep",
+    "minecraft:ocelot",
+    "minecraft:parrot",
+    "minecraft:rabbit",
+    "minecraft:salmon",
+    "minecraft:squid",
+    "minecraft:turtle",
+    "minecraft:tropical_fish",
+    "minecraft:villager"
+  ]
+}

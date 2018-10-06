@@ -1,0 +1,7 @@
+{
+  "replace":false,
+  "values": [
+    "#forge:category/passive_peaceful",
+    "#forge:category/passive_defensive"
+  ]
+}
