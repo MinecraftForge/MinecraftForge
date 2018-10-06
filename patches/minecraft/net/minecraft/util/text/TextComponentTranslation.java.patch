@@ -1,0 +1,13 @@
+--- a/net/minecraft/util/text/TextComponentTranslation.java
++++ b/net/minecraft/util/text/TextComponentTranslation.java
+@@ -101,6 +101,10 @@
+             }
+          }
+ 
++         if (j == 0) {
++            // if we failed to match above, lets try the messageformat handler instead.
++            j = net.minecraftforge.fml.TextComponentMessageFormatHandler.handle(this, this.field_150278_b, this.field_150277_e, p_150269_1_);
++         }
+          if (j < p_150269_1_.length()) {
+             ITextComponent itextcomponent1 = new TextComponentString(String.format(p_150269_1_.substring(j)));
+             itextcomponent1.func_150256_b().func_150221_a(this.func_150256_b());
