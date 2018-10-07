@@ -24,3 +24,12 @@
      }
  
      public boolean func_70441_a(ItemStack p_70441_1_)
+@@ -444,6 +452,8 @@
+                 CrashReportCategory crashreportcategory = crashreport.func_85058_a("Item being added");
+                 crashreportcategory.func_71507_a("Item ID", Integer.valueOf(Item.func_150891_b(p_191971_2_.func_77973_b())));
+                 crashreportcategory.func_71507_a("Item data", Integer.valueOf(p_191971_2_.func_77960_j()));
++                crashreportcategory.func_189529_a("Registry Name", () -> String.valueOf(p_191971_2_.func_77973_b().getRegistryName()));
++                crashreportcategory.func_189529_a("Item Class", () -> p_191971_2_.func_77973_b().getClass().getName());
+                 crashreportcategory.func_189529_a("Item name", new ICrashReportDetail<String>()
+                 {
+                     public String call() throws Exception

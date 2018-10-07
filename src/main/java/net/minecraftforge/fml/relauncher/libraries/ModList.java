@@ -50,8 +50,7 @@ public class ModList
         try
         {
             String key = json.getCanonicalFile().getAbsolutePath();
-            if (cache.containsKey(key))
-                return cache.get(key);
+            return cache.computeIfAbsent(key, k -> new ModList(json, mcdir));
         }
         catch (IOException e)
         {

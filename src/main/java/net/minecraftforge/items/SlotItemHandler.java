@@ -43,7 +43,7 @@ public class SlotItemHandler extends Slot
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack)
     {
-        if (stack.isEmpty())
+        if (stack.isEmpty() || !itemHandler.isItemValid(index, stack))
             return false;
 
         IItemHandler handler = this.getItemHandler();
@@ -63,7 +63,7 @@ public class SlotItemHandler extends Slot
         {
             remainder = handler.insertItem(index, stack, true);
         }
-        return remainder.isEmpty() || remainder.getCount() < stack.getCount();
+        return remainder.getCount() < stack.getCount();
     }
 
     @Override

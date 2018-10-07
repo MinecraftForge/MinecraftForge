@@ -443,9 +443,9 @@ public class BiomeDictionary
         addTypes(Biomes.EXTREME_HILLS_WITH_TREES,         MOUNTAIN, FOREST,     SPARSE                            );
         addTypes(Biomes.SAVANNA,                          HOT,      SAVANNA,    PLAINS,   SPARSE                  );
         addTypes(Biomes.SAVANNA_PLATEAU,                  HOT,      SAVANNA,    PLAINS,   SPARSE,   RARE          );
-        addTypes(Biomes.MESA,                             MESA,     SANDY                                         );
-        addTypes(Biomes.MESA_ROCK,                        MESA,     SPARSE,     SANDY                             );
-        addTypes(Biomes.MESA_CLEAR_ROCK,                  MESA,     SANDY                                         );
+        addTypes(Biomes.MESA,                             MESA,     SANDY,      DRY                               );
+        addTypes(Biomes.MESA_ROCK,                        MESA,     SANDY,      DRY,      SPARSE                  );
+        addTypes(Biomes.MESA_CLEAR_ROCK,                  MESA,     SANDY,      DRY                               );
         addTypes(Biomes.VOID,                             VOID                                                    );
         addTypes(Biomes.MUTATED_PLAINS,                   PLAINS,   RARE                                          );
         addTypes(Biomes.MUTATED_DESERT,                   HOT,      DRY,        SANDY,    RARE                    );
@@ -465,9 +465,9 @@ public class BiomeDictionary
         addTypes(Biomes.MUTATED_EXTREME_HILLS_WITH_TREES, MOUNTAIN, SPARSE,     RARE                              );
         addTypes(Biomes.MUTATED_SAVANNA,                  HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
         addTypes(Biomes.MUTATED_SAVANNA_ROCK,             HOT,      DRY,        SPARSE,   SAVANNA,  HILLS,    RARE);
-        addTypes(Biomes.MUTATED_MESA,                     HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
+        addTypes(Biomes.MUTATED_MESA,                     HOT,      DRY,        SPARSE,   MOUNTAIN, RARE          );
         addTypes(Biomes.MUTATED_MESA_ROCK,                HOT,      DRY,        SPARSE,   HILLS,    RARE          );
-        addTypes(Biomes.MUTATED_MESA_CLEAR_ROCK,          HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
+        addTypes(Biomes.MUTATED_MESA_CLEAR_ROCK,          HOT,      DRY,        SPARSE,   MOUNTAIN, RARE          );
 
 
         if (DEBUG)

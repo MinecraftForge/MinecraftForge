@@ -19,12 +19,12 @@
 
 package net.minecraftforge.fluids;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
 import net.minecraftforge.fml.common.LoaderState;
-import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -38,8 +38,6 @@ import net.minecraftforge.common.MinecraftForge;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
@@ -69,9 +67,10 @@ public abstract class FluidRegistry
     static Map<Fluid,FluidDelegate> delegates = Maps.newHashMap();
 
     static boolean universalBucketEnabled = false;
-    static Set<Fluid> bucketFluids = Sets.newHashSet();
+    static Set<String> bucketFluids = Sets.newHashSet();
+    static Set<Fluid> currentBucketFluids;
 
-    public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow")) {
+    public static final Fluid WATER = new Fluid("water", new ResourceLocation("blocks/water_still"), new ResourceLocation("blocks/water_flow"), new ResourceLocation("blocks/water_overlay")) {
         @Override
         public String getLocalizedName(FluidStack fs) {
             return I18n.translateToLocal("tile.water.name");
@@ -142,6 +141,7 @@ public abstract class FluidRegistry
         fluids = localFluids;
         fluidNames = localFluidNames;
         fluidBlocks = null;
+        currentBucketFluids = null;
         for (FluidDelegate fd : delegates.values())
         {
             fd.rebind();
@@ -236,7 +236,7 @@ public abstract class FluidRegistry
      */
     public static Map<String, Fluid> getRegisteredFluids()
     {
-        return ImmutableMap.copyOf(fluids);
+        return Maps.unmodifiableBiMap(fluids);
     }
 
     /**
@@ -246,7 +246,7 @@ public abstract class FluidRegistry
     @Deprecated
     public static Map<Fluid, Integer> getRegisteredFluidIDs()
     {
-        return ImmutableMap.copyOf(fluidIDs);
+        return Maps.unmodifiableBiMap(fluidIDs);
     }
 
     /**
@@ -289,18 +289,31 @@ public abstract class FluidRegistry
         {
             registerFluid(fluid);
         }
-        return bucketFluids.add(fluid);
+        return bucketFluids.add(fluid.getName());
     }
 
     /**
      * All fluids registered with the universal bucket
-     * @return An immutable set containing the fluids
+     * @return A read-only set containing the fluids
      */
     public static Set<Fluid> getBucketFluids()
     {
-        return ImmutableSet.copyOf(bucketFluids);
+        if (currentBucketFluids == null)
+        {
+            Set<Fluid> tmp = Sets.newHashSet();
+            for (String fluidName : bucketFluids)
+            {
+                tmp.add(getFluid(fluidName));
+            }
+            currentBucketFluids = Collections.unmodifiableSet(tmp);
+        }
+        return currentBucketFluids;
     }
 
+    public static boolean hasBucket(Fluid fluid)
+    {
+        return bucketFluids.contains(fluid.getName());
+    }
 
     public static Fluid lookupFluidForBlock(Block block)
     {

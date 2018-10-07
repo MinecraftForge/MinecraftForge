@@ -19,7 +19,17 @@
                  {
                      if (iblockstate.func_185898_k())
                      {
-@@ -414,7 +414,7 @@
+@@ -144,7 +144,8 @@
+ 
+     public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
+     {
+-        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() || p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c() == Blocks.field_150426_aN;
++        IBlockState downState = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
++        return downState.func_185896_q() || downState.func_193401_d(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID || p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c() == Blocks.field_150426_aN;
+     }
+ 
+     private IBlockState func_176338_e(World p_176338_1_, BlockPos p_176338_2_, IBlockState p_176338_3_)
+@@ -414,7 +415,7 @@
          {
              return true;
          }
@@ -28,7 +38,7 @@
          {
              return true;
          }
-@@ -430,16 +430,11 @@
+@@ -430,16 +431,11 @@
  
      protected static boolean func_176340_e(IBlockAccess p_176340_0_, BlockPos p_176340_1_)
      {
@@ -47,7 +57,7 @@
          Block block = p_176343_0_.func_177230_c();
  
          if (block == Blocks.field_150488_af)
-@@ -457,7 +452,7 @@
+@@ -457,7 +453,7 @@
          }
          else
          {
