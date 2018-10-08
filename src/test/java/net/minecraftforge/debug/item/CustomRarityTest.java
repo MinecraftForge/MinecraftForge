@@ -64,7 +64,7 @@ public class CustomRarityTest
 
     static final class TestItem extends Item
     {
-        private final IRarity rarity = new IRarity()
+        private static final IRarity RARITY = new IRarity()
         {
             @Override
             public TextFormatting getColor()
@@ -82,7 +82,7 @@ public class CustomRarityTest
         @Override
         public IRarity getForgeRarity(ItemStack stack)
         {
-            return rarity;
+            return RARITY;
         }
     }
 }
