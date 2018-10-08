@@ -38,7 +38,15 @@
      public boolean func_77634_r()
      {
          return this.field_77700_c != null;
-@@ -372,7 +375,7 @@
+@@ -365,6 +368,7 @@
+         return p_77636_1_.func_77948_v();
+     }
+ 
++    @Deprecated // use Forge version
+     public EnumRarity func_77613_e(ItemStack p_77613_1_)
+     {
+         return p_77613_1_.func_77948_v() ? EnumRarity.RARE : EnumRarity.COMMON;
+@@ -372,7 +376,7 @@
  
      public boolean func_77616_k(ItemStack p_77616_1_)
      {
@@ -47,7 +55,7 @@
      }
  
      protected RayTraceResult func_77621_a(World p_77621_1_, EntityPlayer p_77621_2_, boolean p_77621_3_)
-@@ -389,8 +392,8 @@
+@@ -389,8 +393,8 @@
          float f5 = MathHelper.func_76126_a(-f * 0.017453292F);
          float f6 = f3 * f4;
          float f7 = f2 * f4;
@@ -58,7 +66,7 @@
          return p_77621_1_.func_147447_a(vec3d, vec3d1, p_77621_3_, !p_77621_3_, false);
      }
  
-@@ -409,6 +412,9 @@
+@@ -409,6 +413,9 @@
  
      protected boolean func_194125_a(CreativeTabs p_194125_1_)
      {
@@ -68,7 +76,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +441,757 @@
+@@ -435,11 +442,762 @@
          return false;
      }
  
@@ -819,14 +827,19 @@
 +    public void setTileEntityItemStackRenderer(@Nullable net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer teisr)
 +    {
 +    	this.teisr = teisr;
-+    }  
++    }
++
++    public net.minecraftforge.common.IRarity getForgeRarity(ItemStack stack)
++    {
++        return this.func_77613_e(stack);
++    }
 +
 +    /* ======================================== FORGE END   =====================================*/
 +
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1751,8 @@
+@@ -999,6 +1757,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -835,7 +848,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1788,7 @@
+@@ -1034,6 +1794,7 @@
              return this.field_78008_j;
          }
  
@@ -843,7 +856,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1812,21 @@
+@@ -1057,5 +1818,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }
