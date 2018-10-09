@@ -46,7 +46,7 @@
 +                        if (result != null) {
 +                            if (!result) continue;
 +                            
-+                            if(iblockstate.func_177230_c().getBlockLiquidHeight(field_70170_p, blockpos$pooledmutableblockpos, iblockstate, Material.field_151586_h) + blockpos$pooledmutableblockpos.func_177956_o() > 0)
++                            if(iblockstate.func_177230_c().getBlockLiquidHeight(field_70170_p, blockpos$pooledmutableblockpos, iblockstate, Material.field_151586_h) > 0)
 +                            {   
 +                                blockpos$pooledmutableblockpos.func_185344_t();
 +                                return EntityBoat.Status.UNDER_FLOWING_WATER;
