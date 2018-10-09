@@ -17,12 +17,12 @@
 +    @Override
 +    public TextFormatting getColor()
 +    {
-+        return field_77937_e;
++        return this.field_77937_e;
 +    }
 +
 +    @Override
 +    public String getName()
 +    {
-+        return field_77934_f;
++        return this.field_77934_f;
 +    }
  }
