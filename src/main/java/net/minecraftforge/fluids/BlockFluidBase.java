@@ -806,6 +806,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     @Override
     public float getBlockLiquidHeight(World world, BlockPos pos, IBlockState state, Material material)
     {
-        return getFilledPercentage(world, pos);
+        float filled = getFilledPercentage(world, pos);
+        return filled > 0 ? filled : 0;
     }
 }
