@@ -26,7 +26,7 @@
          {
              for (EntityItem entityitem : this.field_70170_p.func_72872_a(EntityItem.class, this.func_174813_aQ().func_72314_b(1.0D, 0.0D, 1.0D)))
              {
-@@ -702,10 +705,36 @@
+@@ -702,10 +705,40 @@
  
      protected void func_70623_bb()
      {
@@ -50,6 +50,10 @@
 +                this.func_70106_y();
 +                return;
 +            }
++            else
++            {
++                this.forceNoDespawn = false;
++            }
 +
 +            this.despawnHandlerWaitTime = 33; //Event handler check not called for 32 ticks
 +        }
@@ -63,7 +67,7 @@
          else
          {
              Entity entity = this.field_70170_p.func_72890_a(this, -1.0D);
-@@ -839,7 +868,6 @@
+@@ -839,7 +872,6 @@
          return !this.field_70170_p.func_72953_d(this.func_174813_aQ()) && this.field_70170_p.func_184144_a(this, this.func_174813_aQ()).isEmpty() && this.field_70170_p.func_72917_a(this.func_174813_aQ(), this);
      }
  
@@ -71,7 +75,7 @@
      public float func_70603_bj()
      {
          return 1.0F;
-@@ -991,6 +1019,8 @@
+@@ -991,6 +1023,8 @@
  
      public static EntityEquipmentSlot func_184640_d(ItemStack p_184640_0_)
      {
@@ -80,7 +84,7 @@
          if (p_184640_0_.func_77973_b() != Item.func_150898_a(Blocks.field_150423_aK) && p_184640_0_.func_77973_b() != Items.field_151144_bL)
          {
              if (p_184640_0_.func_77973_b() instanceof ItemArmor)
-@@ -1003,7 +1033,7 @@
+@@ -1003,7 +1037,7 @@
              }
              else
              {
@@ -89,7 +93,7 @@
              }
          }
          else
-@@ -1434,5 +1464,19 @@
+@@ -1434,5 +1468,19 @@
          ON_GROUND,
          IN_AIR,
          IN_WATER;
