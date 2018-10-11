@@ -1,7 +1,8 @@
 #eclipse
-/bin
-/.settings
-/.classpath
+**/bin
+**/.settings
+**/.classpath
+*.project
 
 #In case people make their workspace in the repo
 /eclipse/
@@ -34,6 +35,5 @@ changelog.txt
 *.7z
 /logs/
 
-/.project
 gradle.properties
 !/mdk/gradle.properties
