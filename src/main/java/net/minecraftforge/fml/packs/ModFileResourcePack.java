@@ -28,11 +28,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import com.google.common.base.Joiner;
 
 public class ModFileResourcePack extends AbstractResourcePack
 {
@@ -71,11 +76,18 @@ public class ModFileResourcePack extends AbstractResourcePack
     {
         try
         {
-            return Files.walk(modFile.getLocator().findPath(modFile, type.getDirectoryName())).
-                    filter(path -> !path.toString().endsWith(".mcmeta")).
-                    filter(path -> path.getNameCount() > 2 && pathIn.equals(path.getName(2).toString())).
-                    filter(path -> filter.test(path.subpath(3, Math.min(maxDepth+3, path.getNameCount())).toString())).
-                    map(path -> new ResourceLocation(path.getName(1).toString(),path.subpath(3,Math.min(maxDepth+3, path.getNameCount())).toString())).
+            Path inputPath = Paths.get(pathIn);
+            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName());
+            return Files.walk(root).
+                    map(path -> root.relativize(path)).
+                    filter(path -> path.getNameCount() > 1 && path.getNameCount() - 1 <= maxDepth). // Make sure the depth is within bounds, ignoring domain
+                    filter(path -> !path.toString().endsWith(".mcmeta")). // Ignore .mcmeta files
+                    filter(path -> path.subpath(1, path.getNameCount()).startsWith(inputPath)). // Make sure the target path is inside this one (again ignoring domain) 
+                    filter(path -> filter.test(path.getFileName().toString())). // Test the file name against the predicate
+                    // Finally we need to form the RL, so use the first name as the domain, and the rest as the path
+                    // It is VERY IMPORTANT that we do not rely on Path.toString as this is inconsistent between operating systems
+                    // Join the path names ourselves to force forward slashes
+                    map(path -> new ResourceLocation(path.getName(0).toString(), Joiner.on('/').join(path.subpath(1,Math.min(maxDepth, path.getNameCount()))))).
                     collect(Collectors.toList());
         }
         catch (IOException e)

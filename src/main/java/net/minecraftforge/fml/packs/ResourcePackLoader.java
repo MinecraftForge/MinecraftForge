@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -111,6 +112,12 @@ public class ResourcePackLoader
         public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packList, ResourcePackInfo.IFactory<T> factory)
         {
             packList.put("forge", ResourcePackInfo.func_195793_a("forge", true, ()->forgePack, factory, ResourcePackInfo.Priority.BOTTOM));
+            for (Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet()) 
+            {
+                String name = "modfile/" + e.getKey().getFileName();
+                packList.put(name, ResourcePackInfo.func_195793_a(name, true, ()->e.getValue(), factory, ResourcePackInfo.Priority.BOTTOM));
+            }
         }
+        
     }
 }

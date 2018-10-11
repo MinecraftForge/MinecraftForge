@@ -75,7 +75,7 @@ public abstract class FMLCommonLaunchHandler
             if (uri.getSchemeSpecificPart().contains("!")) {
                 path = Paths.get(new URI(uri.getSchemeSpecificPart().split("!")[0]));
             } else {
-                path = Paths.get(new URI("file:///"+uri.getSchemeSpecificPart().substring(0, uri.getSchemeSpecificPart().length()-className.length())));
+                path = Paths.get(new URI("file://"+uri.getSchemeSpecificPart().substring(0, uri.getSchemeSpecificPart().length()-className.length())));
             }
             LOGGER.debug(CORE, "Found JAR {} at path {}", jarName, path.toString());
             return path;
