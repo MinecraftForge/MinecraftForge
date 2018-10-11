@@ -84,7 +84,7 @@ public class DynamicBannerTest
         @SideOnly(Side.CLIENT)
         public void registerSupplier(ResourceLocation location)
         {
-            MinecraftForgeClient.registerBannerImageSupplier(location, () -> {
+            MinecraftForgeClient.registerImageLayerSupplier(location, () -> {
                 return createBufferedImage();
             });
         }

@@ -135,16 +135,16 @@ public class MinecraftForgeClient
         regionCache.cleanUp();
     }
 
-    private static HashMap<ResourceLocation, Supplier<BufferedImage>> bannerBufferedImageSuppliers = new HashMap<ResourceLocation, Supplier<BufferedImage>>();
-    public static void registerBannerImageSupplier(ResourceLocation resourceLocation, Supplier<BufferedImage> supplier)
+    private static HashMap<ResourceLocation, Supplier<BufferedImage>> bufferedImageSuppliers = new HashMap<ResourceLocation, Supplier<BufferedImage>>();
+    public static void registerImageLayerSupplier(ResourceLocation resourceLocation, Supplier<BufferedImage> supplier)
     {
-        bannerBufferedImageSuppliers.put(resourceLocation, supplier);
+        bufferedImageSuppliers.put(resourceLocation, supplier);
     }
 
     @Nonnull
     public static BufferedImage getImageLayer(ResourceLocation resourceLocation, IResourceManager resourceManager) throws IOException
     {
-        Supplier<BufferedImage> supplier = bannerBufferedImageSuppliers.get(resourceLocation);
+        Supplier<BufferedImage> supplier = bufferedImageSuppliers.get(resourceLocation);
         if (supplier != null)
             return supplier.get();
 
