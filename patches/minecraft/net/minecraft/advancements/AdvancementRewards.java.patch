@@ -1,0 +1,11 @@
+--- a/net/minecraft/advancements/AdvancementRewards.java
++++ b/net/minecraft/advancements/AdvancementRewards.java
+@@ -41,7 +41,7 @@
+ 
+    public void func_192113_a(EntityPlayerMP p_192113_1_) {
+       p_192113_1_.func_195068_e(this.field_192115_b);
+-      LootContext lootcontext = (new LootContext.Builder(p_192113_1_.func_71121_q())).func_186472_a(p_192113_1_).func_204313_a(new BlockPos(p_192113_1_)).func_186471_a();
++      LootContext lootcontext = (new LootContext.Builder(p_192113_1_.func_71121_q())).func_186472_a(p_192113_1_).func_204313_a(new BlockPos(p_192113_1_)).func_186470_a(p_192113_1_).func_186469_a(p_192113_1_.func_184817_da()).func_186471_a(); // FORGE: add player & luck to LootContext
+       boolean flag = false;
+ 
+       for(ResourceLocation resourcelocation : this.field_192116_c) {
