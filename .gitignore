@@ -15,8 +15,6 @@
 /build
 /.gradle
 
-/out
-
 #occupational hazards
 /projects/
 /repo/
