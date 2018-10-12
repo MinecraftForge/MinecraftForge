@@ -1,0 +1,133 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2018.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
+package net.minecraftforge.fml.packs;
+
+import net.minecraft.resources.AbstractResourcePack;
+import net.minecraft.resources.ResourcePackType;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import com.google.common.base.Joiner;
+
+public class ModFileResourcePack extends AbstractResourcePack
+{
+    private final ModFile modFile;
+
+    public ModFileResourcePack(final ModFile modFile)
+    {
+        super(new File("dummy"));
+        this.modFile = modFile;
+    }
+
+    public ModFile getModFile() {
+        return this.modFile;
+    }
+
+    @Override
+    public String getName()
+    {
+        return modFile.getFileName();
+    }
+
+    @Override
+    protected InputStream getInputStream(String name) throws IOException
+    {
+        return Files.newInputStream(modFile.getLocator().findPath(modFile, name));
+    }
+
+    @Override
+    protected boolean resourceExists(String name)
+    {
+        return Files.exists(modFile.getLocator().findPath(modFile, name));
+    }
+
+    @Override
+    public Collection<ResourceLocation> getAllResourceLocations(ResourcePackType type, String pathIn, int maxDepth, Predicate<String> filter)
+    {
+        try
+        {
+            Path inputPath = Paths.get(pathIn);
+            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName());
+            return Files.walk(root).
+                    map(path -> root.relativize(path)).
+                    filter(path -> path.getNameCount() > 1 && path.getNameCount() - 1 <= maxDepth). // Make sure the depth is within bounds, ignoring domain
+                    filter(path -> !path.toString().endsWith(".mcmeta")). // Ignore .mcmeta files
+                    filter(path -> path.subpath(1, path.getNameCount()).startsWith(inputPath)). // Make sure the target path is inside this one (again ignoring domain) 
+                    filter(path -> filter.test(path.getFileName().toString())). // Test the file name against the predicate
+                    // Finally we need to form the RL, so use the first name as the domain, and the rest as the path
+                    // It is VERY IMPORTANT that we do not rely on Path.toString as this is inconsistent between operating systems
+                    // Join the path names ourselves to force forward slashes
+                    map(path -> new ResourceLocation(path.getName(0).toString(), Joiner.on('/').join(path.subpath(1,Math.min(maxDepth, path.getNameCount()))))).
+                    collect(Collectors.toList());
+        }
+        catch (IOException e)
+        {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public Set<String> getResourceNamespaces(ResourcePackType type)
+    {
+        try {
+            return Files.walk(modFile.getLocator().findPath(modFile, type.getDirectoryName()),1).map(p->p.getFileName().toString()).collect(Collectors.toSet());
+        }
+        catch (IOException e)
+        {
+            return Collections.emptySet();
+        }
+    }
+
+    public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
+        if (location.getPath().startsWith("lang/")) {
+            return super.getResourceStream(ResourcePackType.CLIENT_RESOURCES, location);
+        } else {
+            return super.getResourceStream(type, location);
+        }
+    }
+
+    public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
+        if (location.getPath().startsWith("lang/")) {
+            return super.resourceExists(ResourcePackType.CLIENT_RESOURCES, location);
+        } else {
+            return super.resourceExists(type, location);
+        }
+    }
+
+
+    @Override
+    public void close() throws IOException
+    {
+
+    }
+}

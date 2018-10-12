@@ -21,15 +21,12 @@ package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftforge.versions.mcp.MCPVersion;
 
-import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class BrandingControl
 {
@@ -41,18 +38,17 @@ public class BrandingControl
         if (brandings == null)
         {
             ImmutableList.Builder<String> brd = ImmutableList.builder();
-            brd.add("Minecraft " + ForgeVersion.mcVersion);
-            brd.add("MCP " + ForgeVersion.mcpVersion);
+            brd.add("Minecraft " + MCPVersion.getMCVersion());
+            brd.add("MCP " + MCPVersion.getMCPVersion());
             brd.add("Forge " + ForgeVersion.getVersion());
             int tModCount = ModList.get().size();
-
-            brd.add(MessageFormat.format(ForgeI18n.getPattern("fml.menu.loadingmods"), tModCount));
+            brd.add(ForgeI18n.parseMessage("fml.menu.loadingmods", tModCount));
             brandings = brd.build();
             brandingsNoMC = brandings.subList(1, brandings.size());
         }
     }
 
-    public static List<String> getBrandings(boolean includeMC, boolean reverse)
+    private static List<String> getBrandings(boolean includeMC, boolean reverse)
     {
         computeBranding();
         if (includeMC) {
@@ -66,13 +62,12 @@ public class BrandingControl
         final List<String> brandings = getBrandings(includeMC, reverse);
         IntStream.range(0, brandings.size()).boxed().forEachOrdered(idx -> lineConsumer.accept(idx, brandings.get(idx)));
     }
-    private static final List<String> defaultClientBranding = Stream.of("fml", "forge").collect(Collectors.toList());
+
     public static String getClientBranding() {
-        return defaultClientBranding.stream().collect(Collectors.joining(","));
+        return "forge";
     }
 
-    public static final List<String> defaultServerBranding = Arrays.asList("fml", "forge");
     public static String getServerBranding() {
-        return defaultServerBranding.stream().collect(Collectors.joining(","));
+        return "forge";
     }
 }

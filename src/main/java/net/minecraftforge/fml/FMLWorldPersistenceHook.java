@@ -21,11 +21,10 @@ package net.minecraftforge.fml;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.collect.Multimap;
-import net.minecraft.nbt.INBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
@@ -65,7 +64,7 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
         {
             final NBTTagCompound mod = new NBTTagCompound();
             mod.setString("ModId", mi.getModId());
-            mod.setString("ModVersion", mi.getVersion().getVersionString());
+            mod.setString("ModVersion", MavenVersionStringHelper.artifactVersionToString(mi.getVersion()));
             modList.add(mod);
         });
         fmlData.setTag("LoadingModList", modList);
@@ -98,9 +97,9 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
                     LOGGER.error(WORLDPERSISTENCE,"This world was saved with mod {} which appears to be missing, things may not work well", modId);
                     continue;
                 }
-                if (!modVersion.equals(container.get().getModInfo().getVersion().getVersionString()))
+                if (!Objects.equals(modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion())))
                 {
-                    LOGGER.info(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, container.get().getModInfo().getVersion().getVersionString());
+                    LOGGER.info(WORLDPERSISTENCE,"This world was saved with mod {} version {} and it is now at version {}, things may not work well", modId, modVersion, MavenVersionStringHelper.artifactVersionToString(container.get().getModInfo().getVersion()));
                 }
             }
         }

@@ -54,9 +54,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Files;
 
-import cpw.mods.modlauncher.Launcher;
-import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 public class LibraryManager

@@ -23,12 +23,13 @@ import net.minecraftforge.eventbus.EventBusErrorMessage;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
+import net.minecraftforge.fml.AutomaticEventSubscriber;
 import net.minecraftforge.fml.LifecycleEventProvider;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingException;
+import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.common.event.ModLifecycleEvent;
-import net.minecraftforge.fml.AutomaticEventSubscriber;
-import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;
 
@@ -62,12 +63,12 @@ public class FMLModContainer extends ModContainer
         try
         {
             modClass = Class.forName(className, true, modClassLoader);
-            LOGGER.error(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
+            LOGGER.debug(LOADING,"Loaded modclass {} with {}", modClass.getName(), modClass.getClassLoader());
         }
         catch (Throwable e)
         {
             LOGGER.error(LOADING, "Failed to load class {}", className, e);
-            throw new RuntimeException(e);
+            throw new ModLoadingException(info, ModLoadingStage.CONSTRUCT, "fml.modloading.failedtoloadmodclass", e);
         }
     }
 
@@ -86,7 +87,6 @@ public class FMLModContainer extends ModContainer
     private void onEventFailed(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
     {
         LOGGER.error(new EventBusErrorMessage(event, i, iEventListeners, throwable));
-        modLoadingError.add(throwable);
     }
 
     private void beforeEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
@@ -96,17 +96,16 @@ public class FMLModContainer extends ModContainer
 
     private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
         final ModLifecycleEvent event = lifecycleEvent.buildModEvent(this);
-        LOGGER.debug(LOADING, "Firing event for modid {} : {} @ {}", this.getModId(), event, System.identityHashCode(event.getClass()));
+        LOGGER.debug(LOADING, "Firing event for modid {} : {}", this.getModId(), event.getClass().getName());
         try
         {
             eventBus.post(event);
-            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), event);
+            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), event.getClass().getName());
         }
         catch (Throwable e)
         {
             LOGGER.error(LOADING,"Caught exception during event {} dispatch for modid {}", event, this.getModId(), e);
-            modLoadingStage = ModLoadingStage.ERROR;
-            modLoadingError.add(e);
+            throw new ModLoadingException(modInfo, lifecycleEvent.fromStage(), "fml.modloading.errorduringevent", e);
         }
     }
 
@@ -120,7 +119,9 @@ public class FMLModContainer extends ModContainer
 
     private void preinitMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
     {
+        LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", getModId());
         AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
+        LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", getModId());
     }
 
     private void constructMod(LifecycleEventProvider.LifecycleEvent event)
@@ -134,8 +135,7 @@ public class FMLModContainer extends ModContainer
         catch (Throwable e)
         {
             LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
-            modLoadingStage = ModLoadingStage.ERROR;
-            modLoadingError.add(e);
+            throw new ModLoadingException(modInfo, event.fromStage(), "fml.modloading.failedtoloadmod", e, modClass);
         }
     }
 

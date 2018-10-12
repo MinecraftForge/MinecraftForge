@@ -22,6 +22,8 @@ package net.minecraftforge.fml;
 import net.minecraftforge.fml.common.event.ModLifecycleEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public enum LifecycleEventProvider
@@ -33,8 +35,8 @@ public enum LifecycleEventProvider
     POSTINIT(()->new LifecycleEvent(ModLoadingStage.POSTINIT)),
     COMPLETE(()->new LifecycleEvent(ModLoadingStage.COMPLETE));
 
-    public void dispatch() {
-        ModList.get().dispatchLifeCycleEvent(this.event.get());
+    public void dispatch(Consumer<List<ModLoadingException>> errorHandler) {
+        ModList.get().dispatchLifeCycleEvent(this.event.get(), errorHandler);
     }
     private final Supplier<? extends LifecycleEvent> event;
 

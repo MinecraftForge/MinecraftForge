@@ -1,0 +1,10 @@
+--- a/net/minecraft/resources/IResourceManager.java
++++ b/net/minecraft/resources/IResourceManager.java
+@@ -10,7 +10,6 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public interface IResourceManager {
+-   @OnlyIn(Dist.CLIENT)
+    Set<String> func_199001_a();
+ 
+    IResource func_199002_a(ResourceLocation p_199002_1_) throws IOException;

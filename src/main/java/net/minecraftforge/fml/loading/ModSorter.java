@@ -20,20 +20,17 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.Java9BackportUtils;
-import net.minecraftforge.fml.common.DuplicateModsFoundException;
 import net.minecraftforge.fml.common.toposort.TopologicalSort;
-import net.minecraftforge.fml.common.versioning.ArtifactVersion;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -56,17 +53,29 @@ public class ModSorter
     public static LoadingModList sort(List<ModFile> mods)
     {
         final ModSorter ms = new ModSorter(mods);
-        ms.buildUniqueList();
-        ms.verifyDependencyVersions();
-        ms.sort();
-        return LoadingModList.of(ms.modFiles, ms.sortedList);
+        EarlyLoadingException earlyLoadingException = null;
+        try {
+            ms.findLanguages();
+            ms.buildUniqueList();
+            ms.verifyDependencyVersions();
+            ms.sort();
+        } catch (EarlyLoadingException ele) {
+            earlyLoadingException = ele;
+            ms.sortedList = Collections.emptyList();
+        }
+        return LoadingModList.of(ms.modFiles, ms.sortedList, earlyLoadingException);
+    }
+
+    private void findLanguages() {
+        modFiles.stream().forEach(mf->mf.identifyLanguage());
     }
 
     private void sort()
     {
         final TopologicalSort.DirectedGraph<Supplier<ModFileInfo>> topoGraph = new TopologicalSort.DirectedGraph<>();
         modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).forEach(mi -> topoGraph.addNode(() -> mi));
-        modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).map(IModInfo::getDependencies).flatMap(Collection::stream).
+        modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).
+                map(IModInfo::getDependencies).flatMap(Collection::stream).
                 forEach(dep -> addDependency(topoGraph, dep));
         final List<Supplier<ModFileInfo>> sorted;
         try
@@ -77,7 +86,7 @@ public class ModSorter
         {
             TopologicalSort.TopoSortException.TopoSortExceptionData<Supplier<ModInfo>> data = e.getData();
             LOGGER.error(LOADING, ()-> data);
-            throw e;
+            throw new EarlyLoadingException("Sorting error", e, data.toExceptionData(mi-> mi.get().getModId()));
         }
         this.sortedList = sorted.stream().map(Supplier::get).map(ModFileInfo::getMods).
                 flatMap(Collection::stream).map(ModInfo.class::cast).collect(Collectors.toList());
@@ -107,7 +116,10 @@ public class ModSorter
         final List<Map.Entry<String, List<ModInfo>>> dupedMods = modIds.entrySet().stream().filter(e -> e.getValue().size() > 1).collect(Collectors.toList());
 
         if (!dupedMods.isEmpty()) {
-            throw new DuplicateModsFoundException(null);
+            final List<EarlyLoadingException.ExceptionData> duplicateModErrors = dupedMods.stream().
+                    map(dm -> new EarlyLoadingException.ExceptionData("fml.modloading.dupedmod", dm.getValue().get(0))).
+                    collect(Collectors.toList());
+            throw new EarlyLoadingException("Duplicate mods found", null,  duplicateModErrors);
         }
 
         modIdNameLookup = modIds.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().get(0)));
@@ -127,7 +139,11 @@ public class ModSorter
         LOGGER.debug(LOADING, "Found {} mandatory mod requirements missing", missingVersions.size());
 
         if (!missingVersions.isEmpty()) {
-            throw new RuntimeException("Missing mods");
+            final List<EarlyLoadingException.ExceptionData> exceptionData = missingVersions.stream().map(mv ->
+                    new EarlyLoadingException.ExceptionData("fml.modloading.missingdependency", mv.getModId(),
+                            mv.getOwner().getModId(), mv.getVersionRange(), modVersions.getOrDefault(mv.getModId(), new DefaultArtifactVersion("null")))).
+                    collect(Collectors.toList());
+            throw new EarlyLoadingException("Missing mods", null, exceptionData);
         }
     }
 

@@ -182,7 +182,7 @@
  
     public String getServerModName() {
 -      return "vanilla";
-+      return net.minecraftforge.common.ForgeHooks.getServerModName();
++      return net.minecraftforge.fml.BrandingControl.getServerBranding();
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {

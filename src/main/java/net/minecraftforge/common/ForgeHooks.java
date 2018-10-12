@@ -1277,12 +1277,6 @@ public class ForgeHooks
         return false;
     }
 
-    public static String getServerModName()
-    {
-        //TODO: Branding Properties: snooperbranding
-        return "forge";
-    }
-
     private static TriConsumer<Block, ToolType, Integer> blockToolSetter;
     //Internal use only Modders, this is specifically hidden from you, as you shouldn't be editing other people's blocks.
     public static void setBlockToolSetter(TriConsumer<Block, ToolType, Integer> setter)

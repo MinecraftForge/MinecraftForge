@@ -25,7 +25,6 @@ import cpw.mods.modlauncher.api.ITransformer;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionSpecBuilder;
-import net.minecraftforge.fml.common.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,8 +35,6 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 import static net.minecraftforge.fml.Logging.CORE;
-
-import cpw.mods.modlauncher.api.ITransformationService.OptionResult;
 
 public class FMLServiceProvider implements ITransformationService
 {

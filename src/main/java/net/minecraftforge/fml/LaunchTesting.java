@@ -20,6 +20,7 @@
 package net.minecraftforge.fml;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.Launcher;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.Filter;
@@ -29,6 +30,7 @@ import org.apache.logging.log4j.core.filter.MarkerFilter;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 public class LaunchTesting
 {
@@ -39,11 +41,13 @@ public class LaunchTesting
         final MarkerFilter launchpluginFilter = MarkerFilter.createFilter("LAUNCHPLUGIN", Filter.Result.DENY, Filter.Result.NEUTRAL);
         final MarkerFilter axformFilter= MarkerFilter.createFilter("AXFORM", Filter.Result.DENY, Filter.Result.NEUTRAL);
         final MarkerFilter eventbusFilter = MarkerFilter.createFilter("EVENTBUS", Filter.Result.DENY, Filter.Result.NEUTRAL);
+        final MarkerFilter distxformFilter = MarkerFilter.createFilter("DISTXFORM", Filter.Result.DENY, Filter.Result.NEUTRAL);
         final LoggerContext logcontext = LoggerContext.getContext(false);
         logcontext.getConfiguration().addFilter(classloadingFilter);
         logcontext.getConfiguration().addFilter(launchpluginFilter);
         logcontext.getConfiguration().addFilter(axformFilter);
         logcontext.getConfiguration().addFilter(eventbusFilter);
+        logcontext.getConfiguration().addFilter(distxformFilter);
         logcontext.updateLoggers();
         File invsorter = new File("/home/cpw/projects/minecraft/inventorysorter/classes");
         if (invsorter.exists()) {
@@ -56,14 +60,20 @@ public class LaunchTesting
             throw new IllegalArgumentException("Environment variable target must be set.");
         }
 
-        hackNatives();
-        Launcher.main("--launchTarget", target,
-                "--gameDir", ".",
-                "--accessToken", "blah",
-                "--version", "FMLDev",
-                "--assetIndex", "1.13",
-                "--assetsDir", assets,
-                "--userProperties", "{}");
+        if (Objects.equals(target,"fmldevclient")) {
+            hackNatives();
+            Launcher.main("--launchTarget", target,
+                    "--gameDir", ".",
+                    "--accessToken", "blah",
+                    "--version", "FMLDev",
+                    "--assetIndex", "1.13",
+                    "--assetsDir", assets,
+                    "--userProperties", "{}");
+        } else if (Objects.equals(target, "fmldevserver")) {
+            String[] launchargs = ObjectArrays.concat(new String[] {"--launchTarget", target,
+                    "--gameDir", "."}, args, String.class);
+            Launcher.main(launchargs);
+        }
         Thread.sleep(10000);
     }
 

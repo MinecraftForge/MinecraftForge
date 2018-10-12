@@ -73,6 +73,10 @@ public class ModFile
         return locator.findPath(this, className);
     }
 
+    public void identifyLanguage() {
+        this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this, this.modFileInfo.getModLoader(), this.modFileInfo.getModLoaderVersion());
+    }
+
     public enum Type {
         MOD, LIBRARY, LANGPROVIDER
     }
@@ -124,7 +128,6 @@ public class ModFile
         this.coreMods = ModFileParser.getCoreMods(this);
         this.coreMods.forEach(mi-> LOGGER.debug(LOADING,"Found coremod {}", mi.getPath()));
         this.accessTransformer = locator.findPath(this, "META-INF", "accesstransformer.cfg");
-        this.loader = FMLLoader.getLanguageLoadingProvider().findLanguage(this.modFileInfo.getModLoader(), this.modFileInfo.getModLoaderVersion());
         return true;
     }
 

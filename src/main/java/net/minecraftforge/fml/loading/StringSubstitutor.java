@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.loading;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;

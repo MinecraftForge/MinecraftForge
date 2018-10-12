@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.language;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraftforge.fml.common.versioning.VersionRange;
+import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.net.URL;
 import java.util.List;
