@@ -1,0 +1,12 @@
+--- a/net/minecraft/util/math/RayTraceResult.java
++++ b/net/minecraft/util/math/RayTraceResult.java
+@@ -10,6 +10,9 @@
+    public Vec3d field_72307_f;
+    public Entity field_72308_g;
+ 
++   /** Used to add extra hit info */
++   public Object hitInfo = null;
++
+    public RayTraceResult(Vec3d p_i47094_1_, EnumFacing p_i47094_2_, BlockPos p_i47094_3_) {
+       this(RayTraceResult.Type.BLOCK, p_i47094_1_, p_i47094_2_, p_i47094_3_);
+    }
