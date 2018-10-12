@@ -103,7 +103,6 @@ project(':forge') {
         accessTransformer = file("$rootDir/src/main/resources/forge_at.cfg")
         exc = file("$rootDir/src/main/resources/forge.exc")
         srgPatches = true
-        srgUniversal = true
         clientRun {
             main = 'net.minecraftforge.fml.LaunchTesting'
             environment = [
@@ -621,7 +620,8 @@ project(':forge') {
     universalJar.finalizedBy(signUniversal)
     
     task downloadInstaller(type: DownloadMavenArtifact) {
-        artifact = 'net.minecraftforge:installer:2.+:shrunk'
+        artifact = 'net.minecraftforge:installer:2.0.+:shrunk'
+        changing = true
     }
     
     task installerJar(type: Zip, dependsOn: [downloadInstaller, signUniversal, installerJson, launcherJson, genClientBinPatches, genServerBinPatches]) {
@@ -690,6 +690,13 @@ project(':forge') {
         }
     }
     
+    userdevConfig {
+        def artifacts = getArtifacts(project, project.configurations.installer, true)
+        artifacts.each { key, lib ->
+            addLibrary(lib.name)
+        }
+    }
+    
     license {
         header = file("$rootDir/LICENSE-header.txt")
 
@@ -709,7 +716,7 @@ project(':forge') {
                 files = files("$rootDir/src/test/java")
             }
         }
-    }    
+    }
 
     publishing {
         publications {
@@ -720,6 +727,7 @@ project(':forge') {
                 //TODO: installer-win
                 artifact makeMdk
                 artifact userdevJar
+                artifact sourcesJar
 
                 pom {
                     name = 'forge'

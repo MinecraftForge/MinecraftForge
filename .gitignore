@@ -15,6 +15,8 @@
 #gradle
 /build
 /.gradle
+/mdk/.gradle
+/mdk/build
 
 #occupational hazards
 /projects/
