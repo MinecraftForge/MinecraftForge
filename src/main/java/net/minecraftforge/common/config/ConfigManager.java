@@ -39,6 +39,7 @@ import net.minecraftforge.common.config.Config.Name;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderException;
+import net.minecraftforge.fml.common.LoaderState;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
 import net.minecraftforge.fml.common.discovery.asm.ModAnnotation.EnumHolder;
@@ -170,17 +171,15 @@ public class ConfigManager
 
                 File file = new File(configDir, name + ".cfg");
 
-                boolean loading = false;
                 Configuration cfg = CONFIGS.get(file.getAbsolutePath());
                 if (cfg == null)
                 {
                     cfg = new Configuration(file);
                     cfg.load();
                     CONFIGS.put(file.getAbsolutePath(), cfg);
-                    loading = true;
                 }
 
-                sync(cfg, cls, modid, category, loading, null);
+                sync(cfg, cls, modid, category, !LoaderState.AVAILABLE.equals(Loader.instance().getLoaderState()), null);
 
                 cfg.save();
 
