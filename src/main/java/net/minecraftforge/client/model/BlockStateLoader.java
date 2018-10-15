@@ -93,7 +93,7 @@ public class BlockStateLoader
                             boolean uvLock = var.getUvLock().orElse(false);
                             int weight = var.getWeight().orElse(1);
 
-                            if (var.getModel() != null && var.getSubmodels().isEmpty() && var.getTextures().isEmpty() && var.getCustomData().isEmpty() && var.getState().orElse(ModelRotation.X0_Y0) instanceof ModelRotation)
+                            if (var.isVanillaCompatible())
                                 mcVars.add(new Variant(var.getModel(), (ModelRotation)var.getState().orElse(ModelRotation.X0_Y0), uvLock, weight));
                             else
                                 mcVars.add(new ForgeVariant(location, var.getModel(), var.getState().orElse(TRSRTransformation.identity()), uvLock, var.getSmooth(), var.getGui3d(), weight, var.getTextures(), var.getOnlyPartsVariant(), var.getCustomData()));
