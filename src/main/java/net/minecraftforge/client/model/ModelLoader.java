@@ -375,7 +375,7 @@ public final class ModelLoader extends ModelBakery
         public Collection<ResourceLocation> getTextures()
         {
             // setting parent here to make textures resolve properly
-            if(model.getParentLocation() != null)
+            if(model.getParentLocation() != null && model.parent == null)
             {
                 if(model.getParentLocation().getResourcePath().equals("builtin/generated"))
                 {
@@ -384,6 +384,10 @@ public final class ModelLoader extends ModelBakery
                 else
                 {
                     IModel parent = ModelLoaderRegistry.getModelOrLogError(model.getParentLocation(), "Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model);
+                    if (parent instanceof FancyMissingModel)
+                    {
+                        parent = getMissingModel();
+                    }
                     if(parent instanceof VanillaModelWrapper)
                     {
                         model.parent = ((VanillaModelWrapper) parent).model;
