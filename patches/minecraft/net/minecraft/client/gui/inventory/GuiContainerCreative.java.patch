@@ -67,7 +67,7 @@
          if (this.field_147062_A.func_146179_b().isEmpty())
          {
              for (Item item : Item.field_150901_e)
-@@ -366,7 +403,7 @@
+@@ -366,10 +403,10 @@
      {
          CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
@@ -75,7 +75,11 @@
 +        if (creativetabs != null && creativetabs.func_78019_g())
          {
              GlStateManager.func_179084_k();
-             this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c()), 8, 6, 4210752);
+-            this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c()), 8, 6, 4210752);
++            this.field_146289_q.func_78276_b(creativetabs.getTabDisplayName(), 8, 6, 4210752);
+         }
+     }
+ 
 @@ -401,7 +438,7 @@
  
              for (CreativeTabs creativetabs : CreativeTabs.field_78032_a)
@@ -160,6 +164,15 @@
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          GlStateManager.func_179140_f();
          this.func_191948_b(p_73863_1_, p_73863_2_);
+@@ -647,7 +712,7 @@
+ 
+             if (creativetabs != null)
+             {
+-                list.add(1, "" + TextFormatting.BOLD + TextFormatting.BLUE + I18n.func_135052_a(creativetabs.func_78024_c()));
++                list.add(1, "" + TextFormatting.BOLD + TextFormatting.BLUE + creativetabs.getTabDisplayName());
+             }
+ 
+             for (int i = 0; i < list.size(); ++i)
 @@ -662,7 +727,10 @@
                  }
              }
@@ -241,6 +254,15 @@
          int i = p_147049_1_.func_78020_k();
          int j = 28 * i;
          int k = 0;
+@@ -761,7 +864,7 @@
+ 
+         if (this.func_146978_c(j + 3, k + 3, 23, 27, p_147052_2_, p_147052_3_))
+         {
+-            this.func_146279_a(I18n.func_135052_a(p_147052_1_.func_78024_c()), p_147052_2_, p_147052_3_);
++            this.func_146279_a(p_147052_1_.getTabDisplayName(), p_147052_2_, p_147052_3_);
+             return true;
+         }
+         else
 @@ -806,6 +909,8 @@
          }
  
