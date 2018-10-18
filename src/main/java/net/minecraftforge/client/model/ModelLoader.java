@@ -383,14 +383,10 @@ public final class ModelLoader extends ModelBakery
                 }
                 else
                 {
-                    IModel parent = ModelLoaderRegistry.getModelOrLogError(model.getParentLocation(), "Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model);
-                    if (parent instanceof FancyMissingModel)
+                    Optional<ModelBlock> vanillaParent = ModelLoaderRegistry.getModelOrLogError(model.getParentLocation(), "Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model).asVanillaModel();
+                    if(vanillaParent.isPresent())
                     {
-                        parent = getMissingModel();
-                    }
-                    if(parent instanceof VanillaModelWrapper)
-                    {
-                        model.parent = ((VanillaModelWrapper) parent).model;
+                        model.parent = vanillaParent.get();
                     }
                     else
                     {
@@ -624,6 +620,12 @@ public final class ModelLoader extends ModelBakery
                 return this;
             }
             return new VanillaModelWrapper(location, model, value, animation);
+        }
+
+        @Override
+        public Optional<ModelBlock> asVanillaModel()
+        {
+            return Optional.of(model);
         }
     }
 
