@@ -388,6 +388,11 @@ public class ForgeBlockStateV1 extends Marker
             return output;
         }
 
+        boolean isVanillaCompatible()
+        {
+            return model != null && submodels.isEmpty() && textures.isEmpty() && customData.isEmpty() && !smooth.isPresent() && !gui3d.isPresent() && state.orElse(ModelRotation.X0_Y0) instanceof ModelRotation;
+        }
+
         protected SubModel asGenericSubModel()
         {
             return new SubModel(state.orElse(TRSRTransformation.identity()), uvLock.orElse(false), smooth.orElse(true), gui3d.orElse(true), getTextures(), model, getCustomData());
