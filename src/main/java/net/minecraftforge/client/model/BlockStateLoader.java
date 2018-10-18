@@ -175,8 +175,8 @@ public class BlockStateLoader
         {
             base = base.process(customData);
             base = base.retexture(textureMap);
-            base = smooth.isPresent() ? base.smoothLighting(smooth.get()) : base;
-            base = gui3d.isPresent() ? base.gui3d(gui3d.get()) : base;
+            base = smooth.map(base::smoothLighting).orElse(base);
+            base = gui3d.map(base::gui3d).orElse(base);
             base = base.uvlock(uvlock);
             return base;
         }
