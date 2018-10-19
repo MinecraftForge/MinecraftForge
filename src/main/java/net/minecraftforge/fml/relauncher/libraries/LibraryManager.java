@@ -132,14 +132,19 @@ public class LibraryManager
             if (apache.isFile())
                 apache = apache.getParentFile(); //Get to a directory, this *should* always be the case...
             apache = apache.getParentFile(); //Skip the version folder. In case we ever update the version, I don't want to edit this code again.
+            String comp = apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace('\\', '/');
+            if (!comp.endsWith("/"))
+                comp += '/';
 
-            if (!apache.getAbsolutePath().toLowerCase(Locale.ENGLISH).replace(File.separatorChar, '/').endsWith("/org/apache/maven/maven/"))
+            if (!comp.endsWith("/org/apache/maven/maven-artifact/"))
             {
-                FMLLog.log.error("Apache Maven library folder was not in the format expected: {}. Using default libraries directory.", new File(source.getLocation().toURI()));
+                FMLLog.log.error("Apache Maven library folder was not in the format expected. Using default libraries directory.");
+                FMLLog.log.error("Full: {}", new File(source.getLocation().toURI()));
+                FMLLog.log.error("Trimmed: {}", comp);
                 return new File(minecraftHome, "libraries");
             }
-            //     maven  /maven          /apache         /org           /libraries
-            return apache.getParentFile().getParentFile().getParentFile().getParentFile();
+            //     maven-artifact  /maven          /apache         /org            /libraries
+            return apache          .getParentFile().getParentFile().getParentFile().getParentFile();
         }
         catch (URISyntaxException e)
         {
@@ -163,7 +168,6 @@ public class LibraryManager
                 Artifact artifact = ret.getLeft();
                 Repository repo = modlist.getRepository() == null ? libraries_dir : modlist.getRepository();
                 File moved = repo.archive(artifact, file, ret.getRight());
-                modlist.add(artifact);
                 processed.add(moved);
             }
         }
@@ -213,9 +217,9 @@ public class LibraryManager
         if (jar.getManifest() == null)
             return null;
 
-        JarEntry manfest_entry = jar.getJarEntry(JarFile.MANIFEST_NAME);
-        if (manfest_entry == null)
-            manfest_entry = jar.stream().filter(e -> JarFile.MANIFEST_NAME.equals(e.getName().toUpperCase(Locale.ENGLISH))).findFirst().get(); //We know that getManifest returned non-null so we know there is *some* entry that matches the manifest file. So we dont need to empty check.
+        JarEntry manifest_entry = jar.getJarEntry(JarFile.MANIFEST_NAME);
+        if (manifest_entry == null)
+            manifest_entry = jar.stream().filter(e -> JarFile.MANIFEST_NAME.equals(e.getName().toUpperCase(Locale.ENGLISH))).findFirst().get(); //We know that getManifest returned non-null so we know there is *some* entry that matches the manifest file. So we dont need to empty check.
 
         attrs = jar.getManifest().getMainAttributes();
 
@@ -318,14 +322,20 @@ public class LibraryManager
                 {
                     try
                     {
-                        String timestamp = meta.getValue(TIMESTAMP);
-                        if (timestamp != null)
-                            timestamp = SnapshotJson.TIMESTAMP.format(new Date(Long.parseLong(timestamp)));
-
-                        Artifact artifact = new Artifact(modlist.getRepository(), meta.getValue(MAVEN_ARTIFACT), timestamp);
+                        Artifact artifact = readArtifact(modlist.getRepository(), meta);
                         File target = artifact.getFile();
                         if (target.exists())
+                        {
                             FMLLog.log.debug("Found existing ContainedDep {}({}) from {} extracted to {}, skipping extraction", dep, artifact.toString(), target.getCanonicalPath(), jar.getName());
+                            if (!ENABLE_AUTO_MOD_MOVEMENT)
+                            {
+                                Pair<?, ?> child = extractPacked(target, modlist, modDirs); //If we're not building a real list we have to re-build the dep list every run. So search down.
+                                if (child == null && metaEntry != null) //External meta with no internal name... If there is a internal name, we trust that that name is the correct one.
+                                {
+                                    modlist.add(artifact);
+                                }
+                            }
+                        }
                         else
                         {
                             FMLLog.log.debug("Extracting ContainedDep {}({}) from {} to {}", dep, artifact.toString(), jar.getName(), target.getCanonicalPath());
@@ -352,7 +362,11 @@ public class LibraryManager
                                 File meta_target = new File(target.getAbsolutePath() + ".meta");
                                 Files.write(manifest_data, meta_target);
                             }
-                            extractPacked(target, modlist, modDirs);
+                            Pair<?, ?> child = extractPacked(target, modlist, modDirs);
+                            if (child == null && metaEntry != null) //External meta with no internal name... If there is a internal name, we trust that that name is the correct one.
+                            {
+                                modlist.add(artifact);
+                            }
                         }
                     }
                     catch (NumberFormatException nfe)
@@ -367,7 +381,22 @@ public class LibraryManager
             }
         }
 
-        return attrs.containsKey(MAVEN_ARTIFACT) ? Pair.of(new Artifact(modlist.getRepository(), attrs.getValue(MAVEN_ARTIFACT), attrs.getValue(TIMESTAMP)), readAll(jar.getInputStream(manfest_entry))) : null;
+        if (attrs.containsKey(MAVEN_ARTIFACT))
+        {
+            Artifact artifact = readArtifact(modlist.getRepository(), attrs);
+            modlist.add(artifact);
+            return Pair.of(artifact, readAll(jar.getInputStream(manifest_entry)));
+        }
+        return null;
+    }
+
+    private static Artifact readArtifact(Repository repo, Attributes meta)
+    {
+        String timestamp = meta.getValue(TIMESTAMP);
+        if (timestamp != null)
+            timestamp = SnapshotJson.TIMESTAMP.format(new Date(Long.parseLong(timestamp)));
+
+        return new Artifact(repo, meta.getValue(MAVEN_ARTIFACT), timestamp);
     }
 
     private static byte[] readAll(InputStream in) throws IOException

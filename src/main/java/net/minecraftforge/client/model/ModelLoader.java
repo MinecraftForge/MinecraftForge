@@ -117,6 +117,8 @@ import javax.annotation.Nullable;
 public final class ModelLoader extends ModelBakery
 {
     private final Map<ModelResourceLocation, IModel> stateModels = Maps.newHashMap();
+    private final Map<ModelResourceLocation, ModelBlockDefinition> multipartDefinitions = Maps.newHashMap();
+    private final Map<ModelBlockDefinition, IModel> multipartModels = Maps.newHashMap();
     // TODO: nothing adds to missingVariants, remove it?
     private final Set<ModelResourceLocation> missingVariants = Sets.newHashSet();
     private final Map<ResourceLocation, Exception> loadingExceptions = Maps.newHashMap();
@@ -247,6 +249,7 @@ public final class ModelLoader extends ModelBakery
     {
         for (ModelResourceLocation location : locations)
         {
+            multipartDefinitions.put(location, definition);
             registerVariant(null, location);
         }
     }
@@ -1173,16 +1176,23 @@ public final class ModelLoader extends ModelBakery
         {
             ModelResourceLocation variant = (ModelResourceLocation) modelLocation;
             ModelBlockDefinition definition = loader.getModelBlockDefinition(variant);
+
             try
             {
                 VariantList variants = definition.getVariant(variant.getVariant());
                 return new WeightedRandomModel(variant, variants);
             }
-            catch(MissingVariantException e)
+            catch (MissingVariantException e)
             {
-                if(definition.hasMultipartData())
+                if (definition.equals(loader.multipartDefinitions.get(variant)))
                 {
-                    return new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                    IModel model = loader.multipartModels.get(definition);
+                    if (model == null)
+                    {
+                        model = new MultipartModel(new ResourceLocation(variant.getResourceDomain(), variant.getResourcePath()), definition.getMultipartData());
+                        loader.multipartModels.put(definition, model);
+                    }
+                    return model;
                 }
                 throw e;
             }
