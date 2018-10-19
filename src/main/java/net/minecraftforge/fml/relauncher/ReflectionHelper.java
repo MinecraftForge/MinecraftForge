@@ -42,8 +42,9 @@ import java.util.StringJoiner;
  * when dealing with obfuscated fields or methods.
  *
  * @author cpw
- *
+ * @deprecated not for external use
  */
+@Deprecated // TODO: remove/relocate/replace
 public class ReflectionHelper
 {
     public static class UnableToFindMethodException extends RuntimeException
