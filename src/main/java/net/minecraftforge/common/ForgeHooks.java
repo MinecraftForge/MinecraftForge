@@ -329,7 +329,6 @@ public class ForgeHooks
                 return new ItemStack(Items.WHEAT_SEEDS, 1 + rand.nextInt(fortune * 2 + 1));
             }
         });
-        initTools();
     }
 
     /**
