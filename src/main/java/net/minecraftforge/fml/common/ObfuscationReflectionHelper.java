@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.common;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -177,5 +178,19 @@ public class ObfuscationReflectionHelper
     {
         String mappedName = remapMethodName(clazz, srgName, returnType, parameterTypes);
         return ReflectionHelper.findMethod(clazz, mappedName, null, parameterTypes);
+    }
+
+    /**
+     * Finds a constructor in the specified class that has matching parameter types.
+     *
+     * @param klass The class to find the constructor in
+     * @param parameterTypes The parameter types of the constructor.
+     * @param <T> The type
+     *
+     * @return The constructor
+     */
+    public static <T> Constructor<T> findConstructor(Class<T> klass, Class<?>... parameterTypes)
+    {
+        return ReflectionHelper.findConstructor(klass, parameterTypes);
     }
 }
