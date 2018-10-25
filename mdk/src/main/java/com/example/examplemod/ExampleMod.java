@@ -19,7 +19,7 @@ public class ExampleMod
     @EventHandler
     public void preInit(FMLPreInitializationEvent event)
     {
-        logger = event.getModLog();
+        setLogger(event.getModLog());
     }
 
     @EventHandler
@@ -27,5 +27,9 @@ public class ExampleMod
     {
         // some example code
         logger.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
+    }
+
+    private static synchronized void setLogger(Logger logger) {
+        ExampleMod.logger = logger;
     }
 }
