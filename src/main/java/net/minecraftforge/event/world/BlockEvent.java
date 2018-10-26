@@ -203,6 +203,7 @@ public class BlockEvent extends Event
      * If a Block Place event is cancelled, the block will not be placed.
      */
     @Cancelable
+    @Deprecated // Remove in 1.13
     public static class PlaceEvent extends EntityPlaceEvent
     {
         private final EntityPlayer player;
