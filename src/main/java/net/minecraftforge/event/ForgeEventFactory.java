@@ -121,8 +121,8 @@ import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.BlockEvent.BaseMultiPlaceEvent;
-import net.minecraftforge.event.world.BlockEvent.BasePlaceEvent;
+import net.minecraftforge.event.world.BlockEvent.EntityMultiPlaceEvent;
+import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
@@ -141,11 +141,11 @@ import javax.annotation.Nullable;
 public class ForgeEventFactory
 {
 
-    public static BaseMultiPlaceEvent onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, EnumFacing direction)
+    public static EntityMultiPlaceEvent onMultiBlockPlace(@Nullable Entity entity, List<BlockSnapshot> blockSnapshots, EnumFacing direction)
     {
         BlockSnapshot snap = blockSnapshots.get(0);
         IBlockState placedAgainst = snap.getWorld().getBlockState(snap.getPos().offset(direction.getOpposite()));
-        BaseMultiPlaceEvent event = new BaseMultiPlaceEvent(blockSnapshots, placedAgainst, entity);
+        EntityMultiPlaceEvent event = new EntityMultiPlaceEvent(blockSnapshots, placedAgainst, entity);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }
@@ -159,10 +159,10 @@ public class ForgeEventFactory
         return event;
     }
 
-    public static BasePlaceEvent onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull EnumFacing direction)
+    public static EntityPlaceEvent onBlockPlace(@Nullable Entity entity, @Nonnull BlockSnapshot blockSnapshot, @Nonnull EnumFacing direction)
     {
         IBlockState placedAgainst = blockSnapshot.getWorld().getBlockState(blockSnapshot.getPos().offset(direction.getOpposite()));
-        BasePlaceEvent event = new BasePlaceEvent(blockSnapshot, placedAgainst, entity);
+        EntityPlaceEvent event = new BlockEvent.EntityPlaceEvent(blockSnapshot, placedAgainst, entity);
         MinecraftForge.EVENT_BUS.post(event);
         return event;
     }

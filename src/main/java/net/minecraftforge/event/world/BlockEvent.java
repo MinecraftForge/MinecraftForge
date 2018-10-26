@@ -22,14 +22,10 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockPortal;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
@@ -173,14 +169,14 @@ public class BlockEvent extends Event
      * If a Block Place event is cancelled, the block will not be placed.
      */
     @Cancelable
-    public static class BasePlaceEvent extends BlockEvent
+    public static class EntityPlaceEvent extends BlockEvent
     {
         private final Entity entity;
         private final BlockSnapshot blockSnapshot;
         private final IBlockState placedBlock;
         private final IBlockState placedAgainst;
 
-        public BasePlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull IBlockState placedAgainst, @Nullable Entity entity)
+        public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull IBlockState placedAgainst, @Nullable Entity entity)
         {
             super(blockSnapshot.getWorld(), blockSnapshot.getPos(), !(entity instanceof EntityPlayer) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
             this.entity = entity;
@@ -190,7 +186,7 @@ public class BlockEvent extends Event
 
             if (DEBUG)
             {
-                System.out.printf("Created BasePlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][Entity: %s ]\n", getPlacedBlock(), placedAgainst, entity);
+                System.out.printf("Created EntityPlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][Entity: %s ]\n", getPlacedBlock(), placedAgainst, entity);
             }
         }
 
@@ -207,7 +203,7 @@ public class BlockEvent extends Event
      * If a Block Place event is cancelled, the block will not be placed.
      */
     @Cancelable
-    public static class PlaceEvent extends BasePlaceEvent
+    public static class PlaceEvent extends EntityPlaceEvent
     {
         private final EntityPlayer player;
         private final EnumHand hand;
@@ -237,16 +233,16 @@ public class BlockEvent extends Event
      * block.
      */
     @Cancelable
-    public static class BaseMultiPlaceEvent extends BasePlaceEvent
+    public static class EntityMultiPlaceEvent extends EntityPlaceEvent
     {
         private final List<BlockSnapshot> blockSnapshots;
 
-        public BaseMultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull IBlockState placedAgainst, @Nullable Entity entity) {
+        public EntityMultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull IBlockState placedAgainst, @Nullable Entity entity) {
             super(blockSnapshots.get(0), placedAgainst, entity);
             this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
             if (DEBUG)
             {
-                System.out.printf("Created BaseMultiPlaceEvent - [PlacedAgainst: %s ][Entity: %s ]\n", placedAgainst, entity);
+                System.out.printf("Created EntityMultiPlaceEvent - [PlacedAgainst: %s ][Entity: %s ]\n", placedAgainst, entity);
             }
         }
 

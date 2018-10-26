@@ -20,7 +20,6 @@
 package net.minecraftforge.debug.block;
 
 import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.init.Blocks;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -33,7 +32,7 @@ public class BasePlaceEventTest
     static final boolean ENABLED = true;
 
     @SubscribeEvent
-    public static void onBlockPlaced(BlockEvent.BasePlaceEvent event)
+    public static void onBlockPlaced(BlockEvent.EntityPlaceEvent event)
     {
         if (!ENABLED)
         {
