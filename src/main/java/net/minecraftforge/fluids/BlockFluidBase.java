@@ -714,8 +714,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     private int getFlowDecay(IBlockAccess world, BlockPos pos)
     {
+        return quantaPerBlock - getEffectiveQuanta(world, pos);
+    }
+
+    private int getEffectiveQuanta(IBlockAccess world, BlockPos pos)
+    {
         int quantaValue = getQuantaValue(world, pos);
-        return quantaValue > 0 && hasVerticalFlow(world, pos) ? 0 : quantaPerBlock - quantaValue;
+        return quantaValue > 0 && quantaValue < quantaPerBlock && hasVerticalFlow(world, pos) ? quantaPerBlock : quantaValue;
     }
 
     private boolean hasVerticalFlow(IBlockAccess world, BlockPos pos)
@@ -751,7 +756,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public float getFilledPercentage(IBlockAccess world, BlockPos pos)
     {
-        int quantaRemaining = getQuantaValue(world, pos);
+        int quantaRemaining = getEffectiveQuanta(world, pos);
         float remaining = (quantaRemaining + 1f) / (quantaPerBlockFloat + 1f);
         return remaining * (density > 0 ? 1 : -1);
     }
