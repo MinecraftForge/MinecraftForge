@@ -399,7 +399,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public int getPackedLightmapCoords(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         int lightThis     = world.getCombinedLight(pos, 0);
-        int lightUp       = world.getCombinedLight(pos.up(), 0);
+        int lightUp       = world.getCombinedLight(pos.down(densityDir), 0);
         int lightThisBase = lightThis & 255;
         int lightUpBase   = lightUp & 255;
         int lightThisExt  = lightThis >> 16 & 255;
