@@ -375,23 +375,17 @@ public final class ModelLoader extends ModelBakery
         public Collection<ResourceLocation> getTextures()
         {
             // setting parent here to make textures resolve properly
-            if(model.getParentLocation() != null)
+            ResourceLocation parentLocation = model.getParentLocation();
+            if(parentLocation != null && model.parent == null)
             {
-                if(model.getParentLocation().getPath().equals("builtin/generated"))
+                if(parentLocation.getPath().equals("builtin/generated"))
                 {
                     model.parent = MODEL_GENERATED;
                 }
                 else
                 {
-                    IModel parent = ModelLoaderRegistry.getModelOrLogError(model.getParentLocation(), "Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model);
-                    if(parent instanceof VanillaModelWrapper)
-                    {
-                        model.parent = ((VanillaModelWrapper) parent).model;
-                    }
-                    else
-                    {
-                        throw new IllegalStateException("vanilla model '" + model + "' can't have non-vanilla parent");
-                    }
+                    model.parent = ModelLoaderRegistry.getModelOrLogError(parentLocation, "Could not load vanilla model parent '" + parentLocation + "' for '" + model + "'")
+                            .asVanillaModel().orElseThrow(() -> new IllegalStateException("vanilla model '" + model + "' can't have non-vanilla parent"));
                 }
             }
 
@@ -620,6 +614,12 @@ public final class ModelLoader extends ModelBakery
                 return this;
             }
             return new VanillaModelWrapper(location, model, value, animation);
+        }
+
+        @Override
+        public Optional<ModelBlock> asVanillaModel()
+        {
+            return Optional.of(model);
         }
     }
 

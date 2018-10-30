@@ -740,7 +740,7 @@ public class FluidUtil
             }
         }
 
-        if (FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.getBucketFluids().contains(fluid))
+        if (FluidRegistry.isUniversalBucketEnabled() && FluidRegistry.hasBucket(fluid))
         {
             UniversalBucket bucket = ForgeModContainer.getInstance().universalBucket;
             ItemStack filledBucket = new ItemStack(bucket);
