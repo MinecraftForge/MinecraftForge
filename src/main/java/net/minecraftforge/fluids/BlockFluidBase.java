@@ -717,13 +717,13 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return quantaPerBlock - getEffectiveQuanta(world, pos);
     }
 
-    private int getEffectiveQuanta(IBlockAccess world, BlockPos pos)
+    final int getEffectiveQuanta(IBlockAccess world, BlockPos pos)
     {
         int quantaValue = getQuantaValue(world, pos);
         return quantaValue > 0 && quantaValue < quantaPerBlock && hasVerticalFlow(world, pos) ? quantaPerBlock : quantaValue;
     }
 
-    private boolean hasVerticalFlow(IBlockAccess world, BlockPos pos)
+    final boolean hasVerticalFlow(IBlockAccess world, BlockPos pos)
     {
         return world.getBlockState(pos.down(densityDir)).getBlock() == this;
     }
