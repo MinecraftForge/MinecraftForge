@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerHeldItemWitch.java
++++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerHeldItemWitch.java
+@@ -53,7 +53,7 @@
+                 float f1 = 0.375F;
+                 GlStateManager.func_179152_a(0.375F, -0.375F, 0.375F);
+             }
+-            else if (item == Items.field_151031_f)
++            else if (item instanceof net.minecraft.item.ItemBow)
+             {
+                 GlStateManager.func_179109_b(0.0F, 0.125F, -0.125F);
+                 GlStateManager.func_179114_b(-45.0F, 0.0F, 1.0F, 0.0F);
