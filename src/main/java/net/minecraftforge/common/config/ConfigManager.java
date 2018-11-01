@@ -179,7 +179,7 @@ public class ConfigManager
                     CONFIGS.put(file.getAbsolutePath(), cfg);
                 }
 
-                sync(cfg, cls, modid, category, !LoaderState.AVAILABLE.equals(Loader.instance().getLoaderState()), null);
+                sync(cfg, cls, modid, category, !Loader.instance().hasReachedState(LoaderState.AVAILABLE), null);
 
                 cfg.save();
 
