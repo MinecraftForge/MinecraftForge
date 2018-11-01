@@ -216,7 +216,7 @@ public class FMLCommonHandler
      */
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
-        FMLLog.log.error("Something raised an exception. The message was '{}'. 'stopGame' is {}", stopGame, exception);
+        FMLLog.log.error("Something raised an exception. The message was '{}'. 'stopGame' is {}", message, stopGame, exception);
         if (stopGame)
         {
             getSidedDelegate().haltGame(message,exception);
