@@ -37,7 +37,31 @@
              {
                  this.field_147369_b.field_71134_c.func_187251_a(this.field_147369_b, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
              }
-@@ -933,7 +940,9 @@
+@@ -789,12 +796,13 @@
+                 {
+                     this.field_147369_b.func_70634_a(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v);
+                 }
+-                else
++                else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this.field_147369_b, entity.field_71093_bK))
+                 {
++                    int prevDimension = this.field_147369_b.field_71093_bK;
+                     WorldServer worldserver1 = this.field_147369_b.func_71121_q();
+                     WorldServer worldserver2 = (WorldServer)entity.field_70170_p;
+                     this.field_147369_b.field_71093_bK = entity.field_71093_bK;
+-                    this.func_147359_a(new SPacketRespawn(this.field_147369_b.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), this.field_147369_b.field_71134_c.func_73081_b()));
++                    this.func_147359_a(new SPacketRespawn(this.field_147369_b.field_71093_bK, worldserver2.func_175659_aa(), worldserver2.func_72912_H().func_76067_t(), this.field_147369_b.field_71134_c.func_73081_b()));
+                     this.field_147367_d.func_184103_al().func_187243_f(this.field_147369_b);
+                     worldserver1.func_72973_f(this.field_147369_b);
+                     this.field_147369_b.field_70128_L = false;
+@@ -813,6 +821,7 @@
+                     this.field_147369_b.field_71134_c.func_73080_a(worldserver2);
+                     this.field_147367_d.func_184103_al().func_72354_b(this.field_147369_b, worldserver2);
+                     this.field_147367_d.func_184103_al().func_72385_f(this.field_147369_b);
++                    net.minecraftforge.fml.common.FMLCommonHandler.instance().firePlayerChangedDimensionEvent(this.field_147369_b, prevDimension, this.field_147369_b.field_71093_bK);
+                 }
+             }
+         }
+@@ -933,7 +942,9 @@
              }
              else
              {
@@ -48,7 +72,7 @@
                  this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
              }
  
-@@ -1066,6 +1075,7 @@
+@@ -1066,6 +1077,7 @@
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT)
                  {
                      EnumHand enumhand1 = p_147340_1_.func_186994_b();
@@ -56,7 +80,7 @@
                      entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), enumhand1);
                  }
                  else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK)
-@@ -1106,7 +1116,7 @@
+@@ -1106,7 +1118,7 @@
                          return;
                      }
  
@@ -65,7 +89,7 @@
  
                      if (this.field_147367_d.func_71199_h())
                      {
-@@ -1149,7 +1159,7 @@
+@@ -1149,7 +1161,7 @@
              {
                  ItemStack itemstack2 = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
  
