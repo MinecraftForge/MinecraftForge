@@ -441,7 +441,7 @@
 +
 +    protected void copyForgeCapabilities(Entity other)
 +    {
-+        this.capabilities = other.capabilities;
++        this.capabilities.deserializeNBT(other.capabilities.serializeNBT());
 +    }
 +
 +    public void deserializeNBT(NBTTagCompound nbt)
