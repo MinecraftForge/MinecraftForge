@@ -44,6 +44,7 @@ public class SliderConfigElementTest {
         public static int integer = 0;
 
         @Config.SlidingOption
+        @Config.RangeDouble(min = 15.6f,max = 344.78f)
         public static float f = 60.7f;
 
         //this won't do anything
