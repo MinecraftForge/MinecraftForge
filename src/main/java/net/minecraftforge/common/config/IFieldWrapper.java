@@ -61,7 +61,7 @@ public interface IFieldWrapper
      */
     boolean handlesKey(String key);
 
-    /**
+    /**TODO remove both methods in future
      * @param cfg The configuration object holding the properties
      * @param desc The properties description
      * @param langKey The languageKey of the property, used in GUI
@@ -69,9 +69,13 @@ public interface IFieldWrapper
      * @param reqWorldRestart True, if the world needs to be reloaded after changes to this property
      */
     default void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart) {
-        return setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart, false);
+        setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart, false);
     }
-    
+
+    /**
+     * @see IFieldWrapper#setupConfiguration(Configuration, String, String, boolean, boolean)
+     *
+     */
     void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl);
     
     /**
