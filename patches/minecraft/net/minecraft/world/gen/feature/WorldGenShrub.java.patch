@@ -14,7 +14,7 @@
 +        IBlockState state = p_180709_1_.func_180495_p(p_180709_3_);
  
 -        if (block == Blocks.field_150346_d || block == Blocks.field_150349_c)
-+        if (state.func_177230_c().canSustainPlant(state, p_180709_1_, p_180709_3_, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g)))
++        if (state.func_177230_c().canSustainPlant(state, p_180709_1_, p_180709_3_, net.minecraft.util.EnumFacing.UP, this.sapling))
          {
              p_180709_3_ = p_180709_3_.func_177984_a();
              this.func_175903_a(p_180709_1_, p_180709_3_, this.field_150527_b);

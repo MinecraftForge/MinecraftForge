@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenTaiga2.java
-@@ -30,7 +30,7 @@
+@@ -20,6 +20,8 @@
+     public WorldGenTaiga2(boolean p_i2025_1_)
+     {
+         super(p_i2025_1_);
++        this.trunk = field_181645_a;
++        this.leaf = field_181646_b;
+     }
+ 
+     public boolean func_180709_b(World p_180709_1_, Random p_180709_2_, BlockPos p_180709_3_)
+@@ -30,7 +32,7 @@
          int l = 2 + p_180709_2_.nextInt(2);
          boolean flag = true;
  
@@ -9,7 +18,7 @@
          {
              for (int i1 = p_180709_3_.func_177956_o(); i1 <= p_180709_3_.func_177956_o() + 1 + i && flag; ++i1)
              {
-@@ -51,11 +51,11 @@
+@@ -51,11 +53,11 @@
                  {
                      for (int l1 = p_180709_3_.func_177952_p() - j1; l1 <= p_180709_3_.func_177952_p() + j1 && flag; ++l1)
                      {
@@ -24,7 +33,7 @@
                              {
                                  flag = false;
                              }
-@@ -74,11 +74,12 @@
+@@ -74,11 +76,12 @@
              }
              else
              {
@@ -33,14 +42,14 @@
 +                IBlockState state = p_180709_1_.func_180495_p(down);
  
 -                if ((block == Blocks.field_150349_c || block == Blocks.field_150346_d || block == Blocks.field_150458_ak) && p_180709_3_.func_177956_o() < 256 - i - 1)
-+                if (state.func_177230_c().canSustainPlant(state, p_180709_1_, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_150345_g) && p_180709_3_.func_177956_o() < p_180709_1_.func_72800_K() - i - 1)
++                if (state.func_177230_c().canSustainPlant(state, p_180709_1_, down, net.minecraft.util.EnumFacing.UP, this.sapling) && p_180709_3_.func_177956_o() < p_180709_1_.func_72800_K() - i - 1)
                  {
 -                    this.func_175921_a(p_180709_1_, p_180709_3_.func_177977_b());
 +                    state.func_177230_c().onPlantGrow(state, p_180709_1_, down, p_180709_3_);
                      int i3 = p_180709_2_.nextInt(2);
                      int j3 = 1;
                      int k3 = 0;
-@@ -98,8 +99,9 @@
+@@ -98,10 +101,11 @@
                                  if (Math.abs(j2) != i3 || Math.abs(l2) != i3 || i3 <= 0)
                                  {
                                      BlockPos blockpos = new BlockPos(i2, j4, k2);
@@ -49,9 +58,12 @@
 -                                    if (!p_180709_1_.func_180495_p(blockpos).func_185913_b())
 +                                    if (state.func_177230_c().canBeReplacedByLeaves(state, p_180709_1_, blockpos))
                                      {
-                                         this.func_175903_a(p_180709_1_, blockpos, field_181646_b);
+-                                        this.func_175903_a(p_180709_1_, blockpos, field_181646_b);
++                                        this.func_175903_a(p_180709_1_, blockpos, this.leaf);
                                      }
-@@ -128,9 +130,10 @@
+                                 }
+                             }
+@@ -128,11 +132,12 @@
  
                      for (int k4 = 0; k4 < i - i4; ++k4)
                      {
@@ -62,5 +74,8 @@
 -                        if (material1 == Material.field_151579_a || material1 == Material.field_151584_j)
 +                        if (state.func_177230_c().isAir(state, p_180709_1_, upN) || state.func_177230_c().isLeaves(state, p_180709_1_, upN))
                          {
-                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(k4), field_181645_a);
+-                            this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(k4), field_181645_a);
++                            this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(k4), this.trunk);
                          }
+                     }
+ 

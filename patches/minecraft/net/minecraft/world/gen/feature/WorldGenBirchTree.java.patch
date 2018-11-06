@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBirchTree.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBirchTree.java
-@@ -56,9 +56,9 @@
+@@ -21,6 +21,8 @@
+     {
+         super(p_i45449_1_);
+         this.field_150531_a = p_i45449_2_;
++        this.trunk = field_181629_a;
++        this.leaf = field_181630_b;
+     }
+ 
+     public boolean func_180709_b(World p_180709_1_, Random p_180709_2_, BlockPos p_180709_3_)
+@@ -56,9 +58,9 @@
                  {
                      for (int i1 = p_180709_3_.func_177952_p() - k; i1 <= p_180709_3_.func_177952_p() + k && flag; ++i1)
                      {
@@ -12,14 +21,14 @@
                              {
                                  flag = false;
                              }
-@@ -77,11 +77,13 @@
+@@ -77,11 +79,13 @@
              }
              else
              {
 -                Block block = p_180709_1_.func_180495_p(p_180709_3_.func_177977_b()).func_177230_c();
 +                BlockPos down = p_180709_3_.func_177977_b();
 +                IBlockState state = p_180709_1_.func_180495_p(down);
-+                boolean isSoil = state.func_177230_c().canSustainPlant(state, p_180709_1_, down, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_150345_g);
++                boolean isSoil = state.func_177230_c().canSustainPlant(state, p_180709_1_, down, net.minecraft.util.EnumFacing.UP, this.sapling);
  
 -                if ((block == Blocks.field_150349_c || block == Blocks.field_150346_d || block == Blocks.field_150458_ak) && p_180709_3_.func_177956_o() < 256 - i - 1)
 +                if (isSoil && p_180709_3_.func_177956_o() < p_180709_1_.func_72800_K() - i - 1)
@@ -29,7 +38,7 @@
  
                      for (int i2 = p_180709_3_.func_177956_o() - 3 + i; i2 <= p_180709_3_.func_177956_o() + i; ++i2)
                      {
-@@ -99,9 +101,9 @@
+@@ -99,11 +103,11 @@
                                  if (Math.abs(j1) != l2 || Math.abs(l1) != l2 || p_180709_2_.nextInt(2) != 0 && k2 != 0)
                                  {
                                      BlockPos blockpos = new BlockPos(i3, i2, k1);
@@ -39,9 +48,12 @@
 -                                    if (material == Material.field_151579_a || material == Material.field_151584_j)
 +                                    if (state2.func_177230_c().isAir(state2, p_180709_1_, blockpos) || state2.func_177230_c().isAir(state2, p_180709_1_, blockpos))
                                      {
-                                         this.func_175903_a(p_180709_1_, blockpos, field_181630_b);
+-                                        this.func_175903_a(p_180709_1_, blockpos, field_181630_b);
++                                        this.func_175903_a(p_180709_1_, blockpos, this.leaf);
                                      }
-@@ -112,9 +114,10 @@
+                                 }
+                             }
+@@ -112,11 +116,12 @@
  
                      for (int j2 = 0; j2 < i; ++j2)
                      {
@@ -52,5 +64,8 @@
 -                        if (material1 == Material.field_151579_a || material1 == Material.field_151584_j)
 +                        if (state2.func_177230_c().isAir(state2, p_180709_1_, upN) || state2.func_177230_c().isLeaves(state2, p_180709_1_, upN))
                          {
-                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(j2), field_181629_a);
+-                            this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(j2), field_181629_a);
++                            this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(j2), this.trunk);
                          }
+                     }
+ 

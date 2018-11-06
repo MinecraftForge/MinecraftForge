@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenBigTree.java
-@@ -99,9 +99,9 @@
+@@ -32,6 +32,8 @@
+     public WorldGenBigTree(boolean p_i2008_1_)
+     {
+         super(p_i2008_1_);
++        this.trunk = Blocks.field_150364_r.func_176223_P();
++        this.leaf = Blocks.field_150362_t.func_176223_P().func_177226_a(BlockLeaves.field_176236_b, Boolean.valueOf(false));
+     }
+ 
+     void func_76489_a()
+@@ -99,9 +101,9 @@
                  if (Math.pow((double)Math.abs(j) + 0.5D, 2.0D) + Math.pow((double)Math.abs(k) + 0.5D, 2.0D) <= (double)(p_181631_2_ * p_181631_2_))
                  {
                      BlockPos blockpos = p_181631_1_.func_177982_a(j, 0, k);
@@ -12,7 +21,62 @@
                      {
                          this.func_175903_a(this.field_175946_l, blockpos, p_181631_3_);
                      }
-@@ -269,7 +269,7 @@
+@@ -151,12 +153,17 @@
+     {
+         for (int i = 0; i < this.field_76508_n; ++i)
+         {
+-            this.func_181631_a(p_175940_1_.func_177981_b(i), this.func_76495_b(i), Blocks.field_150362_t.func_176223_P().func_177226_a(BlockLeaves.field_176236_b, Boolean.valueOf(false)));
++            this.func_181631_a(p_175940_1_.func_177981_b(i), this.func_76495_b(i), this.leaf);
+         }
+     }
+ 
+     void func_175937_a(BlockPos p_175937_1_, BlockPos p_175937_2_, Block p_175937_3_)
+     {
++        limb(p_175937_1_, p_175937_2_, p_175937_3_.func_176223_P());
++    }
++
++    void limb(BlockPos p_175937_1_, BlockPos p_175937_2_, IBlockState p_175937_3_)
++    {
+         BlockPos blockpos = p_175937_2_.func_177982_a(-p_175937_1_.func_177958_n(), -p_175937_1_.func_177956_o(), -p_175937_1_.func_177952_p());
+         int i = this.func_175935_b(blockpos);
+         float f = (float)blockpos.func_177958_n() / (float)i;
+@@ -167,7 +174,7 @@
+         {
+             BlockPos blockpos1 = p_175937_1_.func_177963_a((double)(0.5F + (float)j * f), (double)(0.5F + (float)j * f1), (double)(0.5F + (float)j * f2));
+             BlockLog.EnumAxis blocklog$enumaxis = this.func_175938_b(p_175937_1_, blockpos1);
+-            this.func_175903_a(this.field_175946_l, blockpos1, p_175937_3_.func_176223_P().func_177226_a(BlockLog.field_176299_a, blocklog$enumaxis));
++            this.func_175903_a(this.field_175946_l, blockpos1, p_175937_3_.func_177226_a(BlockLog.field_176299_a, blocklog$enumaxis));
+         }
+     }
+ 
+@@ -227,13 +234,13 @@
+         BlockPos blockpos = this.field_175947_m;
+         BlockPos blockpos1 = this.field_175947_m.func_177981_b(this.field_76501_f);
+         Block block = Blocks.field_150364_r;
+-        this.func_175937_a(blockpos, blockpos1, block);
++        this.limb(blockpos, blockpos1, this.trunk);
+ 
+         if (this.field_175943_g == 2)
+         {
+-            this.func_175937_a(blockpos.func_177974_f(), blockpos1.func_177974_f(), block);
+-            this.func_175937_a(blockpos.func_177974_f().func_177968_d(), blockpos1.func_177974_f().func_177968_d(), block);
+-            this.func_175937_a(blockpos.func_177968_d(), blockpos1.func_177968_d(), block);
++            this.limb(blockpos.func_177974_f(), blockpos1.func_177974_f(), this.trunk);
++            this.limb(blockpos.func_177974_f().func_177968_d(), blockpos1.func_177974_f().func_177968_d(), this.trunk);
++            this.limb(blockpos.func_177968_d(), blockpos1.func_177968_d(), this.trunk);
+         }
+     }
+ 
+@@ -246,7 +253,7 @@
+ 
+             if (!blockpos.equals(worldgenbigtree$foliagecoordinates) && this.func_76493_c(i - this.field_175947_m.func_177956_o()))
+             {
+-                this.func_175937_a(blockpos, worldgenbigtree$foliagecoordinates, Blocks.field_150364_r);
++                this.limb(blockpos, worldgenbigtree$foliagecoordinates, this.trunk);
+             }
+         }
+     }
+@@ -269,7 +276,7 @@
              {
                  BlockPos blockpos1 = p_175936_1_.func_177963_a((double)(0.5F + (float)j * f), (double)(0.5F + (float)j * f1), (double)(0.5F + (float)j * f2));
  
@@ -21,7 +85,7 @@
                  {
                      return j;
                  }
-@@ -297,6 +297,7 @@
+@@ -297,6 +304,7 @@
  
          if (!this.func_76497_e())
          {
@@ -29,7 +93,7 @@
              return false;
          }
          else
-@@ -305,15 +306,18 @@
+@@ -305,15 +313,18 @@
              this.func_175941_b();
              this.func_175942_c();
              this.func_175939_d();
@@ -43,7 +107,7 @@
 -        Block block = this.field_175946_l.func_180495_p(this.field_175947_m.func_177977_b()).func_177230_c();
 +        BlockPos down = this.field_175947_m.func_177977_b();
 +        net.minecraft.block.state.IBlockState state = this.field_175946_l.func_180495_p(down);
-+        boolean isSoil = state.func_177230_c().canSustainPlant(state, this.field_175946_l, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g));
++        boolean isSoil = state.func_177230_c().canSustainPlant(state, this.field_175946_l, down, net.minecraft.util.EnumFacing.UP, this.sapling);
  
 -        if (block != Blocks.field_150346_d && block != Blocks.field_150349_c && block != Blocks.field_150458_ak)
 +        if (!isSoil)

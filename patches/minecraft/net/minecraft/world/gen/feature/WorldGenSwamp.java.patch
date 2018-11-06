@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenSwamp.java
-@@ -61,7 +61,7 @@
+@@ -21,6 +21,8 @@
+     public WorldGenSwamp()
+     {
+         super(false);
++        this.trunk = field_181648_a;
++        this.leaf = field_181649_b;
+     }
+ 
+     public boolean func_180709_b(World p_180709_1_, Random p_180709_2_, BlockPos p_180709_3_)
+@@ -61,7 +63,7 @@
                              IBlockState iblockstate = p_180709_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1));
                              Block block = iblockstate.func_177230_c();
  
@@ -9,14 +18,14 @@
                              {
                                  if (block != Blocks.field_150355_j && block != Blocks.field_150358_i)
                                  {
-@@ -87,11 +87,13 @@
+@@ -87,11 +89,13 @@
              }
              else
              {
 -                Block block1 = p_180709_1_.func_180495_p(p_180709_3_.func_177977_b()).func_177230_c();
 +                BlockPos down = p_180709_3_.func_177977_b();
 +                IBlockState state = p_180709_1_.func_180495_p(down);
-+                boolean isSoil = state.func_177230_c().canSustainPlant(state, p_180709_1_, down, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g));
++                boolean isSoil = state.func_177230_c().canSustainPlant(state, p_180709_1_, down, net.minecraft.util.EnumFacing.UP, this.sapling);
  
 -                if ((block1 == Blocks.field_150349_c || block1 == Blocks.field_150346_d) && p_180709_3_.func_177956_o() < 256 - i - 1)
 +                if (isSoil && p_180709_3_.func_177956_o() < p_180709_1_.func_72800_K() - i - 1)
@@ -26,7 +35,7 @@
  
                      for (int k1 = p_180709_3_.func_177956_o() - 3 + i; k1 <= p_180709_3_.func_177956_o() + i; ++k1)
                      {
-@@ -109,8 +111,9 @@
+@@ -109,10 +113,11 @@
                                  if (Math.abs(k3) != l2 || Math.abs(j1) != l2 || p_180709_2_.nextInt(2) != 0 && j2 != 0)
                                  {
                                      BlockPos blockpos = new BlockPos(j3, k1, i4);
@@ -35,9 +44,12 @@
 -                                    if (!p_180709_1_.func_180495_p(blockpos).func_185913_b())
 +                                    if (state.func_177230_c().canBeReplacedByLeaves(state, p_180709_1_, blockpos))
                                      {
-                                         this.func_175903_a(p_180709_1_, blockpos, field_181649_b);
+-                                        this.func_175903_a(p_180709_1_, blockpos, field_181649_b);
++                                        this.func_175903_a(p_180709_1_, blockpos, this.leaf);
                                      }
-@@ -121,10 +124,11 @@
+                                 }
+                             }
+@@ -121,12 +126,13 @@
  
                      for (int l1 = 0; l1 < i; ++l1)
                      {
@@ -49,9 +61,12 @@
 -                        if (iblockstate1.func_185904_a() == Material.field_151579_a || iblockstate1.func_185904_a() == Material.field_151584_j || block2 == Blocks.field_150358_i || block2 == Blocks.field_150355_j)
 +                        if (block2.isAir(iblockstate1, p_180709_1_, upN) || block2.isLeaves(iblockstate1, p_180709_1_, upN) || block2 == Blocks.field_150358_i || block2 == Blocks.field_150355_j)
                          {
-                             this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(l1), field_181648_a);
+-                            this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(l1), field_181648_a);
++                            this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(l1), this.trunk);
                          }
-@@ -149,22 +153,22 @@
+                     }
+ 
+@@ -149,22 +155,22 @@
                                      BlockPos blockpos1 = blockpos$mutableblockpos1.func_177978_c();
                                      BlockPos blockpos2 = blockpos$mutableblockpos1.func_177968_d();
  
@@ -78,7 +93,7 @@
                                      {
                                          this.func_181647_a(p_180709_1_, blockpos2, BlockVine.field_176273_b);
                                      }
-@@ -193,7 +197,7 @@
+@@ -193,7 +199,7 @@
          this.func_175903_a(p_181647_1_, p_181647_2_, iblockstate);
          int i = 4;
  

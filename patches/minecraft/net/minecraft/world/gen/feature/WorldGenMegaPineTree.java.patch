@@ -42,7 +42,7 @@
              Block block = iblockstate.func_177230_c();
  
 -            if (block == Blocks.field_150349_c || block == Blocks.field_150346_d)
-+            if (block.canSustainPlant(iblockstate, p_175934_1_, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g)))
++            if (block.canSustainPlant(iblockstate, p_175934_1_, blockpos, net.minecraft.util.EnumFacing.UP, this.sapling))
              {
                  this.func_175903_a(p_175934_1_, blockpos, field_181635_g);
                  break;
