@@ -241,7 +241,6 @@ public class ConfigManager
 
             boolean requiresMcRestart = f.isAnnotationPresent(Config.RequiresMcRestart.class);
             boolean requiresWorldRestart = f.isAnnotationPresent(Config.RequiresWorldRestart.class);
-
             boolean hasSlidingControl = f.isAnnotationPresent(Config.SlidingOption.class);
 
             if (FieldWrapper.hasWrapperFor(f)) //Wrappers exist for primitives, enums, maps and arrays
@@ -262,9 +261,6 @@ public class ConfigManager
                         if (!existed || loading) //Creates keys in category specified by the wrapper if new ones are programaticaly added
                         {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
-
-                            property.setHasSlidingControl(hasSlidingControl);
-
                             adapt.setDefaultValue(property, wrapper.getValue(key));
                             if (!existed)
                                 adapt.setValue(property, wrapper.getValue(key));
@@ -274,7 +270,6 @@ public class ConfigManager
                         else //If the key is not new, sync according to shouldReadFromVar()
                         {
                             Property property = property(cfg, wrapper.getCategory(), suffix, propType, adapt.isArrayAdapter());
-                            property.setHasSlidingControl(hasSlidingControl);
                             Object propVal = adapt.getValue(property);
                             Object mapVal = wrapper.getValue(key);
                             if (shouldReadFromVar(property, propVal, mapVal))
@@ -301,7 +296,7 @@ public class ConfigManager
                     }
 
                     if (loading)
-                        wrapper.setupConfiguration(cfg, comment, langKey, requiresMcRestart, requiresWorldRestart);
+                        wrapper.setupConfiguration(cfg, comment, langKey, requiresMcRestart, requiresWorldRestart, hasSlidingControl);
 
                 }
                 catch (Exception e)

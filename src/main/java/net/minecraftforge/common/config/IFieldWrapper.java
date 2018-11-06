@@ -68,7 +68,7 @@ public interface IFieldWrapper
      * @param reqMCRestart True, if a change in this property requires a restart of Minecraft
      * @param reqWorldRestart True, if the world needs to be reloaded after changes to this property
      */
-    void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart);
+    void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl);
     
     /**
      * i.e. general.map in the example above
