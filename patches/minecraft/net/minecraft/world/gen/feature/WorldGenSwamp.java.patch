@@ -66,7 +66,16 @@
                          }
                      }
  
-@@ -149,22 +155,22 @@
+@@ -142,29 +148,30 @@
+                             {
+                                 blockpos$mutableblockpos1.func_181079_c(l3, i2, j4);
+ 
+-                                if (p_180709_1_.func_180495_p(blockpos$mutableblockpos1).func_185904_a() == Material.field_151584_j)
++                                IBlockState state1 = p_180709_1_.func_180495_p(blockpos$mutableblockpos1);
++                                if (state1.func_177230_c().isLeaves(state1, p_180709_1_, blockpos$mutableblockpos1))
+                                 {
+                                     BlockPos blockpos3 = blockpos$mutableblockpos1.func_177976_e();
+                                     BlockPos blockpos4 = blockpos$mutableblockpos1.func_177974_f();
                                      BlockPos blockpos1 = blockpos$mutableblockpos1.func_177978_c();
                                      BlockPos blockpos2 = blockpos$mutableblockpos1.func_177968_d();
  
@@ -93,7 +102,7 @@
                                      {
                                          this.func_181647_a(p_180709_1_, blockpos2, BlockVine.field_176273_b);
                                      }
-@@ -193,7 +199,7 @@
+@@ -193,7 +200,7 @@
          this.func_175903_a(p_181647_1_, p_181647_2_, iblockstate);
          int i = 4;
  

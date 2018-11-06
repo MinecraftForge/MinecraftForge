@@ -5,7 +5,7 @@
          }
      }
 +
-+    protected net.minecraft.block.state.IBlockState trunk; // for big trees, should have log axis property
++    protected net.minecraft.block.state.IBlockState trunk; // should have log axis property if used for WorldGenBigTree
 +    protected net.minecraft.block.state.IBlockState leaf;
 +    protected net.minecraftforge.common.IPlantable sapling = (net.minecraft.block.BlockSapling) Blocks.field_150345_g;
 +
