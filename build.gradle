@@ -24,9 +24,9 @@ import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
 
 plugins {
-    id 'net.minecrell.licenser' version '0.4'
+    id 'net.minecrell.licenser' version '0.4.1'
     id 'org.ajoberstar.grgit' version '2.3.0'
-    id 'de.undercouch.download' version '3.3.0'
+    id 'de.undercouch.download' version '3.4.3'
 }
 apply plugin: 'eclipse'
 
