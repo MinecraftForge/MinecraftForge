@@ -34,11 +34,11 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     protected final EnumFacing side;
 
     @SuppressWarnings("unchecked")
-    public static <T extends IItemHandlerModifiable> OptionalCapabilityInstance<T>[] create(ISidedInventory inv, EnumFacing... sides) {
-        OptionalCapabilityInstance<T>[] ret = new OptionalCapabilityInstance[sides.length];
+    public static OptionalCapabilityInstance<IItemHandlerModifiable>[] create(ISidedInventory inv, EnumFacing... sides) {
+        OptionalCapabilityInstance<IItemHandlerModifiable>[] ret = new OptionalCapabilityInstance[sides.length];
         for (int x = 0; x < sides.length; x++) {
             final EnumFacing side = sides[x];
-            ret[x] = OptionalCapabilityInstance.of(() -> (T)new SidedInvWrapper(inv, side));
+            ret[x] = OptionalCapabilityInstance.of(() -> new SidedInvWrapper(inv, side));
         }
         return ret;
     }
