@@ -61,7 +61,7 @@ public interface IFieldWrapper
      */
     boolean handlesKey(String key);
 
-    /**TODO remove both methods in future
+    /**TODO unify them
      * @param cfg The configuration object holding the properties
      * @param desc The properties description
      * @param langKey The languageKey of the property, used in GUI
