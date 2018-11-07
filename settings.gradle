@@ -7,3 +7,5 @@ include ':forge'
 project(":mcp").projectDir = file("projects/mcp")
 project(":clean").projectDir = file("projects/clean")
 project(":forge").projectDir = file("projects/forge")
+
+enableFeaturePreview('STABLE_PUBLISHING')
