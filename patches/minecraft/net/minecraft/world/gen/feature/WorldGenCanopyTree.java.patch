@@ -58,9 +58,12 @@
                      {
                          return false;
                      }
-@@ -202,18 +205,25 @@
+@@ -200,20 +203,27 @@
+ 
+     private void func_181639_b(World p_181639_1_, BlockPos p_181639_2_)
      {
-         if (this.func_150523_a(p_181639_1_.func_180495_p(p_181639_2_).func_177230_c()))
+-        if (this.func_150523_a(p_181639_1_.func_180495_p(p_181639_2_).func_177230_c()))
++        if (this.isReplaceable(p_181639_1_, p_181639_2_))
          {
 -            this.func_175903_a(p_181639_1_, p_181639_2_, field_181640_a);
 +            this.func_175903_a(p_181639_1_, p_181639_2_, this.trunk);

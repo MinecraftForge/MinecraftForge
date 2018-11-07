@@ -37,7 +37,7 @@
                      {
                          this.func_175903_a(p_180709_1_, p_180709_3_.func_177982_a(0, j, 1), this.field_76520_b);
                      }
-@@ -133,7 +126,7 @@
+@@ -133,16 +126,23 @@
              IBlockState iblockstate = p_175934_1_.func_180495_p(blockpos);
              Block block = iblockstate.func_177230_c();
  
@@ -46,7 +46,12 @@
              {
                  this.func_175903_a(p_175934_1_, blockpos, field_181635_g);
                  break;
-@@ -145,4 +138,11 @@
+             }
+ 
+-            if (iblockstate.func_185904_a() != Material.field_151579_a && i < 0)
++            if (!block.isAir(iblockstate, p_175934_1_, blockpos) && i < 0)
+             {
+                 break;
              }
          }
      }
