@@ -242,8 +242,8 @@ public class FMLHandshakeHandler {
             NetworkRegistry.LoginPayload message = messageList.get(packetPosition);
 
             LOGGER.debug(FMLHSMARKER, "Sending ticking packet info '{}' to '{}' sequence {}", message.getMessageContext(), message.getChannelName(), packetPosition);
-            loginWrapper.sendServerToClientLoginPacket(message.getChannelName(), message.getData(), packetPosition, this.manager);
             sentMessages.add(packetPosition);
+            loginWrapper.sendServerToClientLoginPacket(message.getChannelName(), message.getData(), packetPosition, this.manager);
             packetPosition++;
         }
 
