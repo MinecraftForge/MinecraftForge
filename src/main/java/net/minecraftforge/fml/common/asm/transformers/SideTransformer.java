@@ -93,9 +93,10 @@ public class SideTransformer implements IClassTransformer
         }
 
         // remove dynamic synthetic lambda methods that are inside of removed methods
-        List<Handle> dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles();
-        if (!dynamicLambdaHandles.isEmpty())
+        for (List<Handle> dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles();
+             !dynamicLambdaHandles.isEmpty(); dynamicLambdaHandles = lambdaGatherer.getDynamicLambdaHandles())
         {
+            lambdaGatherer = new LambdaGatherer();
             methods = classNode.methods.iterator();
             while (methods.hasNext())
             {
@@ -110,6 +111,7 @@ public class SideTransformer implements IClassTransformer
                             System.out.println(String.format("Removing Method: %s.%s%s", classNode.name, method.name, method.desc));
                         }
                         methods.remove();
+                        lambdaGatherer.accept(method);
                     }
                 }
             }
