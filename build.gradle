@@ -88,6 +88,7 @@ license {
     header = project.file('LICENSE-header.txt')
 
     include 'net/minecraftforge/'
+    exclude 'net/minecraftforge/api/distmarker/'
     exclude 'net/minecraftforge/fml/repackage/'
     exclude 'net/minecraftforge/server/terminalconsole/'
     exclude 'net/minecraftforge/fml/common/versioning/ComparableVersion.java'
