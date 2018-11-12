@@ -273,14 +273,11 @@
          this.func_71403_a((WorldClient)null);
          System.gc();
          ISaveHandler isavehandler = this.field_71469_aa.func_75804_a(p_71371_1_, false);
-@@ -2344,8 +2380,14 @@
+@@ -2346,6 +2382,12 @@
  
-         this.field_71461_s.func_73720_a(I18n.func_135052_a("menu.loadingLevel"));
- 
--        while (!this.field_71437_Z.func_71200_ad())
-+        while (!this.field_71437_Z.func_71200_ad() && !this.field_71437_Z.func_71241_aa())
+         while (!this.field_71437_Z.func_71200_ad())
          {
-+            if (!net.minecraftforge.fml.common.StartupQuery.check())
++            if (!net.minecraftforge.fml.common.StartupQuery.check() || this.field_71437_Z.func_71241_aa())
 +            {
 +                func_71403_a(null);
 +                func_147108_a(null);
