@@ -190,7 +190,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     @Override
     public ResourceLocation getKey(V value)
     {
-        return this.names.inverse().get(value);
+        ResourceLocation ret = this.names.inverse().get(value);
+        return ret == null ? this.defaultKey : ret;
     }
 
     @Override
