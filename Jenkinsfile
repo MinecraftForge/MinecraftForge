@@ -17,10 +17,10 @@ pipeline {
                 git(url: 'https://github.com/MinecraftForge/MinecraftForge.git', changelog: true)
             }
         }
-        cache(maxCacheSize: 250/*MB*/, caches: [
-            [$class: 'ArbitraryFileCache', excludes: 'log.txt', includes: '**/*', path: '${WORKSPACE}/projects/forge/build/extractRangeMap'] //Cache the rangemap to help speed up builds
-        ]){
-            stage('buildandtest') {
+        stage('buildandtest') {
+            cache(maxCacheSize: 250/*MB*/, caches: [
+                [$class: 'ArbitraryFileCache', excludes: 'log.txt', includes: '**/*', path: '${WORKSPACE}/projects/forge/build/extractRangeMap'] //Cache the rangemap to help speed up builds
+            ]){
                 steps {
                     sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue build test'
                     script {
@@ -34,7 +34,11 @@ pipeline {
                     }
                 }
             }
-            stage('publish') {
+        }
+        stage('publish') {
+            cache(maxCacheSize: 250/*MB*/, caches: [
+                [$class: 'ArbitraryFileCache', excludes: 'log.txt', includes: '**/*', path: '${WORKSPACE}/projects/forge/build/extractRangeMap'] //Cache the rangemap to help speed up builds
+            ]){
                 when {
                     not {
                         changeRequest()
