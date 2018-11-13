@@ -8,7 +8,7 @@ pipeline {
         }
     }
     environment {
-        GRADLE_ARGS = --no-daemon' // No daemon for now as FG3 kinda derps. //'-Dorg.gradle.daemon.idletimeout=5000'
+        GRADLE_ARGS = '--no-daemon' // No daemon for now as FG3 kinda derps. //'-Dorg.gradle.daemon.idletimeout=5000'
     }
 
     stages {
