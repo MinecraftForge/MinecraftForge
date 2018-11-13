@@ -8,7 +8,7 @@ pipeline {
         }
     }
     environment {
-        GRADLE_ARGS = '--no-daemon' // No daemon for now as FG3 kinda derps. //'-Dorg.gradle.daemon.idletimeout=5000'
+        GRADLE_ARGS = '--no-daemon --console=plain' // No daemon for now as FG3 kinda derps. //'-Dorg.gradle.daemon.idletimeout=5000'
     }
 
     stages {
@@ -17,12 +17,12 @@ pipeline {
                 checkout scm
             }
         }
-        stage('build') {
+        stage('setup') {
             steps {
                 cache(maxCacheSize: 250/*MB*/, caches: [
                     [$class: 'ArbitraryFileCache', excludes: 'log.txt', includes: '**/*', path: '${WORKSPACE}/projects/forge/build/extractRangeMap'] //Cache the rangemap to help speed up builds
                 ]){
-                    sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue build'
+                    sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue setup'
                 }
                 script {
                     env.MYVERSION = sh(returnStdout: true, script: './gradlew properties -q | grep "version:" | awk \'{print $2}\'').trim()
