@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('fetch') {
             steps {
-                git(url: 'https://github.com/MinecraftForge/MinecraftForge.git', changelog: true)
+                checkout scm
             }
         }
         stage('build') {
