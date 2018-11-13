@@ -30,9 +30,6 @@ plugins {
 }
 apply plugin: 'eclipse'
 
-group = 'net.minecraftforge'
-version = '1.0.0'
-
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.forgedev.mcp'
     mcp {
@@ -92,9 +89,20 @@ project(':forge') {
     }
     ext {
         MC_VERSION = '1.13'
-        SPEC_VERSION = '15.24.0'
+        SPEC_VERSION = '24.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
+        // ForgeMC is a unique identifier for every MC version we have supported.
+        // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
         MCP_VERSION = project(':mcp').mcp.config.version.split('-')[1] // The timestamp only.
+        
+        if (project.hasProperty('keystore')) {
+            jarsigner = [
+                storepass: project.properties.keystoreStorePass,
+                keypass: project.properties.keystoreKeyPass,
+                keystore: project.properties.keystore
+            ]
+        }
     }
     patcher {
         parent = project(':clean')
@@ -122,17 +130,22 @@ project(':forge') {
     }
     
     def getVersion = {
-        def out = MC_VERSION.replace('-', '_') + '-' + SPEC_VERSION + '.' + (System.getenv('BUILD_NUMBER') ?: project.ext.properties.buildNumber ?: 0)
+        //TAG-offset-hash
+        def raw = grgit.describe(longDescr: true)
+        def desc = (raw == null ? '0.0-0-unknown' : grgit.describe(longDescr: true)).split('-') as List
+        def hash = desc.remove(desc.size() - 1)
+        def offset = desc.remove(desc.size() - 1)
+        def tag = desc.join('-')
         def branch = grgit.branch.current().name
-        if (branch != null && branch != 'master' && branch != 'HEAD' && branch != MC_VERSION && branch != MC_VERSION + '.0') {
-            if (!(branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() -2))))
-                out += "-${branch}"
-        }
-        println('Version: ' + out)
-        return out
+        if (branch in ['master', 'HEAD', MC_VERSION, MC_VERSION + '.0'])
+            branch = null
+        if (branch != null && branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() - 2))) //1.13.x
+            branch = null
+        SPEC_VERSION = tag
+        return "${tag}.${offset}${t -> if (branch != null) t << '-' + branch}"
     }
     
-    group = 'net.minecraftforge'
+    group = 'net.minecraftforge.test' //TODO: remove when we jenkins is working
     version = getVersion()
     applyPatches {
         canonicalizeAccess true
