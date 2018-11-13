@@ -17,12 +17,12 @@ pipeline {
                 git(url: 'https://github.com/MinecraftForge/MinecraftForge.git', changelog: true)
             }
         }
-        stage('buildandtest') {
+        stage('build') {
             steps {
                 cache(maxCacheSize: 250/*MB*/, caches: [
                     [$class: 'ArbitraryFileCache', excludes: 'log.txt', includes: '**/*', path: '${WORKSPACE}/projects/forge/build/extractRangeMap'] //Cache the rangemap to help speed up builds
                 ]){
-                    sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue build test'
+                    sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue build'
                 }
                 script {
                     env.MYVERSION = sh(returnStdout: true, script: './gradlew properties -q | grep "version:" | awk \'{print $2}\'').trim()
@@ -62,8 +62,8 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
-            junit 'build/test-results/*/*.xml'
-            jacoco sourcePattern: '**/src/*/java'
+            //junit 'build/test-results/*/*.xml'
+            //jacoco sourcePattern: '**/src/*/java'
         }
     }
 }
