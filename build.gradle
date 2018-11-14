@@ -707,6 +707,8 @@ project(':forge') {
             }
             filter(ReplaceTokens, tokens: [
                 FORGE_VERSION: project.version,
+                FORGE_GROUP: project.group,
+                FORGE_NAME: project.name,
                 MC_VERSION: MC_VERSION,
                 MAPPING_CHANNEL: MAPPING_CHANNEL,
                 MAPPING_VERSION: MAPPING_VERSION

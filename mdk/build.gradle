@@ -44,7 +44,7 @@ minecraft {
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied. 
-    minecraft 'net.minecraftforge:forge:@FORGE_VERSION@'
+    minecraft '@FORGE_GROUP@:@FORGE_NAME@:@FORGE_VERSION@'
 
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
