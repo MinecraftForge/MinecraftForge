@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url = 'http://files.minecraftforge.net/maven' }
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
     }
@@ -29,6 +29,17 @@ plugins {
     id 'de.undercouch.download' version '3.3.0'
 }
 apply plugin: 'eclipse'
+
+ext {
+    JAR_SIGNER = null
+    if (project.hasProperty('keystore')) {
+        JAR_SIGNER = [
+            storepass: project.properties.keystoreStorePass,
+            keypass: project.properties.keystoreKeyPass,
+            keystore: project.properties.keystore
+        ]
+    }
+}
 
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.forgedev.mcp'
@@ -95,14 +106,6 @@ project(':forge') {
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
         MCP_VERSION = project(':mcp').mcp.config.version.split('-')[1] // The timestamp only.
-        
-        if (project.hasProperty('keystore')) {
-            jarsigner = [
-                storepass: project.properties.keystoreStorePass,
-                keypass: project.properties.keystoreKeyPass,
-                keystore: project.properties.keystore
-            ]
-        }
     }
     patcher {
         parent = project(':clean')
@@ -613,13 +616,10 @@ project(':forge') {
 
     task signUniversal(type: SignJar, dependsOn: universalJar) {
         onlyIf {
-            project.hasProperty('jarsigner') && universalJar.state.failure == null
+            JAR_SIGNER != null && universalJar.state.failure == null
         }
 
-        def jarsigner = [:];
-        if (project.hasProperty('jarsigner'))
-            jarsigner = project.jarsigner;
-
+        def jarsigner = JAR_SIGNER == null ? [:] : JAR_SIGNER
         alias = 'forge'
         storePass = jarsigner.storepass
         keyPass = jarsigner.keypass
@@ -663,13 +663,10 @@ project(':forge') {
     }
     task signInstaller(type: SignJar, dependsOn: installerJar) {
         onlyIf {
-            project.hasProperty('jarsigner') && installerJar.state.failure == null
+            JAR_SIGNER != null && installerJar.state.failure == null
         }
 
-        def jarsigner = [:];
-        if (project.hasProperty('jarsigner'))
-            jarsigner = project.jarsigner;
-
+        def jarsigner = JAR_SIGNER == null ? [:] : JAR_SIGNER
         alias = 'forge'
         storePass = jarsigner.storepass
         keyPass = jarsigner.keypass
@@ -775,7 +772,7 @@ project(':forge') {
                         username project.properties.forgeMavenUser
                         password project.properties.forgeMavenPassword
                     }
-                    url 'http://files.minecraftforge.net/maven/manage/upload'
+                    url 'https://files.minecraftforge.net/maven/manage/upload'
                 } else {
                     url 'file://' + rootProject.file('repo').getAbsolutePath()
                 }
