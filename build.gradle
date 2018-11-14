@@ -39,12 +39,16 @@ ext {
             keystore: project.properties.keystore
         ]
     }
+    MAPPING_CHANNEL = 'snapshot'
+    MAPPING_VERSION = '20180921-1.13'
+    MC_VERSION = '1.13'
+    MCP_VERSION = '2018.09.12.04.11.00'
 }
 
 project(':mcp') {
     apply plugin: 'net.minecraftforge.gradle.forgedev.mcp'
     mcp {
-        config = '1.13-2018.09.12.04.11.00'
+        config = MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
     }
 }
@@ -59,8 +63,8 @@ project(':clean') {
     patcher {
         parent = project(':mcp')
         patchedSrc = file('src/main/java')
-        mappings channel: 'snapshot', version: '20180921-1.13'
-        mcVersion = '1.13'
+        mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
+        mcVersion = MC_VERSION
     }
     task runclient(type: JavaExec) {
         doFirst {
@@ -99,13 +103,11 @@ project(':forge') {
         mavenCentral()
     }
     ext {
-        MC_VERSION = '1.13'
         SPEC_VERSION = '24.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
         MCP_ARTIFACT = project(':mcp').mcp.config
-        MCP_VERSION = project(':mcp').mcp.config.version.split('-')[1] // The timestamp only.
     }
     patcher {
         parent = project(':clean')
@@ -145,7 +147,7 @@ project(':forge') {
         if (branch != null && branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() - 2))) //1.13.x
             branch = null
         SPEC_VERSION = tag
-        return "${MC_VERSION}-${tag}.${offset}${t -> if (branch != null) t << '-' + branch}"
+        return "${MC_VERSION}-${tag}.${offset}${t -> if (branch != null) t << '-' + branch}".toString() //Bake the response instead of making it dynamic
     }
     
     group = 'net.minecraftforge.test' //TODO: remove when we jenkins is working
@@ -239,10 +241,16 @@ project(':forge') {
         rootProject.file('CREDITS.txt'),
         rootProject.file('LICENSE.txt')
     ]
-    /* TODO: Changelog
-    if (project.hasProperty('forgeJenkinsPass'))
+    
+    def jenkinsChangelog = rootProject.file('build/changelog.txt')
+    def changelog = file("build/libs/${project.name}-${project.version}-changelog.txt")
+    if (jenkinsChangelog.exists()) {
+        if (!changelog.parentFile.exists())
+            changelog.parentFile.mkdirs()
+        java.nio.file.Files.copy(jenkinsChangelog.toPath(), changelog.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
         extraTxts += changelog
-    */
+        println extraTxts
+    }
     
     task downloadCrowdin() {
         ext {
@@ -351,7 +359,7 @@ project(':forge') {
     task launcherJson(dependsOn: 'signUniversal') {
         inputs.file universalJar.archivePath
         ext {
-            output = file('build/libs/version.json')
+            output = file('build/version.json')
             vanilla = project(':mcp').file('build/mcp/downloadJson/version.json')
             timestamp = dateToIso8601(new Date())
             comment = [
@@ -413,7 +421,7 @@ project(':forge') {
       
     task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches]) {
         ext {
-            output = file('build/libs/install_profile.json')
+            output = file('build/install_profile.json')
             INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.0.3'
             JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.0.4'
         }
@@ -640,6 +648,7 @@ project(':forge') {
     task installerJar(type: Zip, dependsOn: [downloadInstaller, signUniversal, installerJson, launcherJson, genClientBinPatches, genServerBinPatches]) {
         classifier = 'installer'
         extension = 'jar' //Needs to be Zip task to not override Manifest, so set extension
+        destinationDir = file('build/libs')
         from(extraTxts)
         from(rootProject.file('/src/main/resources/forge_logo.png')) {
             rename{'big_logo.png'}
@@ -683,7 +692,7 @@ project(':forge') {
         baseName = project.name
         classifier = 'mdk'
         version = project.version
-        destinationDir = file('build/distributions')
+        destinationDir = file('build/libs')
 
         from rootProject.file('gradlew')
         from rootProject.file('gradlew.bat')
@@ -692,10 +701,16 @@ project(':forge') {
             into('gradle/')
         }
         from(rootProject.file('mdk/')){
-         /*   filter(ReplaceTokens, tokens: [
-                VERSION: project.version
+            rootProject.file('mdk/gitignore.txt').eachLine{
+                if (!it.trim().isEmpty() && !it.trim().startsWith('#'))
+                    exclude it
+            }
+            filter(ReplaceTokens, tokens: [
+                FORGE_VERSION: project.version,
+                MC_VERSION: MC_VERSION,
+                MAPPING_CHANNEL: MAPPING_CHANNEL,
+                MAPPING_VERSION: MAPPING_VERSION
             ])
-            */
             rename 'gitignore\\.txt', '.gitignore'
         }
     }
@@ -732,7 +747,8 @@ project(':forge') {
         publications {
             mavenJava(MavenPublication) {
                 artifact universalJar
-                //TODO: changelog
+                if (changelog.exists())
+                    artifact changelog
                 artifact installerJar
                 //TODO: installer-win
                 artifact makeMdk

@@ -20,10 +20,6 @@ apply plugin: 'net.minecraftforge.gradle'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
 
-repositories {
-    maven { url ='file://' + file('../repo').absolutePath } //Used by Forge development testing only, you can delete this.
-}
-
 version = '1.0'
 group = 'com.yourname.modid' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'modid'
@@ -39,16 +35,16 @@ minecraft {
     // stable_#            stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: '20180921-1.13'
+    mappings channel: '@MAPPING_CHANNEL@', version: '@MAPPING_VERSION@'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
-    accessTransformer = file('test_at.cfg')
+    //accessTransformer = file('my_at.cfg')
 }
 
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied. 
-    minecraft 'net.minecraftforge:forge:1.13-15.24.0.0-1.13-pre'
+    minecraft 'net.minecraftforge:forge:@FORGE_VERSION@'
 
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -76,14 +72,14 @@ dependencies {
 processResources {
     // this will ensure that this task is redone when the versions change.
     inputs.property 'version', project.version
-    inputs.property 'mcversion', '1.13'
+    inputs.property 'mcversion', '@MC_VERSION@'
 
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
                 
         // replace version and mcversion
-        expand 'version':project.version, 'mcversion': '1.13'
+        expand 'version':project.version, 'mcversion': '@MC_VERSION@'
     }
 
     // copy everything else except the mcmod.info

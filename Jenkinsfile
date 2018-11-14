@@ -31,7 +31,6 @@ pipeline {
             post {
                 success {
                     writeChangelog(currentBuild, 'build/changelog.txt')
-                    archiveArtifacts artifacts: 'build/changelog.txt', fingerprint: false
                 }
             }
         }
@@ -61,7 +60,7 @@ pipeline {
     }
     post {
         always {
-            archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.jar', fingerprint: true
+            archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.*', fingerprint: true
             //junit 'build/test-results/*/*.xml'
             //jacoco sourcePattern: '**/src/*/java'
         }
