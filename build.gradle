@@ -4,7 +4,7 @@ buildscript {
         mavenCentral()
         maven {
             name = "forge"
-            url = "http://files.minecraftforge.net/maven"
+            url = "https://files.minecraftforge.net/maven"
         }
         maven {
             name = "sonatype"
@@ -114,7 +114,7 @@ task changelog(type: JenkinsChangelog) {
     }
 
     outputs.upToDateWhen { false } // never up to date
-    serverRoot = "http://ci.jenkins.minecraftforge.net/"
+    serverRoot = "http://jenkins.minecraftforge.net/"
     jobName = "minecraftforge"
     targetBuild = System.env['BUILD_NUMBER'] ?: project.ext.properties.buildNumber ?:0;
     authName = "console_script"
@@ -317,7 +317,7 @@ uploadArchives {
 
         if (project.hasProperty('forgeMavenPass'))
         {
-            repository(url: "http://files.minecraftforge.net/maven/manage/upload") {
+            repository(url: "https://files.minecraftforge.net/maven/manage/upload") {
                 authentication(userName: "forge", password: project.getProperty('forgeMavenPass')) // the elvis operator. look it up.
             }
         }
