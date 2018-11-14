@@ -145,7 +145,7 @@ project(':forge') {
         if (branch != null && branch.endsWith('.x') && MC_VERSION.startsWith(branch.substring(0, branch.length() - 2))) //1.13.x
             branch = null
         SPEC_VERSION = tag
-        return "${tag}.${offset}${t -> if (branch != null) t << '-' + branch}"
+        return "${MC_VERSION}-${tag}.${offset}${t -> if (branch != null) t << '-' + branch}"
     }
     
     group = 'net.minecraftforge.test' //TODO: remove when we jenkins is working
