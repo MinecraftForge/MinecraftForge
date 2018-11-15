@@ -88,7 +88,7 @@
 +      if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +         if (facing == EnumFacing.UP)
 +            return handlers[0].cast();
-+         else if (facing == EnumFacing.UP)
++         else if (facing == EnumFacing.DOWN)
 +            return handlers[1].cast();
 +         else
 +            return handlers[2].cast();
