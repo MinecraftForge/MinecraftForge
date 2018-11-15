@@ -118,7 +118,7 @@ public @interface Config
     {}
 
     /**
-     * A field marked with this annotation (and {@link RangeInt} or {@link RangeDouble}} will have a slider control attached in the config UI;
+     * A field marked with this annotation (and {@link RangeInt} or {@link RangeDouble}) will have a slider control attached in the config UI
      */
     @Retention(RetentionPolicy.RUNTIME)
     @Target(ElementType.FIELD)
