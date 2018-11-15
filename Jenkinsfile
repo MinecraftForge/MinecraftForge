@@ -56,6 +56,21 @@ pipeline {
                 sh 'curl --user ${FORGE_MAVEN} http://files.minecraftforge.net/maven/manage/promote/latest/net.minecraftforge.test.forge/${MYVERSION}'
             }
         }
+        stage('test_publish_pr') { //Publish to local repo to test full process, but don't include credentials so it can't sign/publish to maven
+            when {
+                changeRequest()
+            }
+            environment {
+                CROWDIN = credentials('forge-crowdin')
+            }
+            steps {
+                cache(maxCacheSize: 250/*MB*/, caches: [
+                    [$class: 'ArbitraryFileCache', excludes: '', includes: 'output.txt', path: '${WORKSPACE}/projects/forge/build/extractRangeMap/'] //Cache the rangemap to help speed up builds
+                ]){
+                    sh './gradlew ${GRADLE_ARGS} :forge:publish -PcrowdinKey=${CROWDIN}'
+                }
+            }
+        }
     }
     post {
         always {
