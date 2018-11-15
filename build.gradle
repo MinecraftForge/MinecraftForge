@@ -242,15 +242,9 @@ project(':forge') {
         rootProject.file('LICENSE.txt')
     ]
     
-    def jenkinsChangelog = rootProject.file('build/changelog.txt')
-    def changelog = file("build/libs/${project.name}-${project.version}-changelog.txt")
-    if (jenkinsChangelog.exists()) {
-        if (!changelog.parentFile.exists())
-            changelog.parentFile.mkdirs()
-        java.nio.file.Files.copy(jenkinsChangelog.toPath(), changelog.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+    def changelog = rootProject.file('build/changelog.txt')
+    if (changelog.exists())
         extraTxts += changelog
-        println extraTxts
-    }
     
     task downloadCrowdin() {
         ext {
@@ -749,8 +743,11 @@ project(':forge') {
         publications {
             mavenJava(MavenPublication) {
                 artifact universalJar
-                if (changelog.exists())
-                    artifact changelog
+                if (changelog.exists()) {
+                    artifact(changelog) {
+                        classifier = 'changelog'
+                    }
+                }
                 artifact installerJar
                 //TODO: installer-win
                 artifact makeMdk

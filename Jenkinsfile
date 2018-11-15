@@ -1,6 +1,9 @@
 @Library('forge-shared-library')_
 
 pipeline {
+    options {
+        disableConcurrentBuilds()
+    }
     agent {
         docker {
             image 'gradlewrapper:latest'
@@ -19,11 +22,7 @@ pipeline {
         }
         stage('setup') {
             steps {
-                cache(maxCacheSize: 250/*MB*/, caches: [
-                    [$class: 'ArbitraryFileCache', excludes: '', includes: 'output.txt', path: '${WORKSPACE}/projects/forge/build/extractRangeMap/'] //Cache the rangemap to help speed up builds
-                ]){
-                    sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue setup'
-                }
+                sh './gradlew ${GRADLE_ARGS} --refresh-dependencies --continue setup'
                 script {
                     env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "version:" | awk \'{print $2}\'').trim()
                 }
