@@ -61,20 +61,20 @@ public interface IFieldWrapper
      */
     boolean handlesKey(String key);
 
-    /**TODO unify them
-     * @param cfg The configuration object holding the properties
-     * @param desc The properties description
-     * @param langKey The languageKey of the property, used in GUI
-     * @param reqMCRestart True, if a change in this property requires a restart of Minecraft
-     * @param reqWorldRestart True, if the world needs to be reloaded after changes to this property
+    /**
+     * @see IFieldWrapper#setupConfiguration(Configuration, String, String, boolean, boolean, boolean)
      */
     default void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart) {
         setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart, false);
     }
 
     /**
-     * @see IFieldWrapper#setupConfiguration(Configuration, String, String, boolean, boolean)
      *
+     * @param cfg The configuration object holding the properties
+     * @param desc The properties description
+     * @param langKey The languageKey of the property, used in GUI
+     * @param reqMCRestart True, if a change in this property requires a restart of Minecraft
+     * @param reqWorldRestart True, if the world needs to be reloaded after changes to this property
      */
     void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl);
     
