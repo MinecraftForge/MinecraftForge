@@ -75,6 +75,8 @@ public interface IFieldWrapper
      * @param langKey The languageKey of the property, used in GUI
      * @param reqMCRestart True, if a change in this property requires a restart of Minecraft
      * @param reqWorldRestart True, if the world needs to be reloaded after changes to this property
+     * @param hasSlidingControl true if the property is going to have a slider control attached in the configuration UI;
+     *                          works in conjunction with {@link Config.RangeInt} and {@link Config.RangeDouble}
      */
     void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl);
     
