@@ -1,28 +1,12 @@
 --- a/net/minecraft/block/BlockLadder.java
 +++ b/net/minecraft/block/BlockLadder.java
-@@ -3,6 +3,7 @@
- import javax.annotation.Nullable;
- import net.minecraft.block.state.BlockFaceShape;
- import net.minecraft.block.state.IBlockState;
-+import net.minecraft.entity.EntityLivingBase;
- import net.minecraft.fluid.Fluid;
- import net.minecraft.fluid.IFluidState;
- import net.minecraft.init.Blocks;
-@@ -20,6 +21,7 @@
- import net.minecraft.util.math.shapes.VoxelShape;
- import net.minecraft.world.IBlockReader;
- import net.minecraft.world.IWorld;
-+import net.minecraft.world.IWorldReader;
- import net.minecraft.world.IWorldReaderBase;
- 
- public class BlockLadder extends Block implements IBucketPickupHandler, ILiquidContainer {
-@@ -151,4 +153,9 @@
+@@ -151,4 +151,9 @@
           return false;
        }
     }
 +
 +   @Override
-+   public boolean isLadder(IBlockState state, IWorldReader world, BlockPos pos, EntityLivingBase entity) {
++   public boolean isLadder(IBlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, net.minecraft.entity.EntityLivingBase entity) {
 +      return true;
 +   }
  }

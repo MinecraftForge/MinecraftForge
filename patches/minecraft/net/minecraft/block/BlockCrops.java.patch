@@ -1,14 +1,6 @@
 --- a/net/minecraft/block/BlockCrops.java
 +++ b/net/minecraft/block/BlockCrops.java
-@@ -9,6 +9,7 @@
- import net.minecraft.state.StateContainer;
- import net.minecraft.state.properties.BlockStateProperties;
- import net.minecraft.util.IItemProvider;
-+import net.minecraft.util.NonNullList;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.util.math.MathHelper;
- import net.minecraft.util.math.shapes.VoxelShape;
-@@ -55,12 +56,14 @@
+@@ -55,12 +55,14 @@
  
     public void func_196267_b(IBlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
        super.func_196267_b(p_196267_1_, p_196267_2_, p_196267_3_, p_196267_4_);
@@ -24,7 +16,7 @@
              }
           }
        }
-@@ -89,9 +92,9 @@
+@@ -89,9 +91,9 @@
           for(int j = -1; j <= 1; ++j) {
              float f1 = 0.0F;
              IBlockState iblockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
@@ -36,7 +28,7 @@
                    f1 = 3.0F;
                 }
              }
-@@ -135,15 +138,19 @@
+@@ -135,15 +137,19 @@
     }
  
     public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
@@ -47,7 +39,7 @@
 +   }
 +
 +   @Override
-+   public void getDrops(IBlockState state, NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
++   public void getDrops(IBlockState state, net.minecraft.util.NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
 +      {
 +         int i = this.func_185527_x(state);
           if (i >= this.func_185526_g()) {

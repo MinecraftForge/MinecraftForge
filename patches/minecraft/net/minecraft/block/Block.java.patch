@@ -1,12 +1,6 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -71,14 +71,19 @@
- import net.minecraft.world.World;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+import net.minecraftforge.common.EnumPlantType;
-+import net.minecraftforge.common.IPlantable;
-+
+@@ -74,11 +74,13 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -23,7 +17,7 @@
     protected final int field_149784_t;
     protected final float field_149782_v;
     protected final float field_149781_w;
-@@ -316,7 +321,7 @@
+@@ -316,7 +318,7 @@
  
     @Deprecated
     public boolean func_196253_a(IBlockState p_196253_1_, BlockItemUseContext p_196253_2_) {
@@ -32,7 +26,7 @@
     }
  
     @Deprecated
-@@ -328,8 +333,9 @@
+@@ -328,8 +330,9 @@
        return this.field_149789_z;
     }
  
@@ -43,7 +37,7 @@
     }
  
     @Deprecated
-@@ -340,11 +346,11 @@
+@@ -340,11 +343,11 @@
     @Deprecated
     @OnlyIn(Dist.CLIENT)
     public int func_185484_c(IBlockState p_185484_1_, IWorldReader p_185484_2_, BlockPos p_185484_3_) {
@@ -57,7 +51,7 @@
        } else {
           return i;
        }
-@@ -486,8 +492,12 @@
+@@ -486,8 +489,12 @@
  
     @Deprecated
     public void func_196243_a(IBlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, IBlockState p_196243_4_, boolean p_196243_5_) {
@@ -70,7 +64,7 @@
     public int func_196264_a(IBlockState p_196264_1_, Random p_196264_2_) {
        return 1;
     }
-@@ -502,30 +512,27 @@
+@@ -502,30 +509,27 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -113,7 +107,7 @@
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -547,6 +554,7 @@
+@@ -547,6 +551,7 @@
  
     }
  
@@ -121,7 +115,7 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -615,16 +623,22 @@
+@@ -615,16 +620,22 @@
     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
        p_180657_2_.func_71029_a(StatList.field_188065_ae.func_199076_b(this));
        p_180657_2_.func_71020_j(0.005F);
@@ -146,7 +140,7 @@
     protected boolean func_149700_E() {
        return this.func_176223_P().func_185917_h() && !this.func_149716_u();
     }
-@@ -681,6 +695,7 @@
+@@ -681,6 +692,7 @@
        p_176216_2_.field_70181_x = 0.0D;
     }
  
@@ -154,7 +148,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -755,6 +770,7 @@
+@@ -755,6 +767,7 @@
        }
     }
  
@@ -162,7 +156,7 @@
     public SoundType func_185467_w() {
        return this.field_149762_H;
     }
-@@ -1147,7 +1163,7 @@
+@@ -1147,7 +1160,7 @@
        func_196254_a("chiseled_quartz_block", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_151677_p).func_200943_b(0.8F)));
        func_196254_a("quartz_pillar", new BlockRotatedPillar(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_151677_p).func_200943_b(0.8F)));
        func_196254_a("quartz_stairs", new BlockStairs(block42.func_176223_P(), Block.Builder.func_200950_a(block42)));
@@ -171,7 +165,7 @@
        func_196254_a("dropper", new BlockDropper(Block.Builder.func_200945_a(Material.field_151576_e).func_200943_b(3.5F)));
        func_196254_a("white_terracotta", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_193561_M).func_200948_a(1.25F, 4.2F)));
        func_196254_a("orange_terracotta", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_193562_N).func_200948_a(1.25F, 4.2F)));
-@@ -1604,4 +1620,83 @@
+@@ -1604,4 +1617,83 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }
@@ -216,9 +210,9 @@
 +   }
 +
 +   @Override
-+   public boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing, IPlantable plantable) {
++   public boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing, net.minecraftforge.common.IPlantable plantable) {
 +       IBlockState plant = plantable.getPlant(world, pos.func_177972_a(facing));
-+       EnumPlantType type = plantable.getPlantType(world, pos.func_177972_a(facing));
++       net.minecraftforge.common.EnumPlantType type = plantable.getPlantType(world, pos.func_177972_a(facing));
 +
 +       if (plant.func_177230_c() == Blocks.field_150434_aF)
 +           return this.getBlock() == Blocks.field_150434_aF || this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_196611_F;

@@ -1,10 +1,6 @@
 --- a/net/minecraft/block/BlockMobSpawner.java
 +++ b/net/minecraft/block/BlockMobSpawner.java
-@@ -10,9 +10,12 @@
- import net.minecraft.util.IItemProvider;
- import net.minecraft.util.math.BlockPos;
- import net.minecraft.world.IBlockReader;
-+import net.minecraft.world.IWorldReader;
+@@ -13,6 +13,8 @@
  import net.minecraft.world.World;
  
  public class BlockMobSpawner extends BlockContainer {
@@ -13,7 +9,7 @@
     protected BlockMobSpawner(Block.Builder p_i48364_1_) {
        super(p_i48364_1_);
     }
-@@ -27,10 +30,13 @@
+@@ -27,10 +29,13 @@
  
     public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
        super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, p_196255_5_);
@@ -22,7 +18,7 @@
     }
  
 +   @Override
-+   public int getExpDrop(IBlockState state, IWorldReader world, BlockPos pos, int fortune) {
++   public int getExpDrop(IBlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, int fortune) {
 +      return 15 + RAND.nextInt(15) + RAND.nextInt(15);
 +   }
 +
