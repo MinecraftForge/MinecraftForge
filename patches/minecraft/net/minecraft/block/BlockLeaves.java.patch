@@ -1,0 +1,97 @@
+--- a/net/minecraft/block/BlockLeaves.java
++++ b/net/minecraft/block/BlockLeaves.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.block;
+ 
++import java.util.List;
+ import java.util.Random;
++
++import javax.annotation.Nonnull;
+ import javax.annotation.Nullable;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -22,11 +25,12 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.IWorld;
++import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class BlockLeaves extends Block {
++public class BlockLeaves extends Block implements net.minecraftforge.common.IShearable {
+    public static final IntegerProperty field_208494_a = BlockStateProperties.field_208514_aa;
+    public static final BooleanProperty field_208495_b = BlockStateProperties.field_208515_s;
+    protected static boolean field_196478_c;
+@@ -122,28 +126,37 @@
+    }
+ 
+    public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
+-      if (!p_196255_2_.field_72995_K) {
+-         int i = this.func_196472_i(p_196255_1_);
+-         if (p_196255_5_ > 0) {
+-            i -= 2 << p_196255_5_;
++       super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, p_196255_5_);
++   }
++
++   @Override
++   public void getDrops(IBlockState state, net.minecraft.util.NonNullList<ItemStack> drops, World worldIn, BlockPos pos, int fortune) {
++      {
++         int i = this.func_196472_i(state);
++         if (fortune > 0) {
++            i -= 2 << fortune;
+             if (i < 10) {
+                i = 10;
+             }
+          }
+ 
+-         if (p_196255_2_.field_73012_v.nextInt(i) == 0) {
+-            func_180635_a(p_196255_2_, p_196255_3_, new ItemStack(this.func_199769_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_5_)));
++         if (worldIn.field_73012_v.nextInt(i) == 0) {
++            ItemStack drop = new ItemStack(this.func_199769_a(state, worldIn, pos, fortune));
++            if (!drop.func_190926_b())
++                drops.add(drop);
+          }
+ 
+          i = 200;
+-         if (p_196255_5_ > 0) {
+-            i -= 10 << p_196255_5_;
++         if (fortune > 0) {
++            i -= 10 << fortune;
+             if (i < 40) {
+                i = 40;
+             }
+          }
+ 
+-         this.func_196474_a(p_196255_2_, p_196255_3_, p_196255_1_, i);
++         captureDrops(true);
++         this.func_196474_a(worldIn, pos, state, i);
++         drops.addAll(captureDrops(false));
+       }
+ 
+    }
+@@ -173,13 +186,7 @@
+    }
+ 
+    public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
+-      if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ) {
+-         p_180657_2_.func_71029_a(StatList.field_188065_ae.func_199076_b(this));
+-         p_180657_2_.func_71020_j(0.005F);
+-         func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(this));
+-      } else {
+          super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
+-      }
+    }
+ 
+    protected void func_206840_a(StateContainer.Builder<Block, IBlockState> p_206840_1_) {
+@@ -189,4 +196,9 @@
+    public IBlockState func_196258_a(BlockItemUseContext p_196258_1_) {
+       return func_208493_b((IBlockState)this.func_176223_P().func_206870_a(field_208495_b, Boolean.valueOf(true)), p_196258_1_.func_195991_k(), p_196258_1_.func_195995_a());
+    }
++
++   @Override
++   public List<ItemStack> onSheared(@Nonnull ItemStack item, IWorldReader world, BlockPos pos, int fortune) {
++      return java.util.Arrays.asList(new ItemStack(this));
++   }
+ }

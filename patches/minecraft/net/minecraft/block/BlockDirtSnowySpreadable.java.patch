@@ -1,0 +1,10 @@
+--- a/net/minecraft/block/BlockDirtSnowySpreadable.java
++++ b/net/minecraft/block/BlockDirtSnowySpreadable.java
+@@ -25,6 +25,7 @@
+ 
+    public void func_196267_b(IBlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
+       if (!p_196267_2_.field_72995_K) {
++         if (!p_196267_2_.func_205050_e(p_196267_3_, 3)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light and spreading
+          if (!func_196383_a(p_196267_2_, p_196267_3_)) {
+             p_196267_2_.func_175656_a(p_196267_3_, Blocks.field_150346_d.func_176223_P());
+          } else {

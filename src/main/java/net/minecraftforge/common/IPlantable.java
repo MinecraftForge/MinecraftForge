@@ -19,12 +19,28 @@
 
 package net.minecraftforge.common;
 
+import net.minecraft.block.BlockCrops;
+import net.minecraft.block.BlockFlower;
+import net.minecraft.block.BlockSapling;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IBlockReader;
 
 public interface IPlantable
 {
-    EnumPlantType getPlantType(IWorldReader world, BlockPos pos);
-    IBlockState getPlant(IWorldReader world, BlockPos pos);
+    default EnumPlantType getPlantType(IBlockReader world, BlockPos pos) {
+        if (this instanceof BlockCrops) return EnumPlantType.Crop;
+        if (this instanceof BlockSapling) return EnumPlantType.Plains;
+        if (this instanceof BlockFlower) return EnumPlantType.Plains;
+        if (this == Blocks.DEAD_BUSH)      return EnumPlantType.Desert;
+        if (this == Blocks.LILY_PAD)       return EnumPlantType.Water;
+        if (this == Blocks.RED_MUSHROOM)   return EnumPlantType.Cave;
+        if (this == Blocks.BROWN_MUSHROOM) return EnumPlantType.Cave;
+        if (this == Blocks.NETHER_WART)    return EnumPlantType.Nether;
+        if (this == Blocks.TALL_GRASS)      return EnumPlantType.Plains;
+        return net.minecraftforge.common.EnumPlantType.Plains;
+    }
+
+    IBlockState getPlant(IBlockReader world, BlockPos pos);
 }

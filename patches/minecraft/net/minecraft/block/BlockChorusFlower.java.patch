@@ -1,0 +1,20 @@
+--- a/net/minecraft/block/BlockChorusFlower.java
++++ b/net/minecraft/block/BlockChorusFlower.java
+@@ -42,7 +42,7 @@
+          BlockPos blockpos = p_196267_3_.func_177984_a();
+          if (p_196267_2_.func_175623_d(blockpos) && blockpos.func_177956_o() < 256) {
+             int i = p_196267_1_.func_177229_b(field_185607_a);
+-            if (i < 5) {
++            if (i < 5 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, blockpos, p_196267_1_, true)) {
+                boolean flag = false;
+                boolean flag1 = false;
+                IBlockState iblockstate = p_196267_2_.func_180495_p(p_196267_3_.func_177977_b());
+@@ -99,7 +99,7 @@
+                } else {
+                   this.func_185605_c(p_196267_2_, p_196267_3_);
+                }
+-
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
+             }
+          }
+       }

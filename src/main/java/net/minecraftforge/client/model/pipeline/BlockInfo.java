@@ -123,7 +123,7 @@ public class BlockInfo
                 {
                     BlockPos pos = blockPos.add(x - 1, y - 1, z - 1);
                     IBlockState state = world.getBlockState(pos);
-                    t[x][y][z] = state.getLightOpacity(world, pos) < 15;
+                    t[x][y][z] = state.getOpacity(world, pos) < 15;
                     int brightness = state.getPackedLightmapCoords(world, pos);
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;

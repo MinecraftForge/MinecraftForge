@@ -1,6 +1,12 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -74,7 +74,7 @@
+@@ -71,14 +71,19 @@
+ import net.minecraft.world.World;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.common.EnumPlantType;
++import net.minecraftforge.common.IPlantable;
++
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,8 +14,63 @@
 +public class Block extends net.minecraftforge.registries.ForgeRegistryEntry<Block> implements IItemProvider, net.minecraftforge.common.extensions.IForgeBlock {
     protected static final Logger field_196273_d = LogManager.getLogger();
     private static final ResourceLocation field_176230_a = new ResourceLocation("air");
-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(field_176230_a);
-@@ -502,8 +502,8 @@
+-   public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = new RegistryNamespacedDefaultedByKey<ResourceLocation, Block>(field_176230_a);
+-   public static final ObjectIntIdentityMap<IBlockState> field_176229_d = new ObjectIntIdentityMap<IBlockState>();
++   @Deprecated //Forge: Do not use, use ForgeRegistries
++   public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Block> field_149771_c = net.minecraftforge.registries.GameData.getWrapperDefaulted(Block.class);
++   @Deprecated //Forge: Do not use, use GameRegistry
++   public static final ObjectIntIdentityMap<IBlockState> field_176229_d = net.minecraftforge.registries.GameData.getBlockStateIDMap();
+    protected final int field_149784_t;
+    protected final float field_149782_v;
+    protected final float field_149781_w;
+@@ -316,7 +321,7 @@
+ 
+    @Deprecated
+    public boolean func_196253_a(IBlockState p_196253_1_, BlockItemUseContext p_196253_2_) {
+-      return this.field_149764_J.func_76222_j() && p_196253_2_.func_195996_i().func_77973_b() != this.func_199767_j();
++      return p_196253_1_.func_185904_a().func_76222_j() && p_196253_2_.func_195996_i().func_77973_b() != this.func_199767_j();
+    }
+ 
+    @Deprecated
+@@ -328,8 +333,9 @@
+       return this.field_149789_z;
+    }
+ 
++   @Deprecated //Forge: New State sensitive version.
+    public boolean func_149716_u() {
+-      return this instanceof ITileEntityProvider;
++      return hasTileEntity(func_176223_P());
+    }
+ 
+    @Deprecated
+@@ -340,11 +346,11 @@
+    @Deprecated
+    @OnlyIn(Dist.CLIENT)
+    public int func_185484_c(IBlockState p_185484_1_, IWorldReader p_185484_2_, BlockPos p_185484_3_) {
+-      int i = p_185484_2_.func_175626_b(p_185484_3_, p_185484_1_.func_185906_d());
++      int i = p_185484_2_.func_175626_b(p_185484_3_, p_185484_1_.getLightValue(p_185484_2_, p_185484_3_));
+       if (i == 0 && p_185484_1_.func_177230_c() instanceof BlockSlab) {
+          p_185484_3_ = p_185484_3_.func_177977_b();
+          p_185484_1_ = p_185484_2_.func_180495_p(p_185484_3_);
+-         return p_185484_2_.func_175626_b(p_185484_3_, p_185484_1_.func_185906_d());
++         return p_185484_2_.func_175626_b(p_185484_3_, p_185484_1_.getLightValue(p_185484_2_, p_185484_3_));
+       } else {
+          return i;
+       }
+@@ -486,8 +492,12 @@
+ 
+    @Deprecated
+    public void func_196243_a(IBlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, IBlockState p_196243_4_, boolean p_196243_5_) {
++       if (hasTileEntity(p_196243_1_) && !(this instanceof BlockContainer)) {
++           p_196243_2_.func_175713_t(p_196243_3_);
++       }
+    }
+ 
++   @Deprecated //Forge: Use fortune/location sensitive version
+    public int func_196264_a(IBlockState p_196264_1_, Random p_196264_2_) {
+       return 1;
+    }
+@@ -502,30 +512,27 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -20,7 +81,64 @@
        }
     }
  
-@@ -625,6 +625,7 @@
+    @Deprecated
+    public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
+-      if (!p_196255_2_.field_72995_K) {
+-         int i = this.func_196251_a(p_196255_1_, p_196255_5_, p_196255_2_, p_196255_3_, p_196255_2_.field_73012_v);
+-
+-         for(int j = 0; j < i; ++j) {
+-            if (!(p_196255_4_ < 1.0F) || !(p_196255_2_.field_73012_v.nextFloat() > p_196255_4_)) {
+-               Item item = this.func_199769_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_5_).func_199767_j();
+-               if (item != Items.field_190931_a) {
+-                  func_180635_a(p_196255_2_, p_196255_3_, new ItemStack(item));
+-               }
+-            }
+-         }
+-
++      if (!p_196255_2_.field_72995_K && !p_196255_2_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
++         NonNullList<ItemStack> drops = NonNullList.func_191196_a();
++         getDrops(p_196255_1_, drops, p_196255_2_, p_196255_3_, p_196255_5_); // use the old method until it gets removed, for backward compatibility
++         p_196255_4_ = net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, p_196255_2_, p_196255_3_, p_196255_1_, p_196255_5_, p_196255_4_, false, harvesters.get());
++         drops.forEach(stack -> func_180635_a(p_196255_2_, p_196255_3_, stack));
+       }
+    }
+ 
+    public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
+-      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_82766_b("doTileDrops")) {
++      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_82766_b("doTileDrops") && !p_180635_0_.restoringBlockSnapshots) {// do not drop items while restoring blockstates, prevents item dupe
++         if (captureDrops.get()) {
++            capturedDrops.get().add(p_180635_2_);
++            return;
++         }
+          float f = 0.5F;
+          double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
+          double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
+@@ -547,6 +554,7 @@
+ 
+    }
+ 
++   @Deprecated //Forge: State sensitive version
+    public float func_149638_a() {
+       return this.field_149781_w;
+    }
+@@ -615,16 +623,22 @@
+    public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
+       p_180657_2_.func_71029_a(StatList.field_188065_ae.func_199076_b(this));
+       p_180657_2_.func_71020_j(0.005F);
+-      if (this.func_149700_E() && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0) {
++      if (this.canSilkHarvest(p_180657_4_, p_180657_1_, p_180657_3_, p_180657_2_) && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0) {
++         NonNullList<ItemStack> items = NonNullList.func_191196_a();
+          ItemStack itemstack = this.func_180643_i(p_180657_4_);
+-         func_180635_a(p_180657_1_, p_180657_3_, itemstack);
++         if (!itemstack.func_190926_b()) items.add(itemstack);
++         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(items, p_180657_1_, p_180657_3_, p_180657_4_, 0, 1.0f, true, p_180657_2_);
++         items.forEach(e -> func_180635_a(p_180657_1_, p_180657_3_, e));
+       } else {
++         harvesters.set(p_180657_2_);
+          int i = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, p_180657_6_);
+          p_180657_4_.func_196949_c(p_180657_1_, p_180657_3_, i);
++         harvesters.set(null);
+       }
  
     }
  
@@ -28,7 +146,15 @@
     protected boolean func_149700_E() {
        return this.func_176223_P().func_185917_h() && !this.func_149716_u();
     }
-@@ -755,6 +756,7 @@
+@@ -681,6 +695,7 @@
+       p_176216_2_.field_70181_x = 0.0D;
+    }
+ 
++   @Deprecated // Forge: Use more sensitive version below: getPickBlock
+    public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_) {
+       return new ItemStack(this);
+    }
+@@ -755,6 +770,7 @@
        }
     }
  
@@ -36,12 +162,22 @@
     public SoundType func_185467_w() {
        return this.field_149762_H;
     }
-@@ -1604,4 +1606,56 @@
+@@ -1147,7 +1163,7 @@
+       func_196254_a("chiseled_quartz_block", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_151677_p).func_200943_b(0.8F)));
+       func_196254_a("quartz_pillar", new BlockRotatedPillar(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_151677_p).func_200943_b(0.8F)));
+       func_196254_a("quartz_stairs", new BlockStairs(block42.func_176223_P(), Block.Builder.func_200950_a(block42)));
+-      func_196254_a("activator_rail", new BlockRailPowered(Block.Builder.func_200945_a(Material.field_151594_q).func_200942_a().func_200943_b(0.7F).func_200947_a(SoundType.field_185852_e)));
++      func_196254_a("activator_rail", new BlockRailPowered(Block.Builder.func_200945_a(Material.field_151594_q).func_200942_a().func_200943_b(0.7F).func_200947_a(SoundType.field_185852_e), true));
+       func_196254_a("dropper", new BlockDropper(Block.Builder.func_200945_a(Material.field_151576_e).func_200943_b(3.5F)));
+       func_196254_a("white_terracotta", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_193561_M).func_200948_a(1.25F, 4.2F)));
+       func_196254_a("orange_terracotta", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_193562_N).func_200948_a(1.25F, 4.2F)));
+@@ -1604,4 +1620,83 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }
 +   /* ======================================== FORGE START =====================================*/
-+   private ThreadLocal<IBlockState> silkCheck = new ThreadLocal<>();
++   protected Random RANDOM = new Random();
++   protected ThreadLocal<EntityPlayer> harvesters = new ThreadLocal<>();
 +   private net.minecraftforge.common.ToolType harvestTool;
 +   private int harvestLevel;
 +   protected static ThreadLocal<Boolean> captureDrops = ThreadLocal.withInitial(() -> false);
@@ -68,12 +204,6 @@
 +      return this.func_149700_E() && !state.hasTileEntity();
 +   }
 +
-+   @Override
-+   public void onBlockExploded(IBlockState state, World world, BlockPos pos, Explosion explosion) {
-+      world.func_175698_g(pos);
-+      func_180652_a(world, pos, explosion);
-+   }
-+
 +   @Nullable
 +   @Override
 +   public net.minecraftforge.common.ToolType getHarvestTool(IBlockState state) {
@@ -83,6 +213,38 @@
 +   @Override
 +   public int getHarvestLevel(IBlockState state) {
 +      return harvestLevel; //TODO: RE-Evaluate
++   }
++
++   @Override
++   public boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing, IPlantable plantable) {
++       IBlockState plant = plantable.getPlant(world, pos.func_177972_a(facing));
++       EnumPlantType type = plantable.getPlantType(world, pos.func_177972_a(facing));
++
++       if (plant.func_177230_c() == Blocks.field_150434_aF)
++           return this.getBlock() == Blocks.field_150434_aF || this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_196611_F;
++
++       if (plant.func_177230_c() == Blocks.field_196608_cF)
++           return true;
++
++       if (plantable instanceof BlockBush && ((BlockBush)plantable).func_200014_a_(state, world, pos))
++           return true;
++
++       switch (type) {
++           case Desert: return this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_150405_ch || this.getBlock() instanceof BlockGlazedTerracotta;
++           case Nether: return this.getBlock() == Blocks.field_150425_aM;
++           case Crop: return this.getBlock() == Blocks.field_150458_ak;
++           case Cave: return state.func_185896_q();
++           case Plains: return this.getBlock() == Blocks.field_150349_c || this.getBlock() == Blocks.field_150346_d || this.getBlock() == Blocks.field_150458_ak;
++           case Water: return state.func_185904_a() == Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
++           case Beach:
++               boolean isBeach = this.getBlock() == Blocks.field_150349_c || this.getBlock() == Blocks.field_150346_d || this.getBlock() == Blocks.field_150354_m;
++               boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == Material.field_151586_h ||
++                       world.func_180495_p(pos.func_177976_e()).func_185904_a() == Material.field_151586_h ||
++                       world.func_180495_p(pos.func_177978_c()).func_185904_a() == Material.field_151586_h ||
++                       world.func_180495_p(pos.func_177968_d()).func_185904_a() == Material.field_151586_h);
++               return isBeach && hasWater;
++       }
++       return false;
 +   }
 +
 +   static {

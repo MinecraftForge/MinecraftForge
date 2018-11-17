@@ -47,5 +47,5 @@ public enum EnumPlantType
      * @param name the name of the type of plant, you had better follow the style above
      * @return the acquired {@link EnumPlantType}, a new one if not found.
      */
-    public static EnumPlantType create(String name, int test, long bar, String foo){ return null; }
+    public static EnumPlantType create(String name){ return null; }
 }

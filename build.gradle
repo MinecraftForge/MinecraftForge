@@ -119,17 +119,29 @@ project(':forge') {
         clientRun {
             main = 'net.minecraftforge.fml.LaunchTesting'
             environment = [
-                target: 'fmldevclient'
+                target: 'fmldevclient',
+                assetDirectory: downloadAssets.output,
+                nativesDirectory: extractNatives.output
             ]
             properties = [
-                target: 'fmldevclient',
-                assetDirectory: downloadAssets.output
+                'org.lwjgl.util.Debug': 'true',
+                'org.lwjgl.util.DebugLoader': 'true',
+                'mc.version': MC_VERSION,
+                'mcp.version': MCP_VERSION,
+                'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
+                'forge.spec': SPEC_VERSION
             ]
         }
         serverRun {
             main = 'net.minecraftforge.fml.LaunchTesting'
             environment = [
                 target: 'fmldevserver'
+            ]
+            properties = [
+                'mc.version': MC_VERSION,
+                'mcp.version': MCP_VERSION,
+                'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
+                'forge.spec': SPEC_VERSION
             ]
         }
     }
@@ -207,7 +219,7 @@ project(':forge') {
         ]
         environment += [
                 target:'fmldevclient',
-                assetDirectory: file("${gradle.getGradleUserHomeDir()}/caches/forge_gradle/assets/"),
+                assetDirectory: downloadAssets.output,
                 nativesDirectory: extractNatives.output
         ]
         workingDir 'runclient'

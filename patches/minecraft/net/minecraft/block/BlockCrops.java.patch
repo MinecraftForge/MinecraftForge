@@ -1,0 +1,64 @@
+--- a/net/minecraft/block/BlockCrops.java
++++ b/net/minecraft/block/BlockCrops.java
+@@ -9,6 +9,7 @@
+ import net.minecraft.state.StateContainer;
+ import net.minecraft.state.properties.BlockStateProperties;
+ import net.minecraft.util.IItemProvider;
++import net.minecraft.util.NonNullList;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.shapes.VoxelShape;
+@@ -55,12 +56,14 @@
+ 
+    public void func_196267_b(IBlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
+       super.func_196267_b(p_196267_1_, p_196267_2_, p_196267_3_, p_196267_4_);
++      if (!p_196267_2_.func_205050_e(p_196267_3_, 1)) return; // Forge: prevent loading unloaded chunks when checking neighbor's light
+       if (p_196267_2_.func_201669_a(p_196267_3_.func_177984_a(), 0) >= 9) {
+          int i = this.func_185527_x(p_196267_1_);
+          if (i < this.func_185526_g()) {
+             float f = func_180672_a(this, p_196267_2_, p_196267_3_);
+-            if (p_196267_4_.nextInt((int)(25.0F / f) + 1) == 0) {
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
+                p_196267_2_.func_180501_a(p_196267_3_, this.func_185528_e(i + 1), 2);
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
+             }
+          }
+       }
+@@ -89,9 +92,9 @@
+          for(int j = -1; j <= 1; ++j) {
+             float f1 = 0.0F;
+             IBlockState iblockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
+-            if (iblockstate.func_177230_c() == Blocks.field_150458_ak) {
++            if (iblockstate.canSustainPlant(p_180672_1_, blockpos.func_177982_a(i, 0, j), net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)p_180672_0_)) {
+                f1 = 1.0F;
+-               if (iblockstate.func_177229_b(BlockFarmland.field_176531_a) > 0) {
++               if (iblockstate.isFertile(p_180672_1_, blockpos.func_177982_a(i, 0, j))) {
+                   f1 = 3.0F;
+                }
+             }
+@@ -135,15 +138,19 @@
+    }
+ 
+    public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
+-      super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, 0);
+-      if (!p_196255_2_.field_72995_K) {
+-         int i = this.func_185527_x(p_196255_1_);
++      super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, p_196255_5_);
++   }
++
++   @Override
++   public void getDrops(IBlockState state, NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
++      {
++         int i = this.func_185527_x(state);
+          if (i >= this.func_185526_g()) {
+-            int j = 3 + p_196255_5_;
++            int j = 3 + fortune;
+ 
+             for(int k = 0; k < j; ++k) {
+-               if (p_196255_2_.field_73012_v.nextInt(2 * this.func_185526_g()) <= i) {
+-                  func_180635_a(p_196255_2_, p_196255_3_, new ItemStack(this.func_199772_f()));
++               if (world.field_73012_v.nextInt(2 * this.func_185526_g()) <= i) {
++                  drops.add(new ItemStack(this.func_199772_f()));
+                }
+             }
+          }

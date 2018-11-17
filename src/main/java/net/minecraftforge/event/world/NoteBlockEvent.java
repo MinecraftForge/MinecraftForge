@@ -20,6 +20,7 @@
 package net.minecraftforge.event.world;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.state.properties.NoteBlockInstrument;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -86,20 +87,20 @@ public class NoteBlockEvent extends BlockEvent
     @Cancelable
     public static class Play extends NoteBlockEvent
     {
-        private Instrument instrument;
+        private NoteBlockInstrument instrument;
 
-        public Play(World world, BlockPos pos, IBlockState state, int note, int instrument)
+        public Play(World world, BlockPos pos, IBlockState state, int note, NoteBlockInstrument instrument)
         {
             super(world, pos, state, note);
-            this.setInstrument(Instrument.fromId(instrument));
+            this.instrument = instrument;
         }
 
-        public Instrument getInstrument()
+        public NoteBlockInstrument getInstrument()
         {
             return instrument;
         }
 
-        public void setInstrument(Instrument instrument)
+        public void setInstrument(NoteBlockInstrument instrument)
         {
             this.instrument = instrument;
         }
@@ -130,32 +131,6 @@ public class NoteBlockEvent extends BlockEvent
         public Octave getOldOctave()
         {
             return oldOctave;
-        }
-    }
-
-    /**
-     * Describes the types of musical Instruments that can be played by a Noteblock.
-     * The Instrument being played can be overridden with {@link NoteBlockEvent.Play#setInstrument(Instrument)}
-     */
-    public static enum Instrument
-    {
-        PIANO,
-        BASSDRUM,
-        SNARE,
-        CLICKS,
-        BASSGUITAR,
-        FLUTE,
-        BELL,
-        GUITAR,
-        CHIME,
-        XYLOPHONE;
-
-        // cache to avoid creating a new array every time
-        private static final Instrument[] values = values();
-
-        static Instrument fromId(int id)
-        {
-            return id < 0 || id >= values.length ? PIANO : values[id];
         }
     }
 

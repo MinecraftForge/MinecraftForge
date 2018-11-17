@@ -33,8 +33,12 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -42,6 +46,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.properties.BedPart;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -51,9 +56,11 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorldReaderBase;
 import net.minecraft.world.IWorldWriter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.dimension.EndDimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.EnumPlantType;
@@ -121,7 +128,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True if the block is a full cube
      */
-    default boolean isNormalCube(IBlockState state, IWorldReader world, BlockPos pos)
+    default boolean isNormalCube(IBlockState state, IBlockReader world, BlockPos pos)
     {
         return state.isNormalCube();
     }
@@ -167,10 +174,74 @@ public interface IForgeBlock
      */
     default boolean hasTileEntity(IBlockState state)
     {
-        return this.getBlock().hasTileEntity();
+        return this instanceof ITileEntityProvider;
     }
 
+    /**
+     * Called throughout the code as a replacement for ITileEntityProvider.createNewTileEntity
+     * Return the same thing you would from that function.
+     * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
+     *
+     * @param state The state of the current block
+     * @param world The world to create the TE in
+     * @return A instance of a class extending TileEntity
+     */
+    @Nullable
+    default TileEntity createTileEntity(IBlockState state, IBlockReader world)
+    {
+        if (getBlock() instanceof ITileEntityProvider)
+            return ((ITileEntityProvider)getBlock()).createNewTileEntity(world);
+        return null;
+    }
+
+    /**
+     * Return true from this function if the player with silk touch can harvest this block directly, and not it's normal drops.
+     *
+     * @param state current block state
+     * @param world The world
+     * @param pos Block position in world
+     * @param player The player doing the harvesting
+     * @return True if the block can be directly harvested using silk touch
+     */
     boolean canSilkHarvest(IBlockState state, IWorldReader world, BlockPos pos, EntityPlayer player);
+
+    /**
+     * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
+     *
+     * @param world The current world
+     * @param pos The block's current position
+     * @param player The player damaging the block
+     * @return True to spawn the drops
+     */
+    default public boolean canHarvestBlock(IBlockState state, IBlockReader world, BlockPos pos, EntityPlayer player)
+    {
+        return net.minecraftforge.common.ForgeHooks.canHarvestBlock(state, player, world, pos);
+    }
+
+    /**
+     * Called when a player removes a block.  This is responsible for
+     * actually destroying the block, and the block is intact at time of call.
+     * This is called regardless of whether the player can harvest the block or
+     * not.
+     *
+     * Return true if the block is actually destroyed.
+     *
+     * Note: When used in multiplayer, this is called on both client and
+     * server sides!
+     *
+     * @param state The current state.
+     * @param world The current world
+     * @param player The player damaging the block, may be null
+     * @param pos Block position in world
+     * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
+     *        Can be useful to delay the destruction of tile entities till after harvestBlock
+     * @return True if the block is actually destroyed.
+     */
+    default boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
+    {
+        getBlock().onBlockHarvested(world, pos, state, player);
+        return world.setBlockState(pos, net.minecraft.init.Blocks.AIR.getDefaultState(), world.isRemote ? 11 : 3);
+    }
 
     /**
      * Determines if this block is classified as a Bed, Allowing
@@ -198,10 +269,9 @@ public interface IForgeBlock
      * @param type The Mob Category Type
      * @return True to allow a mob of the specified category to spawn, false to prevent it.
      */
-    @SuppressWarnings("deprecation")
     default boolean canCreatureSpawn(IBlockState state, IWorldReader world, BlockPos pos, EntitySpawnPlacementRegistry.SpawnPlacementType type)
     {
-        return this.getBlock().isTopSolid(state);
+        return state.isTopSolid();
     }
     /**
      * Returns the position that the player is moved to upon
@@ -277,18 +347,6 @@ public interface IForgeBlock
     default void beginLeaveDecay(IBlockState state, IWorldReader world, BlockPos pos) {}
 
     /**
-     * Determines if this block can prevent leaves connected to it from decaying.
-     * @param state The current state
-     * @param world The current world
-     * @param pos Block position in world
-     * @return true if the presence this block can prevent leaves from decaying.
-     */
-    default boolean canSustainLeaves(IBlockState state, IWorldReader world, BlockPos pos)
-    {
-        return false;
-    }
-
-    /**
      * Determines if this block is considered a leaf block, used to apply the leaf decay and generation system.
      *
      * @param state The current state
@@ -331,17 +389,6 @@ public interface IForgeBlock
     }
 
     /**
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return  true if the block is wood (logs)
-     */
-    default boolean isWood(IBlockState state, IWorldReader world, BlockPos pos)
-    {
-        return false;
-    }
-
-    /**
      * Determines if the current block is replaceable by Ore veins during world generation.
      *
      * @param state The current state
@@ -352,7 +399,7 @@ public interface IForgeBlock
      * @return True to allow this block to be replaced by a ore
      */
     default boolean isReplaceableOreGen(IBlockState state, IWorldReader world, BlockPos pos, Predicate<IBlockState> target)
-    {
+    { //TODO: Re-evaluate with new world gen
         return target.test(state);
     }
 
@@ -379,7 +426,10 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param explosion The explosion instance affecting the block
      */
-    void onBlockExploded(IBlockState state, World world, BlockPos pos, Explosion explosion);
+    default void onBlockExploded(IBlockState state, World world, BlockPos pos, Explosion explosion) {
+        world.removeBlock(pos);
+        getBlock().onExplosionDestroy(world, pos, explosion);
+    }
 
     /**
      * Determine if this block can make a redstone connection on the side provided,
@@ -452,6 +502,7 @@ public interface IForgeBlock
     {
         return false;
     }
+
    /**
     * Allows a block to override the standard vanilla running particles.
     * This is called from {@link Entity#spawnRunningParticles} and is called both,
@@ -504,47 +555,7 @@ public interface IForgeBlock
     * @param plantable The plant that wants to check
     * @return True to allow the plant to be planted/stay.
     */
-    default boolean canSustainPlant(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing facing, IPlantable plantable)
-    {
-        IBlockState plant = plantable.getPlant(world, pos.offset(facing));
-        EnumPlantType type = plantable.getPlantType(world, pos.offset(facing));
-
-        if (plant.getBlock() == Blocks.CACTUS)
-        {
-            return this.getBlock() == Blocks.CACTUS && this.getBlock() == Blocks.SAND;
-        }
-
-        if (plant.getBlock() == Blocks.SUGAR_CANE)
-        {
-            return true;
-        }
-
-        if (plantable instanceof BlockBush && ((BlockBush)plantable).isValidPosition(state, world, pos))
-        {
-            return true;
-        }
-
-        switch (type)
-        {
-            case Desert: return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.TERRACOTTA ||
-                    this.getBlock() instanceof BlockGlazedTerracotta;
-            case Nether: return this.getBlock() == Blocks.SOUL_SAND;
-            case Crop: return this.getBlock() == Blocks.FARMLAND;
-            case Cave: return state.isTopSolid();
-            case Plains: return this.getBlock() == Blocks.GRASS || this.getBlock() == Blocks.DIRT ||
-                    this.getBlock() == Blocks.FARMLAND;
-            case Water: return state.getMaterial() == Material.WATER; //&& state.getValue(BlockLiquidWrapper)
-            case Beach:
-                boolean isBeach = this.getBlock() == Blocks.GRASS || this.getBlock() == Blocks.DIRT ||
-                        this.getBlock() == Blocks.SAND;
-                boolean hasWater = (world.getBlockState(pos.east()).getMaterial() == Material.WATER ||
-                        world.getBlockState(pos.west()).getMaterial() == Material.WATER ||
-                        world.getBlockState(pos.north()).getMaterial() == Material.WATER ||
-                        world.getBlockState(pos.south()).getMaterial() == Material.WATER);
-                return isBeach && hasWater;
-        }
-        return false;
-    }
+    boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing, IPlantable plantable);
 
     /**
      * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.
@@ -575,30 +586,12 @@ public interface IForgeBlock
     * @param pos Block position in world
     * @return True if the soil should be considered fertile.
     */
-    default boolean isFertile(IBlockState state, IWorldReader world, BlockPos pos)
+    default boolean isFertile(IBlockState state, IBlockReader world, BlockPos pos)
     {
         if (this.getBlock() == Blocks.FARMLAND)
             return state.get(BlockFarmland.MOISTURE) > 0;
 
         return  false;
-    }
-
-   /**
-    * Location aware and overrideable version of the lightOpacity array,
-    * return the number to subtract from the light value when it passes through this block.
-    *
-    * This is not guaranteed to have the tile entity in place before this is called, so it is
-    * Recommended that you have your tile entity call relight after being placed if you
-    * rely on it for light info.
-    *
-    * @param state The Block state
-    * @param world The current world
-    * @param pos Block position in world
-    * @return The amount of light to block, 0 for air, 255 for fully opaque.
-    */
-    default int getLightOpacity(IBlockState state, IWorldReader world, BlockPos pos)
-    {
-        return state.getOpacity(world, pos);
     }
 
    /**
@@ -628,46 +621,33 @@ public interface IForgeBlock
        return 0;
     }
 
-    default boolean rotateBlock(IBlockState state, IWorld world, BlockPos pos, EnumFacing axis)
+    @SuppressWarnings("deprecation")
+    default IBlockState rotate(IBlockState state, IWorld world, BlockPos pos, Rotation direction)
     {
-        state.getValues().keySet().forEach(prop ->
+        return state.rotate(direction);
+    }
+
+    /**
+     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
+     * Note, this is up to the block to decide. It may not be accurate or representative.
+     * @param state The current state
+     * @param world The world
+     * @param pos Block position in world
+     * @return An array of valid axes to rotate around, or null for none or unknown
+     */
+    @Nullable
+    default EnumFacing[] getValidRotations(IBlockState state, IBlockReader world, BlockPos pos)
+    {
+        for (IProperty<?> prop : state.getProperties())
         {
-            if (prop.getName().equals("facing") || prop.getName().equals("rotation") && prop.getValueClass() == EnumFacing.class)
+            if ((prop.getName().equals("facing") || prop.getName().equals("rotation")) && prop.getValueClass() == EnumFacing.class)
             {
-                Block block = state.getBlock();
-                if (!(block instanceof BlockBed) && !(block instanceof BlockPistonExtension))
-                {
-                    IBlockState newState;
-                    @SuppressWarnings("unchecked")
-                    IProperty<EnumFacing> facingIProperty = (IProperty<EnumFacing>) prop;
-                    EnumFacing facing = state.get(facingIProperty);
-                    Collection<EnumFacing> validFacing = facingIProperty.getAllowedValues();
-
-                    // rotate horizontal facings clockwise
-                    if (validFacing.size() == 4 && !validFacing.contains(EnumFacing.UP) && !validFacing.contains(EnumFacing.DOWN))
-                    {
-                        newState = state.with(facingIProperty, facing.rotateY());
-                    }
-                    else
-                    {
-                        // rotate other facings about the axis
-                        EnumFacing rotatedFacing = facing.rotateAround(axis.getAxis());
-                        if (validFacing.contains(rotatedFacing))
-                        {
-                            newState = state.with(facingIProperty, rotatedFacing);
-                        }
-                        else // abnormal facing property, just cycle it
-                        {
-                            newState = state.cycle(facingIProperty);
-                        }
-                    }
-
-                    world.setBlockState(pos, newState, 3);
-                }
-
+                @SuppressWarnings("unchecked")
+                Collection<EnumFacing> values = ((Collection<EnumFacing>)prop.getAllowedValues());
+                return values.toArray(new EnumFacing[values.size()]);
             }
-        });
-        return false;
+        }
+        return null;
     }
 
    /**
@@ -691,8 +671,21 @@ public interface IForgeBlock
     * @param fortune
     * @return Amount of XP from breaking this block.
     */
+    @SuppressWarnings("unchecked")
     default boolean recolorBlock(IBlockState state, IWorld world, BlockPos pos, EnumFacing facing, EnumDyeColor color)
     {
+        for (IProperty<?> prop : state.getProperties())
+        {
+            if (prop.getName().equals("color") && prop.getValueClass() == EnumDyeColor.class)
+            {
+                EnumDyeColor current = (EnumDyeColor)state.get(prop);
+                if (current != color && prop.getAllowedValues().contains(color))
+                {
+                    world.setBlockState(pos, state.with(((IProperty<EnumDyeColor>)prop), color), 3);
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -782,7 +775,6 @@ public interface IForgeBlock
     {
         return this.getBlock().getRenderLayer() == layer;
     }
-    // For Internal use only to capture droped items inside getDrops
 
     /**
      * Sensitive version of getSoundType
@@ -891,7 +883,7 @@ public interface IForgeBlock
      * @param facing The side the connecting block is on
      * @return True to allow another block to connect to this block
      */
-    default boolean canBeConnectedTo(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing facing)
+    default boolean canBeConnectedTo(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing)
     {
         return false;
     }
@@ -914,16 +906,15 @@ public interface IForgeBlock
      * @param side The side of this block that the chest lid is trying to open into
      * @return true if the chest should be prevented from opening by this block
      */
-    @SuppressWarnings("deprecation")
-    default boolean doesSideBlockChestOpening(IBlockState blockState, IWorldReader world, BlockPos pos, EnumFacing side)
+    default boolean doesSideBlockChestOpening(IBlockState blockState, IBlockReader world, BlockPos pos, EnumFacing side)
     {
         ResourceLocation registryName = this.getBlock().getRegistryName();
         if (registryName != null && "minecraft".equals(registryName.getNamespace()))
         {
             // maintain the vanilla behavior of https://bugs.mojang.com/browse/MC-378
-            return isNormalCube(blockState, world, pos);
+            return blockState.isNormalCube(world, pos);
         }
-        return this.getBlock().isTopSolid(blockState);
+        return blockState.isTopSolid();
     }
 
     /**
@@ -935,4 +926,123 @@ public interface IForgeBlock
         return state.getBlock() == Blocks.SLIME_BLOCK;
     }
 
+    /**
+     * This gets a complete list of items dropped from this block.
+     *
+     * @param state Current state
+     * @param drops add all items this block drops to this drops list
+     * @param world The current world, Currently hard 'World' and not 'IBlockReder' because vanilla needs it.
+     * @param pos Block position in world
+     * @param fortune Breakers fortune level
+     */
+    default void getDrops(IBlockState state, NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune)
+    {
+        int count = getBlock().getItemsToDropCount(state, fortune, world, pos, world.rand);
+        for (int i = 0; i < count; i++)
+        {
+           Item item = getBlock().getItemDropped(state, world, pos, fortune).asItem();
+           if (item != Items.AIR)
+              drops.add(new ItemStack(item));
+        }
+     }
+
+    /**
+     * Chance that fire will spread and consume this block.
+     * 300 being a 100% chance, 0, being a 0% chance.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @return A number ranging from 0 to 300 relating used to determine if the block will be consumed by fire
+     */
+    default int getFlammability(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing face)
+    {
+        return ((BlockFire)Blocks.FIRE).getFlammability(getBlock());
+    }
+
+    /**
+     * Called when fire is updating, checks if a block face can catch fire.
+     *
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @return True if the face can be on fire, false otherwise.
+     */
+    default boolean isFlammable(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing face)
+    {
+        return state.getFlammability(world, pos, face) > 0;
+    }
+
+    /**
+     * Called when fire is updating on a neighbor block.
+     * The higher the number returned, the faster fire will spread around this block.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @return A number that is used to determine the speed of fire growth around the block
+     */
+    default int getFireSpreadSpeed(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing face)
+    {
+        return ((BlockFire)Blocks.FIRE).getEncouragement(getBlock());
+    }
+
+    /**
+     * Currently only called by fire when it is on top of this block.
+     * Returning true will prevent the fire from naturally dying during updating.
+     * Also prevents firing from dying from rain.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param side The face that the fire is coming from
+     * @return True if this block sustains fire, meaning it will never go out.
+     */
+    default boolean isFireSource(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing side)
+    {
+        if (side != EnumFacing.UP)
+            return false;
+        if (getBlock() == Blocks.NETHERRACK || getBlock() == Blocks.MAGMA_BLOCK)
+            return true;
+        if (world instanceof World && ((World)world).dimension instanceof EndDimension && getBlock() == Blocks.BEDROCK)
+            return true;
+        return false;
+    }
+
+    /**
+     * Determines if this block is can be destroyed by the specified entities normal behavior.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True to allow the ender dragon to destroy this block
+     */
+    default boolean canEntityDestroy(IBlockState state, IBlockReader world, BlockPos pos, Entity entity)
+    {
+        if (entity instanceof EntityDragon)
+        {
+            return this != Blocks.BARRIER &&
+                   this != Blocks.OBSIDIAN &&
+                   this != Blocks.END_STONE &&
+                   this != Blocks.BEDROCK &&
+                   this != Blocks.END_PORTAL &&
+                   this != Blocks.END_PORTAL_FRAME &&
+                   this != Blocks.COMMAND_BLOCK &&
+                   this != Blocks.REPEATING_COMMAND_BLOCK &&
+                   this != Blocks.CHAIN_COMMAND_BLOCK &&
+                   this != Blocks.IRON_BARS &&
+                   this != Blocks.END_GATEWAY;
+        }
+        else if ((entity instanceof EntityWither) ||
+                 (entity instanceof EntityWitherSkull))
+        {
+            return EntityWither.canDestroyBlock(getBlock());
+        }
+
+        return true;
+    }
 }

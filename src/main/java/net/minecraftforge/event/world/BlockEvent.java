@@ -22,17 +22,15 @@ package net.minecraftforge.event.world;
 import java.util.EnumSet;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockPortal;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -90,12 +88,12 @@ public class BlockEvent extends Event
     public static class HarvestDropsEvent extends BlockEvent
     {
         private final int fortuneLevel;
-        private final List<ItemStack> drops;
+        private final NonNullList<ItemStack> drops;
         private final boolean isSilkTouching;
         private float dropChance; // Change to e.g. 1.0f, if you manipulate the list and want to guarantee it always drops
         private final EntityPlayer harvester; // May be null for non-player harvesting such as explosions or machines
 
-        public HarvestDropsEvent(World world, BlockPos pos, IBlockState state, int fortuneLevel, float dropChance, List<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching)
+        public HarvestDropsEvent(World world, BlockPos pos, IBlockState state, int fortuneLevel, float dropChance, NonNullList<ItemStack> drops, EntityPlayer harvester, boolean isSilkTouching)
         {
             super(world, pos, state);
             this.fortuneLevel = fortuneLevel;

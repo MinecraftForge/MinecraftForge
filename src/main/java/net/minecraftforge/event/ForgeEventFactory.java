@@ -254,7 +254,7 @@ public class ForgeEventFactory
         return event.getDisplayname();
     }
 
-    public static float fireBlockHarvesting(List<ItemStack> drops, World world, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player)
+    public static float fireBlockHarvesting(NonNullList<ItemStack> drops, World world, BlockPos pos, IBlockState state, int fortune, float dropChance, boolean silkTouch, EntityPlayer player)
     {
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
         MinecraftForge.EVENT_BUS.post(event);

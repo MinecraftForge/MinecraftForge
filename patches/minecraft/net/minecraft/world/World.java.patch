@@ -1,10 +1,6 @@
 --- a/net/minecraft/world/World.java
 +++ b/net/minecraft/world/World.java
-@@ -68,10 +68,11 @@
- import net.minecraft.world.storage.WorldSavedDataStorage;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+
+@@ -71,7 +71,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -13,7 +9,16 @@
     protected static final Logger field_195596_d = LogManager.getLogger();
     private static final EnumFacing[] field_200007_a = EnumFacing.values();
     private int field_181546_a = 63;
-@@ -121,6 +122,7 @@
+@@ -110,6 +110,8 @@
+    private final WorldBorder field_175728_M;
+    int[] field_72994_J;
+ 
++   public boolean restoringBlockSnapshots = false;
++
+    protected World(ISaveHandler p_i45749_1_, WorldInfo p_i45749_2_, Dimension p_i45749_3_, Profiler p_i45749_4_, boolean p_i45749_5_) {
+       this.field_73021_x = Lists.newArrayList(this.field_184152_t);
+       this.field_72985_G = true;
+@@ -121,6 +123,7 @@
        this.field_73011_w = p_i45749_3_;
        this.field_72995_K = p_i45749_5_;
        this.field_175728_M = p_i45749_3_.func_177501_r();
@@ -21,7 +26,7 @@
     }
  
     public IWorld func_175643_b() {
-@@ -2397,4 +2399,31 @@
+@@ -2397,4 +2400,31 @@
     public abstract RecipeManager func_199532_z();
  
     public abstract NetworkTagManager func_205772_D();
@@ -29,7 +34,7 @@
 +   /* ======================================== FORGE START =====================================*/
 +
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
-+   
++
 +   protected void initCapabilities()
 +   {
 +       net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
@@ -46,7 +51,7 @@
 +           capabilityData.setCapabilities(field_73011_w, getCapabilities());
 +       }
 +   }
-+   
++
 +   protected WorldSavedDataStorage perWorldStorage; //Moved to a getter to simulate final without being final so we can load in subclasses.
 +   public WorldSavedDataStorage getPerWorldStorage()
 +   {

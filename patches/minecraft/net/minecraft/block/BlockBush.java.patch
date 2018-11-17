@@ -1,0 +1,32 @@
+--- a/net/minecraft/block/BlockBush.java
++++ b/net/minecraft/block/BlockBush.java
+@@ -10,7 +10,7 @@
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.IWorldReaderBase;
+ 
+-public class BlockBush extends Block {
++public class BlockBush extends Block implements net.minecraftforge.common.IPlantable {
+    protected BlockBush(Block.Builder p_i48437_1_) {
+       super(p_i48437_1_);
+    }
+@@ -26,6 +26,8 @@
+ 
+    public boolean func_196260_a(IBlockState p_196260_1_, IWorldReaderBase p_196260_2_, BlockPos p_196260_3_) {
+       BlockPos blockpos = p_196260_3_.func_177977_b();
++      if (p_196260_1_.func_177230_c() == this) //Forge: This function is called during world gen and placement, before this block is set, so if we are not 'here' then assume it's the pre-check.
++         return p_196260_2_.func_180495_p(blockpos).canSustainPlant(p_196260_2_, blockpos, EnumFacing.UP, this);
+       return this.func_200014_a_(p_196260_2_.func_180495_p(blockpos), p_196260_2_, blockpos);
+    }
+ 
+@@ -44,4 +46,11 @@
+    public int func_200011_d(IBlockState p_200011_1_, IBlockReader p_200011_2_, BlockPos p_200011_3_) {
+       return 0;
+    }
++
++   @Override
++   public IBlockState getPlant(IBlockReader world, BlockPos pos) {
++       IBlockState state = world.func_180495_p(pos);
++       if (state.func_177230_c() != this) return func_176223_P();
++       return state;
++   }
+ }

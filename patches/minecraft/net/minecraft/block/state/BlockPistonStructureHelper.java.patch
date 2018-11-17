@@ -1,0 +1,53 @@
+--- a/net/minecraft/block/state/BlockPistonStructureHelper.java
++++ b/net/minecraft/block/state/BlockPistonStructureHelper.java
+@@ -51,7 +51,7 @@
+       } else {
+          for(int i = 0; i < this.field_177258_e.size(); ++i) {
+             BlockPos blockpos = this.field_177258_e.get(i);
+-            if (this.field_177261_a.func_180495_p(blockpos).func_177230_c() == Blocks.field_180399_cE && !this.func_177250_b(blockpos)) {
++            if (this.field_177261_a.func_180495_p(blockpos).isStickyBlock() && !this.func_177250_b(blockpos)) {
+                return false;
+             }
+          }
+@@ -62,8 +62,7 @@
+ 
+    private boolean func_177251_a(BlockPos p_177251_1_, EnumFacing p_177251_2_) {
+       IBlockState iblockstate = this.field_177261_a.func_180495_p(p_177251_1_);
+-      Block block = iblockstate.func_177230_c();
+-      if (iblockstate.func_196958_f()) {
++      if (iblockstate.isAir(field_177261_a, p_177251_1_)) {
+          return true;
+       } else if (!BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, p_177251_1_, this.field_177257_d, false, p_177251_2_)) {
+          return true;
+@@ -76,11 +75,10 @@
+          if (i + this.field_177258_e.size() > 12) {
+             return false;
+          } else {
+-            while(block == Blocks.field_180399_cE) {
++            while(iblockstate.isStickyBlock()) {
+                BlockPos blockpos = p_177251_1_.func_177967_a(this.field_177257_d.func_176734_d(), i);
+                iblockstate = this.field_177261_a.func_180495_p(blockpos);
+-               block = iblockstate.func_177230_c();
+-               if (iblockstate.func_196958_f() || !BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, blockpos, this.field_177257_d, false, this.field_177257_d.func_176734_d()) || blockpos.equals(this.field_177259_b)) {
++               if (iblockstate.isAir(field_177261_a, blockpos) || !BlockPistonBase.func_185646_a(iblockstate, this.field_177261_a, blockpos, this.field_177257_d, false, this.field_177257_d.func_176734_d()) || blockpos.equals(this.field_177259_b)) {
+                   break;
+                }
+ 
+@@ -107,7 +105,7 @@
+ 
+                   for(int l = 0; l <= k + i1; ++l) {
+                      BlockPos blockpos2 = this.field_177258_e.get(l);
+-                     if (this.field_177261_a.func_180495_p(blockpos2).func_177230_c() == Blocks.field_180399_cE && !this.func_177250_b(blockpos2)) {
++                     if (this.field_177261_a.func_180495_p(blockpos2).isStickyBlock() && !this.func_177250_b(blockpos2)) {
+                         return false;
+                      }
+                   }
+@@ -116,7 +114,7 @@
+                }
+ 
+                iblockstate = this.field_177261_a.func_180495_p(blockpos1);
+-               if (iblockstate.func_196958_f()) {
++               if (iblockstate.isAir(field_177261_a, blockpos1)) {
+                   return true;
+                }
+ 

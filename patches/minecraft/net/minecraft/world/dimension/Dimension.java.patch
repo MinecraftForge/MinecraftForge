@@ -9,11 +9,11 @@
     public static final float[] field_111203_a = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
     protected World field_76579_a;
     protected boolean field_76575_d;
-@@ -141,4 +141,76 @@
+@@ -141,4 +141,91 @@
     public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  
     public abstract DimensionType func_186058_p();
-+   
++
 +   /*======================================= Forge Start =========================================*/
 +   private net.minecraftforge.client.IRenderHandler skyRenderer = null;
 +   private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
@@ -39,14 +39,14 @@
 +   {
 +      return this.skyRenderer;
 +   }
-+   
++
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
 +   public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer)
 +   {
 +      this.skyRenderer = skyRenderer;
 +   }
-+   
++
 +   @Nullable
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
@@ -54,14 +54,14 @@
 +   {
 +      return cloudRenderer;
 +   }
-+   
++
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
 +   public void setCloudRenderer(net.minecraftforge.client.IRenderHandler renderer)
 +   {
 +      cloudRenderer = renderer;
 +   }
-+   
++
 +   @Nullable
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
@@ -69,14 +69,14 @@
 +   {
 +      return weatherRenderer;
 +   }
-+   
++
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
 +   public void setWeatherRenderer(net.minecraftforge.client.IRenderHandler renderer)
 +   {
 +      weatherRenderer = renderer;
 +   }
-+   
++
 +   @Override
 +   public void resetRainAndThunder()
 +   {
@@ -84,5 +84,20 @@
 +      field_76579_a.func_72912_H().func_76084_b(false);
 +      field_76579_a.func_72912_H().func_76090_f(0);
 +      field_76579_a.func_72912_H().func_76069_a(false);
++   }
++
++   /**
++    * Determines if the player can sleep in this world (or if the bed should explode for example).
++    *
++    * @param player The player that is attempting to sleep
++    * @param pos The location where the player tries to sleep at (the position of the clicked on bed for example)
++    * @return the result of a player trying to sleep at the given location
++    */
++   public SleepResult canSleepAt(net.minecraft.entity.player.EntityPlayer player, BlockPos pos) {
++       return (this.func_76567_e() && this.field_76579_a.func_180494_b(pos) != net.minecraft.init.Biomes.field_76778_j) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
++   }
++
++   public enum SleepResult {
++      ALLOW, DENY, BED_EXPLODES
 +   }
  }

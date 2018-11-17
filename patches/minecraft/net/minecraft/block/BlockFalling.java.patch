@@ -1,0 +1,21 @@
+--- a/net/minecraft/block/BlockFalling.java
++++ b/net/minecraft/block/BlockFalling.java
+@@ -48,7 +48,9 @@
+                p_176503_1_.func_72838_d(entityfallingblock);
+             }
+          } else {
++            IBlockState state = func_176223_P();
+             if (p_176503_1_.func_180495_p(p_176503_2_).func_177230_c() == this) {
++               state = p_176503_1_.func_180495_p(p_176503_2_);
+                p_176503_1_.func_175698_g(p_176503_2_);
+             }
+ 
+@@ -58,7 +60,7 @@
+             }
+ 
+             if (blockpos.func_177956_o() > 0) {
+-               p_176503_1_.func_175656_a(blockpos.func_177984_a(), this.func_176223_P());
++               p_176503_1_.func_175656_a(blockpos.func_177984_a(), state); //Forge: Fix loss of state information during world gen.
+             }
+          }
+ 

@@ -657,11 +657,6 @@ public class ForgeHooks
         return event.getEntityItem();
     }
 
-    public static float getEnchantPower(@Nonnull World world, @Nonnull BlockPos pos)
-    {
-        return world.getBlockState(pos).getEnchantPowerBonus(world, pos);
-    }
-
     @Nullable
     public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
     {
@@ -1177,7 +1172,7 @@ public class ForgeHooks
         return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
     }
 
-    public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state, IBlockState blockState)
+    public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state)
     {
         MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
     }
@@ -1267,7 +1262,6 @@ public class ForgeHooks
 
     public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
     {
-
         if (entity.canTrample(state, pos, fallDistance))
         {
             BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
@@ -1317,5 +1311,12 @@ public class ForgeHooks
             return Fluids.EMPTY.getDefaultState();
         }
 
+    }
+
+    public static int onNoteChange(World world, BlockPos pos, IBlockState state, int old, int _new) {
+        NoteBlockEvent.Change event = new NoteBlockEvent.Change(world, pos, state, old, _new);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return -1;
+        return event.getVanillaNoteId();
     }
 }

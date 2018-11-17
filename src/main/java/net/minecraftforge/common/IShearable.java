@@ -48,7 +48,9 @@ public interface IShearable
      * @param pos Block's position in world.
      * @return If this is shearable, and onSheared should be called.
      */
-    boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos);
+    default boolean isShearable(@Nonnull ItemStack item, IWorldReader world, BlockPos pos) {
+        return true;
+    }
 
     /**
      * Performs the shear function on this object.

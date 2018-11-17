@@ -24,7 +24,6 @@ import java.util.function.Predicate;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
@@ -35,8 +34,8 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
@@ -107,7 +106,7 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @return True if the block is a full cube
      */
-    default boolean isNormalCube(IWorldReader world, BlockPos pos)
+    default boolean isNormalCube(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().isNormalCube(getBlockState(), world, pos);
     }
@@ -142,9 +141,68 @@ public interface IForgeBlockState
         return getBlockState().getBlock().hasTileEntity(getBlockState());
     }
 
+    /**
+     * Called throughout the code as a replacement for ITileEntityProvider.createNewTileEntity
+     * Return the same thing you would from that function.
+     * This will fall back to ITileEntityProvider.createNewTileEntity(World) if this block is a ITileEntityProvider
+     *
+     * @param world The world to create the TE in
+     * @return A instance of a class extending TileEntity
+     */
+    @Nullable
+    default TileEntity createTileEntity(IBlockReader world)
+    {
+        return getBlockState().getBlock().createTileEntity(getBlockState(), world);
+    }
+
+    /**
+     * Return true from this function if the player with silk touch can harvest this block directly, and not it's normal drops.
+     *
+     * @param world The world
+     * @param pos Block position in world
+     * @param player The player doing the harvesting
+     * @return True if the block can be directly harvested using silk touch
+     */
     default boolean canSilkHarvest(IWorldReader world, BlockPos pos, EntityPlayer player)
     {
         return getBlockState().getBlock().canSilkHarvest(getBlockState(), world, pos, player);
+    }
+
+    /**
+     * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
+     *
+     * @param world The current world
+     * @param pos The block's current position
+     * @param player The player damaging the block
+     * @return True to spawn the drops
+     */
+    default boolean canHarvestBlock(IBlockReader world, BlockPos pos, EntityPlayer player)
+    {
+        return getBlockState().getBlock().canHarvestBlock(getBlockState(), world, pos, player);
+    }
+
+
+    /**
+     * Called when a player removes a block.  This is responsible for
+     * actually destroying the block, and the block is intact at time of call.
+     * This is called regardless of whether the player can harvest the block or
+     * not.
+     *
+     * Return true if the block is actually destroyed.
+     *
+     * Note: When used in multiplayer, this is called on both client and
+     * server sides!
+     *
+     * @param world The current world
+     * @param player The player damaging the block, may be null
+     * @param pos Block position in world
+     * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
+     *        Can be useful to delay the destruction of tile entities till after harvestBlock
+     * @return True if the block is actually destroyed.
+     */
+    default boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
+    {
+        return getBlockState().getBlock().removedByPlayer(getBlockState(), world, pos, player, willHarvest);
     }
 
     /**
@@ -240,17 +298,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Determines if this block can prevent leaves connected to it from decaying.
-     * @param world The current world
-     * @param pos Block position in world
-     * @return true if the presence this block can prevent leaves from decaying.
-     */
-    default boolean canSustainLeaves(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().canSustainLeaves(getBlockState(), world, pos);
-    }
-
-    /**
      * Determines if this block is considered a leaf block, used to apply the leaf decay and generation system.
      *
      * @param world The current world
@@ -287,17 +334,6 @@ public interface IForgeBlockState
     default boolean canBeReplacedByLeaves(IWorldReader world, BlockPos pos)
     {
         return getBlockState().getBlock().canBeReplacedByLeaves(getBlockState(), world, pos);
-    }
-
-    /**
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return  true if the block is wood (logs)
-     */
-    default boolean isWood(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().isWood(getBlockState(), world, pos);
     }
 
     /**
@@ -457,7 +493,7 @@ public interface IForgeBlockState
     * @param plantable The plant that wants to check
     * @return True to allow the plant to be planted/stay.
     */
-    default boolean canSustainPlant(IWorldReader world, BlockPos pos, EnumFacing facing, IPlantable plantable)
+    default boolean canSustainPlant(IBlockReader world, BlockPos pos, EnumFacing facing, IPlantable plantable)
     {
         return getBlockState().getBlock().canSustainPlant(getBlockState(), world, pos, facing, plantable);
     }
@@ -489,27 +525,9 @@ public interface IForgeBlockState
     * @param pos Block position in world
     * @return True if the soil should be considered fertile.
     */
-    default boolean isFertile(IWorldReader world, BlockPos pos)
+    default boolean isFertile(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().isFertile(getBlockState(), world, pos);
-    }
-
-   /**
-    * Location aware and overrideable version of the lightOpacity array,
-    * return the number to subtract from the light value when it passes through this block.
-    *
-    * This is not guaranteed to have the tile entity in place before this is called, so it is
-    * Recommended that you have your tile entity call relight after being placed if you
-    * rely on it for light info.
-    *
-    * @param state The Block state
-    * @param world The current world
-    * @param pos Block position in world
-    * @return The amount of light to block, 0 for air, 255 for fully opaque.
-    */
-    default int getLightOpacity(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().getLightOpacity(getBlockState(), world, pos);
     }
 
    /**
@@ -524,6 +542,7 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().isBeaconBase(getBlockState(), world, pos, beacon);
     }
+
    /**
     * Gathers how much experience this block drops when broken.
     *
@@ -537,9 +556,9 @@ public interface IForgeBlockState
         return getBlockState().getBlock().getExpDrop(getBlockState(), world, pos, fortune);
     }
 
-    default boolean rotateBlock(IWorld world, BlockPos pos, EnumFacing axis)
+    default IBlockState rotate(IWorld world, BlockPos pos, Rotation direction)
     {
-        return getBlockState().getBlock().rotateBlock(getBlockState(), world, pos, axis);
+        return getBlockState().getBlock().rotate(getBlockState(), world, pos, direction);
     }
 
 
@@ -554,6 +573,16 @@ public interface IForgeBlockState
         return getBlockState().getBlock().getEnchantPowerBonus(getBlockState(), world, pos);
     }
 
+    /**
+     * //TODO: Re-Evaluate
+     * Gathers how much experience this block drops when broken.
+     *
+     * @param state The current state
+     * @param world The world
+     * @param pos Block position
+     * @param fortune
+     * @return Amount of XP from breaking this block.
+     */
     default boolean recolorBlock(IWorld world, BlockPos pos, EnumFacing facing, EnumDyeColor color)
     {
         return getBlockState().getBlock().recolorBlock(getBlockState(), world, pos, facing, color);
@@ -723,7 +752,6 @@ public interface IForgeBlockState
         return getBlockState().getBlock().getStateForPlacement(getBlockState(), facing, state2, world, pos1, pos2, hand);
     }
 
-
     /**
      * Determines if another block can connect to this block
      *
@@ -732,7 +760,7 @@ public interface IForgeBlockState
      * @param facing The side the connecting block is on
      * @return True to allow another block to connect to this block
      */
-    default boolean canBeConnectedTo(IWorldReader world, BlockPos pos, EnumFacing facing)
+    default boolean canBeConnectedTo(IBlockReader world, BlockPos pos, EnumFacing facing)
     {
         return getBlockState().getBlock().canBeConnectedTo(getBlockState(), world, pos, facing);
     }
@@ -755,7 +783,7 @@ public interface IForgeBlockState
      * @param side The side of this block that the chest lid is trying to open into
      * @return true if the chest should be prevented from opening by this block
      */
-    default boolean doesSideBlockChestOpening(IWorldReader world, BlockPos pos, EnumFacing side)
+    default boolean doesSideBlockChestOpening(IBlockReader world, BlockPos pos, EnumFacing side)
     {
         return getBlockState().getBlock().doesSideBlockChestOpening(getBlockState(), world, pos, side);
     }
@@ -769,4 +797,97 @@ public interface IForgeBlockState
         return getBlockState().getBlock().isStickyBlock(getBlockState());
     }
 
+    /**
+     * This gets a complete list of items dropped from this block.
+     *
+     * @param drops add all items this block drops to this drops list
+     * @param world The current world
+     * @param pos Block position in world
+     * @param fortune Breakers fortune level
+     */
+    default void getDrops(NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune)
+    {
+        getBlockState().getBlock().getDrops(getBlockState(), drops, world, pos, fortune);
+    }
+
+    /**
+     * Chance that fire will spread and consume this block.
+     * 300 being a 100% chance, 0, being a 0% chance.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @return A number ranging from 0 to 300 relating used to determine if the block will be consumed by fire
+     */
+    default int getFlammability(IBlockReader world, BlockPos pos, EnumFacing face)
+    {
+        return getBlockState().getBlock().getFlammability(getBlockState(), world, pos, face);
+    }
+
+    /**
+     * Called when fire is updating, checks if a block face can catch fire.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @return True if the face can be on fire, false otherwise.
+     */
+    default boolean isFlammable(IBlockReader world, BlockPos pos, EnumFacing face)
+    {
+        return getBlockState().getBlock().isFlammable(getBlockState(), world, pos, face);
+    }
+
+    /**
+     * Called when fire is updating on a neighbor block.
+     * The higher the number returned, the faster fire will spread around this block.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param face The face that the fire is coming from
+     * @return A number that is used to determine the speed of fire growth around the block
+     */
+    default int getFireSpreadSpeed(IBlockReader world, BlockPos pos, EnumFacing face)
+    {
+        return getBlockState().getBlock().getFireSpreadSpeed(getBlockState(), world, pos, face);
+    }
+
+    /**
+     * Currently only called by fire when it is on top of this block.
+     * Returning true will prevent the fire from naturally dying during updating.
+     * Also prevents firing from dying from rain.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param side The face that the fire is coming from
+     * @return True if this block sustains fire, meaning it will never go out.
+     */
+    default boolean isFireSource(IBlockReader world, BlockPos pos, EnumFacing side)
+    {
+        return getBlockState().getBlock().isFireSource(getBlockState(), world, pos, side);
+    }
+
+    /**
+     * Determines if this block is can be destroyed by the specified entities normal behavior.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True to allow the ender dragon to destroy this block
+     */
+    default boolean canEntityDestroy(IBlockReader world, BlockPos pos, Entity entity)
+    {
+        return getBlockState().getBlock().canEntityDestroy(getBlockState(), world, pos, entity);
+    }
+
+    /**
+     * Get the rotations that can apply to the block at the specified coordinates. Null means no rotations are possible.
+     * Note, this is up to the block to decide. It may not be accurate or representative.
+     * @param world The world
+     * @param pos Block position in world
+     * @return An array of valid axes to rotate around, or null for none or unknown
+     */
+    @Nullable
+    default EnumFacing[] getValidRotations(IBlockReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().getValidRotations(getBlockState(), world, pos);
+    }
 }

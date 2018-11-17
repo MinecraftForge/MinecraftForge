@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockEnderChest.java
++++ b/net/minecraft/block/BlockEnderChest.java
+@@ -81,7 +81,7 @@
+       InventoryEnderChest inventoryenderchest = p_196250_4_.func_71005_bN();
+       TileEntity tileentity = p_196250_2_.func_175625_s(p_196250_3_);
+       if (inventoryenderchest != null && tileentity instanceof TileEntityEnderChest) {
+-         if (p_196250_2_.func_180495_p(p_196250_3_.func_177984_a()).func_185915_l()) {
++         if (p_196250_2_.func_180495_p(p_196250_3_.func_177984_a()).doesSideBlockChestOpening(p_196250_2_, p_196250_3_.func_177984_a(), EnumFacing.DOWN)) {
+             return true;
+          } else if (p_196250_2_.field_72995_K) {
+             return true;

@@ -281,12 +281,15 @@ public class GameData
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
-        @SuppressWarnings("deprecation")
         @Override
         public void onAdd(IForgeRegistryInternal<Block> owner, RegistryManager stage, int id, Block block, @Nullable Block oldBlock)
         {
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
+
+            int offset = 0;
+            for (IBlockState state : block.getStateContainer().getValidStates())
+                blockstateMap.put(state, id + offset++);
 /*
 
             if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
@@ -329,29 +332,26 @@ public class GameData
         @Override
         public void onClear(IForgeRegistryInternal<Block> owner, RegistryManager stage)
         {
-//            owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class).clear();
+            owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class).clear();
         }
 
         @Override
         public void onCreate(IForgeRegistryInternal<Block> owner, RegistryManager stage)
         {
-/*
             final ClearableObjectIntIdentityMap<IBlockState> idMap = new ClearableObjectIntIdentityMap<IBlockState>()
             {
-                @SuppressWarnings("deprecation")
                 @Override
                 public int get(IBlockState key)
                 {
                     Integer integer = (Integer)this.identityMap.get(key);
                     // There are some cases where this map is queried to serialize a state that is valid,
                     //but somehow not in this list, so attempt to get real metadata. Doing this hear saves us 7 patches
-                    if (integer == null && key != null)
-                        integer = this.identityMap.get(key.getBlock().getStateFromMeta(key.getBlock().getMetaFromState(key)));
+                    //if (integer == null && key != null)
+                    //    integer = this.identityMap.get(key.getBlock().getStateFromMeta(key.getBlock().getMetaFromState(key)));
                     return integer == null ? -1 : integer.intValue();
                 }
             };
             owner.setSlaveMap(BLOCKSTATE_TO_ID, idMap);
-*/
             owner.setSlaveMap(BLOCK_TO_ITEM, Maps.newHashMap());
         }
 

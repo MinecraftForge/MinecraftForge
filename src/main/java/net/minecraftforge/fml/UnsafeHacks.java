@@ -19,9 +19,6 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraft.network.Packet;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.ICustomPacket;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
