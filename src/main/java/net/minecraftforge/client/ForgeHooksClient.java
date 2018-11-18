@@ -593,25 +593,15 @@ public class ForgeHooksClient
     
     private static class LightGatheringTransformer extends QuadGatheringTransformer {
         
+        private static final VertexFormat FORMAT = new VertexFormat().addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.TEX_2S);
+        
         int blockLight, skyLight;
-        private int lmapIndex = -1;
         
-        private VertexFormat format;
-        
-        @Override
-        public void setVertexFormat(VertexFormat format) 
-        {
-            if (!Objects.equals(this.format, format)) 
-            {
-                super.setVertexFormat(format);
-                this.format = format;
-                this.lmapIndex = format.getElements().indexOf(DefaultVertexFormats.TEX_2S);
-            }
-        }
+        { setVertexFormat(FORMAT); }
         
         boolean hasLighting() 
         {
-            return lmapIndex >= 0;
+            return dataLength[1] >= 2;
         }
 
         @Override
@@ -623,8 +613,8 @@ public class ForgeHooksClient
             // Compute average light for all 4 vertices
             for (int i = 0; i < 4; i++) 
             {
-                blockLight += (int) ((quadData[lmapIndex][i][0] * 0xFFFF) / 0x20);
-                skyLight += (int) ((quadData[lmapIndex][i][1] * 0xFFFF) / 0x20);
+                blockLight += (int) ((quadData[1][i][0] * 0xFFFF) / 0x20);
+                skyLight += (int) ((quadData[1][i][1] * 0xFFFF) / 0x20);
             }
             // Values must be multiplied by 16, divided by 4 for average => x4
             blockLight *= 4;
@@ -683,13 +673,12 @@ public class ForgeHooksClient
             // Fail-fast on ITEM, as it cannot have light data
             if (q.getFormat() != DefaultVertexFormats.ITEM) 
             {
-                lightGatherer.setVertexFormat(q.getFormat());
+                q.pipe(lightGatherer);
                 if (lightGatherer.hasLighting())
                 {
-                    q.pipe(lightGatherer);
+                    bl = lightGatherer.blockLight;
+                    sl = lightGatherer.skyLight;
                 }
-                bl = lightGatherer.blockLight;
-                sl = lightGatherer.skyLight;
             }
             
             int colorMultiplier = segmentColorMultiplier;
