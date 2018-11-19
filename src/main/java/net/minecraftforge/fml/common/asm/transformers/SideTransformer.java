@@ -62,6 +62,7 @@ public class SideTransformer implements IClassTransformer
             throw new RuntimeException(String.format("Attempted to load class %s for invalid side %s", classNode.name, SIDE));
         }
 
+        boolean changed = false;
         Iterator<FieldNode> fields = classNode.fields.iterator();
         while(fields.hasNext())
         {
@@ -73,6 +74,7 @@ public class SideTransformer implements IClassTransformer
                     System.out.println(String.format("Removing Field: %s.%s", classNode.name, field.name));
                 }
                 fields.remove();
+                changed = true;
             }
         }
 
@@ -89,6 +91,7 @@ public class SideTransformer implements IClassTransformer
                 }
                 methods.remove();
                 lambdaGatherer.accept(method);
+                changed = true;
             }
         }
 
@@ -112,14 +115,20 @@ public class SideTransformer implements IClassTransformer
                         }
                         methods.remove();
                         lambdaGatherer.accept(method);
+                        changed = true;
                     }
                 }
             }
         }
 
-        ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-        classNode.accept(writer);
-        return writer.toByteArray();
+        //No need to waste time on rewriting an unchanged class
+        if (changed)
+        {
+            ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
+            classNode.accept(writer);
+            return writer.toByteArray();
+        }
+        return bytes;
     }
 
     private boolean remove(List<AnnotationNode> anns, String side)

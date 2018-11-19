@@ -21,7 +21,6 @@ package net.minecraftforge.fml.common.asm.transformers;
 
 import java.util.Arrays;
 
-import com.google.common.base.Stopwatch;
 import net.minecraft.launchwrapper.IClassNameTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -32,7 +31,6 @@ import net.minecraftforge.fml.common.asm.transformers.deobf.FMLRemappingAdapter;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.commons.ClassRemapper;
-import org.objectweb.asm.commons.RemappingClassAdapter;
 
 public class DeobfuscationTransformer implements IClassTransformer, IClassNameTransformer {
     private static final String[] EXEMPT_LIBS = new String[] {
