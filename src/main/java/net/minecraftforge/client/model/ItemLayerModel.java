@@ -407,12 +407,14 @@ public final class ItemLayerModel implements IModel
     private static void putVertex(UnpackedBakedQuad.Builder builder, VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, float x, float y, float z, float u, float v)
     {
         Vector4f vec = new Vector4f();
+        boolean hasTransform = transform.isPresent() && !transform.get().isIdentity();
+
         for(int e = 0; e < format.getElementCount(); e++)
         {
             switch(format.getElement(e).getUsage())
             {
             case POSITION:
-                if(transform.isPresent())
+                if(hasTransform)
                 {
                     vec.x = x;
                     vec.y = y;
@@ -429,13 +431,26 @@ public final class ItemLayerModel implements IModel
             case COLOR:
                 builder.put(e, 1f, 1f, 1f, 1f);
                 break;
-            case UV: if(format.getElement(e).getIndex() == 0)
-            {
-                builder.put(e, u, v, 0f, 1f);
+            case UV:
+                if(format.getElement(e).getIndex() == 0)
+                {
+                    builder.put(e, u, v, 0f, 1f);
+                }
                 break;
-            }
             case NORMAL:
-                builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                if(hasTransform)
+                {
+                    vec.x = (float)side.getFrontOffsetX();
+                    vec.y = (float)side.getFrontOffsetY();
+                    vec.z = (float)side.getFrontOffsetZ();
+                    vec.w = 1f;
+                    transform.get().getMatrix().transform(vec);
+                    builder.put(e, vec.x / vec.w, vec.y / vec.w, vec.z / vec.w, 0f);
+                }
+                else
+                {
+                    builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                }
                 break;
             default:
                 builder.put(e);

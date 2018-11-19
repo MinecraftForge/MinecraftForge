@@ -410,6 +410,8 @@ public final class ModelFluid implements IModel
 
         private void putVertex(UnpackedBakedQuad.Builder builder, EnumFacing side, boolean offset, float x, float y, float z, float u, float v)
         {
+            boolean hasTransform = transformation.isPresent() && !transformation.get().isIdentity();
+
             for(int e = 0; e < format.getElementCount(); e++)
             {
                 switch(format.getElement(e).getUsage())
@@ -419,7 +421,7 @@ public final class ModelFluid implements IModel
                     float dy = offset ? side.getDirectionVec().getY() * eps : 0f;
                     float dz = offset ? side.getDirectionVec().getZ() * eps : 0f;
                     float[] data = { x - dx, y - dy, z - dz, 1f };
-                    if(transformation.isPresent() && !transformation.get().isIdentity())
+                    if(hasTransform)
                     {
                         Vector4f vec = new Vector4f(data);
                         transformation.get().getMatrix().transform(vec);
@@ -434,13 +436,27 @@ public final class ModelFluid implements IModel
                         (color & 0xFF) / 255f,
                         ((color >> 24) & 0xFF) / 255f);
                     break;
-                case UV: if(format.getElement(e).getIndex() == 0)
-                {
-                    builder.put(e, u, v, 0f, 1f);
+                case UV:
+                    if(format.getElement(e).getIndex() == 0)
+                    {
+                        builder.put(e, u, v, 0f, 1f);
+                    }
                     break;
-                }
                 case NORMAL:
-                    builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                    if(hasTransform)
+                    {
+                        Vector4f vec = new Vector4f();
+                        vec.x = (float)side.getFrontOffsetX();
+                        vec.y = (float)side.getFrontOffsetY();
+                        vec.z = (float)side.getFrontOffsetZ();
+                        vec.w = 1f;
+                        transformation.get().getMatrix().transform(vec);
+                        builder.put(e, vec.x / vec.w, vec.y / vec.w, vec.z / vec.w, 0f);
+                    }
+                    else
+                    {
+                        builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                    }
                     break;
                 default:
                     builder.put(e);

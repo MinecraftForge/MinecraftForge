@@ -141,7 +141,8 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
                     quadBuilder.put(e, vec.x, vec.y, vec.z, vec.w);
                     break;
                 case UV:
-                    quadBuilder.put(e, sprite.getInterpolatedU(u * 16), sprite.getInterpolatedV(v * 16), 0, 1);
+                    if(format.getElement(e).getIndex() == 0)
+                        quadBuilder.put(e, sprite.getInterpolatedU(u * 16), sprite.getInterpolatedV(v * 16), 0, 1);
                     break;
                 case COLOR:
                     quadBuilder.put(e, r, g, b, a);

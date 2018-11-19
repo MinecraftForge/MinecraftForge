@@ -294,17 +294,15 @@ public final class ItemTextureQuadConverter
                                   float x, float y, float z, float u, float v, int color)
     {
         Vector4f vec = new Vector4f();
+        // only apply the transform if it's not identity
+        boolean hasTransform = !transform.isIdentity();
+
         for (int e = 0; e < format.getElementCount(); e++)
         {
             switch (format.getElement(e).getUsage())
             {
                 case POSITION:
-                    if (transform.isIdentity())
-                    {
-                        builder.put(e, x, y, z, 1);
-                    }
-                    // only apply the transform if it's not identity
-                    else
+                    if (hasTransform)
                     {
                         vec.x = x;
                         vec.y = y;
@@ -312,6 +310,10 @@ public final class ItemTextureQuadConverter
                         vec.w = 1;
                         transform.getMatrix().transform(vec);
                         builder.put(e, vec.x, vec.y, vec.z, vec.w);
+                    }
+                    else
+                    {
+                        builder.put(e, x, y, z, 1);
                     }
                     break;
                 case COLOR:
@@ -325,10 +327,22 @@ public final class ItemTextureQuadConverter
                     if (format.getElement(e).getIndex() == 0)
                     {
                         builder.put(e, u, v, 0f, 1f);
-                        break;
                     }
+                    break;
                 case NORMAL:
-                    builder.put(e, (float) side.getFrontOffsetX(), (float) side.getFrontOffsetY(), (float) side.getFrontOffsetZ(), 0f);
+                    if (hasTransform)
+                    {
+                        vec.x = (float) side.getFrontOffsetX();
+                        vec.y = (float) side.getFrontOffsetY();
+                        vec.z = (float) side.getFrontOffsetZ();
+                        vec.w = 1f;
+                        transform.getMatrix().transform(vec);
+                        builder.put(e, vec.x / vec.w, vec.y / vec.w, vec.z / vec.w, 0f);
+                    }
+                    else
+                    {
+                        builder.put(e, (float) side.getFrontOffsetX(), (float) side.getFrontOffsetY(), (float) side.getFrontOffsetZ(), 0f);
+                    }
                     break;
                 default:
                     builder.put(e);
