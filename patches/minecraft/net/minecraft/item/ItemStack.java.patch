@@ -215,7 +215,24 @@
          }
      }
  
-@@ -862,6 +886,7 @@
+@@ -751,13 +775,14 @@
+ 
+                     if (p_82840_1_ != null)
+                     {
+-                        if (attributemodifier.func_111167_a() == Item.field_111210_e)
++                        //Forge: Changed to java.util.Objects.equals check to support deserialised attributes
++                        if (java.util.Objects.equals(attributemodifier.func_111167_a(), Item.field_111210_e))
+                         {
+                             d0 = d0 + p_82840_1_.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111125_b();
+                             d0 = d0 + (double)EnchantmentHelper.func_152377_a(this, EnumCreatureAttribute.UNDEFINED);
+                             flag = true;
+                         }
+-                        else if (attributemodifier.func_111167_a() == Item.field_185050_h)
++                        else if (java.util.Objects.equals(attributemodifier.func_111167_a(), Item.field_185050_h))
+                         {
+                             d0 += p_82840_1_.func_110148_a(SharedMonsterAttributes.field_188790_f).func_111125_b();
+                             flag = true;
+@@ -862,6 +887,7 @@
              }
          }
  
@@ -223,7 +240,7 @@
          return list;
      }
  
-@@ -987,7 +1012,7 @@
+@@ -987,7 +1013,7 @@
          }
          else
          {
@@ -232,7 +249,7 @@
          }
  
          return multimap;
-@@ -1130,4 +1155,128 @@
+@@ -1130,4 +1156,128 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
