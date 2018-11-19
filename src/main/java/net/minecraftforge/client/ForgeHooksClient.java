@@ -638,10 +638,8 @@ public class ForgeHooksClient
     
     private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
 
-    public static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack) 
+    public static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack)
     {
-        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
-
         List<BakedQuad> allquads = new ArrayList<>();
 
         for (EnumFacing enumfacing : EnumFacing.VALUES)
@@ -651,14 +649,19 @@ public class ForgeHooksClient
 
         allquads.addAll(model.getQuads(null, null, 0));
 
+        if (allquads.isEmpty()) return;
+
         // Current list of consecutive quads with the same lighting
         List<BakedQuad> segment = new ArrayList<>();
 
         // Lighting of the current segment
         int segmentBlockLight = -1;
         int segmentSkyLight = -1;
+        // Coloring of the current segment
         int segmentColorMultiplier = color;
-        
+        // If the current segment contains lighting data
+        boolean hasLighting = false;
+
         // Tint index cache to avoid unnecessary IItemColor lookups
         int prevTintIndex = -1;
 
@@ -671,7 +674,7 @@ public class ForgeHooksClient
             int sl = 0;
 
             // Fail-fast on ITEM, as it cannot have light data
-            if (q.getFormat() != DefaultVertexFormats.ITEM) 
+            if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().hasUvOffset(1))
             {
                 q.pipe(lightGatherer);
                 if (lightGatherer.hasLighting())
@@ -680,13 +683,14 @@ public class ForgeHooksClient
                     sl = lightGatherer.skyLight;
                 }
             }
-            
+
             int colorMultiplier = segmentColorMultiplier;
+
             // If there is no color override, and this quad is tinted, we need to apply IItemColor
             if (color == 0xFFFFFFFF && q.hasTintIndex())
             {
                 int tintIndex = q.getTintIndex();
-                
+
                 if (prevTintIndex != tintIndex)
                 {
                     colorMultiplier = getColorMultiplier(stack, tintIndex);
@@ -699,54 +703,60 @@ public class ForgeHooksClient
                 prevTintIndex = -1;
             }
 
-            // If this is a new light value, draw the segment and flush it
-            if (segmentBlockLight != bl || segmentSkyLight != sl || segmentColorMultiplier != colorMultiplier) 
+            boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
+            boolean colorDirty = hasLighting && segmentColorMultiplier != colorMultiplier;
+
+            // If lighting or color data has changed, draw the segment and flush it
+            if (lightingDirty || colorDirty)
             {
-                if (i > 0) // Make sure this isn't the first quad being processed 
+                if (i > 0) // Make sure this isn't the first quad being processed
                 {
-                    drawSegment(bufferbuilder, ri, segmentColorMultiplier, stack, segment, segmentBlockLight, segmentSkyLight, true);
+                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
                 }
                 segmentBlockLight = bl;
                 segmentSkyLight = sl;
                 segmentColorMultiplier = colorMultiplier;
+                hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0;
             }
 
             segment.add(q);
         }
-        
-        boolean lightDirty = segment.size() < allquads.size(); // Was at least one change in lighting for this model
-        drawSegment(bufferbuilder, ri, segmentColorMultiplier, stack, segment, segmentBlockLight, segmentSkyLight, lightDirty);
+
+        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
 
         // Clean up render state if necessary
-        if (lightDirty)
+        if (hasLighting)
         {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
             GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
         }
     }
 
-    private static void drawSegment(BufferBuilder bufferbuilder, RenderItem ri, int color, ItemStack stack, List<BakedQuad> segment, int bl, int sl, boolean updateLighting) 
+    private static void drawSegment(RenderItem ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor)
     {
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
 
         float lastBl = OpenGlHelper.lastBrightnessX;
         float lastSl = OpenGlHelper.lastBrightnessY;
-        if (updateLighting) 
+
+        if (updateLighting || updateColor)
         {
-            float emissive = (float) sl / 0xF0;
+            float emissive = Math.max(bl, sl) / 240f;
             
-            float r = (color >>> 16 & 0xff) / 255f;
-            float g = (color >>>  8 & 0xff) / 255f;
-            float b = (color        & 0xff) / 255f;
+            float r = (tintColor >>> 16 & 0xff) / 255f;
+            float g = (tintColor >>>  8 & 0xff) / 255f;
+            float b = (tintColor        & 0xff) / 255f;
             
             GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
-    
-            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
+
+            if (updateLighting)
+            {
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
+            }
         }
 
-        // By passing the color multiplier here, we avoid renderQuads doing the same 
-        // work again to determine the tintindex/IItemColor color. 
-        ri.renderQuads(bufferbuilder, segment, color, stack);
+        ri.renderQuads(bufferbuilder, segment, baseColor, stack);
         Tessellator.getInstance().draw();
 
         // Preserve this as it represents the "world" lighting
