@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model;
 
+import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraftforge.common.ForgeVersion;
@@ -406,7 +407,6 @@ public final class ItemLayerModel implements IModel
 
     private static void putVertex(UnpackedBakedQuad.Builder builder, VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, float x, float y, float z, float u, float v)
     {
-        Vector4f vec = new Vector4f();
         boolean hasTransform = transform.isPresent() && !transform.get().isIdentity();
 
         for(int e = 0; e < format.getElementCount(); e++)
@@ -416,11 +416,8 @@ public final class ItemLayerModel implements IModel
             case POSITION:
                 if(hasTransform)
                 {
-                    vec.x = x;
-                    vec.y = y;
-                    vec.z = z;
-                    vec.w = 1;
-                    transform.get().getMatrix().transform(vec);
+                    Vector4f vec = new Vector4f(x, y, z, 1);
+                    transform.get().transformPosition(vec);
                     builder.put(e, vec.x, vec.y, vec.z, vec.w);
                 }
                 else
@@ -438,18 +435,18 @@ public final class ItemLayerModel implements IModel
                 }
                 break;
             case NORMAL:
+                float offX = (float) side.getFrontOffsetX();
+                float offY = (float) side.getFrontOffsetY();
+                float offZ = (float) side.getFrontOffsetZ();
                 if(hasTransform)
                 {
-                    vec.x = (float)side.getFrontOffsetX();
-                    vec.y = (float)side.getFrontOffsetY();
-                    vec.z = (float)side.getFrontOffsetZ();
-                    vec.w = 1f;
-                    transform.get().getMatrix().transform(vec);
-                    builder.put(e, vec.x / vec.w, vec.y / vec.w, vec.z / vec.w, 0f);
+                    Vector3f vec = new Vector3f(offX, offY, offZ);
+                    transform.get().transformNormal(vec);
+                    builder.put(e, vec.x, vec.y, vec.z, 0f);
                 }
                 else
                 {
-                    builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                    builder.put(e, offX, offY, offZ, 0f);
                 }
                 break;
             default:

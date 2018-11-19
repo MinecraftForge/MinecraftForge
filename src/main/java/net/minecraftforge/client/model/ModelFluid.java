@@ -27,6 +27,7 @@ import java.util.Optional;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.block.state.IBlockState;
@@ -424,7 +425,7 @@ public final class ModelFluid implements IModel
                     if(hasTransform)
                     {
                         Vector4f vec = new Vector4f(data);
-                        transformation.get().getMatrix().transform(vec);
+                        transformation.get().transformPosition(vec);
                         vec.get(data);
                     }
                     builder.put(e, data);
@@ -443,19 +444,18 @@ public final class ModelFluid implements IModel
                     }
                     break;
                 case NORMAL:
+                    float offX = (float) side.getFrontOffsetX();
+                    float offY = (float) side.getFrontOffsetY();
+                    float offZ = (float) side.getFrontOffsetZ();
                     if(hasTransform)
                     {
-                        Vector4f vec = new Vector4f();
-                        vec.x = (float)side.getFrontOffsetX();
-                        vec.y = (float)side.getFrontOffsetY();
-                        vec.z = (float)side.getFrontOffsetZ();
-                        vec.w = 1f;
-                        transformation.get().getMatrix().transform(vec);
-                        builder.put(e, vec.x / vec.w, vec.y / vec.w, vec.z / vec.w, 0f);
+                        Vector3f vec = new Vector3f(offX, offY, offZ);
+                        transformation.get().transformNormal(vec);
+                        builder.put(e, vec.x, vec.y, vec.z, 0f);
                     }
                     else
                     {
-                        builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                        builder.put(e, offX, offY, offZ, 0f);
                     }
                     break;
                 default:

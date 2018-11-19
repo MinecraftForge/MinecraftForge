@@ -27,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TRSRTransformation;
 
+import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import java.util.List;
@@ -293,7 +294,6 @@ public final class ItemTextureQuadConverter
     private static void putVertex(UnpackedBakedQuad.Builder builder, VertexFormat format, TRSRTransformation transform, EnumFacing side,
                                   float x, float y, float z, float u, float v, int color)
     {
-        Vector4f vec = new Vector4f();
         // only apply the transform if it's not identity
         boolean hasTransform = !transform.isIdentity();
 
@@ -304,11 +304,8 @@ public final class ItemTextureQuadConverter
                 case POSITION:
                     if (hasTransform)
                     {
-                        vec.x = x;
-                        vec.y = y;
-                        vec.z = z;
-                        vec.w = 1;
-                        transform.getMatrix().transform(vec);
+                        Vector4f vec = new Vector4f(x, y, z, 1f);
+                        transform.transformPosition(vec);
                         builder.put(e, vec.x, vec.y, vec.z, vec.w);
                     }
                     else
@@ -330,18 +327,18 @@ public final class ItemTextureQuadConverter
                     }
                     break;
                 case NORMAL:
+                    float offX = (float) side.getFrontOffsetX();
+                    float offY = (float) side.getFrontOffsetY();
+                    float offZ = (float) side.getFrontOffsetZ();
                     if (hasTransform)
                     {
-                        vec.x = (float) side.getFrontOffsetX();
-                        vec.y = (float) side.getFrontOffsetY();
-                        vec.z = (float) side.getFrontOffsetZ();
-                        vec.w = 1f;
-                        transform.getMatrix().transform(vec);
-                        builder.put(e, vec.x / vec.w, vec.y / vec.w, vec.z / vec.w, 0f);
+                        Vector3f vec = new Vector3f(offX, offY, offZ);
+                        transform.transformNormal(vec);
+                        builder.put(e, vec.x, vec.y, vec.z, 0f);
                     }
                     else
                     {
-                        builder.put(e, (float) side.getFrontOffsetX(), (float) side.getFrontOffsetY(), (float) side.getFrontOffsetZ(), 0f);
+                        builder.put(e, offX, offY, offZ, 0f);
                     }
                     break;
                 default:
