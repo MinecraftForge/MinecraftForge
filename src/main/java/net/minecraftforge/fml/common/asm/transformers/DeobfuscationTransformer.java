@@ -21,6 +21,7 @@ package net.minecraftforge.fml.common.asm.transformers;
 
 import java.util.Arrays;
 
+import com.google.common.base.Stopwatch;
 import net.minecraft.launchwrapper.IClassNameTransformer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -30,6 +31,7 @@ import net.minecraftforge.fml.common.asm.transformers.deobf.FMLRemappingAdapter;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.RemappingClassAdapter;
 
 public class DeobfuscationTransformer implements IClassTransformer, IClassNameTransformer {
@@ -52,7 +54,7 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
 
     private static final boolean RECALC_FRAMES = Boolean.parseBoolean(System.getProperty("FORGE_FORCE_FRAME_RECALC", "false"));
     private static final int WRITER_FLAGS = ClassWriter.COMPUTE_MAXS | (RECALC_FRAMES ? ClassWriter.COMPUTE_FRAMES : 0);
-    private static final int READER_FLAGS = RECALC_FRAMES ? ClassReader.SKIP_FRAMES : ClassReader.EXPAND_FRAMES;
+    private static final int READER_FLAGS = RECALC_FRAMES ? ClassReader.SKIP_FRAMES : 0;
     // COMPUTE_FRAMES causes classes to be loaded, which could cause issues if the classes do not exist.
     // However in testing this has not happened. {As we run post SideTransformer}
     // If reported we need to add a custom implementation of ClassWriter.getCommonSuperClass
@@ -72,7 +74,7 @@ public class DeobfuscationTransformer implements IClassTransformer, IClassNameTr
 
         ClassReader classReader = new ClassReader(bytes);
         ClassWriter classWriter = new ClassWriter(WRITER_FLAGS);
-        RemappingClassAdapter remapAdapter = new FMLRemappingAdapter(classWriter);
+        ClassRemapper remapAdapter = new FMLRemappingAdapter(classWriter);
         classReader.accept(remapAdapter, READER_FLAGS);
         return classWriter.toByteArray();
     }

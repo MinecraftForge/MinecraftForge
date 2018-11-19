@@ -25,14 +25,13 @@ import org.objectweb.asm.Handle;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.commons.Remapper;
-import org.objectweb.asm.commons.RemappingClassAdapter;
-import org.objectweb.asm.commons.RemappingMethodAdapter;
+import org.objectweb.asm.commons.*;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class FMLRemappingAdapter extends RemappingClassAdapter {
+public class FMLRemappingAdapter extends ClassRemapper
+{
     public FMLRemappingAdapter(ClassVisitor cv)
     {
         super(cv, FMLDeobfuscatingRemapper.INSTANCE);
@@ -65,21 +64,21 @@ public class FMLRemappingAdapter extends RemappingClassAdapter {
             remapper.mapMemberFieldName(className, name, desc),
             remapper.mapDesc(desc), remapper.mapSignature(signature, true),
             remapper.mapValue(value));
-        return createRemappingFieldAdapter(fv);
+        return createFieldRemapper(fv);
     }
 
     @Override
-    protected MethodVisitor createRemappingMethodAdapter(int access, String newDesc, MethodVisitor mv)
+    protected MethodVisitor createMethodRemapper(MethodVisitor mv)
     {
-        return new StaticFixingMethodVisitor(access, newDesc, mv, remapper);
+        return new StaticFixingMethodVisitor(mv, remapper);
     }
 
-    private static class StaticFixingMethodVisitor extends RemappingMethodAdapter
+    private static class StaticFixingMethodVisitor extends MethodRemapper
     {
 
-        public StaticFixingMethodVisitor(int access, String desc, MethodVisitor mv, Remapper remapper)
+        public StaticFixingMethodVisitor(MethodVisitor mv, Remapper remapper)
         {
-            super(access, desc, mv, remapper);
+            super(mv, remapper);
         }
 
         @Override
