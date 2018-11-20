@@ -46,6 +46,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ClassInheritanceMultiMap;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -466,8 +467,11 @@ public class ForgeChunkManager
         return false;
     }
 
-    static void loadWorld(World world)
+    static void loadWorld(IWorld iworld)
     {
+        if (!(iworld instanceof World)) return;
+        World world = (World)iworld;
+
         ArrayListMultimap<String, Ticket> newTickets = ArrayListMultimap.create();
         tickets.put(world, newTickets);
 
@@ -617,8 +621,10 @@ public class ForgeChunkManager
         }
     }
 
-    static void unloadWorld(World world)
+    static void unloadWorld(IWorld iworld)
     {
+        if (!(iworld instanceof World)) return;
+        World world = (World)iworld;
         // World save fires before this event so the chunk loading info will be done
         if (!(world instanceof WorldServer))
         {
@@ -897,8 +903,10 @@ public class ForgeChunkManager
         return forcedChunks.containsKey(world) ? forcedChunks.get(world) : ImmutableSetMultimap.of();
     }
 
-    static void saveWorld(World world)
+    static void saveWorld(IWorld iworld)
     {
+        if (!(iworld instanceof World)) return;
+        World world = (World)iworld;
         // only persist persistent worlds
         if (!(world instanceof WorldServer))
         {

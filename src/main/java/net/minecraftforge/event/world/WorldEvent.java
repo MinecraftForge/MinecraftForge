@@ -33,6 +33,7 @@ import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
@@ -51,14 +52,14 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 public class WorldEvent extends Event
 {
-    private final World world;
+    private final IWorld world;
 
-    public WorldEvent(World world)
+    public WorldEvent(IWorld world)
     {
         this.world = world;
     }
 
-    public World getWorld()
+    public IWorld getWorld()
     {
         return world;
     }
@@ -80,7 +81,7 @@ public class WorldEvent extends Event
      **/
     public static class Load extends WorldEvent
     {
-        public Load(World world) { super(world); }
+        public Load(IWorld world) { super(world); }
     }
 
     /**
@@ -99,7 +100,7 @@ public class WorldEvent extends Event
      **/
     public static class Unload extends WorldEvent
     {
-        public Unload(World world) { super(world); }
+        public Unload(IWorld world) { super(world); }
     }
 
     /**
@@ -116,7 +117,7 @@ public class WorldEvent extends Event
      **/
     public static class Save extends WorldEvent
     {
-        public Save(World world) { super(world); }
+        public Save(IWorld world) { super(world); }
     }
 
     /**
@@ -134,7 +135,7 @@ public class WorldEvent extends Event
         private final BlockPos pos;
         private final List<SpawnListEntry> list;
 
-        public PotentialSpawns(World world, EnumCreatureType type, BlockPos pos, List<SpawnListEntry> oldList)
+        public PotentialSpawns(IWorld world, EnumCreatureType type, BlockPos pos, List<SpawnListEntry> oldList)
         {
             super(world);
             this.pos = pos;
@@ -173,7 +174,7 @@ public class WorldEvent extends Event
     public static class CreateSpawnPosition extends WorldEvent
     {
         private final WorldSettings settings;
-        public CreateSpawnPosition(World world, WorldSettings settings)
+        public CreateSpawnPosition(IWorld world, WorldSettings settings)
         {
             super(world);
             this.settings = settings;

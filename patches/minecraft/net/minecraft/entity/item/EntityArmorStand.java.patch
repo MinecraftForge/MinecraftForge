@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/item/EntityArmorStand.java
++++ b/net/minecraft/entity/item/EntityArmorStand.java
+@@ -54,7 +54,7 @@
+    public static final DataParameter<Rotations> field_184806_f = EntityDataManager.<Rotations>func_187226_a(EntityArmorStand.class, DataSerializers.field_187199_i);
+    public static final DataParameter<Rotations> field_184807_g = EntityDataManager.<Rotations>func_187226_a(EntityArmorStand.class, DataSerializers.field_187199_i);
+    private static final Predicate<Entity> field_184798_bv = (p_200617_0_) -> {
+-      return p_200617_0_ instanceof EntityMinecart && ((EntityMinecart)p_200617_0_).func_184264_v() == EntityMinecart.Type.RIDEABLE;
++      return p_200617_0_ instanceof EntityMinecart && ((EntityMinecart)p_200617_0_).canBeRidden();
+    };
+    private final NonNullList<ItemStack> field_184799_bw;
+    private final NonNullList<ItemStack> field_184800_bx;

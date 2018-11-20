@@ -62,6 +62,7 @@ import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.village.Village;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
@@ -191,13 +192,9 @@ public class ForgeEventFactory
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner);
         if (result == Result.DEFAULT)
-        {
             return entity.getCanSpawnHere() && entity.isNotColliding(); // vanilla logic
-        }
         else
-        {
             return result == Result.ALLOW;
-        }
     }
 
     public static boolean doSpecialSpawn(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)
@@ -675,7 +672,7 @@ public class ForgeEventFactory
         return result == Result.DEFAULT ? def : result == Result.ALLOW;
     }
 
-    public static boolean onTrySpawnPortal(World world, BlockPos pos, BlockPortal.Size size)
+    public static boolean onTrySpawnPortal(IWorld world, BlockPos pos, BlockPortal.Size size)
     {
         return MinecraftForge.EVENT_BUS.post(new BlockEvent.PortalSpawnEvent(world, pos, world.getBlockState(pos), size));
     }

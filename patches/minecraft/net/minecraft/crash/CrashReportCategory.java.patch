@@ -1,0 +1,15 @@
+--- a/net/minecraft/crash/CrashReportCategory.java
++++ b/net/minecraft/crash/CrashReportCategory.java
+@@ -98,8 +98,10 @@
+       if (astacktraceelement.length <= 0) {
+          return 0;
+       } else {
+-         this.field_85075_d = new StackTraceElement[astacktraceelement.length - 3 - p_85073_1_];
+-         System.arraycopy(astacktraceelement, 3 + p_85073_1_, this.field_85075_d, 0, this.field_85075_d.length);
++         int len = astacktraceelement.length - 3 - p_85073_1_;
++         if (len <= 0) len = astacktraceelement.length;
++         this.field_85075_d = new StackTraceElement[len];
++         System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.field_85075_d, 0, this.field_85075_d.length);
+          return this.field_85075_d.length;
+       }
+    }

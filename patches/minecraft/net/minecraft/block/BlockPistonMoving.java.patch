@@ -1,0 +1,26 @@
+--- a/net/minecraft/block/BlockPistonMoving.java
++++ b/net/minecraft/block/BlockPistonMoving.java
+@@ -86,14 +86,22 @@
+    }
+ 
+    public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
+-      if (!p_196255_2_.field_72995_K) {
++      if (false && !p_196255_2_.field_72995_K) { //Forge: Noop this out
+          TileEntityPiston tileentitypiston = this.func_196342_a(p_196255_2_, p_196255_3_);
+          if (tileentitypiston != null) {
+             tileentitypiston.func_200230_i().func_196949_c(p_196255_2_, p_196255_3_, 0);
+          }
+       }
++      super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, 1, p_196255_5_); // mimic vanilla behavior from above and ignore chance
+    }
+ 
++   @Override
++   public void getDrops(IBlockState state, net.minecraft.util.NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
++      TileEntityPiston te = this.func_196342_a(world, pos);
++      if (te != null)
++         te.func_200230_i().getDrops(drops, world, pos, fortune);
++   }
++
+    public VoxelShape func_196244_b(IBlockState p_196244_1_, IBlockReader p_196244_2_, BlockPos p_196244_3_) {
+       return ShapeUtils.func_197880_a();
+    }

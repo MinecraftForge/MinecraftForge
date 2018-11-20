@@ -9,15 +9,10 @@
     protected static final VoxelShape field_196397_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
  
     protected BlockDeadBush(Block.Builder p_i48418_1_) {
-@@ -46,4 +46,14 @@
+@@ -46,4 +46,9 @@
  
        super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, flag ? Blocks.field_150350_a.func_176223_P() : p_180657_4_, p_180657_5_, p_180657_6_);
     }
-+
-+   @Override
-+   public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos) {
-+      return false;
-+   }
 +
 +   @Override
 +   public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos, int fortune) {

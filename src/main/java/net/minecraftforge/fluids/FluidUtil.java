@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.block.Block;
+import net.minecraft.block.IBucketPickupHandler;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;

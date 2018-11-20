@@ -1,0 +1,52 @@
+--- a/net/minecraft/block/BlockReed.java
++++ b/net/minecraft/block/BlockReed.java
+@@ -18,7 +18,7 @@
+ import net.minecraft.world.IWorldReaderBase;
+ import net.minecraft.world.World;
+ 
+-public class BlockReed extends Block {
++public class BlockReed extends Block implements net.minecraftforge.common.IPlantable {
+    public static final IntegerProperty field_176355_a = BlockStateProperties.field_208171_X;
+    protected static final VoxelShape field_196503_b = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
+ 
+@@ -40,12 +40,15 @@
+ 
+          if (i < 3) {
+             int j = p_196267_1_.func_177229_b(field_176355_a);
++            if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, true)) {
+             if (j == 15) {
+                p_196267_2_.func_175656_a(p_196267_3_.func_177984_a(), this.func_176223_P());
+                p_196267_2_.func_180501_a(p_196267_3_, (IBlockState)p_196267_1_.func_206870_a(field_176355_a, Integer.valueOf(0)), 4);
+             } else {
+                p_196267_2_.func_180501_a(p_196267_3_, (IBlockState)p_196267_1_.func_206870_a(field_176355_a, Integer.valueOf(j + 1)), 4);
+             }
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
++            }
+          }
+       }
+ 
+@@ -56,6 +59,9 @@
+    }
+ 
+    public boolean func_196260_a(IBlockState p_196260_1_, IWorldReaderBase p_196260_2_, BlockPos p_196260_3_) {
++      IBlockState soil = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
++      if (soil.canSustainPlant(p_196260_2_, p_196260_3_.func_177977_b(), EnumFacing.UP, this)) return true;
++
+       Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
+       if (block == this) {
+          return true;
+@@ -91,4 +97,14 @@
+    public BlockFaceShape func_193383_a(IBlockReader p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_) {
+       return BlockFaceShape.UNDEFINED;
+    }
++
++   @Override
++   public net.minecraftforge.common.EnumPlantType getPlantType(IBlockReader world, BlockPos pos) {
++       return net.minecraftforge.common.EnumPlantType.Beach;
++   }
++
++   @Override
++   public IBlockState getPlant(IBlockReader world, BlockPos pos) {
++      return func_176223_P();
++   }
+ }

@@ -1,0 +1,21 @@
+--- a/net/minecraft/block/BlockRedstoneOre.java
++++ b/net/minecraft/block/BlockRedstoneOre.java
+@@ -72,11 +72,17 @@
+ 
+    public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
+       super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, p_196255_5_);
+-      if (this.func_199769_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_5_) != this) {
++      if (false && this.func_199769_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_5_) != this) {
+          int i = 1 + p_196255_2_.field_73012_v.nextInt(5);
+          this.func_180637_b(p_196255_2_, p_196255_3_, i);
+       }
++   }
+ 
++   @Override
++   public int getExpDrop(IBlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, int fortune) {
++      if (!(world instanceof World) || func_199769_a(state, (World)world, pos, fortune) != this)
++         return 1 + RANDOM.nextInt(5);
++      return 0;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

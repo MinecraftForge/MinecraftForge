@@ -1,0 +1,27 @@
+--- a/net/minecraft/block/SoundType.java
++++ b/net/minecraft/block/SoundType.java
+@@ -2,8 +2,6 @@
+ 
+ import net.minecraft.init.SoundEvents;
+ import net.minecraft.util.SoundEvent;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class SoundType {
+    public static final SoundType field_185848_a = new SoundType(1.0F, 1.0F, SoundEvents.field_187881_gQ, SoundEvents.field_187897_gY, SoundEvents.field_187891_gV, SoundEvents.field_187889_gU, SoundEvents.field_187887_gT);
+@@ -46,7 +44,6 @@
+       return this.field_185861_n;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public SoundEvent func_185845_c() {
+       return this.field_185862_o;
+    }
+@@ -59,7 +56,6 @@
+       return this.field_185864_q;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public SoundEvent func_185846_f() {
+       return this.field_185865_r;
+    }

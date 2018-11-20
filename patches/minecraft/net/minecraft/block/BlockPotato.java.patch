@@ -1,0 +1,25 @@
+--- a/net/minecraft/block/BlockPotato.java
++++ b/net/minecraft/block/BlockPotato.java
+@@ -26,7 +26,7 @@
+ 
+    public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
+       super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, p_196255_5_);
+-      if (!p_196255_2_.field_72995_K) {
++      if (false && !p_196255_2_.field_72995_K) { //Forge: Moved to getDrops
+          if (this.func_185525_y(p_196255_1_) && p_196255_2_.field_73012_v.nextInt(50) == 0) {
+             func_180635_a(p_196255_2_, p_196255_3_, new ItemStack(Items.field_151170_bI));
+          }
+@@ -34,6 +34,13 @@
+       }
+    }
+ 
++   @Override
++   public void getDrops(IBlockState state, net.minecraft.util.NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
++      super.getDrops(state, drops, world, pos, fortune);
++      if (this.func_185525_y(state) && world.field_73012_v.nextInt(50) == 0)
++          drops.add(new ItemStack(Items.field_151170_bI));
++   }
++
+    public VoxelShape func_196244_b(IBlockState p_196244_1_, IBlockReader p_196244_2_, BlockPos p_196244_3_) {
+       return field_196396_a[p_196244_1_.func_177229_b(this.func_185524_e())];
+    }

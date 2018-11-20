@@ -23,6 +23,7 @@ import java.util.Random;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraftforge.common.MinecraftForge;
@@ -107,7 +108,7 @@ public abstract class TerrainGen
     }
     */
 
-    public static boolean saplingGrowTree(World world, Random rand, BlockPos pos)
+    public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos)
     {
         SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
         MinecraftForge.TERRAIN_GEN_BUS.post(event);

@@ -8,12 +8,26 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-@@ -421,6 +422,8 @@
+@@ -248,6 +249,9 @@
+       BlockDispenser.func_199774_a(Items.field_203797_aN, ibehaviordispenseitem);
+       BlockDispenser.func_199774_a(Items.field_203795_aL, ibehaviordispenseitem);
+       BlockDispenser.func_199774_a(Items.field_204272_aO, ibehaviordispenseitem);
++      BlockDispenser.func_199774_a(Items.field_151117_aB, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
++      BlockDispenser.func_199774_a(Items.field_151133_ar, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
++      if (false)
+       BlockDispenser.func_199774_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem() {
+          private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
  
+@@ -419,8 +423,12 @@
+                func_210839_a("entity", EntityType.field_200787_a, EntityType::func_210760_d);
+             }
+ 
++            if (false) // skip redirectOutputToLog, Forge already redirects stdout and stderr output to log so that they print with more context
              func_179868_d();
           }
 +         net.minecraftforge.registries.ForgeRegistries.ITEMS.getClass(); // TODO figure out a better way to ensure these are initialized
 +         net.minecraft.tileentity.TileEntityType.field_200970_a.getClass();
++         net.minecraftforge.registries.GameData.vanillaSnapshot();
        }
     }
  

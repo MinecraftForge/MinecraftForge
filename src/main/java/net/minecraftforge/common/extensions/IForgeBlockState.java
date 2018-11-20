@@ -43,6 +43,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IWorldReaderBase;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -298,18 +299,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Determines if this block is considered a leaf block, used to apply the leaf decay and generation system.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return true if this block is considered leaves.
-     */
-    default boolean isLeaves(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().isLeaves(getBlockState(), world, pos);
-    }
-
-    /**
      * Determines this block should be treated as an air block
      * by the rest of the code. This method is primarily
      * useful for creating pure logic-blocks that will be invisible
@@ -387,7 +376,7 @@ public interface IForgeBlockState
      * @param side The side that is trying to make the connection, CAN BE NULL
      * @return True to make the connection
      */
-    default boolean canConnectRedstone(IWorldReader world, BlockPos pos, @Nullable EnumFacing side)
+    default boolean canConnectRedstone(IBlockReader world, BlockPos pos, @Nullable EnumFacing side)
     {
         return getBlockState().getBlock().canConnectRedstone(getBlockState(), world, pos, side);
     }
@@ -400,7 +389,7 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @return True to allow the torch to be placed
      */
-    default boolean canPlaceTorchOnTop(IWorldReader world, BlockPos pos)
+    default boolean canPlaceTorchOnTop(IWorldReaderBase world, BlockPos pos)
     {
         return getBlockState().getBlock().canPlaceTorchOnTop(getBlockState(), world, pos);
     }

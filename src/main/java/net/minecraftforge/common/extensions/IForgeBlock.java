@@ -46,6 +46,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.state.IProperty;
 import net.minecraft.state.properties.BedPart;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -347,19 +348,6 @@ public interface IForgeBlock
     default void beginLeaveDecay(IBlockState state, IWorldReader world, BlockPos pos) {}
 
     /**
-     * Determines if this block is considered a leaf block, used to apply the leaf decay and generation system.
-     *
-     * @param state The current state
-     * @param world The current world
-     * @param pos Block position in world
-     * @return true if this block is considered leaves.
-     */
-    default boolean isLeaves(IBlockState state, IWorldReader world, BlockPos pos)
-    {
-        return state.getMaterial() == Material.LEAVES;
-    }
-
-    /**
      * Determines this block should be treated as an air block
      * by the rest of the code. This method is primarily
      * useful for creating pure logic-blocks that will be invisible
@@ -385,7 +373,7 @@ public interface IForgeBlock
      */
     default boolean canBeReplacedByLeaves(IBlockState state, IWorldReader world, BlockPos pos)
     {
-        return isAir(state, world, pos) || isLeaves(state, world, pos);
+        return isAir(state, world, pos) || state.isIn(BlockTags.LEAVES);
     }
 
     /**
@@ -441,7 +429,7 @@ public interface IForgeBlock
      * @param side The side that is trying to make the connection, CAN BE NULL
      * @return True to make the connection
      */
-    default boolean canConnectRedstone(IBlockState state, IWorldReader world, BlockPos pos, @Nullable EnumFacing side)
+    default boolean canConnectRedstone(IBlockState state, IBlockReader world, BlockPos pos, @Nullable EnumFacing side)
     {
         return state.canProvidePower() && side != null;
     }
@@ -455,12 +443,12 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True to allow the torch to be placed
      */
-    default boolean canPlaceTorchOnTop(IBlockState state, IWorldReader world, BlockPos pos)
+    default boolean canPlaceTorchOnTop(IBlockState state, IWorldReaderBase world, BlockPos pos)
     {
         if (state.isTopSolid() || state.getBlockFaceShape(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
-            return this.getBlock() != Blocks.END_GATEWAY && this.getBlock() != Blocks.JACK_O_LANTERN;
+            return this.getBlock() != Blocks.END_GATEWAY;
         else
-            return this.getBlock() instanceof BlockFence || this.getBlock() == Blocks.COBBLESTONE_WALL || this.getBlock() instanceof BlockGlass;
+            return this.getBlock() instanceof BlockFence || this.getBlock() instanceof BlockStainedGlass || this.getBlock() == Blocks.GLASS || this.getBlock() == Blocks.COBBLESTONE_WALL || this.getBlock() == Blocks.MOSSY_COBBLESTONE_WALL;
     }
 
     /**

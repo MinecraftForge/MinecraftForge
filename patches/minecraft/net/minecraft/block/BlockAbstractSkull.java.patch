@@ -1,0 +1,52 @@
+--- a/net/minecraft/block/BlockAbstractSkull.java
++++ b/net/minecraft/block/BlockAbstractSkull.java
+@@ -38,6 +38,7 @@
+    }
+ 
+    public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
++       super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, p_196255_5_);
+    }
+ 
+    public void func_176208_a(World p_176208_1_, BlockPos p_176208_2_, IBlockState p_176208_3_, EntityPlayer p_176208_4_) {
+@@ -45,6 +46,7 @@
+          TileEntitySkull.func_195486_a(p_176208_1_, p_176208_2_);
+       }
+ 
++      this.func_196255_a(p_176208_3_, p_176208_1_, p_176208_2_, 1.0f, 0);
+       super.func_176208_a(p_176208_1_, p_176208_2_, p_176208_3_, p_176208_4_);
+    }
+ 
+@@ -55,7 +57,7 @@
+    public void func_196243_a(IBlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, IBlockState p_196243_4_, boolean p_196243_5_) {
+       if (p_196243_1_.func_177230_c() != p_196243_4_.func_177230_c() && !p_196243_2_.field_72995_K) {
+          TileEntity tileentity = p_196243_2_.func_175625_s(p_196243_3_);
+-         if (tileentity instanceof TileEntitySkull) {
++         if (false && tileentity instanceof TileEntitySkull) { //Forge: Moved to getDrops
+             TileEntitySkull tileentityskull = (TileEntitySkull)tileentity;
+             if (tileentityskull.func_195487_d()) {
+                ItemStack itemstack = this.func_185473_a(p_196243_2_, p_196243_3_, p_196243_1_);
+@@ -74,6 +76,24 @@
+       }
+    }
+ 
++   @Override
++   public void getDrops(IBlockState state, net.minecraft.util.NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
++      TileEntity te = world.func_175625_s(pos);
++      if (te instanceof TileEntitySkull) {
++         TileEntitySkull skull = (TileEntitySkull)te;
++         if (skull.func_195487_d()) {
++            ItemStack ret = func_185473_a(world, pos, state);
++            Block block = skull.func_195044_w().func_177230_c();
++            if ((block == Blocks.field_196710_eS || block == Blocks.field_196709_eR) && skull.func_152108_a() != null) {
++               NBTTagCompound nbt = new NBTTagCompound();
++               NBTUtil.func_180708_a(nbt, skull.func_152108_a());
++               ret.func_196082_o().func_74782_a("SkullOwner", nbt);
++            }
++            drops.add(ret);
++         }
++      }
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public BlockSkull.ISkullType func_196292_N_() {
+       return this.field_196293_a;

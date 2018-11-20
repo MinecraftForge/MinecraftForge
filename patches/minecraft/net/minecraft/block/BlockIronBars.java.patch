@@ -1,0 +1,50 @@
+--- a/net/minecraft/block/BlockIronBars.java
++++ b/net/minecraft/block/BlockIronBars.java
+@@ -25,15 +25,12 @@
+       IBlockReader iblockreader = p_196258_1_.func_195991_k();
+       BlockPos blockpos = p_196258_1_.func_195995_a();
+       IFluidState ifluidstate = p_196258_1_.func_195991_k().func_204610_c(p_196258_1_.func_195995_a());
+-      BlockPos blockpos1 = blockpos.func_177978_c();
+-      BlockPos blockpos2 = blockpos.func_177968_d();
+-      BlockPos blockpos3 = blockpos.func_177976_e();
+-      BlockPos blockpos4 = blockpos.func_177974_f();
+-      IBlockState iblockstate = iblockreader.func_180495_p(blockpos1);
+-      IBlockState iblockstate1 = iblockreader.func_180495_p(blockpos2);
+-      IBlockState iblockstate2 = iblockreader.func_180495_p(blockpos3);
+-      IBlockState iblockstate3 = iblockreader.func_180495_p(blockpos4);
+-      return (IBlockState)((IBlockState)((IBlockState)((IBlockState)((IBlockState)this.func_176223_P().func_206870_a(field_196409_a, Boolean.valueOf(this.func_196417_a(iblockstate, iblockstate.func_193401_d(iblockreader, blockpos1, EnumFacing.SOUTH))))).func_206870_a(field_196413_c, Boolean.valueOf(this.func_196417_a(iblockstate1, iblockstate1.func_193401_d(iblockreader, blockpos2, EnumFacing.NORTH))))).func_206870_a(field_196414_y, Boolean.valueOf(this.func_196417_a(iblockstate2, iblockstate2.func_193401_d(iblockreader, blockpos3, EnumFacing.EAST))))).func_206870_a(field_196411_b, Boolean.valueOf(this.func_196417_a(iblockstate3, iblockstate3.func_193401_d(iblockreader, blockpos4, EnumFacing.WEST))))).func_206870_a(field_204514_u, Boolean.valueOf(ifluidstate.func_206886_c() == Fluids.field_204546_a));
++      return this.func_176223_P()
++         .func_206870_a(field_196409_a, canPaneConnectTo(iblockreader, blockpos, EnumFacing.NORTH))
++         .func_206870_a(field_196413_c, canPaneConnectTo(iblockreader, blockpos, EnumFacing.SOUTH))
++         .func_206870_a(field_196414_y, canPaneConnectTo(iblockreader, blockpos, EnumFacing.WEST))
++         .func_206870_a(field_196411_b, canPaneConnectTo(iblockreader, blockpos, EnumFacing.EAST))
++         .func_206870_a(field_204514_u, Boolean.valueOf(ifluidstate.func_206886_c() == Fluids.field_204546_a));
+    }
+ 
+    public IBlockState func_196271_a(IBlockState p_196271_1_, EnumFacing p_196271_2_, IBlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+@@ -41,7 +38,7 @@
+          p_196271_4_.func_205219_F_().func_205360_a(p_196271_5_, Fluids.field_204546_a, Fluids.field_204546_a.func_205569_a(p_196271_4_));
+       }
+ 
+-      return p_196271_2_.func_176740_k().func_176722_c() ? (IBlockState)p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.func_196417_a(p_196271_3_, p_196271_3_.func_193401_d(p_196271_4_, p_196271_6_, p_196271_2_.func_176734_d())))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
++      return p_196271_2_.func_176740_k().func_176722_c() ? (IBlockState)p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.canPaneConnectTo(p_196271_4_, p_196271_5_, p_196271_2_))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
+    }
+ 
+    public boolean func_149686_d(IBlockState p_149686_1_) {
+@@ -87,4 +84,16 @@
+    public BlockFaceShape func_193383_a(IBlockReader p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_) {
+       return p_193383_4_ != EnumFacing.UP && p_193383_4_ != EnumFacing.DOWN ? BlockFaceShape.MIDDLE_POLE_THIN : BlockFaceShape.CENTER_SMALL;
+    }
++
++   @Override
++   public boolean canBeConnectedTo(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing) {
++      IBlockState other = world.func_180495_p(pos.func_177972_a(facing));
++      return func_196417_a(other, other.func_193401_d(world, pos.func_177972_a(facing), facing.func_176734_d()));
++   }
++
++   private boolean canPaneConnectTo(IBlockReader world, BlockPos pos, EnumFacing facing) {
++      BlockPos offset = pos.func_177972_a(facing);
++      IBlockState other = world.func_180495_p(offset);
++      return other.canBeConnectedTo(world, offset, facing.func_176734_d()) || func_176223_P().canBeConnectedTo(world, pos, facing.func_176734_d());
++   }
+ }

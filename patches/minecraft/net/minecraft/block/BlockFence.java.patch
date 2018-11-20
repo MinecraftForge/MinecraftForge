@@ -22,6 +22,15 @@
     }
  
     public IBlockState func_196271_a(IBlockState p_196271_1_, EnumFacing p_196271_2_, IBlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
+@@ -80,7 +77,7 @@
+          p_196271_4_.func_205219_F_().func_205360_a(p_196271_5_, Fluids.field_204546_a, Fluids.field_204546_a.func_205569_a(p_196271_4_));
+       }
+ 
+-      return p_196271_2_.func_176740_k().func_176716_d() == EnumFacing.Plane.HORIZONTAL ? (IBlockState)p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.func_196416_a(p_196271_3_, p_196271_3_.func_193401_d(p_196271_4_, p_196271_6_, p_196271_2_.func_176734_d())))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
++      return p_196271_2_.func_176740_k().func_176716_d() == EnumFacing.Plane.HORIZONTAL ? (IBlockState)p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.canFenceConnectTo(p_196271_4_, p_196271_5_, p_196271_2_))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
+    }
+ 
+    protected void func_206840_a(StateContainer.Builder<Block, IBlockState> p_206840_1_) {
 @@ -90,4 +87,16 @@
     public BlockFaceShape func_193383_a(IBlockReader p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_) {
        return p_193383_4_ != EnumFacing.UP && p_193383_4_ != EnumFacing.DOWN ? BlockFaceShape.MIDDLE_POLE : BlockFaceShape.CENTER;

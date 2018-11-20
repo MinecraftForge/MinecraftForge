@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/item/EntityMinecartFurnace.java
++++ b/net/minecraft/entity/item/EntityMinecartFurnace.java
+@@ -115,6 +115,7 @@
+    }
+ 
+    public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_) {
++      if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
+       ItemStack itemstack = p_184230_1_.func_184586_b(p_184230_2_);
+       if (field_195407_e.test(itemstack) && this.field_94110_c + 3600 <= 32000) {
+          if (!p_184230_1_.field_71075_bZ.field_75098_d) {

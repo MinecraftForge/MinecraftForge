@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/item/EntityMinecartHopper.java
++++ b/net/minecraft/entity/item/EntityMinecartHopper.java
+@@ -47,6 +47,7 @@
+    }
+ 
+    public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_) {
++      if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
+       if (!this.field_70170_p.field_72995_K) {
+          p_184230_1_.func_71007_a(this);
+       }

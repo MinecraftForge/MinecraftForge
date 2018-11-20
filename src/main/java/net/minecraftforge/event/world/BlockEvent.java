@@ -33,6 +33,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -49,17 +50,17 @@ public class BlockEvent extends Event
 {
     private static final boolean DEBUG = Boolean.parseBoolean(System.getProperty("forge.debugBlockEvent", "false"));
 
-    private final World world;
+    private final IWorld world;
     private final BlockPos pos;
     private final IBlockState state;
-    public BlockEvent(World world, BlockPos pos, IBlockState state)
+    public BlockEvent(IWorld world, BlockPos pos, IBlockState state)
     {
         this.pos = pos;
         this.world = world;
         this.state = state;
     }
 
-    public World getWorld()
+    public IWorld getWorld()
     {
         return world;
     }
@@ -435,7 +436,7 @@ public class BlockEvent extends Event
     {
         private final BlockPortal.Size size;
 
-        public PortalSpawnEvent(World world, BlockPos pos, IBlockState state, BlockPortal.Size size)
+        public PortalSpawnEvent(IWorld world, BlockPos pos, IBlockState state, BlockPortal.Size size)
         {
             super(world, pos, state);
             this.size = size;

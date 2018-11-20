@@ -1,0 +1,21 @@
+--- a/net/minecraft/block/BlockWeb.java
++++ b/net/minecraft/block/BlockWeb.java
+@@ -16,7 +16,7 @@
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.World;
+ 
+-public class BlockWeb extends Block {
++public class BlockWeb extends Block implements net.minecraftforge.common.IShearable {
+    public BlockWeb(Block.Builder p_i48296_1_) {
+       super(p_i48296_1_);
+    }
+@@ -54,4 +54,9 @@
+    public BlockFaceShape func_193383_a(IBlockReader p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_) {
+       return BlockFaceShape.UNDEFINED;
+    }
++
++   @Override
++   public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos, int fortune) {
++      return java.util.Arrays.asList(new ItemStack(this));
++   }
+ }
