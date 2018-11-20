@@ -211,10 +211,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                         parent.put(e, position[v]);
                         break;
                     case NORMAL:
-                        if(normalIndex != -1)
-                        {
-                            parent.put(e, normal[v]);
-                        }
+                        parent.put(e, normal[v]);
                         break;
                     case COLOR:
                         parent.put(e, color[v]);
@@ -223,8 +220,8 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                         if(element.getIndex() == 1)
                         {
                             parent.put(e, lightmap[v]);
+                            break;
                         }
-                        break;
                     default:
                         parent.put(e, quadData[e][v]);
                 }
