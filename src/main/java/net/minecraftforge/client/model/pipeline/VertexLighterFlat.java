@@ -210,19 +210,21 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                         pos[2] += blockInfo.getBlockPos().getZ();*/
                         parent.put(e, position[v]);
                         break;
-                    case NORMAL: if(normalIndex != -1)
-                    {
-                        parent.put(e, normal[v]);
+                    case NORMAL:
+                        if(normalIndex != -1)
+                        {
+                            parent.put(e, normal[v]);
+                        }
                         break;
-                    }
                     case COLOR:
                         parent.put(e, color[v]);
                         break;
-                    case UV: if(element.getIndex() == 1)
-                    {
-                        parent.put(e, lightmap[v]);
+                    case UV:
+                        if(element.getIndex() == 1)
+                        {
+                            parent.put(e, lightmap[v]);
+                        }
                         break;
-                    }
                     default:
                         parent.put(e, quadData[e][v]);
                 }
