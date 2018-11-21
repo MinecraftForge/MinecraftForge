@@ -120,7 +120,7 @@ public class GameData
     private static final ResourceLocation BLOCK_TO_ITEM         = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID      = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation ENTITY_CLASS_TO_ENTRY = new ResourceLocation("forge:entity_class_to_entry");
-    private static final ResourceLocation SERIALISER_TO_ENTRY   = new ResourceLocation("forge:serializer_to_entry");
+    private static final ResourceLocation SERIALIZER_TO_ENTRY   = new ResourceLocation("forge:serializer_to_entry");
 
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
@@ -207,7 +207,7 @@ public class GameData
     @SuppressWarnings("unchecked")
     public static Map<DataSerializer<?>, DataSerializerEntry> getSerializerMap()
     {
-        return GameRegistry.findRegistry(DataSerializerEntry.class).getSlaveMap(SERIALISER_TO_ENTRY, Map.class);
+        return GameRegistry.findRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
@@ -515,20 +515,20 @@ public class GameData
         public void onAdd(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage, int id, DataSerializerEntry obj, @Nullable DataSerializerEntry oldObj)
         {
             @SuppressWarnings("unchecked")
-            Map<DataSerializer<?>, DataSerializerEntry> map = owner.getSlaveMap(SERIALISER_TO_ENTRY, Map.class);
+            Map<DataSerializer<?>, DataSerializerEntry> map = owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
             map.put(obj.getSerializer(), obj);
         }
 
         @Override
         public void onClear(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
         {
-            owner.getSlaveMap(SERIALISER_TO_ENTRY, Map.class).clear();
+            owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class).clear();
         }
 
         @Override
         public void onCreate(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
         {
-            owner.setSlaveMap(SERIALISER_TO_ENTRY, new IdentityHashMap<>());
+            owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
         }
     }
 
