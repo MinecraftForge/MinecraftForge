@@ -103,7 +103,7 @@ public class ASMDataTable
             return container.getSource().equals(data.candidate.getModContainer());
         }
     }
-    private SetMultimap<String, ASMData> globalAnnotationData = HashMultimap.create();
+    private final SetMultimap<String, ASMData> globalAnnotationData = HashMultimap.create();
     private Map<ModContainer, SetMultimap<String,ASMData>> containerAnnotationData;
 
     private List<ModContainer> containers = Lists.newArrayList();
@@ -114,11 +114,16 @@ public class ASMDataTable
         if (containerAnnotationData == null)
         {
             ImmutableMap.Builder<ModContainer, SetMultimap<String, ASMData>> mapBuilder = ImmutableMap.builder();
-            for (ModContainer cont : containers)
+            //concurrently filter the values to speed this up
+            containers.parallelStream().forEach(cont ->
             {
                 Multimap<String, ASMData> values = Multimaps.filterValues(globalAnnotationData, new ModContainerPredicate(cont));
-                mapBuilder.put(cont, ImmutableSetMultimap.copyOf(values));
-            }
+                ImmutableSetMultimap<String, ASMData> immutableValues = ImmutableSetMultimap.copyOf(values);
+                synchronized (mapBuilder)
+                {
+                    mapBuilder.put(cont, immutableValues);
+                }
+            });
             containerAnnotationData = mapBuilder.build();
         }
         return containerAnnotationData.get(container);
