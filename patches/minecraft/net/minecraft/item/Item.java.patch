@@ -808,7 +808,7 @@
 +     * @param entity the entity using the item
 +     * @return a float between 0F and 1F
 +     */
-+    public float getMovementSpeedMultiplier(ItemStack stack, EntityLivingBase entity)
++    public float getSpeedModifier(ItemStack stack, EntityLivingBase entity)
 +    {
 +    	return 0.2F;
 +    }

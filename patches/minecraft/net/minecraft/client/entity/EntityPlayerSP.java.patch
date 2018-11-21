@@ -101,8 +101,8 @@
 -            this.field_71158_b.field_78902_a *= 0.2F;
 -            this.field_71158_b.field_192832_b *= 0.2F;
 -            this.field_71156_d = 0;
-+            this.field_71158_b.field_78902_a *= this.func_184607_cu().func_77973_b().getMovementSpeedMultiplier(this.func_184607_cu(), this);
-+            this.field_71158_b.field_192832_b *= this.func_184607_cu().func_77973_b().getMovementSpeedMultiplier(this.func_184607_cu(), this);
++            this.field_71158_b.field_78902_a *= this.func_184607_cu().func_77973_b().getSpeedModifier(this.func_184607_cu(), this);
++            this.field_71158_b.field_192832_b *= this.func_184607_cu().func_77973_b().getSpeedModifier(this.func_184607_cu(), this);
 +            if(this.func_184607_cu().func_77973_b().shouldPreventSprinting(this.func_184607_cu(), this)) this.field_71156_d = 0;
          }
  
