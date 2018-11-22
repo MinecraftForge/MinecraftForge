@@ -35,6 +35,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 
 import net.minecraftforge.fml.common.ModContainer;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class ASMDataTable
 {
@@ -113,18 +114,10 @@ public class ASMDataTable
     {
         if (containerAnnotationData == null)
         {
-            ImmutableMap.Builder<ModContainer, SetMultimap<String, ASMData>> mapBuilder = ImmutableMap.builder();
             //concurrently filter the values to speed this up
-            containers.parallelStream().forEach(cont ->
-            {
-                Multimap<String, ASMData> values = Multimaps.filterValues(globalAnnotationData, new ModContainerPredicate(cont));
-                ImmutableSetMultimap<String, ASMData> immutableValues = ImmutableSetMultimap.copyOf(values);
-                synchronized (mapBuilder)
-                {
-                    mapBuilder.put(cont, immutableValues);
-                }
-            });
-            containerAnnotationData = mapBuilder.build();
+            containerAnnotationData = containers.parallelStream()
+                    .map(cont -> Pair.of(cont, ImmutableSetMultimap.copyOf(Multimaps.filterValues(globalAnnotationData, new ModContainerPredicate(cont)))))
+                    .collect(ImmutableMap.toImmutableMap(Pair::getKey, Pair::getValue));
         }
         return containerAnnotationData.get(container);
     }
