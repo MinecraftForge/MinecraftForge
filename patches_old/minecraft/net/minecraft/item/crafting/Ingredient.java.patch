@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/Ingredient.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/Ingredient.java
+@@ -108,4 +142,22 @@
+ 
+         return field_193370_a;
+     }
++
++    // Merges several vanilla Ingredients together. As a qwerk of how the json is structured, we can't tell if its a single Ingredient type or multiple so we split per item and remerge here.
++    //Only public for internal use, so we can access a private field in here.
++    public static Ingredient merge(java.util.Collection<Ingredient> parts)
++    {
++        net.minecraft.util.NonNullList<ItemStack> lst = net.minecraft.util.NonNullList.func_191196_a();
++        for (Ingredient part : parts)
++        {
++            for (ItemStack stack : part.field_193371_b)
++                lst.add(stack);
++        }
++        return new Ingredient(lst.toArray(new ItemStack[lst.size()]));
++    }
++
+ }

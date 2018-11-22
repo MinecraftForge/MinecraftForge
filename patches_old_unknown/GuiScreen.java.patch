@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/client/gui/GuiScreen.java
++++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreen.java
+@@ -421,9 +434,15 @@
+ 
+                 if (guibutton.func_146116_c(this.field_146297_k, p_73864_1_, p_73864_2_))
+                 {
++                    net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre event = new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre(this, guibutton, this.field_146292_n);
++                    if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event))
++                        break;
++                    guibutton = event.getButton();
+                     this.field_146290_a = guibutton;
+                     guibutton.func_146113_a(this.field_146297_k.func_147118_V());
+                     this.func_146284_a(guibutton);
++                    if (this.equals(this.field_146297_k.field_71462_r))
++                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Post(this, event.getButton(), this.field_146292_n));
+                 }
+             }
+         }
+@@ -473,7 +496,10 @@
+         {
+             while (Mouse.next())
+             {
++                this.mouseHandled = false;
++                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Pre(this))) continue;
+                 this.func_146274_d();
++                if (this.equals(this.field_146297_k.field_71462_r) && !this.mouseHandled) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Post(this));
+             }
+         }
+ 
+@@ -481,7 +507,10 @@
+         {
+             while (Keyboard.next())
+             {
++                this.keyHandled = false;
++                if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Pre(this))) continue;
+                 this.func_146282_l();
++                if (this.equals(this.field_146297_k.field_71462_r) && !this.keyHandled) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Post(this));
+             }
+         }
+     }
