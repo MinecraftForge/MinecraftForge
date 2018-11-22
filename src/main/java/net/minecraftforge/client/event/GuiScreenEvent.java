@@ -20,7 +20,11 @@
 package net.minecraftforge.client.event;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
@@ -35,14 +39,14 @@ import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Event classes for GuiScreen events.
- * 
+ *
  * @author bspkrs
  */
 @OnlyIn(Dist.CLIENT)
-public class GuiScreenEvent extends Event 
+public class GuiScreenEvent extends Event
 {
     private final GuiScreen gui;
-    
+
     public GuiScreenEvent(GuiScreen gui)
     {
         this.gui = gui;
@@ -58,57 +62,68 @@ public class GuiScreenEvent extends Event
 
     public static class InitGuiEvent extends GuiScreenEvent
     {
+        private Consumer<GuiButton> addButton;
+        private Consumer<GuiButton> removeButton;
+
         private List<GuiButton> buttonList;
-        
-        public InitGuiEvent(GuiScreen gui, List<GuiButton> buttonList)
+
+        public InitGuiEvent(GuiScreen gui, List<GuiButton> buttonList, Consumer<GuiButton> addButton, Consumer<GuiButton> removeButton)
         {
             super(gui);
-            this.setButtonList(buttonList);
+            this.buttonList = Collections.unmodifiableList(buttonList);
+            this.addButton = addButton;
+            this.removeButton = removeButton;
         }
 
         /**
-         * The {@link #buttonList} field from the GuiScreen object referenced by {@link #gui}.
+         * Unmodifiable reference to the list of buttons on the {@link #gui}.
          */
         public List<GuiButton> getButtonList()
         {
             return buttonList;
         }
 
-        public void setButtonList(List<GuiButton> buttonList)
+        public void addButton(GuiButton button)
         {
-            this.buttonList = buttonList;
+            addButton.accept(button);
+        }
+
+        public void removeButton(GuiButton button)
+        {
+            removeButton.accept(button);
         }
 
         /**
          * This event fires just after initializing {@link GuiScreen#mc}, {@link GuiScreen#fontRenderer},
          * {@link GuiScreen#width}, and {@link GuiScreen#height}.<br/><br/>
-         * 
+         *
          * If canceled the following lines are skipped in {@link GuiScreen#setWorldAndResolution(Minecraft, int, int)}:<br/>
          * {@code this.buttonList.clear();}<br/>
+         * {@code this.children.clear();}<br/>
          * {@code this.initGui();}<br/>
          */
         @Cancelable
         public static class Pre extends InitGuiEvent
         {
-            public Pre(GuiScreen gui, List<GuiButton> buttonList)
+            public Pre(GuiScreen gui, List<GuiButton> buttonList, Consumer<GuiButton> addButton, Consumer<GuiButton> removeButton)
             {
-                super(gui, buttonList);
+                super(gui, buttonList, addButton, removeButton);
             }
         }
-        
+
         /**
          * This event fires right after {@link GuiScreen#initGui()}.
          * This is a good place to alter a GuiScreen's component layout if desired.
          */
         public static class Post extends InitGuiEvent
         {
-            public Post(GuiScreen gui, List<GuiButton> buttonList)
+            public Post(GuiScreen gui, List<GuiButton> buttonList, Consumer<GuiButton> addButton, Consumer<GuiButton> removeButton)
             {
-                super(gui, buttonList);
+                super(gui, buttonList, addButton, removeButton);
             }
         }
     }
-    
+
     public static class DrawScreenEvent extends GuiScreenEvent
     {
         private final int mouseX;
@@ -176,43 +191,40 @@ public class GuiScreenEvent extends Event
      * This event fires at the end of {@link GuiScreen#drawDefaultBackground()} and before the rest of the Gui draws.
      * This allows drawing next to Guis, above the background but below any tooltips.
      */
-/*
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
-        private final int mouseX;
-        private final int mouseY;
+        //private final int mouseX;
+        //private final int mouseY;
 
         public BackgroundDrawnEvent(GuiScreen gui)
         {
             super(gui);
+            /*
             final ScaledResolution scaledresolution = new ScaledResolution(gui.mc);
             final int scaledWidth = scaledresolution.getScaledWidth();
             final int scaledHeight = scaledresolution.getScaledHeight();
             this.mouseX = Mouse.getX() * scaledWidth / gui.mc.displayWidth;
             this.mouseY = scaledHeight - Mouse.getY() * scaledHeight / gui.mc.displayHeight - 1;
+            */
         }
 
-        */
-/**
+        /**
          * The x coordinate of the mouse pointer on the screen.
-         *//*
-
+         * /
         public int getMouseX()
         {
             return mouseX;
         }
 
-        */
-/**
+        /**
          * The y coordinate of the mouse pointer on the screen.
-         *//*
-
+         * /
         public int getMouseY()
         {
             return mouseY;
         }
+        */
     }
-*/
 
     /**
      * This event fires in {@link InventoryEffectRenderer#updateActivePotionEffects()}
@@ -227,7 +239,7 @@ public class GuiScreenEvent extends Event
             super(gui);
         }
     }
-    
+
     public static class ActionPerformedEvent extends GuiScreenEvent
     {
         private GuiButton button;
@@ -279,7 +291,7 @@ public class GuiScreenEvent extends Event
                 super(gui, button, buttonList);
             }
         }
-        
+
         /**
          * This event fires after {@link GuiScreen#actionPerformed(GuiButton)} provided that the active
          * screen has not been changed as a result of {@link GuiScreen#actionPerformed(GuiButton)}.

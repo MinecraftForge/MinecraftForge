@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/gui/GuiCreateWorld.java
++++ b/net/minecraft/client/gui/GuiCreateWorld.java
+@@ -159,14 +159,7 @@
+       this.field_146321_E.field_146125_m = false;
+       this.field_146322_F = this.func_189646_b(new GuiButton(8, this.field_146294_l / 2 + 5, 120, 150, 20, I18n.func_135052_a("selectWorld.customizeType")) {
+          public void func_194829_a(double p_194829_1_, double p_194829_3_) {
+-            if (WorldType.field_77139_a[GuiCreateWorld.this.field_146331_K] == WorldType.field_77138_c) {
+-               GuiCreateWorld.this.field_146297_k.func_147108_a(new GuiCreateFlatWorld(GuiCreateWorld.this, GuiCreateWorld.this.field_146334_a));
+-            }
+-
+-            if (WorldType.field_77139_a[GuiCreateWorld.this.field_146331_K] == WorldType.field_205394_h) {
+-               GuiCreateWorld.this.field_146297_k.func_147108_a(new GuiCreateBuffetWorld(GuiCreateWorld.this, GuiCreateWorld.this.field_146334_a));
+-            }
+-
++            WorldType.field_77139_a[GuiCreateWorld.this.field_146331_K].onCustomizeButton(GuiCreateWorld.this.field_146297_k, GuiCreateWorld.this);
+          }
+       });
+       this.field_146322_F.field_146125_m = false;
+@@ -258,6 +251,7 @@
+                i = (long)s.hashCode();
+             }
+          }
++         WorldType.field_77139_a[this.field_146331_K].onGUICreateWorldPress();
+ 
+          WorldSettings worldsettings = new WorldSettings(i, GameType.func_77142_a(this.field_146342_r), this.field_146341_s, this.field_146337_w, WorldType.field_77139_a[this.field_146331_K]);
+          worldsettings.func_205390_a((JsonElement)Dynamic.convert(NBTDynamicOps.field_210820_a, JsonOps.INSTANCE, this.field_146334_a));

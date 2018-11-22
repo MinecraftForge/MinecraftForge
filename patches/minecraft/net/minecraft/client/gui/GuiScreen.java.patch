@@ -1,0 +1,105 @@
+--- a/net/minecraft/client/gui/GuiScreen.java
++++ b/net/minecraft/client/gui/GuiScreen.java
+@@ -51,6 +51,7 @@
+    public boolean field_146291_p;
+    protected FontRenderer field_146289_q;
+    private URI field_175286_t;
++   protected boolean keyHandled, mouseHandled; // Forge: allow canceling key and mouse Post events from handleMouseInput and handleKeyboardInput
+ 
+    public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
+       for(int i = 0; i < this.field_146292_n.size(); ++i) {
+@@ -87,7 +88,10 @@
+    }
+ 
+    protected void func_146285_a(ItemStack p_146285_1_, int p_146285_2_, int p_146285_3_) {
+-      this.func_146283_a(this.func_191927_a(p_146285_1_), p_146285_2_, p_146285_3_);
++      FontRenderer font = p_146285_1_.func_77973_b().getFontRenderer(p_146285_1_);
++      net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_146285_1_);
++      this.drawHoveringText(this.func_191927_a(p_146285_1_), p_146285_2_, p_146285_3_, (font == null ? field_146289_q : font));
++      net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+    }
+ 
+    public List<String> func_191927_a(ItemStack p_191927_1_) {
+@@ -106,25 +110,30 @@
+    }
+ 
+    public void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_) {
+-      if (!p_146283_1_.isEmpty()) {
++      drawHoveringText(p_146283_1_, p_146283_2_, p_146283_3_, field_146289_q);
++   }
++
++   public void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font) {
++      net.minecraftforge.fml.client.config.GuiUtils.drawHoveringText(textLines, x, y, field_146294_l, field_146295_m, -1, font);
++      if (false && !textLines.isEmpty()) {
+          GlStateManager.func_179101_C();
+          RenderHelper.func_74518_a();
+          GlStateManager.func_179140_f();
+          GlStateManager.func_179097_i();
+          int i = 0;
+ 
+-         for(String s : p_146283_1_) {
++         for(String s : textLines) {
+             int j = this.field_146289_q.func_78256_a(s);
+             if (j > i) {
+                i = j;
+             }
+          }
+ 
+-         int l1 = p_146283_2_ + 12;
+-         int i2 = p_146283_3_ - 12;
++         int l1 = x + 12;
++         int i2 = y - 12;
+          int k = 8;
+-         if (p_146283_1_.size() > 1) {
+-            k += 2 + (p_146283_1_.size() - 1) * 10;
++         if (textLines.size() > 1) {
++            k += 2 + (textLines.size() - 1) * 10;
+          }
+ 
+          if (l1 + i > this.field_146294_l) {
+@@ -150,8 +159,8 @@
+          this.func_73733_a(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
+          this.func_73733_a(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
+ 
+-         for(int k1 = 0; k1 < p_146283_1_.size(); ++k1) {
+-            String s1 = p_146283_1_.get(k1);
++         for(int k1 = 0; k1 < textLines.size(); ++k1) {
++            String s1 = textLines.get(k1);
+             this.field_146289_q.func_175063_a(s1, (float)l1, (float)i2, -1);
+             if (k1 == 0) {
+                i2 += 2;
+@@ -279,9 +288,12 @@
+    }
+ 
+    public void func_175281_b(String p_175281_1_, boolean p_175281_2_) {
++      p_175281_1_ = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_175281_1_);
++      if (p_175281_1_.isEmpty()) return;
+       if (p_175281_2_) {
+          this.field_146297_k.field_71456_v.func_146158_b().func_146239_a(p_175281_1_);
+       }
++      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; //Forge: TODO Client command re-write
+ 
+       this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
+    }
+@@ -292,9 +304,13 @@
+       this.field_146289_q = p_146280_1_.field_71466_p;
+       this.field_146294_l = p_146280_2_;
+       this.field_146295_m = p_146280_3_;
++      java.util.function.Consumer<GuiButton> remove = (b) -> { field_146292_n.remove(b); field_195124_j.remove(b); };
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.field_146292_n, this::func_189646_b, remove))) {
+       this.field_146292_n.clear();
+       this.field_195124_j.clear();
+       this.func_73866_w_();
++      }
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.field_146292_n, this::func_189646_b, remove));
+    }
+ 
+    public List<? extends IGuiEventListener> func_195074_b() {
+@@ -313,6 +329,7 @@
+ 
+    public void func_146276_q_() {
+       this.func_146270_b(0);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
+    }
+ 
+    public void func_146270_b(int p_146270_1_) {

@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/entity/AbstractClientPlayer.java
++++ b/net/minecraft/client/entity/AbstractClientPlayer.java
+@@ -126,6 +126,6 @@
+          f *= 1.0F - f1 * 0.15F;
+       }
+ 
+-      return f;
++      return net.minecraftforge.client.ForgeHooksClient.getOffsetFOV(this, f);
+    }
+ }

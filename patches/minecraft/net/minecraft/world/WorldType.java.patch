@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/WorldType.java
++++ b/net/minecraft/world/WorldType.java
+@@ -31,6 +31,7 @@
+    }
+ 
+    private WorldType(int p_i49778_1_, String p_i49778_2_, String p_i49778_3_, int p_i49778_4_) {
++      if (p_i49778_2_.length() > 16 && field_180272_g != null) throw new IllegalArgumentException("World type names must not be longer then 16: " + p_i49778_2_);
+       this.field_77133_f = p_i49778_2_;
+       this.field_211890_l = p_i49778_3_;
+       this.field_77134_g = p_i49778_4_;
+@@ -117,4 +118,22 @@
+       this.field_151361_l = true;
+       return this;
+    }
++
++   /**
++    * Called when 'Create New World' button is pressed before starting game
++    */
++   public void onGUICreateWorldPress() { }
++
++   /**
++    * Called when the 'Customize' button is pressed on world creation GUI
++    * @param mc The Minecraft instance
++    * @param gui the createworld GUI
++    */
++   @OnlyIn(Dist.CLIENT)
++   public void onCustomizeButton(net.minecraft.client.Minecraft mc, net.minecraft.client.gui.GuiCreateWorld gui) {
++      if (this == WorldType.field_77138_c)
++         mc.func_147108_a(new net.minecraft.client.gui.GuiCreateFlatWorld(gui, gui.field_146334_a));
++      else if (this == WorldType.field_180271_f)
++         mc.func_147108_a(new net.minecraft.client.gui.GuiCreateBuffetWorld(gui, gui.field_146334_a));
++   }
+ }

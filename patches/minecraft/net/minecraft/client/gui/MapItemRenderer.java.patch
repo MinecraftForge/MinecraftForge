@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/MapItemRenderer.java
++++ b/net/minecraft/client/gui/MapItemRenderer.java
+@@ -118,6 +118,7 @@
+ 
+          for(MapDecoration mapdecoration : this.field_148242_b.field_76203_h.values()) {
+             if (!p_148237_1_ || mapdecoration.func_191180_f()) {
++               if (mapdecoration.render(k)) { k++; continue; }
+                MapItemRenderer.this.field_148251_b.func_110577_a(MapItemRenderer.field_148253_a);
+                GlStateManager.func_179094_E();
+                GlStateManager.func_179109_b(0.0F + (float)mapdecoration.func_176112_b() / 2.0F + 64.0F, 0.0F + (float)mapdecoration.func_176113_c() / 2.0F + 64.0F, -0.02F);

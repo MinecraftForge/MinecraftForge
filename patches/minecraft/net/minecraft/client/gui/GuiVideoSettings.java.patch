@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/GuiVideoSettings.java
++++ b/net/minecraft/client/gui/GuiVideoSettings.java
+@@ -94,4 +94,10 @@
+       this.func_73732_a(this.field_146289_q, this.field_146500_a, this.field_146294_l / 2, 5, 16777215);
+       super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+    }
++
++   @Override // FORGE: fix for MC-64581 very laggy mipmap slider
++   public void func_146281_b() {
++      super.func_146281_b();
++      this.field_146297_k.field_71474_y.onGuiClosed();
++   }
+ }

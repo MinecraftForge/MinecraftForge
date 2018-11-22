@@ -123,6 +123,7 @@ import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.resource.IResourceType;
+import net.minecraftforge.client.resource.ReloadRequirements;
 import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.client.resource.VanillaResourceType;
 import net.minecraftforge.common.ForgeMod;
@@ -777,4 +778,11 @@ public class ForgeHooksClient
 
         return true;
    }
+
+    public static void refreshResources(Minecraft mc, VanillaResourceType... types) {
+        SelectiveReloadStateHandler.INSTANCE.beginReload(ReloadRequirements.include(types));
+        mc.refreshResources();
+        SelectiveReloadStateHandler.INSTANCE.endReload();
+
+    }
 }

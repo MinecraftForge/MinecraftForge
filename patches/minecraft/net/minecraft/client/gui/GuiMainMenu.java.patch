@@ -1,6 +1,23 @@
 --- a/net/minecraft/client/gui/GuiMainMenu.java
 +++ b/net/minecraft/client/gui/GuiMainMenu.java
-@@ -192,12 +192,18 @@
+@@ -59,6 +59,7 @@
+    private int field_193978_M;
+    private int field_193979_N;
+    private final RenderSkybox field_209101_K;
++   private net.minecraftforge.client.gui.NotificationModUpdateScreen modUpdateNotification;
+ 
+    public GuiMainMenu() {
+       this.field_146972_A = field_96138_a;
+@@ -178,7 +179,7 @@
+       if (this.func_183501_a()) {
+          this.field_183503_M.func_146280_a(this.field_146297_k, this.field_146294_l, this.field_146295_m);
+       }
+-
++      modUpdateNotification = net.minecraftforge.client.gui.NotificationModUpdateScreen.init(this, field_146292_n.stream().filter(b -> b.field_146127_k == 6).findFirst().orElse(null)); // The Mobs button is id 6
+    }
+ 
+    private void func_73969_a(int p_73969_1_, int p_73969_2_) {
+@@ -192,11 +193,17 @@
              GuiMainMenu.this.field_146297_k.func_147108_a(new GuiMultiplayer(GuiMainMenu.this));
           }
        });
@@ -14,13 +31,12 @@
 +         @Override
 +         public void func_194829_a(double p_194829_1_, double p_194829_3_) {
 +            GuiMainMenu.this.field_146297_k.func_147108_a(new net.minecraftforge.fml.client.gui.GuiModList(GuiMainMenu.this));
-    }
++         }
 +      });
-+   }
+    }
  
     private void func_73972_b(int p_73972_1_, int p_73972_2_) {
-       this.func_189646_b(new GuiButton(11, this.field_146294_l / 2 - 100, p_73972_1_, I18n.func_135052_a("menu.playdemo")) {
-@@ -206,7 +212,7 @@
+@@ -206,7 +213,7 @@
           }
        });
        this.field_73973_d = this.func_189646_b(new GuiButton(12, this.field_146294_l / 2 - 100, p_73972_1_ + p_73972_2_ * 1, I18n.func_135052_a("menu.resetdemo")) {
@@ -29,15 +45,23 @@
              ISaveFormat isaveformat1 = GuiMainMenu.this.field_146297_k.func_71359_d();
              WorldInfo worldinfo1 = isaveformat1.func_75803_c("Demo_World");
              if (worldinfo1 != null) {
-@@ -283,7 +289,10 @@
+@@ -283,7 +290,10 @@
           s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
        }
  
 -      this.func_73731_b(this.field_146289_q, s, 2, this.field_146295_m - 10, -1);
 +      net.minecraftforge.fml.BrandingControl.forEachLine(true, true, (brdline, brd) ->
-+              this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + brdline * (this.field_146289_q.field_78288_b + 1)), 16777215)
++         this.func_73731_b(this.field_146289_q, brd, 2, this.field_146295_m - ( 10 + brdline * (this.field_146289_q.field_78288_b + 1)), 16777215)
 +      );
 +
        this.func_73731_b(this.field_146289_q, "Copyright Mojang AB. Do not distribute!", this.field_193979_N, this.field_146295_m - 10, -1);
        if (p_73863_1_ > this.field_193979_N && p_73863_1_ < this.field_193979_N + this.field_193978_M && p_73863_2_ > this.field_146295_m - 10 && p_73863_2_ < this.field_146295_m) {
           func_73734_a(this.field_193979_N, this.field_146295_m - 1, this.field_193979_N + this.field_193978_M, this.field_146295_m, -1);
+@@ -299,6 +309,7 @@
+       if (this.func_183501_a()) {
+          this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+       }
++      modUpdateNotification.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
+ 
+    }
+ 

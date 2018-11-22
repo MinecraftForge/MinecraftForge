@@ -1,0 +1,61 @@
+--- a/net/minecraft/client/audio/SoundManager.java
++++ b/net/minecraft/client/audio/SoundManager.java
+@@ -75,6 +75,7 @@
+       try {
+          SoundSystemConfig.addLibrary(LibraryLWJGL3.class);
+          SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundSetupEvent(this));
+       } catch (SoundSystemException soundsystemexception) {
+          field_148621_b.error(field_148623_a, "Error linking with the LibraryJavaSound plug-in", (Throwable)soundsystemexception);
+       }
+@@ -94,6 +95,7 @@
+ 
+       this.func_148613_b();
+       this.func_148608_i();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
+    }
+ 
+    private synchronized void func_148608_i() {
+@@ -299,6 +301,8 @@
+ 
+    public void func_148611_c(ISound p_148611_1_) {
+       if (this.field_148617_f) {
++         p_148611_1_ = net.minecraftforge.client.ForgeHooksClient.playSound(this, p_148611_1_);
++         if (p_148611_1_ == null) return;
+          SoundEventAccessor soundeventaccessor = p_148611_1_.func_184366_a(this.field_148622_c);
+          ResourceLocation resourcelocation = p_148611_1_.func_147650_b();
+          if (soundeventaccessor == null) {
+@@ -340,8 +344,10 @@
+                      ResourceLocation resourcelocation1 = sound.func_188721_b();
+                      if (sound.func_188723_h()) {
+                         this.field_148620_e.newStreamingSource(p_148611_1_.func_204200_l(), s, func_148612_a(resourcelocation1), resourcelocation1.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f);
++                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlayStreamingSourceEvent(this, p_148611_1_, s));
+                      } else {
+                         this.field_148620_e.newSource(p_148611_1_.func_204200_l(), s, func_148612_a(resourcelocation1), resourcelocation1.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f);
++                        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, p_148611_1_, s));
+                      }
+ 
+                      field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", sound.func_188719_a(), resourcelocation, s);
+@@ -429,12 +435,16 @@
+    }
+ 
+    public void func_148615_a(EntityPlayer p_148615_1_, float p_148615_2_) {
+-      if (this.field_148617_f && p_148615_1_ != null) {
+-         float f = p_148615_1_.field_70127_C + (p_148615_1_.field_70125_A - p_148615_1_.field_70127_C) * p_148615_2_;
+-         float f1 = p_148615_1_.field_70126_B + (p_148615_1_.field_70177_z - p_148615_1_.field_70126_B) * p_148615_2_;
+-         double d0 = p_148615_1_.field_70169_q + (p_148615_1_.field_70165_t - p_148615_1_.field_70169_q) * (double)p_148615_2_;
+-         double d1 = p_148615_1_.field_70167_r + (p_148615_1_.field_70163_u - p_148615_1_.field_70167_r) * (double)p_148615_2_ + (double)p_148615_1_.func_70047_e();
+-         double d2 = p_148615_1_.field_70166_s + (p_148615_1_.field_70161_v - p_148615_1_.field_70166_s) * (double)p_148615_2_;
++      setListener((net.minecraft.entity.Entity)p_148615_1_, p_148615_2_);
++   }
++
++   public void setListener(net.minecraft.entity.Entity player, float partialTicks) {
++      if (this.field_148617_f && player != null) {
++         float f = player.field_70127_C + (player.field_70125_A - player.field_70127_C) * partialTicks;
++         float f1 = player.field_70126_B + (player.field_70177_z - player.field_70126_B) * partialTicks;
++         double d0 = player.field_70169_q + (player.field_70165_t - player.field_70169_q) * (double)partialTicks;
++         double d1 = player.field_70167_r + (player.field_70163_u - player.field_70167_r) * (double)partialTicks + (double)player.func_70047_e();
++         double d2 = player.field_70166_s + (player.field_70161_v - player.field_70166_s) * (double)partialTicks;
+          float f2 = MathHelper.func_76134_b((f1 + 90.0F) * ((float)Math.PI / 180F));
+          float f3 = MathHelper.func_76126_a((f1 + 90.0F) * ((float)Math.PI / 180F));
+          float f4 = MathHelper.func_76134_b(-f * ((float)Math.PI / 180F));
