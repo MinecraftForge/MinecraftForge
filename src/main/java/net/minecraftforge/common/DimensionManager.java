@@ -502,9 +502,11 @@ public class DimensionManager
             int[] intArray = compoundTag.getIntArray("DimensionArray");
             for (int i = 0; i < intArray.length; i++)
             {
+                int data = intArray[i];
+                if (data == 0) continue;
                 for (int j = 0; j < Integer.SIZE; j++)
                 {
-                    if ((intArray[i] & (1 << j)) != 0) markUsed(i * Integer.SIZE + j);
+                    if ((data & (1 << j)) != 0) markUsed(i * Integer.SIZE + j);
                 }
             }
         }
