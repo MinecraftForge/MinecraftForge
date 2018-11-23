@@ -443,7 +443,7 @@ public class LibraryManager
         List<File> list = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
-        Map<String,String> args = (Map<String, String>)Launch.blackboard.get("launchArgs");
+        Map<String,String> args = (Map<String, String>)Launch.blackboard.get("forgeLaunchArgs");
         String extraMods = args.get("--mods");
         if (extraMods != null)
         {

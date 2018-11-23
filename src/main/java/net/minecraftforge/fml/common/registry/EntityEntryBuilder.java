@@ -31,7 +31,8 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.relauncher.ReflectionHelper.UnknownConstructorException;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -250,7 +251,7 @@ public final class EntityEntryBuilder<E extends Entity>
      * @throws IllegalStateException If the entity id has not been provided
      * @throws IllegalStateException If the entity name has not been provided
      * @throws IllegalStateException If spawns have been provided for a non {@link EntityLiving}
-     * @throws ReflectionHelper.UnknownConstructorException If a {@link #factory} has not been provided
+     * @throws UnknownConstructorException If a {@link #factory} has not been provided
      *     and {@link #entity} does not have a constructor accepting {@link World}
      */
     @Nonnull
@@ -293,7 +294,7 @@ public final class EntityEntryBuilder<E extends Entity>
 
         ConstructorFactory(final Class<? extends E> entity)
         {
-            this.constructor = ReflectionHelper.findConstructor(entity, World.class);
+            this.constructor = ObfuscationReflectionHelper.findConstructor(entity, World.class);
         }
 
         @Override
