@@ -605,21 +605,21 @@ public class CoreModManager {
         catch (ClassNotFoundException cnfe)
         {
             if (!Lists.newArrayList(rootPlugins).contains(coreModClass))
-                FMLLog.log.error("Coremod {}: Unable to class load the plugin {}", coreModClass, cnfe);
+                FMLLog.log.error("Coremod {}: Unable to class load the plugin {}", coreModName, coreModClass, cnfe);
             else
                 FMLLog.log.debug("Skipping root plugin {}", coreModClass);
         }
         catch (ClassCastException cce)
         {
-            FMLLog.log.error("Coremod {}: The plugin {} is not an implementor of IFMLLoadingPlugin", coreModClass, cce);
+            FMLLog.log.error("Coremod {}: The plugin {} is not an implementor of IFMLLoadingPlugin", coreModName, coreModClass, cce);
         }
         catch (InstantiationException ie)
         {
-            FMLLog.log.error("Coremod {}: The plugin class {} was not instantiable", coreModClass, ie);
+            FMLLog.log.error("Coremod {}: The plugin class {} was not instantiable", coreModName, coreModClass, ie);
         }
         catch (IllegalAccessException iae)
         {
-            FMLLog.log.error("Coremod {}: The plugin class {} was not accessible", coreModClass, iae);
+            FMLLog.log.error("Coremod {}: The plugin class {} was not accessible", coreModName, coreModClass, iae);
         }
         return null;
     }
