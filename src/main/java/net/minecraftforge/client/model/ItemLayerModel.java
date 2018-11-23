@@ -120,6 +120,7 @@ public final class ItemLayerModel implements IUnbakedModel
     public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format) {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         Optional<TRSRTransformation> transform = state.apply(Optional.empty());
+        boolean identity = !transform.isPresent() || transform.get().isIdentity();
         for(int i = 0; i < textures.size(); i++)
         {
             TextureAtlasSprite sprite = bakedTextureGetter.apply(textures.get(i));
@@ -127,7 +128,7 @@ public final class ItemLayerModel implements IUnbakedModel
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
         ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
-        return new BakedItemModel(builder.build(), particle, map, overrides);
+        return new BakedItemModel(builder.build(), particle, map, overrides, identity);
     }
 
     public static ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format, Optional<TRSRTransformation> transform)
@@ -411,12 +412,14 @@ public final class ItemLayerModel implements IUnbakedModel
     private static void putVertex(UnpackedBakedQuad.Builder builder, VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, float x, float y, float z, float u, float v)
     {
         Vector4f vec = new Vector4f();
+        boolean hasTransform = transform.isPresent() && !transform.get().isIdentity();
+
         for(int e = 0; e < format.getElementCount(); e++)
         {
             switch(format.getElement(e).getUsage())
             {
             case POSITION:
-                if(transform.isPresent())
+                if(hasTransform)
                 {
                     vec.x = x;
                     vec.y = y;
