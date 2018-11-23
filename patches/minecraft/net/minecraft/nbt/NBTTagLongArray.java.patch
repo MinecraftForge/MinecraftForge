@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/nbt/NBTTagLongArray.java
++++ ../src-work/minecraft/net/minecraft/nbt/NBTTagLongArray.java
+@@ -98,4 +98,9 @@
+     {
+         return super.hashCode() ^ Arrays.hashCode(this.field_193587_b);
+     }
++
++    public long[] getLongArray()
++    {
++        return this.field_193587_b;
++    }
+ }

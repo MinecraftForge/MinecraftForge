@@ -47,6 +47,7 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagLongArray;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.MinecraftException;
@@ -56,6 +57,7 @@ import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.storage.ISaveHandler;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLLog;
 
@@ -76,11 +78,14 @@ public class DimensionManager
 
     private static boolean hasInit = false;
 
+    private static final int ID_THRESHOLD = 4096; // Marks when to change to storing used IDs "unpacked"
+
     private static final Int2ObjectMap<WorldServer> worlds = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final Int2ObjectMap<Dimension> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final IntSet keepLoaded = IntSets.synchronize(new IntOpenHashSet());
     private static final IntSet unloadQueue = IntSets.synchronize(new IntLinkedOpenHashSet());
-    private static final BitSet dimensionMap = new BitSet(Long.SIZE << 4);
+    private static BitSet packedIds = new BitSet(Long.SIZE << 4);
+    private static IntSet unpackedIds = new IntOpenHashSet();
     private static final ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
     private static final Multiset<Integer> leakedWorlds = HashMultiset.create();
 
@@ -136,7 +141,7 @@ public class DimensionManager
         dimensions.put(id, new Dimension(type));
         if (id >= 0)
         {
-            dimensionMap.set(id);
+            markUsed(id);
         }
     }
 
@@ -412,65 +417,108 @@ public class DimensionManager
      * block of free ids. Always call for each individual ID you wish to get.
      * @return the next free dimension ID
      */
-    public static int getNextFreeDimId() {
+    public static int getNextFreeDimId()
+    {
         int next = 0;
+        while ((next = packedIds.nextClearBit(next)) < ID_THRESHOLD)
+        {
+            if (checkAvailable(next)) return next;
+        }
         while (true)
         {
-            next = dimensionMap.nextClearBit(next);
-            if (dimensions.containsKey(next))
+            while (unpackedIds.contains(next)) next++;
+            if (checkAvailable(next)) return next;
+        }
+    }
+
+    private static boolean checkAvailable(int id)
+    {
+        if (dimensions.containsKey(id))
+        {
+            markUsed(id);
+            return false;
+        }
+        return true;
+    }
+
+    private static void markUsed(int id)
+    {
+        if (id < ID_THRESHOLD)
+        {
+            packedIds.set(id);
+        }
+        else
+        {
+            unpackedIds.add(id);
+        }
+    }
+
+    private static void markUsed(IntSet ids)
+    {
+        IntIterator iterator = ids.iterator();
+        while (iterator.hasNext())
+        {
+            int id = iterator.nextInt();
+            if (id >= 0)
             {
-                dimensionMap.set(next);
-            }
-            else
-            {
-                return next;
+                markUsed(id);
             }
         }
     }
 
     public static NBTTagCompound saveDimensionDataMap()
     {
-        int[] data = new int[(dimensionMap.length() + Integer.SIZE - 1 )/ Integer.SIZE];
         NBTTagCompound dimMap = new NBTTagCompound();
-        for (int i = 0; i < data.length; i++)
-        {
-            int val = 0;
-            for (int j = 0; j < Integer.SIZE; j++)
-            {
-                val |= dimensionMap.get(i * Integer.SIZE + j) ? (1 << j) : 0;
-            }
-            data[i] = val;
-        }
-        dimMap.setIntArray("DimensionArray", data);
+        dimMap.setTag("PackedIDs", new NBTTagLongArray(packedIds.toLongArray()));
+        dimMap.setIntArray("UnpackedIDs", unpackedIds.toIntArray());
+        dimMap.setInteger("PackThreshold", ID_THRESHOLD);
         return dimMap;
     }
 
     public static void loadDimensionDataMap(@Nullable NBTTagCompound compoundTag)
     {
-        dimensionMap.clear();
         if (compoundTag == null)
         {
-            IntIterator iterator = dimensions.keySet().iterator();
-            while (iterator.hasNext())
-            {
-                int id = iterator.nextInt();
-                if (id >= 0)
-                {
-                    dimensionMap.set(id);
-                }
-            }
+            packedIds.clear();
+            unpackedIds.clear();
+            markUsed(dimensions.keySet());
         }
         else
         {
+            long[] packed = new long[0];
+            if (compoundTag.hasKey("PackedIDs", Constants.NBT.TAG_LONG_ARRAY))
+            {
+                packed = ((NBTTagLongArray) compoundTag.getTag("PackedIDs")).getLongArray();
+            }
+            packedIds = BitSet.valueOf(packed);
+
+            int[] unpacked = compoundTag.getIntArray("UnpackedIDs");
+            unpackedIds = new IntOpenHashSet(unpacked);
+
+            int threshold = compoundTag.getInteger("PackThreshold");
+            if (threshold != ID_THRESHOLD) repack();
+
+            // legacy data (load but don't save)
             int[] intArray = compoundTag.getIntArray("DimensionArray");
             for (int i = 0; i < intArray.length; i++)
             {
                 for (int j = 0; j < Integer.SIZE; j++)
                 {
-                    dimensionMap.set(i * Integer.SIZE + j, (intArray[i] & (1 << j)) != 0);
+                    if ((intArray[i] & (1 << j)) != 0) markUsed(i * Integer.SIZE + j);
                 }
             }
         }
+    }
+
+    private static void repack()
+    {
+        IntSet temp = new IntOpenHashSet(unpackedIds);
+        unpackedIds.clear();
+
+        packedIds.stream().forEach(temp::add);
+        packedIds.clear();
+
+        markUsed(temp);
     }
 
     /**
