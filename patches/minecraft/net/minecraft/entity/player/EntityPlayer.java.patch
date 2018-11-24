@@ -349,7 +349,7 @@
              }
  
 -            if (this.field_70170_p.func_72935_r())
-+            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, this.field_71081_bT))
++            if (!net.minecraftforge.event.ForgeEventFactory.fireSleepingTimeCheck(this, p_180469_1_))
              {
                  return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
              }

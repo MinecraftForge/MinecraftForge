@@ -399,7 +399,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
     public int getPackedLightmapCoords(@Nonnull IBlockState state, @Nonnull IBlockAccess world, @Nonnull BlockPos pos)
     {
         int lightThis     = world.getCombinedLight(pos, 0);
-        int lightUp       = world.getCombinedLight(pos.up(), 0);
+        int lightUp       = world.getCombinedLight(pos.down(densityDir), 0);
         int lightThisBase = lightThis & 255;
         int lightUpBase   = lightUp & 255;
         int lightThisExt  = lightThis >> 16 & 255;
@@ -714,11 +714,16 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     private int getFlowDecay(IBlockAccess world, BlockPos pos)
     {
-        int quantaValue = getQuantaValue(world, pos);
-        return quantaValue > 0 && hasVerticalFlow(world, pos) ? 0 : quantaPerBlock - quantaValue;
+        return quantaPerBlock - getEffectiveQuanta(world, pos);
     }
 
-    private boolean hasVerticalFlow(IBlockAccess world, BlockPos pos)
+    final int getEffectiveQuanta(IBlockAccess world, BlockPos pos)
+    {
+        int quantaValue = getQuantaValue(world, pos);
+        return quantaValue > 0 && quantaValue < quantaPerBlock && hasVerticalFlow(world, pos) ? quantaPerBlock : quantaValue;
+    }
+
+    final boolean hasVerticalFlow(IBlockAccess world, BlockPos pos)
     {
         return world.getBlockState(pos.down(densityDir)).getBlock() == this;
     }
@@ -751,7 +756,7 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
 
     public float getFilledPercentage(IBlockAccess world, BlockPos pos)
     {
-        int quantaRemaining = getQuantaValue(world, pos);
+        int quantaRemaining = getEffectiveQuanta(world, pos);
         float remaining = (quantaRemaining + 1f) / (quantaPerBlockFloat + 1f);
         return remaining * (density > 0 ? 1 : -1);
     }
