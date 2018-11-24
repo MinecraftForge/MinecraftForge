@@ -126,12 +126,8 @@ public class BlockFluidClassic extends BlockFluidBase
             {
                 expQuanta = quantaPerBlock;
             }
-            // unobstructed flow from 'above'
-            else if (world.getBlockState(pos.down(densityDir)).getBlock() == this
-                    || hasDownhillFlow(world, pos, EnumFacing.EAST)
-                    || hasDownhillFlow(world, pos, EnumFacing.WEST)
-                    || hasDownhillFlow(world, pos, EnumFacing.NORTH)
-                    || hasDownhillFlow(world, pos, EnumFacing.SOUTH))
+            // vertical flow into block
+            else if (hasVerticalFlow(world, pos))
             {
                 expQuanta = quantaPerBlock - 1;
             }
@@ -179,7 +175,7 @@ public class BlockFluidClassic extends BlockFluidBase
 
         if (isSourceBlock(world, pos) || !isFlowingVertically(world, pos))
         {
-            if (world.getBlockState(pos.down(densityDir)).getBlock() == this)
+            if (hasVerticalFlow(world, pos))
             {
                 flowMeta = 1;
             }
@@ -289,7 +285,7 @@ public class BlockFluidClassic extends BlockFluidBase
 
     protected int getLargerQuanta(IBlockAccess world, BlockPos pos, int compare)
     {
-        int quantaRemaining = getQuantaValue(world, pos);
+        int quantaRemaining = getEffectiveQuanta(world, pos);
         if (quantaRemaining <= 0)
         {
             return compare;

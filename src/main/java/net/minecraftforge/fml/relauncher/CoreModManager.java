@@ -76,12 +76,13 @@ public class CoreModManager {
     private static List<String> ignoredModFiles = Lists.newArrayList();
     private static Map<String, List<String>> transformers = Maps.newHashMap();
     private static List<FMLPluginWrapper> loadPlugins;
-    private static boolean deobfuscatedEnvironment;
     private static FMLTweaker tweaker;
     private static File mcDir;
     private static List<String> candidateModFiles = Lists.newArrayList();
     private static List<String> accessTransformers = Lists.newArrayList();
     private static Set<String> rootNames = Sets.newHashSet();
+
+    static boolean deobfuscatedEnvironment;
 
     static
     {
@@ -605,21 +606,21 @@ public class CoreModManager {
         catch (ClassNotFoundException cnfe)
         {
             if (!Lists.newArrayList(rootPlugins).contains(coreModClass))
-                FMLLog.log.error("Coremod {}: Unable to class load the plugin {}", coreModClass, cnfe);
+                FMLLog.log.error("Coremod {}: Unable to class load the plugin {}", coreModName, coreModClass, cnfe);
             else
                 FMLLog.log.debug("Skipping root plugin {}", coreModClass);
         }
         catch (ClassCastException cce)
         {
-            FMLLog.log.error("Coremod {}: The plugin {} is not an implementor of IFMLLoadingPlugin", coreModClass, cce);
+            FMLLog.log.error("Coremod {}: The plugin {} is not an implementor of IFMLLoadingPlugin", coreModName, coreModClass, cce);
         }
         catch (InstantiationException ie)
         {
-            FMLLog.log.error("Coremod {}: The plugin class {} was not instantiable", coreModClass, ie);
+            FMLLog.log.error("Coremod {}: The plugin class {} was not instantiable", coreModName, coreModClass, ie);
         }
         catch (IllegalAccessException iae)
         {
-            FMLLog.log.error("Coremod {}: The plugin class {} was not accessible", coreModClass, iae);
+            FMLLog.log.error("Coremod {}: The plugin class {} was not accessible", coreModName, coreModClass, iae);
         }
         return null;
     }
