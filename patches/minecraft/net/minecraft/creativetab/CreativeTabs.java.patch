@@ -44,7 +44,7 @@
          return this.field_78033_n < 6;
      }
  
-@@ -260,4 +282,45 @@
+@@ -260,4 +282,50 @@
              item.func_150895_a(this, p_78018_1_);
          }
      }
@@ -88,5 +88,10 @@
 +    public net.minecraft.util.ResourceLocation getBackgroundImage()
 +    {
 +        return new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.func_78015_f());
++    }
++
++    public int getLabelColor()
++    {
++        return 4210752;
 +    }
  }
