@@ -111,7 +111,7 @@ public class Property
     {
         this(name, value, type, false, validValues, new String[0], name);
     }
-    
+
     public Property(String name, String value, Type type, String[] validValues, String[] validValuesDisplay)
     {
         this(name, value, type, false, validValues, validValuesDisplay, name);

@@ -1610,16 +1610,16 @@ public class Configuration
     }
 
     private String setPropertyAndGetString(String name, String category, String defaultValue, String comment, String[] validValues, String[] validValuesDisplay, String langKey)
-	{
-		Property prop = this.get(category, name, defaultValue);
+    {
+        Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
         if (validValuesDisplay != null)
-        	prop.setValidValuesDisplay(validValuesDisplay);
+            prop.setValidValuesDisplay(validValuesDisplay);
 
         prop.setLanguageKey(langKey);
         prop.setComment(comment + " [default: " + defaultValue + "]");
-		return prop.getString();
-	}
+        return prop.getString();
+    }
 
     /**
      * Creates a string list property.
@@ -1699,16 +1699,16 @@ public class Configuration
     }
 
     private String[] setPropertyAndGetStringList(String name, String category, String[] defaultValue, String comment, String[] validValues, String[] validValuesDisplay, String langKey)
-	{
-		Property prop = this.get(category, name, defaultValue);
+    {
+        Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
         if (validValuesDisplay != null)
-        	prop.setValidValuesDisplay(validValuesDisplay);
+            prop.setValidValuesDisplay(validValuesDisplay);
 
         prop.setLanguageKey(langKey);
         prop.setComment(comment + " [default: " + defaultValue + "]");
-		return prop.getStringList();
-	}
+        return prop.getStringList();
+    }
 
     /**
      * Creates a boolean property.
