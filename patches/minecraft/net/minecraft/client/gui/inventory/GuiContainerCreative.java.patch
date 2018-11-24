@@ -67,7 +67,7 @@
          if (this.field_147062_A.func_146179_b().isEmpty())
          {
              for (Item item : Item.field_150901_e)
-@@ -366,7 +403,7 @@
+@@ -366,10 +403,10 @@
      {
          CreativeTabs creativetabs = CreativeTabs.field_78032_a[field_147058_w];
  
@@ -75,7 +75,11 @@
 +        if (creativetabs != null && creativetabs.func_78019_g())
          {
              GlStateManager.func_179084_k();
-             this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c()), 8, 6, 4210752);
+-            this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c()), 8, 6, 4210752);
++            this.field_146289_q.func_78276_b(I18n.func_135052_a(creativetabs.func_78024_c()), 8, 6, creativetabs.getLabelColor());
+         }
+     }
+ 
 @@ -401,7 +438,7 @@
  
              for (CreativeTabs creativetabs : CreativeTabs.field_78032_a)
