@@ -37,6 +37,15 @@
  
          if (p_70037_1_.func_150297_b("ConversionTime", 99) && p_70037_1_.func_74762_e("ConversionTime") > -1)
          {
+@@ -91,7 +101,7 @@
+     @Nullable
+     public IEntityLivingData func_180482_a(DifficultyInstance p_180482_1_, @Nullable IEntityLivingData p_180482_2_)
+     {
+-        this.func_190733_a(this.field_70170_p.field_73012_v.nextInt(6));
++        net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70170_p.field_73012_v);
+         return super.func_180482_a(p_180482_1_, p_180482_2_);
+     }
+ 
 @@ -175,7 +185,7 @@
      {
          EntityVillager entityvillager = new EntityVillager(this.field_70170_p);

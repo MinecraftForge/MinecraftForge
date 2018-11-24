@@ -111,6 +111,7 @@ public final class ItemLayerModel implements IModel
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         Optional<TRSRTransformation> transform = state.apply(Optional.empty());
+        boolean identity = !transform.isPresent() || transform.get().isIdentity();
         for(int i = 0; i < textures.size(); i++)
         {
             TextureAtlasSprite sprite = bakedTextureGetter.apply(textures.get(i));
@@ -118,7 +119,7 @@ public final class ItemLayerModel implements IModel
         }
         TextureAtlasSprite particle = bakedTextureGetter.apply(textures.isEmpty() ? new ResourceLocation("missingno") : textures.get(0));
         ImmutableMap<TransformType, TRSRTransformation> map = PerspectiveMapWrapper.getTransforms(state);
-        return new BakedItemModel(builder.build(), particle, map, overrides);
+        return new BakedItemModel(builder.build(), particle, map, overrides, identity);
     }
 
     public static ImmutableList<BakedQuad> getQuadsForSprite(int tint, TextureAtlasSprite sprite, VertexFormat format, Optional<TRSRTransformation> transform)
