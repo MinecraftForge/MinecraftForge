@@ -88,4 +88,6 @@ public interface IFMLSidedHandler
     default void resetClientRecipeBook(){}
 
     default void reloadSearchTrees(){}
+
+    default void reloadCreativeSettings(){}
 }

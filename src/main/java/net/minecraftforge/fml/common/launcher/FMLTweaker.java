@@ -122,6 +122,8 @@ public class FMLTweaker implements ITweaker {
 
         Yggdrasil.login(launchArgs);
 
+        Launch.blackboard.put("forgeLaunchArgs", Maps.newHashMap(launchArgs));
+
         try
         {
             jarLocation = getClass().getProtectionDomain().getCodeSource().getLocation().toURI();
