@@ -155,7 +155,7 @@ public class FMLModContainer implements ModContainer
             }
             catch (Exception ex)
             {
-                FMLLog.log.error("Error constructing custom mod language adapter referenced by {} (modid: {})", getModId(), ex);
+                FMLLog.log.error("Error constructing custom mod language adapter referenced by {} (modid: {})", this.className, getModId(), ex);
                 throw new RuntimeException(ex);
             }
         }
