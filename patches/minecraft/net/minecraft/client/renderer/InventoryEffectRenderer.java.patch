@@ -33,7 +33,7 @@
                      this.func_73729_b(i + 6, j + 7, 0 + i1 % 8 * 18, 198 + i1 / 8 * 18, 18, 18);
                  }
  
-+                potion.renderInventoryEffect(i, j, potioneffect, field_146297_k);
++                potion.renderInventoryEffect(potioneffect, this, i, j, this.field_73735_i);
 +                if (!potion.shouldRenderInvText(potioneffect)) { j += l; continue; }
                  String s1 = I18n.func_135052_a(potion.func_76393_a());
  
