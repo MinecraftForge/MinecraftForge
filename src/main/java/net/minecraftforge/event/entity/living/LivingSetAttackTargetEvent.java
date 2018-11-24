@@ -28,8 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 /**
  * LivingSetAttackTargetEvent is fired when an Entity sets a target to attack.<br>
  * This event is fired whenever an Entity sets a target to attack in
- * {@link EntityLiving#setAttackTarget(EntityLivingBase)} and
- * {@link EntityLivingBase#setRevengeTarget(EntityLivingBase)}.<br>
+ * {@link EntityLiving#setAttackTarget(EntityLivingBase)}.<br>
  * <br>
  * This event is fired via the {@link ForgeHooks#onLivingSetAttackTarget(EntityLivingBase, EntityLivingBase)}.<br>
  * <br>
