@@ -810,7 +810,7 @@
 +     */
 +    public float getSpeedModifier(ItemStack stack, EntityLivingBase entity)
 +    {
-+    	return 0.2F;
++        return 0.2F;
 +    }
 +    
 +    /**
@@ -821,7 +821,7 @@
 +     */
 +    public boolean shouldPreventSprinting(ItemStack stack, EntityLivingBase entity)
 +    {
-+    	return true;
++        return true;
 +    }
 +    
 +    @SideOnly(Side.CLIENT)
