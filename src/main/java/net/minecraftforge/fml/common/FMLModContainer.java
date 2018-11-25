@@ -37,13 +37,11 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import com.google.common.base.Throwables;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.common.Mod.Metadata;
-import net.minecraftforge.fml.common.asm.transformers.BlamingTransformer;
 import net.minecraftforge.fml.common.discovery.ASMDataTable;
 import net.minecraftforge.fml.common.discovery.ModCandidate;
 import net.minecraftforge.fml.common.discovery.ASMDataTable.ASMData;
@@ -157,7 +155,7 @@ public class FMLModContainer implements ModContainer
             }
             catch (Exception ex)
             {
-                FMLLog.log.error("Error constructing custom mod language adapter referenced by {} (modid: {})", getModId(), ex);
+                FMLLog.log.error("Error constructing custom mod language adapter referenced by {} (modid: {})", this.className, getModId(), ex);
                 throw new RuntimeException(ex);
             }
         }
@@ -507,7 +505,6 @@ public class FMLModContainer implements ModContainer
     @Subscribe
     public void constructMod(FMLConstructionEvent event)
     {
-        BlamingTransformer.addClasses(getModId(), candidate.getClassList());
         ModClassLoader modClassLoader = event.getModClassLoader();
         try
         {

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.BlockPortal;
-import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.Entity;
@@ -44,6 +43,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
@@ -62,6 +62,7 @@ import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.village.Village;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
@@ -394,7 +395,7 @@ public class ForgeEventFactory
     public static void firePlayerLoadingEvent(EntityPlayer player, IPlayerFileData playerFileData, String uuidString)
     {
         SaveHandler sh = (SaveHandler) playerFileData;
-        File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "playersDirectory", "field_"+"75771_c");
+        File dir = ObfuscationReflectionHelper.getPrivateValue(SaveHandler.class, sh, "field_"+"75771_c");
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.LoadFromFile(player, dir, uuidString));
     }
 
@@ -792,5 +793,10 @@ public class ForgeEventFactory
 
         Result result = event.getResult();
         return result == Result.DEFAULT ? world.getGameRules().getBoolean("mobGriefing") : result == Result.ALLOW;
+    }
+
+    public static void onGameRuleChange(GameRules rules, String ruleName, MinecraftServer server)
+    {
+        MinecraftForge.EVENT_BUS.post(new GameRuleChangeEvent(rules, ruleName, server));
     }
 }
