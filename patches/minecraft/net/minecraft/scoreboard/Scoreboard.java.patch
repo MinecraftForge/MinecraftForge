@@ -1,0 +1,42 @@
+--- ../src-base/minecraft/net/minecraft/scoreboard/Scoreboard.java
++++ ../src-work/minecraft/net/minecraft/scoreboard/Scoreboard.java
+@@ -272,6 +272,7 @@
+         for (String s : p_96511_1_.func_96670_d())
+         {
+             this.field_96540_f.remove(s);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.TeamEvent.LeaveTeamEvent(p_96511_1_, s));
+         }
+ 
+         this.func_96513_c(p_96511_1_);
+@@ -298,6 +299,7 @@
+ 
+             this.field_96540_f.put(p_151392_1_, scoreplayerteam);
+             scoreplayerteam.func_96670_d().add(p_151392_1_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.TeamEvent.JoinTeamEvent(scoreplayerteam, p_151392_1_));
+             return true;
+         }
+     }
+@@ -327,6 +329,7 @@
+         {
+             this.field_96540_f.remove(p_96512_1_);
+             p_96512_2_.func_96670_d().remove(p_96512_1_);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.TeamEvent.LeaveTeamEvent(p_96512_2_, p_96512_1_));
+         }
+     }
+ 
+@@ -372,6 +375,7 @@
+ 
+     public void func_96523_a(ScorePlayerTeam p_96523_1_)
+     {
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.TeamEvent.CreateTeamEvent(p_96523_1_));
+     }
+ 
+     public void func_96538_b(ScorePlayerTeam p_96538_1_)
+@@ -380,6 +384,7 @@
+ 
+     public void func_96513_c(ScorePlayerTeam p_96513_1_)
+     {
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.TeamEvent.RemoveTeamEvent(p_96513_1_));
+     }
+ 
+     public static String func_96517_b(int p_96517_0_)
