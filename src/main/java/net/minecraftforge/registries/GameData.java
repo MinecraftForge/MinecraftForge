@@ -292,7 +292,10 @@ public class GameData
         void remove(I key)
         {
             Integer prev = this.identityMap.remove(key);
-            if (prev != null) this.objectList.set(prev, null);
+            if (prev != null)
+            {
+                this.objectList.set(prev, null);
+            }
         }
     }
 
@@ -311,7 +314,9 @@ public class GameData
             if (oldBlock != null)
             {
                 for (IBlockState state : oldBlock.getBlockState().getValidStates())
+                {
                     blockstateMap.remove(state);
+                }
             }
 
             if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
@@ -495,7 +500,10 @@ public class GameData
             }
             @SuppressWarnings("unchecked")
             Map<Class<? extends Entity>, EntityEntry> map = owner.getSlaveMap(ENTITY_CLASS_TO_ENTRY, Map.class);
-            if (oldEntry != null) map.remove(oldEntry.getEntityClass());
+            if (oldEntry != null)
+            {
+                map.remove(oldEntry.getEntityClass());
+            }
             map.put(entry.getEntityClass(), entry);
         }
 
