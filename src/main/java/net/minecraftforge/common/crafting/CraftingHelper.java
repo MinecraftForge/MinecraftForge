@@ -650,9 +650,9 @@ public class CraftingHelper {
                 loadFactories(json, ctx);
             }
         }
-        catch (IOException e)
+        catch (JsonParseException | IOException e)
         {
-            e.printStackTrace();
+            FMLLog.log.error("Error loading _factories.json: ", e);
         }
         finally
         {
@@ -678,7 +678,7 @@ public class CraftingHelper {
                         JsonObject[] json = JsonUtils.fromJson(GSON, reader, JsonObject[].class);
                         ctx.loadConstants(json);
                     }
-                    catch (IOException e)
+                    catch (JsonParseException | IOException e)
                     {
                         FMLLog.log.error("Error loading _constants.json: ", e);
                         return false;
