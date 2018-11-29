@@ -21,12 +21,12 @@ package net.minecraftforge.client.model;
 
 import java.util.function.Predicate;
 
-import net.minecraftforge.client.resource.IResourceType;
-import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
-import net.minecraftforge.client.resource.VanillaResourceType;
 import net.minecraft.client.renderer.block.model.IUnbakedModel;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.resource.VanillaResourceType;
 
 public interface ICustomModelLoader extends ISelectiveResourceReloadListener
 {
@@ -52,4 +52,11 @@ public interface ICustomModelLoader extends ISelectiveResourceReloadListener
      * loads (or reloads) specified model
      */
     IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception;
+
+
+    @Override
+    default IResourceType getResourceType()
+    {
+       return VanillaResourceType.MODELS;
+    }
 }

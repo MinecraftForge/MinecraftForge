@@ -9,7 +9,15 @@
     private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
     private static final DataParameter<Integer> field_184830_b = EntityDataManager.<Integer>func_187226_a(EntityPlayer.class, DataSerializers.field_187192_b);
     protected static final DataParameter<Byte> field_184827_bp = EntityDataManager.<Byte>func_187226_a(EntityPlayer.class, DataSerializers.field_187191_a);
-@@ -663,7 +665,12 @@
+@@ -161,6 +163,7 @@
+       this.func_110148_a(SharedMonsterAttributes.field_111263_d).func_111128_a((double)0.1F);
+       this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188790_f);
+       this.func_110140_aT().func_111150_b(SharedMonsterAttributes.field_188792_h);
++      this.func_110140_aT().func_111150_b(REACH_DISTANCE);
+    }
+ 
+    protected void func_70088_a() {
+@@ -663,7 +666,12 @@
        return p_184816_1_.func_92059_d();
     }
  
@@ -22,7 +30,7 @@
        float f = this.field_71071_by.func_184438_a(p_184813_1_);
        if (f > 1.0F) {
           int i = EnchantmentHelper.func_185293_e(this);
-@@ -705,6 +712,7 @@
+@@ -705,6 +713,7 @@
           f /= 5.0F;
        }
  

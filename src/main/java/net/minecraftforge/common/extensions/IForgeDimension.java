@@ -21,6 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.NetherDimension;
@@ -44,7 +45,7 @@ public interface IForgeDimension
      * and VillageCollection are initialized. On client, called when world is
      * constructed, just before world load event is called. Note that this method is
      * always called before the world load event.
-     * 
+     *
      * @return initial holder for capabilities on the world
      */
     default net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities()
@@ -58,7 +59,7 @@ public interface IForgeDimension
      * worldA.provider.getMovementFactor() / worldB.provider.getMovementFactor()
      * Example: Overworld factor is 1, nether factor is 8. Traveling from overworld
      * to nether multiplies coordinates by 1/8.
-     * 
+     *
      * @return The movement factor
      */
     default double getMovementFactor()
@@ -103,7 +104,7 @@ public interface IForgeDimension
     void setWeatherRenderer(IRenderHandler renderer);
 
     void resetRainAndThunder();
-    
+
     default boolean canDoLightning(net.minecraft.world.chunk.Chunk chunk)
     {
         return true;
@@ -112,5 +113,17 @@ public interface IForgeDimension
     default boolean canDoRainSnowIce(net.minecraft.world.chunk.Chunk chunk)
     {
         return true;
+    }
+
+    /**
+     * Called on the client to get the music type to play when in this world type.
+     * At the time of calling, the client player and world are guaranteed to be non-null
+     * @return null to use vanilla logic, otherwise a MusicType to play in this world
+     */
+    @Nullable
+    @OnlyIn(Dist.CLIENT)
+    default MusicTicker.MusicType getMusicType()
+    {
+        return null;
     }
 }

@@ -37,6 +37,7 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityWitherSkull;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
@@ -65,6 +66,7 @@ import net.minecraft.world.dimension.EndDimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.EnumPlantType;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
 
@@ -216,7 +218,7 @@ public interface IForgeBlock
      */
     default public boolean canHarvestBlock(IBlockState state, IBlockReader world, BlockPos pos, EntityPlayer player)
     {
-        return net.minecraftforge.common.ForgeHooks.canHarvestBlock(state, player, world, pos);
+        return ForgeHooks.canHarvestBlock(state, player, world, pos);
     }
 
     /**
@@ -236,12 +238,13 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
      *        Can be useful to delay the destruction of tile entities till after harvestBlock
+     * @param fluid The current fluid state at current position
      * @return True if the block is actually destroyed.
      */
-    default boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
+    default boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest, IFluidState fluid)
     {
         getBlock().onBlockHarvested(world, pos, state, player);
-        return world.setBlockState(pos, net.minecraft.init.Blocks.AIR.getDefaultState(), world.isRemote ? 11 : 3);
+        return world.setBlockState(pos, fluid.getBlockState(), world.isRemote ? 11 : 3);
     }
 
     /**
@@ -504,6 +507,24 @@ public interface IForgeBlock
     * @return True to prevent vanilla running particles from spawning.
     */
     default boolean addRunningEffects(IBlockState state, World world, BlockPos pos, Entity entity)
+    {
+        return false;
+    }
+
+    /**
+     * Spawn a digging particle effect in the world, this is a wrapper
+     * around EffectRenderer.addBlockHitEffects to allow the block more
+     * control over the particles. Useful when you have entirely different
+     * texture sheets for different sides/locations in the world.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param target The target the player is looking at {x/y/z/side/sub}
+     * @param manager A reference to the current particle manager.
+     * @return True to prevent vanilla digging particles form spawning.
+     */
+    @OnlyIn(Dist.CLIENT)
+    default boolean addHitEffects(IBlockState state, World worldObj, RayTraceResult target, ParticleManager manager)
     {
         return false;
     }

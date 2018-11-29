@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/BlockRendererDispatcher.java
++++ b/net/minecraft/client/renderer/BlockRendererDispatcher.java
+@@ -105,4 +105,9 @@
+    public void func_195410_a(IResourceManager p_195410_1_) {
+       this.field_175025_e.func_178268_a();
+    }
++
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.MODELS;
++   }
+ }

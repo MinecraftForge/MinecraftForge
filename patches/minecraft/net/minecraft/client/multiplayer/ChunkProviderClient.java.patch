@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/multiplayer/ChunkProviderClient.java
++++ b/net/minecraft/client/multiplayer/ChunkProviderClient.java
+@@ -55,6 +55,7 @@
+    public Chunk func_73158_c(int p_73158_1_, int p_73158_2_) {
+       Chunk chunk = new Chunk(this.field_73235_d, p_73158_1_, p_73158_2_, new Biome[256]);
+       this.field_73236_b.put(ChunkPos.func_77272_a(p_73158_1_, p_73158_2_), chunk);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
+       chunk.func_177417_c(true);
+       return chunk;
+    }

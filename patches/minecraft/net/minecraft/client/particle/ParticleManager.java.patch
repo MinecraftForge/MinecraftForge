@@ -1,0 +1,30 @@
+--- a/net/minecraft/client/particle/ParticleManager.java
++++ b/net/minecraft/client/particle/ParticleManager.java
+@@ -145,6 +145,7 @@
+    }
+ 
+    public void func_78873_a(Particle p_78873_1_) {
++      if (p_78873_1_ == null) return; //Forge: Prevent modders from being bad and adding nulls causing untraceable NPEs.
+       this.field_187241_h.add(p_78873_1_);
+    }
+ 
+@@ -332,7 +333,7 @@
+    }
+ 
+    public void func_180533_a(BlockPos p_180533_1_, IBlockState p_180533_2_) {
+-      if (!p_180533_2_.func_196958_f()) {
++      if (!p_180533_2_.isAir(this.field_78878_a, p_180533_1_)) {
+          VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
+          double d0 = 0.25D;
+          voxelshape.func_197755_b((p_199284_3_, p_199284_5_, p_199284_7_, p_199284_9_, p_199284_11_, p_199284_13_) -> {
+@@ -411,4 +412,10 @@
+ 
+       return String.valueOf(i);
+    }
++
++   public void addBlockHitEffects(BlockPos pos, net.minecraft.util.math.RayTraceResult target) {
++      IBlockState state = field_78878_a.func_180495_p(pos);
++      if (!state.addHitEffects(field_78878_a, target, this))
++         func_180532_a(pos, target.field_178784_b);
++   }
+ }

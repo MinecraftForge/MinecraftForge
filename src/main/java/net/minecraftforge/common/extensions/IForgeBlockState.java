@@ -30,6 +30,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntitySpawnPlacementRegistry.SpawnPlacementType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -199,11 +200,12 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @param willHarvest True if Block.harvestBlock will be called after this, if the return in true.
      *        Can be useful to delay the destruction of tile entities till after harvestBlock
+     * @param fluid The current fluid and block state for the position in the world.
      * @return True if the block is actually destroyed.
      */
-    default boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest)
+    default boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest, IFluidState fluid)
     {
-        return getBlockState().getBlock().removedByPlayer(getBlockState(), world, pos, player, willHarvest);
+        return getBlockState().getBlock().removedByPlayer(getBlockState(), world, pos, player, willHarvest, fluid);
     }
 
     /**
@@ -447,6 +449,23 @@ public interface IForgeBlockState
     default boolean addRunningEffects(World world, BlockPos pos, Entity entity)
     {
         return getBlockState().getBlock().addRunningEffects(getBlockState(), world, pos, entity);
+    }
+
+    /**
+     * Spawn a digging particle effect in the world, this is a wrapper
+     * around EffectRenderer.addBlockHitEffects to allow the block more
+     * control over the particles. Useful when you have entirely different
+     * texture sheets for different sides/locations in the world.
+     *
+     * @param world The current world
+     * @param target The target the player is looking at {x/y/z/side/sub}
+     * @param manager A reference to the current particle manager.
+     * @return True to prevent vanilla digging particles form spawning.
+     */
+    @OnlyIn(Dist.CLIENT)
+    default boolean addHitEffects(World world, RayTraceResult target, ParticleManager manager)
+    {
+        return getBlockState().getBlock().addHitEffects(getBlockState(), world, target, manager);
     }
 
    /**

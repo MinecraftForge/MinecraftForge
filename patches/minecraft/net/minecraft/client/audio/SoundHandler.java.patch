@@ -46,3 +46,13 @@
     public void func_147689_b() {
        this.field_147694_f.func_148610_e();
     }
+@@ -257,4 +273,9 @@
+    public void func_195478_a(@Nullable ResourceLocation p_195478_1_, @Nullable SoundCategory p_195478_2_) {
+       this.field_147694_f.func_195855_a(p_195478_1_, p_195478_2_);
+    }
++
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.SOUNDS;
++   }
+ }

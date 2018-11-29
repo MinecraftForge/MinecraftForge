@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/shader/ShaderGroup.java
++++ b/net/minecraft/client/shader/ShaderGroup.java
+@@ -143,7 +143,8 @@
+                   String s3 = JsonUtils.func_151200_h(jsonobject1, "id");
+                   Framebuffer framebuffer2 = this.func_148017_a(s3);
+                   if (framebuffer2 == null) {
+-                     ResourceLocation resourcelocation = new ResourceLocation("textures/effect/" + s3 + ".png");
++                     ResourceLocation rl = ResourceLocation.func_208304_a(s3);
++                     ResourceLocation resourcelocation = new ResourceLocation(rl.func_110624_b(), "textures/effect/" + rl.func_110623_a() + ".png");
+                      IResource iresource = null;
+ 
+                      try {

@@ -1,0 +1,59 @@
+--- a/net/minecraft/util/EnumFacing.java
++++ b/net/minecraft/util/EnumFacing.java
+@@ -13,8 +13,6 @@
+ import net.minecraft.entity.Entity;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.Vec3i;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public enum EnumFacing implements IStringSerializable {
+    DOWN(0, 1, -1, "down", EnumFacing.AxisDirection.NEGATIVE, EnumFacing.Axis.Y, new Vec3i(0, -1, 0)),
+@@ -109,7 +107,6 @@
+       return func_82600_a(this.field_176759_h);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public EnumFacing func_176732_a(EnumFacing.Axis p_176732_1_) {
+       switch(p_176732_1_) {
+       case X:
+@@ -150,7 +147,6 @@
+       }
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    private EnumFacing func_176744_n() {
+       switch(this) {
+       case NORTH:
+@@ -168,7 +164,6 @@
+       }
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    private EnumFacing func_176738_p() {
+       switch(this) {
+       case EAST:
+@@ -221,7 +216,6 @@
+    }
+ 
+    @Nullable
+-   @OnlyIn(Dist.CLIENT)
+    public static EnumFacing func_176739_a(@Nullable String p_176739_0_) {
+       return p_176739_0_ == null ? null : (EnumFacing)field_176761_p.get(p_176739_0_.toLowerCase(Locale.ROOT));
+    }
+@@ -295,7 +289,6 @@
+       throw new IllegalArgumentException("No such direction: " + p_181076_0_ + " " + p_181076_1_);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public Vec3i func_176730_m() {
+       return this.field_176756_m;
+    }
+@@ -339,7 +332,6 @@
+       }
+ 
+       @Nullable
+-      @OnlyIn(Dist.CLIENT)
+       public static EnumFacing.Axis func_176717_a(String p_176717_0_) {
+          return field_176725_d.get(p_176717_0_.toLowerCase(Locale.ROOT));
+       }

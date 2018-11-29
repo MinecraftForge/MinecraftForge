@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/resources/FoliageColorReloadListener.java
++++ b/net/minecraft/client/resources/FoliageColorReloadListener.java
+@@ -21,4 +21,9 @@
+       }
+ 
+    }
++
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.TEXTURES;
++   }
+ }

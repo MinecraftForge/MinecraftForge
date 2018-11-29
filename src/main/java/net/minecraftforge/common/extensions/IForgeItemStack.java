@@ -123,5 +123,30 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
         getStack().write(ret);
         return ret;
     }
+    /**
+     * Called before a block is broken. Return true to prevent default block
+     * harvesting.
+     *
+     * Note: In SMP, this is called on both client and server sides!
+     *
+     * @param pos       Block's position in world
+     * @param player    The Player that is wielding the item
+     * @return True to prevent harvesting, false to continue as normal
+     */
+    default boolean onBlockStartBreak(BlockPos pos, EntityPlayer player)
+    {
+        return getStack().isEmpty() || getStack().getItem().onBlockStartBreak(getStack(), pos, player);
+    }
 
+    /**
+     * Called when the player is mining a block and the item in his hand changes.
+     * Allows to not reset blockbreaking if only NBT or similar changes.
+     *
+     * @param newStack The new stack
+     * @return True to reset block break progress
+     */
+    default boolean shouldCauseBlockBreakReset(ItemStack newStack)
+    {
+        return getStack().getItem().shouldCauseBlockBreakReset(getStack(), newStack);
+    }
 }

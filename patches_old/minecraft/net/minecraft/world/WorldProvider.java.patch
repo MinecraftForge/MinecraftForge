@@ -245,18 +245,6 @@
 +    }
 +
 +    /**
-+     * Called on the client to get the music type to play when in this world type.
-+     * At the time of calling, the client player and world are guaranteed to be non-null
-+     * @return null to use vanilla logic, otherwise a MusicType to play in this world
-+     */
-+    @Nullable
-+    @SideOnly(Side.CLIENT)
-+    public net.minecraft.client.audio.MusicTicker.MusicType getMusicType()
-+    {
-+        return null;
-+    }
-+
-+    /**
 +     * Determines if the player can sleep in this world (or if the bed should explode for example).
 +     *
 +     * @param player The player that is attempting to sleep
@@ -266,13 +254,6 @@
 +    public WorldSleepResult canSleepAt(net.minecraft.entity.player.EntityPlayer player, BlockPos pos)
 +    {
 +        return (this.func_76567_e() && this.field_76579_a.func_180494_b(pos) != net.minecraft.init.Biomes.field_76778_j) ? WorldSleepResult.ALLOW : WorldSleepResult.BED_EXPLODES;
-+    }
-+
-+    public static enum WorldSleepResult
-+    {
-+        ALLOW,
-+        DENY,
-+        BED_EXPLODES;
 +    }
 +
 +    /*======================================= Start Moved From World =========================================*/

@@ -533,22 +533,6 @@ public interface IForgeItem
     }
 
     /**
-     * Checked from
-     * {@link net.minecraft.client.multiplayer.PlayerControllerMP#onPlayerDestroyBlock(BlockPos pos)
-     * PlayerControllerMP.onPlayerDestroyBlock()} when a creative player left-clicks
-     * a block with this item. Also checked from
-     * {@link net.minecraftforge.common.ForgeHooks#onBlockBreakEvent(World, GameType, EntityPlayerMP, BlockPos)
-     * ForgeHooks.onBlockBreakEvent()} to prevent sending an event.
-     *
-     * @return true if the given player can destroy specified block in creative mode
-     *         with this item
-     */
-    default boolean canDestroyBlockInCreative(World world, BlockPos pos, ItemStack stack, EntityPlayer player)
-    {
-        return !(this instanceof ItemSword);
-    }
-
-    /**
      * ItemStack sensitive version of {@link #canHarvestBlock(IBlockState)}
      *
      * @param stack The itemstack used to harvest the block

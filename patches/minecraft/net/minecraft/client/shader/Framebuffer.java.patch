@@ -1,0 +1,57 @@
+--- a/net/minecraft/client/shader/Framebuffer.java
++++ b/net/minecraft/client/shader/Framebuffer.java
+@@ -22,6 +22,7 @@
+    public int field_147624_h;
+    public float[] field_147625_i;
+    public int field_147623_j;
++   private boolean stencilEnabled = false;
+ 
+    public Framebuffer(int p_i45078_1_, int p_i45078_2_, boolean p_i45078_3_) {
+       this.field_147619_e = p_i45078_3_;
+@@ -95,8 +96,14 @@
+          OpenGlHelper.func_153188_a(OpenGlHelper.field_153198_e, OpenGlHelper.field_153200_g, 3553, this.field_147617_g, 0);
+          if (this.field_147619_e) {
+             OpenGlHelper.func_153176_h(OpenGlHelper.field_153199_f, this.field_147624_h);
++            if (!this.stencilEnabled) {
+             OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, 33190, this.field_147622_a, this.field_147620_b);
+             OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, OpenGlHelper.field_153201_h, OpenGlHelper.field_153199_f, this.field_147624_h);
++            } else {
++                OpenGlHelper.func_153186_a(OpenGlHelper.field_153199_f, org.lwjgl.opengl.EXTPackedDepthStencil.GL_DEPTH24_STENCIL8_EXT, this.field_147622_a, this.field_147620_b);
++                OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_DEPTH_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, this.field_147624_h);
++                OpenGlHelper.func_153190_b(OpenGlHelper.field_153198_e, org.lwjgl.opengl.EXTFramebufferObject.GL_STENCIL_ATTACHMENT_EXT, OpenGlHelper.field_153199_f, this.field_147624_h);
++            }
+          }
+ 
+          this.func_147611_b();
+@@ -229,4 +236,31 @@
+       GlStateManager.func_179086_m(i);
+       this.func_147609_e();
+    }
++
++   /**
++    * Attempts to enabled 8 bits of stencil buffer on this FrameBuffer.
++    * Modders must call this directly to set things up.
++    * This is to prevent the default cause where graphics cards do not support stencil bits.
++    * Modders should check the below 'isStencilEnabled' to check if another modder has already enabled them.
++    *
++    * Note:
++    *   As of now the only thing that is checked is if FBOs are supported entirely, in the future
++    *   we may expand to check for errors.
++    *
++    * @return True if the FBO was re-initialized with stencil bits.
++    */
++   public boolean enableStencil() {
++      if (!OpenGlHelper.func_148822_b()) return false;
++      stencilEnabled = true;
++      this.func_147613_a(field_147621_c, field_147618_d);
++      return true; //TODO: Find a way to detect if this failed?
++   }
++
++   /**
++    * Returns wither or not this FBO has been successfully initialized with stencil bits.
++    * If not, and a modder wishes it to be, they must call enableStencil.
++    */
++   public boolean isStencilEnabled() {
++      return this.stencilEnabled;
++   }
+ }

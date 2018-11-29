@@ -26,7 +26,7 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound>
 {
     default TileEntity getTileEntity() { return (TileEntity) this; }
-    
+
     @Override
     default void deserializeNBT(NBTTagCompound nbt)
     {
@@ -40,4 +40,35 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
         getTileEntity().write(ret);
         return ret;
     }
+
+    /**
+     * Called when you receive a TileEntityData packet for the location this
+     * TileEntity is currently in. On the client, the NetworkManager will always
+     * be the remote server. On the server, it will be whomever is responsible for
+     * sending the packet.
+     *
+     * @param net The NetworkManager the packet originated from
+     * @param pkt The data packet
+     */
+    default void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt){ }
+
+    /**
+     * Called when the chunk's TE update tag, gotten from {@link #getUpdateTag()}, is received on the client.
+     * <p>
+     * Used to handle this tag in a special way. By default this simply calls {@link #readFromNBT(NBTTagCompound)}.
+     *
+     * @param tag The {@link NBTTagCompound} sent from {@link #getUpdateTag()}
+     */
+     default void handleUpdateTag(NBTTagCompound tag)
+     {
+         getTileEntity().read(tag);
+     }
+
+    /**
+     * Gets a {@link NBTTagCompound} that can be used to store custom data for this tile entity.
+     * It will be written, and read from disc, so it persists over world saves.
+     *
+     * @return A compound tag for custom data
+     */
+     NBTTagCompound getTileData();
 }

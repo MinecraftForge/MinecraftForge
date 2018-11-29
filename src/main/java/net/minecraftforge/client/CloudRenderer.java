@@ -23,8 +23,6 @@ import javax.annotation.Nonnull;
 import java.nio.ByteBuffer;
 import java.util.function.Predicate;
 
-import net.minecraftforge.client.resource.IResourceType;
-import net.minecraftforge.client.resource.VanillaResourceType;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -47,7 +45,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ForgeModContainer;
-import net.minecraftforge.client.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ISelectiveResourceReloadListener;
+import net.minecraftforge.resource.VanillaResourceType;
 
 public class CloudRenderer implements ISelectiveResourceReloadListener
 {

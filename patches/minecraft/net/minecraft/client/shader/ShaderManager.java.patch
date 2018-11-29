@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/shader/ShaderManager.java
++++ b/net/minecraft/client/shader/ShaderManager.java
+@@ -51,7 +51,8 @@
+ 
+    public ShaderManager(IResourceManager p_i45087_1_, String p_i45087_2_) throws IOException {
+       JsonParser jsonparser = new JsonParser();
+-      ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_i45087_2_ + ".json");
++      ResourceLocation rl = ResourceLocation.func_208304_a(p_i45087_2_);
++      ResourceLocation resourcelocation = new ResourceLocation(rl.func_110624_b(), "shaders/program/" + rl.func_110623_a() + ".json");
+       this.field_148007_m = p_i45087_2_;
+       IResource iresource = null;
+ 

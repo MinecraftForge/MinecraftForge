@@ -9,7 +9,7 @@
     public static final float[] field_111203_a = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
     protected World field_76579_a;
     protected boolean field_76575_d;
-@@ -141,4 +141,91 @@
+@@ -141,4 +141,107 @@
     public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  
     public abstract DimensionType func_186058_p();
@@ -95,6 +95,22 @@
 +    */
 +   public SleepResult canSleepAt(net.minecraft.entity.player.EntityPlayer player, BlockPos pos) {
 +       return (this.func_76567_e() && this.field_76579_a.func_180494_b(pos) != net.minecraft.init.Biomes.field_76778_j) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
++   }
++
++   /**
++    * If this method returns true, then chunks received by the client will
++    * have {@link net.minecraft.world.chunk.Chunk#resetRelightChecks} called
++    * on them, queuing lighting checks for all air blocks in the chunk (and
++    * any adjacent light-emitting blocks).
++    *
++    * Returning true here is recommended if the chunk generator used also
++    * does this for newly generated chunks.
++    *
++    * @return true if lighting checks should be performed
++    */
++   public boolean shouldClientCheckLighting()
++   {
++       return !(this instanceof OverworldDimension);
 +   }
 +
 +   public enum SleepResult {
