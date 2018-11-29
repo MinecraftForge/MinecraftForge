@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/tileentity/TileEntitySign.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntitySign.java
 @@ -59,7 +59,7 @@
              }
-             public boolean func_70003_b(int p_70003_1_, String p_70003_2_)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              {
 -                return true;
 +                return p_70003_1_ <= 2; //Forge: Fixes  MC-75630 - Exploit with signs and command blocks
-             }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              public BlockPos func_180425_c()
              {

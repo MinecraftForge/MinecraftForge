@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/client/renderer/ChestRenderer.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/client/renderer/ChestRenderer.java
 @@ -13,6 +13,7 @@
      {
-         GlStateManager.func_179131_c(p_178175_2_, p_178175_2_, p_178175_2_, 1.0F);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          GlStateManager.func_179114_b(90.0F, 0.0F, 1.0F, 0.0F);
 -        TileEntityItemStackRenderer.field_147719_a.func_179022_a(new ItemStack(p_178175_1_));
 +        ItemStack stack = new ItemStack(p_178175_1_);
-+        stack.func_77973_b().getTileEntityItemStackRenderer().func_179022_a(stack);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      }
  }

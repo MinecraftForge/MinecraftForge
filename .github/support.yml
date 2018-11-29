@@ -1,16 +1,17 @@
-# Configuration for support-requests - https://github.com/dessant/support-requests
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 
 # Label used to mark issues as support requests
 supportLabel: Forum
-# Comment to post on issues marked as support requests. Add a link
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 # to a support page, or set to `false` to disable
 supportComment: >
   👋 We use the issue tracker exclusively for final bug reports and feature requests.
-  However, this issue appears to be better suited for the
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
   [Forge Support Forums](http://www.minecraftforge.net/forum/forum/18-support-bug-reports/).
   Please create a new topic on the support forum with this issue, and the conversation can
   continue there.
-# Whether to close issues marked as support requests
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 close: true
 # Whether to lock issues marked as support requests
 lock: true
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

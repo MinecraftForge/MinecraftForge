@@ -1,53 +1,53 @@
---- ../src-base/minecraft/net/minecraft/entity/passive/HorseArmorType.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/entity/passive/HorseArmorType.java
 @@ -55,6 +55,7 @@
          return this.field_188586_e;
-     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +    @Deprecated /**Forge: Use getByName. Ordinals of mod-added enum constants are dependent on load order, unlike names.**/
      public static HorseArmorType func_188575_a(int p_188575_0_)
-     {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          return values()[p_188575_0_];
 @@ -62,9 +63,10 @@
  
-     public static HorseArmorType func_188580_a(ItemStack p_188580_0_)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      {
 -        return p_188580_0_.func_190926_b() ? NONE : func_188576_a(p_188580_0_.func_77973_b());
 +        return p_188580_0_.func_77973_b().getHorseArmorType(p_188580_0_);
-     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +    @Deprecated //Forge: Use getByItemStack
      public static HorseArmorType func_188576_a(Item p_188576_0_)
-     {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          if (p_188576_0_ == Items.field_151138_bX)
 @@ -81,8 +83,30 @@
          }
-     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +    @Deprecated //Forge: Use ItemStack sensitive overload
      public static boolean func_188577_b(Item p_188577_0_)
-     {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          return func_188576_a(p_188577_0_) != NONE;
      }
 +    
-+    /* ======================================== FORGE START ======================================== */
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +    //Allows for textures located outside the vanilla horse armor folder
 +    private HorseArmorType(String defaultTextureLocation, int armorStrengthIn)
 +    {
-+        this.field_188588_g = armorStrengthIn;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        this.field_188586_e = defaultTextureLocation;
 +        this.field_188587_f = "forge";
 +    }
-+    
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +    public static HorseArmorType getByName(String name)
 +    {
 +        HorseArmorType type = HorseArmorType.valueOf(name);
-+        return type != null ? type : NONE;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +    }
 +    
 +    public static boolean isHorseArmor(ItemStack stack)
-+    {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        return func_188580_a(stack) != NONE;
 +    }
 +    /* ======================================== FORGE END ======================================== */
- }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

@@ -1,2 +1,2 @@
-item.diamond_shield.name=Diamond Shield
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 item.heavy_diamond_sword.name=Heavy Diamond Sword

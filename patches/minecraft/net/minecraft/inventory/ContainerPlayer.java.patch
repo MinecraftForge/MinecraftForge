@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/inventory/ContainerPlayer.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/inventory/ContainerPlayer.java
 @@ -43,7 +43,7 @@
                  }
-                 public boolean func_75214_a(ItemStack p_75214_1_)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                  {
 -                    return entityequipmentslot == EntityLiving.func_184640_d(p_75214_1_);
 +                    return p_75214_1_.func_77973_b().isValidArmor(p_75214_1_, entityequipmentslot, field_82862_h);
-                 }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                  public boolean func_82869_a(EntityPlayer p_82869_1_)
                  {

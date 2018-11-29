@@ -1,4 +1,4 @@
-config_test.config.types=Field Types
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 config_test.config.annotations=Annotations
 config_test.config.subcats=Subcategories
 config_test.config.maps=Maps

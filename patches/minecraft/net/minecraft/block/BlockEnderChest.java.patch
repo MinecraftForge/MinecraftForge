@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/block/BlockEnderChest.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/block/BlockEnderChest.java
 @@ -100,7 +100,7 @@
  
-         if (inventoryenderchest != null && tileentity instanceof TileEntityEnderChest)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          {
 -            if (p_180639_1_.func_180495_p(p_180639_2_.func_177984_a()).func_185915_l())
 +            if (p_180639_1_.func_180495_p(p_180639_2_.func_177984_a()).doesSideBlockChestOpening(p_180639_1_, p_180639_2_.func_177984_a(), EnumFacing.DOWN))
-             {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                  return true;
              }

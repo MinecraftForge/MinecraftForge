@@ -1,14 +1,14 @@
---- ../src-base/minecraft/net/minecraft/client/resources/IResourceManagerReloadListener.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/client/resources/IResourceManagerReloadListener.java
 @@ -3,6 +3,11 @@
  import net.minecraftforge.fml.relauncher.Side;
- import net.minecraftforge.fml.relauncher.SideOnly;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +/**
 + * @deprecated Forge: {@link net.minecraftforge.client.resource.ISelectiveResourceReloadListener}, which selectively allows
-+ * individual resource types being reloaded should rather be used where possible.
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 + */
 +@Deprecated
  @SideOnly(Side.CLIENT)
- public interface IResourceManagerReloadListener
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  {

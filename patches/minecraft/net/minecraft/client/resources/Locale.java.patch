@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/client/resources/Locale.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/client/resources/Locale.java
 @@ -95,6 +95,8 @@
  
-     private void func_135021_a(InputStream p_135021_1_) throws IOException
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      {
 +        p_135021_1_ = net.minecraftforge.fml.common.FMLCommonHandler.instance().loadLanguage(field_135032_a, p_135021_1_);
 +        if (p_135021_1_ == null) return;
-         for (String s : IOUtils.readLines(p_135021_1_, StandardCharsets.UTF_8))
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          {
              if (!s.isEmpty() && s.charAt(0) != '#')

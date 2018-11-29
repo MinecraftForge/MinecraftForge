@@ -1,15 +1,15 @@
---- ../src-base/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/RegionFile.java
 @@ -95,6 +95,12 @@
          }
-     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +    @Deprecated // TODO: remove (1.13)
 +    public synchronized boolean chunkExists(int x, int z)
-+    {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        return func_76709_c(x, z);
 +    }
 +
-     @Nullable
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
      public synchronized DataInputStream func_76704_a(int p_76704_1_, int p_76704_2_)

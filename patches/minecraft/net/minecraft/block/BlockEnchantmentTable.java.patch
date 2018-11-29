@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/block/BlockEnchantmentTable.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/block/BlockEnchantmentTable.java
 @@ -64,7 +64,7 @@
                      {
-                         BlockPos blockpos = p_180655_3_.func_177982_a(i, k, j);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 -                        if (p_180655_2_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150342_X)
 +                        if (net.minecraftforge.common.ForgeHooks.getEnchantPower(p_180655_2_, blockpos) > 0)
-                         {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                              if (!p_180655_2_.func_175623_d(p_180655_3_.func_177982_a(i / 2, 0, j / 2)))
                              {

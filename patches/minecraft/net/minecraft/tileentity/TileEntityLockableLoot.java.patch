@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/tileentity/TileEntityLockableLoot.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityLockableLoot.java
 @@ -73,7 +73,7 @@
  
-             if (p_184281_1_ != null)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              {
 -                lootcontext$builder.func_186469_a(p_184281_1_.func_184817_da());
 +                lootcontext$builder.func_186469_a(p_184281_1_.func_184817_da()).func_186470_a(p_184281_1_); // Forge: add player to LootContext
-             }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
              loottable.func_186460_a(this, random, lootcontext$builder.func_186471_a());

@@ -1,21 +1,21 @@
---- ../src-base/minecraft/net/minecraft/stats/RecipeBook.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/stats/RecipeBook.java
 @@ -42,9 +42,17 @@
          this.field_194078_b.clear(i);
-     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +    @Deprecated //DO NOT USE
      protected static int func_194075_d(@Nullable IRecipe p_194075_0_)
-     {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 -        return CraftingManager.field_193380_a.func_148757_b(p_194075_0_);
 +        int ret = CraftingManager.field_193380_a.func_148757_b(p_194075_0_);
 +        if (ret == -1)
-+        {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +            ret = ((net.minecraftforge.registries.ForgeRegistry<IRecipe>)net.minecraftforge.fml.common.registry.ForgeRegistries.RECIPES).getID(p_194075_0_.getRegistryName());
 +            if (ret == -1)
 +                throw new IllegalArgumentException(String.format("Attempted to get the ID for a unknown recipe: %s Name: %s", p_194075_0_, p_194075_0_.getRegistryName()));
-+        }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        return ret;
      }
  
-     @SideOnly(Side.CLIENT)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

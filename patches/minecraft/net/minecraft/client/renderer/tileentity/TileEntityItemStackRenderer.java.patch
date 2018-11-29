@@ -1,10 +1,10 @@
---- ../src-base/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/client/renderer/tileentity/TileEntityItemStackRenderer.java
 @@ -118,6 +118,7 @@
          {
-             TileEntityRendererDispatcher.field_147556_a.func_192855_a(field_191274_b[BlockShulkerBox.func_190955_b(item).func_176765_a()], 0.0D, 0.0D, 0.0D, 0.0F, p_192838_2_);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          }
 +        else if (Block.func_149634_a(item) != Blocks.field_150486_ae) net.minecraftforge.client.ForgeHooksClient.renderTileItem(p_192838_1_.func_77973_b(), p_192838_1_.func_77960_j());
          else
-         {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              TileEntityRendererDispatcher.field_147556_a.func_192855_a(this.field_147717_b, 0.0D, 0.0D, 0.0D, 0.0F, p_192838_2_);

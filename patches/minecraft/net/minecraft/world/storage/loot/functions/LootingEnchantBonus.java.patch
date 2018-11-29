@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/world/storage/loot/functions/LootingEnchantBonus.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/world/storage/loot/functions/LootingEnchantBonus.java
 @@ -32,7 +32,7 @@
  
-         if (entity instanceof EntityLivingBase)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          {
 -            int i = EnchantmentHelper.func_185283_h((EntityLivingBase)entity);
 +            int i = p_186553_3_.getLootingModifier();
- 
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              if (i == 0)
              {

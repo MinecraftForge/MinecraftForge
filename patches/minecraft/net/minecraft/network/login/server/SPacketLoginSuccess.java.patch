@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/network/login/server/SPacketLoginSuccess.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/network/login/server/SPacketLoginSuccess.java
 @@ -26,7 +26,7 @@
      {
-         String s = p_148837_1_.func_150789_c(36);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          String s1 = p_148837_1_.func_150789_c(16);
 -        UUID uuid = UUID.fromString(s);
 +        UUID uuid = s.length() > 0 ? UUID.fromString(s) : null;
-         this.field_149602_a = new GameProfile(uuid, s1);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      }
  

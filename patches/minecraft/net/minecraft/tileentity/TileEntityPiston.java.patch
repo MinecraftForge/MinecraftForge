@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/tileentity/TileEntityPiston.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityPiston.java
 @@ -145,7 +145,7 @@
  
-             if (!list1.isEmpty())
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              {
 -                boolean flag = this.field_174932_a.func_177230_c() == Blocks.field_180399_cE;
 +                boolean flag = this.field_174932_a.func_177230_c().isStickyBlock(this.field_174932_a);
- 
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                  for (int i = 0; i < list1.size(); ++i)
                  {

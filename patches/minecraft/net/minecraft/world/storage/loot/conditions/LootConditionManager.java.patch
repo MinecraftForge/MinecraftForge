@@ -1,18 +1,18 @@
---- ../src-base/minecraft/net/minecraft/world/storage/loot/conditions/LootConditionManager.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/world/storage/loot/conditions/LootConditionManager.java
 @@ -42,6 +42,15 @@
          }
-     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +    public static boolean testAllConditions(Iterable<LootCondition> conditions, Random rand, LootContext context)
 +    {
-+        if (conditions == null) return true;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        for (LootCondition cond : conditions)
 +           if (!cond.func_186618_a(rand, context))
 +                return false;
-+        return true;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +    }
 +
      public static boolean func_186638_a(@Nullable LootCondition[] p_186638_0_, Random p_186638_1_, LootContext p_186638_2_)
-     {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          if (p_186638_0_ == null)

@@ -1,10 +1,10 @@
---- ../src-base/minecraft/net/minecraft/client/gui/GuiScreenBook.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiScreenBook.java
 @@ -69,6 +69,7 @@
  
-             if (this.field_146476_w < 1)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              {
 +                this.field_146483_y.func_74742_a(new NBTTagString("")); // Forge: fix MC-1685
                  this.field_146476_w = 1;
-             }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          }

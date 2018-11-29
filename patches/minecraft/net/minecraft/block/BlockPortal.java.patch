@@ -1,20 +1,21 @@
---- ../src-base/minecraft/net/minecraft/block/BlockPortal.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/block/BlockPortal.java
 @@ -111,7 +111,7 @@
      {
-         BlockPortal.Size blockportal$size = new BlockPortal.Size(p_176548_1_, p_176548_2_, EnumFacing.Axis.X);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 -        if (blockportal$size.func_150860_b() && blockportal$size.field_150864_e == 0)
 +        if (blockportal$size.func_150860_b() && blockportal$size.field_150864_e == 0 && !net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(p_176548_1_, p_176548_2_, blockportal$size))
-         {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              blockportal$size.func_150859_c();
              return true;
 @@ -120,7 +120,7 @@
-         {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              BlockPortal.Size blockportal$size1 = new BlockPortal.Size(p_176548_1_, p_176548_2_, EnumFacing.Axis.Z);
  
 -            if (blockportal$size1.func_150860_b() && blockportal$size1.field_150864_e == 0)
-+            if (blockportal$size1.func_150860_b() && blockportal$size1.field_150864_e == 0 && !net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(p_176548_1_, p_176548_2_, blockportal$size1))
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              {
                  blockportal$size1.func_150859_c();
                  return true;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

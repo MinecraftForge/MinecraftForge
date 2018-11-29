@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/nbt/NBTTagString.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagString.java
 @@ -29,7 +29,7 @@
      {
-         p_152446_3_.func_152450_a(288L);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          this.field_74751_a = p_152446_1_.readUTF();
 -        p_152446_3_.func_152450_a((long)(16 * this.field_74751_a.length()));
 +        NBTSizeTracker.readUTF(p_152446_3_, field_74751_a); // Forge: Correctly read String length including header.
-     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
      public byte func_74732_a()

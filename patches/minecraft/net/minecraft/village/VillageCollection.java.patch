@@ -1,10 +1,10 @@
---- ../src-base/minecraft/net/minecraft/village/VillageCollection.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/village/VillageCollection.java
 @@ -151,6 +151,7 @@
  
-     private void func_180609_b(BlockPos p_180609_1_)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      {
 +        if (!this.field_75556_a.func_175697_a(p_180609_1_, 16)) return; // Forge: prevent loading unloaded chunks when checking for doors
          int i = 16;
-         int j = 4;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          int k = 16;

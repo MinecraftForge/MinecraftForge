@@ -1,2 +1,2 @@
-tile.custom_slime_block.blue_slime_block.name=Blue Slime Block
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 tile.custom_slime_block.obsidian_slime_block.name=Obsidian Slime Block

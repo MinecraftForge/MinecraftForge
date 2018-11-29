@@ -1,14 +1,14 @@
---- ../src-base/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/client/network/NetHandlerLoginClient.java
 @@ -108,7 +108,10 @@
      {
-         this.field_175091_e = p_147390_1_.func_179730_a();
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          this.field_147393_d.func_150723_a(EnumConnectionState.PLAY);
 -        this.field_147393_d.func_150719_a(new NetHandlerPlayClient(this.field_147394_b, this.field_147395_c, this.field_147393_d, this.field_175091_e));
 +        NetHandlerPlayClient nhpc = new NetHandlerPlayClient(this.field_147394_b, this.field_147395_c, this.field_147393_d, this.field_175091_e);
-+        this.field_147393_d.func_150719_a(nhpc);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        net.minecraftforge.fml.client.FMLClientHandler.instance().setPlayClient(nhpc);
 +        net.minecraftforge.fml.common.network.internal.FMLNetworkHandler.fmlClientHandshake(this.field_147393_d);
      }
- 
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      public void func_147231_a(ITextComponent p_147231_1_)

@@ -1,17 +1,17 @@
---- ../src-base/minecraft/net/minecraft/item/ItemHoe.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/item/ItemHoe.java
 @@ -47,10 +47,13 @@
          }
-         else
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          {
 +            int hook = net.minecraftforge.event.ForgeEventFactory.onHoeUse(itemstack, p_180614_1_, p_180614_2_, p_180614_3_);
 +            if (hook != 0) return hook > 0 ? EnumActionResult.SUCCESS : EnumActionResult.FAIL;
-+
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              IBlockState iblockstate = p_180614_2_.func_180495_p(p_180614_3_);
              Block block = iblockstate.func_177230_c();
  
--            if (p_180614_5_ != EnumFacing.DOWN && p_180614_2_.func_180495_p(p_180614_3_.func_177984_a()).func_185904_a() == Material.field_151579_a)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +            if (p_180614_5_ != EnumFacing.DOWN && p_180614_2_.func_175623_d(p_180614_3_.func_177984_a()))
              {
                  if (block == Blocks.field_150349_c || block == Blocks.field_185774_da)
-                 {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

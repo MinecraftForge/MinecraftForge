@@ -1,13 +1,13 @@
---- ../src-base/minecraft/net/minecraft/advancements/DisplayInfo.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/advancements/DisplayInfo.java
 @@ -132,7 +132,9 @@
          {
-             Item item = JsonUtils.func_188180_i(p_193221_0_, "item");
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              int i = JsonUtils.func_151208_a(p_193221_0_, "data", 0);
 -            return new ItemStack(item, 1, i);
 +            ItemStack ret = new ItemStack(item, 1, i);
-+            ret.func_77982_d(net.minecraftforge.common.util.JsonUtils.readNBT(p_193221_0_, "nbt"));
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +            return ret;
          }
      }
- 
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

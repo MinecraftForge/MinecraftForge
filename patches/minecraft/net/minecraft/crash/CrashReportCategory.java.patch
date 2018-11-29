@@ -1,25 +1,25 @@
---- ../src-base/minecraft/net/minecraft/crash/CrashReportCategory.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/crash/CrashReportCategory.java
 @@ -121,8 +121,11 @@
          }
-         else
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          {
 -            this.field_85075_d = new StackTraceElement[astacktraceelement.length - 3 - p_85073_1_];
 -            System.arraycopy(astacktraceelement, 3 + p_85073_1_, this.field_85075_d, 0, this.field_85075_d.length);
-+            int len = astacktraceelement.length - 3 - p_85073_1_;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +            // Really Mojang, Still, god damn...
 +            if (len <= 0) len = astacktraceelement.length;
 +            this.field_85075_d = new StackTraceElement[len];
-+            System.arraycopy(astacktraceelement, astacktraceelement.length - len, this.field_85075_d, 0, this.field_85075_d.length);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              return this.field_85075_d.length;
          }
      }
-@@ -206,7 +209,7 @@
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              {
                  try
                  {
--                    return String.format("ID #%d (%s // %s)", i, p_180523_2_.func_149739_a(), p_180523_2_.getClass().getCanonicalName());
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +                    return String.format("ID #%d (%s // %s // %s)", i, p_180523_2_.func_149739_a(), p_180523_2_.getClass().getName(), p_180523_2_.getRegistryName());
                  }
                  catch (Throwable var2)
-                 {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

@@ -1,60 +1,61 @@
---- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenMegaPineTree.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenMegaPineTree.java
 @@ -41,32 +41,25 @@
  
-             for (int j = 0; j < i; ++j)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              {
 -                IBlockState iblockstate = p_180709_1_.func_180495_p(p_180709_3_.func_177981_b(j));
 -
--                if (iblockstate.func_185904_a() == Material.field_151579_a || iblockstate.func_185904_a() == Material.field_151584_j)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +                if (isAirLeaves(p_180709_1_, p_180709_3_.func_177981_b(j)))
                  {
                      this.func_175903_a(p_180709_1_, p_180709_3_.func_177981_b(j), this.field_76520_b);
-                 }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
                  if (j < i - 1)
                  {
--                    iblockstate = p_180709_1_.func_180495_p(p_180709_3_.func_177982_a(1, j, 0));
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 -
 -                    if (iblockstate.func_185904_a() == Material.field_151579_a || iblockstate.func_185904_a() == Material.field_151584_j)
 +                    if (isAirLeaves(p_180709_1_, p_180709_3_.func_177982_a(1, j, 0)))
-                     {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                          this.func_175903_a(p_180709_1_, p_180709_3_.func_177982_a(1, j, 0), this.field_76520_b);
                      }
  
--                    iblockstate = p_180709_1_.func_180495_p(p_180709_3_.func_177982_a(1, j, 1));
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 -
 -                    if (iblockstate.func_185904_a() == Material.field_151579_a || iblockstate.func_185904_a() == Material.field_151584_j)
 +                    if (isAirLeaves(p_180709_1_, p_180709_3_.func_177982_a(1, j, 1)))
-                     {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                          this.func_175903_a(p_180709_1_, p_180709_3_.func_177982_a(1, j, 1), this.field_76520_b);
                      }
  
--                    iblockstate = p_180709_1_.func_180495_p(p_180709_3_.func_177982_a(0, j, 1));
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 -                    if (iblockstate.func_185904_a() == Material.field_151579_a || iblockstate.func_185904_a() == Material.field_151584_j)
 +                    if (isAirLeaves(p_180709_1_, p_180709_3_.func_177982_a(0, j, 1)))
-                     {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                          this.func_175903_a(p_180709_1_, p_180709_3_.func_177982_a(0, j, 1), this.field_76520_b);
                      }
 @@ -133,7 +126,7 @@
-             IBlockState iblockstate = p_175934_1_.func_180495_p(blockpos);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              Block block = iblockstate.func_177230_c();
  
 -            if (block == Blocks.field_150349_c || block == Blocks.field_150346_d)
-+            if (block.canSustainPlant(iblockstate, p_175934_1_, blockpos, net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_150345_g)))
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              {
                  this.func_175903_a(p_175934_1_, blockpos, field_181635_g);
                  break;
-@@ -145,4 +138,11 @@
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              }
          }
      }
-+
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +    //Helper macro
 +    private boolean isAirLeaves(World world, BlockPos pos)
 +    {
-+        IBlockState state = world.func_180495_p(pos);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        return state.func_177230_c().isAir(state, world, pos) || state.func_177230_c().isLeaves(state, world, pos);
 +    }
  }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

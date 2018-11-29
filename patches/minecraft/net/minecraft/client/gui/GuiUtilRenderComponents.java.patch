@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/client/gui/GuiUtilRenderComponents.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/client/gui/GuiUtilRenderComponents.java
 @@ -73,6 +73,8 @@
                          s3 = s4;
-                     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +                    s3 = FontRenderer.func_78282_e(s2) + s3; //Forge: Fix chat formatting not surviving line wrapping.
 +
-                     TextComponentString textcomponentstring1 = new TextComponentString(s3);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                      textcomponentstring1.func_150255_a(itextcomponent1.func_150256_b().func_150232_l());
                      list1.add(j + 1, textcomponentstring1);

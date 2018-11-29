@@ -1,27 +1,27 @@
---- ../src-base/minecraft/net/minecraft/world/storage/SaveFormatOld.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/world/storage/SaveFormatOld.java
 @@ -109,6 +109,24 @@
          }
-     }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +    //Forge: Special version of the above that runs during actual world loading and not metadata gathering.
 +    public static WorldInfo loadAndFix(File file, DataFixer fixer, SaveHandler save)
-+    {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        try
 +        {
 +            NBTTagCompound nbt = CompressedStreamTools.func_74796_a(new FileInputStream(file));
-+            WorldInfo info = new WorldInfo(fixer.func_188257_a(FixTypes.LEVEL, nbt.func_74775_l("Data")));
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +            net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataLoad(save, info, nbt);
 +            return info;
 +        }
-+        catch (net.minecraftforge.fml.common.StartupQuery.AbortedException e) { throw e; }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        catch (Exception exception)
 +        {
 +            field_151479_b.error((String)("Exception reading " + file), (Throwable)exception);
-+            return null;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +        }
 +    }
 +
-     @SideOnly(Side.CLIENT)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      public void func_75806_a(String p_75806_1_, String p_75806_2_)
      {

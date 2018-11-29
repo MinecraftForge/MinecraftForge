@@ -1,31 +1,31 @@
---- ../src-base/minecraft/net/minecraft/block/BlockChest.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
 @@ -470,7 +470,7 @@
  
-                     if (block == this)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                      {
 -                        if (this.func_176457_m(p_189418_1_, blockpos))
 +                        if (!p_189418_3_ && this.func_176457_m(p_189418_1_, blockpos)) // Forge: fix MC-99321
-                         {
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                              return null;
                          }
 @@ -538,7 +538,7 @@
- 
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      private boolean func_176456_n(World p_176456_1_, BlockPos p_176456_2_)
      {
 -        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).func_185915_l();
-+        return p_176456_1_.func_180495_p(p_176456_2_.func_177984_a()).doesSideBlockChestOpening(p_176456_1_, p_176456_2_.func_177984_a(), EnumFacing.DOWN);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      }
  
      private boolean func_176453_o(World p_176453_1_, BlockPos p_176453_2_)
-@@ -608,4 +608,10 @@
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          BASIC,
          TRAP;
      }
-+
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +    /* ======================================== FORGE START =====================================*/
 +    public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis)
 +    {
-+        return !func_176454_e(world, pos) && super.rotateBlock(world, pos, axis);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +    }
  }

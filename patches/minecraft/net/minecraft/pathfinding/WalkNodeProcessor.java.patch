@@ -1,20 +1,21 @@
---- ../src-base/minecraft/net/minecraft/pathfinding/WalkNodeProcessor.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/pathfinding/WalkNodeProcessor.java
 @@ -427,6 +427,7 @@
                          {
-                             p_193578_5_ = PathNodeType.DANGER_FIRE;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
                          }
 +                        else if(block.isBurning(p_193578_1_,blockpos$pooledmutableblockpos)) p_193578_5_ = PathNodeType.DAMAGE_FIRE;
                      }
-                 }
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
              }
 @@ -443,6 +444,9 @@
          Block block = iblockstate.func_177230_c();
-         Material material = iblockstate.func_185904_a();
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
  
 +        PathNodeType type = block.getAiPathNodeType(iblockstate, p_189553_1_, blockpos);
 +        if (type != null) return type;
-+
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          if (material == Material.field_151579_a)
          {
              return PathNodeType.OPEN;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`

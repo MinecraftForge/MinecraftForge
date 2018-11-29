@@ -1,10 +1,10 @@
---- ../src-base/minecraft/net/minecraft/util/MouseHelper.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/util/MouseHelper.java
 @@ -13,6 +13,7 @@
  
-     public void func_74372_a()
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      {
 +        if (Boolean.parseBoolean(System.getProperty("fml.noGrab","false"))) return;
          Mouse.setGrabbed(true);
-         this.field_74377_a = 0;
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          this.field_74375_b = 0;

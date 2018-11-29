@@ -1,10 +1,10 @@
---- ../src-base/minecraft/net/minecraft/advancements/AdvancementManager.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/advancements/AdvancementManager.java
 @@ -66,6 +66,7 @@
          field_192784_c.func_192087_a();
-         Map<ResourceLocation, Advancement.Builder> map = this.func_192781_c();
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          this.func_192777_a(map);
 +        this.field_193768_e |= net.minecraftforge.common.ForgeHooks.loadAdvancements(map);
          field_192784_c.func_192083_a(map);
- 
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          for (Advancement advancement : field_192784_c.func_192088_b())

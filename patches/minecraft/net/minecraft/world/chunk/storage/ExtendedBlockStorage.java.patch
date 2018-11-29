@@ -1,11 +1,11 @@
---- ../src-base/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
 @@ -34,6 +34,8 @@
  
-     public void func_177484_a(int p_177484_1_, int p_177484_2_, int p_177484_3_, IBlockState p_177484_4_)
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
      {
 +        if (p_177484_4_ instanceof net.minecraftforge.common.property.IExtendedBlockState)
 +            p_177484_4_ = ((net.minecraftforge.common.property.IExtendedBlockState) p_177484_4_).getClean();
-         IBlockState iblockstate = this.func_177485_a(p_177484_1_, p_177484_2_, p_177484_3_);
+To remove copyright: 1) open `blr.class` in hex editor 2) Replace "Copyright Mojang" with bytes 0x20, then 3) set JVM arguments to `-Dfml.ignorePatchDiscrepancies=true -Dfml.ignoreInvalidMinecraftCertificates=true`
          Block block = iblockstate.func_177230_c();
          Block block1 = p_177484_4_.func_177230_c();
