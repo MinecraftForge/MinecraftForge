@@ -1304,6 +1304,7 @@ public class ForgeHooks
 
     public static boolean loadAdvancements(Map<ResourceLocation, Advancement.Builder> map)
     {
+        CraftingHelper.init();
         boolean errored = false;
         setActiveModContainer(null);
         Loader.instance().getActiveModList().forEach(ForgeHooks::loadFactories);

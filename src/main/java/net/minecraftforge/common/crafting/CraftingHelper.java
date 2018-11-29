@@ -415,7 +415,7 @@ public class CraftingHelper {
     // INTERNAL
     //=======================================================
 
-    private static void init()
+    public static void init()
     {
         conditions.clear();
         ingredients.clear();
@@ -614,6 +614,7 @@ public class CraftingHelper {
         //TODO: If this errors in ServerInit it freezes the client at loading world, find a way to pop that up?
         //TODO: Figure out how to remove recipes, and override them. This relies on cpw to help.
         //For now this is only done one after mod init, I want to move this to ServerInit and re-do it many times.
+        init();
         ForgeRegistry<IRecipe> reg = (ForgeRegistry<IRecipe>)ForgeRegistries.RECIPES;
         //reg.unfreeze();
         if (DEBUG_LOAD_MINECRAFT)
@@ -639,8 +640,6 @@ public class CraftingHelper {
 
     public static void loadFactories(ModContainer mod, String base, FactoryLoader... loaders)
     {
-        init();
-
         FileSystem fs = null;
         BufferedReader reader = null;
         try
