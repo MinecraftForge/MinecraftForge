@@ -859,7 +859,7 @@ public interface IForgeBlock
      * @param viewpoint the viewpoint
      * @return the block state that should be 'seen'
      */
-    default IBlockState getStateAtViewpoint(IBlockState state, IWorldReader world, BlockPos pos, Vec3d viewpoint)
+    default IBlockState getStateAtViewpoint(IBlockState state, IBlockReader world, BlockPos pos, Vec3d viewpoint)
     {
         return state;
     }

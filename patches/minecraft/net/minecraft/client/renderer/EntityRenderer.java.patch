@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/renderer/EntityRenderer.java
 +++ b/net/minecraft/client/renderer/EntityRenderer.java
+@@ -738,7 +738,7 @@
+       GlStateManager.func_179086_m(16640);
+       this.field_78531_r.field_71424_I.func_76318_c("camera");
+       this.func_195460_g(p_181560_1_);
+-      ActiveRenderInfo.func_197924_a(this.field_78531_r.field_71439_g, this.field_78531_r.field_71474_y.field_74320_O == 2, this.field_78530_s);
++      ActiveRenderInfo.updateRenderInfo(this.field_78531_r.func_175606_aa(), this.field_78531_r.field_71474_y.field_74320_O == 2, this.field_78530_s);
+       this.field_78531_r.field_71424_I.func_76318_c("frustum");
+       ClippingHelperImpl.func_78558_a();
+       this.field_78531_r.field_71424_I.func_76318_c("culling");
 @@ -1182,4 +1182,9 @@
     public float func_205001_m() {
        return this.field_78530_s;
