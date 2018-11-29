@@ -1,6 +1,33 @@
 --- a/net/minecraft/client/renderer/BlockRendererDispatcher.java
 +++ b/net/minecraft/client/renderer/BlockRendererDispatcher.java
-@@ -105,4 +105,9 @@
+@@ -28,7 +28,7 @@
+ 
+    public BlockRendererDispatcher(BlockModelShapes p_i46577_1_, BlockColors p_i46577_2_) {
+       this.field_175028_a = p_i46577_1_;
+-      this.field_175027_c = new BlockModelRenderer(p_i46577_2_);
++      this.field_175027_c = new net.minecraftforge.client.model.pipeline.ForgeBlockModelRenderer(p_i46577_2_);
+       this.field_175025_e = new BlockFluidRenderer();
+    }
+ 
+@@ -40,7 +40,7 @@
+       if (p_175020_1_.func_185901_i() == EnumBlockRenderType.MODEL) {
+          IBakedModel ibakedmodel = this.field_175028_a.func_178125_b(p_175020_1_);
+          long i = p_175020_1_.func_209533_a(p_175020_2_);
+-         IBakedModel ibakedmodel1 = (new SimpleBakedModel.Builder(p_175020_1_, ibakedmodel, p_175020_3_, this.field_195476_e, i)).func_177645_b();
++         IBakedModel ibakedmodel1 = net.minecraftforge.client.ForgeHooksClient.getDamageModel(ibakedmodel, p_175020_3_, p_175020_1_, p_175020_4_, p_175020_2_);
+          this.field_175027_c.func_199324_a(p_175020_4_, ibakedmodel1, p_175020_1_, p_175020_2_, Tessellator.func_178181_a().func_178180_c(), true, this.field_195476_e, i);
+       }
+    }
+@@ -53,6 +53,8 @@
+          } else {
+             switch(enumblockrendertype) {
+             case MODEL:
++               IBakedModel model = this.func_184389_a(p_195475_1_);
++               p_195475_1_ = p_195475_1_.func_177230_c().getExtendedState(p_195475_1_, p_195475_3_, p_195475_2_);
+                return this.field_175027_c.func_199324_a(p_195475_3_, this.func_184389_a(p_195475_1_), p_195475_1_, p_195475_2_, p_195475_4_, true, p_195475_5_, p_195475_1_.func_209533_a(p_195475_2_));
+             case ENTITYBLOCK_ANIMATED:
+                return false;
+@@ -105,4 +107,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175025_e.func_178268_a();
     }

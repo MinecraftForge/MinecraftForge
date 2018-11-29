@@ -39,20 +39,20 @@
 +   
 +   //For some unknown reason Mojang changed the vanilla function to hardcode alpha as 255.... So lets re-add the parameter -.-
 +   public void putColorRGBA(int index, int red, int green, int blue, int alpha) {
-+       if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
-+           this.field_178999_b.put(index, alpha << 24 | blue << 16 | green << 8 | red);
-+       else
-+           this.field_178999_b.put(index, red << 24 | green << 16 | blue << 8 | alpha);
- }
++      if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN)
++         this.field_178999_b.put(index, alpha << 24 | blue << 16 | green << 8 | red);
++      else
++         this.field_178999_b.put(index, red << 24 | green << 16 | blue << 8 | alpha);
++   }
 +   
 +   public boolean isColorDisabled() {
-+       return field_78939_q;
++      return field_78939_q;
 +   }
 +   
 +   public void putBulkData(ByteBuffer buffer) {
-+       func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
-+       this.field_179001_a.position(this.field_178997_d * this.field_179011_q.func_177338_f());
-+       this.field_179001_a.put(buffer);
-+       this.field_178997_d += buffer.limit() / this.field_179011_q.func_177338_f();
++      func_181670_b(buffer.limit() + this.field_179011_q.func_177338_f());
++      this.field_179001_a.position(this.field_178997_d * this.field_179011_q.func_177338_f());
++      this.field_179001_a.put(buffer);
++      this.field_178997_d += buffer.limit() / this.field_179011_q.func_177338_f();
 +   }
-+}
+ }
