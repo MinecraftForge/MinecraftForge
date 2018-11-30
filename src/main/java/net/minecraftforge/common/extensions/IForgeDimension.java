@@ -102,6 +102,20 @@ public interface IForgeDimension
 
     @OnlyIn(Dist.CLIENT)
     void setWeatherRenderer(IRenderHandler renderer);
+    
+    /**
+     * Allows for manipulating the coloring of the lightmap texture.
+     * Will be called for each 16*16 combination of sky/block light values.
+     *
+     * @param partialTicks Progress between ticks.
+     * @param sunBrightness Current sun brightness.
+     * @param skyLight Sky light brightness factor.
+     * @param blockLight Block light brightness factor.
+     * @param colors The color values that will be used: [r, g, b].
+     *
+     * @see net.minecraft.client.renderer.EntityRenderer#updateLightmap(float)
+     */
+    default void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
 
     void resetRainAndThunder();
 

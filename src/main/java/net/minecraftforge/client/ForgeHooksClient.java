@@ -54,6 +54,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -88,6 +89,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -165,9 +167,9 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
     }
 
-    public static boolean renderFirstPersonHand(RenderGlobal context, float partialTicks, int renderPass)
+    public static boolean renderFirstPersonHand(RenderGlobal context, float partialTicks)
     {
-        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks, renderPass));
+        return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks));
     }
 
     public static boolean renderSpecificFirstPersonHand(EnumHand hand, float partialTicks, float interpPitch, float swingProgress, float equipProgress, ItemStack stack)
@@ -249,8 +251,8 @@ public class ForgeHooksClient
         return fovUpdateEvent.getNewfov();
     }
 
-    public static float getFOVModifier(EntityRenderer renderer, Entity entity, IBlockState state, double renderPartialTicks, float fov) {
-        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, state, renderPartialTicks, fov);
+    public static double getFOVModifier(EntityRenderer renderer, Entity entity, IBlockState blockState, IFluidState fluidState, double renderPartialTicks, double fov) {
+        EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, blockState, fluidState, renderPartialTicks, fov);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getFOV();
     }
@@ -366,16 +368,16 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
     }
 
-    public static float getFogDensity(EntityRenderer renderer, Entity entity, IBlockState state, float partial, float density)
+    public static float getFogDensity(FogRenderer fogRenderer, EntityRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, float partial, float density)
     {
-        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(renderer, entity, state, partial, density);
+        EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(fogRenderer, renderer, entity, state, fluidState, partial, density);
         if (MinecraftForge.EVENT_BUS.post(event)) return event.getDensity();
         return -1;
     }
 
-    public static void onFogRender(EntityRenderer renderer, Entity entity, IBlockState state, float partial, int mode, float distance)
+    public static void onFogRender(FogRenderer fogRenderer, EntityRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, float partial, int mode, float distance)
     {
-        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(renderer, entity, state, partial, mode, distance));
+        MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(fogRenderer, renderer, entity, state, fluidState, partial, mode, distance));
     }
 
     public static void onModelBake(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
