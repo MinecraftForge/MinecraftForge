@@ -1,0 +1,75 @@
+--- a/net/minecraft/client/renderer/FirstPersonRenderer.java
++++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
+@@ -286,12 +286,14 @@
+       if (flag) {
+          float f4 = enumhand == EnumHand.MAIN_HAND ? f : 0.0F;
+          float f3 = 1.0F - (this.field_187470_g + (this.field_187469_f - this.field_187470_g) * p_78440_1_);
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(EnumHand.MAIN_HAND, p_78440_1_, f1, f4, f3, this.field_187467_d))
+          this.func_187457_a(abstractclientplayer, p_78440_1_, f1, EnumHand.MAIN_HAND, f4, this.field_187467_d, f3);
+       }
+ 
+       if (flag1) {
+          float f5 = enumhand == EnumHand.OFF_HAND ? f : 0.0F;
+          float f6 = 1.0F - (this.field_187472_i + (this.field_187471_h - this.field_187472_i) * p_78440_1_);
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(EnumHand.OFF_HAND, p_78440_1_, f1, f5, f6, this.field_187468_e))
+          this.func_187457_a(abstractclientplayer, p_78440_1_, f1, EnumHand.OFF_HAND, f5, this.field_187468_e, f6);
+       }
+ 
+@@ -307,7 +309,7 @@
+          if (flag && !p_187457_1_.func_82150_aj()) {
+             this.func_187456_a(p_187457_7_, p_187457_5_, enumhandside);
+          }
+-      } else if (p_187457_6_.func_77973_b() == Items.field_151098_aY) {
++      } else if (p_187457_6_.func_77973_b() instanceof net.minecraft.item.ItemMap) {
+          if (flag && this.field_187468_e.func_190926_b()) {
+             this.func_187463_a(p_187457_3_, p_187457_7_, p_187457_5_);
+          } else {
+@@ -402,6 +404,7 @@
+       GlStateManager.func_179118_c();
+       if (this.field_78455_a.field_71439_g.func_70094_T()) {
+          IBlockState iblockstate = this.field_78455_a.field_71441_e.func_180495_p(new BlockPos(this.field_78455_a.field_71439_g));
++         BlockPos overlayPos = new BlockPos(this.field_78455_a.field_71439_g);
+          EntityPlayer entityplayer = this.field_78455_a.field_71439_g;
+ 
+          for(int i = 0; i < 8; ++i) {
+@@ -412,20 +415,24 @@
+             IBlockState iblockstate1 = this.field_78455_a.field_71441_e.func_180495_p(blockpos);
+             if (iblockstate1.func_191058_s()) {
+                iblockstate = iblockstate1;
++               overlayPos = blockpos;
+             }
+          }
+ 
+          if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE) {
++            if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
+             this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
+          }
+       }
+ 
+       if (!this.field_78455_a.field_71439_g.func_175149_v()) {
+          if (this.field_78455_a.field_71439_g.func_208600_a(FluidTags.field_206959_a)) {
++            if (!net.minecraftforge.event.ForgeEventFactory.renderWaterOverlay(field_78455_a.field_71439_g, p_78447_1_))
+             this.func_78448_c(p_78447_1_);
+          }
+ 
+          if (this.field_78455_a.field_71439_g.func_70027_ad()) {
++            if (!net.minecraftforge.event.ForgeEventFactory.renderFireOverlay(field_78455_a.field_71439_g, p_78447_1_))
+             this.func_78442_d();
+          }
+       }
+@@ -538,6 +545,15 @@
+          this.field_187471_h = MathHelper.func_76131_a(this.field_187471_h - 0.4F, 0.0F, 1.0F);
+       } else {
+          float f = entityplayersp.func_184825_o(1.0F);
++
++         boolean requipM = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187467_d, itemstack, entityplayersp.field_71071_by.field_70461_c);
++         boolean requipO = net.minecraftforge.client.ForgeHooksClient.shouldCauseReequipAnimation(this.field_187468_e, itemstack1, -1);
++
++         if (!requipM && !Objects.equals(this.field_187467_d, itemstack))
++             this.field_187467_d = itemstack;
++         if (!requipO && !Objects.equals(this.field_187468_e, itemstack1))
++             this.field_187468_e = itemstack1;
++
+          this.field_187469_f += MathHelper.func_76131_a((Objects.equals(this.field_187467_d, itemstack) ? f * f * f : 0.0F) - this.field_187469_f, -0.4F, 0.4F);
+          this.field_187471_h += MathHelper.func_76131_a((float)(Objects.equals(this.field_187468_e, itemstack1) ? 1 : 0) - this.field_187471_h, -0.4F, 0.4F);
+       }
