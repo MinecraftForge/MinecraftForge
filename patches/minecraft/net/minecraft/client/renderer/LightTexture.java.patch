@@ -7,7 +7,7 @@
 +                  
 +                  float[] colors = {f10, f11, f12};
 +                  world.func_201675_m().getLightmapColors(p_205106_1_, f, f4, f5, colors);
-+                  f10 = colors[0]; f11 = colors[1]; f10 = colors[2];
++                  f10 = colors[0]; f11 = colors[1]; f12 = colors[2];
  
 +                  // Forge: fix MC-58177
 +                  f10 = net.minecraft.util.math.MathHelper.func_76131_a(f10, 0f, 1f);

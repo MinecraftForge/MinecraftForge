@@ -1,6 +1,16 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -135,7 +135,14 @@
+@@ -116,6 +116,9 @@
+          if (f4 > 1.0F / this.field_205095_e) {
+             f4 = 1.0F / this.field_205095_e;
+          }
++         
++         // Forge: fix MC-4647 and MC-10480
++         if (Float.isInfinite(f4)) f4 = Math.nextAfter(f4, 0.0);
+ 
+          this.field_205093_c = this.field_205093_c * (1.0F - f2) + this.field_205093_c * f4 * f2;
+          this.field_205094_d = this.field_205094_d * (1.0F - f2) + this.field_205094_d * f4 * f2;
+@@ -135,7 +138,14 @@
           this.field_205094_d = this.field_205094_d * (1.0F - f3) + this.field_205094_d * f5 * f3;
           this.field_205095_e = this.field_205095_e * (1.0F - f3) + this.field_205095_e * f5 * f3;
        }
@@ -15,7 +25,7 @@
        GlStateManager.func_179082_a(this.field_205093_c, this.field_205094_d, this.field_205095_e, 0.0F);
     }
  
-@@ -227,6 +234,10 @@
+@@ -227,6 +237,10 @@
        GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
        GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
        IFluidState ifluidstate = ActiveRenderInfo.func_206243_b(this.field_205105_o.field_71441_e, entity, p_78468_2_);
@@ -26,7 +36,7 @@
        if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q)) {
           float f2 = 5.0F;
           int i = ((EntityLivingBase)entity).func_70660_b(MobEffects.field_76440_q).func_76459_b();
-@@ -286,6 +297,7 @@
+@@ -286,6 +300,7 @@
              GlStateManager.func_179102_b(f1 * 0.05F);
              GlStateManager.func_179153_c(Math.min(f1, 192.0F) * 0.5F);
           }
