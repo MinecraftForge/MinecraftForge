@@ -27,7 +27,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -54,7 +53,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.FallbackResourceManager;
 import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.LegacyV2Adapter;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
@@ -434,11 +432,12 @@ public class FMLClientHandler implements IFMLSidedHandler
         else
         {
             logMissingTextureErrors();
-            if (!badTextureDomains.isEmpty() || !badResources.isEmpty())
+            Object isDeobf = Launch.blackboard.get("fml.deobfuscatedEnvironment");
+            if (isDeobf != null && (Boolean) isDeobf)
             {
-                if ((Boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment")) {
-                    if (badTextureDomains.size() != 0)
-                        badResources.put("textures", badTextureDomains);
+                badTextureDomains.forEach(domain -> trackBadResource("textures", domain));
+                if (!badResources.isEmpty())
+                {
                     showGuiScreen(new GuiResourceError(badResources));
                 }
             }
@@ -943,6 +942,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private Set<String> badTextureDomains = Sets.newHashSet();
     private Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
     private Map<String, Set<String>> badResources = Maps.newHashMap();
+    private boolean showResourceErrorScreen = false;
 
     public void trackMissingTexture(ResourceLocation resourceLocation)
     {
@@ -1039,9 +1039,11 @@ public class FMLClientHandler implements IFMLSidedHandler
     }
 
     @Override
-    public void trackBadResource(String type, String name)
+    public void trackBadResource(String type, String modid)
     {
-        badResources.computeIfAbsent(type, (k) -> Sets.newHashSet()).add(name);
+        badResources.computeIfAbsent(type, (k) -> Sets.newHashSet()).add(modid);
+        ModContainer container = Loader.instance().getIndexedModList().get(modid);
+        showResourceErrorScreen |= container == null || container.getSource().isDirectory();
     }
 
     @Override

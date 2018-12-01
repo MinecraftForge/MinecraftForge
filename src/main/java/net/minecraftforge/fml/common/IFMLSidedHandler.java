@@ -73,7 +73,7 @@ public interface IFMLSidedHandler
 
     IThreadListener getWorldThread(INetHandler net);
 
-    default void trackBadResource(String type, String name){}
+    default void trackBadResource(String type, String modid){}
 
     void processWindowMessages();
 
