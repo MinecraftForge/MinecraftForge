@@ -789,16 +789,8 @@ public class Loader
 
     public boolean serverStarting(Object server)
     {
-        try
-        {
-            modController.distributeStateMessage(LoaderState.SERVER_STARTING, server);
-            modController.transition(LoaderState.SERVER_STARTING, false);
-        }
-        catch (Throwable t)
-        {
-            FMLLog.log.error("A fatal exception occurred during the server starting event", t);
-            return false;
-        }
+        modController.distributeStateMessage(LoaderState.SERVER_STARTING, server);
+        modController.transition(LoaderState.SERVER_STARTING, false);
         return true;
     }
 
@@ -859,16 +851,8 @@ public class Loader
 
     public boolean serverAboutToStart(Object server)
     {
-        try
-        {
-            modController.distributeStateMessage(LoaderState.SERVER_ABOUT_TO_START, server);
-            modController.transition(LoaderState.SERVER_ABOUT_TO_START, false);
-        }
-        catch (Throwable t)
-        {
-            FMLLog.log.error("A fatal exception occurred during the server about to start event", t);
-            return false;
-        }
+        modController.distributeStateMessage(LoaderState.SERVER_ABOUT_TO_START, server);
+        modController.transition(LoaderState.SERVER_ABOUT_TO_START, false);
         return true;
     }
 
