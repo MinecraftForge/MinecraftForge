@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 
 import net.minecraftforge.fml.ModList;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
@@ -302,60 +303,66 @@ public class CraftingHelper
             String path = key.getPath();
             if (!path.equals("recipes/_constants.json")) //Top level only
                 continue;
-
-            try (IResource iresource = manager.getResource(key))
-            {
-                JsonObject[] elements = JsonUtils.fromJson(GSON, IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8), JsonObject[].class);
-                for (int x = 0; x < elements.length; x++)
-                {
-                    JsonObject json = elements[x];
-                    //Force namespace to the directory that this constants file is in, to prevent modders from overriding other's sneakily
-                    //TODO: Move back to a resource pack/mod specific constant list?
-                    ResourceLocation name = json.has("name") ? new ResourceLocation(JsonUtils.getString(json, "name")) : null;
-                    if (name != null)
-                        name = new ResourceLocation(key.getNamespace(), name.getPath());
-
-                    if (json == null || json.size() == 0)
-                        LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's null or empty", x, key);
-                    else if (!processConditions(json, "conditions"))
-                        LOGGER.info(CRAFTHELPER, "Skipping loading constant #{} from {} as it's conditions were not met", x, key);
-                    else if (name == null)
-                        LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `name`", x, key);
-                    else if (json.has("items"))
-                    {
-                        List<ItemStack> items = new ArrayList<>();
-                        for (JsonElement item : JsonUtils.getJsonArray(json, "items"))
-                        {
-                            if (item.isJsonObject())
-                                items.add(getItemStack(item.getAsJsonObject(), true));
-                            else
-                            {
-                                LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's `items` entry is not a object", x, key);
-                                items.clear();
-                                break;
-                            }
-                        }
-                        if (!items.isEmpty())
-                            tmp.put(name, new StackList(items));
-                    }
-                    else if (json.has("tag"))
-                        tmp.put(name, Ingredient.deserializeItemList(json));
-                    else if (json.has("item"))
-                        tmp.put(name, new StackList(Lists.newArrayList(getItemStack(JsonUtils.getJsonObject(json, "item"), true))));
-                    else
-                        LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `item` or `items` element", x, key);
-                }
-
-            }
-            catch (IllegalArgumentException | JsonParseException e)
-            {
-               LOGGER.error(CRAFTHELPER, "Parsing error loading constants {}", key, e);
-            }
-            catch (IOException e)
-            {
-               LOGGER.error(CRAFTHELPER, "Couldn't read constants from {}", key, e);
-            }
+            
+            tmp.putAll(loadConstants(manager, key));
         }
         constants = tmp;
+    }
+    
+    public static Map<ResourceLocation, IItemList> loadConstants(IResourceManager manager, ResourceLocation key) {
+        Map<ResourceLocation, IItemList> tmp = new HashMap<>();
+        try (IResource iresource = manager.getResource(key))
+        {
+            JsonObject[] elements = JsonUtils.fromJson(GSON, IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8), JsonObject[].class);
+            for (int x = 0; x < elements.length; x++)
+            {
+                JsonObject json = elements[x];
+                //Force namespace to the directory that this constants file is in, to prevent modders from overriding other's sneakily
+                //TODO: Move back to a resource pack/mod specific constant list?
+                ResourceLocation name = json.has("name") ? new ResourceLocation(JsonUtils.getString(json, "name")) : null;
+                if (name != null)
+                    name = new ResourceLocation(key.getNamespace(), name.getPath());
+
+                if (json == null || json.size() == 0)
+                    LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's null or empty", x, key);
+                else if (!processConditions(json, "conditions"))
+                    LOGGER.info(CRAFTHELPER, "Skipping loading constant #{} from {} as it's conditions were not met", x, key);
+                else if (name == null)
+                    LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `name`", x, key);
+                else if (json.has("items"))
+                {
+                    List<ItemStack> items = new ArrayList<>();
+                    for (JsonElement item : JsonUtils.getJsonArray(json, "items"))
+                    {
+                        if (item.isJsonObject())
+                            items.add(getItemStack(item.getAsJsonObject(), true));
+                        else
+                        {
+                            LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's `items` entry is not a object", x, key);
+                            items.clear();
+                            break;
+                        }
+                    }
+                    if (!items.isEmpty())
+                        tmp.put(name, new StackList(items));
+                }
+                else if (json.has("tag"))
+                    tmp.put(name, Ingredient.deserializeItemList(json));
+                else if (json.has("item"))
+                    tmp.put(name, new StackList(Lists.newArrayList(getItemStack(JsonUtils.getJsonObject(json, "item"), true))));
+                else
+                    LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `item` or `items` element", x, key);
+            }
+
+        }
+        catch (IllegalArgumentException | JsonParseException e)
+        {
+           LOGGER.error(CRAFTHELPER, "Parsing error loading constants {}", key, e);
+        }
+        catch (IOException e)
+        {
+           LOGGER.error(CRAFTHELPER, "Couldn't read constants from {}", key, e);
+        }
+        return tmp;
     }
 }
