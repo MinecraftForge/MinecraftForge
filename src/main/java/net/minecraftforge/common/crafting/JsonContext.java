@@ -62,7 +62,7 @@ public class JsonContext
     {
         for (JsonObject json : jsons)
         {
-            if (json.has("conditions") && !CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), this))
+            if (!CraftingHelper.processConditions(json, this))
                 continue;
             if (!json.has("ingredient"))
                 throw new JsonSyntaxException("Constant entry must contain 'ingredient' value");
