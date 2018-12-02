@@ -18,3 +18,12 @@
          int l = 1;
          Iterator<Ingredient> iterator = p_193951_1_.func_192400_c().iterator();
  
+@@ -500,7 +500,7 @@
+ 
+                 Ingredient ingredient = iterator.next();
+ 
+-                if (ingredient != Ingredient.field_193370_a)
++                if (ingredient.func_193365_a().length > 0)
+                 {
+                     Slot slot = p_193951_2_.get(l);
+                     this.field_191915_z.func_194187_a(ingredient, slot.field_75223_e, slot.field_75221_f);
