@@ -21,6 +21,7 @@ package net.minecraftforge.common.crafting;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
@@ -29,6 +30,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -832,23 +834,18 @@ public class CraftingHelper {
         return success;
     }
 
-    public static JsonContext loadContext(File file) throws IOException
+    public static JsonContext loadContext(ResourceLocation path) throws IOException
     {
         ModContainer mod = Loader.instance().activeModContainer();
         if(mod == null)
         {
-            throw new RuntimeException("Error loading constants, no mod to load for found");
+            throw new IllegalStateException("No active mod container");
         }
-        return loadContext(new JsonContext(mod.getModId()), file);
-    }
-
-    public static JsonContext loadContext(String path) throws IOException
+        return loadContext(path, mod);
+     }
+    
+    public static JsonContext loadContext(ResourceLocation path, ModContainer mod) throws IOException
     {
-        ModContainer mod = Loader.instance().activeModContainer();
-        if(mod == null)
-        {
-            throw new RuntimeException("Error loading constants, no mod to load for found");
-        }
         return loadContext(mod, new JsonContext(mod.getModId()), path);
     }
 
@@ -862,31 +859,32 @@ public class CraftingHelper {
         }
         catch (IOException e)
         {
-            FMLLog.log.error("Error loading constants from file: {}", file.getAbsolutePath(), e);
-            throw e;
+            throw new IOException("Error loading constants from file: " + file.getAbsolutePath(), e);
         }
     }
 
-    private static JsonContext loadContext(ModContainer mod, JsonContext ctx, String path) throws IOException
+    private static JsonContext loadContext(ModContainer mod, JsonContext ctx, ResourceLocation path) throws IOException
     {
         Path fPath = null;
         if(mod.getSource().isFile())
         {
             try(FileSystem fs = FileSystems.newFileSystem(mod.getSource().toPath(), null))
             {
-                fPath = fs.getPath("/assets/" + ctx.getModId() + path);
+                fPath = fs.getPath("assets", path.getResourceDomain(), path.getResourcePath());
             }
         }
         else if (mod.getSource().isDirectory())
         {
-            fPath = mod.getSource().toPath().resolve("assets/" + ctx.getModId() + path);
+            fPath = mod.getSource().toPath().resolve(Paths.get("assets", path.getResourceDomain(), path.getResourcePath()));
         }
 
         if (fPath != null && Files.exists(fPath))
         {
             return loadContext(ctx, fPath.toFile());
-        } else {
-            throw new IOException("path could not be resolved: " + path);
+        } 
+        else 
+        {
+            throw new FileNotFoundException(fPath != null ? fPath.toString() : path.toString());
         }
     }
 }
