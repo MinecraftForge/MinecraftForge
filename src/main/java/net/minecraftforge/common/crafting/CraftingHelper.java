@@ -43,6 +43,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -638,16 +639,16 @@ public class CraftingHelper {
 
     public static void loadFactories(ModContainer mod, String base, FactoryLoader... loaders)
     {
-        Path fPath = null;
-        JsonContext ctx = new JsonContext(mod.getModId());
+        FileSystem fs = null;
         try
         {
+            Path fPath = null;
+            JsonContext ctx = new JsonContext(mod.getModId());
+
             if (mod.getSource().isFile())
             {
-                try (FileSystem fs = FileSystems.newFileSystem(mod.getSource().toPath(), null))
-                {
-                    fPath = fs.getPath("/" + base, "_factories.json");
-                }
+                fs = FileSystems.newFileSystem(mod.getSource().toPath(), null);
+                fPath = fs.getPath("/" + base, "_factories.json");
             }
             else if (mod.getSource().isDirectory())
             {
@@ -666,6 +667,10 @@ public class CraftingHelper {
         catch (IOException e)
         {
             e.printStackTrace();
+        }
+        finally
+        {
+            IOUtils.closeQuietly(fs);
         }
     }
 
@@ -768,62 +773,72 @@ public class CraftingHelper {
             }
         }
 
-        Path root = null;
-        if (source.isFile())
-        {
-            try (FileSystem fs = FileSystems.newFileSystem(source.toPath(), null);)
-            {
-                root = fs.getPath("/" + base);
-            }
-            catch (IOException e)
-            {
-                FMLLog.log.error("Error loading FileSystem from jar: ", e);
-                return false;
-            }
-        }
-        else if (source.isDirectory())
-        {
-            root = source.toPath().resolve(base);
-        }
-
-        if (root == null || !Files.exists(root))
-            return defaultUnfoundRoot;
-
-        if (preprocessor != null)
-        {
-            Boolean cont = preprocessor.apply(root);
-            if (cont == null || !cont.booleanValue())
-                return false;
-        }
-
+        FileSystem fs = null;
         boolean success = true;
 
-        if (processor != null)
+        try
         {
-            Iterator<Path> itr = null;
-            try
-            {
-                itr = Files.walk(root).iterator();
-            }
-            catch (IOException e)
-            {
-                FMLLog.log.error("Error iterating filesystem for: {}", mod.getModId(), e);
-                return false;
-            }
+            Path root = null;
 
-            while (itr != null && itr.hasNext())
+            if (source.isFile())
             {
-                Boolean cont = processor.apply(root, itr.next());
-
-                if (visitAllFiles)
+                try
                 {
-                    success &= cont != null && cont;
+                    fs = FileSystems.newFileSystem(source.toPath(), null);
+                    root = fs.getPath("/" + base);
                 }
-                else if (cont == null || !cont)
+                catch (IOException e)
                 {
+                    FMLLog.log.error("Error loading FileSystem from jar: ", e);
                     return false;
                 }
             }
+            else if (source.isDirectory())
+            {
+                root = source.toPath().resolve(base);
+            }
+    
+            if (root == null || !Files.exists(root))
+                return defaultUnfoundRoot;
+    
+            if (preprocessor != null)
+            {
+                Boolean cont = preprocessor.apply(root);
+                if (cont == null || !cont.booleanValue())
+                    return false;
+            }
+        
+            if (processor != null)
+            {
+                Iterator<Path> itr = null;
+                try
+                {
+                    itr = Files.walk(root).iterator();
+                }
+                catch (IOException e)
+                {
+                    FMLLog.log.error("Error iterating filesystem for: {}", mod.getModId(), e);
+                    return false;
+                }
+    
+                while (itr != null && itr.hasNext())
+                {
+                    Boolean cont = processor.apply(root, itr.next());
+    
+                    if (visitAllFiles)
+                    {
+                        success &= cont != null && cont;
+                    }
+                    else if (cont == null || !cont)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        finally
+        {
+            IOUtils.closeQuietly(fs);
         }
 
         return success;
