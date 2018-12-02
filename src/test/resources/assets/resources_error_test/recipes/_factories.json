@@ -1,0 +1,5 @@
+{
+  "conditions": {
+    "error-test": "net.minecraftforge.debug.client.ResourcesErrorTest$Enabled"
+  }
+}

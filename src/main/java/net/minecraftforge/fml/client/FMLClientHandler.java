@@ -436,7 +436,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             if (isDeobf != null && (Boolean) isDeobf)
             {
                 badTextureDomains.forEach(domain -> trackBadResource("textures", domain));
-                if (!badResources.isEmpty())
+                if (showResourceErrorScreen)
                 {
                     showGuiScreen(new GuiResourceError(badResources));
                 }

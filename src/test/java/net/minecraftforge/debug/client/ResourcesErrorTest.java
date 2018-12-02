@@ -19,14 +19,19 @@
 
 package net.minecraftforge.debug.client;
 
+import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Items;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.crafting.IConditionFactory;
+import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.function.BooleanSupplier;
 
 @Mod(modid = "resources_error_test", name = "ResourceErrorTest", clientSideOnly = true)
 @Mod.EventBusSubscriber
@@ -47,5 +52,14 @@ public class ResourcesErrorTest
     {
         if (ENABLE)
             evt.getMap().registerSprite(new ResourceLocation("resources_error_test:missingno"));
+    }
+
+    public static class Enabled implements IConditionFactory
+    {
+        @Override
+        public BooleanSupplier parse(JsonContext context, JsonObject json)
+        {
+            return () -> ENABLE;
+        }
     }
 }

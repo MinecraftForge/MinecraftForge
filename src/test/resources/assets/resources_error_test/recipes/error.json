@@ -1,0 +1,12 @@
+{
+  "conditions": [{
+    "type": "resources_error_test:error-test"
+  }],
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "minecraft:stone",
+      "data": 0
+    }
+  ]
+}
