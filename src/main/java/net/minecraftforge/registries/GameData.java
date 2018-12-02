@@ -896,13 +896,32 @@ public class GameData
         }
     }
 
+    /**
+     * @deprecated Use {@link #checkPrefix(String, boolean)}.
+     */
+    @Deprecated
     public static ResourceLocation checkPrefix(String name)
+    {
+        return checkPrefix(name, true);
+    }
+
+    /**
+     * Check a name for a domain prefix, and if not present infer it from the
+     * current active mod container.
+     * 
+     * @param name          The name or resource location
+     * @param warnOverrides If true, logs a warning if domain differs from that of
+     *                      the currently currently active mod container
+     * 
+     * @return The {@link ResourceLocation} with given or inferred domain
+     */
+    public static ResourceLocation checkPrefix(String name, boolean warnOverrides)
     {
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
         name = index == -1 ? name : name.substring(index + 1);
         String prefix = ModLoadingContext.get().getActiveContainer().getNamespace();
-        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
+        if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
             LogManager.getLogger().info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
             prefix = oldPrefix;
