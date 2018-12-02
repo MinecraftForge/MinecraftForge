@@ -367,9 +367,9 @@ public class CraftingHelper {
         return ret;
     }
 
-    public static boolean processConditions(JsonObject json, JsonContext context)
+    public static boolean processConditions(JsonObject json, String memberName, JsonContext context)
     {
-        return !json.has("conditions") || processConditions(JsonUtils.getJsonArray(json, "conditions"), context);
+        return !json.has(memberName) || processConditions(JsonUtils.getJsonArray(json, memberName), context);
     }
 
     public static boolean processConditions(JsonArray conditions, JsonContext context)
@@ -711,7 +711,7 @@ public class CraftingHelper {
                 {
                     reader = Files.newBufferedReader(file);
                     JsonObject json = JsonUtils.fromJson(GSON, reader, JsonObject.class);
-                    if (!processConditions(json, ctx))
+                    if (!processConditions(json, "conditions", ctx))
                         return true;
                     IRecipe recipe = CraftingHelper.getRecipe(json, ctx);
                     ForgeRegistries.RECIPES.register(recipe.setRegistryName(key));
