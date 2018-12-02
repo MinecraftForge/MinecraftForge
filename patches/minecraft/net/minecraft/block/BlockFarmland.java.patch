@@ -18,3 +18,12 @@
      }
  
      private boolean func_176530_e(World p_176530_1_, BlockPos p_176530_2_)
+@@ -108,7 +108,7 @@
+             }
+         }
+ 
+-        return false;
++        return net.minecraftforge.common.FarmlandWaterManager.hasBlockWaterTicket(p_176530_1_, p_176530_2_);
+     }
+ 
+     public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_)

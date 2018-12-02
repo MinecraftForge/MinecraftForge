@@ -58,7 +58,7 @@ public class JsonContext
         return constants.get(name);
     }
 
-    void loadConstants(JsonObject[] jsons)
+    void loadConstants(JsonObject... jsons)
     {
         for (JsonObject json : jsons)
         {
