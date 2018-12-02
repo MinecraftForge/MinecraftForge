@@ -9,7 +9,19 @@
          this.func_175041_b();
          this.field_184395_f = p_i46552_3_;
      }
-@@ -137,7 +137,7 @@
+@@ -113,6 +113,11 @@
+ 
+     private void func_191967_a(IBakedModel p_191967_1_, int p_191967_2_, ItemStack p_191967_3_)
+     {
++        if (net.minecraftforge.common.ForgeModContainer.allowEmissiveItems)
++        {
++            net.minecraftforge.client.ForgeHooksClient.renderLitItem(this, p_191967_1_, p_191967_2_, p_191967_3_);
++            return;
++        }
+         Tessellator tessellator = Tessellator.func_178181_a();
+         BufferBuilder bufferbuilder = tessellator.func_178180_c();
+         bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_176599_b);
+@@ -137,7 +142,7 @@
              {
                  GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
                  GlStateManager.func_179091_B();
@@ -18,7 +30,7 @@
              }
              else
              {
-@@ -218,7 +218,7 @@
+@@ -218,7 +223,7 @@
                  k = k | -16777216;
              }
  
@@ -27,7 +39,7 @@
          }
      }
  
-@@ -240,17 +240,7 @@
+@@ -240,17 +245,7 @@
      public IBakedModel func_184393_a(ItemStack p_184393_1_, @Nullable World p_184393_2_, @Nullable EntityLivingBase p_184393_3_)
      {
          IBakedModel ibakedmodel = this.field_175059_m.func_178089_a(p_184393_1_);
@@ -46,7 +58,7 @@
      }
  
      public void func_184392_a(ItemStack p_184392_1_, EntityLivingBase p_184392_2_, ItemCameraTransforms.TransformType p_184392_3_, boolean p_184392_4_)
-@@ -274,14 +264,9 @@
+@@ -274,14 +269,9 @@
              GlStateManager.func_179147_l();
              GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
              GlStateManager.func_179094_E();
@@ -63,7 +75,7 @@
              this.func_180454_a(p_184394_1_, p_184394_2_);
              GlStateManager.func_187407_a(GlStateManager.CullFace.BACK);
              GlStateManager.func_179121_F();
-@@ -314,7 +299,7 @@
+@@ -314,7 +304,7 @@
          GlStateManager.func_187401_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          this.func_180452_a(p_191962_2_, p_191962_3_, p_191962_4_.func_177556_c());
@@ -72,7 +84,7 @@
          this.func_180454_a(p_191962_1_, p_191962_4_);
          GlStateManager.func_179118_c();
          GlStateManager.func_179101_C();
-@@ -367,6 +352,7 @@
+@@ -367,6 +357,7 @@
                          return String.valueOf((Object)p_184391_2_.func_77973_b());
                      }
                  });
@@ -80,7 +92,7 @@
                  crashreportcategory.func_189529_a("Item Aux", new ICrashReportDetail<String>()
                  {
                      public String call() throws Exception
-@@ -413,9 +399,12 @@
+@@ -413,9 +404,12 @@
                  p_180453_1_.func_175063_a(s, (float)(p_180453_3_ + 19 - 2 - p_180453_1_.func_78256_a(s)), (float)(p_180453_4_ + 6 + 3), 16777215);
                  GlStateManager.func_179145_e();
                  GlStateManager.func_179126_j();
@@ -94,7 +106,7 @@
              {
                  GlStateManager.func_179140_f();
                  GlStateManager.func_179097_i();
-@@ -424,11 +413,10 @@
+@@ -424,11 +418,10 @@
                  GlStateManager.func_179084_k();
                  Tessellator tessellator = Tessellator.func_178181_a();
                  BufferBuilder bufferbuilder = tessellator.func_178180_c();
@@ -110,7 +122,7 @@
                  this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
                  this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
                  GlStateManager.func_179147_l();
-@@ -1099,6 +1087,7 @@
+@@ -1099,6 +1092,7 @@
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.LOAD.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.CORNER.func_185110_a(), "structure_block");
          this.func_175029_a(Blocks.field_185779_df, TileEntityStructure.Mode.DATA.func_185110_a(), "structure_block");

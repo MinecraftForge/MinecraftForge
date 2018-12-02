@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="net.minecraftforge.server.terminalconsole">
+<Configuration status="warn" packages="net.minecraftforge.server.terminalconsole,com.mojang.util">
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>

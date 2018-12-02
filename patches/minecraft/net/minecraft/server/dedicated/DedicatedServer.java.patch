@@ -33,7 +33,7 @@
                  this.func_184105_a(new DedicatedPlayerList(this));
                  long j = System.nanoTime();
  
-@@ -260,6 +265,7 @@
+@@ -260,11 +265,13 @@
                  TileEntitySkull.func_184293_a(this.func_152358_ax());
                  TileEntitySkull.func_184294_a(this.func_147130_as());
                  PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -41,7 +41,13 @@
                  field_155771_h.info("Preparing level \"{}\"", (Object)this.func_71270_I());
                  this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
                  long i1 = System.nanoTime() - j;
-@@ -296,7 +302,8 @@
+                 String s3 = String.format("%.3fs", (double)i1 / 1.0E9D);
+                 field_155771_h.info("Done ({})! For help, type \"help\" or \"?\"", (Object)s3);
++                this.field_175591_ab = func_130071_aq();
+ 
+                 if (this.field_71340_o.func_187239_a("announce-player-achievements"))
+                 {
+@@ -296,7 +303,8 @@
                  }
  
                  Items.field_190931_a.func_150895_a(CreativeTabs.field_78027_g, NonNullList.func_191196_a());
@@ -51,7 +57,7 @@
              }
          }
      }
-@@ -515,7 +522,7 @@
+@@ -515,7 +523,7 @@
  
      public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_)
      {
@@ -60,7 +66,7 @@
          {
              return false;
          }
-@@ -584,6 +591,9 @@
+@@ -584,6 +592,9 @@
          return this.field_71340_o.func_73669_a("network-compression-threshold", super.func_175577_aI());
      }
  
