@@ -70,7 +70,7 @@ public interface IForgeRegistryEntry<V>
             if (getRegistryName() != null)
                 throw new IllegalStateException("Attempted to set registry name with existing registry name! New: " + name + " Old: " + getRegistryName());
 
-            this.registryName = GameData.checkPrefix(name);
+            this.registryName = GameData.checkPrefix(name, true);
             return (T)this;
         }
 

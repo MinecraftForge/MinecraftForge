@@ -24,23 +24,19 @@ import java.io.IOException;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.JsonContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 @Mod(modid = ConstantLoadingTest.MODID, name = "ConstantLoadingTestMod", version = "1.0", acceptableRemoteVersions = "*")
 @Mod.EventBusSubscriber
 public class ConstantLoadingTest
 {
     public static final String MODID = "constantloadingtest";
-    private static final boolean ENABLED = false;
-
-    private static final Logger LOGGER = LogManager.getLogger(MODID);
+    private static final boolean ENABLED = true;
 
     @EventHandler
     public void init(FMLInitializationEvent event)
@@ -49,22 +45,24 @@ public class ConstantLoadingTest
         {
             return;
         }
-        LOGGER.info("Loading constant for recipe...");
         JsonContext ctx = null;
         try
         {
-            ctx = CraftingHelper.loadContext("/stuff/someConstants.json");
-        } catch (IOException e) {
-            LOGGER.error("Something went wrong in loading the constant");
-            return;
+            ctx = CraftingHelper.loadContext(new ResourceLocation(MODID, "test/_constants.json"));
+        }
+        catch (IOException e) 
+        {
+            throw new RuntimeException("Exception loading test constants file", e);
         }
 
         Ingredient flint = ctx.getConstant("FLINT");
         if (flint == null)
         {
-            LOGGER.error("Ingredients not loaded correctly from json");
-            return;
+            throw new IllegalStateException("Constant ingredient not loaded properly");
         }
-        LOGGER.info("Ingredient matches correctly: {}", flint.apply(new ItemStack(Items.FLINT)));
+        if (!flint.apply(new ItemStack(Items.FLINT)))
+        {
+            throw new IllegalStateException("Constant ingredient failed to match test input");
+        }
     }
 }

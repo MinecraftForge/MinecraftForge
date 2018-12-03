@@ -52,19 +52,37 @@ public class PotionEventTest
     @SubscribeEvent
     public void onPotionAdded(PotionEvent.PotionAddedEvent event)
     {
-        log.info("{} has a new PotionEffect {}, the old one was {}", event.getEntityLiving(), event.getPotionEffect(), event.getOldPotionEffect());
+        if (!event.getEntity().getEntityWorld().isRemote)
+        {
+            log.info("{} has a new PotionEffect {}, the old one was {}", event.getEntityLiving(), event.getPotionEffect(), event.getOldPotionEffect());
+        }
     }
     
     @SubscribeEvent
     public void isPotionApplicable(PotionEvent.PotionApplicableEvent event)
     {
-        event.setResult(Result.ALLOW);
-        log.info("Allowed Potion {} for Entity {}", event.getPotionEffect(), event.getEntityLiving());
+        if (!event.getEntity().getEntityWorld().isRemote)
+        {
+            event.setResult(Result.ALLOW);
+            log.info("Allowed Potion {} for Entity {}", event.getPotionEffect(), event.getEntityLiving());
+        }
     }
     
     @SubscribeEvent
     public void onPotionRemove(PotionEvent.PotionRemoveEvent event)
     {
-        log.info("Effect {} got Removed from {}", event.getPotionEffect(), event.getEntityLiving());
+        if (!event.getEntity().getEntityWorld().isRemote)
+        {
+            log.info("Effect {} got Removed from {}", event.getPotionEffect(), event.getEntityLiving());
+        }
+    }
+    
+    @SubscribeEvent
+    public void onPotionExpiry(PotionEvent.PotionExpiryEvent event)
+    {
+        if (!event.getEntity().getEntityWorld().isRemote)
+        {
+            log.info("Effect {} expired from {}", event.getPotionEffect(), event.getEntityLiving());
+        }
     }
 }
