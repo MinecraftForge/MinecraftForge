@@ -160,7 +160,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True if the block should deal damage
      */
-    default boolean isBurning(IWorldReader world, BlockPos pos)
+    default boolean isBurning(IBlockState state, IBlockReader world, BlockPos pos)
     {
         return false;
     }
@@ -361,7 +361,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True if the block considered air
      */
-    default boolean isAir(IBlockState state, IWorldReader world, BlockPos pos)
+    default boolean isAir(IBlockState state, IBlockReader world, BlockPos pos)
     {
         return state.getMaterial() == Material.AIR;
     }
@@ -903,9 +903,9 @@ public interface IForgeBlock
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(IBlockState state, IWorldReader world, BlockPos pos)
+    default PathNodeType getAiPathNodeType(IBlockState state, IBlockReader world, BlockPos pos)
     {
-        return isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
+        return state.isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
     }
 
     /**

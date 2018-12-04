@@ -325,27 +325,6 @@
          this.field_70752_e = true;
      }
  
-+    /***
-+     * Removes all potion effects that have curativeItem as a curative item for its effect
-+     * @param curativeItem The itemstack we are using to cure potion effects
-+     */
-+    public void curePotionEffects(ItemStack curativeItem)
-+    {
-+        if (field_70170_p.field_72995_K) return;
-+        Iterator<PotionEffect> iterator = this.field_70713_bf.values().iterator();
-+
-+        while (iterator.hasNext())
-+        {
-+            PotionEffect effect = iterator.next();
-+
-+            if (effect.isCurativeItem(curativeItem))
-+            {
-+                func_70688_c(effect);
-+                iterator.remove();
-+                this.field_70752_e = true;
-+            }
-+        }
-+    }
 +
 +    /**
 +     * Returns true if the entity's rider (EntityPlayer) should face forward when mounted.

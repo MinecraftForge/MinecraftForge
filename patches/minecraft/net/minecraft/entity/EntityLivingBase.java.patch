@@ -1,0 +1,30 @@
+--- a/net/minecraft/entity/EntityLivingBase.java
++++ b/net/minecraft/entity/EntityLivingBase.java
+@@ -622,6 +622,27 @@
+       }
+    }
+ 
++   /***
++    * Removes all potion effects that have curativeItem as a curative item for its effect
++    * @param curativeItem The itemstack we are using to cure potion effects
++    */
++   public boolean curePotionEffects(ItemStack curativeItem) {
++      if (this.field_70170_p.field_72995_K)
++         return false;
++      boolean ret = false;
++      Iterator<PotionEffect> itr = this.field_70713_bf.values().iterator();
++      while (itr.hasNext()) {
++         PotionEffect effect = itr.next();
++         if (effect.isCurativeItem(curativeItem)) {
++            this.func_70688_c(effect);
++            itr.remove();
++            ret = true;
++            this.field_70752_e = true;
++         }
++      }
++      return ret;
++   }
++
+    public Collection<PotionEffect> func_70651_bq() {
+       return this.field_70713_bf.values();
+    }

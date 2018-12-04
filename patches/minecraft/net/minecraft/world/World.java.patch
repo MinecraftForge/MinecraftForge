@@ -26,6 +26,15 @@
     }
  
     public IWorld func_175643_b() {
+@@ -184,7 +187,7 @@
+    }
+ 
+    public boolean func_175623_d(BlockPos p_175623_1_) {
+-      return this.func_180495_p(p_175623_1_).func_196958_f();
++      return this.func_180495_p(p_175623_1_).isAir(this, p_175623_1_);
+    }
+ 
+    public Chunk func_175726_f(BlockPos p_175726_1_) {
 @@ -2397,4 +2400,31 @@
     public abstract RecipeManager func_199532_z();
  

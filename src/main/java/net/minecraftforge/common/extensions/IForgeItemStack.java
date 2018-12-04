@@ -25,6 +25,7 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -148,5 +149,33 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
     default boolean shouldCauseBlockBreakReset(ItemStack newStack)
     {
         return getStack().getItem().shouldCauseBlockBreakReset(getStack(), newStack);
+    }
+
+    /**
+     * Checks whether an item can be enchanted with a certain enchantment. This
+     * applies specifically to enchanting an item in the enchanting table and is
+     * called when retrieving the list of possible enchantments for an item.
+     * Enchantments may additionally (or exclusively) be doing their own checks in
+     * {@link net.minecraft.enchantment.Enchantment#canApplyAtEnchantingTable(ItemStack)};
+     * check the individual implementation for reference. By default this will check
+     * if the enchantment type is valid for this item type.
+     *
+     * @param stack       the item stack to be enchanted
+     * @param enchantment the enchantment to be applied
+     * @return true if the enchantment can be applied to this item
+     */
+    default boolean canApplyAtEnchantingTable(Enchantment enchantment)
+    {
+        return getStack().getItem().canApplyAtEnchantingTable(getStack(), enchantment);
+    }
+
+    /**
+     * ItemStack sensitive version of getItemEnchantability
+     *
+     * @return the item echantability value
+     */
+    default int getItemEnchantability()
+    {
+        return getStack().getItem().getItemEnchantability(getStack());
     }
 }

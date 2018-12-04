@@ -310,7 +310,7 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @return True if the block considered air
      */
-    default boolean isAir(IWorldReader world, BlockPos pos)
+    default boolean isAir(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().isAir(getBlockState(), world, pos);
     }
@@ -897,5 +897,29 @@ public interface IForgeBlockState
     default EnumFacing[] getValidRotations(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getValidRotations(getBlockState(), world, pos);
+    }
+
+    /**
+     * Determines if this block should set fire and deal fire damage
+     * to entities coming into contact with it.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True if the block should deal damage
+     */
+    default boolean isBurning(IBlockReader world, BlockPos pos)
+    {
+       return getBlockState().getBlock().isBurning(getBlockState(), world, pos);
+    }
+
+    /**
+     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
+     *
+     * @return the PathNodeType
+     */
+    @Nullable
+    default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos);
     }
 }

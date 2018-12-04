@@ -1,0 +1,38 @@
+--- a/net/minecraft/item/ItemMap.java
++++ b/net/minecraft/item/ItemMap.java
+@@ -41,7 +41,7 @@
+ 
+    public static ItemStack func_195952_a(World p_195952_0_, int p_195952_1_, int p_195952_2_, byte p_195952_3_, boolean p_195952_4_, boolean p_195952_5_) {
+       ItemStack itemstack = new ItemStack(Items.field_151098_aY);
+-      func_195951_a(itemstack, p_195952_0_, p_195952_1_, p_195952_2_, p_195952_3_, p_195952_4_, p_195952_5_, p_195952_0_.field_73011_w.func_186058_p().func_186068_a());
++      func_195951_a(itemstack, p_195952_0_, p_195952_1_, p_195952_2_, p_195952_3_, p_195952_4_, p_195952_5_, p_195952_0_.field_73011_w.getId());
+       return itemstack;
+    }
+ 
+@@ -49,7 +49,7 @@
+    public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {
+       MapData mapdata = func_195953_a(p_195950_1_, "map_" + func_195949_f(p_195950_0_));
+       if (mapdata == null && !p_195950_1_.field_72995_K) {
+-         mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.field_73011_w.func_186058_p().func_186068_a());
++         mapdata = func_195951_a(p_195950_0_, p_195950_1_, p_195950_1_.func_72912_H().func_76079_c(), p_195950_1_.func_72912_H().func_76074_e(), 3, false, false, p_195950_1_.field_73011_w.getId());
+       }
+ 
+       return mapdata;
+@@ -75,7 +75,7 @@
+    }
+ 
+    public void func_77872_a(World p_77872_1_, Entity p_77872_2_, MapData p_77872_3_) {
+-      if (p_77872_1_.field_73011_w.func_186058_p().func_186068_a() == p_77872_3_.field_76200_c && p_77872_2_ instanceof EntityPlayer) {
++      if (p_77872_1_.field_73011_w.getId() == p_77872_3_.field_76200_c && p_77872_2_ instanceof EntityPlayer) {
+          int i = 1 << p_77872_3_.field_76197_d;
+          int j = p_77872_3_.field_76201_a;
+          int k = p_77872_3_.field_76199_b;
+@@ -215,7 +215,7 @@
+    public static void func_190905_a(World p_190905_0_, ItemStack p_190905_1_) {
+       MapData mapdata = func_195950_a(p_190905_1_, p_190905_0_);
+       if (mapdata != null) {
+-         if (p_190905_0_.field_73011_w.func_186058_p().func_186068_a() == mapdata.field_76200_c) {
++         if (p_190905_0_.field_73011_w.getId() == mapdata.field_76200_c) {
+             int i = 1 << mapdata.field_76197_d;
+             int j = mapdata.field_76201_a;
+             int k = mapdata.field_76199_b;

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/ChunkCache.java
++++ b/net/minecraft/world/ChunkCache.java
+@@ -239,7 +239,7 @@
+    }
+ 
+    public boolean func_175623_d(BlockPos p_175623_1_) {
+-      return this.func_180495_p(p_175623_1_).func_196958_f();
++      return this.func_180495_p(p_175623_1_).isAir(this, p_175623_1_);
+    }
+ 
+    public int func_175642_b(EnumLightType p_175642_1_, BlockPos p_175642_2_) {

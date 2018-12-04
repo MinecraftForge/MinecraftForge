@@ -44,6 +44,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResult;
@@ -347,22 +348,22 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(event) ? "" : event.getMessage();
     }
 
-    public static int onHoeUse(ItemStack stack, EntityPlayer player, World worldIn, BlockPos pos)
+    public static int onHoeUse(ItemUseContext context)
     {
-        UseHoeEvent event = new UseHoeEvent(player, stack, worldIn, pos);
+        UseHoeEvent event = new UseHoeEvent(context);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
-            stack.damageItem(1, player);
+            context.getItem().damageItem(1, context.getPlayer());
             return 1;
         }
         return 0;
     }
 
 
-    public static int onApplyBonemeal(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull ItemStack stack, @Nullable EnumHand hand)
+    public static int onApplyBonemeal(@Nonnull EntityPlayer player, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull ItemStack stack)
     {
-        BonemealEvent event = new BonemealEvent(player, world, pos, state, hand, stack);
+        BonemealEvent event = new BonemealEvent(player, world, pos, state, stack);
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {

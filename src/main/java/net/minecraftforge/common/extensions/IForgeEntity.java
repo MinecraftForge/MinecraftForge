@@ -162,7 +162,6 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
     /**
      * Checks if this {@link Entity} can trample a {@link Block}.
      *
-     * @param block The block being tested
      * @param pos The block pos
      * @param fallDistance The fall distance
      * @return {@code true} if this entity can trample, {@code false} otherwise
