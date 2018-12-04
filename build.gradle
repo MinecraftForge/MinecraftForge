@@ -86,7 +86,8 @@ project(':forge') {
     apply plugin: 'net.minecrell.licenser'
     apply plugin: 'de.undercouch.download'
     
-    compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.    
+    compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+    group = 'net.minecraftforge.test' //TODO: remove test when we finish patches and want users to find it
     
     sourceSets {
         main {
@@ -129,7 +130,8 @@ project(':forge') {
                 'mc.version': MC_VERSION,
                 'mcp.version': MCP_VERSION,
                 'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
-                'forge.spec': SPEC_VERSION
+                'forge.spec': SPEC_VERSION,
+                'forge.group': project.group
             ]
         }
         serverRun {
@@ -141,7 +143,8 @@ project(':forge') {
                 'mc.version': MC_VERSION,
                 'mcp.version': MCP_VERSION,
                 'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
-                'forge.spec': SPEC_VERSION
+                'forge.spec': SPEC_VERSION,
+                'forge.group': project.group
             ]
         }
     }
@@ -162,7 +165,6 @@ project(':forge') {
         return "${MC_VERSION}-${tag}.${offset}${t -> if (branch != null) t << '-' + branch}".toString() //Bake the response instead of making it dynamic
     }
     
-    group = 'net.minecraftforge.test' //TODO: remove when we jenkins is working
     version = getVersion()
     applyPatches {
         canonicalizeAccess true
@@ -215,7 +217,8 @@ project(':forge') {
                 "mc.version": "${MC_VERSION}",
                 "mcp.version": "${MCP_VERSION}",
                 "forge.version": "${project.version.substring(MC_VERSION.length() + 1)}",
-                "forge.spec":"${SPEC_VERSION}"
+                "forge.spec":"${SPEC_VERSION}",
+                "forge.group": project.group
         ]
         environment += [
                 target:'fmldevclient',
@@ -242,7 +245,8 @@ project(':forge') {
                 "mc.version": "${MC_VERSION}",
                 "mcp.version": "${MCP_VERSION}",
                 "forge.version": "${project.version.substring(MC_VERSION.length() + 1)}",
-                "forge.spec":"${SPEC_VERSION}"
+                "forge.spec":"${SPEC_VERSION}",
+                "forge.group": project.group
         ]
         environment target:'fmldevserver'
         workingDir 'runserver'
@@ -613,7 +617,7 @@ project(':forge') {
                 'Specification-Title':      'Forge',
                 'Specification-Vendor':     'Forge Development LLC',
                 'Specification-Version':    SPEC_VERSION,
-                'Implementation-Title':     'Forge',
+                'Implementation-Title':     project.group,
                 'Implementation-Version':   project.version.substring(MC_VERSION.length() + 1),
                 'Implementation-Vendor':    'Forge Development LLC'
             ] as LinkedHashMap, 'net/minecraftforge/versions/forge/')
