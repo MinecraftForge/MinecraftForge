@@ -746,13 +746,6 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
     }
 
-    public static String getHorseArmorTexture(EntityHorse horse, ItemStack armorStack)
-    {
-        String texture = armorStack.getItem().getHorseArmorTexture(horse, armorStack);
-        if(texture == null) texture = horse.getHorseArmorType().getTextureName();
-        return texture;
-    }
-
     public static void refreshResources(Minecraft mc, VanillaResourceType... types) {
         SelectiveReloadStateHandler.INSTANCE.beginReload(ReloadRequirements.include(types));
         mc.refreshResources();

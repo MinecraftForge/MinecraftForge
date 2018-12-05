@@ -35,6 +35,15 @@
     }
  
     public Chunk func_175726_f(BlockPos p_175726_1_) {
+@@ -1495,7 +1498,7 @@
+    }
+ 
+    public boolean func_195595_w(BlockPos p_195595_1_) {
+-      return this.func_195588_v(p_195595_1_) && this.func_180495_p(p_195595_1_).func_185896_q();
++      return this.func_195588_v(p_195595_1_) && this.func_180495_p(p_195595_1_).isTopSolid(this, p_195595_1_);
+    }
+ 
+    public void func_72966_v() {
 @@ -2397,4 +2400,31 @@
     public abstract RecipeManager func_199532_z();
  

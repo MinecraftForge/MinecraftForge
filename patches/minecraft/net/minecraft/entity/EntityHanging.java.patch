@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/EntityHanging.java
++++ b/net/minecraft/entity/EntityHanging.java
+@@ -117,6 +117,8 @@
+                int j1 = (j - 1) / -2;
+                blockpos$mutableblockpos.func_189533_g(blockpos).func_189534_c(enumfacing, k + i1).func_189534_c(EnumFacing.UP, l + j1);
+                IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$mutableblockpos);
++               if (iblockstate.func_193401_d(this.field_70170_p, blockpos$mutableblockpos, this.field_174860_b) == net.minecraft.block.state.BlockFaceShape.SOLID)
++                  continue;
+                if (!iblockstate.func_185904_a().func_76220_a() && !BlockRedstoneDiode.func_185546_B(iblockstate)) {
+                   return false;
+                }

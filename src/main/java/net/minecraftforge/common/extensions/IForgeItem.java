@@ -30,6 +30,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -269,10 +270,10 @@ public interface IForgeItem
      * for cleaner control over the update of the item without having to write a
      * subclass.
      *
-     * @param entityItem The entity Item
+     * @param entity The entity Item
      * @return Return true to skip any further update code.
      */
-    default boolean onEntityItemUpdate(net.minecraft.entity.item.EntityItem entityItem)
+    default boolean onEntityItemUpdate(ItemStack stack, EntityItem entity)
     {
         return false;
     }
@@ -421,11 +422,10 @@ public interface IForgeItem
     /**
      * Called when a entity tries to play the 'swing' animation.
      *
-     * @param entityLiving The entity swinging the item.
-     * @param stack        The Item stack
+     * @param entity The entity swinging the item.
      * @return True to cancel any further processing by EntityLiving
      */
-    default boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
+    default boolean onEntitySwing(ItemStack stack, EntityLivingBase entity)
     {
         return false;
     }
@@ -744,20 +744,15 @@ public interface IForgeItem
         return HorseArmorType.getByItem(stack.getItem());
     }
 
-    default String getHorseArmorTexture(EntityLiving wearer, ItemStack stack)
-    {
-        return getHorseArmorType(stack).getTextureName();
-    }
-
     /**
      * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
      * armor slot.
      *
+     * @param stack the armor itemstack
      * @param world the world the horse is in
      * @param horse the horse wearing this armor
-     * @param armor the armor itemstack
      */
-    default void onHorseArmorTick(World world, EntityLiving horse, ItemStack armor)
+    default void onHorseArmorTick(ItemStack stack, World world, EntityLiving horse)
     {
     }
 

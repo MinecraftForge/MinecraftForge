@@ -406,7 +406,7 @@ public class ForgeHooks
         return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
     }
 
-    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit)
+    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, Collection<EntityItem> drops, int lootingLevel, boolean recentlyHit)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }

@@ -143,13 +143,22 @@ public class ForgeConfig
         LogManager.getLogger().debug(CORE, "Loaded FML config from {}", configFile);
     }
 
+    //TODO: Make this less duplciate? Maybe static CfgEntry<T> zombieBaseSummonChance = create((spec, name) -> spec.comment().translation().define(name), "zombieBaseSummonChance")
+    public static class GENERAL
+    {
+        public static double zombieBaseSummonChance() {
+            return ForgeConfig.INSTANCE.configData.<Double>getOrElse("general.zombieBaseSummonChance", (double)0.01F);
+        }
+        public static float zombieBabyChance() {
+            return ForgeConfig.INSTANCE.configData.<Float>getOrElse("general.zombieBabyChance", 0.05F);
+        }
+    }
+
     //General
     //public static boolean disableVersionCheck = false;
     //public static boolean removeErroringEntities = false;
     //public static boolean removeErroringTileEntities = false;
     //public static boolean fullBoundingBoxLadders = false;
-    //public static double zombieSummonBaseChance = 0.1;
-    //public static float zombieBabyChance = 0.05f;
     //public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     //public static boolean fixVanillaCascading = false;
     //public static int dimensionUnloadQueueDelay = 0;

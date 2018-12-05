@@ -1054,4 +1054,17 @@ public interface IForgeBlock
 
         return true;
     }
+
+    /**
+     * Determines if the top is consider 'solid'. This is a helper for getBlockFaceShape(UP) == SOLID.
+     * Sadly some vanilla logic doesn't sync this value, so we have to have this special function.
+     *
+     * @param world The world
+     * @param pos Block position in world
+     * @return True if the top is considered solid
+     */
+     default boolean isTopSolid(IBlockState state, IWorldReader world, BlockPos pos)
+     {
+         return state.isTopSolid();
+     }
 }

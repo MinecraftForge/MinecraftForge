@@ -45,11 +45,6 @@
 +        return this == field_77138_c ? 1.0D : 0.03125D;
 +    }
 +
-+    public boolean handleSlimeSpawnReduction(java.util.Random random, World world)
-+    {
-+        return this == field_77138_c ? random.nextInt(4) != 1 : false;
-+    }
-+
 +    /*=================================================== FORGE START ======================================*/
 +    private static int getNextID()
 +    {

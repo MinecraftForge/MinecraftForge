@@ -8,7 +8,7 @@
        this.field_77133_f = p_i49778_2_;
        this.field_211890_l = p_i49778_3_;
        this.field_77134_g = p_i49778_4_;
-@@ -117,4 +118,22 @@
+@@ -117,4 +118,26 @@
        this.field_151361_l = true;
        return this;
     }
@@ -29,5 +29,9 @@
 +         mc.func_147108_a(new net.minecraft.client.gui.GuiCreateFlatWorld(gui, gui.field_146334_a));
 +      else if (this == WorldType.field_180271_f)
 +         mc.func_147108_a(new net.minecraft.client.gui.GuiCreateBuffetWorld(gui, gui.field_146334_a));
++   }
++
++   public boolean handleSlimeSpawnReduction(java.util.Random random, World world) {
++      return this == field_77138_c ? random.nextInt(4) != 1 : false;
 +   }
  }

@@ -26,14 +26,23 @@ import javax.annotation.Nullable;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
@@ -177,5 +186,118 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
     default int getItemEnchantability()
     {
         return getStack().getItem().getItemEnchantability(getStack());
+    }
+
+    /**
+     * Override this to set a non-default armor slot for an ItemStack, but <em>do
+     * not use this to get the armor slot of said stack; for that, use
+     * {@link net.minecraft.entity.EntityLiving#getSlotForItemStack(ItemStack)}.</em>
+     *
+     * @return the armor slot of the ItemStack, or {@code null} to let the default
+     *         vanilla logic as per {@code EntityLiving.getSlotForItemStack(stack)}
+     *         decide
+     */
+    @Nullable
+    default EntityEquipmentSlot getEquipmentSlot()
+    {
+        return getStack().getItem().getEquipmentSlot(getStack());
+    }
+
+    /**
+     * Can this Item disable a shield
+     *
+     * @param shield   The shield in question
+     * @param entity   The EntityLivingBase holding the shield
+     * @param attacker The EntityLivingBase holding the ItemStack
+     * @retrun True if this ItemStack can disable the shield in question.
+     */
+    default boolean canDisableShield(ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker)
+    {
+        return getStack().getItem().canDisableShield(getStack(), shield, entity, attacker);
+    }
+
+    /**
+     * Is this Item a shield
+     *
+     * @param entity The Entity holding the ItemStack
+     * @return True if the ItemStack is considered a shield
+     */
+    default boolean isShield(@Nullable EntityLivingBase entity)
+    {
+        return getStack().getItem().isShield(getStack(), entity);
+    }
+
+    /**
+     * Called when a entity tries to play the 'swing' animation.
+     *
+     * @param entity The entity swinging the item.
+     * @return True to cancel any further processing by EntityLiving
+     */
+    default boolean onEntitySwing(EntityLivingBase entity)
+    {
+        return getStack().getItem().onEntitySwing(getStack(), entity);
+    }
+
+    /**
+     * Called each tick while using an item.
+     *
+     * @param player The Player using the item
+     * @param count  The amount of time in tick the item has been used for
+     *               continuously
+     */
+    default void onUsingTick(EntityLivingBase player, int count)
+    {
+        getStack().getItem().onUsingTick(getStack(), player, count);
+    }
+
+    /**
+     * Retrieves the normal 'lifespan' of this item when it is dropped on the ground
+     * as a EntityItem. This is in ticks, standard result is 6000, or 5 mins.
+     *
+     * @param world     The world the entity is in
+     * @return The normal lifespan in ticks.
+     */
+    default int getEntityLifespan(World world)
+    {
+        return getStack().getItem().getEntityLifespan(getStack(), world);
+    }
+
+    /**
+     * Called by the default implemetation of EntityItem's onUpdate method, allowing
+     * for cleaner control over the update of the item without having to write a
+     * subclass.
+     *
+     * @param entity The entity Item
+     * @return Return true to skip any further update code.
+     */
+    default boolean onEntityItemUpdate(EntityItem entity)
+    {
+        return getStack().getItem().onEntityItemUpdate(getStack(), entity);
+    }
+
+    /**
+     * Returns an enum constant of type {@code HorseArmorType}. The returned enum
+     * constant will be used to determine the armor value and texture of this item
+     * when equipped.
+     *
+     * @return an enum constant of type {@code HorseArmorType}. Return
+     *         HorseArmorType.NONE if this is not horse armor
+     */
+    default HorseArmorType getHorseArmorType()
+    {
+        return getStack().getItem().getHorseArmorType(getStack());
+    }
+
+
+    /**
+     * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
+     * armor slot.
+     *
+     * @param world the world the horse is in
+     * @param horse the horse wearing this armor
+     */
+    default void onHorseArmorTick(World world, EntityLiving horse)
+    {
+        getStack().getItem().onHorseArmorTick(getStack(), world, horse);
     }
 }

@@ -1,0 +1,35 @@
+--- a/net/minecraft/entity/EntityTrackerEntry.java
++++ b/net/minecraft/entity/EntityTrackerEntry.java
+@@ -143,7 +143,7 @@
+          EntityItemFrame entityitemframe = (EntityItemFrame)this.field_73132_a;
+          ItemStack itemstack = entityitemframe.func_82335_i();
+          if (itemstack.func_77973_b() instanceof ItemMap) {
+-            MapData mapdata = ItemMap.func_195950_a(itemstack, this.field_73132_a.field_70170_p);
++            MapData mapdata = ((ItemMap)itemstack.func_77973_b()).getMapDataOverride(itemstack, this.field_73132_a.field_70170_p);
+ 
+             for(EntityPlayer entityplayer : p_73122_1_) {
+                EntityPlayerMP entityplayermp = (EntityPlayerMP)entityplayer;
+@@ -376,11 +376,13 @@
+ 
+                this.field_73132_a.func_184178_b(p_73117_1_);
+                p_73117_1_.func_184848_d(this.field_73132_a);
++               net.minecraftforge.event.ForgeEventFactory.onStartEntityTracking(field_73132_a, p_73117_1_);
+             }
+          } else if (this.field_73134_o.contains(p_73117_1_)) {
+             this.field_73134_o.remove(p_73117_1_);
+             this.field_73132_a.func_184203_c(p_73117_1_);
+             p_73117_1_.func_152339_d(this.field_73132_a);
++            net.minecraftforge.event.ForgeEventFactory.onStopEntityTracking(field_73132_a, p_73117_1_);
+          }
+ 
+       }
+@@ -409,6 +411,9 @@
+          field_151262_p.warn("Fetching addPacket for removed entity");
+       }
+ 
++      Packet<?> pkt = net.minecraftforge.fml.network.NetworkHooks.getEntitySpawningPacket(this.field_73132_a);
++      if (pkt != null) return pkt;
++
+       if (this.field_73132_a instanceof EntityPlayerMP) {
+          return new SPacketSpawnPlayer((EntityPlayer)this.field_73132_a);
+       } else if (this.field_73132_a instanceof IAnimal) {

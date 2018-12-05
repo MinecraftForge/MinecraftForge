@@ -17,6 +17,15 @@
     }
  
     protected void func_70088_a() {
+@@ -433,7 +436,7 @@
+          this.field_71107_bF = this.field_71109_bG;
+          this.field_71109_bG = 0.0F;
+          this.func_71015_k(this.field_70165_t - d0, this.field_70163_u - d1, this.field_70161_v - d2);
+-         if (this.func_184187_bx() instanceof EntityPig) {
++         if (this.func_184187_bx() instanceof EntityLivingBase && ((EntityLivingBase)this.func_184187_bx()).shouldRiderFaceForward(this)) {
+             this.field_70125_A = f1;
+             this.field_70177_z = f;
+             this.field_70761_aq = ((EntityPig)this.func_184187_bx()).field_70761_aq;
 @@ -663,7 +666,12 @@
        return p_184816_1_.func_92059_d();
     }
@@ -38,3 +47,21 @@
        return f;
     }
  
+@@ -823,7 +832,7 @@
+ 
+    protected void func_190629_c(EntityLivingBase p_190629_1_) {
+       super.func_190629_c(p_190629_1_);
+-      if (p_190629_1_.func_184614_ca().func_77973_b() instanceof ItemAxe) {
++      if (p_190629_1_.func_184614_ca().canDisableShield(this.field_184627_bm, this, p_190629_1_)) {
+          this.func_190777_m(true);
+       }
+ 
+@@ -844,7 +853,7 @@
+    }
+ 
+    protected void func_184590_k(float p_184590_1_) {
+-      if (p_184590_1_ >= 3.0F && this.field_184627_bm.func_77973_b() == Items.field_185159_cQ) {
++      if (p_184590_1_ >= 3.0F && this.field_184627_bm.isShield(this)) {
+          int i = 1 + MathHelper.func_76141_d(p_184590_1_);
+          this.field_184627_bm.func_77972_a(i, this);
+          if (this.field_184627_bm.func_190926_b()) {

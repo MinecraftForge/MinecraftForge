@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ItemMap.java
 +++ b/net/minecraft/item/ItemMap.java
-@@ -41,7 +41,7 @@
+@@ -41,20 +41,26 @@
  
     public static ItemStack func_195952_a(World p_195952_0_, int p_195952_1_, int p_195952_2_, byte p_195952_3_, boolean p_195952_4_, boolean p_195952_5_) {
        ItemStack itemstack = new ItemStack(Items.field_151098_aY);
@@ -9,7 +9,8 @@
        return itemstack;
     }
  
-@@ -49,7 +49,7 @@
++   @Deprecated //Forge: Use instance version below
+    @Nullable
     public static MapData func_195950_a(ItemStack p_195950_0_, World p_195950_1_) {
        MapData mapdata = func_195953_a(p_195950_1_, "map_" + func_195949_f(p_195950_0_));
        if (mapdata == null && !p_195950_1_.field_72995_K) {
@@ -18,7 +19,17 @@
        }
  
        return mapdata;
-@@ -75,7 +75,7 @@
+    }
+ 
++   @Nullable //Forge: Item instance override version instead of static.
++   public MapData getMapDataOverride(ItemStack stack, World world) {
++      return ItemMap.func_195950_a(stack, world);
++   }
++
+    public static int func_195949_f(ItemStack p_195949_0_) {
+       NBTTagCompound nbttagcompound = p_195949_0_.func_77978_p();
+       return nbttagcompound != null && nbttagcompound.func_150297_b("map", 99) ? nbttagcompound.func_74762_e("map") : 0;
+@@ -75,7 +81,7 @@
     }
  
     public void func_77872_a(World p_77872_1_, Entity p_77872_2_, MapData p_77872_3_) {
@@ -27,7 +38,7 @@
           int i = 1 << p_77872_3_.field_76197_d;
           int j = p_77872_3_.field_76201_a;
           int k = p_77872_3_.field_76199_b;
-@@ -215,7 +215,7 @@
+@@ -215,7 +221,7 @@
     public static void func_190905_a(World p_190905_0_, ItemStack p_190905_1_) {
        MapData mapdata = func_195950_a(p_190905_1_, p_190905_0_);
        if (mapdata != null) {
