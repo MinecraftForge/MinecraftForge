@@ -4,7 +4,7 @@
           }
        }
  
-+      if (!field_78776_a.field_71439_g.func_184614_ca().onBlockStartBreak(p_187103_1_, field_78776_a.field_71439_g)) return false;
++      if (field_78776_a.field_71439_g.func_184614_ca().onBlockStartBreak(p_187103_1_, field_78776_a.field_71439_g)) return false;
 +
        World world = this.field_78776_a.field_71441_e;
        IBlockState iblockstate = world.func_180495_p(p_187103_1_);
@@ -33,7 +33,7 @@
                 }
              }
  
-+            boolean flag = block.removedByPlayer(iblockstate, world, p_187103_1_, field_78776_a.field_71439_g, false, ifluidstate);
++            boolean flag = iblockstate.removedByPlayer(world, p_187103_1_, field_78776_a.field_71439_g, false, ifluidstate);
 +            if (flag) block.func_176206_d(world, p_187103_1_, iblockstate);
              return flag;
           }

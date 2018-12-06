@@ -26,16 +26,15 @@ import javax.annotation.Nullable;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
@@ -145,7 +144,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      */
     default boolean onBlockStartBreak(BlockPos pos, EntityPlayer player)
     {
-        return getStack().isEmpty() || getStack().getItem().onBlockStartBreak(getStack(), pos, player);
+        return !getStack().isEmpty() && getStack().getItem().onBlockStartBreak(getStack(), pos, player);
     }
 
     /**
@@ -299,5 +298,40 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
     default void onHorseArmorTick(World world, EntityLiving horse)
     {
         getStack().getItem().onHorseArmorTick(getStack(), world, horse);
+    }
+
+    /**
+     * Whether this Item can be used as a payment to activate the vanilla beacon.
+     *
+     * @return true if this Item can be used
+     */
+    default boolean isBeaconPayment()
+    {
+        return getStack().getItem().isBeaconPayment(getStack());
+    }
+
+    /**
+     * Determines if the specific ItemStack can be placed in the specified armor
+     * slot, for the entity.
+     *
+     * @param armorType Armor slot to be verified.
+     * @param entity    The entity trying to equip the armor
+     * @return True if the given ItemStack can be inserted in the slot
+     */
+    default boolean canEquip(EntityEquipmentSlot armorType, Entity entity)
+    {
+        return getStack().getItem().canEquip(getStack(), armorType, entity);
+    }
+
+    /**
+     * Allow or forbid the specific book/item combination as an anvil enchant
+     *
+     * @param stack The item
+     * @param book  The book
+     * @return if the enchantment is allowed
+     */
+    default boolean isBookEnchantable(ItemStack book)
+    {
+        return getStack().getItem().isBookEnchantable(getStack(), book);
     }
 }

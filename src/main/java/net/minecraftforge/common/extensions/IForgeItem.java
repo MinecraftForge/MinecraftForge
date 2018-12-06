@@ -34,7 +34,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.IItemPropertyGetter;
@@ -42,7 +41,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
@@ -50,7 +48,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.RegistrySimple;
-import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -329,16 +326,14 @@ public interface IForgeItem
      * Determines if the specific ItemStack can be placed in the specified armor
      * slot, for the entity.
      *
-     * TODO: Change name to canEquip in 1.13?
-     *
      * @param stack     The ItemStack
      * @param armorType Armor slot to be verified.
      * @param entity    The entity trying to equip the armor
      * @return True if the given ItemStack can be inserted in the slot
      */
-    default boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
+    default boolean canEquip(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
     {
-        return net.minecraft.entity.EntityLiving.getSlotForItemStack(stack) == armorType;
+        return EntityLiving.getSlotForItemStack(stack) == armorType;
     }
 
     /**
@@ -739,6 +734,7 @@ public interface IForgeItem
      * @return an enum constant of type {@code HorseArmorType}. Return
      *         HorseArmorType.NONE if this is not horse armor
      */
+    @SuppressWarnings("deprecation")
     default HorseArmorType getHorseArmorType(ItemStack stack)
     {
         return HorseArmorType.getByItem(stack.getItem());
