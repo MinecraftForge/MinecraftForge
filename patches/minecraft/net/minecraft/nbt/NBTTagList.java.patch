@@ -22,7 +22,7 @@
 +        return field_74747_a.iterator();
 +    }
 +
-+    public byte getByteAt(int i)
++    public byte getByte(int i)
 +    {
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
@@ -35,10 +35,10 @@
 +
 +    public boolean getBooleanAt(int i)
 +    {
-+        return getByteAt(i) != 0;
++        return getByte(i) != 0;
 +    }
 +
-+    public short getShortAt(int i)
++    public short getShort(int i)
 +    {
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
@@ -49,7 +49,7 @@
 +        return 0;
 +    }
 +
-+    public long getLongAt(int i)
++    public long getLong(int i)
 +    {
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
@@ -60,7 +60,7 @@
 +        return 0;
 +    }
 +
-+    public byte[] getByteArrayAt(int i)
++    public byte[] getByteArray(int i)
 +    {
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
@@ -71,7 +71,7 @@
 +        return new byte[0];
 +    }
 +
-+    public NBTTagList getListTagAt(int i, int type)
++    public NBTTagList getListTag(int i, int type)
 +    {
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
@@ -87,7 +87,7 @@
 +        return new NBTTagList();
 +    }
 +
-+    public long[] getLongArrayAt(int i)
++    public long[] getLongArray(int i)
 +    {
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {

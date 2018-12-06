@@ -23,7 +23,7 @@
 +
 +    // FORGE START
 +
-+    public void setLongArray(String key, long[] value)
++    public void putLongArray(String key, long[] value)
 +    {
 +        this.field_74784_a.put(key, new NBTTagLongArray(value));
 +    }
