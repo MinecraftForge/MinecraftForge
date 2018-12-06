@@ -19,7 +19,7 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -208,6 +211,7 @@
+@@ -208,14 +211,16 @@
          {
              if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0)
              {
@@ -27,3 +27,25 @@
                  p_70100_1_.field_71090_bL = 2;
                  p_70100_1_.func_71001_a(this, 1);
                  ItemStack itemstack = EnchantmentHelper.func_92099_a(Enchantments.field_185296_A, p_70100_1_);
+ 
+                 if (!itemstack.func_190926_b() && itemstack.func_77951_h())
+                 {
+-                    int i = Math.min(this.func_184514_c(this.field_70530_e), itemstack.func_77952_i());
+-                    this.field_70530_e -= this.func_184515_b(i);
++                    float ratio = itemstack.func_77973_b().getXpRepairRatio(itemstack);
++                    int i = Math.min(roundAverage(this.field_70530_e * ratio), itemstack.func_77952_i());
++                    this.field_70530_e -= roundAverage(i / ratio);
+                     itemstack.func_77964_b(itemstack.func_77952_i() - i);
+                 }
+ 
+@@ -337,4 +342,10 @@
+     {
+         return false;
+     }
++
++    private static int roundAverage(float value)
++    {
++        double floor = Math.floor(value);
++        return (int) floor + (Math.random() < value - floor ? 1 : 0);
++    }
+ }
