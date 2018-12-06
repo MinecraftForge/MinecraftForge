@@ -67,6 +67,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
+import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.thread.SidedThreadGroup;
 import net.minecraftforge.fml.relauncher.CoreModManager;
@@ -215,7 +216,7 @@ public class FMLCommonHandler
      */
     public void raiseException(Throwable exception, String message, boolean stopGame)
     {
-        FMLLog.log.error("Something raised an exception. The message was '{}'. 'stopGame' is {}", stopGame, exception);
+        FMLLog.log.error("Something raised an exception. The message was '{}'. 'stopGame' is {}", message, stopGame, exception);
         if (stopGame)
         {
             getSidedDelegate().haltGame(message,exception);
@@ -506,7 +507,7 @@ public class FMLCommonHandler
         MinecraftServer server = getMinecraftServerInstance();
         Loader.instance().serverStopped();
         // FORCE the internal server to stop: hello optifine workaround!
-        if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v", "u", "serverStopped");
+        if (server!=null) ObfuscationReflectionHelper.setPrivateValue(MinecraftServer.class, server, false, "field_71316"+"_v");
 
         // allow any pending exit to continue, clear exitLatch
         CountDownLatch latch = exitLatch;
@@ -612,6 +613,11 @@ public class FMLCommonHandler
     public boolean shouldAllowPlayerLogins()
     {
         return sidedDelegate.shouldAllowPlayerLogins();
+    }
+
+    public void fireServerConnectionEvent(NetworkManager manager)
+    {
+        bus().post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
     }
 
     /**
@@ -770,5 +776,10 @@ public class FMLCommonHandler
 
     public void reloadSearchTrees() {
         this.sidedDelegate.reloadSearchTrees();
+    }
+
+    public void reloadCreativeSettings()
+    {
+        this.sidedDelegate.reloadCreativeSettings();
     }
 }

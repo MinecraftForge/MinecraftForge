@@ -19,10 +19,6 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import java.util.Iterator;
-import java.util.List;
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLiving;
@@ -36,7 +32,10 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.network.internal.FMLMessage.EntitySpawnMessage;
+import net.minecraftforge.registries.GameData;
 
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
@@ -145,8 +144,9 @@ public class EntityRegistry
 
     private static final EntityRegistry INSTANCE = new EntityRegistry();
 
-    private ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
-    private BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
+    private final ListMultimap<ModContainer, EntityRegistration> entityRegistrations = ArrayListMultimap.create();
+    private final BiMap<Class<? extends Entity>, EntityRegistration> entityClassRegistrations = HashBiMap.create();
+    private final Map<Class<? extends Entity>, EntityEntry> entityClassEntries = GameData.getEntityClassMap();
 
     public static EntityRegistry instance()
     {
@@ -374,15 +374,9 @@ public class EntityRegistry
 
     //Helper function
     @Nullable
-    public static EntityEntry getEntry(Class<? extends Entity> entry)
+    public static EntityEntry getEntry(Class<? extends Entity> entityClass)
     {
-        //TODO: Slave map for faster lookup?
-        for (EntityEntry e : ForgeRegistries.ENTITIES)
-        {
-            if (e.getEntityClass() == entry)
-                return e;
-        }
-        return null;
+        return instance().entityClassEntries.get(entityClass);
     }
 
     // This is an internal method - do not touch.

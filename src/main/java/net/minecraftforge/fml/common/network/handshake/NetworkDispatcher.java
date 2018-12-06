@@ -250,7 +250,6 @@ public class NetworkDispatcher extends SimpleChannelInboundHandler<Packet<?>> im
         this.connectionType = type;
         FMLLog.log.info("[{}] Server side {} connection established", Thread.currentThread().getName(), this.connectionType.name().toLowerCase(Locale.ENGLISH));
         this.state = ConnectionState.CONNECTED;
-        MinecraftForge.EVENT_BUS.post(new FMLNetworkEvent.ServerConnectionFromClientEvent(manager));
         if (DEBUG_HANDSHAKE)
             manager.closeChannel(new TextComponentString("Handshake Complete review log file for details."));
         scm.initializeConnectionToPlayer(manager, player, serverHandler);

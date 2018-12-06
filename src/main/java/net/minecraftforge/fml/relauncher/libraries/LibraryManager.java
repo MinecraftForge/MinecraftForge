@@ -99,8 +99,11 @@ public class LibraryManager
         for (ModList list : ModList.getKnownLists(minecraftHome))
         {
             Repository repo = list.getRepository() == null ? libraries_dir : list.getRepository();
-            for (Artifact artifact : list.getArtifacts())
+            List<Artifact> artifacts = list.getArtifacts();
+            // extractPacked adds artifacts to the list. As such, we can't use an Iterator to traverse it.
+            for (int i = 0; i < artifacts.size(); i++)
             {
+                Artifact artifact = artifacts.get(i);
                 Artifact resolved = repo.resolve(artifact);
                 if (resolved != null)
                 {
@@ -440,7 +443,7 @@ public class LibraryManager
         List<File> list = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
-        Map<String,String> args = (Map<String, String>)Launch.blackboard.get("launchArgs");
+        Map<String,String> args = (Map<String, String>)Launch.blackboard.get("forgeLaunchArgs");
         String extraMods = args.get("--mods");
         if (extraMods != null)
         {
