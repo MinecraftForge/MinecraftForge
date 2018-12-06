@@ -112,6 +112,7 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import net.minecraftforge.fml.common.toposort.ModSortingException;
+import net.minecraftforge.fml.relauncher.FMLLaunchHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.registries.GameData;
 
@@ -432,8 +433,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         else
         {
             logMissingTextureErrors();
-            Object isDeobf = Launch.blackboard.get("fml.deobfuscatedEnvironment");
-            if (isDeobf != null && (Boolean) isDeobf)
+            if (FMLLaunchHandler.isDeobfuscatedEnvironment())
             {
                 badTextureDomains.forEach(domain -> trackBadResource("textures", domain));
                 if (showResourceErrorScreen)
