@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/RenderFish.java
++++ b/net/minecraft/client/renderer/entity/RenderFish.java
+@@ -65,7 +65,7 @@
+          GlStateManager.func_179121_F();
+          int k = entityplayer.func_184591_cq() == EnumHandSide.RIGHT ? 1 : -1;
+          ItemStack itemstack = entityplayer.func_184614_ca();
+-         if (itemstack.func_77973_b() != Items.field_151112_aM) {
++         if (!(itemstack.func_77973_b() instanceof net.minecraft.item.ItemFishingRod)) {
+             k = -k;
+          }
+ 
