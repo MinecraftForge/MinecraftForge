@@ -1,0 +1,44 @@
+--- a/net/minecraft/world/gen/feature/ShrubFeature.java
++++ b/net/minecraft/world/gen/feature/ShrubFeature.java
+@@ -12,6 +12,7 @@
+ public class ShrubFeature extends AbstractTreeFeature<NoFeatureConfig> {
+    private final IBlockState field_150528_a;
+    private final IBlockState field_150527_b;
++   protected net.minecraftforge.common.IPlantable sapling = (net.minecraftforge.common.IPlantable)Blocks.field_196674_t;
+ 
+    public ShrubFeature(IBlockState p_i46450_1_, IBlockState p_i46450_2_) {
+       super(false);
+@@ -20,12 +21,11 @@
+    }
+ 
+    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorld p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_) {
+-      for(IBlockState iblockstate = p_208519_2_.func_180495_p(p_208519_4_); (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) && p_208519_4_.func_177956_o() > 0; iblockstate = p_208519_2_.func_180495_p(p_208519_4_)) {
++      for(IBlockState iblockstate = p_208519_2_.func_180495_p(p_208519_4_); (iblockstate.isAir(p_208519_2_, p_208519_4_) || iblockstate.func_203425_a(BlockTags.field_206952_E)) && p_208519_4_.func_177956_o() > 0; iblockstate = p_208519_2_.func_180495_p(p_208519_4_)) {
+          p_208519_4_ = p_208519_4_.func_177977_b();
+       }
+ 
+-      Block block = p_208519_2_.func_180495_p(p_208519_4_).func_177230_c();
+-      if (Block.func_196245_f(block) || block == Blocks.field_196658_i) {
++      if (p_208519_2_.func_180495_p(p_208519_4_).canSustainPlant(p_208519_2_, p_208519_4_, net.minecraft.util.EnumFacing.UP, sapling)) {
+          p_208519_4_ = p_208519_4_.func_177984_a();
+          this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_, this.field_150527_b);
+ 
+@@ -41,7 +41,7 @@
+                   if (Math.abs(i1) != k || Math.abs(k1) != k || p_208519_3_.nextInt(2) != 0) {
+                      BlockPos blockpos = new BlockPos(l, i, j1);
+                      IBlockState iblockstate1 = p_208519_2_.func_180495_p(blockpos);
+-                     if (iblockstate1.func_196958_f() || iblockstate1.func_203425_a(BlockTags.field_206952_E)) {
++                     if (iblockstate1.canBeReplacedByLeaves(p_208519_2_, blockpos)) {
+                         this.func_202278_a(p_208519_2_, blockpos, this.field_150528_a);
+                      }
+                   }
+@@ -52,4 +52,9 @@
+ 
+       return true;
+    }
++
++   public ShrubFeature setSapling(net.minecraftforge.common.IPlantable sapling) {
++      this.sapling = sapling;
++      return this;
++   }
+ }

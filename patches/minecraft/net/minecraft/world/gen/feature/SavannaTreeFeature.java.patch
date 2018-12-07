@@ -1,0 +1,62 @@
+--- a/net/minecraft/world/gen/feature/SavannaTreeFeature.java
++++ b/net/minecraft/world/gen/feature/SavannaTreeFeature.java
+@@ -21,7 +21,7 @@
+    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorld p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_) {
+       int i = p_208519_3_.nextInt(3) + p_208519_3_.nextInt(3) + 5;
+       boolean flag = true;
+-      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= 256) {
++      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= p_208519_2_.func_201672_e().func_72800_K()) {
+          for(int j = p_208519_4_.func_177956_o(); j <= p_208519_4_.func_177956_o() + 1 + i; ++j) {
+             int k = 1;
+             if (j == p_208519_4_.func_177956_o()) {
+@@ -36,8 +36,8 @@
+ 
+             for(int l = p_208519_4_.func_177958_n() - k; l <= p_208519_4_.func_177958_n() + k && flag; ++l) {
+                for(int i1 = p_208519_4_.func_177952_p() - k; i1 <= p_208519_4_.func_177952_p() + k && flag; ++i1) {
+-                  if (j >= 0 && j < 256) {
+-                     if (!this.func_150523_a(p_208519_2_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_177230_c())) {
++                  if (j >= 0 && j < p_208519_2_.func_201672_e().func_72800_K()) {
++                     if (!this.canGrowInto(p_208519_2_, blockpos$mutableblockpos.func_181079_c(l, j, i1))) {
+                         flag = false;
+                      }
+                   } else {
+@@ -50,9 +50,9 @@
+          if (!flag) {
+             return false;
+          } else {
+-            Block block = p_208519_2_.func_180495_p(p_208519_4_.func_177977_b()).func_177230_c();
+-            if ((block == Blocks.field_196658_i || Block.func_196245_f(block)) && p_208519_4_.func_177956_o() < 256 - i - 1) {
+-               this.func_175921_a(p_208519_2_, p_208519_4_.func_177977_b());
++            boolean isSoil = p_208519_2_.func_180495_p(p_208519_4_.func_177977_b()).canSustainPlant(p_208519_2_, p_208519_4_.func_177977_b(), net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_196679_x);
++            if (isSoil && p_208519_4_.func_177956_o() < p_208519_2_.func_201672_e().func_72800_K() - i - 1) {
++               this.setDirtAt(p_208519_2_, p_208519_4_.func_177977_b(), p_208519_4_);
+                EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.func_179518_a(p_208519_3_);
+                int k2 = i - p_208519_3_.nextInt(4) - 1;
+                int l2 = 3 - p_208519_3_.nextInt(3);
+@@ -70,7 +70,7 @@
+ 
+                   BlockPos blockpos = new BlockPos(i3, i2, j1);
+                   IBlockState iblockstate = p_208519_2_.func_180495_p(blockpos);
+-                  if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++                  if (iblockstate.isAir(p_208519_2_, blockpos) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                      this.func_208532_a(p_208519_1_, p_208519_2_, blockpos);
+                      k1 = i2;
+                   }
+@@ -113,7 +113,7 @@
+                         j1 += enumfacing1.func_82599_e();
+                         BlockPos blockpos1 = new BlockPos(i3, j2, j1);
+                         IBlockState iblockstate1 = p_208519_2_.func_180495_p(blockpos1);
+-                        if (iblockstate1.func_196958_f() || iblockstate1.func_203425_a(BlockTags.field_206952_E)) {
++                        if (iblockstate1.isAir(p_208519_2_, blockpos1) || iblockstate1.func_203425_a(BlockTags.field_206952_E)) {
+                            this.func_208532_a(p_208519_1_, p_208519_2_, blockpos1);
+                            k1 = j2;
+                         }
+@@ -159,7 +159,7 @@
+ 
+    private void func_175924_b(IWorld p_175924_1_, BlockPos p_175924_2_) {
+       IBlockState iblockstate = p_175924_1_.func_180495_p(p_175924_2_);
+-      if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++      if (iblockstate.canBeReplacedByLeaves(p_175924_1_, p_175924_2_)) {
+          this.func_202278_a(p_175924_1_, p_175924_2_, field_181644_b);
+       }
+ 

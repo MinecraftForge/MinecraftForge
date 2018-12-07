@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/gen/feature/ReedFeature.java
++++ b/net/minecraft/world/gen/feature/ReedFeature.java
+@@ -18,7 +18,6 @@
+             BlockPos blockpos1 = blockpos.func_177977_b();
+             if (p_212245_1_.func_204610_c(blockpos1.func_177976_e()).func_206884_a(FluidTags.field_206959_a) || p_212245_1_.func_204610_c(blockpos1.func_177974_f()).func_206884_a(FluidTags.field_206959_a) || p_212245_1_.func_204610_c(blockpos1.func_177978_c()).func_206884_a(FluidTags.field_206959_a) || p_212245_1_.func_204610_c(blockpos1.func_177968_d()).func_206884_a(FluidTags.field_206959_a)) {
+                int k = 2 + p_212245_3_.nextInt(p_212245_3_.nextInt(3) + 1);
+-
+                for(int l = 0; l < k; ++l) {
+                   if (Blocks.field_196608_cF.func_176223_P().func_196955_c(p_212245_1_, blockpos)) {
+                      p_212245_1_.func_180501_a(blockpos.func_177981_b(l), Blocks.field_196608_cF.func_176223_P(), 2);

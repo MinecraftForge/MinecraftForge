@@ -36,6 +36,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -184,7 +185,6 @@ public interface IForgeBlockState
         return getBlockState().getBlock().canHarvestBlock(getBlockState(), world, pos, player);
     }
 
-
     /**
      * Called when a player removes a block.  This is responsible for
      * actually destroying the block, and the block is intact at time of call.
@@ -323,7 +323,7 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @return true if this block can be replaced by growing leaves.
      */
-    default boolean canBeReplacedByLeaves(IWorldReader world, BlockPos pos)
+    default boolean canBeReplacedByLeaves(IWorldReaderBase world, BlockPos pos)
     {
         return getBlockState().getBlock().canBeReplacedByLeaves(getBlockState(), world, pos);
     }
@@ -520,7 +520,7 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @param source Source plant's position in world
      */
-    default void onPlantGrow(World world, BlockPos pos, BlockPos source)
+    default void onPlantGrow(IWorld world, BlockPos pos, BlockPos source)
     {
         getBlockState().getBlock().onPlantGrow(getBlockState(), world, pos, source);
     }

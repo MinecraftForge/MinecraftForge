@@ -374,9 +374,9 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return true if this block can be replaced by growing leaves.
      */
-    default boolean canBeReplacedByLeaves(IBlockState state, IWorldReader world, BlockPos pos)
+    default boolean canBeReplacedByLeaves(IBlockState state, IWorldReaderBase world, BlockPos pos)
     {
-        return isAir(state, world, pos) || state.isIn(BlockTags.LEAVES);
+        return (isAir(state, world, pos) || state.isIn(BlockTags.LEAVES)) || !state.isOpaqueCube(world, pos);
     }
 
     /**
@@ -390,7 +390,7 @@ public interface IForgeBlock
      * @return True to allow this block to be replaced by a ore
      */
     default boolean isReplaceableOreGen(IBlockState state, IWorldReader world, BlockPos pos, Predicate<IBlockState> target)
-    { //TODO: Re-evaluate with new world gen
+    {
         return target.test(state);
     }
 
@@ -580,9 +580,9 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param source Source plant's position in world
      */
-    default void onPlantGrow(IBlockState state, World world, BlockPos pos, BlockPos source)
+    default void onPlantGrow(IBlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
-        if (this.getBlock() == Blocks.GRASS || this.getBlock() == Blocks.FARMLAND)
+        if (this.getBlock() == Blocks.GRASS || this.getBlock() == Blocks.FARMLAND || this.getBlock() == Blocks.AIR)
             world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
     }
 

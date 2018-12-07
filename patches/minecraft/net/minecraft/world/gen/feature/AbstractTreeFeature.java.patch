@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/gen/feature/AbstractTreeFeature.java
++++ b/net/minecraft/world/gen/feature/AbstractTreeFeature.java
+@@ -21,16 +21,13 @@
+       super(p_i45448_1_);
+    }
+ 
+-   protected boolean func_150523_a(Block p_150523_1_) {
+-      IBlockState iblockstate = p_150523_1_.func_176223_P();
+-      return iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E) || p_150523_1_ == Blocks.field_196658_i || Block.func_196245_f(p_150523_1_) || p_150523_1_.func_203417_a(BlockTags.field_200031_h) || p_150523_1_.func_203417_a(BlockTags.field_200030_g) || p_150523_1_ == Blocks.field_150395_bd;
++   protected boolean canGrowInto(net.minecraft.world.IBlockReader world, BlockPos pos) {
++      IBlockState iblockstate = world.func_180495_p(pos);
++      return iblockstate.isAir(world, pos) || iblockstate.func_203425_a(BlockTags.field_206952_E) || iblockstate.func_177230_c() == Blocks.field_196658_i || Block.func_196245_f(iblockstate.func_177230_c()) || iblockstate.func_203425_a(BlockTags.field_200031_h) || iblockstate.func_203425_a(BlockTags.field_200030_g) || iblockstate.func_177230_c() == Blocks.field_150395_bd;
+    }
+ 
+-   protected void func_175921_a(IWorld p_175921_1_, BlockPos p_175921_2_) {
+-      if (!Block.func_196245_f(p_175921_1_.func_180495_p(p_175921_2_).func_177230_c())) {
+-         this.func_202278_a(p_175921_1_, p_175921_2_, Blocks.field_150346_d.func_176223_P());
+-      }
+-
++   protected void setDirtAt(IWorld worldIn, BlockPos pos, BlockPos origin) {
++      worldIn.func_180495_p(pos).onPlantGrow(worldIn, pos, origin);
+    }
+ 
+    protected void func_202278_a(IWorld p_202278_1_, BlockPos p_202278_2_, IBlockState p_202278_3_) {

@@ -1,0 +1,60 @@
+--- a/net/minecraft/world/gen/feature/CanopyTreeFeature.java
++++ b/net/minecraft/world/gen/feature/CanopyTreeFeature.java
+@@ -27,15 +27,16 @@
+       if (k >= 1 && k + i + 1 < 256) {
+          BlockPos blockpos = p_208519_4_.func_177977_b();
+          Block block = p_208519_2_.func_180495_p(blockpos).func_177230_c();
+-         if (block != Blocks.field_196658_i && !Block.func_196245_f(block)) {
++         boolean isSoil = p_208519_2_.func_180495_p(blockpos).canSustainPlant(p_208519_2_, blockpos, net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_196680_y);
++         if (!isSoil) {
+             return false;
+          } else if (!this.func_181638_a(p_208519_2_, p_208519_4_, i)) {
+             return false;
+          } else {
+-            this.func_175921_a(p_208519_2_, blockpos);
+-            this.func_175921_a(p_208519_2_, blockpos.func_177974_f());
+-            this.func_175921_a(p_208519_2_, blockpos.func_177968_d());
+-            this.func_175921_a(p_208519_2_, blockpos.func_177968_d().func_177974_f());
++            this.setDirtAt(p_208519_2_, blockpos, blockpos.func_177984_a());
++            this.setDirtAt(p_208519_2_, blockpos.func_177974_f(), blockpos.func_177984_a());
++            this.setDirtAt(p_208519_2_, blockpos.func_177968_d(), blockpos.func_177984_a());
++            this.setDirtAt(p_208519_2_, blockpos.func_177968_d().func_177974_f(), blockpos.func_177984_a());
+             EnumFacing enumfacing = EnumFacing.Plane.HORIZONTAL.func_179518_a(p_208519_3_);
+             int i1 = i - p_208519_3_.nextInt(4);
+             int j1 = 2 - p_208519_3_.nextInt(3);
+@@ -53,7 +54,7 @@
+                int k2 = k + j2;
+                BlockPos blockpos1 = new BlockPos(k1, k2, l1);
+                IBlockState iblockstate = p_208519_2_.func_180495_p(blockpos1);
+-               if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++               if (iblockstate.isAir(p_208519_2_, blockpos1) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                   this.func_208533_a(p_208519_1_, p_208519_2_, blockpos1);
+                   this.func_208533_a(p_208519_1_, p_208519_2_, blockpos1.func_177974_f());
+                   this.func_208533_a(p_208519_1_, p_208519_2_, blockpos1.func_177968_d());
+@@ -144,7 +145,7 @@
+ 
+          for(int j1 = -i1; j1 <= i1; ++j1) {
+             for(int k1 = -i1; k1 <= i1; ++k1) {
+-               if (!this.func_150523_a(p_181638_1_.func_180495_p(blockpos$mutableblockpos.func_181079_c(i + j1, j + l, k + k1)).func_177230_c())) {
++               if (!this.canGrowInto(p_181638_1_, blockpos$mutableblockpos.func_181079_c(i + j1, j + l, k + k1))) {
+                   return false;
+                }
+             }
+@@ -155,7 +156,7 @@
+    }
+ 
+    private void func_208533_a(Set<BlockPos> p_208533_1_, IWorld p_208533_2_, BlockPos p_208533_3_) {
+-      if (this.func_150523_a(p_208533_2_.func_180495_p(p_208533_3_).func_177230_c())) {
++      if (this.canGrowInto(p_208533_2_, p_208533_3_)) {
+          this.func_208520_a(p_208533_1_, p_208533_2_, p_208533_3_, field_181640_a);
+       }
+ 
+@@ -163,7 +164,7 @@
+ 
+    private void func_202414_a(IWorld p_202414_1_, int p_202414_2_, int p_202414_3_, int p_202414_4_) {
+       BlockPos blockpos = new BlockPos(p_202414_2_, p_202414_3_, p_202414_4_);
+-      if (p_202414_1_.func_180495_p(blockpos).func_196958_f()) {
++      if (p_202414_1_.func_180495_p(blockpos).isAir(p_202414_1_, blockpos)) {
+          this.func_202278_a(p_202414_1_, blockpos, field_181641_b);
+       }
+ 

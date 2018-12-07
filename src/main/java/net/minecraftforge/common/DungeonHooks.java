@@ -22,7 +22,7 @@ package net.minecraftforge.common;
 import java.util.ArrayList;
 import java.util.Random;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.entity.EntityType;
 import net.minecraft.util.WeightedRandom;
 
 public class DungeonHooks
@@ -34,7 +34,7 @@ public class DungeonHooks
      * If the mob is already in the spawn list, the rarity will be added to the existing one,
      * causing the mob to be more common.
      *
-     * @param name The name of the monster, use the same name used when registering the entity.
+     * @param type Monster type
      * @param rarity The rarity of selecting this mob over others. Must be greater then 0.
      *        Vanilla Minecraft has the following mobs:
      *        Spider   100
@@ -43,7 +43,7 @@ public class DungeonHooks
      *        Meaning, Zombies are twice as common as spiders or skeletons.
      * @return The new rarity of the monster,
      */
-    public static float addDungeonMob(ResourceLocation name, int rarity)
+    public static float addDungeonMob(EntityType<?> type, int rarity)
     {
         if (rarity <= 0)
         {
@@ -52,13 +52,13 @@ public class DungeonHooks
 
         for (DungeonMob mob : dungeonMobs)
         {
-            if (name.equals(mob.type))
+            if (type == mob.type)
             {
                 return mob.itemWeight += rarity;
             }
         }
 
-        dungeonMobs.add(new DungeonMob(rarity, name));
+        dungeonMobs.add(new DungeonMob(rarity, type));
         return rarity;
     }
 
@@ -68,11 +68,11 @@ public class DungeonHooks
      * @param name The name of the mob to remove
      * @return The rarity of the removed mob, prior to being removed.
      */
-    public static int removeDungeonMob(ResourceLocation name)
+    public static int removeDungeonMob(EntityType<?> name)
     {
         for (DungeonMob mob : dungeonMobs)
         {
-            if (name.equals(mob.type))
+            if (name == mob.type)
             {
                 dungeonMobs.remove(mob);
                 return mob.itemWeight;
@@ -86,7 +86,7 @@ public class DungeonHooks
      * @param rand World generation random number generator
      * @return The mob name
      */
-    public static ResourceLocation getRandomDungeonMob(Random rand)
+    public static EntityType<?> getRandomDungeonMob(Random rand)
     {
         DungeonMob mob = WeightedRandom.getRandomItem(rand, dungeonMobs);
         return mob.type;
@@ -95,8 +95,8 @@ public class DungeonHooks
 
     public static class DungeonMob extends WeightedRandom.Item
     {
-        public ResourceLocation type;
-        public DungeonMob(int weight, ResourceLocation type)
+        public final EntityType<?> type;
+        public DungeonMob(int weight, EntityType<?> type)
         {
             super(weight);
             this.type = type;
@@ -111,8 +111,8 @@ public class DungeonHooks
 
     static
     {
-        addDungeonMob(new ResourceLocation("skeleton"), 100);
-        addDungeonMob(new ResourceLocation("zombie"),   200);
-        addDungeonMob(new ResourceLocation("spider"),   100);
+        addDungeonMob(EntityType.SKELETON, 100);
+        addDungeonMob(EntityType.ZOMBIE,   200);
+        addDungeonMob(EntityType.SPIDER,   100);
     }
 }
