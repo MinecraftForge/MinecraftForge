@@ -33,7 +33,7 @@
 +        return 0;
 +    }
 +
-+    public boolean getBooleanAt(int i)
++    public boolean getBoolean(int i)
 +    {
 +        return getByte(i) != 0;
 +    }
