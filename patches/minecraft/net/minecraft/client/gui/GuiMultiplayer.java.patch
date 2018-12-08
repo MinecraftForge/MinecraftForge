@@ -5,7 +5,7 @@
  
     private void func_146791_a(ServerData p_146791_1_) {
 -      this.field_146297_k.func_147108_a(new GuiConnecting(this, this.field_146297_k, p_146791_1_));
-+      net.minecraftforge.fml.client.ClientHooks.connectToServer(this,p_146791_1_);
++      net.minecraftforge.fml.client.ClientHooks.connectToServer(this, p_146791_1_);
     }
  
     public void func_146790_a(int p_146790_1_) {

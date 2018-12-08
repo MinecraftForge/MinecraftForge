@@ -6,7 +6,7 @@
                 }
 -
 +               float[] customColor = iblockstate.func_177230_c().getBeaconColorMultiplier(iblockstate, this.field_145850_b, blockpos$mutableblockpos, func_174877_v());
-+               if(customColor!=null) {
++               if(customColor != null) {
 +                  afloat = customColor;
 +               } else {
                 tileentitybeacon$beamsegment.func_177262_a();
