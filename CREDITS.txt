@@ -2,7 +2,7 @@ Minecraft Forge: Credits/Thank You
 
 Forge is a set of tools and modifications to the Minecraft base game code to assist 
 mod developers in creating new and exciting content. It has been in development for 
-several years now, so now I would like to take this time thank a few people who have 
+several years now, so I would like to take this time thank a few people who have 
 helped it along its way.
 
 First, thanks to the people who originally created the Forge projects way back in
