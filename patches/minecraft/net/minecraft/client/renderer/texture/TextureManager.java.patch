@@ -1,12 +1,35 @@
 --- a/net/minecraft/client/renderer/texture/TextureManager.java
 +++ b/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -127,4 +127,9 @@
+@@ -106,17 +106,20 @@
+    public void func_147645_c(ResourceLocation p_147645_1_) {
+       ITextureObject itextureobject = this.func_110581_b(p_147645_1_);
+       if (itextureobject != null) {
++         this.field_110585_a.remove(p_147645_1_); // Forge: fix MC-98707
+          TextureUtil.func_147942_a(itextureobject.func_110552_b());
        }
  
     }
-+
+ 
+    public void func_195410_a(IResourceManager p_195410_1_) {
++      net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Reloading Texture Manager", this.field_110585_a.keySet().size(), true);
+       MissingTextureSprite.func_195676_d();
+       Iterator<Entry<ResourceLocation, ITextureObject>> iterator = this.field_110585_a.entrySet().iterator();
+ 
+       while(iterator.hasNext()) {
+          Entry<ResourceLocation, ITextureObject> entry = iterator.next();
++         bar.step(entry.getKey().toString());
+          ResourceLocation resourcelocation = entry.getKey();
+          ITextureObject itextureobject = entry.getValue();
+          if (itextureobject == MissingTextureSprite.func_195676_d() && !resourcelocation.equals(MissingTextureSprite.func_195675_b())) {
+@@ -125,6 +128,11 @@
+             this.func_110579_a(entry.getKey(), itextureobject);
+          }
+       }
++      net.minecraftforge.fml.common.ProgressManager.pop(bar);
++   }
+ 
 +   @Override
 +   public net.minecraftforge.resource.IResourceType getResourceType() {
 +      return net.minecraftforge.resource.VanillaResourceType.TEXTURES;
-+   }
+    }
  }
