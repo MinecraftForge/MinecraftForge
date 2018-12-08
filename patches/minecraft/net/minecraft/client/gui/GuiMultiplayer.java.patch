@@ -1,6 +1,14 @@
 --- a/net/minecraft/client/gui/GuiMultiplayer.java
 +++ b/net/minecraft/client/gui/GuiMultiplayer.java
-@@ -296,7 +296,7 @@
+@@ -36,6 +36,7 @@
+ 
+    public GuiMultiplayer(GuiScreen p_i1040_1_) {
+       this.field_146798_g = p_i1040_1_;
++      net.minecraftforge.fml.client.ClientHooks.setupServerList();
+    }
+ 
+    public IGuiEventListener getFocused() {
+@@ -296,7 +297,7 @@
     }
  
     private void func_146791_a(ServerData p_146791_1_) {
