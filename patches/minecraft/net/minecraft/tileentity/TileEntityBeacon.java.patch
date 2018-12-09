@@ -1,6 +1,6 @@
 --- a/net/minecraft/tileentity/TileEntityBeacon.java
 +++ b/net/minecraft/tileentity/TileEntityBeacon.java
-@@ -141,9 +141,13 @@
+@@ -141,11 +141,15 @@
                    this.field_174909_f.clear();
                    break;
                 }
@@ -13,5 +13,8 @@
                 continue;
 +               }
              }
- 
+-
++            else
              afloat = ((BlockStainedGlassPane)block).func_196419_d().func_193349_f();
+          }
+ 
