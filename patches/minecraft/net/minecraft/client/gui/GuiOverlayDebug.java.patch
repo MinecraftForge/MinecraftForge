@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/gui/GuiOverlayDebug.java
++++ b/net/minecraft/client/gui/GuiOverlayDebug.java
+@@ -181,6 +181,10 @@
+       long k = Runtime.getRuntime().freeMemory();
+       long l = j - k;
+       List<String> list = Lists.newArrayList(String.format("Java: %s %dbit", System.getProperty("java.version"), this.field_175242_a.func_147111_S() ? 64 : 32), String.format("Mem: % 2d%% %03d/%03dMB", l * 100L / i, func_175240_a(l), func_175240_a(i)), String.format("Allocated: % 2d%% %03dMB", j * 100L / i, func_175240_a(j)), "", String.format("CPU: %s", OpenGlHelper.func_183029_j()), "", String.format("Display: %dx%d (%s)", Minecraft.func_71410_x().field_195558_d.func_198109_k(), Minecraft.func_71410_x().field_195558_d.func_198091_l(), GlStateManager.func_187416_u(7936)), GlStateManager.func_187416_u(7937), GlStateManager.func_187416_u(7938));
++
++      list.add("");
++      net.minecraftforge.fml.BrandingControl.forEachLine(false,false, (idx,s) -> list.add(s)); // Add forge branding
++
+       if (this.field_175242_a.func_189648_am()) {
+          return list;
+       } else {
