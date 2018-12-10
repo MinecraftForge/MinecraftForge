@@ -1,6 +1,14 @@
 --- a/net/minecraft/inventory/SlotCrafting.java
 +++ b/net/minecraft/inventory/SlotCrafting.java
-@@ -47,7 +47,9 @@
+@@ -39,6 +39,7 @@
+    protected void func_75208_c(ItemStack p_75208_1_) {
+       if (this.field_75237_g > 0) {
+          p_75208_1_.func_77980_a(this.field_75238_b.field_70170_p, this.field_75238_b, this.field_75237_g);
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerCraftingEvent(this.field_75238_b, p_75208_1_, this.field_75224_c);
+       }
+ 
+       ((IRecipeHolder)this.field_75224_c).func_201560_d(this.field_75238_b);
+@@ -47,7 +48,9 @@
  
     public ItemStack func_190901_a(EntityPlayer p_190901_1_, ItemStack p_190901_2_) {
        this.func_75208_c(p_190901_2_);
