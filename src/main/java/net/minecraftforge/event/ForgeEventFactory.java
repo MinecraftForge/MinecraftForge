@@ -20,6 +20,7 @@
 package net.minecraftforge.event;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
@@ -180,7 +181,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
-    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)
+    public static Result canEntitySpawn(EntityLiving entity, IWorld world, float x, float y, float z, MobSpawnerBaseLogic spawner)
     {
         if (entity == null)
             return Result.DEFAULT;
@@ -426,15 +427,11 @@ public class ForgeEventFactory
         return event.getResult() == Result.ALLOW ? 1 : 0;
     }
 
-    public static void onPlayerDrops(EntityPlayer player, DamageSource cause, List<EntityItem> capturedDrops, boolean recentlyHit)
+    public static void onPlayerDrops(EntityPlayer player, DamageSource cause, Collection<EntityItem> drops, boolean recentlyHit)
     {
-        PlayerDropsEvent event = new PlayerDropsEvent(player, cause, capturedDrops, recentlyHit);
-        if (!MinecraftForge.EVENT_BUS.post(event))
-        {
-            for (EntityItem item : capturedDrops)
-            {
-                player.dropItemAndGetStack(item);
-            }
+        PlayerDropsEvent event = new PlayerDropsEvent(player, cause, drops, recentlyHit);
+        if (!MinecraftForge.EVENT_BUS.post(event)) {
+            drops.forEach(e -> player.dropItemAndGetStack(e));
         }
     }
 

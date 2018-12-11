@@ -31,8 +31,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
@@ -258,9 +260,9 @@ public interface IForgeBlock
      * @param player The player or camera entity, null in some cases.
      * @return True to treat this as a bed
      */
-    default boolean isBed(IBlockState state, IWorldReader world, BlockPos pos, @Nullable EntityPlayer player)
+    default boolean isBed(IBlockState state, IBlockReader world, BlockPos pos, @Nullable EntityPlayer player)
     {
-        return this.getBlock() instanceof BlockBed;
+        return this.getBlock() instanceof BlockBed; //TODO: Forge: Keep isBed function?
     }
 
     /**
@@ -273,9 +275,9 @@ public interface IForgeBlock
      * @param type The Mob Category Type
      * @return True to allow a mob of the specified category to spawn, false to prevent it.
      */
-    default boolean canCreatureSpawn(IBlockState state, IWorldReader world, BlockPos pos, EntitySpawnPlacementRegistry.SpawnPlacementType type)
+    default boolean canCreatureSpawn(IBlockState state, IWorldReaderBase world, BlockPos pos, EntitySpawnPlacementRegistry.SpawnPlacementType type, @Nullable EntityType<? extends EntityLiving> entityType)
     {
-        return state.isTopSolid();
+        return state.isTopSolid() || entityType != null && EntitySpawnPlacementRegistry.func_209345_a(entityType, state);
     }
     /**
      * Returns the position that the player is moved to upon
@@ -288,7 +290,7 @@ public interface IForgeBlock
      * @return The spawn position
      */
     @Nullable
-    default BlockPos getBedSpawnPosition(IBlockState state, IWorldReader world, BlockPos pos, @Nullable EntityPlayer player)
+    default BlockPos getBedSpawnPosition(IBlockState state, IBlockReader world, BlockPos pos, @Nullable EntityPlayer player)
     {
         if (world instanceof World)
         {

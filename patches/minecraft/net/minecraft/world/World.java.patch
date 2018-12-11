@@ -44,7 +44,7 @@
     }
  
     public void func_72966_v() {
-@@ -2397,4 +2400,31 @@
+@@ -2397,4 +2400,35 @@
     public abstract RecipeManager func_199532_z();
  
     public abstract NetworkTagManager func_205772_D();
@@ -53,26 +53,30 @@
 +
 +   private net.minecraftforge.common.util.WorldCapabilityData capabilityData;
 +
-+   protected void initCapabilities()
-+   {
-+       net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
-+       this.gatherCapabilities(parent);
-+       net.minecraftforge.common.util.WorldCapabilityData data = (net.minecraftforge.common.util.WorldCapabilityData)perWorldStorage.func_201067_a(net.minecraftforge.common.util.WorldCapabilityData::new, net.minecraftforge.common.util.WorldCapabilityData.ID);
-+       if (data == null)
-+       {
-+           capabilityData = new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities());
-+           perWorldStorage.func_75745_a(capabilityData.func_195925_e(), capabilityData);
- }
-+       else
-+       {
-+           capabilityData = data;
-+           capabilityData.setCapabilities(field_73011_w, getCapabilities());
-+       }
++   protected void initCapabilities() {
++      net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
++      this.gatherCapabilities(parent);
++      net.minecraftforge.common.util.WorldCapabilityData data = (net.minecraftforge.common.util.WorldCapabilityData)perWorldStorage.func_201067_a(net.minecraftforge.common.util.WorldCapabilityData::new, net.minecraftforge.common.util.WorldCapabilityData.ID);
++      if (data == null) {
++         capabilityData = new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities());
++         perWorldStorage.func_75745_a(capabilityData.func_195925_e(), capabilityData);
++      } else {
++         capabilityData = data;
++         capabilityData.setCapabilities(field_73011_w, getCapabilities());
++      }
 +   }
 +
 +   protected WorldSavedDataStorage perWorldStorage; //Moved to a getter to simulate final without being final so we can load in subclasses.
-+   public WorldSavedDataStorage getPerWorldStorage()
-+   {
-+       return perWorldStorage;
++   public WorldSavedDataStorage getPerWorldStorage() {
++      return perWorldStorage;
 +   }
-+}
++
++   public int countEntities(net.minecraft.entity.EnumCreatureType type, boolean forSpawnCount) {
++      int ret = 0;
++      for(Entity entity : this.field_72996_f) {
++         if (entity.isCreatureType(type, forSpawnCount))
++            ret++;
++      }
++      return ret;
++   }
+ }

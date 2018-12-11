@@ -8,3 +8,24 @@
        field_209347_a.put(p_209346_0_, new EntitySpawnPlacementRegistry.Entry(p_209346_2_, p_209346_1_, p_209346_3_));
     }
  
+@@ -109,5 +110,20 @@
+    public static enum SpawnPlacementType {
+       ON_GROUND,
+       IN_WATER;
++
++      public static SpawnPlacementType create(String name, net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReaderBase, net.minecraft.util.math.BlockPos, EntityType<? extends EntityLiving>> predicate) {
++         return null;
++      }
++
++      private net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReaderBase, net.minecraft.util.math.BlockPos, EntityType<? extends EntityLiving>> predicate;
++      private SpawnPlacementType() { this(null); }
++      private SpawnPlacementType(net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReaderBase, net.minecraft.util.math.BlockPos, EntityType<? extends EntityLiving>> predicate) {
++         this.predicate = predicate;
++      }
++
++      public boolean canSpawnAt(net.minecraft.world.IWorldReaderBase world, net.minecraft.util.math.BlockPos pos, EntityType<? extends EntityLiving> type) {
++         if (predicate == null) return net.minecraft.world.WorldEntitySpawner.canSpawnAtBody(this, world, pos, type);
++         return predicate.test(world, pos, type);
++      }
+    }
+ }

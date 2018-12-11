@@ -186,25 +186,6 @@
 +     * @see net.minecraft.client.renderer.EntityRenderer#updateLightmap(float)
 +     */
 +    public void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
-+
-+    public BlockPos getRandomizedSpawnPoint()
-+    {
-+        BlockPos ret = this.field_76579_a.func_175694_M();
-+
-+        boolean isAdventure = field_76579_a.func_72912_H().func_76077_q() == GameType.ADVENTURE;
-+        int spawnFuzz = this.field_76579_a instanceof WorldServer ? field_76577_b.getSpawnFuzz((WorldServer)this.field_76579_a, this.field_76579_a.func_73046_m()) : 1;
-+        int border = MathHelper.func_76128_c(field_76579_a.func_175723_af().func_177729_b(ret.func_177958_n(), ret.func_177952_p()));
-+        if (border < spawnFuzz) spawnFuzz = border;
-+
-+        if (!func_177495_o() && !isAdventure && spawnFuzz != 0)
-+        {
-+            if (spawnFuzz < 2) spawnFuzz = 2;
-+            int spawnFuzzHalf = spawnFuzz / 2;
-+            ret = field_76579_a.func_175672_r(ret.func_177982_a(spawnFuzzHalf - field_76579_a.field_73012_v.nextInt(spawnFuzz), 0, spawnFuzzHalf - field_76579_a.field_73012_v.nextInt(spawnFuzz)));
-+        }
-+
-+        return ret;
-+    }
 +    /**
 +     * Determine if the cursor on the map should 'spin' when rendered, like it does for the player in the nether.
 +     *
