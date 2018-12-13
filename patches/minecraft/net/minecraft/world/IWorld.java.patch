@@ -1,0 +1,22 @@
+--- a/net/minecraft/world/IWorld.java
++++ b/net/minecraft/world/IWorld.java
+@@ -24,16 +24,16 @@
+    long func_72905_C();
+ 
+    default float func_130001_d() {
+-      return Dimension.field_111203_a[this.func_201675_m().func_76559_b(this.func_72912_H().func_76073_f())];
++      return this.func_201675_m().getCurrentMoonPhaseFactor(this.func_201672_e().func_72820_D());
+    }
+ 
+    default float func_72826_c(float p_72826_1_) {
+-      return this.func_201675_m().func_76563_a(this.func_72912_H().func_76073_f(), p_72826_1_);
++      return this.func_201675_m().func_76563_a(this.func_201672_e().func_72820_D(), p_72826_1_);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+    default int func_72853_d() {
+-      return this.func_201675_m().func_76559_b(this.func_72912_H().func_76073_f());
++      return this.func_201675_m().func_76559_b(this.func_201672_e().func_72820_D());
+    }
+ 
+    ITickList<Block> func_205220_G_();

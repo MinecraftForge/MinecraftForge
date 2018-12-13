@@ -1,0 +1,26 @@
+--- a/net/minecraft/world/storage/WorldSavedData.java
++++ b/net/minecraft/world/storage/WorldSavedData.java
+@@ -2,7 +2,7 @@
+ 
+ import net.minecraft.nbt.NBTTagCompound;
+ 
+-public abstract class WorldSavedData {
++public abstract class WorldSavedData implements net.minecraftforge.common.util.INBTSerializable<NBTTagCompound> {
+    private final String field_76190_i;
+    private boolean field_76189_a;
+ 
+@@ -29,4 +29,14 @@
+    public String func_195925_e() {
+       return this.field_76190_i;
+    }
++
++   @Override
++   public void deserializeNBT(NBTTagCompound nbt) {
++      func_76184_a(nbt);
++   }
++
++   @Override
++   public NBTTagCompound serializeNBT() {
++      return func_189551_b(new NBTTagCompound());
++   }
+ }

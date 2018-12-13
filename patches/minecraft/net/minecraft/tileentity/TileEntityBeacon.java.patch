@@ -1,0 +1,47 @@
+--- a/net/minecraft/tileentity/TileEntityBeacon.java
++++ b/net/minecraft/tileentity/TileEntityBeacon.java
+@@ -128,7 +128,7 @@
+       boolean flag = true;
+       BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+ 
+-      for(int i1 = j + 1; i1 < 256; ++i1) {
++      for(int i1 = j + 1; i1 < this.func_145831_w().func_72800_K(); ++i1) {
+          IBlockState iblockstate = this.field_145850_b.func_180495_p(blockpos$mutableblockpos.func_181079_c(i, i1, k));
+          Block block = iblockstate.func_177230_c();
+          float[] afloat;
+@@ -142,10 +142,15 @@
+                   break;
+                }
+ 
++               float[] custom = iblockstate.getBeaconColorMultiplier(this.field_145850_b, blockpos$mutableblockpos, func_174877_v());
++               if (custom != null) {
++                  afloat = custom;
++               } else {
+                tileentitybeacon$beamsegment.func_177262_a();
+                continue;
++               }
+             }
+-
++            else
+             afloat = ((BlockStainedGlassPane)block).func_196419_d().func_193349_f();
+          }
+ 
+@@ -174,8 +179,7 @@
+ 
+             for(int i2 = i - k1; i2 <= i + k1 && flag1; ++i2) {
+                for(int j1 = k - k1; j1 <= k + k1; ++j1) {
+-                  Block block1 = this.field_145850_b.func_180495_p(new BlockPos(i2, l1, j1)).func_177230_c();
+-                  if (block1 != Blocks.field_150475_bE && block1 != Blocks.field_150340_R && block1 != Blocks.field_150484_ah && block1 != Blocks.field_150339_S) {
++                  if (this.field_145850_b.func_180495_p(new BlockPos(i2, l1, j1)).isBeaconBase(this.field_145850_b, new BlockPos(i2, l1, j1), this.func_174877_v())) {
+                      flag1 = false;
+                      break;
+                   }
+@@ -346,7 +350,7 @@
+    }
+ 
+    public boolean func_94041_b(int p_94041_1_, ItemStack p_94041_2_) {
+-      return p_94041_2_.func_77973_b() == Items.field_151166_bC || p_94041_2_.func_77973_b() == Items.field_151045_i || p_94041_2_.func_77973_b() == Items.field_151043_k || p_94041_2_.func_77973_b() == Items.field_151042_j;
++      return p_94041_2_.isBeaconPayment();
+    }
+ 
+    public String func_174875_k() {

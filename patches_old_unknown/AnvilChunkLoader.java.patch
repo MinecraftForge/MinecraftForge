@@ -1,0 +1,91 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
+@@ -49,9 +49,31 @@
+         this.field_193416_e = p_i46673_2_;
+     }
+
+     @Nullable
+     public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
+     {
++        Object[] data = this.loadChunk__Async(p_75815_1_, p_75815_2_, p_75815_3_);
++
++        if (data != null)
++        {
++            Chunk chunk = (Chunk) data[0];
++            NBTTagCompound nbttagcompound = (NBTTagCompound) data[1];
++            this.loadEntities(p_75815_1_, nbttagcompound.func_74775_l("Level"), chunk);
++            return chunk;
++        }
++
++        return null;
++    }
++
++    @Nullable
++    public Object[] loadChunk__Async(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
++    {
+         ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
+         NBTTagCompound nbttagcompound = this.field_75828_a.get(chunkpos);
+ 
+@@ -67,7 +89,7 @@
+             nbttagcompound = this.field_193416_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
+         }
+ 
+-        return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
++        return this.checkedReadChunkFromNBT__Async(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
+     }
+ 
+     public boolean func_191063_a(int p_191063_1_, int p_191063_2_)
+@@ -80,6 +102,13 @@
+     @Nullable
+     protected Chunk func_75822_a(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
+     {
++        Object[] data = this.checkedReadChunkFromNBT__Async(p_75822_1_, p_75822_2_, p_75822_3_, p_75822_4_);
++        return data != null ? (Chunk)data[0] : null;
++    }
++
++    @Nullable
++    protected Object[] checkedReadChunkFromNBT__Async(World p_75822_1_, int p_75822_2_, int p_75822_3_, NBTTagCompound p_75822_4_)
++    {
+         if (!p_75822_4_.func_150297_b("Level", 10))
+         {
+             field_151505_a.error("Chunk file at {},{} is missing level data, skipping", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_));
+@@ -103,10 +132,29 @@
+                     field_151505_a.error("Chunk file at {},{} is in the wrong location; relocating. (Expected {}, {}, got {}, {})", Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(p_75822_2_), Integer.valueOf(p_75822_3_), Integer.valueOf(chunk.field_76635_g), Integer.valueOf(chunk.field_76647_h));
+                     nbttagcompound.func_74768_a("xPos", p_75822_2_);
+                     nbttagcompound.func_74768_a("zPos", p_75822_3_);
++
++                    // Have to move tile entities since we don't load them at this stage
++                    NBTTagList _tileEntities = nbttagcompound.func_150295_c("TileEntities", 10);
++
++                    if (_tileEntities != null)
++                    {
++                        for (int te = 0; te < _tileEntities.func_74745_c(); te++)
++                        {
++                            NBTTagCompound _nbt = (NBTTagCompound) _tileEntities.func_150305_b(te);
++                            _nbt.func_74768_a("x", p_75822_2_ * 16 + (_nbt.func_74762_e("x") - chunk.field_76635_g * 16));
++                            _nbt.func_74768_a("z", p_75822_3_ * 16 + (_nbt.func_74762_e("z") - chunk.field_76647_h * 16));
++                        }
++                    }
++
+                     chunk = this.func_75823_a(p_75822_1_, nbttagcompound);
+                 }
+ 
+-                return chunk;
++                Object[] data = new Object[2];
++                data[0] = chunk;
++                data[1] = p_75822_4_;
++                // event is fired in ChunkIOProvider.callStage2 since it must be fired after TE's load.
++                // MinecraftForge.EVENT_BUS.post(new ChunkDataEvent.Load(chunk, par4NBTTagCompound));
++                return data;
+             }
+         }
+     }
+@@ -121,7 +169,10 @@
+             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+             nbttagcompound.func_74782_a("Level", nbttagcompound1);
+             nbttagcompound.func_74768_a("DataVersion", 1343);
++            net.minecraftforge.fml.common.FMLCommonHandler.instance().getDataFixer().writeVersionData(nbttagcompound);
+             this.func_75820_a(p_75816_2_, p_75816_1_, nbttagcompound1);
+             this.func_75824_a(p_75816_2_.func_76632_l(), nbttagcompound);
+         }
+         catch (Exception exception)

@@ -154,12 +154,16 @@ public class ForgeConfig
         public static int clumpingThreshold() {
             return ForgeConfig.INSTANCE.configData.<Integer>getOrElse("general.clumpingThreshold", 64);
         }
+        public static boolean removeErroringEntities() {
+            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.removeErroringEntities", false);
+        }
+        public static boolean removeErroringTileEntities() {
+            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.removeErroringTileEntities", false);
+        }
     }
 
     //General
     //public static boolean disableVersionCheck = false;
-    //public static boolean removeErroringEntities = false;
-    //public static boolean removeErroringTileEntities = false;
     //public static boolean fullBoundingBoxLadders = false;
     //public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     //public static boolean fixVanillaCascading = false;

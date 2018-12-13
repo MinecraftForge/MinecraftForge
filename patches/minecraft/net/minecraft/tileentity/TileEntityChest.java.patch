@@ -1,0 +1,70 @@
+--- a/net/minecraft/tileentity/TileEntityChest.java
++++ b/net/minecraft/tileentity/TileEntityChest.java
+@@ -33,6 +33,7 @@
+    protected float field_145986_n;
+    protected int field_145987_o;
+    private int field_145983_q;
++   private net.minecraftforge.common.capabilities.OptionalCapabilityInstance<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
+ 
+    protected TileEntityChest(TileEntityType<?> p_i48287_1_) {
+       super(p_i48287_1_);
+@@ -220,7 +221,7 @@
+ 
+    public static int func_195481_a(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
+       IBlockState iblockstate = p_195481_0_.func_180495_p(p_195481_1_);
+-      if (iblockstate.func_177230_c().func_149716_u()) {
++      if (iblockstate.hasTileEntity()) {
+          TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
+          if (tileentity instanceof TileEntityChest) {
+             return ((TileEntityChest)tileentity).field_145987_o;
+@@ -235,4 +236,50 @@
+       p_199722_0_.func_199721_a(p_199722_1_.func_190576_q());
+       p_199722_1_.func_199721_a(nonnulllist);
+    }
++
++   @Override
++   public void func_145836_u() {
++      super.func_145836_u();
++      if (this.chestHandler != null) {
++         this.chestHandler.invalidate();
++         this.chestHandler = null;
++      }
++   }
++
++   @Override
++   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, EnumFacing side) {
++       if (cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++          if (this.chestHandler == null) {
++             this.chestHandler = net.minecraftforge.common.capabilities.OptionalCapabilityInstance.of(this::createHandler);
++          }
++          return this.chestHandler.cast();
++       }
++       return super.getCapability(cap, side);
++   }
++
++   private net.minecraftforge.items.IItemHandlerModifiable createHandler() {
++      IBlockState state = this.func_195044_w();
++      if (!(state.func_177230_c() instanceof BlockChest)) {
++         return new net.minecraftforge.items.wrapper.InvWrapper(this);
++      }
++      ChestType type = state.func_177229_b(BlockChest.field_196314_b);
++      if (type != ChestType.SINGLE) {
++         BlockPos opos = this.func_174877_v().func_177972_a(BlockChest.func_196311_i(state));
++         IBlockState ostate = this.func_145831_w().func_180495_p(opos);
++         if (state.func_177230_c() == ostate.func_177230_c()) {
++            ChestType otype = ostate.func_177229_b(BlockChest.field_196314_b);
++            if (otype != ChestType.SINGLE && type != otype && state.func_177229_b(BlockChest.field_176459_a) == ostate.func_177229_b(BlockChest.field_176459_a)) {
++               TileEntity ote = this.func_145831_w().func_175625_s(opos);
++               if (ote instanceof TileEntityChest) {
++                  IInventory top    = type == ChestType.RIGHT ? this : (IInventory)ote;
++                  IInventory bottom = type == ChestType.RIGHT ? (IInventory)ote : this;
++                  return new net.minecraftforge.items.wrapper.CombinedInvWrapper(
++                     new net.minecraftforge.items.wrapper.InvWrapper(top),
++                     new net.minecraftforge.items.wrapper.InvWrapper(bottom));
++               }
++            }
++         }
++      }
++      return new net.minecraftforge.items.wrapper.InvWrapper(this);
++   }
+ }

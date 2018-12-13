@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -127,8 +127,9 @@
+             }
+         }
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().confirmBackupLevelDatUse(this);
+         file1 = new File(this.field_75770_b, "level.dat_old");
+         return file1.exists() ? SaveFormatOld.func_186353_a(file1, this.field_186341_a) : null;
+     }
+ 
+     public void func_75755_a(WorldInfo p_75755_1_, @Nullable NBTTagCompound p_75755_2_)
+@@ -137,6 +138,8 @@
+         NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+         nbttagcompound1.func_74782_a("Data", nbttagcompound);
+ 
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().handleWorldDataSave(this, p_75755_1_, nbttagcompound1);
++
+         try
+         {
+             File file1 = new File(this.field_75770_b, "level.dat_new");

@@ -1,0 +1,33 @@
+--- a/net/minecraft/world/end/DragonFightManager.java
++++ b/net/minecraft/world/end/DragonFightManager.java
+@@ -80,6 +80,7 @@
+ 
+          this.field_186117_k = p_i46669_2_.func_74767_n("DragonKilled");
+          this.field_186118_l = p_i46669_2_.func_74767_n("PreviouslyKilled");
++         this.field_186120_n = !p_i46669_2_.func_74767_n("LegacyScanPerformed"); // Forge: fix MC-105080
+          if (p_i46669_2_.func_74767_n("IsRespawning")) {
+             this.field_186122_p = DragonSpawnState.START;
+          }
+@@ -114,6 +115,7 @@
+ 
+       nbttagcompound.func_74757_a("DragonKilled", this.field_186117_k);
+       nbttagcompound.func_74757_a("PreviouslyKilled", this.field_186118_l);
++      nbttagcompound.func_74757_a("LegacyScanPerformed", !this.field_186120_n); // Forge: fix MC-105080
+       if (this.field_186121_o != null) {
+          nbttagcompound.func_74782_a("ExitPortalLocation", NBTUtil.func_186859_a(this.field_186121_o));
+       }
+@@ -502,6 +504,14 @@
+ 
+    }
+ 
++   public void addPlayer(EntityPlayerMP player) {
++      this.field_186109_c.func_186760_a(player);
++   }
++
++   public void removePlayer(EntityPlayerMP player) {
++      this.field_186109_c.func_186761_b(player);
++   }
++
+    class LoadManager {
+       private DragonFightManager.LoadState field_210826_b;
+ 

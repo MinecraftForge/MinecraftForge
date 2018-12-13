@@ -9,7 +9,24 @@
     public static final float[] field_111203_a = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
     protected World field_76579_a;
     protected boolean field_76575_d;
-@@ -141,4 +141,97 @@
+@@ -64,7 +64,7 @@
+ 
+    @OnlyIn(Dist.CLIENT)
+    public float func_76571_f() {
+-      return 128.0F;
++      return this.getWorld().func_72912_H().func_76067_t().getCloudHeight();
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -120,6 +120,7 @@
+ 
+    protected abstract void func_76572_b();
+ 
++   @Deprecated //Forge: Use WorldType.createChunkGenerator
+    public abstract IChunkGenerator<?> func_186060_c();
+ 
+    @Nullable
+@@ -141,4 +142,101 @@
     public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  
     public abstract DimensionType func_186058_p();
@@ -101,6 +118,10 @@
 +    */
 +   public boolean shouldClientCheckLighting() {
 +      return !(this instanceof OverworldDimension);
++   }
++
++   public World getWorld() {
++      return this.field_76579_a;
 +   }
 +
 +   public enum SleepResult {
