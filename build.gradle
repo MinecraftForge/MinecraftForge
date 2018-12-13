@@ -460,6 +460,7 @@ project(':forge') {
             def libs = [:]
             def json = [
                 _comment_: launcherJson.comment,
+                spec: 0,
                 profile: project.name,
                 version: launcherJson.id,
                 json: '/version.json',

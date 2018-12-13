@@ -20,6 +20,7 @@
 package net.minecraftforge.userdev;
 
 import com.google.common.collect.Sets;
+import com.google.common.collect.Streams;
 import net.minecraftforge.fml.loading.moddiscovery.IModLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.logging.log4j.LogManager;
@@ -27,10 +28,16 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.FileAttributeView;
+import java.nio.file.attribute.UserPrincipalLookupService;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.jar.Manifest;
@@ -88,7 +95,16 @@ public class ClasspathLocator implements IModLocator
         if (path.length < 1) {
             throw new IllegalArgumentException("Missing path");
         }
-        return modFile.getFilePath().resolve(modFile.getFilePath().getFileSystem().getPath(path[0], Arrays.copyOfRange(path, 1, path.length)));
+
+        Path filePath = modFile.getFilePath();
+        Path classesRoot = getClassesPath(filePath);
+        String[] tail = Arrays.copyOfRange(path, 1, path.length);
+        Path classPath = classesRoot.resolve(classesRoot.getFileSystem().getPath(path[0], tail));
+        if(Files.exists(classPath))
+        {
+            return classPath;
+        }
+        return filePath.resolve(filePath.getFileSystem().getPath(path[0], tail));
     }
 
     @Override
@@ -96,22 +112,7 @@ public class ClasspathLocator implements IModLocator
         LOGGER.debug(SCAN,"Scanning classpath");
 
         Path filePath = modFile.getFilePath();
-
-        Path scanPath = filePath;
-
-        // Hack 1: When running from within intellij, we get
-        // "out/production/resources" + "out/production/classes"
-        if(filePath.getNameCount() >= 1 && filePath.getName(filePath.getNameCount()-1).toString().equals("resources"))
-        {
-            scanPath = filePath.getParent().resolve("classes");
-        }
-        // Hack 2: When running from gradle, we get
-        // "build/resources/<sourceset>" + "build/classes/<language>/<sourceset>"
-        else if(filePath.getNameCount() >= 2 && filePath.getName(filePath.getNameCount()-2).toString().equals("resources"))
-        {
-            // We'll scan all the subdirectories for languages and sourcesets, hopefully that works...
-            scanPath = filePath.getParent().getParent().resolve("classes");
-        }
+        Path scanPath = getClassesPath(filePath);
 
         try (Stream<Path> files = Files.find(scanPath, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
@@ -119,6 +120,26 @@ public class ClasspathLocator implements IModLocator
             e.printStackTrace();
         }
         LOGGER.debug(SCAN,"Classpath scan complete");
+    }
+
+    private Path getClassesPath(Path filePath)
+    {
+        Path classesPath = filePath;
+
+        // Hack 1: When running from within intellij, we get
+        // "out/production/resources" + "out/production/classes"
+        if(filePath.getNameCount() >= 1 && filePath.getName(filePath.getNameCount()-1).toString().equals("resources"))
+        {
+            classesPath = filePath.getParent().resolve("classes");
+        }
+        // Hack 2: When running from gradle, we get
+        // "build/resources/<sourceset>" + "build/classes/<language>/<sourceset>"
+        else if(filePath.getNameCount() >= 2 && filePath.getName(filePath.getNameCount()-2).toString().equals("resources"))
+        {
+            // We'll scan all the subdirectories for languages and sourcesets, hopefully that works...
+            classesPath = filePath.getParent().getParent().resolve("classes");
+        }
+        return classesPath;
     }
 
     @Override
