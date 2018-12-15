@@ -64,9 +64,8 @@ public interface IFieldWrapper
     /**
      * @see IFieldWrapper#setupConfiguration(Configuration, String, String, boolean, boolean, boolean)
      */
-    default void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart) {
-        setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart, false);
-    }
+    @Deprecated
+    void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart);
 
     /**
      *
@@ -78,7 +77,10 @@ public interface IFieldWrapper
      * @param hasSlidingControl true if the property is going to have a slider control attached in the configuration UI;
      *                          works in conjunction with {@link Config.RangeInt} and {@link Config.RangeDouble}
      */
-    void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl);
+    default void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl)
+    {
+        setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart);
+    }
     
     /**
      * i.e. general.map in the example above

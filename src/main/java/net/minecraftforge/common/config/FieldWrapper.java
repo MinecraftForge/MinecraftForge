@@ -175,6 +175,11 @@ public abstract class FieldWrapper implements IFieldWrapper
         }
 
         @Override
+        public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart) {
+            this.setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart,false);
+        }
+
+        @Override
         public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl)
         {
             ConfigCategory confCat = cfg.getCategory(getCategory());
@@ -251,6 +256,11 @@ public abstract class FieldWrapper implements IFieldWrapper
             }
         }
 
+        @Override
+        public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart) {
+            this.setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart,false);
+        }
+
         @SuppressWarnings({ "unchecked", "rawtypes" })
         @Override
         public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart, boolean hasSlidingControl)
@@ -317,6 +327,11 @@ public abstract class FieldWrapper implements IFieldWrapper
             {
                 throw new RuntimeException(e);
             }
+        }
+
+        @Override
+        public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart) {
+            this.setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart,false);
         }
 
         @Override
