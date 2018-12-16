@@ -41,6 +41,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
     private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
+    private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
     private boolean saveToDisc = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
@@ -88,6 +89,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             this.add((CreateCallback<T>)inst);
         if (inst instanceof ValidateCallback)
             this.add((ValidateCallback<T>)inst);
+        if (inst instanceof BakeCallback)
+            this.add((BakeCallback<T>)inst);
         if (inst instanceof DummyFactory)
             this.set((DummyFactory<T>)inst);
         if (inst instanceof MissingFactory)
@@ -116,6 +119,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public RegistryBuilder<T> add(ValidateCallback<T> validate)
     {
         this.validateCallback.add(validate);
+        return this;
+    }
+
+    public RegistryBuilder<T> add(BakeCallback<T> bake)
+    {
+        this.bakeCallback.add(bake);
         return this;
     }
 
@@ -152,7 +161,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public IForgeRegistry<T> create()
     {
         return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getAdd(), getClear(), getCreate(), getValidate(), saveToDisc, allowOverrides, allowModifications, dummyFactory, missingFactory);
+                getAdd(), getClear(), getCreate(), getValidate(), getBake(), saveToDisc, allowOverrides, allowModifications, dummyFactory, missingFactory);
     }
 
     @Nullable
@@ -212,6 +221,21 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
         {
             for (ValidateCallback<T> cb : this.validateCallback)
                 cb.onValidate(owner, stage, id, key, obj);
+        };
+    }
+
+    @Nullable
+    private BakeCallback<T> getBake()
+    {
+        if (bakeCallback.isEmpty())
+            return null;
+        if (bakeCallback.size() == 1)
+            return bakeCallback.get(0);
+
+        return (owner, stage) ->
+        {
+            for (BakeCallback<T> cb : this.bakeCallback)
+                cb.onBake(owner, stage);
         };
     }
 }

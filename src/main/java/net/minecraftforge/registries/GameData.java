@@ -19,7 +19,6 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -49,9 +48,9 @@ import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.StartupQuery;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
 
 import java.lang.reflect.Field;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -70,8 +69,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 
 /**
  * INTERNAL ONLY
@@ -226,7 +223,10 @@ public class GameData
             reg.validateContent(name);
             reg.freeze();
         });
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
+            reg.freeze();
+            reg.bake();
+        });
 
         // the id mapping is finalized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
         //Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
@@ -277,62 +277,34 @@ public class GameData
     }
 
 
-    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
+    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
+
+        // Keep track of used state IDs
+        private BitSet usedStateIds = new BitSet();
+        // Tiny optimization, instead of searching clear bits from 0, start at the last used one.
+        private int nextId = 0;
 
         @Override
         public void onAdd(IForgeRegistryInternal<Block> owner, RegistryManager stage, int id, Block block, @Nullable Block oldBlock)
         {
-            @SuppressWarnings("unchecked")
-            ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
-
-            int offset = 0;
-            for (IBlockState state : block.getStateContainer().getValidStates())
-                blockstateMap.put(state, id + offset++);
-/*
-
-            if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
-            {
-                for (int meta = 0; meta < 15; meta++)
-                    blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta);
-            }
-
-            //So, due to blocks having more in-world states then metadata allows, we have to turn the map into a semi-milti-bimap.
-            //We can do this however because the implementation of the map is last set wins. So we can add all states, then fix the meta bimap.
-            //Multiple states -> meta. But meta to CORRECT state.
-
-            final boolean[] usedMeta = new boolean[16]; //Hold a list of known meta from all states.
-            for (IBlockState state : block.getBlockState().getValidStates())
-            {
-                final int meta = block.getMetaFromState(state);
-                blockstateMap.put(state, id << 4 | meta); //Add ALL the things!
-                usedMeta[meta] = true;
-            }
-
-            for (int meta = 0; meta < 16; meta++)
-            {
-                if (block.getClass() == BlockObserver.class)
-                    continue; //Observers are bad and have non-cyclical states. So we HAVE to use the vanilla logic above.
-                if (usedMeta[meta])
-                    blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
-            }
-
             if (oldBlock != null)
             {
-                @SuppressWarnings("unchecked")
-                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
-                Item item = blockToItem.get(oldBlock);
-                if (item != null)
-                    blockToItem.forcePut(block, item);
+                if (block.getRegistryName().getNamespace().equals("minecraft") &&
+                        block.getStateContainer().getValidStates().size() != block.getStateContainer().getValidStates().size())
+                {
+                    throw new RuntimeException("Registry replacements for vanilla blocks must not change the number of blockstates.");
+                }
             }
-*/
         }
 
         @Override
         public void onClear(IForgeRegistryInternal<Block> owner, RegistryManager stage)
         {
             owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class).clear();
+            usedStateIds.clear();
+            nextId = 0;
         }
 
         @Override
@@ -362,6 +334,25 @@ public class GameData
             GameData.forceRegistryName(ret, key);
             return ret;
         }
+
+        @Override
+        public void onBake(IForgeRegistryInternal<Block> owner, RegistryManager stage)
+        {
+            @SuppressWarnings("unchecked")
+            ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
+
+            for (Block block : owner)
+            {
+                for (IBlockState state : block.getStateContainer().getValidStates())
+                {
+                    nextId = usedStateIds.nextClearBit(nextId);
+
+                    usedStateIds.set(nextId);
+                    blockstateMap.put(state, nextId++);
+                }
+            }
+        }
+
         private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
             private BlockDummyAir(Block.Builder builder)
@@ -688,8 +679,12 @@ public class GameData
             loadRegistry(key, STAGING, RegistryManager.ACTIVE, registrySuperType, true);
         });
 
-        // Dump the active registry
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
+            reg.bake();
+
+            // Dump the active registry
+            reg.dump(name);
+        });
 
         // Tell mods that the ids have changed
         //Loader.instance().fireRemapEvent(remaps, false);

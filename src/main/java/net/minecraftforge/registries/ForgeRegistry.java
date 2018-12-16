@@ -78,6 +78,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final AddCallback<V> add;
     private final ClearCallback<V> clear;
     private final ValidateCallback<V> validate;
+    private final BakeCallback<V> bake;
     private final MissingFactory<V> missing;
     private final BitSet availabilityMap;
     private final Set<ResourceLocation> dummies = Sets.newHashSet();
@@ -94,7 +95,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private V defaultValue = null;
     boolean isFrozen = false;
 
-    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
+    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, @Nullable BakeCallback<V> bake, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
     {
         this.stage = stage;
         this.superType = superType;
@@ -106,6 +107,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.add = add;
         this.clear = clear;
         this.validate = validate;
+        this.bake = bake;
         this.missing = missing;
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
         this.allowOverrides = allowOverrides;
@@ -268,7 +270,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     ForgeRegistry<V> copy(RegistryManager stage)
     {
-        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, stage, allowOverrides, isModifiable, dummyFactory, missing);
+        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, bake, stage, allowOverrides, isModifiable, dummyFactory, missing);
     }
 
     int add(int id, V value)
@@ -463,6 +465,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             if (this.validate != null)
                 this.validate.onValidate(this, this.stage, id, name, obj);
         }
+    }
+
+    public void bake()
+    {
+        if (this.bake != null)
+            this.bake.onBake(this, this.stage);
     }
 
     void sync(ResourceLocation name, ForgeRegistry<V> from)

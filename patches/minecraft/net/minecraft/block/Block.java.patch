@@ -181,7 +181,15 @@
        func_196254_a("dropper", new BlockDropper(Block.Builder.func_200945_a(Material.field_151576_e).func_200943_b(3.5F)));
        func_196254_a("white_terracotta", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_193561_M).func_200948_a(1.25F, 4.2F)));
        func_196254_a("orange_terracotta", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_193562_N).func_200948_a(1.25F, 4.2F)));
-@@ -1604,4 +1620,83 @@
+@@ -1464,6 +1480,7 @@
+       func_196254_a("structure_block", new BlockStructure(Block.Builder.func_200949_a(Material.field_151573_f, MapColor.field_197656_x).func_200948_a(-1.0F, 3600000.0F)));
+       field_149771_c.func_177776_a();
+ 
++      if(false) // Processed in GameData.BlockCallbacks#onBake
+       for(Block block80 : field_149771_c) {
+          for(IBlockState iblockstate : block80.func_176194_O().func_177619_a()) {
+             field_176229_d.func_195867_b(iblockstate);
+@@ -1604,4 +1621,83 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }

@@ -96,6 +96,14 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     }
 
     /**
+     * Callback fired when the registry is done processing. Used to calculate state ID maps.
+     */
+    interface BakeCallback<V extends IForgeRegistryEntry<V>>
+    {
+        void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage);
+    }
+
+    /**
      * Factory for creating dummy entries, allowing worlds to be loaded and keep the missing block references.
      */
     interface DummyFactory<V extends IForgeRegistryEntry<V>>
