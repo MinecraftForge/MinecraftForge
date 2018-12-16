@@ -710,7 +710,7 @@ public class Property
     }
 
     /**
-     * Gets the array of valid values that this String Property can be set to, or null if not defined.
+     * Gets the array of valid values that this String Property can be set to, or null or empty if not defined.
      *
      * @return a String array of valid values
      */
@@ -732,7 +732,7 @@ public class Property
     }
 
     /**
-     * Gets the array of the config GUI display versions of the valid values that this String Property can be set to, or null if not defined.
+     * Gets the array of the config GUI display versions of the valid values that this String Property can be set to, or null or empty if not defined.
      *
      * @return a String array of the aliases of the valid values
      */
