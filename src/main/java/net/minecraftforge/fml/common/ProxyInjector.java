@@ -31,6 +31,9 @@ import org.apache.logging.log4j.Level;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+
+import org.objectweb.asm.Type;
 
 /**
  * @author cpw
@@ -42,7 +45,12 @@ public class ProxyInjector
     {
         FMLLog.log.debug("Attempting to inject @SidedProxy classes into {}", mod.getModId());
         SetMultimap<String, ASMData> modData = data.getAnnotationsFor(mod);
-        Set<ASMData> mods = modData.get(Mod.class.getName());
+        Set<ASMDataTable.ASMData> mods = Sets.newHashSet();
+
+        for(Type type : ModContainerFactory.modTypes.keySet()) {
+            mods.addAll(modData.get(type.getClassName()));
+        }
+
         Set<ASMData> targets = modData.get(SidedProxy.class.getName());
         ClassLoader mcl = Loader.instance().getModClassLoader();
 
