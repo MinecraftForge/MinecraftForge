@@ -52,6 +52,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceFluidMode;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -617,6 +618,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (this.mc.gameSettings.showDebugInfo && !pre(DEBUG))
         {
+            debugOverlay.update();
             listL.addAll(debugOverlay.getLeft());
             listR.addAll(debugOverlay.getRight());
             post(DEBUG);
@@ -831,6 +833,12 @@ public class GuiIngameForge extends GuiIngame
         {
             super(mc);
             this.mc = mc;
+        }
+        public void update()
+        {
+            Entity entity = this.mc.getRenderViewEntity();
+            this.rayTraceBlock = entity.rayTrace(20.0D, 0.0F, RayTraceFluidMode.NEVER);
+            this.rayTraceFluid = entity.rayTrace(20.0D, 0.0F, RayTraceFluidMode.ALWAYS);
         }
         @Override protected void renderDebugInfoLeft(){}
         @Override protected void renderDebugInfoRight(){}
