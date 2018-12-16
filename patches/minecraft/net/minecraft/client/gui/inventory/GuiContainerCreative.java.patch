@@ -46,7 +46,7 @@
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
        this.field_195377_F = false;
 -      if (field_147058_w != ItemGroup.field_78027_g.func_78021_a()) {
-+      if (ItemGroup.field_78032_a[field_147058_w].hasSearchBar()) {
++      if (!ItemGroup.field_78032_a[field_147058_w].hasSearchBar()) {
           if (this.field_146297_k.field_71474_y.field_74310_D.func_197976_a(p_keyPressed_1_, p_keyPressed_2_)) {
              this.field_195377_F = true;
              this.func_147050_b(ItemGroup.field_78027_g);
