@@ -1613,9 +1613,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
-        if (validValuesDisplay != null)
-            prop.setValidValuesDisplay(validValuesDisplay);
-
+        prop.setValidValuesDisplay(validValuesDisplay);
         prop.setLanguageKey(langKey);
         prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getString();
@@ -1702,9 +1700,7 @@ public class Configuration
     {
         Property prop = this.get(category, name, defaultValue);
         prop.setValidValues(validValues);
-        if (validValuesDisplay != null)
-            prop.setValidValuesDisplay(validValuesDisplay);
-
+        prop.setValidValuesDisplay(validValuesDisplay);
         prop.setLanguageKey(langKey);
         prop.setComment(comment + " [default: " + defaultValue + "]");
         return prop.getStringList();
