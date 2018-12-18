@@ -1,0 +1,28 @@
+--- a/net/minecraft/world/gen/feature/IceSpikeFeature.java
++++ b/net/minecraft/world/gen/feature/IceSpikeFeature.java
+@@ -38,14 +38,14 @@
+                   if ((i1 == 0 && j1 == 0 || !(f1 * f1 + f2 * f2 > f * f)) && (i1 != -l && i1 != l && j1 != -l && j1 != l || !(p_212245_3_.nextFloat() > 0.75F))) {
+                      IBlockState iblockstate = p_212245_1_.func_180495_p(p_212245_4_.func_177982_a(i1, k, j1));
+                      Block block = iblockstate.func_177230_c();
+-                     if (iblockstate.func_196958_f() || Block.func_196245_f(block) || block == Blocks.field_196604_cC || block == Blocks.field_150432_aD) {
++                     if (iblockstate.isAir(p_212245_1_, p_212245_4_.func_177982_a(i1, k, j1)) || Block.func_196245_f(block) || block == Blocks.field_196604_cC || block == Blocks.field_150432_aD) {
+                         this.func_202278_a(p_212245_1_, p_212245_4_.func_177982_a(i1, k, j1), Blocks.field_150403_cj.func_176223_P());
+                      }
+ 
+                      if (k != 0 && l > 1) {
+                         iblockstate = p_212245_1_.func_180495_p(p_212245_4_.func_177982_a(i1, -k, j1));
+                         block = iblockstate.func_177230_c();
+-                        if (iblockstate.func_196958_f() || Block.func_196245_f(block) || block == Blocks.field_196604_cC || block == Blocks.field_150432_aD) {
++                        if (iblockstate.isAir(p_212245_1_, p_212245_4_.func_177982_a(i1, -k, j1)) || Block.func_196245_f(block) || block == Blocks.field_196604_cC || block == Blocks.field_150432_aD) {
+                            this.func_202278_a(p_212245_1_, p_212245_4_.func_177982_a(i1, -k, j1), Blocks.field_150403_cj.func_176223_P());
+                         }
+                      }
+@@ -72,7 +72,7 @@
+                while(blockpos.func_177956_o() > 50) {
+                   IBlockState iblockstate1 = p_212245_1_.func_180495_p(blockpos);
+                   Block block1 = iblockstate1.func_177230_c();
+-                  if (!iblockstate1.func_196958_f() && !Block.func_196245_f(block1) && block1 != Blocks.field_196604_cC && block1 != Blocks.field_150432_aD && block1 != Blocks.field_150403_cj) {
++                  if (!iblockstate1.isAir(p_212245_1_, blockpos) && !Block.func_196245_f(block1) && block1 != Blocks.field_196604_cC && block1 != Blocks.field_150432_aD && block1 != Blocks.field_150403_cj) {
+                      break;
+                   }
+ 

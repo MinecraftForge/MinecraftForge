@@ -35,6 +35,7 @@ public class Tags
         public static final Tag<Block> CHESTS_TRAPPED = tag("chests/trapped");
         public static final Tag<Block> CHESTS_WOODEN = tag("chests/wooden");
         public static final Tag<Block> COBBLESTONE = tag("cobblestone");
+        public static final Tag<Block> DIRT = tag("dirt");
         public static final Tag<Block> FENCE_GATES = tag("fence_gates");
         public static final Tag<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
         public static final Tag<Block> FENCES = tag("fences");

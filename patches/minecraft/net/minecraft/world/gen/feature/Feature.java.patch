@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/gen/feature/Feature.java
++++ b/net/minecraft/world/gen/feature/Feature.java
+@@ -64,15 +64,15 @@
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202339_q = new BigTreeFeature(false);
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202340_r = new BirchTreeFeature(false, false);
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202341_s = new BirchTreeFeature(false, true);
+-   public static final AbstractTreeFeature<NoFeatureConfig> field_202342_t = new ShrubFeature(Blocks.field_196620_N.func_176223_P(), Blocks.field_196642_W.func_176223_P());
+-   public static final AbstractTreeFeature<NoFeatureConfig> field_202343_u = new JungleTreeFeature(false, 4, Blocks.field_196620_N.func_176223_P(), Blocks.field_196648_Z.func_176223_P(), true);
++   public static final AbstractTreeFeature<NoFeatureConfig> field_202342_t = new ShrubFeature(Blocks.field_196620_N.func_176223_P(), Blocks.field_196642_W.func_176223_P()).setSapling((net.minecraftforge.common.IPlantable)Blocks.field_196678_w);
++   public static final AbstractTreeFeature<NoFeatureConfig> field_202343_u = new JungleTreeFeature(false, 4, Blocks.field_196620_N.func_176223_P(), Blocks.field_196648_Z.func_176223_P(), true).setSapling((net.minecraftforge.common.IPlantable)Blocks.field_196678_w);
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202344_v = new PointyTaigaTreeFeature();
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202345_w = new CanopyTreeFeature(false);
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202346_x = new SavannaTreeFeature(false);
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202347_y = new TallTaigaTreeFeature(false);
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202348_z = new SwampTreeFeature();
+    public static final AbstractTreeFeature<NoFeatureConfig> field_202301_A = new TreeFeature(false);
+-   public static final HugeTreesFeature<NoFeatureConfig> field_202302_B = new MegaJungleFeature(false, 10, 20, Blocks.field_196620_N.func_176223_P(), Blocks.field_196648_Z.func_176223_P());
++   public static final HugeTreesFeature<NoFeatureConfig> field_202302_B = new MegaJungleFeature(false, 10, 20, Blocks.field_196620_N.func_176223_P(), Blocks.field_196648_Z.func_176223_P()).setSapling((net.minecraftforge.common.IPlantable)Blocks.field_196678_w);
+    public static final HugeTreesFeature<NoFeatureConfig> field_202303_C = new MegaPineTree(false, false);
+    public static final HugeTreesFeature<NoFeatureConfig> field_202304_D = new MegaPineTree(false, true);
+    public static final AbstractFlowersFeature field_202305_E = new DefaultFlowersFeature();

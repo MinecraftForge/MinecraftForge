@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/HellLavaFeature.java
++++ b/net/minecraft/world/gen/feature/HellLavaFeature.java
+@@ -15,7 +15,7 @@
+    public boolean func_212245_a(IWorld p_212245_1_, IChunkGenerator<? extends IChunkGenSettings> p_212245_2_, Random p_212245_3_, BlockPos p_212245_4_, HellLavaConfig p_212245_5_) {
+       if (p_212245_1_.func_180495_p(p_212245_4_.func_177984_a()) != field_205173_a) {
+          return false;
+-      } else if (!p_212245_1_.func_180495_p(p_212245_4_).func_196958_f() && p_212245_1_.func_180495_p(p_212245_4_) != field_205173_a) {
++      } else if (!p_212245_1_.func_175623_d(p_212245_4_) && p_212245_1_.func_180495_p(p_212245_4_) != field_205173_a) {
+          return false;
+       } else {
+          int i = 0;

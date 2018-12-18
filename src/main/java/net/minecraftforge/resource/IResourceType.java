@@ -19,13 +19,9 @@
 
 package net.minecraftforge.resource;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
 /**
  * Represents a generic type of reloadable resource. Used for resource reload filtering.
  */
-@OnlyIn(Dist.CLIENT)
 public interface IResourceType
 {
 }

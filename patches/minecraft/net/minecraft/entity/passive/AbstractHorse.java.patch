@@ -1,0 +1,24 @@
+--- a/net/minecraft/entity/passive/AbstractHorse.java
++++ b/net/minecraft/entity/passive/AbstractHorse.java
+@@ -264,6 +264,7 @@
+ 
+       this.field_110296_bG.func_110134_a(this);
+       this.func_110232_cE();
++      this.itemHandler = net.minecraftforge.common.capabilities.OptionalCapabilityInstance.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG));
+    }
+ 
+    protected void func_110232_cE() {
+@@ -960,4 +961,13 @@
+ 
+       return p_204210_2_;
+    }
++
++   private net.minecraftforge.common.capabilities.OptionalCapabilityInstance<?> itemHandler = null;
++
++   @Override
++   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
++      if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
+ }

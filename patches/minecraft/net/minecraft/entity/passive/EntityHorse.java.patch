@@ -1,0 +1,63 @@
+--- a/net/minecraft/entity/passive/EntityHorse.java
++++ b/net/minecraft/entity/passive/EntityHorse.java
+@@ -32,6 +32,7 @@
+    private static final UUID field_184786_bD = UUID.fromString("556E1665-8B10-40C8-8F9D-CF9B1667F295");
+    private static final DataParameter<Integer> field_184789_bG = EntityDataManager.<Integer>func_187226_a(EntityHorse.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Integer> field_184791_bI = EntityDataManager.<Integer>func_187226_a(EntityHorse.class, DataSerializers.field_187192_b);
++   private static final DataParameter<ItemStack> HORSE_ARMOR_STACK = EntityDataManager.<ItemStack>func_187226_a(EntityHorse.class, DataSerializers.field_187196_f);
+    private static final String[] field_110268_bz = new String[]{"textures/entity/horse/horse_white.png", "textures/entity/horse/horse_creamy.png", "textures/entity/horse/horse_chestnut.png", "textures/entity/horse/horse_brown.png", "textures/entity/horse/horse_black.png", "textures/entity/horse/horse_gray.png", "textures/entity/horse/horse_darkbrown.png"};
+    private static final String[] field_110269_bA = new String[]{"hwh", "hcr", "hch", "hbr", "hbl", "hgr", "hdb"};
+    private static final String[] field_110291_bB = new String[]{null, "textures/entity/horse/horse_markings_white.png", "textures/entity/horse/horse_markings_whitefield.png", "textures/entity/horse/horse_markings_whitedots.png", "textures/entity/horse/horse_markings_blackdots.png"};
+@@ -47,6 +48,7 @@
+       super.func_70088_a();
+       this.field_70180_af.func_187214_a(field_184789_bG, 0);
+       this.field_70180_af.func_187214_a(field_184791_bI, HorseArmorType.NONE.func_188579_a());
++      this.field_70180_af.func_187214_a(HORSE_ARMOR_STACK, ItemStack.field_190927_a);
+    }
+ 
+    public void func_70014_b(NBTTagCompound p_70014_1_) {
+@@ -63,7 +65,7 @@
+       this.func_110235_q(p_70037_1_.func_74762_e("Variant"));
+       if (p_70037_1_.func_150297_b("ArmorItem", 10)) {
+          ItemStack itemstack = ItemStack.func_199557_a(p_70037_1_.func_74775_l("ArmorItem"));
+-         if (!itemstack.func_190926_b() && HorseArmorType.func_188577_b(itemstack.func_77973_b())) {
++         if (!itemstack.func_190926_b() && func_190682_f(itemstack)) {
+             this.field_110296_bG.func_70299_a(1, itemstack);
+          }
+       }
+@@ -122,6 +124,7 @@
+    public void func_146086_d(ItemStack p_146086_1_) {
+       HorseArmorType horsearmortype = HorseArmorType.func_188580_a(p_146086_1_);
+       this.field_70180_af.func_187227_b(field_184791_bI, horsearmortype.func_188579_a());
++      this.field_70180_af.func_187227_b(HORSE_ARMOR_STACK, p_146086_1_);
+       this.func_110230_cF();
+       if (!this.field_70170_p.field_72995_K) {
+          this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_188479_b(field_184786_bD);
+@@ -134,6 +137,8 @@
+    }
+ 
+    public HorseArmorType func_184783_dl() {
++      ItemStack stack = this.field_70180_af.func_187225_a(HORSE_ARMOR_STACK);
++      if (!stack.func_190926_b()) return stack.getHorseArmorType();
+       return HorseArmorType.func_188575_a(this.field_70180_af.func_187225_a(field_184791_bI));
+    }
+ 
+@@ -168,7 +173,8 @@
+          this.field_70180_af.func_187230_e();
+          this.func_110230_cF();
+       }
+-
++      ItemStack stack = this.field_110296_bG.func_70301_a(1);
++      if (func_190682_f(stack)) stack.onHorseArmorTick(field_70170_p, this);
+    }
+ 
+    protected SoundEvent func_184639_G() {
+@@ -295,7 +301,7 @@
+    }
+ 
+    public boolean func_190682_f(ItemStack p_190682_1_) {
+-      return HorseArmorType.func_188577_b(p_190682_1_.func_77973_b());
++      return HorseArmorType.isHorseArmor(p_190682_1_);
+    }
+ 
+    @Nullable

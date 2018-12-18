@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/passive/EntityOcelot.java
++++ b/net/minecraft/entity/passive/EntityOcelot.java
+@@ -181,7 +181,7 @@
+          }
+ 
+          if (!this.field_70170_p.field_72995_K) {
+-            if (this.field_70146_Z.nextInt(3) == 0) {
++            if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_)) {
+                this.func_193101_c(p_184645_1_);
+                this.func_70912_b(1 + this.field_70170_p.field_73012_v.nextInt(3));
+                this.func_70908_e(true);

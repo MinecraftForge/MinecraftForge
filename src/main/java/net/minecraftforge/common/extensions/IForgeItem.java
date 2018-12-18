@@ -30,10 +30,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.HorseArmorType;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.IItemPropertyGetter;
@@ -41,7 +41,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumActionResult;
@@ -49,7 +48,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.registry.RegistrySimple;
-import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -269,10 +267,10 @@ public interface IForgeItem
      * for cleaner control over the update of the item without having to write a
      * subclass.
      *
-     * @param entityItem The entity Item
+     * @param entity The entity Item
      * @return Return true to skip any further update code.
      */
-    default boolean onEntityItemUpdate(net.minecraft.entity.item.EntityItem entityItem)
+    default boolean onEntityItemUpdate(ItemStack stack, EntityItem entity)
     {
         return false;
     }
@@ -320,7 +318,7 @@ public interface IForgeItem
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
-    default void onArmorTick(World world, EntityPlayer player, ItemStack itemStack)
+    default void onArmorTick(ItemStack stack, World world, EntityPlayer player)
     {
     }
 
@@ -328,16 +326,14 @@ public interface IForgeItem
      * Determines if the specific ItemStack can be placed in the specified armor
      * slot, for the entity.
      *
-     * TODO: Change name to canEquip in 1.13?
-     *
      * @param stack     The ItemStack
      * @param armorType Armor slot to be verified.
      * @param entity    The entity trying to equip the armor
      * @return True if the given ItemStack can be inserted in the slot
      */
-    default boolean isValidArmor(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
+    default boolean canEquip(ItemStack stack, EntityEquipmentSlot armorType, Entity entity)
     {
-        return net.minecraft.entity.EntityLiving.getSlotForItemStack(stack) == armorType;
+        return EntityLiving.getSlotForItemStack(stack) == armorType;
     }
 
     /**
@@ -421,11 +417,10 @@ public interface IForgeItem
     /**
      * Called when a entity tries to play the 'swing' animation.
      *
-     * @param entityLiving The entity swinging the item.
-     * @param stack        The Item stack
+     * @param entity The entity swinging the item.
      * @return True to cancel any further processing by EntityLiving
      */
-    default boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack)
+    default boolean onEntitySwing(ItemStack stack, EntityLivingBase entity)
     {
         return false;
     }
@@ -739,25 +734,21 @@ public interface IForgeItem
      * @return an enum constant of type {@code HorseArmorType}. Return
      *         HorseArmorType.NONE if this is not horse armor
      */
+    @SuppressWarnings("deprecation")
     default HorseArmorType getHorseArmorType(ItemStack stack)
     {
         return HorseArmorType.getByItem(stack.getItem());
-    }
-
-    default String getHorseArmorTexture(EntityLiving wearer, ItemStack stack)
-    {
-        return getHorseArmorType(stack).getTextureName();
     }
 
     /**
      * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
      * armor slot.
      *
+     * @param stack the armor itemstack
      * @param world the world the horse is in
      * @param horse the horse wearing this armor
-     * @param armor the armor itemstack
      */
-    default void onHorseArmorTick(World world, EntityLiving horse, ItemStack armor)
+    default void onHorseArmorTick(ItemStack stack, World world, EntityLiving horse)
     {
     }
 

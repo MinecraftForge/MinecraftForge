@@ -4,7 +4,7 @@
     public int func_200881_e() {
        return this.field_77879_b;
     }
-+   
++
 +   public float getToughness() {
 +       return this.field_189415_e;
 +   }

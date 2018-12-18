@@ -25,7 +25,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -53,12 +52,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceFluidMode;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;
@@ -299,7 +297,7 @@ public class GuiIngameForge extends GuiIngame
         int left = width / 2 - 91;
         int top = height - left_height;
 
-        int level = ForgeHooks.getTotalArmorValue(mc.player);
+        int level = mc.player.getTotalArmorValue();
         for (int i = 1; level > 0 && i < 20; i += 2)
         {
             if (i < level)
@@ -620,6 +618,7 @@ public class GuiIngameForge extends GuiIngame
 
         if (this.mc.gameSettings.showDebugInfo && !pre(DEBUG))
         {
+            debugOverlay.update();
             listL.addAll(debugOverlay.getLeft());
             listR.addAll(debugOverlay.getRight());
             post(DEBUG);
@@ -834,6 +833,12 @@ public class GuiIngameForge extends GuiIngame
         {
             super(mc);
             this.mc = mc;
+        }
+        public void update()
+        {
+            Entity entity = this.mc.getRenderViewEntity();
+            this.rayTraceBlock = entity.rayTrace(20.0D, 0.0F, RayTraceFluidMode.NEVER);
+            this.rayTraceFluid = entity.rayTrace(20.0D, 0.0F, RayTraceFluidMode.ALWAYS);
         }
         @Override protected void renderDebugInfoLeft(){}
         @Override protected void renderDebugInfoRight(){}

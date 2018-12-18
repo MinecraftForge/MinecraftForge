@@ -1,6 +1,43 @@
 --- a/net/minecraft/world/WorldServerMulti.java
 +++ b/net/minecraft/world/WorldServerMulti.java
-@@ -60,6 +60,7 @@
+@@ -10,11 +10,12 @@
+ 
+ public class WorldServerMulti extends WorldServer {
+    private final WorldServer field_175743_a;
++   private IBorderListener borderListener;
+ 
+    public WorldServerMulti(MinecraftServer p_i45923_1_, ISaveHandler p_i45923_2_, int p_i45923_3_, WorldServer p_i45923_4_, Profiler p_i45923_5_) {
+       super(p_i45923_1_, p_i45923_2_, new DerivedWorldInfo(p_i45923_4_.func_72912_H()), p_i45923_3_, p_i45923_5_);
+       this.field_175743_a = p_i45923_4_;
+-      p_i45923_4_.func_175723_af().func_177737_a(new IBorderListener() {
++      this.borderListener = new IBorderListener() {
+          public void func_177694_a(WorldBorder p_177694_1_, double p_177694_2_) {
+             WorldServerMulti.this.func_175723_af().func_177750_a(p_177694_2_);
+          }
+@@ -42,28 +43,37 @@
+          public void func_177695_c(WorldBorder p_177695_1_, double p_177695_2_) {
+             WorldServerMulti.this.func_175723_af().func_177724_b(p_177695_2_);
+          }
+-      });
++      };
++      p_i45923_4_.func_175723_af().func_177737_a(this.borderListener);
+    }
+ 
+    protected void func_73042_a() {
++      this.perWorldStorage.func_75744_a();
+    }
+ 
+    public IWorld func_175643_b() {
+       this.field_72988_C = this.field_175743_a.func_175693_T();
+       String s = VillageCollection.func_176062_a(this.field_73011_w);
+-      VillageCollection villagecollection = (VillageCollection)this.field_72988_C.func_201067_a(VillageCollection::new, s);
++      VillageCollection villagecollection = (VillageCollection)this.perWorldStorage.func_201067_a(VillageCollection::new, s);
+       if (villagecollection == null) {
+          this.field_72982_D = new VillageCollection(this);
+-         this.field_72988_C.func_75745_a(s, this.field_72982_D);
++         this.perWorldStorage.func_75745_a(s, this.field_72982_D);
+       } else {
+          this.field_72982_D = villagecollection;
           this.field_72982_D.func_82566_a(this);
        }
  
@@ -8,3 +45,13 @@
        return this;
     }
  
+    public void func_184166_c() {
+       this.field_73011_w.func_186057_q();
+    }
++
++   @Override
++   public void close() {
++      super.close();
++      this.field_175743_a.func_175723_af().removeListener(this.borderListener); // Unlink ourselves, to prevent world leak.
++   }
+ }

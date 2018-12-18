@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/TaigaGrassFeature.java
++++ b/net/minecraft/world/gen/feature/TaigaGrassFeature.java
+@@ -17,7 +17,7 @@
+    public boolean func_212245_a(IWorld p_212245_1_, IChunkGenerator<? extends IChunkGenSettings> p_212245_2_, Random p_212245_3_, BlockPos p_212245_4_, NoFeatureConfig p_212245_5_) {
+       IBlockState iblockstate = this.func_202388_a(p_212245_3_);
+ 
+-      for(IBlockState iblockstate1 = p_212245_1_.func_180495_p(p_212245_4_); (iblockstate1.func_196958_f() || iblockstate1.func_203425_a(BlockTags.field_206952_E)) && p_212245_4_.func_177956_o() > 0; iblockstate1 = p_212245_1_.func_180495_p(p_212245_4_)) {
++      for(IBlockState iblockstate1 = p_212245_1_.func_180495_p(p_212245_4_); (iblockstate1.isAir(p_212245_1_, p_212245_4_) || iblockstate1.func_203425_a(BlockTags.field_206952_E)) && p_212245_4_.func_177956_o() > 0; iblockstate1 = p_212245_1_.func_180495_p(p_212245_4_)) {
+          p_212245_4_ = p_212245_4_.func_177977_b();
+       }
+ 

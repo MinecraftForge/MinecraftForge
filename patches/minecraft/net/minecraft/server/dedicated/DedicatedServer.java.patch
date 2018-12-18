@@ -1,6 +1,14 @@
 --- a/net/minecraft/server/dedicated/DedicatedServer.java
 +++ b/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -110,6 +110,7 @@
+@@ -89,6 +89,7 @@
+    public boolean func_71197_b() throws IOException {
+       Thread thread = new Thread("Server console handler") {
+          public void run() {
++            if (net.minecraftforge.server.console.TerminalHandler.handleCommands(DedicatedServer.this)) return;
+             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
+ 
+             String s4;
+@@ -110,6 +111,7 @@
           field_155771_h.warn("To start the server with more ram, launch it as \"java -Xmx1024M -Xms1024M -jar minecraft_server.jar\"");
        }
  
@@ -8,7 +16,7 @@
        field_155771_h.info("Loading properties");
        this.field_71340_o = new PropertyManager(new File("server.properties"));
        this.field_154332_n = new ServerEula(new File("eula.txt"));
-@@ -181,6 +182,7 @@
+@@ -181,6 +183,7 @@
           if (!PreYggdrasilConverter.func_152714_a(this.field_71340_o)) {
              return false;
           } else {
@@ -16,7 +24,7 @@
              this.func_184105_a(new DedicatedPlayerList(this));
              long j = Util.func_211178_c();
              if (this.func_71270_I() == null) {
-@@ -218,6 +220,7 @@
+@@ -218,6 +221,7 @@
              TileEntitySkull.func_184293_a(this.func_152358_ax());
              TileEntitySkull.func_184294_a(this.func_147130_as());
              PlayerProfileCache.func_187320_a(this.func_71266_T());
@@ -24,7 +32,15 @@
              field_155771_h.info("Preparing level \"{}\"", (Object)this.func_71270_I());
              JsonObject jsonobject = new JsonObject();
              if (worldtype == WorldType.field_77138_c) {
-@@ -257,7 +260,8 @@
+@@ -230,6 +234,7 @@
+             long i1 = Util.func_211178_c() - j;
+             String s3 = String.format(Locale.ROOT, "%.3fs", (double)i1 / 1.0E9D);
+             field_155771_h.info("Done ({})! For help, type \"help\"", (Object)s3);
++            this.field_211151_aa = Util.func_211177_b(); //Forge: Update server time to prevent watchdog/spaming during long load.
+             if (this.field_71340_o.func_187239_a("announce-player-achievements")) {
+                this.func_200252_aR().func_82764_b("announceAdvancements", this.field_71340_o.func_73670_a("announce-player-achievements", true) ? "true" : "false", this);
+                this.field_71340_o.func_187238_b("announce-player-achievements");
+@@ -257,7 +262,8 @@
              }
  
              Items.field_190931_a.func_150895_a(ItemGroup.field_78027_g, NonNullList.func_191196_a());
@@ -34,3 +50,22 @@
           }
        }
     }
+@@ -436,7 +442,7 @@
+    }
+ 
+    public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_) {
+-      if (p_175579_1_.field_73011_w.func_186058_p().func_186068_a() != 0) {
++      if (p_175579_1_.field_73011_w.getId() != 0) {
+          return false;
+       } else if (this.func_184103_al().func_152603_m().func_152690_d()) {
+          return false;
+@@ -566,4 +572,9 @@
+       this.func_195571_aL().func_197059_a(this.field_184115_n.func_195540_f(), p_71252_1_);
+       return this.field_184115_n.func_70008_c();
+    }
++
++   @Override //Forge: Enable formated text for colors in console.
++   public void func_145747_a(net.minecraft.util.text.ITextComponent message) {
++      field_155771_h.info(message.func_150254_d());
++   }
+ }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/dimension/OverworldDimension.java
++++ b/net/minecraft/world/dimension/OverworldDimension.java
+@@ -51,7 +51,7 @@
+    }
+ 
+    public boolean func_186056_c(int p_186056_1_, int p_186056_2_) {
+-      return !this.field_76579_a.func_72916_c(p_186056_1_, p_186056_2_);
++      return !this.field_76579_a.func_72916_c(p_186056_1_, p_186056_2_) || !this.field_76579_a.field_73011_w.func_186058_p().shouldLoadSpawn();
+    }
+ 
+    protected void func_76572_b() {

@@ -1,0 +1,20 @@
+--- a/net/minecraft/tileentity/TileEntityLockable.java
++++ b/net/minecraft/tileentity/TileEntityLockable.java
+@@ -36,4 +36,17 @@
+    public void func_174892_a(LockCode p_174892_1_) {
+       this.field_174901_a = p_174892_1_;
+    }
++
++   private net.minecraftforge.common.capabilities.OptionalCapabilityInstance<?> itemHandler = net.minecraftforge.common.capabilities.OptionalCapabilityInstance.of(() -> createUnSidedHandler());
++   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++      return new net.minecraftforge.items.wrapper.InvWrapper(this);
++   }
++
++   @javax.annotation.Nullable
++   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
++      if (cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ) {
++         return itemHandler.cast();
++      }
++      return super.getCapability(cap, side);
++   }
+ }

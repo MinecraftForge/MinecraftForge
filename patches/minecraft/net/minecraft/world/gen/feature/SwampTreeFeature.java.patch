@@ -1,0 +1,87 @@
+--- a/net/minecraft/world/gen/feature/SwampTreeFeature.java
++++ b/net/minecraft/world/gen/feature/SwampTreeFeature.java
+@@ -27,7 +27,7 @@
+       }
+ 
+       boolean flag = true;
+-      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= 256) {
++      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= p_208519_2_.func_201672_e().func_72800_K()) {
+          for(int j = p_208519_4_.func_177956_o(); j <= p_208519_4_.func_177956_o() + 1 + i; ++j) {
+             int k = 1;
+             if (j == p_208519_4_.func_177956_o()) {
+@@ -42,10 +42,10 @@
+ 
+             for(int l = p_208519_4_.func_177958_n() - k; l <= p_208519_4_.func_177958_n() + k && flag; ++l) {
+                for(int i1 = p_208519_4_.func_177952_p() - k; i1 <= p_208519_4_.func_177952_p() + k && flag; ++i1) {
+-                  if (j >= 0 && j < 256) {
++                  if (j >= 0 && j < p_208519_2_.func_201672_e().func_72800_K()) {
+                      IBlockState iblockstate = p_208519_2_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1));
+                      Block block = iblockstate.func_177230_c();
+-                     if (!iblockstate.func_196958_f() && !iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++                     if (!iblockstate.isAir(p_208519_2_, blockpos$mutableblockpos) && !iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                         if (block == Blocks.field_150355_j) {
+                            if (j > p_208519_4_.func_177956_o()) {
+                               flag = false;
+@@ -64,9 +64,8 @@
+          if (!flag) {
+             return false;
+          } else {
+-            Block block1 = p_208519_2_.func_180495_p(p_208519_4_.func_177977_b()).func_177230_c();
+-            if ((block1 == Blocks.field_196658_i || Block.func_196245_f(block1)) && p_208519_4_.func_177956_o() < 256 - i - 1) {
+-               this.func_175921_a(p_208519_2_, p_208519_4_.func_177977_b());
++            if (p_208519_2_.func_180495_p(p_208519_4_.func_177977_b()).canSustainPlant(p_208519_2_, p_208519_4_.func_177977_b(), net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_196674_t)  && p_208519_4_.func_177956_o() < p_208519_2_.func_201672_e().func_72800_K() - i - 1) {
++               this.setDirtAt(p_208519_2_, p_208519_4_.func_177977_b(), p_208519_4_);
+ 
+                for(int k1 = p_208519_4_.func_177956_o() - 3 + i; k1 <= p_208519_4_.func_177956_o() + i; ++k1) {
+                   int j2 = k1 - (p_208519_4_.func_177956_o() + i);
+@@ -79,7 +78,7 @@
+                         int j1 = i4 - p_208519_4_.func_177952_p();
+                         if (Math.abs(k3) != l2 || Math.abs(j1) != l2 || p_208519_3_.nextInt(2) != 0 && j2 != 0) {
+                            BlockPos blockpos = new BlockPos(j3, k1, i4);
+-                           if (!p_208519_2_.func_180495_p(blockpos).func_200015_d(p_208519_2_, blockpos)) {
++                           if (p_208519_2_.func_180495_p(blockpos).canBeReplacedByLeaves(p_208519_2_, blockpos)) {
+                               this.func_202278_a(p_208519_2_, blockpos, field_181649_b);
+                            }
+                         }
+@@ -90,7 +89,7 @@
+                for(int l1 = 0; l1 < i; ++l1) {
+                   IBlockState iblockstate1 = p_208519_2_.func_180495_p(p_208519_4_.func_177981_b(l1));
+                   Block block2 = iblockstate1.func_177230_c();
+-                  if (iblockstate1.func_196958_f() || iblockstate1.func_203425_a(BlockTags.field_206952_E) || block2 == Blocks.field_150355_j) {
++                  if (iblockstate1.isAir(p_208519_2_, p_208519_4_.func_177981_b(l1)) || iblockstate1.func_203425_a(BlockTags.field_206952_E) || block2 == Blocks.field_150355_j) {
+                      this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177981_b(l1), field_181648_a);
+                   }
+                }
+@@ -108,19 +107,19 @@
+                            BlockPos blockpos4 = blockpos$mutableblockpos1.func_177974_f();
+                            BlockPos blockpos1 = blockpos$mutableblockpos1.func_177978_c();
+                            BlockPos blockpos2 = blockpos$mutableblockpos1.func_177968_d();
+-                           if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_180495_p(blockpos3).func_196958_f()) {
++                           if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_175623_d(blockpos3)) {
+                               this.func_181647_a(p_208519_2_, blockpos3, BlockVine.field_176278_M);
+                            }
+ 
+-                           if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_180495_p(blockpos4).func_196958_f()) {
++                           if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_175623_d(blockpos4)) {
+                               this.func_181647_a(p_208519_2_, blockpos4, BlockVine.field_176280_O);
+                            }
+ 
+-                           if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_180495_p(blockpos1).func_196958_f()) {
++                           if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_175623_d(blockpos1)) {
+                               this.func_181647_a(p_208519_2_, blockpos1, BlockVine.field_176279_N);
+                            }
+ 
+-                           if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_180495_p(blockpos2).func_196958_f()) {
++                           if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_175623_d(blockpos2)) {
+                               this.func_181647_a(p_208519_2_, blockpos2, BlockVine.field_176273_b);
+                            }
+                         }
+@@ -143,7 +142,7 @@
+       this.func_202278_a(p_181647_1_, p_181647_2_, iblockstate);
+       int i = 4;
+ 
+-      for(BlockPos blockpos = p_181647_2_.func_177977_b(); p_181647_1_.func_180495_p(blockpos).func_196958_f() && i > 0; --i) {
++      for(BlockPos blockpos = p_181647_2_.func_177977_b(); p_181647_1_.func_175623_d(blockpos) && i > 0; --i) {
+          this.func_202278_a(p_181647_1_, blockpos, iblockstate);
+          blockpos = blockpos.func_177977_b();
+       }

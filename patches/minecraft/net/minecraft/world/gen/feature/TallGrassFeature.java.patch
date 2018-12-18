@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/TallGrassFeature.java
++++ b/net/minecraft/world/gen/feature/TallGrassFeature.java
+@@ -10,7 +10,7 @@
+ 
+ public class TallGrassFeature extends Feature<TallGrassConfig> {
+    public boolean func_212245_a(IWorld p_212245_1_, IChunkGenerator<? extends IChunkGenSettings> p_212245_2_, Random p_212245_3_, BlockPos p_212245_4_, TallGrassConfig p_212245_5_) {
+-      for(IBlockState iblockstate = p_212245_1_.func_180495_p(p_212245_4_); (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) && p_212245_4_.func_177956_o() > 0; iblockstate = p_212245_1_.func_180495_p(p_212245_4_)) {
++      for(IBlockState iblockstate = p_212245_1_.func_180495_p(p_212245_4_); (iblockstate.isAir(p_212245_1_, p_212245_4_) || iblockstate.func_203425_a(BlockTags.field_206952_E)) && p_212245_4_.func_177956_o() > 0; iblockstate = p_212245_1_.func_180495_p(p_212245_4_)) {
+          p_212245_4_ = p_212245_4_.func_177977_b();
+       }
+ 

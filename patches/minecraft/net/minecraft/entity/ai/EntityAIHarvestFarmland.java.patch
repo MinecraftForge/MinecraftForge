@@ -1,0 +1,23 @@
+--- a/net/minecraft/entity/ai/EntityAIHarvestFarmland.java
++++ b/net/minecraft/entity/ai/EntityAIHarvestFarmland.java
+@@ -25,7 +25,7 @@
+ 
+    public boolean func_75250_a() {
+       if (this.field_179496_a <= 0) {
+-         if (!this.field_179504_c.field_70170_p.func_82736_K().func_82766_b("mobGriefing")) {
++         if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_179504_c.field_70170_p, this.field_179504_c)) {
+             return false;
+          }
+ 
+@@ -70,6 +70,11 @@
+                   } else if (itemstack.func_77973_b() == Items.field_185163_cU) {
+                      iworld.func_180501_a(blockpos, Blocks.field_185773_cZ.func_176223_P(), 3);
+                      flag = true;
++                  } else if (itemstack.func_77973_b() instanceof net.minecraftforge.common.IPlantable) {
++                     if (((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlantType(iworld, blockpos) == net.minecraftforge.common.EnumPlantType.Crop) {
++                        iworld.func_180501_a(blockpos, ((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlant(iworld, blockpos),3);
++                        flag = true;
++                     }
+                   }
+                }
+ 

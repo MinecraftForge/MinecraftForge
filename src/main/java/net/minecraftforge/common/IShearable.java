@@ -23,6 +23,7 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
 
 import javax.annotation.Nonnull;
@@ -71,5 +72,5 @@ public interface IShearable
      * @return A List containing all items from this shearing. May be empty.
      */
     @Nonnull
-    List<ItemStack> onSheared(@Nonnull ItemStack item, IWorldReader world, BlockPos pos, int fortune);
+    List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune);
 }

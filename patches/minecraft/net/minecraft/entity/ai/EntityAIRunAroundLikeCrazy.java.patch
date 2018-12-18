@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/EntityAIRunAroundLikeCrazy.java
++++ b/net/minecraft/entity/ai/EntityAIRunAroundLikeCrazy.java
+@@ -52,7 +52,7 @@
+          if (entity instanceof EntityPlayer) {
+             int i = this.field_111180_a.func_110252_cg();
+             int j = this.field_111180_a.func_190676_dC();
+-            if (j > 0 && this.field_111180_a.func_70681_au().nextInt(j) < i) {
++            if (j > 0 && this.field_111180_a.func_70681_au().nextInt(j) < i && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(field_111180_a, (EntityPlayer)entity)) {
+                this.field_111180_a.func_110263_g((EntityPlayer)entity);
+                return;
+             }

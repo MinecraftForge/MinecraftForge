@@ -38,8 +38,8 @@ public class ForgeVersion
     public static final String mcpVersion = "9.42";
 
     private static final String forgeVersion;
-
     private static final String forgeSpec;
+    private static final String forgeGroup;
 
     static {
         String vers = ForgeVersion.class.getPackage().getImplementationVersion();
@@ -52,10 +52,19 @@ public class ForgeVersion
             spec = System.getProperty("forge.spec");
         }
         if (spec == null) throw new RuntimeException("Missing forge spec, cannot continue");
+        String group = ForgeVersion.class.getPackage().getImplementationTitle();
+        if (group == null) {
+            group = System.getProperty("forge.group");
+        }
+        if (group == null) {
+            group = "net.minecraftforge"; // If all else fails, Our normal group
+        }
         forgeVersion = vers;
         forgeSpec = spec;
+        forgeGroup = group;
         LOGGER.info(CORE, "Found Forge version {}", forgeVersion);
         LOGGER.info(CORE, "Found Forge spec {}", forgeSpec);
+        LOGGER.info(CORE, "Found Forge group {}", forgeGroup);
     }
 
     public static String getVersion()
@@ -76,6 +85,10 @@ public class ForgeVersion
 
     public static String getSpec() {
         return forgeSpec;
+    }
+
+    public static String getGroup() {
+        return forgeGroup;
     }
 }
 

@@ -351,8 +351,8 @@ public class VillagerRegistry
             throw new RuntimeException("Attempted to set villager profession to unregistered profession: " + network + " " + prof);
         }
 
-        if (prof != entity.getForgeProfession())
-            entity.setForgeProfession(prof);
+        if (prof != entity.getProfessionForge())
+            entity.setProfession(prof);
     }
 
     @Deprecated public static VillagerProfession getById(int network){ return INSTANCE.REGISTRY.get(network); }

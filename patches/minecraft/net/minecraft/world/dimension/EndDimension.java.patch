@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/dimension/EndDimension.java
++++ b/net/minecraft/world/dimension/EndDimension.java
+@@ -23,7 +23,7 @@
+    private DragonFightManager field_186064_g;
+ 
+    public void func_76572_b() {
+-      NBTTagCompound nbttagcompound = this.field_76579_a.func_72912_H().func_186347_a(DimensionType.THE_END);
++      NBTTagCompound nbttagcompound = this.field_76579_a.func_72912_H().getDimensionData(this.field_76579_a.field_73011_w.getId());
+       this.field_186064_g = this.field_76579_a instanceof WorldServer ? new DragonFightManager((WorldServer)this.field_76579_a, nbttagcompound.func_74775_l("DragonFight")) : null;
+       this.field_191067_f = false;
+    }
+@@ -109,7 +109,7 @@
+          nbttagcompound.func_74782_a("DragonFight", this.field_186064_g.func_186088_a());
+       }
+ 
+-      this.field_76579_a.func_72912_H().func_186345_a(DimensionType.THE_END, nbttagcompound);
++      this.field_76579_a.func_72912_H().setDimensionData(this.field_76579_a.field_73011_w.getId(), nbttagcompound);
+    }
+ 
+    public void func_186059_r() {
+@@ -123,4 +123,18 @@
+    public DragonFightManager func_186063_s() {
+       return this.field_186064_g;
+    }
++
++   @Override
++   public void func_186061_a(net.minecraft.entity.player.EntityPlayerMP player) {
++      if (field_186064_g != null) {
++         field_186064_g.addPlayer(player);
++      }
++   }
++
++   @Override
++   public void func_186062_b(net.minecraft.entity.player.EntityPlayerMP player) {
++      if (field_186064_g != null) {
++         field_186064_g.removePlayer(player);
++      }
++   }
+ }

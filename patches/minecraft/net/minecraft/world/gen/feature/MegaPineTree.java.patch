@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/gen/feature/MegaPineTree.java
++++ b/net/minecraft/world/gen/feature/MegaPineTree.java
+@@ -30,23 +30,23 @@
+ 
+          for(int j = 0; j < i; ++j) {
+             IBlockState iblockstate = p_208519_2_.func_180495_p(p_208519_4_.func_177981_b(j));
+-            if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++            if (iblockstate.isAir(p_208519_2_, p_208519_4_.func_177981_b(j)) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177981_b(j), this.field_76520_b);
+             }
+ 
+             if (j < i - 1) {
+                iblockstate = p_208519_2_.func_180495_p(p_208519_4_.func_177982_a(1, j, 0));
+-               if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++               if (iblockstate.isAir(p_208519_2_, p_208519_4_.func_177982_a(1, j, 0)) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                   this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177982_a(1, j, 0), this.field_76520_b);
+                }
+ 
+                iblockstate = p_208519_2_.func_180495_p(p_208519_4_.func_177982_a(1, j, 1));
+-               if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++               if (iblockstate.isAir(p_208519_2_, p_208519_4_.func_177982_a(1, j, 1)) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                   this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177982_a(1, j, 1), this.field_76520_b);
+                }
+ 
+                iblockstate = p_208519_2_.func_180495_p(p_208519_4_.func_177982_a(0, j, 1));
+-               if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++               if (iblockstate.isAir(p_208519_2_, p_208519_4_.func_177982_a(0, j, 1)) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                   this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177982_a(0, j, 1), this.field_76520_b);
+                }
+             }
+@@ -108,7 +108,7 @@
+             break;
+          }
+ 
+-         if (!iblockstate.func_196958_f() && i < 0) {
++         if (!iblockstate.isAir(p_175934_1_, blockpos) && i < 0) {
+             break;
+          }
+       }

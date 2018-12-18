@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/chunk/ChunkSection.java
++++ b/net/minecraft/world/chunk/ChunkSection.java
+@@ -35,6 +35,8 @@
+    }
+ 
+    public void func_177484_a(int p_177484_1_, int p_177484_2_, int p_177484_3_, IBlockState p_177484_4_) {
++      if (p_177484_4_ instanceof net.minecraftforge.common.property.IExtendedBlockState)
++         p_177484_4_ = ((net.minecraftforge.common.property.IExtendedBlockState)p_177484_4_).getClean();
+       IBlockState iblockstate = this.func_177485_a(p_177484_1_, p_177484_2_, p_177484_3_);
+       IFluidState ifluidstate = this.func_206914_b(p_177484_1_, p_177484_2_, p_177484_3_);
+       IFluidState ifluidstate1 = p_177484_4_.func_204520_s();

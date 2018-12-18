@@ -31,8 +31,10 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntitySpawnPlacementRegistry;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.player.EntityPlayer;
@@ -160,7 +162,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True if the block should deal damage
      */
-    default boolean isBurning(IWorldReader world, BlockPos pos)
+    default boolean isBurning(IBlockState state, IBlockReader world, BlockPos pos)
     {
         return false;
     }
@@ -258,9 +260,9 @@ public interface IForgeBlock
      * @param player The player or camera entity, null in some cases.
      * @return True to treat this as a bed
      */
-    default boolean isBed(IBlockState state, IWorldReader world, BlockPos pos, @Nullable EntityPlayer player)
+    default boolean isBed(IBlockState state, IBlockReader world, BlockPos pos, @Nullable EntityPlayer player)
     {
-        return this.getBlock() instanceof BlockBed;
+        return this.getBlock() instanceof BlockBed; //TODO: Forge: Keep isBed function?
     }
 
     /**
@@ -273,9 +275,9 @@ public interface IForgeBlock
      * @param type The Mob Category Type
      * @return True to allow a mob of the specified category to spawn, false to prevent it.
      */
-    default boolean canCreatureSpawn(IBlockState state, IWorldReader world, BlockPos pos, EntitySpawnPlacementRegistry.SpawnPlacementType type)
+    default boolean canCreatureSpawn(IBlockState state, IWorldReaderBase world, BlockPos pos, EntitySpawnPlacementRegistry.SpawnPlacementType type, @Nullable EntityType<? extends EntityLiving> entityType)
     {
-        return state.isTopSolid();
+        return state.isTopSolid() || entityType != null && EntitySpawnPlacementRegistry.func_209345_a(entityType, state);
     }
     /**
      * Returns the position that the player is moved to upon
@@ -288,7 +290,7 @@ public interface IForgeBlock
      * @return The spawn position
      */
     @Nullable
-    default BlockPos getBedSpawnPosition(IBlockState state, IWorldReader world, BlockPos pos, @Nullable EntityPlayer player)
+    default BlockPos getBedSpawnPosition(IBlockState state, IBlockReader world, BlockPos pos, @Nullable EntityPlayer player)
     {
         if (world instanceof World)
         {
@@ -361,7 +363,7 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return True if the block considered air
      */
-    default boolean isAir(IBlockState state, IWorldReader world, BlockPos pos)
+    default boolean isAir(IBlockState state, IBlockReader world, BlockPos pos)
     {
         return state.getMaterial() == Material.AIR;
     }
@@ -374,9 +376,9 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @return true if this block can be replaced by growing leaves.
      */
-    default boolean canBeReplacedByLeaves(IBlockState state, IWorldReader world, BlockPos pos)
+    default boolean canBeReplacedByLeaves(IBlockState state, IWorldReaderBase world, BlockPos pos)
     {
-        return isAir(state, world, pos) || state.isIn(BlockTags.LEAVES);
+        return (isAir(state, world, pos) || state.isIn(BlockTags.LEAVES)) || !state.isOpaqueCube(world, pos);
     }
 
     /**
@@ -390,7 +392,7 @@ public interface IForgeBlock
      * @return True to allow this block to be replaced by a ore
      */
     default boolean isReplaceableOreGen(IBlockState state, IWorldReader world, BlockPos pos, Predicate<IBlockState> target)
-    { //TODO: Re-evaluate with new world gen
+    {
         return target.test(state);
     }
 
@@ -580,9 +582,9 @@ public interface IForgeBlock
      * @param pos Block position in world
      * @param source Source plant's position in world
      */
-    default void onPlantGrow(IBlockState state, World world, BlockPos pos, BlockPos source)
+    default void onPlantGrow(IBlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
-        if (this.getBlock() == Blocks.GRASS || this.getBlock() == Blocks.FARMLAND)
+        if (this.getBlock() == Blocks.GRASS || this.getBlock() == Blocks.FARMLAND || this.getBlock() == Blocks.AIR)
             world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
     }
 
@@ -903,9 +905,9 @@ public interface IForgeBlock
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(IBlockState state, IWorldReader world, BlockPos pos)
+    default PathNodeType getAiPathNodeType(IBlockState state, IBlockReader world, BlockPos pos)
     {
-        return isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
+        return state.isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
     }
 
     /**
@@ -1054,4 +1056,17 @@ public interface IForgeBlock
 
         return true;
     }
+
+    /**
+     * Determines if the top is consider 'solid'. This is a helper for getBlockFaceShape(UP) == SOLID.
+     * Sadly some vanilla logic doesn't sync this value, so we have to have this special function.
+     *
+     * @param world The world
+     * @param pos Block position in world
+     * @return True if the top is considered solid
+     */
+     default boolean isTopSolid(IBlockState state, IWorldReader world, BlockPos pos)
+     {
+         return state.isTopSolid();
+     }
 }

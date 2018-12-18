@@ -44,7 +44,15 @@
           return p_189516_1_;
        }
     }
-@@ -98,7 +106,6 @@
+@@ -91,14 +99,13 @@
+       if (this.field_145850_b != null) {
+          this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
+          this.field_145850_b.func_175646_b(this.field_174879_c, this);
+-         if (!this.field_195045_e.func_196958_f()) {
++         if (!this.field_195045_e.isAir(field_145850_b, this.field_174879_c)) {
+             this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
+          }
+       }
  
     }
  

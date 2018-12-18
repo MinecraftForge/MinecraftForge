@@ -20,7 +20,7 @@
 package net.minecraftforge.event.entity.living;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -52,11 +52,11 @@ import net.minecraft.entity.EntityLivingBase;
 public class LivingDropsEvent extends LivingEvent
 {
     private final DamageSource source;
-    private final List<EntityItem> drops;
+    private final Collection<EntityItem> drops;
     private final int lootingLevel;
     private final boolean recentlyHit;
 
-    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, List<EntityItem> drops, int lootingLevel, boolean recentlyHit)
+    public LivingDropsEvent(EntityLivingBase entity, DamageSource source, Collection<EntityItem> drops, int lootingLevel, boolean recentlyHit)
     {
         super(entity);
         this.source = source;
@@ -70,7 +70,7 @@ public class LivingDropsEvent extends LivingEvent
         return source;
     }
 
-    public List<EntityItem> getDrops()
+    public Collection<EntityItem> getDrops()
     {
         return drops;
     }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/VinesFeature.java
++++ b/net/minecraft/world/gen/feature/VinesFeature.java
+@@ -14,7 +14,7 @@
+    public boolean func_212245_a(IWorld p_212245_1_, IChunkGenerator<? extends IChunkGenSettings> p_212245_2_, Random p_212245_3_, BlockPos p_212245_4_, NoFeatureConfig p_212245_5_) {
+       BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos(p_212245_4_);
+ 
+-      for(int i = p_212245_4_.func_177956_o(); i < 256; ++i) {
++      for(int i = p_212245_4_.func_177956_o(); i < p_212245_1_.func_201672_e().func_72800_K(); ++i) {
+          blockpos$mutableblockpos.func_189533_g(p_212245_4_);
+          blockpos$mutableblockpos.func_196234_d(p_212245_3_.nextInt(4) - p_212245_3_.nextInt(4), 0, p_212245_3_.nextInt(4) - p_212245_3_.nextInt(4));
+          blockpos$mutableblockpos.func_185336_p(i);

@@ -26,12 +26,13 @@ import com.google.common.collect.Maps;
 
 public final class ToolType
 {
+    private static final Pattern VALID_NAME = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case. And use _ to separate words.
+    private static final Map<String, ToolType> values = Maps.newHashMap();
+
     public static final ToolType AXE = get("axe");
     public static final ToolType PICKAXE = get("pickaxe");
     public static final ToolType SHOVEL = get("shovel");
 
-    private static final Map<String, ToolType> values = Maps.newHashMap();
-    private static final Pattern VALID_NAME = Pattern.compile("[^a-z_]"); //Only a-z and _ are allowed, meaning names must be lower case. And use _ to separate words.
 
     public static ToolType get(String name)
     {

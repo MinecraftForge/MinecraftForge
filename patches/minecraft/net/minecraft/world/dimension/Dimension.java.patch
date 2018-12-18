@@ -9,7 +9,24 @@
     public static final float[] field_111203_a = new float[]{1.0F, 0.75F, 0.5F, 0.25F, 0.0F, 0.25F, 0.5F, 0.75F};
     protected World field_76579_a;
     protected boolean field_76575_d;
-@@ -141,4 +141,107 @@
+@@ -64,7 +64,7 @@
+ 
+    @OnlyIn(Dist.CLIENT)
+    public float func_76571_f() {
+-      return 128.0F;
++      return this.getWorld().func_72912_H().func_76067_t().getCloudHeight();
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -120,6 +120,7 @@
+ 
+    protected abstract void func_76572_b();
+ 
++   @Deprecated //Forge: Use WorldType.createChunkGenerator
+    public abstract IChunkGenerator<?> func_186060_c();
+ 
+    @Nullable
+@@ -141,4 +142,101 @@
     public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  
     public abstract DimensionType func_186058_p();
@@ -21,65 +38,56 @@
 +   private int dimensionId;
 +
 +   @Override
-+   public void setId(int id)
-+   {
++   public void setId(int id) {
 +       this.dimensionId = id;
 +   }
 +
 +   @Override
-+   public int getId()
-+   {
++   public int getId() {
 +       return this.dimensionId;
 +   }
 +
 +   @Nullable
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
-+   public net.minecraftforge.client.IRenderHandler getSkyRenderer()
-+   {
++   public net.minecraftforge.client.IRenderHandler getSkyRenderer() {
 +      return this.skyRenderer;
 +   }
 +
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
-+   public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer)
-+   {
++   public void setSkyRenderer(net.minecraftforge.client.IRenderHandler skyRenderer) {
 +      this.skyRenderer = skyRenderer;
 +   }
 +
 +   @Nullable
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
-+   public net.minecraftforge.client.IRenderHandler getCloudRenderer()
-+   {
++   public net.minecraftforge.client.IRenderHandler getCloudRenderer() {
 +      return cloudRenderer;
 +   }
 +
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
-+   public void setCloudRenderer(net.minecraftforge.client.IRenderHandler renderer)
-+   {
++   public void setCloudRenderer(net.minecraftforge.client.IRenderHandler renderer) {
 +      cloudRenderer = renderer;
 +   }
 +
 +   @Nullable
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
-+   public net.minecraftforge.client.IRenderHandler getWeatherRenderer()
-+   {
++   public net.minecraftforge.client.IRenderHandler getWeatherRenderer() {
 +      return weatherRenderer;
 +   }
 +
 +   @OnlyIn(Dist.CLIENT)
 +   @Override
-+   public void setWeatherRenderer(net.minecraftforge.client.IRenderHandler renderer)
-+   {
++   public void setWeatherRenderer(net.minecraftforge.client.IRenderHandler renderer) {
 +      weatherRenderer = renderer;
 +   }
 +
 +   @Override
-+   public void resetRainAndThunder()
-+   {
++   public void resetRainAndThunder() {
 +      field_76579_a.func_72912_H().func_76080_g(0);
 +      field_76579_a.func_72912_H().func_76084_b(false);
 +      field_76579_a.func_72912_H().func_76090_f(0);
@@ -94,7 +102,7 @@
 +    * @return the result of a player trying to sleep at the given location
 +    */
 +   public SleepResult canSleepAt(net.minecraft.entity.player.EntityPlayer player, BlockPos pos) {
-+       return (this.func_76567_e() && this.field_76579_a.func_180494_b(pos) != net.minecraft.init.Biomes.field_76778_j) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
++      return (this.func_76567_e() && this.field_76579_a.func_180494_b(pos) != net.minecraft.init.Biomes.field_76778_j) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
 +   }
 +
 +   /**
@@ -108,9 +116,12 @@
 +    *
 +    * @return true if lighting checks should be performed
 +    */
-+   public boolean shouldClientCheckLighting()
-+   {
-+       return !(this instanceof OverworldDimension);
++   public boolean shouldClientCheckLighting() {
++      return !(this instanceof OverworldDimension);
++   }
++
++   public World getWorld() {
++      return this.field_76579_a;
 +   }
 +
 +   public enum SleepResult {

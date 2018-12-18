@@ -1,0 +1,20 @@
+--- a/net/minecraft/enchantment/EnumEnchantmentType.java
++++ b/net/minecraft/enchantment/EnumEnchantmentType.java
+@@ -90,5 +90,16 @@
+    private EnumEnchantmentType() {
+    }
+ 
+-   public abstract boolean func_77557_a(Item p_77557_1_);
++   private java.util.function.Predicate<Item> delegate;
++   private EnumEnchantmentType(java.util.function.Predicate<Item> delegate) {
++      this.delegate = delegate;
++   }
++
++   public static EnumEnchantmentType create(String name, java.util.function.Predicate<Item> delegate) {
++      return null;
++   }
++
++   public boolean func_77557_a(Item p_77557_1_) {
++      return this.delegate == null ? false : this.delegate.test(p_77557_1_);
++   }
+ }

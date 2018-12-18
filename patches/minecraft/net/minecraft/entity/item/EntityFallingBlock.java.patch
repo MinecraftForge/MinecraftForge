@@ -1,0 +1,19 @@
+--- a/net/minecraft/entity/item/EntityFallingBlock.java
++++ b/net/minecraft/entity/item/EntityFallingBlock.java
+@@ -137,6 +137,7 @@
+                }
+             } else {
+                IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos1);
++               if (this.field_70170_p.func_175623_d(new BlockPos(this.field_70165_t, this.field_70163_u - (double)0.01F, this.field_70161_v))) //Forge: Don't indent below.
+                if (!flag1 && BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - (double)0.01F, this.field_70161_v)))) {
+                   this.field_70122_E = false;
+                   return;
+@@ -153,7 +154,7 @@
+                            ((BlockFalling)block).func_176502_a_(this.field_70170_p, blockpos1, this.field_175132_d, iblockstate);
+                         }
+ 
+-                        if (this.field_145810_d != null && block instanceof ITileEntityProvider) {
++                        if (this.field_145810_d != null && this.field_175132_d.hasTileEntity()) {
+                            TileEntity tileentity = this.field_70170_p.func_175625_s(blockpos1);
+                            if (tileentity != null) {
+                               NBTTagCompound nbttagcompound = tileentity.func_189515_b(new NBTTagCompound());

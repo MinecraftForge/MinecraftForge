@@ -1,0 +1,29 @@
+--- a/net/minecraft/item/ItemBucketMilk.java
++++ b/net/minecraft/item/ItemBucketMilk.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.item;
+ 
++import javax.annotation.Nullable;
++
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayer;
+@@ -17,6 +19,8 @@
+    }
+ 
+    public ItemStack func_77654_b(ItemStack p_77654_1_, World p_77654_2_, EntityLivingBase p_77654_3_) {
++      if (!p_77654_2_.field_72995_K) p_77654_3_.curePotionEffects(p_77654_1_); // FORGE - move up so stack.shrink does not turn stack into air
++
+       if (p_77654_3_ instanceof EntityPlayerMP) {
+          EntityPlayerMP entityplayermp = (EntityPlayerMP)p_77654_3_;
+          CriteriaTriggers.field_193138_y.func_193148_a(entityplayermp, p_77654_1_);
+@@ -46,4 +50,9 @@
+       p_77659_2_.func_184598_c(p_77659_3_);
+       return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, p_77659_2_.func_184586_b(p_77659_3_));
+    }
++
++   @Override
++   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.NBTTagCompound nbt) {
++      return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
++   }
+ }

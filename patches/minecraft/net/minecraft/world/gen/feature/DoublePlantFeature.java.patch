@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/DoublePlantFeature.java
++++ b/net/minecraft/world/gen/feature/DoublePlantFeature.java
+@@ -13,7 +13,7 @@
+ 
+       for(int i = 0; i < 64; ++i) {
+          BlockPos blockpos = p_212245_4_.func_177982_a(p_212245_3_.nextInt(8) - p_212245_3_.nextInt(8), p_212245_3_.nextInt(4) - p_212245_3_.nextInt(4), p_212245_3_.nextInt(8) - p_212245_3_.nextInt(8));
+-         if (p_212245_1_.func_175623_d(blockpos) && blockpos.func_177956_o() < 254 && p_212245_5_.field_202435_a.func_196955_c(p_212245_1_, blockpos)) {
++         if (p_212245_1_.func_175623_d(blockpos) && blockpos.func_177956_o() < p_212245_1_.func_201672_e().func_72800_K() - 2 && p_212245_5_.field_202435_a.func_196955_c(p_212245_1_, blockpos)) {
+             ((BlockDoublePlant)p_212245_5_.field_202435_a.func_177230_c()).func_196390_a(p_212245_1_, blockpos, 2);
+             flag = true;
+          }

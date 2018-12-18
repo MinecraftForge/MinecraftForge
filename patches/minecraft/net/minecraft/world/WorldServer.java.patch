@@ -9,15 +9,14 @@
     private static final Logger field_147491_a = LogManager.getLogger();
     private final MinecraftServer field_73061_a;
     private final EntityTracker field_73062_L;
-@@ -105,27 +105,36 @@
-    protected final VillageSiege field_175740_d = new VillageSiege(this);
+@@ -106,26 +106,35 @@
     ObjectLinkedOpenHashSet<BlockEventData> field_147490_S = new ObjectLinkedOpenHashSet<BlockEventData>();
     private boolean field_211159_Q;
-+   
+ 
 +   /** Stores the recently processed (lighting) chunks */
 +   protected java.util.Set<ChunkPos> doneChunks = new java.util.HashSet<ChunkPos>();
 +   public List<Teleporter> customTeleporters = new java.util.ArrayList<Teleporter>();
- 
++
     public WorldServer(MinecraftServer p_i45921_1_, ISaveHandler p_i45921_2_, WorldInfo p_i45921_3_, int p_i45921_4_, Profiler p_i45921_5_) {
 -      super(p_i45921_2_, p_i45921_3_, DimensionType.func_186069_a(p_i45921_4_).func_186070_d(), p_i45921_5_, false);
 +      super(p_i45921_2_, p_i45921_3_,net.minecraftforge.common.DimensionManager.createProviderFor(p_i45921_4_), p_i45921_5_, false);
@@ -73,7 +72,7 @@
        this.field_72986_A.func_82572_b(this.field_72986_A.func_82573_f() + 1L);
        if (this.func_82736_K().func_82766_b("doDaylightCycle")) {
 -         this.field_72986_A.func_76068_b(this.field_72986_A.func_76073_f() + 1L);
-+         this.field_72986_A.func_76068_b(this.func_72820_D() + 1L);
++         this.func_72877_b(this.func_72820_D() + 1L);
        }
  
        this.field_72984_F.func_76318_c("tickPending");
@@ -114,6 +113,15 @@
     }
  
     public boolean func_73056_e() {
+@@ -336,7 +349,7 @@
+          boolean flag1 = this.func_72911_I();
+          this.field_72984_F.func_76320_a("pollingChunks");
+ 
+-         for(Iterator<Chunk> iterator = this.field_73063_M.func_187300_b(); iterator.hasNext(); this.field_72984_F.func_76319_b()) {
++         for(Iterator<Chunk> iterator = getPersistentChunkIterable(this.field_73063_M.func_187300_b()); iterator.hasNext(); this.field_72984_F.func_76319_b()) {
+             this.field_72984_F.func_76320_a("getChunk");
+             Chunk chunk = iterator.next();
+             int j = chunk.field_76635_g * 16;
 @@ -346,7 +359,7 @@
              this.field_72984_F.func_76318_c("tickChunk");
              chunk.func_150804_b(false);
@@ -138,15 +146,29 @@
                 if (biome.func_201848_a(this, blockpos2)) {
                    this.func_175656_a(blockpos2, Blocks.field_150432_aD.func_176223_P());
                 }
-@@ -545,6 +559,11 @@
+@@ -435,7 +449,7 @@
+    }
+ 
+    public void func_72939_s() {
+-      if (this.field_73010_i.isEmpty()) {
++      if (this.field_73010_i.isEmpty() && getPersistentChunks().isEmpty()) {
+          if (this.field_80004_Q++ >= 300) {
+             return;
+          }
+@@ -541,10 +555,15 @@
+ 
+    protected IChunkProvider func_72970_h() {
+       IChunkLoader ichunkloader = this.field_73019_z.func_75763_a(this.field_73011_w);
+-      return new ChunkProviderServer(this, ichunkloader, this.field_73011_w.func_186060_c(), this.field_73061_a);
++      return new ChunkProviderServer(this, ichunkloader, this.func_175624_G().createChunkGenerator(this), this.field_73061_a);
     }
  
     public boolean func_175660_a(EntityPlayer p_175660_1_, BlockPos p_175660_2_) {
 +      return super.func_175660_a(p_175660_1_, p_175660_2_);
 +   }
-+   
-+   public boolean canMineBlockBody(EntityPlayer p_175660_1_, BlockPos p_175660_2_)
-+   {
++
++   @Override
++   public boolean canMineBlockBody(EntityPlayer p_175660_1_, BlockPos p_175660_2_) {
        return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
     }
  
@@ -154,7 +176,7 @@
        } else if (this.field_72986_A.func_76067_t() == WorldType.field_180272_g) {
           this.field_72986_A.func_176143_a(BlockPos.field_177992_a.func_177984_a());
        } else {
-+          if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(this, p_73052_1_)) return;
++         if (net.minecraftforge.event.ForgeEventFactory.onCreateWorldSpawn(this, p_73052_1_)) return;
           BiomeProvider biomeprovider = this.field_73020_y.func_201711_g().func_202090_b();
           List<Biome> list = biomeprovider.func_76932_a();
           Random random = new Random(this.func_72905_C());
@@ -242,16 +264,22 @@
        }
  
     }
-@@ -957,4 +984,12 @@
+@@ -957,4 +984,18 @@
     public NetworkTagManager func_205772_D() {
        return this.field_73061_a.func_199731_aO();
     }
 +
 +   private long[] tickTime = new long[100];
++
 +   public void setTickTime(int tick, long time) {
 +      this.tickTime[tick % 100] = time;
 +   }
++
 +   public long[] getTickTimes() {
 +      return this.tickTime;
++   }
++
++   public java.io.File getChunkSaveLocation() {
++      return ((net.minecraft.world.chunk.storage.AnvilChunkLoader)func_72863_F().field_73247_e).field_75825_d;
 +   }
  }

@@ -1,0 +1,29 @@
+--- a/net/minecraft/pathfinding/WalkNodeProcessor.java
++++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
+@@ -343,10 +343,11 @@
+             for(int i = -1; i <= 1; ++i) {
+                for(int j = -1; j <= 1; ++j) {
+                   if (i != 0 || j != 0) {
+-                     Block block = p_193578_1_.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(i + p_193578_2_, p_193578_3_, j + p_193578_4_)).func_177230_c();
++                     IBlockState state = p_193578_1_.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(i + p_193578_2_, p_193578_3_, j + p_193578_4_));
++                     Block block = state.func_177230_c();
+                      if (block == Blocks.field_150434_aF) {
+                         p_193578_5_ = PathNodeType.DANGER_CACTUS;
+-                     } else if (block == Blocks.field_150480_ab) {
++                     } else if (block == Blocks.field_150480_ab || state.isBurning(p_193578_1_, blockpos$pooledmutableblockpos)) {
+                         p_193578_5_ = PathNodeType.DANGER_FIRE;
+                      }
+                   }
+@@ -361,9 +362,11 @@
+    protected PathNodeType func_189553_b(IBlockReader p_189553_1_, int p_189553_2_, int p_189553_3_, int p_189553_4_) {
+       BlockPos blockpos = new BlockPos(p_189553_2_, p_189553_3_, p_189553_4_);
+       IBlockState iblockstate = p_189553_1_.func_180495_p(blockpos);
++      PathNodeType type = iblockstate.getAiPathNodeType(p_189553_1_, blockpos);
++      if (type != null) return type;
+       Block block = iblockstate.func_177230_c();
+       Material material = iblockstate.func_185904_a();
+-      if (iblockstate.func_196958_f()) {
++      if (iblockstate.isAir(p_189553_1_, blockpos)) {
+          return PathNodeType.OPEN;
+       } else if (!block.func_203417_a(BlockTags.field_212185_E) && block != Blocks.field_196651_dG) {
+          if (block == Blocks.field_150480_ab) {

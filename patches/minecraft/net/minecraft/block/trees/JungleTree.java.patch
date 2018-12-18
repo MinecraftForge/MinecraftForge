@@ -1,0 +1,16 @@
+--- a/net/minecraft/block/trees/JungleTree.java
++++ b/net/minecraft/block/trees/JungleTree.java
+@@ -11,11 +11,11 @@
+ public class JungleTree extends AbstractBigTree {
+    @Nullable
+    protected AbstractTreeFeature<NoFeatureConfig> func_196936_b(Random p_196936_1_) {
+-      return new TreeFeature(true, 4 + p_196936_1_.nextInt(7), Blocks.field_196620_N.func_176223_P(), Blocks.field_196648_Z.func_176223_P(), false);
++      return new TreeFeature(true, 4 + p_196936_1_.nextInt(7), Blocks.field_196620_N.func_176223_P(), Blocks.field_196648_Z.func_176223_P(), false).setSapling((net.minecraft.block.BlockSapling)Blocks.field_196678_w);
+    }
+ 
+    @Nullable
+    protected AbstractTreeFeature<NoFeatureConfig> func_196938_a(Random p_196938_1_) {
+-      return new MegaJungleFeature(true, 10, 20, Blocks.field_196620_N.func_176223_P(), Blocks.field_196648_Z.func_176223_P());
++      return new MegaJungleFeature(true, 10, 20, Blocks.field_196620_N.func_176223_P(), Blocks.field_196648_Z.func_176223_P()).setSapling((net.minecraft.block.BlockSapling)Blocks.field_196678_w);
+    }
+ }
