@@ -33,7 +33,7 @@
        if (!this.field_78531_r.field_71474_y.field_74325_U) {
 -         GlStateManager.func_179114_b(entity.func_195050_f(p_78467_1_), 1.0F, 0.0F, 0.0F);
 -         GlStateManager.func_179114_b(entity.func_195046_g(p_78467_1_) + 180.0F, 0.0F, 1.0F, 0.0F);
-+         float yaw = entity.func_195046_g(p_78467_1_);
++         float yaw = entity.func_195046_g(p_78467_1_) + 180F;
 +         float pitch = entity.func_195050_f(p_78467_1_);
 +         float roll = 0.0F;
 +         IBlockState state = ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_78467_1_);
