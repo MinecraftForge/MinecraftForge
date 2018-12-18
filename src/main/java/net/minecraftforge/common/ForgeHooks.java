@@ -61,6 +61,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
@@ -101,6 +102,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.stats.StatList;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
@@ -124,6 +126,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
@@ -155,6 +158,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
@@ -279,20 +283,6 @@ public class ForgeHooks
             blockToolSetter.accept(block, ToolType.PICKAXE, 2);
         for (Block block : new Block[]{Blocks.IRON_BLOCK, Blocks.IRON_ORE, Blocks.LAPIS_BLOCK, Blocks.LAPIS_ORE})
             blockToolSetter.accept(block, ToolType.PICKAXE, 1);
-    }
-
-    public static int getTotalArmorValue(EntityPlayer player)
-    {
-        int ret = player.getTotalArmorValue();
-        for (int x = 0; x < player.inventory.armorInventory.size(); x++)
-        {
-            ItemStack stack = player.inventory.armorInventory.get(x);
-            if (stack.getItem() instanceof ISpecialArmor)
-            {
-                ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, x);
-            }
-        }
-        return ret;
     }
 
     /**
@@ -1161,5 +1151,10 @@ public class ForgeHooks
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getVanillaNoteId();
+    }
+
+    public static int canEntitySpawn(EntityLiving entity, IWorld world, float x, float y, float z, MobSpawnerBaseLogic spawner) {
+        Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null);
+        return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 }

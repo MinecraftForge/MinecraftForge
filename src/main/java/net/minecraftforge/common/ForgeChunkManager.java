@@ -50,6 +50,7 @@ import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.storage.ThreadedFileIOBase;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -141,18 +142,6 @@ public class ForgeChunkManager
             this.chunk = chunk;
             this.nbt = new NBTTagCompound();
         }
-    }
-
-    public static Iterator<Chunk> getPersistentChunksIterableFor(final World world, Iterator<Chunk> chunkIterator)
-    {
-        final ImmutableSetMultimap<ChunkPos, Ticket> persistentChunksFor = getPersistentChunksFor(world);
-        final ImmutableSet.Builder<Chunk> builder = ImmutableSet.builder();
-        world.profiler.startSection("forcedChunkLoading");
-        builder.addAll(persistentChunksFor.keys().stream().filter(Objects::nonNull).map(input -> world.getChunk(input.x, input.z)).iterator());
-        world.profiler.endStartSection("regularChunkLoading");
-        builder.addAll(chunkIterator);
-        world.profiler.endSection();
-        return builder.build().iterator();
     }
 
     /**
@@ -994,25 +983,29 @@ public class ForgeChunkManager
         }
     }
 
-    public static void storeChunkNBT(Chunk chunk, NBTTagCompound nbt)
+    public static void storeChunkNBT(World world, IChunk ichunk, NBTTagCompound nbt)
     {
         if (dormantChunkCacheSize == 0) return;
 
-        Cache<Long, ChunkEntry> cache = dormantChunkCache.get(chunk.getWorld());
+        Cache<Long, ChunkEntry> cache = dormantChunkCache.get(world);
         if (cache == null) return;
 
-        ChunkEntry entry = cache.getIfPresent(ChunkPos.asLong(chunk.x, chunk.z));
+        ChunkEntry entry = cache.getIfPresent(ichunk.getPos().asLong());
         if (entry != null)
         {
             entry.nbt.setTag("Entities", nbt.getList("Entities", Constants.NBT.TAG_COMPOUND));
             entry.nbt.setTag("TileEntities", nbt.getList("TileEntities", Constants.NBT.TAG_COMPOUND));
 
-            ClassInheritanceMultiMap<Entity>[] entityLists = chunk.getEntityLists();
-            for (int i = 0; i < entityLists.length; ++i)
+            if (ichunk instanceof Chunk)
             {
-                entityLists[i] = new ClassInheritanceMultiMap<>(Entity.class);
+                Chunk chunk = (Chunk)ichunk;
+                ClassInheritanceMultiMap<Entity>[] entityLists = chunk.getEntityLists();
+                for (int i = 0; i < entityLists.length; ++i)
+                {
+                    entityLists[i] = new ClassInheritanceMultiMap<>(Entity.class);
+                }
+                chunk.getTileEntityMap().clear();
             }
-            chunk.getTileEntityMap().clear();
         }
     }
 

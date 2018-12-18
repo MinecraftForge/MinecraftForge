@@ -20,10 +20,8 @@
 package net.minecraftforge.event.world;
 
 import net.minecraft.client.multiplayer.ChunkProviderClient;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.eventbus.api.Event;
 
 /**
  * ChunkEvent is fired when an event involving a chunk occurs.<br>
@@ -36,15 +34,15 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 public class ChunkEvent extends WorldEvent
 {
-    private final Chunk chunk;
+    private final IChunk chunk;
 
-    public ChunkEvent(Chunk chunk)
+    public ChunkEvent(IChunk chunk)
     {
         super(chunk.getWorld());
         this.chunk = chunk;
     }
 
-    public Chunk getChunk()
+    public IChunk getChunk()
     {
         return chunk;
     }
@@ -63,7 +61,7 @@ public class ChunkEvent extends WorldEvent
      **/
     public static class Load extends ChunkEvent
     {
-        public Load(Chunk chunk)
+        public Load(IChunk chunk)
         {
             super(chunk);
         }
@@ -82,7 +80,7 @@ public class ChunkEvent extends WorldEvent
      **/
     public static class Unload extends ChunkEvent
     {
-        public Unload(Chunk chunk)
+        public Unload(IChunk chunk)
         {
             super(chunk);
         }

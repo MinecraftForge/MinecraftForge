@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/BlockNote.java
 +++ b/net/minecraft/block/BlockNote.java
+@@ -49,7 +49,7 @@
+    }
+ 
+    private void func_196482_a(World p_196482_1_, BlockPos p_196482_2_) {
+-      if (p_196482_1_.func_180495_p(p_196482_2_.func_177984_a()).func_196958_f()) {
++      if (p_196482_1_.func_175623_d(p_196482_2_.func_177984_a())) {
+          p_196482_1_.func_175641_c(p_196482_2_, this, 0, 0);
+       }
+ 
 @@ -59,7 +59,9 @@
        if (p_196250_2_.field_72995_K) {
           return true;

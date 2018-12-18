@@ -71,4 +71,12 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      * @return A compound tag for custom data
      */
      NBTTagCompound getTileData();
+
+     default void onChunkUnloaded(){}
+
+    /**
+     * Called when this is first added to the world (by {@link World#addTileEntity(TileEntity)}).
+     * Override instead of adding {@code if (firstTick)} stuff in update.
+     */
+    default void onLoad(){}
 }

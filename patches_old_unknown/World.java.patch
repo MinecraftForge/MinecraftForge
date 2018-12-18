@@ -1,0 +1,150 @@
+--- ../src-base/minecraft/net/minecraft/world/World.java
++++ ../src-work/minecraft/net/minecraft/world/World.java
+@@ -527,11 +579,11 @@
+         {
+             IBlockState iblockstate = this.func_180495_p(p_190529_1_);
+ 
+-            if (iblockstate.func_177230_c() == Blocks.field_190976_dk)
++            if (true)
+             {
+                 try
+                 {
+-                    ((BlockObserver)iblockstate.func_177230_c()).func_190962_b(iblockstate, this, p_190529_1_, p_190529_2_, p_190529_3_);
++                    iblockstate.func_177230_c().observedNeighborChange(iblockstate, this, p_190529_1_, p_190529_2_, p_190529_3_);
+                 }
+                 catch (Throwable throwable)
+                 {
+@@ -543,7 +595,7 @@
+                         {
+                             try
+                             {
+-                                return String.format("ID #%d (%s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getCanonicalName());
++                                return String.format("ID #%d (%s // %s // %s)", Block.func_149682_b(p_190529_2_), p_190529_2_.func_149739_a(), p_190529_2_.getClass().getName(), p_190529_2_.getRegistryName());
+                             }
+                             catch (Throwable var2)
+                             {
+@@ -1227,6 +1291,7 @@
+         IBlockState iblockstate = Blocks.field_150348_b.func_176223_P();
+         BlockPos.PooledMutableBlockPos blockpos$pooledmutableblockpos = BlockPos.PooledMutableBlockPos.func_185346_s();
+ 
++        if (p_191504_3_ && !net.minecraftforge.event.ForgeEventFactory.gatherCollisionBoxes(this, p_191504_1_, p_191504_2_, p_191504_4_)) return true;
+         try
+         {
+             for (int k1 = i; k1 < j; ++k1)
+@@ -1269,7 +1334,7 @@
+ 
+                                 iblockstate1.func_185908_a(this, blockpos$pooledmutableblockpos, p_191504_2_, p_191504_4_, p_191504_1_, false);
+ 
+-                                if (p_191504_3_ && !p_191504_4_.isEmpty())
++                                if (p_191504_3_ && !net.minecraftforge.event.ForgeEventFactory.gatherCollisionBoxes(this, p_191504_1_, p_191504_2_, p_191504_4_))
+                                 {
+                                     boolean flag5 = true;
+                                     return flag5;
+@@ -1319,11 +1384,10 @@
+                 }
+             }
+         }
+-
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.GetCollisionBoxesEvent(this, p_184144_1_, p_184144_2_, list));
+         return list;
+     }
+@@ -1522,9 +1620,9 @@
+         for (blockpos = new BlockPos(p_175672_1_.func_177958_n(), chunk.func_76625_h() + 16, p_175672_1_.func_177952_p()); blockpos.func_177956_o() >= 0; blockpos = blockpos1)
+         {
+             blockpos1 = blockpos.func_177977_b();
+-            Material material = chunk.func_177435_g(blockpos1).func_185904_a();
++            IBlockState state = chunk.func_177435_g(blockpos1);
+ 
+-            if (material.func_76230_c() && material != Material.field_151584_j)
++            if (state.func_185904_a().func_76230_c() && !state.func_177230_c().isLeaves(state, this, blockpos1) && !state.func_177230_c().isFoliage(this, blockpos1))
+             {
+                 break;
+             }
+@@ -1972,6 +2128,12 @@
+                 {
+                     IBlockState iblockstate1 = this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(l3, i4, j4));
+ 
++                    Boolean result = iblockstate1.func_177230_c().isAABBInsideLiquid(this, blockpos$pooledmutableblockpos, p_72953_1_);
++                    if (result != null) {
++                        if (!result) continue;
++                        blockpos$pooledmutableblockpos.func_185344_t();
++                        return true;
++                    }
+                     if (iblockstate1.func_185904_a().func_76224_d())
+                     {
+                         blockpos$pooledmutableblockpos.func_185344_t();
+@@ -2050,6 +2217,16 @@
+                         IBlockState iblockstate1 = this.func_180495_p(blockpos$pooledmutableblockpos);
+                         Block block = iblockstate1.func_177230_c();
+ 
++                        Boolean result = block.isEntityInsideMaterial(this, blockpos$pooledmutableblockpos, iblockstate1, p_72918_3_, (double)i3, p_72918_2_, false);
++                        if (result != null && result == true)
++                        {
++                            // Forge: When requested call blocks modifyAcceleration method, and more importantly cause this method to return true, which results in an entity being "inWater"
++                            flag = true;
++                            vec3d = block.func_176197_a(this, blockpos$pooledmutableblockpos, p_72918_3_, vec3d);
++                            continue;
++                        }
++                        else if (result != null && result == false) continue;
++
+                         if (iblockstate1.func_185904_a() == p_72918_2_)
+                         {
+                             double d0 = (double)((float)(i4 + 1) - BlockLiquid.func_149801_b(((Integer)iblockstate1.func_177229_b(BlockLiquid.field_176367_b)).intValue()));
+@@ -2095,7 +2272,14 @@
+             {
+                 for (int j4 = j3; j4 < k3; ++j4)
+                 {
+-                    if (this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(l3, i4, j4)).func_185904_a() == p_72875_2_)
++                    IBlockState iblockstate1 = this.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(l3, i4, j4));
++                    Boolean result = iblockstate1.func_177230_c().isAABBInsideMaterial(this, blockpos$pooledmutableblockpos, p_72875_1_, p_72875_2_);
++                    if (result != null) {
++                        if (!result) continue;
++                        blockpos$pooledmutableblockpos.func_185344_t();
++                        return true;
++                    }
++                    if (iblockstate1.func_185904_a() == p_72875_2_)
+                     {
+                         blockpos$pooledmutableblockpos.func_185344_t();
+                         return true;
+@@ -2484,6 +2687,11 @@
+ 
+     public boolean func_175670_e(BlockPos p_175670_1_, boolean p_175670_2_)
+     {
++        return this.field_73011_w.canBlockFreeze(p_175670_1_, p_175670_2_);
++    }
++
++    public boolean canBlockFreezeBody(BlockPos p_175670_1_, boolean p_175670_2_)
++    {
+         Biome biome = this.func_180494_b(p_175670_1_);
+         float f = biome.func_180626_a(p_175670_1_);
+ 
+@@ -2525,6 +2733,11 @@
+ 
+     public boolean func_175708_f(BlockPos p_175708_1_, boolean p_175708_2_)
+     {
++        return this.field_73011_w.canSnowAt(p_175708_1_, p_175708_2_);
++    }
++
++    public boolean canSnowAtBody(BlockPos p_175708_1_, boolean p_175708_2_)
++    {
+         Biome biome = this.func_180494_b(p_175708_1_);
+         float f = biome.func_180626_a(p_175708_1_);
+ 
+@@ -2542,7 +2755,7 @@
+             {
+                 IBlockState iblockstate1 = this.func_180495_p(p_175708_1_);
+ 
+-                if (iblockstate1.func_185904_a() == Material.field_151579_a && Blocks.field_150431_aC.func_176196_c(this, p_175708_1_))
++                if (iblockstate1.func_177230_c().isAir(iblockstate1, this, p_175708_1_) && Blocks.field_150431_aC.func_176196_c(this, p_175708_1_))
+                 {
+                     return true;
+                 }
+@@ -2958,7 +3175,7 @@
+         }
+         else
+         {
+-            return iblockstate1.func_185904_a().func_76222_j() && p_190527_1_.func_176198_a(this, p_190527_2_, p_190527_4_);
++            return iblockstate1.func_177230_c().func_176200_f(this, p_190527_2_) && p_190527_1_.func_176198_a(this, p_190527_2_, p_190527_4_);
+         }
+     }
+ 

@@ -20,7 +20,7 @@
 package net.minecraftforge.event.world;
 
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,17 +40,17 @@ public class ChunkDataEvent extends ChunkEvent
 {
     private final NBTTagCompound data;
 
-    public ChunkDataEvent(Chunk chunk, NBTTagCompound data)
+    public ChunkDataEvent(IChunk chunk, NBTTagCompound data)
     {
         super(chunk);
         this.data = data;
     }
-    
+
     public NBTTagCompound getData()
     {
         return data;
     }
-    
+
     /**
      * ChunkDataEvent.Load is fired when vanilla Minecraft attempts to load Chunk data.<br>
      * This event is fired during chunk loading in
@@ -64,15 +64,15 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Load extends ChunkDataEvent
     {
-        public Load(Chunk chunk, NBTTagCompound data)
+        public Load(IChunk chunk, NBTTagCompound data)
         {
             super(chunk, data);
         }
     }
-    
+
     /**
      * ChunkDataEvent.Save is fired when vanilla Minecraft attempts to save Chunk data.<br>
-     * This event is fired during chunk saving in 
+     * This event is fired during chunk saving in
      * {@link AnvilChunkLoader#saveChunk(World, Chunk)}. <br>
      * <br>
      * This event is not {@link net.minecraftforge.eventbus.api.Cancelable}.<br>
@@ -83,7 +83,7 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Save extends ChunkDataEvent
     {
-        public Save(Chunk chunk, NBTTagCompound data)
+        public Save(IChunk chunk, NBTTagCompound data)
         {
             super(chunk, data);
         }

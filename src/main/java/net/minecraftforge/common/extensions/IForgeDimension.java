@@ -22,9 +22,18 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nullable;
 
 import net.minecraft.client.audio.MusicTicker;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldType;
+import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.NetherDimension;
+import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.IRenderHandler;
@@ -105,12 +114,12 @@ public interface IForgeDimension
 
     void resetRainAndThunder();
 
-    default boolean canDoLightning(net.minecraft.world.chunk.Chunk chunk)
+    default boolean canDoLightning(Chunk chunk)
     {
         return true;
     }
 
-    default boolean canDoRainSnowIce(net.minecraft.world.chunk.Chunk chunk)
+    default boolean canDoRainSnowIce(Chunk chunk)
     {
         return true;
     }
@@ -125,5 +134,153 @@ public interface IForgeDimension
     default MusicTicker.MusicType getMusicType()
     {
         return null;
+    }
+
+    default Biome getBiome(BlockPos pos)
+    {
+       return getDimension().getWorld().getBiomeBody(pos);
+    }
+
+    default boolean isDaytime()
+    {
+        return getDimension().getWorld().getSkylightSubtracted() < 4;
+    }
+
+    /**
+     * The current sun brightness factor for this dimension.
+     * 0.0f means no light at all, and 1.0f means maximum sunlight.
+     * This will be used for the "calculateSkylightSubtracted"
+     * which is for Sky light value calculation.
+     *
+     * @return The current brightness factor
+     **/
+    default float getSunBrightnessFactor(float partialTicks)
+    {
+        return getDimension().getWorld().getSunBrightnessFactor(partialTicks);
+    }
+
+    /**
+     * Gets the Sun Brightness for rendering sky.
+     * */
+    @OnlyIn(Dist.CLIENT)
+    default float getSunBrightness(float partialTicks)
+    {
+        return getDimension().getWorld().getSunBrightnessBody(partialTicks);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    default Vec3d getSkyColor(Entity cameraEntity, float partialTicks)
+    {
+        return getDimension().getWorld().getSkyColorBody(cameraEntity, partialTicks);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    default Vec3d getCloudColor(float partialTicks)
+    {
+        return getDimension().getWorld().getCloudColorBody(partialTicks);
+    }
+
+    /**
+     * Calculates the current moon phase factor.
+     * This factor is effective for slimes.
+     * (This method do not affect the moon rendering)
+     * */
+    default float getCurrentMoonPhaseFactor(long time)
+    {
+        return Dimension.MOON_PHASE_FACTORS[this.getDimension().getMoonPhase(time)];
+    }
+
+    /**
+     * Gets the Star Brightness for rendering sky.
+     * */
+    @OnlyIn(Dist.CLIENT)
+    default float getStarBrightness(float partialTicks)
+    {
+        float f = getDimension().getWorld().getCelestialAngle(partialTicks);
+        float f1 = 1.0F - (MathHelper.cos(f * ((float)Math.PI * 2F)) * 2.0F + 0.25F);
+        f1 = MathHelper.clamp(f1, 0.0F, 1.0F);
+        return f1 * f1 * 0.5F;
+    }
+
+    default void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful) { }
+
+    default void calculateInitialWeather()
+    {
+        getDimension().getWorld().calculateInitialWeatherBody();
+    }
+
+    default void updateWeather()
+    {
+        getDimension().getWorld().updateWeatherBody();
+    }
+
+    default long getSeed()
+    {
+        return getDimension().getWorld().getWorldInfo().getSeed();
+    }
+
+    default long getWorldTime()
+    {
+        return getDimension().getWorld().getWorldInfo().getDayTime();
+    }
+
+    default void setWorldTime(long time)
+    {
+        getDimension().getWorld().getWorldInfo().setDayTime(time);
+    }
+
+    default BlockPos getSpawnPoint()
+    {
+        WorldInfo info = getDimension().getWorld().getWorldInfo();
+        return new BlockPos(info.getSpawnX(), info.getSpawnY(), info.getSpawnZ());
+    }
+
+    default void setSpawnPoint(BlockPos pos)
+    {
+        getDimension().getWorld().getWorldInfo().setSpawn(pos);
+    }
+
+    default boolean canMineBlock(EntityPlayer player, BlockPos pos)
+    {
+        return getDimension().getWorld().canMineBlockBody(player, pos);
+    }
+
+    default boolean isHighHumidity(BlockPos pos)
+    {
+        return getDimension().getWorld().getBiome(pos).isHighHumidity();
+    }
+
+    default int getHeight()
+    {
+        return 256;
+    }
+
+    default int getActualHeight()
+    {
+        return getDimension().isNether() ? 128 : 256;
+    }
+
+    default double getHorizon()
+    {
+        return getDimension().getWorld().getWorldInfo().getTerrainType().getHorizon(getDimension().getWorld());
+    }
+
+    default String getSaveFolder()
+    {
+        return getId() == 0 ? null : "DIM" + getId();
+    }
+
+    /**
+     * Determine if the cursor on the map should 'spin' when rendered, like it does for the player in the nether.
+     *
+     * @param entity The entity holding the map, playername, or frame-ENTITYID
+     * @param x X Position
+     * @param z Z Position
+     * @param rotation the regular rotation of the marker
+     * @return True to 'spin' the cursor
+     */
+    default boolean shouldMapSpin(String entity, double x, double z, double rotation)
+    {
+        return getId() < 0;
     }
 }

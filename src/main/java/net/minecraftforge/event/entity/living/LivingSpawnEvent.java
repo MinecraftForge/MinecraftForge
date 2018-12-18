@@ -25,6 +25,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 import net.minecraftforge.eventbus.api.Event.HasResult;
@@ -43,12 +44,12 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  **/
 public class LivingSpawnEvent extends LivingEvent
 {
-    private final World world;
+    private final IWorld world;
     private final float x;
     private final float y;
     private final float z;
 
-    public LivingSpawnEvent(EntityLiving entity, World world, float x, float y, float z)
+    public LivingSpawnEvent(EntityLiving entity, IWorld world, float x, float y, float z)
     {
         super(entity);
         this.world = world;
@@ -57,7 +58,7 @@ public class LivingSpawnEvent extends LivingEvent
         this.z = z;
     }
 
-    public World getWorld() { return world; }
+    public IWorld getWorld() { return world; }
     public float getX() { return x; }
     public float getY() { return y; }
     public float getZ() { return z; }
@@ -76,7 +77,6 @@ public class LivingSpawnEvent extends LivingEvent
         @Nullable
         private final MobSpawnerBaseLogic spawner;
 
-
         /**
          * CheckSpawn is fired when an Entity is about to be spawned.
          * @param entity the spawning entity
@@ -87,7 +87,7 @@ public class LivingSpawnEvent extends LivingEvent
          * @param spawner position of the MobSpawner
          *                  null if it this spawn is coming from a WorldSpawner
          */
-        public CheckSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
+        public CheckSpawn(EntityLiving entity, IWorld world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;
@@ -95,7 +95,7 @@ public class LivingSpawnEvent extends LivingEvent
 
         public boolean isSpawner()
         {
-            return spawner != null; // TODO: replace with spawner null check in 1.13
+            return spawner != null;
         }
 
         @Nullable

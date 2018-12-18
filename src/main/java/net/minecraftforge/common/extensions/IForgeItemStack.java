@@ -287,6 +287,13 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
         return getStack().getItem().getHorseArmorType(getStack());
     }
 
+    /**
+     * Called to tick armor in the armor slot. Override to do something
+     */
+    default void onArmorTick(World world, EntityPlayer player)
+    {
+        getStack().getItem().onArmorTick(getStack(), world, player);
+    }
 
     /**
      * Called every tick from {@link EntityHorse#onUpdate()} on the item in the
@@ -333,5 +340,19 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
     default boolean isBookEnchantable(ItemStack book)
     {
         return getStack().getItem().isBookEnchantable(getStack(), book);
+    }
+
+
+    /**
+     * Called when a player drops the item into the world, returning false from this
+     * will prevent the item from being removed from the players inventory and
+     * spawning in the world
+     *
+     * @param player The player that dropped the item
+     * @param item   The item stack, before the item is removed.
+     */
+    default boolean onDroppedByPlayer(EntityPlayer player)
+    {
+        return getStack().getItem().onDroppedByPlayer(getStack(), player);
     }
 }

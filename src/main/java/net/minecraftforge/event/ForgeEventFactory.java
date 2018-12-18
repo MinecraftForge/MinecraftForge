@@ -20,6 +20,7 @@
 package net.minecraftforge.event;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
@@ -118,8 +119,6 @@ import net.minecraftforge.event.entity.player.SleepingLocationCheckEvent;
 import net.minecraftforge.event.entity.player.SleepingTimeCheckEvent;
 import net.minecraftforge.event.entity.player.UseHoeEvent;
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
-import net.minecraftforge.event.terraingen.ChunkGeneratorEvent;
-import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.BlockEvent.CreateFluidSourceEvent;
 import net.minecraftforge.event.world.BlockEvent.MultiPlaceEvent;
@@ -127,6 +126,7 @@ import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
+import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -180,7 +180,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
-    public static Result canEntitySpawn(EntityLiving entity, World world, float x, float y, float z, MobSpawnerBaseLogic spawner)
+    public static Result canEntitySpawn(EntityLiving entity, IWorld world, float x, float y, float z, MobSpawnerBaseLogic spawner)
     {
         if (entity == null)
             return Result.DEFAULT;
@@ -426,15 +426,11 @@ public class ForgeEventFactory
         return event.getResult() == Result.ALLOW ? 1 : 0;
     }
 
-    public static void onPlayerDrops(EntityPlayer player, DamageSource cause, List<EntityItem> capturedDrops, boolean recentlyHit)
+    public static void onPlayerDrops(EntityPlayer player, DamageSource cause, Collection<EntityItem> drops, boolean recentlyHit)
     {
-        PlayerDropsEvent event = new PlayerDropsEvent(player, cause, capturedDrops, recentlyHit);
-        if (!MinecraftForge.EVENT_BUS.post(event))
-        {
-            for (EntityItem item : capturedDrops)
-            {
-                player.dropItemAndGetStack(item);
-            }
+        PlayerDropsEvent event = new PlayerDropsEvent(player, cause, drops, recentlyHit);
+        if (!MinecraftForge.EVENT_BUS.post(event)) {
+            drops.forEach(e -> player.dropItemAndGetStack(e));
         }
     }
 
@@ -644,18 +640,6 @@ public class ForgeEventFactory
         return MinecraftForge.EVENT_BUS.post(new ProjectileImpactEvent.Throwable(throwable, ray));
     }
 
-    public static boolean onReplaceBiomeBlocks(IChunkGenerator gen, int x, int z, ChunkPrimer primer, World world)
-    {
-        ChunkGeneratorEvent.ReplaceBiomeBlocks event = new ChunkGeneratorEvent.ReplaceBiomeBlocks(gen, x, z, primer, world);
-        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
-        return event.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY;
-    }
-
-    public static void onChunkPopulate(boolean pre, IChunkGenerator gen, World world, Random rand, int x, int z, boolean hasVillageGenerated)
-    {
-        MinecraftForge.EVENT_BUS.post(pre ? new PopulateChunkEvent.Pre(gen, world, rand, x, z, hasVillageGenerated) : new PopulateChunkEvent.Post(gen, world, rand, x, z, hasVillageGenerated));
-    }
-
     public static LootTable loadLootTable(ResourceLocation name, LootTable table, LootTableManager lootTableManager)
     {
         LootTableLoadEvent event = new LootTableLoadEvent(name, table, lootTableManager);
@@ -703,5 +687,12 @@ public class ForgeEventFactory
 
         Result result = event.getResult();
         return result == Result.DEFAULT ? world.getGameRules().getBoolean("mobGriefing") : result == Result.ALLOW;
+    }
+
+    public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos)
+    {
+        SaplingGrowTreeEvent event = new SaplingGrowTreeEvent(world, rand, pos);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getResult() != Result.DENY;
     }
 }

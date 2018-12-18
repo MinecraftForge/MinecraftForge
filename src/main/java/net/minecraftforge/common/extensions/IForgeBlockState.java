@@ -27,16 +27,16 @@ import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EntitySpawnPlacementRegistry.SpawnPlacementType;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
@@ -219,7 +219,7 @@ public interface IForgeBlockState
      * @param player The player or camera entity, null in some cases.
      * @return True to treat this as a bed
      */
-    default boolean isBed(IWorldReader world, BlockPos pos, @Nullable EntityPlayer player)
+    default boolean isBed(IBlockReader world, BlockPos pos, @Nullable EntityPlayer player)
     {
         return getBlockState().getBlock().isBed(getBlockState(), world, pos, player);
     }
@@ -233,9 +233,9 @@ public interface IForgeBlockState
      * @param type The Mob Category Type
      * @return True to allow a mob of the specified category to spawn, false to prevent it.
      */
-    default boolean canCreatureSpawn(IWorldReader world, BlockPos pos, SpawnPlacementType type)
+    default boolean canCreatureSpawn(IWorldReaderBase world, BlockPos pos, SpawnPlacementType type, EntityType<? extends EntityLiving> entityType)
     {
-        return getBlockState().getBlock().canCreatureSpawn(getBlockState(), world, pos, type);
+        return getBlockState().getBlock().canCreatureSpawn(getBlockState(), world, pos, type, entityType);
     }
     /**
      * Returns the position that the player is moved to upon
@@ -247,7 +247,7 @@ public interface IForgeBlockState
      * @return The spawn position
      */
     @Nullable
-    default BlockPos getBedSpawnPosition(IWorldReader world, BlockPos pos, @Nullable EntityPlayer player)
+    default BlockPos getBedSpawnPosition(IBlockReader world, BlockPos pos, @Nullable EntityPlayer player)
     {
         return getBlockState().getBlock().getBedSpawnPosition(getBlockState(), world, pos, player);
     }

@@ -1,0 +1,81 @@
+--- a/net/minecraft/world/WorldEntitySpawner.java
++++ b/net/minecraft/world/WorldEntitySpawner.java
+@@ -71,13 +71,15 @@
+ 
+          for(EnumCreatureType enumcreaturetype : EnumCreatureType.values()) {
+             if ((!enumcreaturetype.func_75599_d() || p_77192_3_) && (enumcreaturetype.func_75599_d() || p_77192_2_) && (!enumcreaturetype.func_82705_e() || p_77192_4_)) {
+-               int l4 = p_77192_1_.func_72907_a(enumcreaturetype.func_75598_a());
++               int l4 = p_77192_1_.countEntities(enumcreaturetype, true);
+                int i5 = enumcreaturetype.func_75601_b() * i / field_180268_a;
+                if (l4 <= i5) {
+                   BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+ 
++                  java.util.ArrayList<ChunkPos> shuffled = new java.util.ArrayList<>(this.field_77193_b);
++                  java.util.Collections.shuffle(shuffled);
+                   label142:
+-                  for(ChunkPos chunkpos1 : this.field_77193_b) {
++                  for(ChunkPos chunkpos1 : shuffled) {
+                      BlockPos blockpos = func_180621_a(p_77192_1_, chunkpos1.field_77276_a, chunkpos1.field_77275_b);
+                      int k1 = blockpos.func_177958_n();
+                      int l1 = blockpos.func_177956_o();
+@@ -125,7 +127,9 @@
+                                        }
+ 
+                                        entityliving.func_70012_b((double)f, (double)i3, (double)f1, p_77192_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
+-                                       if (entityliving.func_70601_bi() && entityliving.func_205019_a(p_77192_1_)) {
++                                       int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(entityliving, p_77192_1_, f, i3, f1, null);
++                                       if (canSpawn == 1 || (canSpawn == 0 && entityliving.func_70601_bi() && entityliving.func_205019_a(p_77192_1_))) {
++                                          if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, p_77192_1_, f, i3, f1, null))
+                                           ientitylivingdata = entityliving.func_204210_a(p_77192_1_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata, (NBTTagCompound)null);
+                                           if (entityliving.func_205019_a(p_77192_1_)) {
+                                              ++j2;
+@@ -135,7 +139,7 @@
+                                              entityliving.func_70106_y();
+                                           }
+ 
+-                                          if (j2 >= entityliving.func_70641_bl()) {
++                                          if (j2 >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(entityliving)) {
+                                              continue label142;
+                                           }
+ 
+@@ -183,18 +187,25 @@
+ 
+    public static boolean func_209382_a(EntitySpawnPlacementRegistry.SpawnPlacementType p_209382_0_, IWorldReaderBase p_209382_1_, BlockPos p_209382_2_, @Nullable EntityType<? extends EntityLiving> p_209382_3_) {
+       if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
+-         IBlockState iblockstate = p_209382_1_.func_180495_p(p_209382_2_);
+-         IFluidState ifluidstate = p_209382_1_.func_204610_c(p_209382_2_);
+-         switch(p_209382_0_) {
++         return p_209382_0_.canSpawnAt(p_209382_1_, p_209382_2_, p_209382_3_);
++      }
++      return false;
++   }
++
++   public static boolean canSpawnAtBody(EntitySpawnPlacementRegistry.SpawnPlacementType placeType, IWorldReaderBase worldIn, BlockPos pos, @Nullable EntityType<? extends EntityLiving> entityTypeIn) {
++       if (true) {
++         IBlockState iblockstate = worldIn.func_180495_p(pos);
++         IFluidState ifluidstate = worldIn.func_204610_c(pos);
++         switch(placeType) {
+          case IN_WATER:
+-            return ifluidstate.func_206884_a(FluidTags.field_206959_a) && p_209382_1_.func_204610_c(p_209382_2_.func_177977_b()).func_206884_a(FluidTags.field_206959_a) && !p_209382_1_.func_180495_p(p_209382_2_.func_177984_a()).func_185915_l();
++            return ifluidstate.func_206884_a(FluidTags.field_206959_a) && worldIn.func_204610_c(pos.func_177977_b()).func_206884_a(FluidTags.field_206959_a) && !worldIn.func_180495_p(pos.func_177984_a()).func_185915_l();
+          case ON_GROUND:
+          default:
+-            IBlockState iblockstate1 = p_209382_1_.func_180495_p(p_209382_2_.func_177977_b());
+-            if (iblockstate1.func_185896_q() || p_209382_3_ != null && EntitySpawnPlacementRegistry.func_209345_a(p_209382_3_, iblockstate1)) {
++            IBlockState iblockstate1 = worldIn.func_180495_p(pos.func_177977_b());
++            if (iblockstate.canCreatureSpawn(worldIn, pos, placeType, entityTypeIn)) {
+                Block block = iblockstate1.func_177230_c();
+                boolean flag = block != Blocks.field_150357_h && block != Blocks.field_180401_cv;
+-               return flag && func_206851_a(iblockstate, ifluidstate) && func_206851_a(p_209382_1_.func_180495_p(p_209382_2_.func_177984_a()), p_209382_1_.func_204610_c(p_209382_2_.func_177984_a()));
++               return flag && func_206851_a(iblockstate, ifluidstate) && func_206851_a(worldIn.func_180495_p(pos.func_177984_a()), worldIn.func_204610_c(pos.func_177984_a()));
+             } else {
+                return false;
+             }
+@@ -235,6 +246,7 @@
+ 
+                      float f = MathHelper.func_76131_a((float)l, (float)i + entityliving.field_70130_N, (float)(i + 16) - entityliving.field_70130_N);
+                      float f1 = MathHelper.func_76131_a((float)i1, (float)j + entityliving.field_70130_N, (float)(j + 16) - entityliving.field_70130_N);
++                     if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(entityliving, p_77191_0_, f, blockpos.func_177956_o(), f1, null) == -1) continue;
+                      entityliving.func_70012_b((double)f, (double)blockpos.func_177956_o(), (double)f1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
+                      if (entityliving.func_205020_a(p_77191_0_) && entityliving.func_205019_a(p_77191_0_)) {
+                         ientitylivingdata = entityliving.func_204210_a(p_77191_0_.func_175649_E(new BlockPos(entityliving)), ientitylivingdata, (NBTTagCompound)null);

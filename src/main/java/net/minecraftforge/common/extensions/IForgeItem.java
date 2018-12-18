@@ -318,7 +318,7 @@ public interface IForgeItem
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
-    default void onArmorTick(World world, EntityPlayer player, ItemStack itemStack)
+    default void onArmorTick(ItemStack stack, World world, EntityPlayer player)
     {
     }
 

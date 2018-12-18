@@ -26,7 +26,9 @@ import javax.annotation.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLeashKnot;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityEnderCrystal;
@@ -167,4 +169,16 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
      * @return {@code true} if this entity can trample, {@code false} otherwise
      */
     boolean canTrample(IBlockState state, BlockPos pos, float fallDistance);
+
+    /**
+     * Returns true if the entity is of the @link{EnumCreatureType} provided
+     * @param type The EnumCreatureType type this entity is evaluating
+     * @param forSpawnCount If this is being invoked to check spawn count caps.
+     * @return If the creature is of the type provided
+     */
+    default boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
+    {
+        if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).isNoDespawnRequired()) return false;
+        return type.getBaseClass().isAssignableFrom(this.getClass());
+    }
 }

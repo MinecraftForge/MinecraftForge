@@ -1,0 +1,20 @@
+--- a/net/minecraft/entity/projectile/EntityWitherSkull.java
++++ b/net/minecraft/entity/projectile/EntityWitherSkull.java
+@@ -45,7 +45,7 @@
+    }
+ 
+    public float func_180428_a(Explosion p_180428_1_, IBlockReader p_180428_2_, BlockPos p_180428_3_, IBlockState p_180428_4_, IFluidState p_180428_5_, float p_180428_6_) {
+-      return this.func_82342_d() && EntityWither.func_181033_a(p_180428_4_.func_177230_c()) ? Math.min(0.8F, p_180428_6_) : p_180428_6_;
++      return this.func_82342_d() && p_180428_4_.canEntityDestroy(p_180428_2_, p_180428_3_, this) ? Math.min(0.8F, p_180428_6_) : p_180428_6_;
+    }
+ 
+    protected void func_70227_a(RayTraceResult p_70227_1_) {
+@@ -77,7 +77,7 @@
+             }
+          }
+ 
+-         this.field_70170_p.func_72885_a(this, this.field_70165_t, this.field_70163_u, this.field_70161_v, 1.0F, false, this.field_70170_p.func_82736_K().func_82766_b("mobGriefing"));
++         this.field_70170_p.func_72885_a(this, this.field_70165_t, this.field_70163_u, this.field_70161_v, 1.0F, false, net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a));
+          this.func_70106_y();
+       }
+ 

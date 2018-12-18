@@ -43,8 +43,6 @@ public class MinecraftForge
      * EVENT_BUS for everything else
      */
     public static final IEventBus EVENT_BUS = IEventBus.create();
-    public static final IEventBus TERRAIN_GEN_BUS = IEventBus.create();
-    public static final IEventBus ORE_GEN_BUS = IEventBus.create();
 
     static final ForgeInternalHandler INTERNAL_HANDLER = new ForgeInternalHandler();
     private static final Logger LOGGER = LogManager.getLogger();
