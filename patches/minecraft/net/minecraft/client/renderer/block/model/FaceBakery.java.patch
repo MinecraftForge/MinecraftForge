@@ -15,7 +15,7 @@
        }
  
 -      int[] aint = this.func_188012_a(blockfaceuv, p_199332_4_, p_199332_5_, this.func_199337_a(p_199332_1_, p_199332_2_), p_199332_6_, p_199332_7_, p_199332_9_);
-+      int[] aint = this.makeQuadVertexData(blockfaceuv, p_199332_4_, p_199332_5_, this.func_199337_a(p_199332_1_, p_199332_2_), p_199332_6_, p_199332_7_, p_199332_9_);
++      int[] aint = this.makeQuadVertexData(blockfaceuv, p_199332_4_, p_199332_5_, this.func_199337_a(p_199332_1_, p_199332_2_), p_199332_6_, p_199332_7_, false);
        EnumFacing enumfacing = func_178410_a(aint);
        if (p_199332_7_ == null) {
           this.func_178408_a(aint, enumfacing);
