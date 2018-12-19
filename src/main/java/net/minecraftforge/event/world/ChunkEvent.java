@@ -38,7 +38,7 @@ public class ChunkEvent extends WorldEvent
 
     public ChunkEvent(IChunk chunk)
     {
-        super(chunk.getWorld());
+        super(chunk.getWorldForge());
         this.chunk = chunk;
     }
 

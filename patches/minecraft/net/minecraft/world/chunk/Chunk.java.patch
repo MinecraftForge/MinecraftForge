@@ -17,33 +17,34 @@
     }
  
     public Chunk(World p_i48703_1_, ChunkPrimer p_i48703_2_, int p_i48703_3_, int p_i48703_4_) {
-@@ -1164,4 +1165,29 @@
+@@ -1164,4 +1165,30 @@
        QUEUED,
        CHECK;
     }
-+   
-+   // FORGE start
-+   
++
 +   /**
 +    * <strong>FOR INTERNAL USE ONLY</strong>
 +    * <p>
-+    * Only public for use in {@link AnvilChunkLoader}. 
++    * Only public for use in {@link AnvilChunkLoader}.
 +    */
 +   @java.lang.Deprecated
 +   @javax.annotation.Nullable
-+   public final NBTTagCompound writeCapsToNBT()
-+   {
-+       return this.serializeCaps();
- }
-+   
++   public final NBTTagCompound writeCapsToNBT() {
++      return this.serializeCaps();
++   }
++
 +   /**
 +    * <strong>FOR INTERNAL USE ONLY</strong>
 +    * <p>
-+    * Only public for use in {@link AnvilChunkLoader}. 
++    * Only public for use in {@link AnvilChunkLoader}.
 +    */
 +   @java.lang.Deprecated
-+   public final void readCapsFromNBT(NBTTagCompound tag)
-+   {
-+       this.deserializeCaps(tag);
++   public final void readCapsFromNBT(NBTTagCompound tag) {
++      this.deserializeCaps(tag);
 +   }
-+}
++
++   @Override
++   public World getWorldForge() {
++      return func_177412_p();
++   }
+ }

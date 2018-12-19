@@ -6,7 +6,7 @@
     BitSet func_205749_a(GenerationStage.Carving p_205749_1_);
 +
 +   @Nullable
-+   default net.minecraft.world.IWorld getWorld() {
++   default net.minecraft.world.IWorld getWorldForge() {
 +      return null;
 +   }
  }
