@@ -1,0 +1,27 @@
+--- a/net/minecraft/client/renderer/entity/RenderPlayer.java
++++ b/net/minecraft/client/renderer/entity/RenderPlayer.java
+@@ -52,6 +52,7 @@
+    }
+ 
+    public void func_76986_a(AbstractClientPlayer p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Pre(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_))) return;
+       if (!p_76986_1_.func_175144_cb() || this.field_76990_c.field_78734_h == p_76986_1_) {
+          double d0 = p_76986_4_;
+          if (p_76986_1_.func_70093_af()) {
+@@ -63,6 +64,7 @@
+          super.func_76986_a(p_76986_1_, p_76986_2_, d0, p_76986_6_, p_76986_8_, p_76986_9_);
+          GlStateManager.func_187440_b(GlStateManager.Profile.PLAYER_SKIN);
+       }
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_));
+    }
+ 
+    private void func_177137_d(AbstractClientPlayer p_177137_1_) {
+@@ -104,6 +106,8 @@
+                EnumAction enumaction1 = itemstack1.func_77975_n();
+                if (enumaction1 == EnumAction.BLOCK) {
+                   modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
++               } else if (enumaction1 == EnumAction.BOW) { // FORGE: fix MC-88356 allow offhand to use bow and arrow animation TODO Remove in 1.13.1 - Fixed
++                  modelbiped$armpose1 = ModelBiped.ArmPose.BOW_AND_ARROW;
+                } else if (enumaction1 == EnumAction.SPEAR) {
+                   modelbiped$armpose1 = ModelBiped.ArmPose.THROW_SPEAR;
+                }
