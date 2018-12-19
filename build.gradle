@@ -140,7 +140,7 @@ project(':forge') {
             properties = [
                 'org.lwjgl.util.Debug': 'true',
                 'org.lwjgl.util.DebugLoader': 'true',
-                'org.lwjgl.system.SharedLibraryExtractDirectory': 'lwjgl_dll',
+                'org.lwjgl.system.SharedLibraryExtractDirectory': "lwjgl_dll",
                 'mc.version': MC_VERSION,
                 'mcp.version': MCP_VERSION,
                 'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
