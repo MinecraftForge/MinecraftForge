@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
 +++ b/net/minecraft/client/renderer/chunk/ChunkRenderDispatcher.java
-@@ -44,8 +44,13 @@
+@@ -44,9 +44,14 @@
     private final ChunkRenderWorker field_178525_i;
  
     public ChunkRenderDispatcher() {
@@ -10,7 +10,9 @@
 +   public ChunkRenderDispatcher(int countRenderBuilders) {
        int i = Math.max(1, (int)((double)Runtime.getRuntime().maxMemory() * 0.3D) / 10485760);
        int j = Math.max(1, MathHelper.func_76125_a(Runtime.getRuntime().availableProcessors(), 1, i / 5));
+-      this.field_188249_c = MathHelper.func_76125_a(j * 10, 1, i);
 +      if(countRenderBuilders < 0) countRenderBuilders = MathHelper.func_76125_a(j * 10, 1, i);
-       this.field_188249_c = MathHelper.func_76125_a(j * 10, 1, i);
++      this.field_188249_c = countRenderBuilders;
        if (j > 1) {
           for(int k = 0; k < j; ++k) {
+             ChunkRenderWorker chunkrenderworker = new ChunkRenderWorker(this);

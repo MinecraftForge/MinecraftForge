@@ -1,16 +1,14 @@
 --- a/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
 +++ b/net/minecraft/client/renderer/entity/layers/LayerArmorBase.java
-@@ -2,6 +2,9 @@
+@@ -2,6 +2,7 @@
  
  import com.google.common.collect.Maps;
  import java.util.Map;
 +
-+import javax.annotation.Nullable;
-+
  import net.minecraft.client.Minecraft;
  import net.minecraft.client.renderer.GlStateManager;
  import net.minecraft.client.renderer.entity.RenderLivingBase;
-@@ -50,12 +53,13 @@
+@@ -50,12 +51,13 @@
           ItemArmor itemarmor = (ItemArmor)itemstack.func_77973_b();
           if (itemarmor.func_185083_B_() == p_188361_9_) {
              T t = this.func_188360_a(p_188361_9_);
@@ -26,7 +24,7 @@
                 int i = ((ItemArmorDyeable)itemarmor).func_200886_f(itemstack);
                 float f = (float)(i >> 16 & 255) / 255.0F;
                 float f1 = (float)(i >> 8 & 255) / 255.0F;
-@@ -67,7 +71,7 @@
+@@ -67,7 +69,7 @@
  
              GlStateManager.func_179131_c(this.field_177184_f, this.field_177185_g, this.field_177192_h, this.field_177187_e);
              t.func_78088_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
@@ -35,7 +33,7 @@
                 func_188364_a(this.field_177190_a, p_188361_1_, t, p_188361_2_, p_188361_3_, p_188361_4_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
              }
  
-@@ -119,10 +123,12 @@
+@@ -119,10 +121,12 @@
        Minecraft.func_71410_x().field_71460_t.func_191514_d(false);
     }
  
@@ -48,7 +46,7 @@
     private ResourceLocation func_177178_a(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_) {
        String s = String.format("textures/models/armor/%s_layer_%d%s.png", p_177178_1_.func_200880_d().func_200897_d(), p_177178_2_ ? 2 : 1, p_177178_3_ == null ? "" : String.format("_%s", p_177178_3_));
        ResourceLocation resourcelocation = field_177191_j.get(s);
-@@ -137,4 +143,47 @@
+@@ -137,4 +141,47 @@
     protected abstract void func_177177_a();
  
     protected abstract void func_188359_a(T p_188359_1_, EntityEquipmentSlot p_188359_2_);
@@ -71,7 +69,7 @@
 +    * @param type Subtype, can be null or "overlay"
 +    * @return ResourceLocation pointing at the armor's texture
 +    */
-+   public ResourceLocation getArmorResource(net.minecraft.entity.Entity entity, ItemStack stack, EntityEquipmentSlot slot, @Nullable String type) {
++   public ResourceLocation getArmorResource(net.minecraft.entity.Entity entity, ItemStack stack, EntityEquipmentSlot slot, @javax.annotation.Nullable String type) {
 +      ItemArmor item = (ItemArmor)stack.func_77973_b();
 +      String texture = item.func_200880_d().func_200897_d();
 +      String domain = "minecraft";
