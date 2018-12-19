@@ -325,8 +325,8 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
         GlStateManager.translated((offU * scale) - x, y, (offV * scale) - z);
 
         // Modulo to prevent texture samples becoming inaccurate at extreme offsets.
-        offU = offU % texW;
-        offV = offV % texH;
+        offU %= texW;
+        offV %= texH;
 
         // Translate the texture.
         GlStateManager.matrixMode(GL11.GL_TEXTURE);

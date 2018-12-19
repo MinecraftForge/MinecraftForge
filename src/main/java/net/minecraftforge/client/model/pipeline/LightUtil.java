@@ -165,7 +165,7 @@ public class LightUtil
                 int index = pos >> 2;
                 int offset = pos & 3;
                 int bits = from[index];
-                bits = bits >>> (offset * 8);
+                bits >>>= (offset * 8);
                 if((pos + size - 1) / 4 != index)
                 {
                     bits |= from[index + 1] << ((4 - offset) * 8);

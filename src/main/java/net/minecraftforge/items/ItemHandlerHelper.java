@@ -228,7 +228,7 @@ public class ItemHandlerHelper
                 }
             }
 
-            proportion = proportion / (float)inv.getSlots();
+            proportion /= (float) inv.getSlots();
             return MathHelper.floor(proportion * 14.0F) + (itemsFound > 0 ? 1 : 0);
         }
     }

@@ -166,7 +166,7 @@ public class GuiSlider extends GuiButtonExt
             {
                 while (val.substring(val.indexOf(".") + 1).length() < precision)
                 {
-                    val = val + "0";
+                    val += "0";
                 }
             }
         }
