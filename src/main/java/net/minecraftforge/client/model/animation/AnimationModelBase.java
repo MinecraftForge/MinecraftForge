@@ -103,7 +103,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
                 quad.pipe(lighter);
             }
         }
-        for(EnumFacing side : EnumFacing.values())
+        for(EnumFacing side : EnumFacing.VALUES)
         {
             quads = bakedModel.getQuads(null, side, 0);
             if(!quads.isEmpty())

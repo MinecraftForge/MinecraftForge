@@ -106,7 +106,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
                 quad.pipe(lighter);
             }
         }
-        for(EnumFacing side : EnumFacing.values())
+        for(EnumFacing side : EnumFacing.VALUES)
         {
             quads = model.getQuads(state, side, rand);
             if(!quads.isEmpty())
