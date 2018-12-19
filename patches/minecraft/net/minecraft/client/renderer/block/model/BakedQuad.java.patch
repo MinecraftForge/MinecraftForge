@@ -36,7 +36,7 @@
 +   @Override
 +   public void pipe(net.minecraftforge.client.model.pipeline.IVertexConsumer consumer) {
 +       net.minecraftforge.client.model.pipeline.LightUtil.putBakedQuad(consumer, this);
- }
++   }
 +   
 +   public net.minecraft.client.renderer.vertex.VertexFormat getFormat() {
 +       return format;
@@ -45,4 +45,4 @@
 +   public boolean shouldApplyDiffuseLighting() {
 +       return applyDiffuseLighting;
 +   }
-+}
+ }
