@@ -38,7 +38,7 @@
  
     private void func_195667_a(int p_195667_1_, int p_195667_2_, NativeImage[] p_195667_3_) {
        for(int i = 0; i < this.field_195670_c.length; ++i) {
-+         if ((this.field_110975_c >> i <= 0) || (this.field_110974_d >> i <= 0)) break;
++         if ((this.field_130223_c >> i <= 0) || (this.field_130224_d >> i <= 0)) break;
           p_195667_3_[i].func_195706_a(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_130223_c >> i, this.field_130224_d >> i, this.field_195670_c.length > 1);
        }
  
