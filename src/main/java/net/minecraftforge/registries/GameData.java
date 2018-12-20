@@ -247,6 +247,7 @@ public class GameData
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
             loadRegistry(r.getKey(), RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, true);
         }
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
         // the id mapping has reverted, fire remap events for those that care about id changes
         //Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
 
