@@ -271,6 +271,7 @@ public class GameData
         {
             this.identityMap.clear();
             this.objectList.clear();
+            this.nextId = 0;
         }
     }
 
