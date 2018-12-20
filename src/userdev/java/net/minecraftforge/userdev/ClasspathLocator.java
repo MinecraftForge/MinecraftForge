@@ -19,8 +19,10 @@
 
 package net.minecraftforge.userdev;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Streams;
+import com.google.common.collect.Table;
+import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.IModLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.logging.log4j.LogManager;
@@ -28,61 +30,90 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.FileAttributeView;
-import java.nio.file.attribute.UserPrincipalLookupService;
-import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipError;
 
+import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
 import static net.minecraftforge.fml.Logging.SCAN;
 
-public class ClasspathLocator implements IModLocator
-{
+public class ClasspathLocator implements IModLocator {
+
+    private static final String JAR_SUFFIX = ".jar";
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Predicate<Path> JAR_FILTER = path -> StringUtils.toLowerCase(path.getFileName().toString()).endsWith(JAR_SUFFIX);
+    private static final Comparator<Path> PATH_COMPARATOR = Comparator.comparing(path -> StringUtils.toLowerCase(path.getFileName().toString()));
+
+    private final Map<ModFile, FileSystem> modJars;
+    private final Table<ModFile, String[], Path> pathCache;
+    private final List<Path> classpath;
 
     public ClasspathLocator() {
+        modJars = new HashMap<>();
+        pathCache = HashBasedTable.create();
+        classpath = Stream.of(System.getProperty("java.class.path", "").split(File.pathSeparator))
+                .distinct()
+                .map(Paths::get)
+                .filter(Files::exists)
+                .sorted(PATH_COMPARATOR)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<ModFile> scanMods() {
+        List<ModFile> mods = classpath.stream()
+                .filter(JAR_FILTER)
+                .map(path -> new ModFile(path, this))
+                .filter(ModFile::identifyMods)
+                .peek(modFile -> modJars.compute(modFile, (key, value) -> createFileSystem(key)))
+                .collect(Collectors.toList());
+
         Set<URL> modUrls = Sets.newHashSet();
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        try
-        {
+
+        try {
             modUrls.addAll(Collections.list(ClassLoader.getSystemResources("META-INF/coremods.json")));
-            modUrls.addAll(Collections.list(loader.getResources("META-INF/coremods.json")));
             modUrls.addAll(Collections.list(ClassLoader.getSystemResources("META-INF/mods.toml")));
-            modUrls.addAll(Collections.list(loader.getResources("META-INF/mods.toml")));
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return modUrls.stream().map((url) -> {
-            try
-            {
-                // We got URLs including "META-INF/<something", so get two components up.
-                return new File(url.toURI()).toPath().getParent().getParent();
-            }
-            catch (URISyntaxException e)
-            {
-                e.printStackTrace();
-            }
-            return null;
-        }).filter(Objects::nonNull).distinct()
+        modUrls.stream()
+                .filter(url -> url.getProtocol().equals("file"))
+                .map((url) -> {
+                    try {
+                        // We got URLs including "META-INF/<something", so get two components up.
+                        return new File(url.toURI()).toPath().getParent().getParent();
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .distinct()
+                .sorted(PATH_COMPARATOR)
                 .map(path -> new ModFile(path, this))
-                .collect(Collectors.toList());
+                .forEach(mods::add);
+
+        return mods;
+    }
+
+    private FileSystem createFileSystem(ModFile modFile) {
+        try {
+            return FileSystems.newFileSystem(modFile.getFilePath(), modFile.getClass().getClassLoader());
+        } catch (ZipError | IOException e) {
+            LOGGER.debug(SCAN, "Ignoring invalid JAR file {}", modFile.getFilePath());
+            return null;
+        }
     }
 
     @Override
@@ -96,61 +127,87 @@ public class ClasspathLocator implements IModLocator
             throw new IllegalArgumentException("Missing path");
         }
 
-        Path filePath = modFile.getFilePath();
-        Path classesRoot = getClassesPath(filePath);
-        String[] tail = Arrays.copyOfRange(path, 1, path.length);
-        Path classPath = classesRoot.resolve(classesRoot.getFileSystem().getPath(path[0], tail));
-        if(Files.exists(classPath))
-        {
-            return classPath;
+        // Check mod jars
+        FileSystem modJarsResult = modJars.get(modFile);
+
+        if (modJarsResult != null) {
+            // Resolve via mod jar
+            return modJarsResult
+                    .getPath(path[0], Arrays.copyOfRange(path, 1, path.length));
         }
-        return filePath.resolve(filePath.getFileSystem().getPath(path[0], tail));
+
+        // Check path cache
+        Path pathCacheResult = pathCache.get(modFile, path);
+
+        if (pathCacheResult != null) {
+            // Resolve via path cache
+            return pathCacheResult;
+        }
+
+        Path resolvedPath = null;
+
+        // Loop classpath, excluding jars
+        for (Path dirPath : classpath.stream().filter(JAR_FILTER.negate()).collect(Collectors.toList())) {
+            if (resolvedPath == null || !Files.exists(resolvedPath)) {
+                resolvedPath = dirPath.resolve(FileSystems.getDefault().getPath(path[0], Arrays.copyOfRange(path, 1, path.length)));
+            }
+        }
+
+        if (resolvedPath == null) {
+            throw new IllegalStateException("Path not resolved");
+        }
+
+        // Cache resolved path
+        pathCache.put(modFile, path, resolvedPath);
+
+        // Resolve via classpath
+        return resolvedPath;
     }
 
     @Override
     public void scanFile(final ModFile modFile, final Consumer<Path> pathConsumer) {
-        LOGGER.debug(SCAN,"Scanning classpath");
+        LOGGER.debug(SCAN, "Scanning classpath");
 
-        Path filePath = modFile.getFilePath();
-        Path scanPath = getClassesPath(filePath);
+        // Check mod jars
+        if (modJars.containsKey(modFile)) {
+            // Scan mod jar
+            modJars.get(modFile)
+                    .getRootDirectories()
+                    .forEach(path -> scanPath(path, pathConsumer));
 
-        try (Stream<Path> files = Files.find(scanPath, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
+            return;
+        }
+
+        // Loop classpath, excluding jars
+        classpath.stream()
+                .filter(JAR_FILTER.negate())
+                .forEach(path -> scanPath(path, pathConsumer));
+
+        LOGGER.debug(SCAN, "Classpath scan complete");
+    }
+
+    private void scanPath(Path path, final Consumer<Path> pathConsumer) {
+        try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, attributes) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        LOGGER.debug(SCAN,"Classpath scan complete");
-    }
-
-    private Path getClassesPath(Path filePath)
-    {
-        Path classesPath = filePath;
-
-        // Hack 1: When running from within intellij, we get
-        // "out/production/resources" + "out/production/classes"
-        if(filePath.getNameCount() >= 1 && filePath.getName(filePath.getNameCount()-1).toString().equals("resources"))
-        {
-            classesPath = filePath.getParent().resolve("classes");
-        }
-        // Hack 2: When running from gradle, we get
-        // "build/resources/<sourceset>" + "build/classes/<language>/<sourceset>"
-        else if(filePath.getNameCount() >= 2 && filePath.getName(filePath.getNameCount()-2).toString().equals("resources"))
-        {
-            // We'll scan all the subdirectories for languages and sourcesets, hopefully that works...
-            classesPath = filePath.getParent().getParent().resolve("classes");
-        }
-        return classesPath;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "{Classpath locator}";
     }
 
     @Override
-    public Optional<Manifest> findManifest(Path file)
-    {
+    public Optional<Manifest> findManifest(Path file) {
+        if (JAR_FILTER.test(file)) {
+            try (JarFile jarFile = new JarFile(file.toFile())) {
+                return Optional.ofNullable(jarFile.getManifest());
+            } catch (IOException ignored) { }
+        }
+
         return Optional.empty();
     }
+
 }
