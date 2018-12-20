@@ -43,7 +43,7 @@ public class SidedInvWrapper implements IItemHandlerModifiable
         return ret;
     }
 
-    protected SidedInvWrapper(ISidedInventory inv, EnumFacing side)
+    public SidedInvWrapper(ISidedInventory inv, EnumFacing side)
     {
         this.inv = inv;
         this.side = side;

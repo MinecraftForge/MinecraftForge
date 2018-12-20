@@ -1,0 +1,18 @@
+--- a/net/minecraft/resources/IResourceManagerReloadListener.java
++++ b/net/minecraft/resources/IResourceManagerReloadListener.java
+@@ -1,5 +1,15 @@
+ package net.minecraft.resources;
+ 
++
++/**
++ * @deprecated Forge: {@link net.minecraftforge.resource.ISelectiveResourceReloadListener}, which selectively allows
++ * individual resource types being reloaded should rather be used where possible.
++ */
++@Deprecated
+ public interface IResourceManagerReloadListener {
+    void func_195410_a(IResourceManager p_195410_1_);
++   @javax.annotation.Nullable
++   default net.minecraftforge.resource.IResourceType getResourceType() {
++      return null;
++   }
+ }

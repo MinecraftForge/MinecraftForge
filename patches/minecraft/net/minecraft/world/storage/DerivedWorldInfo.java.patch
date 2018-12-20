@@ -1,0 +1,24 @@
+--- a/net/minecraft/world/storage/DerivedWorldInfo.java
++++ b/net/minecraft/world/storage/DerivedWorldInfo.java
+@@ -179,11 +179,21 @@
+    public void func_180783_e(boolean p_180783_1_) {
+    }
+ 
++   @Deprecated //Use int dimension ID
+    public void func_186345_a(DimensionType p_186345_1_, NBTTagCompound p_186345_2_) {
+       this.field_76115_a.func_186345_a(p_186345_1_, p_186345_2_);
+    }
+ 
++   public void setDimensionData(int dim, NBTTagCompound nbt) {
++      this.field_76115_a.setDimensionData(dim, nbt);
++   }
++
++   @Deprecated //Use int dimension ID
+    public NBTTagCompound func_186347_a(DimensionType p_186347_1_) {
+       return this.field_76115_a.func_186347_a(p_186347_1_);
+    }
++
++   public NBTTagCompound getDimensionData(int dim) {
++      return this.field_76115_a.getDimensionData(dim);
++   }
+ }

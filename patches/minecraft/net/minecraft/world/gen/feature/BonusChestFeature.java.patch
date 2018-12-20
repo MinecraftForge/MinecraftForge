@@ -1,0 +1,43 @@
+--- a/net/minecraft/world/gen/feature/BonusChestFeature.java
++++ b/net/minecraft/world/gen/feature/BonusChestFeature.java
+@@ -13,7 +13,7 @@
+ 
+ public class BonusChestFeature extends Feature<NoFeatureConfig> {
+    public boolean func_212245_a(IWorld p_212245_1_, IChunkGenerator<? extends IChunkGenSettings> p_212245_2_, Random p_212245_3_, BlockPos p_212245_4_, NoFeatureConfig p_212245_5_) {
+-      for(IBlockState iblockstate = p_212245_1_.func_180495_p(p_212245_4_); (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) && p_212245_4_.func_177956_o() > 1; iblockstate = p_212245_1_.func_180495_p(p_212245_4_)) {
++      for(IBlockState iblockstate = p_212245_1_.func_180495_p(p_212245_4_); (iblockstate.isAir(p_212245_1_, p_212245_4_) || iblockstate.func_203425_a(BlockTags.field_206952_E)) && p_212245_4_.func_177956_o() > 1; iblockstate = p_212245_1_.func_180495_p(p_212245_4_)) {
+          p_212245_4_ = p_212245_4_.func_177977_b();
+       }
+ 
+@@ -24,26 +24,26 @@
+ 
+          for(int i = 0; i < 4; ++i) {
+             BlockPos blockpos = p_212245_4_.func_177982_a(p_212245_3_.nextInt(4) - p_212245_3_.nextInt(4), p_212245_3_.nextInt(3) - p_212245_3_.nextInt(3), p_212245_3_.nextInt(4) - p_212245_3_.nextInt(4));
+-            if (p_212245_1_.func_175623_d(blockpos) && p_212245_1_.func_180495_p(blockpos.func_177977_b()).func_185896_q()) {
++            if (p_212245_1_.func_175623_d(blockpos) && p_212245_1_.func_180495_p(blockpos.func_177977_b()).isTopSolid(p_212245_1_.func_201672_e(), blockpos.func_177977_b())) {
+                p_212245_1_.func_180501_a(blockpos, Blocks.field_150486_ae.func_176223_P(), 2);
+                TileEntityLockableLoot.func_195479_a(p_212245_1_, p_212245_3_, blockpos, LootTableList.field_186420_b);
+                BlockPos blockpos1 = blockpos.func_177974_f();
+                BlockPos blockpos2 = blockpos.func_177976_e();
+                BlockPos blockpos3 = blockpos.func_177978_c();
+                BlockPos blockpos4 = blockpos.func_177968_d();
+-               if (p_212245_1_.func_175623_d(blockpos2) && p_212245_1_.func_180495_p(blockpos2.func_177977_b()).func_185896_q()) {
++               if (p_212245_1_.func_175623_d(blockpos2) && p_212245_1_.func_180495_p(blockpos2.func_177977_b()).isTopSolid(p_212245_1_.func_201672_e(), blockpos2.func_177977_b())) {
+                   p_212245_1_.func_180501_a(blockpos2, Blocks.field_150478_aa.func_176223_P(), 2);
+                }
+ 
+-               if (p_212245_1_.func_175623_d(blockpos1) && p_212245_1_.func_180495_p(blockpos1.func_177977_b()).func_185896_q()) {
++               if (p_212245_1_.func_175623_d(blockpos1) && p_212245_1_.func_180495_p(blockpos1.func_177977_b()).isTopSolid(p_212245_1_.func_201672_e(), blockpos1.func_177977_b())) {
+                   p_212245_1_.func_180501_a(blockpos1, Blocks.field_150478_aa.func_176223_P(), 2);
+                }
+ 
+-               if (p_212245_1_.func_175623_d(blockpos3) && p_212245_1_.func_180495_p(blockpos3.func_177977_b()).func_185896_q()) {
++               if (p_212245_1_.func_175623_d(blockpos3) && p_212245_1_.func_180495_p(blockpos3.func_177977_b()).isTopSolid(p_212245_1_.func_201672_e(), blockpos3.func_177977_b())) {
+                   p_212245_1_.func_180501_a(blockpos3, Blocks.field_150478_aa.func_176223_P(), 2);
+                }
+ 
+-               if (p_212245_1_.func_175623_d(blockpos4) && p_212245_1_.func_180495_p(blockpos4.func_177977_b()).func_185896_q()) {
++               if (p_212245_1_.func_175623_d(blockpos4) && p_212245_1_.func_180495_p(blockpos4.func_177977_b()).isTopSolid(p_212245_1_.func_201672_e(), blockpos4.func_177977_b())) {
+                   p_212245_1_.func_180501_a(blockpos4, Blocks.field_150478_aa.func_176223_P(), 2);
+                }
+ 

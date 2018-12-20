@@ -129,7 +129,7 @@ public class ServerLifecycleHooks
 
     }
 
-    public void handleExit(int retVal)
+    public static void handleExit(int retVal)
     {
 /*
         CountDownLatch latch = exitLatch;

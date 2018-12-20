@@ -1,11 +1,14 @@
 --- a/net/minecraft/potion/PotionType.java
 +++ b/net/minecraft/potion/PotionType.java
-@@ -7,7 +7,7 @@
+@@ -7,9 +7,8 @@
  import net.minecraft.util.ResourceLocation;
  import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
  
 -public class PotionType {
+-   private static final ResourceLocation field_185177_b = new ResourceLocation("empty");
+-   public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(field_185177_b);
 +public class PotionType extends net.minecraftforge.registries.ForgeRegistryEntry<PotionType> {
-    private static final ResourceLocation field_185177_b = new ResourceLocation("empty");
-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType>(field_185177_b);
++   public static final RegistryNamespacedDefaultedByKey<ResourceLocation, PotionType> field_185176_a = net.minecraftforge.registries.GameData.getWrapperDefaulted(PotionType.class);
     private final String field_185179_d;
+    private final ImmutableList<PotionEffect> field_185180_e;
+ 

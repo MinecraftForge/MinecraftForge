@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/EntityAIBreakBlock.java
++++ b/net/minecraft/entity/ai/EntityAIBreakBlock.java
+@@ -28,7 +28,7 @@
+    }
+ 
+    public boolean func_75250_a() {
+-      if (!this.field_203118_g.field_70170_p.func_82736_K().func_82766_b("mobGriefing")) {
++      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_203118_g.field_70170_p, this.field_203118_g) || !this.field_203118_g.field_70170_p.func_180495_p(this.field_179494_b).canEntityDestroy(this.field_203118_g.field_70170_p, this.field_179494_b, this.field_203118_g) || !net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this.field_203118_g, this.field_179494_b, this.field_203118_g.field_70170_p.func_180495_p(this.field_179494_b))) {
+          return false;
+       } else {
+          return this.field_203118_g.func_70681_au().nextInt(20) != 0 ? false : super.func_75250_a();

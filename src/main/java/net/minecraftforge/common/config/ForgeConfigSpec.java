@@ -33,11 +33,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.Config;
+import com.electronwill.nightconfig.core.ConfigFormat;
 import com.electronwill.nightconfig.core.InMemoryFormat;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
 import com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction;
 import com.electronwill.nightconfig.core.ConfigSpec.CorrectionListener;
 import com.google.common.base.Joiner;
@@ -50,17 +54,16 @@ import com.google.common.collect.Lists;
  * and other things Forge configs would find useful.
  */
 
-public class ForgeConfigSpec
+public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
 {
-    private final Config storage;
     private Map<List<String>, String> levelComments = new HashMap<>();
     private ForgeConfigSpec(Config storage, Map<List<String>, String> levelComments) {
-        this.storage = storage;
+        super(storage);
         this.levelComments = levelComments;
     }
 
     public boolean isCorrect(CommentedConfig config) {
-        return correct(storage, config, null, null, null, true) == 0;
+        return correct(this.config, config, null, null, null, true) == 0;
     }
 
     public int correct(CommentedConfig config) {
@@ -68,7 +71,7 @@ public class ForgeConfigSpec
     }
     public int correct(CommentedConfig config, CorrectionListener listener) {
         LinkedList<String> parentPath = new LinkedList<>(); //Linked list for fast add/removes
-        return correct(storage, config, parentPath, Collections.unmodifiableList(parentPath), listener, false);
+        return correct(this.config, config, parentPath, Collections.unmodifiableList(parentPath), listener, false);
     }
 
     private int correct(Config spec, CommentedConfig config, LinkedList<String> parentPath, List<String> parentPathUnmodifiable, CorrectionListener listener, boolean dryRun)
@@ -165,6 +168,8 @@ public class ForgeConfigSpec
         }
         return count;
     }
+
+
 
     public static class Builder
     {

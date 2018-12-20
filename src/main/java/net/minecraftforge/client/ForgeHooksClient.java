@@ -70,6 +70,7 @@ import net.minecraft.client.renderer.block.model.SimpleBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.model.ModelBiped;
+import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -122,10 +123,6 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
-import net.minecraftforge.client.resource.IResourceType;
-import net.minecraftforge.client.resource.ReloadRequirements;
-import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
-import net.minecraftforge.client.resource.VanillaResourceType;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
@@ -134,6 +131,10 @@ import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.ReloadRequirements;
+import net.minecraftforge.resource.SelectiveReloadStateHandler;
+import net.minecraftforge.resource.VanillaResourceType;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -669,11 +670,6 @@ public class ForgeHooksClient
         return from.getItem().shouldCauseReequipAnimation(from, to, changed);
     }
 
-    public static boolean shouldCauseBlockBreakReset(@Nonnull ItemStack from, @Nonnull ItemStack to)
-    {
-        return from.getItem().shouldCauseBlockBreakReset(from, to);
-    }
-
     public static BlockFaceUV applyUVLock(BlockFaceUV blockFaceUV, EnumFacing originalSide, ITransformation rotation)
     {
         TRSRTransformation global = new TRSRTransformation(rotation.getMatrixVec());
@@ -729,7 +725,7 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(new RenderGameOverlayEvent(Animation.getPartialTickTime(), res), BOSSINFO));
     }
 
-    public static ScreenshotEvent onScreenshot(BufferedImage image, File screenshotFile)
+    public static ScreenshotEvent onScreenshot(NativeImage image, File screenshotFile)
     {
         ScreenshotEvent event = new ScreenshotEvent(image, screenshotFile);
         MinecraftForge.EVENT_BUS.post(event);
@@ -749,35 +745,6 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new InputUpdateEvent(player, movementInput));
     }
-
-    public static String getHorseArmorTexture(EntityHorse horse, ItemStack armorStack)
-    {
-        String texture = armorStack.getItem().getHorseArmorTexture(horse, armorStack);
-        if(texture == null) texture = horse.getHorseArmorType().getTextureName();
-        return texture;
-    }
-
-    public static boolean shouldUseVanillaReloadableListener(IResourceManagerReloadListener listener)
-    {
-        Predicate<IResourceType> predicate = SelectiveReloadStateHandler.INSTANCE.get();
-
-        if (listener instanceof ModelManager || listener instanceof ItemRenderer)
-            return predicate.test(VanillaResourceType.MODELS);
-        else if (listener instanceof BlockRendererDispatcher || listener instanceof RenderGlobal)
-            return predicate.test(VanillaResourceType.MODELS);
-        else if (listener instanceof TextureManager || listener instanceof FontRenderer)
-            return predicate.test(VanillaResourceType.TEXTURES);
-        else if (listener instanceof FoliageColorReloadListener || listener instanceof GrassColorReloadListener)
-            return predicate.test(VanillaResourceType.TEXTURES);
-        else if (listener instanceof SoundHandler)
-            return predicate.test(VanillaResourceType.SOUNDS);
-        else if (listener instanceof EntityRenderer)
-            return predicate.test(VanillaResourceType.SHADERS);
-        else if (listener instanceof LanguageManager || listener instanceof SearchTreeManager)
-            return predicate.test(VanillaResourceType.LANGUAGES);
-
-        return true;
-   }
 
     public static void refreshResources(Minecraft mc, VanillaResourceType... types) {
         SelectiveReloadStateHandler.INSTANCE.beginReload(ReloadRequirements.include(types));

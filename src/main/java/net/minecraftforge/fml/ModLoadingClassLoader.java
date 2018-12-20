@@ -33,7 +33,6 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModLoadingClassLoader extends SecureClassLoader
 {
-
     private static final Logger LOGGER = LogManager.getLogger();
 
     static {
@@ -51,6 +50,18 @@ public class ModLoadingClassLoader extends SecureClassLoader
     }
 
     @Override
+    protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
+    {
+        final String className = name.replace('.', '/').concat(".class");
+        final Path classResource = FMLLoader.getLoadingModList().findResource(className);
+        if (classResource != null)
+        {
+            return findClass(name);
+        }
+        return super.loadClass(name, resolve);
+    }
+
+    @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException
     {
         LOGGER.debug(LOADING, "Loading class {}", name);
@@ -65,7 +76,7 @@ public class ModLoadingClassLoader extends SecureClassLoader
             {
                 throw new ClassNotFoundException("Failed to load class file " + classResource + " for "+ className, e);
             }
-        } else {
+        } else if(getParent() != null) {
             getParent().loadClass(name);
         }
         throw new ClassNotFoundException("Failed to find class file "+ className);

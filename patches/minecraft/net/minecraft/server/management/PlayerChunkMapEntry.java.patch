@@ -1,0 +1,133 @@
+--- a/net/minecraft/server/management/PlayerChunkMapEntry.java
++++ b/net/minecraft/server/management/PlayerChunkMapEntry.java
+@@ -30,11 +30,17 @@
+    private int field_187288_h;
+    private long field_187289_i;
+    private boolean field_187290_j;
++   /*private boolean loading = true;
++   private final Runnable loadedRunnable;*/
+ 
+    public PlayerChunkMapEntry(PlayerChunkMap p_i1518_1_, int p_i1518_2_, int p_i1518_3_) {
+       this.field_187282_b = p_i1518_1_;
+       this.field_187284_d = new ChunkPos(p_i1518_2_, p_i1518_3_);
++      //this.loadedRunnable = () -> {
+       this.field_187286_f = p_i1518_1_.func_72688_a().func_72863_F().func_201714_b(p_i1518_2_, p_i1518_3_);
++      /*this.loading = false;
++      }; Forge: Pending if we find a better way to async load/gen chunks.
++      mapIn.getWorld().getChunkProvider().loadChunk(chunkX, chunkZ, this.loadedRunnable);*/
+    }
+ 
+    public ChunkPos func_187264_a() {
+@@ -52,6 +58,8 @@
+          this.field_187283_c.add(p_187276_1_);
+          if (this.field_187290_j) {
+             this.func_187278_c(p_187276_1_);
++            // chunk watch event - the chunk is ready
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(this.field_187286_f, p_187276_1_));
+          }
+ 
+       }
+@@ -59,11 +67,26 @@
+ 
+    public void func_187277_b(EntityPlayerMP p_187277_1_) {
+       if (this.field_187283_c.contains(p_187277_1_)) {
++         // If we haven't loaded yet don't load the chunk just so we can clean it up
++         if (this.field_187286_f == null) {
++            this.field_187283_c.remove(p_187277_1_);
++
++            if (this.field_187283_c.isEmpty()) {
++               /*if (this.loading)
++                  net.minecraftforge.common.chunkio.ChunkIOExecutor.dropQueuedChunkLoad(this.playerChunkMap.getWorld(), this.pos.x, this.pos.z, this.loadedRunnable);
++               */
++               this.field_187282_b.func_187305_b(this);
++            }
++
++            return;
++         }
++
+          if (this.field_187290_j) {
+             p_187277_1_.field_71135_a.func_147359_a(new SPacketUnloadChunk(this.field_187284_d.field_77276_a, this.field_187284_d.field_77275_b));
+          }
+ 
+          this.field_187283_c.remove(p_187277_1_);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.UnWatch(this.field_187286_f, p_187277_1_));
+          if (this.field_187283_c.isEmpty()) {
+             this.field_187282_b.func_187305_b(this);
+          }
+@@ -72,6 +95,7 @@
+    }
+ 
+    public boolean func_187268_a(boolean p_187268_1_) {
++      //if (this.loading) return false;
+       if (this.field_187286_f != null) {
+          return true;
+       } else {
+@@ -96,11 +120,14 @@
+          this.field_187287_g = 0;
+          this.field_187288_h = 0;
+          this.field_187290_j = true;
++         if (this.field_187283_c.isEmpty()) return true; // Forge: fix MC-120780
+          Packet<?> packet = new SPacketChunkData(this.field_187286_f, 65535);
+ 
+          for(EntityPlayerMP entityplayermp : this.field_187283_c) {
+             entityplayermp.field_71135_a.func_147359_a(packet);
+             this.field_187282_b.func_72688_a().func_73039_n().func_85172_a(entityplayermp, this.field_187286_f);
++            // chunk watch event - delayed to here as the chunk wasn't ready in addPlayer
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkWatchEvent.Watch(this.field_187286_f, entityplayermp));
+          }
+ 
+          return true;
+@@ -130,7 +157,7 @@
+          }
+ 
+          this.field_187288_h |= 1 << (p_187265_2_ >> 4);
+-         if (this.field_187287_g < 64) {
++         { //Forge; Cache everything, so always run
+             short short1 = (short)(p_187265_1_ << 12 | p_187265_3_ << 8 | p_187265_2_);
+ 
+             for(int i = 0; i < this.field_187287_g; ++i) {
+@@ -139,6 +166,8 @@
+                }
+             }
+ 
++            if (this.field_187287_g == this.field_187285_e.length)
++                this.field_187285_e = java.util.Arrays.copyOf(this.field_187285_e, this.field_187285_e.length << 1);
+             this.field_187285_e[this.field_187287_g++] = short1;
+          }
+ 
+@@ -163,20 +192,22 @@
+                int k = (this.field_187285_e[0] >> 8 & 15) + this.field_187284_d.field_77275_b * 16;
+                BlockPos blockpos = new BlockPos(i, j, k);
+                this.func_187267_a(new SPacketBlockChange(this.field_187282_b.func_72688_a(), blockpos));
+-               if (this.field_187282_b.func_72688_a().func_180495_p(blockpos).func_177230_c().func_149716_u()) {
++               if (this.field_187282_b.func_72688_a().func_180495_p(blockpos).hasTileEntity()) {
+                   this.func_187273_a(this.field_187282_b.func_72688_a().func_175625_s(blockpos));
+                }
+-            } else if (this.field_187287_g == 64) {
++            } else if (this.field_187287_g >= net.minecraftforge.common.ForgeConfig.GENERAL.clumpingThreshold()) {
+                this.func_187267_a(new SPacketChunkData(this.field_187286_f, this.field_187288_h));
++               //TODO: Fix Mojang's fuckup to modded by combining all TE data into the chunk data packet... seriously... packet size explosion!
+             } else {
+                this.func_187267_a(new SPacketMultiBlockChange(this.field_187287_g, this.field_187285_e, this.field_187286_f));
+-
++            //} Keep this in the else until we figure out a fix for mojang's derpitude on the data packet so we don't double send crap.
++            //{// Forge: Send only the tile entities that are updated, Adding this brace lets us keep the indent and the patch small
+                for(int l = 0; l < this.field_187287_g; ++l) {
+                   int i1 = (this.field_187285_e[l] >> 12 & 15) + this.field_187284_d.field_77276_a * 16;
+                   int j1 = this.field_187285_e[l] & 255;
+                   int k1 = (this.field_187285_e[l] >> 8 & 15) + this.field_187284_d.field_77275_b * 16;
+                   BlockPos blockpos1 = new BlockPos(i1, j1, k1);
+-                  if (this.field_187282_b.func_72688_a().func_180495_p(blockpos1).func_177230_c().func_149716_u()) {
++                  if (this.field_187282_b.func_72688_a().func_180495_p(blockpos1).hasTileEntity()) {
+                      this.func_187273_a(this.field_187282_b.func_72688_a().func_175625_s(blockpos1));
+                   }
+                }
+@@ -240,4 +271,8 @@
+ 
+       return d0;
+    }
++
++   public List<EntityPlayerMP> getWatchingPlayers() {
++      return func_187274_e() ? java.util.Collections.unmodifiableList(field_187283_c) : java.util.Collections.emptyList();
++   }
+ }

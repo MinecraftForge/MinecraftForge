@@ -13,11 +13,62 @@
     private static final Logger field_145852_a = LogManager.getLogger();
     private final TileEntityType<?> field_200663_e;
     protected World field_145850_b;
-@@ -26,6 +27,7 @@
+@@ -23,9 +24,12 @@
+    protected boolean field_145846_f;
+    @Nullable
+    private IBlockState field_195045_e;
++   private NBTTagCompound customTileData;
  
++
     public TileEntity(TileEntityType<?> p_i48289_1_) {
        this.field_200663_e = p_i48289_1_;
 +      this.gatherCapabilities();
     }
  
     @Nullable
+@@ -43,6 +47,8 @@
+ 
+    public void func_145839_a(NBTTagCompound p_145839_1_) {
+       this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
++      if (p_145839_1_.func_74764_b("ForgeData")) this.customTileData = p_145839_1_.func_74775_l("ForgeData");
++      if (getCapabilities() != null && p_145839_1_.func_74764_b("ForgeCaps")) deserializeCaps(p_145839_1_.func_74775_l("ForgeCaps"));
+    }
+ 
+    public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_) {
+@@ -58,6 +64,8 @@
+          p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
+          p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
+          p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
++         if (this.customTileData != null) p_189516_1_.func_74782_a("ForgeData", this.customTileData);
++         if (getCapabilities() != null) p_189516_1_.func_74782_a("ForgeCaps", serializeCaps());
+          return p_189516_1_;
+       }
+    }
+@@ -91,14 +99,13 @@
+       if (this.field_145850_b != null) {
+          this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
+          this.field_145850_b.func_175646_b(this.field_174879_c, this);
+-         if (!this.field_195045_e.func_196958_f()) {
++         if (!this.field_195045_e.isAir(field_145850_b, this.field_174879_c)) {
+             this.field_145850_b.func_175666_e(this.field_174879_c, this.field_195045_e.func_177230_c());
+          }
+       }
+ 
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_) {
+       double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
+       double d1 = (double)this.field_174879_c.func_177956_o() + 0.5D - p_145835_3_;
+@@ -179,4 +186,11 @@
+    public TileEntityType<?> func_200662_C() {
+       return this.field_200663_e;
+    }
++
++   @Override
++   public NBTTagCompound getTileData() {
++      if (this.customTileData == null)
++         this.customTileData = new NBTTagCompound();
++      return this.customTileData;
++   }
+ }

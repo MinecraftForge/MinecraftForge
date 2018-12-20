@@ -1,0 +1,50 @@
+--- a/net/minecraft/entity/item/EntityMinecartContainer.java
++++ b/net/minecraft/entity/item/EntityMinecartContainer.java
+@@ -119,10 +119,11 @@
+       return 64;
+    }
+ 
++   @Override
+    @Nullable
+-   public Entity func_184204_a(int p_184204_1_) {
++   public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter) {
+       this.field_94112_b = false;
+-      return super.func_184204_a(p_184204_1_);
++      return super.changeDimension(dimensionIn, teleporter);
+    }
+ 
+    public void func_70106_y() {
+@@ -163,6 +164,7 @@
+    }
+ 
+    public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_) {
++      if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
+       if (!this.field_70170_p.field_72995_K) {
+          p_184230_1_.func_71007_a(this);
+       }
+@@ -215,9 +217,9 @@
+             random = new Random(this.field_184291_d);
+          }
+ 
+-         LootContext.Builder lootcontext$builder = (new LootContext.Builder((WorldServer)this.field_70170_p)).func_204313_a(new BlockPos(this));
++         LootContext.Builder lootcontext$builder = (new LootContext.Builder((WorldServer)this.field_70170_p)).func_204313_a(new BlockPos(this)).func_186472_a(this); // Forge: add looted entity to LootContext
+          if (p_184288_1_ != null) {
+-            lootcontext$builder.func_186469_a(p_184288_1_.func_184817_da());
++            lootcontext$builder.func_186469_a(p_184288_1_.func_184817_da()).func_186470_a(p_184288_1_); // Forge: add player to LootContext
+          }
+ 
+          loottable.func_186460_a(this, random, lootcontext$builder.func_186471_a());
+@@ -238,4 +240,13 @@
+    public ResourceLocation func_184276_b() {
+       return this.field_184290_c;
+    }
++
++   private net.minecraftforge.common.capabilities.OptionalCapabilityInstance<?> itemHandler = net.minecraftforge.common.capabilities.OptionalCapabilityInstance.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++
++   @Override
++   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
++      if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
+ }

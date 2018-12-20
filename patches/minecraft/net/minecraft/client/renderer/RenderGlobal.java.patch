@@ -1,0 +1,14 @@
+--- a/net/minecraft/client/renderer/RenderGlobal.java
++++ b/net/minecraft/client/renderer/RenderGlobal.java
+@@ -2126,6 +2126,11 @@
+       }
+    }
+ 
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.MODELS;
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    class ContainerLocalRenderInformation {
+       private final RenderChunk field_178036_a;

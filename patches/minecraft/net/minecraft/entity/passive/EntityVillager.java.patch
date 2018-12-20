@@ -94,6 +94,24 @@
     public boolean func_70941_o() {
        return this.field_70952_f;
     }
+@@ -350,7 +389,7 @@
+                i = -3;
+             }
+ 
+-            this.field_70954_d.func_82688_a(((EntityPlayer)p_70604_1_).func_146103_bH().getName(), i);
++            this.field_70954_d.modifyPlayerReputation(((EntityPlayer)p_70604_1_).func_146103_bH().getId(), i);
+             if (this.func_70089_S()) {
+                this.field_70170_p.func_72960_a(this, (byte)13);
+             }
+@@ -364,7 +403,7 @@
+          Entity entity = p_70645_1_.func_76346_g();
+          if (entity != null) {
+             if (entity instanceof EntityPlayer) {
+-               this.field_70954_d.func_82688_a(((EntityPlayer)entity).func_146103_bH().getName(), -2);
++               this.field_70954_d.modifyPlayerReputation(((EntityPlayer)entity).func_146103_bH().getId(), -2);
+             } else if (entity instanceof IMob) {
+                this.field_70954_d.func_82692_h();
+             }
 @@ -433,7 +472,7 @@
           this.field_70959_by = true;
           this.field_175565_bs = true;
@@ -165,14 +183,14 @@
        }
  
        this.func_175552_ct();
-@@ -817,6 +847,10 @@
-          p_190888_2_.add(new MerchantRecipe(itemstack, itemstack1));
+@@ -818,6 +848,10 @@
        }
     }
-+   
+ 
 +   //MODDERS DO NOT USE OR EDIT THIS IN ANY WAY IT WILL HAVE NO EFFECT, THIS IS JUST IN HERE TO ALLOW FORGE TO ACCESS IT
 +   @Deprecated
 +   public static ITradeList[][][][] GET_TRADES_DONT_USE(){ return field_175561_bA; }
- 
++
     public static class ListItemForEmeralds implements EntityVillager.ITradeList {
        public ItemStack field_179403_a;
+       public EntityVillager.PriceInfo field_179402_b;

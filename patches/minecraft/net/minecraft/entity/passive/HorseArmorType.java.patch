@@ -1,0 +1,67 @@
+--- a/net/minecraft/entity/passive/HorseArmorType.java
++++ b/net/minecraft/entity/passive/HorseArmorType.java
+@@ -16,6 +16,7 @@
+    private final String field_188586_e;
+    private final String field_188587_f;
+    private final int field_188588_g;
++   private Item item;
+ 
+    private HorseArmorType(int p_i46799_3_) {
+       this.field_188588_g = p_i46799_3_;
+@@ -29,6 +30,15 @@
+       this.field_188587_f = p_i46800_5_;
+    }
+ 
++   private HorseArmorType(int strength, String texture, String hash, Item item) {
++       this(strength, texture, hash);
++       this.item = item;
++   }
++
++   public static HorseArmorType create(String name, int strength, String texture, String hash, Item item) {
++       return null;
++   }
++
+    public int func_188579_a() {
+       return this.ordinal();
+    }
+@@ -48,25 +58,38 @@
+       return this.field_188586_e;
+    }
+ 
++   @Deprecated //Forge: Use by name, or ItemStack, ordinals for modded ones are not guaranteed to be in the same order each run.
+    public static HorseArmorType func_188575_a(int p_188575_0_) {
+       return values()[p_188575_0_];
+    }
+ 
+    public static HorseArmorType func_188580_a(ItemStack p_188580_0_) {
+-      return p_188580_0_.func_190926_b() ? NONE : func_188576_a(p_188580_0_.func_77973_b());
++      return p_188580_0_.func_190926_b() ? NONE : p_188580_0_.getHorseArmorType();
+    }
+ 
++   @Deprecated //Forge: Use ItemStack.getHorseArmorType
+    public static HorseArmorType func_188576_a(Item p_188576_0_) {
+       if (p_188576_0_ == Items.field_151138_bX) {
+          return IRON;
+       } else if (p_188576_0_ == Items.field_151136_bY) {
+          return GOLD;
++      } else if (p_188576_0_ == Items.field_151125_bZ) {
++          return DIAMOND;
+       } else {
+-         return p_188576_0_ == Items.field_151125_bZ ? DIAMOND : NONE;
++         for (HorseArmorType type : values()) {
++            if (type.item != null && type.item.delegate.get() == p_188576_0_.delegate.get())
++               return type;
++         }
++         return NONE;
+       }
+    }
+ 
++   @Deprecated //Forge: Use ItemStack version
+    public static boolean func_188577_b(Item p_188577_0_) {
+       return func_188576_a(p_188577_0_) != NONE;
+    }
++
++   public static boolean isHorseArmor(ItemStack stack) {
++      return stack.getHorseArmorType() != NONE;
++   }
+ }

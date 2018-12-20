@@ -158,6 +158,20 @@
     public SoundType func_185467_w() {
        return this.field_149762_H;
     }
+@@ -776,11 +792,11 @@
+    }
+ 
+    public static boolean func_196252_e(Block p_196252_0_) {
+-      return p_196252_0_ == Blocks.field_150348_b || p_196252_0_ == Blocks.field_196650_c || p_196252_0_ == Blocks.field_196654_e || p_196252_0_ == Blocks.field_196656_g;
++      return net.minecraftforge.common.tags.Tags.Blocks.STONE.func_199685_a_(p_196252_0_);
+    }
+ 
+    public static boolean func_196245_f(Block p_196245_0_) {
+-      return p_196245_0_ == Blocks.field_150346_d || p_196245_0_ == Blocks.field_196660_k || p_196245_0_ == Blocks.field_196661_l;
++      return net.minecraftforge.common.tags.Tags.Blocks.DIRT.func_199685_a_(p_196245_0_);
+    }
+ 
+    public static void func_149671_p() {
 @@ -1147,7 +1163,7 @@
        func_196254_a("chiseled_quartz_block", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_151677_p).func_200943_b(0.8F)));
        func_196254_a("quartz_pillar", new BlockRotatedPillar(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_151677_p).func_200943_b(0.8F)));
@@ -219,7 +233,7 @@
 +       if (plant.func_177230_c() == Blocks.field_150434_aF)
 +           return this.getBlock() == Blocks.field_150434_aF || this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_196611_F;
 +
-+       if (plant.func_177230_c() == Blocks.field_196608_cF)
++       if (plant.func_177230_c() == Blocks.field_196608_cF && this == Blocks.field_196608_cF)
 +           return true;
 +
 +       if (plantable instanceof BlockBush && ((BlockBush)plantable).func_200014_a_(state, world, pos))
@@ -230,10 +244,10 @@
 +           case Nether: return this.getBlock() == Blocks.field_150425_aM;
 +           case Crop: return this.getBlock() == Blocks.field_150458_ak;
 +           case Cave: return state.func_185896_q();
-+           case Plains: return this.getBlock() == Blocks.field_150349_c || this.getBlock() == Blocks.field_150346_d || this.getBlock() == Blocks.field_150458_ak;
++           case Plains: return this.getBlock() == Blocks.field_150349_c || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150458_ak;
 +           case Water: return state.func_185904_a() == Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
 +           case Beach:
-+               boolean isBeach = this.getBlock() == Blocks.field_150349_c || this.getBlock() == Blocks.field_150346_d || this.getBlock() == Blocks.field_150354_m;
++               boolean isBeach = this.getBlock() == Blocks.field_150349_c || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150354_m;
 +               boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == Material.field_151586_h ||
 +                       world.func_180495_p(pos.func_177976_e()).func_185904_a() == Material.field_151586_h ||
 +                       world.func_180495_p(pos.func_177978_c()).func_185904_a() == Material.field_151586_h ||

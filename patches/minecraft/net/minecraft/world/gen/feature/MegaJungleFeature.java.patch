@@ -1,0 +1,38 @@
+--- a/net/minecraft/world/gen/feature/MegaJungleFeature.java
++++ b/net/minecraft/world/gen/feature/MegaJungleFeature.java
+@@ -44,7 +44,7 @@
+ 
+          for(int i2 = 0; i2 < i; ++i2) {
+             BlockPos blockpos = p_208519_4_.func_177981_b(i2);
+-            if (this.func_150523_a(p_208519_2_.func_180495_p(blockpos).func_177230_c())) {
++            if (this.canGrowInto(p_208519_2_, blockpos)) {
+                this.func_208520_a(p_208519_1_, p_208519_2_, blockpos, this.field_76520_b);
+                if (i2 > 0) {
+                   this.func_202407_a(p_208519_2_, p_208519_3_, blockpos.func_177976_e(), BlockVine.field_176278_M);
+@@ -54,7 +54,7 @@
+ 
+             if (i2 < i - 1) {
+                BlockPos blockpos1 = blockpos.func_177974_f();
+-               if (this.func_150523_a(p_208519_2_.func_180495_p(blockpos1).func_177230_c())) {
++               if (this.canGrowInto(p_208519_2_, blockpos1)) {
+                   this.func_208520_a(p_208519_1_, p_208519_2_, blockpos1, this.field_76520_b);
+                   if (i2 > 0) {
+                      this.func_202407_a(p_208519_2_, p_208519_3_, blockpos1.func_177974_f(), BlockVine.field_176280_O);
+@@ -63,7 +63,7 @@
+                }
+ 
+                BlockPos blockpos2 = blockpos.func_177968_d().func_177974_f();
+-               if (this.func_150523_a(p_208519_2_.func_180495_p(blockpos2).func_177230_c())) {
++               if (this.canGrowInto(p_208519_2_, blockpos2)) {
+                   this.func_208520_a(p_208519_1_, p_208519_2_, blockpos2, this.field_76520_b);
+                   if (i2 > 0) {
+                      this.func_202407_a(p_208519_2_, p_208519_3_, blockpos2.func_177974_f(), BlockVine.field_176280_O);
+@@ -72,7 +72,7 @@
+                }
+ 
+                BlockPos blockpos3 = blockpos.func_177968_d();
+-               if (this.func_150523_a(p_208519_2_.func_180495_p(blockpos3).func_177230_c())) {
++               if (this.canGrowInto(p_208519_2_, blockpos3)) {
+                   this.func_208520_a(p_208519_1_, p_208519_2_, blockpos3, this.field_76520_b);
+                   if (i2 > 0) {
+                      this.func_202407_a(p_208519_2_, p_208519_3_, blockpos3.func_177976_e(), BlockVine.field_176278_M);

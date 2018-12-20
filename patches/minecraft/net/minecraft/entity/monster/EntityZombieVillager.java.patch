@@ -16,7 +16,7 @@
     public void func_70014_b(NBTTagCompound p_70014_1_) {
        super.func_70014_b(p_70014_1_);
        p_70014_1_.func_74768_a("Profession", this.func_190736_dl());
-+      p_70014_1_.func_74778_a("ProfessionName", this.getForgeProfession().getRegistryName().toString());
++      p_70014_1_.func_74778_a("ProfessionName", this.getProfessionForge().getRegistryName().toString());
        p_70014_1_.func_74768_a("ConversionTime", this.func_82230_o() ? this.field_82234_d : -1);
        if (this.field_191992_by != null) {
           p_70014_1_.func_186854_a("ConversionPlayer", this.field_191992_by);
@@ -27,7 +27,7 @@
 +      if (p_70037_1_.func_74764_b("ProfessionName")) {
 +         net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession p = net.minecraftforge.registries.ForgeRegistries.VILLAGER_PROFESSIONS.getValue(new net.minecraft.util.ResourceLocation(p_70037_1_.func_74779_i("ProfessionName")));
 +         if (p == null) p = net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER.orElseThrow(() -> new IllegalStateException("Farmer profession not initialized?"));
-+         this.setForgeProfession(p);
++         this.setProfession(p);
 +      }
        if (p_70037_1_.func_150297_b("ConversionTime", 99) && p_70037_1_.func_74762_e("ConversionTime") > -1) {
           this.func_191991_a(p_70037_1_.func_186855_b("ConversionPlayer") ? p_70037_1_.func_186857_a("ConversionPlayer") : null, p_70037_1_.func_74762_e("ConversionTime"));
@@ -37,29 +37,24 @@
        EntityVillager entityvillager = new EntityVillager(this.field_70170_p);
        entityvillager.func_82149_j(this);
 -      entityvillager.func_70938_b(this.func_190736_dl());
-+      entityvillager.setProfession(this.getForgeProfession());
++      entityvillager.setProfession(this.getProfessionForge());
        entityvillager.func_190672_a(this.field_70170_p.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null, (NBTTagCompound)null, false);
        entityvillager.func_82187_q();
        if (this.func_70631_g_()) {
-@@ -224,4 +232,37 @@
+@@ -224,4 +232,28 @@
     protected ItemStack func_190732_dj() {
        return ItemStack.field_190927_a;
     }
-+   
-+   /* ======================================== FORGE START =====================================*/
 +
 +   @Nullable
 +   private net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof;
-+   public void setForgeProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof)
-+   {
++   public void setProfession(net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession prof) {
 +      this.prof = prof;
 +      this.func_190733_a(net.minecraftforge.fml.common.registry.VillagerRegistry.getId(prof));
 +   }
 +
-+   public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getForgeProfession()
-+   {
-+      if (this.prof == null)
-+      {
++   public net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession getProfessionForge() {
++      if (this.prof == null) {
 +         this.prof = net.minecraftforge.fml.common.registry.VillagerRegistry.getById(this.func_190736_dl());
 +         if (this.prof == null)
 +            return net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER.orElseThrow(() -> new IllegalStateException("Farmer profession not initialized?"));
@@ -68,14 +63,10 @@
 +   }
 +
 +   @Override
-+   public void func_184206_a(DataParameter<?> key)
-+   {
++   public void func_184206_a(DataParameter<?> key) {
 +      super.func_184206_a(key);
-+      if (key.equals(field_190739_c))
-+      {
++      if (key.equals(field_190739_c)) {
 +         net.minecraftforge.fml.common.registry.VillagerRegistry.onSetProfession(this, this.field_70180_af.func_187225_a(field_190739_c));
 +      }
 +   }
-+
-+   /* ======================================== FORGE END =====================================*/
  }

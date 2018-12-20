@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/gen/feature/BigTreeFeature.java
++++ b/net/minecraft/world/gen/feature/BigTreeFeature.java
+@@ -31,7 +31,7 @@
+             if (Math.pow((double)Math.abs(j) + 0.5D, 2.0D) + Math.pow((double)Math.abs(k) + 0.5D, 2.0D) <= (double)(p_208529_3_ * p_208529_3_)) {
+                BlockPos blockpos = p_208529_2_.func_177982_a(j, 0, k);
+                IBlockState iblockstate = p_208529_1_.func_180495_p(blockpos);
+-               if (iblockstate.func_196958_f() || iblockstate.func_185904_a() == Material.field_151584_j) {
++               if (iblockstate.isAir(p_208529_1_, blockpos) || iblockstate.func_185904_a() == Material.field_151584_j) {
+                   this.func_202278_a(p_208529_1_, blockpos, field_208531_b);
+                }
+             }
+@@ -86,7 +86,7 @@
+             BlockPos blockpos1 = p_208523_3_.func_177963_a((double)(0.5F + (float)j * f), (double)(0.5F + (float)j * f1), (double)(0.5F + (float)j * f2));
+             if (p_208523_5_) {
+                this.func_208520_a(p_208523_1_, p_208523_2_, blockpos1, (IBlockState)field_208530_a.func_206870_a(BlockLog.field_176298_M, this.func_197170_b(p_208523_3_, blockpos1)));
+-            } else if (!this.func_150523_a(p_208523_2_.func_180495_p(blockpos1).func_177230_c())) {
++            } else if (!this.canGrowInto(p_208523_2_, blockpos1)) {
+                return j;
+             }
+          }
+@@ -205,8 +205,7 @@
+    }
+ 
+    private int func_208528_b(Set<BlockPos> p_208528_1_, IWorld p_208528_2_, BlockPos p_208528_3_, int p_208528_4_) {
+-      Block block = p_208528_2_.func_180495_p(p_208528_3_.func_177977_b()).func_177230_c();
+-      if (!Block.func_196245_f(block) && block != Blocks.field_196658_i && block != Blocks.field_150458_ak) {
++      if (!p_208528_2_.func_180495_p(p_208528_3_.func_177977_b()).canSustainPlant(p_208528_2_, p_208528_3_.func_177977_b(), net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_196674_t))) {
+          return -1;
+       } else {
+          int i = this.func_208523_a(p_208528_1_, p_208528_2_, p_208528_3_, p_208528_3_.func_177981_b(p_208528_4_ - 1), false);

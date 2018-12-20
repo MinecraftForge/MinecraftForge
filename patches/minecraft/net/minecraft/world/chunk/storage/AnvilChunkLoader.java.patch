@@ -1,6 +1,44 @@
 --- a/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ b/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -445,6 +445,16 @@
+@@ -214,6 +214,9 @@
+             this.func_202156_a((ChunkPrimer)p_75816_2_, p_75816_1_, nbttagcompound1);
+          }
+ 
++         net.minecraftforge.common.ForgeChunkManager.storeChunkNBT(p_75816_1_, p_75816_2_, nbttagcompound1);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkDataEvent.Save(p_75816_2_, nbttagcompound));
++
+          this.func_75824_a(chunkpos, nbttagcompound);
+       } catch (Exception exception) {
+          field_151505_a.error("Failed to save chunk", (Throwable)exception);
+@@ -391,10 +394,14 @@
+       for(int j = 0; j < p_75820_1_.func_177429_s().length; ++j) {
+          for(Entity entity : p_75820_1_.func_177429_s()[j]) {
+             NBTTagCompound nbttagcompound = new NBTTagCompound();
++            try {
+             if (entity.func_70039_c(nbttagcompound)) {
+                p_75820_1_.func_177409_g(true);
+                nbttaglist1.add((INBTBase)nbttagcompound);
+             }
++            } catch (Exception e) {
++               LogManager.getLogger().error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", entity.func_200600_R(), e);
++            }
+          }
+       }
+ 
+@@ -405,7 +412,11 @@
+          TileEntity tileentity = p_75820_1_.func_175625_s(blockpos);
+          if (tileentity != null) {
+             NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+-            tileentity.func_189515_b(nbttagcompound1);
++            try {
++               tileentity.func_189515_b(nbttagcompound1);
++            } catch (Exception e) {
++               LogManager.getLogger().error("A TileEntity type {} has thrown an exception trying to write state. It will not persist, Report this to the mod author", tileentity.getClass().getName(), e);
++            }
+             nbttagcompound1.func_74757_a("keepPacked", false);
+             nbttaglist2.add((INBTBase)nbttagcompound1);
+          } else {
+@@ -445,6 +456,16 @@
  
        p_75820_3_.func_74782_a("Heightmaps", nbttagcompound2);
        p_75820_3_.func_74782_a("Structures", this.func_202160_a(p_75820_1_.field_76635_g, p_75820_1_.field_76647_h, p_75820_1_.func_201609_c(), p_75820_1_.func_201604_d()));
@@ -17,7 +55,7 @@
     }
  
     private Chunk func_75823_a(IWorld p_75823_1_, NBTTagCompound p_75823_2_) {
-@@ -511,6 +521,10 @@
+@@ -511,6 +532,10 @@
           chunk.func_177427_f(true);
        }
  
@@ -28,7 +66,7 @@
        return chunk;
     }
  
-@@ -813,4 +827,8 @@
+@@ -813,4 +838,8 @@
  
        return flag;
     }

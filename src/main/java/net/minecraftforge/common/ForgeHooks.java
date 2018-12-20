@@ -61,6 +61,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartContainer;
@@ -101,6 +102,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.stats.StatList;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
@@ -124,6 +126,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
@@ -155,6 +158,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
+import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
@@ -281,180 +285,11 @@ public class ForgeHooks
             blockToolSetter.accept(block, ToolType.PICKAXE, 1);
     }
 
-    public static int getTotalArmorValue(EntityPlayer player)
-    {
-        int ret = player.getTotalArmorValue();
-        for (int x = 0; x < player.inventory.armorInventory.size(); x++)
-        {
-            ItemStack stack = player.inventory.armorInventory.get(x);
-            if (stack.getItem() instanceof ISpecialArmor)
-            {
-                ret += ((ISpecialArmor)stack.getItem()).getArmorDisplay(player, stack, x);
-            }
-        }
-        return ret;
-    }
-
     /**
      * Called when a player uses 'pick block', calls new Entity and Block hooks.
      */
     public static boolean onPickBlock(RayTraceResult target, EntityPlayer player, World world)
     {
-        /*
-            boolean flag = this.player.capabilities.isCreativeMode;
-            TileEntity tileentity = null;
-            ItemStack itemstack;
-
-            if (this.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
-            {
-                BlockPos blockpos = this.objectMouseOver.getBlockPos();
-                IBlockState iblockstate = this.world.getBlockState(blockpos);
-                Block block = iblockstate.getBlock();
-
-                if (iblockstate.getMaterial() == Material.AIR)
-                {
-                    return;
-                }
-
-                itemstack = block.getItem(this.world, blockpos, iblockstate);
-
-                if (itemstack.isEmpty())
-                {
-                    return;
-                }
-
-                if (flag && GuiScreen.isCtrlKeyDown() && block.hasTileEntity())
-                {
-                    tileentity = this.world.getTileEntity(blockpos);
-                }
-            }
-            else
-            {
-                if (this.objectMouseOver.typeOfHit != RayTraceResult.Type.ENTITY || this.objectMouseOver.entityHit == null || !flag)
-                {
-                    return;
-                }
-
-                if (this.objectMouseOver.entityHit instanceof EntityPainting)
-                {
-                    itemstack = new ItemStack(Items.PAINTING);
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot)
-                {
-                    itemstack = new ItemStack(Items.LEAD);
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityItemFrame)
-                {
-                    EntityItemFrame entityitemframe = (EntityItemFrame)this.objectMouseOver.entityHit;
-                    ItemStack itemstack1 = entityitemframe.getDisplayedItem();
-
-                    if (itemstack1.isEmpty())
-                    {
-                        itemstack = new ItemStack(Items.ITEM_FRAME);
-                    }
-                    else
-                    {
-                        itemstack = itemstack1.copy();
-                    }
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityMinecart)
-                {
-                    EntityMinecart entityminecart = (EntityMinecart)this.objectMouseOver.entityHit;
-                    Item item;
-
-                    switch (entityminecart.getType())
-                    {
-                        case FURNACE:
-                            item = Items.FURNACE_MINECART;
-                            break;
-                        case CHEST:
-                            item = Items.CHEST_MINECART;
-                            break;
-                        case TNT:
-                            item = Items.TNT_MINECART;
-                            break;
-                        case HOPPER:
-                            item = Items.HOPPER_MINECART;
-                            break;
-                        case COMMAND_BLOCK:
-                            item = Items.COMMAND_BLOCK_MINECART;
-                            break;
-                        default:
-                            item = Items.MINECART;
-                    }
-
-                    itemstack = new ItemStack(item);
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityBoat)
-                {
-                    itemstack = new ItemStack(((EntityBoat)this.objectMouseOver.entityHit).getItemBoat());
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityArmorStand)
-                {
-                    itemstack = new ItemStack(Items.ARMOR_STAND);
-                }
-                else if (this.objectMouseOver.entityHit instanceof EntityEnderCrystal)
-                {
-                    itemstack = new ItemStack(Items.END_CRYSTAL);
-                }
-                else
-                {
-                    ResourceLocation resourcelocation = EntityList.func_191301_a(this.objectMouseOver.entityHit);
-
-                    if (resourcelocation == null || !EntityList.ENTITY_EGGS.containsKey(resourcelocation))
-                    {
-                        return;
-                    }
-
-                    itemstack = new ItemStack(Items.SPAWN_EGG);
-                    ItemMonsterPlacer.applyEntityIdToItemStack(itemstack, resourcelocation);
-                }
-            }
-
-            if (itemstack.isEmpty())
-            {
-                String s = "";
-
-                if (this.objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK)
-                {
-                    s = ((ResourceLocation)Block.REGISTRY.getNameForObject(this.world.getBlockState(this.objectMouseOver.getBlockPos()).getBlock())).toString();
-                }
-                else if (this.objectMouseOver.typeOfHit == RayTraceResult.Type.ENTITY)
-                {
-                    s = EntityList.func_191301_a(this.objectMouseOver.entityHit).toString();
-                }
-
-                LOGGER.warn("Picking on: [{}] {} gave null item", new Object[] {this.objectMouseOver.typeOfHit, s});
-            }
-            else
-            {
-                InventoryPlayer inventoryplayer = this.player.inventory;
-
-                if (tileentity != null)
-                {
-                    this.storeTEInStack(itemstack, tileentity);
-                }
-
-                int i = inventoryplayer.getSlotFor(itemstack);
-
-                if (flag)
-                {
-                    inventoryplayer.setPickedItemStack(itemstack);
-                    this.playerController.sendSlotPacket(this.player.getHeldItem(EnumHand.MAIN_HAND), 36 + inventoryplayer.currentItem);
-                }
-                else if (i != -1)
-                {
-                    if (InventoryPlayer.isHotbar(i))
-                    {
-                        inventoryplayer.currentItem = i;
-                    }
-                    else
-                    {
-                        this.playerController.pickItem(i);
-                    }
-                }
-            }
-         */
         ItemStack result;
         boolean isCreative = player.abilities.isCreativeMode;
         TileEntity te = null;
@@ -463,12 +298,10 @@ public class ForgeHooks
         {
             IBlockState state = world.getBlockState(target.getBlockPos());
 
-            if (state.getBlock().isAir(state, world, target.getBlockPos()))
-            {
+            if (state.isAir(world, target.getBlockPos()))
                 return false;
-            }
 
-            if (isCreative && GuiScreen.isCtrlKeyDown() && state.getBlock().hasTileEntity(state))
+            if (isCreative && GuiScreen.isCtrlKeyDown() && state.hasTileEntity())
                 te = world.getTileEntity(target.getBlockPos());
 
             result = state.getBlock().getPickBlock(state, target, world, target.getBlockPos(), player);
@@ -563,7 +396,7 @@ public class ForgeHooks
         return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
     }
 
-    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, ArrayList<EntityItem> drops, int lootingLevel, boolean recentlyHit)
+    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, Collection<EntityItem> drops, int lootingLevel, boolean recentlyHit)
     {
         return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
     }
@@ -754,7 +587,7 @@ public class ForgeHooks
         boolean preCancelEvent = false;
         ItemStack itemstack = entityPlayer.getHeldItemMainhand();
         if (gameType.isCreative() && !itemstack.isEmpty()
-                && !itemstack.getItem().canDestroyBlockInCreative(world, pos, itemstack, entityPlayer))
+                && !itemstack.getItem().canPlayerBreakBlockWhileHolding(world.getBlockState(pos), world, pos, entityPlayer))
             preCancelEvent = true;
 
         if (gameType.hasLimitedInteractions())
@@ -1318,5 +1151,10 @@ public class ForgeHooks
         if (MinecraftForge.EVENT_BUS.post(event))
             return -1;
         return event.getVanillaNoteId();
+    }
+
+    public static int canEntitySpawn(EntityLiving entity, IWorld world, float x, float y, float z, MobSpawnerBaseLogic spawner) {
+        Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null);
+        return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }
 }

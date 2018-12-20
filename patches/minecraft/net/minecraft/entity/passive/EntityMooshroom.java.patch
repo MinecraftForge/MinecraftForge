@@ -1,0 +1,52 @@
+--- a/net/minecraft/entity/passive/EntityMooshroom.java
++++ b/net/minecraft/entity/passive/EntityMooshroom.java
+@@ -15,7 +15,7 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.storage.loot.LootTableList;
+ 
+-public class EntityMooshroom extends EntityCow {
++public class EntityMooshroom extends EntityCow implements net.minecraftforge.common.IShearable {
+    public EntityMooshroom(World p_i1687_1_) {
+       super(EntityType.field_200780_T, p_i1687_1_);
+       this.func_70105_a(0.9F, 1.4F);
+@@ -33,7 +33,7 @@
+          }
+ 
+          return true;
+-      } else if (itemstack.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0) {
++      } else if (false && itemstack.func_77973_b() == Items.field_151097_aZ && this.func_70874_b() >= 0) { //Forge: Moved to onSheared
+          this.func_70106_y();
+          this.field_70170_p.func_195594_a(Particles.field_197627_t, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D);
+          if (!this.field_70170_p.field_72995_K) {
+@@ -69,4 +69,31 @@
+    protected ResourceLocation func_184647_J() {
+       return LootTableList.field_186400_H;
+    }
++
++   @Override
++   public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, net.minecraft.util.math.BlockPos pos) {
++      return this.func_70874_b() >= 0;
++   }
++
++   @Override
++   public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, net.minecraft.util.math.BlockPos pos, int fortune) {
++      java.util.List<ItemStack> ret = new java.util.ArrayList<>();
++      this.func_70106_y();
++      this.field_70170_p.func_195594_a(Particles.field_197627_t, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 2.0F), this.field_70161_v, 0.0D, 0.0D, 0.0D);
++      if (!this.field_70170_p.field_72995_K) {
++         EntityCow entitycow = new EntityCow(this.field_70170_p);
++         entitycow.func_70012_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, this.field_70177_z, this.field_70125_A);
++         entitycow.func_70606_j(this.func_110143_aJ());
++         entitycow.field_70761_aq = this.field_70761_aq;
++         if (this.func_145818_k_()) {
++            entitycow.func_200203_b(this.func_200201_e());
++         }
++         this.field_70170_p.func_72838_d(entitycow);
++         for(int i = 0; i < 5; ++i) {
++            ret.add(new ItemStack(Blocks.field_150337_Q));
++         }
++         this.func_184185_a(SoundEvents.field_187784_dt, 1.0F, 1.0F);
++      }
++      return ret;
++   }
+ }

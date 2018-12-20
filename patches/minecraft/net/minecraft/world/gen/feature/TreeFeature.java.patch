@@ -1,0 +1,101 @@
+--- a/net/minecraft/world/gen/feature/TreeFeature.java
++++ b/net/minecraft/world/gen/feature/TreeFeature.java
+@@ -21,6 +21,7 @@
+    private final boolean field_76531_b;
+    private final IBlockState field_76532_c;
+    private final IBlockState field_76530_d;
++   protected net.minecraftforge.common.IPlantable sapling = (net.minecraftforge.common.IPlantable)Blocks.field_196674_t;
+ 
+    public TreeFeature(boolean p_i2027_1_) {
+       this(p_i2027_1_, 4, field_181653_a, field_181654_b, false);
+@@ -37,7 +38,7 @@
+    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorld p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_) {
+       int i = this.func_208534_a(p_208519_3_);
+       boolean flag = true;
+-      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= 256) {
++      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= p_208519_2_.func_201672_e().func_72800_K()) {
+          for(int j = p_208519_4_.func_177956_o(); j <= p_208519_4_.func_177956_o() + 1 + i; ++j) {
+             int k = 1;
+             if (j == p_208519_4_.func_177956_o()) {
+@@ -52,8 +53,8 @@
+ 
+             for(int l = p_208519_4_.func_177958_n() - k; l <= p_208519_4_.func_177958_n() + k && flag; ++l) {
+                for(int i1 = p_208519_4_.func_177952_p() - k; i1 <= p_208519_4_.func_177952_p() + k && flag; ++i1) {
+-                  if (j >= 0 && j < 256) {
+-                     if (!this.func_150523_a(p_208519_2_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_177230_c())) {
++                  if (j >= 0 && j < p_208519_2_.func_201672_e().func_72800_K()) {
++                     if (!this.canGrowInto(p_208519_2_, blockpos$mutableblockpos.func_181079_c(l, j, i1))) {
+                         flag = false;
+                      }
+                   } else {
+@@ -66,9 +67,8 @@
+          if (!flag) {
+             return false;
+          } else {
+-            Block block = p_208519_2_.func_180495_p(p_208519_4_.func_177977_b()).func_177230_c();
+-            if ((block == Blocks.field_196658_i || Block.func_196245_f(block) || block == Blocks.field_150458_ak) && p_208519_4_.func_177956_o() < 256 - i - 1) {
+-               this.func_175921_a(p_208519_2_, p_208519_4_.func_177977_b());
++            if (p_208519_2_.func_180495_p(p_208519_4_.func_177977_b()).canSustainPlant(p_208519_2_, p_208519_4_.func_177977_b(), net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_196674_t) && p_208519_4_.func_177956_o() < p_208519_2_.func_201672_e().func_72800_K() - i - 1) {
++               this.setDirtAt(p_208519_2_, p_208519_4_.func_177977_b(), p_208519_4_);
+                int k2 = 3;
+                int l2 = 0;
+ 
+@@ -85,7 +85,7 @@
+                            BlockPos blockpos = new BlockPos(k1, i3, i2);
+                            IBlockState iblockstate = p_208519_2_.func_180495_p(blockpos);
+                            Material material = iblockstate.func_185904_a();
+-                           if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E) || material == Material.field_151582_l) {
++                           if (iblockstate.canBeReplacedByLeaves(p_208519_2_, blockpos) || material == Material.field_151582_l) {
+                               this.func_202278_a(p_208519_2_, blockpos, this.field_76530_d);
+                            }
+                         }
+@@ -96,7 +96,7 @@
+                for(int j3 = 0; j3 < i; ++j3) {
+                   IBlockState iblockstate1 = p_208519_2_.func_180495_p(p_208519_4_.func_177981_b(j3));
+                   Material material1 = iblockstate1.func_185904_a();
+-                  if (iblockstate1.func_196958_f() || iblockstate1.func_203425_a(BlockTags.field_206952_E) || material1 == Material.field_151582_l) {
++                  if (iblockstate1.canBeReplacedByLeaves(p_208519_2_, p_208519_4_.func_177981_b(j3)) || material1 == Material.field_151582_l) {
+                      this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177981_b(j3), this.field_76532_c);
+                      if (this.field_76531_b && j3 > 0) {
+                         if (p_208519_3_.nextInt(3) > 0 && p_208519_2_.func_175623_d(p_208519_4_.func_177982_a(-1, j3, 0))) {
+@@ -132,19 +132,19 @@
+                               BlockPos blockpos2 = blockpos$mutableblockpos1.func_177974_f();
+                               BlockPos blockpos3 = blockpos$mutableblockpos1.func_177978_c();
+                               BlockPos blockpos4 = blockpos$mutableblockpos1.func_177968_d();
+-                              if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_180495_p(blockpos1).func_196958_f()) {
++                              if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_175623_d(blockpos1)) {
+                                  this.func_181650_b(p_208519_2_, blockpos1, BlockVine.field_176278_M);
+                               }
+ 
+-                              if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_180495_p(blockpos2).func_196958_f()) {
++                              if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_175623_d(blockpos2)) {
+                                  this.func_181650_b(p_208519_2_, blockpos2, BlockVine.field_176280_O);
+                               }
+ 
+-                              if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_180495_p(blockpos3).func_196958_f()) {
++                              if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_175623_d(blockpos3)) {
+                                  this.func_181650_b(p_208519_2_, blockpos3, BlockVine.field_176279_N);
+                               }
+ 
+-                              if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_180495_p(blockpos4).func_196958_f()) {
++                              if (p_208519_3_.nextInt(4) == 0 && p_208519_2_.func_175623_d(blockpos4)) {
+                                  this.func_181650_b(p_208519_2_, blockpos4, BlockVine.field_176273_b);
+                               }
+                            }
+@@ -190,10 +190,15 @@
+       this.func_181651_a(p_181650_1_, p_181650_2_, p_181650_3_);
+       int i = 4;
+ 
+-      for(BlockPos blockpos = p_181650_2_.func_177977_b(); p_181650_1_.func_180495_p(blockpos).func_196958_f() && i > 0; --i) {
++      for(BlockPos blockpos = p_181650_2_.func_177977_b(); p_181650_1_.func_175623_d(blockpos) && i > 0; --i) {
+          this.func_181651_a(p_181650_1_, blockpos, p_181650_3_);
+          blockpos = blockpos.func_177977_b();
+       }
+ 
+    }
++
++   public TreeFeature setSapling(net.minecraftforge.common.IPlantable sapling) {
++      this.sapling = sapling;
++      return this;
++   }
+ }

@@ -75,20 +75,19 @@ public class ForgeConfig
             .translation("forge.configgui.fixVanillaCascading")
             .define("fixVanillaCascading", false)
 
-
             .comment("The time in ticks the server will wait when a dimension was queued to unload. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.")
             .translation("forge.configgui.dimensionUnloadQueueDelay")
             .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE)
+
+            .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024")
+            .translation("forge.configgui.clumpingThreshold")
+            .worldRestart()
+            .defineInRange("clumpingThreshold", 64, 64, 1024)
         .pop()
 
         //Client
         .comment("Client only settings, mostly things related to rendering")
         .push("client")
-            .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024")
-            .translation("forge.configgui.clumpingThreshold")
-            .worldRestart()
-            .defineInRange("clumpingThreshold", 64, 64, 1024)
-
             .comment("Toggle off to make missing model text in the gui fit inside the slot.")
             .translation("forge.configgui.zoomInMissingModelTextInGui")
             .define("zoomInMissingModelTextInGui", false)
@@ -143,13 +142,29 @@ public class ForgeConfig
         LogManager.getLogger().debug(CORE, "Loaded FML config from {}", configFile);
     }
 
+    //TODO: Make this less duplciate? Maybe static CfgEntry<T> zombieBaseSummonChance = create((spec, name) -> spec.comment().translation().define(name), "zombieBaseSummonChance")
+    public static class GENERAL
+    {
+        public static double zombieBaseSummonChance() {
+            return ForgeConfig.INSTANCE.configData.<Double>getOrElse("general.zombieBaseSummonChance", (double)0.01F);
+        }
+        public static double zombieBabyChance() {
+            return ForgeConfig.INSTANCE.configData.<Double>getOrElse("general.zombieBabyChance", 0.05D);
+        }
+        public static int clumpingThreshold() {
+            return ForgeConfig.INSTANCE.configData.<Integer>getOrElse("general.clumpingThreshold", 64);
+        }
+        public static boolean removeErroringEntities() {
+            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.removeErroringEntities", false);
+        }
+        public static boolean removeErroringTileEntities() {
+            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.removeErroringTileEntities", false);
+        }
+    }
+
     //General
     //public static boolean disableVersionCheck = false;
-    //public static boolean removeErroringEntities = false;
-    //public static boolean removeErroringTileEntities = false;
     //public static boolean fullBoundingBoxLadders = false;
-    //public static double zombieSummonBaseChance = 0.1;
-    //public static float zombieBabyChance = 0.05f;
     //public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     //public static boolean fixVanillaCascading = false;
     //public static int dimensionUnloadQueueDelay = 0;

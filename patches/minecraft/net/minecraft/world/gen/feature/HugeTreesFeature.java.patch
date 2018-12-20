@@ -1,0 +1,76 @@
+--- a/net/minecraft/world/gen/feature/HugeTreesFeature.java
++++ b/net/minecraft/world/gen/feature/HugeTreesFeature.java
+@@ -14,6 +14,7 @@
+    protected final IBlockState field_76520_b;
+    protected final IBlockState field_76521_c;
+    protected int field_150538_d;
++   protected net.minecraftforge.common.IPlantable sapling = (net.minecraftforge.common.IPlantable)Blocks.field_196674_t;
+ 
+    public HugeTreesFeature(boolean p_i46447_1_, int p_i46447_2_, int p_i46447_3_, IBlockState p_i46447_4_, IBlockState p_i46447_5_) {
+       super(p_i46447_1_);
+@@ -34,7 +35,8 @@
+ 
+    private boolean func_175926_c(IBlockReader p_175926_1_, BlockPos p_175926_2_, int p_175926_3_) {
+       boolean flag = true;
+-      if (p_175926_2_.func_177956_o() >= 1 && p_175926_2_.func_177956_o() + p_175926_3_ + 1 <= 256) {
++      int worldHeight  = p_175926_1_ instanceof IWorld ? ((IWorld)p_175926_1_).func_201672_e().func_72800_K() : 256;
++      if (p_175926_2_.func_177956_o() >= 1 && p_175926_2_.func_177956_o() + p_175926_3_ + 1 <= worldHeight) {
+          for(int i = 0; i <= 1 + p_175926_3_; ++i) {
+             int j = 2;
+             if (i == 0) {
+@@ -45,7 +47,7 @@
+ 
+             for(int k = -j; k <= j && flag; ++k) {
+                for(int l = -j; l <= j && flag; ++l) {
+-                  if (p_175926_2_.func_177956_o() + i < 0 || p_175926_2_.func_177956_o() + i >= 256 || !this.func_150523_a(p_175926_1_.func_180495_p(p_175926_2_.func_177982_a(k, i, l)).func_177230_c())) {
++                  if (p_175926_2_.func_177956_o() + i < 0 || p_175926_2_.func_177956_o() + i >= 256 || !this.canGrowInto(p_175926_1_, p_175926_2_.func_177982_a(k, i, l))) {
+                      flag = false;
+                   }
+                }
+@@ -60,12 +62,12 @@
+ 
+    private boolean func_202405_b(IWorld p_202405_1_, BlockPos p_202405_2_) {
+       BlockPos blockpos = p_202405_2_.func_177977_b();
+-      Block block = p_202405_1_.func_180495_p(blockpos).func_177230_c();
+-      if ((block == Blocks.field_196658_i || Block.func_196245_f(block)) && p_202405_2_.func_177956_o() >= 2) {
+-         this.func_175921_a(p_202405_1_, blockpos);
+-         this.func_175921_a(p_202405_1_, blockpos.func_177974_f());
+-         this.func_175921_a(p_202405_1_, blockpos.func_177968_d());
+-         this.func_175921_a(p_202405_1_, blockpos.func_177968_d().func_177974_f());
++      boolean isSoil = p_202405_1_.func_180495_p(blockpos).canSustainPlant(p_202405_1_, blockpos, net.minecraft.util.EnumFacing.UP, sapling);
++      if (isSoil && p_202405_2_.func_177956_o() >= 2) {
++         this.setDirtAt(p_202405_1_, blockpos, p_202405_2_);
++         this.setDirtAt(p_202405_1_, blockpos.func_177974_f(), p_202405_2_);
++         this.setDirtAt(p_202405_1_, blockpos.func_177968_d(), p_202405_2_);
++         this.setDirtAt(p_202405_1_, blockpos.func_177968_d().func_177974_f(), p_202405_2_);
+          return true;
+       } else {
+          return false;
+@@ -86,7 +88,7 @@
+             if (l + i1 < 7 && l * l + i1 * i1 <= i) {
+                BlockPos blockpos = p_175925_2_.func_177982_a(j, 0, k);
+                IBlockState iblockstate = p_175925_1_.func_180495_p(blockpos);
+-               if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++               if (iblockstate.isAir(p_175925_1_, blockpos) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                   this.func_202278_a(p_175925_1_, blockpos, this.field_76521_c);
+                }
+             }
+@@ -103,7 +105,7 @@
+             if (j * j + k * k <= i) {
+                BlockPos blockpos = p_175928_2_.func_177982_a(j, 0, k);
+                IBlockState iblockstate = p_175928_1_.func_180495_p(blockpos);
+-               if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
++               if (iblockstate.isAir(p_175928_1_, blockpos) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                   this.func_202278_a(p_175928_1_, blockpos, this.field_76521_c);
+                }
+             }
+@@ -111,4 +113,9 @@
+       }
+ 
+    }
++
++   public HugeTreesFeature<T> setSapling(net.minecraftforge.common.IPlantable sapling) {
++      this.sapling = sapling;
++      return this;
++   }
+ }

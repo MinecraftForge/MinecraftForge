@@ -23,6 +23,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -191,5 +192,15 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
             throw new IllegalArgumentException("Slot " + slot + " not in valid range - [0," + slots.size() + ")");
 
         return slots.get(slot);
+    }
+
+    public static OptionalCapabilityInstance<IItemHandlerModifiable>[] create(EntityLivingBase entity)
+    {
+        @SuppressWarnings("unchecked")
+        OptionalCapabilityInstance<IItemHandlerModifiable>[] ret = new OptionalCapabilityInstance[3];
+        ret[0] = OptionalCapabilityInstance.of(() -> new EntityHandsInvWrapper(entity));
+        ret[1] = OptionalCapabilityInstance.of(() -> new EntityArmorInvWrapper(entity));
+        ret[2] = OptionalCapabilityInstance.of(() -> new CombinedInvWrapper(ret[0].orElse(null), ret[1].orElse(null)));
+        return ret;
     }
 }

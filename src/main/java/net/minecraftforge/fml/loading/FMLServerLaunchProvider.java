@@ -28,6 +28,7 @@ import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -47,7 +48,7 @@ public class FMLServerLaunchProvider extends FMLCommonLaunchHandler implements I
     public Path[] identifyTransformationTargets()
     {
         Path libsPath = findLibsPath();
-        Path patchedBinariesPath = libsPath.resolve(Paths.get("net","minecraftforge","forge",MCPVersion.getMCVersion()+"-"+ForgeVersion.getVersion(),"forge-"+MCPVersion.getMCVersion()+"-"+ForgeVersion.getVersion()+"-server.jar"));
+        Path patchedBinariesPath = libsPath.resolve(Paths.get(ForgeVersion.getGroup().replace('.', File.separatorChar), "forge", MCPVersion.getMCVersion() + "-" + ForgeVersion.getVersion(), "forge-" + MCPVersion.getMCVersion() + "-" + ForgeVersion.getVersion() + "-server.jar"));
         Path srgMcPath = libsPath.resolve(Paths.get("net","minecraft", "server", MCPVersion.getMCPandMCVersion(), "server-"+MCPVersion.getMCPandMCVersion()+"-srg.jar"));
         LOGGER.info("SRG MC at {} is {}", srgMcPath.toString(), Files.exists(srgMcPath) ? "present" : "missing");
         LOGGER.info("Forge patches at {} is {}", patchedBinariesPath.toString(), Files.exists(patchedBinariesPath) ? "present" : "missing");

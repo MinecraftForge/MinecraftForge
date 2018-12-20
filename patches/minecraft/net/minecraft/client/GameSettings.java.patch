@@ -81,7 +81,7 @@
 +   private boolean needsBlockModelRefresh = false;
 +   public void onGuiClosed() {
 +      if (needsBlockModelRefresh) {
-+         this.field_74317_L.func_152344_a(() -> net.minecraftforge.client.ForgeHooksClient.refreshResources(this.field_74317_L, net.minecraftforge.client.resource.VanillaResourceType.MODELS));
++         this.field_74317_L.func_152344_a(() -> net.minecraftforge.client.ForgeHooksClient.refreshResources(this.field_74317_L, net.minecraftforge.resource.VanillaResourceType.MODELS));
 +         this.needsBlockModelRefresh = false;
 +      }
 +   }

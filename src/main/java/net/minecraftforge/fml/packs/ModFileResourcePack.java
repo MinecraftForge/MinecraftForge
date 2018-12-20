@@ -76,10 +76,10 @@ public class ModFileResourcePack extends AbstractResourcePack
     {
         try
         {
-            Path inputPath = Paths.get(pathIn);
-            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName());
+            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName()).toAbsolutePath();
+            Path inputPath = root.resolve(pathIn);
             return Files.walk(root).
-                    map(path -> root.relativize(path)).
+                    map(path -> root.relativize(path.toAbsolutePath())).
                     filter(path -> path.getNameCount() > 1 && path.getNameCount() - 1 <= maxDepth). // Make sure the depth is within bounds, ignoring domain
                     filter(path -> !path.toString().endsWith(".mcmeta")). // Ignore .mcmeta files
                     filter(path -> path.subpath(1, path.getNameCount()).startsWith(inputPath)). // Make sure the target path is inside this one (again ignoring domain) 
@@ -100,7 +100,12 @@ public class ModFileResourcePack extends AbstractResourcePack
     public Set<String> getResourceNamespaces(ResourcePackType type)
     {
         try {
-            return Files.walk(modFile.getLocator().findPath(modFile, type.getDirectoryName()),1).map(p->p.getFileName().toString()).collect(Collectors.toSet());
+            Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName()).toAbsolutePath();
+            return Files.walk(root,1)
+                    .map(path -> root.relativize(path.toAbsolutePath()))
+                    .filter(path -> path.getNameCount() > 0) // skip the root entry
+                    .map(p->p.toString().replaceAll("/$","")) // remove the trailing slash, if present
+                    .collect(Collectors.toSet());
         }
         catch (IOException e)
         {

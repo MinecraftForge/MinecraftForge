@@ -1,0 +1,12 @@
+--- a/net/minecraft/world/chunk/IChunk.java
++++ b/net/minecraft/world/chunk/IChunk.java
+@@ -116,4 +116,9 @@
+    ITickList<Fluid> func_212247_j();
+ 
+    BitSet func_205749_a(GenerationStage.Carving p_205749_1_);
++
++   @Nullable
++   default net.minecraft.world.IWorld getWorldForge() {
++      return null;
++   }
+ }
