@@ -1,6 +1,37 @@
 --- a/net/minecraft/client/network/NetHandlerPlayClient.java
 +++ b/net/minecraft/client/network/NetHandlerPlayClient.java
-@@ -1598,6 +1598,7 @@
+@@ -273,6 +273,7 @@
+ import net.minecraft.world.storage.MapData;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.common.tags.ForgeTagManager;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -288,7 +289,7 @@
+    private final Map<UUID, NetworkPlayerInfo> field_147310_i = Maps.<UUID, NetworkPlayerInfo>newHashMap();
+    private final ClientAdvancementManager field_191983_k;
+    private final ClientSuggestionProvider field_195516_l;
+-   private NetworkTagManager field_199725_m = new NetworkTagManager();
++   private ForgeTagManager field_199725_m = new ForgeTagManager();
+    private NBTQueryManager field_211524_l = new NBTQueryManager(this);
+    private final Random field_147306_l = new Random();
+    private CommandDispatcher<ISuggestionProvider> field_195517_n = new CommandDispatcher<ISuggestionProvider>();
+@@ -1283,11 +1284,9 @@
+ 
+    public void func_199723_a(SPacketTagsList p_199723_1_) {
+       PacketThreadUtil.func_180031_a(p_199723_1_, this, this.field_147299_f);
+-      this.field_199725_m = p_199723_1_.func_199858_a();
++      this.field_199725_m = (ForgeTagManager) p_199723_1_.func_199858_a();
+       if (!this.field_147302_e.func_150731_c()) {
+-         BlockTags.func_199895_a(this.field_199725_m.func_199717_a());
+-         ItemTags.func_199902_a(this.field_199725_m.func_199715_b());
+-         FluidTags.func_206953_a(this.field_199725_m.func_205704_c());
++         field_199725_m.onRemoteClientReceivedTags();
+       }
+ 
+    }
+@@ -1598,6 +1597,7 @@
              ((DebugRendererWorldGenAttempts)this.field_147299_f.field_184132_p.field_201750_j).func_201734_a(packetbuffer.func_179259_c(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat());
              field_147301_d.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
           } else {

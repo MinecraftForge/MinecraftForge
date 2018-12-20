@@ -1,6 +1,14 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -148,7 +148,6 @@
+@@ -112,6 +112,7 @@
+ import net.minecraft.world.storage.loot.LootTableManager;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.common.tags.ForgeTagManager;
+ import org.apache.commons.lang3.Validate;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -148,7 +149,6 @@
     private int field_71280_D;
     private int field_143008_E;
     public final long[] field_71311_j = new long[100];
@@ -8,7 +16,16 @@
     private KeyPair field_71292_I;
     private String field_71293_J;
     private String field_71294_K;
-@@ -287,8 +286,7 @@
+@@ -178,7 +178,7 @@
+    private FolderPackFinder field_195578_ae;
+    private final Commands field_195579_af;
+    private final RecipeManager field_199530_ag = new RecipeManager();
+-   private final NetworkTagManager field_199736_ah = new NetworkTagManager();
++   private final NetworkTagManager field_199736_ah = new ForgeTagManager();
+    private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
+    private final CustomBossEvents field_201301_aj = new CustomBossEvents(this);
+    private final LootTableManager field_200256_aj = new LootTableManager();
+@@ -287,8 +287,7 @@
     public void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, JsonElement p_71247_6_) {
        this.func_71237_c(p_71247_1_);
        this.func_200245_b(new TextComponentTranslation("menu.loadingLevel", new Object[0]));
@@ -18,7 +35,7 @@
        ISaveHandler isavehandler = this.field_71310_m.func_197715_a(p_71247_1_, this);
        this.func_175584_a(this.func_71270_I(), isavehandler);
        WorldInfo worldinfo = isavehandler.func_75757_d();
-@@ -340,6 +338,18 @@
+@@ -340,6 +339,18 @@
           }
        }
  
@@ -37,7 +54,7 @@
        this.field_71318_t.func_72364_a(this.field_71305_c);
        if (worldinfo.func_201357_P() != null) {
           this.func_201300_aS().func_201381_a(worldinfo.func_201357_P());
-@@ -378,7 +388,7 @@
+@@ -378,7 +389,7 @@
        this.func_200245_b(new TextComponentTranslation("menu.generatingTerrain", new Object[0]));
        int j1 = 0;
        field_147145_h.info("Preparing start region for level 0");
@@ -46,7 +63,7 @@
        BlockPos blockpos = worldserver.func_175694_M();
        List<ChunkPos> list = Lists.<ChunkPos>newArrayList();
        Set<ChunkPos> set = Sets.<ChunkPos>newConcurrentHashSet();
-@@ -493,9 +503,14 @@
+@@ -493,9 +504,14 @@
  
           for(WorldServer worldserver1 : this.field_71305_c) {
              if (worldserver1 != null) {
@@ -61,7 +78,7 @@
        }
  
        if (this.field_71307_n.func_76468_d()) {
-@@ -523,6 +538,7 @@
+@@ -523,6 +539,7 @@
     public void run() {
        try {
           if (this.func_71197_b()) {
@@ -69,7 +86,7 @@
              this.field_211151_aa = Util.func_211177_b();
              this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
              this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.13", 393));
-@@ -546,7 +562,10 @@
+@@ -546,7 +563,10 @@
  
                 this.field_71296_Q = true;
              }
@@ -80,7 +97,7 @@
              this.func_71228_a((CrashReport)null);
           }
        } catch (Throwable throwable1) {
-@@ -565,6 +584,7 @@
+@@ -565,6 +585,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -88,7 +105,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -573,6 +593,7 @@
+@@ -573,6 +594,7 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -96,7 +113,7 @@
              this.func_71240_o();
           }
  
-@@ -648,6 +669,7 @@
+@@ -648,6 +670,7 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -104,7 +121,7 @@
        }
  
        if (this.field_71315_w % 900 == 0) {
-@@ -686,16 +708,18 @@
+@@ -686,16 +709,18 @@
        this.func_193030_aL().func_73660_a();
        this.field_71304_b.func_76318_c("levels");
  
@@ -127,7 +144,7 @@
                 this.field_71304_b.func_76319_b();
              }
  
-@@ -724,9 +748,11 @@
+@@ -724,9 +749,11 @@
              this.field_71304_b.func_76319_b();
           }
  
@@ -140,7 +157,7 @@
        this.field_71304_b.func_76318_c("connection");
        this.func_147137_ag().func_151269_c();
        this.field_71304_b.func_76318_c("players");
-@@ -749,6 +775,14 @@
+@@ -749,6 +776,14 @@
     }
  
     public static void main(String[] p_main_0_) {
@@ -155,7 +172,7 @@
        Bootstrap.func_151354_b();
  
        try {
-@@ -851,7 +885,7 @@
+@@ -851,7 +886,7 @@
     }
  
     public void func_71256_s() {
@@ -164,7 +181,7 @@
        this.field_175590_aa.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
           field_147145_h.error(p_195574_1_);
        });
-@@ -871,11 +905,7 @@
+@@ -871,11 +906,7 @@
     }
  
     public WorldServer func_71218_a(int p_71218_1_) {
@@ -177,7 +194,7 @@
     }
  
     public WorldServer func_200667_a(DimensionType p_200667_1_) {
-@@ -918,7 +948,7 @@
+@@ -918,7 +949,7 @@
     }
  
     public String getServerModName() {

@@ -59,4 +59,13 @@ public abstract class ForgeRegistryEntry<V extends IForgeRegistryEntry<V>> imple
     }
 
     public final Class<V> getRegistryType() { return (Class<V>)token.getRawType(); }
+
+    @Override
+    public String toString()
+    { //Default implementation so that we can have at least some toString Information, if this was not overridden
+        return "ForgeRegistryEntry{" +
+                "type=" + token +
+                ", registryName=" + (getRegistryName()!=null?getRegistryName():"unset") +
+                '}';
+    }
 }
