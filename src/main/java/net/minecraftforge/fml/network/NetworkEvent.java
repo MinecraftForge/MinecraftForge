@@ -170,7 +170,7 @@ public class NetworkEvent extends Event
             return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().getLogicalSide()).addScheduledTask(runnable);
         }
 
-        NetworkManager getNetworkManager() {
+        public NetworkManager getNetworkManager() {
             return networkManager;
         }
     }
