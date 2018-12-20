@@ -286,7 +286,7 @@ public class GameData
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
                 if (block.getRegistryName().getNamespace().equals("minecraft") && (
                         oldBlock.getStateContainer().getValidStates().size() != block.getStateContainer().getValidStates().size() ||
-                        Streams.zip(oldBlock.getStateContainer().getValidStates().stream().map(Object::toString),
+                        !Streams.zip(oldBlock.getStateContainer().getValidStates().stream().map(Object::toString),
                                     block.getStateContainer().getValidStates().stream().map(Object::toString),
                                     String::equals).allMatch(v -> v)))
                 {
