@@ -1,0 +1,49 @@
+--- a/net/minecraft/tags/NetworkTagCollection.java
++++ b/net/minecraft/tags/NetworkTagCollection.java
+@@ -8,13 +8,27 @@
+ import net.minecraft.util.registry.RegistryNamespaced;
+ 
+ public class NetworkTagCollection<T> extends TagCollection<T> {
+-   private final RegistryNamespaced<ResourceLocation, T> field_200044_a;
++   protected final RegistryNamespaced<ResourceLocation, T> field_200044_a;
++   protected final java.util.function.Function<T,Integer> itemToId;
++   protected final java.util.function.Function<Integer,T> idToItem;
+ 
++   public NetworkTagCollection(java.util.function.Predicate<ResourceLocation> isValueKnownPredicateIn, java.util.function.Function<ResourceLocation, T> resourceLocationToItemIn, java.util.function.Function<T, Integer> itemToId, java.util.function.Function<Integer, T> idToItem, String resourceLocationPrefixIn, boolean preserveOrderIn, String itemTypeNameIn) {
++      super(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, preserveOrderIn, itemTypeNameIn);
++      this.itemToId = itemToId;
++      this.idToItem = idToItem;
++      this.field_200044_a = null;
++   }
++
+    public NetworkTagCollection(RegistryNamespaced<ResourceLocation, T> p_i48237_1_, String p_i48237_2_, String p_i48237_3_) {
+       super(p_i48237_1_::func_148741_d, p_i48237_1_::func_82594_a, p_i48237_2_, false, p_i48237_3_);
+       this.field_200044_a = p_i48237_1_;
++      this.itemToId = p_i48237_1_::func_148757_b;
++      this.idToItem = p_i48237_1_::func_148754_a;
+    }
+ 
++   public void write(ResourceLocation collectionId, PacketBuffer buffer) { func_200042_a(buffer);} //called with this TagCollections ResourceLocation Id
++   public void read(ResourceLocation collectionId, PacketBuffer buffer) { func_200043_b(buffer);} //called with this TagCollections ResourceLocation Id
++
+    public void func_200042_a(PacketBuffer p_200042_1_) {
+       p_200042_1_.func_150787_b(this.func_200039_c().size());
+ 
+@@ -23,7 +37,7 @@
+          p_200042_1_.func_150787_b(((Tag)entry.getValue()).func_199885_a().size());
+ 
+          for(T t : (entry.getValue()).func_199885_a()) {
+-            p_200042_1_.func_150787_b(this.field_200044_a.func_148757_b(t));
++            p_200042_1_.func_150787_b(itemToId.apply(t));
+          }
+       }
+ 
+@@ -38,7 +52,7 @@
+          List<T> list = Lists.<T>newArrayList();
+ 
+          for(int l = 0; l < k; ++l) {
+-            list.add(this.field_200044_a.func_148754_a(p_200043_1_.func_150792_a()));
++            list.add(idToItem.apply(p_200043_1_.func_150792_a()));
+          }
+ 
+          this.func_200039_c().put(resourcelocation, Tag.Builder.<T>func_200047_a().func_200046_a(list).func_200051_a(resourcelocation));

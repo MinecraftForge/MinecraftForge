@@ -41,7 +41,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
     {
         return fromForgeRegistry(registry,resourceLocationPrefixes,itemTypeName,false);
     }
-    //cannot add this as a constructor, cause Java cannot infer the addtional Bound on T in a constructor
+    //cannot add this as a constructor, cause Java cannot infer the additional Bound on T in a constructor
     public static <T extends IForgeRegistryEntry<T>> ForgeTagCollection<T> fromForgeRegistry(IForgeRegistry<T> registryIn, List<String> resourceLocationPrefixes, String itemTypeName, boolean preserveOrder)
     {
         ForgeRegistry<T> registry = (ForgeRegistry<T>) registryIn;

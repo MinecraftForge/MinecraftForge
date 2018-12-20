@@ -1,0 +1,18 @@
+--- a/net/minecraft/tags/ItemTags.java
++++ b/net/minecraft/tags/ItemTags.java
+@@ -55,12 +55,13 @@
+       return new ItemTags.Wrapper(new ResourceLocation(p_199901_0_));
+    }
+ 
+-   public static class Wrapper extends Tag<Item> {
++   public static class Wrapper extends net.minecraftforge.common.tags.TagWrapper<Item>
++   {
+       private int field_199890_a = -1;
+       private Tag<Item> field_199891_b;
+ 
+       public Wrapper(ResourceLocation p_i48212_1_) {
+-         super(p_i48212_1_);
++         super(p_i48212_1_,ItemTags::func_199903_a);
+       }
+ 
+       public boolean func_199685_a_(Item p_199685_1_) {

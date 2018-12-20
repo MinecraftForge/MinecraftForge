@@ -154,9 +154,9 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T> {
     @Override
     public boolean resolve(Function<ResourceLocation, Tag<T>> resourceLocationToTag)
     {
-        if (!resolved)
+        if (!isResolved())
             this.resolved = super.resolve(resourceLocationToTag);
-        return resolved;
+        return isResolved();
     }
 
     public Set<ResourceLocation> findResolveFailures(Function<ResourceLocation, Tag<T>> resourceLocationToTag)

@@ -1,0 +1,49 @@
+--- a/net/minecraft/tags/Tag.java
++++ b/net/minecraft/tags/Tag.java
+@@ -22,6 +22,12 @@
+    private final Set<T> field_199889_b;
+    private final Collection<Tag.ITagEntry<T>> field_200150_c;
+ 
++   public Tag(ResourceLocation resourceLocationIn, Collection<Tag.ITagEntry<T>> entriesIn, Set<T> taggedItems) {
++      this.field_199888_a = resourceLocationIn;
++      this.field_199889_b = taggedItems;
++      this.field_200150_c = entriesIn;
++   }
++
+    public Tag(ResourceLocation p_i48236_1_) {
+       this.field_199888_a = p_i48236_1_;
+       this.field_199889_b = Collections.<T>emptySet();
+@@ -64,6 +70,22 @@
+       return this.field_200150_c;
+    }
+ 
++   @Override
++   public int hashCode() { return func_199886_b().hashCode(); }
++
++   /**
++    * Equality is based on the equality of the Tags ID (ResourceLocation)
++    * @param obj The Object to compare with
++    * @return Whether or not the other Object is a Tag to which this ImmutableTag should be equal too
++    */
++   @Override
++   public boolean equals(Object obj)
++   {
++      if (obj == this) return true;
++      if (!(obj instanceof Tag)) return false;
++      return func_199886_b().equals(((Tag<?>) obj).func_199886_b());
++   }
++
+    public T func_205596_a(Random p_205596_1_) {
+       List<T> list = Lists.newArrayList(this.func_199885_a());
+       return list.get(p_205596_1_.nextInt(list.size()));
+@@ -74,8 +96,8 @@
+    }
+ 
+    public static class Builder<T> {
+-      private final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
+-      private boolean field_200053_b;
++      protected final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
++      protected boolean field_200053_b;
+ 
+       public static <T> Tag.Builder<T> func_200047_a() {
+          return new Tag.Builder<T>();
