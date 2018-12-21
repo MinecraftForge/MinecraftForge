@@ -1,9 +1,0 @@
---- ../src-base/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
-+++ ../src-work/minecraft/net/minecraft/client/renderer/BlockModelShapes.java
-@@ -391,5 +391,6 @@
-                 return new ModelResourceLocation(s + "_double_slab", s1);
-             }
-         });
-+        net.minecraftforge.client.model.ModelLoader.onRegisterAllBlocks(this);
-     }
- }

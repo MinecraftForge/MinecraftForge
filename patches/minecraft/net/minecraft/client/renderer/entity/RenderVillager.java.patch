@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/entity/RenderVillager.java
++++ b/net/minecraft/client/renderer/entity/RenderVillager.java
+@@ -27,6 +27,7 @@
+    }
+ 
+    protected ResourceLocation func_110775_a(EntityVillager p_110775_1_) {
++      if (true) return p_110775_1_.getProfessionForge().getSkin();
+       switch(p_110775_1_.func_70946_n()) {
+       case 0:
+          return field_110904_g;

@@ -78,6 +78,8 @@ public class ClientModLoader
         GlStateManager.enableTexture2D();
         if (error != null) {
             mc.displayGuiScreen(new LoadingErrorScreen(error));
+        } else {
+            ClientHooks.logMissingTextureErrors();
         }
     }
 

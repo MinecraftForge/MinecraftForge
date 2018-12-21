@@ -35,12 +35,10 @@ public class RenderHandEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final RenderGlobal context;
     private final float partialTicks;
-    private final int renderPass;
-    public RenderHandEvent(RenderGlobal context, float partialTicks, int renderPass)
+    public RenderHandEvent(RenderGlobal context, float partialTicks)
     {
         this.context = context;
         this.partialTicks = partialTicks;
-        this.renderPass = renderPass;
     }
 
     public RenderGlobal getContext()
@@ -51,10 +49,5 @@ public class RenderHandEvent extends net.minecraftforge.eventbus.api.Event
     public float getPartialTicks()
     {
         return partialTicks;
-    }
-
-    public int getRenderPass()
-    {
-        return renderPass;
     }
 }

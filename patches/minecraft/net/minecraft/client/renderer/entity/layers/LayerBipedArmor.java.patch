@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/entity/layers/LayerBipedArmor.java
++++ b/net/minecraft/client/renderer/entity/layers/LayerBipedArmor.java
+@@ -44,4 +44,9 @@
+    protected void func_177194_a(ModelBiped p_177194_1_) {
+       p_177194_1_.func_178719_a(false);
+    }
++   
++   @Override
++   protected ModelBiped getArmorModelHook(net.minecraft.entity.EntityLivingBase entity, net.minecraft.item.ItemStack itemStack, EntityEquipmentSlot slot, ModelBiped model) {
++      return net.minecraftforge.client.ForgeHooksClient.getArmorModel(entity, itemStack, slot, model);
++   }
+ }

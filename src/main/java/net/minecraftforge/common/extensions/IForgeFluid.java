@@ -22,11 +22,12 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tags.Tag;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -97,5 +98,14 @@ public interface IForgeFluid
     default float getExplosionResistance(IFluidState state, IWorldReader world, BlockPos pos, @Nullable Entity exploder, Explosion explosion)
     {
         return state.getExplosionResistance();
+    }
+    
+    /**
+     * Queries if this fluid should render in a given layer.
+     * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
+     */
+    default boolean canRenderInLayer(IFluidState state, BlockRenderLayer layer)
+    {
+        return this.getFluid().getRenderLayer() == layer;
     }
 }
