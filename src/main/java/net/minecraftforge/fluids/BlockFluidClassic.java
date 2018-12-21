@@ -26,6 +26,7 @@ import java.util.Random;
 
 import com.google.common.primitives.Ints;
 
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
@@ -55,10 +56,15 @@ public class BlockFluidClassic extends BlockFluidBase
 
     protected FluidStack stack;
 
+    public BlockFluidClassic(Fluid fluid, Material material, MapColor mapColor)
+    {
+        super(fluid, material, mapColor);
+        stack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
+    }
+
     public BlockFluidClassic(Fluid fluid, Material material)
     {
-        super(fluid, material);
-        stack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
+        this(fluid, material, material.getMaterialMapColor());
     }
 
     public BlockFluidClassic setFluidStack(FluidStack stack)
