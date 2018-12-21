@@ -46,7 +46,7 @@ public final class ForgeTagManager extends NetworkTagManager
 
     private static void registerForgeTags(final ResourceLocation id, final IForgeRegistry<?> reg, Consumer<ForgeTagManager> collectionLoader,final String name)
     {
-        registerTagCollection(id, () -> ForgeTagCollection.fromForgeRegistry(reg,ForgeTagCollection.getDefaultLoadingLocation(id),name),collectionLoader);
+        registerTagCollection(id, () -> {return ForgeTagCollection.fromForgeRegistry(reg,ForgeTagCollection.getDefaultLoadingLocation(id),name);},collectionLoader);
     }
 
     public static void registerTagCollection(ResourceLocation id, Supplier<ForgeTagCollection<?>> factory)
@@ -76,7 +76,7 @@ public final class ForgeTagManager extends NetworkTagManager
         registerForgeTags(GameData.BIOMES,BIOMES,(manager -> Tags.Biomes.setBiomeTagCollection((ForgeTagCollection<Biome>) manager.getTagsForId(GameData.BIOMES))),"biome");
         registerForgeTags(GameData.SOUNDEVENTS,SOUND_EVENTS,(manager -> Tags.SoundEvents.setSoundEventTagCollection((ForgeTagCollection<SoundEvent>) manager.getTagsForId(GameData.SOUNDEVENTS))),"sound event");
         registerForgeTags(GameData.POTIONTYPES,POTION_TYPES,(manager -> Tags.PotionTypes.setPotionTypeTagCollection((ForgeTagCollection<PotionType>) manager.getTagsForId(GameData.POTIONTYPES))),"potion type");
-        registerForgeTags(GameData.ENCHANTMENTS,ENCHANTMENTS,(manager -> Tags.Enchantments.setEnchantmentTagCollection((ForgeTagCollection<Enchantment>) manager.getTagsForId(GameData.ENCHANTMENTS))),"enchantments");
+        registerForgeTags(GameData.ENCHANTMENTS,ENCHANTMENTS,(manager -> Tags.Enchantments.setEnchantmentTagCollection((ForgeTagCollection<Enchantment>) manager.getTagsForId(GameData.ENCHANTMENTS))),"enchantment");
         registerForgeTags(GameData.PROFESSIONS,VILLAGER_PROFESSIONS,(manager -> Tags.VillagerProfessions.setVillagerProfessionTagCollection((ForgeTagCollection<VillagerRegistry.VillagerProfession>) manager.getTagsForId(GameData.PROFESSIONS))),"villager profession");
         registerForgeTags(GameData.ENTITIES,ENTITIES,(manager -> Tags.Entities.setEntityTagCollection((ForgeTagCollection<Entity>) manager.getTagsForId(GameData.ENTITIES))),"entity");
         registerForgeTags(GameData.TILEENTITIES,TILE_ENTITIES,(manager -> Tags.TileEntities.setTileEntityTagCollection((ForgeTagCollection<TileEntity>) manager.getTagsForId(GameData.TILEENTITIES))),"tile entity");

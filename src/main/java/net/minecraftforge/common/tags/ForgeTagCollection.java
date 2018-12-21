@@ -18,7 +18,6 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.lwjgl.system.CallbackI.I;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -33,10 +32,6 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
     private static final int JSON_EXTENSION_LENGTH = ".json".length();
-    private final ImmutableList<String> resourceLocationPrefixes;
-    private final Map<T, SortedSet<Tag<T>>> owningTags;
-    private boolean collectDummyTags;
-    private Supplier<ForgeTagBuilder<T>> builderFactory;
 
     public static <T> ForgeTagCollection<T> empty() {
         return new ForgeTagCollection<>(new RegistryNamespaced<>(),ImmutableList.of(),"");
@@ -57,6 +52,11 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
     {
         return ImmutableList.of("tags/" + id.getPath(), "tags/" + id.getNamespace() + "/" + id.getPath());
     }
+    private final ImmutableList<String> resourceLocationPrefixes;
+    private final Map<T, SortedSet<Tag<T>>> owningTags;
+    private Supplier<ForgeTagBuilder<T>> builderFactory;
+    private boolean collectDummyTags;
+    private boolean extendedLogging;
 
     public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, Function<T, Integer> itemToId, Function<Integer, T> idToItem, List<String> resourceLocationPrefixes, boolean preserveOrderIn, String itemTypeNameIn)
     {
@@ -65,6 +65,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
         this.owningTags = new HashMap<>();
         this.collectDummyTags = true;
         this.builderFactory = ForgeTagBuilder::immutableTagBuilder;
+        this.extendedLogging = false;
     }
 
     public ForgeTagCollection(RegistryNamespaced<ResourceLocation, T> registryIn, List<String> resourceLocationPrefixes, String itemTypeName)
@@ -74,11 +75,18 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
         this.owningTags = new HashMap<>();
         this.collectDummyTags = true;
         this.builderFactory = ForgeTagBuilder::immutableTagBuilder;
+        this.extendedLogging = false;
     }
 
-    public ForgeTagCollection<T> setCollectDummyTags(boolean collectDummyTags)
+    public ForgeTagCollection<T> disableDummyTags()
     {
-        this.collectDummyTags = collectDummyTags;
+        this.collectDummyTags = false;
+        return this;
+    }
+
+    public ForgeTagCollection<T> enableExtendedLogging()
+    {
+        this.extendedLogging = true;
         return this;
     }
 
@@ -95,6 +103,11 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
 
     public boolean isCollectingDummyTags() {
         return collectDummyTags;
+    }
+
+    public boolean isExtendedLoggingEnabled()
+    {
+        return extendedLogging;
     }
 
     @Override
@@ -232,7 +245,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
 
     protected void collectDummyTags(Map<ResourceLocation, UnbakedTag<T>> map)
     {
-        LOGGER.debug("Injecting minecraft dummy {} Tags", itemTypeName);
+        LOGGER.debug("Injecting minecraft dummy {} Tags for {} loaded Tags", itemTypeName,map.size());
         Map<String, Set<ResourceLocation>> flattener = Maps.newHashMap();
         for (Map.Entry<ResourceLocation, UnbakedTag<T>> unbuildTag : map.entrySet())
         {
@@ -241,7 +254,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
                 Set<ResourceLocation> current = flattener.getOrDefault(unbuildTag.getKey().getPath(), new HashSet<>());
                 current.add(unbuildTag.getKey());
                 flattener.put(unbuildTag.getKey().getPath(), current);
-                LOGGER.trace("Prepared to add #{} to Dummy-Tag #minecraft:{}.", unbuildTag.getKey(), unbuildTag.getKey().getPath());
+                if (isExtendedLoggingEnabled())LOGGER.trace("Prepared to add #{} to Dummy-Tag #minecraft:{}.", unbuildTag.getKey(), unbuildTag.getKey().getPath());
             }
         }
         for (Map.Entry<String, Set<ResourceLocation>> flattenedEntry : flattener.entrySet())
@@ -249,10 +262,13 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
             ResourceLocation collected = new ResourceLocation("minecraft:" + flattenedEntry.getKey());
             UnbakedTag<T> builder = map.getOrDefault(collected, new UnbakedTag<>(collected,getBuilderFactory())); //ensure that we don't delete existing minecraft tags
             map.put(collected, builder.addAllDummyEntries(flattenedEntry.getValue()));
-            if (builder.replacesDummyAdds())
-                LOGGER.trace("Loaded replacement for #{} prevented insertion of dummy entries.", builder.getId());
-            else
-                LOGGER.trace("Added Dummy-Tag #{}.", builder.getId());
+            if (isExtendedLoggingEnabled())
+            {
+                if (builder.replacesDummyAdds())
+                    LOGGER.trace("Loaded replacement for #{} prevented insertion of dummy entries.", builder.getId());
+                else
+                    LOGGER.trace("Added Dummy-Tag #{}.", builder.getId());
+            }
         }
     }
 
@@ -317,7 +333,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
                 owningTags.put(element, set);
             }
             //DEBUG: dump Tags
-            LOGGER.trace("Indexed #{}", tag.toString());
+            if (isExtendedLoggingEnabled()) LOGGER.trace("Indexed #{}", tag.toString());
         }
     }
 
