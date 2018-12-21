@@ -31,7 +31,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.tileentity.TileEntity;
 
-public abstract class FastTESR<T extends TileEntity> extends TileEntityRenderer<T>
+public abstract class TileEntityRendererFast<T extends TileEntity> extends TileEntityRenderer<T>
 {
     @Override
     public final void render(T te, double x, double y, double z, float partialTicks, int destroyStage)
