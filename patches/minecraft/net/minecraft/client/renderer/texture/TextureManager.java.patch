@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/TextureManager.java
 +++ b/net/minecraft/client/renderer/texture/TextureManager.java
-@@ -106,17 +106,20 @@
+@@ -106,6 +106,7 @@
     public void func_147645_c(ResourceLocation p_147645_1_) {
        ITextureObject itextureobject = this.func_110581_b(p_147645_1_);
        if (itextureobject != null) {
@@ -8,19 +8,20 @@
           TextureUtil.func_147942_a(itextureobject.func_110552_b());
        }
  
-    }
+@@ -113,11 +114,13 @@
  
     public void func_195410_a(IResourceManager p_195410_1_) {
-+      net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Reloading Texture Manager", this.field_110585_a.keySet().size(), true);
        MissingTextureSprite.func_195676_d();
++      net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Reloading Texture Manager", this.field_110585_a.entrySet().size(), true);
        Iterator<Entry<ResourceLocation, ITextureObject>> iterator = this.field_110585_a.entrySet().iterator();
  
        while(iterator.hasNext()) {
           Entry<ResourceLocation, ITextureObject> entry = iterator.next();
-+         bar.step(entry.getKey().toString());
           ResourceLocation resourcelocation = entry.getKey();
++         bar.step(resourcelocation.toString());
           ITextureObject itextureobject = entry.getValue();
           if (itextureobject == MissingTextureSprite.func_195676_d() && !resourcelocation.equals(MissingTextureSprite.func_195675_b())) {
+             iterator.remove();
 @@ -125,6 +128,11 @@
              this.func_110579_a(entry.getKey(), itextureobject);
           }

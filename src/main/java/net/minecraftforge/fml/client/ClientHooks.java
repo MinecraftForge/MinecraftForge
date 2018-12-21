@@ -19,12 +19,32 @@
 
 package net.minecraftforge.fml.client;
 
+import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
 import com.google.common.base.CharMatcher;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
 import com.google.gson.JsonObject;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiConnecting;
@@ -35,23 +55,16 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
+import net.minecraft.resources.AbstractResourcePack;
+import net.minecraft.resources.FallbackResourceManager;
+import net.minecraft.resources.IResourcePack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.WorldSummary;
-import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.client.gui.GuiAccessDenied;
+import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.registries.GameData;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
-import javax.annotation.Nullable;
-import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
 public class ClientHooks
 {
@@ -220,4 +233,103 @@ public class ClientHooks
         // We can't handle many unicode points in the splash renderer
         return DISALLOWED_CHAR_MATCHER.removeFrom(net.minecraft.util.StringUtils.stripControlCodes(message));
     }
+    
+    private static SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
+    private static Set<String> badTextureDomains = Sets.newHashSet();
+    private static Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
+
+    public static void trackMissingTexture(ResourceLocation resourceLocation)
+    {
+        badTextureDomains.add(resourceLocation.getNamespace());
+        missingTextures.put(resourceLocation.getNamespace(),resourceLocation);
+    }
+
+    public static void trackBrokenTexture(ResourceLocation resourceLocation, String error)
+    {
+        badTextureDomains.add(resourceLocation.getNamespace());
+        Set<ResourceLocation> badType = brokenTextures.get(resourceLocation.getNamespace(), error);
+        if (badType == null)
+        {
+            badType = Sets.newHashSet();
+            brokenTextures.put(resourceLocation.getNamespace(), MoreObjects.firstNonNull(error, "Unknown error"), badType);
+        }
+        badType.add(resourceLocation);
+    }
+
+    public static void logMissingTextureErrors()
+    {
+        if (missingTextures.isEmpty() && brokenTextures.isEmpty())
+        {
+            return;
+        }
+        Logger logger = LogManager.getLogger("FML.TEXTURE_ERRORS");
+        logger.error(Strings.repeat("+=", 25));
+        logger.error("The following texture errors were found.");
+        Map<String,FallbackResourceManager> resManagers = null;// TODO ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "field_110548"+"_a");
+        for (String resourceDomain : badTextureDomains)
+        {
+            Set<ResourceLocation> missing = missingTextures.get(resourceDomain);
+            logger.error(Strings.repeat("=", 50));
+            logger.error("  DOMAIN {}", resourceDomain);
+            logger.error(Strings.repeat("-", 50));
+            logger.error("  domain {} is missing {} texture{}",resourceDomain, missing.size(),missing.size()!=1 ? "s" : "");
+            FallbackResourceManager fallbackResourceManager = resManagers.get(resourceDomain);
+            if (fallbackResourceManager == null)
+            {
+                logger.error("    domain {} is missing a resource manager - it is probably a side-effect of automatic texture processing", resourceDomain);
+            }
+            else
+            {
+                List<IResourcePack> resPacks = null;//ObfuscationReflectionHelper.getPrivateValue(FallbackResourceManager.class, fallbackResourceManager, "field_110540"+"_a");
+                logger.error("    domain {} has {} location{}:",resourceDomain, resPacks.size(), resPacks.size() != 1 ? "s" :"");
+                for (IResourcePack resPack : resPacks)
+                {
+                    if (resPack instanceof ModFileResourcePack) {
+                        ModFileResourcePack modRP = (ModFileResourcePack) resPack;
+                        List<IModInfo> mods = modRP.getModFile().getModInfos();
+                        logger.error("      mod(s) {} resources at {}", mods.stream().map(IModInfo::getDisplayName).collect(Collectors.toList()), modRP.getModFile().getFilePath());
+                    }
+                    else if (resPack instanceof AbstractResourcePack)
+                    {
+                        AbstractResourcePack resourcePack = (AbstractResourcePack) resPack;
+                        File resPath = null;// TODO bfuscationReflectionHelper.getPrivateValue(AbstractResourcePack.class, resourcePack, "field_110597"+"_b");
+                        logger.error("      resource pack at path {}",resPath.getPath());
+                    }
+                    else
+                    {
+                        logger.error("      unknown resourcepack type {} : {}", resPack.getClass().getName(), resPack.getName());
+                    }
+                }
+            }
+            logger.error(Strings.repeat("-", 25));
+            if (missingTextures.containsKey(resourceDomain)) {
+                logger.error("    The missing resources for domain {} are:", resourceDomain);
+                for (ResourceLocation rl : missing) {
+                    logger.error("      {}", rl.getPath());
+                }
+                logger.error(Strings.repeat("-", 25));
+            }
+            if (!brokenTextures.containsRow(resourceDomain))
+            {
+                logger.error("    No other errors exist for domain {}", resourceDomain);
+            }
+            else
+            {
+                logger.error("    The following other errors were reported for domain {}:",resourceDomain);
+                Map<String, Set<ResourceLocation>> resourceErrs = brokenTextures.row(resourceDomain);
+                for (String error: resourceErrs.keySet())
+                {
+                    logger.error(Strings.repeat("-", 25));
+                    logger.error("    Problem: {}", error);
+                    for (ResourceLocation rl : resourceErrs.get(error))
+                    {
+                        logger.error("      {}",rl.getPath());
+                    }
+                }
+            }
+            logger.error(Strings.repeat("=", 50));
+        }
+        logger.error(Strings.repeat("+=", 25));
+    }
+
 }

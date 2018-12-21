@@ -305,14 +305,14 @@ public final class ModelDynBucket implements IUnbakedModel
             if (getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_cover.png")) == null)
             {
                 ResourceLocation bucketCover = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_cover");
-                BucketCoverSprite bucketCoverSprite = new BucketCoverSprite(getResource(bucketCover));
+                BucketCoverSprite bucketCoverSprite = new BucketCoverSprite(bucketCover);
 //                map.setTextureEntry(bucketCoverSprite);
             }
 
             if (getResource(new ResourceLocation(ForgeVersion.MOD_ID, "textures/items/bucket_base.png")) == null)
             {
                 ResourceLocation bucketBase = new ResourceLocation(ForgeVersion.MOD_ID, "items/bucket_base");
-                BucketBaseSprite bucketBaseSprite = new BucketBaseSprite(getResource(bucketBase));
+                BucketBaseSprite bucketBaseSprite = new BucketBaseSprite(bucketBase);
 //                map.setTextureEntry(bucketBaseSprite);
             }
         }
@@ -320,12 +320,12 @@ public final class ModelDynBucket implements IUnbakedModel
 
     private static final class BucketBaseSprite extends TextureAtlasSprite
     {
-        private final ResourceLocation bucket = new ResourceLocation("items/bucket_empty");
+        private final ResourceLocation bucket = new ResourceLocation("item/bucket");
         private final ImmutableList<ResourceLocation> dependencies = ImmutableList.of(bucket);
 
-        private BucketBaseSprite(IResource resource)
+        private BucketBaseSprite(ResourceLocation res)
         {
-            super(resource.getLocation(), getSizeInfo(resource), resource.getMetadata(AnimationMetadataSection.SERIALIZER));
+            super(res, getSizeInfo(getResource(new ResourceLocation("textures/item/bucket.png"))), getResource(new ResourceLocation("textures/item/bucket.png")).getMetadata(AnimationMetadataSection.SERIALIZER));
         }
 
         /* TODO Custom TAS
@@ -361,13 +361,13 @@ public final class ModelDynBucket implements IUnbakedModel
      */
     private static final class BucketCoverSprite extends TextureAtlasSprite
     {
-        private final ResourceLocation bucket = new ResourceLocation("items/bucket_empty");
-        private final ResourceLocation bucketCoverMask = new ResourceLocation(ForgeVersion.MOD_ID, "items/vanilla_bucket_cover_mask");
+        private final ResourceLocation bucket = new ResourceLocation("item/bucket");
+        private final ResourceLocation bucketCoverMask = new ResourceLocation(ForgeVersion.MOD_ID, "item/vanilla_bucket_cover_mask");
         private final ImmutableList<ResourceLocation> dependencies = ImmutableList.of(bucket, bucketCoverMask);
 
-        private BucketCoverSprite(IResource resource)
+        private BucketCoverSprite(ResourceLocation res)
         {
-            super(resource.getLocation(), getSizeInfo(resource), resource.getMetadata(AnimationMetadataSection.SERIALIZER));
+            super(res, getSizeInfo(getResource(new ResourceLocation("textures/item/bucket.png"))), getResource(new ResourceLocation("textures/item/bucket.png")).getMetadata(AnimationMetadataSection.SERIALIZER));
         }
 
         /* TODO Custom TAS
