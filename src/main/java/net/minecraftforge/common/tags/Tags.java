@@ -20,11 +20,19 @@
 package net.minecraftforge.common.tags;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 
 public class Tags
 {
@@ -63,7 +71,7 @@ public class Tags
 
         private static Tag<Block> tag(String name)
         {
-            return new BlockTags.Wrapper(new ResourceLocation("forge", name));
+            return new BlockTags.Wrapper(new ResourceLocation(name)); //Access the created dummy Tags
         }
     }
 
@@ -140,7 +148,168 @@ public class Tags
 
         private static Tag<Item> tag(String name)
         {
-            return new ItemTags.Wrapper(new ResourceLocation("forge", name));
+            return new ItemTags.Wrapper(new ResourceLocation(name)); //Access the created Dummy Tags
+        }
+    }
+
+    public static class Potions
+    {
+
+        private static ForgeTagCollection<Potion> potionTagCollection = ForgeTagCollection.empty();
+
+        static void setPotionTagCollection(ForgeTagCollection<Potion> potionTagCollection)
+        {
+            Potions.potionTagCollection = potionTagCollection;
+        }
+
+        public static ForgeTagCollection<Potion> getPotionTagCollection()
+        {
+            return potionTagCollection;
+        }
+
+        private static Tag<Potion> tag(String name)
+        {
+            return new TagWrapper<>(new ResourceLocation(name),Potions::getPotionTagCollection);
+        }
+    }
+
+    public static class Biomes
+    {
+        private static ForgeTagCollection<Biome> biomeTagCollection = ForgeTagCollection.empty();
+
+        static void setBiomeTagCollection(ForgeTagCollection<Biome> biomeTagCollection)
+        {
+            Biomes.biomeTagCollection = biomeTagCollection;
+        }
+
+        public static ForgeTagCollection<Biome> getBiomeTagCollection()
+        {
+            return biomeTagCollection;
+        }
+
+        private static Tag<Biome> tag(String name)
+        {
+            return new TagWrapper<>(new ResourceLocation(name),Biomes::getBiomeTagCollection);
+        }
+    }
+
+    public static class SoundEvents
+    {
+        private static ForgeTagCollection<SoundEvent> soundEventTagCollection = ForgeTagCollection.empty();
+
+        static void setSoundEventTagCollection(ForgeTagCollection<SoundEvent> soundEventTagCollection)
+        {
+            SoundEvents.soundEventTagCollection = soundEventTagCollection;
+        }
+
+        public static ForgeTagCollection<SoundEvent> getSoundEventTagCollection()
+        {
+            return soundEventTagCollection;
+        }
+
+        private static Tag<SoundEvent> tag(String name)
+        {
+            return new TagWrapper<>(new ResourceLocation(name),SoundEvents::getSoundEventTagCollection);
+        }
+    }
+
+    public static class PotionTypes
+    {
+        private static ForgeTagCollection<PotionType> potionTypeTagCollection = ForgeTagCollection.empty();
+
+        static void setPotionTypeTagCollection(ForgeTagCollection<PotionType> potionTypeTagCollection)
+        {
+            PotionTypes.potionTypeTagCollection = potionTypeTagCollection;
+        }
+
+        public static ForgeTagCollection<PotionType> getPotionTypeTagCollection()
+        {
+            return potionTypeTagCollection;
+        }
+
+        private static Tag<PotionType> tag(String name)
+        {
+            return new TagWrapper<>(new ResourceLocation(name),PotionTypes::getPotionTypeTagCollection);
+        }
+    }
+
+    public static class Enchantments
+    {
+        private static ForgeTagCollection<Enchantment> enchantmentTagCollection = ForgeTagCollection.empty();
+
+        static void setEnchantmentTagCollection(ForgeTagCollection<Enchantment> enchantmentTagCollection)
+        {
+            Enchantments.enchantmentTagCollection = enchantmentTagCollection;
+        }
+
+        public static ForgeTagCollection<Enchantment> getEnchantmentTagCollection()
+        {
+            return enchantmentTagCollection;
+        }
+
+        private static Tag<Enchantment> tag(String name)
+        {
+            return new TagWrapper<>(new ResourceLocation(name),Enchantments::getEnchantmentTagCollection);
+        }
+    }
+
+    public static class VillagerProfessions
+    {
+        private static ForgeTagCollection<VillagerRegistry.VillagerProfession> villagerProfessionTagCollection = ForgeTagCollection.empty();
+
+        static void setVillagerProfessionTagCollection(ForgeTagCollection<VillagerRegistry.VillagerProfession> villagerProfessionTagCollection)
+        {
+            VillagerProfessions.villagerProfessionTagCollection = villagerProfessionTagCollection;
+        }
+
+        public static ForgeTagCollection<VillagerRegistry.VillagerProfession> getVillagerProfessionTagCollection()
+        {
+            return villagerProfessionTagCollection;
+        }
+
+        private static Tag<VillagerRegistry.VillagerProfession> tag(String name)
+        {
+            return new TagWrapper<>(new ResourceLocation(name),VillagerProfessions::getVillagerProfessionTagCollection);
+        }
+    }
+
+    public static class Entities
+    {
+        private static ForgeTagCollection<Entity> entityTagCollection = ForgeTagCollection.empty();
+
+        static void setEntityTagCollection(ForgeTagCollection<Entity> entityTagCollection)
+        {
+            Entities.entityTagCollection = entityTagCollection;
+        }
+
+        public static ForgeTagCollection<Entity> getEntityTagCollection()
+        {
+            return entityTagCollection;
+        }
+
+        private static Tag<Entity> tag(String name)
+        {
+            return new TagWrapper<>(new ResourceLocation(name),Entities::getEntityTagCollection);
+        }
+    }
+
+    public static class TileEntities
+    {
+        private static ForgeTagCollection<TileEntity> tileEntityTagCollection = ForgeTagCollection.empty();
+
+        static void setTileEntityTagCollection(ForgeTagCollection<TileEntity> tileEntityTagCollection)
+        {
+            TileEntities.tileEntityTagCollection = tileEntityTagCollection;
+        }
+
+        public static ForgeTagCollection<TileEntity> getTileEntityTagCollection()
+        {
+            return tileEntityTagCollection;
+        }
+
+        private static Tag<TileEntity> tag(String name)
+        {
+            return new TagWrapper<>(new ResourceLocation(name),TileEntities::getTileEntityTagCollection);
         }
     }
 }

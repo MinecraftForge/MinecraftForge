@@ -1,22 +1,26 @@
 package net.minecraftforge.common.tags;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionType;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.NetworkTagManager;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
-import net.minecraftforge.fml.loading.FMLConfig;
-import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.world.biome.Biome;
+import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.IForgeRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,28 +31,22 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import static net.minecraftforge.registries.ForgeRegistries.*;
+
 public final class ForgeTagManager extends NetworkTagManager
 {
     private static final Logger LOGGER = LogManager.getLogger();
     public static final ResourceLocation FLUID_TAGS = new ResourceLocation("fluids");
     private static final Map<ResourceLocation, TagCollectionFactoryEntry> factories = new HashMap<>();
-    private static final List<ResourceLocation> VANILLA_IDS = ImmutableList.of(GameData.BLOCKS, GameData.ITEMS, FLUID_TAGS);
+
     private static void registerVanillaTags(ResourceLocation id, Consumer<ForgeTagManager> reloadCallback)
     {
         factories.put(id,new TagCollectionFactoryEntry(null,reloadCallback,null,true));
     }
 
-    static {
-        registerVanillaTags(GameData.BLOCKS,(manager -> BlockTags.setCollection(manager.getBlocks())));
-        registerVanillaTags(GameData.ITEMS,(manager -> ItemTags.setCollection(manager.getItems())));
-        registerVanillaTags(FLUID_TAGS,(manager -> FluidTags.setCollection(manager.getFluids())));
-    }
-
-    private static int generation = 0;
-
-    public static int getGeneration()
+    private static void registerForgeTags(final ResourceLocation id, final IForgeRegistry<?> reg, Consumer<ForgeTagManager> collectionLoader,final String name)
     {
-        return generation;
+        registerTagCollection(id, () -> ForgeTagCollection.fromForgeRegistry(reg,ForgeTagCollection.getDefaultLoadingLocation(id),name),collectionLoader);
     }
 
     public static void registerTagCollection(ResourceLocation id, Supplier<ForgeTagCollection<?>> factory)
@@ -66,6 +64,29 @@ public final class ForgeTagManager extends NetworkTagManager
         if (factories.containsKey(id))
             throw new IllegalArgumentException("Cannot register " + id + " TagCollection twice!");
         factories.put(id, new TagCollectionFactoryEntry(factory,reloadCallback,syncPredicate,false));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void initForgeTags()
+    {
+        registerVanillaTags(GameData.BLOCKS,(manager -> BlockTags.setCollection(manager.getBlocks())));
+        registerVanillaTags(GameData.ITEMS,(manager -> ItemTags.setCollection(manager.getItems())));
+        registerVanillaTags(FLUID_TAGS,(manager -> FluidTags.setCollection(manager.getFluids())));
+        registerForgeTags(GameData.POTIONS,POTIONS,(manager -> Tags.Potions.setPotionTagCollection((ForgeTagCollection<Potion>) manager.getTagsForId(GameData.POTIONS))),"potion");
+        registerForgeTags(GameData.BIOMES,BIOMES,(manager -> Tags.Biomes.setBiomeTagCollection((ForgeTagCollection<Biome>) manager.getTagsForId(GameData.BIOMES))),"biome");
+        registerForgeTags(GameData.SOUNDEVENTS,SOUND_EVENTS,(manager -> Tags.SoundEvents.setSoundEventTagCollection((ForgeTagCollection<SoundEvent>) manager.getTagsForId(GameData.SOUNDEVENTS))),"sound event");
+        registerForgeTags(GameData.POTIONTYPES,POTION_TYPES,(manager -> Tags.PotionTypes.setPotionTypeTagCollection((ForgeTagCollection<PotionType>) manager.getTagsForId(GameData.POTIONTYPES))),"potion type");
+        registerForgeTags(GameData.ENCHANTMENTS,ENCHANTMENTS,(manager -> Tags.Enchantments.setEnchantmentTagCollection((ForgeTagCollection<Enchantment>) manager.getTagsForId(GameData.ENCHANTMENTS))),"enchantments");
+        registerForgeTags(GameData.PROFESSIONS,VILLAGER_PROFESSIONS,(manager -> Tags.VillagerProfessions.setVillagerProfessionTagCollection((ForgeTagCollection<VillagerRegistry.VillagerProfession>) manager.getTagsForId(GameData.PROFESSIONS))),"villager profession");
+        registerForgeTags(GameData.ENTITIES,ENTITIES,(manager -> Tags.Entities.setEntityTagCollection((ForgeTagCollection<Entity>) manager.getTagsForId(GameData.ENTITIES))),"entity");
+        registerForgeTags(GameData.TILEENTITIES,TILE_ENTITIES,(manager -> Tags.TileEntities.setTileEntityTagCollection((ForgeTagCollection<TileEntity>) manager.getTagsForId(GameData.TILEENTITIES))),"tile entity");
+    }
+
+    private static int generation = 0;
+
+    public static int getGeneration()
+    {
+        return generation;
     }
 
     private Map<ResourceLocation, TagCollectionValueEntry> tagCollections;
@@ -146,6 +167,7 @@ public final class ForgeTagManager extends NetworkTagManager
         this.getItems().read(GameData.ITEMS, buffer);
         this.getFluids().read(FLUID_TAGS, buffer);
         readForgeTags(buffer);
+        generation++;
     }
 
     private void readForgeTags(PacketBuffer buffer)

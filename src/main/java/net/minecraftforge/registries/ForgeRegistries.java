@@ -24,14 +24,11 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
-import net.minecraftforge.common.tags.ForgeTagCollection;
 import net.minecraftforge.common.tags.ForgeTagManager;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
@@ -57,7 +54,7 @@ public class ForgeRegistries
     public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
     public static final IForgeRegistry<EntityType<?>>       ENTITIES     = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(EntityType.class);
     public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
-    static { registerTags(); }
+    static { ForgeTagManager.initForgeTags(); }
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
      */
@@ -66,21 +63,5 @@ public class ForgeRegistries
         GameData.init();
         VillagerRegistry.instance();
         Bootstrap.register();
-    }
-
-    private static void addTags(final ResourceLocation id, final IForgeRegistry<?> reg, final String name) {
-        ForgeTagManager.registerTagCollection(id, () -> ForgeTagCollection.fromForgeRegistry(reg,ForgeTagCollection.getDefaultLoadingLocation(id),name));
-    }
-
-    private static void registerTags() {
-        //Items and Blocks are handeled in ForgeTagManager seperatly cause they are Vanilla Tags...
-        addTags(GameData.POTIONS,POTIONS,"potion");
-        addTags(GameData.BIOMES,BIOMES,"biome");
-        addTags(GameData.SOUNDEVENTS,SOUND_EVENTS,"sound event");
-        addTags(GameData.POTIONTYPES,POTION_TYPES,"potion type");
-        addTags(GameData.ENCHANTMENTS,ENCHANTMENTS,"enchantments");
-        addTags(GameData.PROFESSIONS,VILLAGER_PROFESSIONS,"villager profession");
-        addTags(GameData.ENTITIES,ENTITIES,"entity");
-        addTags(GameData.TILEENTITIES,TILE_ENTITIES,"tile entity");
     }
 }

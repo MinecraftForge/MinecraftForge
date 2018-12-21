@@ -37,6 +37,11 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
     private final Map<T, SortedSet<Tag<T>>> owningTags;
     private boolean collectDummyTags;
     private Supplier<ForgeTagBuilder<T>> builderFactory;
+
+    public static <T> ForgeTagCollection<T> empty() {
+        return new ForgeTagCollection<>(new RegistryNamespaced<>(),ImmutableList.of(),"");
+    }
+
     public static <T extends IForgeRegistryEntry<T>> ForgeTagCollection<T> fromForgeRegistry(IForgeRegistry<T> registry, List<String> resourceLocationPrefixes, String itemTypeName)
     {
         return fromForgeRegistry(registry,resourceLocationPrefixes,itemTypeName,false);
@@ -55,7 +60,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
 
     public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, Function<T, Integer> itemToId, Function<Integer, T> idToItem, List<String> resourceLocationPrefixes, boolean preserveOrderIn, String itemTypeNameIn)
     {
-        super(isValueKnownPredicateIn, resourceLocationToItemIn, itemToId, idToItem, resourceLocationPrefixes.get(0), preserveOrderIn, itemTypeNameIn);
+        super(isValueKnownPredicateIn, resourceLocationToItemIn, itemToId, idToItem, resourceLocationPrefixes.isEmpty()?"":resourceLocationPrefixes.get(0), preserveOrderIn, itemTypeNameIn);
         this.resourceLocationPrefixes = ImmutableList.copyOf(resourceLocationPrefixes);
         this.owningTags = new HashMap<>();
         this.collectDummyTags = true;
@@ -64,7 +69,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
 
     public ForgeTagCollection(RegistryNamespaced<ResourceLocation, T> registryIn, List<String> resourceLocationPrefixes, String itemTypeName)
     {
-        super(registryIn, resourceLocationPrefixes.get(0), itemTypeName);
+        super(registryIn, resourceLocationPrefixes.isEmpty()?"":resourceLocationPrefixes.get(0), itemTypeName);
         this.resourceLocationPrefixes = ImmutableList.copyOf(resourceLocationPrefixes);
         this.owningTags = new HashMap<>();
         this.collectDummyTags = true;
@@ -93,6 +98,13 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
     }
 
     @Override
+    public void clear()
+    {
+        super.clear();
+        this.owningTags.clear();
+    }
+
+    @Override
     public void reload(IResourceManager resourceManager)
     {
         LOGGER.info("Loading {} Tags.", itemTypeName);
@@ -102,11 +114,11 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
         {
             if (isCollectingDummyTags()) collectDummyTags(map);
             registerUnbakedTags(map);
+            updateOwningTags();
         } else
         {
             LOGGER.debug("Skipping Registration because there were no {} Tags added", itemTypeName);
         }
-        updateOwningTags();
         LOGGER.info("Finished loading {} {} Tags.", getTagMap().size(), itemTypeName);
     }
 
