@@ -19,8 +19,8 @@
 
 package net.minecraftforge.userdev;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.collect.Streams;
 import net.minecraftforge.fml.loading.moddiscovery.IModLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.logging.log4j.LogManager;
@@ -28,16 +28,9 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.FileAttributeView;
-import java.nio.file.attribute.UserPrincipalLookupService;
-import java.nio.file.spi.FileSystemProvider;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.jar.Manifest;
@@ -49,9 +42,11 @@ import static net.minecraftforge.fml.Logging.SCAN;
 public class ClasspathLocator implements IModLocator
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final String COREMODS = "META-INF/coremods.json";
+    private static final String MODS = "META-INF/mods.toml";
+    private Map<Path, List<Path>> paths = Maps.newHashMap();
 
-    public ClasspathLocator() {
-    }
+    public ClasspathLocator() {}
 
     @Override
     public List<ModFile> scanMods() {
@@ -59,10 +54,10 @@ public class ClasspathLocator implements IModLocator
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         try
         {
-            modUrls.addAll(Collections.list(ClassLoader.getSystemResources("META-INF/coremods.json")));
-            modUrls.addAll(Collections.list(loader.getResources("META-INF/coremods.json")));
-            modUrls.addAll(Collections.list(ClassLoader.getSystemResources("META-INF/mods.toml")));
-            modUrls.addAll(Collections.list(loader.getResources("META-INF/mods.toml")));
+            modUrls.addAll(Collections.list(ClassLoader.getSystemResources(COREMODS)));
+            modUrls.addAll(Collections.list(loader.getResources(COREMODS)));
+            modUrls.addAll(Collections.list(ClassLoader.getSystemResources(MODS)));
+            modUrls.addAll(Collections.list(loader.getResources(MODS)));
         }
         catch (IOException e)
         {

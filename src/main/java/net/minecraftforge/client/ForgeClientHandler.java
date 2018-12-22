@@ -23,7 +23,6 @@ import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -35,7 +34,7 @@ public class ForgeClientHandler
         // register model for the universal bucket, if it exists
         if (FluidRegistry.isUniversalBucketEnabled())
         {
-        	// TODO no more mesh definitions, this should be implemented with overrides
+            // TODO no more mesh definitions, this should be implemented with overrides
 //            ModelLoader.setBucketModelDefinition(ForgeMod.getInstance().universalBucket);
         }
     }
