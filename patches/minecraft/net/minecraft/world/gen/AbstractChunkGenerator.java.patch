@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/gen/AbstractChunkGenerator.java
++++ b/net/minecraft/world/gen/AbstractChunkGenerator.java
+@@ -106,6 +106,7 @@
+    }
+ 
+    public void func_205471_a(IChunk p_205471_1_, Biome[] p_205471_2_, SharedSeedRandom p_205471_3_, int p_205471_4_) {
++      if (!net.minecraftforge.event.ForgeEventFactory.onReplaceBiomeBlocks(this, p_205471_1_, this.field_202095_a)) return;
+       double d0 = 0.03125D;
+       ChunkPos chunkpos = p_205471_1_.func_76632_l();
+       int i = chunkpos.func_180334_c();

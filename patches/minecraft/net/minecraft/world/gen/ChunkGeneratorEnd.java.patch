@@ -1,0 +1,43 @@
+--- a/net/minecraft/world/gen/ChunkGeneratorEnd.java
++++ b/net/minecraft/world/gen/ChunkGeneratorEnd.java
+@@ -20,9 +20,9 @@
+    private NoiseGeneratorOctaves field_185969_i;
+    private NoiseGeneratorOctaves field_185970_j;
+    private NoiseGeneratorOctaves field_185971_k;
+-   private final NoiseGeneratorOctaves field_73214_a;
+-   private final NoiseGeneratorOctaves field_73212_b;
+-   private final NoiseGeneratorPerlin field_205478_l;
++   private NoiseGeneratorOctaves field_73214_a;
++   private NoiseGeneratorOctaves field_73212_b;
++   private NoiseGeneratorPerlin field_205478_l;
+    private final BlockPos field_191061_n;
+    private final EndGenSettings field_202116_l;
+    private final IBlockState field_205479_o;
+@@ -42,6 +42,16 @@
+       this.field_73212_b = new NoiseGeneratorOctaves(sharedseedrandom, 16);
+       sharedseedrandom.func_202423_a(262);
+       this.field_205478_l = new NoiseGeneratorPerlin(new SharedSeedRandom(this.field_202096_b), 4);
++      
++      net.minecraftforge.event.terraingen.InitNoiseGensEvent.ContextEnd ctx =
++              new net.minecraftforge.event.terraingen.InitNoiseGensEvent.ContextEnd(field_185969_i, field_185970_j, field_185971_k, field_73214_a, field_73212_b, field_205478_l);
++      ctx = net.minecraftforge.event.terraingen.TerrainGen.getModdedNoiseGenerators(p_i48956_1_, sharedseedrandom, ctx);
++      this.field_185969_i = ctx.getLPerlin1();
++      this.field_185970_j = ctx.getLPerlin2();
++      this.field_185971_k = ctx.getPerlin();
++      this.field_73214_a = ctx.getDepth();
++      this.field_73212_b = ctx.getScale();
++      this.field_205478_l = ctx.getIsland();
+    }
+ 
+    public void func_202114_a(int p_202114_1_, int p_202114_2_, IChunk p_202114_3_) {
+@@ -121,6 +131,10 @@
+ 
+    private double[] func_202113_a(int p_202113_1_, int p_202113_2_, int p_202113_3_, int p_202113_4_, int p_202113_5_, int p_202113_6_) {
+       double[] adouble = new double[p_202113_4_ * p_202113_5_ * p_202113_6_];
++      net.minecraftforge.event.terraingen.ChunkGeneratorEvent.InitNoiseField event = new net.minecraftforge.event.terraingen.ChunkGeneratorEvent.InitNoiseField(this, adouble, p_202113_1_, p_202113_2_, p_202113_3_, p_202113_4_, p_202113_5_, p_202113_6_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++      if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return event.getNoisefield();
++
+       double d0 = 684.412D;
+       double d1 = 684.412D;
+       d0 = d0 * 2.0D;

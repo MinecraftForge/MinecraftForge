@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/structure/VillageStructure.java
++++ b/net/minecraft/world/gen/feature/structure/VillageStructure.java
+@@ -67,7 +67,7 @@
+          super(p_i48753_4_, p_i48753_5_, p_i48753_6_, p_i48753_3_, p_i48753_1_.func_72905_C());
+          VillageConfig villageconfig = (VillageConfig)p_i48753_2_.func_202087_b(p_i48753_6_, Feature.field_202328_f);
+          List<VillagePieces.PieceWeight> list = VillagePieces.func_75084_a(p_i48753_3_, villageconfig.field_202461_a);
+-         VillagePieces.Start villagepieces$start = new VillagePieces.Start(0, p_i48753_3_, (p_i48753_4_ << 4) + 2, (p_i48753_5_ << 4) + 2, list, villageconfig);
++         VillagePieces.Start villagepieces$start = new VillagePieces.Start(0, p_i48753_3_, (p_i48753_4_ << 4) + 2, (p_i48753_5_ << 4) + 2, list, villageconfig, p_i48753_6_);
+          this.field_75075_a.add(villagepieces$start);
+          villagepieces$start.func_74861_a(villagepieces$start, this.field_75075_a, p_i48753_3_);
+          List<StructurePiece> list1 = villagepieces$start.field_74930_j;

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/template/Template.java
++++ b/net/minecraft/world/gen/feature/template/Template.java
+@@ -185,6 +185,8 @@
+ 
+             for(Template.BlockInfo template$blockinfo : list) {
+                BlockPos blockpos = func_186266_a(p_189960_4_, template$blockinfo.field_186242_a).func_177971_a(p_189960_2_);
++               // Forge: skip processing blocks outside BB to prevent cascading worldgen issues
++               if (mutableboundingbox != null && !mutableboundingbox.func_175898_b(blockpos)) continue;
+                Template.BlockInfo template$blockinfo1 = p_189960_3_ != null ? p_189960_3_.func_189943_a(p_189960_1_, blockpos, template$blockinfo) : template$blockinfo;
+                if (template$blockinfo1 != null) {
+                   Block block1 = template$blockinfo1.field_186243_b.func_177230_c();
