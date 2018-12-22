@@ -1,14 +1,5 @@
 --- a/net/minecraft/world/gen/layer/LayerUtil.java
 +++ b/net/minecraft/world/gen/layer/LayerUtil.java
-@@ -25,7 +25,7 @@
-    protected static final int field_203637_i = Biome.func_185362_a(Biomes.field_203619_Y);
-    protected static final int field_203638_j = Biome.func_185362_a(Biomes.field_203620_Z);
- 
--   private static <T extends IArea, C extends IContextExtended<T>> IAreaFactory<T> func_202829_a(long p_202829_0_, IAreaTransformer1 p_202829_2_, IAreaFactory<T> p_202829_3_, int p_202829_4_, LongFunction<C> p_202829_5_) {
-+   public static <T extends IArea, C extends IContextExtended<T>> IAreaFactory<T> func_202829_a(long p_202829_0_, IAreaTransformer1 p_202829_2_, IAreaFactory<T> p_202829_3_, int p_202829_4_, LongFunction<C> p_202829_5_) {
-       IAreaFactory<T> iareafactory = p_202829_3_;
- 
-       for(int i = 0; i < p_202829_4_; ++i) {
 @@ -67,12 +67,12 @@
        if (p_202828_0_ == WorldType.field_77135_d) {
           i = 6;
