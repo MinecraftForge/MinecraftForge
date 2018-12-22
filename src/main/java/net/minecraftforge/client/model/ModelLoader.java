@@ -1009,8 +1009,7 @@ public final class ModelLoader extends ModelBakery
             shapes.registerBlockWithStateMapper(e.getKey().get(), e.getValue());
         }
     }
-
-    private static final Map<IRegistryDelegate<Item>, ItemMeshDefinition> customMeshDefinitions = com.google.common.collect.Maps.newHashMap();
+*/
     private static final Map<Pair<IRegistryDelegate<Item>, Integer>, ModelResourceLocation> customModels = com.google.common.collect.Maps.newHashMap();
 
     /**
@@ -1039,10 +1038,10 @@ public final class ModelLoader extends ModelBakery
         ModelLoader.setCustomMeshDefinition(item, stack -> ModelDynBucket.LOCATION);
         ModelBakery.registerItemVariants(item, ModelDynBucket.LOCATION);
     }
-
+*/
     /**
      * Internal, do not use.
-     *//*
+     */
     public static void onRegisterItems(ItemModelMesher mesher)
     {
         for (Entry<Pair<IRegistryDelegate<Item>, Integer>, ModelResourceLocation> e : customModels.entrySet())
@@ -1050,7 +1049,7 @@ public final class ModelLoader extends ModelBakery
             mesher.register(e.getKey().getLeft().get(), e.getValue());
         }
     }
-*/
+
     private static enum DefaultTextureGetter implements Function<ResourceLocation, TextureAtlasSprite>
     {
         INSTANCE;

@@ -41,9 +41,11 @@ public class FMLConfig
         configSpec.defineInList("side", Dist.CLIENT.name(), Arrays.stream(Dist.values()).map(Enum::name).collect(Collectors.toList()));
         configSpec.defineInRange("maxframerate", 60, 10, 120);
         configSpec.defineInRange("minframerate", 60, 10, 120);
+        /* Tests that we know work and shouldn't be done in runtime.
         configSpec.defineInList(Arrays.asList("tasty","flavour"), Dist.CLIENT.name(), Arrays.stream(Dist.values()).map(Enum::name).collect(Collectors.toList()));
         configSpec.defineInList(Arrays.asList("tasty","teaser"), Dist.CLIENT.name(), Arrays.stream(Dist.values()).map(Enum::name).collect(Collectors.toList()));
         configSpec.define("longstring", StringUtils.repeat("AAAA", 10000), s->s!=null && ((String)s).length()>0);
+        */
     }
 
     private CommentedFileConfig configData;

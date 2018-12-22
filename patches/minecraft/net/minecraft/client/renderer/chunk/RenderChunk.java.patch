@@ -1,0 +1,74 @@
+--- a/net/minecraft/client/renderer/chunk/RenderChunk.java
++++ b/net/minecraft/client/renderer/chunk/RenderChunk.java
+@@ -37,7 +37,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class RenderChunk {
++public class RenderChunk implements net.minecraftforge.client.extensions.IForgeRenderChunk {
+    private volatile World field_178588_d;
+    private final RenderGlobal field_178589_e;
+    public static int field_178592_a;
+@@ -128,7 +128,8 @@
+             p_178581_4_.func_178540_f().unlock();
+          }
+ 
+-         ChunkCache lvt_10_1_ = new ChunkCache(world, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
++         ChunkCache lvt_10_1_ = createRegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
++         net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(this.field_178588_d, this.field_178586_f, lvt_10_1_);
+          VisGraph lvt_11_1_ = new VisGraph();
+          HashSet lvt_12_1_ = Sets.newHashSet();
+          if (!lvt_10_1_.func_72806_N()) {
+@@ -145,22 +146,23 @@
+                   lvt_11_1_.func_178606_a(blockpos$mutableblockpos);
+                }
+ 
+-               if (block.func_149716_u()) {
++               if (block.hasTileEntity(iblockstate)) {
+                   TileEntity tileentity = lvt_10_1_.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
+                   if (tileentity != null) {
+                      TileEntityRenderer<TileEntity> tileentityrenderer = TileEntityRendererDispatcher.field_147556_a.<TileEntity>func_147547_b(tileentity);
+                      if (tileentityrenderer != null) {
+-                        compiledchunk.func_178490_a(tileentity);
+                         if (tileentityrenderer.func_188185_a(tileentity)) {
+                            lvt_12_1_.add(tileentity);
+                         }
++                        else compiledchunk.func_178490_a(tileentity); // FORGE: Fix MC-112730
+                      }
+                   }
+                }
+-
++               
+                IFluidState ifluidstate = lvt_10_1_.func_204610_c(blockpos$mutableblockpos);
+-               if (!ifluidstate.func_206888_e()) {
+-                  BlockRenderLayer blockrenderlayer1 = ifluidstate.func_180664_k();
++               for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
++                   net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
++               if (!ifluidstate.func_206888_e() && ifluidstate.canRenderInLayer(blockrenderlayer1)) {
+                   int j = blockrenderlayer1.ordinal();
+                   BufferBuilder bufferbuilder = p_178581_4_.func_178545_d().func_179039_a(j);
+                   if (!compiledchunk.func_178492_d(blockrenderlayer1)) {
+@@ -171,17 +173,18 @@
+                   aboolean[j] |= blockrendererdispatcher.func_205318_a(blockpos$mutableblockpos, lvt_10_1_, bufferbuilder, ifluidstate);
+                }
+ 
+-               if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE) {
+-                  BlockRenderLayer blockrenderlayer2 = block.func_180664_k();
+-                  int k = blockrenderlayer2.ordinal();
++               if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE && iblockstate.canRenderInLayer(blockrenderlayer1)) {
++                  int k = blockrenderlayer1.ordinal();
+                   BufferBuilder bufferbuilder1 = p_178581_4_.func_178545_d().func_179039_a(k);
+-                  if (!compiledchunk.func_178492_d(blockrenderlayer2)) {
+-                     compiledchunk.func_178493_c(blockrenderlayer2);
++                  if (!compiledchunk.func_178492_d(blockrenderlayer1)) {
++                     compiledchunk.func_178493_c(blockrenderlayer1);
+                      this.func_178573_a(bufferbuilder1, blockpos);
+                   }
+ 
+                   aboolean[k] |= blockrendererdispatcher.func_195475_a(iblockstate, blockpos$mutableblockpos, lvt_10_1_, bufferbuilder1, random);
+                }
++               }
++               net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+             }
+ 
+             for(BlockRenderLayer blockrenderlayer : BlockRenderLayer.values()) {

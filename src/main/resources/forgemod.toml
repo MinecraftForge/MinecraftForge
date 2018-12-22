@@ -1,8 +1,11 @@
-modId="forge"
-version="${global.forgeVersion}"
-displayName="Forge"
-logoFile="forge_logo.png"
-displayURL="https://files.minecraftforge.net/"
-description='''
-Forge, the magic
-'''
+modLoader="javafml"
+loaderVersion="[2.0,]"
+updateJSONURL="https://files.minecraftforge.net/maven/net/minecraftforge/forge/promotions_slim.json"
+issueTrackerURL="http://www.minecraftforge.net/"
+
+[[mods]]
+    modId="forge"
+    version="${jarVersion}"
+    displayName="Forge"
+    description="Mod loading a compatibility API"
+    

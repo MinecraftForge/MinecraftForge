@@ -143,8 +143,7 @@ public class ForgeConfig
     }
 
     //TODO: Make this less duplciate? Maybe static CfgEntry<T> zombieBaseSummonChance = create((spec, name) -> spec.comment().translation().define(name), "zombieBaseSummonChance")
-    public static class GENERAL
-    {
+    public static class GENERAL {
         public static double zombieBaseSummonChance() {
             return ForgeConfig.INSTANCE.configData.<Double>getOrElse("general.zombieBaseSummonChance", (double)0.01F);
         }
@@ -160,19 +159,28 @@ public class ForgeConfig
         public static boolean removeErroringTileEntities() {
             return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.removeErroringTileEntities", false);
         }
+        public static boolean fullBoundingBoxLadders() {
+            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.fullBoundingBoxLadders", false);
+        }
+        public static int dimensionUnloadQueueDelay() {
+            return ForgeConfig.INSTANCE.configData.<Integer>getOrElse("general.dimensionUnloadQueueDelay", 0);
+        }
+    }
+
+    public static class CLIENT {
+        public static boolean forgeCloudsEnabled() {
+            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.forgeCloudsEnabled", true);
+        }
     }
 
     //General
     //public static boolean disableVersionCheck = false;
-    //public static boolean fullBoundingBoxLadders = false;
     //public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     //public static boolean fixVanillaCascading = false;
-    //public static int dimensionUnloadQueueDelay = 0;
 
     //Client
     //public static int clumpingThreshold = 64;
     //public static boolean zoomInMissingModelTextInGui = false;
-    //public static boolean forgeCloudsEnabled = true;
     //public static boolean disableStairSlabCulling = false;
     //public static boolean alwaysSetupTerrainOffThread = false;
     //public static boolean forgeLightPipelineEnabled = true;

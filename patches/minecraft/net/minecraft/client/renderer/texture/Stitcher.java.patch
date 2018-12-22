@@ -1,0 +1,53 @@
+--- a/net/minecraft/client/renderer/texture/Stitcher.java
++++ b/net/minecraft/client/renderer/texture/Stitcher.java
+@@ -12,6 +12,8 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public class Stitcher {
++   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
++    
+    private final int field_147971_a;
+    private final Set<Stitcher.Holder> field_94319_a = Sets.<Stitcher.Holder>newHashSetWithExpectedSize(256);
+    private final List<Stitcher.Slot> field_94317_b = Lists.<Stitcher.Slot>newArrayListWithCapacity(256);
+@@ -48,16 +50,22 @@
+    public void func_94305_f() {
+       Stitcher.Holder[] astitcher$holder = (Stitcher.Holder[])this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
+       Arrays.sort((Object[])astitcher$holder);
+-
++      net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", astitcher$holder.length);
++      
+       for(Stitcher.Holder stitcher$holder : astitcher$holder) {
++         bar.step(stitcher$holder.func_98150_a().func_195668_m().toString());
+          if (!this.func_94310_b(stitcher$holder)) {
+             String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution resourcepack?", stitcher$holder.func_98150_a().func_195668_m(), stitcher$holder.func_98150_a().func_94211_a(), stitcher$holder.func_98150_a().func_94216_b());
++            LOGGER.info(s);
++            for (Stitcher.Holder h : astitcher$holder)
++                LOGGER.info("  {}", h);
+             throw new StitcherException(stitcher$holder, s);
+          }
+       }
+ 
+       this.field_94318_c = MathHelper.func_151236_b(this.field_94318_c);
+       this.field_94315_d = MathHelper.func_151236_b(this.field_94315_d);
++      net.minecraftforge.fml.common.ProgressManager.pop(bar);
+    }
+ 
+    public List<TextureAtlasSprite> func_94309_g() {
+@@ -121,7 +129,7 @@
+          boolean flag4 = flag2 && l != j1;
+          boolean flag;
+          if (flag3 ^ flag4) {
+-            flag = flag3;
++            flag = !flag3 && flag1; // Forge: Fix stitcher not expanding entire height before growing width, and (potentially) growing larger then the max size.
+          } else {
+             flag = flag1 && k <= l;
+          }
+@@ -195,7 +203,7 @@
+       }
+ 
+       public String toString() {
+-         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + '}';
++         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + ", name=" + this.field_98151_a.func_195668_m() + '}';
+       }
+ 
+       public int compareTo(Stitcher.Holder p_compareTo_1_) {

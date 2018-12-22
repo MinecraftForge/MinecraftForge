@@ -20,6 +20,7 @@
 package net.minecraftforge.userdev;
 
 import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
 import net.minecraftforge.fml.loading.StringUtils;
@@ -50,6 +51,9 @@ public class ClasspathLocator implements IModLocator {
 
     private static final String JAR_SUFFIX = ".jar";
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final String COREMODS = "META-INF/coremods.json";
+    private static final String MODS = "META-INF/mods.toml";
+  
     private static final Predicate<Path> JAR_FILTER = path -> StringUtils.toLowerCase(path.getFileName().toString()).endsWith(JAR_SUFFIX);
     private static final Comparator<Path> PATH_COMPARATOR = Comparator.comparing(path -> StringUtils.toLowerCase(path.getFileName().toString()));
 
@@ -78,10 +82,13 @@ public class ClasspathLocator implements IModLocator {
                 .collect(Collectors.toList());
 
         Set<URL> modUrls = Sets.newHashSet();
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
         try {
-            modUrls.addAll(Collections.list(ClassLoader.getSystemResources("META-INF/coremods.json")));
-            modUrls.addAll(Collections.list(ClassLoader.getSystemResources("META-INF/mods.toml")));
+            modUrls.addAll(Collections.list(ClassLoader.getSystemResources(COREMODS)));
+            modUrls.addAll(Collections.list(loader.getResources(COREMODS)));
+            modUrls.addAll(Collections.list(ClassLoader.getSystemResources(MODS)));
+            modUrls.addAll(Collections.list(loader.getResources(MODS)));
         } catch (IOException e) {
             e.printStackTrace();
         }

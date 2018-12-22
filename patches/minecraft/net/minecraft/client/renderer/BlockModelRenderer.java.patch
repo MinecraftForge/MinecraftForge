@@ -1,0 +1,48 @@
+--- a/net/minecraft/client/renderer/BlockModelRenderer.java
++++ b/net/minecraft/client/renderer/BlockModelRenderer.java
+@@ -45,7 +45,7 @@
+    }
+ 
+    public boolean func_199324_a(IWorldReader p_199324_1_, IBakedModel p_199324_2_, IBlockState p_199324_3_, BlockPos p_199324_4_, BufferBuilder p_199324_5_, boolean p_199324_6_, Random p_199324_7_, long p_199324_8_) {
+-      boolean flag = Minecraft.func_71379_u() && p_199324_3_.func_185906_d() == 0 && p_199324_2_.func_177555_b();
++      boolean flag = Minecraft.func_71379_u() && p_199324_3_.getLightValue(p_199324_1_, p_199324_4_) == 0 && p_199324_2_.isAmbientOcclusion(p_199324_3_);
+ 
+       try {
+          return flag ? this.func_199326_b(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_) : this.func_199325_c(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_);
+@@ -120,6 +120,13 @@
+          p_187492_8_.func_187491_a(p_187492_1_, p_187492_2_, p_187492_3_, bakedquad.func_178210_d(), p_187492_6_, p_187492_7_);
+          p_187492_4_.func_178981_a(bakedquad.func_178209_a());
+          p_187492_4_.func_178962_a(p_187492_8_.field_178207_c[0], p_187492_8_.field_178207_c[1], p_187492_8_.field_178207_c[2], p_187492_8_.field_178207_c[3]);
++         if(bakedquad.shouldApplyDiffuseLighting()) {
++            float diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(bakedquad.func_178210_d());
++            p_187492_8_.field_178206_b[0] *= diffuse;
++            p_187492_8_.field_178206_b[1] *= diffuse;
++            p_187492_8_.field_178206_b[2] *= diffuse;
++            p_187492_8_.field_178206_b[3] *= diffuse;
++         }
+          if (bakedquad.func_178212_b()) {
+             int k = this.field_187499_a.func_186724_a(p_187492_2_, p_187492_1_, p_187492_3_, bakedquad.func_178211_c());
+             float f = (float)(k >> 16 & 255) / 255.0F;
+@@ -229,10 +236,22 @@
+             float f = (float)(k >> 16 & 255) / 255.0F;
+             float f1 = (float)(k >> 8 & 255) / 255.0F;
+             float f2 = (float)(k & 255) / 255.0F;
++            if(bakedquad.shouldApplyDiffuseLighting()) {
++               float diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(bakedquad.func_178210_d());
++               f *= diffuse;
++               f1 *= diffuse;
++               f2 *= diffuse;
++            }
+             p_187496_6_.func_178978_a(f, f1, f2, 4);
+             p_187496_6_.func_178978_a(f, f1, f2, 3);
+             p_187496_6_.func_178978_a(f, f1, f2, 2);
+             p_187496_6_.func_178978_a(f, f1, f2, 1);
++         } else if(bakedquad.shouldApplyDiffuseLighting()) {
++            float diffuse = net.minecraftforge.client.model.pipeline.LightUtil.diffuseLight(bakedquad.func_178210_d());
++            p_187496_6_.func_178978_a(diffuse, diffuse, diffuse, 4);
++            p_187496_6_.func_178978_a(diffuse, diffuse, diffuse, 3);
++            p_187496_6_.func_178978_a(diffuse, diffuse, diffuse, 2);
++            p_187496_6_.func_178978_a(diffuse, diffuse, diffuse, 1);
+          }
+ 
+          p_187496_6_.func_178987_a(d0, d1, d2);
