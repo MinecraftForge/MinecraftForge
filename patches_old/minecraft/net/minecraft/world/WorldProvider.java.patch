@@ -40,15 +40,6 @@
      }
  
      public boolean func_76566_a(int p_76566_1_, int p_76566_2_)
-@@ -179,7 +154,7 @@
-     @SideOnly(Side.CLIENT)
-     public float func_76571_f()
-     {
--        return 128.0F;
-+        return this.field_76577_b.getCloudHeight();
-     }
- 
-     @SideOnly(Side.CLIENT)
 @@ -196,13 +171,13 @@
  
      public int func_76557_i()
@@ -56,84 +47,11 @@
 -        return this.field_76577_b == WorldType.field_77138_c ? 4 : this.field_76579_a.func_181545_F() + 1;
 +        return this.field_76577_b.getMinimumSpawnHeight(this.field_76579_a);
      }
- 
-     @SideOnly(Side.CLIENT)
-     public double func_76565_k()
-     {
--        return this.field_76577_b == WorldType.field_77138_c ? 1.0D : 0.03125D;
-+        return this.field_76577_b.voidFadeMagnitude();
-     }
- 
-     @SideOnly(Side.CLIENT)
 @@ -241,6 +216,371 @@
          return new WorldBorder();
      }
  
 +    /*======================================= Forge Start =========================================*/
-+    /**
-+     * Returns the sub-folder of the world folder that this WorldProvider saves to.
-+     * EXA: DIM1, DIM-1
-+     * @return The sub-folder name to save this world's chunks to.
-+     */
-+    @Nullable
-+    public String getSaveFolder()
-+    {
-+        return (dimensionId == 0 ? null : "DIM" + dimensionId);
-+    }
-+
-+    /**
-+     * If this method returns true, then chunks received by the client will
-+     * have {@link net.minecraft.world.chunk.Chunk#resetRelightChecks} called
-+     * on them, queuing lighting checks for all air blocks in the chunk (and
-+     * any adjacent light-emitting blocks).
-+     *
-+     * Returning true here is recommended if the chunk generator used also
-+     * does this for newly generated chunks.
-+     *
-+     * @return true if lighting checks should be performed
-+     */
-+    public boolean shouldClientCheckLighting()
-+    {
-+        return !(this instanceof WorldProviderSurface);
-+    }
-+
-+
-+    /**
-+     * Allows for manipulating the coloring of the lightmap texture.
-+     * Will be called for each 16*16 combination of sky/block light values.
-+     *
-+     * @param partialTicks Progress between ticks.
-+     * @param sunBrightness Current sun brightness.
-+     * @param skyLight Sky light brightness factor.
-+     * @param blockLight Block light brightness factor.
-+     * @param colors The color values that will be used: [r, g, b].
-+     *
-+     * @see net.minecraft.client.renderer.EntityRenderer#updateLightmap(float)
-+     */
-+    public void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
-+
-+    /**
-+     * Determines the dimension the player will be respawned in, typically this brings them back to the overworld.
-+     *
-+     * @param player The player that is respawning
-+     * @return The dimension to respawn the player in
-+     */
-+    public int getRespawnDimension(net.minecraft.entity.player.EntityPlayerMP player)
-+    {
-+        return player.getSpawnDimension();
-+    }
-+
-+    /**
-+     * Determines if the player can sleep in this world (or if the bed should explode for example).
-+     *
-+     * @param player The player that is attempting to sleep
-+     * @param pos The location where the player tries to sleep at (the position of the clicked on bed for example)
-+     * @return the result of a player trying to sleep at the given location
-+     */
-+    public WorldSleepResult canSleepAt(net.minecraft.entity.player.EntityPlayer player, BlockPos pos)
-+    {
-+        return (this.func_76567_e() && this.field_76579_a.func_180494_b(pos) != net.minecraft.init.Biomes.field_76778_j) ? WorldSleepResult.ALLOW : WorldSleepResult.BED_EXPLODES;
-+    }
 +    public boolean canBlockFreeze(BlockPos pos, boolean byWater)
 +    {
 +        return field_76579_a.canBlockFreezeBody(pos, byWater);
@@ -142,24 +60,6 @@
 +    public boolean canSnowAt(BlockPos pos, boolean checkLight)
 +    {
 +        return field_76579_a.canSnowAtBody(pos, checkLight);
-+    }
-+
-+    public void resetRainAndThunder()
-+    {
-+        field_76579_a.field_72986_A.func_76080_g(0);
-+        field_76579_a.field_72986_A.func_76084_b(false);
-+        field_76579_a.field_72986_A.func_76090_f(0);
-+        field_76579_a.field_72986_A.func_76069_a(false);
-+    }
-+
-+    public boolean canDoLightning(net.minecraft.world.chunk.Chunk chunk)
-+    {
-+        return true;
-+    }
-+
-+    public boolean canDoRainSnowIce(net.minecraft.world.chunk.Chunk chunk)
-+    {
-+        return true;
 +    }
 +
      public void func_186061_a(EntityPlayerMP p_186061_1_)

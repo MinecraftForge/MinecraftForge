@@ -18,6 +18,15 @@
     }
  
     @OnlyIn(Dist.CLIENT)
+@@ -79,7 +79,7 @@
+ 
+    @OnlyIn(Dist.CLIENT)
+    public double func_76565_k() {
+-      return this.field_76579_a.func_72912_H().func_76067_t() == WorldType.field_77138_c ? 1.0D : 0.03125D;
++      return this.field_76579_a.func_72912_H().func_76067_t().voidFadeMagnitude();
+    }
+ 
+    public boolean func_177500_n() {
 @@ -120,6 +120,7 @@
  
     protected abstract void func_76572_b();
@@ -26,7 +35,7 @@
     public abstract IChunkGenerator<?> func_186060_c();
  
     @Nullable
-@@ -141,4 +142,101 @@
+@@ -141,4 +142,72 @@
     public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  
     public abstract DimensionType func_186058_p();
@@ -94,37 +103,8 @@
 +      field_76579_a.func_72912_H().func_76069_a(false);
 +   }
 +
-+   /**
-+    * Determines if the player can sleep in this world (or if the bed should explode for example).
-+    *
-+    * @param player The player that is attempting to sleep
-+    * @param pos The location where the player tries to sleep at (the position of the clicked on bed for example)
-+    * @return the result of a player trying to sleep at the given location
-+    */
-+   public SleepResult canSleepAt(net.minecraft.entity.player.EntityPlayer player, BlockPos pos) {
-+      return (this.func_76567_e() && this.field_76579_a.func_180494_b(pos) != net.minecraft.init.Biomes.field_76778_j) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
-+   }
-+
-+   /**
-+    * If this method returns true, then chunks received by the client will
-+    * have {@link net.minecraft.world.chunk.Chunk#resetRelightChecks} called
-+    * on them, queuing lighting checks for all air blocks in the chunk (and
-+    * any adjacent light-emitting blocks).
-+    *
-+    * Returning true here is recommended if the chunk generator used also
-+    * does this for newly generated chunks.
-+    *
-+    * @return true if lighting checks should be performed
-+    */
-+   public boolean shouldClientCheckLighting() {
-+      return !(this instanceof OverworldDimension);
-+   }
-+
++   @Override
 +   public World getWorld() {
 +      return this.field_76579_a;
-+   }
-+
-+   public enum SleepResult {
-+      ALLOW, DENY, BED_EXPLODES
 +   }
  }

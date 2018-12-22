@@ -1,5 +1,14 @@
 --- a/net/minecraft/world/WorldType.java
 +++ b/net/minecraft/world/WorldType.java
+@@ -3,7 +3,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class WorldType {
++public class WorldType implements net.minecraftforge.common.extensions.IForgeWorldType {
+    public static WorldType[] field_77139_a = new WorldType[16];
+    public static final WorldType field_77137_b = (new WorldType(0, "default", 1)).func_77129_f();
+    public static final WorldType field_77138_c = (new WorldType(1, "flat")).func_205392_a(true);
 @@ -22,6 +22,10 @@
     private boolean field_151361_l;
     private boolean field_205395_p;
@@ -37,49 +46,3 @@
     public String func_211888_a() {
        return this.field_77133_f;
     }
-@@ -117,4 +133,45 @@
-       this.field_151361_l = true;
-       return this;
-    }
-+
-+   /**
-+    * Called when 'Create New World' button is pressed before starting game
-+    */
-+   public void onGUICreateWorldPress() { }
-+
-+   /**
-+    * Called when the 'Customize' button is pressed on world creation GUI
-+    * @param mc The Minecraft instance
-+    * @param gui the createworld GUI
-+    */
-+   @OnlyIn(Dist.CLIENT)
-+   public void onCustomizeButton(net.minecraft.client.Minecraft mc, net.minecraft.client.gui.GuiCreateWorld gui) {
-+      if (this == WorldType.field_77138_c)
-+         mc.func_147108_a(new net.minecraft.client.gui.GuiCreateFlatWorld(gui, gui.field_146334_a));
-+      else if (this == WorldType.field_180271_f)
-+         mc.func_147108_a(new net.minecraft.client.gui.GuiCreateBuffetWorld(gui, gui.field_146334_a));
-+   }
-+
-+   public boolean handleSlimeSpawnReduction(java.util.Random random, World world) {
-+      return this == field_77138_c ? random.nextInt(4) != 1 : false;
-+   }
-+
-+   public double getHorizon(World world) {
-+      return this == field_77138_c ? 0.0D : 63.0D;
-+   }
-+
-+   /**
-+    * Get the height to render the clouds for this world type
-+    * @return The height to render clouds at
-+    */
-+   public float getCloudHeight() {
-+      return 128.0F;
-+   }
-+
-+   @SuppressWarnings("deprecation")
-+   public net.minecraft.world.gen.IChunkGenerator<?> createChunkGenerator(World world) {
-+      return world.field_73011_w.func_186060_c();
-+   }
-+
-+
- }
