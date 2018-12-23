@@ -176,6 +176,9 @@ public class NetworkEvent extends Event
             return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().getLogicalSide()).addScheduledTask(runnable);
         }
 
+        /**
+         * When available, gets the sender for packets that are sent from a client to the server.
+         */
         @Nullable
         public EntityPlayerMP getSender()
         {
