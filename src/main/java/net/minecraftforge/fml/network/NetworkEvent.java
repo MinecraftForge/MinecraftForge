@@ -22,15 +22,14 @@ package net.minecraftforge.fml.network;
 import com.google.common.util.concurrent.ListenableFuture;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSidedProvider;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -133,11 +132,6 @@ public class NetworkEvent extends Event
         private final PacketDispatcher packetDispatcher;
         private boolean packetHandled;
 
-        Context(NetworkManager netHandler, NetworkDirection side, int index)
-        {
-            this(netHandler, side, new PacketDispatcher.NetworkManagerDispatcher(netHandler, index, side.reply()::buildPacket));
-        }
-
         Context(NetworkManager networkManager, NetworkDirection side, PacketDispatcher dispatcher) {
             this.networkManager = networkManager;
             this.side = side;
@@ -167,11 +161,28 @@ public class NetworkEvent extends Event
 
         @SuppressWarnings("unchecked")
         public <V> ListenableFuture<V> enqueueWork(Runnable runnable) {
-            return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().getLogicalSide()).addScheduledTask(runnable);
+            IThreadListener threadListener = LogicalSidedProvider.WORKQUEUE.get(getDirection().getLogicalSide());
+            return (ListenableFuture<V>) threadListener.addScheduledTask(runnable);
         }
 
         NetworkManager getNetworkManager() {
             return networkManager;
+        }
+    }
+
+    public static class ContextServer extends Context
+    {
+        private final EntityPlayerMP sender;
+
+        ContextServer(NetworkManager netHandler, NetworkDirection side, int index, final EntityPlayerMP sender)
+        {
+            super(netHandler, side, new PacketDispatcher.NetworkManagerDispatcher(netHandler, index, side.reply()::buildPacket));
+            this.sender = sender;
+        }
+
+        public EntityPlayerMP getSender()
+        {
+            return sender;
         }
     }
 }

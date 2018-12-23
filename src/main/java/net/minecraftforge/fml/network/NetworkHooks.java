@@ -55,9 +55,9 @@ public class NetworkHooks
         return null;
     }
 
-    public static boolean onCustomPayload(final ICustomPacket<?> packet, final NetworkManager manager) {
+    public static boolean onCustomPayload(final ICustomPacket<?> packet, final NetworkManager manager, final EntityPlayerMP player) {
         return NetworkRegistry.findTarget(packet.getName()).
-                map(ni->ni.dispatch(packet.getDirection(), packet, manager)).orElse(Boolean.FALSE);
+                map(ni->ni.dispatch(packet.getDirection(), packet, manager, player)).orElse(Boolean.FALSE);
     }
 
     public static void registerServerLoginChannel(NetworkManager manager, CPacketHandshake packet)

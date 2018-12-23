@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.network;
 
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -77,9 +78,9 @@ public class NetworkInstance
         this.networkEventBus.unregister(object);
     }
 
-    boolean dispatch(final NetworkDirection side, final ICustomPacket<?> packet, final NetworkManager manager)
+    boolean dispatch(final NetworkDirection side, final ICustomPacket<?> packet, final NetworkManager manager, final EntityPlayerMP player)
     {
-        final NetworkEvent.Context context = new NetworkEvent.Context(manager, side, packet.getIndex());
+        final NetworkEvent.Context context = new NetworkEvent.ContextServer(manager, side, packet.getIndex(), player);
         this.networkEventBus.post(side.getEvent(packet, () -> context));
         return context.getPacketHandled();
     }
