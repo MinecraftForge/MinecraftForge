@@ -19,9 +19,15 @@
 
 package net.minecraftforge.fml.network;
 
+import javax.annotation.Nullable;
+
 import com.google.common.util.concurrent.ListenableFuture;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
+
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.INetHandler;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.IThreadListener;
@@ -168,6 +174,21 @@ public class NetworkEvent extends Event
         @SuppressWarnings("unchecked")
         public <V> ListenableFuture<V> enqueueWork(Runnable runnable) {
             return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().getLogicalSide()).addScheduledTask(runnable);
+        }
+
+        /**
+         * When available, gets the sender for packets that are sent from a client to the server.
+         */
+        @Nullable
+        public EntityPlayerMP getSender()
+        {
+            INetHandler netHandler = networkManager.getNetHandler();
+            if (netHandler instanceof NetHandlerPlayServer)
+            {
+                NetHandlerPlayServer netHandlerPlayServer = (NetHandlerPlayServer) netHandler;
+                return netHandlerPlayServer.player;
+            }
+            return null;
         }
 
         NetworkManager getNetworkManager() {
