@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/MouseHelper.java
++++ b/net/minecraft/client/MouseHelper.java
+@@ -76,11 +76,15 @@
+             final int pFinal =  p_198023_3_;
+             if (flag) {
+                GuiScreen.func_195121_a(() -> {
+-                  aboolean[0] = this.field_198036_a.field_71462_r.mouseClicked(d0, d1, pFinal);
++                  aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseClickedPre(this.field_198036_a.field_71462_r, d0, d1, pFinal);
++                  if (!aboolean[0]) aboolean[0] = this.field_198036_a.field_71462_r.mouseClicked(d0, d1, pFinal);
++                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseClickedPost(this.field_198036_a.field_71462_r, d0, d1, pFinal);
+                }, "mouseClicked event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
+             } else {
+                GuiScreen.func_195121_a(() -> {
+-                  aboolean[0] = this.field_198036_a.field_71462_r.mouseReleased(d0, d1, pFinal);
++                  aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseReleasedPre(this.field_198036_a.field_71462_r, d0, d1, pFinal);
++                  if (!aboolean[0]) aboolean[0] = this.field_198036_a.field_71462_r.mouseReleased(d0, d1, pFinal);
++                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseReleasedPost(this.field_198036_a.field_71462_r, d0, d1, pFinal);
+                }, "mouseReleased event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
+             }
+          }
