@@ -508,7 +508,7 @@ public abstract class FieldWrapper implements IFieldWrapper
         @Override
         public ITypeAdapter getTypeAdapter()
         {
-            return TypeAdapters.Str;
+            return TypeAdapters.StrA;
         }
 
         @Override

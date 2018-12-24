@@ -135,7 +135,7 @@ public class ConfigAnnotationTest
         public static String[]    StrA = {"STR", "ING!"};
         public static TEST        enu = TEST.BIG;
         public static NestedType  Inner = new NestedType();
-        public static IConfigValue aValue = new IConfigValue() {
+        public static IConfigValue IConfigValue = new IConfigValue() {
         	private String insideString = "defaultValue";
 			@Override
 			public IConfigValue readFromString(String s) {
@@ -150,7 +150,7 @@ public class ConfigAnnotationTest
 			public String usage() {
 				return "Saves a string";
 			}};
-		public static IConfigValueArray aValueArray = new IConfigValueArray() {
+		public static IConfigValueArray IConfigValueArray = new IConfigValueArray() {
 			private String[] array = new String[] {"defaultA","defaultB"};
 			@Override
 			public IConfigValueArray readFromString(String[] s) {
