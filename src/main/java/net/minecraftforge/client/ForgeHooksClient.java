@@ -28,6 +28,7 @@ import static org.lwjgl.opengl.GL20.*;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Random;
 
@@ -38,6 +39,8 @@ import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.client.MouseHelper;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -809,5 +812,11 @@ public class ForgeHooksClient
     {
         Event event = new GuiScreenEvent.KeyboardCharTypedEvent.Post(guiScreen, codePoint, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static void onRecipesUpdated(Collection<IRecipe> recipes)
+    {
+        Event event = new RecipesUpdatedEvent(recipes);
+        MinecraftForge.EVENT_BUS.post(event);
     }
 }

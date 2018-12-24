@@ -18,3 +18,11 @@
              } else {
                 this.func_199509_a(RecipeSerializers.func_199572_a(resourcelocation1, jsonobject));
              }
+@@ -60,6 +64,7 @@
+       }
+ 
+       field_199521_c.info("Loaded {} recipes", (int)this.field_199522_d.size());
++      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(this.field_199522_d.values());
+    }
+ 
+    public void func_199509_a(IRecipe p_199509_1_) {
