@@ -87,11 +87,19 @@
     }
  
     public List<? extends IGuiEventListener> func_195074_b() {
-@@ -322,6 +337,7 @@
+@@ -318,6 +333,7 @@
+    public void func_146270_b(int p_146270_1_) {
+       if (this.field_146297_k.field_71441_e != null) {
+          this.func_73733_a(0, 0, this.field_146294_l, this.field_146295_m, -1072689136, -804253680);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
+       } else {
           this.func_146278_c(p_146270_1_);
        }
- 
+@@ -338,6 +354,7 @@
+       bufferbuilder.func_181662_b((double)this.field_146294_l, 0.0D, 0.0D).func_187315_a((double)((float)this.field_146294_l / 32.0F), (double)p_146278_1_).func_181669_b(64, 64, 64, 255).func_181675_d();
+       bufferbuilder.func_181662_b(0.0D, 0.0D, 0.0D).func_187315_a(0.0D, (double)p_146278_1_).func_181669_b(64, 64, 64, 255).func_181675_d();
+       tessellator.func_78381_a();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
     }
  
-    public void func_146278_c(int p_146278_1_) {
+    public boolean func_73868_f() {
