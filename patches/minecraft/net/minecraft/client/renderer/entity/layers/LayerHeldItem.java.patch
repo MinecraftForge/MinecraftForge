@@ -1,11 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/entity/layers/LayerHeldItem.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/entity/layers/LayerHeldItem.java
-@@ -49,13 +49,13 @@
+@@ -7,6 +7,7 @@
+ import net.minecraft.client.renderer.entity.RenderLivingBase;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumHandSide;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+@@ -26,7 +27,8 @@
+         boolean flag = p_177141_1_.func_184591_cq() == EnumHandSide.RIGHT;
+         ItemStack itemstack = flag ? p_177141_1_.func_184592_cb() : p_177141_1_.func_184614_ca();
+         ItemStack itemstack1 = flag ? p_177141_1_.func_184614_ca() : p_177141_1_.func_184592_cb();
+-
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.LayerHeldItemEvent(p_177141_1_, itemstack, flag?net.minecraft.util.EnumHand.OFF_HAND:net.minecraft.util.EnumHand.MAIN_HAND));
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.LayerHeldItemEvent(p_177141_1_, itemstack, flag?net.minecraft.util.EnumHand.MAIN_HAND:net.minecraft.util.EnumHand.OFF_HAND));
+         if (!itemstack.func_190926_b() || !itemstack1.func_190926_b())
+         {
+             GlStateManager.func_179094_E();
+@@ -49,13 +51,13 @@
          if (!p_188358_2_.func_190926_b())
          {
              GlStateManager.func_179094_E();
 -            this.func_191361_a(p_188358_4_);
- 
+
              if (p_188358_1_.func_70093_af())
              {
                  GlStateManager.func_179109_b(0.0F, 0.2F, 0.0F);
