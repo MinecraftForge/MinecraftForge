@@ -19,7 +19,14 @@
 
 package net.minecraftforge.debug.mod;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.logging.log4j.Logger;
+
 import com.google.common.collect.Maps;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.Comment;
@@ -30,16 +37,13 @@ import net.minecraftforge.common.config.Config.RangeInt;
 import net.minecraftforge.common.config.Config.RequiresMcRestart;
 import net.minecraftforge.common.config.Config.Type;
 import net.minecraftforge.common.config.ConfigManager;
+import net.minecraftforge.common.config.IConfigValue;
+import net.minecraftforge.common.config.IConfigValueArray;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.apache.logging.log4j.Logger;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 @Mod(modid = ConfigAnnotationTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*")
 public class ConfigAnnotationTest
@@ -131,7 +135,37 @@ public class ConfigAnnotationTest
         public static String[]    StrA = {"STR", "ING!"};
         public static TEST        enu = TEST.BIG;
         public static NestedType  Inner = new NestedType();
-
+        public static IConfigValue aValue = new IConfigValue() {
+        	private String insideString = "defaultValue";
+			@Override
+			public IConfigValue readFromString(String s) {
+				this.insideString=s;
+				return this;
+			}
+			@Override
+			public String writeToString() {
+				return this.insideString;
+			}
+			@Override
+			public String usage() {
+				return "Saves a string";
+			}};
+		public static IConfigValueArray aValueArray = new IConfigValueArray() {
+			private String[] array = new String[] {"defaultA","defaultB"};
+			@Override
+			public IConfigValueArray readFromString(String[] s) {
+				this.array=s;
+				return this;
+			}
+			@Override
+			public String[] writeToString() {
+				return this.array;
+			}
+			@Override
+			public String usage() {
+				return "Saves an array of strings";
+			}};	
+			
         public enum TEST { BIG, BAD, WOLF; }
         public static class NestedType
         {

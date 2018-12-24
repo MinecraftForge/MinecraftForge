@@ -63,6 +63,10 @@ public abstract class FieldWrapper implements IFieldWrapper
             return new EnumWrapper(category, field, instance);
         else if (Map.class.isAssignableFrom(field.getType()))
             return new MapWrapper(category, field, instance);
+        else if (IConfigValue.class.isAssignableFrom(field.getType()))
+            return new IConfigValueWrapper(category, field, instance);
+        else if (IConfigValueArray.class.isAssignableFrom(field.getType()))
+            return new IConfigValueArrayWrapper(category, field, instance);
         else if (field.getType().getSuperclass().equals(Object.class))
             throw new RuntimeException("Objects should not be handled by field wrappers");
         else
@@ -76,6 +80,10 @@ public abstract class FieldWrapper implements IFieldWrapper
         else if (Enum.class.isAssignableFrom(field.getType()))
             return true;
         else if (Map.class.isAssignableFrom(field.getType()))
+            return true;
+        else if (IConfigValue.class.isAssignableFrom(field.getType()))
+            return true;
+        else if (IConfigValueArray.class.isAssignableFrom(field.getType()))
             return true;
         return false;
     }
@@ -428,5 +436,123 @@ public abstract class FieldWrapper implements IFieldWrapper
             throw new UnsupportedOperationException("This is a static bean.");
         }
 
+    }
+    
+    private static class IConfigValueWrapper extends SingleValueFieldWrapper
+    {
+
+        private IConfigValueWrapper(String category, Field field, Object instance)
+        {
+            super(category, field, instance);
+        }
+
+        @Override
+        public ITypeAdapter getTypeAdapter()
+        {
+            return TypeAdapters.Str;
+        }
+
+        @Override
+        public Object getValue(String key)
+        {
+            if (!hasKey(key))
+                throw new IllegalArgumentException("Unsupported Key!");
+
+            try
+            {
+                IConfigValue val = (IConfigValue) field.get(instance);
+                return val.writeToString();
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void setValue(String key, Object value)
+        {
+            if (!hasKey(key))
+                throw new IllegalArgumentException("Unsupported Key!");
+            try
+            {
+                field.set(instance, ((IConfigValue)field.get(instance)).readFromString((String) value));
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart)
+        {
+            super.setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart);
+            Property prop = cfg.getCategory(this.category).get(this.name); // Will be setup in general by ConfigManager
+            try {
+				prop.setComment(((IConfigValue)field.get(instance)).usage());
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+        }
+    }
+    
+    private static class IConfigValueArrayWrapper extends SingleValueFieldWrapper
+    {
+
+        private IConfigValueArrayWrapper(String category, Field field, Object instance)
+        {
+            super(category, field, instance);
+        }
+
+        @Override
+        public ITypeAdapter getTypeAdapter()
+        {
+            return TypeAdapters.Str;
+        }
+
+        @Override
+        public Object getValue(String key)
+        {
+            if (!hasKey(key))
+                throw new IllegalArgumentException("Unsupported Key!");
+
+            try
+            {
+            	IConfigValueArray val = (IConfigValueArray) field.get(instance);
+                return val.writeToString();
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void setValue(String key, Object value)
+        {
+            if (!hasKey(key))
+                throw new IllegalArgumentException("Unsupported Key!");
+            try
+            {
+                field.set(instance, ((IConfigValueArray)field.get(instance)).readFromString((String[]) value));
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @Override
+        public void setupConfiguration(Configuration cfg, String desc, String langKey, boolean reqMCRestart, boolean reqWorldRestart)
+        {
+            super.setupConfiguration(cfg, desc, langKey, reqMCRestart, reqWorldRestart);
+            Property prop = cfg.getCategory(this.category).get(this.name); // Will be setup in general by ConfigManager
+            try {
+				prop.setComment(((IConfigValueArray)field.get(instance)).usage());
+			} catch (IllegalArgumentException | IllegalAccessException e) {
+				throw new RuntimeException(e);
+			}
+        }
     }
 }
