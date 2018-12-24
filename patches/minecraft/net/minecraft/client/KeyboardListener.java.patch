@@ -1,0 +1,38 @@
+--- a/net/minecraft/client/KeyboardListener.java
++++ b/net/minecraft/client/KeyboardListener.java
+@@ -266,10 +266,14 @@
+             GuiScreen.func_195121_a(() -> {
+                if (p_197961_5_ != 1 && (p_197961_5_ != 2 || !this.field_197973_b)) {
+                   if (p_197961_5_ == 0) {
+-                     aboolean[0] = iguieventlistener.keyReleased(p_197961_3_, p_197961_4_, p_197961_6_);
++                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyReleasedPre(this.field_197972_a.field_71462_r, p_197961_3_, p_197961_4_, p_197961_6_);
++                     if (!aboolean[0]) aboolean[0] = iguieventlistener.keyReleased(p_197961_3_, p_197961_4_, p_197961_6_);
++                     if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyReleasedPost(this.field_197972_a.field_71462_r, p_197961_3_, p_197961_4_, p_197961_6_);
+                   }
+                } else {
+-                  aboolean[0] = iguieventlistener.keyPressed(p_197961_3_, p_197961_4_, p_197961_6_);
++                  aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyPressedPre(this.field_197972_a.field_71462_r, p_197961_3_, p_197961_4_, p_197961_6_);
++                  if (!aboolean[0]) aboolean[0] = iguieventlistener.keyPressed(p_197961_3_, p_197961_4_, p_197961_6_);
++                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyPressedPost(this.field_197972_a.field_71462_r, p_197961_3_, p_197961_4_, p_197961_6_);
+                }
+ 
+             }, "keyPressed event handler", iguieventlistener.getClass().getCanonicalName());
+@@ -346,12 +350,16 @@
+          if (iguieventlistener != null) {
+             if (Character.charCount(p_197963_3_) == 1) {
+                GuiScreen.func_195121_a(() -> {
+-                  iguieventlistener.charTyped((char)p_197963_3_, p_197963_4_);
++                  if (net.minecraftforge.client.ForgeHooksClient.onGuiCharTypedPre(this.field_197972_a.field_71462_r, (char)p_197963_3_, p_197963_4_)) return;
++                  if (iguieventlistener.charTyped((char)p_197963_3_, p_197963_4_)) return;
++                  net.minecraftforge.client.ForgeHooksClient.onGuiCharTypedPost(this.field_197972_a.field_71462_r, (char)p_197963_3_, p_197963_4_);
+                }, "charTyped event handler", iguieventlistener.getClass().getCanonicalName());
+             } else {
+                for(char c0 : Character.toChars(p_197963_3_)) {
+                   GuiScreen.func_195121_a(() -> {
+-                     iguieventlistener.charTyped(c0, p_197963_4_);
++                     if (net.minecraftforge.client.ForgeHooksClient.onGuiCharTypedPre(this.field_197972_a.field_71462_r, c0, p_197963_4_)) return;
++                     if (iguieventlistener.charTyped(c0, p_197963_4_)) return;
++                     net.minecraftforge.client.ForgeHooksClient.onGuiCharTypedPost(this.field_197972_a.field_71462_r, c0, p_197963_4_);
+                   }, "charTyped event handler", iguieventlistener.getClass().getCanonicalName());
+                }
+             }
