@@ -87,11 +87,11 @@
     }
  
     public List<? extends IGuiEventListener> func_195074_b() {
-@@ -313,6 +328,7 @@
+@@ -322,6 +337,7 @@
+          this.func_146278_c(p_146270_1_);
+       }
  
-    public void func_146276_q_() {
-       this.func_146270_b(0);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
     }
  
-    public void func_146270_b(int p_146270_1_) {
+    public void func_146278_c(int p_146278_1_) {
