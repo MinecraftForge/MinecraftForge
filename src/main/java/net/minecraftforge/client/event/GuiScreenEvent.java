@@ -284,14 +284,12 @@ public class GuiScreenEvent extends Event
     {
         private final double mouseX;
         private final double mouseY;
-        private final int button;
 
-        public MouseInputEvent(GuiScreen gui, double mouseX, double mouseY, int button)
+        public MouseInputEvent(GuiScreen gui, double mouseX, double mouseY)
         {
             super(gui);
             this.mouseX = mouseX;
             this.mouseY = mouseY;
-            this.button = button;
         }
 
         public double getMouseX()
@@ -303,18 +301,21 @@ public class GuiScreenEvent extends Event
         {
             return mouseY;
         }
-
-        public int getButton()
-        {
-            return button;
-        }
     }
 
     public static abstract class MouseClickedEvent extends MouseInputEvent
     {
+        private final int button;
+
         public MouseClickedEvent(GuiScreen gui, double mouseX, double mouseY, int button)
         {
-            super(gui, mouseX, mouseY, button);
+            super(gui, mouseX, mouseY);
+            this.button = button;
+        }
+
+        public int getButton()
+        {
+            return button;
         }
 
         /**
@@ -332,7 +333,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires after {@link IGuiEventListener#mouseClicked(double, double, int)} if the click was not already handled.
-         * Cancel this event when you successfully use the mouse click to prevent other handlers from using the same input.
+         * Cancel this event when you successfully use the mouse click, to prevent other handlers from using the same input.
          */
         @Cancelable
         public static class Post extends MouseClickedEvent
@@ -346,9 +347,17 @@ public class GuiScreenEvent extends Event
 
     public static abstract class MouseReleasedEvent extends MouseInputEvent
     {
+        private final int button;
+
         public MouseReleasedEvent(GuiScreen gui, double mouseX, double mouseY, int button)
         {
-            super(gui, mouseX, mouseY, button);
+            super(gui, mouseX, mouseY);
+            this.button = button;
+        }
+
+        public int getButton()
+        {
+            return button;
         }
 
         /**
@@ -366,7 +375,7 @@ public class GuiScreenEvent extends Event
 
         /**
          * This event fires after {@link IGuiEventListener#mouseReleased(double, double, int)} if the release was not already handled.
-         * Cancel this event when you successfully use the mouse release to prevent other handlers from using the same input.
+         * Cancel this event when you successfully use the mouse release, to prevent other handlers from using the same input.
          */
         @Cancelable
         public static class Post extends MouseReleasedEvent
@@ -374,6 +383,104 @@ public class GuiScreenEvent extends Event
             public Post(GuiScreen gui, double mouseX, double mouseY, int button)
             {
                 super(gui, mouseX, mouseY, button);
+            }
+        }
+    }
+
+    public static abstract class MouseDragEvent extends MouseInputEvent
+    {
+        private final int mouseButton;
+        private final double dragX;
+        private final double dragY;
+
+        public MouseDragEvent(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+        {
+            super(gui, mouseX, mouseY);
+            this.mouseButton = mouseButton;
+            this.dragX = dragX;
+            this.dragY = dragY;
+        }
+
+        public int getMouseButton()
+        {
+            return mouseButton;
+        }
+
+        public double getDragX()
+        {
+            return dragX;
+        }
+
+        public double getDragY()
+        {
+            return dragY;
+        }
+
+        /**
+         * This event fires when a mouse drag is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#mouseDragged(double, double, int, double, double)}.
+         */
+        @Cancelable
+        public static class Pre extends MouseDragEvent
+        {
+            public Pre(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+            {
+                super(gui, mouseX, mouseY, mouseButton, dragX, dragY);
+            }
+        }
+
+        /**
+         * This event fires after {@link IGuiEventListener#mouseDragged(double, double, int, double, double)} if the drag was not already handled.
+         * Cancel this event when you successfully use the mouse drag, to prevent other handlers from using the same input.
+         */
+        @Cancelable
+        public static class Post extends MouseDragEvent
+        {
+            public Post(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+            {
+                super(gui, mouseX, mouseY, mouseButton, dragX, dragY);
+            }
+        }
+    }
+
+    public static abstract class MouseScrollEvent extends MouseInputEvent
+    {
+        private final double scrollDelta;
+
+        public MouseScrollEvent(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+        {
+            super(gui, mouseX, mouseY);
+            this.scrollDelta = scrollDelta;
+        }
+
+        public double getScrollDelta()
+        {
+            return scrollDelta;
+        }
+
+        /**
+         * This event fires when a mouse scroll is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#mouseScrolled(double)}.
+         */
+        @Cancelable
+        public static class Pre extends MouseScrollEvent
+        {
+            public Pre(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+            {
+                super(gui, mouseX, mouseY, scrollDelta);
+            }
+        }
+
+        /**
+         * This event fires after {@link IGuiEventListener#mouseScrolled(double)} if the scroll was not already handled.
+         * Cancel this event when you successfully use the mouse scroll, to prevent other handlers from using the same input.
+         */
+        @Cancelable
+        public static class Post extends MouseScrollEvent
+        {
+            public Post(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+            {
+                super(gui, mouseX, mouseY, scrollDelta);
             }
         }
     }
