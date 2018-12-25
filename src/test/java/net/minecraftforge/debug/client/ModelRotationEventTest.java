@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 @Mod(modid = "modelrotationtest", name = "Model Rotation Test", version = "0.0.0", clientSideOnly = true)
 public class ModelRotationEventTest
 {
-    static final boolean ENABLED = true;
+    static final boolean ENABLED = false;
 
     @EventHandler
     public void init(FMLInitializationEvent event)
