@@ -1,12 +1,9 @@
 package net.minecraftforge.common.tags;
 
 import com.google.gson.JsonObject;
-import net.minecraft.block.Block;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollection;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.registries.IForgeRegistry;
 
 import java.util.Collection;
 import java.util.Random;
@@ -22,7 +19,7 @@ public class TagWrapper<T> extends Tag<T>
     public TagWrapper(ResourceLocation resourceLocationIn, Supplier<TagCollection<T>> collectionProvider)
     {
         super(resourceLocationIn);
-        this.lastKnownGeneration = ForgeTagManager.getGeneration()-1;
+        this.lastKnownGeneration = ForgeTagManager.getGeneration() - 1;
         this.collectionProvider = collectionProvider;
     }
 
@@ -51,24 +48,29 @@ public class TagWrapper<T> extends Tag<T>
         return collectionProvider;
     }
 
-    private void updateTag() {
-        if (this.getLastKnownGeneration() != ForgeTagManager.getGeneration()) {
+    private void updateTag()
+    {
+        if (this.getLastKnownGeneration() != ForgeTagManager.getGeneration())
+        {
             this.setCachedTag(getCollectionProvider().get().get(getId()));
             this.setLastKnownGeneration(ForgeTagManager.getGeneration());
         }
     }
 
-    public boolean contains(T itemIn) {
+    public boolean contains(T itemIn)
+    {
         updateTag();
         return this.getCachedTag().contains(itemIn);
     }
 
-    public Collection<T> getAllElements() {
+    public Collection<T> getAllElements()
+    {
         updateTag();
         return this.getCachedTag().getAllElements();
     }
 
-    public Collection<Tag.ITagEntry<T>> getEntries() {
+    public Collection<Tag.ITagEntry<T>> getEntries()
+    {
         updateTag();
         return this.getCachedTag().getEntries();
     }

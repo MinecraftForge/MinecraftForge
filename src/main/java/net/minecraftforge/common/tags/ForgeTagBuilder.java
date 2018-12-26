@@ -1,5 +1,9 @@
 package net.minecraftforge.common.tags;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -8,45 +12,123 @@ import net.minecraft.tags.Tag;
 import net.minecraft.tags.Tag.ITagEntry;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public final class ForgeTagBuilder<T> extends Tag.Builder<T> {
+public final class ForgeTagBuilder<T> extends Tag.Builder<T>
+{
+    public static Comparator<IForgeRegistryEntry<?>> registryNameComparator()
+    {
+        return Comparator.nullsFirst(Comparator.<IForgeRegistryEntry<?>, ResourceLocation>comparing(IForgeRegistryEntry::getRegistryName, Comparator.nullsFirst(Comparator.naturalOrder())));
+    }
+
+    public static <T> Comparator<Tag<T>> tagIdComparator()
+    {
+        return Comparator.nullsFirst(Comparator.<Tag<T>, ResourceLocation>comparing(Tag::getId, Comparator.nullsFirst(Comparator.naturalOrder())));
+    }
+
+    //compares Vanilla TagEntries, sorting ListEntries and non-vanilla ITagEntry sub-classes to the front
+    public static <T> Comparator<ITagEntry<T>> tagEntryComparator()
+    {
+        return Comparator.nullsFirst(Comparator.<ITagEntry<T>, ResourceLocation>comparing(e -> (e instanceof Tag.TagEntry ? ((Tag.TagEntry<T>) e).getSerializedId() : null), Comparator.nullsFirst(Comparator.naturalOrder())));
+    }
+
+    private static <T> void populateEntries(Iterable<ITagEntry<T>> entries, Consumer<Collection<T>> consumer)
+    {
+        List<T> list = new ArrayList<>();
+        for (ITagEntry<T> entry : entries)
+        {
+            entry.populate(list);
+            consumer.accept(list);
+            list.clear();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> Comparator<T> uncheckedComparator(@Nonnull Comparator<?> comparator)
+    {
+        return (Comparator<T>) comparator;
+    }
+
+    @Nullable
+    private static <T> Comparator<T> tryCreateComparatorFor(Iterator<ITagEntry<T>> it)
+    {
+        List<T> testItems = new ArrayList<>();
+        while (testItems.isEmpty() && it.hasNext())
+            it.next().populate(testItems);
+        if (testItems.isEmpty())
+            return null;
+        else if (testItems.get(0) instanceof Comparable)
+            return uncheckedComparator(Comparator.naturalOrder());
+        else if (testItems.get(0) instanceof IForgeRegistryEntry)
+            return uncheckedComparator(registryNameComparator());
+        else
+            return null;
+    }
+
+    public static <T> Tag<T> copyOf(ResourceLocation resourceLocationIn, Iterable<ITagEntry<T>> entries, boolean preserveOrder)
+    {
+        Iterator<ITagEntry<T>> it = entries.iterator();
+        if (!it.hasNext()) return empty(resourceLocationIn);
+        if (preserveOrder) return copyOf(resourceLocationIn, entries, null, null);
+        return copyOf(resourceLocationIn, entries, tryCreateComparatorFor(it),tagEntryComparator());
+    }
+
+    public static <T> Tag<T> copyOf(ResourceLocation resourceLocationIn, Iterable<ITagEntry<T>> entries, @Nullable Comparator<T> comparator)
+    {
+        return copyOf(resourceLocationIn, entries, comparator, comparator!=null?tagEntryComparator():null);
+    }
+
+    public static <T> Tag<T> copyOf(ResourceLocation resourceLocationIn, Iterable<ITagEntry<T>> entries, @Nullable Comparator<T> comparator, @Nullable Comparator<ITagEntry<T>> entryComparator)
+    {
+        ImmutableList<ITagEntry<T>> entryList = (entryComparator != null ? ImmutableList.sortedCopyOf(entryComparator, entries) : ImmutableList.copyOf(entries));
+        ImmutableSet.Builder<T> builder = comparator != null ? ImmutableSortedSet.orderedBy(comparator) : ImmutableSet.builder();
+        populateEntries(entryList, builder::addAll);
+        return new Tag<>(resourceLocationIn, entryList, builder.build());
+    }
+
+    public static <T> Tag<T> empty(ResourceLocation id)
+    {
+        return new Tag<>(id, ImmutableList.of(), ImmutableSortedSet.of());
+    }
+
+    public static <T> ForgeTagBuilder<T> vanillaTagBuilder()
+    {
+        return new ForgeTagBuilder<>((location, iTagEntries, preserveOrder, itemComparator) -> new Tag<>(location, iTagEntries, preserveOrder));
+    }
+
+    public static <T> ForgeTagBuilder immutableTagBuilder()
+    {
+        return new ForgeTagBuilder<>((TagFactory<T>) (location, iTagEntries, preserveOrder, itemComparator) -> copyOf(location, iTagEntries, preserveOrder));
+    }
+
     private static final Logger LOGGER = LogManager.getLogger();
     private boolean resolved;
     private final TagFactory<T> factory;
-
-    public static <T> ForgeTagBuilder<T> vanillaTagBuilder() {
-        return new ForgeTagBuilder<>(new TagFactory<T>() {
-            @Override
-            public Tag<T> build(ResourceLocation location, Set<ITagEntry<T>> iTagEntries, boolean preserveOrder) {
-                return new Tag<>(location,iTagEntries,preserveOrder);
-            }
-
-            @Override
-            public Tag<T> build(ResourceLocation location, Set<ITagEntry<T>> iTagEntries, Comparator<T> itemComparator) {
-                return new Tag<>(location,iTagEntries,false);
-            }
-        });
-    }
-
-    public static <T> ForgeTagBuilder<T> immutableTagBuilder() {
-        return ImmutableTag.builder();
-    }
+    private Comparator<T> comparator;
 
     public ForgeTagBuilder(TagFactory<T> factory)
     {
         this.resolved = false;
         this.factory = factory;
+        this.comparator = null;
+    }
+
+    public ForgeTagBuilder<T> withOrdering(Comparator<T> comparator)
+    {
+        this.comparator = comparator;
+        return this;
     }
 
     /**
@@ -66,8 +148,7 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T> {
     public ForgeTagBuilder<T> add(ITagEntry<T> entry)
     {
         onChange();
-        super.add(entry);
-        return this;
+        return (ForgeTagBuilder<T>) super.add(entry);
     }
 
     @Override
@@ -87,8 +168,7 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T> {
 
     public ForgeTagBuilder<T> addAllTags(Iterable<ResourceLocation> itemsIn)
     {
-        onChange();
-        for (ResourceLocation location:itemsIn)
+        for (ResourceLocation location : itemsIn)
         {
             add(location);
         }
@@ -112,12 +192,10 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T> {
     /**
      * @param preserveOrderIn whether or not the Order in which TagEntries were added should be preserved
      * @return this Builder, in order to support Method chaining
-     * @implNote Notice that this doesn't have any influence on the resulting ImmutableTag, because ImmutableTags require to be sorted.
      */
     @Override
     public ForgeTagBuilder<T> ordered(boolean preserveOrderIn)
     {
-        onChange();
         return (ForgeTagBuilder<T>) super.ordered(preserveOrderIn);
     }
 
@@ -144,9 +222,8 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T> {
             }
         }
 
-        if (!missingEntries.isEmpty()) {
+        if (!missingEntries.isEmpty())
             throw new MissingEntriesException(missingEntries);
-        }
 
         return this;
     }
@@ -173,19 +250,18 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T> {
     @Override
     public Tag<T> build(ResourceLocation resourceLocationIn)
     {
-        if (!resolved) LOGGER.trace("Building unresolved Tag!");
-        return factory.build(resourceLocationIn,entries,preserveOrder);
+        return build(resourceLocationIn, comparator);
     }
 
-    public Tag<T> build(ResourceLocation resourceLocationIn, Comparator<T> itemComparator)
+    public Tag<T> build(ResourceLocation resourceLocationIn, @Nullable Comparator<T> itemComparator)
     {
         if (!resolved) LOGGER.trace("Building unresolved Tag!");
-        return factory.build(resourceLocationIn,entries,itemComparator);
+        return factory.build(resourceLocationIn, entries, preserveOrder, itemComparator);
     }
 
-    public interface TagFactory<T> {
-        public Tag<T> build(ResourceLocation location, Set<ITagEntry<T>> entries, boolean preserveOrder);
-
-        public Tag<T> build(ResourceLocation location, Set<ITagEntry<T>> entries, Comparator<T> itemComparator);
+    @FunctionalInterface
+    public interface TagFactory<T>
+    {
+        public Tag<T> build(ResourceLocation location, Set<ITagEntry<T>> entries, boolean preserveOrder, @Nullable Comparator<T> itemComparator);
     }
 }

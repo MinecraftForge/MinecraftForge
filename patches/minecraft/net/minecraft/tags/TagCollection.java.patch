@@ -13,7 +13,7 @@
     private final String field_199923_f;
 -   private final boolean field_200041_g;
 -   private final String field_200157_i;
-+   protected final boolean field_200041_g;
++   protected boolean field_200041_g;
 +   protected final String field_200157_i;
  
     public TagCollection(Predicate<ResourceLocation> p_i48235_1_, Function<ResourceLocation, T> p_i48235_2_, String p_i48235_3_, boolean p_i48235_4_, String p_i48235_5_) {
@@ -23,7 +23,7 @@
     public Tag<T> func_199915_b(ResourceLocation p_199915_1_) {
        Tag<T> tag = this.field_199921_d.get(p_199915_1_);
 -      return tag == null ? new Tag(p_199915_1_) : tag;
-+      return tag == null ? net.minecraftforge.common.tags.ImmutableTag.<T>empty(p_199915_1_) : tag;
++      return tag == null ? net.minecraftforge.common.tags.ForgeTagBuilder.empty(p_199915_1_) : tag;
     }
  
     public Collection<ResourceLocation> func_199908_a() {

@@ -4,8 +4,10 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.Set;
 
-public class MissingEntriesException extends TagException {
+public class MissingEntriesException extends TagException
+{
     private final Set<ResourceLocation> missingEntries;
+
     public MissingEntriesException(Set<ResourceLocation> missingEntries)
     {
         super("Failed to load Tag, because Registry did not contain required entries");
@@ -23,10 +25,10 @@ public class MissingEntriesException extends TagException {
     {
         stream.println(" ");
         stream.println("###################################");
-        stream.println("Missing "+getMissingEntries().size()+ (getMissingEntries().size() == 1?" Entry":" Entries"));
-        for (ResourceLocation entry: getMissingEntries())
+        stream.println("Missing " + getMissingEntries().size() + (getMissingEntries().size() == 1 ? " Entry" : " Entries"));
+        for (ResourceLocation entry : getMissingEntries())
         {
-            stream.println(" - Could not resolve "+entry);
+            stream.println(" - Could not resolve " + entry);
 
         }
         stream.println("###################################");

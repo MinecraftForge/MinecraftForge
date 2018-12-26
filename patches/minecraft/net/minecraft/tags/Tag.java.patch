@@ -13,7 +13,7 @@
     public Tag(ResourceLocation p_i48236_1_) {
        this.field_199888_a = p_i48236_1_;
        this.field_199889_b = Collections.<T>emptySet();
-@@ -64,6 +70,22 @@
+@@ -64,8 +70,24 @@
        return this.field_200150_c;
     }
  
@@ -34,8 +34,11 @@
 +   }
 +
     public T func_205596_a(Random p_205596_1_) {
-       List<T> list = Lists.newArrayList(this.func_199885_a());
+-      List<T> list = Lists.newArrayList(this.func_199885_a());
++      List<T> list = (this.func_199885_a() instanceof com.google.common.collect.ImmutableSet)? ((com.google.common.collect.ImmutableSet<T>) this.func_199885_a()).asList():Lists.newArrayList(this.func_199885_a());
        return list.get(p_205596_1_.nextInt(list.size()));
+    }
+ 
 @@ -74,8 +96,8 @@
     }
  

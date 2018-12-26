@@ -26,7 +26,10 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -41,45 +44,47 @@ public final class ForgeTagManager extends NetworkTagManager
 
     private static void registerVanillaTags(ResourceLocation id, Consumer<ForgeTagManager> reloadCallback)
     {
-        factories.put(id,new TagCollectionFactoryEntry(null,reloadCallback,null,true));
+        factories.put(id, new TagCollectionFactoryEntry(null, reloadCallback, null, true));
     }
 
-    private static void registerForgeTags(final ResourceLocation id, final IForgeRegistry<?> reg, Consumer<ForgeTagManager> collectionLoader,final String name)
+    private static void registerForgeTags(final ResourceLocation id, final IForgeRegistry<?> reg, Consumer<ForgeTagManager> collectionLoader, final String name)
     {
-        registerTagCollection(id, () -> {return ForgeTagCollection.fromForgeRegistry(reg,ForgeTagCollection.getDefaultLoadingLocation(id),name);},collectionLoader);
+        registerTagCollection(id, () -> {
+            return ForgeTagCollection.fromForgeRegistry(reg, ForgeTagCollection.getDefaultLoadingLocation(id), name);
+        }, collectionLoader);
     }
 
     public static void registerTagCollection(ResourceLocation id, Supplier<ForgeTagCollection<?>> factory)
     {
-        registerTagCollection(id,factory,null);
+        registerTagCollection(id, factory, null);
     }
 
     public static void registerTagCollection(ResourceLocation id, Supplier<ForgeTagCollection<?>> factory, @Nullable Consumer<ForgeTagManager> reloadCallback)
     {
-        registerTagCollection(id,factory,reloadCallback,null);
+        registerTagCollection(id, factory, reloadCallback, null);
     }
 
     public static void registerTagCollection(ResourceLocation id, @Nonnull Supplier<ForgeTagCollection<?>> factory, @Nullable Consumer<ForgeTagManager> reloadCallback, @Nullable Predicate<ForgeTagManager> syncPredicate)
     {
         if (factories.containsKey(id))
             throw new IllegalArgumentException("Cannot register " + id + " TagCollection twice!");
-        factories.put(id, new TagCollectionFactoryEntry(factory,reloadCallback,syncPredicate,false));
+        factories.put(id, new TagCollectionFactoryEntry(factory, reloadCallback, syncPredicate, false));
     }
 
     @SuppressWarnings("unchecked")
     public static void initForgeTags()
     {
-        registerVanillaTags(GameData.BLOCKS,(manager -> BlockTags.setCollection(manager.getBlocks())));
-        registerVanillaTags(GameData.ITEMS,(manager -> ItemTags.setCollection(manager.getItems())));
-        registerVanillaTags(FLUID_TAGS,(manager -> FluidTags.setCollection(manager.getFluids())));
-        registerForgeTags(GameData.POTIONS,POTIONS,(manager -> Tags.Potions.setPotionTagCollection((ForgeTagCollection<Potion>) manager.getTagsForId(GameData.POTIONS))),"potion");
-        registerForgeTags(GameData.BIOMES,BIOMES,(manager -> Tags.Biomes.setBiomeTagCollection((ForgeTagCollection<Biome>) manager.getTagsForId(GameData.BIOMES))),"biome");
-        registerForgeTags(GameData.SOUNDEVENTS,SOUND_EVENTS,(manager -> Tags.SoundEvents.setSoundEventTagCollection((ForgeTagCollection<SoundEvent>) manager.getTagsForId(GameData.SOUNDEVENTS))),"sound event");
-        registerForgeTags(GameData.POTIONTYPES,POTION_TYPES,(manager -> Tags.PotionTypes.setPotionTypeTagCollection((ForgeTagCollection<PotionType>) manager.getTagsForId(GameData.POTIONTYPES))),"potion type");
-        registerForgeTags(GameData.ENCHANTMENTS,ENCHANTMENTS,(manager -> Tags.Enchantments.setEnchantmentTagCollection((ForgeTagCollection<Enchantment>) manager.getTagsForId(GameData.ENCHANTMENTS))),"enchantment");
-        registerForgeTags(GameData.PROFESSIONS,VILLAGER_PROFESSIONS,(manager -> Tags.VillagerProfessions.setVillagerProfessionTagCollection((ForgeTagCollection<VillagerRegistry.VillagerProfession>) manager.getTagsForId(GameData.PROFESSIONS))),"villager profession");
-        registerForgeTags(GameData.ENTITIES,ENTITIES,(manager -> Tags.Entities.setEntityTagCollection((ForgeTagCollection<Entity>) manager.getTagsForId(GameData.ENTITIES))),"entity");
-        registerForgeTags(GameData.TILEENTITIES,TILE_ENTITIES,(manager -> Tags.TileEntities.setTileEntityTagCollection((ForgeTagCollection<TileEntity>) manager.getTagsForId(GameData.TILEENTITIES))),"tile entity");
+        registerVanillaTags(GameData.BLOCKS, (manager -> BlockTags.setCollection(manager.getBlocks())));
+        registerVanillaTags(GameData.ITEMS, (manager -> ItemTags.setCollection(manager.getItems())));
+        registerVanillaTags(FLUID_TAGS, (manager -> FluidTags.setCollection(manager.getFluids())));
+        registerForgeTags(GameData.POTIONS, POTIONS, (manager -> Tags.Potions.setPotionTagCollection((ForgeTagCollection<Potion>) manager.getTagsForId(GameData.POTIONS))), "potion");
+        registerForgeTags(GameData.BIOMES, BIOMES, (manager -> Tags.Biomes.setBiomeTagCollection((ForgeTagCollection<Biome>) manager.getTagsForId(GameData.BIOMES))), "biome");
+        registerForgeTags(GameData.SOUNDEVENTS, SOUND_EVENTS, (manager -> Tags.SoundEvents.setSoundEventTagCollection((ForgeTagCollection<SoundEvent>) manager.getTagsForId(GameData.SOUNDEVENTS))), "sound event");
+        registerForgeTags(GameData.POTIONTYPES, POTION_TYPES, (manager -> Tags.PotionTypes.setPotionTypeTagCollection((ForgeTagCollection<PotionType>) manager.getTagsForId(GameData.POTIONTYPES))), "potion type");
+        registerForgeTags(GameData.ENCHANTMENTS, ENCHANTMENTS, (manager -> Tags.Enchantments.setEnchantmentTagCollection((ForgeTagCollection<Enchantment>) manager.getTagsForId(GameData.ENCHANTMENTS))), "enchantment");
+        registerForgeTags(GameData.PROFESSIONS, VILLAGER_PROFESSIONS, (manager -> Tags.VillagerProfessions.setVillagerProfessionTagCollection((ForgeTagCollection<VillagerRegistry.VillagerProfession>) manager.getTagsForId(GameData.PROFESSIONS))), "villager profession");
+        registerForgeTags(GameData.ENTITIES, ENTITIES, (manager -> Tags.Entities.setEntityTagCollection((ForgeTagCollection<Entity>) manager.getTagsForId(GameData.ENTITIES))), "entity");
+        registerForgeTags(GameData.TILEENTITIES, TILE_ENTITIES, (manager -> Tags.TileEntities.setTileEntityTagCollection((ForgeTagCollection<TileEntity>) manager.getTagsForId(GameData.TILEENTITIES))), "tile entity");
     }
 
     private static int generation = 0;
@@ -96,7 +101,7 @@ public final class ForgeTagManager extends NetworkTagManager
         super();
         tagCollections = Maps.newHashMapWithExpectedSize(factories.size());
         for (Map.Entry<ResourceLocation, TagCollectionFactoryEntry> entry : factories.entrySet())
-            tagCollections.put(entry.getKey(), entry.getValue().create(entry.getKey(),this));
+            tagCollections.put(entry.getKey(), entry.getValue().create(entry.getKey(), this));
         tagCollections = Collections.unmodifiableMap(tagCollections);
     }
 
@@ -137,7 +142,7 @@ public final class ForgeTagManager extends NetworkTagManager
         for (Map.Entry<ResourceLocation, TagCollectionValueEntry> entry : tagCollections.entrySet())
         {
             entry.getValue().clear();
-            entry.getValue().reload(entry.getKey(), resourceManager,this);
+            entry.getValue().reload(entry.getKey(), resourceManager, this);
         }
         generation++;
     }
@@ -155,7 +160,7 @@ public final class ForgeTagManager extends NetworkTagManager
 
     private void writeForgeTags(final PacketBuffer buffer)
     {
-        tagCollections.entrySet().stream().filter(e -> e.getValue().shouldSync(ForgeTagManager.this)).filter(e -> !e.getValue().isVanilla()).forEach( e-> {
+        tagCollections.entrySet().stream().filter(e -> e.getValue().shouldSync(ForgeTagManager.this)).filter(e -> !e.getValue().isVanilla()).forEach(e -> {
             buffer.writeResourceLocation(e.getKey());
             e.getValue().write(e.getKey(), buffer);
         });
@@ -177,8 +182,8 @@ public final class ForgeTagManager extends NetworkTagManager
             ResourceLocation id = buffer.readResourceLocation();
             //we cannot make any assumptions about the Format an unknown collection might have written into the buffer (custom implementations are allowed...)-> we have to Fail
             //modders who see this: if you want your tags not to be synced: just provide a Predicate!
-            ForgeTagCollection<?> tags = Objects.requireNonNull(getTagsForId(id),"Tag List mismatch! Received "+id+" from Server, but it was not registered Client-Side!");
-            tags.read(id,buffer);
+            ForgeTagCollection<?> tags = Objects.requireNonNull(getTagsForId(id), "Tag List mismatch! Received " + id + " from Server, but it was not registered Client-Side!");
+            tags.read(id, buffer);
         }
     }
 
@@ -190,7 +195,8 @@ public final class ForgeTagManager extends NetworkTagManager
         }
     }
 
-    private static class TagCollectionValueEntry{
+    private static class TagCollectionValueEntry
+    {
         private final ForgeTagCollection<?> collection;
         @Nonnull
         private final Predicate<ForgeTagManager> performSyncPredicate;
@@ -245,40 +251,48 @@ public final class ForgeTagManager extends NetworkTagManager
 
         void onReloaded(ForgeTagManager tagManager)
         {
-            if (reloadCallback!=null) reloadCallback.accept(tagManager);
+            if (reloadCallback != null) reloadCallback.accept(tagManager);
         }
 
-        boolean isVanilla() {
+        boolean isVanilla()
+        {
             return isVanillaCollection;
         }
     }
 
-    private static class TagCollectionFactoryEntry{
+    private static class TagCollectionFactoryEntry
+    {
         private final Supplier<ForgeTagCollection<?>> supplier;
         @Nonnull
         private final Predicate<ForgeTagManager> performSyncPredicate;
         private final Consumer<ForgeTagManager> reloadCallback;
         private final boolean isVanillaCollection;
 
-        TagCollectionFactoryEntry(@Nullable Supplier<ForgeTagCollection<?>> collectionSupplier, @Nullable Consumer<ForgeTagManager> reloadCallback,@Nullable Predicate<ForgeTagManager> performSyncPredicate, boolean vanillaCollection)
+        TagCollectionFactoryEntry(@Nullable Supplier<ForgeTagCollection<?>> collectionSupplier, @Nullable Consumer<ForgeTagManager> reloadCallback, @Nullable Predicate<ForgeTagManager> performSyncPredicate, boolean vanillaCollection)
         {
             this.supplier = collectionSupplier;
             this.reloadCallback = reloadCallback;
-            this.performSyncPredicate = performSyncPredicate!=null?performSyncPredicate:(rl->true);
+            this.performSyncPredicate = performSyncPredicate != null ? performSyncPredicate : (rl -> true);
             this.isVanillaCollection = vanillaCollection;
-            if (this.supplier == null && !isVanilla()) throw new IllegalArgumentException("A factory for TagCollections is required!");
+            if (this.supplier == null && !isVanilla())
+                throw new IllegalArgumentException("A factory for TagCollections is required!");
         }
 
         TagCollectionValueEntry create(ResourceLocation id, ForgeTagManager manager)
         {
-            if (!isVanilla()) return new TagCollectionValueEntry(Objects.requireNonNull(supplier.get()),reloadCallback,performSyncPredicate,false);
-            if (id.equals(GameData.ITEMS)) return new TagCollectionValueEntry(manager.getItems(),reloadCallback,performSyncPredicate,true);
-            if (id.equals(GameData.BLOCKS)) return new TagCollectionValueEntry(manager.getBlocks(),reloadCallback,performSyncPredicate,true);
-            if (id.equals(FLUID_TAGS)) return new TagCollectionValueEntry(manager.getFluids(),reloadCallback,performSyncPredicate,true);
-            throw new RuntimeException("Failed to create vanilla TagCollection with id "+id);
+            if (!isVanilla())
+                return new TagCollectionValueEntry(Objects.requireNonNull(supplier.get()), reloadCallback, performSyncPredicate, false);
+            if (id.equals(GameData.ITEMS))
+                return new TagCollectionValueEntry(manager.getItems(), reloadCallback, performSyncPredicate, true);
+            if (id.equals(GameData.BLOCKS))
+                return new TagCollectionValueEntry(manager.getBlocks(), reloadCallback, performSyncPredicate, true);
+            if (id.equals(FLUID_TAGS))
+                return new TagCollectionValueEntry(manager.getFluids(), reloadCallback, performSyncPredicate, true);
+            throw new RuntimeException("Failed to create vanilla TagCollection with id " + id);
         }
 
-        boolean isVanilla() {
+        boolean isVanilla()
+        {
             return isVanillaCollection;
         }
     }

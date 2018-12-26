@@ -2,7 +2,8 @@ package net.minecraftforge.common.tags;
 
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 
-public abstract class TagException extends EnhancedRuntimeException {
+public abstract class TagException extends EnhancedRuntimeException
+{
     public TagException()
     {
     }

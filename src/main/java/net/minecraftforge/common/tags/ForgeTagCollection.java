@@ -28,54 +28,61 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
+public class ForgeTagCollection<T> extends NetworkTagCollection<T>
+{
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Gson GSON = new Gson();
     private static final int JSON_EXTENSION_LENGTH = ".json".length();
 
-    public static <T> ForgeTagCollection<T> empty() {
-        return new ForgeTagCollection<>(new RegistryNamespaced<>(),ImmutableList.of(),"");
+    public static <T> ForgeTagCollection<T> empty()
+    {
+        return new ForgeTagCollection<>(new RegistryNamespaced<>(), ImmutableList.of(), "");
     }
 
     public static <T extends IForgeRegistryEntry<T>> ForgeTagCollection<T> fromForgeRegistry(IForgeRegistry<T> registry, List<String> resourceLocationPrefixes, String itemTypeName)
     {
-        return fromForgeRegistry(registry,resourceLocationPrefixes,itemTypeName,false);
+        return fromForgeRegistry(registry, resourceLocationPrefixes, itemTypeName, false);
     }
+
     //cannot add this as a constructor, cause Java cannot infer the additional Bound on T in a constructor
     public static <T extends IForgeRegistryEntry<T>> ForgeTagCollection<T> fromForgeRegistry(IForgeRegistry<T> registryIn, List<String> resourceLocationPrefixes, String itemTypeName, boolean preserveOrder)
     {
         ForgeRegistry<T> registry = (ForgeRegistry<T>) registryIn;
-        return new ForgeTagCollection<>(registry::containsKey,registry::getValue,registry::getID,registry::getValue,resourceLocationPrefixes,preserveOrder,itemTypeName);
+        return new ForgeTagCollection<>(registry::containsKey, registry::getValue, registry::getID, registry::getValue, resourceLocationPrefixes, preserveOrder, itemTypeName);
     }
 
     public static List<String> getDefaultLoadingLocation(ResourceLocation id)
     {
         return ImmutableList.of("tags/" + id.getPath(), "tags/" + id.getNamespace() + "/" + id.getPath());
     }
+
     private final ImmutableList<String> resourceLocationPrefixes;
     private final Map<T, SortedSet<Tag<T>>> owningTags;
     private Supplier<ForgeTagBuilder<T>> builderFactory;
+    private Comparator<T> comparingItems;
     private boolean collectDummyTags;
     private boolean extendedLogging;
 
     public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, Function<T, Integer> itemToId, Function<Integer, T> idToItem, List<String> resourceLocationPrefixes, boolean preserveOrderIn, String itemTypeNameIn)
     {
-        super(isValueKnownPredicateIn, resourceLocationToItemIn, itemToId, idToItem, resourceLocationPrefixes.isEmpty()?"":resourceLocationPrefixes.get(0), preserveOrderIn, itemTypeNameIn);
+        super(isValueKnownPredicateIn, resourceLocationToItemIn, itemToId, idToItem, resourceLocationPrefixes.isEmpty() ? "" : resourceLocationPrefixes.get(0), preserveOrderIn, itemTypeNameIn);
         this.resourceLocationPrefixes = ImmutableList.copyOf(resourceLocationPrefixes);
         this.owningTags = new HashMap<>();
         this.collectDummyTags = true;
         this.builderFactory = ForgeTagBuilder::immutableTagBuilder;
         this.extendedLogging = false;
+        this.comparingItems = null;
     }
 
     public ForgeTagCollection(RegistryNamespaced<ResourceLocation, T> registryIn, List<String> resourceLocationPrefixes, String itemTypeName)
     {
-        super(registryIn, resourceLocationPrefixes.isEmpty()?"":resourceLocationPrefixes.get(0), itemTypeName);
+        super(registryIn, resourceLocationPrefixes.isEmpty() ? "" : resourceLocationPrefixes.get(0), itemTypeName);
         this.resourceLocationPrefixes = ImmutableList.copyOf(resourceLocationPrefixes);
         this.owningTags = new HashMap<>();
         this.collectDummyTags = true;
         this.builderFactory = ForgeTagBuilder::immutableTagBuilder;
         this.extendedLogging = false;
+        this.comparingItems = null;
     }
 
     public ForgeTagCollection<T> disableDummyTags()
@@ -95,13 +102,26 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
         return builderFactory;
     }
 
-    public ForgeTagCollection<T> setBuilderFactory(Supplier<ForgeTagBuilder<T>> builderFactory)
+    public ForgeTagCollection<T> withBuilder(Supplier<ForgeTagBuilder<T>> builderFactory)
     {
         this.builderFactory = builderFactory;
         return this;
     }
 
-    public boolean isCollectingDummyTags() {
+    public ForgeTagCollection<T> comparingItemsBy(Comparator<T> comparator)
+    {
+        this.preserveOrder = false;
+        this.comparingItems = comparator;
+        return this;
+    }
+
+    public Comparator<T> getItemComparator()
+    {
+        return comparingItems;
+    }
+
+    public boolean isCollectingDummyTags()
+    {
         return collectDummyTags;
     }
 
@@ -137,9 +157,10 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
 
     /**
      * This is mainly here for Vanilla compat.
-     * @see #getOwningTagsForItem(Object)
+     *
      * @param itemIn The item For which to find Tags containing it
      * @return The ID's of the Tags containing the specified Item
+     * @see #getOwningTagsForItem(Object)
      */
     @Override
     public SortedSet<ResourceLocation> getOwningTags(T itemIn)
@@ -148,13 +169,13 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
     }
 
     /**
-     * @implNote This is more efficient than the Vanilla Implementation
      * @param itemIn The item For which to find Tags containing it
      * @return The Tag's containing the specifying Item. Ordered by their ID's.
+     * @implNote This is more efficient than the Vanilla Implementation
      */
     public SortedSet<Tag<T>> getOwningTagsForItem(T itemIn)
     {
-        return Collections.unmodifiableSortedSet(owningTags.getOrDefault(itemIn,Collections.emptySortedSet()));
+        return Collections.unmodifiableSortedSet(owningTags.getOrDefault(itemIn, Collections.emptySortedSet()));
     }
 
     protected Map<T, SortedSet<Tag<T>>> getOwningTagMapModifiable()
@@ -207,22 +228,26 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
                             LOGGER.error("Couldn't load {} Tag list {} from {} in data pack {} as it's empty or null", this.itemTypeName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName());
                         } else
                         {
-                            UnbakedTag<T> builder = map.getOrDefault(tagLoadingParameter.getTagId(), new UnbakedTag<>(tagLoadingParameter,getBuilderFactory()));
+                            UnbakedTag<T> builder = map.getOrDefault(tagLoadingParameter.getTagId(), new UnbakedTag<>(tagLoadingParameter, getBuilderFactory()));
                             builder.deserialize(isValueKnownPredicate, resourceLocationToItem, jsonobject);
                             map.put(tagLoadingParameter.getTagId(), builder);
                         }
-                    } catch (MissingEntriesException e)
+                    }
+                    catch (MissingEntriesException e)
                     {
                         printMissingEntriesError(tagLoadingParameter, e);
-                    } catch (RuntimeException | IOException ioexception)
+                    }
+                    catch (RuntimeException | IOException ioexception)
                     {
                         LOGGER.error("Couldn't read {} Tag {} from {} in Data Pack {}", this.itemTypeName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), iresource.getPackName(), ioexception);
-                    } finally
+                    }
+                    finally
                     {
                         IOUtils.closeQuietly((Closeable) iresource);
                     }
                 }
-            } catch (IOException ioexception1)
+            }
+            catch (IOException ioexception1)
             {
                 LOGGER.error("Couldn't read {} Tag {} from {}", this.itemTypeName, tagLoadingParameter.getTagId(), tagLoadingParameter.getLocation(), ioexception1);
             }
@@ -245,7 +270,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
 
     protected void collectDummyTags(Map<ResourceLocation, UnbakedTag<T>> map)
     {
-        LOGGER.debug("Injecting minecraft dummy {} Tags for {} loaded Tags", itemTypeName,map.size());
+        LOGGER.debug("Injecting minecraft dummy {} Tags for {} loaded Tags", itemTypeName, map.size());
         Map<String, Set<ResourceLocation>> flattener = Maps.newHashMap();
         for (Map.Entry<ResourceLocation, UnbakedTag<T>> unbuildTag : map.entrySet())
         {
@@ -254,13 +279,14 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
                 Set<ResourceLocation> current = flattener.getOrDefault(unbuildTag.getKey().getPath(), new HashSet<>());
                 current.add(unbuildTag.getKey());
                 flattener.put(unbuildTag.getKey().getPath(), current);
-                if (isExtendedLoggingEnabled())LOGGER.trace("Prepared to add #{} to Dummy-Tag #minecraft:{}.", unbuildTag.getKey(), unbuildTag.getKey().getPath());
+                if (isExtendedLoggingEnabled())
+                    LOGGER.trace("Prepared to add #{} to Dummy-Tag #minecraft:{}.", unbuildTag.getKey(), unbuildTag.getKey().getPath());
             }
         }
         for (Map.Entry<String, Set<ResourceLocation>> flattenedEntry : flattener.entrySet())
         {
             ResourceLocation collected = new ResourceLocation("minecraft:" + flattenedEntry.getKey());
-            UnbakedTag<T> builder = map.getOrDefault(collected, new UnbakedTag<>(collected,getBuilderFactory())); //ensure that we don't delete existing minecraft tags
+            UnbakedTag<T> builder = map.getOrDefault(collected, new UnbakedTag<>(collected, getBuilderFactory())); //ensure that we don't delete existing minecraft tags
             map.put(collected, builder.addAllDummyEntries(flattenedEntry.getValue()));
             if (isExtendedLoggingEnabled())
             {
@@ -285,7 +311,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
                 if ((entry1.getValue()).resolve(this::get))
                 {
                     registeredAny = true;
-                    this.register((entry1.getValue()).bake(preserveOrder));
+                    this.register((entry1.getValue()).bake(getItemComparator(), preserveOrder));
                     iterator.remove();
                 }
             }
@@ -329,7 +355,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
             for (T element : tag.getAllElements())
             {
                 if (element == null) continue;
-                SortedSet<Tag<T>> set = owningTags.getOrDefault(element, new TreeSet<>(ImmutableTag.tagIdComparator()));
+                SortedSet<Tag<T>> set = owningTags.getOrDefault(element, new TreeSet<>(ForgeTagBuilder.tagIdComparator()));
                 owningTags.put(element, set);
             }
             //DEBUG: dump Tags
@@ -337,7 +363,8 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
         }
     }
 
-    protected static class TagLoadingParameter { //value class, so that we don't need to use Triples...
+    protected static class TagLoadingParameter
+    { //value class, so that we don't need to use Triples...
         private final String prefix;
         private final ResourceLocation location;
         private final ResourceLocation tagId;
@@ -367,14 +394,15 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
         }
     }
 
-    protected static class UnbakedTag<T> {
+    protected static class UnbakedTag<T>
+    {
         private final ForgeTagBuilder<T> builder; //Use Immutable Tags - this should ensure that we always have a quite fast contains check
         private final ResourceLocation id;
         private boolean replacesDummyAdds; //prevents dummy Adds to be performed on replace=true minecraft Tags
 
         protected UnbakedTag(TagLoadingParameter descriptor, Supplier<ForgeTagBuilder<T>> builderSupplier)
         {
-            this(descriptor.getTagId(),builderSupplier);
+            this(descriptor.getTagId(), builderSupplier);
         }
 
         protected UnbakedTag(ResourceLocation id, Supplier<ForgeTagBuilder<T>> builderSupplier)
@@ -429,9 +457,9 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T> {
             return getBuilder().build(getId());
         }
 
-        protected Tag<T> bake(boolean preserveOrder)
+        protected Tag<T> bake(Comparator<T> comparator, boolean preserveOrder)
         {
-            return getBuilder().ordered(preserveOrder).build(getId());
+            return getBuilder().ordered(preserveOrder).build(getId(), comparator);
         }
     }
 }
