@@ -44,7 +44,7 @@ import org.apache.commons.lang3.tuple.Pair;
 /**
  * Generic TileEntitySpecialRenderer that works with the Forge model system and animations.
  */
-public class AnimationTESR<T extends TileEntity> extends FastTESR<T> implements IEventHandler<T>
+public class AnimationTESR<T extends TileEntity> extends TileEntityRendererFast<T> implements IEventHandler<T>
 {
     protected static BlockRendererDispatcher blockRenderer;
 

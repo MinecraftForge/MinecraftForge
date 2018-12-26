@@ -28,11 +28,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.NetherDimension;
+import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -44,6 +44,8 @@ public interface IForgeDimension
     {
         return (Dimension) this;
     }
+    
+    World getWorld();
 
     /**
      * Called from {@link World#initCapabilities()}, to gather capabilities for this
@@ -79,6 +81,22 @@ public interface IForgeDimension
         }
         return 1.0;
     }
+    
+    /**
+     * If this method returns true, then chunks received by the client will
+     * have {@link net.minecraft.world.chunk.Chunk#resetRelightChecks} called
+     * on them, queuing lighting checks for all air blocks in the chunk (and
+     * any adjacent light-emitting blocks).
+     *
+     * Returning true here is recommended if the chunk generator used also
+     * does this for newly generated chunks.
+     *
+     * @return true if lighting checks should be performed
+     */
+    default boolean shouldClientCheckLighting()
+    {
+        return !(this instanceof OverworldDimension);
+    }
 
     /**
      * Sets the providers current dimension ID, used in default getSaveFolder()
@@ -111,6 +129,20 @@ public interface IForgeDimension
 
     @OnlyIn(Dist.CLIENT)
     void setWeatherRenderer(IRenderHandler renderer);
+    
+    /**
+     * Allows for manipulating the coloring of the lightmap texture.
+     * Will be called for each 16*16 combination of sky/block light values.
+     *
+     * @param partialTicks Progress between ticks.
+     * @param sunBrightness Current sun brightness.
+     * @param skyLight Sky light brightness factor.
+     * @param blockLight Block light brightness factor.
+     * @param colors The color values that will be used: [r, g, b].
+     *
+     * @see net.minecraft.client.renderer.EntityRenderer#updateLightmap(float)
+     */
+    default void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
 
     void resetRainAndThunder();
 
@@ -135,15 +167,34 @@ public interface IForgeDimension
     {
         return null;
     }
+    
+    /**
+     * Determines if the player can sleep in this world (or if the bed should explode for example).
+     *
+     * @param player The player that is attempting to sleep
+     * @param pos The location where the player tries to sleep at (the position of the clicked on bed for example)
+     * @return the result of a player trying to sleep at the given location
+     */
+    default SleepResult canSleepAt(net.minecraft.entity.player.EntityPlayer player, BlockPos pos)
+    {
+        return (getDimension().canRespawnHere() && getWorld().getBiome(pos) != net.minecraft.init.Biomes.NETHER) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
+    }
+
+    enum SleepResult
+    {
+        ALLOW,
+        DENY,
+        BED_EXPLODES;
+    }
 
     default Biome getBiome(BlockPos pos)
     {
-       return getDimension().getWorld().getBiomeBody(pos);
+       return getWorld().getBiomeBody(pos);
     }
 
     default boolean isDaytime()
     {
-        return getDimension().getWorld().getSkylightSubtracted() < 4;
+        return getWorld().getSkylightSubtracted() < 4;
     }
 
     /**
@@ -156,7 +207,7 @@ public interface IForgeDimension
      **/
     default float getSunBrightnessFactor(float partialTicks)
     {
-        return getDimension().getWorld().getSunBrightnessFactor(partialTicks);
+        return getWorld().getSunBrightnessFactor(partialTicks);
     }
 
     /**
@@ -165,19 +216,19 @@ public interface IForgeDimension
     @OnlyIn(Dist.CLIENT)
     default float getSunBrightness(float partialTicks)
     {
-        return getDimension().getWorld().getSunBrightnessBody(partialTicks);
+        return getWorld().getSunBrightnessBody(partialTicks);
     }
 
     @OnlyIn(Dist.CLIENT)
     default Vec3d getSkyColor(Entity cameraEntity, float partialTicks)
     {
-        return getDimension().getWorld().getSkyColorBody(cameraEntity, partialTicks);
+        return getWorld().getSkyColorBody(cameraEntity, partialTicks);
     }
 
     @OnlyIn(Dist.CLIENT)
     default Vec3d getCloudColor(float partialTicks)
     {
-        return getDimension().getWorld().getCloudColorBody(partialTicks);
+        return getWorld().getCloudColorBody(partialTicks);
     }
 
     /**
@@ -196,7 +247,7 @@ public interface IForgeDimension
     @OnlyIn(Dist.CLIENT)
     default float getStarBrightness(float partialTicks)
     {
-        float f = getDimension().getWorld().getCelestialAngle(partialTicks);
+        float f = getWorld().getCelestialAngle(partialTicks);
         float f1 = 1.0F - (MathHelper.cos(f * ((float)Math.PI * 2F)) * 2.0F + 0.25F);
         f1 = MathHelper.clamp(f1, 0.0F, 1.0F);
         return f1 * f1 * 0.5F;
@@ -206,48 +257,48 @@ public interface IForgeDimension
 
     default void calculateInitialWeather()
     {
-        getDimension().getWorld().calculateInitialWeatherBody();
+        getWorld().calculateInitialWeatherBody();
     }
 
     default void updateWeather()
     {
-        getDimension().getWorld().updateWeatherBody();
+        getWorld().updateWeatherBody();
     }
 
     default long getSeed()
     {
-        return getDimension().getWorld().getWorldInfo().getSeed();
+        return getWorld().getWorldInfo().getSeed();
     }
 
     default long getWorldTime()
     {
-        return getDimension().getWorld().getWorldInfo().getDayTime();
+        return getWorld().getWorldInfo().getDayTime();
     }
 
     default void setWorldTime(long time)
     {
-        getDimension().getWorld().getWorldInfo().setDayTime(time);
+        getWorld().getWorldInfo().setDayTime(time);
     }
 
     default BlockPos getSpawnPoint()
     {
-        WorldInfo info = getDimension().getWorld().getWorldInfo();
+        WorldInfo info = getWorld().getWorldInfo();
         return new BlockPos(info.getSpawnX(), info.getSpawnY(), info.getSpawnZ());
     }
 
     default void setSpawnPoint(BlockPos pos)
     {
-        getDimension().getWorld().getWorldInfo().setSpawn(pos);
+        getWorld().getWorldInfo().setSpawn(pos);
     }
 
     default boolean canMineBlock(EntityPlayer player, BlockPos pos)
     {
-        return getDimension().getWorld().canMineBlockBody(player, pos);
+        return getWorld().canMineBlockBody(player, pos);
     }
 
     default boolean isHighHumidity(BlockPos pos)
     {
-        return getDimension().getWorld().getBiome(pos).isHighHumidity();
+        return getWorld().getBiome(pos).isHighHumidity();
     }
 
     default int getHeight()
@@ -262,7 +313,7 @@ public interface IForgeDimension
 
     default double getHorizon()
     {
-        return getDimension().getWorld().getWorldInfo().getTerrainType().getHorizon(getDimension().getWorld());
+        return getWorld().getWorldInfo().getTerrainType().getHorizon(getWorld());
     }
 
     default String getSaveFolder()
@@ -282,5 +333,16 @@ public interface IForgeDimension
     default boolean shouldMapSpin(String entity, double x, double z, double rotation)
     {
         return getId() < 0;
+    }
+
+    /**
+     * Determines the dimension the player will be respawned in, typically this brings them back to the overworld.
+     *
+     * @param player The player that is respawning
+     * @return The dimension to respawn the player in
+     */
+    default int getRespawnDimension(net.minecraft.entity.player.EntityPlayerMP player)
+    {
+        return player.getSpawnDimension();
     }
 }

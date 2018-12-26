@@ -23,9 +23,9 @@ import net.minecraftforge.fml.ModLoadingClassLoader;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.fml.loading.DefaultModInfos;
 
+/*
 public class ForgeModContainer extends FMLModContainer
 {
-/*
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
     private static ForgeModContainer INSTANCE;
@@ -342,8 +342,6 @@ public class ForgeModContainer extends FMLModContainer
     {
         return updateJSONUrl;
     }
-
-    */
     public ForgeModContainer(ModLoadingClassLoader classLoader)
     {
         super(DefaultModInfos.forgeModInfo, "net.minecraftforge.common.ForgeMod", classLoader, null);
@@ -351,3 +349,5 @@ public class ForgeModContainer extends FMLModContainer
     }
 
 }
+
+*/

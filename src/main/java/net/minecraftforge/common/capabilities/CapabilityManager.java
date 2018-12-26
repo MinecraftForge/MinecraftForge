@@ -44,6 +44,7 @@ public enum CapabilityManager
 {
     INSTANCE;
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Type CAP_INJECT = Type.getType(CapabilityInject.class);
 
     /**
      * Registers a capability to be consumed by others.
@@ -76,9 +77,11 @@ public enum CapabilityManager
     private IdentityHashMap<String, List<Function<Capability<?>, Object>>> callbacks = new IdentityHashMap<>();
     public void injectCapabilities(List<ModFileScanData> data)
     {
-        final List<ModFileScanData.AnnotationData> capabilities = data.stream().map(ModFileScanData::getAnnotations).flatMap(Collection::stream).
-                filter(a -> Objects.equals(a.getClassType(), Type.getType(CapabilityInject.class))).
-                collect(Collectors.toList());
+        final List<ModFileScanData.AnnotationData> capabilities = data.stream()
+            .map(ModFileScanData::getAnnotations)
+            .flatMap(Collection::stream)
+            .filter(a -> CAP_INJECT.equals(a.getAnnotationType()))
+            .collect(Collectors.toList());
         capabilities.forEach(this::attachCapabilityToMethod);
     }
 

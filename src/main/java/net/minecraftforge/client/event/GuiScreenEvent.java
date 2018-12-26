@@ -22,20 +22,22 @@ package net.minecraftforge.client.event;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.util.InputMappings;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
+
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Event classes for GuiScreen events.
@@ -163,8 +165,8 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just before {@link GuiScreen#drawScreen(int, int, float)} is called.
-         * Cancel this event to skip {@link GuiScreen#drawScreen(int, int, float)}.
+         * This event fires just before {@link GuiScreen#render(int, int, float)} is called.
+         * Cancel this event to skip {@link GuiScreen#render(int, int, float)}.
          */
         @Cancelable
         public static class Pre extends DrawScreenEvent
@@ -176,7 +178,7 @@ public class GuiScreenEvent extends Event
         }
 
         /**
-         * This event fires just after {@link GuiScreen#drawScreen(int, int, float)} is called.
+         * This event fires just after {@link GuiScreen#render(int, int, float)} is called.
          */
         public static class Post extends DrawScreenEvent
         {
@@ -188,42 +190,15 @@ public class GuiScreenEvent extends Event
     }
 
     /**
-     * This event fires at the end of {@link GuiScreen#drawDefaultBackground()} and before the rest of the Gui draws.
+     * This event fires at the end of {@link GuiScreen#drawBackground(int)} and before the rest of the Gui draws.
      * This allows drawing next to Guis, above the background but below any tooltips.
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
-        //private final int mouseX;
-        //private final int mouseY;
-
         public BackgroundDrawnEvent(GuiScreen gui)
         {
             super(gui);
-            /*
-            final ScaledResolution scaledresolution = new ScaledResolution(gui.mc);
-            final int scaledWidth = scaledresolution.getScaledWidth();
-            final int scaledHeight = scaledresolution.getScaledHeight();
-            this.mouseX = Mouse.getX() * scaledWidth / gui.mc.displayWidth;
-            this.mouseY = scaledHeight - Mouse.getY() * scaledHeight / gui.mc.displayHeight - 1;
-            */
         }
-
-        /**
-         * The x coordinate of the mouse pointer on the screen.
-         * /
-        public int getMouseX()
-        {
-            return mouseX;
-        }
-
-        /**
-         * The y coordinate of the mouse pointer on the screen.
-         * /
-        public int getMouseY()
-        {
-            return mouseY;
-        }
-        */
     }
 
     /**
@@ -305,74 +280,388 @@ public class GuiScreenEvent extends Event
         }
     }
 
-    public static class MouseInputEvent extends GuiScreenEvent
+    public static abstract class MouseInputEvent extends GuiScreenEvent
     {
-        public MouseInputEvent(GuiScreen gui)
+        private final double mouseX;
+        private final double mouseY;
+
+        public MouseInputEvent(GuiScreen gui, double mouseX, double mouseY)
         {
             super(gui);
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
+        }
+
+        public double getMouseX()
+        {
+            return mouseX;
+        }
+
+        public double getMouseY()
+        {
+            return mouseY;
+        }
+    }
+
+    public static abstract class MouseClickedEvent extends MouseInputEvent
+    {
+        private final int button;
+
+        public MouseClickedEvent(GuiScreen gui, double mouseX, double mouseY, int button)
+        {
+            super(gui, mouseX, mouseY);
+            this.button = button;
+        }
+
+        public int getButton()
+        {
+            return button;
         }
 
         /**
-         * This event fires when mouse input is detected by a GuiScreen.
-         * Cancel this event to bypass {@link GuiScreen#handleMouseInput()}.
+         * This event fires when a mouse click is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#mouseClicked(double, double, int)}.
          */
         @Cancelable
-        public static class Pre extends MouseInputEvent
+        public static class Pre extends MouseClickedEvent
         {
-            public Pre(GuiScreen gui)
+            public Pre(GuiScreen gui, double mouseX, double mouseY, int button)
             {
-                super(gui);
+                super(gui, mouseX, mouseY, button);
             }
         }
 
         /**
-         * This event fires after {@link GuiScreen#handleMouseInput()} provided that the active
-         * screen has not been changed as a result of {@link GuiScreen#handleMouseInput()} and
-         * the {@link GuiScreen#mouseHandled} flag has not been set.
-         * Cancel this event when you successfully use the mouse input to prevent other handlers from using the same input.
+         * This event fires after {@link IGuiEventListener#mouseClicked(double, double, int)} if the click was not already handled.
+         * Cancel this event when you successfully use the mouse click, to prevent other handlers from using the same input.
          */
         @Cancelable
-        public static class Post extends MouseInputEvent
+        public static class Post extends MouseClickedEvent
         {
-            public Post(GuiScreen gui)
+            public Post(GuiScreen gui, double mouseX, double mouseY, int button)
             {
-                super(gui);
+                super(gui, mouseX, mouseY, button);
             }
         }
     }
 
-    public static class KeyboardInputEvent extends GuiScreenEvent
+    public static abstract class MouseReleasedEvent extends MouseInputEvent
     {
-        public KeyboardInputEvent(GuiScreen gui)
+        private final int button;
+
+        public MouseReleasedEvent(GuiScreen gui, double mouseX, double mouseY, int button)
         {
-            super(gui);
+            super(gui, mouseX, mouseY);
+            this.button = button;
+        }
+
+        public int getButton()
+        {
+            return button;
         }
 
         /**
-         * This event fires when keyboard input is detected by a GuiScreen.
-         * Cancel this event to bypass {@link GuiScreen#handleKeyboardInput()}.
+         * This event fires when a mouse release is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#mouseReleased(double, double, int)}.
          */
         @Cancelable
-        public static class Pre extends KeyboardInputEvent
+        public static class Pre extends MouseReleasedEvent
         {
-            public Pre(GuiScreen gui)
+            public Pre(GuiScreen gui, double mouseX, double mouseY, int button)
             {
-                super(gui);
+                super(gui, mouseX, mouseY, button);
             }
         }
 
         /**
-         * This event fires after {@link GuiScreen#handleKeyboardInput()} provided that the active
-         * screen has not been changed as a result of {@link GuiScreen#handleKeyboardInput()} and
-         * the {@link GuiScreen#keyHandled} flag has not been set.
+         * This event fires after {@link IGuiEventListener#mouseReleased(double, double, int)} if the release was not already handled.
+         * Cancel this event when you successfully use the mouse release, to prevent other handlers from using the same input.
+         */
+        @Cancelable
+        public static class Post extends MouseReleasedEvent
+        {
+            public Post(GuiScreen gui, double mouseX, double mouseY, int button)
+            {
+                super(gui, mouseX, mouseY, button);
+            }
+        }
+    }
+
+    public static abstract class MouseDragEvent extends MouseInputEvent
+    {
+        private final int mouseButton;
+        private final double dragX;
+        private final double dragY;
+
+        public MouseDragEvent(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+        {
+            super(gui, mouseX, mouseY);
+            this.mouseButton = mouseButton;
+            this.dragX = dragX;
+            this.dragY = dragY;
+        }
+
+        public int getMouseButton()
+        {
+            return mouseButton;
+        }
+
+        public double getDragX()
+        {
+            return dragX;
+        }
+
+        public double getDragY()
+        {
+            return dragY;
+        }
+
+        /**
+         * This event fires when a mouse drag is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#mouseDragged(double, double, int, double, double)}.
+         */
+        @Cancelable
+        public static class Pre extends MouseDragEvent
+        {
+            public Pre(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+            {
+                super(gui, mouseX, mouseY, mouseButton, dragX, dragY);
+            }
+        }
+
+        /**
+         * This event fires after {@link IGuiEventListener#mouseDragged(double, double, int, double, double)} if the drag was not already handled.
+         * Cancel this event when you successfully use the mouse drag, to prevent other handlers from using the same input.
+         */
+        @Cancelable
+        public static class Post extends MouseDragEvent
+        {
+            public Post(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+            {
+                super(gui, mouseX, mouseY, mouseButton, dragX, dragY);
+            }
+        }
+    }
+
+    public static abstract class MouseScrollEvent extends MouseInputEvent
+    {
+        private final double scrollDelta;
+
+        public MouseScrollEvent(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+        {
+            super(gui, mouseX, mouseY);
+            this.scrollDelta = scrollDelta;
+        }
+
+        public double getScrollDelta()
+        {
+            return scrollDelta;
+        }
+
+        /**
+         * This event fires when a mouse scroll is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#mouseScrolled(double)}.
+         */
+        @Cancelable
+        public static class Pre extends MouseScrollEvent
+        {
+            public Pre(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+            {
+                super(gui, mouseX, mouseY, scrollDelta);
+            }
+        }
+
+        /**
+         * This event fires after {@link IGuiEventListener#mouseScrolled(double)} if the scroll was not already handled.
+         * Cancel this event when you successfully use the mouse scroll, to prevent other handlers from using the same input.
+         */
+        @Cancelable
+        public static class Post extends MouseScrollEvent
+        {
+            public Post(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+            {
+                super(gui, mouseX, mouseY, scrollDelta);
+            }
+        }
+    }
+
+    public static abstract class KeyboardKeyEvent extends GuiScreenEvent
+    {
+        private final int keyCode;
+        private final int scanCode;
+        private final int modifiers;
+
+        public KeyboardKeyEvent(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+        {
+            super(gui);
+            this.keyCode = keyCode;
+            this.scanCode = scanCode;
+            this.modifiers = modifiers;
+        }
+
+        /**
+         * The keyboard key that was pressed or released
+         * https://www.glfw.org/docs/latest/group__keys.html
+         *
+         * @see GLFW key constants starting with "GLFW_KEY_"
+         */
+        public int getKeyCode()
+        {
+            return keyCode;
+        }
+
+        /**
+         * Platform-specific scan code.
+         * Used for {@link InputMappings#getInputByCode(int, int)}
+         *
+         * The scan code is unique for every key, regardless of whether it has a key code.
+         * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
+         * on the platform but they are safe to save to disk as custom key bindings.
+         */
+        public int getScanCode()
+        {
+            return scanCode;
+        }
+
+        /**
+         * Bit field representing the modifier keys pressed.
+         * https://www.glfw.org/docs/latest/group__mods.html
+         *
+         * @see GLFW#GLFW_MOD_SHIFT
+         * @see GLFW#GLFW_MOD_CONTROL
+         * @see GLFW#GLFW_MOD_ALT
+         * @see GLFW#GLFW_MOD_SUPER
+         */
+        public int getModifiers()
+        {
+            return modifiers;
+        }
+    }
+
+    public static abstract class KeyboardKeyPressedEvent extends KeyboardKeyEvent
+    {
+        public KeyboardKeyPressedEvent(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+        {
+            super(gui,  keyCode, scanCode, modifiers);
+        }
+
+        /**
+         * This event fires when keyboard input is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#keyPressed(int, int, int)}.
+         */
+        @Cancelable
+        public static class Pre extends KeyboardKeyPressedEvent
+        {
+            public Pre(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+            {
+                super(gui, keyCode, scanCode, modifiers);
+            }
+        }
+
+        /**
+         * This event fires after {@link IGuiEventListener#keyPressed(int, int, int)} if the key was not already handled.
          * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
          */
         @Cancelable
-        public static class Post extends KeyboardInputEvent
+        public static class Post extends KeyboardKeyPressedEvent
         {
-            public Post(GuiScreen gui)
+            public Post(GuiScreen gui, int keyCode, int scanCode, int modifiers)
             {
-                super(gui);
+                super(gui, keyCode, scanCode, modifiers);
+            }
+        }
+    }
+
+    public static abstract class KeyboardKeyReleasedEvent extends KeyboardKeyEvent
+    {
+        public KeyboardKeyReleasedEvent(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+        {
+            super(gui, keyCode, scanCode, modifiers);
+        }
+
+        /**
+         * This event fires when keyboard input is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#keyReleased(int, int, int)}.
+         */
+        @Cancelable
+        public static class Pre extends KeyboardKeyReleasedEvent
+        {
+            public Pre(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+            {
+                super(gui, keyCode, scanCode, modifiers);
+            }
+        }
+
+        /**
+         * This event fires after {@link IGuiEventListener#keyReleased(int, int, int)} if the key was not already handled.
+         * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
+         */
+        @Cancelable
+        public static class Post extends KeyboardKeyReleasedEvent
+        {
+            public Post(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+            {
+                super(gui, keyCode, scanCode, modifiers);
+            }
+        }
+    }
+
+    public static class KeyboardCharTypedEvent extends GuiScreenEvent
+    {
+        private final char codePoint;
+        private final int modifiers;
+
+        public KeyboardCharTypedEvent(GuiScreen gui, char codePoint, int modifiers)
+        {
+            super(gui);
+            this.codePoint = codePoint;
+            this.modifiers = modifiers;
+        }
+
+        /**
+         * The code point typed, used for text entry.
+         */
+        public char getCodePoint()
+        {
+            return codePoint;
+        }
+
+        /**
+         * Bit field representing the modifier keys pressed.
+         *
+         * @see GLFW#GLFW_MOD_SHIFT
+         * @see GLFW#GLFW_MOD_CONTROL
+         * @see GLFW#GLFW_MOD_ALT
+         * @see GLFW#GLFW_MOD_SUPER
+         */
+        public int getModifiers()
+        {
+            return modifiers;
+        }
+
+        /**
+         * This event fires when keyboard character input is detected for a GuiScreen, before it is handled.
+         * Cancel this event to bypass {@link IGuiEventListener#charTyped(char, int)}.
+         */
+        @Cancelable
+        public static class Pre extends KeyboardCharTypedEvent
+        {
+            public Pre(GuiScreen gui, char codePoint, int modifiers)
+            {
+                super(gui, codePoint, modifiers);
+            }
+        }
+
+        /**
+         * This event fires after {@link IGuiEventListener#charTyped(char, int)} if the character was not already handled.
+         * Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
+         */
+        @Cancelable
+        public static class Post extends KeyboardCharTypedEvent
+        {
+            public Post(GuiScreen gui, char codePoint, int modifiers)
+            {
+                super(gui, codePoint, modifiers);
             }
         }
     }

@@ -1,14 +1,6 @@
 --- a/net/minecraft/client/gui/GuiScreen.java
 +++ b/net/minecraft/client/gui/GuiScreen.java
-@@ -51,6 +51,7 @@
-    public boolean field_146291_p;
-    protected FontRenderer field_146289_q;
-    private URI field_175286_t;
-+   protected boolean keyHandled, mouseHandled; // Forge: allow canceling key and mouse Post events from handleMouseInput and handleKeyboardInput
- 
-    public void func_73863_a(int p_73863_1_, int p_73863_2_, float p_73863_3_) {
-       for(int i = 0; i < this.field_146292_n.size(); ++i) {
-@@ -87,7 +88,10 @@
+@@ -87,7 +87,10 @@
     }
  
     protected void func_146285_a(ItemStack p_146285_1_, int p_146285_2_, int p_146285_3_) {
@@ -20,7 +12,7 @@
     }
  
     public List<String> func_191927_a(ItemStack p_191927_1_) {
-@@ -106,25 +110,30 @@
+@@ -106,25 +109,30 @@
     }
  
     public void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_) {
@@ -57,7 +49,7 @@
           }
  
           if (l1 + i > this.field_146294_l) {
-@@ -150,8 +159,8 @@
+@@ -150,8 +158,8 @@
           this.func_73733_a(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, 1347420415, 1347420415);
           this.func_73733_a(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, 1344798847, 1344798847);
  
@@ -68,7 +60,7 @@
              this.field_146289_q.func_175063_a(s1, (float)l1, (float)i2, -1);
              if (k1 == 0) {
                 i2 += 2;
-@@ -279,9 +288,12 @@
+@@ -279,9 +287,12 @@
     }
  
     public void func_175281_b(String p_175281_1_, boolean p_175281_2_) {
@@ -81,7 +73,7 @@
  
        this.field_146297_k.field_71439_g.func_71165_d(p_175281_1_);
     }
-@@ -292,9 +304,13 @@
+@@ -292,9 +303,13 @@
        this.field_146289_q = p_146280_1_.field_71466_p;
        this.field_146294_l = p_146280_2_;
        this.field_146295_m = p_146280_3_;
@@ -95,11 +87,19 @@
     }
  
     public List<? extends IGuiEventListener> func_195074_b() {
-@@ -313,6 +329,7 @@
- 
-    public void func_146276_q_() {
-       this.func_146270_b(0);
+@@ -318,6 +333,7 @@
+    public void func_146270_b(int p_146270_1_) {
+       if (this.field_146297_k.field_71441_e != null) {
+          this.func_73733_a(0, 0, this.field_146294_l, this.field_146295_m, -1072689136, -804253680);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
+       } else {
+          this.func_146278_c(p_146270_1_);
+       }
+@@ -338,6 +354,7 @@
+       bufferbuilder.func_181662_b((double)this.field_146294_l, 0.0D, 0.0D).func_187315_a((double)((float)this.field_146294_l / 32.0F), (double)p_146278_1_).func_181669_b(64, 64, 64, 255).func_181675_d();
+       bufferbuilder.func_181662_b(0.0D, 0.0D, 0.0D).func_187315_a(0.0D, (double)p_146278_1_).func_181669_b(64, 64, 64, 255).func_181675_d();
+       tessellator.func_78381_a();
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
     }
  
-    public void func_146270_b(int p_146270_1_) {
+    public boolean func_73868_f() {

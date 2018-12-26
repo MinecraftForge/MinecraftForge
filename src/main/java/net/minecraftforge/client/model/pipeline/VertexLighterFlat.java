@@ -167,7 +167,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
             float y = position[v][1] - .5f;
             float z = position[v][2] - .5f;
 
-            //if(blockInfo.getBlock().isFullCube())
+//            if(blockInfo.getState().getBlock().isFullCube(blockInfo.getState()))
             {
                 x += normal[v][0] * .5f;
                 y += normal[v][1] * .5f;

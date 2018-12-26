@@ -28,7 +28,6 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -43,8 +42,7 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.ForgeModContainer;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.resource.IResourceType;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.resource.VanillaResourceType;
@@ -272,7 +270,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     public void checkSettings()
     {
-        boolean newEnabled = ForgeMod.forgeCloudsEnabled
+        boolean newEnabled = ForgeConfig.CLIENT.forgeCloudsEnabled()
                 && mc.gameSettings.shouldRenderClouds() != 0
                 && mc.world != null
                 && mc.world.dimension.isSurfaceWorld();
