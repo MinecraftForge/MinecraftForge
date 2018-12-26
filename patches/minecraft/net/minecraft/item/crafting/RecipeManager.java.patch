@@ -22,7 +22,7 @@
        }
  
        field_199521_c.info("Loaded {} recipes", (int)this.field_199522_d.size());
-+      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(this.field_199522_d.values());
++      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated();
     }
  
     public void func_199509_a(IRecipe p_199509_1_) {

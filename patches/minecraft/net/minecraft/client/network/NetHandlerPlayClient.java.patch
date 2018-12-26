@@ -46,7 +46,7 @@
        recipebookclient.func_199644_c();
        recipebookclient.func_199642_d().forEach(searchtree::func_194043_a);
        searchtree.func_194040_a();
-+      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated(p_199525_1_.func_199616_a());
++      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated();
     }
  
     public void func_200232_a(SPacketPlayerLook p_200232_1_) {

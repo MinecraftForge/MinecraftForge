@@ -814,9 +814,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(event);
     }
 
-    public static void onRecipesUpdated(Collection<IRecipe> recipes)
+    public static void onRecipesUpdated()
     {
-        Event event = new RecipesUpdatedEvent(recipes);
+        Event event = new RecipesUpdatedEvent();
         MinecraftForge.EVENT_BUS.post(event);
     }
 }
