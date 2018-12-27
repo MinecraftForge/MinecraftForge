@@ -39,14 +39,3 @@
        return list.get(p_205596_1_.nextInt(list.size()));
     }
  
-@@ -74,8 +96,8 @@
-    }
- 
-    public static class Builder<T> {
--      private final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
--      private boolean field_200053_b;
-+      protected final Set<Tag.ITagEntry<T>> field_200052_a = Sets.<Tag.ITagEntry<T>>newLinkedHashSet();
-+      protected boolean field_200053_b;
- 
-       public static <T> Tag.Builder<T> func_200047_a() {
-          return new Tag.Builder<T>();

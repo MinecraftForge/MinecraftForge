@@ -1,24 +1,6 @@
 --- a/net/minecraft/tags/TagCollection.java
 +++ b/net/minecraft/tags/TagCollection.java
-@@ -29,12 +29,12 @@
-    private static final Logger field_199918_a = LogManager.getLogger();
-    private static final Gson field_199919_b = new Gson();
-    private static final int field_199920_c = ".json".length();
--   private final Map<ResourceLocation, Tag<T>> field_199921_d = Maps.<ResourceLocation, Tag<T>>newHashMap();
--   private final Function<ResourceLocation, T> field_200040_e;
--   private final Predicate<ResourceLocation> field_200156_f;
-+   protected final Map<ResourceLocation, Tag<T>> field_199921_d = Maps.<ResourceLocation, Tag<T>>newHashMap();
-+   protected final Function<ResourceLocation, T> field_200040_e;
-+   protected final Predicate<ResourceLocation> field_200156_f;
-    private final String field_199923_f;
--   private final boolean field_200041_g;
--   private final String field_200157_i;
-+   protected boolean field_200041_g;
-+   protected final String field_200157_i;
- 
-    public TagCollection(Predicate<ResourceLocation> p_i48235_1_, Function<ResourceLocation, T> p_i48235_2_, String p_i48235_3_, boolean p_i48235_4_, String p_i48235_5_) {
-       this.field_200156_f = p_i48235_1_;
-@@ -59,7 +59,7 @@
+@@ -59,9 +59,11 @@
  
     public Tag<T> func_199915_b(ResourceLocation p_199915_1_) {
        Tag<T> tag = this.field_199921_d.get(p_199915_1_);
@@ -26,13 +8,8 @@
 +      return tag == null ? net.minecraftforge.common.tags.ForgeTagBuilder.empty(p_199915_1_) : tag;
     }
  
-    public Collection<ResourceLocation> func_199908_a() {
-@@ -83,6 +83,8 @@
-       this.field_199921_d.clear();
-    }
- 
 +   public void reload(ResourceLocation collectionId, IResourceManager resourceManager) {func_199909_a(resourceManager);}
 +
-    public void func_199909_a(IResourceManager p_199909_1_) {
-       Map<ResourceLocation, Tag.Builder<T>> map = Maps.<ResourceLocation, Tag.Builder<T>>newHashMap();
- 
+    public Collection<ResourceLocation> func_199908_a() {
+       return this.field_199921_d.keySet();
+    }
