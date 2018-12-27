@@ -91,9 +91,9 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T>
         return this;
     }
 
-    public ForgeTagCollection<T> enableExtendedLogging()
+    public ForgeTagCollection<T> setEnableExtendedLogging(boolean extendedLoggingEnabled)
     {
-        this.extendedLogging = true;
+        this.extendedLogging = extendedLoggingEnabled;
         return this;
     }
 
@@ -108,7 +108,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T>
         return this;
     }
 
-    public ForgeTagCollection<T> comparingItemsBy(Comparator<T> comparator)
+    public ForgeTagCollection<T> comparingEntriesBy(Comparator<T> comparator)
     {
         this.preserveOrder = false;
         this.comparingItems = comparator;

@@ -28,20 +28,35 @@ import java.util.function.Predicate;
 @ParametersAreNonnullByDefault
 public final class ForgeTagBuilder<T> extends Tag.Builder<T>
 {
-    public static Comparator<IForgeRegistryEntry<?>> registryNameComparator()
+    /**
+     *
+     * @param <T> The type of {@link IForgeRegistryEntry}. Completely irrelevant for the Comparator. Just here to save People using it from unnecessary casting.
+     * @return A comparator comparing {@link IForgeRegistryEntry} by their registryName's naturalOrder ({@link ResourceLocation} comparison).
+     */
+    public static <T> Comparator<IForgeRegistryEntry<T>> registryNameComparator()
     {
-        return Comparator.nullsFirst(Comparator.<IForgeRegistryEntry<?>, ResourceLocation>comparing(IForgeRegistryEntry::getRegistryName, Comparator.nullsFirst(Comparator.naturalOrder())));
+        return Comparator.comparing(IForgeRegistryEntry::getRegistryName, Comparator.naturalOrder());
     }
 
+    /**
+     *
+     * @param <T> The type of {@link Tag}. Completely irrelevant for the Comparator. Just here to save People using it from unnecessary casting.
+     * @return A comparator comparing {@link Tag}'s by their id's naturalOrder ({@link ResourceLocation} comparison).
+     */
     public static <T> Comparator<Tag<T>> tagIdComparator()
     {
-        return Comparator.nullsFirst(Comparator.<Tag<T>, ResourceLocation>comparing(Tag::getId, Comparator.nullsFirst(Comparator.naturalOrder())));
+        return Comparator.comparing(Tag::getId, Comparator.naturalOrder());
     }
 
-    //compares Vanilla TagEntries, sorting ListEntries and non-vanilla ITagEntry sub-classes to the front
+    /**
+     *
+     * @param <T> The type of {@link ITagEntry}. Completely irrelevant for the Comparator. Just here to save People using it from unnecessary casting.
+     * @return A Comparator comparing vanilla {@link ITagEntry}'s: sorting {@link Tag.ListEntry} and non-vanilla ITagEntry sub-classes to the front.
+     *         {@link Tag.TagEntry} will be sorted to the end, ordered by their serializedId's ({@link ResourceLocation} comparison).
+     */
     public static <T> Comparator<ITagEntry<T>> tagEntryComparator()
     {
-        return Comparator.nullsFirst(Comparator.<ITagEntry<T>, ResourceLocation>comparing(e -> (e instanceof Tag.TagEntry ? ((Tag.TagEntry<T>) e).getSerializedId() : null), Comparator.nullsFirst(Comparator.naturalOrder())));
+        return Comparator.comparing(e -> (e instanceof Tag.TagEntry ? ((Tag.TagEntry<T>) e).getSerializedId() : null), Comparator.nullsFirst(Comparator.naturalOrder()));
     }
 
     private static <T> void populateEntries(Iterable<ITagEntry<T>> entries, Consumer<Collection<T>> consumer)
@@ -73,8 +88,7 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T>
             return uncheckedComparator(Comparator.naturalOrder());
         else if (testItems.get(0) instanceof IForgeRegistryEntry)
             return uncheckedComparator(registryNameComparator());
-        else
-            return null;
+        return null;
     }
 
     public static <T> Tag<T> copyOf(ResourceLocation resourceLocationIn, Iterable<ITagEntry<T>> entries, boolean preserveOrder)
@@ -262,6 +276,6 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T>
     @FunctionalInterface
     public interface TagFactory<T>
     {
-        public Tag<T> build(ResourceLocation location, Set<ITagEntry<T>> entries, boolean preserveOrder, @Nullable Comparator<T> itemComparator);
+        public Tag<T> build(ResourceLocation location, Set<ITagEntry<T>> entries, boolean preserveOrder, @Nullable Comparator<T> entryComparator);
     }
 }
