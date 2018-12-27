@@ -35,7 +35,7 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T>
      */
     public static <T> Comparator<IForgeRegistryEntry<T>> registryNameComparator()
     {
-        return Comparator.comparing(IForgeRegistryEntry::getRegistryName, Comparator.naturalOrder());
+        return Comparator.comparing(IForgeRegistryEntry::getRegistryName);
     }
 
     /**
@@ -45,7 +45,7 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T>
      */
     public static <T> Comparator<Tag<T>> tagIdComparator()
     {
-        return Comparator.comparing(Tag::getId, Comparator.naturalOrder());
+        return Comparator.comparing(Tag::getId);
     }
 
     /**
