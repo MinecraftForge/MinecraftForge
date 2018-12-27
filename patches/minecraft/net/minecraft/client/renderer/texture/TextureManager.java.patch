@@ -12,7 +12,7 @@
  
     public void func_195410_a(IResourceManager p_195410_1_) {
        MissingTextureSprite.func_195676_d();
-+      net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Reloading Texture Manager", this.field_110585_a.entrySet().size(), true);
++      net.minecraftforge.fml.common.ProgressManager.run("Reloading Texture Manager", this.field_110585_a.entrySet().size(), true, (bar) -> {
        Iterator<Entry<ResourceLocation, ITextureObject>> iterator = this.field_110585_a.entrySet().iterator();
  
        while(iterator.hasNext()) {
@@ -26,7 +26,7 @@
              this.func_110579_a(entry.getKey(), itextureobject);
           }
        }
-+      net.minecraftforge.fml.common.ProgressManager.pop(bar);
++      }); // Forge: end progress bar
 +   }
  
 +   @Override

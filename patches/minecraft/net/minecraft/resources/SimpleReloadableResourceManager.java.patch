@@ -12,7 +12,7 @@
     }
  
     public void func_199005_a(List<IResourcePack> p_199005_1_) {
-+      net.minecraftforge.fml.common.ProgressManager.ProgressBar resReload = net.minecraftforge.fml.common.ProgressManager.push("Loading Resources", p_199005_1_.size() + 1, true);
++      net.minecraftforge.fml.common.ProgressManager.run("Loading Resources", p_199005_1_.size() + 1, true, (resReload) -> {;
        this.func_199008_b();
        field_199012_a.info("Reloading ResourceManager: {}", p_199005_1_.stream().map(IResourcePack::func_195762_a).collect(Collectors.joining(", ")));
  
@@ -27,12 +27,12 @@
        } else {
           this.func_199010_c();
        }
-+      net.minecraftforge.fml.common.ProgressManager.pop(resReload);
++      }); // Forge: end progress bar
  
     }
  
     public void func_199006_a(IResourceManagerReloadListener p_199006_1_) {
-+      net.minecraftforge.fml.common.ProgressManager.ProgressBar resReload = net.minecraftforge.fml.common.ProgressManager.push("Loading Resource", 1);
++      net.minecraftforge.fml.common.ProgressManager.run("Loading Resource", 1, (resReload) -> {
 +      resReload.step(p_199006_1_.getClass());
        this.field_199015_d.add(p_199006_1_);
        if (field_199012_a.isDebugEnabled()) {
@@ -40,18 +40,18 @@
        } else {
           p_199006_1_.func_195410_a(this);
        }
-+      net.minecraftforge.fml.common.ProgressManager.pop(resReload);
++      }); // Forge: end progress bar
  
     }
  
     private void func_199010_c() {
-+      net.minecraftforge.fml.common.ProgressManager.ProgressBar resReload = net.minecraftforge.fml.common.ProgressManager.push("Reloading", this.field_199015_d.size());
++      net.minecraftforge.fml.common.ProgressManager.run("Reloading", this.field_199015_d.size(), (resReload) -> {
        for(IResourceManagerReloadListener iresourcemanagerreloadlistener : this.field_199015_d) {
 +         resReload.step(iresourcemanagerreloadlistener.getClass());
 +         if (!net.minecraftforge.resource.SelectiveReloadStateHandler.INSTANCE.test(iresourcemanagerreloadlistener)) continue; // Forge: Selective reloading for vanilla listeners
           iresourcemanagerreloadlistener.func_195410_a(this);
        }
-+      net.minecraftforge.fml.common.ProgressManager.pop(resReload);
++      }); // Forge: end progress bar
  
     }
  

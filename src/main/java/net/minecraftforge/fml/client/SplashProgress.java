@@ -448,9 +448,10 @@ public class SplashProgress
                 drawBox(barWidth - 2, barHeight - 2);
                 // slidy part
                 setColor(barColor);
-                drawBox((barWidth - 2) * (b.getStep() + 1) / (b.getSteps() + 1), barHeight - 2); // Step can sometimes be 0.
+                int step = b.getStep();
+                drawBox((barWidth - 2) * (step + 1) / (b.getTotalSteps() + 1), barHeight - 2); // Step can sometimes be 0.
                 // progress text
-                String progress = "" + b.getStep() + "/" + b.getSteps();
+                String progress = "" + step + "/" + b.getTotalSteps();
                 glTranslatef(((float)barWidth - 2) / 2 - fontRenderer.getStringWidth(progress), 2, 0);
                 setColor(fontColor);
                 glScalef(2, 2, 1);

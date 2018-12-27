@@ -19,19 +19,10 @@
 
 package net.minecraftforge.fml.common;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import net.minecraftforge.fml.SidedProvider;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.MessageFormatMessage;
-
-import static net.minecraftforge.fml.Logging.SPLASH;
+import java.util.function.Consumer;
 
 /**
  * Not a fully fleshed out API, may change in future MC versions.
@@ -39,8 +30,27 @@ import static net.minecraftforge.fml.Logging.SPLASH;
  */
 public class ProgressManager
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-    private static final List<ProgressBar> bars = new CopyOnWriteArrayList<ProgressBar>();
+    private static final List<ProgressBar> bars = new CopyOnWriteArrayList<>();
+
+    /**
+     * Not a fully fleshed out API, may change in future MC versions.
+     * However feel free to use and suggest additions.
+     */
+    public static void run(String title, int steps, Consumer<ProgressBar> task)
+    {
+        run(title, steps, false, task);
+    }
+
+    /**
+     * Not a fully fleshed out API, may change in future MC versions.
+     * However feel free to use and suggest additions.
+     */
+    public static void run(String title, int steps, boolean timeEachStep, Consumer<ProgressBar> task)
+    {
+        ProgressBar bar = push(title, steps, timeEachStep);
+        task.accept(bar);
+        pop(bar);
+    }
 
     /**
      * Not a fully fleshed out API, may change in future MC versions.
@@ -50,18 +60,15 @@ public class ProgressManager
     {
         return push(title, steps, false);
     }
+
     /**
      * Not a fully fleshed out API, may change in future MC versions.
      * However feel free to use and suggest additions.
      */
     public static ProgressBar push(String title, int steps, boolean timeEachStep)
     {
-        ProgressBar bar = new ProgressBar(title, steps);
+        ProgressBar bar = new ProgressBar(title, steps, timeEachStep);
         bars.add(bar);
-        if (timeEachStep)
-        {
-            bar.timeEachStep();
-        }
 //        DistExecutor.runWhenOn(Dist.CLIENT, ()->SplashProgress::processMessages);
         return bar;
     }
@@ -72,18 +79,8 @@ public class ProgressManager
      */
     public static void pop(ProgressBar bar)
     {
-        if(bar.getSteps() != bar.getStep()) throw new IllegalStateException("can't pop unfinished ProgressBar " + bar.getTitle());
         bars.remove(bar);
-        if (bar.getSteps() != 0)
-        {
-            long newTime = System.nanoTime();
-            if (bar.timeEachStep)
-                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Step: {0} - {1} took {2,number,0.000}ms", bar.getTitle(), bar.getMessage(), (newTime - bar.lastTime) / 1.0e6));
-            if (bar.getSteps() == 1)
-                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0} - {1} took {2,number,0.000}ms", bar.getTitle(), bar.getMessage(), (newTime - bar.lastTime) / 1.0e6));
-            else
-                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0} took {1,number,0.000}ms", bar.getTitle(), (newTime - bar.lastTime) / 1.0e6));
-        }
+        bar.finish();
 //        DistExecutor.runWhenOn(Dist.CLIENT, ()->SplashProgress::processMessages);
     }
 
@@ -95,68 +92,4 @@ public class ProgressManager
         return bars.iterator();
     }
 
-
-    /**
-     * Not a fully fleshed out API, may change in future MC versions.
-     * However feel free to use and suggest additions.
-     */
-    public static class ProgressBar
-    {
-        private final String title;
-        private final int steps;
-        private volatile int step = 0;
-        private volatile String message = "";
-        private boolean timeEachStep = false;
-        private long startTime = System.nanoTime();
-        private long lastTime = startTime;
-
-        private ProgressBar(String title, int steps)
-        {
-            this.title = title;
-            this.steps = steps;
-        }
-
-        public void step(Class<?> classToName, String... extra)
-        {
-            step(ClassNameUtils.shortName(classToName)+ String.join(" ", extra));
-        }
-
-        public void step(String message)
-        {
-            if(step >= steps) throw new IllegalStateException("too much steps for ProgressBar " + title);
-            if (timeEachStep && step != 0)
-            {
-                long newTime = System.nanoTime();
-                LOGGER.debug(SPLASH,new MessageFormatMessage("Bar Step: {0} - {1} took {2,number,0.000}ms", getTitle(), getMessage(), (newTime - lastTime) / 1.0e6));
-                lastTime = newTime;
-            }
-            step += 1;
-            this.message = SidedProvider.STRIPCHARS.<Function<String, String>>get().apply(message);
-        }
-
-        public String getTitle()
-        {
-            return title;
-        }
-
-        public int getSteps()
-        {
-            return steps;
-        }
-
-        public int getStep()
-        {
-            return step;
-        }
-
-        public String getMessage()
-        {
-            return message;
-        }
-
-        public void timeEachStep()
-        {
-            this.timeEachStep = true;
-        }
-    }
 }
