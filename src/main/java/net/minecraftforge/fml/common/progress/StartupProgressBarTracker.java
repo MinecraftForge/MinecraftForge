@@ -23,6 +23,7 @@ import com.google.common.base.Stopwatch;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.client.SplashProgress;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.MessageFormatMessage;
@@ -40,6 +41,7 @@ class StartupProgressBarTracker implements IProgressBarTracker
 
     private final boolean timeEachStep;
     private final Stopwatch stopwatch;
+    private String logPrefix = "";
 
     StartupProgressBarTracker(boolean timeEachStep)
     {
@@ -50,9 +52,11 @@ class StartupProgressBarTracker implements IProgressBarTracker
     @Override
     public void onBarStarted(ProgressBar bar)
     {
+        int depth = bars.size();
+        logPrefix = StringUtils.repeat("  ", depth);
         bars.add(bar);
         DistExecutor.runWhenOn(Dist.CLIENT, ()-> SplashProgress::processMessages);
-        LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Starting: {0}", bar.getTitle()));
+        LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Starting: {1}", logPrefix, bar.getTitle()));
         stopwatch.start();
     }
 
@@ -61,7 +65,7 @@ class StartupProgressBarTracker implements IProgressBarTracker
     {
         if (timeEachStep)
         {
-            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Step: {0} - {1} starting", bar.getTitle(), message));
+            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Step: {1} - {2} starting", logPrefix, bar.getTitle(), message));
             stopwatch.reset();
             stopwatch.start();
         }
@@ -73,7 +77,7 @@ class StartupProgressBarTracker implements IProgressBarTracker
         if (timeEachStep)
         {
             stopwatch.stop();
-            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Step: {0} - {1} took {2}", bar.getTitle(), message, stopwatch));
+            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Step: {1} - {2} took {3}", logPrefix, bar.getTitle(), message, stopwatch));
         }
     }
 
@@ -87,11 +91,11 @@ class StartupProgressBarTracker implements IProgressBarTracker
         bars.remove(bar);
         if (timeEachStep)
         {
-            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0}", bar.getTitle()));
+            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Finished: {1}", logPrefix, bar.getTitle()));
         }
         else
         {
-            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("Bar Finished: {0} took {1}", bar.getTitle(), stopwatch));
+            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Finished: {1} took {2}", logPrefix, bar.getTitle(), stopwatch));
         }
         DistExecutor.runWhenOn(Dist.CLIENT, ()-> SplashProgress::processMessages);
     }
