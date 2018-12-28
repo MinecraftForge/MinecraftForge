@@ -80,7 +80,10 @@ class StartupProgressBarTracker implements IProgressBarTracker
     @Override
     public void onBarFinished(ProgressBar bar, int step, String message)
     {
-        stopwatch.stop();
+        if (stopwatch.isRunning())
+        {
+            stopwatch.stop();
+        }
         bars.remove(bar);
         if (timeEachStep)
         {
