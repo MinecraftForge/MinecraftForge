@@ -49,7 +49,7 @@ public class StartupProgressManager
 
     public static ProgressBar start(String title, int steps, boolean timeEachStep)
     {
-        StartupProgressBarTracker tracker = new StartupProgressBarTracker(timeEachStep);
+        StartupProgressBarTracker tracker = new StartupProgressBarTracker(timeEachStep, steps);
         return new ProgressBar(title, steps, stripChars, tracker);
     }
 

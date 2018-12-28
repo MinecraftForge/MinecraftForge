@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.MessageFormatMessage;
 
+import javax.annotation.Nullable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -40,64 +41,82 @@ class StartupProgressBarTracker implements IProgressBarTracker
     private static final List<ProgressBar> bars = new CopyOnWriteArrayList<>();
 
     private final boolean timeEachStep;
+    private final int steps;
     private final Stopwatch stopwatch;
+    @Nullable
+    private Stopwatch stepStopwatch;
     private String logPrefix = "";
 
-    StartupProgressBarTracker(boolean timeEachStep)
+    StartupProgressBarTracker(boolean timeEachStep, int steps)
     {
         this.timeEachStep = timeEachStep;
+        this.steps = steps;
         this.stopwatch = Stopwatch.createUnstarted();
     }
 
     @Override
-    public void onBarStarted(ProgressBar bar)
+    public void onBarCreated(ProgressBar bar)
     {
         int depth = bars.size();
-        logPrefix = StringUtils.repeat("  ", depth);
+        logPrefix = StringUtils.repeat("        ", depth);
         bars.add(bar);
         DistExecutor.runWhenOn(Dist.CLIENT, ()-> SplashProgress::processMessages);
-        LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Starting: {1}", logPrefix, bar.getTitle()));
-        stopwatch.start();
     }
 
     @Override
     public void onStepStarted(ProgressBar bar, int step, String message)
     {
-        if (timeEachStep)
+        if (step == 1)
         {
-            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Step: {1} - {2} starting", logPrefix, bar.getTitle(), message));
-            stopwatch.reset();
+            if (steps > 1)
+            {
+                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Starting: {1}", logPrefix, bar.getTitle()));
+                if (timeEachStep)
+                {
+                    stepStopwatch = Stopwatch.createStarted();
+                }
+            }
+            else
+            {
+                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Starting: {1} - {2}", logPrefix, bar.getTitle(), message));
+            }
             stopwatch.start();
+        }
+        if (stepStopwatch != null)
+        {
+            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}    Bar Step: {1} - {2} - starting", logPrefix, bar.getTitle(), message));
+            stepStopwatch.reset();
+            stepStopwatch.start();
         }
     }
 
     @Override
     public void onStepFinished(ProgressBar bar, int step, String message)
     {
-        if (timeEachStep)
+        if (stepStopwatch != null)
         {
-            stopwatch.stop();
-            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Step: {1} - {2} took {3}", logPrefix, bar.getTitle(), message, stopwatch));
+            stepStopwatch.stop();
+            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}    Bar Step: {1} - {2} - took {3}", logPrefix, bar.getTitle(), message, stepStopwatch));
         }
     }
 
     @Override
     public void onBarFinished(ProgressBar bar, int step, String message)
     {
-        if (stopwatch.isRunning())
+        if (steps > 0)
         {
             stopwatch.stop();
+            bars.remove(bar);
+            if (steps > 1)
+            {
+                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Finished: {1} - took {2}", logPrefix, bar.getTitle(), stopwatch));
+            }
+            else
+            {
+                LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Finished: {1} - {2} - took {3}", logPrefix, bar.getTitle(), message, stopwatch));
+            }
+            DistExecutor.runWhenOn(Dist.CLIENT, () -> SplashProgress::processMessages);
         }
-        bars.remove(bar);
-        if (timeEachStep)
-        {
-            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Finished: {1}", logPrefix, bar.getTitle()));
-        }
-        else
-        {
-            LOGGER.debug(SPLASH, () -> new MessageFormatMessage("{0}Bar Finished: {1} took {2}", logPrefix, bar.getTitle(), stopwatch));
-        }
-        DistExecutor.runWhenOn(Dist.CLIENT, ()-> SplashProgress::processMessages);
     }
 
     /**

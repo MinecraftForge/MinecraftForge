@@ -43,7 +43,7 @@ public final class ProgressBar implements AutoCloseable
         this.totalSteps = totalSteps;
         this.stripChars = stripChars;
         this.tracker = tracker;
-        this.tracker.onBarStarted(this);
+        this.tracker.onBarCreated(this);
     }
 
     public void step(Class<?> classToName, String... extra)
