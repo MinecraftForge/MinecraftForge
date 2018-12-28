@@ -14,7 +14,7 @@
  
 -      for(ResourceLocation resourcelocation : this.field_195427_i) {
 +      field_147635_d.info("Max texture size: {}", i);
-+      net.minecraftforge.fml.common.ProgressBar textureLoadingBar = net.minecraftforge.fml.common.ProgressManager.push("Texture loading", this.field_195427_i.size());
++      try (net.minecraftforge.fml.common.progress.ProgressBar textureLoadingBar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture loading", this.field_195427_i.size())) {
 +      loadedSprites.clear();
 +      for(ResourceLocation resourcelocation : Sets.newHashSet(this.field_195427_i)) {
 +         textureLoadingBar.step(this.func_195420_b(resourcelocation).toString());
@@ -28,7 +28,7 @@
              stitcher.func_110934_a(textureatlassprite);
           }
        }
-+      net.minecraftforge.fml.common.ProgressManager.pop(textureLoadingBar);
++      } // Forge: end progress bar
  
        int l = Math.min(j, k);
        int i1 = MathHelper.func_151239_c(l);
@@ -40,7 +40,7 @@
  
        this.field_94249_f.func_147963_d(this.field_147636_j);
        stitcher.func_110934_a(this.field_94249_f);
-+      net.minecraftforge.fml.common.ProgressManager.run("Texture creation", 2, (bar) -> {
++      try (net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture creation", 2)) {
  
        try {
 +         bar.step("Stitching");
@@ -53,8 +53,8 @@
 +      bar.step("Allocating GL texture");
        TextureUtil.func_180600_a(this.func_110552_b(), this.field_147636_j, stitcher.func_110935_a(), stitcher.func_110936_b());
  
-+      }); // Forge: end progress bar
-+      net.minecraftforge.fml.common.ProgressManager.run("Texture mipmap and upload", stitcher.func_94309_g().size(), (bar) -> {
++      }; // Forge: end progress bar
++      try (net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture mipmap and upload", stitcher.func_94309_g().size())) {
        for(TextureAtlasSprite textureatlassprite1 : stitcher.func_94309_g()) {
 -         if (textureatlassprite1 == this.field_94249_f || this.func_195422_a(p_195421_1_, textureatlassprite1)) {
 +         bar.step(textureatlassprite1.func_195668_m().toString());
@@ -68,7 +68,7 @@
        }
  
 +      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
-+      }); // Forge: end progress bar
++      }; // Forge: end progress bar
     }
  
     private boolean func_195422_a(IResourceManager p_195422_1_, TextureAtlasSprite p_195422_2_) {

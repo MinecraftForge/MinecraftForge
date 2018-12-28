@@ -21,7 +21,7 @@
           }
        }
  
-+      net.minecraftforge.fml.common.ProgressManager.run("Loading sounds", resources.size(), (resourcesBar) -> {
++      try (net.minecraftforge.fml.common.progress.ProgressBar resourcesBar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Loading sounds", resources.size())) {
 +      resources.forEach(entry -> {
 +          resourcesBar.step(entry.func_76341_a().toString());
 +          try {
@@ -30,7 +30,7 @@
 +              field_147698_b.warn("Invalid sounds.json", e);
 +          }
 +      });
-+      }); // Forge: end progress bar
++      }; // Forge: end progress bar
 +
        for(ResourceLocation resourcelocation : this.field_147697_e.func_148742_b()) {
           SoundEventAccessor soundeventaccessor = (SoundEventAccessor)this.field_147697_e.func_82594_a(resourcelocation);
