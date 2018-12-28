@@ -83,11 +83,8 @@ public enum SidedProvider
         else if (FMLEnvironment.dist == Dist.DEDICATED_SERVER) {
             return (T)this.serverSide.apply(server);
         }
-        else if (FMLEnvironment.dist == null) {
-            return (T)this.testSide.get();
-        }
         else {
-            throw new IllegalArgumentException("THREE SIDES? WUT?");
+            return (T)this.testSide.get();
         }
     }
 }
