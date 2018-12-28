@@ -132,7 +132,7 @@ public class TestProgressBar
         }
 
         @Override
-        public void onBarStart(ProgressBar bar)
+        public void onBarStarted(ProgressBar bar)
         {
             bars.add(bar);
             int expectedStepCount = 0;

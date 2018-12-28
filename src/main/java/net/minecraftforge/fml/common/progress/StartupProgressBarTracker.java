@@ -48,7 +48,7 @@ class StartupProgressBarTracker implements IProgressBarTracker
     }
 
     @Override
-    public void onBarStart(ProgressBar bar)
+    public void onBarStarted(ProgressBar bar)
     {
         bars.add(bar);
         DistExecutor.runWhenOn(Dist.CLIENT, ()-> SplashProgress::processMessages);

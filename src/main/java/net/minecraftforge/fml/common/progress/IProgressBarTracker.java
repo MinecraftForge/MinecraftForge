@@ -21,7 +21,7 @@ package net.minecraftforge.fml.common.progress;
 
 public interface IProgressBarTracker
 {
-    default void onBarStart(ProgressBar bar) {}
+    default void onBarStarted(ProgressBar bar) {}
 
     default void onStepStarted(ProgressBar bar, int step, String message) {}
 
