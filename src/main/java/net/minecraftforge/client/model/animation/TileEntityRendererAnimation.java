@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
@@ -31,7 +32,6 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
 import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
-import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.IExtendedBlockState;
@@ -39,18 +39,16 @@ import net.minecraftforge.common.property.Properties;
 
 import java.util.Random;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 /**
- * Generic TileEntitySpecialRenderer that works with the Forge model system and animations.
+ * Generic {@link TileEntityRenderer} that works with the Forge model system and animations.
  */
-public class AnimationTESR<T extends TileEntity> extends TileEntityRendererFast<T> implements IEventHandler<T>
+public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntityRendererFast<T> implements IEventHandler<T>
 {
     protected static BlockRendererDispatcher blockRenderer;
 
     @Override
     public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, BufferBuilder renderer)
-   {
+    {
         OptionalCapabilityInstance<IAnimationStateMachine> cap = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY);
         if(!cap.isPresent())
         {

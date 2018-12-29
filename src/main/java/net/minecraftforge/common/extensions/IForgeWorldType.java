@@ -19,6 +19,7 @@ import net.minecraft.world.gen.layer.GenLayerZoom;
 import net.minecraft.world.gen.layer.LayerUtil;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.config.IArrayEntry;
 
 public interface IForgeWorldType
 {
@@ -81,17 +82,19 @@ public interface IForgeWorldType
     }
 
     /**
-     * Creates the GenLayerBiome used for generating the world with the specified
-     * ChunkProviderSettings JSON String *IF AND ONLY IF* this WorldType ==
-     * WorldType.CUSTOMIZED.
+     * Allows modifying the {@link IAreaFactory} used for this type's biome
+     * generation.
      *
-     *
-     * @param worldSeed     The world seed
-     * @param parentLayer   The parent layer to feed into any layer you return
-     * @param chunkSettings The ChunkGeneratorSettings constructed from the custom
-     *                      JSON
-     * @return A GenLayer that will return ints representing the Biomes to be
-     *         generated, see GenLayerBiome
+     * @param                <T> The type of {@link IArea}.
+     * @param                <C> The type of {@link IContextExtended}.
+     * 
+     * @param parentLayer    The parent layer to feed into any layer you return
+     * @param chunkSettings  The {@link OverworldGenSettings} used to create the
+     *                       {@link GenLayerBiome}.
+     * @param contextFactory A {@link LongFunction} factory to create contexts of
+     *                       the supplied size.
+     * @return An {@link IAreaFactory} that representing the Biomes to be generated.
+     * @see {@link GenLayerBiome}
      */
     default <T extends IArea, C extends IContextExtended<T>> IAreaFactory<T> getBiomeLayer(IAreaFactory<T> parentLayer,
             OverworldGenSettings chunkSettings, LongFunction<C> contextFactory)
