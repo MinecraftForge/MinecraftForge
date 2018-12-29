@@ -40,13 +40,13 @@
           throw new IllegalStateException("Duplicate recipe ignored with ID " + p_199509_1_.func_199560_c());
        } else {
           this.field_199522_d.put(p_199509_1_.func_199560_c(), p_199509_1_);
-+         this.sortedRecipes.computeIfAbsent(p_199509_1_.getType(), t -> Maps.newHashMap()).put(p_199509_1_.func_199560_c(), p_199509_1_);
++         recipesByType(p_199509_1_.getType()).put(p_199509_1_.func_199560_c(), p_199509_1_);
        }
     }
  
     public ItemStack func_199514_a(IInventory p_199514_1_, World p_199514_2_) {
 -      for(IRecipe irecipe : this.field_199522_d.values()) {
-+      for(IRecipe irecipe : this.sortedRecipes.computeIfAbsent(p_199514_1_.getRecipeType(), t -> Maps.newHashMap()).values()) {
++      for(IRecipe irecipe : recipesByType(p_199514_1_.getRecipeType()).values()) {
           if (irecipe.func_77569_a(p_199514_1_, p_199514_2_)) {
              return irecipe.func_77572_b(p_199514_1_);
           }
@@ -55,7 +55,7 @@
     @Nullable
     public IRecipe func_199515_b(IInventory p_199515_1_, World p_199515_2_) {
 -      for(IRecipe irecipe : this.field_199522_d.values()) {
-+      for(IRecipe irecipe : this.sortedRecipes.computeIfAbsent(p_199515_1_.getRecipeType(), t -> Maps.newHashMap()).values()) {
++      for(IRecipe irecipe : recipesByType(p_199515_1_.getRecipeType()).values()) {
           if (irecipe.func_77569_a(p_199515_1_, p_199515_2_)) {
              return irecipe;
           }
@@ -64,23 +64,28 @@
  
     public NonNullList<ItemStack> func_199513_c(IInventory p_199513_1_, World p_199513_2_) {
 -      for(IRecipe irecipe : this.field_199522_d.values()) {
-+      for(IRecipe irecipe : this.sortedRecipes.computeIfAbsent(p_199513_1_.getRecipeType(), t -> Maps.newHashMap()).values()) {
++      for(IRecipe irecipe : recipesByType(p_199513_1_.getRecipeType()).values()) {
           if (irecipe.func_77569_a(p_199513_1_, p_199513_2_)) {
              return irecipe.func_179532_b(p_199513_1_);
           }
-@@ -123,5 +130,15 @@
+@@ -123,5 +130,20 @@
     @OnlyIn(Dist.CLIENT)
     public void func_199518_d() {
        this.field_199522_d.clear();
 +      this.sortedRecipes.clear();
     }
-+   
++
 +   public Collection<IRecipe> getRecipes(net.minecraftforge.common.crafting.IRecipeType type) {
-+	   return this.sortedRecipes.computeIfAbsent(type, t -> Maps.newHashMap()).values();
++      return recipesByType(type).values();
 +   }
 +
++   @Override
 +   public net.minecraftforge.resource.IResourceType getResourceType() {
-+	   return net.minecraftforge.resource.VanillaResourceType.RECIPES;
++      return net.minecraftforge.resource.VanillaResourceType.RECIPES;
++   }
++
++   private Map<ResourceLocation, IRecipe> recipesByType(net.minecraftforge.common.crafting.IRecipeType type) {
++      return this.sortedRecipes.computeIfAbsent(type, t -> Maps.newHashMap());
 +   }
 +
  }
