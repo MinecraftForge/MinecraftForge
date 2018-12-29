@@ -45,7 +45,7 @@ public interface IForgeWorldType
     {
         if (this == WorldType.FLAT)
             mc.displayGuiScreen(new GuiCreateFlatWorld(gui, gui.chunkProviderSettingsJson));
-        else if (this == WorldType.CUSTOMIZED)
+        else if (this == WorldType.BUFFET)
             mc.displayGuiScreen(new GuiCreateBuffetWorld(gui, gui.chunkProviderSettingsJson));
     }
 
