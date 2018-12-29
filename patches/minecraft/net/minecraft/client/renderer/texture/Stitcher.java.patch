@@ -13,9 +13,8 @@
     public void func_94305_f() {
        Stitcher.Holder[] astitcher$holder = (Stitcher.Holder[])this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
        Arrays.sort((Object[])astitcher$holder);
--
-+      net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Texture stitching", astitcher$holder.length);
-+      
++      try(net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture stitching", astitcher$holder.length)) {
+ 
        for(Stitcher.Holder stitcher$holder : astitcher$holder) {
 +         bar.step(stitcher$holder.func_98150_a().func_195668_m().toString());
           if (!this.func_94310_b(stitcher$holder)) {
@@ -29,7 +28,7 @@
  
        this.field_94318_c = MathHelper.func_151236_b(this.field_94318_c);
        this.field_94315_d = MathHelper.func_151236_b(this.field_94315_d);
-+      net.minecraftforge.fml.common.ProgressManager.pop(bar);
++      }; // Forge: end progress bar
     }
  
     public List<TextureAtlasSprite> func_94309_g() {
