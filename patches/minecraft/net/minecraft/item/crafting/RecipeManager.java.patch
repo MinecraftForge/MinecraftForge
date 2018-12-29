@@ -1,15 +1,24 @@
 --- a/net/minecraft/item/crafting/RecipeManager.java
 +++ b/net/minecraft/item/crafting/RecipeManager.java
-@@ -37,6 +37,8 @@
+@@ -30,13 +30,17 @@
+    public static final int field_199519_a = "recipes/".length();
+    public static final int field_199520_b = ".json".length();
+    private final Map<ResourceLocation, IRecipe> field_199522_d = Maps.<ResourceLocation, IRecipe>newHashMap();
++   private final Map<net.minecraftforge.common.crafting.IRecipeType, Map<ResourceLocation, IRecipe>> sortedRecipes = Maps.newHashMap();
+    private boolean field_199523_e;
+ 
+    public void func_195410_a(IResourceManager p_195410_1_) {
+       Gson gson = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
        this.field_199523_e = false;
        this.field_199522_d.clear();
++      this.sortedRecipes.clear();
  
 +      net.minecraftforge.common.crafting.CraftingHelper.reloadConstants(p_195410_1_);
 +
        for(ResourceLocation resourcelocation : p_195410_1_.func_199003_a("recipes", (p_199516_0_) -> {
           return p_199516_0_.endsWith(".json");
        })) {
-@@ -47,6 +49,8 @@
+@@ -47,6 +51,8 @@
              JsonObject jsonobject = (JsonObject)JsonUtils.func_188178_a(gson, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), JsonObject.class);
              if (jsonobject == null) {
                 field_199521_c.error("Couldn't load recipe {} as it's null or empty", (Object)resourcelocation1);
@@ -18,3 +27,60 @@
              } else {
                 this.func_199509_a(RecipeSerializers.func_199572_a(resourcelocation1, jsonobject));
              }
+@@ -54,7 +60,7 @@
+             field_199521_c.error("Parsing error loading recipe {}", resourcelocation1, jsonparseexception);
+             this.field_199523_e = true;
+          } catch (IOException ioexception) {
+-            field_199521_c.error("Couldn't read custom advancement {} from {}", resourcelocation1, resourcelocation, ioexception);
++            field_199521_c.error("Couldn't read custom recipe {} from {}", resourcelocation1, resourcelocation, ioexception);
+             this.field_199523_e = true;
+          }
+       }
+@@ -67,11 +73,12 @@
+          throw new IllegalStateException("Duplicate recipe ignored with ID " + p_199509_1_.func_199560_c());
+       } else {
+          this.field_199522_d.put(p_199509_1_.func_199560_c(), p_199509_1_);
++         this.sortedRecipes.computeIfAbsent(p_199509_1_.getType(), t -> Maps.newHashMap()).put(p_199509_1_.func_199560_c(), p_199509_1_);
+       }
+    }
+ 
+    public ItemStack func_199514_a(IInventory p_199514_1_, World p_199514_2_) {
+-      for(IRecipe irecipe : this.field_199522_d.values()) {
++      for(IRecipe irecipe : this.sortedRecipes.computeIfAbsent(p_199514_1_.getRecipeType(), t -> Maps.newHashMap()).values()) {
+          if (irecipe.func_77569_a(p_199514_1_, p_199514_2_)) {
+             return irecipe.func_77572_b(p_199514_1_);
+          }
+@@ -82,7 +89,7 @@
+ 
+    @Nullable
+    public IRecipe func_199515_b(IInventory p_199515_1_, World p_199515_2_) {
+-      for(IRecipe irecipe : this.field_199522_d.values()) {
++      for(IRecipe irecipe : this.sortedRecipes.computeIfAbsent(p_199515_1_.getRecipeType(), t -> Maps.newHashMap()).values()) {
+          if (irecipe.func_77569_a(p_199515_1_, p_199515_2_)) {
+             return irecipe;
+          }
+@@ -92,7 +99,7 @@
+    }
+ 
+    public NonNullList<ItemStack> func_199513_c(IInventory p_199513_1_, World p_199513_2_) {
+-      for(IRecipe irecipe : this.field_199522_d.values()) {
++      for(IRecipe irecipe : this.sortedRecipes.computeIfAbsent(p_199513_1_.getRecipeType(), t -> Maps.newHashMap()).values()) {
+          if (irecipe.func_77569_a(p_199513_1_, p_199513_2_)) {
+             return irecipe.func_179532_b(p_199513_1_);
+          }
+@@ -123,5 +130,15 @@
+    @OnlyIn(Dist.CLIENT)
+    public void func_199518_d() {
+       this.field_199522_d.clear();
++      this.sortedRecipes.clear();
+    }
++   
++   public Collection<IRecipe> getRecipes(net.minecraftforge.common.crafting.IRecipeType type) {
++	   return this.sortedRecipes.computeIfAbsent(type, t -> Maps.newHashMap()).values();
++   }
++
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++	   return net.minecraftforge.resource.VanillaResourceType.RECIPES;
++   }
++
+ }

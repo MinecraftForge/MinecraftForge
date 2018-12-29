@@ -42,3 +42,12 @@
     default String func_193358_e() {
        return "";
     }
+@@ -48,4 +43,8 @@
+    ResourceLocation func_199560_c();
+ 
+    IRecipeSerializer<?> func_199559_b();
++   
++   default net.minecraftforge.common.crafting.IRecipeType getType() {
++	   return net.minecraftforge.common.crafting.VanillaRecipeType.CRAFTING;
++   }
+ }

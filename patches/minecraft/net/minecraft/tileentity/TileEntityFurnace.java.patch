@@ -75,7 +75,7 @@
     }
  
     public boolean func_70300_a(EntityPlayer p_70300_1_) {
-@@ -501,4 +506,27 @@
+@@ -501,4 +506,31 @@
  
        this.field_203901_m.clear();
     }
@@ -101,5 +101,9 @@
 +      super.func_145843_s();
 +      for (int x = 0; x < handlers.length; x++)
 +          handlers[x].invalidate();
++   }
++
++   public net.minecraftforge.common.crafting.IRecipeType getRecipeType() {
++	   return net.minecraftforge.common.crafting.VanillaRecipeType.FURNACE;
 +   }
  }
