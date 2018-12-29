@@ -20,7 +20,6 @@
 package net.minecraftforge.fml;
 
 import net.minecraftforge.fml.common.event.ModLifecycleEvent;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -64,9 +63,9 @@ public enum LifecycleEventProvider
             return ModLoadingStage.values()[this.stage.ordinal()+1];
         }
 
-        public ModLifecycleEvent buildModEvent(FMLModContainer fmlModContainer)
+        public ModLifecycleEvent buildModEvent(ModContainer modContainer)
         {
-            return stage.getModEvent(fmlModContainer);
+            return stage.getModEvent(modContainer);
         }
     }
 }
