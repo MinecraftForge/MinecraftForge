@@ -29,6 +29,7 @@ import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Floats;
 import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import com.google.common.primitives.Shorts;
 
 import net.minecraftforge.common.config.Property.Type;
@@ -43,6 +44,7 @@ class TypeAdapters
     *    char, char[], Character, Character[]
     *    short, short[], Short, Short[]
     *    int, int[], Integer, Integer[]
+    *    long, long[], Long, Long[]
     *    String, String[]
     */
     static ITypeAdapter bool = new ITypeAdapter() {
@@ -814,6 +816,113 @@ class TypeAdapters
             return true;
         }
     };
+
+    static ITypeAdapter long_ = new ITypeAdapter() {
+        @Override
+        public Object getValue(Property prop) {
+            return prop.getLong();
+        }
+        @Override
+        public void setDefaultValue(Property property, Object value)
+        {
+            property.setDefaultValue((Long)value);
+        }
+        @Override
+        public void setValue(Property property, Object value)
+        {
+            property.setValue((Long)value);
+        }
+        @Override
+        public Type getType()
+        {
+            return Type.LONG;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
+        }
+    };
+    static ITypeAdapter longA = new ITypeAdapter() {
+        @Override
+        public Object getValue(Property prop) {
+            return prop.getLongList();
+        }
+        @Override
+        public void setDefaultValue(Property property, Object value)
+        {
+            property.setDefaultValues((long[])value);
+        }
+        @Override
+        public void setValue(Property property, Object value)
+        {
+            property.setValues((long[])value);
+        }
+        @Override
+        public Type getType()
+        {
+            return Type.LONG;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
+    };
+    static ITypeAdapter Long = new ITypeAdapter() {
+        @Override
+        public Object getValue(Property prop) {
+            return (Long)prop.getLong();
+        }
+        @Override
+        public void setDefaultValue(Property property, Object value)
+        {
+            property.setDefaultValue((Long)value);
+        }
+        @Override
+        public void setValue(Property property, Object value)
+        {
+            property.setValue((Long)value);
+        }
+        @Override
+        public Type getType()
+        {
+            return Type.LONG;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return false;
+        }
+    };
+    static ITypeAdapter LongA = new ITypeAdapter() {
+        @Override
+        public Object getValue(Property prop) {
+            return Longs.asList(prop.getLongList()).toArray(new Long[prop.getLongList().length]);
+        }
+        @Override
+        public void setDefaultValue(Property property, Object value)
+        {
+            property.setDefaultValues(Longs.toArray(Arrays.asList((Long[])value)));
+        }
+        @Override
+        public void setValue(Property property, Object value)
+        {
+            property.setValues(Longs.toArray(Arrays.asList((Long[])value)));
+        }
+        @Override
+        public Type getType()
+        {
+            return Type.LONG;
+        }
+        @Override
+        public boolean isArrayAdapter()
+        {
+            return true;
+        }
+    };
+
+
     static ITypeAdapter Str = new ITypeAdapter() {
         @Override
         public Object getValue(Property prop) {

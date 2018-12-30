@@ -50,7 +50,8 @@ public class Property
         BOOLEAN,
         DOUBLE,
         COLOR,
-        MOD_ID;
+        MOD_ID,
+        LONG;
 
         public static Type tryParse(char id)
         {
@@ -554,6 +555,21 @@ public class Property
     }
 
     /**
+     * Sets the default long[] values of this Property.
+     *
+     * @param defaultValues an array of long values
+     */
+    public Property setDefaultValues(long[] defaultValues)
+    {
+        String[] temp = new String[defaultValues.length];
+        for(int i = 0; i < defaultValues.length; i++)
+            temp[i] = Long.toString(defaultValues[i]);
+
+        setDefaultValues(temp);
+        return this;
+    }
+
+    /**
      * Sets the default double value of this Property.
      *
      * @param defaultValue a double value
@@ -954,6 +970,56 @@ public class Property
     }
 
     /**
+     * Returns the long value of all values that can
+     * be parsed in the list.
+     *
+     * @return Array of length 0 if none of the values could be parsed.
+     */
+    public long[] getLongList()
+    {
+        ArrayList<Long> nums = new ArrayList<>();
+
+        for(String value : values)
+        {
+            try
+            {
+                nums.add(Long.parseLong(value));
+            }
+            catch (NumberFormatException e){}
+        }
+
+        long[] primitives = new long[nums.size()];
+
+        for(int i = 0; i < nums.size(); i++)
+        {
+            primitives[i] = nums.get(i);
+        }
+
+        return primitives;
+    }
+
+    /**
+     * Checks if all of the current values stored in this property can be converted to a long.
+     * @return True if the type of the Property is a Long List
+     */
+    public boolean isLongList()
+    {
+        if(isList && type == Type.LONG)
+            for(String value : values)
+            {
+                try
+                {
+                    Long.parseLong(value);
+                }
+                catch(NumberFormatException e)
+                {
+                    return false;
+                }
+            }
+        return isList && type == Type.LONG;
+    }
+
+    /**
      * Returns the boolean value of all values that can
      * be parsed in the list.
      *
@@ -1196,6 +1262,23 @@ public class Property
     }
 
     public void set(int[] values)
+    {
+        this.setValues(values);
+    }
+
+    /**
+     * Sets the values of this Property to the provided int[] values.
+     */
+    public Property setValues(long[] values)
+    {
+        this.values = new String[values.length];
+        for (int i = 0; i < values.length; i++)
+            this.values[i] = String.valueOf(values[i]);
+        changed = true;
+        return this;
+    }
+
+    public void set(long[] values)
     {
         this.setValues(values);
     }

@@ -142,7 +142,7 @@ public class ConfigElement implements IConfigElement
     public static ConfigGuiType getType(Property prop)
     {
         return prop.getType() == Property.Type.BOOLEAN ? ConfigGuiType.BOOLEAN : prop.getType() == Property.Type.DOUBLE ? ConfigGuiType.DOUBLE :
-            prop.getType() == Property.Type.INTEGER ? ConfigGuiType.INTEGER : prop.getType() == Property.Type.COLOR ? ConfigGuiType.COLOR :
+            prop.getType() == Property.Type.INTEGER ? ConfigGuiType.INTEGER :  prop.getType() == Property.Type.COLOR ? ConfigGuiType.COLOR :
             prop.getType() == Property.Type.MOD_ID ? ConfigGuiType.MOD_ID : ConfigGuiType.STRING;
     }
 
@@ -246,6 +246,13 @@ public class ConfigElement implements IConfigElement
                     ia[i] = Integer.valueOf(aVal[i].toString());
                 return ia;
             }
+            else if (type == Property.Type.LONG)
+            {
+                Long[] ia = new Long[aVal.length];
+                for(int i = 0; i < aVal.length; i++)
+                    ia[i] = Long.valueOf(aVal[i].toString());
+                return ia;
+            }
             else
                 return aVal;
         }
@@ -291,6 +298,13 @@ public class ConfigElement implements IConfigElement
                     ia[i] = Integer.valueOf(aVal[i].toString());
                 return ia;
             }
+            else if (type == Property.Type.LONG)
+            {
+                Long[] ia = new Long[aVal.length];
+                for(int i = 0; i < aVal.length; i++)
+                    ia[i] = Long.valueOf(aVal[i].toString());
+                return ia;
+            }
             else
                 return aVal;
         }
@@ -308,6 +322,8 @@ public class ConfigElement implements IConfigElement
                 prop.set(Double.parseDouble(value.toString()));
             else if (type == Property.Type.INTEGER)
                 prop.set(Integer.parseInt(value.toString()));
+            else if (type == Property.Type.LONG)
+                prop.set(Long.parseLong(value.toString()));
             else
                 prop.set(value.toString());
         }
