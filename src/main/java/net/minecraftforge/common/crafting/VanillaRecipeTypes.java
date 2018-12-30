@@ -19,24 +19,20 @@
 
 package net.minecraftforge.common.crafting;
 
+import net.minecraft.item.crafting.FurnaceRecipe;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 
-public enum VanillaRecipeType implements IRecipeType 
+public final class VanillaRecipeTypes
 {
-    CRAFTING(new ResourceLocation("crafting")),
-    FURNACE(new ResourceLocation("furnace"));
+    /**
+     * Used for normal crafting.
+     */
+    public static final RecipeType<IRecipe> CRAFTING = new RecipeType<>(new ResourceLocation("crafting"), IRecipe.class);
 
-    ResourceLocation id;
-
-    VanillaRecipeType(ResourceLocation id) 
-    {
-        this.id = id;
-    }
-
-    @Override
-    public ResourceLocation getId()
-    {
-        return id;
-    }
+    /**
+     * Used for furnace recipes.
+     */
+    public static final RecipeType<FurnaceRecipe> SMELTING = new RecipeType<>(new ResourceLocation("smelting"), FurnaceRecipe.class);
 
 }

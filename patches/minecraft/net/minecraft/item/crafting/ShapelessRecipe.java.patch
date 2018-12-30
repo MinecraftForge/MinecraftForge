@@ -36,7 +36,7 @@
  
     public boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_) {
 -      if (!(p_77569_1_ instanceof InventoryCrafting)) {
-+      if (!matchesType(p_77569_1_.getRecipeType())) {
++      if (!matchesType(p_77569_1_.getRecipeTypes())) {
           return false;
        } else {
           RecipeItemHelper recipeitemhelper = new RecipeItemHelper();

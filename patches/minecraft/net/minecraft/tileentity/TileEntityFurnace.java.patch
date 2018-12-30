@@ -75,7 +75,7 @@
     }
  
     public boolean func_70300_a(EntityPlayer p_70300_1_) {
-@@ -501,4 +506,32 @@
+@@ -501,4 +506,34 @@
  
        this.field_203901_m.clear();
     }
@@ -103,8 +103,10 @@
 +          handlers[x].invalidate();
 +   }
 +
++   static final java.util.Collection<net.minecraftforge.common.crafting.RecipeType<?>> types = java.util.Collections.singleton(net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING);
++
 +   @Override
-+   public net.minecraftforge.common.crafting.IRecipeType getRecipeType() {
-+      return net.minecraftforge.common.crafting.VanillaRecipeType.FURNACE;
++   public java.util.Collection<net.minecraftforge.common.crafting.RecipeType<?>> getRecipeTypes() {
++      return types;
 +   }
  }

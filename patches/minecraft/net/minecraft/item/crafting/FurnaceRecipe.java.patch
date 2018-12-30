@@ -14,7 +14,7 @@
  
     public boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_) {
 -      return p_77569_1_ instanceof TileEntityFurnace && this.field_201834_c.test(p_77569_1_.func_70301_a(0));
-+      return matchesType(p_77569_1_.getRecipeType()) && this.field_201834_c.test(p_77569_1_.func_70301_a(0));
++      return matchesType(p_77569_1_.getRecipeTypes()) && this.field_201834_c.test(p_77569_1_.func_70301_a(0));
     }
  
     public ItemStack func_77572_b(IInventory p_77572_1_) {
@@ -38,8 +38,8 @@
     }
  
 +   @Override
-+   public net.minecraftforge.common.crafting.IRecipeType getType() {
-+      return net.minecraftforge.common.crafting.VanillaRecipeType.FURNACE;
++   public net.minecraftforge.common.crafting.RecipeType<FurnaceRecipe> getType() {
++      return net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING;
 +   }
 +
     public static class Serializer implements IRecipeSerializer<FurnaceRecipe> {

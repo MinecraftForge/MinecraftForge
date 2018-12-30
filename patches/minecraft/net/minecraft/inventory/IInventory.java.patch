@@ -1,11 +1,17 @@
 --- a/net/minecraft/inventory/IInventory.java
 +++ b/net/minecraft/inventory/IInventory.java
-@@ -44,4 +44,8 @@
+@@ -44,4 +44,14 @@
     default int func_174922_i() {
        return 0;
     }
 +
-+   default net.minecraftforge.common.crafting.IRecipeType getRecipeType() {
-+	   return net.minecraftforge.common.crafting.VanillaRecipeType.CRAFTING;
++   static final java.util.Collection<net.minecraftforge.common.crafting.RecipeType<?>> types = java.util.Collections.singleton(net.minecraftforge.common.crafting.VanillaRecipeTypes.CRAFTING);
++
++   /**
++    * Do not create a new collection in this method.
++    * @return The types of recipes supported by this inventory.
++    */
++   default java.util.Collection<net.minecraftforge.common.crafting.RecipeType<?>> getRecipeTypes() {
++	   return types;
 +   }
  }

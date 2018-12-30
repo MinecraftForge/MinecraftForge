@@ -19,9 +19,29 @@
 
 package net.minecraftforge.common.crafting;
 
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 
-public interface IRecipeType
+public class RecipeType<T extends IRecipe>
 {
-    ResourceLocation getId();
+    protected final ResourceLocation id;
+    protected final Class<T> baseClass;
+    
+    public RecipeType(ResourceLocation id, Class<T> baseClass) {
+        this.id = id;
+        this.baseClass = baseClass;
+    }
+
+    public ResourceLocation getId()
+    {
+        return id;
+    }
+
+    /**
+     * @return The class that all recipes of this type must extend.
+     */
+    public Class<T> getBaseClass()
+    {
+        return baseClass;
+    }
 }
