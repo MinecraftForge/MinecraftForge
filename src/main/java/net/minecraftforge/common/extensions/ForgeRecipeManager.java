@@ -19,37 +19,39 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.resources.IResourceManagerReloadListener;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.crafting.RecipeType;
 
 @SuppressWarnings("deprecation")
-public interface IForgeRecipeManager extends IResourceManagerReloadListener
+public abstract class ForgeRecipeManager implements IResourceManagerReloadListener
 {
+    protected final Map<RecipeType<? extends IRecipe>, List<? extends IRecipe>> sortedRecipes = Maps.newHashMap();
 
-    default <T extends IRecipe> Collection<T> getRecipes(RecipeType<T> type)
+    public <T extends IRecipe> Collection<T> getRecipes(RecipeType<T> type)
     {
-        return recipesByType(type).values();
+        return recipesByType(type);
     }
 
-    @Override
-    default net.minecraftforge.resource.IResourceType getResourceType()
+    @SuppressWarnings("unchecked")
+    public <T extends IRecipe> List<T> recipesByType(net.minecraftforge.common.crafting.RecipeType<T> type)
     {
-        return net.minecraftforge.resource.VanillaResourceType.RECIPES;
+        return (List<T>) this.sortedRecipes.computeIfAbsent(type, t -> new ArrayList<>());
     }
 
-    <T extends IRecipe> Map<ResourceLocation, T> recipesByType(RecipeType<T> type);
-
-    default Collection<IRecipe> getRecipes(Collection<RecipeType<?>> types)
+    public Collection<IRecipe> getRecipes(Collection<RecipeType<?>> types)
     {
         Set<IRecipe> recipes = new HashSet<>();
-        for(RecipeType<?> t : types) recipes.addAll(recipesByType(t).values());
+        for(RecipeType<?> t : types) recipes.addAll(recipesByType(t));
         return recipes;
     }
 

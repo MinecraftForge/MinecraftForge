@@ -1,0 +1,14 @@
+--- a/net/minecraft/inventory/InventoryCrafting.java
++++ b/net/minecraft/inventory/InventoryCrafting.java
+@@ -120,4 +120,11 @@
+       }
+ 
+    }
++
++   static final java.util.Collection<net.minecraftforge.common.crafting.RecipeType<?>> types = java.util.Collections.singleton(net.minecraftforge.common.crafting.VanillaRecipeTypes.CRAFTING);
++
++   @Override
++   public java.util.Collection<net.minecraftforge.common.crafting.RecipeType<?>> getRecipeTypes() {
++      return types;
++   }
+ }
