@@ -51,9 +51,4 @@ public enum VanillaResourceType implements IResourceType
      * Used when all shaders are reloaded.
      */
     SHADERS,
-    
-    /**
-     * Used when recipes are reloaded.
-     */
-    RECIPES,
 }
