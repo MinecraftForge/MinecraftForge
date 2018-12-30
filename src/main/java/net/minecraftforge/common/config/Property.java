@@ -257,6 +257,9 @@ public class Property
         if (this.type == Type.INTEGER && this.isIntValue())
             return Integer.parseInt(value) == Integer.parseInt(defaultValue);
 
+        if (this.type == Type.LONG && this.isLongValue())
+            return Long.parseLong(value) == Long.parseLong(defaultValue);
+
         if (this.type == Type.DOUBLE && this.isDoubleValue())
             return Double.parseDouble(value) == Double.parseDouble(defaultValue);
 

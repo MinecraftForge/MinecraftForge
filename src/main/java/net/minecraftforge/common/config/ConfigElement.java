@@ -355,6 +355,13 @@ public class ConfigElement implements IConfigElement
                     ia[i] = Integer.valueOf(aVal[i].toString());
                 prop.set(ia);
             }
+            else if (type == Property.Type.LONG)
+            {
+                long[] la = new long[aVal.length];
+                for(int i = 0; i < aVal.length; i++)
+                    la[i] = Long.valueOf(aVal[i].toString());
+                prop.set(la);
+            }
             else
             {
                 String[] is = new String[aVal.length];

@@ -84,6 +84,10 @@ public class ConfigManager
         register(int[].class,       TypeAdapters.intA);
         register(Integer.class,     TypeAdapters.Int);
         register(Integer[].class,   TypeAdapters.IntA);
+        register(long.class,        TypeAdapters.long_);
+        register(long[].class,      TypeAdapters.longA);
+        register(Long.class,        TypeAdapters.Long);
+        register(Long[].class,      TypeAdapters.LongA);
         register(String.class,      TypeAdapters.Str);
         register(String[].class,    TypeAdapters.StrA);
 
@@ -95,6 +99,7 @@ public class ConfigManager
         ARRAY_REMAP.put(Character.class, Character[].class);
         ARRAY_REMAP.put(Short.class,     Short[].class    );
         ARRAY_REMAP.put(Integer.class,   Integer[].class  );
+        ARRAY_REMAP.put(Long.class,      Long[].class     );
         ARRAY_REMAP.put(String.class,    String[].class   );
     }
     private static void register(Class<?> cls, ITypeAdapter adpt)
