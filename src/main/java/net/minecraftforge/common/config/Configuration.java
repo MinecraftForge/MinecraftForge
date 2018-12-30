@@ -19,11 +19,6 @@
 
 package net.minecraftforge.common.config;
 
-import static net.minecraftforge.common.config.Property.Type.BOOLEAN;
-import static net.minecraftforge.common.config.Property.Type.DOUBLE;
-import static net.minecraftforge.common.config.Property.Type.INTEGER;
-import static net.minecraftforge.common.config.Property.Type.STRING;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -59,6 +54,8 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.relauncher.FMLInjectionData;
 import org.apache.commons.io.IOUtils;
+
+import static net.minecraftforge.common.config.Property.Type.*;
 
 /**
  * This class offers advanced configurations capabilities, allowing to provide
@@ -410,6 +407,148 @@ public class Configuration
         prop.setMaxListLength(maxListLength);
 
         if (!prop.isIntList())
+        {
+            prop.setValues(values);
+        }
+
+        return prop;
+    }
+
+    /* ****************************************************************************************************************
+     *
+     * LONG gets
+     *
+     *****************************************************************************************************************/
+
+    /**
+     * Gets a long Property object without a comment using default settings.
+     *
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @return an integer Property object with default bounds of Long.MIN_VALUE and Long.MAX_VALUE
+     */
+    public Property get(String category, String key, long defaultValue)
+    {
+        return get(category, key, defaultValue, null, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    /**
+     * Gets a long Property object with a comment using default settings.
+     *
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @return an long Property object with default bounds of Long.MIN_VALUE and Long.MAX_VALUE
+     */
+    public Property get(String category, String key, long defaultValue, String comment)
+    {
+        return get(category, key, defaultValue, comment, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    /**
+     * Gets a long Property object with the defined comment, minimum and maximum bounds.
+     *
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValue the default value
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @return an integer Property object with the defined comment, minimum and maximum bounds
+     */
+    public Property get(String category, String key, long defaultValue, String comment, long minValue, long maxValue)
+    {
+        Property prop = get(category, key, Long.toString(defaultValue), comment, LONG);
+        prop.setDefaultValue(Long.toString(defaultValue));
+        prop.setMinValue(minValue);
+        prop.setMaxValue(maxValue);
+
+        if (!prop.isLongValue())
+        {
+            prop.setValue(defaultValue);
+        }
+        return prop;
+    }
+
+    /**
+     * Gets a long array Property object without a comment using default settings.
+     *
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @return a long array Property object with default bounds of Long.MIN_VALUE and Long.MAX_VALUE, isListLengthFixed = false,
+     *         maxListLength = -1
+     */
+    public Property get(String category, String key, long[] defaultValues)
+    {
+        return get(category, key, defaultValues, null);
+    }
+
+    /**
+     * Gets a long array Property object with a comment using default settings.
+     *
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @return a long array Property object with default bounds of Long.MIN_VALUE and Long.MAX_VALUE, isListLengthFixed = false,
+     *         maxListLength = -1
+     */
+    public Property get(String category, String key, long[] defaultValues, String comment)
+    {
+        return get(category, key, defaultValues, comment, Long.MIN_VALUE, Long.MAX_VALUE, false, -1);
+    }
+
+    /**
+     * Gets a long array Property object with the defined comment, minimum and maximum bounds.
+     *
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @return a long array Property object with the defined comment, minimum and maximum bounds, isListLengthFixed
+     *         = false, maxListLength = -1
+     */
+    public Property get(String category, String key, long[] defaultValues, String comment, long minValue, long maxValue)
+    {
+        return get(category, key, defaultValues, comment, minValue, maxValue, false, -1);
+    }
+
+    /**
+     * Gets a long array Property object with all settings defined.
+     *
+     * @param category the config category
+     * @param key the Property key value
+     * @param defaultValues an array containing the default values
+     * @param comment a String comment
+     * @param minValue minimum boundary
+     * @param maxValue maximum boundary
+     * @param isListLengthFixed boolean for whether this array is required to be a specific length (defined by the default value array
+     *            length or maxListLength)
+     * @param maxListLength the maximum length of this array, use -1 for no max length
+     * @return a long array Property object with all settings defined
+     */
+    public Property get(String category, String key, long[] defaultValues, String comment, long minValue, long maxValue,
+        boolean isListLengthFixed, int maxListLength)
+    {
+        String[] values = new String[defaultValues.length];
+        for (int i = 0; i < defaultValues.length; i++)
+        {
+            values[i] = Long.toString(defaultValues[i]);
+        }
+
+        Property prop = get(category, key, values, comment, LONG);
+        prop.setDefaultValues(values);
+        prop.setMinValue(minValue);
+        prop.setMaxValue(maxValue);
+        prop.setIsListLengthFixed(isListLengthFixed);
+        prop.setMaxListLength(maxListLength);
+
+        if (!prop.isLongList())
         {
             prop.setValues(values);
         }
