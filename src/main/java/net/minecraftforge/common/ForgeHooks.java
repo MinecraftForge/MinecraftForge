@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -110,9 +111,12 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
+import net.minecraft.world.storage.loot.LootContext;
 import net.minecraft.world.storage.loot.LootEntry;
+import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
+import net.minecraft.world.storage.loot.RandomValueRange;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -142,6 +146,7 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.LoaderState;
@@ -162,7 +167,6 @@ import org.apache.commons.io.IOUtils;
 
 public class ForgeHooks
 {
-    //TODO: Loot tables?
     static class SeedEntry extends WeightedRandom.Item
     {
         @Nonnull
@@ -180,19 +184,58 @@ public class ForgeHooks
     }
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
 
+    /**
+     * A hacked LootPool implementation that makes sure that the old seedList are still supported
+     * for sake of backward compatiblities and can draw items from that list using the old logic as well.
+     * This implementation is NOT for public uses! Modders should use vanilla LootTable directly instead.
+     */
+    // TODO Remove this when MinecraftForge#addGrassSeed are removed
+    static final class SeedListPool extends LootPool
+    {
+        SeedListPool()
+        {
+            super(new LootEntry[0], new LootCondition[0], new RandomValueRange(0F), new RandomValueRange(0F), "forge:legacy_seed_list");
+        }
+
+        @Override
+        public void generateLoot(Collection<ItemStack> stacks, Random rand, LootContext context)
+        {
+            //Some bad mods hack in and empty our list, so lets not hard crash -.-
+            if (!ForgeHooks.seedList.isEmpty())
+            {
+                SeedEntry entry = WeightedRandom.getRandomItem(rand, ForgeHooks.seedList);
+                if (entry != null)
+                {
+                    // TODO Use custom LootContext for fortune level?
+                    ItemStack result = entry.getStack(rand, (int) context.getLuck());
+                    if (!result.isEmpty())
+                    {
+                        stacks.add(result);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Path of dummy loot table used by populating grass seed drop. The actual content is injected via
+     * {@link ForgeModContainer#injectGrassSeedLootTable}.
+     */
+    static final ResourceLocation GRASS_SEED_TABLE = new ResourceLocation(ForgeVersion.MOD_ID, "grass_seed");
+
     @Nonnull
     public static ItemStack getGrassSeed(Random rand, int fortune)
     {
-        if (seedList.size() == 0)
-        {
-            return ItemStack.EMPTY; //Some bad mods hack in and empty our list, so lets not hard crash -.-
-        }
-        SeedEntry entry = WeightedRandom.getRandomItem(rand, seedList);
-        if (entry == null || entry.seed.isEmpty())
+        LootContext.Builder contextBuilder = new LootContext.Builder(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0)).withLuck(fortune);
+        List<ItemStack> poll = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getLootTableManager().getLootTableFromLocation(GRASS_SEED_TABLE).generateLootForPools(rand, contextBuilder.build());
+        if (poll.isEmpty())
         {
             return ItemStack.EMPTY;
         }
-        return entry.getStack(rand, fortune);
+        else
+        {
+            return poll.get(0);
+        }
     }
 
     private static boolean toolInit = false;

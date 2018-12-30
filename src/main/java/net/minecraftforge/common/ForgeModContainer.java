@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraftforge.event.LootTableLoadEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -508,6 +509,22 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             universalBucket.setUnlocalizedName("forge.bucketFilled");
             event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
+        }
+    }
+
+    @SubscribeEvent
+    public void injectGrassSeedLootTable(LootTableLoadEvent event)
+    {
+        if (ForgeHooks.GRASS_SEED_TABLE.equals(event.getName()))
+        {
+            if (!event.getTable().isFrozen())
+            {
+                event.getTable().addPool(new ForgeHooks.SeedListPool());
+            }
+            else
+            {
+                log.error("Failed to inject legacy grass seed list into loot table, this should not happen");
+            }
         }
     }
 

@@ -67,12 +67,20 @@ public class MinecraftForge
      * @param weight The relative probability of the seeds,
      *               where wheat seeds are 10.
      *
-     * Note: These functions may be going away soon, we're looking into loot tables....
+     * @deprecated Forge now reserves a dummy loot table at path of forge:grass_seed, and
+     *             Forge will draw items from that loot table. While this method has been
+     *             retrofitted into loot table system and thus will remain functional,
+     *             it is advised to inject your own loot table into that dummy table via
+     *             {@link net.minecraftforge.event.LootTableLoadEvent LootTableLoadEvent}.
+     *
+     * TODO: Remove both methods before 1.14 when all block drops use loot table system
      */
+    @Deprecated
     public static void addGrassSeed(@Nonnull ItemStack seed, int weight)
     {
         addGrassSeed(new SeedEntry(seed, weight));
     }
+    /** @deprecated see {@link #addGrassSeed(ItemStack, int)}*/ @Deprecated
     public static void addGrassSeed(SeedEntry seed)
     {
         ForgeHooks.seedList.add(seed);
