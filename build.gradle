@@ -91,9 +91,19 @@ project(':forge') {
     
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
     group = 'net.minecraftforge.test' //TODO: remove test when we finish patches and want users to find it
-    
+
     sourceSets {
+        fmllauncher {
+            java {
+                srcDir "$rootDir/src/fmllauncher/java"
+            }
+            resources {
+                srcDir "$rootDir/src/fmllauncher/resources"
+            }
+        }
         main {
+            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
+            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
             java {
                 srcDir "$rootDir/src/main/java"
             }
@@ -210,6 +220,21 @@ project(':forge') {
         installer 'java3d:vecmath:1.5.2'
         installer 'org.apache.logging.log4j:log4j-api:2.11.1'
         installer 'org.apache.logging.log4j:log4j-core:2.11.1'
+        fmllauncherImplementation 'org.ow2.asm:asm:6.2'
+        fmllauncherImplementation 'org.ow2.asm:asm-commons:6.2'
+        fmllauncherImplementation 'org.ow2.asm:asm-tree:6.2'
+        fmllauncherImplementation 'cpw.mods:modlauncher:0.1.0'
+        fmllauncherImplementation 'net.minecraftforge:accesstransformers:0.10+:shadowed'
+        fmllauncherImplementation 'net.minecraftforge:eventbus:0.1+:service'
+        fmllauncherImplementation 'net.minecraftforge:forgespi:0.1+'
+        fmllauncherImplementation 'net.minecraftforge:coremods:0.1+'
+        fmllauncherImplementation 'com.electronwill.night-config:core:3.4.0'
+        fmllauncherImplementation 'com.electronwill.night-config:toml:3.4.0'
+        fmllauncherImplementation 'org.apache.maven:maven-artifact:3.5.3'
+        fmllauncherImplementation 'org.apache.logging.log4j:log4j-api:2.11.1'
+        fmllauncherImplementation 'org.apache.logging.log4j:log4j-core:2.11.1'
+        fmllauncherImplementation 'com.google.guava:guava:21.0'
+        fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
     }
 
     task runclient(type: JavaExec, dependsOn: [":forge:downloadAssets", ":forge:extractNatives"]) {
@@ -644,6 +669,37 @@ project(':forge') {
                 'Implementation-Version':   MCP_VERSION,
                 'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap, 'net/minecraftforge/versions/mcp/')
+            // manifest entry for FML @Mod
+            manifest.attributes([
+                    'Specification-Title':      'Mod Language Provider',
+                    'Specification-Vendor':     'Forge Development LLC',
+                    'Specification-Version':    '1',
+                    'Implementation-Title':     'FML Java Mod',
+                    'Implementation-Version':   SPEC_VERSION,
+                    'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap, 'net/minecraftforge/fml/javafmlmod/')
+        }
+    }
+
+    task fmllauncherJar(type: Jar) {
+        from sourceSets.fmllauncher.output
+        doFirst {
+            manifest.attributes([
+                    'Specification-Title'   : 'Forge',
+                    'Specification-Vendor'  : 'Forge Development LLC',
+                    'Specification-Version' : SPEC_VERSION,
+                    'Implementation-Title'  : project.group,
+                    'Implementation-Version': project.version.substring(MC_VERSION.length() + 1),
+                    'Implementation-Vendor' : 'Forge Development LLC'
+            ] as LinkedHashMap, 'net/minecraftforge/versions/forge/')
+            manifest.attributes([
+                    'Specification-Title'   : 'Minecraft',
+                    'Specification-Vendor'  : 'Mojang',
+                    'Specification-Version' : MC_VERSION,
+                    'Implementation-Title'  : 'MCP',
+                    'Implementation-Version': MCP_VERSION,
+                    'Implementation-Vendor' : 'Forge'
+            ] as LinkedHashMap, 'net/minecraftforge/versions/mcp/')
         }
     }
 
@@ -811,6 +867,7 @@ project(':forge') {
                 artifact makeMdk
                 artifact userdevJar
                 artifact sourcesJar
+                artifact fmllauncherJar
 
                 pom {
                     name = 'forge'

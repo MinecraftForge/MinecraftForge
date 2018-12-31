@@ -21,6 +21,7 @@ package net.minecraftforge.fml;
 
 import net.minecraftforge.fml.common.event.ModLifecycleEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.minecraftforge.fml.language.ILifecycleEvent;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -46,7 +47,7 @@ public enum LifecycleEventProvider
     }
 
 
-    public static class LifecycleEvent {
+    public static class LifecycleEvent implements ILifecycleEvent<LifecycleEvent> {
         private final ModLoadingStage stage;
 
         public LifecycleEvent(ModLoadingStage stage)

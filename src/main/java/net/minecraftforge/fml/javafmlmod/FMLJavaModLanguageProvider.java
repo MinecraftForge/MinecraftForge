@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
-import net.minecraftforge.fml.LifecycleEventProvider;
+import net.minecraftforge.fml.language.ILifecycleEvent;
 import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.language.IModInfo;
 import net.minecraftforge.fml.language.ModFileScanData;
@@ -32,6 +32,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.LOADING;
@@ -100,12 +101,7 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
     }
 
     @Override
-    public void preLifecycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
-    {
-    }
+    public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(final Supplier<R> consumeEvent) {
 
-    @Override
-    public void postLifecycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
-    {
     }
 }

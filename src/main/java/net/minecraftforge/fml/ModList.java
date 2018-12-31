@@ -92,7 +92,7 @@ public class ModList
     }
 
     public void dispatchLifeCycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
-        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.preLifecycleEvent(lifecycleEvent));
+        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
         DeferredWorkQueue.deferredWorkQueue.clear();
         try
         {
@@ -105,7 +105,7 @@ public class ModList
         LOGGER.debug(LOADING, "Dispatching synchronous work, {} jobs", DeferredWorkQueue.deferredWorkQueue.size());
         DeferredWorkQueue.deferredWorkQueue.forEach(FutureTask::run);
         LOGGER.debug(LOADING, "Synchronous work queue complete");
-        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.postLifecycleEvent(lifecycleEvent));
+        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
 
     public void setLoadedMods(final List<ModContainer> modContainers)

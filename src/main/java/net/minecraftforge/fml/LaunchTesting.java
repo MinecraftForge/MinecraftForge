@@ -68,7 +68,9 @@ public class LaunchTesting
                     "--version", "FMLDev",
                     "--assetIndex", "1.13",
                     "--assetsDir", assets,
-                    "--userProperties", "{}");
+                    "--userProperties", "{}",
+                    "--fml.forgeVersion", "24.0.0",
+                    "--fml.mcVersion", "1.13");
         } else if (Objects.equals(target, "fmldevserver")) {
             String[] launchargs = ObjectArrays.concat(new String[] {"--launchTarget", target,
                     "--gameDir", "."}, args, String.class);

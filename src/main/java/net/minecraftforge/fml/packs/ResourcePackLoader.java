@@ -37,13 +37,11 @@ import java.util.stream.Collectors;
 public class ResourcePackLoader
 {
     private static Map<ModFile, ModFileResourcePack> modResourcePacks;
-    private static AbstractResourcePack forgePack;
     private static ResourcePackList<?> resourcePackList;
 
     public static IResourcePack getResourcePackFor(String modId)
     {
-        if (modId == "forge") return forgePack;
-        else return modResourcePacks.get(ModList.get().getModFileById(modId).getFile());
+        return modResourcePacks.get(ModList.get().getModFileById(modId).getFile());
     }
 
     @SuppressWarnings("unchecked")
@@ -56,9 +54,6 @@ public class ResourcePackLoader
         modResourcePacks = ModList.get().getModFiles().stream().
                 map(mf -> new ModFileResourcePack(mf.getFile())).
                 collect(Collectors.toMap(ModFileResourcePack::getModFile, Function.identity()));
-        forgePack = Files.isDirectory(FMLLoader.getForgePath()) ?
-                new ForgeFolderPack(FMLLoader.getForgePath().toFile()) :
-                new ForgeFilePack(FMLLoader.getForgePath().toFile());
         resourcePacks.addPackFinder(new ModPackFinder());
     }
 
@@ -111,8 +106,7 @@ public class ResourcePackLoader
         @Override
         public <T extends ResourcePackInfo> void addPackInfosToMap(Map<String, T> packList, ResourcePackInfo.IFactory<T> factory)
         {
-            packList.put("forge", ResourcePackInfo.func_195793_a("forge", true, ()->forgePack, factory, ResourcePackInfo.Priority.BOTTOM));
-            for (Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet()) 
+            for (Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet())
             {
                 String name = "modfile/" + e.getKey().getFileName();
                 packList.put(name, ResourcePackInfo.func_195793_a(name, true, ()->e.getValue(), factory, ResourcePackInfo.Priority.BOTTOM));
