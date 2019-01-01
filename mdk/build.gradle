@@ -75,3 +75,33 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+task deleteMcmodInfoFile(type: Delete) {
+    doLast {
+        // We need to delete the duplicate mcmod.info file, which is
+        // created when the Gradle task 'copyMcmodInfoFile' (see below)
+        // executes, for when we run the client from inside of the
+        // IDE, before the jar file is created, or else Gradle will
+        // throw a ZipException ('duplicate entry: mcmod.info').
+        //
+        // delete "$buildDir/classes/main/mcmod.info" <-- DOES NOT WORK!
+        file("$buildDir/classes/main/mcmod.info").delete()
+    }
+}
+task copyMcmodInfoFile() {
+    doLast {
+        // Copy the in-memory/modified mcmod.info file (see above Gradle
+        // task 'processResources') into the root folder that the
+        // net.minecraftforge.fml.common.discovery.DirectoryDiscoverer
+        // class will search in, when running the client from the IDE.
+        copy { // A 'type: Copy' task will not run its 'doLast' block!
+            from("$buildDir/resources/main") {
+                include 'mcmod.info'
+            }
+            into "$buildDir/classes/main"
+        }
+    }
+}
+// Need to hook our before/after tasks up to the 'jar' task ...
+jar.dependsOn deleteMcmodInfoFile
+jar.finalizedBy copyMcmodInfoFile
