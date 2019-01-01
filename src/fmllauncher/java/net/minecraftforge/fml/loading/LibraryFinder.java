@@ -69,8 +69,8 @@ public class LibraryFinder {
         return ObjectArrays.concat(extras, realms);
     }
 
-    static Path getForgeLibraryPath(final String mcVersion, final String forgeVersion) {
-        Path forgePath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraftforge", "forge", "", "", mcVersion+"-"+forgeVersion));
+    static Path getForgeLibraryPath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
+        Path forgePath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", "universal", mcVersion+"-"+forgeVersion));
         LOGGER.debug(CORE, "Found forge path {} is {}", forgePath, pathStatus(forgePath));
         return forgePath;
     }
@@ -78,11 +78,16 @@ public class LibraryFinder {
     static String pathStatus(final Path path) {
         return Files.exists(path) ? "present" : "missing";
     }
-    static Path[] getMCPaths(final String mcVersion, final String forgeVersion, final String type) {
-        Path srgMcPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "srg", mcVersion));
-        Path patchedBinariesPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraftforge", "forge", "", type, mcVersion+"-"+forgeVersion));
+
+    static Path[] getMCPaths(final String mcVersion, final String mcpVersion, final String forgeVersion, final String forgeGroup, final String type) {
+        Path srgMcPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "srg", mcVersion+"-"+mcpVersion));
+        Path mcDataPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "data", mcVersion));
+        Path mcExtrasPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "extra", mcVersion));
+        Path patchedBinariesPath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", type, mcVersion+"-"+forgeVersion));
         LOGGER.info("SRG MC at {} is {}", srgMcPath.toString(), pathStatus(srgMcPath));
+        LOGGER.info("MC Data at {} is {}", mcDataPath.toString(), pathStatus(mcDataPath));
+        LOGGER.info("MC Extras at {} is {}", mcExtrasPath.toString(), pathStatus(mcExtrasPath));
         LOGGER.info("Forge patches at {} is {}", patchedBinariesPath.toString(), pathStatus(patchedBinariesPath));
-        return new Path[] { srgMcPath, patchedBinariesPath };
+        return new Path[] { patchedBinariesPath, mcDataPath, mcExtrasPath, srgMcPath };
     }
 }

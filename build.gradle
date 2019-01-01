@@ -195,7 +195,7 @@ project(':forge') {
         MANIFESTS = [
             '/': [
                 'Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                'GitCommit': grgit.head().getAbbreviatedId(8),
+                'GitCommit': grgit.head().abbreviatedId,
                 'Git-Branch': grgit.branch.current().getName()
             ] as LinkedHashMap,
             'net/minecraftforge/versions/forge/': [
@@ -221,6 +221,14 @@ project(':forge') {
                 'Implementation-Title':     'FML Java Mod',
                 'Implementation-Version':   SPEC_VERSION,
                 'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap,
+            'net/minecraftforge/fml/loading/': [
+                    'Specification-Title':      'Launcher',
+                    'Specification-Vendor':     'Forge Development LLC',
+                    'Specification-Version':    '1',
+                    'Implementation-Title':     'FML Launcher',
+                    'Implementation-Version':   SPEC_VERSION,
+                    'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap
         ]
     }
@@ -449,7 +457,7 @@ project(':forge') {
                     ]
                 ],
                 arguments: [
-                    game: ['--launchTarget', 'fmlclient']
+                    game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"]
                 ],
                 libraries: [
                     [

@@ -41,6 +41,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
@@ -60,8 +61,10 @@ public class FMLLoader
     private static Path gamePath;
     private static Path forgePath;
     private static Path[] mcPaths;
-    static String forgeVersion;
     static String mcVersion;
+    private static String mcpVersion;
+    static String forgeVersion;
+    private static String forgeGroup;
     private static Predicate<String> classLoaderExclusions;
 
     static void onInitialLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
@@ -134,26 +137,19 @@ public class FMLLoader
         dist = commonLaunchHandler.getDist();
 
         mcVersion = (String) arguments.get("mcVersion");
+        mcpVersion = (String) arguments.get("mcpVersion");
         forgeVersion = (String) arguments.get("forgeVersion");
-        forgePath = commonLaunchHandler.getForgePath(mcVersion, forgeVersion);
-        mcPaths = commonLaunchHandler.getMCPaths(mcVersion, forgeVersion);
+        forgeGroup = (String) arguments.get("forgeGroup");
 
-        if (!Files.exists(forgePath)) {
-            LOGGER.fatal(CORE, "Failed to find forge version {} for MC {} at {}", forgeVersion, mcVersion, forgePath);
-            throw new RuntimeException("Missing forge!");
-        }
-        if (!Files.exists(mcPaths[0])) {
-            LOGGER.fatal(CORE, "Failed to find deobfuscated Minecraft version {} at {}", mcVersion, mcPaths[0]);
-            throw new RuntimeException("Missing deobfuscated minecraft!");
-        }
-        if (!Files.exists(mcPaths[1])) {
-            LOGGER.fatal(CORE, "Failed to find forge patches for Minecraft version {} at {}", mcVersion, mcPaths[1]);
-            throw new RuntimeException("Missing forge patches!");
-        }
+        LOGGER.fatal("Received command line version data  : MC Version: '{}' MCP Version: '{}' Forge Version: '{}' Forge group: '{}'", mcVersion, mcpVersion, forgeVersion, forgeGroup);
+        forgePath = commonLaunchHandler.getForgePath(mcVersion, forgeVersion, forgeGroup);
+        mcPaths = commonLaunchHandler.getMCPaths(mcVersion, mcpVersion, forgeVersion, forgeGroup);
 
+        commonLaunchHandler.validatePaths(forgePath, mcPaths, forgeVersion, mcVersion, mcpVersion);
         commonLaunchHandler.setup(environment, arguments);
         classLoaderExclusions = commonLaunchHandler.getPackagePredicate();
         languageLoadingProvider = new LanguageLoadingProvider();
+        languageLoadingProvider.addForgeLanguage(forgePath);
 
         runtimeDistCleaner.getExtension().accept(dist);
     }
@@ -180,6 +176,7 @@ public class FMLLoader
 
     public static void loadAccessTransformer()
     {
+/*
         final URL resource = FMLLoader.class.getClassLoader().getResource("forge_at.cfg");
         if (resource == null) {
             throw new RuntimeException("Missing forge_at.cfg file");
@@ -194,6 +191,7 @@ public class FMLLoader
             LOGGER.error("Error loading forge_at.cfg file", e);
             throw new RuntimeException(e);
         }
+*/
     }
 
     public static void addAccessTransformer(Path atPath, ModFile modName)

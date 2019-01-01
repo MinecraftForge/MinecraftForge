@@ -36,7 +36,7 @@ import java.util.Objects;
 public class DefaultModInfos
 {
     static {
-        FileConfig minecraftmod;        FileConfig forgemod;
+        FileConfig minecraftmod;
         try
         {
             final URI jarFileURI = DefaultModInfos.class.getClassLoader().getResource("minecraftmod.toml").toURI();
@@ -49,10 +49,9 @@ public class DefaultModInfos
         }
         catch (IOException | URISyntaxException | NullPointerException e)
         {
-            throw new RuntimeException("Missing toml configs for minecraft and forge!", e);
+            throw new RuntimeException("Missing toml config for minecraft!", e);
         }
         minecraftModInfo = new ModInfo(null, minecraftmod);
-
     }
 
     public static final IModInfo minecraftModInfo;

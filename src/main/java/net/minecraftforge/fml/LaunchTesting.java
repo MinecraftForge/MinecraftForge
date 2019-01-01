@@ -70,6 +70,7 @@ public class LaunchTesting
                     "--assetsDir", assets,
                     "--userProperties", "{}",
                     "--fml.forgeVersion", "24.0.0",
+                    "--fml.mcpVersion", "2018.11.30",
                     "--fml.mcVersion", "1.13");
         } else if (Objects.equals(target, "fmldevserver")) {
             String[] launchargs = ObjectArrays.concat(new String[] {"--launchTarget", target,

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import net.minecraftforge.fml.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -28,8 +29,11 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.artifact.versioning.VersionRange;
 
+import java.io.File;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,11 +41,13 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
+import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.rethrowFunction;
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class LanguageLoadingProvider
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private final LanguageClassLoader languageClassLoader;
     private final List<IModLanguageProvider> languageProviders = new ArrayList<>();
     private final ServiceLoader<IModLanguageProvider> serviceLoader;
     private final Map<String, ModLanguageWrapper> languageProviderMap = new HashMap<>();
@@ -52,9 +58,9 @@ public class LanguageLoadingProvider
     }
 
     private static class ModLanguageWrapper {
+
         private final IModLanguageProvider modLanguageProvider;
         private final ArtifactVersion version;
-
         public ModLanguageWrapper(IModLanguageProvider modLanguageProvider, ArtifactVersion version)
         {
             this.modLanguageProvider = modLanguageProvider;
@@ -70,9 +76,29 @@ public class LanguageLoadingProvider
         {
             return modLanguageProvider;
         }
+
+    }
+    private static class LanguageClassLoader extends URLClassLoader
+    {
+
+        public LanguageClassLoader() {
+            super(new URL[0]);
+        }
+            @Override
+        public void addURL(final URL url) {
+            LOGGER.debug(CORE, "Adding {} to languageloader classloader", url);
+            super.addURL(url);
+        }
+
     }
     LanguageLoadingProvider() {
-        serviceLoader = ServiceLoader.load(IModLanguageProvider.class);
+        languageClassLoader = new LanguageClassLoader();
+        serviceLoader = ServiceLoader.load(IModLanguageProvider.class, languageClassLoader);
+        loadLanguageProviders();
+    }
+
+    private void loadLanguageProviders() {
+        LOGGER.debug(CORE, "Found {} language providers", ServiceLoaderStreamUtils.toList(serviceLoader).size());
         serviceLoader.forEach(languageProviders::add);
 
         languageProviders.forEach(lp -> {
@@ -88,16 +114,35 @@ public class LanguageLoadingProvider
                 LOGGER.fatal(CORE, "Found unversioned system classpath language provider {}", lp.name());
                 throw new RuntimeException("Failed to find implementation version for language provider "+ lp.name());
             }
-            LOGGER.debug(CORE, "Found system classpath language provider {}, version {}", lp.name(), impl);
+            LOGGER.debug(CORE, "Found language provider {}, version {}", lp.name(), impl);
             languageProviderMap.put(lp.name(), new ModLanguageWrapper(lp, new DefaultArtifactVersion(impl)));
         });
+    }
+
+    void addForgeLanguage(final Path forgePath) {
+        if (!languageProviderMap.containsKey("javafml")) {
+            LOGGER.debug(CORE,"Adding forge as a language from {}", forgePath.toString());
+            addLanguagePaths(Stream.of(forgePath));
+            serviceLoader.reload();
+            loadLanguageProviders();
+        } else {
+            LOGGER.debug(CORE, "Skipping adding forge jar - javafml is already present");
+        }
+    }
+
+    private void addLanguagePaths(final Stream<Path> langPaths) {
+        languageProviders.clear();
+        languageProviderMap.clear();
+        langPaths.map(Path::toFile).map(File::toURI).map(rethrowFunction(URI::toURL)).forEach(languageClassLoader::addURL);
     }
 
     public void addAdditionalLanguages(List<ModFile> modFiles)
     {
         if (modFiles==null) return;
         Stream<Path> langPaths = modFiles.stream().map(ModFile::getFilePath);
+        addLanguagePaths(langPaths);
         serviceLoader.reload();
+        loadLanguageProviders();
     }
 
     public IModLanguageProvider findLanguage(ModFile mf, String modLoader, VersionRange modLoaderVersion) {

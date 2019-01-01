@@ -53,13 +53,13 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
         return LibraryFinder.commonLibPaths(new Path[] {FMLLoader.getForgePath()});
     }
 
-    public Path getForgePath(final String mcVersion, final String forgeVersion) {
+    public Path getForgePath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
         // In forge dev, we just find the path for ForgeVersion for everything
         compiledClasses = LibraryFinder.findJarPathFor("net/minecraftforge/versions/forge/ForgeVersion.class", "forge");
         return compiledClasses;
     }
 
-    public Path[] getMCPaths(final String mcVersion, final String forgeVersion) {
+    public Path[] getMCPaths(final String mcVersion, final String forgeVersion, final String forgeGroup) {
         // In forge dev, we just find the path for ForgeVersion for everything
         return new Path[] { compiledClasses, compiledClasses };
     }
@@ -91,5 +91,9 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     public Dist getDist()
     {
         return Dist.CLIENT;
+    }
+
+    @Override
+    protected void validatePaths(final Path forgePath, final Path[] mcPaths, final String forgeVersion, final String mcVersion, final String mcpVersion) {
     }
 }

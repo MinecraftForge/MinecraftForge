@@ -19,18 +19,21 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public abstract class FMLCommonLaunchHandler
 {
@@ -48,12 +51,12 @@ public abstract class FMLCommonLaunchHandler
         return cn -> SKIPPACKAGES.stream().noneMatch(cn::startsWith);
     }
 
-    public Path getForgePath(final String mcVersion, final String forgeVersion) {
-        return LibraryFinder.getForgeLibraryPath(mcVersion, forgeVersion);
+    public Path getForgePath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
+        return LibraryFinder.getForgeLibraryPath(mcVersion, forgeVersion, forgeGroup);
     }
 
-    public Path[] getMCPaths(final String mcVersion, final String forgeVersion) {
-        return LibraryFinder.getMCPaths(mcVersion, forgeVersion, getDist().isClient() ? "client" : "server");
+    public Path[] getMCPaths(final String mcVersion, final String mcpVersion, final String forgeVersion, final String forgeGroup) {
+        return LibraryFinder.getMCPaths(mcVersion, mcpVersion, forgeVersion, forgeGroup, getDist().isClient() ? "client" : "server");
     }
 
     public void setup(final IEnvironment environment, final Map<String, ?> arguments)
@@ -66,5 +69,20 @@ public abstract class FMLCommonLaunchHandler
     protected void beforeStart(ITransformingClassLoader launchClassLoader)
     {
         FMLLoader.beforeStart(launchClassLoader);
+    }
+
+    protected void validatePaths(final Path forgePath, final Path[] mcPaths, String forgeVersion, String mcVersion, String mcpVersion) {
+        if (!Files.exists(forgePath)) {
+            LOGGER.fatal(CORE, "Failed to find forge version {} for MC {} at {}", forgeVersion, mcVersion, forgePath);
+            throw new RuntimeException("Missing forge!");
+        }
+
+        Stream.of(mcPaths).forEach(p->{
+            if (!Files.exists(p)) {
+                LOGGER.fatal(CORE, "Failed to find Minecraft resource version {} at {}", mcVersion+"-"+mcpVersion, p);
+                throw new RuntimeException("Missing minecraft resource!");
+            }
+        });
+
     }
 }

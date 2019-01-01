@@ -108,6 +108,8 @@ public class ExplodedDirectoryLocator implements IModLocator {
     @Override
     public void initArguments(final Map<String, ?> arguments) {
         final List<Pair<Path, Path>> explodedTargets = ((Map<String, List<Pair<Path, Path>>>) arguments).get("explodedTargets");
-        rootDirs.addAll(explodedTargets);
+        if (explodedTargets != null && !explodedTargets.isEmpty()) {
+            rootDirs.addAll(explodedTargets);
+        }
     }
 }

@@ -30,7 +30,8 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -61,8 +62,19 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
         };
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setup(final IEnvironment environment, final Map<String, ?> arguments) {
+        final List<String> mavenRoots = new ArrayList<>((List<String>) arguments.get("mavenRoots"));
+        final List<String> mods = new ArrayList<>((List<String>) arguments.get("mods"));
+        mavenRoots.add(LibraryFinder.findLibsPath().toString());
+        final String forgeVersion = (String) arguments.get("forgeVersion");
+        final String mcVersion = (String) arguments.get("mcVersion");
+        final String forgeGroup = (String) arguments.get("forgeGroup");
+        mods.add(forgeGroup+":forge::universal:"+mcVersion+"-"+forgeVersion);
+        // generics are gross yea?
+        ((Map)arguments).put("mavenRoots", mavenRoots);
+        ((Map)arguments).put("mods", mods);
     }
 
     @Override
