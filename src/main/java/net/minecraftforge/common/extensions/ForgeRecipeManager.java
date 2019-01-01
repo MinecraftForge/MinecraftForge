@@ -43,7 +43,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends IRecipe> List<T> recipesByType(net.minecraftforge.common.crafting.RecipeType<T> type)
+    public <T extends IRecipe> List<T> recipesByType(RecipeType<T> type)
     {
         return (List<T>) this.sortedRecipes.computeIfAbsent(type, t -> new ArrayList<>());
     }
