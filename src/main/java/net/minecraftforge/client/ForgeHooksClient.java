@@ -25,9 +25,16 @@ import static net.minecraftforge.common.ForgeVersion.Status.BETA_OUTDATED;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Deque;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.annotation.Nonnull;
@@ -55,6 +62,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.BlockFaceUV;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -69,8 +78,10 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -123,6 +134,7 @@ import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.resource.IResourceType;
 import net.minecraftforge.client.resource.SelectiveReloadStateHandler;
 import net.minecraftforge.client.resource.VanillaResourceType;
+import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
 import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.ForgeVersion.Status;
@@ -135,12 +147,15 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.FMLLog;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
+import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
 import java.util.function.Predicate;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 public class ForgeHooksClient
@@ -578,6 +593,198 @@ public class ForgeHooksClient
     {
         tileItemMap.put(Pair.of(item, metadata), TileClass);
     }
+    
+    private static class LightGatheringTransformer extends QuadGatheringTransformer {
+        
+        private static final VertexFormat FORMAT = new VertexFormat().addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.TEX_2S);
+        
+        int blockLight, skyLight;
+        
+        { setVertexFormat(FORMAT); }
+        
+        boolean hasLighting() 
+        {
+            return dataLength[1] >= 2;
+        }
+
+        @Override
+        protected void processQuad() 
+        {
+            // Reset light data
+            blockLight = 0;
+            skyLight = 0;
+            // Compute average light for all 4 vertices
+            for (int i = 0; i < 4; i++) 
+            {
+                blockLight += (int) ((quadData[1][i][0] * 0xFFFF) / 0x20);
+                skyLight += (int) ((quadData[1][i][1] * 0xFFFF) / 0x20);
+            }
+            // Values must be multiplied by 16, divided by 4 for average => x4
+            blockLight *= 4;
+            skyLight *= 4;
+        }
+        
+        // Dummy overrides
+
+        @Override
+        public void setQuadTint(int tint) {}
+
+        @Override
+        public void setQuadOrientation(EnumFacing orientation) {}
+
+        @Override
+        public void setApplyDiffuseLighting(boolean diffuse) {}
+
+        @Override
+        public void setTexture(TextureAtlasSprite texture) {}
+    }
+    
+    private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
+
+    public static void renderLitItem(RenderItem ri, IBakedModel model, int color, ItemStack stack)
+    {
+        List<BakedQuad> allquads = new ArrayList<>();
+
+        for (EnumFacing enumfacing : EnumFacing.VALUES)
+        {
+            allquads.addAll(model.getQuads(null, enumfacing, 0));
+        }
+
+        allquads.addAll(model.getQuads(null, null, 0));
+
+        if (allquads.isEmpty()) return;
+
+        // Current list of consecutive quads with the same lighting
+        List<BakedQuad> segment = new ArrayList<>();
+
+        // Lighting of the current segment
+        int segmentBlockLight = -1;
+        int segmentSkyLight = -1;
+        // Coloring of the current segment
+        int segmentColorMultiplier = color;
+        // If the current segment contains lighting data
+        boolean hasLighting = false;
+
+        // Tint index cache to avoid unnecessary IItemColor lookups
+        int prevTintIndex = -1;
+
+        for (int i = 0; i < allquads.size(); i++) 
+        {
+            BakedQuad q = allquads.get(i);
+
+            // Lighting of the current quad
+            int bl = 0;
+            int sl = 0;
+
+            // Fail-fast on ITEM, as it cannot have light data
+            if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().hasUvOffset(1))
+            {
+                q.pipe(lightGatherer);
+                if (lightGatherer.hasLighting())
+                {
+                    bl = lightGatherer.blockLight;
+                    sl = lightGatherer.skyLight;
+                }
+            }
+
+            int colorMultiplier = segmentColorMultiplier;
+
+            // If there is no color override, and this quad is tinted, we need to apply IItemColor
+            if (color == 0xFFFFFFFF && q.hasTintIndex())
+            {
+                int tintIndex = q.getTintIndex();
+
+                if (prevTintIndex != tintIndex)
+                {
+                    colorMultiplier = getColorMultiplier(stack, tintIndex);
+                }
+                prevTintIndex = tintIndex;
+            }
+            else
+            {
+                colorMultiplier = color;
+                prevTintIndex = -1;
+            }
+
+            boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
+            boolean colorDirty = hasLighting && segmentColorMultiplier != colorMultiplier;
+
+            // If lighting or color data has changed, draw the segment and flush it
+            if (lightingDirty || colorDirty)
+            {
+                if (i > 0) // Make sure this isn't the first quad being processed
+                {
+                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
+                }
+                segmentBlockLight = bl;
+                segmentSkyLight = sl;
+                segmentColorMultiplier = colorMultiplier;
+                hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0;
+            }
+
+            segment.add(q);
+        }
+
+        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
+
+        // Clean up render state if necessary
+        if (hasLighting)
+        {
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
+            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+        }
+    }
+
+    private static void drawSegment(RenderItem ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor)
+    {
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+
+        float lastBl = OpenGlHelper.lastBrightnessX;
+        float lastSl = OpenGlHelper.lastBrightnessY;
+
+        if (updateLighting || updateColor)
+        {
+            float emissive = Math.max(bl, sl) / 240f;
+            
+            float r = (tintColor >>> 16 & 0xff) / 255f;
+            float g = (tintColor >>>  8 & 0xff) / 255f;
+            float b = (tintColor        & 0xff) / 255f;
+            
+            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
+
+            if (updateLighting)
+            {
+                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
+            }
+        }
+
+        ri.renderQuads(bufferbuilder, segment, baseColor, stack);
+        Tessellator.getInstance().draw();
+
+        // Preserve this as it represents the "world" lighting
+        OpenGlHelper.lastBrightnessX = lastBl;
+        OpenGlHelper.lastBrightnessY = lastSl;
+
+        segment.clear();
+    }
+    
+    private static int getColorMultiplier(ItemStack stack, int tintIndex)
+    {
+        if (tintIndex == -1 || stack.isEmpty()) return 0xFFFFFFFF;
+
+        int colorMultiplier = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, tintIndex);
+
+        if (EntityRenderer.anaglyphEnable)
+        {
+            colorMultiplier = TextureUtil.anaglyphColor(colorMultiplier);
+        }
+
+        // Always full opacity
+        colorMultiplier |= 0xff << 24; // -16777216
+
+        return colorMultiplier;
+    }
 
     /**
      * internal, relies on fixed format of FaceBakery
@@ -781,4 +988,23 @@ public class ForgeHooksClient
 
         return true;
    }
+
+    // Resets cached thread fields in ThreadNameCachingStrategy and ReusableLogEventFactory to be repopulated during their next access.
+    // This serves a workaround for no built-in method of triggering this type of refresh as brought up by LOG4J2-2178.
+    public static void invalidateLog4jThreadCache()
+    {
+        try
+        {
+            Field nameField = ThreadNameCachingStrategy.class.getDeclaredField("THREADLOCAL_NAME");
+            Field logEventField = ReusableLogEventFactory.class.getDeclaredField("mutableLogEventThreadLocal");
+            nameField.setAccessible(true);
+            logEventField.setAccessible(true);
+            ((ThreadLocal<?>) nameField.get(null)).set(null);
+            ((ThreadLocal<?>) logEventField.get(null)).set(null);
+        }
+        catch (ReflectiveOperationException | NoClassDefFoundError e)
+        {
+            FMLLog.log.error("Unable to invalidate log4j thread cache, thread fields in logs may be inaccurate", e);
+        }
+    }
 }

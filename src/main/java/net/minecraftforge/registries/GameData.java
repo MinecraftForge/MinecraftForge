@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -111,8 +112,9 @@ public class GameData
     private static final int MAX_RECIPE_ID = Integer.MAX_VALUE >> 5; // Varint CPacketRecipeInfo/SPacketRecipeBook
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
 
-    private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
-    private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
+    private static final ResourceLocation BLOCK_TO_ITEM         = new ResourceLocation("minecraft:blocktoitemmap");
+    private static final ResourceLocation BLOCKSTATE_TO_ID      = new ResourceLocation("minecraft:blockstatetoid");
+    private static final ResourceLocation ENTITY_CLASS_TO_ENTRY = new ResourceLocation("forge:entity_class_to_entry");
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
     private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
@@ -186,6 +188,12 @@ public class GameData
     public static ObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
     {
         return GameRegistry.findRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<Class<? extends Entity>, EntityEntry> getEntityClassMap()
+    {
+        return GameRegistry.findRegistry(EntityEntry.class).getSlaveMap(ENTITY_CLASS_TO_ENTRY, Map.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
@@ -452,7 +460,7 @@ public class GameData
         reg.register(id, key, new EntityEntry(clazz, oldName));
     }
 
-    private static class EntityCallbacks implements IForgeRegistry.AddCallback<EntityEntry>
+    private static class EntityCallbacks implements IForgeRegistry.AddCallback<EntityEntry>, IForgeRegistry.ClearCallback<EntityEntry>, IForgeRegistry.CreateCallback<EntityEntry>
     {
         static final EntityCallbacks INSTANCE = new EntityCallbacks();
 
@@ -464,7 +472,24 @@ public class GameData
                 ((EntityEntryBuilder.BuiltEntityEntry) entry).addedToRegistry();
             }
             if (entry.getEgg() != null)
+            {
                 EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
+            }
+            @SuppressWarnings("unchecked")
+            Map<Class<? extends Entity>, EntityEntry> map = owner.getSlaveMap(ENTITY_CLASS_TO_ENTRY, Map.class);
+            map.put(entry.getEntityClass(), entry);
+        }
+
+        @Override
+        public void onClear(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage)
+        {
+            owner.getSlaveMap(ENTITY_CLASS_TO_ENTRY, Map.class).clear();
+        }
+
+        @Override
+        public void onCreate(IForgeRegistryInternal<EntityEntry> owner, RegistryManager stage)
+        {
+            owner.setSlaveMap(ENTITY_CLASS_TO_ENTRY, new IdentityHashMap<>());
         }
     }
 
@@ -772,14 +797,33 @@ public class GameData
         */
     }
 
+    /**
+     * @deprecated Use {@link #checkPrefix(String, boolean)}.
+     */
+    @Deprecated
     public static ResourceLocation checkPrefix(String name)
+    {
+        return checkPrefix(name, true);
+    }
+
+    /**
+     * Check a name for a domain prefix, and if not present infer it from the
+     * current active mod container.
+     * 
+     * @param name          The name or resource location
+     * @param warnOverrides If true, logs a warning if domain differs from that of
+     *                      the currently currently active mod container
+     * 
+     * @return The {@link ResourceLocation} with given or inferred domain
+     */
+    public static ResourceLocation checkPrefix(String name, boolean warnOverrides)
     {
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
         name = index == -1 ? name : name.substring(index + 1);
         ModContainer mc = Loader.instance().activeModContainer();
         String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId().toLowerCase(Locale.ROOT);
-        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
+        if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
             FMLLog.log.warn("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
             prefix = oldPrefix;
