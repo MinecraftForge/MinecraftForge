@@ -33,7 +33,7 @@
           throw new IllegalStateException("Duplicate recipe ignored with ID " + p_199509_1_.func_199560_c());
        } else {
           this.field_199522_d.put(p_199509_1_.func_199560_c(), p_199509_1_);
-+         ((Map) recipesByType(p_199509_1_.getType())).put(p_199509_1_.func_199560_c(), p_199509_1_);
++         ((java.util.List) recipesByType(p_199509_1_.getType())).add(p_199509_1_);
        }
     }
  
