@@ -43,7 +43,7 @@ public abstract class FMLCommonLaunchHandler
             "joptsimple.", "org.lwjgl.", "com.mojang.guava.", "com.google.", "org.apache.commons.", "io.netty.",
             "org.apache.logging.log4j.", "org.apache.http.", "org.apache.maven.", "org.objectweb.asm.",
             "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig.",
-            "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.", "net.minecraftforge.versions.",
+            "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.",
             "net.minecraftforge.eventbus.", "net.minecraftforge.api."
     );
 

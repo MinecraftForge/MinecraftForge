@@ -21,7 +21,7 @@ package net.minecraftforge.common.asm;
 
 import java.nio.file.Path;
 
-import net.minecraftforge.fml.AdvancedLogMessageAdapter;
+import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Label;

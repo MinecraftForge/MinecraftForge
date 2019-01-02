@@ -46,6 +46,7 @@ import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,7 +87,7 @@ public class LibraryManager
         libraries_dir = Repository.get("libraries");
 
         File mods = new File(minecraftHome, "mods");
-        File mods_ver = new File(mods, ForgeVersion.mcVersion);
+        File mods_ver = new File(mods, MCPVersion.getMCVersion());
 
         ModList memory = null;
         if (!ENABLE_AUTO_MOD_MOVEMENT)
@@ -471,7 +472,7 @@ public class LibraryManager
             }
         }
 
-        for (String dir : new String[]{"mods", "mods" + File.separatorChar + ForgeVersion.mcVersion})
+        for (String dir : new String[]{"mods", "mods" + File.separatorChar + MCPVersion.getMCVersion()})
         {
             File base = new File(mcDir, dir);
             if (!base.isDirectory() || !base.exists())

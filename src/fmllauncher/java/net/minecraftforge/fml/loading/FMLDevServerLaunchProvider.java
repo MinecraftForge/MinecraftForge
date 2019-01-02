@@ -19,14 +19,18 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -35,6 +39,8 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private Path compiledClasses;
+    private Path resources;
 
     @Override
     public String name()
@@ -45,7 +51,21 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     @Override
     public Path[] identifyTransformationTargets()
     {
-            return LibraryFinder.commonLibPaths(new Path[] { FMLLoader.getForgePath() });
+        return LibraryFinder.commonLibPaths(ObjectArrays.concat(FMLLoader.getForgePath(), FMLLoader.getMCPaths()));
+    }
+
+    @Override
+    public Path getForgePath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
+        // In forge dev, we just find the path for ForgeVersion for everything
+        compiledClasses = LibraryFinder.findJarPathFor("net/minecraftforge/versions/forge/ForgeVersion.class", "forge");
+        resources = LibraryFinder.findJarPathFor("assets/minecraft/lang/en_us.json", "mcassets");
+        return compiledClasses;
+    }
+
+    @Override
+    public Path[] getMCPaths(final String mcVersion, final String mcpVersion, final String forgeVersion, final String forgeGroup) {
+        // In forge dev, we just find the path for ForgeVersion for everything
+        return new Path[] { compiledClasses, resources };
     }
 
     @Override
@@ -64,7 +84,10 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     @Override
     public void setup(IEnvironment environment, final Map<String, ?> arguments)
     {
-        LOGGER.debug(CORE, "No jar creation necessary. Launch is dev environment");
+        // we're injecting forge into the exploded dir finder
+        final Path forgemodstoml = LibraryFinder.findJarPathFor("META-INF/mods.toml", "forgemodstoml");
+        ((Map<String, List<Pair<Path,Path>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
+                add(Pair.of(compiledClasses, forgemodstoml));
     }
 
     @Override

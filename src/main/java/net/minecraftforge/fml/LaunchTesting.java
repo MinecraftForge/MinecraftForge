@@ -74,7 +74,9 @@ public class LaunchTesting
                     "--fml.mcVersion", "1.13");
         } else if (Objects.equals(target, "fmldevserver")) {
             String[] launchargs = ObjectArrays.concat(new String[] {"--launchTarget", target,
-                    "--gameDir", "."}, args, String.class);
+                    "--gameDir", ".", "--fml.forgeVersion", "24.0.0",
+                    "--fml.mcpVersion", "2018.11.30",
+                    "--fml.mcVersion", "1.13"}, args, String.class);
             Launcher.main(launchargs);
         }
         Thread.sleep(10000);
