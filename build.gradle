@@ -112,6 +112,17 @@ project(':forge') {
                 srcDir "$rootDir/src/main/resources"
             }
         }
+        test {
+            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
+            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
+            java {
+                // srcDir "$rootDir/src/test/java" TODO fix later
+                srcDir "$rootDir/src/fmllaunchertest/java"
+            }
+            resources {
+                srcDir "$rootDir/src/test/resources"
+            }
+        }
         userdev {
             compileClasspath += sourceSets.main.runtimeClasspath
             runtimeClasspath += sourceSets.main.runtimeClasspath
@@ -273,6 +284,9 @@ project(':forge') {
         installer 'org.apache.logging.log4j:log4j-core:2.11.1'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.0.0"
+        testImplementation "org.opentest4j:opentest4j:1.0.0" // needed for junit 5
+        testImplementation "org.hamcrest:hamcrest-all:1.3" // needs advanced matching for list order
     }
 
     task runclient(type: JavaExec, dependsOn: [":forge:downloadAssets", ":forge:extractNatives"]) {
