@@ -19,257 +19,101 @@
 
 package net.minecraftforge.fml.loading.toposort;
 
-import com.google.common.collect.Sets;
-import net.minecraftforge.fml.loading.EarlyLoadingException;
-import org.apache.logging.log4j.message.Message;
-import org.apache.logging.log4j.util.StringBuilderFormattable;
+import com.google.common.base.Preconditions;
+import com.google.common.graph.Graph;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
 
 /**
- * Topological sort for mod loading
+ * Provides a topological sort algorithm.
  *
- * Based on a variety of sources, including http://keithschwarz.com/interesting/code/?dir=topological-sort
- * @author cpw
- *
+ * <p>While this algorithm is used for mod loading in forge, it can be
+ * utilized in other fashions, e.g. topology-based registry loading, prioritization
+ * for renderers, and even mod module loading.
  */
-public class TopologicalSort
-{
-    public static class DirectedGraph<T> implements Iterable<T>
-    {
-        private final Map<T, SortedSet<T>> graph = new HashMap<>();
-        private List<T> orderedNodes = new ArrayList<>();
-
-        public boolean addNode(T node)
-        {
-            // Ignore nodes already added
-            if (graph.containsKey(node))
-            {
-                return false;
-            }
-
-            orderedNodes.add(node);
-            graph.put(node, new TreeSet<>(Comparator.comparingInt(o -> orderedNodes.indexOf(o))));
-            return true;
-        }
-
-        public void addEdge(T from, T to)
-        {
-            if (!(graph.containsKey(from) && graph.containsKey(to)))
-            {
-                throw new NoSuchElementException("Missing nodes from graph");
-            }
-
-            graph.get(from).add(to);
-        }
-
-        public void removeEdge(T from, T to)
-        {
-            if (!(graph.containsKey(from) && graph.containsKey(to)))
-            {
-                throw new NoSuchElementException("Missing nodes from graph");
-            }
-
-            graph.get(from).remove(to);
-        }
-
-        public boolean edgeExists(T from, T to)
-        {
-            if (!(graph.containsKey(from) && graph.containsKey(to)))
-            {
-                throw new NoSuchElementException("Missing nodes from graph");
-            }
-
-            return graph.get(from).contains(to);
-        }
-
-        public Set<T> edgesFrom(T from)
-        {
-            if (!graph.containsKey(from))
-            {
-                throw new NoSuchElementException("Missing node from graph");
-            }
-
-            return Collections.unmodifiableSortedSet(graph.get(from));
-        }
-        @Override
-        public Iterator<T> iterator()
-        {
-            return orderedNodes.iterator();
-        }
-
-        public int size()
-        {
-            return graph.size();
-        }
-
-        public boolean isEmpty()
-        {
-            return graph.isEmpty();
-        }
-
-        @Override
-        public String toString()
-        {
-            return graph.toString();
-        }
-    }
+public final class TopologicalSort {
 
     /**
-     * Sort the input graph into a topologically sorted list
+     * A breath-first-search based topological sort.
      *
-     * Uses the reverse depth first search as outlined in ...
-     * @param graph
-     * @return The sorted mods list.
+     * <p>Compared to the depth-first-search version, it does not reverse the graph
+     * and supports custom secondary ordering specified by a comparator. It also utilizes the
+     * recently introduced Guava Graph API, which is more straightforward than the old directed
+     * graph.
+     *
+     * <p>The graph to sort must be directed, must not allow self loops, and must not contain
+     * cycles. {@link IllegalArgumentException} will be thrown otherwise.
+     *
+     * <p>When {@code null} is used for the comparator and multiple nodes have no
+     * prerequisites, the order depends on the iteration order of the set returned by the
+     * {@link Graph#successors(Object)} call, which is random by default.
+     *
+     * <p>Given the number of edges {@code E} and the number of vertexes {@code V},
+     * the time complexity of a sort without a secondary comparator is {@code O(E + V)}.
+     * With a secondary comparator of time complexity {@code O(T)}, the overall time
+     * complexity would be {@code O(E + TV log(V))}. As a result, the comparator should
+     * be as efficient as possible.
+     *
+     * <p>Examples of topological sort usage can be found in Forge test code.
+     *
+     * @param graph      the graph to sort
+     * @param comparator the secondary comparator, may be null
+     * @param <T>        the node type of the graph
+     * @return the ordered nodes from the graph
+     * @throws IllegalArgumentException if the graph is undirected or allows self loops
+     * @throws CyclePresentException    if the graph contains cycles
      */
-    public static <T> List<T> topologicalSort(DirectedGraph<T> graph)
-    {
-        DirectedGraph<T> rGraph = reverse(graph);
-        List<T> sortedResult = new ArrayList<>();
-        Set<T> visitedNodes = new HashSet<>();
-        // A list of "fully explored" nodes. Leftovers in here indicate cycles in the graph
-        Set<T> expandedNodes = new HashSet<>();
+    public static <T> List<T> topologicalSort(Graph<T> graph, @Nullable Comparator<? super T> comparator) throws IllegalArgumentException {
+        Preconditions.checkArgument(graph.isDirected(), "Cannot topologically sort an undirected graph!");
+        Preconditions.checkArgument(!graph.allowsSelfLoops(), "Cannot topologically sort a graph with self loops!");
 
-        for (T node : rGraph)
-        {
-            explore(node, rGraph, sortedResult, visitedNodes, expandedNodes);
+        final Queue<T> queue = comparator == null ? new ArrayDeque<>() : new PriorityQueue<>(comparator);
+        final Map<T, Integer> degrees = new HashMap<>();
+        final List<T> results = new ArrayList<>();
+
+        for (final T node : graph.nodes()) {
+            final int degree = graph.inDegree(node);
+            if (degree == 0) {
+                queue.add(node);
+            } else {
+                degrees.put(node, degree);
+            }
         }
 
-        return sortedResult;
+        while (!queue.isEmpty()) {
+            final T current = queue.remove();
+            results.add(current);
+            for (final T successor : graph.successors(current)) {
+                final int updated = degrees.compute(successor, (node, degree) -> Objects.requireNonNull(degree, () -> "Invalid degree present for " + node) - 1);
+                if (updated == 0) {
+                    queue.add(successor);
+                    degrees.remove(successor);
+                }
+            }
+        }
+
+        if (!degrees.isEmpty()) {
+            Set<Set<T>> components = new StronglyConnectedComponentDetector<>(graph).getComponents();
+            components.removeIf(set -> set.size() < 2);
+            throwCyclePresentException(components);
+        }
+
+        return results;
     }
 
-    public static <T> DirectedGraph<T> reverse(DirectedGraph<T> graph)
-    {
-        DirectedGraph<T> result = new DirectedGraph<>();
-
-        for (T node : graph)
-        {
-            result.addNode(node);
-        }
-
-        for (T from : graph)
-        {
-            for (T to : graph.edgesFrom(from))
-            {
-                result.addEdge(to, from);
-            }
-        }
-
-        return result;
-    }
-
-    private static <T> void explore(T node, DirectedGraph<T> graph, List<T> sortedResult, Set<T> visitedNodes, Set<T> expandedNodes)
-    {
-        // Have we been here before?
-        if (visitedNodes.contains(node))
-        {
-            // And have completed this node before
-            if (expandedNodes.contains(node))
-            {
-                // Then we're fine
-                return;
-            }
-
-            throw new TopoSortException(new TopoSortException.TopoSortExceptionData<>(node, sortedResult, visitedNodes, expandedNodes));
-        }
-
-        // Visit this node
-        visitedNodes.add(node);
-
-        // Recursively explore inbound edges
-        for (T inbound : graph.edgesFrom(node))
-        {
-            explore(inbound, graph, sortedResult, visitedNodes, expandedNodes);
-        }
-
-        // Add ourselves now
-        sortedResult.add(node);
-        // And mark ourselves as explored
-        expandedNodes.add(node);
-    }
-
-    public static class TopoSortException extends RuntimeException {
-        private final TopoSortExceptionData<?> topoSortData;
-
-        public static class TopoSortExceptionData<T> implements Message, StringBuilderFormattable
-        {
-            private final List<T> sortedResult;
-            private final Set<T> visitedNodes;
-            private final Set<T> expandedNodes;
-            private final T node;
-
-            TopoSortExceptionData(T node, List<T> sortedResult, Set<T> visitedNodes, Set<T> expandedNodes)
-            {
-                this.node = node;
-                this.sortedResult = sortedResult;
-                this.visitedNodes = visitedNodes;
-                this.expandedNodes = expandedNodes;
-            }
-
-            @Override
-            public String getFormattedMessage()
-            {
-                return "";
-            }
-
-            @Override
-            public String getFormat()
-            {
-                return "";
-            }
-
-            @Override
-            public Object[] getParameters()
-            {
-                return new Object[0];
-            }
-
-            @Override
-            public Throwable getThrowable()
-            {
-                return null;
-            }
-
-            @Override
-            public void formatTo(StringBuilder buffer)
-            {
-                buffer.append("Mod Sorting failed.\n");
-                buffer.append("Visiting node {}\n").append(String.valueOf(node));
-                buffer.append("Current sorted list : {}\n").append(String.valueOf(sortedResult));
-                buffer.append("Visited set for this node : {}\n").append(String.valueOf(visitedNodes));
-                buffer.append("Explored node set : {}\n").append(expandedNodes);
-                buffer.append("Likely cycle is in : {}\n").append(Sets.difference(visitedNodes, expandedNodes));
-            }
-
-            public List<EarlyLoadingException.ExceptionData> toExceptionData(Function<T, String> nodeMapper) {
-                return Collections.singletonList(
-                        new EarlyLoadingException.ExceptionData("fml.messages.cycleproblem",
-                                nodeMapper.apply(node),
-                                visitedNodes.stream().map(nodeMapper).collect(Collectors.joining(","))));
-            }
-        }
-
-        public <T> TopoSortException(TopoSortExceptionData<T> data)
-        {
-            this.topoSortData = data;
-        }
-
-        @SuppressWarnings("unchecked")
-        public <T> TopoSortExceptionData<T> getData() {
-            return (TopoSortExceptionData<T>)this.topoSortData;
-        }
+    @SuppressWarnings("unchecked") // for unchecked annotation
+    private static <T> void throwCyclePresentException(Set<Set<T>> components) {
+        throw new CyclePresentException((Set<Set<?>>) (Set<?>) components);
     }
 }
