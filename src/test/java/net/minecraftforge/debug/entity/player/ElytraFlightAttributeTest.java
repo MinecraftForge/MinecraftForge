@@ -107,8 +107,14 @@ public class ElytraFlightAttributeTest
                 AttributeModifier mod = elytraFlight.getModifier(UUID_ELYTRA_BOOTS);
                 if (mod != null) elytraFlight.removeModifier(mod);
                 if (hasBoots)
-                    elytraFlight.applyModifier(new AttributeModifier(
-                            UUID_ELYTRA_BOOTS, "elytra_flight_boots", 1.0D, 0));
+                {
+                    elytraFlight.applyModifier(new AttributeModifier(UUID_ELYTRA_BOOTS, "elytra_flight_boots", 1.0D, 0));
+
+                    if (player.ticksExisted % 20 == 0 && player.isElytraFlying())
+                    {
+                        boots.damageItem(1, player);
+                    }
+                }
             }
         }
     }
