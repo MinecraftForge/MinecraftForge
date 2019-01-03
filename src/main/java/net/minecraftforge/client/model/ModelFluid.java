@@ -283,7 +283,7 @@ public final class ModelFluid implements IModel
         private ImmutableMap<EnumFacing, ImmutableList<BakedQuad>> buildQuads(boolean statePresent, int[] cornerRound, int flowRound, boolean[] sideOverlays)
         {
             EnumMap<EnumFacing, ImmutableList<BakedQuad>> faceQuads = new EnumMap<>(EnumFacing.class);
-            for (EnumFacing side : EnumFacing.VALUES)
+            for (EnumFacing side : EnumFacing.values())
             {
                 faceQuads.put(side, ImmutableList.of());
             }

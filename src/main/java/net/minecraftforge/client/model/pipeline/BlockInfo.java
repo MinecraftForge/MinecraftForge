@@ -28,7 +28,7 @@ import net.minecraft.world.IBlockAccess;
 
 public class BlockInfo
 {
-    private static final EnumFacing[] SIDES = EnumFacing.VALUES;
+    private static final EnumFacing[] SIDES = EnumFacing.values();
 
     private final BlockColors colors;
     private IBlockAccess world;

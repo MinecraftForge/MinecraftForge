@@ -818,7 +818,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
         tmp.set(new AxisAngle4f(1, 0, 0, (float)Math.toRadians(90)));
         vanillaUvTransformLocalToGlobal.put(EnumFacing.DOWN,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
 
-        for(EnumFacing side : EnumFacing.VALUES)
+        for(EnumFacing side : EnumFacing.values())
         {
             vanillaUvTransformGlobalToLocal.put(side, vanillaUvTransformLocalToGlobal.get(side).inverse());
         }
