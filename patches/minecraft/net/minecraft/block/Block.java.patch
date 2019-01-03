@@ -1405,7 +1405,7 @@
 +     }
 +     
 +     /**
-+      * Called when entities try to swim (for example a boat in water)
++      * Called when entities are swimming in the given liquid and returns the relative height (used by {@link net.minecraft.entity.item.EntityBoat})
 +      * 
 +      * @param world world that is being tested.
 +      * @param pos block thats being tested.
