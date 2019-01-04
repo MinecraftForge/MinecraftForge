@@ -288,6 +288,15 @@ public class GameData
             this.identityMap.clear();
             this.objectList.clear();
         }
+
+        void remove(I key)
+        {
+            Integer prev = this.identityMap.remove(key);
+            if (prev != null)
+            {
+                this.objectList.set(prev, null);
+            }
+        }
     }
 
 
@@ -301,6 +310,14 @@ public class GameData
         {
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
+
+            if (oldBlock != null)
+            {
+                for (IBlockState state : oldBlock.getBlockState().getValidStates())
+                {
+                    blockstateMap.remove(state);
+                }
+            }
 
             if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
             {
@@ -387,6 +404,12 @@ public class GameData
         @Override
         public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item, @Nullable Item oldItem)
         {
+            if (oldItem instanceof ItemBlock)
+            {
+                @SuppressWarnings("unchecked")
+                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+                blockToItem.remove(((ItemBlock)oldItem).getBlock());
+            }
             if (item instanceof ItemBlock)
             {
                 @SuppressWarnings("unchecked")
@@ -477,6 +500,10 @@ public class GameData
             }
             @SuppressWarnings("unchecked")
             Map<Class<? extends Entity>, EntityEntry> map = owner.getSlaveMap(ENTITY_CLASS_TO_ENTRY, Map.class);
+            if (oldEntry != null)
+            {
+                map.remove(oldEntry.getEntityClass());
+            }
             map.put(entry.getEntityClass(), entry);
         }
 
