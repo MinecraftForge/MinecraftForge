@@ -32,7 +32,8 @@ import net.minecraftforge.fml.common.eventhandler.Event.HasResult;
 /**
  * MerchantTradeOffersEvent is fired when a list of villager trade offers is presented in
  * {@link IMerchant#getRecipes(EntityPlayer)}, allowing mods to modify trade offers depending
- * on the player.<br>
+ * on the player. Be warned that this event is fired on both server and client; thus, modders
+ * should ensure that they sync the needed data for this event themselves.<br>
  * <br>
  * This event is not {@link Cancelable}.<br>
  * <br>
