@@ -29,9 +29,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
@@ -86,8 +84,8 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     {
         // we're injecting forge into the exploded dir finder
         final Path forgemodstoml = LibraryFinder.findJarPathFor("META-INF/mods.toml", "forgemodstoml");
-        ((Map<String, List<Pair<Path,Path>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
-                add(Pair.of(compiledClasses, forgemodstoml));
+        ((Map<String, List<Pair<Path,List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
+                add(Pair.of(forgemodstoml, Collections.singletonList(compiledClasses)));
     }
 
     @Override

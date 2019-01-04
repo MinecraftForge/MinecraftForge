@@ -19,20 +19,18 @@
 
 package net.minecraftforge.fml;
 
+import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.ModJarURLHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.SecureClassLoader;
 import java.util.function.Predicate;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 
-public class ModLoadingClassLoader extends SecureClassLoader
+public class ModLoadingClassLoader extends TransformingClassLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -41,62 +39,44 @@ public class ModLoadingClassLoader extends SecureClassLoader
     }
 
     private final Predicate<String> classLoadingPredicate;
+    private final TransformingClassLoader tcl;
 
-    protected ModLoadingClassLoader(final ClassLoader parent) {
-        super(parent);
+    protected ModLoadingClassLoader(final TransformingClassLoader parent) {
+        super(parent, path->FMLLoader.getLoadingModList().findURLForResource(path));
+        this.tcl = parent;
         this.classLoadingPredicate = FMLLoader.getClassLoaderExclusions();
+    }
+
+    @Override
+    protected URL locateResource(final String path) {
+        return FMLLoader.getLoadingModList().findURLForResource(path);
     }
 
     @Override
     public URL getResource(String name)
     {
-        return super.getResource(name);
+        return locateResource(name);
     }
 
-/*
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException
     {
+        synchronized (getClassLoadingLock(name)) {
+            Class<?> existingClass = tcl.getLoadedClass(name);
+            if (existingClass != null) return existingClass;
 
-        final String className = name.replace('.', '/').concat(".class");
-        final Path classResource = FMLLoader.getLoadingModList().findResource(className);
-        if (classResource != null)
-        {
-            return findClass(name);
-        }
-
-        return super.loadClass(name, resolve);
-    }
-*/
-
-    @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException
-    {
-        if (!classLoadingPredicate.test(name)) {
-            LOGGER.debug(LOADING, "Delegating to parent {}", name);
-            return getParent().loadClass(name);
-        }
-        LOGGER.debug(LOADING, "Loading class {}", name);
-        final String className = name.replace('.','/').concat(".class");
-        final Path classResource = FMLLoader.getLoadingModList().findResource(className);
-        if (classResource != null) {
-            try {
-                final byte[] bytes = Files.readAllBytes(classResource);
-                return defineClass(name, bytes, 0, bytes.length);
+            LOGGER.debug(LOADING, "Loading class {}", name);
+            if (!classLoadingPredicate.test(name)) {
+                LOGGER.debug(LOADING, "Delegating to parent {}", name);
+                return tcl.loadClass(name);
             }
-            catch (IOException e)
-            {
-                throw new ClassNotFoundException("Failed to load class file " + classResource + " for "+ className, e);
-            }
-        } else if(getParent() != null) {
-            getParent().loadClass(name);
+            return tcl.loadClass(name, this::locateResource);
         }
-        throw new ClassNotFoundException("Failed to find class file "+ className);
     }
 
     @Override
     protected URL findResource(String name)
     {
-        return super.findResource(name);
+        return locateResource(name);
     }
 }

@@ -36,8 +36,8 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 public class ExplodedDirectoryLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
-    private final List<Pair<Path,Path>> rootDirs;
-    private final Map<ModFile, Pair<Path,Path>> mods;
+    private final List<Pair<Path,List<Path>>> rootDirs;
+    private final Map<ModFile, Pair<Path,List<Path>>> mods;
 
     public ExplodedDirectoryLocator() {
         this.rootDirs = new ArrayList<>();
@@ -49,7 +49,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
         final Path modstoml = Paths.get("META-INF", "mods.toml");
         // Collect all the mods.toml files found
         rootDirs.forEach(pathPathPair -> {
-            Path resources = pathPathPair.getRight();
+            Path resources = pathPathPair.getLeft();
             Path modtoml = resources.resolve(modstoml);
             if (Files.exists(modtoml)) {
                 ModFile mf = new ModFile(pathPathPair.getLeft(), this);
@@ -73,25 +73,29 @@ public class ExplodedDirectoryLocator implements IModLocator {
         }
         final Path target = Paths.get(path[0], Arrays.copyOfRange(path, 1, path.length));
         // try right path first (resources)
-        Path found = mods.get(modFile).getRight().resolve(target);
+        Path found = mods.get(modFile).getLeft().resolve(target);
         if (Files.exists(found)) return found;
         // then try left path (classes)
-        return mods.get(modFile).getLeft().resolve(target);
+        return mods.get(modFile).getRight().stream().map(p->p.resolve(target)).findFirst().orElse(found.resolve(target));
     }
 
     @Override
     public void scanFile(final ModFile modFile, final Consumer<Path> pathConsumer) {
-        LOGGER.debug(SCAN,"Scanning directory {}", modFile.getFilePath().toString());
-        final Pair<Path, Path> pathPathPair = mods.get(modFile);
-        // classes are in the left branch of the pair
-        try (Stream<Path> files = Files.find(pathPathPair.getLeft(), Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
-            files.forEach(pathConsumer);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        LOGGER.debug(SCAN,"Directory scan complete {}", pathPathPair.getLeft());
+        LOGGER.debug(SCAN,"Scanning exploded directory {}", modFile.getFilePath().toString());
+        final Pair<Path, List<Path>> pathPathPair = mods.get(modFile);
+        // classes are in the right branch of the pair
+         pathPathPair.getRight().forEach(path->scanIndividualPath(path, pathConsumer));
+        LOGGER.debug(SCAN,"Exploded directory scan complete {}", pathPathPair.getLeft().toString());
     }
 
+    private void scanIndividualPath(final Path path, Consumer<Path> pathConsumer) {
+        LOGGER.debug(SCAN, "Scanning exploded target {}", path.toString());
+        try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
+            files.forEach(pathConsumer);
+        } catch (IOException e) {
+            LOGGER.info("Exception scanning {}", path, e);
+        }
+    }
     @Override
     public String toString()
     {
@@ -107,7 +111,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
     @SuppressWarnings("unchecked")
     @Override
     public void initArguments(final Map<String, ?> arguments) {
-        final List<Pair<Path, Path>> explodedTargets = ((Map<String, List<Pair<Path, Path>>>) arguments).get("explodedTargets");
+        final List<Pair<Path, List<Path>>> explodedTargets = ((Map<String, List<Pair<Path, List<Path>>>>) arguments).get("explodedTargets");
         if (explodedTargets != null && !explodedTargets.isEmpty()) {
             rootDirs.addAll(explodedTargets);
         }

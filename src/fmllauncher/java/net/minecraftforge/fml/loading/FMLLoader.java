@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.TransformingClassLoader;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformationService;
@@ -56,7 +57,7 @@ public class FMLLoader
     private static LanguageLoadingProvider languageLoadingProvider;
     private static Dist dist;
     private static LoadingModList loadingModList;
-    private static ClassLoader launchClassLoader;
+    private static TransformingClassLoader launchClassLoader;
     private static RuntimeDistCleaner runtimeDistCleaner;
     private static Path gamePath;
     private static Path forgePath;
@@ -207,7 +208,7 @@ public class FMLLoader
 
     public static void beforeStart(ITransformingClassLoader launchClassLoader)
     {
-        FMLLoader.launchClassLoader = launchClassLoader.getInstance();
+        FMLLoader.launchClassLoader = (TransformingClassLoader) launchClassLoader.getInstance();
     }
 
 
@@ -217,7 +218,7 @@ public class FMLLoader
 
     }
 
-    public static ClassLoader getLaunchClassLoader()
+    public static TransformingClassLoader getLaunchClassLoader()
     {
         return launchClassLoader;
     }

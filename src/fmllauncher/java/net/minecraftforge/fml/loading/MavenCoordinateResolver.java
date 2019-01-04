@@ -25,7 +25,8 @@ import java.nio.file.Paths;
 /**
  * Convert a maven coordinate into a Path.
  *
- * {@code <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>}, must not be {@code null}.
+ * This is gradle standard not maven standard coordinate formatting
+ * {@code <groupId>:<artifactId>[:<classifier>]:<version>[@extension]}, must not be {@code null}.
  */
 
 public class MavenCoordinateResolver {
@@ -33,9 +34,10 @@ public class MavenCoordinateResolver {
         final String[] parts = coordinate.split(":");
         final String groupId = parts[0];
         final String artifactId = parts[1];
-        final String extension = parts.length > 3 ? parts[2] : "";
-        final String classifier = parts.length > 4 ? parts[3] : "";
-        final String version = parts[parts.length-1];
+        final String classifier = parts.length > 3 ? parts[2] : "";
+        final String[] versext = parts[parts.length-1].split("@");
+        final String version = versext[0];
+        final String extension = versext.length > 1 ? versext[1] : "";
         return get(groupId, artifactId, extension, classifier, version);
     }
 

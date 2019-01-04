@@ -49,22 +49,27 @@ public class LibraryFinder {
 
     static Path findJarPathFor(final String className, final String jarName) {
         final URL resource = LibraryFinder.class.getClassLoader().getResource(className);
+        return findJarPathFor(className, jarName, resource);
+    }
+
+    public static Path findJarPathFor(final String resourceName, final String jarName, final URL resource) {
         try {
             Path path;
             final URI uri = resource.toURI();
             if (uri.getRawSchemeSpecificPart().contains("!")) {
                 path = Paths.get(new URI(uri.getRawSchemeSpecificPart().split("!")[0]));
             } else {
-                path = Paths.get(new URI("file://"+uri.getRawSchemeSpecificPart().substring(0, uri.getRawSchemeSpecificPart().length()-className.length())));
+                path = Paths.get(new URI("file://"+uri.getRawSchemeSpecificPart().substring(0, uri.getRawSchemeSpecificPart().length()-resourceName.length())));
             }
             LOGGER.debug(CORE, "Found JAR {} at path {}", jarName, path.toString());
             return path;
         } catch (NullPointerException | URISyntaxException e) {
-            LOGGER.error(CORE, "Failed to find JAR for class {} - {}", className, jarName);
-            throw new RuntimeException("Unable to locate "+className+" - "+jarName, e);
+            LOGGER.error(CORE, "Failed to find JAR for class {} - {}", resourceName, jarName);
+            throw new RuntimeException("Unable to locate "+resourceName+" - "+jarName, e);
         }
     }
-    static Path[] commonLibPaths(Path[] extras) {
+
+    public static Path[] commonLibPaths(Path[] extras) {
         final Path realms = findJarPathFor("com/mojang/realmsclient/RealmsVersion.class", "realms");
         return ObjectArrays.concat(extras, realms);
     }

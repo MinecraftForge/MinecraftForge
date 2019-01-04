@@ -35,8 +35,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.fml.Logging.LOADING;
-import static net.minecraftforge.fml.Logging.SCAN;
+import static net.minecraftforge.fml.Logging.*;
 
 public class FMLJavaModLanguageProvider implements IModLanguageProvider
 {
@@ -68,13 +67,14 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
             // in the classloader of the game - the context classloader is appropriate here.
             try
             {
-                final Constructor<?> constructor = Class.forName("net.minecraftforge.fml.javafmlmod.FMLModContainer", true, Thread.currentThread().getContextClassLoader()).
-                        getConstructor(IModInfo.class, String.class, ClassLoader.class, ModFileScanData.class);
+                final Class<?> fmlContainer = Class.forName("net.minecraftforge.fml.javafmlmod.FMLModContainer", true, Thread.currentThread().getContextClassLoader());
+                LOGGER.debug(LOADING, "Loading FMLModContainer from classloader {} - got {}", Thread.currentThread().getContextClassLoader(), fmlContainer.getClassLoader());
+                final Constructor<?> constructor = fmlContainer.getConstructor(IModInfo.class, String.class, ClassLoader.class, ModFileScanData.class);
                 return (T)constructor.newInstance(info, className, modClassLoader, modFileScanResults);
             }
             catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e)
             {
-                LOGGER.error(LOADING,"Unable to load FMLModContainer, wut?", e);
+                LOGGER.fatal(LOADING,"Unable to load FMLModContainer, wut?", e);
                 throw new RuntimeException(e);
             }
         }

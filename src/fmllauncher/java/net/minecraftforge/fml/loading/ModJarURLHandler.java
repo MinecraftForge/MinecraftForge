@@ -25,29 +25,43 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class ModJarURLHandler extends URLStreamHandler
 {
-    // modjar:///modid!path/to/file
+    // modjar://modid/path/to/file
     @Override
-    protected URLConnection openConnection(URL url) throws IOException {
+    protected URLConnection openConnection(URL url) {
         return new URLConnection(url) {
+            private Path resource;
             private String modpath;
             private String modid;
 
             @Override
-            public void connect() throws IOException
+            public void connect()
             {
-                final String path = url.getPath();
-                final String[] parts = path.split("!");
-                if (parts.length!=2) throw new IOException("Illegal URL format "+path);
-                modid = parts[0];
-                modpath = parts[1];
+                if (resource == null) {
+                    modid = url.getHost();
+                    // trim first char
+                    modpath = url.getPath().substring(1);
+                    resource = FMLLoader.getLoadingModList().getModFileById(modid).getFile().findResource(modpath);
+                }
             }
             @Override
             public InputStream getInputStream() throws IOException
             {
-                return Files.newInputStream(FMLLoader.getLoadingModList().getModFileById(modid).getFile().findResource(modpath));
+                connect();
+                return Files.newInputStream(resource);
+            }
+
+            @Override
+            public long getContentLengthLong() {
+                try {
+                    connect();
+                    return Files.size(resource);
+                } catch (IOException e) {
+                    return -1L;
+                }
             }
         };
     }

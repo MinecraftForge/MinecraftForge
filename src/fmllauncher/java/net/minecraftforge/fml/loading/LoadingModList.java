@@ -25,6 +25,8 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -98,6 +100,20 @@ public class LoadingModList
         for (ModFileInfo mf : modFiles) {
             final Path resource = mf.getFile().findResource(className);
             if (Files.exists(resource)) return resource;
+        }
+        return null;
+    }
+
+    public URL findURLForResource(final String resourceName) {
+        for (ModFileInfo mf : modFiles) {
+            final Path resource = mf.getFile().findResource(resourceName);
+            if (Files.exists(resource)) {
+                try {
+                    return new URL("modjar://"+mf.getMods().get(0).getModId()+"/"+resourceName);
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
         return null;
     }
