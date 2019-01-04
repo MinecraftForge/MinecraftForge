@@ -33,6 +33,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 
+@Deprecated // TODO as this only targets a single class, it can be moved to a JS coremod
 public abstract class FieldRedirectTransformer implements ILaunchPluginService
 {
     private final String clsName;
