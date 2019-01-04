@@ -82,6 +82,8 @@ public class Property
     private String langKey;
     private String minValue;
     private String maxValue;
+    /** If true, will have a slider attached automatically in configuration UI */
+    private boolean hasSlidingControl;
 
     private Class<? extends IConfigEntry> configEntryClass = null;
     private Class<? extends IArrayEntry> arrayEntryClass = null;
@@ -1260,4 +1262,14 @@ public class Property
     public void set(long    value){ set(Long.toString(value));    }
     public void set(boolean value){ set(Boolean.toString(value)); }
     public void set(double  value){ set(Double.toString(value));  }
+
+    public boolean hasSlidingControl()
+    {
+        return hasSlidingControl;
+    }
+
+    public void setHasSlidingControl(boolean b)
+    {
+        hasSlidingControl=b;
+    }
 }

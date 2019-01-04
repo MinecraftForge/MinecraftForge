@@ -12,5 +12,11 @@
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
+},
+{
+  "modid": "slider_config_element",
+  "name": "Slider Config Element Test",
+  "description": "",
+  "version": "0.0"
 }
 ]

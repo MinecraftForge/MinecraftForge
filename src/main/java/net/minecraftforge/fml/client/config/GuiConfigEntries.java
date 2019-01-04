@@ -138,9 +138,19 @@ public class GuiConfigEntries extends GuiListExtended
                     else if (configElement.getType() == ConfigGuiType.BOOLEAN)
                         this.listEntries.add(new GuiConfigEntries.BooleanEntry(this.owningScreen, this, configElement));
                     else if (configElement.getType() == ConfigGuiType.INTEGER)
-                        this.listEntries.add(new GuiConfigEntries.IntegerEntry(this.owningScreen, this, configElement));
+                    {
+                        if(configElement.hasSlidingControl())
+                            listEntries.add(new GuiConfigEntries.NumberSliderEntry(owningScreen,this,configElement));
+                        else
+                            this.listEntries.add(new GuiConfigEntries.IntegerEntry(this.owningScreen, this, configElement));
+                    }
                     else if (configElement.getType() == ConfigGuiType.DOUBLE)
-                        this.listEntries.add(new GuiConfigEntries.DoubleEntry(this.owningScreen, this, configElement));
+                    {
+                        if(configElement.hasSlidingControl())
+                            listEntries.add(new NumberSliderEntry(owningScreen,this,configElement));
+                        else
+                            this.listEntries.add(new GuiConfigEntries.DoubleEntry(this.owningScreen, this, configElement));
+                    }
                     else if (configElement.getType() == ConfigGuiType.COLOR)
                     {
                         if (configElement.getValidValues() != null && configElement.getValidValues().length > 0)
