@@ -49,7 +49,7 @@
                      WorldServer worldserver2 = (WorldServer)entity.field_70170_p;
                      this.field_147369_b.field_71093_bK = entity.field_71093_bK;
 -                    this.func_147359_a(new SPacketRespawn(this.field_147369_b.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), this.field_147369_b.field_71134_c.func_73081_b()));
-+                    this.func_147359_a(new SPacketRespawn(this.field_147369_b.field_71093_bK, worldserver2.func_175659_aa(), worldserver2.func_72912_H().func_76067_t(), this.field_147369_b.field_71134_c.func_73081_b()));
++                    this.func_147359_a(new SPacketRespawn(this.field_147369_b.field_71093_bK, worldserver2.func_175659_aa(), worldserver2.func_72912_H().func_76067_t(), this.field_147369_b.field_71134_c.func_73081_b())); // Forge: Use new dimensions information
                      this.field_147367_d.func_184103_al().func_187243_f(this.field_147369_b);
                      worldserver1.func_72973_f(this.field_147369_b);
                      this.field_147369_b.field_70128_L = false;
