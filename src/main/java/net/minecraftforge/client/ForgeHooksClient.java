@@ -629,6 +629,9 @@ public class ForgeHooksClient
         int segmentSkyLight = -1;
         // Coloring of the current segment
         int segmentColorMultiplier = color;
+        // State changed by the current segment
+        boolean segmentLightingDirty = false;
+        boolean segmentColorDirty = false;
         // If the current segment contains lighting data
         boolean hasLighting = false;
 
@@ -681,18 +684,20 @@ public class ForgeHooksClient
             {
                 if (i > 0) // Make sure this isn't the first quad being processed
                 {
-                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
+                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, segmentLightingDirty && (hasLighting || segment.size() < i), segmentColorDirty);
                 }
                 segmentBlockLight = bl;
                 segmentSkyLight = sl;
                 segmentColorMultiplier = colorMultiplier;
+                segmentLightingDirty = lightingDirty;
+                segmentColorDirty = colorDirty;
                 hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0;
             }
 
             segment.add(q);
         }
 
-        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
+        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, segmentLightingDirty && (hasLighting || segment.size() < allquads.size()), segmentColorDirty);
 
         // Clean up render state if necessary
         if (hasLighting)
