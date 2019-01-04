@@ -26,6 +26,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -73,6 +74,22 @@ public class RegistryOverrideTest
         if (ENABLED)
         {
             event.getRegistry().register(new PotionType().setRegistryName("minecraft:awkward"));
+        }
+    }
+
+    @SubscribeEvent
+    public static void registerPotions(RegistryEvent.Register<Potion> event)
+    {
+        if (ENABLED)
+        {
+            event.getRegistry().register(new Potion(true, 0x00ffff)
+            {
+                {
+                    setPotionName("effect.poison");
+                    setIconIndex(6, 0);
+                    setEffectiveness(0.25D);
+                }
+            }.setRegistryName("minecraft:poison"));
         }
     }
 
