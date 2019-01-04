@@ -629,9 +629,12 @@ public class ForgeHooksClient
         int segmentSkyLight = -1;
         // Coloring of the current segment
         int segmentColorMultiplier = color;
+        // Diffuse lighting state
+        boolean segmentShading = true;
         // State changed by the current segment
         boolean segmentLightingDirty = false;
         boolean segmentColorDirty = false;
+        boolean segmentShadingDirty = false;
         // If the current segment contains lighting data
         boolean hasLighting = false;
 
@@ -676,28 +679,33 @@ public class ForgeHooksClient
                 prevTintIndex = -1;
             }
 
+            boolean shade = q.shouldApplyDiffuseLighting();
+
             boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
             boolean colorDirty = hasLighting && segmentColorMultiplier != colorMultiplier;
+            boolean shadeDirty = shade != segmentShading; 
 
             // If lighting or color data has changed, draw the segment and flush it
-            if (lightingDirty || colorDirty)
+            if (lightingDirty || colorDirty || shadeDirty)
             {
                 if (i > 0) // Make sure this isn't the first quad being processed
                 {
-                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, segmentLightingDirty && (hasLighting || segment.size() < i), segmentColorDirty);
+                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < i), segmentColorDirty, segmentShadingDirty);
                 }
                 segmentBlockLight = bl;
                 segmentSkyLight = sl;
                 segmentColorMultiplier = colorMultiplier;
+                segmentShading = shade;
                 segmentLightingDirty = lightingDirty;
                 segmentColorDirty = colorDirty;
+                segmentShadingDirty = shadeDirty;
                 hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0;
             }
 
             segment.add(q);
         }
 
-        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, segmentLightingDirty && (hasLighting || segment.size() < allquads.size()), segmentColorDirty);
+        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < allquads.size()), segmentColorDirty, segmentShadingDirty);
 
         // Clean up render state if necessary
         if (hasLighting)
@@ -707,7 +715,7 @@ public class ForgeHooksClient
         }
     }
 
-    private static void drawSegment(ItemRenderer ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor)
+    private static void drawSegment(ItemRenderer ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean shade, boolean updateLighting, boolean updateColor, boolean updateShading)
     {
         BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
@@ -715,16 +723,26 @@ public class ForgeHooksClient
         float lastBl = OpenGlHelper.lastBrightnessX;
         float lastSl = OpenGlHelper.lastBrightnessY;
 
-        if (updateLighting || updateColor)
+        if (updateLighting || updateColor || updateShading)
         {
-            float emissive = Math.max(bl, sl) / 240f;
-
-            float r = (tintColor >>> 16 & 0xff) / 255f;
-            float g = (tintColor >>>  8 & 0xff) / 255f;
-            float b = (tintColor        & 0xff) / 255f;
-
-            GL11.glMaterialfv(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
-
+            if (!shade)
+            {
+                // When diffuse lighting is off, set the emissive buffer to "disable" the GL lighting effects and emulate the block rendering
+                float emissive = Math.max(bl, sl) / 240f;
+                
+                float r = (tintColor >>> 16 & 0xff) / 255f;
+                float g = (tintColor >>>  8 & 0xff) / 255f;
+                float b = (tintColor        & 0xff) / 255f;
+                
+                GL11.glMaterialfv(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
+            }
+            else
+            {
+                // Otherwise leave it as-is (or reset it) so that normal lighting effects take hold
+                // Color will be set instead by downstream RenderItem#renderQuads
+                GL11.glMaterialfv(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+            }
+            
             if (updateLighting)
             {
                 OpenGlHelper.glMultiTexCoord2f(OpenGlHelper.GL_TEXTURE1, Math.max(bl, lastBl), Math.max(sl, lastSl));
