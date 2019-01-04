@@ -17,7 +17,18 @@
     }
  
     public boolean func_199308_a(PotionEffect p_199308_1_) {
-@@ -188,11 +191,12 @@
+@@ -88,6 +91,10 @@
+    }
+ 
+    public Potion func_188419_a() {
++      return this.getPotionRaw() == null ? null : this.getPotionRaw().delegate.get();
++   }
++
++   private Potion getPotionRaw() {
+       return this.field_188420_b;
+    }
+ 
+@@ -188,11 +195,12 @@
        p_82719_1_.func_74757_a("Ambient", this.func_82720_e());
        p_82719_1_.func_74757_a("ShowParticles", this.func_188418_e());
        p_82719_1_.func_74757_a("ShowIcon", this.func_205348_f());
@@ -31,7 +42,7 @@
        Potion potion = Potion.func_188412_a(i);
        if (potion == null) {
           return null;
-@@ -210,7 +214,7 @@
+@@ -210,7 +218,7 @@
              flag2 = p_82722_0_.func_74767_n("ShowIcon");
           }
  
@@ -40,7 +51,7 @@
        }
     }
  
-@@ -226,6 +230,67 @@
+@@ -226,6 +234,67 @@
  
     public int compareTo(PotionEffect p_compareTo_1_) {
        int i = 32147;
