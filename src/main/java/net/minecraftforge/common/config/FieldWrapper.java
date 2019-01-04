@@ -259,14 +259,19 @@ public abstract class FieldWrapper implements IFieldWrapper
 
             Property prop = cfg.getCategory(this.category).get(this.name); // Will be setup in general by ConfigManager
 
-            List<String> lst = Lists.newArrayList();
+            List<String> listValidValues = Lists.newArrayList();
+            List<String> listValidValuesDisplay = Lists.newArrayList();
             for (Enum e : ((Class<? extends Enum>) field.getType()).getEnumConstants())
-                lst.add(e.name());
+            {
+                listValidValues.add(e.name());
+                listValidValuesDisplay.add(e.toString());
+            }
 
-            prop.setValidationPattern(Pattern.compile(PIPE.join(lst)));
-            prop.setValidValues(lst.toArray(new String[0]));
+            prop.setValidationPattern(Pattern.compile(PIPE.join(listValidValues)));
+            prop.setValidValues(listValidValues.toArray(new String[0]));
+            prop.setValidValuesDisplay(listValidValuesDisplay.toArray(new String[0]));
 
-            String validValues = NEW_LINE.join(lst);
+            String validValues = NEW_LINE.join(listValidValues);
 
             if (desc != null)
                 prop.setComment(NEW_LINE.join(new String[] { desc, "Valid values:" }) + "\n" + validValues);

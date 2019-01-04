@@ -208,6 +208,12 @@ public class ConfigElement implements IConfigElement
     }
 
     @Override
+    public String[] getValidValuesDisplay()
+    {
+        return isProperty ? prop.getValidValuesDisplay() : null;
+    }
+
+    @Override
     public String getLanguageKey()
     {
         return isProperty ? prop.getLanguageKey() : category.getLanguagekey();
