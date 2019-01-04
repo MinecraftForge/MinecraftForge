@@ -273,6 +273,15 @@ public class GameData
             this.objectList.clear();
             this.nextId = 0;
         }
+
+        void remove(I key)
+        {
+            Integer prev = this.identityMap.remove(key);
+            if (prev != null)
+            {
+                this.objectList.set(prev, null);
+            }
+        }
     }
 
     private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
@@ -315,6 +324,14 @@ public class GameData
                 }
             }
 /*
+
+            if (oldBlock != null)
+            {
+                for (IBlockState state : oldBlock.getBlockState().getValidStates())
+                {
+                    blockstateMap.remove(state);
+                }
+            }
 
             if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
             {
@@ -424,6 +441,12 @@ public class GameData
         @Override
         public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item, @Nullable Item oldItem)
         {
+            if (oldItem instanceof ItemBlock)
+            {
+                @SuppressWarnings("unchecked")
+                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+                blockToItem.remove(((ItemBlock)oldItem).getBlock());
+            }
             if (item instanceof ItemBlock)
             {
                 @SuppressWarnings("unchecked")
@@ -511,6 +534,7 @@ public class GameData
             }
             if (entry.getEgg() != null)
                 EntityList.ENTITY_EGGS.put(entry.getRegistryName(), entry.getEgg());
+            }
         }
     }
 */
