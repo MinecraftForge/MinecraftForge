@@ -74,6 +74,7 @@ public class DimensionManager
     }
 
     private static boolean hasInit = false;
+    private static int lastUsedId = 0;
 
     private static final Int2ObjectMap<WorldServer> worlds = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final Int2ObjectMap<Dimension> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
@@ -413,12 +414,12 @@ public class DimensionManager
      */
     public static int getNextFreeDimId()
     {
-        int next = 0;
-        while (true)
+        int next = lastUsedId;
+        while (usedIds.contains(next) || !checkAvailable(next))
         {
-            while (usedIds.contains(next)) next++;
-            if (checkAvailable(next)) return next;
+            next++;
         }
+        return lastUsedId = next;
     }
 
     private static boolean checkAvailable(int id)
