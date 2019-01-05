@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -39,14 +40,18 @@ public class ResourcePackLoader
     private static Map<ModFile, ModFileResourcePack> modResourcePacks;
     private static ResourcePackList<?> resourcePackList;
 
-    public static IResourcePack getResourcePackFor(String modId)
+    public static ModFileResourcePack getResourcePackFor(String modId)
     {
         return modResourcePacks.get(ModList.get().getModFileById(modId).getFile());
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends ResourcePackInfo> T getResourcePackInfo(String modId) {
-        return (T)resourcePackList.getPackInfo(modId);
+    public static <T extends ResourcePackInfo> T getResourcePackInfoForModId(String modId) {
+        if (Objects.equals(modId, "minecraft")) {
+            // Additional resources for MC are associated with forge
+            return getResourcePackFor("forge").getPackInfo();
+        }
+        return getResourcePackFor(modId).getPackInfo();
     }
 
     public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks) {
@@ -57,50 +62,6 @@ public class ResourcePackLoader
         resourcePacks.addPackFinder(new ModPackFinder());
     }
 
-    private static class ForgeFolderPack extends FolderPack {
-        public ForgeFolderPack(final File folder) {
-            super(folder);
-        }
-
-        public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
-            if (location.getPath().startsWith("lang/")) {
-                return super.getResourceStream(ResourcePackType.CLIENT_RESOURCES, location);
-            } else {
-                return super.getResourceStream(type, location);
-            }
-        }
-
-        public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
-            if (location.getPath().startsWith("lang/")) {
-                return super.resourceExists(ResourcePackType.CLIENT_RESOURCES, location);
-            } else {
-                return super.resourceExists(type, location);
-            }
-        }
-    }
-
-    private static class ForgeFilePack extends FilePack {
-        public ForgeFilePack(final File folder) {
-            super(folder);
-        }
-
-        public InputStream getResourceStream(ResourcePackType type, ResourceLocation location) throws IOException {
-            if (location.getPath().startsWith("lang/")) {
-                return super.getResourceStream(ResourcePackType.CLIENT_RESOURCES, location);
-            } else {
-                return super.getResourceStream(type, location);
-            }
-        }
-
-        public boolean resourceExists(ResourcePackType type, ResourceLocation location) {
-            if (location.getPath().startsWith("lang/")) {
-                return super.resourceExists(ResourcePackType.CLIENT_RESOURCES, location);
-            } else {
-                return super.resourceExists(type, location);
-            }
-        }
-
-    }
     private static class ModPackFinder implements IPackFinder
     {
         @Override
@@ -109,7 +70,9 @@ public class ResourcePackLoader
             for (Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet())
             {
                 String name = "modfile/" + e.getKey().getFileName();
-                packList.put(name, ResourcePackInfo.func_195793_a(name, true, ()->e.getValue(), factory, ResourcePackInfo.Priority.BOTTOM));
+                final T packInfo = ResourcePackInfo.func_195793_a(name, true, () -> e.getValue(), factory, ResourcePackInfo.Priority.BOTTOM);
+                e.getValue().setPackInfo(packInfo);
+                packList.put(name, packInfo);
             }
         }
         

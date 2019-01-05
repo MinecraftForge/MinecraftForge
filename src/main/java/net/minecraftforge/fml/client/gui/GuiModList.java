@@ -433,8 +433,8 @@ public class GuiModList extends GuiScreen
         Pair<ResourceLocation, Dimension> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = mc.getTextureManager();
-            ResourcePackInfoClient pack = ResourcePackLoader.getResourcePackInfo(selectedMod.getModId());
-            if (pack == null) pack = ResourcePackLoader.getResourcePackInfo("forge");
+            ResourcePackInfoClient pack = ResourcePackLoader.getResourcePackInfoForModId(selectedMod.getModId());
+            if (pack == null) pack = ResourcePackLoader.getResourcePackInfoForModId("forge");
             try
             {
                 NativeImage logo = null;

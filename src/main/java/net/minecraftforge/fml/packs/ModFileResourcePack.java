@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.packs;
 
 import net.minecraft.resources.AbstractResourcePack;
+import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -42,6 +43,7 @@ import com.google.common.base.Joiner;
 public class ModFileResourcePack extends AbstractResourcePack
 {
     private final ModFile modFile;
+    private ResourcePackInfo packInfo;
 
     public ModFileResourcePack(final ModFile modFile)
     {
@@ -134,5 +136,13 @@ public class ModFileResourcePack extends AbstractResourcePack
     public void close() throws IOException
     {
 
+    }
+
+    <T extends ResourcePackInfo> void setPackInfo(final T packInfo) {
+        this.packInfo = packInfo;
+    }
+
+    <T extends ResourcePackInfo> T getPackInfo() {
+        return (T)this.packInfo;
     }
 }

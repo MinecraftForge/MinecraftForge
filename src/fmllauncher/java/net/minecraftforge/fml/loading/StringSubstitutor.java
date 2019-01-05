@@ -31,8 +31,8 @@ import java.util.Map;
 public class StringSubstitutor
 {
     private static final Map<String,String> globals = ImmutableMap.of(
-            "mcVersion", FMLLoader.forgeVersion,
-            "forgeVersion", FMLLoader.mcVersion
+            "mcVersion", FMLLoader.mcVersion,
+            "forgeVersion", FMLLoader.forgeVersion
     );
 
     public static String replace(final String in, final ModFile file) {
@@ -52,15 +52,12 @@ public class StringSubstitutor
                 {
                     return globals.get(parts[1]);
                 }
-                else if ("file".equals(pfx))
+                else if ("file".equals(pfx) && file != null)
                 {
                     return String.valueOf(file.getSubstitutionMap().get().get(parts[1]));
                 }
                 return key;
             }
         };
-    }
-    private static List<String> split(final String in) {
-        return Arrays.asList(in.split("."));
     }
 }
