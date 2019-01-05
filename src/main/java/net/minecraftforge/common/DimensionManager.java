@@ -442,6 +442,7 @@ public class DimensionManager
     public static void loadDimensionDataMap(@Nullable NBTTagCompound compoundTag)
     {
         usedIds.clear();
+        lastUsedId = 0;
 
         if (compoundTag == null)
         {
