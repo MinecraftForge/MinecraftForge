@@ -143,12 +143,12 @@ public class Constants
      */
     public static class BlockFlags {
         public static final int NOTIFY_NEIGHBORS     = 0b00001; //Calls neighborChanged on surrounding blocks
-        public static final int NOTIFY_BLOCK_UPDATE  = 0b00010; //If server-side, Sends the update to the client. If client-side marks the block to be re-rendered (unless NO_RERENDER is present)
+        public static final int SEND_TO_CLIENTS      = 0b00010; //Sends the update to the client
         public static final int NO_RERENDER          = 0b00100; //Stops the blocks from being marked for a render update
         public static final int RERENDER_MAIN_THREAD = 0b01000; //Makes the block be re-rendered immediately, on the main thread
         public static final int NO_OBSERVERS         = 0b10000; //Disables observers from seeing this update
 
-        public static final int DEFAULT = NOTIFY_NEIGHBORS | NOTIFY_BLOCK_UPDATE;
+        public static final int DEFAULT = NOTIFY_NEIGHBORS | SEND_TO_CLIENTS;
         public static final int DEFAULT_AND_RERENDER = DEFAULT | RERENDER_MAIN_THREAD;
     }
 

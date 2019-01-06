@@ -92,7 +92,7 @@ public class BlockFluidFinite extends BlockFluidBase
             changed = true;
             if (quantaRemaining == 1)
             {
-                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), Constants.BlockFlags.NOTIFY_BLOCK_UPDATE);
+                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), Constants.BlockFlags.SEND_TO_CLIENTS);
                 return;
             }
         }
@@ -124,7 +124,7 @@ public class BlockFluidFinite extends BlockFluidBase
         {
             if (changed)
             {
-                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), Constants.BlockFlags.NOTIFY_BLOCK_UPDATE);
+                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), Constants.BlockFlags.SEND_TO_CLIENTS);
             }
             return;
         }
@@ -153,7 +153,7 @@ public class BlockFluidFinite extends BlockFluidBase
                     }
                     else
                     {
-                        world.setBlockState(off, getDefaultState().withProperty(LEVEL, newQuanta - 1), Constants.BlockFlags.NOTIFY_BLOCK_UPDATE);
+                        world.setBlockState(off, getDefaultState().withProperty(LEVEL, newQuanta - 1), Constants.BlockFlags.SEND_TO_CLIENTS);
                     }
                     world.scheduleUpdate(off, this, tickRate);
                 }
@@ -165,7 +165,7 @@ public class BlockFluidFinite extends BlockFluidBase
         {
             ++each;
         }
-        world.setBlockState(pos, state.withProperty(LEVEL, each - 1), Constants.BlockFlags.NOTIFY_BLOCK_UPDATE);
+        world.setBlockState(pos, state.withProperty(LEVEL, each - 1), Constants.BlockFlags.SEND_TO_CLIENTS);
     }
 
     public int tryToFlowVerticallyInto(World world, BlockPos pos, int amtToInput)
