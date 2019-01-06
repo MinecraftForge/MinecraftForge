@@ -254,7 +254,7 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:0.4.+'
+        installer 'cpw.mods:modlauncher:0.4.0'
         installer 'net.minecraftforge:accesstransformers:0.10+:shadowed'
         installer 'net.minecraftforge:eventbus:0.1+:service'
         installer 'net.minecraftforge:forgespi:0.1+'
