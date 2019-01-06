@@ -22,7 +22,6 @@ package net.minecraftforge.common.util;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
-import com.mojang.datafixers.kinds.Const;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
