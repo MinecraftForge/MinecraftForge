@@ -47,12 +47,6 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     }
 
     @Override
-    public Path[] identifyTransformationTargets()
-    {
-        return LibraryFinder.commonLibPaths(ObjectArrays.concat(FMLLoader.getForgePath(), FMLLoader.getMCPaths()));
-    }
-
-    @Override
     public Path getForgePath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
         // In forge dev, we just find the path for ForgeVersion for everything
         compiledClasses = LibraryFinder.findJarPathFor("net/minecraftforge/versions/forge/ForgeVersion.class", "forge");

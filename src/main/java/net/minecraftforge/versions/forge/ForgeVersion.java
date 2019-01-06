@@ -51,9 +51,9 @@ public class ForgeVersion
         forgeVersion = vers;
         forgeSpec = spec;
         forgeGroup = group;
-        LOGGER.info(CORE, "Found Forge version {}", forgeVersion);
-        LOGGER.info(CORE, "Found Forge spec {}", forgeSpec);
-        LOGGER.info(CORE, "Found Forge group {}", forgeGroup);
+        LOGGER.debug(CORE, "Found Forge version {}", forgeVersion);
+        LOGGER.debug(CORE, "Found Forge spec {}", forgeSpec);
+        LOGGER.debug(CORE, "Found Forge group {}", forgeGroup);
     }
 
     public static String getVersion()

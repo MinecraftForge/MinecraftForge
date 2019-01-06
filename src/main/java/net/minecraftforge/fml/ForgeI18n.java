@@ -23,6 +23,8 @@ import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.commons.lang3.text.ExtendedMessageFormat;
 import org.apache.commons.lang3.text.FormatFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.FieldPosition;
 import java.text.Format;
@@ -33,6 +35,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class ForgeI18n {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static Map<String,String> i18n;
     private static Map<String,FormatFactory> customFactories;
 
@@ -77,6 +80,7 @@ public class ForgeI18n {
     }
 
     public static void loadLanguageData(final Map<String, String> properties) {
+        LOGGER.debug("Loading I18N data entries: {}", properties.size());
         i18n = properties;
     }
 

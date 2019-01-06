@@ -64,7 +64,7 @@ public class LibraryFinder {
             LOGGER.debug(CORE, "Found JAR {} at path {}", jarName, path.toString());
             return path;
         } catch (NullPointerException | URISyntaxException e) {
-            LOGGER.error(CORE, "Failed to find JAR for class {} - {}", resourceName, jarName);
+            LOGGER.fatal(CORE, "Failed to find JAR for class {} - {}", resourceName, jarName);
             throw new RuntimeException("Unable to locate "+resourceName+" - "+jarName, e);
         }
     }
@@ -89,10 +89,10 @@ public class LibraryFinder {
         Path mcDataPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "data", mcVersion));
         Path mcExtrasPath = findLibsPath().resolve(MavenCoordinateResolver.get("net.minecraft", type, "", "extra", mcVersion));
         Path patchedBinariesPath = findLibsPath().resolve(MavenCoordinateResolver.get(forgeGroup, "forge", "", type, mcVersion+"-"+forgeVersion));
-        LOGGER.info("SRG MC at {} is {}", srgMcPath.toString(), pathStatus(srgMcPath));
-        LOGGER.info("MC Data at {} is {}", mcDataPath.toString(), pathStatus(mcDataPath));
-        LOGGER.info("MC Extras at {} is {}", mcExtrasPath.toString(), pathStatus(mcExtrasPath));
-        LOGGER.info("Forge patches at {} is {}", patchedBinariesPath.toString(), pathStatus(patchedBinariesPath));
+        LOGGER.debug(CORE,"SRG MC at {} is {}", srgMcPath.toString(), pathStatus(srgMcPath));
+        LOGGER.debug(CORE,"MC Data at {} is {}", mcDataPath.toString(), pathStatus(mcDataPath));
+        LOGGER.debug(CORE,"MC Extras at {} is {}", mcExtrasPath.toString(), pathStatus(mcExtrasPath));
+        LOGGER.debug(CORE,"Forge patches at {} is {}", patchedBinariesPath.toString(), pathStatus(patchedBinariesPath));
         return new Path[] { patchedBinariesPath, mcDataPath, mcExtrasPath, srgMcPath };
     }
 }

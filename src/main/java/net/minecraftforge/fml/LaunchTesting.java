@@ -42,12 +42,14 @@ public class LaunchTesting
         final MarkerFilter axformFilter= MarkerFilter.createFilter("AXFORM", Filter.Result.DENY, Filter.Result.NEUTRAL);
         final MarkerFilter eventbusFilter = MarkerFilter.createFilter("EVENTBUS", Filter.Result.DENY, Filter.Result.NEUTRAL);
         final MarkerFilter distxformFilter = MarkerFilter.createFilter("DISTXFORM", Filter.Result.DENY, Filter.Result.NEUTRAL);
+//        final MarkerFilter scannerFilter = MarkerFilter.createFilter("SCAN", Filter.Result.DENY, Filter.Result.NEUTRAL);
         final LoggerContext logcontext = LoggerContext.getContext(false);
         logcontext.getConfiguration().addFilter(classloadingFilter);
         logcontext.getConfiguration().addFilter(launchpluginFilter);
-        logcontext.getConfiguration().addFilter(axformFilter);
-        logcontext.getConfiguration().addFilter(eventbusFilter);
-        logcontext.getConfiguration().addFilter(distxformFilter);
+//        logcontext.getConfiguration().addFilter(axformFilter);
+//        logcontext.getConfiguration().addFilter(eventbusFilter);
+//        logcontext.getConfiguration().addFilter(distxformFilter);
+//        logcontext.getConfiguration().addFilter(scannerFilter);
         logcontext.updateLoggers();
 
         String assets = System.getenv().getOrDefault("assetDirectory", "assets");

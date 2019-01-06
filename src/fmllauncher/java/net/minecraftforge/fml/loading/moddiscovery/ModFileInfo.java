@@ -27,10 +27,8 @@ import net.minecraftforge.fml.loading.StringUtils;
 import org.apache.maven.artifact.versioning.VersionRange;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
 public class ModFileInfo implements IModFileInfo
@@ -98,5 +96,9 @@ public class ModFileInfo implements IModFileInfo
     public VersionRange getModLoaderVersion()
     {
         return modLoaderVersion;
+    }
+
+    public Optional<Manifest> getManifest() {
+        return modFile.getLocator().findManifest(modFile.getFilePath());
     }
 }

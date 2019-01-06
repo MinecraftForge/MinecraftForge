@@ -1,10 +1,7 @@
 package net.minecraftforge.userdev;
 
-import com.google.common.collect.ObjectArrays;
-import com.google.common.collect.Streams;
 import cpw.mods.modlauncher.api.IEnvironment;
 import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LibraryFinder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -52,7 +49,7 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
             fjroot = fjroot.getParent();
         } while (dirs-- > 0);
         final String fjpath = fjroot.toString();
-        LOGGER.info(CORE, "Injecting forge as mod {} from maven path {}", userdevVersion, fjpath);
+        LOGGER.debug(CORE, "Injecting forge as mod {} from maven path {}", userdevVersion, fjpath);
         mavenRoots.add(fjpath);
         mods.add(forgeGroup+":userdev:"+userdevVersion);
 
@@ -62,7 +59,7 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
             modstoml.stream().filter(u-> !u.getPath().contains("!"));
 
         } catch (IOException e) {
-            LOGGER.fatal("Error trying to find resources", e);
+            LOGGER.fatal(CORE,"Error trying to find resources", e);
             throw new RuntimeException("wha?", e);
         }
 
@@ -97,10 +94,4 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
         mcJars = LibraryFinder.findJarPathFor("en_us.json","mcdata", mcDataPath);
         return new Path[] {mcJars};
     }
-
-    public Path[] identifyTransformationTargets()
-    {
-        return LibraryFinder.commonLibPaths(ObjectArrays.concat(FMLLoader.getForgePath(), FMLLoader.getMCPaths()));
-    }
-
 }

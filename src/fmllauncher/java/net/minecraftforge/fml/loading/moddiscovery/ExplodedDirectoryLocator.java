@@ -93,7 +93,7 @@ public class ExplodedDirectoryLocator implements IModLocator {
         try (Stream<Path> files = Files.find(path, Integer.MAX_VALUE, (p, a) -> p.getNameCount() > 0 && p.getFileName().toString().endsWith(".class"))) {
             files.forEach(pathConsumer);
         } catch (IOException e) {
-            LOGGER.info("Exception scanning {}", path, e);
+            LOGGER.error(SCAN,"Exception scanning {}", path, e);
         }
     }
     @Override

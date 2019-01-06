@@ -44,12 +44,6 @@ public class FMLServerLaunchProvider extends FMLCommonLaunchHandler implements I
     }
 
     @Override
-    public Path[] identifyTransformationTargets()
-    {
-        return ObjectArrays.concat(FMLLoader.getForgePath(), FMLLoader.getMCPaths());
-    }
-
-    @Override
     public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
     {
         return () -> {

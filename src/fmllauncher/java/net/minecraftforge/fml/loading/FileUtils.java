@@ -41,9 +41,9 @@ public class FileUtils
                 Files.createDirectory(dirPath);
             } catch (IOException e) {
                 if (e instanceof FileAlreadyExistsException) {
-                    LOGGER.error(CORE,"Failed to create {} directory - there is a file in the way", dirLabel);
+                    LOGGER.fatal(CORE,"Failed to create {} directory - there is a file in the way", dirLabel);
                 } else {
-                    LOGGER.error(CORE,"Problem with creating {} directory (Permissions?)", dirLabel, e);
+                    LOGGER.fatal(CORE,"Problem with creating {} directory (Permissions?)", dirLabel, e);
                 }
                 throw new RuntimeException("Problem creating directory", e);
             }

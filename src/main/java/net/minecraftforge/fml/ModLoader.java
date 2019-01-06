@@ -49,7 +49,6 @@ public class ModLoader
     private static ModLoader INSTANCE;
     private final TransformingClassLoader launchClassLoader;
     private final LoadingModList loadingModList;
-    private final ModLoadingClassLoader modClassLoader;
 
     private final List<ModLoadingException> loadingExceptions;
     private ModLoader()
@@ -57,10 +56,8 @@ public class ModLoader
         INSTANCE = this;
         this.launchClassLoader = FMLLoader.getLaunchClassLoader();
         this.loadingModList = FMLLoader.getLoadingModList();
-        this.modClassLoader = new ModLoadingClassLoader(this.launchClassLoader);
         this.loadingExceptions = FMLLoader.getLoadingModList().
                 getErrors().stream().flatMap(ModLoadingException::fromEarlyException).collect(Collectors.toList());
-        Thread.currentThread().setContextClassLoader(this.modClassLoader);
     }
 
     public static ModLoader get()
@@ -80,10 +77,10 @@ public class ModLoader
         }
         final Stream<ModContainer> modContainerStream = loadingModList.getModFiles().stream().
                 map(ModFileInfo::getFile).
-                map(mf -> buildMods(mf, modClassLoader)).
+                map(mf -> buildMods(mf, launchClassLoader)).
                 flatMap(Collection::stream);
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.error(CORE, "Failed to initialize mod containers");
+            LOGGER.fatal(CORE, "Failed to initialize mod containers");
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainerStream.collect(Collectors.toList()));
@@ -102,7 +99,7 @@ public class ModLoader
             event.dispatch(this::accumulateErrors);
         }
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.error("Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
+            LOGGER.fatal("Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
             throw new LoadingFailedException(loadingExceptions);
         }
     }
@@ -110,7 +107,7 @@ public class ModLoader
         loadingExceptions.addAll(errors);
     }
 
-    private List<ModContainer> buildMods(final ModFile modFile, final ModLoadingClassLoader modClassLoader)
+    private List<ModContainer> buildMods(final ModFile modFile, final TransformingClassLoader modClassLoader)
     {
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 

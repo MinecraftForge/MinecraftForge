@@ -19,18 +19,25 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
+import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.jar.Manifest;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
@@ -59,6 +66,13 @@ public abstract class FMLCommonLaunchHandler
         return LibraryFinder.getMCPaths(mcVersion, mcpVersion, forgeVersion, forgeGroup, getDist().isClient() ? "client" : "server");
     }
 
+    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
+        Stream.of(LibraryFinder.commonLibPaths(ObjectArrays.concat(FMLLoader.getForgePath(), FMLLoader.getMCPaths()))).
+                forEach(builder::addTransformationPath);
+        builder.setClassBytesLocator(getClassLoaderLocatorFunction());
+        builder.setManifestLocator(getClassLoaderManifestLocatorFunction());
+    }
+
     public void setup(final IEnvironment environment, final Map<String, ?> arguments)
     {
 
@@ -84,5 +98,19 @@ public abstract class FMLCommonLaunchHandler
             }
         });
 
+    }
+
+
+    protected Function<String, Optional<URL>> getClassLoaderLocatorFunction() {
+        return input->Optional.ofNullable(FMLLoader.getLoadingModList().findURLForResource(input));
+    }
+
+    protected Function<URLConnection, Optional<Manifest>> getClassLoaderManifestLocatorFunction() {
+        return input -> {
+            if (input instanceof ModJarURLHandler.ModJarURLConnection) {
+                return ((ModJarURLHandler.ModJarURLConnection) input).getManifest();
+            }
+            return Optional.empty();
+        };
     }
 }
