@@ -152,4 +152,14 @@ public class Constants
         public static final int DEFAULT_AND_RERENDER = DEFAULT | RERENDER_MAIN_THREAD;
     }
 
+    /**
+     * The mutex bits used for AI tasks {@link net.minecraft.entity.ai.EntityAIBase#setMutexBits(int)}
+     * Bits can be OR-ed
+     */
+    public static class AiMutexBits {
+        public static final int MOTION  = 0b001;
+        public static final int LOOKING = 0b010;
+        public static final int MIST    = 0b100;
+    }
+
 }
