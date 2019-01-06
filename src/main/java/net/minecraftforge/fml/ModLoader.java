@@ -87,6 +87,7 @@ public class ModLoader
         dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT);
         GameData.fireCreateRegistryEvents();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
+        GameData.fireRegistryEvents();
         dispatchAndHandleError(LifecycleEventProvider.PREINIT);
         DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
         dispatchAndHandleError(LifecycleEventProvider.SIDEDINIT);
