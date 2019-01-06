@@ -29,8 +29,29 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.tileentity.TileEntity;
 
+/**
+ * A special case {@link TileEntityRenderer} which can be batched with other
+ * renderers that are also instances of this class.
+ * <p>
+ * Advantages:
+ * <ul>
+ * <li>All batched renderers are drawn with a single draw call</li>
+ * <li>Renderers have their vertices depth sorted for better translucency
+ * support</li>
+ * </ul>
+ * <p>
+ * Disadvantages:
+ * <ul>
+ * <li>OpenGL operations are not permitted</li>
+ * <li>All renderers must use the same {@link VertexFormat}
+ * ({@link DefaultVertexFormats#BLOCK})</li>
+ * </ul>
+ * 
+ * @param <T> The type of {@link TileEntity} being rendered.
+ */
 public abstract class TileEntityRendererFast<T extends TileEntity> extends TileEntityRenderer<T>
 {
     @Override
@@ -63,6 +84,11 @@ public abstract class TileEntityRendererFast<T extends TileEntity> extends TileE
         RenderHelper.enableStandardItemLighting();
     }
 
+    /**
+     * Draw this renderer to the passed {@link BufferBuilder}. <strong>DO
+     * NOT</strong> draw to any buffers other than the one passed, or use any OpenGL
+     * operations as they will not be applied when this renderer is batched.
+     */
     @Override
     public abstract void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, BufferBuilder buffer);
 }

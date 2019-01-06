@@ -49,12 +49,18 @@ public class LaunchTesting
         logcontext.getConfiguration().addFilter(eventbusFilter);
         logcontext.getConfiguration().addFilter(distxformFilter);
         logcontext.updateLoggers();
-        File invsorter = new File("/home/cpw/projects/minecraft/inventorysorter/classes");
-        if (invsorter.exists()) {
-            System.setProperty("fml.explodedDir", "/home/cpw/projects/minecraft/inventorysorter/classes"); //TODO: Move this to a example included in our tests, not a random location...
-        }
+
         String assets = System.getenv().getOrDefault("assetDirectory", "assets");
         String target = System.getenv().get("target");
+        String[] launchArgs = new String[]{
+                "--gameDir", ".",
+                "--launchTarget", target,
+                "--fml.forgeVersion", System.getProperty("forge.version"),
+                "--fml.mcpVersion", System.getProperty("mcp.version"),
+                "--fml.mcVersion", System.getProperty("mc.version"),
+                "--fml.forgeGroup", System.getProperty("forge.group")
+        };
+
 
         if (target == null) {
             throw new IllegalArgumentException("Environment variable target must be set.");
@@ -62,18 +68,15 @@ public class LaunchTesting
 
         if (Objects.equals(target,"fmldevclient")) {
             hackNatives();
-            Launcher.main("--launchTarget", target,
-                    "--gameDir", ".",
-                    "--accessToken", "blah",
-                    "--version", "FMLDev",
-                    "--assetIndex", "1.13",
-                    "--assetsDir", assets,
-                    "--userProperties", "{}");
-        } else if (Objects.equals(target, "fmldevserver")) {
-            String[] launchargs = ObjectArrays.concat(new String[] {"--launchTarget", target,
-                    "--gameDir", "."}, args, String.class);
-            Launcher.main(launchargs);
+            launchArgs = ObjectArrays.concat(launchArgs, new String[] {
+                            "--accessToken", "blah",
+                            "--version", "FMLDev",
+                            "--assetIndex", "1.13",
+                            "--assetsDir", assets,
+                            "--userProperties", "{}"
+            }, String.class);
         }
+        Launcher.main(launchArgs);
         Thread.sleep(10000);
     }
 

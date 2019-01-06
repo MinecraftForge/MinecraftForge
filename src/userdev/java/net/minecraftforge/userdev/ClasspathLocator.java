@@ -148,4 +148,11 @@ public class ClasspathLocator implements IModLocator
     {
         return Optional.empty();
     }
+
+    @Override
+    public void initArguments(final Map<String, ?> arguments) {
+
+    }
+
+
 }

@@ -24,7 +24,7 @@
  
        this.field_110451_am.func_199006_a(new GrassColorReloadListener());
        this.field_110451_am.func_199006_a(new FoliageColorReloadListener());
-+      net.minecraftforge.fml.common.ProgressManager.ProgressBar bar = net.minecraftforge.fml.common.ProgressManager.push("Rendering Setup", 5, true);
++      try (net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Rendering Setup", 5, true)) {
 +      bar.step("GL Setup");
        this.field_195558_d.func_198076_a("Startup");
        GlStateManager.func_179098_w();
@@ -60,7 +60,7 @@
        this.field_71452_i = new ParticleManager(this.field_71441_e, this.field_71446_o);
 -      this.field_71456_v = new GuiIngame(this);
 +      //net.minecraftforge.fml.client.SplashProgress.resume();
-+      net.minecraftforge.fml.common.ProgressManager.pop(bar);
++      }; // Forge: end progress bar
 +      net.minecraftforge.fml.client.ClientModLoader.end();
 +      this.field_71456_v = new net.minecraftforge.client.GuiIngameForge(this);
        if (this.field_71475_ae != null) {

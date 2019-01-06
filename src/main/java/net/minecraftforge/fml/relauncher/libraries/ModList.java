@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -66,7 +67,7 @@ public class ModList
     @SuppressWarnings("unchecked")
     public static List<ModList> getKnownLists(File mcdir)
     {
-        for (String list : new String[] {"mods/mod_list.json", "mods/" + ForgeVersion.mcVersion + "/mod_list.json"/* , TODO Launch args ((Map<String, String>)Launch.blackboard.get("launchArgs")).get("--modListFile")*/})
+        for (String list : new String[] {"mods/mod_list.json", "mods/" + MCPVersion.getMCVersion() + "/mod_list.json"/* , TODO Launch args ((Map<String, String>)Launch.blackboard.get("launchArgs")).get("--modListFile")*/})
         {
             if (list != null)
             {
@@ -87,7 +88,7 @@ public class ModList
         if (memory != null)
             lst.add(memory);
 
-        for (String list : new String[] {"mods/mod_list.json", "mods/" + ForgeVersion.mcVersion + "/mod_list.json"/* TODO Launch args, ((Map<String, String>)Launch.blackboard.get("launchArgs")).get("--modListFile")*/})
+        for (String list : new String[] {"mods/mod_list.json", "mods/" + MCPVersion.getMCVersion() + "/mod_list.json"/* TODO Launch args, ((Map<String, String>)Launch.blackboard.get("launchArgs")).get("--modListFile")*/})
         {
             if (list != null)
             {

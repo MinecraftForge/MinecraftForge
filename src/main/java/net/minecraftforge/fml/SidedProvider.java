@@ -34,13 +34,23 @@ import java.util.function.Supplier;
 public enum SidedProvider
 {
     // All of these need to be careful not to directly dereference the client and server elements in their signatures
-    DATAFIXER(c->c.get().getDataFixer(), s->s.get().getDataFixer()),
-    SIDEDINIT((Function<Supplier<Minecraft>, Function<ModContainer, Event>>)c-> mc->new FMLClientInitEvent(c, mc),
-            (Function<Supplier<DedicatedServer>, Function<ModContainer, Event>>)s-> mc->new FMLServerInitEvent(s, mc)),
-    STRIPCHARS((Function<Supplier<Minecraft>, Function<String, String>>)c-> ClientHooks::stripSpecialChars,
-            (Function<Supplier<DedicatedServer>, Function<String, String>>)s-> str->str),
+    DATAFIXER(
+            c->c.get().getDataFixer(),
+            s->s.get().getDataFixer(),
+            ()-> { throw new UnsupportedOperationException(); }),
+    SIDEDINIT(
+            (Function<Supplier<Minecraft>, Function<ModContainer, Event>>)c-> mc->new FMLClientInitEvent(c, mc),
+            s-> mc->new FMLServerInitEvent(s, mc),
+            ()-> { throw new UnsupportedOperationException(); }),
+    STRIPCHARS(
+            (Function<Supplier<Minecraft>, Function<String, String>>)c-> ClientHooks::stripSpecialChars,
+            s-> str->str,
+            ()-> str->str),
     @SuppressWarnings("Convert2MethodRef") // need to not be methodrefs to avoid classloading all of StartupQuery's data (supplier is coming from StartupQuery)
-    STARTUPQUERY(c->StartupQuery.QueryWrapper.clientQuery(c), s->StartupQuery.QueryWrapper.dedicatedServerQuery(s));
+    STARTUPQUERY(
+            c->StartupQuery.QueryWrapper.clientQuery(c),
+            s->StartupQuery.QueryWrapper.dedicatedServerQuery(s),
+            ()-> { throw new UnsupportedOperationException(); });
 
     private static Supplier<Minecraft> client;
     private static Supplier<DedicatedServer> server;
@@ -56,12 +66,13 @@ public enum SidedProvider
 
     private final Function<Supplier<Minecraft>, ?> clientSide;
     private final Function<Supplier<DedicatedServer>, ?> serverSide;
+    private final Supplier<?> testSide;
 
-
-    SidedProvider(Function<Supplier<Minecraft>,?> clientSide, Function<Supplier<DedicatedServer>,?> serverSide)
+    <T> SidedProvider(Function<Supplier<Minecraft>, T> clientSide, Function<Supplier<DedicatedServer>, T> serverSide, Supplier<T> testSide)
     {
         this.clientSide = clientSide;
         this.serverSide = serverSide;
+        this.testSide = testSide;
     }
 
     @SuppressWarnings("unchecked")
@@ -73,7 +84,7 @@ public enum SidedProvider
             return (T)this.serverSide.apply(server);
         }
         else {
-            throw new IllegalArgumentException("THREE SIDES? WUT?");
+            return (T)this.testSide.get();
         }
     }
 }

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -40,12 +41,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.CORE;
+import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static ModLoader INSTANCE;
-    private final ClassLoader launchClassLoader;
+    private final TransformingClassLoader launchClassLoader;
     private final LoadingModList loadingModList;
     private final ModLoadingClassLoader modClassLoader;
 
@@ -112,6 +114,7 @@ public class ModLoader
     {
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
+        LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
         return modFile.getScanResult().getTargets().entrySet().stream().
                 map(e-> {
                     try {

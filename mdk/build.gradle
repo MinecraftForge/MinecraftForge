@@ -63,8 +63,9 @@ minecraft {
 
 dependencies {
     // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied. 
-    minecraft '@FORGE_GROUP@:@FORGE_NAME@:@FORGE_VERSION@'
+    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
+    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
+    minecraft '@FORGE_GROUP@:userdev:@FORGE_VERSION@'
 
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -102,7 +103,7 @@ processResources {
         expand 'version':project.version, 'mcversion': '@MC_VERSION@'
     }
 
-    // copy everything else except the mcmod.info
+    // copy everything else except the mods.toml
     from(sourceSets.main.resources.srcDirs) {
         exclude 'META_INF/mods.toml'
     }
