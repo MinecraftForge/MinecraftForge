@@ -32,6 +32,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nonnull;
@@ -156,7 +157,7 @@ public class BlockFluidClassic extends BlockFluidBase
                 }
                 else
                 {
-                    world.setBlockState(pos, state.withProperty(LEVEL, quantaPerBlock - expQuanta), 2);
+                    world.setBlockState(pos, state.withProperty(LEVEL, quantaPerBlock - expQuanta), Constants.BlockFlags.SEND_TO_CLIENTS);
                     world.scheduleUpdate(pos, this, tickRate);
                     world.notifyNeighborsOfStateChange(pos, this, false);
                 }
@@ -278,7 +279,7 @@ public class BlockFluidClassic extends BlockFluidBase
         if (meta < 0) return;
         if (displaceIfPossible(world, pos))
         {
-            world.setBlockState(pos, this.getDefaultState().withProperty(LEVEL, meta), 3);
+            world.setBlockState(pos, this.getDefaultState().withProperty(LEVEL, meta));
         }
     }
 
@@ -308,7 +309,7 @@ public class BlockFluidClassic extends BlockFluidBase
         if (doPlace)
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, pos);
-            world.setBlockState(pos, this.getDefaultState(), 11);
+            world.setBlockState(pos, this.getDefaultState(), Constants.BlockFlags.DEFAULT | Constants.BlockFlags.RERENDER_MAIN_THREAD);
         }
         return Fluid.BUCKET_VOLUME;
     }

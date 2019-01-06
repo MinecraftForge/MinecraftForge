@@ -134,4 +134,22 @@ public class Constants
         public static final int GATEWAY_SPAWN_EFFECTS = 3000;
         public static final int ENDERMAN_GROWL_SOUND = 3001;
     }
+
+
+    /**
+     * The flags used when calling {@link net.minecraft.world.World#setBlockState}
+     * Can be found from World#markAndNotifyBlock and RenderGlobal#notifyBlockUpdate
+     * Flags can be OR-ed
+     */
+    public static class BlockFlags {
+        public static final int BLOCK_UPDATE = 1;
+        public static final int SEND_TO_CLIENTS = 2;
+        public static final int NO_RERENDER = 4;
+        public static final int RERENDER_MAIN_THREAD = 8;
+        public static final int NO_OBSERVERS = 16;
+
+        public static final int DEFAULT = BLOCK_UPDATE | SEND_TO_CLIENTS;
+        public static final int DEFAULT_AND_RERENDER = DEFAULT | RERENDER_MAIN_THREAD;
+    }
+
 }

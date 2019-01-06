@@ -28,6 +28,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
 
@@ -91,7 +92,7 @@ public class BlockFluidFinite extends BlockFluidBase
             changed = true;
             if (quantaRemaining == 1)
             {
-                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), 2);
+                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), Constants.BlockFlags.SEND_TO_CLIENTS);
                 return;
             }
         }
@@ -123,7 +124,7 @@ public class BlockFluidFinite extends BlockFluidBase
         {
             if (changed)
             {
-                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), 2);
+                world.setBlockState(pos, state.withProperty(LEVEL, quantaRemaining - 1), Constants.BlockFlags.SEND_TO_CLIENTS);
             }
             return;
         }
@@ -152,7 +153,7 @@ public class BlockFluidFinite extends BlockFluidBase
                     }
                     else
                     {
-                        world.setBlockState(off, getDefaultState().withProperty(LEVEL, newQuanta - 1), 2);
+                        world.setBlockState(off, getDefaultState().withProperty(LEVEL, newQuanta - 1), Constants.BlockFlags.SEND_TO_CLIENTS);
                     }
                     world.scheduleUpdate(off, this, tickRate);
                 }
@@ -164,7 +165,7 @@ public class BlockFluidFinite extends BlockFluidBase
         {
             ++each;
         }
-        world.setBlockState(pos, state.withProperty(LEVEL, each - 1), 2);
+        world.setBlockState(pos, state.withProperty(LEVEL, each - 1), Constants.BlockFlags.SEND_TO_CLIENTS);
     }
 
     public int tryToFlowVerticallyInto(World world, BlockPos pos, int amtToInput)
@@ -183,13 +184,13 @@ public class BlockFluidFinite extends BlockFluidBase
             amt += amtToInput;
             if (amt > quantaPerBlock)
             {
-                world.setBlockState(other, myState.withProperty(LEVEL, quantaPerBlock - 1), 3);
+                world.setBlockState(other, myState.withProperty(LEVEL, quantaPerBlock - 1));
                 world.scheduleUpdate(other, this, tickRate);
                 return amt - quantaPerBlock;
             }
             else if (amt > 0)
             {
-                world.setBlockState(other, myState.withProperty(LEVEL, amt - 1), 3);
+                world.setBlockState(other, myState.withProperty(LEVEL, amt - 1));
                 world.scheduleUpdate(other, this, tickRate);
                 world.setBlockToAir(pos);
                 return 0;
@@ -203,7 +204,7 @@ public class BlockFluidFinite extends BlockFluidBase
             {
                 if (displaceIfPossible(world, other))
                 {
-                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1), 3);
+                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1));
                     world.scheduleUpdate(other, this, tickRate);
                     world.setBlockToAir(pos);
                     return 0;
@@ -219,8 +220,8 @@ public class BlockFluidFinite extends BlockFluidBase
                 if (density_other < density) // then swap
                 {
                     IBlockState state = world.getBlockState(other);
-                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1), 3);
-                    world.setBlockState(pos,   state, 3);
+                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1));
+                    world.setBlockState(pos,   state);
                     world.scheduleUpdate(other, this, tickRate);
                     world.scheduleUpdate(pos,   state.getBlock(), state.getBlock().tickRate(world));
                     return 0;
@@ -231,8 +232,8 @@ public class BlockFluidFinite extends BlockFluidBase
                 if (density_other > density)
                 {
                     IBlockState state = world.getBlockState(other);
-                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1), 3);
-                    world.setBlockState(pos, state, 3);
+                    world.setBlockState(other, myState.withProperty(LEVEL, amtToInput - 1));
+                    world.setBlockState(pos, state);
                     world.scheduleUpdate(other, this,  tickRate);
                     world.scheduleUpdate(pos, state.getBlock(), state.getBlock().tickRate(world));
                     return 0;
@@ -273,7 +274,7 @@ public class BlockFluidFinite extends BlockFluidBase
         if (doPlace)
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, pos);
-            world.setBlockState(pos, getDefaultState().withProperty(LEVEL, quanta - 1), 11);
+            world.setBlockState(pos, getDefaultState().withProperty(LEVEL, quanta - 1), Constants.BlockFlags.DEFAULT_AND_RERENDER);
         }
 
         return closest;
