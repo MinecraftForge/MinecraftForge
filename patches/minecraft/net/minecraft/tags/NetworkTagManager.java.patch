@@ -1,18 +1,5 @@
 --- a/net/minecraft/tags/NetworkTagManager.java
 +++ b/net/minecraft/tags/NetworkTagManager.java
-@@ -8,9 +8,9 @@
- import net.minecraft.resources.IResourceManagerReloadListener;
- 
- public class NetworkTagManager implements IResourceManagerReloadListener {
--   private final NetworkTagCollection<Block> field_199719_a = new NetworkTagCollection<Block>(Block.field_149771_c, "tags/blocks", "block");
--   private final NetworkTagCollection<Item> field_199720_b = new NetworkTagCollection<Item>(Item.field_150901_e, "tags/items", "item");
--   private final NetworkTagCollection<Fluid> field_205705_c = new NetworkTagCollection<Fluid>(Fluid.field_205588_a, "tags/fluids", "fluid");
-+   private final NetworkTagCollection<Block> field_199719_a = net.minecraftforge.common.tags.ForgeTagCollection.fromForgeRegistry(net.minecraftforge.registries.ForgeRegistries.BLOCKS, net.minecraftforge.common.tags.ForgeTagCollection.getDefaultLoadingLocation(net.minecraftforge.registries.GameData.BLOCKS),"block");
-+   private final NetworkTagCollection<Item> field_199720_b = net.minecraftforge.common.tags.ForgeTagCollection.fromForgeRegistry(net.minecraftforge.registries.ForgeRegistries.ITEMS, net.minecraftforge.common.tags.ForgeTagCollection.getDefaultLoadingLocation(net.minecraftforge.registries.GameData.ITEMS),"item");
-+   private final NetworkTagCollection<Fluid> field_205705_c = new net.minecraftforge.common.tags.ForgeTagCollection<>(Fluid.field_205588_a, net.minecraftforge.common.tags.ForgeTagCollection.getDefaultLoadingLocation(net.minecraftforge.common.tags.ForgeTagManager.FLUID_TAGS), "fluid");
- 
-    public NetworkTagCollection<Block> func_199717_a() {
-       return this.field_199719_a;
 @@ -47,10 +47,8 @@
     }
  
@@ -21,7 +8,7 @@
 -      networktagmanager.func_199717_a().func_200043_b(p_199714_0_);
 -      networktagmanager.func_199715_b().func_200043_b(p_199714_0_);
 -      networktagmanager.func_205704_c().func_200043_b(p_199714_0_);
-+      net.minecraftforge.common.tags.ForgeTagManager networktagmanager = new net.minecraftforge.common.tags.ForgeTagManager();
++      net.minecraftforge.common.tags.ForgeTagManager networktagmanager = net.minecraftforge.common.tags.ForgeTagManager.getInstance();
 +      networktagmanager.readTags(p_199714_0_);
        return networktagmanager;
     }

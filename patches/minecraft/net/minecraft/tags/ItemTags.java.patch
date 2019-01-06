@@ -1,12 +1,11 @@
 --- a/net/minecraft/tags/ItemTags.java
 +++ b/net/minecraft/tags/ItemTags.java
-@@ -55,12 +55,13 @@
+@@ -55,12 +55,12 @@
        return new ItemTags.Wrapper(new ResourceLocation(p_199901_0_));
     }
  
 -   public static class Wrapper extends Tag<Item> {
-+   public static class Wrapper extends net.minecraftforge.common.tags.TagWrapper<Item>
-+   {
++   public static class Wrapper extends net.minecraftforge.common.tags.TagWrapper<Item> {
        private int field_199890_a = -1;
        private Tag<Item> field_199891_b;
  

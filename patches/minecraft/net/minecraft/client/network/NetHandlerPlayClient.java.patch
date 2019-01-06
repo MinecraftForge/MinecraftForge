@@ -5,7 +5,7 @@
     private final ClientAdvancementManager field_191983_k;
     private final ClientSuggestionProvider field_195516_l;
 -   private NetworkTagManager field_199725_m = new NetworkTagManager();
-+   private net.minecraftforge.common.tags.ForgeTagManager field_199725_m = new net.minecraftforge.common.tags.ForgeTagManager();
++   private net.minecraftforge.common.tags.ForgeTagManager field_199725_m = net.minecraftforge.common.tags.ForgeTagManager.getInstance();
     private NBTQueryManager field_211524_l = new NBTQueryManager(this);
     private final Random field_147306_l = new Random();
     private CommandDispatcher<ISuggestionProvider> field_195517_n = new CommandDispatcher<ISuggestionProvider>();

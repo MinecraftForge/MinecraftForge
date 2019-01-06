@@ -1,14 +1,14 @@
 --- a/net/minecraft/tags/NetworkTagCollection.java
 +++ b/net/minecraft/tags/NetworkTagCollection.java
-@@ -9,12 +9,26 @@
+@@ -9,10 +9,21 @@
  
  public class NetworkTagCollection<T> extends TagCollection<T> {
     protected final RegistryNamespaced<ResourceLocation, T> field_200044_a;
 +   protected final java.util.function.Function<T,Integer> itemToId;
 +   protected final java.util.function.Function<Integer,T> idToItem;
  
-+   public NetworkTagCollection(java.util.function.Predicate<ResourceLocation> isValueKnownPredicateIn, java.util.function.Function<ResourceLocation, T> resourceLocationToItemIn, java.util.function.Function<T, Integer> itemToId, java.util.function.Function<Integer, T> idToItem, String resourceLocationPrefixIn, boolean preserveOrderIn, String itemTypeNameIn) {
-+      super(isValueKnownPredicateIn, resourceLocationToItemIn, resourceLocationPrefixIn, preserveOrderIn, itemTypeNameIn);
++   public NetworkTagCollection(java.util.function.Predicate<ResourceLocation> isValueKnownPredicate, java.util.function.Function<ResourceLocation, T> resourceLocationToItem, java.util.function.Function<T, Integer> itemToId, java.util.function.Function<Integer, T> idToItem, String resourceLocationPrefix, boolean preserveOrder, String itemTypeName) {
++      super(isValueKnownPredicate, resourceLocationToItem, resourceLocationPrefix, preserveOrder, itemTypeName);
 +      this.itemToId = itemToId;
 +      this.idToItem = idToItem;
 +      this.field_200044_a = null;
@@ -21,13 +21,8 @@
 +      this.idToItem = p_i48237_1_::func_148754_a;
     }
  
-+   public void write(ResourceLocation collectionId, PacketBuffer buffer) { func_200042_a(buffer);} //called with this TagCollections ResourceLocation Id
-+   public void read(ResourceLocation collectionId, PacketBuffer buffer) { func_200043_b(buffer);} //called with this TagCollections ResourceLocation Id
-+
     public void func_200042_a(PacketBuffer p_200042_1_) {
-       p_200042_1_.func_150787_b(this.func_200039_c().size());
- 
-@@ -23,7 +37,7 @@
+@@ -23,7 +34,7 @@
           p_200042_1_.func_150787_b(((Tag)entry.getValue()).func_199885_a().size());
  
           for(T t : (entry.getValue()).func_199885_a()) {
@@ -36,7 +31,7 @@
           }
        }
  
-@@ -38,7 +52,7 @@
+@@ -38,7 +49,7 @@
           List<T> list = Lists.<T>newArrayList();
  
           for(int l = 0; l < k; ++l) {

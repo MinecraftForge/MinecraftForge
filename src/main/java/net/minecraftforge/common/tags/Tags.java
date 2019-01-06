@@ -33,6 +33,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
+import net.minecraftforge.registries.GameData;
 
 public class Tags
 {
@@ -155,161 +156,72 @@ public class Tags
     public static class Potions
     {
 
-        private static ForgeTagCollection<Potion> potionTagCollection = ForgeTagCollection.empty();
-
-        static void setPotionTagCollection(ForgeTagCollection<Potion> potionTagCollection)
-        {
-            Potions.potionTagCollection = potionTagCollection;
-        }
-
-        public static ForgeTagCollection<Potion> getPotionTagCollection()
-        {
-            return potionTagCollection;
-        }
-
         private static Tag<Potion> tag(String name)
         {
-            return new TagWrapper<>(new ResourceLocation(name),Potions::getPotionTagCollection);
+            return new TagWrapper<>(new ResourceLocation(name),(()->ForgeTagManager.getInstance().getTagsForIdUnchecked(GameData.POTIONS)));
         }
     }
 
     public static class Biomes
     {
-        private static ForgeTagCollection<Biome> biomeTagCollection = ForgeTagCollection.empty();
-
-        static void setBiomeTagCollection(ForgeTagCollection<Biome> biomeTagCollection)
-        {
-            Biomes.biomeTagCollection = biomeTagCollection;
-        }
-
-        public static ForgeTagCollection<Biome> getBiomeTagCollection()
-        {
-            return biomeTagCollection;
-        }
 
         private static Tag<Biome> tag(String name)
         {
-            return new TagWrapper<>(new ResourceLocation(name),Biomes::getBiomeTagCollection);
+            return new TagWrapper<>(new ResourceLocation(name),(()->ForgeTagManager.getInstance().getTagsForIdUnchecked(GameData.BIOMES)));
         }
     }
 
     public static class SoundEvents
     {
-        private static ForgeTagCollection<SoundEvent> soundEventTagCollection = ForgeTagCollection.empty();
-
-        static void setSoundEventTagCollection(ForgeTagCollection<SoundEvent> soundEventTagCollection)
-        {
-            SoundEvents.soundEventTagCollection = soundEventTagCollection;
-        }
-
-        public static ForgeTagCollection<SoundEvent> getSoundEventTagCollection()
-        {
-            return soundEventTagCollection;
-        }
 
         private static Tag<SoundEvent> tag(String name)
         {
-            return new TagWrapper<>(new ResourceLocation(name),SoundEvents::getSoundEventTagCollection);
+            return new TagWrapper<>(new ResourceLocation(name),(()->ForgeTagManager.getInstance().getTagsForIdUnchecked(GameData.SOUNDEVENTS)));
         }
     }
 
     public static class PotionTypes
     {
-        private static ForgeTagCollection<PotionType> potionTypeTagCollection = ForgeTagCollection.empty();
-
-        static void setPotionTypeTagCollection(ForgeTagCollection<PotionType> potionTypeTagCollection)
-        {
-            PotionTypes.potionTypeTagCollection = potionTypeTagCollection;
-        }
-
-        public static ForgeTagCollection<PotionType> getPotionTypeTagCollection()
-        {
-            return potionTypeTagCollection;
-        }
 
         private static Tag<PotionType> tag(String name)
         {
-            return new TagWrapper<>(new ResourceLocation(name),PotionTypes::getPotionTypeTagCollection);
+            return new TagWrapper<>(new ResourceLocation(name),(()->ForgeTagManager.getInstance().getTagsForIdUnchecked(GameData.POTIONTYPES)));
         }
     }
 
     public static class Enchantments
     {
-        private static ForgeTagCollection<Enchantment> enchantmentTagCollection = ForgeTagCollection.empty();
-
-        static void setEnchantmentTagCollection(ForgeTagCollection<Enchantment> enchantmentTagCollection)
-        {
-            Enchantments.enchantmentTagCollection = enchantmentTagCollection;
-        }
-
-        public static ForgeTagCollection<Enchantment> getEnchantmentTagCollection()
-        {
-            return enchantmentTagCollection;
-        }
 
         private static Tag<Enchantment> tag(String name)
         {
-            return new TagWrapper<>(new ResourceLocation(name),Enchantments::getEnchantmentTagCollection);
+            return new TagWrapper<>(new ResourceLocation(name),(()->ForgeTagManager.getInstance().getTagsForIdUnchecked(GameData.ENCHANTMENTS)));
         }
     }
 
     public static class VillagerProfessions
     {
-        private static ForgeTagCollection<VillagerRegistry.VillagerProfession> villagerProfessionTagCollection = ForgeTagCollection.empty();
-
-        static void setVillagerProfessionTagCollection(ForgeTagCollection<VillagerRegistry.VillagerProfession> villagerProfessionTagCollection)
-        {
-            VillagerProfessions.villagerProfessionTagCollection = villagerProfessionTagCollection;
-        }
-
-        public static ForgeTagCollection<VillagerRegistry.VillagerProfession> getVillagerProfessionTagCollection()
-        {
-            return villagerProfessionTagCollection;
-        }
 
         private static Tag<VillagerRegistry.VillagerProfession> tag(String name)
         {
-            return new TagWrapper<>(new ResourceLocation(name),VillagerProfessions::getVillagerProfessionTagCollection);
+            return new TagWrapper<>(new ResourceLocation(name),(()->ForgeTagManager.getInstance().getTagsForIdUnchecked(GameData.PROFESSIONS)));
         }
     }
 
     public static class Entities
     {
-        private static ForgeTagCollection<Entity> entityTagCollection = ForgeTagCollection.empty();
-
-        static void setEntityTagCollection(ForgeTagCollection<Entity> entityTagCollection)
-        {
-            Entities.entityTagCollection = entityTagCollection;
-        }
-
-        public static ForgeTagCollection<Entity> getEntityTagCollection()
-        {
-            return entityTagCollection;
-        }
 
         private static Tag<Entity> tag(String name)
         {
-            return new TagWrapper<>(new ResourceLocation(name),Entities::getEntityTagCollection);
+            return new TagWrapper<>(new ResourceLocation(name),(()->ForgeTagManager.getInstance().getTagsForIdUnchecked(GameData.ENTITIES)));
         }
     }
 
     public static class TileEntities
     {
-        private static ForgeTagCollection<TileEntity> tileEntityTagCollection = ForgeTagCollection.empty();
-
-        static void setTileEntityTagCollection(ForgeTagCollection<TileEntity> tileEntityTagCollection)
-        {
-            TileEntities.tileEntityTagCollection = tileEntityTagCollection;
-        }
-
-        public static ForgeTagCollection<TileEntity> getTileEntityTagCollection()
-        {
-            return tileEntityTagCollection;
-        }
 
         private static Tag<TileEntity> tag(String name)
         {
-            return new TagWrapper<>(new ResourceLocation(name),TileEntities::getTileEntityTagCollection);
+            return new TagWrapper<>(new ResourceLocation(name),(() ->ForgeTagManager.getInstance().getTagsForIdUnchecked(GameData.TILEENTITIES)));
         }
     }
 }

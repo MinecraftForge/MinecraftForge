@@ -13,7 +13,7 @@
     private final Commands field_195579_af;
     private final RecipeManager field_199530_ag = new RecipeManager();
 -   private final NetworkTagManager field_199736_ah = new NetworkTagManager();
-+   private final net.minecraftforge.common.tags.ForgeTagManager field_199736_ah = new net.minecraftforge.common.tags.ForgeTagManager();
++   private final net.minecraftforge.common.tags.ForgeTagManager field_199736_ah = net.minecraftforge.common.tags.ForgeTagManager.getInstance();
     private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
     private final CustomBossEvents field_201301_aj = new CustomBossEvents(this);
     private final LootTableManager field_200256_aj = new LootTableManager();

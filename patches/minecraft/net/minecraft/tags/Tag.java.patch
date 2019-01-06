@@ -38,4 +38,4 @@
 +      List<T> list = (this.func_199885_a() instanceof com.google.common.collect.ImmutableSet)? ((com.google.common.collect.ImmutableSet<T>) this.func_199885_a()).asList():Lists.newArrayList(this.func_199885_a());
        return list.get(p_205596_1_.nextInt(list.size()));
     }
- 
+

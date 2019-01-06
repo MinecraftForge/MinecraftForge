@@ -8,8 +8,4 @@
 +      return tag == null ? net.minecraftforge.common.tags.ForgeTagBuilder.empty(p_199915_1_) : tag;
     }
  
-+   public void reload(ResourceLocation collectionId, IResourceManager resourceManager) {func_199909_a(resourceManager);}
-+
     public Collection<ResourceLocation> func_199908_a() {
-       return this.field_199921_d.keySet();
-    }
