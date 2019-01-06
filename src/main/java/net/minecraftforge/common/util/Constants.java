@@ -142,13 +142,13 @@ public class Constants
      * Flags can be OR-ed
      */
     public static class BlockFlags {
-        public static final int BLOCK_UPDATE = 1;
+        public static final int NOTIFY_NEIGHBORS = 1;
         public static final int SEND_TO_CLIENTS = 2;
         public static final int NO_RERENDER = 4;
         public static final int RERENDER_MAIN_THREAD = 8;
         public static final int NO_OBSERVERS = 16;
 
-        public static final int DEFAULT = BLOCK_UPDATE | SEND_TO_CLIENTS;
+        public static final int DEFAULT = NOTIFY_NEIGHBORS | SEND_TO_CLIENTS;
         public static final int DEFAULT_AND_RERENDER = DEFAULT | RERENDER_MAIN_THREAD;
     }
 
