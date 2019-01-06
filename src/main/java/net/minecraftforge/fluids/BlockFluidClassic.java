@@ -157,7 +157,7 @@ public class BlockFluidClassic extends BlockFluidBase
                 }
                 else
                 {
-                    world.setBlockState(pos, state.withProperty(LEVEL, quantaPerBlock - expQuanta), Constants.BlockFlags.SEND_TO_CLIENTS);
+                    world.setBlockState(pos, state.withProperty(LEVEL, quantaPerBlock - expQuanta), Constants.BlockFlags.NOTIFY_BLOCK_UPDATE);
                     world.scheduleUpdate(pos, this, tickRate);
                     world.notifyNeighborsOfStateChange(pos, this, false);
                 }

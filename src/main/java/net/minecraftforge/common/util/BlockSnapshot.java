@@ -184,7 +184,7 @@ public class BlockSnapshot
         IBlockState current = getCurrentBlock();
         IBlockState replaced = getReplacedBlock();
 
-        int flags = notifyNeighbors ? Constants.BlockFlags.DEFAULT : Constants.BlockFlags.SEND_TO_CLIENTS;
+        int flags = notifyNeighbors ? Constants.BlockFlags.DEFAULT : Constants.BlockFlags.NOTIFY_BLOCK_UPDATE;
 
         if (current.getBlock() != replaced.getBlock() || current.getBlock().getMetaFromState(current) != replaced.getBlock().getMetaFromState(replaced))
         {
