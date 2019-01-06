@@ -59,7 +59,7 @@ public class Constants
         public static final int DISPENSER_DISPENSE_SOUND = 1000;
         public static final int DISPENSER_FAIL_SOUND = 1001;
         /**
-         * Like DISPENSER_DISPENSE_SOUND, but for items that are thrown (arrows, eggs, snowballs)
+         * Like DISPENSER_DISPENSE_SOUND, but for items that are fired (arrows, eggs, snowballs)
          */
         public static final int DISPENSER_LAUNCH_SOUND = 1002;
         public static final int ENDEREYE_LAUNCH_SOUND = 1003;
