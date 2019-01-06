@@ -117,7 +117,7 @@ public class Constants
          */
         public static final int BREAK_BLOCK_EFFECTS             = 2001;
         /**
-         * data is the rbg color int that should be used for the potion particles
+         * data is the rgb color int that should be used for the potion particles
          */
         public static final int SPLASH_POTION_EFFECT            = 2002;
         public static final int ENDER_EYE_SHATTER               = 2003;
@@ -128,7 +128,7 @@ public class Constants
         public static final int BONEMEAL_PARTICLES              = 2005;
         public static final int DRAGON_FIREBALL_HIT             = 2006;
         /**
-         * data is the rbg color int that should be used for the potion particles
+         * data is the rgb color int that should be used for the potion particles
          */
         public static final int LINGERING_POTION_EFFECT         = 2007;
         public static final int GATEWAY_SPAWN_EFFECTS           = 3000;
