@@ -93,7 +93,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             MethodNode ctr = classNode.methods.stream().filter(m -> m.name.equals("<init>") && m.desc.equals(desc)).findFirst().orElse(null);
             if (ctr == null)
             {
-                LOGGER.error(()->new AdvancedLogMessageAdapter(sb-> {
+                LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
                     sb.append("Enum has create method with no matching constructor:\n");
                     sb.append("  Enum: " + classType.getDescriptor()).append("\n");
                     sb.append("  Target: ").append(desc).append("\n");
@@ -104,7 +104,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
 
             if (values == null)
             {
-                LOGGER.error(()->new AdvancedLogMessageAdapter(sb-> {
+                LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
                     sb.append("Enum has create method but we could not find $VALUES. Found:\n");
                     classNode.fields.stream().filter(f -> (f.access & Opcodes.ACC_STATIC) != 0).
                             forEach(m -> sb.append("  ").append(m.name).append(" ").append(m.desc).append("\n"));

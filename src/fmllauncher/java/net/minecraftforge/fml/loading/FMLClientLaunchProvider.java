@@ -23,6 +23,7 @@ import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
+import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Stream;
 
 public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
@@ -43,12 +45,6 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     public String name()
     {
         return "fmlclient";
-    }
-
-    @Override
-    public Path[] identifyTransformationTargets()
-    {
-        return LibraryFinder.commonLibPaths(ObjectArrays.concat(FMLLoader.getForgePath(), FMLLoader.getMCPaths()));
     }
 
     @Override

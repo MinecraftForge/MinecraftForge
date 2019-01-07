@@ -34,7 +34,7 @@ public final class MavenVersionAdapter {
         try {
             return VersionRange.createFromVersionSpec(spec);
         } catch (InvalidVersionSpecificationException e) {
-            LOGGER.error(CORE, "Failed to parse version spec {}", spec, e);
+            LOGGER.fatal(CORE, "Failed to parse version spec {}", spec, e);
             throw new RuntimeException("Failed to parse spec", e);
         }
     }

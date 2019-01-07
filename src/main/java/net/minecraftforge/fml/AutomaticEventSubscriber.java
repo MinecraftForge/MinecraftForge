@@ -66,7 +66,7 @@ public class AutomaticEventSubscriber
                 }
                 catch (ClassNotFoundException e)
                 {
-                    LOGGER.error(LOADING, "Failed to load mod class {} for @EventBusSubscriber annotation", ad.getClassType(), e);
+                    LOGGER.fatal(LOADING, "Failed to load mod class {} for @EventBusSubscriber annotation", ad.getClassType(), e);
                     throw new RuntimeException(e);
                 }
             }

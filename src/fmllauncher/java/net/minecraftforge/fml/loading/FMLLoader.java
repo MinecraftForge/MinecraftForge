@@ -75,7 +75,7 @@ public class FMLLoader
         final Package modLauncherPackage = ITransformationService.class.getPackage();
         LOGGER.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
         if (!modLauncherPackage.isCompatibleWith("1.0")) {
-            LOGGER.error(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
+            LOGGER.fatal(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
         LOGGER.debug(CORE, "Initializing modjar URL handler");
@@ -86,7 +86,7 @@ public class FMLLoader
         final Package atPackage = accessTransformer.getClass().getPackage();
         LOGGER.debug(CORE,"FML found AccessTransformer version : {}", atPackage.getImplementationVersion());
         if (!atPackage.isCompatibleWith("1.0")) {
-            LOGGER.error(CORE,"Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
+            LOGGER.fatal(CORE,"Found incompatible AccessTransformer specification : {}, version {} from {}", atPackage.getSpecificationVersion(), atPackage.getImplementationVersion(), atPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible accesstransformer found "+atPackage.getSpecificationVersion());
         }
 
@@ -95,7 +95,7 @@ public class FMLLoader
         final Package eventBusPackage = eventBus.getClass().getPackage();
         LOGGER.debug(CORE,"FML found EventBus version : {}", eventBusPackage.getImplementationVersion());
         if (!eventBusPackage.isCompatibleWith("1.0")) {
-            LOGGER.error(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
+            LOGGER.fatal(CORE,"Found incompatible EventBus specification : {}, version {} from {}", eventBusPackage.getSpecificationVersion(), eventBusPackage.getImplementationVersion(), eventBusPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible eventbus found "+eventBusPackage.getSpecificationVersion());
         }
 
@@ -106,10 +106,10 @@ public class FMLLoader
         ServiceLoader.load(ICoreModProvider.class).forEach(coreModProviders::add);
 
         if (coreModProviders.isEmpty()) {
-            LOGGER.error(CORE, "Found no coremod provider. Cannot run");
+            LOGGER.fatal(CORE, "Found no coremod provider. Cannot run");
             throw new IncompatibleEnvironmentException("No coremod library found");
         } else if (coreModProviders.size() > 1) {
-            LOGGER.error(CORE, "Found multiple coremod providers : {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
+            LOGGER.fatal(CORE, "Found multiple coremod providers : {}. Cannot run", coreModProviders.stream().map(p -> p.getClass().getName()).collect(Collectors.toList()));
             throw new IncompatibleEnvironmentException("Multiple coremod libraries found");
         }
 
@@ -124,12 +124,12 @@ public class FMLLoader
         final Optional<ILaunchHandlerService> launchHandler = environment.findLaunchHandler(launchTarget);
         LOGGER.debug(CORE, "Using {} as launch service", launchTarget);
         if (!launchHandler.isPresent()) {
-            LOGGER.error(CORE,"Missing LaunchHandler {}, cannot continue", launchTarget);
+            LOGGER.fatal(CORE,"Missing LaunchHandler {}, cannot continue", launchTarget);
             throw new RuntimeException("Missing launch handler");
         }
 
         if (!(launchHandler.get() instanceof FMLCommonLaunchHandler)) {
-            LOGGER.error(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
+            LOGGER.fatal(CORE, "Incompatible Launch handler found - type {}, cannot continue", launchHandler.get().getClass().getName());
             throw new RuntimeException("Incompatible launch handler found");
         }
         gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Paths.get(".").toAbsolutePath());
@@ -142,7 +142,7 @@ public class FMLLoader
         forgeVersion = (String) arguments.get("forgeVersion");
         forgeGroup = (String) arguments.get("forgeGroup");
 
-        LOGGER.fatal("Received command line version data  : MC Version: '{}' MCP Version: '{}' Forge Version: '{}' Forge group: '{}'", mcVersion, mcpVersion, forgeVersion, forgeGroup);
+        LOGGER.info(CORE,"Received command line version data  : MC Version: '{}' MCP Version: '{}' Forge Version: '{}' Forge group: '{}'", mcVersion, mcpVersion, forgeVersion, forgeGroup);
         forgePath = commonLaunchHandler.getForgePath(mcVersion, forgeVersion, forgeGroup);
         mcPaths = commonLaunchHandler.getMCPaths(mcVersion, mcpVersion, forgeVersion, forgeGroup);
 

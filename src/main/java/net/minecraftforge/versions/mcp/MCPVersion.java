@@ -42,8 +42,8 @@ public class MCPVersion {
         }
         if (vers == null) throw new RuntimeException("Missing MCP version, cannot continue");
         mcpVersion = vers;
-        LOGGER.info(CORE, "Found MC version information {}", mcVersion);
-        LOGGER.info(CORE, "Found MCP version information {}", mcpVersion);
+        LOGGER.debug(CORE, "Found MC version information {}", mcVersion);
+        LOGGER.debug(CORE, "Found MCP version information {}", mcpVersion);
     }
     public static String getMCVersion() {
         return mcVersion;

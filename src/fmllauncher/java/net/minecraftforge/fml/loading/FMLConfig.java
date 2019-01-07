@@ -24,6 +24,7 @@ import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class FMLConfig
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static FMLConfig INSTANCE = new FMLConfig();
     private static ConfigSpec configSpec = new ConfigSpec();
     static {
@@ -53,9 +55,9 @@ public class FMLConfig
                 build();
         configData.load();
         if (!configSpec.isCorrect(configData)) {
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
+            LOGGER.warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
             configSpec.correct(configData, (action, path, incorrectValue, correctedValue) ->
-                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
+                    LOGGER.warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
         }
         configData.save();
     }
@@ -64,8 +66,8 @@ public class FMLConfig
     {
         final Path configFile = FMLPaths.FMLCONFIG.get();
         INSTANCE.loadFrom(configFile);
-        LogManager.getLogger().debug(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
-        LogManager.getLogger().debug(CORE, "Splash screen is {}", INSTANCE.splashScreenEnabled());
+        LOGGER.debug(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
+        LOGGER.debug(CORE, "Splash screen is {}", INSTANCE.splashScreenEnabled());
     }
 
     public boolean splashScreenEnabled() {
