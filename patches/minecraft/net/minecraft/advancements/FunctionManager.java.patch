@@ -1,14 +1,13 @@
 --- a/net/minecraft/advancements/FunctionManager.java
 +++ b/net/minecraft/advancements/FunctionManager.java
-@@ -36,9 +36,9 @@
+@@ -36,9 +37,7 @@
     private final Map<ResourceLocation, FunctionObject> field_193070_d = Maps.<ResourceLocation, FunctionObject>newHashMap();
     private final ArrayDeque<FunctionManager.QueuedCommand> field_194020_g = new ArrayDeque<FunctionManager.QueuedCommand>();
     private boolean field_194021_h;
 -   private final TagCollection<FunctionObject> field_200002_i = new TagCollection<FunctionObject>((p_200107_1_) -> {
-+   private final net.minecraftforge.common.tags.ForgeTagCollection<FunctionObject> field_200002_i = new net.minecraftforge.common.tags.ForgeTagCollection<>((p_200107_1_) -> {
-       return this.func_193058_a(p_200107_1_) != null;
+-      return this.func_193058_a(p_200107_1_) != null;
 -   }, this::func_193058_a, "tags/functions", true, "function");
-+   }, this::func_193058_a, null,null, net.minecraftforge.common.tags.ForgeTagCollection.getDefaultLoadingLocation(new ResourceLocation("functions")), true, "function");
++   private final net.minecraftforge.common.tags.ForgeTagCollection<FunctionObject> field_200002_i = net.minecraftforge.common.tags.ForgeTagManager.createFunctionTags(this);
     private final List<FunctionObject> field_200003_j = Lists.<FunctionObject>newArrayList();
     private boolean field_200223_l;
  

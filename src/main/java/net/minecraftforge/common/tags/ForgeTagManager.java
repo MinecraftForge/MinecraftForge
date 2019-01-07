@@ -1,6 +1,8 @@
 package net.minecraftforge.common.tags;
 
+import net.minecraft.advancements.FunctionManager;
 import net.minecraft.block.Block;
+import net.minecraft.command.FunctionObject;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Item;
 import net.minecraft.network.PacketBuffer;
@@ -25,32 +27,25 @@ import static net.minecraftforge.registries.ForgeRegistries.*;
 
 public final class ForgeTagManager extends NetworkTagManager
 {
-    private static int generation = 0;
-
-    public static int getGeneration()
-    {
-        return generation;
-    }
 
     public static final ResourceLocation FLUID_TAGS = new ResourceLocation("fluids");
+    public static final ResourceLocation FUNCTION_TAGS = new ResourceLocation("functions");
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final ForgeTagManager INSTANCE = new ForgeTagManager();
-    public static ForgeTagManager getInstance() {
+    public static ForgeTagManager getInstance()
+    {
         return INSTANCE;
     }
 
-    private void registerVanillaTags()
+    private static void registerVanillaTags()
     {
-        tagCollections.put(GameData.BLOCKS, new TagCollectionValueEntry(
-                 ForgeTagCollection.fromForgeRegistry(BLOCKS,ForgeTagCollection.getDefaultLoadingLocation(GameData.BLOCKS),"block"),
-                (manager -> BlockTags.setCollection(manager.getBlocks())), true, true));
-        tagCollections.put(GameData.ITEMS, new TagCollectionValueEntry(
-                ForgeTagCollection.fromForgeRegistry(ITEMS,ForgeTagCollection.getDefaultLoadingLocation(GameData.ITEMS),"item"),
-                (manager -> ItemTags.setCollection(manager.getItems())), true, true));
-        tagCollections.put(FLUID_TAGS, new TagCollectionValueEntry(
-                new ForgeTagCollection<>(Fluid.REGISTRY,ForgeTagCollection.getDefaultLoadingLocation(FLUID_TAGS),"fluid"),
-                (manager -> ItemTags.setCollection(manager.getItems())), true, true));
+        getInstance().overrideTagCollection(GameData.BLOCKS, ForgeTagCollection.fromForgeRegistry(BLOCKS,ForgeTagCollection.getDefaultLoadingLocation(GameData.BLOCKS),"block"),
+                (manager -> BlockTags.setCollection(manager.getBlocks())), true, true, true);
+        getInstance().overrideTagCollection(GameData.ITEMS, ForgeTagCollection.fromForgeRegistry(ITEMS,ForgeTagCollection.getDefaultLoadingLocation(GameData.ITEMS),"item"),
+                (manager -> ItemTags.setCollection(manager.getItems())), true, true, true);
+        getInstance().overrideTagCollection(FLUID_TAGS, new ForgeTagCollection<>(Fluid.REGISTRY,ForgeTagCollection.getDefaultLoadingLocation(FLUID_TAGS),"fluid"),
+                (manager -> ItemTags.setCollection(manager.getItems())), true, true, true);
     }
 
     private static void registerForgeTags(final ResourceLocation id, final IForgeRegistry<?> reg, final String name)
@@ -60,7 +55,7 @@ public final class ForgeTagManager extends NetworkTagManager
 
     public static void initForgeTags()
     {
-        getInstance().registerVanillaTags();
+        registerVanillaTags();
         registerForgeTags(GameData.POTIONS, POTIONS, "potion");
         registerForgeTags(GameData.BIOMES, BIOMES, "biome");
         registerForgeTags(GameData.SOUNDEVENTS, SOUND_EVENTS,  "sound event");
@@ -71,29 +66,62 @@ public final class ForgeTagManager extends NetworkTagManager
         registerForgeTags(GameData.TILEENTITIES, TILE_ENTITIES, "tile entity");
     }
 
-    private Map<ResourceLocation, TagCollectionValueEntry> tagCollections;
-
-    public void registerTagCollection(ResourceLocation id, ForgeTagCollection<?> tagCollection)
+    public static ForgeTagCollection<FunctionObject> createFunctionTags(FunctionManager manager)
     {
-        registerTagCollection(id, tagCollection, null);
+        return getInstance().overrideTagCollection(FUNCTION_TAGS,
+                new ForgeTagCollection<>((p_200107_1_) -> manager.getFunction(p_200107_1_) != null, manager::getFunction, null,null, ForgeTagCollection.getDefaultLoadingLocation(ForgeTagManager.FUNCTION_TAGS), true, "function"),
+                null, false, false,true);
     }
 
-    public void registerTagCollection(ResourceLocation id, ForgeTagCollection<?> tagCollection, @Nullable Consumer<ForgeTagManager> reloadCallback)
+    private final Map<ResourceLocation, TagCollectionValueEntry> tagCollections;
+    private int generation;
+
+    public int getGeneration()
     {
-        registerTagCollection(id, tagCollection, reloadCallback, true);
+        return generation;
     }
 
-    public void registerTagCollection(ResourceLocation id, @Nonnull ForgeTagCollection<?> tagCollection, @Nullable Consumer<ForgeTagManager> reloadCallback, boolean performSync)
+    public <T> ForgeTagCollection<T> registerTagCollection(ResourceLocation id, ForgeTagCollection<T> tagCollection)
+    {
+        return registerTagCollection(id, tagCollection, null);
+    }
+
+    public <T> ForgeTagCollection<T> registerTagCollection(ResourceLocation id, ForgeTagCollection<T> tagCollection, @Nullable Consumer<ForgeTagManager> reloadCallback)
+    {
+        return registerTagCollection(id, tagCollection, reloadCallback, true);
+    }
+
+    public <T> ForgeTagCollection<T> registerTagCollection(ResourceLocation id, @Nonnull ForgeTagCollection<T> tagCollection, @Nullable Consumer<ForgeTagManager> reloadCallback, boolean performSync)
+    {
+        return registerTagCollection(id,tagCollection,reloadCallback,performSync,true);
+    }
+
+    public <T> ForgeTagCollection<T> registerTagCollection(ResourceLocation id, @Nonnull ForgeTagCollection<T> tagCollection, @Nullable Consumer<ForgeTagManager> reloadCallback, boolean performSync, boolean performReload)
     {
         if (tagCollections.containsKey(id))
             throw new IllegalArgumentException("Cannot register " + id + " TagCollection twice!");
-        tagCollections.put(id, new TagCollectionValueEntry(tagCollection, reloadCallback, performSync, false));
+        tagCollections.put(id, new TagCollectionValueEntry(tagCollection, reloadCallback, performSync, performReload,false));
+        return tagCollection;
+    }
+
+    /*
+    public <T> ForgeTagCollection<T> overrideTagCollection(ResourceLocation id, @Nonnull ForgeTagCollection<T> tagCollection, @Nullable Consumer<ForgeTagManager> reloadCallback, boolean performSync, boolean performReload)
+    {
+        overrideTagCollection(id,tagCollection,reloadCallback,performSync,performReload,false);
+        return tagCollection;
+    }*/
+
+    private <T> ForgeTagCollection<T> overrideTagCollection(ResourceLocation id, @Nonnull ForgeTagCollection<T> tagCollection, @Nullable Consumer<ForgeTagManager> reloadCallback, boolean performSync, boolean performReload, boolean vanilla)
+    {
+        tagCollections.put(id, new TagCollectionValueEntry(tagCollection, reloadCallback, performSync, performReload,vanilla));
+        return tagCollection;
     }
 
     private ForgeTagManager()
     {
         super();
         tagCollections = new HashMap<>();
+        generation = 0;
     }
 
 
@@ -138,8 +166,7 @@ public final class ForgeTagManager extends NetworkTagManager
     {
         for (Map.Entry<ResourceLocation, TagCollectionValueEntry> entry : tagCollections.entrySet())
         {
-            entry.getValue().clear();
-            entry.getValue().reload(resourceManager, this);
+                entry.getValue().reload(resourceManager, this);
         }
         generation++;
     }
@@ -177,7 +204,7 @@ public final class ForgeTagManager extends NetworkTagManager
         {
             ResourceLocation id = buffer.readResourceLocation();
             //we cannot make any assumptions about the Format an unknown collection might have written into the buffer (custom implementations are allowed...)-> we have to Fail
-            //modders who see this: if you want your tags not to be synced: just provide a Predicate!
+            //modders who see this: if you want your tags not to be synced: just set the boolean to false!
             ForgeTagCollection<?> tags = Objects.requireNonNull(getTagsForId(id), "Tag List mismatch! Received " + id + " from Server, but it was not registered Client-Side!");
             tags.read(buffer);
         }
@@ -191,20 +218,21 @@ public final class ForgeTagManager extends NetworkTagManager
         }
     }
 
-    private static class TagCollectionValueEntry
+    private static final class TagCollectionValueEntry
     {
         private final ForgeTagCollection<?> collection;
-        @Nonnull
         private final boolean performSync;
+        private final boolean performReload;
         @Nullable
         private final Consumer<ForgeTagManager> reloadCallback;
         private final boolean isVanillaCollection;
 
-        TagCollectionValueEntry(@Nonnull ForgeTagCollection<?> collection, @Nullable Consumer<ForgeTagManager> reloadCallback, boolean performSync, boolean vanillaCollection)
+        TagCollectionValueEntry(@Nonnull ForgeTagCollection<?> collection, @Nullable Consumer<ForgeTagManager> reloadCallback, boolean performSync, boolean performReload, boolean vanillaCollection)
         {
             this.collection = collection;
             this.reloadCallback = reloadCallback;
             this.performSync = performSync;
+            this.performReload = performReload;
             this.isVanillaCollection = vanillaCollection;
         }
 
@@ -238,11 +266,14 @@ public final class ForgeTagManager extends NetworkTagManager
             collection.write(buffer);
         }
 
-
         void reload(IResourceManager resManager, ForgeTagManager tagManager)
         {
-            collection.reload(resManager);
-            onReloaded(tagManager);
+            if (performReload)
+            {
+                clear();
+                collection.reload(resManager);
+                onReloaded(tagManager);
+            }
         }
 
         void onReloaded(ForgeTagManager tagManager)

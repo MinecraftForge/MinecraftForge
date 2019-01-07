@@ -3,7 +3,6 @@ package net.minecraftforge.common.tags;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -124,7 +123,8 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T>
 
     public static <T> ForgeTagBuilder immutableTagBuilder()
     {
-        return new ForgeTagBuilder<>((TagFactory<T>) (location, iTagEntries, preserveOrder, itemComparator) -> copyOf(location, iTagEntries, preserveOrder));
+        return new ForgeTagBuilder<>((TagFactory<T>) (location, iTagEntries, preserveOrder, itemComparator) ->
+                itemComparator!=null && !preserveOrder? copyOf(location,iTagEntries,itemComparator):copyOf(location, iTagEntries, preserveOrder));
     }
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -139,7 +139,7 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T>
         this.comparator = null;
     }
 
-    public ForgeTagBuilder<T> withOrdering(Comparator<T> comparator)
+    public ForgeTagBuilder<T> comparingEntriesBy(Comparator<T> comparator)
     {
         this.comparator = comparator;
         return this;
@@ -156,6 +156,12 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T>
     protected void onChange()
     {
         this.resolved = false;
+    }
+
+    @Nullable
+    public Comparator<T> getEntryOrdering()
+    {
+        return comparator;
     }
 
     @Override
@@ -264,7 +270,7 @@ public final class ForgeTagBuilder<T> extends Tag.Builder<T>
     @Override
     public Tag<T> build(ResourceLocation resourceLocationIn)
     {
-        return build(resourceLocationIn, comparator);
+        return build(resourceLocationIn, getEntryOrdering());
     }
 
     public Tag<T> build(ResourceLocation resourceLocationIn, @Nullable Comparator<T> itemComparator)

@@ -63,9 +63,9 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T>
     private boolean collectDummyTags;
     private boolean extendedLogging;
 
-    public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, Function<T, Integer> itemToId, Function<Integer, T> idToItem, List<String> resourceLocationPrefixes, boolean preserveOrderIn, String itemTypeNameIn)
+    public ForgeTagCollection(Predicate<ResourceLocation> isValueKnownPredicateIn, Function<ResourceLocation, T> resourceLocationToItemIn, Function<T, Integer> entryToId, Function<Integer, T> idToEntry, List<String> resourceLocationPrefixes, boolean preserveOrderIn, String entryTypeName)
     {
-        super(isValueKnownPredicateIn, resourceLocationToItemIn, itemToId, idToItem, resourceLocationPrefixes.isEmpty() ? "" : resourceLocationPrefixes.get(0), preserveOrderIn, itemTypeNameIn);
+        super(isValueKnownPredicateIn, resourceLocationToItemIn, entryToId, idToEntry, resourceLocationPrefixes.isEmpty() ? "" : resourceLocationPrefixes.get(0), preserveOrderIn, entryTypeName);
         this.resourceLocationPrefixes = ImmutableList.copyOf(resourceLocationPrefixes);
         this.owningTags = new HashMap<>();
         this.collectDummyTags = true;
@@ -104,7 +104,7 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T>
 
     public ForgeTagCollection<T> withBuilder(Supplier<ForgeTagBuilder<T>> builderFactory)
     {
-        this.builderFactory = builderFactory;
+        this.builderFactory = Objects.requireNonNull(builderFactory,"Cannot construct a ForgeTagCollection which doesn't use any TagBuilder!");
         return this;
     }
 
@@ -459,6 +459,8 @@ public class ForgeTagCollection<T> extends NetworkTagCollection<T>
 
         protected Tag<T> bake(Comparator<T> comparator, boolean preserveOrder)
         {
+            //if no comparator is set for this TagCollection, fall back to the builders own comparator
+            if (comparator == null) return getBuilder().ordered(preserveOrder).build(getId());
             return getBuilder().ordered(preserveOrder).build(getId(), comparator);
         }
     }

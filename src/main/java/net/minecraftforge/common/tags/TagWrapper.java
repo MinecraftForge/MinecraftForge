@@ -19,7 +19,7 @@ public class TagWrapper<T> extends Tag<T>
     public TagWrapper(ResourceLocation resourceLocationIn, Supplier<TagCollection<T>> collectionProvider)
     {
         super(resourceLocationIn);
-        this.lastKnownGeneration = ForgeTagManager.getGeneration() - 1;
+        this.lastKnownGeneration = ForgeTagManager.getInstance().getGeneration() - 1;
         this.collectionProvider = collectionProvider;
     }
 
@@ -50,10 +50,10 @@ public class TagWrapper<T> extends Tag<T>
 
     private void updateTag()
     {
-        if (this.getLastKnownGeneration() != ForgeTagManager.getGeneration())
+        if (this.getLastKnownGeneration() != ForgeTagManager.getInstance().getGeneration())
         {
             this.setCachedTag(getCollectionProvider().get().get(getId()));
-            this.setLastKnownGeneration(ForgeTagManager.getGeneration());
+            this.setLastKnownGeneration(ForgeTagManager.getInstance().getGeneration());
         }
     }
 
