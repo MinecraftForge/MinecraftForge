@@ -3,7 +3,7 @@
 @@ -9,10 +9,21 @@
  
  public class NetworkTagCollection<T> extends TagCollection<T> {
-    private final RegistryNamespaced<ResourceLocation, T> field_200044_a;
+    protected final RegistryNamespaced<ResourceLocation, T> field_200044_a;
 +   protected final java.util.function.Function<T,Integer> itemToId;
 +   protected final java.util.function.Function<Integer,T> idToItem;
  
