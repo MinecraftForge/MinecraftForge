@@ -174,7 +174,7 @@ public class Constants
     public static class AiMutexBits {
         public static final int MOTION  = 0b001;
         public static final int LOOKING = 0b010;
-        public static final int JUMP    = 0b100;
+        public static final int JUMPING    = 0b100;
     }
 
 }
