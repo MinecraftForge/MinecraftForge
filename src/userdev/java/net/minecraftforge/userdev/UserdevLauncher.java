@@ -50,12 +50,8 @@ public class UserdevLauncher
         logcontext.getConfiguration().addFilter(distxformFilter);
         logcontext.updateLoggers();
 
-        String assets = System.getenv().getOrDefault("assetDirectory", "assets");
         String target = System.getenv().get("target");
 
-        if (assets == null ||!new File(assets).exists()) {
-            throw new IllegalArgumentException("Environment variable 'assets' must be set to a valid path.");
-        }
         if (target == null) {
             throw new IllegalArgumentException("Environment variable 'target' must be set to 'fmluserdevclient' or 'fmluserdevserver'.");
         }
@@ -70,6 +66,12 @@ public class UserdevLauncher
         };
 
         if (Objects.equals(target,"fmluserdevclient")) {
+            String assets = System.getenv().getOrDefault("assetDirectory", "assets");
+
+            if (assets == null ||!new File(assets).exists()) {
+                throw new IllegalArgumentException("Environment variable 'assets' must be set to a valid path.");
+            }
+
             hackNatives();
             launchArgs = ObjectArrays.concat(launchArgs, new String[] {
                     "--accessToken", "blah",
