@@ -56,10 +56,14 @@ public class ConfigurationTest {
         Property backgroundProperty = new Property("background", "0xFFFFFF", Property.Type.COLOR);
         backgroundProperty.setComment("background property comment");
 
+        Property longProperty = new Property("longProp", Long.toString((long)1e10), Property.Type.LONG);
+        longProperty.setComment("long value comment");
+
         config = new Configuration();
         category = config.getCategory("defaults");
         category.put(enabledProperty.getName(), enabledProperty);
         category.put(backgroundProperty.getName(), backgroundProperty);
+        category.put(longProperty.getName(), longProperty);
     }
 
     @Test
@@ -94,5 +98,17 @@ public class ConfigurationTest {
         assertEquals("The property's value changed", "true", backgroundProperty.getString());
         assertEquals("The property's type was changed", Property.Type.BOOLEAN, backgroundProperty.getType());
         assertEquals("The property's comment was changed", "enabled property comment", backgroundProperty.getComment());
+    }
+
+    @Test
+    public void testSavingLongValue()
+    {
+        Property longProperty = category.get("longProp");
+
+        assertEquals("The property's name was not changed", "longProp", longProperty.getName());
+        assertEquals("The property's value was not changed", (long)1e10, longProperty.getLong());
+        assertEquals("The property's type was not changed", Property.Type.LONG, longProperty.getType());
+        assertEquals("The property's comment was not changed", "long value comment", longProperty.getComment());
+
     }
 }
