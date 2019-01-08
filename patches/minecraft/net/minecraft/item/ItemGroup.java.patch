@@ -9,7 +9,15 @@
     public static final ItemGroup field_78030_b = (new ItemGroup(0, "buildingBlocks") {
        @OnlyIn(Dist.CLIENT)
        public ItemStack func_78016_d() {
-@@ -104,7 +104,16 @@
+@@ -95,6 +95,7 @@
+          return new ItemStack(Blocks.field_150486_ae);
+       }
+    }).func_78025_a("inventory.png").func_78022_j().func_78014_h();
++   private static final net.minecraft.util.ResourceLocation CREATIVE_INVENTORY_TABS = new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
+    private final int field_78033_n;
+    private final String field_78034_o;
+    private String field_199784_q;
+@@ -104,7 +105,16 @@
     private EnumEnchantmentType[] field_111230_s = new EnumEnchantmentType[0];
     private ItemStack field_151245_t;
  
@@ -26,7 +34,7 @@
        this.field_78033_n = p_i1853_1_;
        this.field_78034_o = p_i1853_2_;
        this.field_151245_t = ItemStack.field_190927_a;
-@@ -179,11 +188,13 @@
+@@ -179,11 +189,13 @@
  
     @OnlyIn(Dist.CLIENT)
     public int func_78020_k() {
@@ -40,7 +48,7 @@
        return this.field_78033_n < 6;
     }
  
-@@ -220,4 +231,31 @@
+@@ -220,4 +232,36 @@
        }
  
     }
@@ -66,6 +74,11 @@
 +   @OnlyIn(Dist.CLIENT)
 +   public net.minecraft.util.ResourceLocation getBackgroundImage() {
 +      return new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.func_78015_f());
++   }
++
++   @OnlyIn(Dist.CLIENT)
++   public net.minecraft.util.ResourceLocation getTabsImage() {
++      return CREATIVE_INVENTORY_TABS;
 +   }
 +
 +   public int getLabelColor() {
