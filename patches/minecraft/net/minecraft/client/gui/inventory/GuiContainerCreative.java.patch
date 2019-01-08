@@ -1,14 +1,5 @@
 --- a/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 +++ b/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-@@ -42,7 +42,7 @@
- 
- @OnlyIn(Dist.CLIENT)
- public class GuiContainerCreative extends InventoryEffectRenderer {
--   private static final ResourceLocation field_147061_u = new ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
-+   private static final net.minecraft.util.ResourceLocation field_147061_u = new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
-    private static final InventoryBasic field_195378_x = new InventoryBasic(new TextComponentString("tmp"), 45);
-    private static int field_147058_w = ItemGroup.field_78030_b.func_78021_a();
-    private float field_147067_x;
 @@ -53,6 +53,8 @@
     private CreativeCrafting field_147059_E;
     private boolean field_195377_F;
