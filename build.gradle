@@ -160,37 +160,39 @@ project(':forge') {
         accessTransformer = file("$rootDir/src/main/resources/META-INF/accesstransformer.cfg")
         exc = file("$rootDir/src/main/resources/forge.exc")
         srgPatches = true
-        clientRun {
-            main = 'net.minecraftforge.fml.LaunchTesting'
-            environment = [
-                target: 'fmldevclient',
-                assetDirectory: downloadAssets.output,
-                nativesDirectory: extractNatives.output
-            ]
-            properties = [
-                'org.lwjgl.util.Debug': 'true',
-                'org.lwjgl.util.DebugLoader': 'true',
-                'org.lwjgl.system.SharedLibraryExtractDirectory': 'lwjgl_dll',
-                'mc.version': MC_VERSION,
-                'mcp.version': MCP_VERSION,
-                'forge.version': project.version.substring(MC_VERSION.length() + 1),
-                'forge.spec': SPEC_VERSION,
-                'forge.group': project.group, 
-                'fmllauncher.version': SPEC_VERSION
-            ]
-        }
-        serverRun {
-            main = 'net.minecraftforge.fml.LaunchTesting'
-            environment = [
-                target: 'fmldevserver'
-            ]
-            properties = [
-                'mc.version': MC_VERSION,
-                'mcp.version': MCP_VERSION,
-                'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
-                'forge.spec': SPEC_VERSION,
-                'forge.group': project.group
-            ]
+        runs {
+            client = {
+                main 'net.minecraftforge.fml.LaunchTesting'
+                environment = [
+                    target: 'fmldevclient',
+                    assetDirectory: downloadAssets.output,
+                    nativesDirectory: extractNatives.output
+                ]
+                properties = [
+                    'org.lwjgl.util.Debug': 'true',
+                    'org.lwjgl.util.DebugLoader': 'true',
+                    'org.lwjgl.system.SharedLibraryExtractDirectory': 'lwjgl_dll',
+                    'mc.version': MC_VERSION,
+                    'mcp.version': MCP_VERSION,
+                    'forge.version': project.version.substring(MC_VERSION.length() + 1),
+                    'forge.spec': SPEC_VERSION,
+                    'forge.group': project.group, 
+                    'fmllauncher.version': SPEC_VERSION
+                ]
+            }
+            server = {
+                main 'net.minecraftforge.fml.LaunchTesting'
+                environment = [
+                    target: 'fmldevserver'
+                ]
+                properties = [
+                    'mc.version': MC_VERSION,
+                    'mcp.version': MCP_VERSION,
+                    'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
+                    'forge.spec': SPEC_VERSION,
+                    'forge.group': project.group
+                ]
+            }
         }
     }
     
@@ -283,9 +285,9 @@ project(':forge') {
         }
         //jvmArgs = ['-verbose:class']
         classpath sourceSets.main.runtimeClasspath
-        main patcher.clientRun.main
-        systemProperties = patcher.clientRun.properties
-        environment += patcher.clientRun.environment
+        main patcher.runs.client.main
+        systemProperties = patcher.runs.client.properties
+        environment += patcher.runs.client.environment
         workingDir 'runclient'
     }
 
@@ -300,10 +302,10 @@ project(':forge') {
             }
         }
         classpath sourceSets.main.runtimeClasspath
-        main patcher.serverRun.main
+        main patcher.runs.server.main
         args 'nogui'
-        systemProperties = patcher.serverRun.properties
-        environment += patcher.serverRun.environment
+        systemProperties = patcher.runs.server.properties
+        environment += patcher.runs.server.environment
         workingDir 'runserver'
         standardInput = System.in
     }
@@ -789,6 +791,31 @@ project(':forge') {
         def artifacts = getArtifacts(project, project.configurations.installer, true)
         artifacts.each { key, lib ->
             addLibrary(lib.name)
+        }
+        addLibrary("${project.group}:${project.name}:${project.version}:launcher")
+        runs {
+            client = {
+                main 'net.minecraftforge.userdev.UserdevLauncher'
+                environment 'target', 'fmluserdevclient'
+                environment 'assetDirectory', '{assets_root}'
+                environment 'nativesDirectory', '{natives}'
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)
+                environment 'FORGE_GROUP', project.group
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MOD_CLASSES', '{source_roots}'
+                environment 'MCP_MAPPINGS', '{mcp_mappings}'
+            }
+            server = {
+                main 'net.minecraftforge.userdev.UserdevLauncher'
+                environment 'target', 'fmldevserver'
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)
+                environment 'FORGE_GROUP', project.group
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MOD_CLASSES', '{source_roots}'
+                environment 'MCP_MAPPINGS', '{mcp_mappings}'
+            }
         }
     }
     

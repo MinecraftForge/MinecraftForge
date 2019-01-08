@@ -53,9 +53,6 @@ public class UserdevLauncher
         String assets = System.getenv().getOrDefault("assetDirectory", "assets");
         String target = System.getenv().get("target");
 
-        if (assets == null ||!new File(assets).exists()) {
-            throw new IllegalArgumentException("Environment variable 'assets' must be set to a valid path.");
-        }
         if (target == null) {
             throw new IllegalArgumentException("Environment variable 'target' must be set to 'fmluserdevclient' or 'fmluserdevserver'.");
         }
@@ -65,11 +62,16 @@ public class UserdevLauncher
                 "--launchTarget", target,
                 "--fml.forgeVersion", System.getenv("FORGE_VERSION"),
                 "--fml.mcpVersion", System.getenv("MCP_VERSION"),
+                "--fml.mcpMappings", System.getenv("MCP_MAPPINGS"),
                 "--fml.mcVersion", System.getenv("MC_VERSION"),
                 "--fml.forgeGroup", System.getenv("FORGE_GROUP")
         };
 
         if (Objects.equals(target,"fmluserdevclient")) {
+            if (assets == null || !new File(assets).exists()) {
+                throw new IllegalArgumentException("Environment variable 'assetDirectory' must be set to a valid path.");
+            }
+
             hackNatives();
             launchArgs = ObjectArrays.concat(launchArgs, new String[] {
                     "--accessToken", "blah",

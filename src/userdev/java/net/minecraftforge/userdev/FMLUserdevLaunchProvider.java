@@ -29,7 +29,7 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
             LOGGER.fatal(CORE, "Unable to locate forge on the classpath");
             throw new RuntimeException("Unable to locate forge on the classpath");
         }
-        forgeJar = LibraryFinder.findJarPathFor("ForgeVersion.class","forge", forgePath);
+        forgeJar = LibraryFinder.findJarPathFor("ForgeVersion.class", "forge", forgePath);
         return forgeJar;
     }
 
@@ -41,8 +41,9 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
         final String forgeVersion = (String) arguments.get("forgeVersion");
         final String mcVersion = (String) arguments.get("mcVersion");
         final String mcpVersion = (String) arguments.get("mcpVersion");
+        final String mcpMappings = (String) arguments.get("mcpMappings");
         final String forgeGroup = (String) arguments.get("forgeGroup");
-        final String userdevVersion = mcVersion+"-"+forgeVersion+"_mapped_snapshot_"+mcpVersion;
+        final String userdevVersion = mcVersion + "-" + forgeVersion + "_mapped_" + mcpMappings;
         int dirs = forgeGroup.split("\\.").length + 2;
         Path fjroot = forgeJar;
         do {
@@ -51,7 +52,7 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
         final String fjpath = fjroot.toString();
         LOGGER.debug(CORE, "Injecting forge as mod {} from maven path {}", userdevVersion, fjpath);
         mavenRoots.add(fjpath);
-        mods.add(forgeGroup+":userdev:"+userdevVersion);
+        mods.add(forgeGroup+":forge:"+userdevVersion);
 
         try {
             final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources("META-INF/mods.toml");

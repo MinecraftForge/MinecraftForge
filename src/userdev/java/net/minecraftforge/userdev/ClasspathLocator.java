@@ -44,7 +44,6 @@ public class ClasspathLocator implements IModLocator
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String COREMODS = "META-INF/coremods.json";
     private static final String MODS = "META-INF/mods.toml";
-    private Map<Path, List<Path>> paths = Maps.newHashMap();
 
     public ClasspathLocator() {}
 
@@ -75,9 +74,12 @@ public class ClasspathLocator implements IModLocator
                 e.printStackTrace();
             }
             return null;
-        }).filter(Objects::nonNull).distinct()
-                .map(path -> new ModFile(path, this))
-                .collect(Collectors.toList());
+        })
+        .filter(Objects::nonNull)
+        .distinct()
+        .filter(Files::isRegularFile) //We're only looking for remapped jars, exploded directories are handled by FMLUserdevLaunchProvider
+        .map(path -> new ModFile(path, this))
+        .collect(Collectors.toList());
     }
 
     @Override
@@ -121,6 +123,7 @@ public class ClasspathLocator implements IModLocator
     {
         Path classesPath = filePath;
 
+        /*
         // Hack 1: When running from within intellij, we get
         // "out/production/resources" + "out/production/classes"
         if(filePath.getNameCount() >= 1 && filePath.getName(filePath.getNameCount()-1).toString().equals("resources"))
@@ -134,6 +137,7 @@ public class ClasspathLocator implements IModLocator
             // We'll scan all the subdirectories for languages and sourcesets, hopefully that works...
             classesPath = filePath.getParent().getParent().resolve("classes");
         }
+        */
         return classesPath;
     }
 
