@@ -265,7 +265,7 @@
 +
 +      @Override
 +      public int getHoverColor(int index) {
-+         return index > 44 ? super.getHoverColor(index) : tabHoverColor;
++         return tabHoverColor;
 +      }
     }
  
