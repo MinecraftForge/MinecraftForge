@@ -61,8 +61,14 @@ public class PotionEvent extends LivingEvent
         
         public PotionRemoveEvent(EntityLivingBase living, Potion potion)
         {
-            super(living, living.getActivePotionMap().get(potion));
+            super(living, living.getActivePotionEffect(potion));
             this.potion = potion;
+        }
+        
+        public PotionRemoveEvent(EntityLivingBase living, PotionEffect effect)
+        {
+            super(living, effect);
+            this.potion = effect.getPotion();            
         }
         
         /**
@@ -146,4 +152,16 @@ public class PotionEvent extends LivingEvent
         }
     }
     
+    /**
+     * This Event is fired when a Potion effect expires on an Entity.
+     * This Event is not {@link Cancelable}
+     * This Event does not have a Result.
+     */
+    public static class PotionExpiryEvent extends PotionEvent
+    {
+        public PotionExpiryEvent(EntityLivingBase living, PotionEffect effect)
+        {
+            super(living, effect);
+        }
+    }
 }    

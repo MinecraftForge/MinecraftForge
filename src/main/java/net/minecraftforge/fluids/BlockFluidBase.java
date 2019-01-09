@@ -31,6 +31,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStairs;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyInteger;
@@ -162,9 +163,9 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
      */
     protected final Fluid definedFluid;
 
-    public BlockFluidBase(Fluid fluid, Material material)
+    public BlockFluidBase(Fluid fluid, Material material, MapColor mapColor)
     {
-        super(material);
+        super(material, mapColor);
         this.setTickRandomly(true);
         this.disableStats();
 
@@ -179,6 +180,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         this.definedFluid = fluid;
         displacements.putAll(defaultDisplacements);
         this.setDefaultState(blockState.getBaseState().withProperty(LEVEL, getMaxRenderHeightMeta()));
+    }
+
+    public BlockFluidBase(Fluid fluid, Material material)
+    {
+        this(fluid, material, material.getMaterialMapColor());
     }
 
     @Override
