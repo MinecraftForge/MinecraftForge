@@ -160,12 +160,11 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 
     public IForgeRegistry<T> create()
     {
-        return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getAdd(), getClear(), getCreate(), getValidate(), getBake(), saveToDisc, allowOverrides, allowModifications, dummyFactory, missingFactory);
+        return RegistryManager.ACTIVE.createRegistry(registryName, this);
     }
 
     @Nullable
-    private AddCallback<T> getAdd()
+    public AddCallback<T> getAdd()
     {
         if (addCallback.isEmpty())
             return null;
@@ -180,7 +179,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    private ClearCallback<T> getClear()
+    public ClearCallback<T> getClear()
     {
         if (clearCallback.isEmpty())
             return null;
@@ -195,7 +194,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    private CreateCallback<T> getCreate()
+    public CreateCallback<T> getCreate()
     {
         if (createCallback.isEmpty())
             return null;
@@ -210,7 +209,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    private ValidateCallback<T> getValidate()
+    public ValidateCallback<T> getValidate()
     {
         if (validateCallback.isEmpty())
             return null;
@@ -225,7 +224,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    private BakeCallback<T> getBake()
+    public BakeCallback<T> getBake()
     {
         if (bakeCallback.isEmpty())
             return null;
@@ -237,5 +236,53 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             for (BakeCallback<T> cb : this.bakeCallback)
                 cb.onBake(owner, stage);
         };
+    }
+
+    public Class<T> getType()
+    {
+        return registryType;
+    }
+
+    @Nullable
+    public ResourceLocation getDefault()
+    {
+        return this.optionalDefaultKey;
+    }
+
+    public int getMinId()
+    {
+        return minId;
+    }
+
+    public int getMaxId()
+    {
+        return maxId;
+    }
+
+    public boolean getAllowOverrides()
+    {
+        return allowOverrides;
+    }
+
+    public boolean getAllowModifications()
+    {
+        return allowModifications;
+    }
+
+    @Nullable
+    public DummyFactory<T> getDummyFactory()
+    {
+        return dummyFactory;
+    }
+
+    @Nullable
+    public MissingFactory<T> getMissingFactory()
+    {
+        return missingFactory;
+    }
+
+    public boolean getSaveToDisc()
+    {
+        return saveToDisc;
     }
 }

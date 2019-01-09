@@ -25,8 +25,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
@@ -37,7 +35,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.FMLHandshakeMessages;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
-import net.minecraftforge.registries.IForgeRegistry.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,23 +98,22 @@ public class RegistryManager
         return getRegistry(key);
     }
 
-    <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(ResourceLocation name, Class<V> type, ResourceLocation defaultKey, int min, int max,
-            @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable CreateCallback<V> create, @Nullable ValidateCallback<V> validate, @Nullable BakeCallback<V> bake,
-            boolean persisted, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
+    <V extends IForgeRegistryEntry<V>> ForgeRegistry<V> createRegistry(ResourceLocation name, RegistryBuilder<V> builder)
     {
         Set<Class<?>> parents = Sets.newHashSet();
-        findSuperTypes(type, parents);
+        findSuperTypes(builder.getType(), parents);
         SetView<Class<?>> overlappedTypes = Sets.intersection(parents, superTypes.keySet());
         if (!overlappedTypes.isEmpty())
         {
             Class<?> foundType = overlappedTypes.iterator().next();
-            LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type", foundType, superTypes.get(foundType), name, type, type);
+            LOGGER.error("Found existing registry of type {} named {}, you cannot create a new registry ({}) with type {}, as {} has a parent of that type",
+                    foundType, superTypes.get(foundType), name, builder.getType(), builder.getType());
             throw new IllegalArgumentException("Duplicate registry parent type found - you can only have one registry for a particular super type");
         }
-        ForgeRegistry<V> reg = new ForgeRegistry<V>(type, defaultKey, min, max, create, add, clear, validate, bake, this, allowOverrides, isModifiable, dummyFactory, missing);
+        ForgeRegistry<V> reg = new ForgeRegistry<V>(this, builder);
         registries.put(name, reg);
-        superTypes.put(type, name);
-        if (persisted)
+        superTypes.put(builder.getType(), name);
+        if (builder.getSaveToDisc())
             this.persisted.add(name);
         return getRegistry(name);
     }
