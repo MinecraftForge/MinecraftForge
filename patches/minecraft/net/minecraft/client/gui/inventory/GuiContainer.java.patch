@@ -5,7 +5,7 @@
              int k1 = slot.field_75221_f;
              GlStateManager.func_179135_a(true, true, true, false);
 -            this.func_73733_a(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-+            int hoverColor = this.field_147002_h.getHoverColor(i1);
++            int hoverColor = this.getSlotHoverColor(i1);
 +            this.func_73733_a(j1, k1, j1 + 16, k1 + 16, hoverColor, hoverColor);
              GlStateManager.func_179135_a(true, true, true, true);
              GlStateManager.func_179145_e();
@@ -141,7 +141,7 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                 return true;
              }
-@@ -556,4 +564,11 @@
+@@ -556,4 +564,16 @@
        }
  
     }
@@ -152,4 +152,9 @@
 +   public int getGuiTop() { return field_147009_r; }
 +   public int getXSize() { return field_146999_f; }
 +   public int getYSize() { return field_147000_g; }
++
++   public int slotHoverColor = -2130706433;
++   public int getSlotHoverColor(int index) {
++      return slotHoverColor;
++   }
  }

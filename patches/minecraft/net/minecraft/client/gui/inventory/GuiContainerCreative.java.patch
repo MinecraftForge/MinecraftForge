@@ -104,7 +104,7 @@
                 this.func_147050_b(itemgroup);
                 return true;
              }
-@@ -368,15 +412,18 @@
+@@ -368,12 +412,15 @@
     }
  
     private boolean func_147055_p() {
@@ -116,13 +116,10 @@
 +      if (p_147050_1_ == null) return;
        int i = field_147058_w;
        field_147058_w = p_147050_1_.func_78021_a();
++      slotHoverColor = p_147050_1_.getHoverColor();
        GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
        this.field_147008_s.clear();
        guicontainercreative$containercreative.field_148330_a.clear();
-+      guicontainercreative$containercreative.tabHoverColor = p_147050_1_.getHoverColor();
-       if (p_147050_1_ == ItemGroup.field_192395_m) {
-          CreativeSettings creativesettings = this.field_146297_k.func_199403_al();
- 
 @@ -447,13 +494,15 @@
        }
  
@@ -250,27 +247,7 @@
        this.func_73729_b(l, i1, j, k, 28, 32);
        this.field_73735_i = 100.0F;
        this.field_146296_j.field_77023_b = 100.0F;
-@@ -718,6 +812,7 @@
-    @OnlyIn(Dist.CLIENT)
-    public static class ContainerCreative extends Container {
-       public NonNullList<ItemStack> field_148330_a = NonNullList.<ItemStack>func_191196_a();
-+      private int tabHoverColor = 0;
- 
-       public ContainerCreative(EntityPlayer p_i1086_1_) {
-          InventoryPlayer inventoryplayer = p_i1086_1_.field_71071_by;
-@@ -781,6 +876,11 @@
-       public boolean func_94531_b(Slot p_94531_1_) {
-          return p_94531_1_.field_75224_c instanceof InventoryPlayer || p_94531_1_.field_75221_f > 90 && p_94531_1_.field_75223_e <= 162;
-       }
-+
-+      @Override
-+      public int getHoverColor(int index) {
-+         return tabHoverColor;
-+      }
-    }
- 
-    @OnlyIn(Dist.CLIENT)
-@@ -845,6 +945,31 @@
+@@ -845,6 +939,31 @@
        public boolean func_82869_a(EntityPlayer p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
        }
