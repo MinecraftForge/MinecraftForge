@@ -161,7 +161,7 @@ project(':forge') {
         exc = file("$rootDir/src/main/resources/forge.exc")
         srgPatches = true
         runs {
-            client = {
+            forge_client = {
                 main 'net.minecraftforge.fml.LaunchTesting'
                 environment = [
                     target: 'fmldevclient',
@@ -180,7 +180,7 @@ project(':forge') {
                     'fmllauncher.version': SPEC_VERSION
                 ]
             }
-            server = {
+            forge_server = {
                 main 'net.minecraftforge.fml.LaunchTesting'
                 environment = [
                     target: 'fmldevserver'
@@ -190,7 +190,8 @@ project(':forge') {
                     'mcp.version': MCP_VERSION,
                     'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
                     'forge.spec': SPEC_VERSION,
-                    'forge.group': project.group
+                    'forge.group': project.group, 
+                    'fmllauncher.version': SPEC_VERSION
                 ]
             }
         }
@@ -285,9 +286,9 @@ project(':forge') {
         }
         //jvmArgs = ['-verbose:class']
         classpath sourceSets.main.runtimeClasspath
-        main patcher.runs.client.main
-        systemProperties = patcher.runs.client.properties
-        environment += patcher.runs.client.environment
+        main patcher.runs.forge_client.main
+        systemProperties = patcher.runs.forge_client.properties
+        environment += patcher.runs.forge_client.environment
         workingDir 'runclient'
     }
 
@@ -302,10 +303,10 @@ project(':forge') {
             }
         }
         classpath sourceSets.main.runtimeClasspath
-        main patcher.runs.server.main
+        main patcher.runs.forge_server.main
         args 'nogui'
-        systemProperties = patcher.runs.server.properties
-        environment += patcher.runs.server.environment
+        systemProperties = patcher.runs.forge_server.properties
+        environment += patcher.runs.forge_server.environment
         workingDir 'runserver'
         standardInput = System.in
     }
@@ -808,7 +809,7 @@ project(':forge') {
             }
             server = {
                 main 'net.minecraftforge.userdev.UserdevLauncher'
-                environment 'target', 'fmldevserver'
+                environment 'target', 'fmluserdevserver'
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)
                 environment 'FORGE_GROUP', project.group
                 environment 'MCP_VERSION', MCP_VERSION

@@ -22,6 +22,7 @@ package net.minecraftforge.fml.language;
 
 import org.objectweb.asm.Type;
 
+import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -71,13 +72,15 @@ public class ModFileScanData
     }
     public static class AnnotationData {
         private final Type annotationType;
+        private final ElementType targetType;
         private final Type clazz;
         private final String memberName;
         private final Map<String,Object> annotationData;
 
 
-        public AnnotationData(final Type annotationType, final Type clazz, final String memberName, final Map<String, Object> annotationData) {
+        public AnnotationData(final Type annotationType, final ElementType targetType, final Type clazz, final String memberName, final Map<String, Object> annotationData) {
             this.annotationType = annotationType;
+            this.targetType = targetType;
             this.clazz = clazz;
             this.memberName = memberName;
             this.annotationData = annotationData;
@@ -85,6 +88,10 @@ public class ModFileScanData
 
         public Type getAnnotationType() {
             return annotationType;
+        }
+
+        public ElementType getTargetType() {
+            return targetType;
         }
 
         public Type getClassType() {

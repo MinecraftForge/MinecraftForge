@@ -26,9 +26,6 @@ import java.net.URL;
 import java.util.Locale;
 import java.util.Map;
 
-/**
- * Created by cpw on 05/06/17.
- */
 public class StringUtils
 {
     public static String toLowerCase(final String str) {

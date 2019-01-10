@@ -26,17 +26,15 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.ResourceLocationException;
 
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Internal class used in tracking {@link ObjectHolder} references
- */
 @SuppressWarnings("rawtypes")
-class ObjectHolderRef
+public class ObjectHolderRef implements Runnable
 {
     private static final Logger LOGGER  = LogManager.getLogger();
     private Field field;
@@ -44,19 +42,24 @@ class ObjectHolderRef
     private boolean isValid;
     private ForgeRegistry<?> registry;
 
-    ObjectHolderRef(Field field, ResourceLocation injectedObject, boolean extractFromExistingValues)
+    public ObjectHolderRef(Field field, ResourceLocation injectedObject)
     {
-        registry = getRegistryForType(field);
+        this(field, injectedObject.toString(), false);
+    }
 
+    ObjectHolderRef(Field field, String injectedObject, boolean extractFromExistingValues)
+    {
+        this.registry = getRegistryForType(field);
         this.field = field;
         this.isValid = registry != null;
+
         if (extractFromExistingValues)
         {
             try
             {
                 Object existing = field.get(null);
                 // nothing is ever allowed to replace AIR
-                if (existing == null || existing == registry.getDefault())
+                if (!isValid || (existing == null || existing == registry.getDefault()))
                 {
                     this.injectedObject = null;
                     this.field = null;
@@ -75,7 +78,14 @@ class ObjectHolderRef
         }
         else
         {
-            this.injectedObject = injectedObject;
+            try
+            {
+                this.injectedObject = new ResourceLocation(injectedObject);
+            }
+            catch (ResourceLocationException e)
+            {
+                throw new IllegalArgumentException("Invalid @ObjectHolder annotation on \"" + field.toString() + "\"", e);
+            }
         }
 
         if (this.injectedObject == null || !isValid())
@@ -103,9 +113,9 @@ class ObjectHolderRef
         {
             Class<?> type = typesToExamine.remove();
             Collections.addAll(typesToExamine, type.getInterfaces());
-            if (ForgeRegistryEntry.class.isAssignableFrom(type))
+            if (IForgeRegistryEntry.class.isAssignableFrom(type))
             {
-                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<ForgeRegistryEntry>)type);
+                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<IForgeRegistryEntry>)type);
                 final Class<?> parentType = type.getSuperclass();
                 if (parentType != null)
                 {
@@ -121,7 +131,8 @@ class ObjectHolderRef
         return isValid;
     }
 
-    public void apply()
+    @Override
+    public void run()
     {
         Object thing;
         if (isValid && registry.containsKey(injectedObject) && !registry.isDummied(injectedObject))
@@ -146,5 +157,20 @@ class ObjectHolderRef
         {
             LOGGER.warn("Unable to set {} with value {} ({})", this.field, thing, this.injectedObject, e);
         }
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return field.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other)
+    {
+        if (!(other instanceof ObjectHolderRef))
+            return false;
+        ObjectHolderRef o = (ObjectHolderRef)other;
+        return this.field.equals(o.field);
     }
 }

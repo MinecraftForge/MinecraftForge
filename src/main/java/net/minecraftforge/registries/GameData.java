@@ -695,7 +695,7 @@ public class GameData
         //Loader.instance().fireRemapEvent(remaps, false);
 
         // The id map changed, ensure we apply object holders
-        ObjectHolderRegistry.INSTANCE.applyObjectHolders();
+        ObjectHolderRegistry.applyObjectHolders();
 
         // Return an empty list, because we're good
         return ArrayListMultimap.create();
