@@ -68,10 +68,6 @@
 +      return new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.func_78015_f());
 +   }
 +
-+   public int getHoverColor() {
-+      return -2130706433;
-+   }
-+
 +   public int getLabelColor() {
 +      return 4210752;
 +   }
