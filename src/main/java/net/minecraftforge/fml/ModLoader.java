@@ -90,8 +90,8 @@ public class ModLoader
         GameData.fireCreateRegistryEvents();
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
-        GameData.fireRegistryEvents();
         dispatchAndHandleError(LifecycleEventProvider.PREINIT);
+        GameData.fireRegistryEvents();
         DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
         dispatchAndHandleError(LifecycleEventProvider.SIDEDINIT);
     }
