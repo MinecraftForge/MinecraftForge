@@ -139,7 +139,7 @@ public class Constants
     /**
      * The flags used when calling {@link net.minecraft.world.World#setBlockState}
      * Can be found from World#markAndNotifyBlock and RenderGlobal#notifyBlockUpdate
-     * Flags can be OR-ed
+     * Flags can be combined with bitwise OR
      */
     public static class BlockFlags {
         /**
