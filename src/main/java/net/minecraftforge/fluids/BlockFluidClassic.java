@@ -309,7 +309,7 @@ public class BlockFluidClassic extends BlockFluidBase
         if (doPlace)
         {
             FluidUtil.destroyBlockOnFluidPlacement(world, pos);
-            world.setBlockState(pos, this.getDefaultState(), Constants.BlockFlags.DEFAULT | Constants.BlockFlags.RERENDER_MAIN_THREAD);
+            world.setBlockState(pos, this.getDefaultState(), Constants.BlockFlags.DEFAULT_AND_RERENDER);
         }
         return Fluid.BUCKET_VOLUME;
     }

@@ -26,9 +26,9 @@ package net.minecraftforge.common.util;
 public class Constants
 {
     /**
-     * NBT Tag type IDS, used when storing the nbt to disc, Should align with NBTBase.getId, 
+     * NBT Tag type IDS, used when storing the nbt to disc, Should align with NBTBase.getId,
      * table used in NBTBase.func_150283_g
-     * 
+     *
      * Main use is checking tag type in NBTTagCompound.func_150297_b(String, int)
      *
      */
@@ -51,9 +51,9 @@ public class Constants
     }
 
     /**
-     * The world event IDS, used when calling World.playEvent.
-     * Can be found from RenderGlobal#playEvent
-     * Some of the events use the "data" parameter. If this is the case, an explanation of what "data" does is also provided
+     * The world event IDS, used when calling {@link net.minecraft.world.World#playEvent(net.minecraft.entity.player.EntityPlayer, int, net.minecraft.util.math.BlockPos, int)}. <br>
+     * Can be found from {@link net.minecraft.client.renderer.RenderGlobal#playEvent}<br>
+     * Some of the events use the {@code data} parameter. If this is the case, an explanation of what {@code data} does is also provided
      */
     public static class WorldEvents {
         public static final int DISPENSER_DISPENSE_SOUND        = 1000;
@@ -70,7 +70,7 @@ public class Constants
         public static final int FENCE_GATE_OPEN_SOUND           = 1008;
         public static final int FIRE_EXTINGUISH_SOUND           = 1009;
         /**
-         * data is the item ID of the record you want to play
+         * {@code data} is the item ID of the record you want to play
          */
         public static final int PLAY_RECORD_SOUND               = 1010;
         public static final int IRON_DOOR_CLOSE_SOUND           = 1011;
@@ -100,7 +100,8 @@ public class Constants
         public static final int IRON_TRAPDOOR_CLOSE_SOUND       = 1036;
         public static final int IRON_TRAPDOOR_OPEN_SOUND        = 1037;
         /**
-         * data is the direction of the smoke, as a grid around the dispenser as follows (with 4 being the position of the dispenser):
+         * {@code data} is the direction of the smoke, as a grid around the dispenser as follows (with 4 being the position of the dispenser):
+         * <pre>
          *        N
          *    0 | 1 | 2
          *    ----------
@@ -108,27 +109,28 @@ public class Constants
          *    ----------
          *    6 | 7 | 8
          *        S
-         * Setting the data to 4 will mean the particles won't spawn
+         * </pre>
+         * Setting the {@code data} to 4 will mean the particles won't spawn
          */
         public static final int DISPENSER_SMOKE                 = 2000;
 
         /**
-         * data is the {@link net.minecraft.block.Block#getStateId state id} of the block broken
+         * {@code data} is the {@link net.minecraft.block.Block#getStateId state id} of the block broken
          */
         public static final int BREAK_BLOCK_EFFECTS             = 2001;
         /**
-         * data is the rgb color int that should be used for the potion particles
+         * {@code data} is the rgb color int that should be used for the potion particles
          */
         public static final int SPLASH_POTION_EFFECT            = 2002;
         public static final int ENDER_EYE_SHATTER               = 2003;
         public static final int MOB_SPAWNER_PARTICLES           = 2004;
         /**
-         * data is the amount of particles to spawn. If data is 0 then there will be 15 particles spawned
+         * {@code data} is the amount of particles to spawn. If {@code data} is 0 then there will be 15 particles spawned
          */
         public static final int BONEMEAL_PARTICLES              = 2005;
         public static final int DRAGON_FIREBALL_HIT             = 2006;
         /**
-         * data is the rgb color int that should be used for the potion particles
+         * {@code data} is the rgb color int that should be used for the potion particles
          */
         public static final int LINGERING_POTION_EFFECT         = 2007;
         public static final int GATEWAY_SPAWN_EFFECTS           = 3000;
@@ -137,8 +139,8 @@ public class Constants
 
 
     /**
-     * The flags used when calling {@link net.minecraft.world.World#setBlockState}
-     * Can be found from World#markAndNotifyBlock and RenderGlobal#notifyBlockUpdate
+     * The flags used when calling {@link net.minecraft.world.World#setBlockState}<br>
+     * Can be found from {@link net.minecraft.world.World#markAndNotifyBlock} and {@link net.minecraft.client.renderer.RenderGlobal#notifyBlockUpdate}<br>
      * Flags can be combined with bitwise OR
      */
     public static class BlockFlags {
@@ -169,12 +171,12 @@ public class Constants
 
     /**
      * The mutex bits used for AI tasks {@link net.minecraft.entity.ai.EntityAIBase#setMutexBits(int)}
-     * Bits can be OR-ed
+     * Bits can be combined with bitwise OR
      */
     public static class AiMutexBits {
-        public static final int MOTION  = 0b001;
-        public static final int LOOKING = 0b010;
-        public static final int JUMPING    = 0b100;
+        public static final int MOVE = 0b001;
+        public static final int LOOK = 0b010;
+        public static final int JUMP = 0b100;
     }
 
 }
