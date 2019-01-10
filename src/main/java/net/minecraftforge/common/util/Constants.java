@@ -113,7 +113,7 @@ public class Constants
         public static final int DISPENSER_SMOKE                 = 2000;
 
         /**
-         * data is the state id of the block broken {@link net.minecraft.block.Block#getStateId}
+         * data is the {@link net.minecraft.block.Block#getStateId state id} of the block broken
          */
         public static final int BREAK_BLOCK_EFFECTS             = 2001;
         /**
