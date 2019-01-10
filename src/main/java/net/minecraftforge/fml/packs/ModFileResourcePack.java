@@ -79,7 +79,8 @@ public class ModFileResourcePack extends AbstractResourcePack
         try
         {
             Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName()).toAbsolutePath();
-            Path inputPath = Paths.get(pathIn);
+            Path inputPath = root.getFileSystem().getPath(pathIn);
+
             return Files.walk(root).
                     map(path -> root.relativize(path.toAbsolutePath())).
                     filter(path -> path.getNameCount() > 1 && path.getNameCount() - 1 <= maxDepth). // Make sure the depth is within bounds, ignoring domain
