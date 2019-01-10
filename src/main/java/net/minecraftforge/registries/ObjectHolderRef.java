@@ -103,9 +103,9 @@ class ObjectHolderRef
         {
             Class<?> type = typesToExamine.remove();
             Collections.addAll(typesToExamine, type.getInterfaces());
-            if (ForgeRegistryEntry.class.isAssignableFrom(type))
+            if (IForgeRegistryEntry.class.isAssignableFrom(type))
             {
-                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<ForgeRegistryEntry>)type);
+                registry = (ForgeRegistry<?>)RegistryManager.ACTIVE.getRegistry((Class<IForgeRegistryEntry>)type);
                 final Class<?> parentType = type.getSuperclass();
                 if (parentType != null)
                 {

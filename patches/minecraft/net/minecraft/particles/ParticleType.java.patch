@@ -1,0 +1,13 @@
+--- a/net/minecraft/particles/ParticleType.java
++++ b/net/minecraft/particles/ParticleType.java
+@@ -3,8 +3,8 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.RegistryNamespaced;
+ 
+-public class ParticleType<T extends IParticleData> {
+-   public static final RegistryNamespaced<ResourceLocation, ParticleType<? extends IParticleData>> field_197577_a = new RegistryNamespaced<ResourceLocation, ParticleType<? extends IParticleData>>();
++public class ParticleType<T extends IParticleData> extends net.minecraftforge.registries.ForgeRegistryEntry<ParticleType<?>> {
++   public static final RegistryNamespaced<ResourceLocation, ParticleType<? extends IParticleData>> field_197577_a = (RegistryNamespaced)net.minecraftforge.registries.GameData.getWrapper(ParticleType.class);
+    private final ResourceLocation field_197579_c;
+    private final boolean field_197581_e;
+    private final IParticleData.IDeserializer<T> field_197582_f;

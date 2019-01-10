@@ -23,20 +23,26 @@ import net.minecraft.block.Block;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.registries.RegistryBuilder;
 
-@Mod(modid = ObjectHolderAnnotationTest.MODID, name = "ObjectHolderTests", version = "1.0", acceptableRemoteVersions = "*")
+@Mod(ObjectHolderAnnotationTest.MODID)
 public class ObjectHolderAnnotationTest
 {
     public static final String MODID = "objectholdertest";
 
-    @Mod.EventHandler
+    public ObjectHolderAnnotationTest() {
+        FMLModLoadingContext.get().getModEventBus().addListener(this::init);
+        MinecraftForge.EVENT_BUS.register(Registration.class);
+    }
+
     public void init(FMLInitializationEvent event)
     {
         //verifies @ObjectHolder with custom id
@@ -46,7 +52,7 @@ public class ObjectHolderAnnotationTest
         //verifies minecraft:air is now resolvable
         assert VanillaObjectHolder.air != null;
         //verifies unexpected name should not have defaulted to AIR.
-        assert VanillaObjectHolder.nonExistentBlock == null;
+        assert VanillaObjectHolder.non_existent_block == null;
         //verifies custom registries
         assert CustomRegistryObjectHolder.custom_entry != null;
         //verifies interfaces are supported
@@ -59,25 +65,23 @@ public class ObjectHolderAnnotationTest
         protected PotionForge(ResourceLocation location, boolean badEffect, int potionColor)
         {
             super(badEffect, potionColor);
-            setPotionName("potion." + location.getResourcePath());
             setRegistryName(location);
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
-        @net.minecraftforge.eventbus.api.SubscribeEvent
+        @SubscribeEvent
         public static void newRegistry(RegistryEvent.NewRegistry event)
         {
             new RegistryBuilder<ICustomRegistryEntry>()
                     .setType(ICustomRegistryEntry.class)
-                    .setName(new ResourceLocation("object_holder_test_custom_registry"))
+                    .setName(new ResourceLocation(MODID, "object_holder_test_custom_registry"))
                     .setIDRange(0, 255)
                     .create();
         }
 
-        @net.minecraftforge.eventbus.api.SubscribeEvent
+        @SubscribeEvent
         public static void registerPotions(RegistryEvent.Register<Potion> event)
         {
             event.getRegistry().register(
@@ -124,24 +128,24 @@ public class ObjectHolderAnnotationTest
         }
     }
 
-    @GameRegistry.ObjectHolder("minecraft")
+    @ObjectHolder("minecraft")
     static class VanillaObjectHolder
     {
         //Tests importing vanilla objects that need the @ObjectHolder annotation to get a valid ResourceLocation
-        @GameRegistry.ObjectHolder("ui.button.click")
+        @ObjectHolder("ui.button.click")
         public static final SoundEvent uiButtonClick = null;
         public static final Block air = null;
-        public static final Block nonExistentBlock = null;
+        public static final Block non_existent_block = null;
     }
 
-    @GameRegistry.ObjectHolder(ObjectHolderAnnotationTest.MODID)
+    @ObjectHolder(ObjectHolderAnnotationTest.MODID)
     static class ForgeObjectHolder
     {
         //Tests using subclasses for injections
         public static final ObjectHolderAnnotationTest.PotionForge forge_potion = null;
     }
 
-    @GameRegistry.ObjectHolder(ObjectHolderAnnotationTest.MODID)
+    @ObjectHolder(ObjectHolderAnnotationTest.MODID)
     static class CustomRegistryObjectHolder
     {
         //Tests whether custom registries can be used

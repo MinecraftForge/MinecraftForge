@@ -30,6 +30,7 @@ import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.ObjectHolderRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -86,6 +87,7 @@ public class ModLoader
         modList.setLoadedMods(modContainerStream.collect(Collectors.toList()));
         dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT);
         GameData.fireCreateRegistryEvents();
+        ObjectHolderRegistry.INSTANCE.findObjectHolders(modList.getAllScanData());
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         GameData.fireRegistryEvents();
         dispatchAndHandleError(LifecycleEventProvider.PREINIT);

@@ -1,11 +1,14 @@
 --- a/net/minecraft/fluid/Fluid.java
 +++ b/net/minecraft/fluid/Fluid.java
-@@ -19,7 +19,7 @@
+@@ -19,9 +19,9 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public abstract class Fluid {
-+public abstract class Fluid implements net.minecraftforge.common.extensions.IForgeFluid {
++public abstract class Fluid extends net.minecraftforge.registries.ForgeRegistryEntry<Fluid> implements net.minecraftforge.common.extensions.IForgeFluid {
     private static final ResourceLocation field_207199_a = new ResourceLocation("empty");
-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Fluid> field_205588_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, Fluid>(field_207199_a);
+-   public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Fluid> field_205588_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, Fluid>(field_207199_a);
++   public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Fluid> field_205588_a = net.minecraftforge.registries.GameData.getWrapperDefaulted(Fluid.class);
     public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<IFluidState>();
+    protected final StateContainer<Fluid, IFluidState> field_207202_e;
+    private IFluidState field_207200_b;

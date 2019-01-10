@@ -22,9 +22,11 @@ package net.minecraftforge.registries;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.Item;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.tileentity.TileEntityType;
@@ -54,6 +56,8 @@ public class ForgeRegistries
     public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
     public static final IForgeRegistry<EntityType<?>>       ENTITIES     = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(EntityType.class);
     public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
+    public static final IForgeRegistry<ParticleType<?>>     PARTICLES    = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(ParticleType.class);
+    public static final IForgeRegistry<Fluid>               FLUIDS       = RegistryManager.ACTIVE.getRegistry(Fluid.class);
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
      */

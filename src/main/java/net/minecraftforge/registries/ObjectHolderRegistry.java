@@ -20,14 +20,14 @@
 package net.minecraftforge.registries;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.language.ModFileScanData;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -37,6 +37,7 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.Type;
 
 /**
  * Internal registry for tracking {@link ObjectHolder} references
@@ -45,31 +46,43 @@ public enum ObjectHolderRegistry
 {
     INSTANCE;
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Type OBJ_HOLDER = Type.getType(ObjectHolder.class);
+    private static final Type MOD = Type.getType(Mod.class);
+
     private List<ObjectHolderRef> objectHolders = Lists.newArrayList();
-/* TODO annotation data
-    public void findObjectHolders(ASMDataTable table)
+
+    public void findObjectHolders(List<ModFileScanData> scanData)
     {
         LOGGER.info("Processing ObjectHolder annotations");
-        Set<ASMData> allObjectHolders = table.getAll(ObjectHolder.class.getName());
+        final List<ModFileScanData.AnnotationData> holders = getAnnotationData(scanData, OBJ_HOLDER);
         Map<String, String> classModIds = Maps.newHashMap();
         Map<String, Class<?>> classCache = Maps.newHashMap();
 
-        table.getAll(Mod.class.getName()).forEach(data -> classModIds.put(data.getClassName(), (String)data.getAnnotationInfo().get("value")));
+        getAnnotationData(scanData, MOD).forEach(data -> classModIds.put(data.getClassType().getClassName(), (String)data.getAnnotationData().get("value")));
 
         // double pass - get all the class level annotations first, then the field level annotations
-        allObjectHolders.stream().filter(data -> data.getObjectName().equals(data.getClassName())).forEach(data ->
+        holders.stream().filter(data -> data.getMemberName().equals(data.getClassType().getClassName())).forEach(data ->
         {
-            String value = (String)data.getAnnotationInfo().get("value");
-            scanTarget(classModIds, classCache, data.getClassName(), data.getObjectName(), value, true, data.getClassName().startsWith("net.minecraft.init"));
+            String value = (String)data.getAnnotationData().get("value");
+            scanTarget(classModIds, classCache, data.getClassType().getClassName(), data.getMemberName(), value, true, data.getClassType().getClassName().startsWith("net.minecraft.init"));
         });
-        allObjectHolders.stream().filter(data -> !data.getObjectName().equals(data.getClassName())).forEach(data ->
+        holders.stream().filter(data -> !data.getMemberName().equals(data.getClassType().getClassName())).forEach(data ->
         {
-            String value = (String)data.getAnnotationInfo().get("value");
-            scanTarget(classModIds, classCache, data.getClassName(), data.getObjectName(), value, false, false);
+            String value = (String)data.getAnnotationData().get("value");
+            scanTarget(classModIds, classCache, data.getClassType().getClassName(), data.getMemberName(), value, false, false);
         });
         LOGGER.info("Found {} ObjectHolder annotations", objectHolders.size());
     }
-*/
+
+    private List<ModFileScanData.AnnotationData> getAnnotationData(List<ModFileScanData> data, Type type)
+    {
+        return data.stream()
+                .map(ModFileScanData::getAnnotations)
+                .flatMap(Collection::stream)
+                .filter(a -> type.equals(a.getAnnotationType()))
+                .collect(Collectors.toList());
+    }
+
     private void scanTarget(Map<String, String> classModIds, Map<String, Class<?>> classCache, String className, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue)
     {
         Class<?> clazz;
@@ -129,7 +142,7 @@ public enum ObjectHolderRegistry
             {
                 continue;
             }
-            addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value, f.getName()), extractFromExistingValues));
+            addHolderReference(new ObjectHolderRef(f, new ResourceLocation(value, f.getName().toLowerCase()), extractFromExistingValues));
         }
     }
 
