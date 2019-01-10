@@ -142,7 +142,7 @@ public class ConfigElement implements IConfigElement
     public static ConfigGuiType getType(Property prop)
     {
         return prop.getType() == Property.Type.BOOLEAN ? ConfigGuiType.BOOLEAN : prop.getType() == Property.Type.DOUBLE ? ConfigGuiType.DOUBLE :
-            prop.getType() == Property.Type.INTEGER ? ConfigGuiType.INTEGER :  prop.getType() == Property.Type.COLOR ? ConfigGuiType.COLOR :
+            prop.getType() == Property.Type.INTEGER ? ConfigGuiType.INTEGER : prop.getType() == Property.Type.COLOR ? ConfigGuiType.COLOR :
             prop.getType() == Property.Type.MOD_ID ? ConfigGuiType.MOD_ID : ConfigGuiType.STRING;
     }
 
