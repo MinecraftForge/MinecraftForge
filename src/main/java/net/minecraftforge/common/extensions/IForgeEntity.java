@@ -181,4 +181,28 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
         if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).isNoDespawnRequired()) return false;
         return type.getBaseClass().isAssignableFrom(this.getClass());
     }
+
+    /**
+     * Gets whether this entity has been added to a world (for tracking). Specifically
+     * between the times when an entity is added to a world and the entity being removed
+     * from the world's tracked lists. See {@link World#onEntityAdded(Entity)} and
+     * {@link World#onEntityRemoved(Entity)}.
+     *
+     * @return True if this entity is being tracked by a world
+     */
+    boolean isAddedToWorld();
+
+    /**
+     * Called after the entity has been added to the world's
+     * ticking list. Can be overriden, but needs to call super
+     * to prevent MC-136995.
+     */
+    void onAddedToWorld();
+
+    /**
+     * Called after the entity has been removed to the world's
+     * ticking list. Can be overriden, but needs to call super
+     * to prevent MC-136995.
+     */
+    void onRemovedFromWorld();
 }
