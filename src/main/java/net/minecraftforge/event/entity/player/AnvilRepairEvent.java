@@ -51,28 +51,6 @@ public class AnvilRepairEvent extends PlayerEvent
     }
 
     /**
-     * Deprecated in favour of {@link #getItemInput()} - this is actually the output slot of the anvil
-     * @return the output slot
-     */
-    @Deprecated
-    @Nonnull
-    public ItemStack getLeft() { return output; }
-    /**
-     * Deprecated in favour of {@link #getIngredientInput()}} - this is actually the first input slot of the anvil
-     * @return the first input slot
-     */
-    @Deprecated
-    @Nonnull
-    public ItemStack getRight() { return left; }
-    /**
-     * Deprecated in favour of {@link #getItemResult()} - this is actually the second input slot of the anvil
-     * @return the second input slot
-     */
-    @Deprecated
-    @Nonnull
-    public ItemStack getOutput() { return right; }
-
-    /**
      * Get the output result from the anvil
      * @return the output
      */

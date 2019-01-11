@@ -99,14 +99,6 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         }
     }
 
-    /**
-     * @deprecated use the NBT-sensitive version {@link #setFluid(FluidStack)}
-     */
-    @Deprecated
-    protected void setFluid(@Nullable Fluid fluid) {
-        setFluid(new FluidStack(fluid, Fluid.BUCKET_VOLUME));
-    }
-
     protected void setFluid(@Nullable FluidStack fluidStack)
     {
         if (fluidStack == null)

@@ -43,12 +43,6 @@ public class RenderBlockOverlayEvent extends net.minecraftforge.eventbus.api.Eve
     private final IBlockState blockForOverlay;
     private final BlockPos blockPos;
     
-    @Deprecated
-    public RenderBlockOverlayEvent(EntityPlayer player, float renderPartialTicks, OverlayType type, Block block, int x, int y, int z)
-    {
-        this(player, renderPartialTicks, type, block.getDefaultState(), new BlockPos(x, y, z));
-    }
-    
     public RenderBlockOverlayEvent(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos blockPos)
     {
         this.player = player;
