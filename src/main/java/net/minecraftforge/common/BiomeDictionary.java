@@ -401,9 +401,9 @@ public class BiomeDictionary
         addTypes(Biomes.WOODED_MOUNTAINS,         MOUNTAIN, FOREST,     SPARSE                            );
         addTypes(Biomes.SAVANNA,                          HOT,      SAVANNA,    PLAINS,   SPARSE                  );
         addTypes(Biomes.SAVANNA_PLATEAU,                  HOT,      SAVANNA,    PLAINS,   SPARSE,   RARE          );
-        addTypes(Biomes.BADLANDS,                             MESA,     SANDY                                         );
-        addTypes(Biomes.WOODED_BADLANDS_PLATEAU,                        MESA,     SPARSE,     SANDY                             );
-        addTypes(Biomes.BADLANDS_PLATEAU,                  MESA,     SANDY                                         );
+        addTypes(Biomes.BADLANDS,                             MESA,     SANDY,  DRY                               );
+        addTypes(Biomes.WOODED_BADLANDS_PLATEAU,                        MESA,     SANDY,    DRY,    SPARSE        );
+        addTypes(Biomes.BADLANDS_PLATEAU,                  MESA,     SANDY,     DRY                               );
         addTypes(Biomes.SMALL_END_ISLANDS,                   END                                                     );
         addTypes(Biomes.END_MIDLANDS,                   END                                                     );
         addTypes(Biomes.END_HIGHLANDS,                   END                                                     );
@@ -434,9 +434,9 @@ public class BiomeDictionary
         addTypes(Biomes.MODIFIED_GRAVELLY_MOUNTAINS, MOUNTAIN, SPARSE,     RARE                              );
         addTypes(Biomes.SHATTERED_SAVANNA,                  HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
         addTypes(Biomes.SHATTERED_SAVANNA_PLATEAU,             HOT,      DRY,        SPARSE,   SAVANNA,  HILLS,    RARE);
-        addTypes(Biomes.ERODED_BADLANDS,                     HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
+        addTypes(Biomes.ERODED_BADLANDS,                     HOT,      DRY,        SPARSE,  MOUNTAIN, RARE);
         addTypes(Biomes.MODIFIED_WOODED_BADLANDS_PLATEAU,                HOT,      DRY,        SPARSE,   HILLS,    RARE          );
-        addTypes(Biomes.MODIFIED_BADLANDS_PLATEAU,          HOT,      DRY,        SPARSE,   SAVANNA,  MOUNTAIN, RARE);
+        addTypes(Biomes.MODIFIED_BADLANDS_PLATEAU,          HOT,      DRY,        SPARSE,  MOUNTAIN, RARE);
 
 
         if (DEBUG)
