@@ -139,11 +139,13 @@ public class Configuration
 */
     public Configuration(File file, String configVersion)
     {
+		this.file = file;
 //        runConfiguration(file, configVersion);
     }
 
     public Configuration(File file, String configVersion, boolean caseSensitiveCustomCategories)
     {
+    	this.file = file;
         this.caseSensitiveCustomCategories = caseSensitiveCustomCategories;
 //        runConfiguration(file, configVersion);
     }
