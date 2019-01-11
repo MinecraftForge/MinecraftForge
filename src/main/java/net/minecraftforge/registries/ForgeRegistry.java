@@ -78,6 +78,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final AddCallback<V> add;
     private final ClearCallback<V> clear;
     private final ValidateCallback<V> validate;
+    private final BakeCallback<V> bake;
     private final MissingFactory<V> missing;
     private final BitSet availabilityMap;
     private final Set<ResourceLocation> dummies = Sets.newHashSet();
@@ -94,23 +95,27 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private V defaultValue = null;
     boolean isFrozen = false;
 
-    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
+    private final RegistryBuilder<V> builder;
+
+    ForgeRegistry(RegistryManager stage, RegistryBuilder<V> builder)
     {
+        this.builder = builder;
         this.stage = stage;
-        this.superType = superType;
-        this.defaultKey = defaultKey;
-        this.min = min;
-        this.max = max;
+        this.superType = builder.getType();
+        this.defaultKey = builder.getDefault();
+        this.min = builder.getMinId();
+        this.max = builder.getMaxId();
         this.availabilityMap = new BitSet(Math.min(max + 1, 0x0FFF));
-        this.create = create;
-        this.add = add;
-        this.clear = clear;
-        this.validate = validate;
-        this.missing = missing;
+        this.create = builder.getCreate();
+        this.add = builder.getAdd();
+        this.clear = builder.getClear();
+        this.validate = builder.getValidate();
+        this.bake = builder.getBake();
+        this.missing = builder.getMissingFactory();
+        this.dummyFactory = builder.getDummyFactory();
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
-        this.allowOverrides = allowOverrides;
-        this.isModifiable = isModifiable;
-        this.dummyFactory = dummyFactory;
+        this.allowOverrides = builder.getAllowOverrides();
+        this.isModifiable = builder.getAllowModifications();
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -268,7 +273,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     ForgeRegistry<V> copy(RegistryManager stage)
     {
-        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, stage, allowOverrides, isModifiable, dummyFactory, missing);
+        return new ForgeRegistry<>(stage, builder);
     }
 
     int add(int id, V value)
@@ -463,6 +468,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             if (this.validate != null)
                 this.validate.onValidate(this, this.stage, id, name, obj);
         }
+    }
+
+    public void bake()
+    {
+        if (this.bake != null)
+            this.bake.onBake(this, this.stage);
     }
 
     void sync(ResourceLocation name, ForgeRegistry<V> from)

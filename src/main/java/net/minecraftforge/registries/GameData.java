@@ -19,10 +19,7 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
@@ -33,6 +30,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
@@ -43,14 +41,18 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
-import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.StartupQuery;
+import net.minecraftforge.fml.common.EnhancedRuntimeException;
+import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
+import net.minecraftforge.fml.common.thread.EffectiveSide;
+import org.apache.commons.lang3.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.BiMap;
-
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
@@ -61,17 +63,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import net.minecraftforge.fml.common.thread.EffectiveSide;
-import org.apache.commons.lang3.Validate;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
-
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 
 /**
  * INTERNAL ONLY
@@ -226,7 +217,10 @@ public class GameData
             reg.validateContent(name);
             reg.freeze();
         });
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.freeze());
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
+            reg.freeze();
+            reg.bake();
+        });
 
         // the id mapping is finalized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
         //Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
@@ -250,6 +244,7 @@ public class GameData
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
             loadRegistry(r.getKey(), RegistryManager.FROZEN, RegistryManager.ACTIVE, clazz, true);
         }
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
         // the id mapping has reverted, fire remap events for those that care about id changes
         //Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
 
@@ -273,23 +268,47 @@ public class GameData
         {
             this.identityMap.clear();
             this.objectList.clear();
+            this.nextId = 0;
         }
     }
 
-
-    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
+    private static class BlockCallbacks implements IForgeRegistry.AddCallback<Block>, IForgeRegistry.ClearCallback<Block>, IForgeRegistry.BakeCallback<Block>, IForgeRegistry.CreateCallback<Block>, IForgeRegistry.DummyFactory<Block>
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
         @Override
         public void onAdd(IForgeRegistryInternal<Block> owner, RegistryManager stage, int id, Block block, @Nullable Block oldBlock)
         {
-            @SuppressWarnings("unchecked")
-            ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
+            if (oldBlock != null)
+            {
+                StateContainer<Block, IBlockState> oldContainer = oldBlock.getStateContainer();
+                StateContainer<Block, IBlockState> newContainer = block.getStateContainer();
+                ImmutableList<IBlockState> oldValidStates = oldContainer.getValidStates();
+                ImmutableList<IBlockState> newValidStates = newContainer.getValidStates();
 
-            int offset = 0;
-            for (IBlockState state : block.getStateContainer().getValidStates())
-                blockstateMap.put(state, id + offset++);
+                // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
+                if (block.getRegistryName().getNamespace().equals("minecraft") && (
+                        oldValidStates.size() != newValidStates.size() ||
+                        !Streams.zip(oldValidStates.stream().map(Object::toString),
+                                    newValidStates.stream().map(Object::toString),
+                                    String::equals).allMatch(v -> v)))
+                {
+                    String oldSequence = oldContainer.getProperties().stream()
+                            .map(s -> String.format("%s={%s}", s.getName(),
+                                    s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
+                            .collect(Collectors.joining(";"));
+                    String newSequence = newContainer.getProperties().stream()
+                            .map(s -> String.format("%s={%s}", s.getName(),
+                                    s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
+                            .collect(Collectors.joining(";"));
+
+                    LOGGER.error("Registry replacements for vanilla block '{}' must not change the number or order of blockstates.\n"+
+                                    "\tOld: {}\n"+
+                                    "\tNew: {}", block.getRegistryName(), oldSequence, newSequence);
+
+                    throw new RuntimeException("Invalid vanilla replacement. See log for details.");
+                }
+            }
 /*
 
             if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
@@ -362,6 +381,22 @@ public class GameData
             GameData.forceRegistryName(ret, key);
             return ret;
         }
+
+        @Override
+        public void onBake(IForgeRegistryInternal<Block> owner, RegistryManager stage)
+        {
+            @SuppressWarnings("unchecked")
+            ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
+
+            for (Block block : owner)
+            {
+                for (IBlockState state : block.getStateContainer().getValidStates())
+                {
+                    blockstateMap.add(state);
+                }
+            }
+        }
+
         private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
             private BlockDummyAir(Block.Builder builder)
@@ -688,8 +723,12 @@ public class GameData
             loadRegistry(key, STAGING, RegistryManager.ACTIVE, registrySuperType, true);
         });
 
-        // Dump the active registry
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
+        RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
+            reg.bake();
+
+            // Dump the active registry
+            reg.dump(name);
+        });
 
         // Tell mods that the ids have changed
         //Loader.instance().fireRemapEvent(remaps, false);
