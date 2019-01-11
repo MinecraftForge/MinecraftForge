@@ -44,12 +44,13 @@ import static net.minecraftforge.fml.Logging.LOADING;
 public class AutomaticEventSubscriber
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Type AUTO_SUBSCRIBER = Type.getType(Mod.EventBusSubscriber.class);
     public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
     {
         if (scanData == null) return;
         LOGGER.debug(LOADING,"Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
         List<ModFileScanData.AnnotationData> ebsTargets = scanData.getAnnotations().stream().
-                filter(annotationData -> Objects.equals(annotationData.getAnnotationType(), Type.getType(Mod.EventBusSubscriber.class))).
+                filter(annotationData -> AUTO_SUBSCRIBER.equals(annotationData.getAnnotationType())).
                 collect(Collectors.toList());
 
         ebsTargets.forEach(ad -> {

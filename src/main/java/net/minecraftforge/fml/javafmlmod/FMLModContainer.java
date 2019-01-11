@@ -120,9 +120,6 @@ public class FMLModContainer extends ModContainer
 
     private void preinitMod(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
     {
-        LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", getModId());
-        AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
-        LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", getModId());
     }
 
     private void constructMod(LifecycleEventProvider.LifecycleEvent event)
@@ -138,6 +135,9 @@ public class FMLModContainer extends ModContainer
             LOGGER.error(LOADING,"Failed to create mod instance. ModID: {}, class {}", getModId(), modClass.getName(), e);
             throw new ModLoadingException(modInfo, event.fromStage(), "fml.modloading.failedtoloadmod", e, modClass);
         }
+        LOGGER.debug(LOADING, "Injecting Automatic event subscribers for {}", getModId());
+        AutomaticEventSubscriber.inject(this, this.scanResults, this.modClass.getClassLoader());
+        LOGGER.debug(LOADING, "Completed Automatic event subscribers for {}", getModId());
     }
 
     @Override
