@@ -19,11 +19,7 @@
 
 package net.minecraftforge.registries;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Streams;
+import com.google.common.collect.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
@@ -34,6 +30,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
+import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
@@ -284,14 +281,32 @@ public class GameData
         {
             if (oldBlock != null)
             {
+                StateContainer<Block, IBlockState> oldContainer = oldBlock.getStateContainer();
+                StateContainer<Block, IBlockState> newContainer = block.getStateContainer();
+                ImmutableList<IBlockState> oldValidStates = oldContainer.getValidStates();
+                ImmutableList<IBlockState> newValidStates = newContainer.getValidStates();
+
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
                 if (block.getRegistryName().getNamespace().equals("minecraft") && (
-                        oldBlock.getStateContainer().getValidStates().size() != block.getStateContainer().getValidStates().size() ||
-                        !Streams.zip(oldBlock.getStateContainer().getValidStates().stream().map(Object::toString),
-                                    block.getStateContainer().getValidStates().stream().map(Object::toString),
+                        oldValidStates.size() != newValidStates.size() ||
+                        !Streams.zip(oldValidStates.stream().map(Object::toString),
+                                    newValidStates.stream().map(Object::toString),
                                     String::equals).allMatch(v -> v)))
                 {
-                    throw new RuntimeException("Registry replacements for vanilla blocks must not change the number of blockstates.");
+                    String oldSequence = oldContainer.getProperties().stream()
+                            .map(s -> String.format("%s={%s}", s.getName(),
+                                    s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
+                            .collect(Collectors.joining(";"));
+                    String newSequence = newContainer.getProperties().stream()
+                            .map(s -> String.format("%s={%s}", s.getName(),
+                                    s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
+                            .collect(Collectors.joining(";"));
+
+                    LOGGER.error("Registry replacements for vanilla block '{}' must not change the number or order of blockstates.\n"+
+                                    "\tOld: {}\n"+
+                                    "\tNew: {}", block.getRegistryName(), oldSequence, newSequence);
+
+                    throw new RuntimeException("Invalid vanilla replacement. See log for details.");
                 }
             }
 /*
