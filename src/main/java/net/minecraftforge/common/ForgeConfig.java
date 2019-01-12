@@ -23,23 +23,18 @@ import static net.minecraftforge.fml.Logging.CORE;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
-
-import net.minecraftforge.versions.forge.ForgeVersion;
+import com.google.common.collect.Lists;
 
 public class ForgeConfig
 {
@@ -128,7 +123,9 @@ public class ForgeConfig
 
         .build();
 
-    private static ForgeConfigSpec chunk_spec = new ForgeConfigSpec.Builder()
+    private static ForgeConfigSpec chunk_spec;
+    static {
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder()
         .comment("Default configuration for Forge chunk loading control")
         .push("defaults")
             .comment("Allow mod overrides, false will use default for everything.")
@@ -157,37 +154,23 @@ public class ForgeConfig
                      "Can be disabled to help troubleshoot chunk loading issues.")
             .translation("forge.configgui.asyncChunkLoading")
             .define("asyncChunkLoading", true)
-        .pop()
+        .pop();
+        
+        final ForgeConfigSpec chunkSpec = new ForgeConfigSpec.Builder()
+                .define("modid", "forge")
+                .define("maxTickets", 200)
+                .define("chunksPerTicket", 25)
+                .build();
+        
+        CommentedConfig cfg = CommentedConfig.inMemory();
+        chunkSpec.correct(cfg);
 
-        //Not sure how to do unlimited nested config objects, so doing this for now as it works.
-        .comment("Per Mod settings. If a mod is missing a entry, or value the default will be used.")
-        .defineList("mods", () -> {
-            Map<String, Object> ret = new HashMap<>();
-            ret.put("modid", ForgeVersion.MOD_ID);
-            ret.put("maxTickets", 200);
-            ret.put("chunksPerTicket", 25);
-            return Arrays.asList(ret);
-        }, (o) -> {
-            if (!(o instanceof Map)) return false;
-            @SuppressWarnings("unchecked")
-            Map<Object, Object> map = (Map<Object, Object>)o;
-            for (Entry<Object, Object> e : map.entrySet()) {
-                if ("modid".equals(e.getKey())) {
-                    if (!(e.getValue() instanceof String))
-                        return false;
-                } else if ("maxTickets".equals(e.getKey())) {
-                    if (!(e.getValue() instanceof Integer))
-                        return false;
-                } else if ("chunksPerTicket".equals(e.getKey())) {
-                    if (!(e.getValue() instanceof Integer))
-                        return false;
-                } else { //Unknown entry
-                    return false;
-                }
-            }
-            return true;
-        })
-        .build();
+        builder.defineList("mods", Lists.newArrayList(cfg), o -> {
+            if (!(o instanceof CommentedConfig)) return false;
+            return chunkSpec.isCorrect((CommentedConfig) o);
+        });
+        chunk_spec = builder.build();
+    }
 
     private CommentedFileConfig configData;
     private CommentedFileConfig chunkData;

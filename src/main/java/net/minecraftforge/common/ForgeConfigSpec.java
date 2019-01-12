@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -128,7 +129,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
                     if (dryRun)
                         return 1;
 
-                    Object newValue = valueSpec.getDefault();
+                    Object newValue = valueSpec.correct(configValue);
                     configMap.put(key, newValue);
                     listener.onCorrect(action, parentPathUnmodifiable, configValue, newValue);
                     count++;
@@ -195,15 +196,18 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public Builder define(List<String> path, Supplier<?> defaultSupplier, Predicate<Object> validator) {
             return define(path, defaultSupplier, validator, Object.class);
         }
-        public Builder define(List<String> path, Supplier<?> defaultSupplier, Predicate<Object> validator, Class<?> clazz) { // This is the root where everything at the end of the day ends up.
+        public Builder define(List<String> path, Supplier<?> defaultSupplier, Predicate<Object> validator, Class<?> clazz) {
+            context.setClazz(clazz);
+            return define(path, new ValueSpec(defaultSupplier, validator, context));
+        }
+        public Builder define(List<String> path, ValueSpec value) { // This is the root where everything at the end of the day ends up.
             if (!currentPath.isEmpty()) {
                 List<String> tmp = new ArrayList<>(currentPath.size() + path.size());
                 tmp.addAll(currentPath);
                 tmp.addAll(path);
                 path = tmp;
             }
-            context.setClazz(clazz);
-            storage.set(path, new ValueSpec(defaultSupplier, validator, context));
+            storage.set(path, value);
             context = new BuilderContext();
             return this;
         }
@@ -246,9 +250,26 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             return defineList(path, () -> defaultValue, elementValidator);
         }
         public Builder defineList(List<String> path, Supplier<List<?>> defaultSupplier, Predicate<Object> elementValidator) {
-            return define(path, defaultSupplier, (Object o) -> {
-                if (!(o instanceof List)) return false;
-                return ((List<?>)o).stream().allMatch(elementValidator);
+            context.setClazz(List.class);
+            return define(path, new ValueSpec(defaultSupplier, elementValidator, context) {
+                @Override
+                public Object correct(Object value) {
+                    if (value == null || !(value instanceof List) || ((List<?>)value).isEmpty()) {
+                        return getDefault();
+                    }
+                    List<?> list = Lists.newArrayList((List<?>) value);
+                    Iterator<?> iter = list.iterator();
+                    while (iter.hasNext()) {
+                        Object o = iter.next();
+                        if (!elementValidator.test(o)) {
+                            iter.remove();
+                        }
+                    }
+                    if (list.isEmpty()) {
+                        return getDefault();
+                    }
+                    return list;
+                }
             });
         }
 
@@ -486,7 +507,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             Objects.requireNonNull(supplier, "Default supplier can not be null");
             Objects.requireNonNull(validator, "Validator can not be null");
 
-            this.comment = LINE_JOINER.join(context.getComment());
+            this.comment = context.getComment() == null ? null : LINE_JOINER.join(context.getComment());
             this.langKey = context.getTranslationKey();
             this.range = context.getRange();
             this.worldRestart = context.needsWorldRestart();
@@ -502,6 +523,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public boolean needsWorldRestart() { return this.worldRestart; }
         public Class<?> getClazz(){ return this.clazz; }
         public boolean test(Object value) { return validator.test(value); }
+        public Object correct(Object value) { return getDefault(); }
 
         public Object getDefault()
         {
