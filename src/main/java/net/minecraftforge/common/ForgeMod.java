@@ -114,7 +114,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityAnimation.register();
         CapabilityEnergy.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
-//        ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(this);
 
         if (!ForgeMod.disableVersionCheck)

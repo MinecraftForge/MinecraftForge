@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.config;
+package net.minecraftforge.common;
 
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.ADD;
 import static com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction.REMOVE;
@@ -33,20 +33,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.Config;
-import com.electronwill.nightconfig.core.ConfigFormat;
 import com.electronwill.nightconfig.core.InMemoryFormat;
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.utils.UnmodifiableConfigWrapper;
 import com.electronwill.nightconfig.core.ConfigSpec.CorrectionAction;
 import com.electronwill.nightconfig.core.ConfigSpec.CorrectionListener;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
 import com.google.common.collect.Lists;
 
 /*
@@ -219,8 +216,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public <V extends Comparable<? super V>> Builder defineInRange(String path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             return defineInRange(split(path), defaultSupplier, min, max, clazz);
         }
-        public <V extends Comparable<? super V>> Builder defineInRange(List<String> path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz)
-        {
+        public <V extends Comparable<? super V>> Builder defineInRange(List<String> path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
             if (min.compareTo(max) > 0)
@@ -228,17 +224,32 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             define(path, defaultSupplier, range);
             return this;
         }
-        public void defineInList(String path, Object defaultValue, Collection<?> acceptableValues) {
-            defineInList(split(path), defaultValue, acceptableValues);
+        public Builder defineInList(String path, Object defaultValue, Collection<?> acceptableValues) {
+            return defineInList(split(path), defaultValue, acceptableValues);
         }
-        public void defineInList(String path, Supplier<?> defaultSupplier, Collection<?> acceptableValues) {
-            defineInList(split(path), defaultSupplier, acceptableValues);
+        public Builder defineInList(String path, Supplier<?> defaultSupplier, Collection<?> acceptableValues) {
+            return defineInList(split(path), defaultSupplier, acceptableValues);
         }
-        public void defineInList(List<String> path, Object defaultValue, Collection<?> acceptableValues) {
-            defineInList(path, () -> defaultValue, acceptableValues);
+        public Builder defineInList(List<String> path, Object defaultValue, Collection<?> acceptableValues) {
+            return defineInList(path, () -> defaultValue, acceptableValues);
         }
-        public void defineInList(List<String> path, Supplier<?> defaultSupplier, Collection<?> acceptableValues) {
-            define(path, defaultSupplier, acceptableValues::contains);
+        public Builder defineInList(List<String> path, Supplier<?> defaultSupplier, Collection<?> acceptableValues) {
+            return define(path, defaultSupplier, acceptableValues::contains);
+        }
+        public Builder defineList(String path, List<?> defaultValue, Predicate<Object> elementValidator) {
+            return defineList(split(path), defaultValue, elementValidator);
+        }
+        public Builder defineList(String path, Supplier<List<?>> defaultSupplier, Predicate<Object> elementValidator) {
+            return defineList(split(path), defaultSupplier, elementValidator);
+        }
+        public Builder defineList(List<String> path, List<?> defaultValue, Predicate<Object> elementValidator) {
+            return defineList(path, () -> defaultValue, elementValidator);
+        }
+        public Builder defineList(List<String> path, Supplier<List<?>> defaultSupplier, Predicate<Object> elementValidator) {
+            return define(path, defaultSupplier, (Object o) -> {
+                if (!(o instanceof List)) return false;
+                return ((List<?>)o).stream().allMatch(elementValidator);
+            });
         }
 
         //Enum

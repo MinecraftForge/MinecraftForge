@@ -20,12 +20,9 @@
 package net.minecraftforge.common;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -53,9 +50,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.storage.ThreadedFileIOBase;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.fml.ModContainer;
@@ -98,13 +92,8 @@ public class ForgeChunkManager
 {
     public static Marker CHUNK_MANAGER = MarkerManager.getMarker("CHUNKMANAGER");
     private static Logger LOGGER = LogManager.getLogger();
-    private static int defaultMaxCount;
-    private static int defaultMaxChunks;
-    private static boolean overridesEnabled;
 
     private static Map<World, Multimap<String, Ticket>> tickets = new MapMaker().weakKeys().makeMap();
-    private static Map<String, Integer> ticketConstraints = Maps.newHashMap();
-    private static Map<String, Integer> chunkConstraints = Maps.newHashMap();
 
     private static SetMultimap<String, Ticket> playerTickets = HashMultimap.create();
 
@@ -115,22 +104,9 @@ public class ForgeChunkManager
 
     private static Map<World,Cache<Long, ChunkEntry>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
 
-    private static File cfgFile;
-    private static Configuration config;
-    private static int playerTicketLength;
-    private static int dormantChunkCacheSize;
-
     public static boolean asyncChunkLoading;
 
-    public static final List<String> MOD_PROP_ORDER = new ArrayList<String>(2);
-
     private static Set<String> warnedMods = Sets.newHashSet();
-
-    static
-    {
-        MOD_PROP_ORDER.add("maximumTicketCount");
-        MOD_PROP_ORDER.add("maximumChunksPerTicket");
-    }
 
     private static class ChunkEntry
     {
@@ -246,7 +222,7 @@ public class ForgeChunkManager
             this.modId = modId;
             this.ticketType = type;
             this.world = world;
-            this.maxDepth = getMaxChunkDepthFor(modId);
+            this.maxDepth = ForgeConfig.CHUNK.chunksPerTicket(modId);
             this.requestedChunks = Sets.newLinkedHashSet();
         }
 
@@ -271,9 +247,10 @@ public class ForgeChunkManager
          */
         public void setChunkListDepth(int depth)
         {
-            if (depth > getMaxChunkDepthFor(modId) || (depth <= 0 && getMaxChunkDepthFor(modId) > 0))
+
+            if (depth > maxDepth || (depth <= 0 && maxDepth > 0))
             {
-                LOGGER.warn(CHUNK_MANAGER, "The mod {} tried to modify the chunk ticket depth to: {}, its allowed maximum is: {}", modId, depth, getMaxChunkDepthFor(modId));
+                LOGGER.warn(CHUNK_MANAGER, "The mod {} tried to modify the chunk ticket depth to: {}, its allowed maximum is: {}", modId, depth, maxDepth);
             }
             else
             {
@@ -300,7 +277,7 @@ public class ForgeChunkManager
          */
         public int getMaxChunkListDepth()
         {
-            return getMaxChunkDepthFor(modId);
+            return maxDepth;
         }
 
         /**
@@ -471,9 +448,9 @@ public class ForgeChunkManager
             return;
         }
 
-        if (dormantChunkCacheSize != 0)
+        if (ForgeConfig.CHUNK.dormantChunkCacheSize() != 0)
         { // only put into cache if we're using dormant chunk caching
-            dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(dormantChunkCacheSize).build());
+            dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(ForgeConfig.CHUNK.dormantChunkCacheSize()).build());
         }
         WorldServer worldServer = (WorldServer) world;
         File chunkDir = worldServer.getChunkSaveLocation();
@@ -575,7 +552,7 @@ public class ForgeChunkManager
                 {
                     continue;
                 }
-                int maxTicketLength = getMaxTicketLengthFor(modId);
+                int maxTicketLength = ForgeConfig.CHUNK.maxTickets(modId);
                 List<Ticket> tickets = loadedTickets.get(modId);
                 if (loadingCallback instanceof OrderedLoadingCallback)
                 {
@@ -621,7 +598,7 @@ public class ForgeChunkManager
         }
 
         forcedChunks.remove(world);
-        if (dormantChunkCacheSize != 0) // only if in use
+        if (ForgeConfig.CHUNK.dormantChunkCacheSize() != 0) // only if in use
         {
             dormantChunkCache.remove(world);
         }
@@ -664,7 +641,7 @@ public class ForgeChunkManager
         if (container!=null)
         {
             String modId = container.getModId();
-            int allowedCount = getMaxTicketLengthFor(modId);
+            int allowedCount = ForgeConfig.CHUNK.maxTickets(modId);
             return allowedCount - tickets.get(world).get(modId).size();
         }
         else
@@ -679,21 +656,9 @@ public class ForgeChunkManager
         return container;
     }
 
-    public static int getMaxTicketLengthFor(String modId)
-    {
-        int allowedCount = ticketConstraints.containsKey(modId) && overridesEnabled ? ticketConstraints.get(modId) : defaultMaxCount;
-        return allowedCount;
-    }
-
-    public static int getMaxChunkDepthFor(String modId)
-    {
-        int allowedCount = chunkConstraints.containsKey(modId) && overridesEnabled ? chunkConstraints.get(modId) : defaultMaxChunks;
-        return allowedCount;
-    }
-
     public static int ticketCountAvailableFor(String username)
     {
-        return playerTicketLength - playerTickets.get(username).size();
+        return ForgeConfig.CHUNK.playerTicketCount() - playerTickets.get(username).size();
     }
 
     @Nullable
@@ -705,7 +670,7 @@ public class ForgeChunkManager
             LOGGER.error(CHUNK_MANAGER, "Failed to locate the container for mod instance {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
             return null;
         }
-        if (playerTickets.get(player).size()>playerTicketLength)
+        if (playerTickets.get(player).size() > ForgeConfig.CHUNK.playerTicketCount())
         {
             LOGGER.warn(CHUNK_MANAGER, "Unable to assign further chunkloading tickets to player {} (on behalf of mod {})", player, mc.getModId());
             return null;
@@ -739,7 +704,7 @@ public class ForgeChunkManager
             throw new RuntimeException("Invalid ticket request");
         }
 
-        int allowedCount = getMaxTicketLengthFor(modId);
+        int allowedCount = ForgeConfig.CHUNK.maxTickets(modId);
 
         if (tickets.get(world).get(modId).size() >= allowedCount)
         {
@@ -861,27 +826,6 @@ public class ForgeChunkManager
         forcedChunks.put(ticket.world,newMap);
     }
 
-    static void loadConfiguration()
-    {
-        ticketConstraints.clear();
-        chunkConstraints.clear();
-        for (String mod : config.getCategoryNames())
-        {
-            if (mod.equals(ForgeVersion.MOD_ID) || mod.equals("defaults"))
-            {
-                continue;
-            }
-            Property modTC = config.get(mod, "maximumTicketCount", 200);
-            Property modCPT = config.get(mod, "maximumChunksPerTicket", 25);
-            ticketConstraints.put(mod, modTC.getInt(200));
-            chunkConstraints.put(mod, modCPT.getInt(25));
-        }
-        if (config.hasChanged())
-        {
-            config.save();
-        }
-    }
-
     /**
      * The list of persistent chunks in the world. This set is immutable.
      * @param world
@@ -975,7 +919,7 @@ public class ForgeChunkManager
 
     public static void putDormantChunk(long coords, Chunk chunk)
     {
-        if (dormantChunkCacheSize == 0) return; // Skip if we're not dormant caching chunks
+        if (ForgeConfig.CHUNK.dormantChunkCacheSize() == 0) return; // Skip if we're not dormant caching chunks
         Cache<Long, ChunkEntry> cache = dormantChunkCache.get(chunk.getWorld());
         if (cache != null)
         {
@@ -985,7 +929,7 @@ public class ForgeChunkManager
 
     public static void storeChunkNBT(World world, IChunk ichunk, NBTTagCompound nbt)
     {
-        if (dormantChunkCacheSize == 0) return;
+        if (ForgeConfig.CHUNK.dormantChunkCacheSize() == 0) return;
 
         Cache<Long, ChunkEntry> cache = dormantChunkCache.get(world);
         if (cache == null) return;
@@ -1012,7 +956,7 @@ public class ForgeChunkManager
     @Nullable
     public static Chunk fetchDormantChunk(long coords, World world)
     {
-        if (dormantChunkCacheSize == 0) return null; // Don't bother with maps at all if its never gonna get a response
+        if (ForgeConfig.CHUNK.dormantChunkCacheSize() == 0) return null; // Don't bother with maps at all if its never gonna get a response
 
         Cache<Long, ChunkEntry> cache = dormantChunkCache.get(world);
         if (cache == null) return null;
@@ -1040,162 +984,6 @@ public class ForgeChunkManager
         {
             TileEntity tileEntity = TileEntity.create(tileEntities.getCompound(i));
             if (tileEntity != null) chunk.addTileEntity(tileEntity);
-        }
-    }
-
-    static void captureConfig(File configDir)
-    {
-        cfgFile = new File(configDir,"forgeChunkLoading.cfg");
-        config = new Configuration(cfgFile, true);
-        try
-        {
-            config.load();
-        }
-        catch (Exception e)
-        {
-            File dest = new File(cfgFile.getParentFile(),"forgeChunkLoading.cfg.bak");
-            if (dest.exists())
-            {
-                dest.delete();
-            }
-            cfgFile.renameTo(dest);
-            LOGGER.error(CHUNK_MANAGER, "A critical error occurred reading the forgeChunkLoading.cfg file, defaults will be used - the invalid file is backed up at forgeChunkLoading.cfg.bak", e);
-        }
-        syncConfigDefaults();
-    }
-
-    /**
-     * Synchronizes the local fields with the values in the Configuration object.
-     */
-    public static void syncConfigDefaults()
-    {
-        // By adding a property order list we are defining the order that the properties will appear both in the config file and on the GUIs.
-        // Property order lists are defined per-ConfigCategory.
-        List<String> propOrder = new ArrayList<String>();
-
-        config.setCategoryComment("defaults", "Default configuration for forge chunk loading control")
-                .setCategoryRequiresWorldRestart("defaults", true);
-
-        Property temp = config.get("defaults", "enabled", true);
-        temp.setComment("Are mod overrides enabled?");
-        temp.setLanguageKey("forge.configgui.enableModOverrides");
-        overridesEnabled = temp.getBoolean(true);
-        propOrder.add("enabled");
-
-        temp = config.get("defaults", "maximumChunksPerTicket", 25);
-        temp.setComment("The default maximum number of chunks a mod can force, per ticket, \n" +
-                    "for a mod without an override. This is the maximum number of chunks a single ticket can force.");
-        temp.setLanguageKey("forge.configgui.maximumChunksPerTicket");
-        temp.setMinValue(0);
-        defaultMaxChunks = temp.getInt(25);
-        propOrder.add("maximumChunksPerTicket");
-
-        temp = config.get("defaults", "maximumTicketCount", 200);
-        temp.setComment("The default maximum ticket count for a mod which does not have an override\n" +
-                    "in this file. This is the number of chunk loading requests a mod is allowed to make.");
-        temp.setLanguageKey("forge.configgui.maximumTicketCount");
-        temp.setMinValue(0);
-        defaultMaxCount = temp.getInt(200);
-        propOrder.add("maximumTicketCount");
-
-        temp = config.get("defaults", "playerTicketCount", 500);
-        temp.setComment("The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.");
-        temp.setLanguageKey("forge.configgui.playerTicketCount");
-        temp.setMinValue(0);
-        playerTicketLength = temp.getInt(500);
-        propOrder.add("playerTicketCount");
-
-        temp = config.get("defaults", "dormantChunkCacheSize", 0);
-        temp.setComment("Unloaded chunks can first be kept in a dormant cache for quicker\n" +
-                    "loading times. Specify the size (in chunks) of that cache here");
-        temp.setLanguageKey("forge.configgui.dormantChunkCacheSize");
-        temp.setMinValue(0);
-        dormantChunkCacheSize = temp.getInt(0);
-        propOrder.add("dormantChunkCacheSize");
-        LOGGER.info(CHUNK_MANAGER, "Configured a dormant chunk cache size of {}", temp.getInt(0));
-
-        temp = config.get("defaults", "asyncChunkLoading", true);
-        temp.setComment("Load chunks asynchronously for players, reducing load on the server thread.\n" +
-                    "Can be disabled to help troubleshoot chunk loading issues.");
-        temp.setLanguageKey("forge.configgui.asyncChunkLoading");
-        asyncChunkLoading = temp.getBoolean(true);
-        propOrder.add("asyncChunkLoading");
-
-        config.setCategoryPropertyOrder("defaults", propOrder);
-
-        config.addCustomCategoryComment(ForgeVersion.MOD_ID, "Sample mod specific control section.\n" +
-                "Copy this section and rename the with the modid for the mod you wish to override.\n" +
-                "A value of zero in either entry effectively disables any chunkloading capabilities\n" +
-                "for that mod");
-
-        temp = config.get(ForgeVersion.MOD_ID, "maximumTicketCount", 200);
-        temp.setComment("Maximum ticket count for the mod. Zero disables chunkloading capabilities.");
-        temp = config.get(ForgeVersion.MOD_ID, "maximumChunksPerTicket", 25);
-        temp.setComment("Maximum chunks per ticket for the mod.");
-        for (String mod : config.getCategoryNames())
-        {
-            if (mod.equals(ForgeVersion.MOD_ID) || mod.equals("defaults"))
-            {
-                continue;
-            }
-            config.get(mod, "maximumTicketCount", 200).setLanguageKey("forge.configgui.maximumTicketCount").setMinValue(0);
-            config.get(mod, "maximumChunksPerTicket", 25).setLanguageKey("forge.configgui.maximumChunksPerTicket").setMinValue(0);
-        }
-
-        if (config.hasChanged())
-        {
-            config.save();
-        }
-    }
-
-    public static Configuration getConfig()
-    {
-        return config;
-    }
-
-    public static ConfigCategory getDefaultsCategory()
-    {
-        return config.getCategory("defaults");
-    }
-
-    public static List<ConfigCategory> getModCategories()
-    {
-        List<ConfigCategory> list = new ArrayList<ConfigCategory>();
-        for (String mod : config.getCategoryNames())
-        {
-            if (mod.equals(ForgeVersion.MOD_ID) || mod.equals("defaults"))
-            {
-                continue;
-            }
-            list.add(config.getCategory(mod));
-        }
-        return list;
-    }
-
-    @Nullable
-    public static ConfigCategory getConfigFor(Object mod)
-    {
-        ModContainer container = getContainer(mod);
-        if (container != null)
-        {
-            return config.getCategory(container.getModId());
-        }
-
-        return null;
-    }
-
-    public static void addConfigProperty(Object mod, String propertyName, String value, Property.Type type)
-    {
-        ModContainer container = getContainer(mod);
-        if (container != null)
-        {
-            ConfigCategory cat = config.getCategory(container.getModId());
-            Property prop = new Property(propertyName, value, type).setLanguageKey("forge.configgui." + propertyName);
-            if (type == Property.Type.INTEGER)
-            {
-                prop.setMinValue(0);
-            }
-            cat.put(propertyName, prop);
         }
     }
 }
