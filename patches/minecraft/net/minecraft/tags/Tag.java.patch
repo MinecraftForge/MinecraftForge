@@ -1,0 +1,60 @@
+--- a/net/minecraft/tags/Tag.java
++++ b/net/minecraft/tags/Tag.java
+@@ -118,8 +118,11 @@
+       }
+ 
+       public boolean func_200160_a(Function<ResourceLocation, Tag<T>> p_200160_1_) {
+-         for(Tag.ITagEntry<T> itagentry : this.field_200052_a) {
++         java.util.Iterator<Tag.ITagEntry<T>> iterator = this.field_200052_a.iterator();
++         while (iterator.hasNext()) {
++            Tag.ITagEntry<T> itagentry = iterator.next();
+             if (!itagentry.func_200161_a(p_200160_1_)) {
++               if (itagentry.isOptional()) { iterator.remove(); continue; }
+                return false;
+             }
+          }
+@@ -139,16 +142,20 @@
+ 
+          for(JsonElement jsonelement : jsonarray) {
+             String s = JsonUtils.func_151206_a(jsonelement, "value");
++            boolean optional = s.startsWith("?");
++            if (optional) s = s.substring(1);
++
+             if (!s.startsWith("#")) {
+                ResourceLocation resourcelocation = new ResourceLocation(s);
+                T t = p_200158_2_.apply(resourcelocation);
+                if (t == null || !p_200158_1_.test(resourcelocation)) {
++                  if (optional) continue;
+                   throw new JsonParseException("Unknown value '" + resourcelocation + "'");
+                }
+ 
+                this.func_200048_a(t);
+             } else {
+-               this.func_200159_a(new ResourceLocation(s.substring(1)));
++               this.func_200575_a(new TagEntry<>(new ResourceLocation(s.substring(1)), optional));
+             }
+          }
+ 
+@@ -164,6 +171,8 @@
+       void func_200162_a(Collection<T> p_200162_1_);
+ 
+       void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_);
++
++      default boolean isOptional() { return false; }
+    }
+ 
+    public static class ListEntry<T> implements Tag.ITagEntry<T> {
+@@ -204,6 +213,13 @@
+          this.field_200163_a = p_i48228_1_;
+       }
+ 
++      private boolean optional = false;
++      public TagEntry(ResourceLocation id, boolean optional) {
++         this.field_200163_a = id;
++         this.optional = optional;
++      }
++      @Override public boolean isOptional() { return optional; }
++
+       public TagEntry(Tag<T> p_i48229_1_) {
+          this.field_200163_a = p_i48229_1_.func_199886_b();
+          this.field_200164_b = p_i48229_1_;
