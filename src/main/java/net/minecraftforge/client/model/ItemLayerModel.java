@@ -429,12 +429,6 @@ public final class ItemLayerModel implements IModel
             case COLOR:
                 builder.put(e, 1f, 1f, 1f, 1f);
                 break;
-            case UV:
-                if(format.getElement(e).getIndex() == 0)
-                {
-                    builder.put(e, u, v, 0f, 1f);
-                }
-                break;
             case NORMAL:
                 float offX = (float) side.getFrontOffsetX();
                 float offY = (float) side.getFrontOffsetY();
@@ -450,6 +444,13 @@ public final class ItemLayerModel implements IModel
                     builder.put(e, offX, offY, offZ, 0f);
                 }
                 break;
+            case UV:
+                if(format.getElement(e).getIndex() == 0)
+                {
+                    builder.put(e, u, v, 0f, 1f);
+                    break;
+                }
+                // else fallthrough to default
             default:
                 builder.put(e);
                 break;

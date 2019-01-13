@@ -320,12 +320,6 @@ public final class ItemTextureQuadConverter
                     float a = ((color >> 24) & 0xFF) / 255f; // alpha
                     builder.put(e, r, g, b, a);
                     break;
-                case UV:
-                    if (format.getElement(e).getIndex() == 0)
-                    {
-                        builder.put(e, u, v, 0f, 1f);
-                    }
-                    break;
                 case NORMAL:
                     float offX = (float) side.getFrontOffsetX();
                     float offY = (float) side.getFrontOffsetY();
@@ -341,6 +335,13 @@ public final class ItemTextureQuadConverter
                         builder.put(e, offX, offY, offZ, 0f);
                     }
                     break;
+                case UV:
+                    if (format.getElement(e).getIndex() == 0)
+                    {
+                        builder.put(e, u, v, 0f, 1f);
+                        break;
+                    }
+                    // else fallthrough to default
                 default:
                     builder.put(e);
                     break;
