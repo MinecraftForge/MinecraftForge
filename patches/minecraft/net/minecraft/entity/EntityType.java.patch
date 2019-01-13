@@ -20,22 +20,23 @@
     public static final EntityType<EntityAreaEffectCloud> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.func_201757_a(EntityAreaEffectCloud.class, EntityAreaEffectCloud::new));
     public static final EntityType<EntityArmorStand> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.func_201757_a(EntityArmorStand.class, EntityArmorStand::new));
     public static final EntityType<EntityTippedArrow> field_200790_d = func_200712_a("arrow", EntityType.Builder.func_201757_a(EntityTippedArrow.class, EntityTippedArrow::new));
-@@ -227,6 +228,11 @@
-    private String field_210762_aX;
-    @Nullable
-    private final Type<?> field_206832_aX;
+@@ -375,15 +376,53 @@
+       return p_200719_1_ == null ? null : p_200719_1_.func_200721_a(p_200719_0_);
+    }
+ 
++   /* Forge Start */
 +   private boolean useVanillaSpawning;
 +   private Function<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, Entity> customSpawnCallback;
 +   private boolean hasCustomTracking;
 +   private int customTrackingRange, customUpdateFrequency;
 +   private boolean customSendVelocityUpdates;
- 
-    public static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
-       EntityType<T> entitytype = p_200712_1_.func_206830_a(p_200712_0_);
-@@ -244,6 +250,18 @@
-       return field_200787_a.func_82594_a(ResourceLocation.func_208304_a(p_200713_0_));
-    }
- 
++
++   public boolean hasCustomTracking() { return hasCustomTracking; }
++   public int getTrackingRange() { return customTrackingRange; }
++   public int getUpdateFrequency() { return customUpdateFrequency; }
++   public boolean shouldSendVelocityUpdates() { return customSendVelocityUpdates; }
++   public boolean usesVanillaSpawning() { return useVanillaSpawning; }
++
 +   public EntityType(Class<? extends T> clazz, Function<? super World, ? extends T> factory, boolean serializable, boolean summonable, @Nullable Type<?> dataFixerType,
 +                     boolean useVanillaSpawning, Function<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, Entity> customSpawnCallback,
 +                     boolean hasCustomTracking, int range, int updateFreq, boolean sendVelocityUpdates) {
@@ -48,22 +49,11 @@
 +      this.customSendVelocityUpdates = sendVelocityUpdates;
 +   }
 +
-    public EntityType(Class<? extends T> p_i49579_1_, Function<? super World, ? extends T> p_i49579_2_, boolean p_i49579_3_, boolean p_i49579_4_, @Nullable Type<?> p_i49579_5_) {
-       this.field_201761_aK = p_i49579_1_;
-       this.field_200732_aK = p_i49579_2_;
-@@ -375,15 +393,32 @@
-       return p_200719_1_ == null ? null : p_200719_1_.func_200721_a(p_200719_0_);
-    }
- 
-+   public boolean hasCustomTracking() { return hasCustomTracking; }
-+   public int getTrackingRange() { return customTrackingRange; }
-+   public int getUpdateFrequency() { return customUpdateFrequency; }
-+   public boolean shouldSendVelocityUpdates() { return customSendVelocityUpdates; }
-+   public boolean usesVanillaSpawning() { return useVanillaSpawning; }
 +   @Nullable public Entity handleSpawnMessage(World world, net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity msg)
 +   {
 +      return customSpawnCallback == null ? func_200721_a(world) : customSpawnCallback.apply(msg);
 +   }
++   /* Forge End */
 +
     public static class Builder<T extends Entity> {
        private final Class<? extends T> field_201759_a;
@@ -80,11 +70,11 @@
        private Builder(Class<? extends T> p_i48756_1_, Function<? super World, ? extends T> p_i48756_2_) {
           this.field_201759_a = p_i48756_1_;
           this.field_200709_a = p_i48756_2_;
-+         this.useVanillaSpawning = field_201759_a.getName().startsWith("net.minecraft");
++         this.useVanillaSpawning = field_201759_a.getName().startsWith("net.minecraft.");
        }
  
        public static <T extends Entity> EntityType.Builder<T> func_201757_a(Class<? extends T> p_201757_0_, Function<? super World, ? extends T> p_201757_1_) {
-@@ -406,12 +441,26 @@
+@@ -406,12 +445,26 @@
           return this;
        }
  
@@ -112,7 +102,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -420,7 +469,7 @@
+@@ -420,7 +473,7 @@
              }
           }
  
