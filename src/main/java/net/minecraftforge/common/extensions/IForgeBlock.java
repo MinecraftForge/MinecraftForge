@@ -1082,4 +1082,21 @@ public interface IForgeBlock
      {
          return state.isTopSolid();
      }
+
+    /**
+     * Ray traces through the blocks collision from start vector to end vector returning a ray trace hit.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param start The start vector
+     * @param end The end vector
+     * @param original The original result from {@link Block#collisionRayTrace(IBlockState, World, BlockPos, Vec3d, Vec3d)}
+     * @return A result that suits your block
+     */
+    @Nullable
+    default RayTraceResult getRayTraceResult(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original)
+    {
+        return original;
+    }
 }
