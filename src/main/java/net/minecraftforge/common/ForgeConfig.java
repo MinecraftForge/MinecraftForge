@@ -23,257 +23,238 @@ import static net.minecraftforge.fml.Logging.CORE;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
 import com.google.common.collect.Lists;
 
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.common.ForgeConfigSpec.NumberValue;
+
 public class ForgeConfig
-{
-    private static ForgeConfig INSTANCE = new ForgeConfig();
-    private static ForgeConfigSpec spec = new ForgeConfigSpec.Builder()
-         //General
-        .comment("General settings that effect both the client and server")
-        .push("general")
+{   
+    private static ForgeConfigSpec spec;
+    
+    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
+    
+    public static class General {
+        
+        static {
+            BUILDER.comment("General settings that effect both the client and server")
+                   .push("general");
+        }
+            
+        public static final BooleanValue disableVersionCheck = BUILDER
             .comment("Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.")
             .translation("forge.configgui.disableVersionCheck")
-            .define("disableVersionCheck", false)
+            .define("disableVersionCheck", false);
 
+        public static final BooleanValue removeErroringEntities = BUILDER
             .comment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
             .translation("forge.configgui.removeErroringEntities")
             .worldRestart()
-            .define("removeErroringEntities", false)
+            .define("removeErroringEntities", false);
 
+        public static final BooleanValue removeErroringTileEntities = BUILDER
             .comment("Set this to true to remove any TileEntity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
             .translation("forge.configgui.removeErroringTileEntities")
             .worldRestart()
-            .define("removeErroringTileEntities", false)
+            .define("removeErroringTileEntities", false);
 
+        public static final BooleanValue fullBoundingBoxLadders = BUILDER
             .comment("Set this to true to check the entire entity's collision bounding box for ladders instead of just the block they are in. Causes noticeable differences in mechanics so default is vanilla behavior. Default: false")
             .translation("forge.configgui.fullBoundingBoxLadders")
             .worldRestart()
-            .define("fullBoundingBoxLadders", false)
+            .define("fullBoundingBoxLadders", false);
 
+        public static final DoubleValue zombieBaseSummonChance = BUILDER
             .comment("Base zombie summoning spawn chance. Allows changing the bonus zombie summoning mechanic.")
             .translation("forge.configgui.zombieBaseSummonChance")
             .worldRestart()
-            .defineInRange("zombieBaseSummonChance", 0.1D, 0.0D, 1.0D)
+            .defineInRange("zombieBaseSummonChance", 0.1D, 0.0D, 1.0D);
 
+        public static final DoubleValue zombieBabyChance = BUILDER
             .comment("Chance that a zombie (or subclass) is a baby. Allows changing the zombie spawning mechanic.")
             .translation("forge.configgui.zombieBabyChance")
             .worldRestart()
-            .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D)
+            .defineInRange("zombieBabyChance", 0.05D, 0.0D, 1.0D);
 
+        public static final BooleanValue logCascadingWorldGeneration = BUILDER
             .comment("Log cascading chunk generation issues during terrain population.")
             .translation("forge.configgui.logCascadingWorldGeneration")
-            .define("logCascadingWorldGeneration", true)
+            .define("logCascadingWorldGeneration", true);
 
+        public static final BooleanValue fixVanillaCascading = BUILDER
             .comment("Fix vanilla issues that cause worldgen cascading. This DOES change vanilla worldgen so DO NOT report bugs related to world differences if this flag is on.")
             .translation("forge.configgui.fixVanillaCascading")
-            .define("fixVanillaCascading", false)
+            .define("fixVanillaCascading", false);
 
+        public static final IntValue dimensionUnloadQueueDelay = BUILDER
             .comment("The time in ticks the server will wait when a dimension was queued to unload. This can be useful when rapidly loading and unloading dimensions, like e.g. throwing items through a nether portal a few time per second.")
             .translation("forge.configgui.dimensionUnloadQueueDelay")
-            .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE)
+            .defineInRange("dimensionUnloadQueueDelay", 0, 0, Integer.MAX_VALUE);
 
+        public static final IntValue clumpingThreshold = BUILDER
             .comment("Controls the number threshold at which Packet51 is preferred over Packet52, default and minimum 64, maximum 1024")
             .translation("forge.configgui.clumpingThreshold")
             .worldRestart()
-            .defineInRange("clumpingThreshold", 64, 64, 1024)
-        .pop()
+            .defineInRange("clumpingThreshold", 64, 64, 1024);
+        
+        static { BUILDER.pop(); }
+    }
+    
+    public static class Client {
+        
+        static {
+            BUILDER.comment("Client only settings, mostly things related to rendering")
+                   .push("client");
+        }
 
-        //Client
-        .comment("Client only settings, mostly things related to rendering")
-        .push("client")
+        public static final BooleanValue zoomInMissingModelTextInGui = BUILDER
             .comment("Toggle off to make missing model text in the gui fit inside the slot.")
             .translation("forge.configgui.zoomInMissingModelTextInGui")
-            .define("zoomInMissingModelTextInGui", false)
+            .define("zoomInMissingModelTextInGui", false);
 
+        public static final BooleanValue forgeCloudsEnabled = BUILDER
             .comment("Enable uploading cloud geometry to the GPU for faster rendering.")
             .translation("forge.configgui.forgeCloudsEnabled")
-            .define("forgeCloudsEnabled", true)
-
+            .define("forgeCloudsEnabled", true);
+        
+        public static final BooleanValue disableStairSlabCulling = BUILDER
             .comment("Disable culling of hidden faces next to stairs and slabs. Causes extra rendering, but may fix some resource packs that exploit this vanilla mechanic.")
             .translation("forge.configgui.disableStairSlabCulling")
-            .define("disableStairSlabCulling", false)
+            .define("disableStairSlabCulling", false);
 
+        public static final BooleanValue alwaysSetupTerrainOffThread = BUILDER        
             .comment("Enable forge to queue all chunk updates to the Chunk Update thread.",
                     "May increase FPS significantly, but may also cause weird rendering lag.",
                     "Not recommended for computers without a significant number of cores available.")
             .translation("forge.configgui.alwaysSetupTerrainOffThread")
-            .define("alwaysSetupTerrainOffThread", false)
+            .define("alwaysSetupTerrainOffThread", false);
 
+        public static final BooleanValue forgeLightPipelineEnabled = BUILDER
             .comment("Enable the forge block rendering pipeline - fixes the lighting of custom models.")
             .translation("forge.configgui.forgeLightPipelineEnabled")
-            .define("forgeLightPipelineEnabled", true)
-
+            .define("forgeLightPipelineEnabled", true);
+        
+        public static final BooleanValue selectiveResourceReloadEnabled = BUILDER
             .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
             .translation("forge.configgui.selectiveResourceReloadEnabled")
-            .define("selectiveResourceReloadEnabled", true)
-        .pop()
-
-
-        .build();
-
-    private static ForgeConfigSpec chunk_spec;
+            .define("selectiveResourceReloadEnabled", true);
+        
+        static { BUILDER.pop(); }
+    }
+    
     static {
-        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder()
-        .comment("Default configuration for Forge chunk loading control")
-        .push("defaults")
+        spec = BUILDER.build();
+    }
+    
+    private static ForgeConfigSpec chunk_spec;
+    private static final ForgeConfigSpec.Builder CHUNK_BUILDER = new ForgeConfigSpec.Builder();
+    
+    public static class Chunk {
+        
+        static {
+            CHUNK_BUILDER.comment("Default configuration for Forge chunk loading control")
+                         .push("defaults");
+        }
+        
+        public static final BooleanValue enable = CHUNK_BUILDER
             .comment("Allow mod overrides, false will use default for everything.")
             .translation("forge.configgui.enableModOverrides")
-            .define("enable", true)
+            .define("enable", true);
 
+        public static final IntValue chunksPerTicket = CHUNK_BUILDER
             .comment("The default maximum number of chunks a mod can force, per ticket,",
                      "for a mod without an override. This is the maximum number of chunks a single ticket can force.")
             .translation("forge.configgui.maximumChunksPerTicket")
-            .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE)
+            .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE);
 
+        public static final IntValue maxTickets = CHUNK_BUILDER
             .comment("The default maximum ticket count for a mod which does not have an override",
                      "in this file. This is the number of chunk loading requests a mod is allowed to make.")
             .translation("forge.configgui.maximumTicketCount")
-            .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE)
+            .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE);
 
+        public static final IntValue playerTicketCount = CHUNK_BUILDER
             .comment("The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.")
             .translation("forge.configgui.playerTicketCount")
-            .defineInRange("playerTicketCount", 500, 0, Integer.MAX_VALUE)
+            .defineInRange("playerTicketCount", 500, 0, Integer.MAX_VALUE);
 
+        public static final IntValue dormantChunkCacheSize = CHUNK_BUILDER
             .comment("Unloaded chunks can first be kept in a dormant cache for quicker loading times. Specify the size (in chunks) of that cache here")
             .translation("forge.configgui.dormantChunkCacheSize")
-            .defineInRange("dormantChunkCacheSize", 0, 0, Integer.MAX_VALUE)
+            .defineInRange("dormantChunkCacheSize", 0, 0, Integer.MAX_VALUE);
 
+        public static final BooleanValue asyncChunkLoading = CHUNK_BUILDER
             .comment("Load chunks asynchronously for players, reducing load on the server thread.",
                      "Can be disabled to help troubleshoot chunk loading issues.")
             .translation("forge.configgui.asyncChunkLoading")
-            .define("asyncChunkLoading", true)
-        .pop();
-        
-        final ForgeConfigSpec chunkSpec = new ForgeConfigSpec.Builder()
-                .define("modid", "forge")
-                .define("maxTickets", 200)
-                .define("chunksPerTicket", 25)
+            .define("asyncChunkLoading", true);
+
+        private static final ForgeConfigSpec chunkSpec = new ForgeConfigSpec.Builder()
+                .define("modid", "forge").next()
+                .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE).next()
+                .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE).next()
                 .build();
         
-        CommentedConfig cfg = CommentedConfig.inMemory();
-        chunkSpec.correct(cfg);
+        private static final CommentedConfig modCfgDefault = CommentedConfig.inMemory();
+        static {
+            chunkSpec.correct(modCfgDefault);
+            CHUNK_BUILDER.pop();
+        }
+        
+        private static final ConfigValue<List<CommentedConfig>> mods = CHUNK_BUILDER
+                .defineList("mods", Lists.newArrayList(modCfgDefault), o -> {
+                    if (!(o instanceof CommentedConfig)) return false;
+                    return chunkSpec.isCorrect((CommentedConfig) o);
+                });
 
-        builder.defineList("mods", Lists.newArrayList(cfg), o -> {
-            if (!(o instanceof CommentedConfig)) return false;
-            return chunkSpec.isCorrect((CommentedConfig) o);
-        });
-        chunk_spec = builder.build();
+        static {
+            chunk_spec = CHUNK_BUILDER.build();
+        }
+        
+        public static int getByMod(NumberValue<Integer> def, String name, String modid)
+        {
+            if (!enable.getBoolean() || modid == null)
+                return def.getInt();
+            
+            return Chunk.mods.get().stream().filter(c -> modid.equals(c.get("modid"))).findFirst()
+                    .map(c -> c.<Integer>get(name))
+                    .orElseGet(def::getInt);
+        }
+
+        public static int maxTickets(@Nullable String modid) {
+            return getByMod(maxTickets, "maxTickets", modid);
+        }
+        
+        public static int chunksPerTicket(@Nullable String modid) {
+            return getByMod(chunksPerTicket, "chunksPerTicket", modid);
+        }
     }
 
-    private CommentedFileConfig configData;
-    private CommentedFileConfig chunkData;
-    private void loadFrom(final Path configRoot) {
+    private static void loadFrom(final Path configRoot) {
         Path configFile = configRoot.resolve("forge.toml");
-        configData = CommentedFileConfig.builder(configFile).sync()
-                .autosave()
-                //.autoreload()
-                .writingMode(WritingMode.REPLACE)
-                .build();
-        configData.load();
-        if (!spec.isCorrect(configData)) {
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configRoot);
-            spec.correct(configData, (action, path, incorrectValue, correctedValue) ->
-                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
-            configData.save();
-        }
+        spec.setConfigFile(configFile);
         LogManager.getLogger().debug(CORE, "Loaded Forge config from {}", configFile);
 
-
         configFile = configRoot.resolve("forge_chunks.toml");
-        chunkData = CommentedFileConfig.builder(configFile).sync()
-                .autosave()
-                //.autoreload()
-                .writingMode(WritingMode.REPLACE)
-                .build();
-        chunkData.load();
-        if (!chunk_spec.isCorrect(chunkData)) {
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configRoot);
-            chunk_spec.correct(chunkData, (action, path, incorrectValue, correctedValue) ->
-                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
-            chunkData.save();
-        }
+        chunk_spec.setConfigFile(configFile);
         LogManager.getLogger().debug(CORE, "Loaded Forge Chunk config from {}", configFile);
     }
 
     public static void load() {
-        INSTANCE.loadFrom(Paths.get("config"));
-    }
-
-    //TODO: Make this less duplciate? Maybe static CfgEntry<T> zombieBaseSummonChance = create((spec, name) -> spec.comment().translation().define(name), "zombieBaseSummonChance")
-    public static class GENERAL {
-        public static double zombieBaseSummonChance() {
-            return ForgeConfig.INSTANCE.configData.<Double>getOrElse("general.zombieBaseSummonChance", (double)0.01F);
-        }
-        public static double zombieBabyChance() {
-            return ForgeConfig.INSTANCE.configData.<Double>getOrElse("general.zombieBabyChance", 0.05D);
-        }
-        public static int clumpingThreshold() {
-            return ForgeConfig.INSTANCE.configData.<Integer>getOrElse("general.clumpingThreshold", 64);
-        }
-        public static boolean removeErroringEntities() {
-            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.removeErroringEntities", false);
-        }
-        public static boolean removeErroringTileEntities() {
-            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.removeErroringTileEntities", false);
-        }
-        public static boolean fullBoundingBoxLadders() {
-            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.fullBoundingBoxLadders", false);
-        }
-        public static int dimensionUnloadQueueDelay() {
-            return ForgeConfig.INSTANCE.configData.<Integer>getOrElse("general.dimensionUnloadQueueDelay", 0);
-        }
-    }
-
-    public static class CLIENT {
-        public static boolean forgeCloudsEnabled() {
-            return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.forgeCloudsEnabled", true);
-        }
-    }
-
-    public static class CHUNK {
-        public static boolean enableModOverrides() {
-            return ForgeConfig.INSTANCE.chunkData.<Boolean>getOrElse("defaults.enable", true);
-        }
-        public static int playerTicketCount() {
-            return ForgeConfig.INSTANCE.chunkData.<Integer>getOrElse("defaults.playerTicketCount", 500);
-        }
-        public static int dormantChunkCacheSize() {
-            return ForgeConfig.INSTANCE.chunkData.<Integer>getOrElse("defaults.dormantChunkCacheSize", 0);
-        }
-        private static int maxTickets() {
-            return ForgeConfig.INSTANCE.chunkData.<Integer>getOrElse("defaults.maxTickets", 200);
-        }
-        public static int chunksPerTicket() {
-            return ForgeConfig.INSTANCE.chunkData.<Integer>getOrElse("defaults.chunksPerTicket", 0);
-        }
-        public static int maxTickets(@Nullable String modid) {
-            if (!enableModOverrides() || modid == null)
-                return maxTickets();
-            Map<Object,Object> data = ForgeConfig.INSTANCE.chunkData.<List<Map<Object, Object>>>getOrElse("mods", Collections.emptyList())
-                    .stream().filter(e -> modid.equals(e.get("modid"))).findFirst().orElse(null);
-            Integer ret = data == null ? null : (Integer)data.get("maxTickets");
-            return ret == null ? maxTickets() : ret;
-        }
-        public static int chunksPerTicket(@Nullable String modid) {
-            if (!enableModOverrides() || modid == null)
-                return chunksPerTicket();
-            Map<Object,Object> data = ForgeConfig.INSTANCE.chunkData.<List<Map<Object, Object>>>getOrElse("mods", Collections.emptyList())
-                    .stream().filter(e -> modid.equals(e.get("modid"))).findFirst().orElse(null);
-            Integer ret = data == null ? null : (Integer)data.get("chunksPerTicket");
-            return ret == null ? chunksPerTicket() : ret;
-        }
+        new General();
+        new Client();
+        new Chunk();
+        loadFrom(Paths.get("config"));
     }
 
     //General

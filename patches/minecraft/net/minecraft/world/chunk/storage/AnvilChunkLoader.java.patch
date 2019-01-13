@@ -55,7 +55,7 @@
     }
  
     private Chunk func_75823_a(IWorld p_75823_1_, NBTTagCompound p_75823_2_) {
-@@ -511,6 +532,10 @@
+@@ -511,12 +532,16 @@
           chunk.func_177427_f(true);
        }
  
@@ -66,6 +66,13 @@
        return chunk;
     }
  
+    private void func_199814_a(NBTTagCompound p_199814_1_, Chunk p_199814_2_) {
+       NBTTagList nbttaglist = p_199814_1_.func_150295_c("Entities", 10);
+-      World world = p_199814_2_.func_177412_p();
++      World world = p_199814_2_.getWorld();
+ 
+       for(int i = 0; i < nbttaglist.size(); ++i) {
+          NBTTagCompound nbttagcompound = nbttaglist.func_150305_b(i);
 @@ -813,4 +838,8 @@
  
        return flag;

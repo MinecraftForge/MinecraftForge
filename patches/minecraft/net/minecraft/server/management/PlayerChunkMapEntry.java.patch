@@ -104,7 +104,7 @@
                    this.func_187273_a(this.field_187282_b.func_72688_a().func_175625_s(blockpos));
                 }
 -            } else if (this.field_187287_g == 64) {
-+            } else if (this.field_187287_g >= net.minecraftforge.common.ForgeConfig.GENERAL.clumpingThreshold()) {
++            } else if (this.field_187287_g >= net.minecraftforge.common.ForgeConfig.General.clumpingThreshold.getInt()) {
                 this.func_187267_a(new SPacketChunkData(this.field_187286_f, this.field_187288_h));
 +               //TODO: Fix Mojang's fuckup to modded by combining all TE data into the chunk data packet... seriously... packet size explosion!
              } else {

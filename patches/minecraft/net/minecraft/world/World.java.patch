@@ -403,7 +403,7 @@
                 entity.func_85029_a(crashreportcategory);
              }
  
-+            if (net.minecraftforge.common.ForgeConfig.GENERAL.removeErroringEntities()) {
++            if (net.minecraftforge.common.ForgeConfig.General.removeErroringEntities.getBoolean()) {
 +               LogManager.getLogger().fatal("{}", crashreport.func_71502_e());
 +               func_72900_e(entity);
 +            } else
@@ -421,7 +421,7 @@
                 CrashReport crashreport1 = CrashReport.func_85055_a(throwable1, "Ticking entity");
                 CrashReportCategory crashreportcategory1 = crashreport1.func_85058_a("Entity being ticked");
                 entity2.func_85029_a(crashreportcategory1);
-+               if (net.minecraftforge.common.ForgeConfig.GENERAL.removeErroringEntities()) {
++               if (net.minecraftforge.common.ForgeConfig.General.removeErroringEntities.getBoolean()) {
 +                  LogManager.getLogger().fatal("{}", crashreport1.func_71502_e());
 +                  func_72900_e(entity2);
 +               } else
@@ -466,7 +466,7 @@
                    CrashReport crashreport2 = CrashReport.func_85055_a(throwable, "Ticking block entity");
                    CrashReportCategory crashreportcategory2 = crashreport2.func_85058_a("Block entity being ticked");
                    tileentity.func_145828_a(crashreportcategory2);
-+                  if (net.minecraftforge.common.ForgeConfig.GENERAL.removeErroringTileEntities()) {
++                  if (net.minecraftforge.common.ForgeConfig.General.removeErroringTileEntities.getBoolean()) {
 +                     LogManager.getLogger().fatal("{}", crashreport2.func_71502_e());
 +                     tileentity.func_145843_s();
 +                     this.func_175713_t(tileentity.func_174877_v());

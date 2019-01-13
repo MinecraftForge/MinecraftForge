@@ -222,7 +222,7 @@ public class ForgeChunkManager
             this.modId = modId;
             this.ticketType = type;
             this.world = world;
-            this.maxDepth = ForgeConfig.CHUNK.chunksPerTicket(modId);
+            this.maxDepth = ForgeConfig.Chunk.chunksPerTicket(modId);
             this.requestedChunks = Sets.newLinkedHashSet();
         }
 
@@ -448,9 +448,9 @@ public class ForgeChunkManager
             return;
         }
 
-        if (ForgeConfig.CHUNK.dormantChunkCacheSize() != 0)
+        if (ForgeConfig.Chunk.dormantChunkCacheSize.getInt() != 0)
         { // only put into cache if we're using dormant chunk caching
-            dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(ForgeConfig.CHUNK.dormantChunkCacheSize()).build());
+            dormantChunkCache.put(world, CacheBuilder.newBuilder().maximumSize(ForgeConfig.Chunk.dormantChunkCacheSize.getInt()).build());
         }
         WorldServer worldServer = (WorldServer) world;
         File chunkDir = worldServer.getChunkSaveLocation();
@@ -552,7 +552,7 @@ public class ForgeChunkManager
                 {
                     continue;
                 }
-                int maxTicketLength = ForgeConfig.CHUNK.maxTickets(modId);
+                int maxTicketLength = ForgeConfig.Chunk.maxTickets(modId);
                 List<Ticket> tickets = loadedTickets.get(modId);
                 if (loadingCallback instanceof OrderedLoadingCallback)
                 {
@@ -598,7 +598,7 @@ public class ForgeChunkManager
         }
 
         forcedChunks.remove(world);
-        if (ForgeConfig.CHUNK.dormantChunkCacheSize() != 0) // only if in use
+        if (ForgeConfig.Chunk.dormantChunkCacheSize.getInt() != 0) // only if in use
         {
             dormantChunkCache.remove(world);
         }
@@ -641,7 +641,7 @@ public class ForgeChunkManager
         if (container!=null)
         {
             String modId = container.getModId();
-            int allowedCount = ForgeConfig.CHUNK.maxTickets(modId);
+            int allowedCount = ForgeConfig.Chunk.maxTickets(modId);
             return allowedCount - tickets.get(world).get(modId).size();
         }
         else
@@ -658,7 +658,7 @@ public class ForgeChunkManager
 
     public static int ticketCountAvailableFor(String username)
     {
-        return ForgeConfig.CHUNK.playerTicketCount() - playerTickets.get(username).size();
+        return ForgeConfig.Chunk.playerTicketCount.getInt() - playerTickets.get(username).size();
     }
 
     @Nullable
@@ -670,7 +670,7 @@ public class ForgeChunkManager
             LOGGER.error(CHUNK_MANAGER, "Failed to locate the container for mod instance {} ({} : {})", mod, mod.getClass().getName(), Integer.toHexString(System.identityHashCode(mod)));
             return null;
         }
-        if (playerTickets.get(player).size() > ForgeConfig.CHUNK.playerTicketCount())
+        if (playerTickets.get(player).size() > ForgeConfig.Chunk.playerTicketCount.getInt())
         {
             LOGGER.warn(CHUNK_MANAGER, "Unable to assign further chunkloading tickets to player {} (on behalf of mod {})", player, mc.getModId());
             return null;
@@ -704,7 +704,7 @@ public class ForgeChunkManager
             throw new RuntimeException("Invalid ticket request");
         }
 
-        int allowedCount = ForgeConfig.CHUNK.maxTickets(modId);
+        int allowedCount = ForgeConfig.Chunk.maxTickets(modId);
 
         if (tickets.get(world).get(modId).size() >= allowedCount)
         {
@@ -919,7 +919,7 @@ public class ForgeChunkManager
 
     public static void putDormantChunk(long coords, Chunk chunk)
     {
-        if (ForgeConfig.CHUNK.dormantChunkCacheSize() == 0) return; // Skip if we're not dormant caching chunks
+        if (ForgeConfig.Chunk.dormantChunkCacheSize.getInt() == 0) return; // Skip if we're not dormant caching chunks
         Cache<Long, ChunkEntry> cache = dormantChunkCache.get(chunk.getWorld());
         if (cache != null)
         {
@@ -929,7 +929,7 @@ public class ForgeChunkManager
 
     public static void storeChunkNBT(World world, IChunk ichunk, NBTTagCompound nbt)
     {
-        if (ForgeConfig.CHUNK.dormantChunkCacheSize() == 0) return;
+        if (ForgeConfig.Chunk.dormantChunkCacheSize.getInt() == 0) return;
 
         Cache<Long, ChunkEntry> cache = dormantChunkCache.get(world);
         if (cache == null) return;
@@ -956,7 +956,7 @@ public class ForgeChunkManager
     @Nullable
     public static Chunk fetchDormantChunk(long coords, World world)
     {
-        if (ForgeConfig.CHUNK.dormantChunkCacheSize() == 0) return null; // Don't bother with maps at all if its never gonna get a response
+        if (ForgeConfig.Chunk.dormantChunkCacheSize.getInt() == 0) return null; // Don't bother with maps at all if its never gonna get a response
 
         Cache<Long, ChunkEntry> cache = dormantChunkCache.get(world);
         if (cache == null) return null;

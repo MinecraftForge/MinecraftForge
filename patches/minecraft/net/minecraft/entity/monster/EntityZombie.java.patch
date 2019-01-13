@@ -5,7 +5,7 @@
        this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111128_a(3.0D);
        this.func_110148_a(SharedMonsterAttributes.field_188791_g).func_111128_a(2.0D);
 -      this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * (double)0.1F);
-+      this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * net.minecraftforge.common.ForgeConfig.GENERAL.zombieBaseSummonChance());
++      this.func_110140_aT().func_111150_b(field_110186_bp).func_111128_a(this.field_70146_Z.nextDouble() * net.minecraftforge.common.ForgeConfig.General.zombieBaseSummonChance.getDouble());
     }
  
     protected void func_70088_a() {
@@ -52,7 +52,7 @@
        this.func_98053_h(this.field_70146_Z.nextFloat() < 0.55F * f);
        if (p_204210_2_ == null) {
 -         p_204210_2_ = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < 0.05F);
-+         p_204210_2_ = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < net.minecraftforge.common.ForgeConfig.GENERAL.zombieBabyChance());
++         p_204210_2_ = new EntityZombie.GroupData(this.field_70170_p.field_73012_v.nextFloat() < net.minecraftforge.common.ForgeConfig.General.zombieBabyChance.getFloat());
        }
  
        if (p_204210_2_ instanceof EntityZombie.GroupData) {
