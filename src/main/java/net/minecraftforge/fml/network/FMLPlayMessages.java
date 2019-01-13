@@ -39,7 +39,7 @@ public class FMLPlayMessages
         private final int entityId;
         private final UUID uuid;
         private final double posX, posY, posZ;
-        private final byte pitch, yaw;
+        private final byte pitch, yaw, headYaw;
         private final short velX, velY, velZ;
         private final PacketBuffer buf;
 
@@ -54,6 +54,7 @@ public class FMLPlayMessages
             this.posZ = e.posZ;
             this.pitch = (byte) MathHelper.floor(e.rotationPitch * 256.0F / 360.0F);
             this.yaw = (byte) MathHelper.floor(e.rotationYaw * 256.0F / 360.0F);
+            this.headYaw = (byte) (e.getRotationYawHead() * 256.0F / 360.0F);
             this.velX = (short)(MathHelper.clamp(e.motionX, -3.9D, 3.9D) * 8000.0D);
             this.velY = (short)(MathHelper.clamp(e.motionY, -3.9D, 3.9D) * 8000.0D);
             this.velZ = (short)(MathHelper.clamp(e.motionZ, -3.9D, 3.9D) * 8000.0D);
@@ -61,7 +62,7 @@ public class FMLPlayMessages
         }
 
         private SpawnEntity(int typeId, int entityId, UUID uuid, double posX, double posY, double posZ,
-                           byte pitch, byte yaw, short velX, short velY, short velZ, PacketBuffer buf)
+                           byte pitch, byte yaw, byte headYaw, short velX, short velY, short velZ, PacketBuffer buf)
         {
             this.entity = null;
             this.typeId = typeId;
@@ -72,6 +73,7 @@ public class FMLPlayMessages
             this.posZ = posZ;
             this.pitch = pitch;
             this.yaw = yaw;
+            this.headYaw = headYaw;
             this.velX = velX;
             this.velY = velY;
             this.velZ = velZ;
@@ -89,6 +91,7 @@ public class FMLPlayMessages
             buf.writeDouble(msg.posZ);
             buf.writeByte(msg.pitch);
             buf.writeByte(msg.yaw);
+            buf.writeByte(msg.headYaw);
             buf.writeShort(msg.velX);
             buf.writeShort(msg.velY);
             buf.writeShort(msg.velZ);
@@ -105,7 +108,7 @@ public class FMLPlayMessages
                     buf.readInt(),
                     new UUID(buf.readLong(), buf.readLong()),
                     buf.readDouble(), buf.readDouble(), buf.readDouble(),
-                    buf.readByte(), buf.readByte(),
+                    buf.readByte(), buf.readByte(), buf.readByte(),
                     buf.readShort(), buf.readShort(), buf.readShort(),
                     buf
             );
@@ -127,8 +130,9 @@ public class FMLPlayMessages
                 }
 
                 EntityTracker.updateServerPosition(e, msg.posX, msg.posY, msg.posZ);
-                e.rotationPitch = (float)(msg.pitch * 360) / 256.0F;
-                e.rotationYaw = (float)(msg.yaw * 360) / 256.0F;
+                e.setPositionAndRotation(msg.posX, msg.posY, msg.posZ, (msg.pitch * 360) / 256.0F, (msg.yaw * 360) / 256.0F);
+                e.setRotationYawHead((msg.headYaw * 360) / 256.0F);
+                e.setRenderYawOffset((msg.headYaw * 360) / 256.0F);
 
                 Entity[] parts = e.getParts();
                 if (parts != null)
