@@ -83,8 +83,12 @@ public class SimpleChannel
 
     public <MSG> void sendTo(MSG message, NetworkManager manager, NetworkDirection direction)
     {
-        ICustomPacket<Packet<?>> payload = direction.buildPacket(toBuffer(message), instance.getChannelName());
-        manager.sendPacket(payload.getThis());
+        manager.sendPacket(toVanillaPacket(message, direction));
+    }
+
+    public <MSG> Packet<?> toVanillaPacket(MSG message, NetworkDirection direction)
+    {
+        return direction.buildPacket(toBuffer(message), instance.getChannelName()).getThis();
     }
 
     public <MSG> void reply(MSG msgToReply, NetworkEvent.Context context)
