@@ -117,7 +117,23 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -615,16 +623,22 @@
+@@ -561,9 +569,14 @@
+          }
+       }
+ 
+-      return raytraceresult;
++      return p_180636_0_.func_177230_c().getRayTraceResult(p_180636_0_, p_180636_1_, p_180636_2_, p_180636_3_, p_180636_4_, raytraceresult);
+    }
+ 
++   @Nullable
++   public RayTraceResult getRayTraceResult(IBlockState state, World worldIn, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original) {
++      return original;
++   }
++
+    public void func_180652_a(World p_180652_1_, BlockPos p_180652_2_, Explosion p_180652_3_) {
+    }
+ 
+@@ -615,16 +628,22 @@
     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
        p_180657_2_.func_71029_a(StatList.field_188065_ae.func_199076_b(this));
        p_180657_2_.func_71020_j(0.005F);
@@ -142,7 +158,7 @@
     protected boolean func_149700_E() {
        return this.func_176223_P().func_185917_h() && !this.func_149716_u();
     }
-@@ -681,6 +695,7 @@
+@@ -681,6 +700,7 @@
        p_176216_2_.field_70181_x = 0.0D;
     }
  
@@ -150,7 +166,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -755,6 +770,7 @@
+@@ -755,6 +775,7 @@
        }
     }
  
@@ -158,7 +174,7 @@
     public SoundType func_185467_w() {
        return this.field_149762_H;
     }
-@@ -776,11 +792,11 @@
+@@ -776,11 +797,11 @@
     }
  
     public static boolean func_196252_e(Block p_196252_0_) {
@@ -172,7 +188,7 @@
     }
  
     public static void func_149671_p() {
-@@ -1147,7 +1163,7 @@
+@@ -1147,7 +1168,7 @@
        func_196254_a("chiseled_quartz_block", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_151677_p).func_200943_b(0.8F)));
        func_196254_a("quartz_pillar", new BlockRotatedPillar(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_151677_p).func_200943_b(0.8F)));
        func_196254_a("quartz_stairs", new BlockStairs(block42.func_176223_P(), Block.Builder.func_200950_a(block42)));
@@ -181,7 +197,7 @@
        func_196254_a("dropper", new BlockDropper(Block.Builder.func_200945_a(Material.field_151576_e).func_200943_b(3.5F)));
        func_196254_a("white_terracotta", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_193561_M).func_200948_a(1.25F, 4.2F)));
        func_196254_a("orange_terracotta", new Block(Block.Builder.func_200949_a(Material.field_151576_e, MapColor.field_193562_N).func_200948_a(1.25F, 4.2F)));
-@@ -1464,6 +1480,7 @@
+@@ -1464,6 +1485,7 @@
        func_196254_a("structure_block", new BlockStructure(Block.Builder.func_200949_a(Material.field_151573_f, MapColor.field_197656_x).func_200948_a(-1.0F, 3600000.0F)));
        field_149771_c.func_177776_a();
  
@@ -189,7 +205,7 @@
        for(Block block80 : field_149771_c) {
           for(IBlockState iblockstate : block80.func_176194_O().func_177619_a()) {
              field_176229_d.func_195867_b(iblockstate);
-@@ -1604,4 +1621,83 @@
+@@ -1604,4 +1626,83 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }
