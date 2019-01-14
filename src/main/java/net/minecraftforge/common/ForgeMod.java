@@ -25,7 +25,7 @@ import net.minecraftforge.fml.WorldPersistenceHooks;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
 import net.minecraftforge.fml.common.event.FMLPostResourceLoadEvent;
-import net.minecraftforge.fml.common.event.FMLPreregistrationEvent;
+import net.minecraftforge.fml.common.event.FMLPreRegistrationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
@@ -107,7 +107,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
 
-    public void preInit(FMLPreregistrationEvent evt)
+    public void preInit(FMLPreRegistrationEvent evt)
     {
         CapabilityItemHandler.register();
         CapabilityFluidHandler.register();

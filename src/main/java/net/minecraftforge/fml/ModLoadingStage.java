@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.common.event.PostRegistrationEvent;
+import net.minecraftforge.fml.common.event.FMLPostRegistrationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostResourceLoadEvent;
-import net.minecraftforge.fml.common.event.FMLPreregistrationEvent;
+import net.minecraftforge.fml.common.event.FMLPreRegistrationEvent;
 import net.minecraftforge.fml.common.event.ModLifecycleEvent;
 
 import java.util.function.Function;
@@ -33,9 +33,9 @@ public enum ModLoadingStage
     ERROR(null),
     VALIDATE(null),
     CONSTRUCT(null),
-    PREINIT(()-> FMLPreregistrationEvent::new),
+    PREINIT(()-> FMLPreRegistrationEvent::new),
     SIDEDINIT(SidedProvider.SIDEDINIT::get),
-    INIT(()-> PostRegistrationEvent::new),
+    INIT(()-> FMLPostRegistrationEvent::new),
     POSTINIT(()-> FMLPostResourceLoadEvent::new),
     COMPLETE(()->FMLLoadCompleteEvent::new),
     DONE(null);

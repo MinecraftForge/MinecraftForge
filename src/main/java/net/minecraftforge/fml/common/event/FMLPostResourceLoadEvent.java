@@ -22,7 +22,7 @@ package net.minecraftforge.fml.common.event;
 import net.minecraftforge.fml.ModContainer;
 
 /**
- * Called after {@link PostRegistrationEvent} has been dispatched on every mod. This is the third and last
+ * Called after {@link FMLPostRegistrationEvent} has been dispatched on every mod. This is the third and last
  * commonly called event during mod initialization.
  *
  * Recommended activities: interact with other mods to establish cross-mod behaviours.

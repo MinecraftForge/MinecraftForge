@@ -22,22 +22,23 @@ package net.minecraftforge.fml.common.event;
 import net.minecraftforge.fml.ModContainer;
 
 /**
- * Called after {@link FMLPreregistrationEvent} and before {@link FMLPostResourceLoadEvent} during mod
- * startup.
+ * Called before {@link FMLPostRegistrationEvent} during mod startup.
  *
- * This is the second of three commonly called events during mod initialization.
+ * This is the first of three commonly called events during mod initialization.
  *
- * Recommended activities: Register your recipes and Ore Dictionary entries in the
- * {@link net.minecraftforge.fml.common.registry.GameRegistry} and {@link net.minecraftforge.oredict.OreDictionary}
- * Dispatch requests through {@link FMLInterModComms} to other mods, to tell them what you wish them to do.
+ * Recommended activities:
+ * Setup your logging {@link #getModLog()}
+ * Load any configuration data you might have {@link #getSuggestedConfigurationFile()}
+ * Search for a version.properties file and load it {@link #getVersionProperties()}
+ * Configure your {@link ModMetadata} programmatically {@link #getModMetadata()}
+ * Discover parts of your mod by using annotation search {@link #getAsmData()}
  *
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class PostRegistrationEvent extends ModLifecycleEvent
+public class FMLPreRegistrationEvent extends ModLifecycleEvent
 {
-
-    public PostRegistrationEvent(final ModContainer container)
+    public FMLPreRegistrationEvent(final ModContainer container)
     {
         super(container);
     }
