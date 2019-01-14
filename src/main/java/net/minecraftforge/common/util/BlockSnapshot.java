@@ -183,9 +183,10 @@ public class BlockSnapshot
             {
                 return false;
             }
+        } else
+        {
+            world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
         }
-
-        world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
 
         TileEntity te = null;
         if (getNbt() != null)
