@@ -1,14 +1,6 @@
 --- a/net/minecraft/tags/Tag.java
 +++ b/net/minecraft/tags/Tag.java
-@@ -139,6 +139,7 @@
- 
-          for(JsonElement jsonelement : jsonarray) {
-             String s = JsonUtils.func_151206_a(jsonelement, "value");
-+
-             if (!s.startsWith("#")) {
-                ResourceLocation resourcelocation = new ResourceLocation(s);
-                T t = p_200158_2_.apply(resourcelocation);
-@@ -151,9 +152,12 @@
+@@ -151,9 +151,11 @@
                 this.func_200159_a(new ResourceLocation(s.substring(1)));
              }
           }
@@ -16,12 +8,11 @@
  
           return this;
        }
-+
 +      public Tag.Builder<T> remove(Tag.ITagEntry<T> e) { this.field_200052_a.remove(e); return this; }
     }
  
     public interface ITagEntry<T> {
-@@ -192,6 +196,8 @@
+@@ -192,6 +194,8 @@
        public Collection<T> func_200578_a() {
           return this.field_200165_a;
        }
@@ -30,7 +21,7 @@
     }
  
     public static class TagEntry<T> implements Tag.ITagEntry<T> {
-@@ -238,5 +244,7 @@
+@@ -238,5 +242,7 @@
        public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
           p_200576_1_.add("#" + this.func_200577_a());
        }
