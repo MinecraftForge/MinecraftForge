@@ -63,6 +63,11 @@ public class BasicEventHooks
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
     }
 
+    public static void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item, ItemStack clone)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item, clone));
+    }
+
     public static void firePlayerCraftingEvent(EntityPlayer player, ItemStack crafted, IInventory craftMatrix)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
