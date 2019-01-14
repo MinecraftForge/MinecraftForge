@@ -7,7 +7,7 @@ updateJSONURL="http://myurl.me/"
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="http://my.issue.tracker/"
 # Extra mod loader property
-randomScalaProperty=fishy
+randomScalaProperty="fishy"
 # Arbitrary key-value property pairs available to mods
 [properties]
 key="value"
@@ -26,7 +26,7 @@ key="value"
     others, but this one is mine
     '''
     # A random extra property for a mod loader
-    randomExtraProperty=somevalue
+    randomExtraProperty="somevalue"
      # Arbitrary key-value pairs
     [inventorysorter.properties]
         key="value"
@@ -39,22 +39,23 @@ key="value"
         # The version range of the dependency
         versionRange="[14.23.2.0,)"
         # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
-        ordering=NONE
+        ordering="NONE"
         # Side this dependency is applied on - BOTH, CLIENT or SERVER
-        side=BOTH
+        side="BOTH"
     # Here's another dependency
     [[inventorysorter.dependencies]]
         modid="minecraft"
         mandatory=true
         versionRange="[1.12.2]"
-        ordering=NONE
-        side=BOTH
+        ordering="NONE"
+        side="BOTH"
+
 # Here's another mod in this jar
 [[mods]]
     # Note that other mod types may want to add additional key-value pairs in here
     modId="inventorysortertoo"
-    # ${jarVersion} will read the Implementation-Version of the jar file
-    version="${jarVersion}"
+    # ${file.jarVersion} will read the Implementation-Version of the jar file
+    version="${file.jarVersion}"
     displayName="Inventory Sorter as well"
     description='''
     This is also my mod, there may be

@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.fml.language.IModLanguageProvider;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;

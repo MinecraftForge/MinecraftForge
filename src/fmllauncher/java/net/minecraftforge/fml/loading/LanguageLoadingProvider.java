@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.loading;
 
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
-import net.minecraftforge.fml.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.fml.loading.moddiscovery.ExplodedDirectoryLocator;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import org.apache.logging.log4j.LogManager;

@@ -22,17 +22,23 @@ package net.minecraftforge.fml.common.event;
 import net.minecraftforge.fml.ModContainer;
 
 /**
- * Called after {@link FMLInitializationEvent} has been dispatched on every mod. This is the third and last
- * commonly called event during mod initialization.
+ * Called before {@link PostRegistrationEvent} during mod startup.
  *
- * Recommended activities: interact with other mods to establish cross-mod behaviours.
+ * This is the first of three commonly called events during mod initialization.
+ *
+ * Recommended activities:
+ * Setup your logging {@link #getModLog()}
+ * Load any configuration data you might have {@link #getSuggestedConfigurationFile()}
+ * Search for a version.properties file and load it {@link #getVersionProperties()}
+ * Configure your {@link ModMetadata} programmatically {@link #getModMetadata()}
+ * Discover parts of your mod by using annotation search {@link #getAsmData()}
  *
  * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLPostInitializationEvent extends ModLifecycleEvent
+public class FMLPreregistrationEvent extends ModLifecycleEvent
 {
-    public FMLPostInitializationEvent(final ModContainer container)
+    public FMLPreregistrationEvent(final ModContainer container)
     {
         super(container);
     }

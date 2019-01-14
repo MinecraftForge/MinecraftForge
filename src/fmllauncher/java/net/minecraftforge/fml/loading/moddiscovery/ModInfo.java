@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.StringSubstitutor;
 
 import java.util.Arrays;

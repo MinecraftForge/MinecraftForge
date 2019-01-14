@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 
 import com.google.common.collect.Maps;
 

@@ -354,7 +354,7 @@ public class ForgeConfig
     }
 
     @Subscribe
-    public void postInit(FMLPostInitializationEvent evt)
+    public void postInit(FMLPostResourceLoadEvent evt)
     {
         ForgeChunkManager.loadConfiguration();
     }

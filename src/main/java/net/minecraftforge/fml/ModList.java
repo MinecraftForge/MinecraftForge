@@ -19,9 +19,7 @@
 
 package net.minecraftforge.fml;
 
-import com.google.common.collect.Streams;
-import net.minecraftforge.fml.language.ModFileScanData;
-import net.minecraftforge.fml.loading.DefaultModInfos;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
