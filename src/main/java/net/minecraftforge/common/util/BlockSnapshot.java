@@ -54,7 +54,7 @@ public class BlockSnapshot
     private final NBTTagCompound nbt;
     @Nullable
     private WeakReference<World> world;
-    private final NBTTagCompound serializedState;
+    private final IBlockState initialState;
 
     public BlockSnapshot(World world, BlockPos pos, IBlockState state)
     {
@@ -67,7 +67,7 @@ public class BlockSnapshot
         this.dimId = world.dimension.getId();
         this.pos = pos.toImmutable();
         this.setReplacedBlock(state);
-        this.serializedState = NBTUtil.writeBlockState(state);
+        this.initialState = state;
         this.setFlag(3);
         this.nbt = nbt;
         if (LOGGER.isDebugEnabled())
@@ -85,12 +85,12 @@ public class BlockSnapshot
     /**
      * Raw constructor designed for serialization usages.
      */
-    public BlockSnapshot(int dimension, BlockPos pos, NBTTagCompound serializedState, int flag, @Nullable NBTTagCompound nbt)
+    public BlockSnapshot(int dimension, BlockPos pos, IBlockState initialState, int flag, @Nullable NBTTagCompound nbt)
     {
         this.dimId = dimension;
         this.pos = pos.toImmutable();
         this.setFlag(flag);
-        this.serializedState = serializedState;
+        this.initialState = initialState;
         this.nbt = nbt;
     }
 
@@ -109,7 +109,7 @@ public class BlockSnapshot
         return new BlockSnapshot(
                 tag.getInt("dimension"),
                 new BlockPos(tag.getInt("posX"), tag.getInt("posY"), tag.getInt("posZ")),
-                tag.getCompound("blockState"),
+                NBTUtil.readBlockState(tag.getCompound("blockState")),
                 tag.getInt("flag"),
                 tag.getBoolean("hasTE") ? tag.getCompound("tileEntity") : null);
     }
@@ -142,7 +142,7 @@ public class BlockSnapshot
     {
         if (this.replacedBlock == null)
         {
-            this.replacedBlock = NBTUtil.readBlockState(this.serializedState);
+            this.replacedBlock = this.getInitialState();
         }
         return this.replacedBlock;
     }
@@ -208,7 +208,7 @@ public class BlockSnapshot
 
     public void writeToNBT(NBTTagCompound compound)
     {
-        compound.setTag("blockState", getSerializedState());
+        compound.setTag("blockState", NBTUtil.writeBlockState(initialState));
         compound.setInt("posX", getPos().getX());
         compound.setInt("posY", getPos().getY());
         compound.setInt("posZ", getPos().getZ());
@@ -247,7 +247,7 @@ public class BlockSnapshot
         {
             return false;
         }
-        if (!this.getSerializedState().equals(other.getSerializedState()))
+        if (this.getInitialState() != other.getInitialState())
         {
             return false;
         }
@@ -262,7 +262,7 @@ public class BlockSnapshot
     public int hashCode()
     {
         int hash = 7;
-        hash = 73 * hash + this.getSerializedState().hashCode();
+        hash = 73 * hash + this.getInitialState().hashCode();
         hash = 73 * hash + this.getDimId();
         hash = 73 * hash + this.getPos().hashCode();
         hash = 73 * hash + Objects.hashCode(this.getNbt());
@@ -284,8 +284,5 @@ public class BlockSnapshot
 
     public void setWorld(World world) { this.world = new WeakReference<>(world); }
 
-    /**
-     * @return The blockstate in serialized form, via {@link NBTUtil#writeBlockState}
-     */
-    public NBTTagCompound getSerializedState() { return serializedState; }
+    public IBlockState getInitialState() { return initialState; }
 }
