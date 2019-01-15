@@ -17,22 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.server;
 
-import net.minecraftforge.fml.ModContainer;
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.command.CommandSource;
+import net.minecraft.server.MinecraftServer;
 
 /**
- * Called after {@link FMLPostRegistrationEvent} has been dispatched on every mod. This is the third and last
- * commonly called event during mod initialization.
- *
- * Recommended activities: interact with other mods to establish cross-mod behaviours.
+ * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.
+ * This event allows for customizations of the server, such as loading custom commands, perhaps customizing recipes or
+ * other activities.
  *
  * @author cpw
  */
-public class FMLPostResourceLoadEvent extends ModLifecycleEvent
+public class FMLServerStartingEvent extends ServerLifecycleEvent
 {
-    public FMLPostResourceLoadEvent(final ModContainer container)
+    public FMLServerStartingEvent(final MinecraftServer server)
     {
-        super(container);
+        super(server);
+    }
+
+    public CommandDispatcher<CommandSource> getCommandDispatcher() {
+        return server.getCommandManager().getDispatcher();
     }
 }

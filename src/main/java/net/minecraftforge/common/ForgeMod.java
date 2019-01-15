@@ -22,12 +22,12 @@ package net.minecraftforge.common;
 import net.minecraftforge.fml.FMLWorldPersistenceHook;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
-import net.minecraftforge.fml.common.event.FMLPostResourceLoadEvent;
-import net.minecraftforge.fml.common.event.FMLPreRegistrationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -107,7 +107,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
 
-    public void preInit(FMLPreRegistrationEvent evt)
+    public void preInit(FMLCommonSetupEvent evt)
     {
         CapabilityItemHandler.register();
         CapabilityFluidHandler.register();
@@ -136,7 +136,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 */
 
-    public void postInit(FMLPostResourceLoadEvent evt)
+    public void postInit(InterModProcessEvent evt)
     {
         registerAllBiomesAndGenerateEvents();
         //ForgeChunkManager.loadConfiguration();

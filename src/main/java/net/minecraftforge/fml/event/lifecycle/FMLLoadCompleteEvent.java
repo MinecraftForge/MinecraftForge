@@ -17,19 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.lifecycle;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.ModContainer;
 
 /**
- * Called when the server begins an orderly shutdown, before {@link FMLServerStoppedEvent}.
+ * This is a mostly internal event fired to mod containers that indicates that loading is complete. Mods should not
+ * in general override or otherwise attempt to implement this event.
  *
  * @author cpw
  */
-public class FMLServerStoppingEvent extends ServerLifecycleEvent
+public class FMLLoadCompleteEvent extends ModLifecycleEvent
 {
-    public FMLServerStoppingEvent(MinecraftServer server)
+    public FMLLoadCompleteEvent(final ModContainer container)
     {
-        super(server);
+        super(container);
     }
 }

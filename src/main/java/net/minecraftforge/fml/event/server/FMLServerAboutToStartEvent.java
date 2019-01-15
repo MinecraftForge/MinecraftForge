@@ -17,25 +17,22 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.server;
 
-import net.minecraft.client.Minecraft;
-import net.minecraftforge.fml.ModContainer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 
-import java.util.function.Supplier;
+/**
+ * Called before the server begins loading anything. Called after {@link InterModProcessEvent} on the dedicated
+ * server, and after the player has hit "Play Selected World" in the client. Called before {@link FMLServerStartingEvent}.
+ *
+ * You can obtain a reference to the server with this event.
+ * @author cpw
+ */
+public class FMLServerAboutToStartEvent extends ServerLifecycleEvent {
 
-public class FMLClientInitEvent extends ModLifecycleEvent
-{
-    private final Supplier<Minecraft> minecraftSupplier;
-
-    public FMLClientInitEvent(Supplier<Minecraft> mc, ModContainer container)
+    public FMLServerAboutToStartEvent(MinecraftServer server)
     {
-        super(container);
-        this.minecraftSupplier = mc;
-    }
-
-    public Supplier<Minecraft> getMinecraftSupplier()
-    {
-        return minecraftSupplier;
+        super(server);
     }
 }

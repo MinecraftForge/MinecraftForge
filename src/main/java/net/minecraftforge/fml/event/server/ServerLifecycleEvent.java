@@ -17,20 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.server;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.eventbus.api.Event;
 
-/**
- * Called after {@link FMLServerStartingEvent} when the server is available and ready to play.
- *
- * @author cpw
- */
-public class FMLServerStartedEvent extends ServerLifecycleEvent
+public class ServerLifecycleEvent extends Event
 {
 
-    public FMLServerStartedEvent(final MinecraftServer server)
+    protected final MinecraftServer server;
+
+    public ServerLifecycleEvent(MinecraftServer server)
     {
-        super(server);
+        this.server = server;
+    }
+
+    public MinecraftServer getServer()
+    {
+        return server;
     }
 }

@@ -17,28 +17,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.lifecycle;
 
 import net.minecraftforge.fml.ModContainer;
 
 /**
- * Called before {@link FMLPostRegistrationEvent} during mod startup.
+ * This is the third of four commonly called events during mod lifecycle startup.
  *
- * This is the first of three commonly called events during mod initialization.
+ * Called before {@link InterModProcessEvent}
+ * Called after {@link FMLClientSetupEvent} or {@link FMLDedicatedServerSetupEvent}
  *
- * Recommended activities:
- * Setup your logging {@link #getModLog()}
- * Load any configuration data you might have {@link #getSuggestedConfigurationFile()}
- * Search for a version.properties file and load it {@link #getVersionProperties()}
- * Configure your {@link ModMetadata} programmatically {@link #getModMetadata()}
- * Discover parts of your mod by using annotation search {@link #getAsmData()}
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
- * @author cpw
+ * Enqueue {@link net.minecraftforge.fml.InterModComms} messages to other mods with this event.
+ *
+ * This is a parallel dispatch event.
  */
-public class FMLPreRegistrationEvent extends ModLifecycleEvent
+public class InterModEnqueueEvent extends ModLifecycleEvent
 {
-    public FMLPreRegistrationEvent(final ModContainer container)
+
+    public InterModEnqueueEvent(final ModContainer container)
     {
         super(container);
     }
