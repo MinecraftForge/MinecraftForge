@@ -41,3 +41,12 @@
        }
  
        p_94525_2_.func_190917_f(p_94525_3_);
+@@ -576,7 +579,7 @@
+       if (!p_192389_1_.field_72995_K) {
+          EntityPlayerMP entityplayermp = (EntityPlayerMP)p_192389_2_;
+          ItemStack itemstack = ItemStack.field_190927_a;
+-         IRecipe irecipe = p_192389_1_.func_73046_m().func_199529_aN().func_199515_b(p_192389_3_, p_192389_1_);
++         IRecipe irecipe = p_192389_1_.func_73046_m().func_199529_aN().getRecipe(p_192389_3_, p_192389_1_, net.minecraftforge.common.crafting.VanillaRecipeTypes.CRAFTING);
+          if (p_192389_4_.func_201561_a(p_192389_1_, entityplayermp, irecipe) && irecipe != null) {
+             itemstack = irecipe.func_77572_b(p_192389_3_);
+          }

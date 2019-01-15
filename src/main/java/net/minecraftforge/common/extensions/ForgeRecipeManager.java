@@ -26,10 +26,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.Maps;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.resources.IResourceManagerReloadListener;
+import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.RecipeType;
 
 @SuppressWarnings("deprecation")
@@ -37,13 +43,8 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
 {
     protected final Map<RecipeType<? extends IRecipe>, List<? extends IRecipe>> sortedRecipes = Maps.newHashMap();
 
-    public <T extends IRecipe> Collection<T> getRecipes(RecipeType<T> type)
-    {
-        return recipesByType(type);
-    }
-
     @SuppressWarnings("unchecked")
-    public <T extends IRecipe> List<T> recipesByType(RecipeType<T> type)
+    public <T extends IRecipe> List<T> getRecipes(RecipeType<T> type)
     {
         return (List<T>) this.sortedRecipes.computeIfAbsent(type, t -> new ArrayList<>());
     }
@@ -51,8 +52,39 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
     public Collection<IRecipe> getRecipes(Collection<RecipeType<?>> types)
     {
         Set<IRecipe> recipes = new HashSet<>();
-        for(RecipeType<?> t : types) recipes.addAll(recipesByType(t));
+        for(RecipeType<?> t : types) recipes.addAll(getRecipes(t));
         return recipes;
+    }
+
+    public ItemStack getResult(IInventory input, World world, RecipeType<?> type)
+    {
+        for(IRecipe irecipe : getRecipes(type))
+            if (irecipe.matches(input, world)) return irecipe.getCraftingResult(input);
+        return ItemStack.EMPTY;
+    }
+
+	@Nullable
+    public <T extends IRecipe> T getRecipe(IInventory input, World world, RecipeType<T> type)
+    {
+        for(T irecipe : getRecipes(type))
+            if (irecipe.matches(input, world)) return irecipe;
+        return null;
+    }
+
+    /**
+     * Modders should not use this if possible.  In the context that this is used, you should already have the recipe.  Do not run extra lookups using this method.
+     */
+    public NonNullList<ItemStack> getRemainingItems(IInventory input, World world, RecipeType<?> type)
+    {
+        for(IRecipe irecipe : getRecipes(type))
+            if (irecipe.matches(input, world)) return irecipe.getRemainingItems(input);
+
+        NonNullList<ItemStack> nonnulllist = NonNullList.withSize(input.getSizeInventory(), ItemStack.EMPTY);
+
+        for(int i = 0; i < nonnulllist.size(); ++i)
+            nonnulllist.set(i, input.getStackInSlot(i));
+        
+        return nonnulllist;
     }
 
 }

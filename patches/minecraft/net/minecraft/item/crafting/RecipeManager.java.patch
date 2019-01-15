@@ -29,39 +29,36 @@
              } else {
                 this.func_199509_a(RecipeSerializers.func_199572_a(resourcelocation1, jsonobject));
              }
-@@ -67,11 +72,12 @@
+@@ -67,9 +72,12 @@
           throw new IllegalStateException("Duplicate recipe ignored with ID " + p_199509_1_.func_199560_c());
        } else {
           this.field_199522_d.put(p_199509_1_.func_199560_c(), p_199509_1_);
-+         ((java.util.List) recipesByType(p_199509_1_.getType())).add(p_199509_1_);
++         if(!p_199509_1_.getType().getBaseClass().isAssignableFrom(p_199509_1_.getClass())) throw new IllegalStateException(String.format("Recipe type %s is not valid for class %s", p_199509_1_.getType().getBaseClass().getName(), p_199509_1_.getClass().getName()));
++         ((java.util.List) getRecipes(p_199509_1_.getType())).add(p_199509_1_);
        }
     }
  
++   @Deprecated //Forge Use getResult(IInventory, World, RecipeType)
     public ItemStack func_199514_a(IInventory p_199514_1_, World p_199514_2_) {
--      for(IRecipe irecipe : this.field_199522_d.values()) {
-+      for(IRecipe irecipe : getRecipes(p_199514_1_.getRecipeTypes())) {
+       for(IRecipe irecipe : this.field_199522_d.values()) {
           if (irecipe.func_77569_a(p_199514_1_, p_199514_2_)) {
-             return irecipe.func_77572_b(p_199514_1_);
-          }
-@@ -82,7 +88,7 @@
- 
-    @Nullable
-    public IRecipe func_199515_b(IInventory p_199515_1_, World p_199515_2_) {
--      for(IRecipe irecipe : this.field_199522_d.values()) {
-+      for(IRecipe irecipe : getRecipes(p_199515_1_.getRecipeTypes())) {
-          if (irecipe.func_77569_a(p_199515_1_, p_199515_2_)) {
-             return irecipe;
-          }
-@@ -92,7 +98,7 @@
+@@ -81,6 +89,7 @@
     }
  
+    @Nullable
++   @Deprecated //Forge: Use getRecipe(IInventory, World, RecipeType)
+    public IRecipe func_199515_b(IInventory p_199515_1_, World p_199515_2_) {
+       for(IRecipe irecipe : this.field_199522_d.values()) {
+          if (irecipe.func_77569_a(p_199515_1_, p_199515_2_)) {
+@@ -91,6 +100,7 @@
+       return null;
+    }
+ 
++   @Deprecated //Forge: Use getRemainingItems(IInventory, World, RecipeType)
     public NonNullList<ItemStack> func_199513_c(IInventory p_199513_1_, World p_199513_2_) {
--      for(IRecipe irecipe : this.field_199522_d.values()) {
-+      for(IRecipe irecipe : getRecipes(p_199513_1_.getRecipeTypes())) {
+       for(IRecipe irecipe : this.field_199522_d.values()) {
           if (irecipe.func_77569_a(p_199513_1_, p_199513_2_)) {
-             return irecipe.func_179532_b(p_199513_1_);
-          }
-@@ -123,5 +129,7 @@
+@@ -123,5 +133,7 @@
     @OnlyIn(Dist.CLIENT)
     public void func_199518_d() {
        this.field_199522_d.clear();

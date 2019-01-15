@@ -36,14 +36,4 @@ public interface IForgeRecipe {
         return VanillaRecipeTypes.CRAFTING;
     }
 
-    /**
-     * Checks if this recipe matches the given type.
-     * @param type The type to match against, usually from an IInventory.
-     * @return If this recipe can be crafted in an inventory using this type.
-     */
-    default boolean matchesType(Collection<RecipeType<?>> types)
-    {
-        return types.contains(getType());
-    }
-
 }

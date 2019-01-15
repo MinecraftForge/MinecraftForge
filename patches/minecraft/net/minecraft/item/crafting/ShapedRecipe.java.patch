@@ -44,7 +44,7 @@
  
     public boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_) {
 -      if (!(p_77569_1_ instanceof InventoryCrafting)) {
-+      if (!matchesType(p_77569_1_.getRecipeTypes())) {
++      if (false) {
           return false;
        } else {
           for(int i = 0; i <= p_77569_1_.func_174922_i() - this.field_77576_b; ++i) {
