@@ -29,13 +29,12 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.tileentity.TileEntity;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientRegistry
 {
-    private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = Collections.synchronizedMap(new HashMap<>());
+    private static Map<Class<? extends Entity>, ResourceLocation> entityShaderMap = new ConcurrentHashMap<>();
 
     /**
      * Registers a Tile Entity renderer.

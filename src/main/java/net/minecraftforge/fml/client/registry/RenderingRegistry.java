@@ -19,21 +19,18 @@
 
 package net.minecraftforge.fml.client.registry;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 
-import com.google.common.collect.Maps;
-
 public class RenderingRegistry
 {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
 
-    private final Map<Class<? extends Entity>, IRenderFactory<? extends Entity>> entityRenderers = Collections.synchronizedMap(new HashMap<>());
+    private final Map<Class<? extends Entity>, IRenderFactory<? extends Entity>> entityRenderers = new ConcurrentHashMap<>();
 
     /**
      * Register an entity rendering handler. This will, after mod initialization, be inserted into the main
