@@ -17,27 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.lifecycle;
 
 import net.minecraftforge.fml.ModContainer;
 
 /**
- * Called after {@link FMLPreInitializationEvent} and before {@link FMLPostInitializationEvent} during mod
- * startup.
+ * This is a mostly internal event fired to mod containers that indicates that loading is complete. Mods should not
+ * in general override or otherwise attempt to implement this event.
  *
- * This is the second of three commonly called events during mod initialization.
- *
- * Recommended activities: Register your recipes and Ore Dictionary entries in the
- * {@link net.minecraftforge.fml.common.registry.GameRegistry} and {@link net.minecraftforge.oredict.OreDictionary}
- * Dispatch requests through {@link FMLInterModComms} to other mods, to tell them what you wish them to do.
- *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
  * @author cpw
  */
-public class FMLInitializationEvent extends ModLifecycleEvent
+public class FMLLoadCompleteEvent extends ModLifecycleEvent
 {
-
-    public FMLInitializationEvent(final ModContainer container)
+    public FMLLoadCompleteEvent(final ModContainer container)
     {
         super(container);
     }

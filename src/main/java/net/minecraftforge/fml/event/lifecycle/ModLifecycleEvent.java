@@ -17,10 +17,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.lifecycle;
 
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModContainer;
+
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 /**
  * Parent type to all ModLifecycle events. This is based on Forge EventBus. They fire through the
@@ -39,5 +43,13 @@ public class ModLifecycleEvent extends Event
     {
        String cn = getClass().getName();
        return cn.substring(cn.lastIndexOf('.')+4,cn.length()-5);
+    }
+
+    public Stream<InterModComms.IMCMessage> getIMCStream() {
+        return InterModComms.getMessages(this.container.getModId());
+    }
+
+    public Stream<InterModComms.IMCMessage> getIMCStream(Predicate<String> methodFilter) {
+        return InterModComms.getMessages(this.container.getModId(), methodFilter);
     }
 }

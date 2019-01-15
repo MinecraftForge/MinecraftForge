@@ -27,7 +27,7 @@ import net.minecraft.world.WorldProvider;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 
 @Mod(modid = WorldProviderCanSleepAtTest.MODID, name = "Can Sleep At Test", version = "0.0.0", acceptableRemoteVersions = "*")
 public class WorldProviderCanSleepAtTest

@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.forgespi.ICoreModFile;
+import net.minecraftforge.forgespi.coremod.ICoreModFile;
 
 import java.io.IOException;
 import java.io.Reader;

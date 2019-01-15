@@ -1,0 +1,31 @@
+--- a/net/minecraft/tags/Tag.java
++++ b/net/minecraft/tags/Tag.java
+@@ -151,9 +151,11 @@
+                this.func_200159_a(new ResourceLocation(s.substring(1)));
+             }
+          }
++         net.minecraftforge.common.ForgeHooks.deserializeTagAdditions(this, p_200158_1_, p_200158_2_, p_200158_3_);
+ 
+          return this;
+       }
++      public Tag.Builder<T> remove(Tag.ITagEntry<T> e) { this.field_200052_a.remove(e); return this; }
+    }
+ 
+    public interface ITagEntry<T> {
+@@ -192,6 +194,8 @@
+       public Collection<T> func_200578_a() {
+          return this.field_200165_a;
+       }
++      @Override public int hashCode() { return this.field_200165_a.hashCode(); }
++      @Override public boolean equals(Object o) { return o == this || (o instanceof Tag.ListEntry && this.field_200165_a.equals(((Tag.ListEntry) o).field_200165_a)); }
+    }
+ 
+    public static class TagEntry<T> implements Tag.ITagEntry<T> {
+@@ -238,5 +242,7 @@
+       public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
+          p_200576_1_.add("#" + this.func_200577_a());
+       }
++      @Override public int hashCode() { return java.util.Objects.hashCode(this.field_200163_a); }
++      @Override public boolean equals(Object o) { return o == this || (o instanceof Tag.TagEntry && java.util.Objects.equals(this.field_200163_a, ((Tag.TagEntry) o).field_200163_a)); }
+    }
+ }

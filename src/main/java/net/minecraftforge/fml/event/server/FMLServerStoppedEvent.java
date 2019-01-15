@@ -17,18 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.server;
 
 import net.minecraft.server.MinecraftServer;
 
 /**
- * Called when the server begins an orderly shutdown, before {@link FMLServerStoppedEvent}.
+ * Called after {@link FMLServerStoppingEvent} when the server has completely shut down.
+ * Called immediately before shutting down, on the dedicated server, and before returning
+ * to the main menu on the client.
  *
  * @author cpw
  */
-public class FMLServerStoppingEvent extends ServerLifecycleEvent
-{
-    public FMLServerStoppingEvent(MinecraftServer server)
+public class FMLServerStoppedEvent extends ServerLifecycleEvent {
+    public FMLServerStoppedEvent(MinecraftServer server)
     {
         super(server);
     }

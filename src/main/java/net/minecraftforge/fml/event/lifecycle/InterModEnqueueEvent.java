@@ -17,25 +17,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.lifecycle;
 
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.ModContainer;
 
-import java.util.function.Supplier;
-
-public class FMLClientInitEvent extends ModLifecycleEvent
+/**
+ * This is the third of four commonly called events during mod lifecycle startup.
+ *
+ * Called before {@link InterModProcessEvent}
+ * Called after {@link FMLClientSetupEvent} or {@link FMLDedicatedServerSetupEvent}
+ *
+ *
+ * Enqueue {@link net.minecraftforge.fml.InterModComms} messages to other mods with this event.
+ *
+ * This is a parallel dispatch event.
+ */
+public class InterModEnqueueEvent extends ModLifecycleEvent
 {
-    private final Supplier<Minecraft> minecraftSupplier;
 
-    public FMLClientInitEvent(Supplier<Minecraft> mc, ModContainer container)
+    public InterModEnqueueEvent(final ModContainer container)
     {
         super(container);
-        this.minecraftSupplier = mc;
-    }
-
-    public Supplier<Minecraft> getMinecraftSupplier()
-    {
-        return minecraftSupplier;
     }
 }

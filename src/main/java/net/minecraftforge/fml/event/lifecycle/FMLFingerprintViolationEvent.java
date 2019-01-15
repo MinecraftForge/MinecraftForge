@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.lifecycle;
 
 import java.io.File;
 import java.util.Set;

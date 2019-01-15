@@ -29,9 +29,9 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModThreadContext;
-import net.minecraftforge.fml.common.event.ModLifecycleEvent;
-import net.minecraftforge.fml.language.IModInfo;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,10 +54,10 @@ public class FMLModContainer extends ModContainer
         LOGGER.debug("Creating FMLModContainer instance for {} with classLoader {} & {}", className, modClassLoader, getClass().getClassLoader());
         this.scanResults = modFileScanResults;
         triggerMap.put(ModLoadingStage.CONSTRUCT, dummy().andThen(this::beforeEvent).andThen(this::constructMod).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.PREINIT, dummy().andThen(this::beforeEvent).andThen(this::preinitMod).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.SIDEDINIT, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.INIT, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
-        triggerMap.put(ModLoadingStage.POSTINIT, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.COMMON_SETUP, dummy().andThen(this::beforeEvent).andThen(this::preinitMod).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.SIDED_SETUP, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.ENQUEUE_IMC, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.PROCESS_IMC, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.COMPLETE, dummy().andThen(this::beforeEvent).andThen(this::completeLoading).andThen(this::fireEvent).andThen(this::afterEvent));
         this.eventBus = IEventBus.create(this::onEventFailed);
 

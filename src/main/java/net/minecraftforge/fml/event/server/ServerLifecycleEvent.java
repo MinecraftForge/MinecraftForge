@@ -17,26 +17,23 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.language;
+package net.minecraftforge.fml.event.server;
 
-import java.util.function.Consumer;
-import java.util.function.Supplier;
+import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.eventbus.api.Event;
 
-/**
- * Loaded as a ServiceLoader, from the classpath. ExtensionPoint are loaded from
- * the mods directory, with the FMLType META-INF of LANGPROVIDER.
- *
- * Version data is read from the manifest's implementation version.
- */
-public interface IModLanguageProvider
+public class ServerLifecycleEvent extends Event
 {
-    String name();
 
-    Consumer<ModFileScanData> getFileVisitor();
+    protected final MinecraftServer server;
 
-    <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(Supplier<R> consumeEvent);
+    public ServerLifecycleEvent(MinecraftServer server)
+    {
+        this.server = server;
+    }
 
-    interface IModLanguageLoader {
-        <T> T loadMod(IModInfo info, ClassLoader modClassLoader, ModFileScanData modFileScanResults);
+    public MinecraftServer getServer()
+    {
+        return server;
     }
 }

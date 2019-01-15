@@ -25,16 +25,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.common.event.ModLifecycleEvent;
-import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLFingerprintViolationEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
+import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 /**
@@ -67,11 +67,11 @@ public @interface Mod
      *
      * These suggestions are mostly just suggestions on what to do in each event.
      * <ul>
-     * <li> {@link FMLPreInitializationEvent} : Run before anything else. Read your config, create blocks,
+     * <li> {@link FMLCommonSetupEvent} : Run before anything else. Read your config, create blocks,
      * items, etc, and register them with the {@link GameRegistry}.</li>
-     * <li> {@link FMLInitializationEvent} : Do your mod setup. Build whatever data structures you care about. Register recipes,
+     * <li> {@link InterModEnqueueEvent} : Do your mod setup. Build whatever data structures you care about. Register recipes,
      * send {@link FMLInterModComms} messages to other mods.</li>
-     * <li> {@link FMLPostInitializationEvent} : Handle interaction with other mods, complete your setup based on this.</li>
+     * <li> {@link InterModProcessEvent} : Handle interaction with other mods, complete your setup based on this.</li>
      * </ul>
      * <p>These are the server lifecycle events. They are fired whenever a server is running, or about to run. Each time a server
      * starts they will be fired in this sequence.
@@ -86,9 +86,9 @@ public @interface Mod
      * The second set of events are more specialized, for receiving notification of specific
      * information.
      * <ul>
-     * <li> {@link FMLFingerprintViolationEvent} : Sent just before {@link FMLPreInitializationEvent}
+     * <li> {@link FMLFingerprintViolationEvent} : Sent just before {@link FMLCommonSetupEvent}
      * if something is wrong with your mod signature</li>
-     * <li> {@link IMCEvent} : Sent just after {@link FMLInitializationEvent} if you have IMC messages waiting
+     * <li> {@link IMCEvent} : Sent just after {@link InterModEnqueueEvent} if you have IMC messages waiting
      * from other mods</li>
      * </ul>
      *

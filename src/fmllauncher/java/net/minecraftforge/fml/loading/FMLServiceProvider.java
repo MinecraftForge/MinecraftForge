@@ -25,6 +25,7 @@ import cpw.mods.modlauncher.api.ITransformer;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import joptsimple.ArgumentAcceptingOptionSpec;
 import joptsimple.OptionSpecBuilder;
+import net.minecraftforge.forgespi.Environment;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -79,10 +80,10 @@ public class FMLServiceProvider implements ITransformationService
         arguments.put("mcpMappings", targetMcpMappings);
         LOGGER.debug(CORE, "Preparing launch handler");
         FMLLoader.setupLaunchHandler(environment, arguments);
+        FMLEnvironment.setupInteropEnvironment(environment);
+        Environment.build(environment);
         LOGGER.debug(CORE,"Initiating mod scan");
         FMLLoader.beginModScan(arguments);
-        LOGGER.debug(CORE, "Loading access transformers");
-        FMLLoader.loadAccessTransformer();
     }
 
     @Override

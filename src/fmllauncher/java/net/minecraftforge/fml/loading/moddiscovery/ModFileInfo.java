@@ -20,9 +20,9 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraftforge.fml.loading.MavenVersionAdapter;
-import net.minecraftforge.fml.language.IModFileInfo;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.MavenVersionAdapter;
+import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.StringUtils;
 import org.apache.maven.artifact.versioning.VersionRange;
 

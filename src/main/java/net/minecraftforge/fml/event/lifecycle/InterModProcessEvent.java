@@ -17,20 +17,29 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.lifecycle;
 
-import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.ModContainer;
+
+import java.util.function.Predicate;
 
 /**
- * Called after {@link FMLServerStoppingEvent} when the server has completely shut down.
- * Called immediately before shutting down, on the dedicated server, and before returning
- * to the main menu on the client.
+ * This is the fourth of four commonly called events during mod lifecycle startup.
  *
- * @author cpw
+ * Called after {@link InterModEnqueueEvent}
+ *
+ * Retrieve {@link net.minecraftforge.fml.InterModComms} {@link net.minecraftforge.fml.InterModComms.IMCMessage} suppliers
+ * and process them as you wish with this event.
+ *
+ * This is a parallel dispatch event.
+ *
+ * @see #getIMCStream()
+ * @see #getIMCStream(Predicate)
  */
-public class FMLServerStoppedEvent extends ServerLifecycleEvent {
-    public FMLServerStoppedEvent(MinecraftServer server)
+public class InterModProcessEvent extends ModLifecycleEvent
+{
+    public InterModProcessEvent(final ModContainer container)
     {
-        super(server);
+        super(container);
     }
 }

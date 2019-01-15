@@ -17,22 +17,18 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.event;
+package net.minecraftforge.fml.event.server;
 
-import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 
 /**
- * Called before the server begins loading anything. Called after {@link FMLPostInitializationEvent} on the dedicated
- * server, and after the player has hit "Play Selected World" in the client. Called before {@link FMLServerStartingEvent}.
+ * Called when the server begins an orderly shutdown, before {@link FMLServerStoppedEvent}.
  *
- * You can obtain a reference to the server with this event.
  * @author cpw
  */
-public class FMLServerAboutToStartEvent extends ServerLifecycleEvent {
-
-    public FMLServerAboutToStartEvent(MinecraftServer server)
+public class FMLServerStoppingEvent extends ServerLifecycleEvent
+{
+    public FMLServerStoppingEvent(MinecraftServer server)
     {
         super(server);
     }

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
 
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;

@@ -17,12 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.language;
+package net.minecraftforge.fml.event.server;
 
-public interface ILifecycleEvent<R extends ILifecycleEvent<?>> {
-    @SuppressWarnings("unchecked")
-    default R concrete() {
-        return (R) this;
+import com.mojang.brigadier.CommandDispatcher;
+import net.minecraft.command.CommandSource;
+import net.minecraft.server.MinecraftServer;
+
+/**
+ * Called after {@link FMLServerAboutToStartEvent} and before {@link FMLServerStartedEvent}.
+ * This event allows for customizations of the server, such as loading custom commands, perhaps customizing recipes or
+ * other activities.
+ *
+ * @author cpw
+ */
+public class FMLServerStartingEvent extends ServerLifecycleEvent
+{
+    public FMLServerStartingEvent(final MinecraftServer server)
+    {
+        super(server);
+    }
+
+    public CommandDispatcher<CommandSource> getCommandDispatcher() {
+        return server.getCommandManager().getDispatcher();
     }
 }
-

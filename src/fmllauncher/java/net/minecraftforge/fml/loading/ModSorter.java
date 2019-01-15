@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.loading;
 
 import net.minecraftforge.fml.loading.toposort.TopologicalSort;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;

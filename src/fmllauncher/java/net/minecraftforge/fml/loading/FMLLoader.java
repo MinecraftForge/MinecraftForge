@@ -30,19 +30,16 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
-import net.minecraftforge.forgespi.ICoreModProvider;
+import net.minecraftforge.forgespi.coremod.ICoreModProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
@@ -149,6 +146,7 @@ public class FMLLoader
         commonLaunchHandler.validatePaths(forgePath, mcPaths, forgeVersion, mcVersion, mcpVersion);
         commonLaunchHandler.setup(environment, arguments);
         classLoaderExclusions = commonLaunchHandler.getPackagePredicate();
+
         languageLoadingProvider = new LanguageLoadingProvider();
         languageLoadingProvider.addForgeLanguage(forgePath);
 
@@ -173,26 +171,6 @@ public class FMLLoader
 
     static ModDiscoverer getModDiscoverer() {
         return modDiscoverer;
-    }
-
-    public static void loadAccessTransformer()
-    {
-/*
-        final URL resource = FMLLoader.class.getClassLoader().getResource("forge_at.cfg");
-        if (resource == null) {
-            throw new RuntimeException("Missing forge_at.cfg file");
-        }
-        try
-        {
-            LOGGER.debug(CORE, "Loading forge_at.cfg into access transformer");
-            accessTransformer.addResource(Paths.get(resource.toURI()), "forge_at.cfg");
-        }
-        catch (URISyntaxException e)
-        {
-            LOGGER.error("Error loading forge_at.cfg file", e);
-            throw new RuntimeException(e);
-        }
-*/
     }
 
     public static void addAccessTransformer(Path atPath, ModFile modName)

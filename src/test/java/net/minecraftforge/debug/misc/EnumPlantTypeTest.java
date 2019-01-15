@@ -22,8 +22,8 @@ package net.minecraftforge.debug.misc;
 import net.minecraftforge.common.BiomeManager.BiomeType;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.event.FMLInitializationEvent;
+import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
 @Mod(modid = "enumplanttypetest", name = "EnumPlantTypeTest", version = "1.0", acceptableRemoteVersions = "*")
