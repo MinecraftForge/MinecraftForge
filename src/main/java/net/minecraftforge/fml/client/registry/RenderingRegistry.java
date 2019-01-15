@@ -19,6 +19,8 @@
 
 package net.minecraftforge.fml.client.registry;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.client.renderer.entity.Render;
@@ -31,12 +33,13 @@ public class RenderingRegistry
 {
     private static final RenderingRegistry INSTANCE = new RenderingRegistry();
 
-    private Map<Class<? extends Entity>, IRenderFactory<? extends Entity>> entityRenderers = Maps.newHashMap();
+    private final Map<Class<? extends Entity>, IRenderFactory<? extends Entity>> entityRenderers = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Register an entity rendering handler. This will, after mod initialization, be inserted into the main
      * render map for entities.
-     * Call this during Preinitialization phase.
+     * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
+     * This method is safe to call during parallel mod loading.
      */
     public static <T extends Entity> void registerEntityRenderingHandler(Class<T> entityClass, IRenderFactory<? super T> renderFactory)
     {
