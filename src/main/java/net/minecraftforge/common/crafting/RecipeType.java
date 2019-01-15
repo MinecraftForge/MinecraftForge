@@ -34,9 +34,9 @@ public class RecipeType<T extends IRecipe>
     private static final Map<ResourceLocation, RecipeType<?>> TYPES = new HashMap<>();
 
     protected final ResourceLocation id;
-    protected final Class<T> baseClass;
+    protected final Class<? extends T> baseClass;
     
-    private RecipeType(ResourceLocation id, Class<T> baseClass) {
+    private RecipeType(ResourceLocation id, Class<? extends T> baseClass) {
         this.id = id;
         this.baseClass = baseClass;
     }
@@ -49,7 +49,7 @@ public class RecipeType<T extends IRecipe>
     /**
      * @return The class that all recipes of this type must extend.
      */
-    public Class<T> getBaseClass()
+    public Class<? extends T> getBaseClass()
     {
         return baseClass;
     }
@@ -61,7 +61,7 @@ public class RecipeType<T extends IRecipe>
      */
     @SuppressWarnings("unchecked")
     @Nullable
-	public static <T extends IRecipe> RecipeType<T> get(ResourceLocation id, Class<T> baseClass)
+	public static <T extends IRecipe> RecipeType<T> get(ResourceLocation id, Class<? extends T> baseClass)
     {
         RecipeType<?> type = TYPES.get(id);
         if(type == null)
