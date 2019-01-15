@@ -25,6 +25,8 @@
   "fml.modloading.errorduringevent":"{0,modinfo,name} ({0,modinfo,id}) encountered an error during the {1,lower} event phase\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadforge": "Failed to load forge",
   "fml.modloading.missingdependency": "Mod \u00a7e{4}\u00a7r requires \u00a76{3}\u00a7r \u00a7o{5,vr}\u00a7r\n\u00a77Currently, \u00a76{3}\u00a7r\u00a77 is \u00a7o{6,i18n,fml.messages.artifactversion.ornotinstalled}",
+  "fml.modloading.failedtoprocesswork":"{0,modinfo,name} ({0,modinfo,id}) encountered an error processing deferred work\n\u00a77{2,exc,msg}",
+  
 
   "fml.messages.artifactversion.ornotinstalled":"{0,ornull,fml.messages.artifactversion.notinstalled}",
   "fml.messages.artifactversion":"{0,ornull,fml.messages.artifactversion.none}",

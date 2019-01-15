@@ -91,7 +91,7 @@ public class ModList
 
     public void dispatchLifeCycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
-        DeferredWorkQueue.deferredWorkQueue.clear();
+        DeferredWorkQueue.clear();
         try
         {
             modLoadingThreadPool.submit(()->this.mods.parallelStream().forEach(m->m.transitionState(lifecycleEvent, errorHandler))).get();
@@ -100,9 +100,7 @@ public class ModList
         {
             LOGGER.error(LOADING, "Encountered an exception during parallel processing", e);
         }
-        LOGGER.debug(LOADING, "Dispatching synchronous work, {} jobs", DeferredWorkQueue.deferredWorkQueue.size());
-        DeferredWorkQueue.deferredWorkQueue.forEach(FutureTask::run);
-        LOGGER.debug(LOADING, "Synchronous work queue complete");
+        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
 
