@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +38,8 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -46,6 +49,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
@@ -1156,5 +1160,77 @@ public class ForgeHooks
     public static int canEntitySpawn(EntityLiving entity, IWorld world, float x, float y, float z, MobSpawnerBaseLogic spawner) {
         Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
+    }
+
+    public static <T> void deserializeTagAdditions(Tag.Builder<T> builder, Predicate<ResourceLocation> isValueKnown, Function<ResourceLocation, T> valueGetter, JsonObject json)
+    {
+        if (json.has("optional"))
+        {
+            for (JsonElement entry : JsonUtils.getJsonArray(json, "optional"))
+            {
+                String s = JsonUtils.getString(entry, "value");
+                if (!s.startsWith("#"))
+                {
+                    ResourceLocation rl = new ResourceLocation(s);
+                    if (isValueKnown.test(rl) && valueGetter.apply(rl) != null)
+                    {
+                        builder.add(valueGetter.apply(rl));
+                    }
+                } else
+                {
+                    builder.add(new OptionalTagEntry<>(new ResourceLocation(s.substring(1))));
+                }
+            }
+        }
+
+        if (json.has("remove"))
+        {
+            for (JsonElement entry : JsonUtils.getJsonArray(json, "remove"))
+            {
+                String s = JsonUtils.getString(entry, "value");
+                if (!s.startsWith("#"))
+                {
+                    ResourceLocation rl = new ResourceLocation(s);
+                    if (isValueKnown.test(rl) && valueGetter.apply(rl) != null)
+                    {
+                        Tag.ITagEntry<T> dummyEntry = new Tag.ListEntry<>(Collections.singletonList(valueGetter.apply(rl)));
+                        builder.remove(dummyEntry);
+                    }
+                } else
+                {
+                    Tag.ITagEntry<T> dummyEntry = new Tag.TagEntry<>(new ResourceLocation(s.substring(1)));
+                    builder.remove(dummyEntry);
+                }
+            }
+        }
+    }
+
+    private static class OptionalTagEntry<T> extends Tag.TagEntry<T>
+    {
+        private Tag<T> resolvedTag = null;
+
+        OptionalTagEntry(ResourceLocation referent)
+        {
+            super(referent);
+        }
+
+        @Override
+        public boolean resolve(@Nonnull Function<ResourceLocation, Tag<T>> resolver)
+        {
+            if (this.resolvedTag == null)
+            {
+                this.resolvedTag = resolver.apply(this.getSerializedId());
+            }
+            return true; // never fail if resolver returns null
+        }
+
+        @Override
+        public void populate(@Nonnull Collection<T> items)
+        {
+            if (this.resolvedTag != null)
+            {
+                items.addAll(this.resolvedTag.getAllElements());
+            }
+        }
     }
 }
