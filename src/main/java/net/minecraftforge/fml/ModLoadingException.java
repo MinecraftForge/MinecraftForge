@@ -20,7 +20,7 @@
 package net.minecraftforge.fml;
 
 import com.google.common.collect.Streams;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.EarlyLoadingException;
 
 import java.util.Arrays;

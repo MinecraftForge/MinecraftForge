@@ -5,9 +5,9 @@
           }
  
 -         if (p_196250_2_.field_73011_w.func_76567_e() && p_196250_2_.func_180494_b(p_196250_3_) != Biomes.field_76778_j) {
-+         net.minecraft.world.dimension.Dimension.SleepResult sleepResult = p_196250_2_.field_73011_w.canSleepAt(p_196250_4_, p_196250_3_);
-+         if (sleepResult != net.minecraft.world.dimension.Dimension.SleepResult.BED_EXPLODES) {
-+            if (sleepResult == net.minecraft.world.dimension.Dimension.SleepResult.DENY) return true;
++         net.minecraftforge.common.extensions.IForgeDimension.SleepResult sleepResult = p_196250_2_.field_73011_w.canSleepAt(p_196250_4_, p_196250_3_);
++         if (sleepResult != net.minecraftforge.common.extensions.IForgeDimension.SleepResult.BED_EXPLODES) {
++            if (sleepResult == net.minecraftforge.common.extensions.IForgeDimension.SleepResult.DENY) return true;
              if (p_196250_1_.func_177229_b(field_176471_b)) {
                 EntityPlayer entityplayer = this.func_176470_e(p_196250_2_, p_196250_3_);
                 if (entityplayer != null) {

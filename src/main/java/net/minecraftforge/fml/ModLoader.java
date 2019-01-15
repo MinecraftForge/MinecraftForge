@@ -19,16 +19,19 @@
 
 package net.minecraftforge.fml;
 
+import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.ObjectHolderRegistry;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,14 +43,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.CORE;
+import static net.minecraftforge.fml.Logging.LOADING;
 
 public class ModLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static ModLoader INSTANCE;
-    private final ClassLoader launchClassLoader;
+    private final TransformingClassLoader launchClassLoader;
     private final LoadingModList loadingModList;
-    private final ModLoadingClassLoader modClassLoader;
 
     private final List<ModLoadingException> loadingExceptions;
     private ModLoader()
@@ -55,10 +58,8 @@ public class ModLoader
         INSTANCE = this;
         this.launchClassLoader = FMLLoader.getLaunchClassLoader();
         this.loadingModList = FMLLoader.getLoadingModList();
-        this.modClassLoader = new ModLoadingClassLoader(this.launchClassLoader);
         this.loadingExceptions = FMLLoader.getLoadingModList().
                 getErrors().stream().flatMap(ModLoadingException::fromEarlyException).collect(Collectors.toList());
-        Thread.currentThread().setContextClassLoader(this.modClassLoader);
     }
 
     public static ModLoader get()
@@ -78,16 +79,18 @@ public class ModLoader
         }
         final Stream<ModContainer> modContainerStream = loadingModList.getModFiles().stream().
                 map(ModFileInfo::getFile).
-                map(mf -> buildMods(mf, modClassLoader)).
+                map(mf -> buildMods(mf, launchClassLoader)).
                 flatMap(Collection::stream);
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.error(CORE, "Failed to initialize mod containers");
+            LOGGER.fatal(CORE, "Failed to initialize mod containers");
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainerStream.collect(Collectors.toList()));
         dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT);
         GameData.fireCreateRegistryEvents();
+        ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
+        GameData.fireRegistryEvents();
         dispatchAndHandleError(LifecycleEventProvider.PREINIT);
         DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
         dispatchAndHandleError(LifecycleEventProvider.SIDEDINIT);
@@ -100,7 +103,7 @@ public class ModLoader
             event.dispatch(this::accumulateErrors);
         }
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.error("Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
+            LOGGER.fatal("Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
             throw new LoadingFailedException(loadingExceptions);
         }
     }
@@ -108,10 +111,11 @@ public class ModLoader
         loadingExceptions.addAll(errors);
     }
 
-    private List<ModContainer> buildMods(final ModFile modFile, final ModLoadingClassLoader modClassLoader)
+    private List<ModContainer> buildMods(final ModFile modFile, final TransformingClassLoader modClassLoader)
     {
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
+        LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
         return modFile.getScanResult().getTargets().entrySet().stream().
                 map(e-> {
                     try {

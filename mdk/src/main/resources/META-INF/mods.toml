@@ -5,8 +5,8 @@
 # Find more information on toml format here:  https://github.com/toml-lang/toml
 # The name of the mod loader type to load - for regular FML @Mod mods it should be javafml
 modLoader="javafml" #mandatory
-# A version range to match for said mod loader - for regular FML @Mod it will be the minecraft version (without the 1.)
-loaderVersion="[13,)" #mandatory
+# A version range to match for said mod loader - for regular FML @Mod it will be the forge version
+loaderVersion="[24,)" #mandatory (24 is current forge version)
 # A URL to query for updates for this mod. See the JSON update specification <here>
 updateJSONURL="http://myurl.me/" #optional
 # A URL to refer people to when problems occur with this mod
@@ -43,7 +43,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magn
     # Does this dependency have to exist - if not, ordering below must be specified
     mandatory=true #mandatory
     # The version range of the dependency
-    versionRange="[14.23.2.0,)" #mandatory
+    versionRange="[24,)" #mandatory
     # An ordering relationship for the dependency - BEFORE or AFTER required if the relationship is not mandatory
     ordering="NONE"
     # Side this dependency is applied on - BOTH, CLIENT or SERVER

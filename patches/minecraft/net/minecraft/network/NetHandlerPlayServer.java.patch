@@ -1,6 +1,18 @@
 --- a/net/minecraft/network/NetHandlerPlayServer.java
 +++ b/net/minecraft/network/NetHandlerPlayServer.java
-@@ -1265,5 +1265,7 @@
+@@ -327,9 +327,11 @@
+             }
+ 
+             entity.func_70080_a(d3, d4, d5, f, f1);
++            this.field_147369_b.func_70080_a(d3, d4, d5, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A); // Forge - Resync player position on vehicle moving
+             boolean flag2 = worldserver.func_195586_b(entity, entity.func_174813_aQ().func_186664_h(0.0625D));
+             if (flag && (flag1 || !flag2)) {
+                entity.func_70080_a(d0, d1, d2, f, f1);
++               this.field_147369_b.func_70080_a(d0, d1, d2, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A); // Forge - Resync player position on vehicle moving
+                this.field_147371_a.func_179290_a(new SPacketMoveVehicle(entity));
+                return;
+             }
+@@ -1265,5 +1267,7 @@
     }
  
     public void func_147349_a(CPacketCustomPayload p_147349_1_) {

@@ -22,7 +22,7 @@ package net.minecraftforge.fml;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import org.apache.logging.log4j.LogManager;
@@ -44,12 +44,13 @@ import static net.minecraftforge.fml.Logging.LOADING;
 public class AutomaticEventSubscriber
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Type AUTO_SUBSCRIBER = Type.getType(Mod.EventBusSubscriber.class);
     public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
     {
         if (scanData == null) return;
         LOGGER.debug(LOADING,"Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
         List<ModFileScanData.AnnotationData> ebsTargets = scanData.getAnnotations().stream().
-                filter(annotationData -> Objects.equals(annotationData.getAnnotationType(), Type.getType(Mod.EventBusSubscriber.class))).
+                filter(annotationData -> AUTO_SUBSCRIBER.equals(annotationData.getAnnotationType())).
                 collect(Collectors.toList());
 
         ebsTargets.forEach(ad -> {
@@ -66,7 +67,7 @@ public class AutomaticEventSubscriber
                 }
                 catch (ClassNotFoundException e)
                 {
-                    LOGGER.error(LOADING, "Failed to load mod class {} for @EventBusSubscriber annotation", ad.getClassType(), e);
+                    LOGGER.fatal(LOADING, "Failed to load mod class {} for @EventBusSubscriber annotation", ad.getClassType(), e);
                     throw new RuntimeException(e);
                 }
             }

@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.packs;
 
 import net.minecraft.resources.AbstractResourcePack;
+import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -42,6 +43,7 @@ import com.google.common.base.Joiner;
 public class ModFileResourcePack extends AbstractResourcePack
 {
     private final ModFile modFile;
+    private ResourcePackInfo packInfo;
 
     public ModFileResourcePack(final ModFile modFile)
     {
@@ -77,7 +79,8 @@ public class ModFileResourcePack extends AbstractResourcePack
         try
         {
             Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName()).toAbsolutePath();
-            Path inputPath = root.resolve(pathIn);
+            Path inputPath = root.getFileSystem().getPath(pathIn);
+
             return Files.walk(root).
                     map(path -> root.relativize(path.toAbsolutePath())).
                     filter(path -> path.getNameCount() > 1 && path.getNameCount() - 1 <= maxDepth). // Make sure the depth is within bounds, ignoring domain
@@ -134,5 +137,13 @@ public class ModFileResourcePack extends AbstractResourcePack
     public void close() throws IOException
     {
 
+    }
+
+    <T extends ResourcePackInfo> void setPackInfo(final T packInfo) {
+        this.packInfo = packInfo;
+    }
+
+    <T extends ResourcePackInfo> T getPackInfo() {
+        return (T)this.packInfo;
     }
 }

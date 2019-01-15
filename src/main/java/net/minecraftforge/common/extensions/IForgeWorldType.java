@@ -1,3 +1,22 @@
+/*
+ * Minecraft Forge
+ * Copyright (c) 2016-2018.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation version 2.1
+ * of the License.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package net.minecraftforge.common.extensions;
 
 import java.util.function.LongFunction;
@@ -19,6 +38,7 @@ import net.minecraft.world.gen.layer.GenLayerZoom;
 import net.minecraft.world.gen.layer.LayerUtil;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.client.config.IArrayEntry;
 
 public interface IForgeWorldType
 {
@@ -45,7 +65,7 @@ public interface IForgeWorldType
     {
         if (this == WorldType.FLAT)
             mc.displayGuiScreen(new GuiCreateFlatWorld(gui, gui.chunkProviderSettingsJson));
-        else if (this == WorldType.CUSTOMIZED)
+        else if (this == WorldType.BUFFET)
             mc.displayGuiScreen(new GuiCreateBuffetWorld(gui, gui.chunkProviderSettingsJson));
     }
 
@@ -81,17 +101,19 @@ public interface IForgeWorldType
     }
 
     /**
-     * Creates the GenLayerBiome used for generating the world with the specified
-     * ChunkProviderSettings JSON String *IF AND ONLY IF* this WorldType ==
-     * WorldType.CUSTOMIZED.
+     * Allows modifying the {@link IAreaFactory} used for this type's biome
+     * generation.
      *
-     *
-     * @param worldSeed     The world seed
-     * @param parentLayer   The parent layer to feed into any layer you return
-     * @param chunkSettings The ChunkGeneratorSettings constructed from the custom
-     *                      JSON
-     * @return A GenLayer that will return ints representing the Biomes to be
-     *         generated, see GenLayerBiome
+     * @param                <T> The type of {@link IArea}.
+     * @param                <C> The type of {@link IContextExtended}.
+     * 
+     * @param parentLayer    The parent layer to feed into any layer you return
+     * @param chunkSettings  The {@link OverworldGenSettings} used to create the
+     *                       {@link GenLayerBiome}.
+     * @param contextFactory A {@link LongFunction} factory to create contexts of
+     *                       the supplied size.
+     * @return An {@link IAreaFactory} that representing the Biomes to be generated.
+     * @see {@link GenLayerBiome}
      */
     default <T extends IArea, C extends IContextExtended<T>> IAreaFactory<T> getBiomeLayer(IAreaFactory<T> parentLayer,
             OverworldGenSettings chunkSettings, LongFunction<C> contextFactory)

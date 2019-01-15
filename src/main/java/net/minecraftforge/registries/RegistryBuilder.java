@@ -41,6 +41,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
     private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
+    private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
     private boolean saveToDisc = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
@@ -88,6 +89,8 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             this.add((CreateCallback<T>)inst);
         if (inst instanceof ValidateCallback)
             this.add((ValidateCallback<T>)inst);
+        if (inst instanceof BakeCallback)
+            this.add((BakeCallback<T>)inst);
         if (inst instanceof DummyFactory)
             this.set((DummyFactory<T>)inst);
         if (inst instanceof MissingFactory)
@@ -116,6 +119,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public RegistryBuilder<T> add(ValidateCallback<T> validate)
     {
         this.validateCallback.add(validate);
+        return this;
+    }
+
+    public RegistryBuilder<T> add(BakeCallback<T> bake)
+    {
+        this.bakeCallback.add(bake);
         return this;
     }
 
@@ -151,12 +160,11 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 
     public IForgeRegistry<T> create()
     {
-        return RegistryManager.ACTIVE.createRegistry(registryName, registryType, optionalDefaultKey, minId, maxId,
-                getAdd(), getClear(), getCreate(), getValidate(), saveToDisc, allowOverrides, allowModifications, dummyFactory, missingFactory);
+        return RegistryManager.ACTIVE.createRegistry(registryName, this);
     }
 
     @Nullable
-    private AddCallback<T> getAdd()
+    public AddCallback<T> getAdd()
     {
         if (addCallback.isEmpty())
             return null;
@@ -171,7 +179,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    private ClearCallback<T> getClear()
+    public ClearCallback<T> getClear()
     {
         if (clearCallback.isEmpty())
             return null;
@@ -186,7 +194,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    private CreateCallback<T> getCreate()
+    public CreateCallback<T> getCreate()
     {
         if (createCallback.isEmpty())
             return null;
@@ -201,7 +209,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     }
 
     @Nullable
-    private ValidateCallback<T> getValidate()
+    public ValidateCallback<T> getValidate()
     {
         if (validateCallback.isEmpty())
             return null;
@@ -213,5 +221,68 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
             for (ValidateCallback<T> cb : this.validateCallback)
                 cb.onValidate(owner, stage, id, key, obj);
         };
+    }
+
+    @Nullable
+    public BakeCallback<T> getBake()
+    {
+        if (bakeCallback.isEmpty())
+            return null;
+        if (bakeCallback.size() == 1)
+            return bakeCallback.get(0);
+
+        return (owner, stage) ->
+        {
+            for (BakeCallback<T> cb : this.bakeCallback)
+                cb.onBake(owner, stage);
+        };
+    }
+
+    public Class<T> getType()
+    {
+        return registryType;
+    }
+
+    @Nullable
+    public ResourceLocation getDefault()
+    {
+        return this.optionalDefaultKey;
+    }
+
+    public int getMinId()
+    {
+        return minId;
+    }
+
+    public int getMaxId()
+    {
+        return maxId;
+    }
+
+    public boolean getAllowOverrides()
+    {
+        return allowOverrides;
+    }
+
+    public boolean getAllowModifications()
+    {
+        return allowModifications;
+    }
+
+    @Nullable
+    public DummyFactory<T> getDummyFactory()
+    {
+        return dummyFactory;
+    }
+
+    @Nullable
+    public MissingFactory<T> getMissingFactory()
+    {
+        return missingFactory;
+    }
+
+    public boolean getSaveToDisc()
+    {
+        return saveToDisc;
     }
 }

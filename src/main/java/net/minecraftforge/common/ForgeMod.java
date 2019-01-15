@@ -22,10 +22,16 @@ package net.minecraftforge.common;
 import net.minecraftforge.fml.FMLWorldPersistenceHook;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
+import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
+import net.minecraftforge.fml.common.event.FMLPostResourceLoadEvent;
+import net.minecraftforge.fml.common.event.FMLPreRegistrationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftforge.versions.mcp.MCPVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,11 +44,6 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLModIdMappingEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
@@ -73,6 +74,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public ForgeMod()
     {
+        LOGGER.info("Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
         INSTANCE = this;
         WorldPersistenceHooks.addHook(this);
         WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
@@ -82,6 +84,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
+        ForgeConfig.load();
     }
 
 /*
@@ -104,14 +107,13 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
 
-    public void preInit(FMLPreInitializationEvent evt)
+    public void preInit(FMLPreRegistrationEvent evt)
     {
         CapabilityItemHandler.register();
         CapabilityFluidHandler.register();
         CapabilityAnimation.register();
         CapabilityEnergy.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
-//        ForgeChunkManager.captureConfig(evt.getModConfigurationDirectory());
         MinecraftForge.EVENT_BUS.register(this);
 
         if (!ForgeMod.disableVersionCheck)
@@ -134,7 +136,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 */
 
-    public void postInit(FMLPostInitializationEvent evt)
+    public void postInit(FMLPostResourceLoadEvent evt)
     {
         registerAllBiomesAndGenerateEvents();
         //ForgeChunkManager.loadConfiguration();

@@ -10,7 +10,7 @@ alpha. Eloraam of RedPower, and SpaceToad of Buildcraft, without their acceptian
 of me taking over the project, who knows what Minecraft modding would be today.
 
 Secondly, someone who has worked with me, and developed some of the core features
-that allow modding to he as functional, and as simple as it is, cpw. For developing
+that allow modding to be as functional, and as simple as it is, cpw. For developing
 FML, which stabelized the client and server modding ecosystem. As well as the base
 loading system that allows us to modify Minecraft's code as elegently as possible.
 

@@ -23,13 +23,23 @@ import static net.minecraftforge.fml.Logging.CORE;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+
+import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.io.WritingMode;
 
-import net.minecraftforge.common.config.ForgeConfigSpec;
+import net.minecraftforge.versions.forge.ForgeVersion;
 
 public class ForgeConfig
 {
@@ -118,9 +128,71 @@ public class ForgeConfig
 
         .build();
 
+    private static ForgeConfigSpec chunk_spec = new ForgeConfigSpec.Builder()
+        .comment("Default configuration for Forge chunk loading control")
+        .push("defaults")
+            .comment("Allow mod overrides, false will use default for everything.")
+            .translation("forge.configgui.enableModOverrides")
+            .define("enable", true)
+
+            .comment("The default maximum number of chunks a mod can force, per ticket,",
+                     "for a mod without an override. This is the maximum number of chunks a single ticket can force.")
+            .translation("forge.configgui.maximumChunksPerTicket")
+            .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE)
+
+            .comment("The default maximum ticket count for a mod which does not have an override",
+                     "in this file. This is the number of chunk loading requests a mod is allowed to make.")
+            .translation("forge.configgui.maximumTicketCount")
+            .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE)
+
+            .comment("The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.")
+            .translation("forge.configgui.playerTicketCount")
+            .defineInRange("playerTicketCount", 500, 0, Integer.MAX_VALUE)
+
+            .comment("Unloaded chunks can first be kept in a dormant cache for quicker loading times. Specify the size (in chunks) of that cache here")
+            .translation("forge.configgui.dormantChunkCacheSize")
+            .defineInRange("dormantChunkCacheSize", 0, 0, Integer.MAX_VALUE)
+
+            .comment("Load chunks asynchronously for players, reducing load on the server thread.",
+                     "Can be disabled to help troubleshoot chunk loading issues.")
+            .translation("forge.configgui.asyncChunkLoading")
+            .define("asyncChunkLoading", true)
+        .pop()
+
+        //Not sure how to do unlimited nested config objects, so doing this for now as it works.
+        .comment("Per Mod settings. If a mod is missing a entry, or value the default will be used.")
+        .defineList("mods", () -> {
+            Map<String, Object> ret = new HashMap<>();
+            ret.put("modid", ForgeVersion.MOD_ID);
+            ret.put("maxTickets", 200);
+            ret.put("chunksPerTicket", 25);
+            return Arrays.asList(ret);
+        }, (o) -> {
+            if (!(o instanceof Map)) return false;
+            @SuppressWarnings("unchecked")
+            Map<Object, Object> map = (Map<Object, Object>)o;
+            for (Entry<Object, Object> e : map.entrySet()) {
+                if ("modid".equals(e.getKey())) {
+                    if (!(e.getValue() instanceof String))
+                        return false;
+                } else if ("maxTickets".equals(e.getKey())) {
+                    if (!(e.getValue() instanceof Integer))
+                        return false;
+                } else if ("chunksPerTicket".equals(e.getKey())) {
+                    if (!(e.getValue() instanceof Integer))
+                        return false;
+                } else { //Unknown entry
+                    return false;
+                }
+            }
+            return true;
+        })
+        .build();
+
     private CommentedFileConfig configData;
-    private void loadFrom(final Path configFile)
-    {
+    private CommentedFileConfig chunkData;
+    private void loadFrom(final Path configRoot) {
+        Path configFile = configRoot.resolve("forge.toml");
         configData = CommentedFileConfig.builder(configFile).sync()
                 .autosave()
                 //.autoreload()
@@ -128,18 +200,32 @@ public class ForgeConfig
                 .build();
         configData.load();
         if (!spec.isCorrect(configData)) {
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configFile);
+            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configRoot);
             spec.correct(configData, (action, path, incorrectValue, correctedValue) ->
                     LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
             configData.save();
         }
+        LogManager.getLogger().debug(CORE, "Loaded Forge config from {}", configFile);
+
+
+        configFile = configRoot.resolve("forge_chunks.toml");
+        chunkData = CommentedFileConfig.builder(configFile).sync()
+                .autosave()
+                //.autoreload()
+                .writingMode(WritingMode.REPLACE)
+                .build();
+        chunkData.load();
+        if (!chunk_spec.isCorrect(chunkData)) {
+            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configRoot);
+            chunk_spec.correct(chunkData, (action, path, incorrectValue, correctedValue) ->
+                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
+            chunkData.save();
+        }
+        LogManager.getLogger().debug(CORE, "Loaded Forge Chunk config from {}", configFile);
     }
 
-    public static void load()
-    {
-        Path configFile = Paths.get("config").resolve("forge.toml");
-        INSTANCE.loadFrom(configFile);
-        LogManager.getLogger().debug(CORE, "Loaded FML config from {}", configFile);
+    public static void load() {
+        INSTANCE.loadFrom(Paths.get("config"));
     }
 
     //TODO: Make this less duplciate? Maybe static CfgEntry<T> zombieBaseSummonChance = create((spec, name) -> spec.comment().translation().define(name), "zombieBaseSummonChance")
@@ -170,6 +256,40 @@ public class ForgeConfig
     public static class CLIENT {
         public static boolean forgeCloudsEnabled() {
             return ForgeConfig.INSTANCE.configData.<Boolean>getOrElse("general.forgeCloudsEnabled", true);
+        }
+    }
+
+    public static class CHUNK {
+        public static boolean enableModOverrides() {
+            return ForgeConfig.INSTANCE.chunkData.<Boolean>getOrElse("defaults.enable", true);
+        }
+        public static int playerTicketCount() {
+            return ForgeConfig.INSTANCE.chunkData.<Integer>getOrElse("defaults.playerTicketCount", 500);
+        }
+        public static int dormantChunkCacheSize() {
+            return ForgeConfig.INSTANCE.chunkData.<Integer>getOrElse("defaults.dormantChunkCacheSize", 0);
+        }
+        private static int maxTickets() {
+            return ForgeConfig.INSTANCE.chunkData.<Integer>getOrElse("defaults.maxTickets", 200);
+        }
+        public static int chunksPerTicket() {
+            return ForgeConfig.INSTANCE.chunkData.<Integer>getOrElse("defaults.chunksPerTicket", 0);
+        }
+        public static int maxTickets(@Nullable String modid) {
+            if (!enableModOverrides() || modid == null)
+                return maxTickets();
+            Map<Object,Object> data = ForgeConfig.INSTANCE.chunkData.<List<Map<Object, Object>>>getOrElse("mods", Collections.emptyList())
+                    .stream().filter(e -> modid.equals(e.get("modid"))).findFirst().orElse(null);
+            Integer ret = data == null ? null : (Integer)data.get("maxTickets");
+            return ret == null ? maxTickets() : ret;
+        }
+        public static int chunksPerTicket(@Nullable String modid) {
+            if (!enableModOverrides() || modid == null)
+                return chunksPerTicket();
+            Map<Object,Object> data = ForgeConfig.INSTANCE.chunkData.<List<Map<Object, Object>>>getOrElse("mods", Collections.emptyList())
+                    .stream().filter(e -> modid.equals(e.get("modid"))).findFirst().orElse(null);
+            Integer ret = data == null ? null : (Integer)data.get("chunksPerTicket");
+            return ret == null ? chunksPerTicket() : ret;
         }
     }
 
@@ -234,7 +354,7 @@ public class ForgeConfig
     }
 
     @Subscribe
-    public void postInit(FMLPostInitializationEvent evt)
+    public void postInit(FMLPostResourceLoadEvent evt)
     {
         ForgeChunkManager.loadConfiguration();
     }
