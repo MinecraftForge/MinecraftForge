@@ -441,7 +441,7 @@ public class ForgeHooks
     {
         boolean isSpectator = (entity instanceof EntityPlayer && ((EntityPlayer)entity).isSpectator());
         if (isSpectator) return false;
-        if (!ForgeConfig.General.fullBoundingBoxLadders.getBoolean())
+        if (!ForgeConfig.GENERAL.fullBoundingBoxLadders.getBoolean())
         {
             return state.getBlock().isLadder(state, world, pos, entity);
         }
