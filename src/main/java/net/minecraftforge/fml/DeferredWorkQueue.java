@@ -72,7 +72,8 @@ public class DeferredWorkQueue
      * Is to {@link Runnable} as {@link Callable} is to {@link Supplier}.
      */
     @FunctionalInterface
-    public interface CheckedRunnable {
+    public interface CheckedRunnable 
+    {
         void run() throws Exception;
     }
     
@@ -131,8 +132,8 @@ public class DeferredWorkQueue
         return runLater(() -> {
             try {
                 workToEnqueue.run();
-            } catch (Exception e) {
-                throw new CompletionException(e);
+            } catch (Throwable t) {
+                throw new CompletionException(t);
             }
         });
     }
@@ -177,8 +178,8 @@ public class DeferredWorkQueue
         return getLater(() -> {
             try {
                 return workToEnqueue.call();
-            } catch (Exception e) {
-                throw new CompletionException(e);
+            } catch (Throwable t) {
+                throw new CompletionException(t);
             }
         });
     }
@@ -197,8 +198,8 @@ public class DeferredWorkQueue
             Stopwatch timer = Stopwatch.createStarted();
             taskinfo.task.run();
             timer.stop();
-            if (timer.elapsed(TimeUnit.SECONDS) > 5) {
-                LOGGER.warn(LOADING, "Mod '{}' took {} to run a deferred task.", taskinfo.owner.getDisplayName(), timer);
+            if (timer.elapsed(TimeUnit.SECONDS) > 1) {
+                LOGGER.warn(LOADING, "Mod '{}' took {} to run a deferred task.", taskinfo.owner.getModId(), timer);
             }
         }
         LOGGER.info(LOADING, "Synchronous work queue completed in {}", globalTimer);
