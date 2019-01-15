@@ -49,7 +49,7 @@
  
     private int func_201562_r() {
 -      FurnaceRecipe furnacerecipe = (FurnaceRecipe)this.field_145850_b.func_199532_z().func_199515_b(this, this.field_145850_b);
-+      FurnaceRecipe furnacerecipe = (FurnaceRecipe)this.field_145850_b.func_199532_z().getRecipe(this, this.field_145850_b, net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING);
++      FurnaceRecipe furnacerecipe = this.field_145850_b.func_199532_z().getRecipe(this, this.field_145850_b, net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING);
        return furnacerecipe != null ? furnacerecipe.func_201830_h() : 200;
     }
  
@@ -91,7 +91,7 @@
     }
  
     public boolean func_70300_a(EntityPlayer p_70300_1_) {
-@@ -501,4 +506,28 @@
+@@ -501,4 +506,27 @@
  
        this.field_203901_m.clear();
     }
@@ -118,5 +118,4 @@
 +      for (int x = 0; x < handlers.length; x++)
 +          handlers[x].invalidate();
 +   }
-+
  }

@@ -19,15 +19,24 @@
 
 package net.minecraftforge.common.crafting;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Nullable;
+
+import org.apache.logging.log4j.LogManager;
+
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 
 public class RecipeType<T extends IRecipe>
 {
+    private static final Map<ResourceLocation, RecipeType<?>> TYPES = new HashMap<>();
+
     protected final ResourceLocation id;
     protected final Class<T> baseClass;
     
-    public RecipeType(ResourceLocation id, Class<T> baseClass) {
+    private RecipeType(ResourceLocation id, Class<T> baseClass) {
         this.id = id;
         this.baseClass = baseClass;
     }
@@ -43,5 +52,28 @@ public class RecipeType<T extends IRecipe>
     public Class<T> getBaseClass()
     {
         return baseClass;
+    }
+
+    /**
+     * @param id The name of the recipe type.
+     * @param baseClass The base class of all recipes using this type.
+     * @return A recipe type, with the provided ID and base class, or null, if the entry exists and the base class is incorrect.
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable
+	public static <T extends IRecipe> RecipeType<T> get(ResourceLocation id, Class<T> baseClass)
+    {
+        RecipeType<?> type = TYPES.get(id);
+        if(type == null)
+        {
+            type = new RecipeType<>(id, baseClass);
+            TYPES.put(id, type);
+        }
+        else if(type.getBaseClass() != baseClass)
+        {
+            LogManager.getLogger().error("Attempted to access RecipeType {} with the wrong base class. Provided {}, expected {}.");
+            return null;
+        }
+        return (RecipeType<T>) type;
     }
 }

@@ -20,11 +20,8 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -33,9 +30,11 @@ import com.google.common.collect.Maps;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.RecipeType;
 
 @SuppressWarnings("deprecation")
@@ -43,17 +42,16 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
 {
     protected final Map<RecipeType<? extends IRecipe>, List<? extends IRecipe>> sortedRecipes = Maps.newHashMap();
 
+    @Override
+    public void onResourceManagerReload(IResourceManager resourceManager) {
+        this.sortedRecipes.clear();
+        CraftingHelper.reloadConstants(resourceManager);
+    }
+
     @SuppressWarnings("unchecked")
     public <T extends IRecipe> List<T> getRecipes(RecipeType<T> type)
     {
         return (List<T>) this.sortedRecipes.computeIfAbsent(type, t -> new ArrayList<>());
-    }
-
-    public Collection<IRecipe> getRecipes(Collection<RecipeType<?>> types)
-    {
-        Set<IRecipe> recipes = new HashSet<>();
-        for(RecipeType<?> t : types) recipes.addAll(getRecipes(t));
-        return recipes;
     }
 
     public ItemStack getResult(IInventory input, World world, RecipeType<?> type)

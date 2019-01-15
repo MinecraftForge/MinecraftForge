@@ -28,11 +28,11 @@ public final class VanillaRecipeTypes
     /**
      * Used for normal crafting.
      */
-    public static final RecipeType<IRecipe> CRAFTING = new RecipeType<>(new ResourceLocation("crafting"), IRecipe.class);
+    public static final RecipeType<IRecipe> CRAFTING = RecipeType.get(new ResourceLocation("crafting"), IRecipe.class);
 
     /**
      * Used for furnace recipes.
      */
-    public static final RecipeType<FurnaceRecipe> SMELTING = new RecipeType<>(new ResourceLocation("smelting"), FurnaceRecipe.class);
+    public static final RecipeType<FurnaceRecipe> SMELTING = RecipeType.get(new ResourceLocation("smelting"), FurnaceRecipe.class);
 
 }
