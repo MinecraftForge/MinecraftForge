@@ -55,6 +55,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 
+import io.netty.util.BooleanSupplier;
+
 /*
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to acept comments, language keys,
  * and other things Forge configs would find useful.
@@ -230,11 +232,11 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public <T> ConfigValue<T> define(List<String> path, Supplier<T> defaultSupplier, Predicate<Object> validator) {
             return define(path, defaultSupplier, validator, Object.class);
         }
-        public <T> ConfigValue<T> define(List<String> path, Supplier<?> defaultSupplier, Predicate<Object> validator, Class<?> clazz) {
+        public <T> ConfigValue<T> define(List<String> path, Supplier<T> defaultSupplier, Predicate<Object> validator, Class<?> clazz) {
             context.setClazz(clazz);
-            return define(path, new ValueSpec(defaultSupplier, validator, context));
+            return define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier);
         }
-        public <T> ConfigValue<T> define(List<String> path, ValueSpec value) { // This is the root where everything at the end of the day ends up.
+        public <T> ConfigValue<T> define(List<String> path, ValueSpec value, Supplier<T> defaultSupplier) { // This is the root where everything at the end of the day ends up.
             if (!currentPath.isEmpty()) {
                 List<String> tmp = new ArrayList<>(currentPath.size() + path.size());
                 tmp.addAll(currentPath);
@@ -243,7 +245,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             }
             storage.set(path, value);
             context = new BuilderContext();
-            return new ConfigValue<>(this, path);
+            return new ConfigValue<>(this, path, defaultSupplier);
         }
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(String path, V defaultValue, V min, V max, Class<V> clazz) {
             return defineInRange(split(path), defaultValue, min, max, clazz);
@@ -273,16 +275,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public <T> ConfigValue<T> defineInList(List<String> path, Supplier<T> defaultSupplier, Collection<? extends T> acceptableValues) {
             return define(path, defaultSupplier, acceptableValues::contains);
         }
-        public <T> ConfigValue<List<T>> defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
+        public <T> ConfigValue<List<? extends T>> defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultValue, elementValidator);
         }
-        public <T> ConfigValue<List<T>> defineList(String path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
+        public <T> ConfigValue<List<? extends T>> defineList(String path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             return defineList(split(path), defaultSupplier, elementValidator);
         }
-        public <T> ConfigValue<List<T>> defineList(List<String> path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
+        public <T> ConfigValue<List<? extends T>> defineList(List<String> path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
             return defineList(path, () -> defaultValue, elementValidator);
         }
-        public <T> ConfigValue<List<T>> defineList(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
+        public <T> ConfigValue<List<? extends T>> defineList(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             context.setClazz(List.class);
             return define(path, new ValueSpec(defaultSupplier, elementValidator, context) {
                 @Override
@@ -303,7 +305,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
                     }
                     return list;
                 }
-            });
+            }, defaultSupplier);
         }
 
         //Enum
@@ -353,7 +355,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             return new BooleanValue(this, define(path, defaultSupplier, o -> {
                 if (o instanceof String) return ((String)o).equalsIgnoreCase("true") || ((String)o).equalsIgnoreCase("false");
                 return o instanceof Boolean;
-            }, Boolean.class).getPath());
+            }, Boolean.class).getPath(), defaultSupplier);
         }
 
         //Double
@@ -367,7 +369,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             return defineInRange(split(path), defaultSupplier, min, max);
         }
         public DoubleValue defineInRange(List<String> path, Supplier<Double> defaultSupplier, double min, double max) {
-            return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath());
+            return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
         }
         
         //Ints
@@ -381,7 +383,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             return defineInRange(split(path), defaultSupplier, min, max);
         }
         public IntValue defineInRange(List<String> path, Supplier<Integer> defaultSupplier, int min, int max) {
-            return new IntValue(this, defineInRange(path, defaultSupplier, min, max, Integer.class).getPath());
+            return new IntValue(this, defineInRange(path, defaultSupplier, min, max, Integer.class).getPath(), defaultSupplier);
         }
         
         //Longs
@@ -395,7 +397,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             return defineInRange(split(path), defaultSupplier, min, max);
         }
         public LongValue defineInRange(List<String> path, Supplier<Long> defaultSupplier, long min, long max) {
-            return new LongValue(this, defineInRange(path, defaultSupplier, min, max, Long.class).getPath());
+            return new LongValue(this, defineInRange(path, defaultSupplier, min, max, Long.class).getPath(), defaultSupplier);
         }
 
         public Builder comment(String comment)
@@ -574,13 +576,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
     {
         private final Builder parent;
         private final List<String> path;
+        private final Supplier<T> defaultSupplier;
         
         private ForgeConfigSpec spec;
         
-        ConfigValue(Builder parent, List<String> path)
+        ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier)
         {
             this.parent = parent;
             this.path = path;
+            this.defaultSupplier = defaultSupplier;
             this.parent.values.add(this);
         }
         
@@ -593,7 +597,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
             Preconditions.checkNotNull(spec.childConfig, "Cannot get config value without assigned Config object present");
-            return spec.childConfig.get(path);
+            return spec.childConfig.getOrElse(path, defaultSupplier);
         }
         
         public Builder next()
@@ -604,9 +608,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
     
     public static class BooleanValue extends ConfigValue<Boolean>
     {
-        BooleanValue(Builder parent, List<String> path)
+        BooleanValue(Builder parent, List<String> path, Supplier<Boolean> defaultSupplier)
         {
-            super(parent, path);
+            super(parent, path, defaultSupplier);
         }
         
         public boolean getBoolean() { return get().booleanValue(); }
@@ -614,9 +618,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
     
     public static class NumberValue<T extends Number> extends ConfigValue<T>
     {
-        public NumberValue(Builder parent, List<String> path)
+        public NumberValue(Builder parent, List<String> path, Supplier<T> defaultSupplier)
         {
-            super(parent, path);
+            super(parent, path, defaultSupplier);
         }
         
         public int getInt() { return get().intValue(); }
@@ -627,26 +631,26 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
     
     public static class IntValue extends NumberValue<Integer>
     {
-        IntValue(Builder parent, List<String> path)
+        IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier)
         {
-            super(parent, path);
+            super(parent, path, defaultSupplier);
         }
     }
     
     public static class LongValue extends NumberValue<Long>
     {
-        LongValue(Builder parent, List<String> path)
+        LongValue(Builder parent, List<String> path, Supplier<Long> defaultSupplier)
         {
-            super(parent, path);
+            super(parent, path, defaultSupplier);
         }
         
     }
     
     public static class DoubleValue extends NumberValue<Double>
     {
-        DoubleValue(Builder parent, List<String> path)
+        DoubleValue(Builder parent, List<String> path, Supplier<Double> defaultSupplier)
         {
-            super(parent, path);
+            super(parent, path, defaultSupplier);
         }
     }
 
