@@ -1164,9 +1164,9 @@ public class ForgeHooks
 
     public static <T> void deserializeTagAdditions(Tag.Builder<T> builder, Predicate<ResourceLocation> isValueKnown, Function<ResourceLocation, T> valueGetter, JsonObject json)
     {
-        if (json.has("optional_values"))
+        if (json.has("optional"))
         {
-            for (JsonElement entry : JsonUtils.getJsonArray(json, "optional_values"))
+            for (JsonElement entry : JsonUtils.getJsonArray(json, "optional"))
             {
                 String s = JsonUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
@@ -1183,9 +1183,9 @@ public class ForgeHooks
             }
         }
 
-        if (json.has("remove_values"))
+        if (json.has("remove"))
         {
-            for (JsonElement entry : JsonUtils.getJsonArray(json, "remove_values"))
+            for (JsonElement entry : JsonUtils.getJsonArray(json, "remove"))
             {
                 String s = JsonUtils.getString(entry, "value");
                 if (!s.startsWith("#"))
