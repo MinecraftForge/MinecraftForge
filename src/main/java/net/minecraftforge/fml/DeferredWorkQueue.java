@@ -198,7 +198,7 @@ public class DeferredWorkQueue
             Stopwatch timer = Stopwatch.createStarted();
             taskinfo.task.run();
             timer.stop();
-            if (timer.elapsed(TimeUnit.SECONDS) > 1) {
+            if (timer.elapsed(TimeUnit.SECONDS) >= 1) {
                 LOGGER.warn(LOADING, "Mod '{}' took {} to run a deferred task.", taskinfo.owner.getModId(), timer);
             }
         }
