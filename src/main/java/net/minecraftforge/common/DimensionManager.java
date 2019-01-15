@@ -395,7 +395,7 @@ public class DimensionManager
         {
             int id = queueIterator.nextInt();
             DimensionData dimension = dimensions.get(id);
-            if (dimension.ticksWaited < ForgeConfig.GENERAL.dimensionUnloadQueueDelay.getInt())
+            if (dimension.ticksWaited < ForgeConfig.GENERAL.dimensionUnloadQueueDelay.get())
             {
                 dimension.ticksWaited++;
                 continue;

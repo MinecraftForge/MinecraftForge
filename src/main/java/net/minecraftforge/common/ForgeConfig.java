@@ -36,7 +36,6 @@ import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.common.ForgeConfigSpec.NumberValue;
 
 public class ForgeConfig
 {    
@@ -252,19 +251,19 @@ public class ForgeConfig
             builder.pop();
         }
         
-        private final ConfigValue<List<CommentedConfig>> mods = CHUNK_BUILDER
+        private final ConfigValue<List<? extends CommentedConfig>> mods = CHUNK_BUILDER
                 .defineList("mods", Lists.newArrayList(modCfgDefault), o -> {
                     if (!(o instanceof CommentedConfig)) return false;
                     return chunkSpec.isCorrect((CommentedConfig) o);
                 });
         
-        private int getByMod(NumberValue<Integer> def, String name, String modid) {
-            if (!enable.getBoolean() || modid == null)
-                return def.getInt();
+        private int getByMod(ConfigValue<Integer> def, String name, String modid) {
+            if (!enable.get() || modid == null)
+                return def.get();
             
             return mods.get().stream().filter(c -> modid.equals(c.get("modid"))).findFirst()
                     .map(c -> c.<Integer>get(name))
-                    .orElseGet(def::getInt);
+                    .orElseGet(def::get);
         }
 
         public int maxTickets(@Nullable String modid) {

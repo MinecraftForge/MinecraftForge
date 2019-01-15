@@ -612,24 +612,9 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         {
             super(parent, path, defaultSupplier);
         }
-        
-        public boolean getBoolean() { return get().booleanValue(); }
     }
     
-    public static class NumberValue<T extends Number> extends ConfigValue<T>
-    {
-        public NumberValue(Builder parent, List<String> path, Supplier<T> defaultSupplier)
-        {
-            super(parent, path, defaultSupplier);
-        }
-        
-        public int getInt() { return get().intValue(); }
-        public long getLong() { return get().longValue(); }
-        public float getFloat() { return get().floatValue(); }
-        public double getDouble() { return get().doubleValue(); }
-    }
-    
-    public static class IntValue extends NumberValue<Integer>
+    public static class IntValue extends ConfigValue<Integer>
     {
         IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier)
         {
@@ -637,16 +622,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         }
     }
     
-    public static class LongValue extends NumberValue<Long>
+    public static class LongValue extends ConfigValue<Long>
     {
         LongValue(Builder parent, List<String> path, Supplier<Long> defaultSupplier)
         {
             super(parent, path, defaultSupplier);
         }
-        
     }
     
-    public static class DoubleValue extends NumberValue<Double>
+    public static class DoubleValue extends ConfigValue<Double>
     {
         DoubleValue(Builder parent, List<String> path, Supplier<Double> defaultSupplier)
         {
