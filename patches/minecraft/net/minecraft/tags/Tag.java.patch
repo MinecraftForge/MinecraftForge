@@ -4,7 +4,7 @@
                 this.func_200159_a(new ResourceLocation(s.substring(1)));
              }
           }
-+         net.minecraftforge.common.TagDeserializerExtensions.deserializeAdditional(this, p_200158_1_, p_200158_2_, p_200158_3_);
++         net.minecraftforge.common.ForgeHooks.deserializeTagAdditions(this, p_200158_1_, p_200158_2_, p_200158_3_);
  
           return this;
        }
