@@ -24,6 +24,8 @@ import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.ResourceLocationException;
@@ -34,7 +36,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @SuppressWarnings("rawtypes")
-public class ObjectHolderRef implements Runnable
+public class ObjectHolderRef implements Consumer<Predicate<ResourceLocation>>
 {
     private static final Logger LOGGER  = LogManager.getLogger();
     private Field field;
@@ -132,8 +134,11 @@ public class ObjectHolderRef implements Runnable
     }
 
     @Override
-    public void run()
+    public void accept(Predicate<ResourceLocation> filter)
     {
+        if (registry == null || !filter.test(registry.getRegistryName()))
+            return;
+
         Object thing;
         if (isValid && registry.containsKey(injectedObject) && !registry.isDummied(injectedObject))
         {

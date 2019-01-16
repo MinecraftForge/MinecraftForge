@@ -248,6 +248,7 @@ public class GameData
         // the id mapping has reverted, fire remap events for those that care about id changes
         //Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
 
+        ObjectHolderRegistry.applyObjectHolders();
         // the id mapping has reverted, ensure we sync up the object holders
         LOGGER.debug("Frozen state restored.");
     }
@@ -786,35 +787,25 @@ public class GameData
     {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
         Collections.sort(keys, (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString()));
-        /*
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
-            if (filter.test(name))
-                ((ForgeRegistry<?>)reg).unfreeze();
-        });
-        */
 
-        if (filter.test(BLOCKS))
-        {
-            MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(BLOCKS).getRegisterEvent(BLOCKS));
-        }
-        if (filter.test(ITEMS))
-        {
-            MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(ITEMS).getRegisterEvent(ITEMS));
-        }
+        //Move Blocks to first, and Items to second.
+        keys.remove(BLOCKS);
+        keys.remove(ITEMS);
+
+        keys.add(0, BLOCKS);
+        keys.add(1, ITEMS);
+
         for (ResourceLocation rl : keys)
         {
             if (!filter.test(rl)) continue;
-            if (rl == BLOCKS || rl == ITEMS) continue;
-            MinecraftForge.EVENT_BUS.post(RegistryManager.ACTIVE.getRegistry(rl).getRegisterEvent(rl));
+            ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
+            reg.unfreeze();
+            MinecraftForge.EVENT_BUS.post(reg.getRegisterEvent(rl));
+            reg.freeze();
+            LOGGER.info("{} Applying holder lookups", rl.toString());
+            ObjectHolderRegistry.applyObjectHolders(key -> rl.equals(key));
+            LOGGER.info("{} Holder lookups applied", rl.toString());
         }
-
-
-        /*
-        RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
-            if (filter.test(name))
-                ((ForgeRegistry<?>)reg).freeze();
-        });
-        */
     }
 
     public static ResourceLocation checkPrefix(String name)

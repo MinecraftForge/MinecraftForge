@@ -27,8 +27,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.forgespi.language.ModFileScanData;
@@ -54,7 +57,7 @@ public class ObjectHolderRegistry
      * and hashCode function to de-duplicate callers here.
      * The default @ObjectHolder implementation uses the hashCode/equals for the field the annotation is on.
      */
-    public static void addHandler(Runnable ref)
+    public static void addHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         objectHolders.add(ref);
     }
@@ -68,7 +71,7 @@ public class ObjectHolderRegistry
      *
      * @return true if handler was matched and removed.
      */
-    public static boolean removeHandler(Runnable ref)
+    public static boolean removeHandler(Consumer<Predicate<ResourceLocation>> ref)
     {
         return objectHolders.remove(ref);
     }
@@ -78,7 +81,7 @@ public class ObjectHolderRegistry
     //==============================================================
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Set<Runnable> objectHolders = new HashSet<>();
+    private static final Set<Consumer<Predicate<ResourceLocation>>> objectHolders = new HashSet<>();
     private static final Type OBJECT_HOLDER = Type.getType(ObjectHolder.class);
     private static final Type MOD = Type.getType(Mod.class);
 
@@ -174,8 +177,13 @@ public class ObjectHolderRegistry
     public static void applyObjectHolders()
     {
         LOGGER.info("Applying holder lookups");
-        objectHolders.forEach(Runnable::run);
+        applyObjectHolders(key -> true);
         LOGGER.info("Holder lookups applied");
+    }
+
+    public static void applyObjectHolders(Predicate<ResourceLocation> filter)
+    {
+        objectHolders.forEach(e -> e.accept(filter));
     }
 
 }
