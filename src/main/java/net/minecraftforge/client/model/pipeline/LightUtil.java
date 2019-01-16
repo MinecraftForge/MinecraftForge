@@ -244,6 +244,7 @@ public class LightUtil
     }
 
     private static IVertexConsumer tessellator = null;
+    @Deprecated // TODO: remove
     public static IVertexConsumer getTessellator()
     {
         if(tessellator == null)
@@ -256,6 +257,7 @@ public class LightUtil
     }
 
     private static ItemConsumer itemConsumer = null;
+    @Deprecated // TODO: remove
     public static ItemConsumer getItemConsumer()
     {
         if(itemConsumer == null)
@@ -265,20 +267,39 @@ public class LightUtil
         return itemConsumer;
     }
 
-    // renders quad in any Vertex Format, but is slower
-    public static void renderQuadColorSlow(BufferBuilder wr, BakedQuad quad, int auxColor)
+    private static final class ItemPipeline
     {
-        ItemConsumer cons;
-        if(wr == Tessellator.getInstance().getBuffer())
+        final BufferBuilder buffer;
+        final VertexBufferConsumer bufferConsumer;
+        final ItemConsumer itemConsumer;
+
+        ItemPipeline(BufferBuilder buffer)
         {
-            cons = getItemConsumer();
+            this.buffer = buffer;
+            this.bufferConsumer = new VertexBufferConsumer(buffer);
+            this.itemConsumer = new ItemConsumer(bufferConsumer);
+        }
+    }
+
+    private static final ThreadLocal<ItemPipeline> itemPipeline = new ThreadLocal<>();
+
+    // renders quad in any Vertex Format, but is slower
+    public static void renderQuadColorSlow(BufferBuilder buffer, BakedQuad quad, int auxColor)
+    {
+        ItemPipeline pipeline = itemPipeline.get();
+        if (pipeline == null || buffer != pipeline.buffer)
+        {
+            pipeline = new ItemPipeline(buffer);
+            itemPipeline.set(pipeline);
         }
         else
         {
-            cons = new ItemConsumer(new VertexBufferConsumer(wr));
+            pipeline.bufferConsumer.checkVertexFormat();
         }
-        float b = (float)(auxColor & 0xFF) / 0xFF;
-        float g = (float)((auxColor >>> 8) & 0xFF) / 0xFF;
+        ItemConsumer cons = pipeline.itemConsumer;
+
+        float b = (float)( auxColor         & 0xFF) / 0xFF;
+        float g = (float)((auxColor >>>  8) & 0xFF) / 0xFF;
         float r = (float)((auxColor >>> 16) & 0xFF) / 0xFF;
         float a = (float)((auxColor >>> 24) & 0xFF) / 0xFF;
 

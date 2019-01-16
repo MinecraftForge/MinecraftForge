@@ -33,7 +33,7 @@ public class VertexBufferConsumer implements IVertexConsumer
 {
     private static final float[] dummyColor = new float[]{ 1, 1, 1, 1 };
     private final BufferBuilder renderer;
-    private final int[] quadData;
+    private int[] quadData;
     private int v = 0;
     private BlockPos offset = BlockPos.ORIGIN;
 
@@ -69,6 +69,14 @@ public class VertexBufferConsumer implements IVertexConsumer
                 //Arrays.fill(quadData, 0);
                 v = 0;
             }
+        }
+    }
+
+    public void checkVertexFormat()
+    {
+        if (renderer.getVertexFormat().getNextOffset() != quadData.length)
+        {
+            quadData = new int[renderer.getVertexFormat().getNextOffset()];
         }
     }
 
