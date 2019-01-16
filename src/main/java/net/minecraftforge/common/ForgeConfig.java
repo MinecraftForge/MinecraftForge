@@ -36,6 +36,7 @@ import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 public class ForgeConfig
 {    
@@ -288,7 +289,7 @@ public class ForgeConfig
     }
 
     public static void load() {
-        loadFrom(Paths.get("config"));
+        loadFrom(FMLPaths.CONFIGDIR.get());
     }
 
     //General
