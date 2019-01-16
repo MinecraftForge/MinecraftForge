@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BlockBush.java
 +++ b/net/minecraft/block/BlockBush.java
-@@ -10,7 +10,7 @@
+@@ -10,14 +10,14 @@
  import net.minecraft.world.IWorld;
  import net.minecraft.world.IWorldReaderBase;
  
@@ -9,6 +9,14 @@
     protected BlockBush(Block.Builder p_i48437_1_) {
        super(p_i48437_1_);
     }
+ 
+    protected boolean func_200014_a_(IBlockState p_200014_1_, IBlockReader p_200014_2_, BlockPos p_200014_3_) {
+       Block block = p_200014_1_.func_177230_c();
+-      return block == Blocks.field_196658_i || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_150458_ak;
++      return block == Blocks.field_196658_i || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_150458_ak || block.canSustainPlant(p_200014_1_, p_200014_2_, p_200014_3_, net.minecraft.util.EnumFacing.UP, this);
+    }
+ 
+    public IBlockState func_196271_a(IBlockState p_196271_1_, EnumFacing p_196271_2_, IBlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
 @@ -44,4 +44,11 @@
     public int func_200011_d(IBlockState p_200011_1_, IBlockReader p_200011_2_, BlockPos p_200011_3_) {
        return 0;
