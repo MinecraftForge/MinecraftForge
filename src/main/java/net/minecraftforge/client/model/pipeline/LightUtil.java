@@ -269,33 +269,23 @@ public class LightUtil
 
     private static final class ItemPipeline
     {
-        final BufferBuilder buffer;
         final VertexBufferConsumer bufferConsumer;
         final ItemConsumer itemConsumer;
 
-        ItemPipeline(BufferBuilder buffer)
+        ItemPipeline()
         {
-            this.buffer = buffer;
-            this.bufferConsumer = new VertexBufferConsumer(buffer);
+            this.bufferConsumer = new VertexBufferConsumer();
             this.itemConsumer = new ItemConsumer(bufferConsumer);
         }
     }
 
-    private static final ThreadLocal<ItemPipeline> itemPipeline = new ThreadLocal<>();
+    private static final ThreadLocal<ItemPipeline> itemPipeline = ThreadLocal.withInitial(ItemPipeline::new);
 
     // renders quad in any Vertex Format, but is slower
     public static void renderQuadColorSlow(BufferBuilder buffer, BakedQuad quad, int auxColor)
     {
         ItemPipeline pipeline = itemPipeline.get();
-        if (pipeline == null || buffer != pipeline.buffer)
-        {
-            pipeline = new ItemPipeline(buffer);
-            itemPipeline.set(pipeline);
-        }
-        else
-        {
-            pipeline.bufferConsumer.checkVertexFormat();
-        }
+        pipeline.bufferConsumer.setBuffer(buffer);
         ItemConsumer cons = pipeline.itemConsumer;
 
         float b = (float)( auxColor         & 0xFF) / 0xFF;

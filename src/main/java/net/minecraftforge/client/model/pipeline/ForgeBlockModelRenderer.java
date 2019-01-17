@@ -36,10 +36,8 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
 {
     private final ThreadLocal<VertexLighterFlat> lighterFlat;
     private final ThreadLocal<VertexLighterSmoothAo> lighterSmooth;
-    private final ThreadLocal<VertexBufferConsumer> consumerFlat = new ThreadLocal<>();
-    private final ThreadLocal<VertexBufferConsumer> consumerSmooth = new ThreadLocal<>();
-    private final ThreadLocal<BufferBuilder> lastBufferFlat = new ThreadLocal<>();
-    private final ThreadLocal<BufferBuilder> lastBufferSmooth = new ThreadLocal<>();
+    private final ThreadLocal<VertexBufferConsumer> consumerFlat = ThreadLocal.withInitial(VertexBufferConsumer::new);
+    private final ThreadLocal<VertexBufferConsumer> consumerSmooth = ThreadLocal.withInitial(VertexBufferConsumer::new);
 
     public ForgeBlockModelRenderer(BlockColors colors)
     {
@@ -53,13 +51,8 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
-            if (buffer != lastBufferFlat.get())
-            {
-                lastBufferFlat.set(buffer);
-                consumerFlat.set(new VertexBufferConsumer(buffer));
-            }
             VertexBufferConsumer consumer = consumerFlat.get();
-            consumer.checkVertexFormat();
+            consumer.setBuffer(buffer);
             consumer.setOffset(pos);
 
             VertexLighterFlat lighter = lighterFlat.get();
@@ -78,13 +71,8 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
-            if (buffer != lastBufferSmooth.get())
-            {
-                lastBufferSmooth.set(buffer);
-                consumerSmooth.set(new VertexBufferConsumer(buffer));
-            }
             VertexBufferConsumer consumer = consumerSmooth.get();
-            consumer.checkVertexFormat();
+            consumer.setBuffer(buffer);
             consumer.setOffset(pos);
 
             VertexLighterSmoothAo lighter = lighterSmooth.get();
