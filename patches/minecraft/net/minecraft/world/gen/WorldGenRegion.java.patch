@@ -9,3 +9,42 @@
     }
  
     public Biome func_180494_b(BlockPos p_180494_1_) {
+@@ -180,7 +180,7 @@
+          NBTTagCompound nbttagcompound = ichunk.func_201579_g(p_175625_1_);
+          if (nbttagcompound != null) {
+             if ("DUMMY".equals(nbttagcompound.func_74779_i("id"))) {
+-               tileentity = ((ITileEntityProvider)this.func_180495_p(p_175625_1_).func_177230_c()).func_196283_a_(this.field_201689_f);
++               tileentity = this.func_180495_p(p_175625_1_).createTileEntity(this.field_201689_f);
+             } else {
+                tileentity = TileEntity.func_203403_c(nbttagcompound);
+             }
+@@ -191,7 +191,7 @@
+             }
+          }
+ 
+-         if (ichunk.func_180495_p(p_175625_1_).func_177230_c() instanceof ITileEntityProvider) {
++         if (ichunk.func_180495_p(p_175625_1_).hasTileEntity()) {
+             field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
+          }
+ 
+@@ -203,9 +203,9 @@
+       IChunk ichunk = this.func_205771_y(p_180501_1_);
+       IBlockState iblockstate = ichunk.func_177436_a(p_180501_1_, p_180501_2_, false);
+       Block block = p_180501_2_.func_177230_c();
+-      if (block.func_149716_u()) {
++      if (p_180501_2_.hasTileEntity()) {
+          if (ichunk.func_201589_g().func_202129_d() == ChunkStatus.Type.LEVELCHUNK) {
+-            ichunk.func_177426_a(p_180501_1_, ((ITileEntityProvider)block).func_196283_a_(this));
++            ichunk.func_177426_a(p_180501_1_, p_180501_2_.createTileEntity(this.field_201689_f));
+          } else {
+             NBTTagCompound nbttagcompound = new NBTTagCompound();
+             nbttagcompound.func_74768_a("x", p_180501_1_.func_177958_n());
+@@ -214,7 +214,7 @@
+             nbttagcompound.func_74778_a("id", "DUMMY");
+             ichunk.func_201591_a(nbttagcompound);
+          }
+-      } else if (iblockstate != null && iblockstate.func_177230_c().func_149716_u()) {
++      } else if (iblockstate != null && iblockstate.hasTileEntity()) {
+          ichunk.func_177425_e(p_180501_1_);
+       }
+ 

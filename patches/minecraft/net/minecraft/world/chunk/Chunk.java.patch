@@ -17,6 +17,37 @@
     }
  
     public Chunk(World p_i48703_1_, ChunkPrimer p_i48703_2_, int p_i48703_3_, int p_i48703_4_) {
+@@ -441,7 +442,7 @@
+          ((Heightmap)this.field_76634_f.get(Heightmap.Type.WORLD_SURFACE)).func_202270_a(i, j, k, p_177436_2_);
+          if (!this.field_76637_e.field_72995_K) {
+             iblockstate.func_196947_b(this.field_76637_e, p_177436_1_, p_177436_2_, p_177436_3_);
+-         } else if (block1 != block && block1 instanceof ITileEntityProvider) {
++         } else if (block1 != block && iblockstate.hasTileEntity()) {
+             this.field_76637_e.func_175713_t(p_177436_1_);
+          }
+ 
+@@ -459,7 +460,7 @@
+                }
+             }
+ 
+-            if (block1 instanceof ITileEntityProvider) {
++            if (iblockstate.hasTileEntity()) {
+                TileEntity tileentity = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
+                if (tileentity != null) {
+                   tileentity.func_145836_u();
+@@ -470,10 +471,10 @@
+                p_177436_2_.func_196945_a(this.field_76637_e, p_177436_1_, iblockstate);
+             }
+ 
+-            if (block instanceof ITileEntityProvider) {
++            if (p_177436_2_.hasTileEntity()) {
+                TileEntity tileentity1 = this.func_177424_a(p_177436_1_, Chunk.EnumCreateEntityType.CHECK);
+                if (tileentity1 == null) {
+-                  tileentity1 = ((ITileEntityProvider)block).func_196283_a_(this.field_76637_e);
++                  tileentity1 = p_177436_2_.createTileEntity(this.field_76637_e);
+                   this.field_76637_e.func_175690_a(p_177436_1_, tileentity1);
+                } else {
+                   tileentity1.func_145836_u();
 @@ -593,6 +594,7 @@
        p_76612_1_.field_70162_ai = k;
        p_76612_1_.field_70164_aj = this.field_76647_h;
@@ -33,6 +64,47 @@
     }
  
     public boolean func_177444_d(BlockPos p_177444_1_) {
+@@ -629,8 +632,7 @@
+    @Nullable
+    private TileEntity func_177422_i(BlockPos p_177422_1_) {
+       IBlockState iblockstate = this.func_180495_p(p_177422_1_);
+-      Block block = iblockstate.func_177230_c();
+-      return !block.func_149716_u() ? null : ((ITileEntityProvider)block).func_196283_a_(this.field_76637_e);
++      return !iblockstate.hasTileEntity() ? null : iblockstate.createTileEntity(this.field_76637_e);
+    }
+ 
+    @Nullable
+@@ -667,7 +669,7 @@
+    public void func_177426_a(BlockPos p_177426_1_, TileEntity p_177426_2_) {
+       p_177426_2_.func_145834_a(this.field_76637_e);
+       p_177426_2_.func_174878_a(p_177426_1_);
+-      if (this.func_180495_p(p_177426_1_).func_177230_c() instanceof ITileEntityProvider) {
++      if (this.func_180495_p(p_177426_1_).hasTileEntity()) {
+          if (this.field_150816_i.containsKey(p_177426_1_)) {
+             ((TileEntity)this.field_150816_i.get(p_177426_1_)).func_145843_s();
+          }
+@@ -788,7 +790,7 @@
+ 
+       while(!this.field_177447_w.isEmpty()) {
+          BlockPos blockpos = this.field_177447_w.poll();
+-         if (this.func_177424_a(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && this.func_180495_p(blockpos).func_177230_c().func_149716_u()) {
++         if (this.func_177424_a(blockpos, Chunk.EnumCreateEntityType.CHECK) == null && this.func_180495_p(blockpos).hasTileEntity()) {
+             TileEntity tileentity = this.func_177422_i(blockpos);
+             this.field_76637_e.func_175690_a(blockpos, tileentity);
+             this.field_76637_e.func_175704_b(blockpos, blockpos);
+@@ -1087,9 +1089,10 @@
+             if (this.func_175625_s(blockpos1) == null) {
+                TileEntity tileentity;
+                if ("DUMMY".equals(nbttagcompound.func_74779_i("id"))) {
++                  IBlockState iblockstate = this.func_180495_p(blockpos1);
+                   Block block = this.func_180495_p(blockpos1).func_177230_c();
+-                  if (block instanceof ITileEntityProvider) {
+-                     tileentity = ((ITileEntityProvider)block).func_196283_a_(this.field_76637_e);
++                  if (iblockstate.hasTileEntity()) {
++                     tileentity = iblockstate.createTileEntity(this.field_76637_e);
+                   } else {
+                      tileentity = null;
+                      field_150817_t.warn("Tried to load a DUMMY block entity @ {} but found not tile entity block {} at location", blockpos1, this.func_180495_p(blockpos1));
 @@ -1164,4 +1167,30 @@
        QUEUED,
        CHECK;

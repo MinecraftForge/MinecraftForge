@@ -65,7 +65,7 @@
                    TileEntityRendererDispatcher.field_147556_a.func_180546_a(tileentity1, p_180446_3_, -1);
                 }
              }
-@@ -622,10 +632,12 @@
+@@ -622,16 +632,18 @@
  
           synchronized(this.field_181024_n) {
              for(TileEntity tileentity : this.field_181024_n) {
@@ -79,6 +79,13 @@
           this.func_180443_s();
  
           for(DestroyBlockProgress destroyblockprogress : this.field_72738_E.values()) {
+             BlockPos blockpos = destroyblockprogress.func_180246_b();
+             IBlockState iblockstate = this.field_72769_h.func_180495_p(blockpos);
+-            if (iblockstate.func_177230_c().func_149716_u()) {
++            if (iblockstate.hasTileEntity()) {
+                TileEntity tileentity2 = this.field_72769_h.func_175625_s(blockpos);
+                if (tileentity2 instanceof TileEntityChest && iblockstate.func_177229_b(BlockChest.field_196314_b) == ChestType.LEFT) {
+                   blockpos = blockpos.func_177972_a(((EnumFacing)iblockstate.func_177229_b(BlockChest.field_176459_a)).func_176746_e());
 @@ -767,7 +779,7 @@
              for(int j = -this.field_72739_F; j <= this.field_72739_F; ++j) {
                 for(int k = -this.field_72739_F; k <= this.field_72739_F; ++k) {

@@ -253,9 +253,8 @@ public class VanillaInventoryCodeHooks
         int k = MathHelper.floor(z);
         BlockPos blockpos = new BlockPos(i, j, k);
         net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
-        Block block = state.getBlock();
 
-        if (block.hasTileEntity(/* TODO Block patches // state */))
+        if (state.hasTileEntity())
         {
             TileEntity tileentity = worldIn.getTileEntity(blockpos);
             if (tileentity != null)
