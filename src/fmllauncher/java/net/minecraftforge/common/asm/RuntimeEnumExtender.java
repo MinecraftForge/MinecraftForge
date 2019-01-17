@@ -45,7 +45,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
     private final Type ENUM = Type.getType(Enum.class);
     private final Type ARRAY_UTILS = Type.getType("Lorg/apache/commons/lang3/ArrayUtils;"); //Don't directly reference this to prevent class loading.
     private final String ADD_DESC = Type.getMethodDescriptor(Type.getType(Object[].class), Type.getType(Object[].class), Type.getType(Object.class));
-    private final Type ENUM_HELPER = Type.getType("Lnet/minecraftforge/common/util/EnumHelper;"); //Again, not direct reference to prevent class loading.
+    private final Type UNSAFE_HACKS = Type.getType("Lnet/minecraftforge/fml/UnsafeHacks;"); //Again, not direct reference to prevent class loading.
     private final String CLEAN_DESC = Type.getMethodDescriptor(Type.VOID_TYPE, Type.getType(Class.class));
     private final String NAME_DESC = Type.getMethodDescriptor(STRING);
     private final String EQUALS_DESC = Type.getMethodDescriptor(Type.BOOLEAN_TYPE, STRING);
@@ -181,7 +181,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 ins.putstatic(classType.getInternalName(), values.name, values.desc);
                 //EnumHelper.cleanEnumCache(ThisType.class)
                 ins.visitLdcInsn(classType);
-                ins.invokestatic(ENUM_HELPER.getInternalName(), "cleanEnumCache", CLEAN_DESC, false);
+                ins.invokestatic(UNSAFE_HACKS.getInternalName(), "cleanEnumCache", CLEAN_DESC, false);
                 //return ret
                 ins.load(vars, classType);
                 ins.areturn(classType);
