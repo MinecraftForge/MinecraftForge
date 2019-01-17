@@ -19,8 +19,9 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.common.event.ModLifecycleEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModContainer;
+import net.minecraftforge.forgespi.language.ILifecycleEvent;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -29,10 +30,10 @@ import java.util.function.Supplier;
 public enum LifecycleEventProvider
 {
     CONSTRUCT(()->new LifecycleEvent(ModLoadingStage.CONSTRUCT)),
-    PREINIT(()->new LifecycleEvent(ModLoadingStage.PREINIT)),
-    SIDEDINIT(()->new LifecycleEvent(ModLoadingStage.SIDEDINIT)),
-    INIT(()->new LifecycleEvent(ModLoadingStage.INIT)),
-    POSTINIT(()->new LifecycleEvent(ModLoadingStage.POSTINIT)),
+    SETUP(()->new LifecycleEvent(ModLoadingStage.COMMON_SETUP)),
+    SIDED_SETUP(()->new LifecycleEvent(ModLoadingStage.SIDED_SETUP)),
+    ENQUEUE_IMC(()->new LifecycleEvent(ModLoadingStage.ENQUEUE_IMC)),
+    PROCESS_IMC(()->new LifecycleEvent(ModLoadingStage.PROCESS_IMC)),
     COMPLETE(()->new LifecycleEvent(ModLoadingStage.COMPLETE));
 
     public void dispatch(Consumer<List<ModLoadingException>> errorHandler) {
@@ -46,7 +47,7 @@ public enum LifecycleEventProvider
     }
 
 
-    public static class LifecycleEvent {
+    public static class LifecycleEvent implements ILifecycleEvent<LifecycleEvent> {
         private final ModLoadingStage stage;
 
         public LifecycleEvent(ModLoadingStage stage)

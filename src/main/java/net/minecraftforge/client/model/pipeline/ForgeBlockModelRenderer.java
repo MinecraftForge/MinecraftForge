@@ -99,6 +99,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         lighter.setState(state);
         lighter.setBlockPos(pos);
         boolean empty = true;
+        rand.setSeed(seed);
         List<BakedQuad> quads = model.getQuads(state, null, rand);
         if(!quads.isEmpty())
         {
@@ -111,6 +112,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
         }
         for(EnumFacing side : EnumFacing.values())
         {
+            rand.setSeed(seed);
             quads = model.getQuads(state, side, rand);
             if(!quads.isEmpty())
             {

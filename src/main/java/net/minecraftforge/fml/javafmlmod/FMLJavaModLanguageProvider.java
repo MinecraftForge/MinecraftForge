@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
-import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.language.IModLanguageProvider;
-import net.minecraftforge.fml.language.IModInfo;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ILifecycleEvent;
+import net.minecraftforge.forgespi.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
@@ -32,10 +32,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.fml.Logging.LOADING;
-import static net.minecraftforge.fml.Logging.SCAN;
+import static net.minecraftforge.fml.Logging.*;
 
 public class FMLJavaModLanguageProvider implements IModLanguageProvider
 {
@@ -67,13 +67,14 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
             // in the classloader of the game - the context classloader is appropriate here.
             try
             {
-                final Constructor<?> constructor = Class.forName("net.minecraftforge.fml.javafmlmod.FMLModContainer", true, Thread.currentThread().getContextClassLoader()).
-                        getConstructor(IModInfo.class, String.class, ClassLoader.class, ModFileScanData.class);
+                final Class<?> fmlContainer = Class.forName("net.minecraftforge.fml.javafmlmod.FMLModContainer", true, Thread.currentThread().getContextClassLoader());
+                LOGGER.debug(LOADING, "Loading FMLModContainer from classloader {} - got {}", Thread.currentThread().getContextClassLoader(), fmlContainer.getClassLoader());
+                final Constructor<?> constructor = fmlContainer.getConstructor(IModInfo.class, String.class, ClassLoader.class, ModFileScanData.class);
                 return (T)constructor.newInstance(info, className, modClassLoader, modFileScanResults);
             }
             catch (NoSuchMethodException | ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e)
             {
-                LOGGER.error(LOADING,"Unable to load FMLModContainer, wut?", e);
+                LOGGER.fatal(LOADING,"Unable to load FMLModContainer, wut?", e);
                 throw new RuntimeException(e);
             }
         }
@@ -100,12 +101,7 @@ public class FMLJavaModLanguageProvider implements IModLanguageProvider
     }
 
     @Override
-    public void preLifecycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
-    {
-    }
+    public <R extends ILifecycleEvent<R>> void consumeLifecycleEvent(final Supplier<R> consumeEvent) {
 
-    @Override
-    public void postLifecycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent)
-    {
     }
 }

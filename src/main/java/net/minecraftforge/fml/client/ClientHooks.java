@@ -62,7 +62,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.client.gui.GuiAccessDenied;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.registries.GameData;
 

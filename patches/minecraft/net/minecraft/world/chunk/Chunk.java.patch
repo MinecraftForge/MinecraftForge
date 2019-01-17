@@ -17,7 +17,23 @@
     }
  
     public Chunk(World p_i48703_1_, ChunkPrimer p_i48703_2_, int p_i48703_3_, int p_i48703_4_) {
-@@ -1164,4 +1165,30 @@
+@@ -593,6 +594,7 @@
+       p_76612_1_.field_70162_ai = k;
+       p_76612_1_.field_70164_aj = this.field_76647_h;
+       this.field_76645_j[k].add(p_76612_1_);
++      this.func_76630_e(); // Forge - ensure chunks are marked to save after an entity add
+    }
+ 
+    public void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_) {
+@@ -613,6 +615,7 @@
+       }
+ 
+       this.field_76645_j[p_76608_2_].remove(p_76608_1_);
++      this.func_76630_e(); // Forge - ensure chunks are marked to save after entity removals
+    }
+ 
+    public boolean func_177444_d(BlockPos p_177444_1_) {
+@@ -1164,4 +1167,30 @@
        QUEUED,
        CHECK;
     }

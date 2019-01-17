@@ -19,12 +19,21 @@
 
 package net.minecraftforge.client;
 
+import java.io.IOException;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
+
+import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeImage;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
@@ -123,5 +132,22 @@ public class MinecraftForgeClient
     {
         regionCache.invalidateAll();
         regionCache.cleanUp();
+    }
+
+    private static HashMap<ResourceLocation, Supplier<NativeImage>> bufferedImageSuppliers = new HashMap<ResourceLocation, Supplier<NativeImage>>();
+    public static void registerImageLayerSupplier(ResourceLocation resourceLocation, Supplier<NativeImage> supplier)
+    {
+        bufferedImageSuppliers.put(resourceLocation, supplier);
+    }
+
+    @Nonnull
+    public static NativeImage getImageLayer(ResourceLocation resourceLocation, IResourceManager resourceManager) throws IOException
+    {
+        Supplier<NativeImage> supplier = bufferedImageSuppliers.get(resourceLocation);
+        if (supplier != null)
+            return supplier.get();
+
+        IResource iresource1 = resourceManager.getResource(resourceLocation);
+        return NativeImage.read(iresource1.getInputStream());
     }
 }

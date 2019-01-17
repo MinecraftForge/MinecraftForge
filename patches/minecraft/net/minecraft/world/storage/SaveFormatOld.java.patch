@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/storage/SaveFormatOld.java
++++ b/net/minecraft/world/storage/SaveFormatOld.java
+@@ -86,13 +86,23 @@
+ 
+    @Nullable
+    public static WorldInfo func_186353_a(File p_186353_0_, DataFixer p_186353_1_) {
++       return getWorldData(p_186353_0_, p_186353_1_, null);
++   }
++
++   @Nullable
++   public static WorldInfo getWorldData(File p_186353_0_, DataFixer p_186353_1_, @Nullable SaveHandler saveHandler) {
+       try {
+          NBTTagCompound nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(p_186353_0_));
+          NBTTagCompound nbttagcompound1 = nbttagcompound.func_74775_l("Data");
+          NBTTagCompound nbttagcompound2 = nbttagcompound1.func_150297_b("Player", 10) ? nbttagcompound1.func_74775_l("Player") : null;
+          nbttagcompound1.func_82580_o("Player");
+          int i = nbttagcompound1.func_150297_b("DataVersion", 99) ? nbttagcompound1.func_74762_e("DataVersion") : -1;
+-         return new WorldInfo(NBTUtil.func_210822_a(p_186353_1_, DataFixTypes.LEVEL, nbttagcompound1, i), p_186353_1_, i, nbttagcompound2);
++         WorldInfo ret = new WorldInfo(NBTUtil.func_210822_a(p_186353_1_, DataFixTypes.LEVEL, nbttagcompound1, i), p_186353_1_, i, nbttagcompound2);
++         if (saveHandler != null)
++            net.minecraftforge.fml.WorldPersistenceHooks.handleWorldDataLoad(saveHandler, ret, nbttagcompound);
++         return ret;
++      } catch (net.minecraftforge.fml.StartupQuery.AbortedException e) {
++         throw e;
+       } catch (Exception exception) {
+          field_151479_b.error("Exception reading {}", p_186353_0_, exception);
+          return null;

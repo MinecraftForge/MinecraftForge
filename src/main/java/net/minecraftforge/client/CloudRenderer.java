@@ -270,7 +270,7 @@ public class CloudRenderer implements ISelectiveResourceReloadListener
 
     public void checkSettings()
     {
-        boolean newEnabled = ForgeConfig.CLIENT.forgeCloudsEnabled()
+        boolean newEnabled = ForgeConfig.CLIENT.forgeCloudsEnabled.get()
                 && mc.gameSettings.shouldRenderClouds() != 0
                 && mc.world != null
                 && mc.world.dimension.isSurfaceWorld();

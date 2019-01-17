@@ -53,29 +53,39 @@ public class UserdevLauncher
         String assets = System.getenv().getOrDefault("assetDirectory", "assets");
         String target = System.getenv().get("target");
 
-        if (assets == null ||!new File(assets).exists()) {
-            throw new IllegalArgumentException("Environment variable 'assets' must be set to a valid path.");
-        }
         if (target == null) {
-            throw new IllegalArgumentException("Environment variable 'target' must be set to 'fmldevclient' or 'fmldevserver'.");
+            throw new IllegalArgumentException("Environment variable 'target' must be set to 'fmluserdevclient' or 'fmluserdevserver'.");
         }
 
-        if (Objects.equals(target,"fmldevclient")) {
+        String[] launchArgs = new String[]{
+                "--gameDir", ".",
+                "--launchTarget", target,
+                "--fml.forgeVersion", System.getenv("FORGE_VERSION"),
+                "--fml.mcpVersion", System.getenv("MCP_VERSION"),
+                "--fml.mcpMappings", System.getenv("MCP_MAPPINGS"),
+                "--fml.mcVersion", System.getenv("MC_VERSION"),
+                "--fml.forgeGroup", System.getenv("FORGE_GROUP")
+        };
+
+        if (Objects.equals(target,"fmluserdevclient")) {
+            if (assets == null || !new File(assets).exists()) {
+                throw new IllegalArgumentException("Environment variable 'assetDirectory' must be set to a valid path.");
+            }
+
             hackNatives();
-            Launcher.main("--launchTarget", target,
-                    "--gameDir", ".",
+            launchArgs = ObjectArrays.concat(launchArgs, new String[] {
                     "--accessToken", "blah",
                     "--version", "FMLDev",
                     "--assetIndex", "1.13",
                     "--assetsDir", assets,
-                    "--userProperties", "{}");
-        } else if (Objects.equals(target, "fmldevserver")) {
-            String[] launchargs = ObjectArrays.concat(new String[] {"--launchTarget", target,
-                    "--gameDir", "."}, args, String.class);
-            Launcher.main(launchargs);
+                    "--userProperties", "{}"
+            }, String.class);
+        } else if (Objects.equals(target, "fmluserdevserver")) {
+            // we're good
         } else {
             throw new IllegalArgumentException("Unknown value for 'target' property: " + target);
         }
+        Launcher.main(launchArgs);
         Thread.sleep(10000);
     }
 

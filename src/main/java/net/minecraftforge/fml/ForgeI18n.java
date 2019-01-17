@@ -23,6 +23,8 @@ import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.commons.lang3.text.ExtendedMessageFormat;
 import org.apache.commons.lang3.text.FormatFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.text.FieldPosition;
 import java.text.Format;
@@ -33,6 +35,7 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class ForgeI18n {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static Map<String,String> i18n;
     private static Map<String,FormatFactory> customFactories;
 
@@ -41,9 +44,9 @@ public class ForgeI18n {
         // {0,modinfo,id} -> modid from ModInfo object; {0,modinfo,name} -> displayname from ModInfo object
         customFactories.put("modinfo", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> parseModInfo(formatString, stringBuffer, objectToParse)));
         // {0,lower} -> lowercase supplied string
-        customFactories.put("lower", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toLowerCase((String)objectToParse))));
+        customFactories.put("lower", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toLowerCase(String.valueOf(objectToParse)))));
         // {0,upper> -> uppercase supplied string
-        customFactories.put("upper", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toUpperCase((String)objectToParse))));
+        customFactories.put("upper", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toUpperCase(String.valueOf(objectToParse)))));
         // {0,exc,class} -> class of exception; {0,exc,msg} -> message from exception
         customFactories.put("exc", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> parseException(formatString, stringBuffer, objectToParse)));
         // {0,vr} -> transform VersionRange into cleartext string using fml.messages.version.restriction.* strings
@@ -77,6 +80,7 @@ public class ForgeI18n {
     }
 
     public static void loadLanguageData(final Map<String, String> properties) {
+        LOGGER.debug("Loading I18N data entries: {}", properties.size());
         i18n = properties;
     }
 

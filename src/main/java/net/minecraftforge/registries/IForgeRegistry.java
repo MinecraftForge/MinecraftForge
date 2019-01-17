@@ -35,6 +35,7 @@ import javax.annotation.Nullable;
  */
 public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterable<V>
 {
+    ResourceLocation getRegistryName();
     Class<V> getRegistrySuperType();
 
     void register(V value);
@@ -93,6 +94,14 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
     interface ValidateCallback<V extends IForgeRegistryEntry<V>>
     {
         void onValidate(IForgeRegistryInternal<V> owner, RegistryManager stage, int id, ResourceLocation key, V obj);
+    }
+
+    /**
+     * Callback fired when the registry is done processing. Used to calculate state ID maps.
+     */
+    interface BakeCallback<V extends IForgeRegistryEntry<V>>
+    {
+        void onBake(IForgeRegistryInternal<V> owner, RegistryManager stage);
     }
 
     /**

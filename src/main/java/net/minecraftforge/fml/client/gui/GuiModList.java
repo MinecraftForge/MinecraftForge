@@ -40,7 +40,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import org.apache.commons.lang3.tuple.Pair;
@@ -433,8 +433,8 @@ public class GuiModList extends GuiScreen
         Pair<ResourceLocation, Dimension> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = mc.getTextureManager();
-            ResourcePackInfoClient pack = ResourcePackLoader.getResourcePackInfo(selectedMod.getModId());
-            if (pack == null) pack = ResourcePackLoader.getResourcePackInfo("forge");
+            ResourcePackInfoClient pack = ResourcePackLoader.getResourcePackInfoForModId(selectedMod.getModId());
+            if (pack == null) pack = ResourcePackLoader.getResourcePackInfoForModId("forge");
             try
             {
                 NativeImage logo = null;

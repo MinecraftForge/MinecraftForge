@@ -19,11 +19,7 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.event.ModLifecycleEvent;
+import net.minecraftforge.fml.event.lifecycle.*;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -33,11 +29,11 @@ public enum ModLoadingStage
     ERROR(null),
     VALIDATE(null),
     CONSTRUCT(null),
-    PREINIT(()->FMLPreInitializationEvent::new),
-    SIDEDINIT(SidedProvider.SIDEDINIT::get),
-    INIT(()->FMLInitializationEvent::new),
-    POSTINIT(()->FMLPostInitializationEvent::new),
-    COMPLETE(()->FMLLoadCompleteEvent::new),
+    COMMON_SETUP(()-> FMLCommonSetupEvent::new),
+    SIDED_SETUP(SidedProvider.SIDED_SETUP_EVENT::get),
+    ENQUEUE_IMC(()-> InterModEnqueueEvent::new),
+    PROCESS_IMC(()-> InterModProcessEvent::new),
+    COMPLETE(()-> FMLLoadCompleteEvent::new),
     DONE(null);
 
     private final Supplier<Function<ModContainer, ModLifecycleEvent>> modLifecycleEventFunction;

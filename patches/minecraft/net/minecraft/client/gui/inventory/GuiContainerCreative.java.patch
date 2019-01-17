@@ -83,15 +83,18 @@
        if (this.field_147062_A.func_146179_b().isEmpty()) {
           for(Item item : Item.field_150901_e) {
              item.func_150895_a(ItemGroup.field_78027_g, guicontainercreative$containercreative.field_148330_a);
-@@ -323,7 +367,7 @@
+@@ -323,9 +367,9 @@
  
     protected void func_146979_b(int p_146979_1_, int p_146979_2_) {
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
 -      if (itemgroup.func_78019_g()) {
 +      if (itemgroup != null && itemgroup.func_78019_g()) {
           GlStateManager.func_179084_k();
-          this.field_146289_q.func_211126_b(I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, 4210752);
+-         this.field_146289_q.func_211126_b(I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, 4210752);
++         this.field_146289_q.func_211126_b(I18n.func_135052_a(itemgroup.func_78024_c()), 8.0F, 6.0F, itemgroup.getLabelColor());
        }
+ 
+    }
 @@ -357,7 +401,7 @@
           this.field_147066_y = false;
  

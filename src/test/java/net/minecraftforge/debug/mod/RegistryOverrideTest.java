@@ -66,6 +66,15 @@ public class RegistryOverrideTest
         );
     }
 
+		@SubscribeEvent
+    public static void registerPotionTypes(RegistryEvent.Register<PotionType> event)
+    {
+        if (ENABLED)
+        {
+            event.getRegistry().register(new PotionType().setRegistryName("minecraft:awkward"));
+        }
+    }
+
     private static class BlockReplacement extends Block
     {
         AxisAlignedBB BB = FULL_BLOCK_AABB.contract(0.1, 0, 0.1);

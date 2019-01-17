@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 
 import java.util.Collections;
 import java.util.HashMap;

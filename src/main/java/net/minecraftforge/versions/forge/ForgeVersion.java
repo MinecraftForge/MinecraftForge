@@ -20,6 +20,7 @@
 package net.minecraftforge.versions.forge;
 
 import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.loading.JarVersionLookupHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,39 +33,27 @@ public class ForgeVersion
     private static final Logger LOGGER = LogManager.getLogger();
     // This is Forge's Mod Id, used for the ForgeMod and resource locations
     public static final String MOD_ID = "forge";
-    // This is the minecraft version we're building for - used in various places in Forge/FML code
-    public static final String mcVersion = "1.13";
-    // This is the MCP data version we're using
-    public static final String mcpVersion = "9.42";
 
     private static final String forgeVersion;
     private static final String forgeSpec;
     private static final String forgeGroup;
 
     static {
-        String vers = ForgeVersion.class.getPackage().getImplementationVersion();
-        if (vers == null) {
-            vers = System.getProperty("forge.version");
-        }
+        LOGGER.debug(CORE, "Forge Version package {} from {}", ForgeVersion.class.getPackage(), ForgeVersion.class.getClassLoader());
+        String vers = JarVersionLookupHandler.getImplementationVersion(ForgeVersion.class).orElse(System.getProperty("forge.version"));
         if (vers == null) throw new RuntimeException("Missing forge version, cannot continue");
-        String spec = ForgeVersion.class.getPackage().getSpecificationVersion();
-        if (spec == null) {
-            spec = System.getProperty("forge.spec");
-        }
+        String spec = JarVersionLookupHandler.getSpecificationVersion(ForgeVersion.class).orElse(System.getProperty("forge.spec"));
         if (spec == null) throw new RuntimeException("Missing forge spec, cannot continue");
-        String group = ForgeVersion.class.getPackage().getImplementationTitle();
-        if (group == null) {
-            group = System.getProperty("forge.group");
-        }
+        String group = JarVersionLookupHandler.getImplementationTitle(ForgeVersion.class).orElse(System.getProperty("forge.group"));
         if (group == null) {
             group = "net.minecraftforge"; // If all else fails, Our normal group
         }
         forgeVersion = vers;
         forgeSpec = spec;
         forgeGroup = group;
-        LOGGER.info(CORE, "Found Forge version {}", forgeVersion);
-        LOGGER.info(CORE, "Found Forge spec {}", forgeSpec);
-        LOGGER.info(CORE, "Found Forge group {}", forgeGroup);
+        LOGGER.debug(CORE, "Found Forge version {}", forgeVersion);
+        LOGGER.debug(CORE, "Found Forge spec {}", forgeSpec);
+        LOGGER.debug(CORE, "Found Forge group {}", forgeGroup);
     }
 
     public static String getVersion()
