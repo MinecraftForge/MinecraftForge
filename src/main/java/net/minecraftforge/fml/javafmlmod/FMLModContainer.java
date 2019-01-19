@@ -152,7 +152,8 @@ public class FMLModContainer extends ModContainer
         return modInstance;
     }
 
-    public IEventBus getEventBus()
+    @Override
+    public IEventBus getLoadingEventBus()
     {
         return this.eventBus;
     }

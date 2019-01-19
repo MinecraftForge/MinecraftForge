@@ -22,7 +22,6 @@ package net.minecraftforge.fml.common;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.event.lifecycle.FMLFingerprintViolationEvent;
@@ -45,7 +44,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  * annotation.
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.TYPE)
+@java.lang.annotation.Target(ElementType.TYPE)
 public @interface Mod
 {
     /**
@@ -97,16 +96,18 @@ public @interface Mod
      */
     @Deprecated
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.METHOD)
+    @java.lang.annotation.Target(ElementType.METHOD)
     @interface EventHandler{}
 
     /**
-     * A class which will be subscribed to {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS} at mod construction time.
+     * A class which will be subscribed to {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS} at mod construction time.
      */
     @Retention(RetentionPolicy.RUNTIME)
-    @Target(ElementType.TYPE)
+    @java.lang.annotation.Target(ElementType.TYPE)
     @interface EventBusSubscriber {
         Dist[] value() default { Dist.CLIENT, Dist.DEDICATED_SERVER };
+
+        Target[] bus() default { Target.MAIN_BUS };
 
         /**
          * Optional value, only nessasary if tis annotation is not on the same class that has a @Mod annotation.
@@ -114,5 +115,9 @@ public @interface Mod
          * @return
          */
         String modid() default "";
+
+        enum Target {
+            MAIN_BUS, MOD_LOADING_BUS
+        }
     }
 }

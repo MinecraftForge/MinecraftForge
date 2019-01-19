@@ -22,9 +22,9 @@ package net.minecraftforge.fml;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;
@@ -39,12 +39,13 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 /**
  * Automatic eventbus subscriber - reads {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber}
- * annotations and passes the class instances to the {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS}
+ * annotations and passes the class instances to the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  */
 public class AutomaticEventSubscriber
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Type AUTO_SUBSCRIBER = Type.getType(Mod.EventBusSubscriber.class);
+
     public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
     {
         if (scanData == null) return;
@@ -54,16 +55,21 @@ public class AutomaticEventSubscriber
                 collect(Collectors.toList());
 
         ebsTargets.forEach(ad -> {
-            @SuppressWarnings("unchecked")
-            final List<ModAnnotation.EnumHolder> sidesValue = (List<ModAnnotation.EnumHolder>)ad.getAnnotationData().
-                    getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "DEDICATED_SERVER")));
-            final EnumSet<Dist> sides = sidesValue.stream().map(eh -> Dist.valueOf(eh.getValue())).
-                    collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
+            final EnumSet<Dist> sides = get(ad, "values", Dist.class, Dist.values());
+            final EnumSet<Mod.EventBusSubscriber.Target> buses = get(ad, "bus", Mod.EventBusSubscriber.Target.class, Mod.EventBusSubscriber.Target.values());
             final String modId = (String)ad.getAnnotationData().getOrDefault("modId", mod.getModId());
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try
                 {
-                    MinecraftForge.EVENT_BUS.register(Class.forName(ad.getClassType().getClassName(), true, loader));
+                    Class<?> clazz = Class.forName(ad.getClassType().getClassName(), true, loader);
+                    if (buses.contains(Mod.EventBusSubscriber.Target.MAIN_BUS))
+                    {
+                        MinecraftForge.EVENT_BUS.register(clazz);
+                    }
+                    if (buses.contains(Mod.EventBusSubscriber.Target.MOD_LOADING_BUS))
+                    {
+                        mod.getLoadingEventBus().register(clazz);
+                    }
                 }
                 catch (ClassNotFoundException e)
                 {
@@ -72,6 +78,13 @@ public class AutomaticEventSubscriber
                 }
             }
         });
+    }
+
+    @SuppressWarnings("unchecked")
+    private static<T extends Enum<T>> EnumSet<T> get(ModFileScanData.AnnotationData data, String field, Class<T> clazz, Enum<T>... allowedValues)
+    {
+        final List<ModAnnotation.EnumHolder> list = (List<ModAnnotation.EnumHolder>) data.getAnnotationData().getOrDefault(field, Arrays.stream(allowedValues).map(s -> new ModAnnotation.EnumHolder(null, s.name())).toArray());
+        return list.stream().map(eh -> Enum.valueOf(clazz, eh.getValue())).collect(Collectors.toCollection(() -> EnumSet.noneOf(clazz)));
     }
 
 }

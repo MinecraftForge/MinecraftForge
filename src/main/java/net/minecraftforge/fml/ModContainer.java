@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.forgespi.language.IModInfo;
 
 import java.util.Collections;
@@ -133,4 +134,13 @@ public abstract class ModContainer
      * @return the mod object instance
      */
     public abstract Object getMod();
+
+    /**
+     * @return the event bus used for loading events. Used by the automatic event bus subscriber.
+     * @throws UnsupportedOperationException If the mod container has no loading event buses
+     */
+    public IEventBus getLoadingEventBus() throws UnsupportedOperationException
+    {
+        throw new UnsupportedOperationException("ModContainer for mod " + modId + " has no mod loading bus!");
+    }
 }

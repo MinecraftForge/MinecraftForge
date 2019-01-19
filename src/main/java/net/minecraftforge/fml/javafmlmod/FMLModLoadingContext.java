@@ -38,7 +38,7 @@ public class FMLModLoadingContext
 
     public IEventBus getModEventBus()
     {
-        return getActiveContainer().getEventBus();
+        return getActiveContainer().getLoadingEventBus();
     }
 
     public FMLModContainer getActiveContainer()
