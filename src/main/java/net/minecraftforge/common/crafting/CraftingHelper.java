@@ -325,12 +325,12 @@ public class CraftingHelper
                             }
                         }
                         if (!items.isEmpty())
-                            constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), new StackList(items));
+                            ret.put(new ResourceLocation(JsonUtils.getString(json, "name")), new StackList(items));
                     }
                     else if (json.has("tag"))
-                        constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), Ingredient.deserializeItemList(json));
+                        ret.put(new ResourceLocation(JsonUtils.getString(json, "name")), Ingredient.deserializeItemList(json));
                     else if (json.has("item"))
-                        constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), new StackList(Lists.newArrayList(getItemStack(JsonUtils.getJsonObject(json, "item"), true))));
+                        ret.put(new ResourceLocation(JsonUtils.getString(json, "name")), new StackList(Lists.newArrayList(getItemStack(JsonUtils.getJsonObject(json, "item"), true))));
                     else
                         LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `item` or `items` element", x, key);
                 }
