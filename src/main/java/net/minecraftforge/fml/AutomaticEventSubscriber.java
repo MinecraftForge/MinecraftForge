@@ -61,10 +61,12 @@ public class AutomaticEventSubscriber
             final EnumSet<Dist> sides = sidesValue.stream().map(eh -> Dist.valueOf(eh.getValue())).
                     collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
             final String modId = (String)ad.getAnnotationData().getOrDefault("modid", mod.getModId());
-            final Mod.EventBusSubscriber.Bus busTarget = (Mod.EventBusSubscriber.Bus)ad.getAnnotationData().getOrDefault("bus", Mod.EventBusSubscriber.Bus.FORGE);
+            final ModAnnotation.EnumHolder busTargetHolder = (ModAnnotation.EnumHolder)ad.getAnnotationData().getOrDefault("bus", new ModAnnotation.EnumHolder(null, "FORGE"));
+            final Mod.EventBusSubscriber.Bus busTarget = Mod.EventBusSubscriber.Bus.valueOf(busTargetHolder.getValue());
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try
                 {
+                    LOGGER.info(LOADING, "Auto-subscribing {} to {}", ad.getClassType().getClassName(), busTarget);
                     busTarget.bus().get().register(Class.forName(ad.getClassType().getClassName(), true, loader));
                 }
                 catch (ClassNotFoundException e)

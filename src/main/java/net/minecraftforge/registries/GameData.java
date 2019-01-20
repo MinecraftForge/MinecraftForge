@@ -806,7 +806,8 @@ public class GameData
             reg.unfreeze();
             final RegistryEvent.Register<?> registerEvent = reg.getRegisterEvent(rl);
             lifecycleEventProvider.setCustomEventSupplier(() -> registerEvent);
-            if (i== keysSize-1) lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.NEXT);
+            lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.STAY);
+            if (i==keysSize-1) lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.NEXT);
             eventDispatcher.accept(lifecycleEventProvider);
             reg.freeze();
             LOGGER.info("{} Applying holder lookups", rl.toString());
