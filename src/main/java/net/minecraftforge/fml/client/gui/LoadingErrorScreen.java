@@ -25,6 +25,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiListExtended;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.Util;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.ModLoadingException;
@@ -33,7 +34,6 @@ import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -56,27 +56,13 @@ public class LoadingErrorScreen extends GuiErrorScreen {
 
     private double openModsDir(double mouseX, double mouseY)
     {
-        try
-        {
-            Desktop.getDesktop().open(modsDir.toFile());
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("Problem opening mods folder", e);
-        }
+        Util.getOSType().openFile(modsDir.toFile());
         return 0.0;
     }
 
     private double openLogFile(double mouseX, double mouseY)
     {
-        try
-        {
-            Desktop.getDesktop().open(logFile.toFile());
-        }
-        catch (Exception e)
-        {
-            LOGGER.error("Problem opening log file {}", logFile, e);
-        }
+        Util.getOSType().openFile(logFile.toFile());
         return 0.0;
     }
 
