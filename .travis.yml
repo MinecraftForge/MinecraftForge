@@ -28,3 +28,8 @@ script:
 
 notifications:
   email: false
+
+# skip building travis on 1.13 - it doesn't work there
+branches:
+  except:
+    - 1.13-pre
