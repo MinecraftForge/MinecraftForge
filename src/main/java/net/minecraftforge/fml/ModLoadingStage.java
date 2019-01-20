@@ -29,13 +29,14 @@ public enum ModLoadingStage
     ERROR(null),
     VALIDATE(null),
     CONSTRUCT(null),
+    CREATE_REGISTRIES(null),
+    LOAD_REGISTRIES(null),
     COMMON_SETUP(()-> FMLCommonSetupEvent::new),
     SIDED_SETUP(SidedProvider.SIDED_SETUP_EVENT::get),
     ENQUEUE_IMC(()-> InterModEnqueueEvent::new),
     PROCESS_IMC(()-> InterModProcessEvent::new),
     COMPLETE(()-> FMLLoadCompleteEvent::new),
     DONE(null);
-
     private final Supplier<Function<ModContainer, ModLifecycleEvent>> modLifecycleEventFunction;
 
     ModLoadingStage(Supplier<Function<ModContainer, ModLifecycleEvent>> modLifecycleEventFunction)

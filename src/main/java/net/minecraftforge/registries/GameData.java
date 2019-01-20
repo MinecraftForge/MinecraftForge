@@ -41,6 +41,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
+import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.ModThreadContext;
 import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
@@ -61,6 +62,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -779,14 +781,17 @@ public class GameData
         MinecraftForge.EVENT_BUS.post(new RegistryEvent.NewRegistry());
     }
 
-    public static void fireRegistryEvents()
-    {
-        fireRegistryEvents(rl -> true);
+    public static void fireCreateRegistryEvents(final LifecycleEventProvider lifecycleEventProvider, final Consumer<LifecycleEventProvider> eventDispatcher) {
+        final RegistryEvent.NewRegistry newRegistryEvent = new RegistryEvent.NewRegistry();
+        lifecycleEventProvider.setCustomEventSupplier(()->newRegistryEvent);
+        eventDispatcher.accept(lifecycleEventProvider);
     }
-    public static void fireRegistryEvents(Predicate<ResourceLocation> filter)
+
+
+    public static void fireRegistryEvents(Predicate<ResourceLocation> filter, final LifecycleEventProvider lifecycleEventProvider, final Consumer<LifecycleEventProvider> eventDispatcher)
     {
         List<ResourceLocation> keys = Lists.newArrayList(RegistryManager.ACTIVE.registries.keySet());
-        Collections.sort(keys, (o1, o2) -> o1.toString().compareToIgnoreCase(o2.toString()));
+        keys.sort((o1, o2) -> String.valueOf(o1).compareToIgnoreCase(String.valueOf(o2)));
 
         //Move Blocks to first, and Items to second.
         keys.remove(BLOCKS);
@@ -794,16 +799,18 @@ public class GameData
 
         keys.add(0, BLOCKS);
         keys.add(1, ITEMS);
-
-        for (ResourceLocation rl : keys)
-        {
+        for (int i = 0, keysSize = keys.size(); i < keysSize; i++) {
+            final ResourceLocation rl = keys.get(i);
             if (!filter.test(rl)) continue;
             ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
             reg.unfreeze();
-            MinecraftForge.EVENT_BUS.post(reg.getRegisterEvent(rl));
+            final RegistryEvent.Register<?> registerEvent = reg.getRegisterEvent(rl);
+            lifecycleEventProvider.setCustomEventSupplier(() -> registerEvent);
+            if (i== keysSize-1) lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.NEXT);
+            eventDispatcher.accept(lifecycleEventProvider);
             reg.freeze();
             LOGGER.info("{} Applying holder lookups", rl.toString());
-            ObjectHolderRegistry.applyObjectHolders(key -> rl.equals(key));
+            ObjectHolderRegistry.applyObjectHolders(rl::equals);
             LOGGER.info("{} Holder lookups applied", rl.toString());
         }
     }

@@ -39,7 +39,8 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 /**
  * Automatic eventbus subscriber - reads {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber}
- * annotations and passes the class instances to the {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS}
+ * annotations and passes the class instances to the {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus}
+ * defined by the annotation. Defaults to {@link MinecraftForge#EVENT_BUS}
  */
 public class AutomaticEventSubscriber
 {
@@ -60,10 +61,11 @@ public class AutomaticEventSubscriber
             final EnumSet<Dist> sides = sidesValue.stream().map(eh -> Dist.valueOf(eh.getValue())).
                     collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
             final String modId = (String)ad.getAnnotationData().getOrDefault("modId", mod.getModId());
+            final Mod.EventBusSubscriber.Bus busTarget = (Mod.EventBusSubscriber.Bus)ad.getAnnotationData().getOrDefault("bus", Mod.EventBusSubscriber.Bus.FORGE);
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try
                 {
-                    MinecraftForge.EVENT_BUS.register(Class.forName(ad.getClassType().getClassName(), true, loader));
+                    busTarget.bus().get().register(Class.forName(ad.getClassType().getClassName(), true, loader));
                 }
                 catch (ClassNotFoundException e)
                 {

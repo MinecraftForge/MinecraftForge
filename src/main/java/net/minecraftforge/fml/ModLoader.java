@@ -123,10 +123,10 @@ public class ModLoader
         }
         modList.setLoadedMods(modContainerStream.collect(Collectors.toList()));
         dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT);
-        GameData.fireCreateRegistryEvents();
+        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, this::dispatchAndHandleError);
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
-        GameData.fireRegistryEvents();
+        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, this::dispatchAndHandleError);
         dispatchAndHandleError(LifecycleEventProvider.SETUP);
         DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
         dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);

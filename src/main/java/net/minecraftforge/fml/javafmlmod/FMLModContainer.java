@@ -29,7 +29,6 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
 import net.minecraftforge.fml.ModThreadContext;
-import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
@@ -54,6 +53,8 @@ public class FMLModContainer extends ModContainer
         LOGGER.debug("Creating FMLModContainer instance for {} with classLoader {} & {}", className, modClassLoader, getClass().getClassLoader());
         this.scanResults = modFileScanResults;
         triggerMap.put(ModLoadingStage.CONSTRUCT, dummy().andThen(this::beforeEvent).andThen(this::constructMod).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.CREATE_REGISTRIES, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
+        triggerMap.put(ModLoadingStage.LOAD_REGISTRIES, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.COMMON_SETUP, dummy().andThen(this::beforeEvent).andThen(this::preinitMod).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.SIDED_SETUP, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.ENQUEUE_IMC, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
@@ -96,8 +97,8 @@ public class FMLModContainer extends ModContainer
     }
 
     private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        final ModLifecycleEvent event = lifecycleEvent.buildModEvent(this);
-        LOGGER.debug(LOADING, "Firing event for modid {} : {}", this.getModId(), event.getClass().getName());
+        final Event event = lifecycleEvent.getOrBuildEvent(this);
+        LOGGER.info(LOADING, "Firing event for modid {} : {}", this.getModId(), event.getClass().getName());
         try
         {
             eventBus.post(event);
