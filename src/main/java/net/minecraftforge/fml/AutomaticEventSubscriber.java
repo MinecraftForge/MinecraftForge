@@ -60,7 +60,7 @@ public class AutomaticEventSubscriber
                     getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "DEDICATED_SERVER")));
             final EnumSet<Dist> sides = sidesValue.stream().map(eh -> Dist.valueOf(eh.getValue())).
                     collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
-            final String modId = (String)ad.getAnnotationData().getOrDefault("modId", mod.getModId());
+            final String modId = (String)ad.getAnnotationData().getOrDefault("modid", mod.getModId());
             final Mod.EventBusSubscriber.Bus busTarget = (Mod.EventBusSubscriber.Bus)ad.getAnnotationData().getOrDefault("bus", Mod.EventBusSubscriber.Bus.FORGE);
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try
