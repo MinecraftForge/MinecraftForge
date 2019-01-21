@@ -157,7 +157,8 @@ public class Constants
          */
         public static final int NO_RERENDER          = 0b00100;
         /**
-         * Makes the block be re-rendered immediately, on the main thread
+         * Makes the block be re-rendered immediately, on the main thread.
+         * If NO_RERENDER is set, then this will be ignored
          */
         public static final int RERENDER_MAIN_THREAD = 0b01000;
         /**
