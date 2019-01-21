@@ -28,16 +28,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 public class ModInfo implements IModInfo
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final DefaultArtifactVersion DEFAULT_VERSION = new DefaultArtifactVersion("1");
+    private static final Pattern VALID_LABEL = Pattern.compile("^[a-z][a-z0-9_-]{1,63}$");
+
     private final ModFileInfo owningFile;
     private final String modId;
+    private final String namespace;
     private final ArtifactVersion version;
     private final String displayName;
     private final String description;
@@ -50,6 +57,15 @@ public class ModInfo implements IModInfo
         this.owningFile = owningFile;
         this.modConfig = modConfig;
         this.modId = modConfig.<String>getOptional("modId").orElseThrow(() -> new InvalidModFileException("Missing modId entry", owningFile));
+        if (!VALID_LABEL.matcher(this.modId).matches()) {
+            LOGGER.fatal("Invalid modId found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.modId, VALID_LABEL.pattern());
+            throw new InvalidModFileException("Invalid modId found : "+ this.modId, owningFile);
+        }
+        this.namespace = modConfig.<String>getOptional("namespace").orElse(this.modId);
+        if (!VALID_LABEL.matcher(this.namespace).matches()) {
+            LOGGER.fatal("Invalid override namespace found in file {} - {} does not match the standard: {}", this.owningFile.getFile().getFilePath(), this.namespace, VALID_LABEL.pattern());
+            throw new InvalidModFileException("Invalid override namespace found : "+ this.namespace, owningFile);
+        }
         this.version = modConfig.<String>getOptional("version").
                 map(s->StringSubstitutor.replace(s, owningFile != null ? owningFile.getFile() : null )).
                 map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
@@ -100,6 +116,16 @@ public class ModInfo implements IModInfo
     @Override
     public UnmodifiableConfig getModConfig() {
         return this.modConfig;
+    }
+
+    @Override
+    public String getNamespace() {
+        return this.namespace;
+    }
+
+    @Override
+    public Map<String, Object> getModProperties() {
+        return this.properties;
     }
 
     public Optional<String> getLogoFile()

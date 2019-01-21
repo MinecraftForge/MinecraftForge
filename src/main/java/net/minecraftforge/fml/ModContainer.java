@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 /**
  * The container that wraps around mods in the system.
@@ -46,8 +45,8 @@ import java.util.regex.Pattern;
 
 public abstract class ModContainer
 {
-    private static final Pattern VALID_MODIDS = Pattern.compile("^[a-z0-9_-]{3,64}$");
     protected final String modId;
+    protected final String namespace;
     protected final IModInfo modInfo;
     protected ModLoadingStage modLoadingStage;
     protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
@@ -55,9 +54,9 @@ public abstract class ModContainer
 
     public ModContainer(IModInfo info)
     {
-        if (!VALID_MODIDS.matcher(info.getModId()).matches())
-            throw new IllegalArgumentException("Invalid modid " + info.getModId() + "! Mod ids need to be lowercase alphanumeric characters or '-'/'_' and need to be between 3 and 64 chars long.");
         this.modId = info.getModId();
+        // TODO: Currently not reading namespace from configuration..
+        this.namespace = this.modId;
         this.modInfo = info;
         this.triggerMap = new HashMap<>();
         this.modLoadingStage = ModLoadingStage.CONSTRUCT;
@@ -74,9 +73,9 @@ public abstract class ModContainer
     /**
      * @return the resource prefix for the mod
      */
-    public final String getPrefix()
+    public final String getNamespace()
     {
-        return modId;
+        return namespace;
     }
 
     /**

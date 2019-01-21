@@ -56,7 +56,6 @@ import org.apache.logging.log4j.MarkerManager;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -821,7 +820,7 @@ public class GameData
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
         name = index == -1 ? name : name.substring(index + 1);
-        String prefix = ModThreadContext.get().getActiveContainer().getPrefix();
+        String prefix = ModThreadContext.get().getActiveContainer().getNamespace();
         if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
             LogManager.getLogger().info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);

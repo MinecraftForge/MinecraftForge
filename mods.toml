@@ -25,13 +25,16 @@ key="value"
     This is my mod, there may be
     others, but this one is mine
     '''
+    # Override the default resourcelocation namespace with this instead
+    # Currently not implemented
+    namespace="invsorter"
     # A random extra property for a mod loader
     randomExtraProperty="somevalue"
      # Arbitrary key-value pairs
-    [inventorysorter.properties]
+    [modproperties.inventorysorter]
         key="value"
     # A list of dependencies
-    [[inventorysorter.dependencies]]
+    [[dependencies.inventorysorter]]
         # the modid of the dependency
         modid="forge"
         # Does this dependency have to exist - if not, ordering below must be specified
@@ -43,7 +46,7 @@ key="value"
         # Side this dependency is applied on - BOTH, CLIENT or SERVER
         side="BOTH"
     # Here's another dependency
-    [[inventorysorter.dependencies]]
+    [[dependencies.inventorysorter]]
         modid="minecraft"
         mandatory=true
         versionRange="[1.12.2]"

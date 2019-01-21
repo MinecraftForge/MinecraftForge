@@ -98,6 +98,11 @@ public class ModFileInfo implements IModFileInfo
         return modLoaderVersion;
     }
 
+    @Override
+    public Map<String, Object> getFileProperties() {
+        return this.properties;
+    }
+
     public Optional<Manifest> getManifest() {
         return modFile.getLocator().findManifest(modFile.getFilePath());
     }
