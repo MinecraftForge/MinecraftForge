@@ -297,16 +297,19 @@ public class LightUtil
         quad.pipe(cons);
     }
 
-    public static void renderQuadColor(BufferBuilder wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColor(BufferBuilder buffer, BakedQuad quad, int auxColor)
     {
-        if (quad.getFormat().equals(wr.getVertexFormat())) 
+        if (quad.getFormat().equals(buffer.getVertexFormat()))
         {
-            wr.addVertexData(quad.getVertexData());
-            ForgeHooksClient.putQuadColor(wr, quad, auxColor);
+            buffer.addVertexData(quad.getVertexData());
+            if (buffer.getVertexFormat().hasColor())
+            {
+                ForgeHooksClient.putQuadColor(buffer, quad, auxColor);
+            }
         }
         else
         {
-            renderQuadColorSlow(wr, quad, auxColor);
+            renderQuadColorSlow(buffer, quad, auxColor);
         }
     }
 
@@ -333,7 +336,8 @@ public class LightUtil
             if(getVertexFormat().getElement(element).getUsage() == EnumUsage.COLOR)
             {
                 System.arraycopy(auxColor, 0, buf, 0, buf.length);
-                for(int i = 0; i < 4; i++)
+                int n = Math.min(4, data.length);
+                for(int i = 0; i < n; i++)
                 {
                     buf[i] *= data[i];
                 }
