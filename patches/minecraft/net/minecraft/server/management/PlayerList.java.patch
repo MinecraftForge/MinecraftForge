@@ -1,0 +1,35 @@
+--- a/net/minecraft/server/management/PlayerList.java
++++ b/net/minecraft/server/management/PlayerList.java
+@@ -184,6 +184,7 @@
+       }
+ 
+       p_72355_2_.func_71116_b();
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedIn( p_72355_2_ );
+    }
+ 
+    protected void func_96456_a(ServerScoreboard p_96456_1_, EntityPlayerMP p_96456_2_) {
+@@ -307,6 +308,7 @@
+    }
+ 
+    public void func_72367_e(EntityPlayerMP p_72367_1_) {
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedOut( p_72367_1_ );
+       WorldServer worldserver = p_72367_1_.func_71121_q();
+       p_72367_1_.func_195066_a(StatList.field_75947_j);
+       this.func_72391_b(p_72367_1_);
+@@ -453,6 +455,7 @@
+       this.field_177454_f.put(entityplayermp.func_110124_au(), entityplayermp);
+       entityplayermp.func_71116_b();
+       entityplayermp.func_70606_j(entityplayermp.func_110143_aJ());
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent( p_72368_1_, p_72368_3_ );
+       return entityplayermp;
+    }
+ 
+@@ -482,7 +485,7 @@
+       for(PotionEffect potioneffect : p_187242_1_.func_70651_bq()) {
+          p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
+       }
+-
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent( p_187242_1_, i, p_187242_2_ );
+    }
+ 
+    public void func_82448_a(Entity p_82448_1_, int p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_) {
