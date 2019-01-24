@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySpider.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySpider.java
+@@ -139,7 +139,13 @@
+ 
+     public boolean func_70687_e(PotionEffect p_70687_1_)
+     {
+-        return p_70687_1_.func_188419_a() == MobEffects.field_76436_u ? false : super.func_70687_e(p_70687_1_);
++        if(p_70687_1_.func_188419_a() == MobEffects.field_76436_u)
++        {
++        	net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent event = new net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent(this, p_70687_1_);
++        	net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++        	return event.getResult() == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW;
++        }	
++        return super.func_70687_e(p_70687_1_);
+     }
+ 
+     public boolean func_70841_p()

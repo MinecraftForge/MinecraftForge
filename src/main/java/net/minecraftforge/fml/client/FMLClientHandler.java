@@ -961,7 +961,7 @@ public class FMLClientHandler implements IFMLSidedHandler
         Logger logger = LogManager.getLogger("FML.TEXTURE_ERRORS");
         logger.error(Strings.repeat("+=", 25));
         logger.error("The following texture errors were found.");
-        Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "domainResourceManagers", "field_110548"+"_a");
+        Map<String,FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "field_110548"+"_a");
         for (String resourceDomain : badTextureDomains)
         {
             Set<ResourceLocation> missing = missingTextures.get(resourceDomain);
@@ -976,7 +976,7 @@ public class FMLClientHandler implements IFMLSidedHandler
             }
             else
             {
-                List<IResourcePack> resPacks = ObfuscationReflectionHelper.getPrivateValue(FallbackResourceManager.class, fallbackResourceManager, "resourcePacks","field_110540"+"_a");
+                List<IResourcePack> resPacks = ObfuscationReflectionHelper.getPrivateValue(FallbackResourceManager.class, fallbackResourceManager, "field_110540"+"_a");
                 logger.error("    domain {} has {} location{}:",resourceDomain, resPacks.size(), resPacks.size() != 1 ? "s" :"");
                 for (IResourcePack resPack : resPacks)
                 {
@@ -988,7 +988,7 @@ public class FMLClientHandler implements IFMLSidedHandler
                     else if (resPack instanceof AbstractResourcePack)
                     {
                         AbstractResourcePack resourcePack = (AbstractResourcePack) resPack;
-                        File resPath = ObfuscationReflectionHelper.getPrivateValue(AbstractResourcePack.class, resourcePack, "resourcePackFile","field_110597"+"_b");
+                        File resPath = ObfuscationReflectionHelper.getPrivateValue(AbstractResourcePack.class, resourcePack, "field_110597"+"_b");
                         logger.error("      resource pack at path {}",resPath.getPath());
                     }
                     else

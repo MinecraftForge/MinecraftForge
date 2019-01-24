@@ -68,7 +68,7 @@
          CreativeTabs creativetabs = this.func_77640_w();
          return creativetabs != null && (p_194125_1_ == CreativeTabs.field_78027_g || p_194125_1_ == creativetabs);
      }
-@@ -435,11 +441,757 @@
+@@ -435,11 +441,779 @@
          return false;
      }
  
@@ -147,6 +147,15 @@
 +    {
 +        canRepair = false;
 +        return this;
++    }
++
++    /**
++     * Determines the amount of durability the mending enchantment
++     * will repair, on average, per point of experience.
++     */
++    public float getXpRepairRatio(ItemStack stack)
++    {
++        return 2f;
 +    }
 +
 +    /**
@@ -689,6 +698,19 @@
 +    }
 +
 +    /**
++     * Called while an item is in 'active' use to determine if usage should continue.
++     * Allows items to continue being used while sustaining damage, for example.
++     *
++     * @param oldStack the previous 'active' stack
++     * @param newStack the stack currently in the active hand
++     * @return true to set the new stack to active and continue using it
++     */
++    public boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
++    {
++        return oldStack.equals(newStack);
++    }
++
++    /**
 +     * Called to get the Mod ID of the mod that *created* the ItemStack,
 +     * instead of the real Mod ID that *registered* it.
 +     *
@@ -826,7 +848,7 @@
      public static void func_150900_l()
      {
          func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a));
-@@ -999,6 +1751,8 @@
+@@ -999,6 +1773,8 @@
          private final float field_78010_h;
          private final float field_78011_i;
          private final int field_78008_j;
@@ -835,7 +857,7 @@
  
          private ToolMaterial(int p_i1874_3_, int p_i1874_4_, float p_i1874_5_, float p_i1874_6_, int p_i1874_7_)
          {
-@@ -1034,6 +1788,7 @@
+@@ -1034,6 +1810,7 @@
              return this.field_78008_j;
          }
  
@@ -843,7 +865,7 @@
          public Item func_150995_f()
          {
              if (this == WOOD)
-@@ -1057,5 +1812,21 @@
+@@ -1057,5 +1834,21 @@
                  return this == DIAMOND ? Items.field_151045_i : null;
              }
          }

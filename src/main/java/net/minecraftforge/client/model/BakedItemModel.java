@@ -44,13 +44,20 @@ public class BakedItemModel implements IBakedModel
     protected final ItemOverrideList overrides;
     protected final IBakedModel guiModel;
 
+    /** @deprecated use {@link #BakedItemModel(ImmutableList, TextureAtlasSprite, ImmutableMap, ItemOverrideList, boolean)} */
+    @Deprecated // TODO: remove
     public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides)
+    {
+        this(quads, particle, transforms, overrides, true);
+    }
+
+    public BakedItemModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, ImmutableMap<TransformType, TRSRTransformation> transforms, ItemOverrideList overrides, boolean untransformed)
     {
         this.quads = quads;
         this.particle = particle;
         this.transforms = transforms;
         this.overrides = overrides;
-        this.guiModel = hasGuiIdentity(transforms) ? new BakedGuiItemModel<>(this) : null;
+        this.guiModel = untransformed && hasGuiIdentity(transforms) ? new BakedGuiItemModel<>(this) : null;
     }
 
     private static boolean hasGuiIdentity(ImmutableMap<TransformType, TRSRTransformation> transforms)

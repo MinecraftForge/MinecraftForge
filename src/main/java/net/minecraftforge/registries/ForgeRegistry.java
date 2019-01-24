@@ -19,6 +19,7 @@
 
 package net.minecraftforge.registries;
 
+import java.lang.reflect.Method;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,20 +27,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.Validate;
 
-import java.util.Set;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -56,7 +55,6 @@ import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.InjectedModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
@@ -190,7 +188,8 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     @Override
     public ResourceLocation getKey(V value)
     {
-        return this.names.inverse().get(value);
+        ResourceLocation ret = this.names.inverse().get(value);
+        return ret == null ? this.defaultKey : ret;
     }
 
     @Override
@@ -430,7 +429,9 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     {
         try
         {
-            ReflectionHelper.findMethod(BitSet.class, "trimToSize", null).invoke(this.availabilityMap);
+            Method method = BitSet.class.getDeclaredMethod("trimToSize");
+            method.setAccessible(true);
+            method.invoke(this.availabilityMap);
         }
         catch (Exception e)
         {

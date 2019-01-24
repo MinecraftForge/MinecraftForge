@@ -4,13 +4,13 @@
                  }
  
                  entity.func_70080_a(d3, d4, d5, f, f1);
-+                this.field_147369_b.func_70080_a(d3, d4, d5, f, f1); // Forge - Resync player position on vehicle moving
++                this.field_147369_b.func_70080_a(d3, d4, d5, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A); // Forge - Resync player position on vehicle moving
                  boolean flag2 = worldserver.func_184144_a(entity, entity.func_174813_aQ().func_186664_h(0.0625D)).isEmpty();
  
                  if (flag && (flag1 || !flag2))
                  {
                      entity.func_70080_a(d0, d1, d2, f, f1);
-+                    this.field_147369_b.func_70080_a(d0, d1, d2, f, f1); // Forge - Resync player position on vehicle moving
++                    this.field_147369_b.func_70080_a(d0, d1, d2, this.field_147369_b.field_70177_z, this.field_147369_b.field_70125_A); // Forge - Resync player position on vehicle moving
                      this.field_147371_a.func_179290_a(new SPacketMoveVehicle(entity));
                      return;
                  }
