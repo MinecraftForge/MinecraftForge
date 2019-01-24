@@ -87,9 +87,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             ((FileConfig) config).load();
         }
         if (!isCorrect(config)) {
-            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", config);
+            String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
+            LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);
             correct(config, (action, path, incorrectValue, correctedValue) ->
-                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", path, incorrectValue, correctedValue));
+                    LogManager.getLogger().warn(CORE, "Incorrect key {} was corrected from {} to {}", DOT_JOINER.join( path ), incorrectValue, correctedValue));
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
             }
@@ -97,7 +98,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
     }
 
     public boolean isCorrect(CommentedConfig config) {
-        return correct(this.config, config, null, null, null, true) == 0;
+        LinkedList<String> parentPath = new LinkedList<>();
+        return correct(this.config, config, parentPath, Collections.unmodifiableList( parentPath ), null, true) == 0;
     }
 
     public int correct(CommentedConfig config) {
@@ -123,8 +125,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             final Object configValue = configMap.get(key);
             final CorrectionAction action = configValue == null ? ADD : REPLACE;
 
-            if (!dryRun)
-                parentPath.addLast(key);
+            parentPath.addLast(key);
 
             if (specValue instanceof Config)
             {
@@ -181,8 +182,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
                     config.setComment(key, valueSpec.getComment());
                 }
             }
-            if (!dryRun)
-                parentPath.removeLast();
+
+            parentPath.removeLast();
         }
 
         // Second step: removes the unspecified values
@@ -286,20 +287,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         }
         public <T> ConfigValue<List<? extends T>> defineList(List<String> path, Supplier<List<? extends T>> defaultSupplier, Predicate<Object> elementValidator) {
             context.setClazz(List.class);
-            return define(path, new ValueSpec(defaultSupplier, elementValidator, context) {
+            return define(path, new ValueSpec(defaultSupplier, x -> x instanceof List && ((List<?>) x).stream().allMatch( elementValidator ), context) {
                 @Override
                 public Object correct(Object value) {
                     if (value == null || !(value instanceof List) || ((List<?>)value).isEmpty()) {
                         return getDefault();
                     }
                     List<?> list = Lists.newArrayList((List<?>) value);
-                    Iterator<?> iter = list.iterator();
-                    while (iter.hasNext()) {
-                        Object o = iter.next();
-                        if (!elementValidator.test(o)) {
-                            iter.remove();
-                        }
-                    }
+                    list.removeIf(elementValidator.negate());
                     if (list.isEmpty()) {
                         return getDefault();
                     }
@@ -639,6 +634,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
     }
 
     private static final Joiner LINE_JOINER = Joiner.on("\n");
+    private static final Joiner DOT_JOINER = Joiner.on(".");
     private static final Splitter DOT_SPLITTER = Splitter.on(".");
     private static List<String> split(String path)
     {
