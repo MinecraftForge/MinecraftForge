@@ -86,6 +86,7 @@ public class ModSorter
         final MutableGraph<ModFileInfo> graph = GraphBuilder.directed().build();
         AtomicInteger counter = new AtomicInteger();
         Map<IModFileInfo, Integer> infos = modFiles.stream().map(ModFile::getModFileInfo).collect(Collectors.toMap(Function.identity(), (e) -> counter.incrementAndGet()));
+        infos.keySet().forEach(i -> graph.addNode((ModFileInfo) i));
         modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).
                 map(IModInfo::getDependencies).flatMap(Collection::stream).
                 forEach(dep -> addDependency(graph, dep));
