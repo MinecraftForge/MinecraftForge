@@ -86,7 +86,7 @@
  
        if (p_70037_1_.func_150297_b("Owner", 10)) {
           this.field_145802_g = NBTUtil.func_186860_b(p_70037_1_.func_74775_l("Owner"));
-@@ -262,12 +281,17 @@
+@@ -262,12 +281,20 @@
  
     public void func_70100_b_(EntityPlayer p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
@@ -100,13 +100,16 @@
 +         int hook = net.minecraftforge.event.ForgeEventFactory.onItemPickup(this, p_70100_1_);
 +         if (hook < 0) return;
 +
++         ItemStack copy = itemstack.func_77946_l();
 +         if (this.field_145804_b == 0 && (this.field_145802_g == null || lifespan - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_110124_au())) && (hook == 1 || i <= 0 || p_70100_1_.field_71071_by.func_70441_a(itemstack))) {
++            copy.func_190920_e(copy.func_190916_E() - func_92059_d().func_190916_E());
++            net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerItemPickupEvent(p_70100_1_, this, copy);
              if (itemstack.func_190926_b()) {
 +               p_70100_1_.func_71001_a(this, i);
                 this.func_70106_y();
                 itemstack.func_190920_e(i);
              }
-@@ -287,9 +311,10 @@
+@@ -287,9 +314,10 @@
        return false;
     }
  
@@ -119,7 +122,7 @@
        if (!this.field_70170_p.field_72995_K && entity instanceof EntityItem) {
           ((EntityItem)entity).func_85054_d();
        }
-@@ -354,6 +379,6 @@
+@@ -354,6 +382,6 @@
  
     public void func_174870_v() {
        this.func_174871_r();
