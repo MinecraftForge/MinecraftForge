@@ -21,13 +21,26 @@ package net.minecraftforge.client;
 
 import java.io.IOException;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.chunk.RenderChunkCache;
 import net.minecraft.client.renderer.texture.NativeImage;
@@ -36,13 +49,10 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.data.IModelData;
 
 public class MinecraftForgeClient
 {
@@ -136,7 +146,61 @@ public class MinecraftForgeClient
         regionCache.invalidateAll();
         regionCache.cleanUp();
     }
+    
+    private static final Map<Pair<World, ChunkPos>, Set<BlockPos>> needModelDataRefresh = new HashMap<>();
+    
+    private static final LoadingCache<Pair<World, ChunkPos>, Map<BlockPos, IModelData>> modelDataCache = CacheBuilder.newBuilder()
+            .maximumSize(1000)
+            .concurrencyLevel(5)
+            .expireAfterAccess(30, TimeUnit.SECONDS)
+            .build(new CacheLoader<Pair<World, ChunkPos>, Map<BlockPos, IModelData>>(){
 
+                @Override
+                public Map<BlockPos, IModelData> load(Pair<World, ChunkPos> key)
+                {
+                    return new ConcurrentHashMap<>();
+                }
+            });
+    
+    public static void requestModelDataRefresh(World world, BlockPos pos)
+    {
+        synchronized (needModelDataRefresh)
+        {
+            needModelDataRefresh.computeIfAbsent(Pair.of(world, new ChunkPos(pos)), $ -> Collections.synchronizedSet(new HashSet<>()))
+                                .add(pos);
+        }
+    }
+    
+    private static void refreshModelData(World world, ChunkPos chunk)
+    {
+        Set<BlockPos> needUpdate;
+        Pair<World, ChunkPos> key = Pair.of(world, chunk);
+        synchronized (needModelDataRefresh)
+        {
+            needUpdate = needModelDataRefresh.put(key, null);
+        }
+        if (needUpdate != null)
+        {
+            Map<BlockPos, IModelData> data = modelDataCache.getUnchecked(key);
+            for (BlockPos pos : needUpdate)
+            {
+                IBlockState toUpdate = world.getBlockState(pos);
+                data.put(pos, Minecraft.getInstance().getBlockRendererDispatcher().getModelForState(toUpdate).getModelData(world, pos, toUpdate));
+            }
+        }
+    }
+    
+    public static IModelData getModelData(World world, BlockPos pos)
+    {
+        return getModelData(world, new ChunkPos(pos)).get(pos);
+    }
+    
+    public static Map<BlockPos, IModelData> getModelData(World world, ChunkPos pos)
+    {
+        refreshModelData(world, pos);
+        return modelDataCache.getUnchecked(Pair.of(world, pos));
+    }
+    
     private static HashMap<ResourceLocation, Supplier<NativeImage>> bufferedImageSuppliers = new HashMap<ResourceLocation, Supplier<NativeImage>>();
     public static void registerImageLayerSupplier(ResourceLocation resourceLocation, Supplier<NativeImage> supplier)
     {

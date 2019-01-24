@@ -6,10 +6,12 @@
  @OnlyIn(Dist.CLIENT)
 -public interface IBakedModel {
 +public interface IBakedModel extends net.minecraftforge.client.extensions.IForgeBakedModel {
++    
++   @Deprecated
     List<BakedQuad> func_200117_a(@Nullable IBlockState p_200117_1_, @Nullable EnumFacing p_200117_2_, Random p_200117_3_);
  
     boolean func_177555_b();
-@@ -21,7 +21,8 @@
+@@ -21,7 +23,8 @@
  
     TextureAtlasSprite func_177554_e();
  

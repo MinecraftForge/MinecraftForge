@@ -23,7 +23,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Range;
 
-public class PropertyFloat implements IUnlistedProperty<Float>
+import net.minecraftforge.client.model.data.IModelProperty;
+
+public class PropertyFloat implements IModelProperty<Float>
 {
     private final String name;
     private final Predicate<Float> validator;
@@ -42,29 +44,5 @@ public class PropertyFloat implements IUnlistedProperty<Float>
     {
         this.name = name;
         this.validator = validator;
-    }
-
-    @Override
-    public String getName()
-    {
-        return name;
-    }
-
-    @Override
-    public boolean isValid(Float value)
-    {
-        return validator.apply(value);
-    }
-
-    @Override
-    public Class<Float> getType()
-    {
-        return Float.class;
-    }
-
-    @Override
-    public String valueToString(Float value)
-    {
-        return value.toString();
     }
 }

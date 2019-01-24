@@ -1,15 +1,103 @@
 --- a/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ b/net/minecraft/client/renderer/BlockModelRenderer.java
-@@ -45,7 +45,7 @@
+@@ -44,63 +44,78 @@
+       this.field_187499_a = p_i46575_1_;
     }
  
++   @Deprecated
     public boolean func_199324_a(IWorldReader p_199324_1_, IBakedModel p_199324_2_, IBlockState p_199324_3_, BlockPos p_199324_4_, BufferBuilder p_199324_5_, boolean p_199324_6_, Random p_199324_7_, long p_199324_8_) {
 -      boolean flag = Minecraft.func_71379_u() && p_199324_3_.func_185906_d() == 0 && p_199324_2_.func_177555_b();
-+      boolean flag = Minecraft.func_71379_u() && p_199324_3_.getLightValue(p_199324_1_, p_199324_4_) == 0 && p_199324_2_.isAmbientOcclusion(p_199324_3_);
++      return renderModel(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
++   }
  
++   public boolean renderModel(IWorldReader worldIn, IBakedModel modelIn, IBlockState stateIn, BlockPos posIn, BufferBuilder buffer, boolean checkSides, Random randomIn, long rand, net.minecraftforge.client.model.data.IModelData modelData) {
++      boolean flag = Minecraft.func_71379_u() && stateIn.getLightValue(worldIn, posIn) == 0 && modelIn.isAmbientOcclusion(stateIn);
++
        try {
-          return flag ? this.func_199326_b(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_) : this.func_199325_c(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_);
-@@ -120,6 +120,13 @@
+-         return flag ? this.func_199326_b(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_) : this.func_199325_c(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_);
++         return flag ? this.renderModelSmooth(worldIn, modelIn, stateIn, posIn, buffer, checkSides, randomIn, rand, modelData) : this.renderModelFlat(worldIn, modelIn, stateIn, posIn, buffer, checkSides, randomIn, rand, modelData);
+       } catch (Throwable throwable) {
+          CrashReport crashreport = CrashReport.func_85055_a(throwable, "Tesselating block model");
+          CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block model being tesselated");
+-         CrashReportCategory.func_175750_a(crashreportcategory, p_199324_4_, p_199324_3_);
++         CrashReportCategory.func_175750_a(crashreportcategory, posIn, stateIn);
+          crashreportcategory.func_71507_a("Using AO", flag);
+          throw new ReportedException(crashreport);
+       }
+    }
+ 
++   @Deprecated
+    public boolean func_199326_b(IWorldReader p_199326_1_, IBakedModel p_199326_2_, IBlockState p_199326_3_, BlockPos p_199326_4_, BufferBuilder p_199326_5_, boolean p_199326_6_, Random p_199326_7_, long p_199326_8_) {
++      return renderModelSmooth(p_199326_1_, p_199326_2_, p_199326_3_, p_199326_4_, p_199326_5_, p_199326_6_, p_199326_7_, p_199326_8_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
++   }
++
++   public boolean renderModelSmooth(IWorldReader worldIn, IBakedModel modelIn, IBlockState stateIn, BlockPos posIn, BufferBuilder buffer, boolean checkSides, Random randomIn, long rand, net.minecraftforge.client.model.data.IModelData modelData) {
+       boolean flag = false;
+       float[] afloat = new float[EnumFacing.values().length * 2];
+       BitSet bitset = new BitSet(3);
+       BlockModelRenderer.AmbientOcclusionFace blockmodelrenderer$ambientocclusionface = new BlockModelRenderer.AmbientOcclusionFace();
+ 
+       for(EnumFacing enumfacing : EnumFacing.values()) {
+-         p_199326_7_.setSeed(p_199326_8_);
+-         List<BakedQuad> list = p_199326_2_.func_200117_a(p_199326_3_, enumfacing, p_199326_7_);
+-         if (!list.isEmpty() && (!p_199326_6_ || Block.func_176225_a(p_199326_3_, p_199326_1_, p_199326_4_, enumfacing))) {
+-            this.func_187492_a(p_199326_1_, p_199326_3_, p_199326_4_, p_199326_5_, list, afloat, bitset, blockmodelrenderer$ambientocclusionface);
++         randomIn.setSeed(rand);
++         List<BakedQuad> list = modelIn.getQuads(stateIn, enumfacing, randomIn, modelData);
++         if (!list.isEmpty() && (!checkSides || Block.func_176225_a(stateIn, worldIn, posIn, enumfacing))) {
++            this.func_187492_a(worldIn, stateIn, posIn, buffer, list, afloat, bitset, blockmodelrenderer$ambientocclusionface);
+             flag = true;
+          }
+       }
+ 
+-      p_199326_7_.setSeed(p_199326_8_);
+-      List<BakedQuad> list1 = p_199326_2_.func_200117_a(p_199326_3_, (EnumFacing)null, p_199326_7_);
++      randomIn.setSeed(rand);
++      List<BakedQuad> list1 = modelIn.getQuads(stateIn, (EnumFacing)null, randomIn, modelData);
+       if (!list1.isEmpty()) {
+-         this.func_187492_a(p_199326_1_, p_199326_3_, p_199326_4_, p_199326_5_, list1, afloat, bitset, blockmodelrenderer$ambientocclusionface);
++         this.func_187492_a(worldIn, stateIn, posIn, buffer, list1, afloat, bitset, blockmodelrenderer$ambientocclusionface);
+          flag = true;
+       }
+ 
+       return flag;
+    }
+ 
++   @Deprecated
+    public boolean func_199325_c(IWorldReader p_199325_1_, IBakedModel p_199325_2_, IBlockState p_199325_3_, BlockPos p_199325_4_, BufferBuilder p_199325_5_, boolean p_199325_6_, Random p_199325_7_, long p_199325_8_) {
++      return renderModelFlat(p_199325_1_, p_199325_2_, p_199325_3_, p_199325_4_, p_199325_5_, p_199325_6_, p_199325_7_, p_199325_8_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
++   }
++
++   public boolean renderModelFlat(IWorldReader worldIn, IBakedModel modelIn, IBlockState stateIn, BlockPos posIn, BufferBuilder buffer, boolean checkSides, Random randomIn, long rand, net.minecraftforge.client.model.data.IModelData modelData) {
+       boolean flag = false;
+       BitSet bitset = new BitSet(3);
+ 
+       for(EnumFacing enumfacing : EnumFacing.values()) {
+-         p_199325_7_.setSeed(p_199325_8_);
+-         List<BakedQuad> list = p_199325_2_.func_200117_a(p_199325_3_, enumfacing, p_199325_7_);
+-         if (!list.isEmpty() && (!p_199325_6_ || Block.func_176225_a(p_199325_3_, p_199325_1_, p_199325_4_, enumfacing))) {
+-            int i = p_199325_3_.func_185889_a(p_199325_1_, p_199325_4_.func_177972_a(enumfacing));
+-            this.func_187496_a(p_199325_1_, p_199325_3_, p_199325_4_, i, false, p_199325_5_, list, bitset);
++         randomIn.setSeed(rand);
++         List<BakedQuad> list = modelIn.getQuads(stateIn, enumfacing, randomIn, modelData);
++         if (!list.isEmpty() && (!checkSides || Block.func_176225_a(stateIn, worldIn, posIn, enumfacing))) {
++            int i = stateIn.func_185889_a(worldIn, posIn.func_177972_a(enumfacing));
++            this.func_187496_a(worldIn, stateIn, posIn, i, false, buffer, list, bitset);
+             flag = true;
+          }
+       }
+ 
+-      p_199325_7_.setSeed(p_199325_8_);
+-      List<BakedQuad> list1 = p_199325_2_.func_200117_a(p_199325_3_, (EnumFacing)null, p_199325_7_);
++      randomIn.setSeed(rand);
++      List<BakedQuad> list1 = modelIn.getQuads(stateIn, (EnumFacing)null, randomIn, modelData);
+       if (!list1.isEmpty()) {
+-         this.func_187496_a(p_199325_1_, p_199325_3_, p_199325_4_, -1, true, p_199325_5_, list1, bitset);
++         this.func_187496_a(worldIn, stateIn, posIn, -1, true, buffer, list1, bitset);
+          flag = true;
+       }
+ 
+@@ -120,6 +135,13 @@
           p_187492_8_.func_187491_a(p_187492_1_, p_187492_2_, p_187492_3_, bakedquad.func_178210_d(), p_187492_6_, p_187492_7_);
           p_187492_4_.func_178981_a(bakedquad.func_178209_a());
           p_187492_4_.func_178962_a(p_187492_8_.field_178207_c[0], p_187492_8_.field_178207_c[1], p_187492_8_.field_178207_c[2], p_187492_8_.field_178207_c[3]);
@@ -23,7 +111,7 @@
           if (bakedquad.func_178212_b()) {
              int k = this.field_187499_a.func_186724_a(p_187492_2_, p_187492_1_, p_187492_3_, bakedquad.func_178211_c());
              float f = (float)(k >> 16 & 255) / 255.0F;
-@@ -229,10 +236,22 @@
+@@ -229,10 +251,22 @@
              float f = (float)(k >> 16 & 255) / 255.0F;
              float f1 = (float)(k >> 8 & 255) / 255.0F;
              float f2 = (float)(k & 255) / 255.0F;

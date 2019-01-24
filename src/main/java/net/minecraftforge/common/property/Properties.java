@@ -20,7 +20,7 @@
 package net.minecraftforge.common.property;
 
 import net.minecraft.state.BooleanProperty;
-import net.minecraft.state.IProperty;
+import net.minecraftforge.client.model.data.IModelProperty;
 import net.minecraftforge.common.model.IModelState;
 
 public class Properties
@@ -33,54 +33,5 @@ public class Properties
     /**
      * Property holding the IModelState used for animating the model in the TESR.
      */
-    public static final IUnlistedProperty<IModelState> AnimationProperty = new IUnlistedProperty<IModelState>()
-    {
-        @Override
-        public String getName() { return "forge_animation"; }
-        @Override
-        public boolean isValid(IModelState state) { return true; }
-        @Override
-        public Class<IModelState> getType() { return IModelState.class; }
-        @Override
-        public String valueToString(IModelState state) { return state.toString(); }
-    };
-
-    public static <V extends Comparable<V>> IUnlistedProperty<V> toUnlisted(IProperty<V> property)
-    {
-        return new PropertyAdapter<V>(property);
-    }
-
-    public static class PropertyAdapter<V extends Comparable<V>> implements IUnlistedProperty<V>
-    {
-        private final IProperty<V> parent;
-
-        public PropertyAdapter(IProperty<V> parent)
-        {
-            this.parent = parent;
-        }
-
-        @Override
-        public String getName()
-        {
-            return parent.getName();
-        }
-
-        @Override
-        public boolean isValid(V value)
-        {
-            return parent.getAllowedValues().contains(value);
-        }
-
-        @Override
-        public Class<V> getType()
-        {
-            return parent.getValueClass();
-        }
-
-        @Override
-        public String valueToString(V value)
-        {
-            return parent.getName(value);
-        }
-    }
+    public static final IModelProperty<IModelState> AnimationProperty = new IModelProperty<IModelState>(){};
 }
