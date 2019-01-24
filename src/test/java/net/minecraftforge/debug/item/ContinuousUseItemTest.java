@@ -55,7 +55,7 @@ public class ContinuousUseItemTest
         {
             event.getRegistry().register(
                     new TestItem().setRegistryName(MOD_ID, TestItem.NAME)
-                                  .setUnlocalizedName(MOD_ID + "." + TestItem.NAME)
+                                  .setTranslationKey(MOD_ID + "." + TestItem.NAME)
                                   .setCreativeTab(CreativeTabs.MISC)
             );
         }

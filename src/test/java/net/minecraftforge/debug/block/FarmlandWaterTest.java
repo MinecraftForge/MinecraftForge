@@ -66,7 +66,7 @@ public class FarmlandWaterTest
     public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
         testBlock = new TestBlock();
-        event.getRegistry().register(testBlock.setRegistryName(new ResourceLocation(ID, "test_block")).setCreativeTab(CreativeTabs.MISC).setUnlocalizedName("Farmland Water Test Block"));
+        event.getRegistry().register(testBlock.setRegistryName(new ResourceLocation(ID, "test_block")).setCreativeTab(CreativeTabs.MISC).setTranslationKey("Farmland Water Test Block"));
         GameRegistry.registerTileEntity(TestTileEntity.class, new ResourceLocation(ID, "test_te"));
     }
 
