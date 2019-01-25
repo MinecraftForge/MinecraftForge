@@ -38,6 +38,7 @@ import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.client.MouseHelper;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -809,5 +810,11 @@ public class ForgeHooksClient
     {
         Event event = new GuiScreenEvent.KeyboardCharTypedEvent.Post(guiScreen, codePoint, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static void onRecipesUpdated()
+    {
+        Event event = new RecipesUpdatedEvent();
+        MinecraftForge.EVENT_BUS.post(event);
     }
 }
