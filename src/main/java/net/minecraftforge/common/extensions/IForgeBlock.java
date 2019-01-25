@@ -190,6 +190,7 @@ public interface IForgeBlock
      * @param state State of the current block
      * @return True if block has a tile entity, false otherwise
      */
+    @SuppressWarnings("deprecation")
     default boolean hasTileEntity(IBlockState state)
     {
         return this instanceof ITileEntityProvider;
@@ -204,6 +205,7 @@ public interface IForgeBlock
      * @param world The world to create the TE in
      * @return A instance of a class extending TileEntity
      */
+    @SuppressWarnings("deprecation")
     @Nullable
     default TileEntity createTileEntity(IBlockState state, IBlockReader world)
     {
