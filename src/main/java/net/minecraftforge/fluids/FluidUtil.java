@@ -224,30 +224,6 @@ public class FluidUtil
      * @param maxAmount   Maximum amount of fluid to take from the tank.
      * @param player      The player that gets the items the inventory can't take.
      *                    Can be null, only used if the inventory cannot take the filled stack.
-     * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
-     * @deprecated use {@link #tryFillContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, boolean)}
-     */
-    @Deprecated // TODO remove in 1.13
-    @Nonnull
-    public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
-    {
-        return tryFillContainerAndStow(container, fluidSource, inventory, maxAmount, player, true);
-    }
-
-    /**
-     * Takes an Fluid Container Item and tries to fill it from the given tank.
-     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the filled container in the given inventory.
-     * If the inventory does not accept it, it will be given to the player or dropped at the players feet.
-     *      If player is null in this case, the action will be aborted.
-     *
-     * @param container   The Fluid Container ItemStack to fill.
-     *                    Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
-     * @param fluidSource The fluid source to fill from
-     * @param inventory   An inventory where any additionally created item (filled container if multiple empty are present) are put
-     * @param maxAmount   Maximum amount of fluid to take from the tank.
-     * @param player      The player that gets the items the inventory can't take.
-     *                    Can be null, only used if the inventory cannot take the filled stack.
      * @param doFill      true if the container should actually be filled, false if it should be simulated.
      * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
      */
@@ -301,29 +277,6 @@ public class FluidUtil
         }
 
         return FluidActionResult.FAILURE;
-    }
-
-    /**
-     * Takes an Fluid Container Item, tries to empty it into the fluid handler, and stows it in the given inventory.
-     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the emptied container in the given inventory.
-     * If the inventory does not accept the emptied container, it will be given to the player or dropped at the players feet.
-     *      If player is null in this case, the action will be aborted.
-     *
-     * @param container        The filled Fluid Container Itemstack to empty.
-     *                         Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
-     * @param fluidDestination The fluid destination to fill from the fluid container.
-     * @param inventory        An inventory where any additionally created item (filled container if multiple empty are present) are put
-     * @param maxAmount        Maximum amount of fluid to take from the tank.
-     * @param player           The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the filled stack.
-     * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
-     * @deprecated use {@link #tryEmptyContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, boolean)}
-     */
-    @Deprecated // TODO: remove in 1.13
-    @Nonnull
-    public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
-    {
-        return tryEmptyContainerAndStow(container, fluidDestination, inventory, maxAmount, player, true);
     }
 
     /**

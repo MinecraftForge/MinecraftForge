@@ -33,12 +33,6 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends net.
     private final double y;
     private final double z;
 
-    @Deprecated
-    public RenderLivingEvent(EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z)
-    {
-        this(entity, renderer, 1, x, y, z);
-    }
-
     public RenderLivingEvent(EntityLivingBase entity, RenderLivingBase<T> renderer, float partialRenderTick, double x, double y, double z)
     {
         this.entity = entity;
@@ -59,14 +53,10 @@ public abstract class RenderLivingEvent<T extends EntityLivingBase> extends net.
     @net.minecraftforge.eventbus.api.Cancelable
     public static class Pre<T extends EntityLivingBase> extends RenderLivingEvent<T>
     {
-        @Deprecated
-        public Pre(EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z){ super(entity, renderer, x, y, z); }
         public Pre(EntityLivingBase entity, RenderLivingBase<T> renderer, float partialRenderTick, double x, double y, double z){ super(entity, renderer, partialRenderTick, x, y, z); }
     }
     public static class Post<T extends EntityLivingBase> extends RenderLivingEvent<T>
     {
-        @Deprecated
-        public Post(EntityLivingBase entity, RenderLivingBase<T> renderer, double x, double y, double z){ super(entity, renderer, x, y, z); }
         public Post(EntityLivingBase entity, RenderLivingBase<T> renderer, float partialRenderTick, double x, double y, double z){ super(entity, renderer, partialRenderTick, x, y, z); }
     }
 

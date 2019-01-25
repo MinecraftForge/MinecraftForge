@@ -261,16 +261,6 @@ public class UniversalBucket extends Item
         }
     }
 
-    /**
-     * @deprecated use the NBT-sensitive version {@link FluidUtil#getFilledBucket(FluidStack)}
-     */
-    @Deprecated
-    @Nonnull
-    public static ItemStack getFilledBucket(@Nonnull UniversalBucket item, Fluid fluid)
-    {
-        return FluidUtil.getFilledBucket(new FluidStack(fluid, Fluid.BUCKET_VOLUME));
-    }
-
     @Nullable
     public FluidStack getFluid(@Nonnull ItemStack container)
     {

@@ -81,13 +81,6 @@ public class BlockSnapshot
         this.setFlag(flag);
     }
 
-    /** @deprecated use {@link #BlockSnapshot(int, BlockPos, ResourceLocation, int, int, NBTTagCompound)} */
-    @Deprecated
-    public BlockSnapshot(int dimension, BlockPos pos, String modId, String blockName, int meta, int flag, @Nullable NBTTagCompound nbt)
-    {
-        this(dimension, pos, new ResourceLocation(modId, blockName), meta, flag, nbt);
-    }
-
     /**
      * Raw constructor designed for serialization usages.
      */
