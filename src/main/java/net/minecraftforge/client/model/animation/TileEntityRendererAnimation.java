@@ -31,6 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
@@ -59,7 +60,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
         IWorldReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
         IBlockState state = world.getBlockState(pos);
         IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
-        IModelData data = model.getModelData(world, pos, state);
+        IModelData data = model.getModelData(world, pos, state, ModelDataManager.getModelData(te.getWorld(), pos));
         if (data.hasProperty(Properties.AnimationProperty))
         {
             float time = Animation.getWorldTime(getWorld(), partialTick);

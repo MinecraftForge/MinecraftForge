@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.extensions;
 
+import javax.annotation.Nonnull;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -29,6 +31,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.model.ModelDataManager;
+import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
 public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound>
@@ -86,7 +91,15 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      * Called when this is first added to the world (by {@link World#addTileEntity(TileEntity)}).
      * Override instead of adding {@code if (firstTick)} stuff in update.
      */
-     default void onLoad(){}
+     default void onLoad()
+     {
+         TileEntity te = getTileEntity();
+         World world = te.getWorld();
+         if (world != null && world.isRemote)
+         {
+             ModelDataManager.requestModelDataRefresh(te);
+         }
+     }
      
      default boolean shouldRenderInPass(int pass)
      {
@@ -167,5 +180,20 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      default boolean hasFastRenderer()
      {
          return false;
+     }
+     
+     default void requestModelDataUpdate()
+     {
+         TileEntity te = getTileEntity();
+         World world = te.getWorld();
+         if (world != null && world.isRemote)
+         {
+             ModelDataManager.requestModelDataRefresh(te);
+         }
+     }
+     
+     default @Nonnull IModelData getModelData()
+     {
+         return EmptyModelData.INSTANCE;
      }
 }

@@ -1,14 +1,17 @@
 --- a/net/minecraft/client/renderer/chunk/ChunkRenderTask.java
 +++ b/net/minecraft/client/renderer/chunk/ChunkRenderTask.java
-@@ -5,6 +5,7 @@
+@@ -5,8 +5,10 @@
  import java.util.List;
  import java.util.concurrent.locks.ReentrantLock;
  import net.minecraft.client.renderer.RegionRenderCacheBuilder;
 +import net.minecraft.util.math.BlockPos;
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.client.model.data.EmptyModelData;
  
-@@ -19,11 +20,14 @@
+ @OnlyIn(Dist.CLIENT)
+ public class ChunkRenderTask implements Comparable<ChunkRenderTask> {
+@@ -19,11 +21,14 @@
     private CompiledChunk field_178547_f;
     private ChunkRenderTask.Status field_178548_g = ChunkRenderTask.Status.PENDING;
     private boolean field_178554_h;
@@ -19,16 +22,16 @@
        this.field_178549_d = p_i46560_2_;
        this.field_188229_e = p_i46560_3_;
 +      
-+      modelData = net.minecraftforge.client.MinecraftForgeClient.getModelData(net.minecraft.client.Minecraft.func_71410_x().field_71441_e, new net.minecraft.util.math.ChunkPos(p_i46560_1_.func_178568_j()));
++      modelData = net.minecraftforge.client.model.ModelDataManager.getModelData(net.minecraft.client.Minecraft.func_71410_x().field_71441_e, new net.minecraft.util.math.ChunkPos(p_i46560_1_.func_178568_j()));
     }
  
     public ChunkRenderTask.Status func_178546_a() {
-@@ -128,4 +132,8 @@
+@@ -128,4 +133,8 @@
        REBUILD_CHUNK,
        RESORT_TRANSPARENCY;
     }
 +   
 +   public net.minecraftforge.client.model.data.IModelData getModelData(BlockPos pos) {
-+       return modelData.get(pos);
++       return modelData.getOrDefault(pos, EmptyModelData.INSTANCE);
 +   }
  }

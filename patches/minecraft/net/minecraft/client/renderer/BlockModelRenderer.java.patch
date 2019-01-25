@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/BlockModelRenderer.java
 +++ b/net/minecraft/client/renderer/BlockModelRenderer.java
-@@ -44,63 +44,78 @@
+@@ -44,63 +44,79 @@
        this.field_187499_a = p_i46575_1_;
     }
  
@@ -12,6 +12,7 @@
  
 +   public boolean renderModel(IWorldReader worldIn, IBakedModel modelIn, IBlockState stateIn, BlockPos posIn, BufferBuilder buffer, boolean checkSides, Random randomIn, long rand, net.minecraftforge.client.model.data.IModelData modelData) {
 +      boolean flag = Minecraft.func_71379_u() && stateIn.getLightValue(worldIn, posIn) == 0 && modelIn.isAmbientOcclusion(stateIn);
++      modelData = modelIn.getModelData(worldIn, posIn, stateIn, modelData);
 +
        try {
 -         return flag ? this.func_199326_b(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_) : this.func_199325_c(p_199324_1_, p_199324_2_, p_199324_3_, p_199324_4_, p_199324_5_, p_199324_6_, p_199324_7_, p_199324_8_);
@@ -97,7 +98,7 @@
           flag = true;
        }
  
-@@ -120,6 +135,13 @@
+@@ -120,6 +136,13 @@
           p_187492_8_.func_187491_a(p_187492_1_, p_187492_2_, p_187492_3_, bakedquad.func_178210_d(), p_187492_6_, p_187492_7_);
           p_187492_4_.func_178981_a(bakedquad.func_178209_a());
           p_187492_4_.func_178962_a(p_187492_8_.field_178207_c[0], p_187492_8_.field_178207_c[1], p_187492_8_.field_178207_c[2], p_187492_8_.field_178207_c[3]);
@@ -111,7 +112,7 @@
           if (bakedquad.func_178212_b()) {
              int k = this.field_187499_a.func_186724_a(p_187492_2_, p_187492_1_, p_187492_3_, bakedquad.func_178211_c());
              float f = (float)(k >> 16 & 255) / 255.0F;
-@@ -229,10 +251,22 @@
+@@ -229,10 +252,22 @@
              float f = (float)(k >> 16 & 255) / 255.0F;
              float f1 = (float)(k >> 8 & 255) / 255.0F;
              float f2 = (float)(k & 255) / 255.0F;
