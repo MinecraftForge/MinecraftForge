@@ -117,6 +117,15 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
+@@ -561,7 +569,7 @@
+          }
+       }
+ 
+-      return raytraceresult;
++      return p_180636_0_.func_177230_c().getRayTraceResult(p_180636_0_, p_180636_1_, p_180636_2_, p_180636_3_, p_180636_4_, raytraceresult);
+    }
+ 
+    public void func_180652_a(World p_180652_1_, BlockPos p_180652_2_, Explosion p_180652_3_) {
 @@ -615,16 +623,22 @@
     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
        p_180657_2_.func_71029_a(StatList.field_188065_ae.func_199076_b(this));
