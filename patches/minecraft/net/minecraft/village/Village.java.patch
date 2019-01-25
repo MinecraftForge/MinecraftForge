@@ -5,11 +5,11 @@
  import net.minecraft.world.World;
  
 -public class Village {
-+public class Village extends net.minecraftforge.common.capabilities.CapabilityProvider implements net.minecraftforge.common.extensions.IForgeVillage {
++public class Village extends net.minecraftforge.common.capabilities.CapabilityProvider<Village> implements net.minecraftforge.common.extensions.IForgeVillage {
     private World field_75586_a;
     private final List<VillageDoorInfo> field_75584_b = Lists.<VillageDoorInfo>newArrayList();
     private BlockPos field_75585_c = BlockPos.field_177992_a;
-@@ -40,15 +40,17 @@
+@@ -40,15 +40,18 @@
     private int field_75581_g;
     private int field_75588_h;
     private int field_82694_i;
@@ -19,16 +19,17 @@
     private int field_75587_j;
  
     public Village() {
-+       this.gatherCapabilities();
++       this(null);
     }
  
     public Village(World p_i1675_1_) {
++      super(Village.class);
        this.field_75586_a = p_i1675_1_;
 +      this.gatherCapabilities();
     }
  
     public void func_82691_a(World p_82691_1_) {
-@@ -237,9 +239,9 @@
+@@ -237,9 +240,9 @@
        double d0 = Double.MAX_VALUE;
        EntityPlayer entityplayer = null;
  
@@ -41,7 +42,7 @@
              if (entityplayer1 != null) {
                 double d1 = entityplayer1.func_70068_e(p_82685_1_);
                 if (!(d1 > d0)) {
-@@ -317,22 +319,47 @@
+@@ -317,22 +320,47 @@
        }
     }
  
@@ -91,7 +92,7 @@
     public void func_82690_a(NBTTagCompound p_82690_1_) {
        this.field_75588_h = p_82690_1_.func_74762_e("PopSize");
        this.field_75583_e = p_82690_1_.func_74762_e("Radius");
-@@ -354,17 +381,14 @@
+@@ -354,17 +382,14 @@
  
        for(int j = 0; j < nbttaglist1.size(); ++j) {
           NBTTagCompound nbttagcompound1 = nbttaglist1.func_150305_b(j);
@@ -114,7 +115,7 @@
     }
  
     public void func_82689_b(NBTTagCompound p_82689_1_) {
-@@ -396,14 +420,12 @@
+@@ -396,14 +421,12 @@
        p_82689_1_.func_74782_a("Doors", nbttaglist);
        NBTTagList nbttaglist1 = new NBTTagList();
  
@@ -132,7 +133,7 @@
                 nbttagcompound1.func_74768_a("S", this.field_82693_j.get(s));
                 nbttaglist1.add((INBTBase)nbttagcompound1);
              }
-@@ -413,6 +435,8 @@
+@@ -413,6 +436,8 @@
        }
  
        p_82689_1_.func_74782_a("Players", nbttaglist1);
@@ -141,7 +142,7 @@
     }
  
     public void func_82692_h() {
-@@ -424,8 +448,8 @@
+@@ -424,8 +449,8 @@
     }
  
     public void func_82683_b(int p_82683_1_) {

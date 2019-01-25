@@ -30,15 +30,21 @@ import net.minecraftforge.event.ForgeEventFactory;
 
 @MethodsReturnNonnullByDefault
 @ParametersAreNonnullByDefault
-public abstract class CapabilityProvider implements ICapabilityProvider
+public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implements ICapabilityProvider
 {
+    private final @Nonnull Class<B> baseClass;
     private @Nullable CapabilityDispatcher capabilities;
+    
+    protected CapabilityProvider(Class<B> baseClass)
+    {
+        this.baseClass = baseClass;
+    }
     
     protected final void gatherCapabilities() { gatherCapabilities(null); }
     
     protected final void gatherCapabilities(@Nullable ICapabilityProvider parent)
     {
-        this.capabilities = ForgeEventFactory.gatherCapabilities(getClass(), this, parent);
+        this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, this, parent);
     }
     
     protected final @Nullable CapabilityDispatcher getCapabilities()
@@ -46,7 +52,7 @@ public abstract class CapabilityProvider implements ICapabilityProvider
         return this.capabilities;
     }
     
-    public final boolean areCapsCompatible(CapabilityProvider other)
+    public final boolean areCapsCompatible(CapabilityProvider<B> other)
     {
         return areCapsCompatible(other.getCapabilities());
     }

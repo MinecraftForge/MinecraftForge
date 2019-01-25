@@ -5,11 +5,19 @@
  import org.apache.logging.log4j.Logger;
  
 -public class Chunk implements IChunk {
-+public class Chunk extends net.minecraftforge.common.capabilities.CapabilityProvider implements IChunk, net.minecraftforge.common.extensions.IForgeChunk {
++public class Chunk extends net.minecraftforge.common.capabilities.CapabilityProvider<Chunk> implements IChunk, net.minecraftforge.common.extensions.IForgeChunk {
     private static final Logger field_150817_t = LogManager.getLogger();
     public static final ChunkSection field_186036_a = null;
     private final ChunkSection[] field_76652_q;
-@@ -125,6 +125,7 @@
+@@ -93,6 +93,7 @@
+    }
+ 
+    public Chunk(World p_i49379_1_, int p_i49379_2_, int p_i49379_3_, Biome[] p_i49379_4_, UpgradeData p_i49379_5_, ITickList<Block> p_i49379_6_, ITickList<Fluid> p_i49379_7_, long p_i49379_8_) {
++      super(Chunk.class);
+       this.field_76652_q = new ChunkSection[16];
+       this.field_76639_c = new boolean[256];
+       this.field_201618_i = Maps.<BlockPos, NBTTagCompound>newHashMap();
+@@ -125,6 +126,7 @@
        this.field_201621_s = p_i49379_6_;
        this.field_205325_u = p_i49379_7_;
        this.field_111204_q = p_i49379_8_;
@@ -17,7 +25,7 @@
     }
  
     public Chunk(World p_i48703_1_, ChunkPrimer p_i48703_2_, int p_i48703_3_, int p_i48703_4_) {
-@@ -593,6 +594,7 @@
+@@ -593,6 +595,7 @@
        p_76612_1_.field_70162_ai = k;
        p_76612_1_.field_70164_aj = this.field_76647_h;
        this.field_76645_j[k].add(p_76612_1_);
@@ -25,7 +33,7 @@
     }
  
     public void func_201607_a(Heightmap.Type p_201607_1_, long[] p_201607_2_) {
-@@ -613,6 +615,7 @@
+@@ -613,6 +616,7 @@
        }
  
        this.field_76645_j[p_76608_2_].remove(p_76608_1_);
@@ -33,7 +41,7 @@
     }
  
     public boolean func_177444_d(BlockPos p_177444_1_) {
-@@ -1164,4 +1167,30 @@
+@@ -1164,4 +1168,30 @@
        QUEUED,
        CHECK;
     }
