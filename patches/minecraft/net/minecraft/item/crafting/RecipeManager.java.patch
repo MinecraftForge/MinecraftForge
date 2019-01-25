@@ -9,14 +9,18 @@
     private static final Logger field_199521_c = LogManager.getLogger();
     public static final int field_199519_a = "recipes/".length();
     public static final int field_199520_b = ".json".length();
-@@ -36,6 +36,7 @@
+@@ -36,9 +36,10 @@
        Gson gson = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
        this.field_199523_e = false;
        this.field_199522_d.clear();
 +      super.func_195410_a(p_195410_1_);
  
        for(ResourceLocation resourcelocation : p_195410_1_.func_199003_a("recipes", (p_199516_0_) -> {
-          return p_199516_0_.endsWith(".json");
+-         return p_199516_0_.endsWith(".json");
++         return p_199516_0_.endsWith(".json") && !p_199516_0_.startsWith("_"); //Forge filter anything beginning with "_" as it's used for metadata.
+       })) {
+          String s = resourcelocation.func_110623_a();
+          ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), s.substring(field_199519_a, s.length() - field_199520_b));
 @@ -47,6 +48,8 @@
              JsonObject jsonobject = (JsonObject)JsonUtils.func_188178_a(gson, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), JsonObject.class);
              if (jsonobject == null) {
