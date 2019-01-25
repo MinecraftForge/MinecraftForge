@@ -9,24 +9,24 @@
     public static final ItemGroup field_78030_b = (new ItemGroup(0, "buildingBlocks") {
        @OnlyIn(Dist.CLIENT)
        public ItemStack func_78016_d() {
-@@ -104,7 +104,16 @@
+@@ -104,11 +104,14 @@
     private EnumEnchantmentType[] field_111230_s = new EnumEnchantmentType[0];
     private ItemStack field_151245_t;
  
 +   public ItemGroup(String label) {
-+       this(field_78032_a.length, label);
++       this(-1, label);
 +   }
 +
     public ItemGroup(int p_i1853_1_, String p_i1853_2_) {
-+      if (p_i1853_1_ >= field_78032_a.length) {
-+         ItemGroup[] tmp = new ItemGroup[p_i1853_1_ + 1];
-+         System.arraycopy(field_78032_a, 0, tmp, 0, field_78032_a.length);
-+         field_78032_a = tmp;
-+      }
-       this.field_78033_n = p_i1853_1_;
+-      this.field_78033_n = p_i1853_1_;
        this.field_78034_o = p_i1853_2_;
        this.field_151245_t = ItemStack.field_190927_a;
-@@ -179,11 +188,13 @@
+-      field_78032_a[p_i1853_1_] = this;
++      this.field_78033_n = addGroupSafe(p_i1853_1_, this);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -179,11 +182,13 @@
  
     @OnlyIn(Dist.CLIENT)
     public int func_78020_k() {
@@ -40,7 +40,7 @@
        return this.field_78033_n < 6;
     }
  
-@@ -220,4 +231,31 @@
+@@ -220,4 +225,57 @@
        }
  
     }
@@ -70,5 +70,28 @@
 +
 +   public int getLabelColor() {
 +      return 4210752;
++   }
++   
++   private static final Object LOCK = new Object();
++   
++   public static int getGroupCountSafe() {
++      synchronized (LOCK) {
++         return ItemGroup.field_78032_a.length;
++      }
++   }
++   
++   private static int addGroupSafe(int index, ItemGroup newGroup) {
++      synchronized (LOCK) {
++         if(index == -1) {
++            index = field_78032_a.length;
++         }
++         if (index >= field_78032_a.length) {
++            ItemGroup[] tmp = new ItemGroup[index + 1];
++            System.arraycopy(field_78032_a, 0, tmp, 0, field_78032_a.length);
++            field_78032_a = tmp;
++         }
++         field_78032_a[index] = newGroup;
++         return index;
++      }
 +   }
  }
