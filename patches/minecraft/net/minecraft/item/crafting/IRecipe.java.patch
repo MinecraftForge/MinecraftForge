@@ -12,7 +12,8 @@
 -import net.minecraftforge.api.distmarker.Dist;
 -import net.minecraftforge.api.distmarker.OnlyIn;
  
- public interface IRecipe {
+-public interface IRecipe {
++public interface IRecipe extends net.minecraftforge.common.extensions.IForgeRecipe {
     boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_);
  
     ItemStack func_77572_b(IInventory p_77572_1_);

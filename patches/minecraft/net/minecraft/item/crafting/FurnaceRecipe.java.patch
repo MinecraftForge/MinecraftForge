@@ -9,7 +9,15 @@
  
  public class FurnaceRecipe implements IRecipe {
     private final ResourceLocation field_201832_a;
-@@ -38,7 +36,6 @@
+@@ -31,14 +29,13 @@
+    }
+ 
+    public boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_) {
+-      return p_77569_1_ instanceof TileEntityFurnace && this.field_201834_c.test(p_77569_1_.func_70301_a(0));
++      return this.field_201834_c.test(p_77569_1_.func_70301_a(0));
+    }
+ 
+    public ItemStack func_77572_b(IInventory p_77572_1_) {
        return this.field_201835_d.func_77946_l();
     }
  
@@ -25,15 +33,21 @@
     public String func_193358_e() {
        return this.field_201833_b;
     }
-@@ -75,6 +71,7 @@
+@@ -74,7 +70,13 @@
+       return this.field_201832_a;
     }
  
++   @Override
++   public net.minecraftforge.common.crafting.RecipeType<FurnaceRecipe> getType() {
++      return net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING;
++   }
++
     public static class Serializer implements IRecipeSerializer<FurnaceRecipe> {
 +      private static ResourceLocation NAME = new ResourceLocation("minecraft", "smelting");
        public FurnaceRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
           String s = JsonUtils.func_151219_a(p_199425_2_, "group", "");
           Ingredient ingredient;
-@@ -113,8 +110,9 @@
+@@ -113,8 +115,9 @@
           p_199427_1_.func_150787_b(p_199427_2_.field_201837_f);
        }
  
