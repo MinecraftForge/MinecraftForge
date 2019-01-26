@@ -108,6 +108,7 @@ public class ModFileResourcePack extends AbstractResourcePack
                     .map(path -> root.relativize(path.toAbsolutePath()))
                     .filter(path -> path.getNameCount() > 0) // skip the root entry
                     .map(p->p.toString().replaceAll("/$","")) // remove the trailing slash, if present
+                    .filter(s -> !s.isEmpty()) //filter empty strings, otherwise empty strings default to minecraft in ResourceLocations
                     .collect(Collectors.toSet());
         }
         catch (IOException e)
