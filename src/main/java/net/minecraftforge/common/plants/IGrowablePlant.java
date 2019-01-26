@@ -27,6 +27,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
+/**
+ * The base interface of all growable plants.  Implementers must override canGrow/grow, or callers will end up with a StackOverflowException.
+ */
 public interface IGrowablePlant extends IPlant, IGrowable
 {
 
@@ -53,12 +56,13 @@ public interface IGrowablePlant extends IPlant, IGrowable
     boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state);
 
     /**
+     * This method is called to grow the plant.  If this plant cannot be grown further, this method should do nothing.
+     * This method is not responsible for posting the forge CropGrowPre/Post events.  Callers should post those themselves.
+     * 
      * @param world The world
      * @param pos The current pos
      * @param state The current state
      * @param natural If this grow call was a result of "natural" causes like random block updates, or artificial, from fertilizers such as bonemeal.
-     * 
-     * This method is called to grow the plant.  If this plant cannot be grown further, this method should do nothing.
      */
     default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
     {
@@ -66,14 +70,15 @@ public interface IGrowablePlant extends IPlant, IGrowable
     }
 
     @Deprecated
-    default boolean canGrow(IBlockReader worldIn, BlockPos pos, IBlockState state, boolean isClient)
+    default boolean canGrow(IBlockReader world, BlockPos pos, IBlockState state, boolean isClient)
     {
-        return false;
+        return canGrow((World) world, pos, state);
     }
 
     @Deprecated
-    default void grow(World worldIn, Random rand, BlockPos pos, IBlockState state)
+    default void grow(World world, Random rand, BlockPos pos, IBlockState state)
     {
+    	grow(world, rand, pos, state, false);
     }
 
 }

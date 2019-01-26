@@ -136,6 +136,7 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.plants.IGrowablePlant;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -1232,5 +1233,18 @@ public class ForgeHooks
                 items.addAll(this.resolvedTag.getAllElements());
             }
         }
+    }
+    
+    public static boolean bonemealGrowablePlant(ItemStack stack, World world, BlockPos pos, IBlockState state)
+    {
+        if(state.getBlock() instanceof IGrowablePlant) return false;
+        IGrowablePlant plant = (IGrowablePlant) state.getBlock();
+        if(plant.canUseBonemeal(world, world.rand, pos, state) && plant.canGrow(world, pos, state))
+        {
+            plant.grow(world, world.rand, pos, state, false);
+            stack.shrink(1);
+            return true;
+        }
+        return false;
     }
 }

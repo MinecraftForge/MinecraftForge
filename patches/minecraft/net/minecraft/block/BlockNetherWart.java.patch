@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/BlockNetherWart.java
 +++ b/net/minecraft/block/BlockNetherWart.java
+@@ -14,7 +14,7 @@
+ import net.minecraft.world.IBlockReader;
+ import net.minecraft.world.World;
+ 
+-public class BlockNetherWart extends BlockBush {
++public class BlockNetherWart extends BlockBush implements net.minecraftforge.common.plants.HarvestableImpl.NetherWart {
+    public static final IntegerProperty field_176486_a = BlockStateProperties.field_208168_U;
+    private static final VoxelShape[] field_196399_b = new VoxelShape[]{Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 5.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 11.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D)};
+ 
 @@ -33,26 +33,33 @@
  
     public void func_196267_b(IBlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {

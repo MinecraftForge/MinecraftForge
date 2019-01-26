@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 -public class BlockReed extends Block {
-+public class BlockReed extends Block implements net.minecraftforge.common.plants.IPlant {
++public class BlockReed extends Block implements net.minecraftforge.common.plants.HarvestableImpl.Reeds {
     public static final IntegerProperty field_176355_a = BlockStateProperties.field_208171_X;
     protected static final VoxelShape field_196503_b = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 16.0D, 14.0D);
  
