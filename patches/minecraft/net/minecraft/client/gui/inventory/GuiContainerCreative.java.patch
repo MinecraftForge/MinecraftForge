@@ -116,7 +116,7 @@
 +      if (p_147050_1_ == null) return;
        int i = field_147058_w;
        field_147058_w = p_147050_1_.func_78021_a();
-+      slotHoverColor = p_147050_1_.getHoverColor();
++      slotColor = p_147050_1_.getSlotColor();
        GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
        this.field_147008_s.clear();
        guicontainercreative$containercreative.field_148330_a.clear();

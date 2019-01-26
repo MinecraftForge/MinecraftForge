@@ -1,16 +1,24 @@
 --- a/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ b/net/minecraft/client/gui/inventory/GuiContainer.java
-@@ -97,7 +97,8 @@
+@@ -7,7 +7,6 @@
+ import net.minecraft.client.renderer.OpenGlHelper;
+ import net.minecraft.client.renderer.RenderHelper;
+ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+-import net.minecraft.client.renderer.texture.TextureMap;
+ import net.minecraft.client.util.InputMappings;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.inventory.ClickType;
+@@ -97,7 +96,8 @@
              int j1 = slot.field_75223_e;
              int k1 = slot.field_75221_f;
              GlStateManager.func_179135_a(true, true, true, false);
 -            this.func_73733_a(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
-+            int hoverColor = this.getSlotHoverColor(i1);
-+            this.func_73733_a(j1, k1, j1 + 16, k1 + 16, hoverColor, hoverColor);
++            int slotColor = this.getSlotColor(i1);
++            this.func_73733_a(j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
              GlStateManager.func_179135_a(true, true, true, true);
              GlStateManager.func_179145_e();
              GlStateManager.func_179126_j();
-@@ -107,6 +108,7 @@
+@@ -107,6 +107,7 @@
        RenderHelper.func_74518_a();
        this.func_146979_b(p_73863_1_, p_73863_2_);
        RenderHelper.func_74520_c();
@@ -18,7 +26,7 @@
        InventoryPlayer inventoryplayer = this.field_146297_k.field_71439_g.field_71071_by;
        ItemStack itemstack = this.field_147012_x.func_190926_b() ? inventoryplayer.func_70445_o() : this.field_147012_x;
        if (!itemstack.func_190926_b()) {
-@@ -158,8 +160,10 @@
+@@ -158,8 +159,10 @@
        GlStateManager.func_179109_b(0.0F, 0.0F, 32.0F);
        this.field_73735_i = 200.0F;
        this.field_146296_j.field_77023_b = 200.0F;
@@ -30,7 +38,7 @@
        this.field_73735_i = 0.0F;
        this.field_146296_j.field_77023_b = 0.0F;
     }
-@@ -203,11 +207,10 @@
+@@ -203,11 +206,10 @@
        this.field_73735_i = 100.0F;
        this.field_146296_j.field_77023_b = 100.0F;
        if (itemstack.func_190926_b() && p_146977_1_.func_111238_b()) {
@@ -45,7 +53,7 @@
              this.func_175175_a(i, j, textureatlassprite, 16, 16);
              GlStateManager.func_179145_e();
              flag1 = true;
-@@ -268,7 +271,8 @@
+@@ -268,7 +270,8 @@
        if (super.mouseClicked(p_mouseClicked_1_, p_mouseClicked_3_, p_mouseClicked_5_)) {
           return true;
        } else {
@@ -55,7 +63,7 @@
           Slot slot = this.func_195360_a(p_mouseClicked_1_, p_mouseClicked_3_);
           long i = Util.func_211177_b();
           this.field_146993_M = this.field_146998_K == slot && i - this.field_146997_J < 250L && this.field_146992_L == p_mouseClicked_5_;
-@@ -277,6 +281,7 @@
+@@ -277,6 +280,7 @@
              int j = this.field_147003_i;
              int k = this.field_147009_r;
              boolean flag1 = this.func_195361_a(p_mouseClicked_1_, p_mouseClicked_3_, j, k, p_mouseClicked_5_);
@@ -63,7 +71,7 @@
              int l = -1;
              if (slot != null) {
                 l = slot.field_75222_d;
-@@ -302,7 +307,7 @@
+@@ -302,7 +306,7 @@
                    }
                 } else if (!this.field_147007_t) {
                    if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o().func_190926_b()) {
@@ -72,7 +80,7 @@
                          this.func_184098_a(slot, l, p_mouseClicked_5_, ClickType.CLONE);
                       } else {
                          boolean flag2 = l != -999 && (InputMappings.func_197956_a(340) || InputMappings.func_197956_a(344));
-@@ -326,7 +331,7 @@
+@@ -326,7 +330,7 @@
                          this.field_146987_F = 0;
                       } else if (p_mouseClicked_5_ == 1) {
                          this.field_146987_F = 1;
@@ -81,7 +89,7 @@
                          this.field_146987_F = 2;
                       }
                    }
-@@ -379,10 +384,13 @@
+@@ -379,10 +383,13 @@
     }
  
     public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
@@ -95,7 +103,7 @@
        int k = -1;
        if (slot != null) {
           k = slot.field_75222_d;
-@@ -396,7 +404,7 @@
+@@ -396,7 +403,7 @@
           if (func_146272_n()) {
              if (!this.field_146994_N.func_190926_b()) {
                 for(Slot slot2 : this.field_147002_h.field_75151_b) {
@@ -104,7 +112,7 @@
                       this.func_184098_a(slot2, slot2.field_75222_d, p_mouseReleased_5_, ClickType.QUICK_MOVE);
                    }
                 }
-@@ -460,7 +468,7 @@
+@@ -460,7 +467,7 @@
  
              this.func_184098_a((Slot)null, -999, Container.func_94534_d(2, this.field_146987_F), ClickType.QUICK_CRAFT);
           } else if (!this.field_146297_k.field_71439_g.field_71071_by.func_70445_o().func_190926_b()) {
@@ -113,7 +121,7 @@
                 this.func_184098_a(slot, k, p_mouseReleased_5_, ClickType.CLONE);
              } else {
                 boolean flag1 = k != -999 && (InputMappings.func_197956_a(340) || InputMappings.func_197956_a(344));
-@@ -509,15 +517,15 @@
+@@ -509,15 +516,15 @@
        if (super.keyPressed(p_keyPressed_1_, p_keyPressed_2_, p_keyPressed_3_)) {
           return true;
        } else {
@@ -132,7 +140,7 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, func_146271_m() ? 1 : 0, ClickType.THROW);
              }
           }
-@@ -529,7 +537,7 @@
+@@ -529,7 +536,7 @@
     protected boolean func_195363_d(int p_195363_1_, int p_195363_2_) {
        if (this.field_146297_k.field_71439_g.field_71071_by.func_70445_o().func_190926_b() && this.field_147006_u != null) {
           for(int i = 0; i < 9; ++i) {
@@ -141,7 +149,7 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                 return true;
              }
-@@ -556,4 +564,16 @@
+@@ -556,4 +563,16 @@
        }
  
     }
@@ -153,8 +161,8 @@
 +   public int getXSize() { return field_146999_f; }
 +   public int getYSize() { return field_147000_g; }
 +
-+   public int slotHoverColor = -2130706433;
-+   public int getSlotHoverColor(int index) {
-+      return slotHoverColor;
++   public int slotColor = -2130706433;
++   public int getSlotColor(int index) {
++      return slotColor;
 +   }
  }

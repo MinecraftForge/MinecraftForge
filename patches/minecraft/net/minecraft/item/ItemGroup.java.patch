@@ -40,7 +40,7 @@
        return this.field_78033_n < 6;
     }
  
-@@ -220,4 +225,48 @@
+@@ -220,4 +225,52 @@
        }
  
     }
@@ -70,6 +70,10 @@
 +
 +   public int getLabelColor() {
 +      return 4210752;
++   }
++
++   public int getSlotColor() {
++      return -2130706433;
 +   }
 +   
 +   public static synchronized int getGroupCountSafe() {
