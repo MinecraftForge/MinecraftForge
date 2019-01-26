@@ -123,8 +123,11 @@ public class ModSorter
     @SuppressWarnings("UnstableApiUsage")
     private void addDependency(MutableGraph<ModFileInfo> topoGraph, IModInfo.ModVersion dep)
     {
-        ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
-        ModFileInfo target = modIdNameLookup.get(dep.getModId()).getOwningFile();
+        final ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
+        final ModInfo targetModInfo = modIdNameLookup.get(dep.getModId());
+        // soft dep that doesn't exist. Just return. No edge required.
+        if (targetModInfo == null) return;
+        final ModFileInfo target = targetModInfo.getOwningFile();
         if (self == target)
             return; // in case a jar has two mods that have dependencies between
         switch (dep.getOrdering()) {
