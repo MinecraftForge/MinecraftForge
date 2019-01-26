@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import com.google.common.collect.Streams;
 import com.google.common.graph.GraphBuilder;
 import com.google.common.graph.MutableGraph;
 import net.minecraftforge.forgespi.language.IModFileInfo;
@@ -77,9 +78,10 @@ public class ModSorter
     }
 
     private void findLanguages() {
-        modFiles.stream().forEach(mf->mf.identifyLanguage());
+        modFiles.forEach(ModFile::identifyLanguage);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void sort()
     {
         // lambdas are identity based, so sorting them is impossible unless you hold reference to them
@@ -118,6 +120,7 @@ public class ModSorter
         this.modFiles = sorted.stream().map(ModFileInfo::getFile).collect(Collectors.toList());
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void addDependency(MutableGraph<ModFileInfo> topoGraph, IModInfo.ModVersion dep)
     {
         ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
@@ -138,7 +141,7 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        final Stream<ModInfo> modInfos = modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).map(ModInfo.class::cast);
+        final Stream<ModInfo> modInfos = Stream.concat(DefaultModInfos.getModInfos().stream(), modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream)).map(ModInfo.class::cast);
         final Map<String, List<ModInfo>> modIds = modInfos.collect(Collectors.groupingBy(IModInfo::getModId));
 
         // TODO: make this figure out dupe handling better
