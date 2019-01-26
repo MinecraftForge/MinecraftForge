@@ -32,7 +32,7 @@ public class SpecialSpawnTest
     static final boolean ENABLED = false;
 
     @SubscribeEvent
-    public static void onAnimalTame(LivingSpawnEvent.SpecialSpawn event)
+    public static void onSpecialSpawn(LivingSpawnEvent.SpecialSpawn event)
     {
         if (!ENABLED)
         {
