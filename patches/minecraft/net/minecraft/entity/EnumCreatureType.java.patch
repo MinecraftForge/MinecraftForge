@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/EnumCreatureType.java
++++ b/net/minecraft/entity/EnumCreatureType.java
+@@ -39,4 +39,8 @@
+    public boolean func_82705_e() {
+       return this.field_82707_i;
+    }
++
++   public static EnumCreatureType create (String name, Class<? extends IAnimal> p_i47849_3_, int p_i47849_4_, boolean p_i47849_5_, boolean p_i47849_6_) {
++      return null;
++   }
+ }
