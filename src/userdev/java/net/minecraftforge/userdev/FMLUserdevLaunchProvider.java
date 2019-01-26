@@ -85,18 +85,25 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
 
         LOGGER.fatal(CORE, "Got mod coordinates {} from env", System.getenv("MOD_CLASSES"));
 
-        final List<Path> modClasses = Arrays.stream(System.getenv("MOD_CLASSES").split(File.pathSeparator)).
-                map(Paths::get).collect(Collectors.toList());
+        // "a/b/;c/d/;" -> "modid%%c:\fish\pepper;modid%%c:\fish2\pepper2\;modid2%%c:\fishy\bums;modid2%%c:\hmm"
+        final Map<String, List<Path>> modClassPaths = Arrays.stream(System.getenv("MOD_CLASSES").split(File.pathSeparator)).
+                map(inp -> inp.split("%%", 2)).map(this::buildModPair).
+                collect(Collectors.groupingBy(Pair::getLeft, Collectors.mapping(Pair::getRight, Collectors.toList())));
 
-        LOGGER.fatal(CORE, "Processed mod coordinates [{}]", modClasses.stream().map(Object::toString).collect(Collectors.joining(",")));
+        LOGGER.info(CORE, "Found supplied mod coordinates [{}]", modClassPaths);
 
-        ((Map<String, List<Pair<Path,List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
-                add(Pair.of(modClasses.get(0), modClasses.subList(1, modClasses.size())));
-
+        final List<Pair<Path, List<Path>>> explodedTargets = ((Map<String, List<Pair<Path, List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a -> new ArrayList<>());
+        modClassPaths.forEach((modlabel,paths) -> explodedTargets.add(Pair.of(paths.get(0), paths.subList(1, paths.size()))));
 
         // generics are gross yea?
         ((Map)arguments).put("mavenRoots", mavenRoots);
         ((Map)arguments).put("mods", mods);
+    }
+
+    private Pair<String, Path> buildModPair(String[] splitString) {
+        String modid = splitString.length == 1 ? "defaultmodid" : splitString[0];
+        Path path = Paths.get(splitString[splitString.length - 1]);
+        return Pair.of(modid, path);
     }
 
     @Override
