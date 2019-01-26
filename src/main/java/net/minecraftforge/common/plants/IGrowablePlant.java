@@ -24,9 +24,9 @@ import java.util.Random;
 import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
-@SuppressWarnings("deprecation")
 public interface IGrowablePlant extends IPlant, IGrowable
 {
 
@@ -63,6 +63,17 @@ public interface IGrowablePlant extends IPlant, IGrowable
     default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
     {
         grow(world, rand, pos, state);
+    }
+
+    @Deprecated
+    default boolean canGrow(IBlockReader worldIn, BlockPos pos, IBlockState state, boolean isClient)
+    {
+        return false;
+    }
+
+    @Deprecated
+    default void grow(World worldIn, Random rand, BlockPos pos, IBlockState state)
+    {
     }
 
 }

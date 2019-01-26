@@ -19,8 +19,11 @@
 
 package net.minecraftforge.common.plants;
 
+import net.minecraft.block.BlockAttachedStem;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockSapling;
+import net.minecraft.block.BlockStem;
+import net.minecraft.block.ILiquidContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -40,14 +43,14 @@ public interface IPlant
      */
     default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
     {
-        if (this instanceof BlockCrops)    return DefaultPlantTypes.CROP;
-        if (this instanceof BlockSapling)  return DefaultPlantTypes.SAPLING;
-        if (this == Blocks.DEAD_BUSH || this == Blocks.CACTUS)      return DefaultPlantTypes.DESERT;
-        if (this == Blocks.LILY_PAD)       return DefaultPlantTypes.WATER;
-        if (this == Blocks.RED_MUSHROOM)   return DefaultPlantTypes.CAVE;
-        if (this == Blocks.BROWN_MUSHROOM) return DefaultPlantTypes.CAVE;
+        if (this instanceof BlockCrops || this instanceof BlockStem || this instanceof BlockAttachedStem) return DefaultPlantTypes.CROP;
+        if (this instanceof BlockSapling) return DefaultPlantTypes.SAPLING;
+        if (this == Blocks.DEAD_BUSH || this == Blocks.CACTUS) return DefaultPlantTypes.DESERT;
+        if (this == Blocks.RED_MUSHROOM || this == Blocks.BROWN_MUSHROOM) return DefaultPlantTypes.CAVE;
         if (this == Blocks.SUGAR_CANE) return DefaultPlantTypes.BEACH;
-        if (this == Blocks.NETHER_WART)    return DefaultPlantTypes.NETHER;
+        if (this == Blocks.NETHER_WART) return DefaultPlantTypes.NETHER;
+        if (this == Blocks.COCOA || this == Blocks.VINE) return DefaultPlantTypes.EPIPHYTE;
+        if (this == Blocks.LILY_PAD || this instanceof ILiquidContainer) return DefaultPlantTypes.WATER;
         return DefaultPlantTypes.PLAINS;
     }
 

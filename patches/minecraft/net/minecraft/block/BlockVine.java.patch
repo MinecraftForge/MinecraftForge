@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 -public class BlockVine extends Block {
-+public class BlockVine extends Block implements net.minecraftforge.common.IShearable {
++public class BlockVine extends Block implements net.minecraftforge.common.IShearable, net.minecraftforge.common.plants.IPlant {
     public static final BooleanProperty field_176277_a = BlockSixWay.field_196496_z;
     public static final BooleanProperty field_176273_b = BlockSixWay.field_196488_a;
     public static final BooleanProperty field_176278_M = BlockSixWay.field_196490_b;

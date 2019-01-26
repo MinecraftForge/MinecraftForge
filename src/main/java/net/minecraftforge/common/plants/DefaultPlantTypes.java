@@ -68,5 +68,10 @@ public final class DefaultPlantTypes
      * Represents plants that grow in the end, like chorus flowers.
      */
     public static final PlantType ENDER = PlantType.get(new ResourceLocation("ender"));
+    
+    /**
+     * Represents plants that grow on other blocks.  Used by cocoa beans and vines.
+     */
+    public static final PlantType EPIPHYTE = PlantType.get(new ResourceLocation("epiphyte"));
 
 }
