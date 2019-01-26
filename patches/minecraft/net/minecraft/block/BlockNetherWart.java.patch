@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 -public class BlockNetherWart extends BlockBush {
-+public class BlockNetherWart extends BlockBush implements net.minecraftforge.common.plants.HarvestableImpl.NetherWart {
++public class BlockNetherWart extends BlockBush implements net.minecraftforge.common.plants.PlantImpl.NetherWart {
     public static final IntegerProperty field_176486_a = BlockStateProperties.field_208168_U;
     private static final VoxelShape[] field_196399_b = new VoxelShape[]{Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 5.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 11.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D)};
  

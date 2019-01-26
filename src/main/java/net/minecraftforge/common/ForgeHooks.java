@@ -56,6 +56,7 @@ import com.google.gson.JsonParseException;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementManager;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockWorldState;
@@ -82,8 +83,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemEnchantedBook;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemSpade;
@@ -136,7 +139,10 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.crafting.CraftingHelper;
+import net.minecraftforge.common.plants.DoublePlantItemBlock;
 import net.minecraftforge.common.plants.IGrowablePlant;
+import net.minecraftforge.common.plants.IPlant;
+import net.minecraftforge.common.plants.PlantableItemBlock;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
@@ -1246,5 +1252,13 @@ public class ForgeHooks
             return true;
         }
         return false;
+    }
+    
+    public static ItemBlock getItemBlock(Block block, @Nullable ItemGroup group)
+    {
+        Item.Builder builder = new Item.Builder().group(group);
+        if(block instanceof BlockDoublePlant) return new DoublePlantItemBlock(block, builder);
+        if(block instanceof IPlant) return new PlantableItemBlock(block, builder);
+        return new ItemBlock(block, builder);
     }
 }

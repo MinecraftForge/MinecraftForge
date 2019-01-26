@@ -29,6 +29,7 @@ import net.minecraft.block.BlockReed;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
@@ -36,10 +37,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 /**
- * Extension interfaces for default implementations of {@link IHarvestablePlant}
+ * Extension interfaces for default implementations of {@link IPlant} / {@link IHarvestablePlant} / {@link IGrowablePlant} / {@link IPlantable}
  *
  */
-public final class HarvestableImpl
+public final class PlantImpl
 {
 
     public static interface Crops extends IHarvestablePlant, IGrowablePlant
@@ -264,6 +265,21 @@ public final class HarvestableImpl
         return (BlockCocoa) this;
     }
 
+    }
+
+    public static interface ItemCocoa extends IPlantable
+    {
+        @Override
+        default IBlockState getPlant(World world, BlockPos pos, ItemStack stack)
+        {
+            return Blocks.COCOA.getDefaultState();
+        }
+        
+        @Override
+        default PlantType getPlantType(World world, BlockPos pos, ItemStack stack)
+        {
+            return DefaultPlantTypes.EPIPHYTE;
+        }
     }
     
 }

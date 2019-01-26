@@ -122,6 +122,20 @@
     public static void func_150900_l() {
        func_179214_a(Blocks.field_150350_a, new ItemAir(Blocks.field_150350_a, new Item.Builder()));
        func_200879_a(Blocks.field_150348_b, ItemGroup.field_78030_b);
+@@ -1105,11 +1151,11 @@
+    }
+ 
+    private static void func_179216_c(Block p_179216_0_) {
+-      func_200126_a(new ItemBlock(p_179216_0_, new Item.Builder()));
++      func_200126_a(net.minecraftforge.common.ForgeHooks.getItemBlock(p_179216_0_, null));
+    }
+ 
+    private static void func_200879_a(Block p_200879_0_, ItemGroup p_200879_1_) {
+-      func_200126_a(new ItemBlock(p_200879_0_, (new Item.Builder()).func_200916_a(p_200879_1_)));
++      func_200126_a(net.minecraftforge.common.ForgeHooks.getItemBlock(p_200879_0_, p_200879_1_));
+    }
+ 
+    private static void func_200126_a(ItemBlock p_200126_0_) {
 @@ -1147,6 +1193,9 @@
        private Item field_200922_c;
        private ItemGroup field_200923_d;

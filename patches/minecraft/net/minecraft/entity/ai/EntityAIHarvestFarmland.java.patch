@@ -14,7 +14,7 @@
           IBlockState iblockstate = iworld.func_180495_p(blockpos);
           Block block = iblockstate.func_177230_c();
 -         if (this.field_179501_f == 0 && block instanceof BlockCrops && ((BlockCrops)block).func_185525_y(iblockstate)) {
-+         if (this.field_179501_f == 0 && block instanceof net.minecraftforge.common.plants.IHarvestablePlant && ((net.minecraftforge.common.plants.IHarvestablePlant)block).isMature(field_179504_c.field_70170_p, field_179504_c.field_70170_p.field_73012_v, blockpos, iblockstate)) {
++         if (this.field_179501_f == 0 && block instanceof net.minecraftforge.common.plants.IHarvestablePlant && ((net.minecraftforge.common.plants.IHarvestablePlant)block).getPlantType(iworld, blockpos, iblockstate) == net.minecraftforge.common.plants.DefaultPlantTypes.CROP && ((net.minecraftforge.common.plants.IHarvestablePlant)block).isMature(field_179504_c.field_70170_p, field_179504_c.field_70170_p.field_73012_v, blockpos, iblockstate)) {
              iworld.func_175655_b(blockpos, true);
           } else if (this.field_179501_f == 1 && iblockstate.func_196958_f()) {
              InventoryBasic inventorybasic = this.field_179504_c.func_175551_co();
@@ -30,3 +30,12 @@
                    }
                 }
  
+@@ -95,7 +100,7 @@
+          p_179488_2_ = p_179488_2_.func_177984_a();
+          IBlockState iblockstate = p_179488_1_.func_180495_p(p_179488_2_);
+          block = iblockstate.func_177230_c();
+-         if (block instanceof BlockCrops && ((BlockCrops)block).func_185525_y(iblockstate) && this.field_179503_e && (this.field_179501_f == 0 || this.field_179501_f < 0)) {
++         if (block instanceof net.minecraftforge.common.plants.IHarvestablePlant && ((net.minecraftforge.common.plants.IHarvestablePlant)block).isMature(field_179504_c.field_70170_p, field_179504_c.field_70170_p.field_73012_v, p_179488_2_, iblockstate) && this.field_179503_e && (this.field_179501_f == 0 || this.field_179501_f < 0)) {
+             this.field_179501_f = 0;
+             return true;
+          }

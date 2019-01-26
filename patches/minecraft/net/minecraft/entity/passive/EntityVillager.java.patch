@@ -183,6 +183,15 @@
        }
  
        this.func_175552_ct();
+@@ -676,7 +706,7 @@
+    }
+ 
+    private boolean func_175558_a(Item p_175558_1_) {
+-      return p_175558_1_ == Items.field_151025_P || p_175558_1_ == Items.field_151174_bG || p_175558_1_ == Items.field_151172_bF || p_175558_1_ == Items.field_151015_O || p_175558_1_ == Items.field_151014_N || p_175558_1_ == Items.field_185164_cV || p_175558_1_ == Items.field_185163_cU;
++      return p_175558_1_ == Items.field_151025_P || p_175558_1_ == Items.field_151174_bG || p_175558_1_ == Items.field_151172_bF || p_175558_1_ == Items.field_151015_O || p_175558_1_ == Items.field_151014_N || p_175558_1_ == Items.field_185164_cV || p_175558_1_ == Items.field_185163_cU || p_175558_1_ instanceof net.minecraftforge.common.plants.IPlantable;
+    }
+ 
+    public boolean func_175553_cp() {
 @@ -818,6 +848,10 @@
        }
     }
