@@ -4,7 +4,7 @@
  public class ShrubFeature extends AbstractTreeFeature<NoFeatureConfig> {
     private final IBlockState field_150528_a;
     private final IBlockState field_150527_b;
-+   protected net.minecraftforge.common.IPlantable sapling = (net.minecraftforge.common.IPlantable)Blocks.field_196674_t;
++   protected net.minecraftforge.common.plants.IPlant sapling = (net.minecraftforge.common.plants.IPlant) Blocks.field_196674_t;
  
     public ShrubFeature(IBlockState p_i46450_1_, IBlockState p_i46450_2_) {
        super(false);
@@ -19,7 +19,7 @@
  
 -      Block block = p_208519_2_.func_180495_p(p_208519_4_).func_177230_c();
 -      if (Block.func_196245_f(block) || block == Blocks.field_196658_i) {
-+      if (p_208519_2_.func_180495_p(p_208519_4_).canSustainPlant(p_208519_2_, p_208519_4_, net.minecraft.util.EnumFacing.UP, sapling)) {
++      if (p_208519_2_.func_180495_p(p_208519_4_).canSustainPlant(p_208519_2_, p_208519_4_, net.minecraft.util.EnumFacing.UP, ((Block) sapling).func_176223_P(), sapling)) {
           p_208519_4_ = p_208519_4_.func_177984_a();
           this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_, this.field_150527_b);
  
@@ -37,7 +37,7 @@
        return true;
     }
 +
-+   public ShrubFeature setSapling(net.minecraftforge.common.IPlantable sapling) {
++   public ShrubFeature setSapling(net.minecraftforge.common.plants.IPlant sapling) {
 +      this.sapling = sapling;
 +      return this;
 +   }

@@ -26,9 +26,11 @@ import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
+import net.minecraft.block.BlockBush;
 import net.minecraft.block.BlockFarmland;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockFire;
+import net.minecraft.block.BlockGlazedTerracotta;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.ITileEntityProvider;
@@ -83,7 +85,9 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.plants.IPlantable;
+import net.minecraftforge.common.plants.DefaultPlantTypes;
+import net.minecraftforge.common.plants.IPlant;
+import net.minecraftforge.common.plants.PlantType;
 
 public interface IForgeBlock
 {
@@ -574,14 +578,50 @@ public interface IForgeBlock
     *   Plains check if its grass or dirt
     *   Water check if its still water
     *
-    * @param state The Current state
+    * @param state The state of this block, not to be confused with the state of the plant.
     * @param world The current world
-    *
     * @param facing The direction relative to the given position the plant wants to be, typically its UP
-    * @param plantable The plant that wants to check
+    * @param plantState The state of the plant, retrieved from an IPlantable (or the world if this plant was already placed).
+    * @param plant The plant that is attempting to be planted or stay planted.
     * @return True to allow the plant to be planted/stay.
     */
-    boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing, IPlantable plantable);
+    default boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing, IBlockState plantState, IPlant plant)
+    {
+        BlockPos plantPos = pos.offset(facing);
+        PlantType type = plant.getPlantType(world, plantPos, plantState);
+
+        if (plantState.getBlock() == Blocks.CACTUS)
+            return this.getBlock() == Blocks.CACTUS || this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.RED_SAND;
+
+        if (plantState.getBlock() == Blocks.SUGAR_CANE && this == Blocks.SUGAR_CANE)
+            return true;
+
+        /* Implemented in Block in order to call the protected method BlockBush#isValidGround
+        if (plant instanceof BlockBush && ((BlockBush) plant).isValidGround(state, world, pos))
+            return true;
+        */
+
+        if(type == DefaultPlantTypes.PLAINS) return this.getBlock() == Blocks.GRASS || Block.isDirt(getBlock()) || this.getBlock() == Blocks.FARMLAND;
+        if(type == DefaultPlantTypes.DESERT)
+        {
+        	return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.TERRACOTTA || this.getBlock() instanceof BlockGlazedTerracotta;
+        }
+        if(type == DefaultPlantTypes.NETHER) return this.getBlock() == Blocks.SOUL_SAND;
+        if(type == DefaultPlantTypes.CROP) return this.getBlock() == Blocks.FARMLAND;
+        if(type == DefaultPlantTypes.CAVE) return state.isTopSolid();
+        if(type == DefaultPlantTypes.WATER) return state.getMaterial() == Material.WATER; //&& state.getValue(BlockLiquidWrapper)
+        if(type == DefaultPlantTypes.BEACH)
+        {
+            boolean isBeach = this.getBlock() == Blocks.GRASS || Block.isDirt(getBlock()) || this.getBlock() == Blocks.SAND;
+            if(!isBeach) return false;
+            boolean hasWater = (world.getBlockState(pos.east()).getMaterial() == Material.WATER  ||
+                                world.getBlockState(pos.west()).getMaterial() == Material.WATER  ||
+                                world.getBlockState(pos.north()).getMaterial() == Material.WATER ||
+                                world.getBlockState(pos.south()).getMaterial() == Material.WATER);
+            return hasWater;
+        }
+        return false;
+    }
 
     /**
      * Called when a plant grows on this block, only implemented for saplings using the WorldGen*Trees classes right now.

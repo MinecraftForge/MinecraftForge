@@ -24,7 +24,7 @@
     private int func_208528_b(Set<BlockPos> p_208528_1_, IWorld p_208528_2_, BlockPos p_208528_3_, int p_208528_4_) {
 -      Block block = p_208528_2_.func_180495_p(p_208528_3_.func_177977_b()).func_177230_c();
 -      if (!Block.func_196245_f(block) && block != Blocks.field_196658_i && block != Blocks.field_150458_ak) {
-+      if (!p_208528_2_.func_180495_p(p_208528_3_.func_177977_b()).canSustainPlant(p_208528_2_, p_208528_3_.func_177977_b(), net.minecraft.util.EnumFacing.UP, ((net.minecraft.block.BlockSapling)Blocks.field_196674_t))) {
++      if (!p_208528_2_.func_180495_p(p_208528_3_.func_177977_b()).canSustainPlant(p_208528_2_, p_208528_3_.func_177977_b(), net.minecraft.util.EnumFacing.UP, Blocks.field_196674_t.func_176223_P(), ((net.minecraft.block.BlockSapling)Blocks.field_196674_t))) {
           return -1;
        } else {
           int i = this.func_208523_a(p_208528_1_, p_208528_2_, p_208528_3_, p_208528_3_.func_177981_b(p_208528_4_ - 1), false);

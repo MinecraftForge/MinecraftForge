@@ -500,12 +500,13 @@ public interface IForgeBlockState
     *
     * @param world The current world
     * @param facing The direction relative to the given position the plant wants to be, typically its UP
+    * @param plantState The state of the plant, retrieved from an IPlantable (or the world if this plant was already placed).
     * @param plant The plant that is attempting to be planted or stay planted.
     * @return True to allow the plant to be planted/stay.
     */
-    default boolean canSustainPlant(IBlockReader world, BlockPos pos, EnumFacing facing, IPlant plant)
+    default boolean canSustainPlant(IBlockReader world, BlockPos pos, EnumFacing facing, IBlockState plantState, IPlant plant)
     {
-        return getBlockState().getBlock().canSustainPlant(getBlockState(), world, pos, facing, plant);
+        return getBlockState().getBlock().canSustainPlant(getBlockState(), world, pos, facing, plantState, plant);
     }
 
     /**

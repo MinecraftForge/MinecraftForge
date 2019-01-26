@@ -21,7 +21,7 @@
 -               if (p_196267_2_.func_180495_p(blockpos).func_196958_f() && (block == Blocks.field_150458_ak || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_196658_i)) {
 +               IBlockState soil = p_196267_2_.func_180495_p(blockpos.func_177977_b());
 +               Block block = soil.func_177230_c();
-+               if (p_196267_2_.func_180495_p(blockpos).isAir(p_196267_2_, blockpos) && (soil.canSustainPlant(p_196267_2_, blockpos.func_177977_b(), EnumFacing.UP, this) || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_196658_i)) {
++               if (p_196267_2_.func_180495_p(blockpos).isAir(p_196267_2_, blockpos) && (soil.canSustainPlant(p_196267_2_, blockpos.func_177977_b(), EnumFacing.UP, func_176223_P(), this) || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_196658_i)) {
                    p_196267_2_.func_175656_a(blockpos, this.field_149877_a.func_176223_P());
                    p_196267_2_.func_175656_a(p_196267_3_, (IBlockState)this.field_149877_a.func_196523_e().func_176223_P().func_206870_a(BlockHorizontal.field_185512_D, enumfacing));
                 }

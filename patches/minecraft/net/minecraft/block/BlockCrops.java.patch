@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/BlockCrops.java
 +++ b/net/minecraft/block/BlockCrops.java
+@@ -16,7 +16,7 @@
+ import net.minecraft.world.IWorldReaderBase;
+ import net.minecraft.world.World;
+ 
+-public class BlockCrops extends BlockBush implements IGrowable {
++public class BlockCrops extends BlockBush implements net.minecraftforge.common.plants.IGrowablePlant {
+    public static final IntegerProperty field_176488_a = BlockStateProperties.field_208170_W;
+    private static final VoxelShape[] field_196393_a = new VoxelShape[]{Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D), Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)};
+ 
 @@ -55,12 +55,14 @@
  
     public void func_196267_b(IBlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
@@ -21,7 +30,7 @@
              float f1 = 0.0F;
              IBlockState iblockstate = p_180672_1_.func_180495_p(blockpos.func_177982_a(i, 0, j));
 -            if (iblockstate.func_177230_c() == Blocks.field_150458_ak) {
-+            if (iblockstate.canSustainPlant(p_180672_1_, blockpos.func_177982_a(i, 0, j), net.minecraft.util.EnumFacing.UP, (net.minecraftforge.common.IPlantable)p_180672_0_)) {
++            if (iblockstate.canSustainPlant(p_180672_1_, blockpos.func_177982_a(i, 0, j), net.minecraft.util.EnumFacing.UP, iblockstate, (net.minecraftforge.common.plants.IPlant)p_180672_0_)) {
                 f1 = 1.0F;
 -               if (iblockstate.func_177229_b(BlockFarmland.field_176531_a) > 0) {
 +               if (iblockstate.isFertile(p_180672_1_, blockpos.func_177982_a(i, 0, j))) {

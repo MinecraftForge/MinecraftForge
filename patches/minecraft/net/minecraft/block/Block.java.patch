@@ -198,7 +198,7 @@
        for(Block block80 : field_149771_c) {
           for(IBlockState iblockstate : block80.func_176194_O().func_177619_a()) {
              field_176229_d.func_195867_b(iblockstate);
-@@ -1604,4 +1621,83 @@
+@@ -1604,4 +1621,57 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }
@@ -243,35 +243,9 @@
 +   }
 +
 +   @Override
-+   public boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing, net.minecraftforge.common.IPlantable plantable) {
-+       IBlockState plant = plantable.getPlant(world, pos.func_177972_a(facing));
-+       net.minecraftforge.common.EnumPlantType type = plantable.getPlantType(world, pos.func_177972_a(facing));
-+
-+       if (plant.func_177230_c() == Blocks.field_150434_aF)
-+           return this.getBlock() == Blocks.field_150434_aF || this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_196611_F;
-+
-+       if (plant.func_177230_c() == Blocks.field_196608_cF && this == Blocks.field_196608_cF)
-+           return true;
-+
-+       if (plantable instanceof BlockBush && ((BlockBush)plantable).func_200014_a_(state, world, pos))
-+           return true;
-+
-+       switch (type) {
-+           case Desert: return this.getBlock() == Blocks.field_150354_m || this.getBlock() == Blocks.field_150405_ch || this.getBlock() instanceof BlockGlazedTerracotta;
-+           case Nether: return this.getBlock() == Blocks.field_150425_aM;
-+           case Crop: return this.getBlock() == Blocks.field_150458_ak;
-+           case Cave: return state.func_185896_q();
-+           case Plains: return this.getBlock() == Blocks.field_150349_c || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150458_ak;
-+           case Water: return state.func_185904_a() == Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
-+           case Beach:
-+               boolean isBeach = this.getBlock() == Blocks.field_150349_c || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150354_m;
-+               boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == Material.field_151586_h ||
-+                       world.func_180495_p(pos.func_177976_e()).func_185904_a() == Material.field_151586_h ||
-+                       world.func_180495_p(pos.func_177978_c()).func_185904_a() == Material.field_151586_h ||
-+                       world.func_180495_p(pos.func_177968_d()).func_185904_a() == Material.field_151586_h);
-+               return isBeach && hasWater;
-+       }
-+       return false;
++   public boolean canSustainPlant(IBlockState state, IBlockReader world, BlockPos pos, EnumFacing facing, IBlockState plantState, net.minecraftforge.common.plants.IPlant plant) {
++       if (plant instanceof BlockBush && ((BlockBush) plant).func_200014_a_(state, world, pos)) return true;
++       return net.minecraftforge.common.extensions.IForgeBlock.super.canSustainPlant(state, world, pos, facing, plantState, plant);
 +   }
 +
 +   static {

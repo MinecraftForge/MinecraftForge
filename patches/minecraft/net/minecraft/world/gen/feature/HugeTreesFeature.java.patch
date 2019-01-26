@@ -4,7 +4,7 @@
     protected final IBlockState field_76520_b;
     protected final IBlockState field_76521_c;
     protected int field_150538_d;
-+   protected net.minecraftforge.common.IPlantable sapling = (net.minecraftforge.common.IPlantable)Blocks.field_196674_t;
++   protected net.minecraftforge.common.plants.IPlant sapling = (net.minecraftforge.common.plants.IPlant) Blocks.field_196674_t;
  
     public HugeTreesFeature(boolean p_i46447_1_, int p_i46447_2_, int p_i46447_3_, IBlockState p_i46447_4_, IBlockState p_i46447_5_) {
        super(p_i46447_1_);
@@ -37,7 +37,7 @@
 -         this.func_175921_a(p_202405_1_, blockpos.func_177974_f());
 -         this.func_175921_a(p_202405_1_, blockpos.func_177968_d());
 -         this.func_175921_a(p_202405_1_, blockpos.func_177968_d().func_177974_f());
-+      boolean isSoil = p_202405_1_.func_180495_p(blockpos).canSustainPlant(p_202405_1_, blockpos, net.minecraft.util.EnumFacing.UP, sapling);
++      boolean isSoil = p_202405_1_.func_180495_p(blockpos).canSustainPlant(p_202405_1_, blockpos, net.minecraft.util.EnumFacing.UP, ((Block) sapling).func_176223_P(), sapling);
 +      if (isSoil && p_202405_2_.func_177956_o() >= 2) {
 +         this.setDirtAt(p_202405_1_, blockpos, p_202405_2_);
 +         this.setDirtAt(p_202405_1_, blockpos.func_177974_f(), p_202405_2_);
@@ -69,7 +69,7 @@
  
     }
 +
-+   public HugeTreesFeature<T> setSapling(net.minecraftforge.common.IPlantable sapling) {
++   public HugeTreesFeature<T> setSapling(net.minecraftforge.common.plants.IPlant sapling) {
 +      this.sapling = sapling;
 +      return this;
 +   }

@@ -18,7 +18,7 @@
 -      return block instanceof BlockCrops || block instanceof BlockStem || block instanceof BlockAttachedStem;
 +   private boolean func_176529_d(IBlockReader p_176529_0_, BlockPos p_176529_1_) {
 +      IBlockState state = p_176529_0_.func_180495_p(p_176529_1_.func_177984_a());
-+      return state.func_177230_c() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, p_176529_0_, p_176529_1_, EnumFacing.UP, (net.minecraftforge.common.IPlantable)state.func_177230_c());
++      return state.func_177230_c() instanceof net.minecraftforge.common.plants.IPlant && canSustainPlant(state, p_176529_0_, p_176529_1_, EnumFacing.UP, state, (net.minecraftforge.common.plants.IPlant)state.func_177230_c());
     }
  
     private static boolean func_176530_e(IWorldReaderBase p_176530_0_, BlockPos p_176530_1_) {

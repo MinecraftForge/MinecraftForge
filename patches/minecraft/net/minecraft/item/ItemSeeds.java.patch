@@ -5,7 +5,7 @@
  import net.minecraft.world.IWorld;
  
 -public class ItemSeeds extends Item {
-+public class ItemSeeds extends Item implements net.minecraftforge.common.IPlantable {
++public class ItemSeeds extends Item implements net.minecraftforge.common.plants.IPlantable {
     private final IBlockState field_195978_a;
  
     public ItemSeeds(Block p_i48472_1_, Item.Builder p_i48472_2_) {
@@ -14,7 +14,7 @@
        IWorld iworld = p_195939_1_.func_195991_k();
        BlockPos blockpos = p_195939_1_.func_195995_a().func_177984_a();
 -      if (p_195939_1_.func_196000_l() == EnumFacing.UP && iworld.func_175623_d(blockpos) && this.field_195978_a.func_196955_c(iworld, blockpos)) {
-+      if (p_195939_1_.func_196000_l() == EnumFacing.UP && iworld.func_175623_d(blockpos) && this.field_195978_a.func_196955_c(iworld, blockpos) && iworld.func_180495_p(p_195939_1_.func_195995_a()).canSustainPlant(iworld, p_195939_1_.func_195995_a(), EnumFacing.UP, this)) {
++      if (p_195939_1_.func_196000_l() == EnumFacing.UP && iworld.func_175623_d(blockpos) && this.field_195978_a.func_196955_c(iworld, blockpos) && iworld.func_180495_p(p_195939_1_.func_195995_a()).canSustainPlant(iworld, p_195939_1_.func_195995_a(), EnumFacing.UP, field_195978_a, (net.minecraftforge.common.plants.IPlant) field_195978_a.func_177230_c())) {
           iworld.func_180501_a(blockpos, this.field_195978_a, 11);
           ItemStack itemstack = p_195939_1_.func_195996_i();
           EntityPlayer entityplayer = p_195939_1_.func_195999_j();
@@ -24,12 +24,12 @@
     }
 +
 +   @Override
-+   public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockReader world, BlockPos pos) {
-+      return net.minecraftforge.common.EnumPlantType.Crop;
++   public net.minecraftforge.common.plants.PlantType getPlantType(net.minecraft.world.IWorld world, BlockPos pos, ItemStack stack) {
++      return net.minecraftforge.common.plants.DefaultPlantTypes.CROP;
 +   }
 +
 +   @Override
-+   public IBlockState getPlant(net.minecraft.world.IBlockReader world, BlockPos pos) {
++   public IBlockState getPlant(net.minecraft.world.IWorld world, BlockPos pos, ItemStack stack) {
 +      return this.field_195978_a;
 +   }
  }

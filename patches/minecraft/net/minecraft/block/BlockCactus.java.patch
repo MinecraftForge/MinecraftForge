@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 -public class BlockCactus extends Block {
-+public class BlockCactus extends Block implements net.minecraftforge.common.IPlantable {
++public class BlockCactus extends Block implements net.minecraftforge.common.plants.IPlant {
     public static final IntegerProperty field_176587_a = BlockStateProperties.field_208171_X;
     protected static final VoxelShape field_196400_b = Block.func_208617_a(1.0D, 0.0D, 1.0D, 15.0D, 15.0D, 15.0D);
     protected static final VoxelShape field_196401_c = Block.func_208617_a(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
@@ -42,22 +42,7 @@
 -      Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
 -      return (block == Blocks.field_150434_aF || block == Blocks.field_150354_m || block == Blocks.field_196611_F) && !p_196260_2_.func_180495_p(p_196260_3_.func_177984_a()).func_185904_a().func_76224_d();
 +      IBlockState soil = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
-+      return soil.canSustainPlant(p_196260_2_, p_196260_3_.func_177977_b(), EnumFacing.UP, this) && !p_196260_2_.func_180495_p(p_196260_3_.func_177984_a()).func_185904_a().func_76224_d();
++      return soil.canSustainPlant(p_196260_2_, p_196260_3_.func_177977_b(), EnumFacing.UP, func_176223_P(), this) && !p_196260_2_.func_180495_p(p_196260_3_.func_177984_a()).func_185904_a().func_76224_d();
     }
  
     public void func_196262_a(IBlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
-@@ -114,4 +117,14 @@
-    public boolean func_196266_a(IBlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
-       return false;
-    }
-+
-+   @Override
-+   public net.minecraftforge.common.EnumPlantType getPlantType(IBlockReader world, BlockPos pos) {
-+       return net.minecraftforge.common.EnumPlantType.Desert;
-+   }
-+
-+   @Override
-+   public IBlockState getPlant(IBlockReader world, BlockPos pos) {
-+       return func_176223_P();
-+   }
- }
