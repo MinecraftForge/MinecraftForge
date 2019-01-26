@@ -1237,7 +1237,7 @@ public class ForgeHooks
     
     public static boolean bonemealGrowablePlant(ItemStack stack, World world, BlockPos pos, IBlockState state)
     {
-        if(state.getBlock() instanceof IGrowablePlant) return false;
+        if(!(state.getBlock() instanceof IGrowablePlant)) return false;
         IGrowablePlant plant = (IGrowablePlant) state.getBlock();
         if(plant.canUseBonemeal(world, world.rand, pos, state) && plant.canGrow(world, pos, state))
         {
