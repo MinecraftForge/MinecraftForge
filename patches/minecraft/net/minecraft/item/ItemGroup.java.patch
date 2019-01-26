@@ -40,7 +40,7 @@
        return this.field_78033_n < 6;
     }
  
-@@ -220,4 +225,54 @@
+@@ -220,4 +225,48 @@
        }
  
     }
@@ -72,26 +72,20 @@
 +      return 4210752;
 +   }
 +   
-+   private static final Object LOCK = new Object();
-+   
-+   public static int getGroupCountSafe() {
-+      synchronized (LOCK) {
-+         return ItemGroup.field_78032_a.length;
-+      }
++   public static synchronized int getGroupCountSafe() {
++      return ItemGroup.field_78032_a.length;
 +   }
 +   
-+   private static int addGroupSafe(int index, ItemGroup newGroup) {
-+      synchronized (LOCK) {
-+         if(index == -1) {
-+            index = field_78032_a.length;
-+         }
-+         if (index >= field_78032_a.length) {
-+            ItemGroup[] tmp = new ItemGroup[index + 1];
-+            System.arraycopy(field_78032_a, 0, tmp, 0, field_78032_a.length);
-+            field_78032_a = tmp;
-+         }
-+         field_78032_a[index] = newGroup;
-+         return index;
++   private static synchronized int addGroupSafe(int index, ItemGroup newGroup) {
++      if(index == -1) {
++         index = field_78032_a.length;
 +      }
++      if (index >= field_78032_a.length) {
++         ItemGroup[] tmp = new ItemGroup[index + 1];
++         System.arraycopy(field_78032_a, 0, tmp, 0, field_78032_a.length);
++         field_78032_a = tmp;
++      }
++      field_78032_a[index] = newGroup;
++      return index;
 +   }
  }
