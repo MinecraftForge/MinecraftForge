@@ -41,7 +41,7 @@ public class SpecialSpawnTest
 
         if (event.getEntity() instanceof EntityPigZombie)
         {
-        	event.getEntity().setCustomNameTag("Called SpecialSpawn");
+            event.getEntity().setCustomNameTag("Called SpecialSpawn");
         }
     }
 }
