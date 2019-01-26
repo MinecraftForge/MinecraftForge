@@ -24,12 +24,12 @@
     }
 +
 +   @Override
-+   public net.minecraftforge.common.plants.PlantType getPlantType(net.minecraft.world.IWorld world, BlockPos pos, ItemStack stack) {
++   public net.minecraftforge.common.plants.PlantType getPlantType(net.minecraft.world.World world, BlockPos pos, ItemStack stack) {
 +      return net.minecraftforge.common.plants.DefaultPlantTypes.CROP;
 +   }
 +
 +   @Override
-+   public IBlockState getPlant(net.minecraft.world.IWorld world, BlockPos pos, ItemStack stack) {
++   public IBlockState getPlant(net.minecraft.world.World world, BlockPos pos, ItemStack stack) {
 +      return this.field_195978_a;
 +   }
  }

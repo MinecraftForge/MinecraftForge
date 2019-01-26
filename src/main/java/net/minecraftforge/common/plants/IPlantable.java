@@ -23,7 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
 
 public interface IPlantable
 {
@@ -35,7 +35,7 @@ public interface IPlantable
      * 
      * @return The type of plant that will be planted by this IPlantable.
      */
-    PlantType getPlantType(IWorld world, BlockPos pos, ItemStack stack);
+    PlantType getPlantType(World world, BlockPos pos, ItemStack stack);
 
     /**
      * @param world The world.
@@ -44,7 +44,7 @@ public interface IPlantable
      * 
      * @return The state that should be planted from this stack.
      */
-    IBlockState getPlant(IWorld world, BlockPos pos, ItemStack stack);
+    IBlockState getPlant(World world, BlockPos pos, ItemStack stack);
 
     /**
      * Used for custom logic when placing the plant state in the world.  Should be called instead of setBlockState(getPlant()).
@@ -54,7 +54,7 @@ public interface IPlantable
      * 
      * @return If this placement was successful.
      */
-	default boolean placePlant(IBlockState state, IWorld world, BlockPos pos)
+	default boolean placePlant(IBlockState state, World world, BlockPos pos)
     {
         return world.setBlockState(pos, state, 3);
     }
