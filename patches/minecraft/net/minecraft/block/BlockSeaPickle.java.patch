@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockSeaPickle.java
++++ b/net/minecraft/block/BlockSeaPickle.java
+@@ -23,7 +23,7 @@
+ import net.minecraft.world.IWorldReaderBase;
+ import net.minecraft.world.World;
+ 
+-public class BlockSeaPickle extends BlockBush implements IGrowable, IBucketPickupHandler, ILiquidContainer {
++public class BlockSeaPickle extends BlockBush implements net.minecraftforge.common.plants.IGrowablePlant, IBucketPickupHandler, ILiquidContainer {
+    public static final IntegerProperty field_204902_a = BlockStateProperties.field_208135_aj;
+    public static final BooleanProperty field_204903_b = BlockStateProperties.field_208198_y;
+    protected static final VoxelShape field_204904_c = Block.func_208617_a(6.0D, 0.0D, 6.0D, 10.0D, 6.0D, 10.0D);

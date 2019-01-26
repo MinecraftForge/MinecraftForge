@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockSeaGrass.java
++++ b/net/minecraft/block/BlockSeaGrass.java
+@@ -23,7 +23,7 @@
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.World;
+ 
+-public class BlockSeaGrass extends BlockBush implements IGrowable, ILiquidContainer {
++public class BlockSeaGrass extends BlockBush implements net.minecraftforge.common.plants.IGrowablePlant, ILiquidContainer {
+    protected static final VoxelShape field_207798_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
+ 
+    protected BlockSeaGrass(Block.Builder p_i48780_1_) {
