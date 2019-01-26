@@ -22,6 +22,7 @@ package net.minecraftforge.common.plants;
 import java.util.Random;
 
 import net.minecraft.block.BlockCactus;
+import net.minecraft.block.BlockCocoa;
 import net.minecraft.block.BlockCrops;
 import net.minecraft.block.BlockNetherWart;
 import net.minecraft.block.BlockReed;
@@ -55,8 +56,8 @@ public final class HarvestableImpl
             {
                 if(seeds.isItemEqual(s)) 
                 { 
-                s.shrink(1); 
-                break;
+                    s.shrink(1); 
+                    break;
                 }
             }
             world.setBlockState(pos, state.with(BlockCrops.AGE, 0));
@@ -91,8 +92,8 @@ public final class HarvestableImpl
             {
                 if(seeds.isItemEqual(s)) 
                 { 
-                s.shrink(1); 
-                break;
+                    s.shrink(1); 
+                    break;
                 }
             }
             world.setBlockState(pos, state.with(BlockNetherWart.AGE, 0));
@@ -144,7 +145,7 @@ public final class HarvestableImpl
     @Override
     default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
     {
-        return state.get(BlockReed.AGE) == 15;
+        return world.getBlockState(pos.down()).getBlock() == getThis();
     }
     
     @Override
@@ -167,7 +168,7 @@ public final class HarvestableImpl
         {
             BlockPos up = pos.up();
             world.setBlockState(up, getThis().getDefaultState());
-            IBlockState iblockstate = state.with(BlockCactus.AGE, 0);
+            IBlockState iblockstate = state.with(BlockReed.AGE, 0);
             world.setBlockState(pos, iblockstate, 4);
             iblockstate.neighborChanged(world, pos, getThis(), pos);
         }
@@ -193,7 +194,7 @@ public final class HarvestableImpl
     @Override
     default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
     {
-        return state.get(BlockCactus.AGE) == 15;
+        return world.getBlockState(pos.down()).getBlock() == getThis();
     }
     
     @Override
@@ -225,6 +226,42 @@ public final class HarvestableImpl
     default BlockCactus getThis()
     {
         return (BlockCactus) this;
+    }
+
+    }
+
+    public static interface Cocoa extends IHarvestablePlant, IGrowablePlant
+    {
+
+    @Override
+    default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
+    {
+        getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+        if(shouldReplant)
+        {
+            ItemStack seeds = getThis().getItem(world, pos, state);
+            for(ItemStack s : drops)
+            {
+                if(seeds.isItemEqual(s)) 
+                { 
+                    s.shrink(1); 
+                    break;
+                }
+            }
+            world.setBlockState(pos, state.with(BlockCocoa.AGE, 0));
+        }
+        else world.destroyBlock(pos, false);
+    }
+
+    @Override
+    default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
+    {
+        return state.get(BlockCocoa.AGE) == 2;
+    }
+
+    default BlockCocoa getThis()
+    {
+        return (BlockCocoa) this;
     }
 
     }
