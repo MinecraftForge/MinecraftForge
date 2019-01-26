@@ -82,8 +82,8 @@ import net.minecraft.world.dimension.EndDimension;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.plants.IPlantable;
 
 public interface IForgeBlock
 {

@@ -52,8 +52,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.common.plants.IPlant;
 
 public interface IForgeBlockState
 {
@@ -500,12 +500,12 @@ public interface IForgeBlockState
     *
     * @param world The current world
     * @param facing The direction relative to the given position the plant wants to be, typically its UP
-    * @param plantable The plant that wants to check
+    * @param plant The plant that is attempting to be planted or stay planted.
     * @return True to allow the plant to be planted/stay.
     */
-    default boolean canSustainPlant(IBlockReader world, BlockPos pos, EnumFacing facing, IPlantable plantable)
+    default boolean canSustainPlant(IBlockReader world, BlockPos pos, EnumFacing facing, IPlant plant)
     {
-        return getBlockState().getBlock().canSustainPlant(getBlockState(), world, pos, facing, plantable);
+        return getBlockState().getBlock().canSustainPlant(getBlockState(), world, pos, facing, plant);
     }
 
     /**
