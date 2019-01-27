@@ -296,11 +296,9 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
-    private static int updatescrollcounter = 0;
-    public static String renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height, String splashText)
+    public static void renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height)
     {
-        VersionChecker.Status status = ForgeVersion.getStatus();
-        if (status == BETA || status == BETA_OUTDATED)
+        if (ForgeVersion.getVersion().getMinorVersion() == 0)
         {
             // render a warning at the top of the screen,
             String line = I18n.format("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET);
@@ -310,7 +308,7 @@ public class ForgeHooksClient
         }
 
         String line = null;
-        switch(status)
+        switch(ForgeVersion.getStatus())
         {
             //case FAILED:        line = " Version check failed"; break;
             //case UP_TO_DATE:    line = "Forge up to date"}; break;
@@ -325,8 +323,6 @@ public class ForgeHooksClient
             // if we have a line, render it in the bottom right, above Mojang's copyright line
             gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
         }
-
-        return splashText;
     }
 
     public static ISound playSound(SoundManager manager, ISound sound)

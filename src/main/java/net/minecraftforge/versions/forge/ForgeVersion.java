@@ -23,6 +23,8 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.JarVersionLookupHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import javax.annotation.Nullable;
 
@@ -34,7 +36,7 @@ public class ForgeVersion
     // This is Forge's Mod Id, used for the ForgeMod and resource locations
     public static final String MOD_ID = "forge";
 
-    private static final String forgeVersion;
+    private static final ArtifactVersion forgeVersion;
     private static final String forgeSpec;
     private static final String forgeGroup;
 
@@ -48,7 +50,7 @@ public class ForgeVersion
         if (group == null) {
             group = "net.minecraftforge"; // If all else fails, Our normal group
         }
-        forgeVersion = vers;
+        forgeVersion = new DefaultArtifactVersion(vers);
         forgeSpec = spec;
         forgeGroup = group;
         LOGGER.debug(CORE, "Found Forge version {}", forgeVersion);
@@ -56,7 +58,7 @@ public class ForgeVersion
         LOGGER.debug(CORE, "Found Forge group {}", forgeGroup);
     }
 
-    public static String getVersion()
+    public static ArtifactVersion getVersion()
     {
         return forgeVersion;
     }
