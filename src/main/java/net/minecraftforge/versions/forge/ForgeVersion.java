@@ -19,6 +19,7 @@
 
 package net.minecraftforge.versions.forge;
 
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.JarVersionLookupHandler;
 import org.apache.logging.log4j.LogManager;
@@ -65,7 +66,7 @@ public class ForgeVersion
 
     public static VersionChecker.Status getStatus()
     {
-        return VersionChecker.Status.PENDING;
+        return VersionChecker.getResult(ModList.get().getModFileById(MOD_ID).getMods().get(0)).status;
     }
 
     @Nullable
