@@ -4,7 +4,7 @@
  
        this.field_110296_bG.func_110134_a(this);
        this.func_110232_cE();
-+      this.itemHandler = net.minecraftforge.common.capabilities.OptionalCapabilityInstance.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG));
++      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG));
     }
  
     protected void func_110232_cE() {
@@ -13,10 +13,10 @@
        return p_204210_2_;
     }
 +
-+   private net.minecraftforge.common.capabilities.OptionalCapabilityInstance<?> itemHandler = null;
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
 +
 +   @Override
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
 +      if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
