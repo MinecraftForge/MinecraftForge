@@ -33,6 +33,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
+import net.minecraftforge.common.util.LazyOptional;
 
 /**
  * A high-speed implementation of a capability delegator.
@@ -92,16 +93,16 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
 
 
     @Override
-    public <T> OptionalCapabilityInstance<T> getCapability(Capability<T> cap, @Nullable EnumFacing side)
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable EnumFacing side)
     {
         for (ICapabilityProvider c : caps)
         {
-            OptionalCapabilityInstance<T> ret = c.getCapability(cap, side);
+            LazyOptional<T> ret = c.getCapability(cap, side);
             if (ret.isPresent()) {
                 return ret;
             }
         }
-        return OptionalCapabilityInstance.empty();
+        return LazyOptional.empty();
     }
 
     @Override

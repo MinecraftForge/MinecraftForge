@@ -17,13 +17,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.capabilities;
+package net.minecraftforge.common.util;
+
+import java.util.function.Predicate;
 
 import javax.annotation.Nonnull;
 
-//Exactly like Supplier, except there IS a contract that each invocation should return a new unique instance and it must not be null.
+/**
+ * Equivalent to {@link Predicate}, except with nonnull contract.
+ * 
+ * @see Predicate
+ */
 @FunctionalInterface
-public interface NonNullSupplier<T>
+public interface NonNullPredicate<T>
 {
-    @Nonnull T get();
+    boolean test(@Nonnull T t);
 }

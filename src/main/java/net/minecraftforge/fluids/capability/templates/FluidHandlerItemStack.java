@@ -27,7 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.*;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.FluidTankProperties;
@@ -47,7 +47,7 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
 {
     public static final String FLUID_NBT_KEY = "Fluid";
     
-    private final OptionalCapabilityInstance<IFluidHandlerItem> holder = OptionalCapabilityInstance.of(() -> this);
+    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
 
     @Nonnull
     protected ItemStack container;
@@ -205,9 +205,9 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
 
     @Override
     @Nonnull
-    public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
-        return OptionalCapabilityInstance.orEmpty(capability, CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, holder);
+        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
     }
 
     /**

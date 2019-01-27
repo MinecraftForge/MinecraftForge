@@ -23,6 +23,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.util.LazyOptional;
 
 public interface ICapabilityProvider
 {
@@ -37,13 +38,13 @@ public interface ICapabilityProvider
      *   <strong>CAN BE NULL</strong>. Null is defined to represent 'internal' or 'self'
      * @return The requested an optional holding the requested capability.
      */
-    @Nonnull <T> OptionalCapabilityInstance<T> getCapability(@Nonnull final Capability<T> cap, final @Nullable EnumFacing side);
+    @Nonnull <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap, final @Nullable EnumFacing side);
 
     /*
      * Purely added as a bouncer to sided version, to make modders stop complaining about calling with a null value.
      * This should never be OVERRIDDEN, modders should only ever implement the sided version.
      */
-    @Nonnull default <T> OptionalCapabilityInstance<T> getCapability(@Nonnull final Capability<T> cap) {
+    @Nonnull default <T> LazyOptional<T> getCapability(@Nonnull final Capability<T> cap) {
         return getCapability(cap, null);
     }
 }

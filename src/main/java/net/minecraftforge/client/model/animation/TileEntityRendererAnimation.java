@@ -31,11 +31,11 @@ import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
+import net.minecraftforge.common.util.LazyOptional;
 
 import java.util.Random;
 
@@ -49,7 +49,7 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
     @Override
     public void renderTileEntityFast(T te, double x, double y, double z, float partialTick, int breakStage, BufferBuilder renderer)
     {
-        OptionalCapabilityInstance<IAnimationStateMachine> cap = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY);
+        LazyOptional<IAnimationStateMachine> cap = te.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY);
         if(!cap.isPresent())
         {
             return;
