@@ -298,7 +298,8 @@ public class ForgeHooksClient
 
     public static void renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height)
     {
-        if (ForgeVersion.getVersion().getMinorVersion() == 0)
+        VersionChecker.Status status = ForgeVersion.getStatus();
+        if (status == BETA || status == BETA_OUTDATED)
         {
             // render a warning at the top of the screen,
             String line = I18n.format("forge.update.beta.1", TextFormatting.RED, TextFormatting.RESET);
@@ -308,7 +309,7 @@ public class ForgeHooksClient
         }
 
         String line = null;
-        switch(ForgeVersion.getStatus())
+        switch(status)
         {
             //case FAILED:        line = " Version check failed"; break;
             //case UP_TO_DATE:    line = "Forge up to date"}; break;

@@ -36,7 +36,7 @@ public class ForgeVersion
     // This is Forge's Mod Id, used for the ForgeMod and resource locations
     public static final String MOD_ID = "forge";
 
-    private static final ArtifactVersion forgeVersion;
+    private static final String forgeVersion;
     private static final String forgeSpec;
     private static final String forgeGroup;
 
@@ -50,7 +50,7 @@ public class ForgeVersion
         if (group == null) {
             group = "net.minecraftforge"; // If all else fails, Our normal group
         }
-        forgeVersion = new DefaultArtifactVersion(vers);
+        forgeVersion = vers;
         forgeSpec = spec;
         forgeGroup = group;
         LOGGER.debug(CORE, "Found Forge version {}", forgeVersion);
@@ -58,7 +58,7 @@ public class ForgeVersion
         LOGGER.debug(CORE, "Found Forge group {}", forgeGroup);
     }
 
-    public static ArtifactVersion getVersion()
+    public static String getVersion()
     {
         return forgeVersion;
     }
