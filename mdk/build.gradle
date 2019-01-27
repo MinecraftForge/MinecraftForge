@@ -33,6 +33,10 @@ minecraft {
     // these can be tweaked, removed, or duplicated as needed.
     runs {
         client = {
+            // recommended logging data for a userdev environment
+            systemProperties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // recommended logging level for the console
+            systemProperties 'forge.logging.console.level': 'debug'
             workingDirectory project.file('run').canonicalPath
             source sourceSets.main
         }

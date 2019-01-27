@@ -46,6 +46,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
 import static net.minecraftforge.fml.Logging.CORE;
+import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
 /**
  * Internal registry for tracking {@link ObjectHolder} references
@@ -89,7 +90,7 @@ public class ObjectHolderRegistry
 
     public static void findObjectHolders()
     {
-        LOGGER.debug(CORE,"Processing ObjectHolder annotations");
+        LOGGER.debug(REGISTRIES,"Processing ObjectHolder annotations");
         final List<ModFileScanData.AnnotationData> annotations = ModList.get().getAllScanData().stream()
             .map(ModFileScanData::getAnnotations)
             .flatMap(Collection::stream)
@@ -108,7 +109,7 @@ public class ObjectHolderRegistry
 
         annotations.stream().filter(a -> OBJECT_HOLDER.equals(a.getAnnotationType())).filter(a -> a.getTargetType() == ElementType.FIELD)
         .forEach(data -> scanTarget(classModIds, classCache, data.getClassType(), data.getMemberName(), (String)data.getAnnotationData().get("value"), false, false));
-        LOGGER.info("Found {} ObjectHolder annotations", objectHolders.size());
+        LOGGER.debug(REGISTRIES,"Found {} ObjectHolder annotations", objectHolders.size());
     }
 
     private static void scanTarget(Map<Type, String> classModIds, Map<Type, Class<?>> classCache, Type type, @Nullable String annotationTarget, String value, boolean isClass, boolean extractFromValue)
@@ -142,7 +143,7 @@ public class ObjectHolderRegistry
                 String prefix = classModIds.get(type);
                 if (prefix == null)
                 {
-                    LOGGER.warn("Found an unqualified ObjectHolder annotation ({}) without a modid context at {}.{}, ignoring", value, type, annotationTarget);
+                    LOGGER.warn(REGISTRIES,"Found an unqualified ObjectHolder annotation ({}) without a modid context at {}.{}, ignoring", value, type, annotationTarget);
                     throw new IllegalStateException("Unqualified reference to ObjectHolder");
                 }
                 value = prefix + ':' + value;
@@ -178,9 +179,9 @@ public class ObjectHolderRegistry
 
     public static void applyObjectHolders()
     {
-        LOGGER.info("Applying holder lookups");
+        LOGGER.debug(REGISTRIES,"Applying holder lookups");
         applyObjectHolders(key -> true);
-        LOGGER.info("Holder lookups applied");
+        LOGGER.debug(REGISTRIES,"Holder lookups applied");
     }
 
     public static void applyObjectHolders(Predicate<ResourceLocation> filter)

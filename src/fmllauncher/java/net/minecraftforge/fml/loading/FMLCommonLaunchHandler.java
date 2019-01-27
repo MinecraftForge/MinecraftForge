@@ -87,14 +87,14 @@ public abstract class FMLCommonLaunchHandler
     }
 
     protected void processModClassesEnvironmentVariable(final Map<String, List<Pair<Path, List<Path>>>> arguments) {
-        LOGGER.info(CORE, "Got mod coordinates {} from env", System.getenv("MOD_CLASSES"));
+        LOGGER.debug(CORE, "Got mod coordinates {} from env", System.getenv("MOD_CLASSES"));
 
         // "a/b/;c/d/;" -> "modid%%c:\fish\pepper;modid%%c:\fish2\pepper2\;modid2%%c:\fishy\bums;modid2%%c:\hmm"
         final Map<String, List<Path>> modClassPaths = Arrays.stream(System.getenv("MOD_CLASSES").split(File.pathSeparator)).
                 map(inp -> inp.split("%%", 2)).map(this::buildModPair).
                 collect(Collectors.groupingBy(Pair::getLeft, Collectors.mapping(Pair::getRight, Collectors.toList())));
 
-        LOGGER.info(CORE, "Found supplied mod coordinates [{}]", modClassPaths);
+        LOGGER.debug(CORE, "Found supplied mod coordinates [{}]", modClassPaths);
 
         final List<Pair<Path, List<Path>>> explodedTargets = arguments.computeIfAbsent("explodedTargets", a -> new ArrayList<>());
         modClassPaths.forEach((modlabel,paths) -> explodedTargets.add(Pair.of(paths.get(0), paths.subList(1, paths.size()))));

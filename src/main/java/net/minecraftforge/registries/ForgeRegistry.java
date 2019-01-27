@@ -29,9 +29,11 @@ import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
 import net.minecraftforge.fml.ModThreadContext;
+import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
@@ -56,6 +58,7 @@ import org.apache.logging.log4j.MarkerManager;
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
+    private static Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
     private static Logger LOGGER = LogManager.getLogger();
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
@@ -625,13 +628,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     void dump(ResourceLocation name)
     {
-        List<Integer> ids = Lists.newArrayList();
-        getKeys().forEach(n -> ids.add(getID(n)));
-
-        Collections.sort(ids);
-
-        LOGGER.trace(REGISTRIES, "Registry Name : {}", name);
-        ids.forEach(id -> LOGGER.trace(REGISTRIES,"  Registry: {} {} {}", id, getKey(getValue(id)), getValue(id)));
+        LOGGER.debug(REGISTRYDUMP, ()-> new AdvancedLogMessageAdapter(sb-> {
+            sb.append("Registry Name: ").append(name).append('\n');
+            getKeys().stream().map(this::getID).sorted().forEach(id ->
+                    sb.append("\tEntry: ").append(id).append(", ").
+                    append(getKey(getValue(id))).append(", ").append(getValue(id)).append('\n'));
+        }));
     }
 
     public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, String> overrides, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remapped, ForgeRegistry<V> old, ResourceLocation name)

@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.Logging.CORE;
+import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -281,11 +282,11 @@ public class ForgeConfig
     private static void loadFrom(final Path configRoot) {
         Path configFile = configRoot.resolve("forge.toml");
         spec.setConfigFile(configFile);
-        LogManager.getLogger().debug(CORE, "Loaded Forge config from {}", configFile);
+        LogManager.getLogger().debug(FORGEMOD, "Loaded Forge config from {}", configFile);
 
         configFile = configRoot.resolve("forge_chunks.toml");
         chunk_spec.setConfigFile(configFile);
-        LogManager.getLogger().debug(CORE, "Loaded Forge Chunk config from {}", configFile);
+        LogManager.getLogger().debug(FORGEMOD, "Loaded Forge Chunk config from {}", configFile);
     }
 
     public static void load() {
