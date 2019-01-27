@@ -65,6 +65,8 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static net.minecraftforge.fml.Logging.CORE;
+
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -809,9 +811,9 @@ public class GameData
             if (i==keysSize-1) lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.NEXT);
             eventDispatcher.accept(lifecycleEventProvider);
             reg.freeze();
-            LOGGER.info("{} Applying holder lookups", rl.toString());
+            LOGGER.debug(CORE,"Applying holder lookups: {}", rl.toString());
             ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.info("{} Holder lookups applied", rl.toString());
+            LOGGER.debug(CORE,"Holder lookups applied: {}", rl.toString());
         }
     }
 

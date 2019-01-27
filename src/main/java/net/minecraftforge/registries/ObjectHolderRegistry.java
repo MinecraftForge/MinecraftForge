@@ -45,6 +45,8 @@ import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import static net.minecraftforge.fml.Logging.CORE;
+
 /**
  * Internal registry for tracking {@link ObjectHolder} references
  */
@@ -87,7 +89,7 @@ public class ObjectHolderRegistry
 
     public static void findObjectHolders()
     {
-        LOGGER.info("Processing ObjectHolder annotations");
+        LOGGER.debug(CORE,"Processing ObjectHolder annotations");
         final List<ModFileScanData.AnnotationData> annotations = ModList.get().getAllScanData().stream()
             .map(ModFileScanData::getAnnotations)
             .flatMap(Collection::stream)

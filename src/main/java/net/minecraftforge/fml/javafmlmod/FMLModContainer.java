@@ -98,11 +98,11 @@ public class FMLModContainer extends ModContainer
 
     private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
         final Event event = lifecycleEvent.getOrBuildEvent(this);
-        LOGGER.info(LOADING, "Firing event for modid {} : {}", this.getModId(), event.getClass().getName());
+        LOGGER.debug(LOADING, "Firing event for modid {} : {}", this.getModId(), event);
         try
         {
             eventBus.post(event);
-            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), event.getClass().getName());
+            LOGGER.debug(LOADING, "Fired event for modid {} : {}", this.getModId(), event);
         }
         catch (Throwable e)
         {

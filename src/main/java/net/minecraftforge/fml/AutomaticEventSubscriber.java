@@ -66,7 +66,7 @@ public class AutomaticEventSubscriber
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try
                 {
-                    LOGGER.info(LOADING, "Auto-subscribing {} to {}", ad.getClassType().getClassName(), busTarget);
+                    LOGGER.debug(LOADING, "Auto-subscribing {} to {}", ad.getClassType().getClassName(), busTarget);
                     busTarget.bus().get().register(Class.forName(ad.getClassType().getClassName(), true, loader));
                 }
                 catch (ClassNotFoundException e)

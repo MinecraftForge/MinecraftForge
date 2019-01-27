@@ -45,6 +45,10 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
      */
     public static class NewRegistry extends net.minecraftforge.eventbus.api.Event
     {
+        @Override
+        public String toString() {
+            return "RegistryEvent.NewRegistry";
+        }
     }
 
     /**
@@ -80,6 +84,10 @@ public class RegistryEvent<T extends IForgeRegistryEntry<T>> extends GenericEven
             return name;
         }
 
+        @Override
+        public String toString() {
+            return "RegistryEvent.Register<"+getName()+">";
+        }
     }
 
     public static class MissingMappings<T extends IForgeRegistryEntry<T>> extends RegistryEvent<T>

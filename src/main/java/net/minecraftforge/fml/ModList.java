@@ -94,13 +94,13 @@ public class ModList
     }
 
     private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
-        LOGGER.info(LOADING, "Dispatching synchronous event {}", lifecycleEvent);
+        LOGGER.debug(LOADING, "Dispatching synchronous event {}", lifecycleEvent);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
         this.mods.forEach(m->m.transitionState(lifecycleEvent, errorHandler));
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
     private void dispatchParallelEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
-        LOGGER.info(LOADING, "Dispatching parallel event {}", lifecycleEvent);
+        LOGGER.debug(LOADING, "Dispatching parallel event {}", lifecycleEvent);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
         DeferredWorkQueue.clear();
         try
