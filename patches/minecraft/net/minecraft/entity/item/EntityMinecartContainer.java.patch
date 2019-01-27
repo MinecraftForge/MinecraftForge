@@ -39,10 +39,10 @@
        return this.field_184290_c;
     }
 +
-+   private net.minecraftforge.common.capabilities.OptionalCapabilityInstance<?> itemHandler = net.minecraftforge.common.capabilities.OptionalCapabilityInstance.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this));
 +
 +   @Override
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
 +      if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
