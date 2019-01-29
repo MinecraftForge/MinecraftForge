@@ -46,224 +46,224 @@ public final class PlantImpl
     public static interface Crops extends IHarvestablePlant, IGrowablePlant
     {
 
-    @Override
-    default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
-    {
-        getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
-        if(shouldReplant)
+        @Override
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
         {
-            ItemStack seeds = getThis().getItem(world, pos, state);
-            for(ItemStack s : drops)
+            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            if(shouldReplant)
             {
-                if(seeds.isItemEqual(s)) 
-                { 
-                    s.shrink(1); 
-                    break;
+                ItemStack seeds = getThis().getItem(world, pos, state);
+                for(ItemStack s : drops)
+                {
+                    if(seeds.isItemEqual(s)) 
+                    { 
+                        s.shrink(1); 
+                        break;
+                    }
                 }
+                world.setBlockState(pos, state.with(BlockCrops.AGE, 0));
             }
-            world.setBlockState(pos, state.with(BlockCrops.AGE, 0));
+            else world.destroyBlock(pos, false);
         }
-        else world.destroyBlock(pos, false);
-    }
 
-    @Override
-    default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        return state.get(BlockCrops.AGE) == 7;
-    }
+        @Override
+        default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
+        {
+            return state.get(BlockCrops.AGE) == 7;
+        }
 
-    default BlockCrops getThis()
-    {
-        return (BlockCrops) this;
-    }
+        default BlockCrops getThis()
+        {
+            return (BlockCrops) this;
+        }
 
     }
     
     public static interface NetherWart extends IHarvestablePlant, IGrowablePlant
     {
 
-    @Override
-    default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
-    {
-        getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
-        if(shouldReplant)
+        @Override
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
         {
-            ItemStack seeds = getThis().getItem(world, pos, state);
-            for(ItemStack s : drops)
+            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            if(shouldReplant)
             {
-                if(seeds.isItemEqual(s)) 
-                { 
-                    s.shrink(1); 
-                    break;
+                ItemStack seeds = getThis().getItem(world, pos, state);
+                for(ItemStack s : drops)
+                {
+                    if(seeds.isItemEqual(s)) 
+                    { 
+                        s.shrink(1); 
+                        break;
+                    }
                 }
+                world.setBlockState(pos, state.with(BlockNetherWart.AGE, 0));
             }
-            world.setBlockState(pos, state.with(BlockNetherWart.AGE, 0));
+            else world.destroyBlock(pos, false);
         }
-        else world.destroyBlock(pos, false);
-    }
 
-    @Override
-    default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        return state.get(BlockNetherWart.AGE) == 3;
-    }
+        @Override
+        default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
+        {
+            return state.get(BlockNetherWart.AGE) == 3;
+        }
 
-    @Override
-    default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
-    {
-        world.setBlockState(pos, state.with(BlockNetherWart.AGE, Math.min(state.get(BlockNetherWart.AGE), 3)));
-    }
+        @Override
+        default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
+        {
+            world.setBlockState(pos, state.with(BlockNetherWart.AGE, Math.min(state.get(BlockNetherWart.AGE), 3)));
+        }
 
-    @Override
-    default boolean canGrow(World world, BlockPos pos, IBlockState state)
-    {
-        return !isMature(world, world.rand, pos, state);
-    }
+        @Override
+        default boolean canGrow(World world, BlockPos pos, IBlockState state)
+        {
+            return !isMature(world, world.rand, pos, state);
+        }
 
-    @Override
-    default boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        return false;
-    }
+        @Override
+        default boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state)
+        {
+            return false;
+        }
 
-    default BlockNetherWart getThis()
-    {
-        return (BlockNetherWart) this;
-    }
+        default BlockNetherWart getThis()
+        {
+            return (BlockNetherWart) this;
+        }
 
     }
 
     public static interface Reeds extends IHarvestablePlant, IGrowablePlant
     {
 
-    @Override
-    default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
-    {
-        getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
-        world.destroyBlock(pos, false);
-    }
-
-    @Override
-    default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        return world.getBlockState(pos.down()).getBlock() == getThis();
-    }
-    
-    @Override
-    default boolean canGrow(World world, BlockPos pos, IBlockState state)
-    {
-        return state.get(BlockReed.AGE) < 15 || (state.get(BlockReed.AGE) == 15 && world.getBlockState(pos.down(2)).getBlock() != getThis() && world.isAirBlock(pos.up()));
-    }
-    
-    @Override
-    default boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        return false;
-    }
-    
-    @Override
-    default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
-    {
-        if(state.get(BlockReed.AGE) < 15) world.setBlockState(pos, state.with(BlockReed.AGE, state.get(BlockReed.AGE) + 1));
-        else
+        @Override
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
         {
-            BlockPos up = pos.up();
-            world.setBlockState(up, getThis().getDefaultState());
-            IBlockState iblockstate = state.with(BlockReed.AGE, 0);
-            world.setBlockState(pos, iblockstate, 4);
-            iblockstate.neighborChanged(world, pos, getThis(), pos);
+            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            world.destroyBlock(pos, false);
         }
-    }
 
-    default BlockReed getThis()
-    {
-        return (BlockReed) this;
-    }
+        @Override
+        default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
+        {
+            return world.getBlockState(pos.down()).getBlock() == getThis();
+        }
+    
+        @Override
+        default boolean canGrow(World world, BlockPos pos, IBlockState state)
+        {
+            return state.get(BlockReed.AGE) < 15 || (state.get(BlockReed.AGE) == 15 && world.getBlockState(pos.down(2)).getBlock() != getThis() && world.isAirBlock(pos.up()));
+        }
+    
+        @Override
+        default boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state)
+        {
+            return false;
+        }
+    
+        @Override
+        default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
+        {
+            if(state.get(BlockReed.AGE) < 15) world.setBlockState(pos, state.with(BlockReed.AGE, state.get(BlockReed.AGE) + 1));
+            else
+            {
+                BlockPos up = pos.up();
+                world.setBlockState(up, getThis().getDefaultState());
+                IBlockState iblockstate = state.with(BlockReed.AGE, 0);
+                world.setBlockState(pos, iblockstate, 4);
+                iblockstate.neighborChanged(world, pos, getThis(), pos);
+            }
+        }
+
+        default BlockReed getThis()
+        {
+            return (BlockReed) this;
+        }
 
     }
     
     public static interface Cactus extends IHarvestablePlant, IGrowablePlant
     {
 
-    @Override
-    default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
-    {
-        getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
-        world.destroyBlock(pos, false);
-    }
-
-    @Override
-    default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        return world.getBlockState(pos.down()).getBlock() == getThis();
-    }
-    
-    @Override
-    default boolean canGrow(World world, BlockPos pos, IBlockState state)
-    {
-        return state.get(BlockCactus.AGE) < 15 || (state.get(BlockCactus.AGE) == 15 && world.getBlockState(pos.down(2)).getBlock() != getThis() && world.isAirBlock(pos.up()));
-    }
-    
-    @Override
-    default boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        return false;
-    }
-    
-    @Override
-    default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
-    {
-        if(state.get(BlockCactus.AGE) < 15) world.setBlockState(pos, state.with(BlockCactus.AGE, state.get(BlockCactus.AGE) + 1));
-        else
+        @Override
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
         {
-            BlockPos up = pos.up();
-            world.setBlockState(up, getThis().getDefaultState());
-            IBlockState iblockstate = state.with(BlockCactus.AGE, 0);
-            world.setBlockState(pos, iblockstate, 4);
-            iblockstate.neighborChanged(world, pos, getThis(), pos);
+            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            world.destroyBlock(pos, false);
         }
-    }
 
-    default BlockCactus getThis()
-    {
-        return (BlockCactus) this;
-    }
+        @Override
+        default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
+        {
+            return world.getBlockState(pos.down()).getBlock() == getThis();
+        }
+    
+        @Override
+        default boolean canGrow(World world, BlockPos pos, IBlockState state)
+        {
+            return state.get(BlockCactus.AGE) < 15 || (state.get(BlockCactus.AGE) == 15 && world.getBlockState(pos.down(2)).getBlock() != getThis() && world.isAirBlock(pos.up()));
+        }
+    
+        @Override
+        default boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state)
+        {
+            return false;
+        }
+    
+        @Override
+        default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
+        {
+            if(state.get(BlockCactus.AGE) < 15) world.setBlockState(pos, state.with(BlockCactus.AGE, state.get(BlockCactus.AGE) + 1));
+            else
+            {
+                BlockPos up = pos.up();
+                world.setBlockState(up, getThis().getDefaultState());
+                IBlockState iblockstate = state.with(BlockCactus.AGE, 0);
+                world.setBlockState(pos, iblockstate, 4);
+                iblockstate.neighborChanged(world, pos, getThis(), pos);
+            }
+        }
+
+        default BlockCactus getThis()
+        {
+            return (BlockCactus) this;
+        }
 
     }
 
     public static interface Cocoa extends IHarvestablePlant, IGrowablePlant
     {
 
-    @Override
-    default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
-    {
-        getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
-        if(shouldReplant)
+        @Override
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
         {
-            ItemStack seeds = getThis().getItem(world, pos, state);
-            for(ItemStack s : drops)
+            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            if(shouldReplant)
             {
-                if(seeds.isItemEqual(s)) 
-                { 
-                    s.shrink(1); 
-                    break;
+                ItemStack seeds = getThis().getItem(world, pos, state);
+                for(ItemStack s : drops)
+                {
+                    if(seeds.isItemEqual(s)) 
+                    { 
+                        s.shrink(1); 
+                        break;
+                    }
                 }
+                world.setBlockState(pos, state.with(BlockCocoa.AGE, 0));
             }
-            world.setBlockState(pos, state.with(BlockCocoa.AGE, 0));
+            else world.destroyBlock(pos, false);
         }
-        else world.destroyBlock(pos, false);
-    }
 
-    @Override
-    default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        return state.get(BlockCocoa.AGE) == 2;
-    }
+        @Override
+        default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
+        {
+            return state.get(BlockCocoa.AGE) == 2;
+        }
 
-    default BlockCocoa getThis()
-    {
-        return (BlockCocoa) this;
-    }
+        default BlockCocoa getThis()
+        {
+            return (BlockCocoa) this;
+        }
 
     }
 
