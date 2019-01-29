@@ -20,9 +20,11 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.StringSubstitutor;
 
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +50,7 @@ public class ModInfo implements IModInfo
     private final ArtifactVersion version;
     private final String displayName;
     private final String description;
+    private final URL updateJSONURL;
     private final List<IModInfo.ModVersion> dependencies;
     private final Map<String,Object> properties;
     private final UnmodifiableConfig modConfig;
@@ -71,6 +74,7 @@ public class ModInfo implements IModInfo
                 map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
         this.displayName = modConfig.<String>getOptional("displayName").orElse(null);
         this.description = modConfig.get("description");
+        this.updateJSONURL = modConfig.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
         if (owningFile != null) {
             this.dependencies = owningFile.getConfig().<List<UnmodifiableConfig>>getOptional(Arrays.asList("dependencies", this.modId)).
                     orElse(Collections.emptyList()).stream().map(dep -> new ModVersion(this, dep)).collect(Collectors.toList());
@@ -103,6 +107,7 @@ public class ModInfo implements IModInfo
     {
         return this.description;
     }
+
     @Override
     public ArtifactVersion getVersion() {
         return version;
@@ -126,6 +131,11 @@ public class ModInfo implements IModInfo
     @Override
     public Map<String, Object> getModProperties() {
         return this.properties;
+    }
+
+    @Override
+    public URL getUpdateURL() {
+        return this.updateJSONURL;
     }
 
     public Optional<String> getLogoFile()

@@ -296,8 +296,7 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
-    private static int updatescrollcounter = 0;
-    public static String renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height, String splashText)
+    public static void renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height)
     {
         VersionChecker.Status status = ForgeVersion.getStatus();
         if (status == BETA || status == BETA_OUTDATED)
@@ -325,8 +324,6 @@ public class ForgeHooksClient
             // if we have a line, render it in the bottom right, above Mojang's copyright line
             gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
         }
-
-        return splashText;
     }
 
     public static ISound playSound(SoundManager manager, ISound sound)

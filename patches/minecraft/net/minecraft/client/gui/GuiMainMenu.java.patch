@@ -45,7 +45,17 @@
              ISaveFormat isaveformat1 = GuiMainMenu.this.field_146297_k.func_71359_d();
              WorldInfo worldinfo1 = isaveformat1.func_75803_c("Demo_World");
              if (worldinfo1 != null) {
-@@ -283,7 +290,10 @@
+@@ -268,6 +275,9 @@
+ 
+       this.field_146297_k.func_110434_K().func_110577_a(field_194400_H);
+       func_146110_a(j + 88, 67, 0.0F, 0.0F, 98, 14, 128.0F, 16.0F);
++
++      net.minecraftforge.client.ForgeHooksClient.renderMainMenu(this, this.field_146289_q, this.field_146294_l, this.field_146295_m);
++
+       GlStateManager.func_179094_E();
+       GlStateManager.func_179109_b((float)(this.field_146294_l / 2 + 90), 70.0F, 0.0F);
+       GlStateManager.func_179114_b(-20.0F, 0.0F, 0.0F, 1.0F);
+@@ -283,7 +293,10 @@
           s = s + ("release".equalsIgnoreCase(this.field_146297_k.func_184123_d()) ? "" : "/" + this.field_146297_k.func_184123_d());
        }
  
@@ -57,7 +67,7 @@
        this.func_73731_b(this.field_146289_q, "Copyright Mojang AB. Do not distribute!", this.field_193979_N, this.field_146295_m - 10, -1);
        if (p_73863_1_ > this.field_193979_N && p_73863_1_ < this.field_193979_N + this.field_193978_M && p_73863_2_ > this.field_146295_m - 10 && p_73863_2_ < this.field_146295_m) {
           func_73734_a(this.field_193979_N, this.field_146295_m - 1, this.field_193979_N + this.field_193978_M, this.field_146295_m, -1);
-@@ -299,6 +309,7 @@
+@@ -299,6 +312,7 @@
        if (this.func_183501_a()) {
           this.field_183503_M.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
        }

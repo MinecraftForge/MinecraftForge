@@ -70,6 +70,10 @@
   "commands.forge.tracking.no_data": "No data has been recorded yet.",
 
 
+  "forge.update.beta.1": "%sWARNING: %sForge Beta",
+  "forge.update.beta.2": "Major issues may arise, verify before reporting.",
+  "forge.update.newversion": "New Forge version available: %s",
+
   "forge.configgui.clumpingThreshold.tooltip": "Controls the number threshold at which Packet51 is preferred over Packet52.",
   "forge.configgui.clumpingThreshold": "Packet Clumping Threshold",
   "forge.configgui.disableVersionCheck.tooltip": "Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.",

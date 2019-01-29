@@ -35,7 +35,6 @@ public class ModFileInfo implements IModFileInfo
 {
     private final UnmodifiableConfig config;
     private final ModFile modFile;
-    private final URL updateJSONURL;
     private final URL issueURL;
     private final String modLoader;
     private final VersionRange modLoaderVersion;
@@ -59,7 +58,6 @@ public class ModFileInfo implements IModFileInfo
             throw new InvalidModFileException("Missing mods list", this);
         }
         this.mods = modConfigs.stream().map(mi-> new ModInfo(this, mi)).collect(Collectors.toList());
-        this.updateJSONURL = config.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
         this.issueURL = config.<String>getOptional("issueTrackerURL").map(StringUtils::toURL).orElse(null);
     }
 
@@ -78,12 +76,6 @@ public class ModFileInfo implements IModFileInfo
     public UnmodifiableConfig getConfig()
     {
         return this.config;
-    }
-
-    @Override
-    public URL getUpdateURL(IModFileInfo modFileInfo)
-    {
-        return this.updateJSONURL;
     }
 
     @Override
