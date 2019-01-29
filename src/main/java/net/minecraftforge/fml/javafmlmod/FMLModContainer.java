@@ -35,6 +35,7 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static net.minecraftforge.fml.Logging.LOADING;
@@ -61,7 +62,7 @@ public class FMLModContainer extends ModContainer
         triggerMap.put(ModLoadingStage.PROCESS_IMC, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.COMPLETE, dummy().andThen(this::beforeEvent).andThen(this::completeLoading).andThen(this::fireEvent).andThen(this::afterEvent));
         this.eventBus = IEventBus.create(this::onEventFailed);
-
+        this.configHandler = Optional.of(event -> this.eventBus.post(event));
         try
         {
             modClass = Class.forName(className, true, modClassLoader);
