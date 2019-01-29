@@ -130,7 +130,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
-            event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
+            event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucket_filled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }
