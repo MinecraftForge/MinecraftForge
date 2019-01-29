@@ -52,6 +52,10 @@ public class NetworkHooks
 
     public static Packet<?> getEntitySpawningPacket(Entity entity)
     {
+        if (!entity.getType().usesVanillaSpawning())
+        {
+            return FMLPlayHandler.channel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
+        }
         return null;
     }
 

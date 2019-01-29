@@ -23,6 +23,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModContainer;
 
+import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -42,7 +43,7 @@ public class ModLifecycleEvent extends Event
     public final String description()
     {
        String cn = getClass().getName();
-       return cn.substring(cn.lastIndexOf('.')+4,cn.length()-5);
+       return cn.substring(cn.lastIndexOf('.')+1);
     }
 
     public Stream<InterModComms.IMCMessage> getIMCStream() {
@@ -51,5 +52,10 @@ public class ModLifecycleEvent extends Event
 
     public Stream<InterModComms.IMCMessage> getIMCStream(Predicate<String> methodFilter) {
         return InterModComms.getMessages(this.container.getModId(), methodFilter);
+    }
+
+    @Override
+    public String toString() {
+        return description();
     }
 }

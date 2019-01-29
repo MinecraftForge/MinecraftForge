@@ -17,13 +17,21 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.capabilities;
+package net.minecraftforge.fml.network;
 
-import javax.annotation.Nonnull;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 
-//Exactly like Consumer, except there IS a contract that the parameter must not be null.
-@FunctionalInterface
-public interface NonNullConsumer<T>
+public class FMLPlayHandler
 {
-    void accept(@Nonnull T t);
+    public static final SimpleChannel channel = NetworkRegistry.ChannelBuilder
+            .named(new ResourceLocation("fml", "play"))
+            .clientAcceptedVersions(a -> true)
+            .serverAcceptedVersions(a -> true)
+            .networkProtocolVersion(() -> NetworkHooks.NETVERSION)
+            .simpleChannel();
+    static
+    {
+        channel.registerMessage(0, FMLPlayMessages.SpawnEntity.class, FMLPlayMessages.SpawnEntity::encode, FMLPlayMessages.SpawnEntity::decode, FMLPlayMessages.SpawnEntity::handle);
+    }
 }

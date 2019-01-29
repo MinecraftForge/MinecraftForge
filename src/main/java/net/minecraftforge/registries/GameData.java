@@ -47,6 +47,7 @@ import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
+import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,6 +66,9 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import static net.minecraftforge.fml.Logging.CORE;
+import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
+
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -72,7 +76,6 @@ import java.util.stream.Collectors;
 public class GameData
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final Marker GD = MarkerManager.getMarker("GAMEDATA");
 
     public static final ResourceLocation BLOCKS       = new ResourceLocation("minecraft:blocks");
     public static final ResourceLocation ITEMS        = new ResourceLocation("minecraft:items");
@@ -109,9 +112,9 @@ public class GameData
     @SuppressWarnings("unchecked")
     public static void init()
     {
-        if ( DISABLE_VANILLA_REGISTRIES)
+        if (DISABLE_VANILLA_REGISTRIES)
         {
-            LOGGER.warn(GD, "DISABLING VANILLA REGISTRY CREATION AS PER SYSTEM VARIABLE SETTING! forge.disableVanillaGameData");
+            LOGGER.warn(REGISTRIES, "DISABLING VANILLA REGISTRY CREATION AS PER SYSTEM VARIABLE SETTING! forge.disableVanillaGameData");
             return;
         }
         if (hasInit)
@@ -188,7 +191,7 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static void vanillaSnapshot()
     {
-        LOGGER.debug("Creating vanilla freeze snapshot");
+        LOGGER.debug(REGISTRIES, "Creating vanilla freeze snapshot");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -201,13 +204,13 @@ public class GameData
         });
         RegistryManager.VANILLA.registries.forEach(LOCK_VANILLA);
         RegistryManager.ACTIVE.registries.forEach(LOCK_VANILLA);
-        LOGGER.debug("Vanilla freeze snapshot created");
+        LOGGER.debug(REGISTRIES, "Vanilla freeze snapshot created");
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void freezeData()
     {
-        LOGGER.debug(GD, "Freezing registries");
+        LOGGER.debug(REGISTRIES, "Freezing registries");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -221,12 +224,13 @@ public class GameData
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> {
             reg.freeze();
             reg.bake();
+            reg.dump(name);
         });
 
         // the id mapping is finalized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
         //Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
 
-        LOGGER.debug(GD, "All registries frozen");
+        LOGGER.debug(REGISTRIES, "All registries frozen");
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -234,12 +238,12 @@ public class GameData
     {
         if (RegistryManager.FROZEN.registries.isEmpty())
         {
-            LOGGER.warn(GD, "Can't revert to frozen GameData state without freezing first.");
+            LOGGER.warn(REGISTRIES, "Can't revert to frozen GameData state without freezing first.");
             return;
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
-        LOGGER.debug(GD, "Reverting to frozen data state.");
+        LOGGER.debug(REGISTRIES, "Reverting to frozen data state.");
         for (Map.Entry<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> r : RegistryManager.ACTIVE.registries.entrySet())
         {
             final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(r.getKey());
@@ -251,16 +255,16 @@ public class GameData
 
         ObjectHolderRegistry.applyObjectHolders();
         // the id mapping has reverted, ensure we sync up the object holders
-        LOGGER.debug("Frozen state restored.");
+        LOGGER.debug(REGISTRIES, "Frozen state restored.");
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static void revert(RegistryManager state, ResourceLocation registry, boolean lock)
     {
-        LOGGER.debug(GD, "Reverting {} to {}", registry, state.getName());
+        LOGGER.debug(REGISTRIES, "Reverting {} to {}", registry, state.getName());
         final Class<? extends IForgeRegistryEntry> clazz = RegistryManager.ACTIVE.getSuperType(registry);
         loadRegistry(registry, state, RegistryManager.ACTIVE, clazz, lock);
-        LOGGER.debug(GD, "Reverting complete");
+        LOGGER.debug(REGISTRIES, "Reverting complete");
     }
 
     //Lets us clear the map so we can rebuild it.
@@ -304,10 +308,12 @@ public class GameData
                                     s.getAllowedValues().stream().map(Object::toString).collect(Collectors.joining( "," ))))
                             .collect(Collectors.joining(";"));
 
-                    LOGGER.error("Registry replacements for vanilla block '{}' must not change the number or order of blockstates.\n"+
-                                    "\tOld: {}\n"+
-                                    "\tNew: {}", block.getRegistryName(), oldSequence, newSequence);
-
+                    LOGGER.error(REGISTRIES,()-> new AdvancedLogMessageAdapter(sb-> {
+                        sb.append("Registry replacements for vanilla block '").append(block.getRegistryName()).
+                                append("' must not change the number or order of blockstates.\n");
+                        sb.append("\tOld: ").append(oldSequence).append('\n');
+                        sb.append("\tNew: ").append(newSequence);
+                    }));
                     throw new RuntimeException("Invalid vanilla replacement. See log for details.");
                 }
             }
@@ -555,7 +561,7 @@ public class GameData
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Multimap<ResourceLocation, ResourceLocation> injectSnapshot(Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot, boolean injectFrozenData, boolean isLocalWorld)
     {
-        LOGGER.info(GD, "Injecting existing registry data into this {} instance", EffectiveSide.get());
+        LOGGER.info(REGISTRIES, "Injecting existing registry data into this {} instance", EffectiveSide.get());
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
@@ -604,14 +610,14 @@ public class GameData
                 }
                 else if (isLocalWorld)
                 {
-                   LOGGER.debug("Registry {}: Resuscitating dummy entry {}", key, dummy);
+                   LOGGER.debug(REGISTRIES,"Registry {}: Resuscitating dummy entry {}", key, dummy);
                 }
                 else
                 {
                     // The server believes this is a dummy block identity, but we seem to have one locally. This is likely a conflict
                     // in mod setup - Mark this entry as a dummy
                     int id = reg.getID(dummy);
-                    LOGGER.warn(GD, "Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
+                    LOGGER.warn(REGISTRIES, "Registry {}: The ID {} @ {} is currently locally mapped - it will be replaced with a dummy for this session", dummy, key, id);
                     reg.markDummy(dummy, id);
                 }
             });
@@ -620,7 +626,7 @@ public class GameData
         int count = missing.values().stream().mapToInt(Map::size).sum();
         if (count > 0)
         {
-            LOGGER.debug(GD,"There are {} mappings missing - attempting a mod remap", count);
+            LOGGER.debug(REGISTRIES,"There are {} mappings missing - attempting a mod remap", count);
             Multimap<ResourceLocation, ResourceLocation> defaulted = ArrayListMultimap.create();
             Multimap<ResourceLocation, ResourceLocation> failed = ArrayListMultimap.create();
 
@@ -634,8 +640,10 @@ public class GameData
                 List<MissingMappings.Mapping<?>> lst = event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.DEFAULT).sorted((a, b) -> a.toString().compareTo(b.toString())).collect(Collectors.toList());
                 if (!lst.isEmpty())
                 {
-                    LOGGER.error(GD,"Unidentified mapping from registry {}", name);
-                    lst.forEach(map -> LOGGER.error("    {}: {}", map.key, map.id));
+                    LOGGER.error(REGISTRIES,()->new AdvancedLogMessageAdapter(sb->{
+                       sb.append("Unidentified mapping from registry").append(name).append('\n');
+                       lst.forEach(map->sb.append("    ").append(map.key).append(": ").append(map.id).append('\n'));
+                    }));
                 }
                 event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));
 
@@ -689,7 +697,7 @@ public class GameData
             if (!defaulted.isEmpty())
             {
                 if (isLocalWorld)
-                    LOGGER.error(GD, "There are unidentified mappings in this world - we are going to attempt to process anyway");
+                    LOGGER.error(REGISTRIES, "There are unidentified mappings in this world - we are going to attempt to process anyway");
             }
 
         }
@@ -809,9 +817,9 @@ public class GameData
             if (i==keysSize-1) lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.NEXT);
             eventDispatcher.accept(lifecycleEventProvider);
             reg.freeze();
-            LOGGER.info("{} Applying holder lookups", rl.toString());
+            LOGGER.debug(REGISTRIES,"Applying holder lookups: {}", rl.toString());
             ObjectHolderRegistry.applyObjectHolders(rl::equals);
-            LOGGER.info("{} Holder lookups applied", rl.toString());
+            LOGGER.debug(REGISTRIES,"Holder lookups applied: {}", rl.toString());
         }
     }
 
@@ -841,7 +849,7 @@ public class GameData
             }
             catch (NoSuchFieldException | SecurityException e)
             {
-                LOGGER.error(GD, "Could not get `registryName` field from IForgeRegistryEntry.Impl", e);
+                LOGGER.error(REGISTRIES, "Could not get `registryName` field from IForgeRegistryEntry.Impl", e);
                 throw new RuntimeException(e);
             }
         }
@@ -851,7 +859,7 @@ public class GameData
         }
         catch (IllegalArgumentException | IllegalAccessException e)
         {
-            LOGGER.error(GD,"Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", name.toString(), e);
+            LOGGER.error(REGISTRIES,"Could not set `registryName` field in IForgeRegistryEntry.Impl to `{}`", name.toString(), e);
             throw new RuntimeException(e);
         }
 

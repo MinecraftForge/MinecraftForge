@@ -36,19 +36,8 @@ public class UserdevLauncher
 {
     public static void main(String... args) throws InterruptedException
     {
-        Configurator.setRootLevel(Level.DEBUG);
-        final MarkerFilter classloadingFilter = MarkerFilter.createFilter("CLASSLOADING", Filter.Result.DENY, Filter.Result.NEUTRAL);
-        final MarkerFilter launchpluginFilter = MarkerFilter.createFilter("LAUNCHPLUGIN", Filter.Result.DENY, Filter.Result.NEUTRAL);
-        final MarkerFilter axformFilter= MarkerFilter.createFilter("AXFORM", Filter.Result.DENY, Filter.Result.NEUTRAL);
-        final MarkerFilter eventbusFilter = MarkerFilter.createFilter("EVENTBUS", Filter.Result.DENY, Filter.Result.NEUTRAL);
-        final MarkerFilter distxformFilter = MarkerFilter.createFilter("DISTXFORM", Filter.Result.DENY, Filter.Result.NEUTRAL);
-        final LoggerContext logcontext = LoggerContext.getContext(false);
-        logcontext.getConfiguration().addFilter(classloadingFilter);
-        logcontext.getConfiguration().addFilter(launchpluginFilter);
-        logcontext.getConfiguration().addFilter(axformFilter);
-        logcontext.getConfiguration().addFilter(eventbusFilter);
-        logcontext.getConfiguration().addFilter(distxformFilter);
-        logcontext.updateLoggers();
+        final String markerselection = System.getProperty("forge.logging.markers", "");
+        Arrays.stream(markerselection.split(",")).forEach(marker-> System.setProperty("forge.logging.marker."+ marker.toLowerCase(Locale.ROOT), "ACCEPT"));
 
         String assets = System.getenv().getOrDefault("assetDirectory", "assets");
         String target = System.getenv().get("target");

@@ -31,7 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
+import net.minecraftforge.common.util.LazyOptional;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -212,7 +212,7 @@ public class VanillaInventoryCodeHooks
         return stack;
     }
 
-    private static OptionalCapabilityInstance<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, EnumFacing hopperFacing)
+    private static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, EnumFacing hopperFacing)
     {
         double x = hopper.getXPos() + (double) hopperFacing.getXOffset();
         double y = hopper.getYPos() + (double) hopperFacing.getYOffset();
@@ -246,7 +246,7 @@ public class VanillaInventoryCodeHooks
         return true;
     }
 
-    public static OptionalCapabilityInstance<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
+    public static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
     {
         int i = MathHelper.floor(x);
         int j = MathHelper.floor(y);
@@ -264,6 +264,6 @@ public class VanillaInventoryCodeHooks
             }
         }
 
-        return OptionalCapabilityInstance.empty();
+        return LazyOptional.empty();
     }
 }

@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerList.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerList.java
+@@ -106,7 +106,7 @@
+         this.field_72405_c = 8;
+     }
+ 
+-    public void func_72355_a(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_)
++    public void initializeConnectionToPlayer(NetworkManager p_72355_1_, EntityPlayerMP p_72355_2_, NetHandlerPlayServer nethandlerplayserver)
+     {
+         GameProfile gameprofile = p_72355_2_.func_146103_bH();
+         PlayerProfileCache playerprofilecache = this.field_72400_f.func_152358_ax();
+@@ -127,8 +138,9 @@
+         WorldServer worldserver = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
+         WorldInfo worldinfo = worldserver.func_72912_H();
+         this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
+-        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.field_72400_f, p_72355_1_, p_72355_2_);
++        p_72355_2_.field_71135_a = nethandlerplayserver;
++        net.minecraftforge.fml.common.FMLCommonHandler.instance().fireServerConnectionEvent(p_72355_1_);
+         nethandlerplayserver.func_147359_a(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
+         nethandlerplayserver.func_147359_a(new SPacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+         nethandlerplayserver.func_147359_a(new SPacketPlayerAbilities(p_72355_2_.field_71075_bZ));

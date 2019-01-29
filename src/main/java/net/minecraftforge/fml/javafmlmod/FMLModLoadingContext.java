@@ -19,8 +19,10 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.config.ModConfig;
 
 import java.util.function.Supplier;
 
@@ -34,6 +36,14 @@ public class FMLModLoadingContext
 
     public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension) {
         getActiveContainer().registerExtensionPoint(point, extension);
+    }
+
+    public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec) {
+        activeContainer.addConfig(new ModConfig(type, spec, activeContainer));
+    }
+
+    public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec, String fileName) {
+        activeContainer.addConfig(new ModConfig(type, spec, activeContainer, fileName));
     }
 
     public IEventBus getModEventBus()

@@ -4,7 +4,7 @@
           ItemStack itemstack = ((Slot)this.field_75151_b.get(i)).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
-+            boolean clientStackChanged = !ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack);
++            boolean clientStackChanged = !itemstack1.areShareTagsEqual(itemstack);
              itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
              this.field_75153_a.set(i, itemstack1);
  

@@ -17,25 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.registry;
+package net.minecraftforge.common.util;
 
-import net.minecraft.entity.Entity;
+import java.util.function.Function;
+
+import javax.annotation.Nonnull;
 
 /**
- * This interface should be implemented by an Entity that can be 'thrown', like snowballs.
- * This was created to mimic ModLoaderMP's 'owner' functionality.
+ * Equivalent to {@link Function}, except with nonnull contract.
+ * 
+ * @see Function
  */
-public interface IThrowableEntity
+@FunctionalInterface
+public interface NonNullFunction<T, R>
 {
-    /**
-     * Gets the entity that threw/created this entity.
-     * @return The owner instance, Null if none.
-     */
-    Entity getThrower();
-
-    /**
-     * Sets the entity that threw/created this entity.
-     * @param entity The new thrower/creator.
-     */
-    void setThrower(Entity entity);
+    @Nonnull
+    R apply(@Nonnull T t);
 }

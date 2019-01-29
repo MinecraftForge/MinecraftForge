@@ -355,4 +355,80 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
     {
         return getStack().getItem().onDroppedByPlayer(getStack(), player);
     }
+
+    /**
+     * Get the NBT data to be sent to the client. The Item can control what data is kept in the tag.
+     *
+     * Note that this will sometimes be applied multiple times, the following MUST
+     * be supported:
+     *   Item item = stack.getItem();
+     *   NBTTagCompound nbtShare1 = item.getNBTShareTag(stack);
+     *   stack.setTagCompound(nbtShare1);
+     *   NBTTagCompound nbtShare2 = item.getNBTShareTag(stack);
+     *   assert nbtShare1.equals(nbtShare2);
+     *
+     * @return The NBT tag
+     */
+    @Nullable
+    default NBTTagCompound getShareTag()
+    {
+        return getStack().getItem().getShareTag(getStack());
+    }
+
+    /**
+     * Override this method to decide what to do with the NBT data received from
+     * getNBTShareTag().
+     *
+     * @param stack The stack that received NBT
+     * @param nbt   Received NBT, can be null
+     */
+    default void readShareTag(@Nullable NBTTagCompound nbt)
+    {
+        getStack().getItem().readShareTag(getStack(), nbt);
+    }
+
+    /**
+     *
+     * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
+     *
+     * @param world The world
+     * @param pos Block position in world
+     * @param player The Player that is wielding the item
+     * @return
+     */
+    default boolean doesSneakBypassUse(net.minecraft.world.IWorldReader world, BlockPos pos, EntityPlayer player)
+    {
+        return getStack().isEmpty() || getStack().getItem().doesSneakBypassUse(getStack(), world, pos, player);
+    }
+
+    /**
+     * Modeled after ItemStack.areItemStackTagsEqual
+     * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
+     * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
+     */
+    default boolean areShareTagsEqual(ItemStack other)
+    {
+        NBTTagCompound shareTagA = getStack().getShareTag();
+        NBTTagCompound shareTagB = other.getShareTag();
+        if (shareTagA == null)
+            return shareTagB == null;
+        else
+            return shareTagB != null && shareTagA.equals(shareTagB);
+    }
+
+    /**
+     * Determines if the ItemStack is equal to the other item stack, including Item, Count, and NBT.
+     *
+     * @param other The other stack
+     * @param limitTags True to use shareTag False to use full NBT tag
+     * @return true if equals
+     */
+    default boolean equals(ItemStack other, boolean limitTags)
+    {
+        if (getStack().isEmpty())
+            return other.isEmpty();
+        else
+            return !other.isEmpty() && getStack().getCount() == other.getCount() && getStack().getItem() == other.getItem() &&
+            (limitTags ? getStack().areShareTagsEqual(other) : ItemStack.areItemStackTagsEqual(getStack(), other));
+    }
 }

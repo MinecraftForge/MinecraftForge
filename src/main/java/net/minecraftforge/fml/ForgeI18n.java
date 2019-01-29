@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static net.minecraftforge.fml.Logging.CORE;
+
 public class ForgeI18n {
     private static final Logger LOGGER = LogManager.getLogger();
     private static Map<String,String> i18n;
@@ -80,7 +82,7 @@ public class ForgeI18n {
     }
 
     public static void loadLanguageData(final Map<String, String> properties) {
-        LOGGER.debug("Loading I18N data entries: {}", properties.size());
+        LOGGER.debug(CORE,"Loading I18N data entries: {}", properties.size());
         i18n = properties;
     }
 

@@ -121,15 +121,18 @@ public interface IForgeItem
      * behavior client side!
      *
      * Note that this will sometimes be applied multiple times, the following MUST
-     * be supported: Item item = stack.getItem(); NBTTagCompound nbtShare1 =
-     * item.getNBTShareTag(stack); stack.setTagCompound(nbtShare1); NBTTagCompound
-     * nbtShare2 = item.getNBTShareTag(stack); assert nbtShare1.equals(nbtShare2);
+     * be supported:
+     *   Item item = stack.getItem();
+     *   NBTTagCompound nbtShare1 = item.getNBTShareTag(stack);
+     *   stack.setTagCompound(nbtShare1);
+     *   NBTTagCompound nbtShare2 = item.getNBTShareTag(stack);
+     *   assert nbtShare1.equals(nbtShare2);
      *
      * @param stack The stack to send the NBT tag for
      * @return The NBT tag
      */
     @Nullable
-    default NBTTagCompound getNBTShareTag(ItemStack stack)
+    default NBTTagCompound getShareTag(ItemStack stack)
     {
         return stack.getTag();
     }
@@ -141,7 +144,7 @@ public interface IForgeItem
      * @param stack The stack that received NBT
      * @param nbt   Received NBT, can be null
      */
-    default void readNBTShareTag(ItemStack stack, @Nullable NBTTagCompound nbt)
+    default void readShareTag(ItemStack stack, @Nullable NBTTagCompound nbt)
     {
         stack.setTag(nbt);
     }
