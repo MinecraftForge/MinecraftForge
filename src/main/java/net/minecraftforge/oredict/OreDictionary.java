@@ -226,7 +226,6 @@ public class OreDictionary
             registerOre("paneGlass",     Blocks.GLASS_PANE);
             registerOre("paneGlass",     new ItemStack(Blocks.STAINED_GLASS_PANE, 1, WILDCARD_VALUE));
             //paneGlass{Color} is added below with dyes
-            registerOre("wool",          Blocks.WOOL);
             registerOre("wool",          new ItemStack(Blocks.WOOL, 1, WILDCARD_VALUE));
             //wool{Color} is added below with dyes
 
