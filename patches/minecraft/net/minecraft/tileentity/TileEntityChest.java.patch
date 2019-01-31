@@ -4,7 +4,7 @@
     protected float field_145986_n;
     protected int field_145987_o;
     private int field_145983_q;
-+   private net.minecraftforge.common.capabilities.OptionalCapabilityInstance<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
++   private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandlerModifiable> chestHandler;
  
     protected TileEntityChest(TileEntityType<?> p_i48287_1_) {
        super(p_i48287_1_);
@@ -32,10 +32,10 @@
 +   }
 +
 +   @Override
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, EnumFacing side) {
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, EnumFacing side) {
 +       if (cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +          if (this.chestHandler == null) {
-+             this.chestHandler = net.minecraftforge.common.capabilities.OptionalCapabilityInstance.of(this::createHandler);
++             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
 +          }
 +          return this.chestHandler.cast();
 +       }

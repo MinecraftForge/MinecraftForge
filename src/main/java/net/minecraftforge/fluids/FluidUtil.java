@@ -41,7 +41,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -434,7 +434,7 @@ public class FluidUtil
      *
      * Vanilla buckets will be converted to universal buckets if they are enabled.
      */
-    public static OptionalCapabilityInstance<IFluidHandlerItem> getFluidHandler(@Nonnull ItemStack itemStack)
+    public static LazyOptional<IFluidHandlerItem> getFluidHandler(@Nonnull ItemStack itemStack)
     {
         return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
     }
@@ -442,7 +442,7 @@ public class FluidUtil
     /**
      * Helper method to get the fluid contained in an itemStack
      */
-    public static OptionalCapabilityInstance<FluidStack> getFluidContained(@Nonnull ItemStack container)
+    public static LazyOptional<FluidStack> getFluidContained(@Nonnull ItemStack container)
     {
         if (!container.isEmpty())
         {
@@ -450,13 +450,13 @@ public class FluidUtil
             return getFluidHandler(container)
                     .map(handler -> handler.drain(Integer.MAX_VALUE, false));
         }
-        return OptionalCapabilityInstance.empty();
+        return LazyOptional.empty();
     }
 
     /**
      * Helper method to get an IFluidHandler for at a block position.
      */
-    public static OptionalCapabilityInstance<IFluidHandler> getFluidHandler(World world, BlockPos blockPos, @Nullable EnumFacing side)
+    public static LazyOptional<IFluidHandler> getFluidHandler(World world, BlockPos blockPos, @Nullable EnumFacing side)
     {
         IBlockState state = world.getBlockState(blockPos);
         Block block = state.getBlock();
@@ -478,7 +478,7 @@ public class FluidUtil
             return OptionalCapabilityInstance.of(() -> new BlockLiquidWrapper((BlockLiquid) block, world, blockPos));
         }
 */
-        return OptionalCapabilityInstance.empty();
+        return LazyOptional.empty();
     }
 
     /**

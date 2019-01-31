@@ -24,7 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -35,7 +35,7 @@ public class TileFluidHandler extends TileEntity
 {
     protected FluidTank tank = new FluidTank(Fluid.BUCKET_VOLUME);
     
-    private final OptionalCapabilityInstance<IFluidHandler> holder = OptionalCapabilityInstance.of(() -> tank);
+    private final LazyOptional<IFluidHandler> holder = LazyOptional.of(() -> tank);
 
     public TileFluidHandler(@Nonnull TileEntityType<?> tileEntityTypeIn)
     {
@@ -59,7 +59,7 @@ public class TileFluidHandler extends TileEntity
 
     @Override
     @Nonnull
-    public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
             return holder.cast();

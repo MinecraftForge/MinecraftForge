@@ -17,13 +17,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.capabilities;
+package net.minecraftforge.common.util;
+
+import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 
-//Exactly like Consumer, except there IS a contract that the parameter must not be null.
+/**
+ * Equivalent to {@link Function}, except with nonnull contract.
+ * 
+ * @see Function
+ */
 @FunctionalInterface
-public interface NonNullConsumer<T>
+public interface NonNullFunction<T, R>
 {
-    void accept(@Nonnull T t);
+    @Nonnull
+    R apply(@Nonnull T t);
 }

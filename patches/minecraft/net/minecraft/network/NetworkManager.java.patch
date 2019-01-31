@@ -1,16 +1,22 @@
 --- a/net/minecraft/network/NetworkManager.java
 +++ b/net/minecraft/network/NetworkManager.java
-@@ -383,6 +383,16 @@
+@@ -264,6 +264,7 @@
+ 
+    @OnlyIn(Dist.CLIENT)
+    public static NetworkManager func_181124_a(InetAddress p_181124_0_, int p_181124_1_, boolean p_181124_2_) {
++      if (p_181124_0_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
+       final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
+       Class<? extends SocketChannel> oclass;
+       LazyLoadBase<? extends EventLoopGroup> lazyloadbase;
+@@ -383,6 +384,14 @@
        return this.field_211397_t;
     }
  
-+   public Channel channel()
-+   {
++   public Channel channel() {
 +      return field_150746_k;
 +   }
 +
-+   public EnumPacketDirection getDirection()
-+   {
++   public EnumPacketDirection getDirection() {
 +      return this.field_179294_g;
 +   }
 +

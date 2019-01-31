@@ -73,19 +73,8 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         this.levelComments = levelComments;
     }
     
-    public void setConfigFile(Path path) {
-        setConfig(CommentedFileConfig.builder(path).sync()
-                .autosave()
-                //.autoreload()
-                .writingMode(WritingMode.REPLACE)
-                .build());
-    }
-    
     public void setConfig(CommentedConfig config) {
         this.childConfig = config;
-        if (config instanceof FileConfig) {
-            ((FileConfig) config).load();
-        }
         if (!isCorrect(config)) {
             String configName = config instanceof FileConfig ? ((FileConfig) config).getNioPath().toString() : config.toString();
             LogManager.getLogger().warn(CORE, "Configuration file {} is not correct. Correcting", configName);

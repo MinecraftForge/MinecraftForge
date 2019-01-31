@@ -5,13 +5,13 @@
        this.field_174901_a = p_174892_1_;
     }
 +
-+   private net.minecraftforge.common.capabilities.OptionalCapabilityInstance<?> itemHandler = net.minecraftforge.common.capabilities.OptionalCapabilityInstance.of(() -> createUnSidedHandler());
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
 +   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
 +      return new net.minecraftforge.items.wrapper.InvWrapper(this);
 +   }
 +
 +   @javax.annotation.Nullable
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.EnumFacing side) {
 +      if (cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ) {
 +         return itemHandler.cast();
 +      }

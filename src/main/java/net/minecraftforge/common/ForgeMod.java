@@ -22,6 +22,7 @@ package net.minecraftforge.common;
 import net.minecraftforge.fml.FMLWorldPersistenceHook;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
@@ -74,7 +75,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public ForgeMod()
     {
-        LOGGER.info("Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
+        LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
         INSTANCE = this;
         WorldPersistenceHooks.addHook(this);
         WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
@@ -84,7 +85,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
-        ForgeConfig.load();
+        FMLModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.spec);
+        FMLModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.chunk_spec);
+        FMLModLoadingContext.get().getModEventBus().register(ForgeConfig.class);
     }
 
 /*
@@ -130,7 +133,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
-            event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
+            event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucket_filled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }

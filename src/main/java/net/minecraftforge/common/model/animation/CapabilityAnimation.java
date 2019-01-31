@@ -25,7 +25,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
+import net.minecraftforge.common.util.LazyOptional;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,18 +53,18 @@ public class CapabilityAnimation
     public static class DefaultItemAnimationCapabilityProvider implements ICapabilityProvider
     {
         @Nonnull
-        private final OptionalCapabilityInstance<IAnimationStateMachine> asm;
+        private final LazyOptional<IAnimationStateMachine> asm;
 
-        public DefaultItemAnimationCapabilityProvider(@Nonnull OptionalCapabilityInstance<IAnimationStateMachine> asm)
+        public DefaultItemAnimationCapabilityProvider(@Nonnull LazyOptional<IAnimationStateMachine> asm)
         {
             this.asm = asm;
         }
 
         @Override
         @Nonnull
-        public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+        public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
         {
-            return OptionalCapabilityInstance.orEmpty(capability, ANIMATION_CAPABILITY, asm);
+            return ANIMATION_CAPABILITY.orEmpty(capability, asm);
         }
     }
 }

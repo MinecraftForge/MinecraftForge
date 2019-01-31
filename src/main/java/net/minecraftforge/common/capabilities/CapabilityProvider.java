@@ -26,6 +26,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.ForgeEventFactory;
 
 @MethodsReturnNonnullByDefault
@@ -98,9 +99,9 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 
     @Override
     @Nonnull
-    public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side)
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side)
     {
         final CapabilityDispatcher disp = getCapabilities();
-        return disp == null ? OptionalCapabilityInstance.empty() : disp.getCapability(cap, side);
+        return disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
     }
 }

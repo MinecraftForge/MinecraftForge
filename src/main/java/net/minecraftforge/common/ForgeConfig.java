@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import static net.minecraftforge.fml.Logging.CORE;
+import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,6 +28,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
@@ -129,7 +132,6 @@ public class ForgeConfig
     }
     
     public static class Client {
-        
         public final BooleanValue zoomInMissingModelTextInGui;
 
         public final BooleanValue forgeCloudsEnabled;
@@ -182,7 +184,7 @@ public class ForgeConfig
         }
     }
     
-    private static final ForgeConfigSpec spec = BUILDER.build();
+    static final ForgeConfigSpec spec = BUILDER.build();
     
     private static final ForgeConfigSpec.Builder CHUNK_BUILDER = new ForgeConfigSpec.Builder();
     
@@ -278,18 +280,15 @@ public class ForgeConfig
     
     public static final ForgeConfigSpec chunk_spec = CHUNK_BUILDER.build();
 
-    private static void loadFrom(final Path configRoot) {
-        Path configFile = configRoot.resolve("forge.toml");
-        spec.setConfigFile(configFile);
-        LogManager.getLogger().debug(CORE, "Loaded Forge config from {}", configFile);
 
-        configFile = configRoot.resolve("forge_chunks.toml");
-        chunk_spec.setConfigFile(configFile);
-        LogManager.getLogger().debug(CORE, "Loaded Forge Chunk config from {}", configFile);
+    @SubscribeEvent
+    public static void onLoad(final ModConfig.Loading configEvent) {
+        LogManager.getLogger().debug(FORGEMOD, "Loaded forge config file {}", configEvent.getConfig().getFileName());
     }
 
-    public static void load() {
-        loadFrom(FMLPaths.CONFIGDIR.get());
+    @SubscribeEvent
+    public static void onFileChange(final ModConfig.ConfigReloading configEvent) {
+        LogManager.getLogger().fatal(CORE, "Forge config just got changed on the file system!");
     }
 
     //General

@@ -83,16 +83,7 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
             throw new RuntimeException("wha?", e);
         }
 
-        LOGGER.fatal(CORE, "Got mod coordinates {} from env", System.getenv("MOD_CLASSES"));
-
-        final List<Path> modClasses = Arrays.stream(System.getenv("MOD_CLASSES").split(File.pathSeparator)).
-                map(Paths::get).collect(Collectors.toList());
-
-        LOGGER.fatal(CORE, "Processed mod coordinates [{}]", modClasses.stream().map(Object::toString).collect(Collectors.joining(",")));
-
-        ((Map<String, List<Pair<Path,List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
-                add(Pair.of(modClasses.get(0), modClasses.subList(1, modClasses.size())));
-
+        processModClassesEnvironmentVariable((Map<String, List<Pair<Path, List<Path>>>>) arguments);
 
         // generics are gross yea?
         ((Map)arguments).put("mavenRoots", mavenRoots);
