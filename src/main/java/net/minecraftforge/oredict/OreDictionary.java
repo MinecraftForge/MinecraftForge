@@ -301,8 +301,6 @@ public class OreDictionary
         replacements.put(new ItemStack(Blocks.ENDER_CHEST), "chestEnder");
         replacements.put(new ItemStack(Blocks.TRAPPED_CHEST), "chestTrapped");
 
-        replacements.put(new ItemStack(Blocks.WOOL, 1, WILDCARD_VALUE), "wool");
-
         // Register dyes
         String[] dyes =
         {
