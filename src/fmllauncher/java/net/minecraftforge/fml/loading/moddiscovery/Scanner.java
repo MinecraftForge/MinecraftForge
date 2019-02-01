@@ -41,6 +41,7 @@ public class Scanner {
 
     public ModFileScanData scan() {
         ModFileScanData result = new ModFileScanData();
+        result.addModFileInfo(fileToScan.getModFileInfo());
         fileToScan.scanFile(p -> fileVisitor(p, result));
         final IModLanguageProvider loader = fileToScan.getLoader();
         LOGGER.debug(SCAN, "Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());
