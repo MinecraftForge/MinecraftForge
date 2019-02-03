@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockCarpet.java
++++ b/net/minecraft/block/BlockCarpet.java
+@@ -15,7 +15,7 @@
+    protected static final VoxelShape field_196548_a = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 1.0D, 16.0D);
+    private final EnumDyeColor field_196549_b;
+ 
+-   protected BlockCarpet(EnumDyeColor p_i48290_1_, Block.Builder p_i48290_2_) {
++   public BlockCarpet(EnumDyeColor p_i48290_1_, Block.Builder p_i48290_2_) {
+       super(p_i48290_2_);
+       this.field_196549_b = p_i48290_1_;
+    }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockButtonStone.java
++++ b/net/minecraft/block/BlockButtonStone.java
+@@ -4,7 +4,7 @@
+ import net.minecraft.util.SoundEvent;
+ 
+ public class BlockButtonStone extends BlockButton {
+-   protected BlockButtonStone(Block.Builder p_i48315_1_) {
++   public BlockButtonStone(Block.Builder p_i48315_1_) {
+       super(false, p_i48315_1_);
+    }
+ 

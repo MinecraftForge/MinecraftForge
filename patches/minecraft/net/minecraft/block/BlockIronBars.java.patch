@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/BlockIronBars.java
 +++ b/net/minecraft/block/BlockIronBars.java
+@@ -16,7 +16,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class BlockIronBars extends BlockFourWay {
+-   protected BlockIronBars(Block.Builder p_i48373_1_) {
++   public BlockIronBars(Block.Builder p_i48373_1_) {
+       super(1.0F, 1.0F, 16.0F, 16.0F, 16.0F, p_i48373_1_);
+       this.func_180632_j((IBlockState)((IBlockState)((IBlockState)((IBlockState)((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_196409_a, Boolean.valueOf(false))).func_206870_a(field_196411_b, Boolean.valueOf(false))).func_206870_a(field_196413_c, Boolean.valueOf(false))).func_206870_a(field_196414_y, Boolean.valueOf(false))).func_206870_a(field_204514_u, Boolean.valueOf(false)));
+    }
 @@ -25,15 +25,12 @@
        IBlockReader iblockreader = p_196258_1_.func_195991_k();
        BlockPos blockpos = p_196258_1_.func_195995_a();

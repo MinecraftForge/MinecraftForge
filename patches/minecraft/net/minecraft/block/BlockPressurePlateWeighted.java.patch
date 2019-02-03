@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockPressurePlateWeighted.java
++++ b/net/minecraft/block/BlockPressurePlateWeighted.java
+@@ -18,7 +18,7 @@
+    public static final IntegerProperty field_176579_a = BlockStateProperties.field_208136_ak;
+    private final int field_150068_a;
+ 
+-   protected BlockPressurePlateWeighted(int p_i48295_1_, Block.Builder p_i48295_2_) {
++   public BlockPressurePlateWeighted(int p_i48295_1_, Block.Builder p_i48295_2_) {
+       super(p_i48295_2_);
+       this.func_180632_j((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_176579_a, Integer.valueOf(0)));
+       this.field_150068_a = p_i48295_1_;

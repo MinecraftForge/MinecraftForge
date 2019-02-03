@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockPressurePlate.java
++++ b/net/minecraft/block/BlockPressurePlate.java
+@@ -20,7 +20,7 @@
+    public static final BooleanProperty field_176580_a = BlockStateProperties.field_208194_u;
+    private final BlockPressurePlate.Sensitivity field_150069_a;
+ 
+-   protected BlockPressurePlate(BlockPressurePlate.Sensitivity p_i48348_1_, Block.Builder p_i48348_2_) {
++   public BlockPressurePlate(BlockPressurePlate.Sensitivity p_i48348_1_, Block.Builder p_i48348_2_) {
+       super(p_i48348_2_);
+       this.func_180632_j((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_176580_a, Boolean.valueOf(false)));
+       this.field_150069_a = p_i48348_1_;

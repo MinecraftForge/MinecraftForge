@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockStairs.java
++++ b/net/minecraft/block/BlockStairs.java
+@@ -86,7 +86,7 @@
+       return voxelshape;
+    }
+ 
+-   protected BlockStairs(IBlockState p_i48321_1_, Block.Builder p_i48321_2_) {
++   public BlockStairs(IBlockState p_i48321_1_, Block.Builder p_i48321_2_) {
+       super(p_i48321_2_);
+       this.func_180632_j((IBlockState)((IBlockState)((IBlockState)((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_176309_a, EnumFacing.NORTH)).func_206870_a(field_176308_b, Half.BOTTOM)).func_206870_a(field_176310_M, StairsShape.STRAIGHT)).func_206870_a(field_204513_t, Boolean.valueOf(false)));
+       this.field_150149_b = p_i48321_1_.func_177230_c();

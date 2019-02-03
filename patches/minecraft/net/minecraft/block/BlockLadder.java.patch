@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/BlockLadder.java
 +++ b/net/minecraft/block/BlockLadder.java
+@@ -30,7 +30,7 @@
+    protected static final VoxelShape field_185689_d = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 3.0D);
+    protected static final VoxelShape field_185690_e = Block.func_208617_a(0.0D, 0.0D, 13.0D, 16.0D, 16.0D, 16.0D);
+ 
+-   protected BlockLadder(Block.Builder p_i48371_1_) {
++   public BlockLadder(Block.Builder p_i48371_1_) {
+       super(p_i48371_1_);
+       this.func_180632_j((IBlockState)((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_176382_a, EnumFacing.NORTH)).func_206870_a(field_204612_b, Boolean.valueOf(false)));
+    }
 @@ -151,4 +151,9 @@
           return false;
        }

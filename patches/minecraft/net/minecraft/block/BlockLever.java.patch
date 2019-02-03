@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockLever.java
++++ b/net/minecraft/block/BlockLever.java
+@@ -32,7 +32,7 @@
+    protected static final VoxelShape field_209350_t = Block.func_208617_a(5.0D, 10.0D, 4.0D, 11.0D, 16.0D, 12.0D);
+    protected static final VoxelShape field_209351_u = Block.func_208617_a(4.0D, 10.0D, 5.0D, 12.0D, 16.0D, 11.0D);
+ 
+-   protected BlockLever(Block.Builder p_i48369_1_) {
++   public BlockLever(Block.Builder p_i48369_1_) {
+       super(p_i48369_1_);
+       this.func_180632_j((IBlockState)((IBlockState)((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_185512_D, EnumFacing.NORTH)).func_206870_a(field_176359_b, Boolean.valueOf(false))).func_206870_a(field_196366_M, AttachFace.WALL));
+    }

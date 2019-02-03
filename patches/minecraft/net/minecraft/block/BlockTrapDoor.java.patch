@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/BlockTrapDoor.java
 +++ b/net/minecraft/block/BlockTrapDoor.java
+@@ -36,7 +36,7 @@
+    protected static final VoxelShape field_185732_B = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D);
+    protected static final VoxelShape field_185733_C = Block.func_208617_a(0.0D, 13.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+ 
+-   protected BlockTrapDoor(Block.Builder p_i48307_1_) {
++   public BlockTrapDoor(Block.Builder p_i48307_1_) {
+       super(p_i48307_1_);
+       this.func_180632_j((IBlockState)((IBlockState)((IBlockState)((IBlockState)((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_185512_D, EnumFacing.NORTH)).func_206870_a(field_176283_b, Boolean.valueOf(false))).func_206870_a(field_176285_M, Half.BOTTOM)).func_206870_a(field_196381_c, Boolean.valueOf(false))).func_206870_a(field_204614_t, Boolean.valueOf(false)));
+    }
 @@ -186,4 +186,14 @@
  
        return super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);

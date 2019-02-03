@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/BlockChest.java
 +++ b/net/minecraft/block/BlockChest.java
+@@ -54,7 +54,7 @@
+    protected static final VoxelShape field_196313_A = Block.func_208617_a(1.0D, 0.0D, 1.0D, 16.0D, 14.0D, 15.0D);
+    protected static final VoxelShape field_196315_B = Block.func_208617_a(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
+ 
+-   protected BlockChest(Block.Builder p_i48430_1_) {
++   public BlockChest(Block.Builder p_i48430_1_) {
+       super(p_i48430_1_);
+       this.func_180632_j((IBlockState)((IBlockState)((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_176459_a, EnumFacing.NORTH)).func_206870_a(field_196314_b, ChestType.SINGLE)).func_206870_a(field_204511_c, Boolean.valueOf(false)));
+    }
 @@ -258,7 +258,7 @@
     }
  

@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockDoor.java
++++ b/net/minecraft/block/BlockDoor.java
+@@ -47,7 +47,7 @@
+    protected static final VoxelShape field_185656_B = Block.func_208617_a(13.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+    protected static final VoxelShape field_185657_C = Block.func_208617_a(0.0D, 0.0D, 0.0D, 3.0D, 16.0D, 16.0D);
+ 
+-   protected BlockDoor(Block.Builder p_i48413_1_) {
++   public BlockDoor(Block.Builder p_i48413_1_) {
+       super(p_i48413_1_);
+       this.func_180632_j((IBlockState)((IBlockState)((IBlockState)((IBlockState)((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_176520_a, EnumFacing.NORTH)).func_206870_a(field_176519_b, Boolean.valueOf(false))).func_206870_a(field_176521_M, DoorHingeSide.LEFT)).func_206870_a(field_176522_N, Boolean.valueOf(false))).func_206870_a(field_176523_O, DoubleBlockHalf.LOWER));
+    }
