@@ -37,7 +37,8 @@ public class DoublePlantItemBlock extends PlantableItemBlock
     @Override
     public boolean placePlant(IBlockState state, World world, BlockPos pos)
     {
-        if(!world.isAirBlock(pos.up())) return false;
+        if (!world.isAirBlock(pos.up()))
+            return false;
         return super.placePlant(state, world, pos) && world.setBlockState(pos.up(), state.with(BlockDoublePlant.HALF, DoubleBlockHalf.UPPER));
     }
 

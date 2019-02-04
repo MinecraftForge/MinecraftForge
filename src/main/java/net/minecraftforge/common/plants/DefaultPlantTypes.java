@@ -24,9 +24,9 @@ import net.minecraft.util.ResourceLocation;
 public final class DefaultPlantTypes
 {
 
-	/**
-	 * Represents plants that should be placed near water, such as Sugarcane.
-	 */
+    /**
+     * Represents plants that should be placed near water, such as Sugarcane.
+     */
     public static final PlantType BEACH = PlantType.get(new ResourceLocation("beach"));
 
     /**
@@ -58,19 +58,19 @@ public final class DefaultPlantTypes
      * Represents plants that grow on water, like lily pads.
      */
     public static final PlantType WATER = PlantType.get(new ResourceLocation("water"));
-    
+
     /**
      * Represents tree saplings.
      */
     public static final PlantType SAPLING = PlantType.get(new ResourceLocation("sapling"));
-    
+
     /**
      * Represents plants that grow in the end, like chorus flowers.
      */
     public static final PlantType ENDER = PlantType.get(new ResourceLocation("ender"));
-    
+
     /**
-     * Represents plants that grow on other blocks.  Used by cocoa beans and vines.
+     * Represents plants that grow on other blocks. Used by cocoa beans and vines.
      */
     public static final PlantType EPIPHYTE = PlantType.get(new ResourceLocation("epiphyte"));
 

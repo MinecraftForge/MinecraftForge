@@ -51,6 +51,7 @@ public interface IPlant
         if (this == Blocks.NETHER_WART) return DefaultPlantTypes.NETHER;
         if (this == Blocks.COCOA || this == Blocks.VINE) return DefaultPlantTypes.EPIPHYTE;
         if (this == Blocks.LILY_PAD || this instanceof ILiquidContainer) return DefaultPlantTypes.WATER;
+        if (this == Blocks.CHORUS_PLANT || this == Blocks.CHORUS_FLOWER) return DefaultPlantTypes.ENDER;
         return DefaultPlantTypes.PLAINS;
     }
 

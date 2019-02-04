@@ -34,6 +34,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 /**
@@ -47,23 +48,26 @@ public final class PlantImpl
     {
 
         @Override
-        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops,
+                boolean shouldReplant)
         {
-            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
-            if(shouldReplant)
+            getThis().getDrops(state, drops, world, pos,
+                    harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            if (shouldReplant)
             {
                 ItemStack seeds = getThis().getItem(world, pos, state);
-                for(ItemStack s : drops)
+                for (ItemStack s : drops)
                 {
-                    if(seeds.isItemEqual(s)) 
-                    { 
-                        s.shrink(1); 
+                    if (seeds.isItemEqual(s))
+                    {
+                        s.shrink(1);
                         break;
                     }
                 }
                 world.setBlockState(pos, state.with(BlockCrops.AGE, 0));
             }
-            else world.destroyBlock(pos, false);
+            else
+                world.destroyBlock(pos, false);
         }
 
         @Override
@@ -78,28 +82,31 @@ public final class PlantImpl
         }
 
     }
-    
+
     public static interface NetherWart extends IHarvestablePlant, IGrowablePlant
     {
 
         @Override
-        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops,
+                boolean shouldReplant)
         {
-            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
-            if(shouldReplant)
+            getThis().getDrops(state, drops, world, pos,
+                    harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            if (shouldReplant)
             {
                 ItemStack seeds = getThis().getItem(world, pos, state);
-                for(ItemStack s : drops)
+                for (ItemStack s : drops)
                 {
-                    if(seeds.isItemEqual(s)) 
-                    { 
-                        s.shrink(1); 
+                    if (seeds.isItemEqual(s))
+                    {
+                        s.shrink(1);
                         break;
                     }
                 }
                 world.setBlockState(pos, state.with(BlockNetherWart.AGE, 0));
             }
-            else world.destroyBlock(pos, false);
+            else
+                world.destroyBlock(pos, false);
         }
 
         @Override
@@ -137,9 +144,11 @@ public final class PlantImpl
     {
 
         @Override
-        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops,
+                boolean shouldReplant)
         {
-            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            getThis().getDrops(state, drops, world, pos,
+                    harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
             world.destroyBlock(pos, false);
         }
 
@@ -148,23 +157,25 @@ public final class PlantImpl
         {
             return world.getBlockState(pos.down()).getBlock() == getThis();
         }
-    
+
         @Override
         default boolean canGrow(World world, BlockPos pos, IBlockState state)
         {
-            return state.get(BlockReed.AGE) < 15 || (state.get(BlockReed.AGE) == 15 && world.getBlockState(pos.down(2)).getBlock() != getThis() && world.isAirBlock(pos.up()));
+            return state.get(BlockReed.AGE) < 15
+                    || (state.get(BlockReed.AGE) == 15 && world.getBlockState(pos.down(2)).getBlock() != getThis() && world.isAirBlock(pos.up()));
         }
-    
+
         @Override
         default boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state)
         {
             return false;
         }
-    
+
         @Override
         default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
         {
-            if(state.get(BlockReed.AGE) < 15) world.setBlockState(pos, state.with(BlockReed.AGE, state.get(BlockReed.AGE) + 1));
+            if (state.get(BlockReed.AGE) < 15)
+                world.setBlockState(pos, state.with(BlockReed.AGE, state.get(BlockReed.AGE) + 1));
             else
             {
                 BlockPos up = pos.up();
@@ -181,14 +192,16 @@ public final class PlantImpl
         }
 
     }
-    
+
     public static interface Cactus extends IHarvestablePlant, IGrowablePlant
     {
 
         @Override
-        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops,
+                boolean shouldReplant)
         {
-            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            getThis().getDrops(state, drops, world, pos,
+                    harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
             world.destroyBlock(pos, false);
         }
 
@@ -197,23 +210,25 @@ public final class PlantImpl
         {
             return world.getBlockState(pos.down()).getBlock() == getThis();
         }
-    
+
         @Override
         default boolean canGrow(World world, BlockPos pos, IBlockState state)
         {
-            return state.get(BlockCactus.AGE) < 15 || (state.get(BlockCactus.AGE) == 15 && world.getBlockState(pos.down(2)).getBlock() != getThis() && world.isAirBlock(pos.up()));
+            return state.get(BlockCactus.AGE) < 15
+                    || (state.get(BlockCactus.AGE) == 15 && world.getBlockState(pos.down(2)).getBlock() != getThis() && world.isAirBlock(pos.up()));
         }
-    
+
         @Override
         default boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state)
         {
             return false;
         }
-    
+
         @Override
         default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
         {
-            if(state.get(BlockCactus.AGE) < 15) world.setBlockState(pos, state.with(BlockCactus.AGE, state.get(BlockCactus.AGE) + 1));
+            if (state.get(BlockCactus.AGE) < 15)
+                world.setBlockState(pos, state.with(BlockCactus.AGE, state.get(BlockCactus.AGE) + 1));
             else
             {
                 BlockPos up = pos.up();
@@ -235,23 +250,26 @@ public final class PlantImpl
     {
 
         @Override
-        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops, boolean shouldReplant)
+        default void harvest(World world, Random rand, BlockPos pos, IBlockState state, EntityPlayer harvester, NonNullList<ItemStack> drops,
+                boolean shouldReplant)
         {
-            getThis().getDrops(state, drops, world, pos, harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
-            if(shouldReplant)
+            getThis().getDrops(state, drops, world, pos,
+                    harvester == null ? 0 : EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, harvester.getHeldItemMainhand()));
+            if (shouldReplant)
             {
                 ItemStack seeds = getThis().getItem(world, pos, state);
-                for(ItemStack s : drops)
+                for (ItemStack s : drops)
                 {
-                    if(seeds.isItemEqual(s)) 
-                    { 
-                        s.shrink(1); 
+                    if (seeds.isItemEqual(s))
+                    {
+                        s.shrink(1);
                         break;
                     }
                 }
                 world.setBlockState(pos, state.with(BlockCocoa.AGE, 0));
             }
-            else world.destroyBlock(pos, false);
+            else
+                world.destroyBlock(pos, false);
         }
 
         @Override
@@ -274,12 +292,21 @@ public final class PlantImpl
         {
             return Blocks.COCOA.getDefaultState();
         }
-        
+
         @Override
         default PlantType getPlantType(World world, BlockPos pos, ItemStack stack)
         {
             return DefaultPlantTypes.EPIPHYTE;
         }
     }
-    
+
+    public static interface Chorus extends IPlant
+    {
+        @Override
+        default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
+        {
+            return DefaultPlantTypes.ENDER;
+        }
+    }
+
 }

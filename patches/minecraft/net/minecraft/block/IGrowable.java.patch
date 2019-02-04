@@ -4,7 +4,7 @@
  import net.minecraft.world.IBlockReader;
  import net.minecraft.world.World;
  
-+//Used for non-plants that can be grown.  Plants that can grow should use IGrowablePlant.
++@Deprecated //Forge: Plants that can grow should use IGrowablePlant.
  public interface IGrowable {
     boolean func_176473_a(IBlockReader p_176473_1_, BlockPos p_176473_2_, IBlockState p_176473_3_, boolean p_176473_4_);
  

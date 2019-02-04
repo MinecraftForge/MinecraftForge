@@ -29,8 +29,9 @@ public class PlantType
     private static final Map<ResourceLocation, PlantType> TYPES = new HashMap<>();
 
     protected final ResourceLocation id;
-    
-    private PlantType(ResourceLocation id) {
+
+    private PlantType(ResourceLocation id)
+    {
         this.id = id;
     }
 
@@ -40,7 +41,8 @@ public class PlantType
     }
 
     /**
-     * @param id The name of the plant type.  Mods creating new plant types should use their domains.  Forge uses "minecraft" as the domain.
+     * @param id
+     *            The name of the plant type. Mods creating new plant types should use their domains. Forge uses "minecraft" as the domain.
      * @return A plant type.
      */
     public static PlantType get(ResourceLocation id)

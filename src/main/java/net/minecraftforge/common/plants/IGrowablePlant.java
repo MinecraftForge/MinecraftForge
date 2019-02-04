@@ -28,15 +28,20 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 /**
- * The base interface of all growable plants.  Implementers must override canGrow/grow, or callers will end up with a StackOverflowException.
+ * The base interface of all growable plants. Implementers must override canGrow/grow, or callers will end up with a StackOverflowException. This class extends IGrowable in order
+ * to reduce the number of patches needed. Modders should not override the IGrowable methods.
  */
+@SuppressWarnings("deprecation")
 public interface IGrowablePlant extends IPlant, IGrowable
 {
 
     /**
-     * @param world The world
-     * @param pos The current pos
-     * @param state The current state
+     * @param world
+     *            The world
+     * @param pos
+     *            The current pos
+     * @param state
+     *            The current state
      * 
      * @return If this plant can grow, and {@link IPlant#grow(World, Random, BlockPos, IBlockState)} will actually do something.
      */
@@ -46,23 +51,31 @@ public interface IGrowablePlant extends IPlant, IGrowable
     }
 
     /**
-     * @param world The world
-     * @param rand A random
-     * @param pos The current pos
-     * @param state The current state
+     * @param world
+     *            The world
+     * @param rand
+     *            A random
+     * @param pos
+     *            The current pos
+     * @param state
+     *            The current state
      * 
      * @return If this plant can be forcibly grown using bonemeal.
      */
     boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state);
 
     /**
-     * This method is called to grow the plant.  If this plant cannot be grown further, this method should do nothing.
-     * This method is not responsible for posting the forge CropGrowPre/Post events.  Callers should post those themselves.
+     * This method is called to grow the plant. If this plant cannot be grown further, this method should do nothing. This method is not responsible for posting the forge
+     * CropGrowPre/Post events. Callers should post those themselves.
      * 
-     * @param world The world
-     * @param pos The current pos
-     * @param state The current state
-     * @param natural If this grow call was a result of "natural" causes like random block updates, or artificial, from fertilizers such as bonemeal.
+     * @param world
+     *            The world
+     * @param pos
+     *            The current pos
+     * @param state
+     *            The current state
+     * @param natural
+     *            If this grow call was a result of "natural" causes like random block updates, or artificial, from fertilizers such as bonemeal.
      */
     default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
     {
@@ -78,7 +91,7 @@ public interface IGrowablePlant extends IPlant, IGrowable
     @Deprecated
     default void grow(World world, Random rand, BlockPos pos, IBlockState state)
     {
-    	grow(world, rand, pos, state, false);
+        grow(world, rand, pos, state, false);
     }
 
 }

@@ -607,6 +607,7 @@ public interface IForgeBlock
         	return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.TERRACOTTA || this.getBlock() instanceof BlockGlazedTerracotta;
         }
         if(type == DefaultPlantTypes.NETHER) return this.getBlock() == Blocks.SOUL_SAND;
+        if(type == DefaultPlantTypes.ENDER) return this.getBlock() == Blocks.END_STONE;
         if(type == DefaultPlantTypes.CROP) return this.getBlock() == Blocks.FARMLAND;
         if(type == DefaultPlantTypes.CAVE) return state.isTopSolid();
         if(type == DefaultPlantTypes.WATER) return state.getMaterial() == Material.WATER; //&& state.getValue(BlockLiquidWrapper)
