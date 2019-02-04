@@ -743,7 +743,7 @@ public interface IForgeBlock
     */
     default boolean shouldCheckWeakPower(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing side)
     {
-        return state.isTopSolid();
+        return state.isNormalCube(world, pos);
     }
 
     /**
