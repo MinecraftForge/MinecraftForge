@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockKelpTop.java
++++ b/net/minecraft/block/BlockKelpTop.java
+@@ -22,7 +22,7 @@
+ import net.minecraft.world.IWorldReaderBase;
+ import net.minecraft.world.World;
+ 
+-public class BlockKelpTop extends Block implements ILiquidContainer {
++public class BlockKelpTop extends Block implements ILiquidContainer, net.minecraftforge.common.plants.IPlant {
+    public static final IntegerProperty field_203163_a = BlockStateProperties.field_208172_Y;
+    protected static final VoxelShape field_207797_b = Block.func_208617_a(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D);
+ 

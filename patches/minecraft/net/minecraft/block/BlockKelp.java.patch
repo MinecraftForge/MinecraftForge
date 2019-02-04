@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/BlockKelp.java
++++ b/net/minecraft/block/BlockKelp.java
+@@ -16,7 +16,7 @@
+ import net.minecraft.world.IWorldReaderBase;
+ import net.minecraft.world.World;
+ 
+-public class BlockKelp extends Block implements ILiquidContainer {
++public class BlockKelp extends Block implements ILiquidContainer, net.minecraftforge.common.plants.IPlant {
+    final BlockKelpTop field_209904_a;
+ 
+    protected BlockKelp(BlockKelpTop p_i49501_1_, Block.Builder p_i49501_2_) {
