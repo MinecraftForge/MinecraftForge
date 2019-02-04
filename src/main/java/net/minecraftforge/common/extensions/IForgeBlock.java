@@ -601,7 +601,7 @@ public interface IForgeBlock
             return true;
         */
 
-        if(type == DefaultPlantTypes.PLAINS) return this.getBlock() == Blocks.GRASS || Block.isDirt(getBlock()) || this.getBlock() == Blocks.FARMLAND;
+        if(type == DefaultPlantTypes.PLAINS) return this.getBlock() == Blocks.GRASS_BLOCK || Block.isDirt(getBlock()) || this.getBlock() == Blocks.FARMLAND;
         if(type == DefaultPlantTypes.DESERT)
         {
         	return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.TERRACOTTA || this.getBlock() instanceof BlockGlazedTerracotta;
