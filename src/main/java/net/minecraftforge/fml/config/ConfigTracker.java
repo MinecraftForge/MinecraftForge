@@ -7,7 +7,9 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.EnumMap;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -22,9 +24,9 @@ public class ConfigTracker {
     private ConfigTracker() {
         this.fileMap = new ConcurrentHashMap<>();
         this.configSets = new EnumMap<>(ModConfig.Type.class);
-        this.configSets.put(ModConfig.Type.CLIENT, new ConcurrentSkipListSet<>());
+        this.configSets.put(ModConfig.Type.CLIENT, Collections.synchronizedSet(new LinkedHashSet<>()));
 //        this.configSets.put(ModConfig.Type.PLAYER, new ConcurrentSkipListSet<>());
-        this.configSets.put(ModConfig.Type.SERVER, new ConcurrentSkipListSet<>());
+        this.configSets.put(ModConfig.Type.SERVER, Collections.synchronizedSet(new LinkedHashSet<>()));
     }
 
     void trackConfig(final ModConfig config) {

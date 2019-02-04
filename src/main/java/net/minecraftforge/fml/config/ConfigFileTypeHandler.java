@@ -25,14 +25,14 @@ public class ConfigFileTypeHandler {
                     writingMode(WritingMode.REPLACE).
                     build();
             LOGGER.debug(CONFIG, "Built TOML config for {}", configPath.toString());
+            configData.load();
+            LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
             try {
-                FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData));
+                FileWatcher.defaultInstance().addWatch(configPath, new ConfigWatcher(c, configData, Thread.currentThread().getContextClassLoader()));
                 LOGGER.debug(CONFIG, "Watching TOML config file {} for changes", configPath.toString());
             } catch (IOException e) {
                 throw new RuntimeException("Couldn't watch config file", e);
             }
-            configData.load();
-            LOGGER.debug(CONFIG, "Loaded TOML config file {}", configPath.toString());
             return configData;
         };
     }
@@ -40,14 +40,18 @@ public class ConfigFileTypeHandler {
     private static class ConfigWatcher implements Runnable {
         private final ModConfig modConfig;
         private final CommentedFileConfig commentedFileConfig;
+        private final ClassLoader realClassLoader;
 
-        ConfigWatcher(final ModConfig modConfig, final CommentedFileConfig commentedFileConfig) {
+        ConfigWatcher(final ModConfig modConfig, final CommentedFileConfig commentedFileConfig, final ClassLoader classLoader) {
             this.modConfig = modConfig;
             this.commentedFileConfig = commentedFileConfig;
+            this.realClassLoader = classLoader;
         }
 
         @Override
         public void run() {
+            // Force the regular classloader onto the special thread
+            Thread.currentThread().setContextClassLoader(realClassLoader);
             LOGGER.debug(CONFIG, "Config file {} changed, sending notifies", this.modConfig.getFileName());
             this.modConfig.fireEvent(new ModConfig.ConfigReloading(this.modConfig));
         }
