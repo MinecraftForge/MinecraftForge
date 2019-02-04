@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -50,10 +51,10 @@ public class Scanner {
     }
 
     private void fileVisitor(final Path path, final ModFileScanData result) {
-        try {
-            LOGGER.debug(SCAN,"Scanning {} path {}", fileToScan, path);
+        LOGGER.debug(SCAN,"Scanning {} path {}", fileToScan, path);
+        try (InputStream in = Files.newInputStream(path)){
             ModClassVisitor mcv = new ModClassVisitor();
-            ClassReader cr = new ClassReader(Files.newInputStream(path));
+            ClassReader cr = new ClassReader(in);
             cr.accept(mcv, 0);
             mcv.buildData(result.getClasses(), result.getAnnotations());
         } catch (IOException e) {
