@@ -261,10 +261,10 @@
 +           case Nether: return this.getBlock() == Blocks.field_150425_aM;
 +           case Crop: return this.getBlock() == Blocks.field_150458_ak;
 +           case Cave: return state.func_185896_q();
-+           case Plains: return this.getBlock() == Blocks.field_150349_c || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150458_ak;
++           case Plains: return this.getBlock() == Blocks.field_196658_i || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150458_ak;
 +           case Water: return state.func_185904_a() == Material.field_151586_h; //&& state.getValue(BlockLiquidWrapper)
 +           case Beach:
-+               boolean isBeach = this.getBlock() == Blocks.field_150349_c || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150354_m;
++               boolean isBeach = this.getBlock() == Blocks.field_196658_i || Block.func_196245_f(this) || this.getBlock() == Blocks.field_150354_m;
 +               boolean hasWater = (world.func_180495_p(pos.func_177974_f()).func_185904_a() == Material.field_151586_h ||
 +                       world.func_180495_p(pos.func_177976_e()).func_185904_a() == Material.field_151586_h ||
 +                       world.func_180495_p(pos.func_177978_c()).func_185904_a() == Material.field_151586_h ||
