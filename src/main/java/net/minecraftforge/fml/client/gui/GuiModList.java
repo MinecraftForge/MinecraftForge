@@ -32,13 +32,17 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.resources.ResourcePackInfoClient;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fml.*;
+import net.minecraftforge.fml.ForgeI18n;
+import net.minecraftforge.fml.MavenVersionStringHelper;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModList;
+import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
+import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.StringUtils;
@@ -433,12 +437,13 @@ public class GuiModList extends GuiScreen
         Pair<ResourceLocation, Dimension> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = mc.getTextureManager();
-            ResourcePackInfoClient pack = ResourcePackLoader.getResourcePackInfoForModId(selectedMod.getModId());
-            if (pack == null) pack = ResourcePackLoader.getResourcePackInfoForModId("forge");
+            final ModFileResourcePack resourcePack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId())
+                    .orElse(ResourcePackLoader.getResourcePackFor("forge").
+                            orElseThrow(()->new RuntimeException("Can't find forge, WHAT!")));
             try
             {
                 NativeImage logo = null;
-                InputStream logoResource = pack.getResourcePack().getRootResourceStream(logoFile);
+                InputStream logoResource = resourcePack.getRootResourceStream(logoFile);
                 if (logoResource != null)
                     logo = NativeImage.read(logoResource);
                 if (logo != null)

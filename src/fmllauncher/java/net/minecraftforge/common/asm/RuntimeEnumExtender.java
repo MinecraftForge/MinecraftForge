@@ -157,14 +157,12 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
 
             {
                 vars += 1; //enum ret;
-                //ret = new ThisType(name, VALUES.length + 1, args..)
+                //ret = new ThisType(name, VALUES.length, args..)
                 ins.anew(classType);
                 ins.dup();
                 ins.load(0, STRING);
                 ins.getstatic(classType.getInternalName(), values.name, values.desc);
                 ins.arraylength();
-                ins.iconst(1);
-                ins.add(Type.INT_TYPE);
                 int idx = 1;
                 for (int x = 1; x < args.length; x++)
                 {
