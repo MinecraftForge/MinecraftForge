@@ -89,5 +89,6 @@ net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_8268
 #net/minecraft/client/audio/SoundManager.setListener(Lnet/minecraft/entity/Entity;F)V=|p_148615_1_,p_148615_2_
 
 net/minecraft/item/ArmorMaterial.create(Ljava/lang/String;Ljava/lang/String;I[IILnet/minecraft/util/SoundEvent;FLjava/util/function/Supplier;)Lnet/minecraft/item/ArmorMaterial;=|name,p_i48533_3_,p_i48533_4_,p_i48533_5_,p_i48533_6_,p_i48533_7_,p_i48533_8_,p_i48533_9_
+net/minecraft/entity/EnumCreatureType.create(Ljava/lang/String;Ljava/lang/Class;IZZ)Lnet/minecraft/entity/EnumCreatureType;=|name,p_i47849_3_,p_i47849_4_,p_i47849_5_,p_i47849_6_
 
 net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;=|p_150788_1_,limitedTag
