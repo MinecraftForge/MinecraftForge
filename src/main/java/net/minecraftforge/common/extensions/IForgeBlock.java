@@ -613,7 +613,7 @@ public interface IForgeBlock
         if(type == DefaultPlantTypes.WATER) return state.getMaterial() == Material.WATER; //&& state.getValue(BlockLiquidWrapper)
         if(type == DefaultPlantTypes.BEACH)
         {
-            boolean isBeach = this.getBlock() == Blocks.GRASS || Block.isDirt(getBlock()) || this.getBlock() == Blocks.SAND;
+            boolean isBeach = this.getBlock() == Blocks.GRASS_BLOCK || Block.isDirt(getBlock()) || this.getBlock() == Blocks.SAND;
             if(!isBeach) return false;
             boolean hasWater = (world.getBlockState(pos.east()).getMaterial() == Material.WATER  ||
                                 world.getBlockState(pos.west()).getMaterial() == Material.WATER  ||
