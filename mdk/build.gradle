@@ -1,15 +1,27 @@
 buildscript {
     repositories {
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        // Try to resolve locally first
+        mavenLocal()
+
+        // Then from Forge's maven
+        maven {
+            name = 'Forge'
+            url = 'https://files.minecraftforge.net/maven'
+        }
+
         jcenter()
         mavenCentral()
     }
+
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle'
+
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+
 apply plugin: 'eclipse'
 
 version = '1.0'
@@ -32,21 +44,83 @@ minecraft {
     // default run configurations.
     // these can be tweaked, removed, or duplicated as needed.
     runs {
-        client = {
-            // recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-            // recommended logging level for the console
-            properties 'forge.logging.console.level': 'debug'
+        // Specifies the name of the run config. 'client' will extend from the userdevConfig's 'client' run config
+        client {
             workingDirectory project.file('run').canonicalPath
-            source sourceSets.main
+
+            // Recommended logging data for a userdev environment
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            // Recommended logging level for the console
+            properties 'forge.logging.console.level': 'debug'
+
+            // Here you can specify a number of mods that are contained
+            // within your project. This allows for having multiple mods,
+            // from multiple source sets, loaded at runtime
+            mods {
+                // The name of the mod
+                ExampleMod {
+                    // The source set for the mod
+                    source sourceSets.main
+
+                    // You can specify multiple source sets per mod
+                    // NOTE: the first source set _MUST_ be the source set that contains the 'META-INF/mods.toml' file
+                    // sources sourceSets.main, sourceSets.api
+                    
+                    // You can also specify arbitrary classes directories, for this given mod
+                    // NOTE: only 'classes' can be used and not 'class' due to it being a reserved keyword
+                    // classes project.file('some/classes/dir')
+                    
+                    // You can also overwrite the existing resource directory specified
+                    // resource = project.file('only/this/resources/dir')
+                    
+                    // The same goes for classes
+                    // classes = project.file('only/this/classes/dir')
+                }
+            }
         }
-        server = {
-            // recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-            // recommended logging level for the console
-            properties 'forge.logging.console.level': 'debug'
+
+        // You can specify any number of run configs
+        // NOTE: only the run configs named 'client' and 'server' will extend from their userdevConfig's counterparts
+        testClient {
+            // You can specify a parent run to be merged into this run config
+            // NOTE: it will not override anything set within this run config
+            parent runs.client
+
+            mods {
+                // Because we are including the parent 'runs.client' config into this run config,
+                // the mod 'ExampleMod' will be added
+
+                // You can specify any number of mods
+                ExampleModTest {
+                    source sourceSets.test
+                }
+            }
+        }
+        
+        server {
             workingDirectory project.file('run').canonicalPath
-            source sourceSets.main
+            
+            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
+            properties 'forge.logging.console.level': 'debug'
+
+            // You can specify any arguments you wish to pass to the launcher
+            arg 'nogui'
+
+            mods {
+                ExampleMod {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        testServer {
+            parent runs.server
+
+            mods {
+                ExampleModTest {
+                    source sourceSets.test
+                }
+            }
         }
     }
 }
@@ -88,5 +162,39 @@ jar {
                     "Implementation-Version": "${version}",
                     "Implementation-Vendor" :"examplemodsareus",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+    }
+}
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', '@MC_VERSION@'
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META_INF/mods.toml'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion': '@MC_VERSION@'
+    }
+
+    // copy everything else except the mods.toml
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'META_INF/mods.toml'
+    }
+}
+
+processTestResources {
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', '@MC_VERSION@'
+
+    from(sourceSets.test.resources.srcDirs) {
+        include 'META_INF/mods.toml'
+
+        expand 'version':project.version, 'mcversion': '@MC_VERSION@'
+    }
+
+    from(sourceSets.test.resources.srcDirs) {
+        exclude 'META_INF/mods.toml'
     }
 }

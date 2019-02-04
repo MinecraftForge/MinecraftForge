@@ -2,6 +2,7 @@ package com.example.examplemod;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -11,6 +12,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
 import org.apache.logging.log4j.LogManager;
@@ -20,12 +22,17 @@ import java.util.stream.Collectors;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("examplemod")
-public class ExampleMod
-{
+public class ExampleMod {
+
     // Directly reference a log4j logger.
     private static final Logger LOGGER = LogManager.getLogger();
 
     public ExampleMod() {
+        // Register the registerBlocks method for registry
+        FMLModLoadingContext.get().getModEventBus().addGenericListener(Block.class, this::registerBlocks);
+        // Register the registerItems method for registry
+        FMLModLoadingContext.get().getModEventBus().addGenericListener(Item.class, this::registerItems);
+
         // Register the setup method for modloading
         FMLModLoadingContext.get().getModEventBus().addListener(this::setup);
         // Register the enqueueIMC method for modloading
@@ -39,45 +46,60 @@ public class ExampleMod
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private void setup(final FMLCommonSetupEvent event)
-    {
-        // some preinit code
-        LOGGER.info("HELLO FROM PREINIT");
+    private void registerBlocks(final RegistryEvent.Register<Block> event) {
+        // Register a new block here
+        LOGGER.info("HELLO from Register Block");
+    }
+
+    private void registerItems(final RegistryEvent.Register<Item> event) {
+        // Register a new item here
+        LOGGER.info("HELLO from Register Item");
+    }
+
+    private void setup(final FMLCommonSetupEvent event) {
+        // Some setup code
+        LOGGER.info("HELLO FROM SETUP");
         LOGGER.info("DIRT BLOCK >> {}", Blocks.DIRT.getRegistryName());
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        // do something that can only be done on the client
+        // Do something that can only be done on the client
         LOGGER.info("Got game settings {}", event.getMinecraftSupplier().get().gameSettings);
     }
 
-    private void enqueueIMC(final InterModEnqueueEvent event)
-    {
-        // some example code to dispatch IMC to another mod
-        InterModComms.sendTo("forge", "helloworld", () -> { LOGGER.info("Hello world"); return "Hello world";});
+    private void enqueueIMC(final InterModEnqueueEvent event) {
+        // Some example code to dispatch IMC to another mod
+        InterModComms.sendTo("forge", "helloworld", () -> {
+            LOGGER.info("Hello world");
+
+            return "Hello world";
+        });
     }
 
-    private void processIMC(final InterModProcessEvent event)
-    {
-        // some example code to receive and process InterModComms from other mods
-        LOGGER.info("Got IMC", event.getIMCStream().
-                map(m->m.getMessageSupplier().get()).
-                collect(Collectors.toList()));
+    private void processIMC(final InterModProcessEvent event) {
+        // Some example code to receive and process InterModComms from other mods
+        LOGGER.info("Got IMC {}", event.getIMCStream()
+                .map(m -> m.getMessageSupplier().get())
+                .collect(Collectors.toList()));
     }
+
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {
-        // register a new block here
-        LOGGER.info("HELLO from Register Block");
+    public final void serverAboutToStart(final FMLServerAboutToStartEvent event) {
+        // Do something when the server is about to start
+        LOGGER.info("HELLO from server about to start");
     }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class
     @Mod.EventBusSubscriber
     public static class ServerEvents {
+
         @SubscribeEvent
         public static void onServerStarting(FMLServerStartingEvent event) {
-            // do something when the server starts
+            // Do something when the server starts
             LOGGER.info("HELLO from server starting");
         }
+
     }
+
 }

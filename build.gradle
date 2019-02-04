@@ -12,19 +12,13 @@ buildscript {
 import groovy.json.JsonSlurper
 import groovy.json.JsonBuilder
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.LinkedHashMap
 import java.security.MessageDigest
-import java.net.URL
 import net.minecraftforge.gradle.common.task.ArchiveChecksum
 import net.minecraftforge.gradle.common.task.DownloadMavenArtifact
 import net.minecraftforge.gradle.common.task.SignJar
 import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
 import org.apache.tools.ant.filters.ReplaceTokens
-import de.undercouch.gradle.tasks.download.Download
 import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
-
-import java.util.stream.Collectors
 
 plugins {
     id 'net.minecrell.licenser' version '0.4'
@@ -69,6 +63,19 @@ project(':clean') {
         patchedSrc = file('src/main/java')
         mappings channel: MAPPING_CHANNEL, version: MAPPING_VERSION
         mcVersion = MC_VERSION
+
+        runs {
+            clean_client {
+                taskName 'clean_client'
+                main 'mcp.client.Start'
+                environment 'assetDirectory', downloadAssets.output
+            }
+
+            clean_server {
+                taskName 'clean_server'
+                main 'net.minecraft.server.MinecraftServer'
+            }
+        }
     }
     task runclient(type: JavaExec) {
         doFirst {
@@ -173,7 +180,8 @@ project(':forge') {
         exc = file("$rootDir/src/main/resources/forge.exc")
         srgPatches = true
         runs {
-            forge_client = {
+            forge_client {
+                taskName 'forge_client'
                 main 'net.minecraftforge.fml.LaunchTesting'
                 environment = [
                     target: 'fmldevclient',
@@ -192,7 +200,8 @@ project(':forge') {
                     'fmllauncher.version': SPEC_VERSION
                 ]
             }
-            forge_server = {
+            forge_server {
+                taskName 'forge_server'
                 main 'net.minecraftforge.fml.LaunchTesting'
                 environment = [
                     target: 'fmldevserver'
@@ -810,7 +819,7 @@ project(':forge') {
         }
         addLibrary("${project.group}:${project.name}:${project.version}:launcher")
         runs {
-            client = {
+            client {
                 main 'net.minecraftforge.userdev.UserdevLauncher'
                 environment 'target', 'fmluserdevclient'
                 environment 'assetDirectory', '{assets_root}'
@@ -822,7 +831,7 @@ project(':forge') {
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
             }
-            server = {
+            server {
                 main 'net.minecraftforge.userdev.UserdevLauncher'
                 environment 'target', 'fmluserdevserver'
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)

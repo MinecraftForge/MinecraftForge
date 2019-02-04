@@ -811,8 +811,7 @@ public class GameData
             if (!filter.test(rl)) continue;
             ForgeRegistry<?> reg = RegistryManager.ACTIVE.getRegistry(rl);
             reg.unfreeze();
-            final RegistryEvent.Register<?> registerEvent = reg.getRegisterEvent(rl);
-            lifecycleEventProvider.setCustomEventSupplier(() -> registerEvent);
+            lifecycleEventProvider.setCustomEventSupplier(() -> reg.getRegisterEvent(rl));
             lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.STAY);
             if (i==keysSize-1) lifecycleEventProvider.changeProgression(LifecycleEventProvider.LifecycleEvent.Progression.NEXT);
             eventDispatcher.accept(lifecycleEventProvider);

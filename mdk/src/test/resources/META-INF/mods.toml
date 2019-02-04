@@ -1,0 +1,29 @@
+modLoader = 'javafml'
+loaderVersion = '[24,)'
+
+[[mods]]
+    modId = 'examplemodtest'
+    version = '1.0'
+    displayName = 'Example Mod Test'
+    description = 'A test mod to test Example Mod'
+
+[[dependencies.examplemodtest]]
+    modId = 'examplemod'
+    mandatory = true
+    versionRange = '[1.0]'
+    ordering = 'AFTER'
+    side = 'BOTH'
+
+[[dependencies.examplemodtest]]
+    modId = 'forge'
+    mandatory = true
+    versionRange = '[24,)'
+    ordering = 'NONE'
+    side = 'BOTH'
+
+[[dependencies.examplemodtest]]
+    modId = 'minecraft'
+    mandatory = true
+    versionRange = '[1.13]'
+    ordering = 'NONE'
+    side = 'BOTH'
