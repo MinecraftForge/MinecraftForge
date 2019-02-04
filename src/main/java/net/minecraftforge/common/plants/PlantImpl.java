@@ -76,6 +76,12 @@ public final class PlantImpl
             return state.get(BlockCrops.AGE) == 7;
         }
 
+        @Override
+        default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
+        {
+            return DefaultPlantTypes.CROP;
+        }
+
         default BlockCrops getThis()
         {
             return (BlockCrops) this;
@@ -133,6 +139,12 @@ public final class PlantImpl
             return false;
         }
 
+        @Override
+        default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
+        {
+            return DefaultPlantTypes.NETHER;
+        }
+
         default BlockNetherWart getThis()
         {
             return (BlockNetherWart) this;
@@ -184,6 +196,12 @@ public final class PlantImpl
                 world.setBlockState(pos, iblockstate, 4);
                 iblockstate.neighborChanged(world, pos, getThis(), pos);
             }
+        }
+
+        @Override
+        default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
+        {
+            return DefaultPlantTypes.BEACH;
         }
 
         default BlockReed getThis()
@@ -239,6 +257,12 @@ public final class PlantImpl
             }
         }
 
+        @Override
+        default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
+        {
+            return DefaultPlantTypes.DESERT;
+        }
+
         default BlockCactus getThis()
         {
             return (BlockCactus) this;
@@ -276,6 +300,12 @@ public final class PlantImpl
         default boolean isMature(World world, Random rand, BlockPos pos, IBlockState state)
         {
             return state.get(BlockCocoa.AGE) == 2;
+        }
+
+        @Override
+        default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
+        {
+            return DefaultPlantTypes.EPIPHYTE;
         }
 
         default BlockCocoa getThis()

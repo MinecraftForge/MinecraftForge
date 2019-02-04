@@ -58,6 +58,11 @@ public final class DefaultPlantTypes
      * Represents plants that grow on water, like lily pads.
      */
     public static final PlantType WATER = PlantType.get(new ResourceLocation("water"));
+    
+    /**
+     * Represents plants that grow underwater, like sea grass.
+     */
+    public static final PlantType UNDERWATER = PlantType.get(new ResourceLocation("underwater"));
 
     /**
      * Represents tree saplings.
