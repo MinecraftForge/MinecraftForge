@@ -2,7 +2,6 @@ package com.example.examplemod;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
@@ -36,7 +35,7 @@ public class ExampleMod
         FMLModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
 
         // Register ourselves for server, registry and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
+        FMLModLoadingContext.get().getModEventBus().register(this);
     }
 
     private void setup(final FMLCommonSetupEvent event)
@@ -72,7 +71,7 @@ public class ExampleMod
     }
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class
-    @Mod.EventBusSubscriber
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class ServerEvents {
         @SubscribeEvent
         public static void onServerStarting(FMLServerStartingEvent event) {
