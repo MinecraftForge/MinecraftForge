@@ -281,7 +281,7 @@
                      if (!this.field_70170_p.func_184143_b(axisalignedbb1))
                      {
 -                        if (this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u, d12)).func_185896_q())
-+                        if (this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u, d12)).isSideSolid(field_70170_p, new BlockPos(d11, this.field_70163_u, d12), EnumFacing.UP))
++                        if (net.minecraftforge.common.ForgeHooks.isTopSolid(this.field_70170_p, new BlockPos(d11, this.field_70163_u, d12)))
                          {
                              this.func_70634_a(d11, this.field_70163_u + 1.0D, d12);
                              return;
@@ -290,7 +290,7 @@
                          BlockPos blockpos = new BlockPos(d11, this.field_70163_u - 1.0D, d12);
  
 -                        if (this.field_70170_p.func_180495_p(blockpos).func_185896_q() || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
-+                        if (this.field_70170_p.func_180495_p(blockpos).isSideSolid(field_70170_p, blockpos, EnumFacing.UP) || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
++                        if (net.minecraftforge.common.ForgeHooks.isTopSolid(this.field_70170_p, blockpos) || this.field_70170_p.func_180495_p(blockpos).func_185904_a() == Material.field_151586_h)
                          {
                              d1 = d11;
                              d13 = this.field_70163_u + 1.0D;
@@ -298,7 +298,7 @@
                          }
                      }
 -                    else if (!this.field_70170_p.func_184143_b(axisalignedbb1.func_72317_d(0.0D, 1.0D, 0.0D)) && this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u + 1.0D, d12)).func_185896_q())
-+                    else if (!this.field_70170_p.func_184143_b(axisalignedbb1.func_72317_d(0.0D, 1.0D, 0.0D)) && this.field_70170_p.func_180495_p(new BlockPos(d11, this.field_70163_u + 1.0D, d12)).isSideSolid(field_70170_p, new BlockPos(d11, this.field_70163_u + 1.0D, d12), EnumFacing.UP))
++                    else if (!this.field_70170_p.func_184143_b(axisalignedbb1.func_72317_d(0.0D, 1.0D, 0.0D)) && net.minecraftforge.common.ForgeHooks.isTopSolid(this.field_70170_p, new BlockPos(d11, this.field_70163_u + 1.0D, d12)))
                      {
                          d1 = d11;
                          d13 = this.field_70163_u + 2.0D;

@@ -1470,4 +1470,10 @@ public class ForgeHooks
         return false;
     }
 
+    // helper function to reduce patches
+    public static boolean isTopSolid(IBlockAccess world, BlockPos pos)
+    {
+        IBlockState state = world.getBlockState(pos);
+        return state.getBlock().isTopSolid(state, world, pos);
+    }
 }

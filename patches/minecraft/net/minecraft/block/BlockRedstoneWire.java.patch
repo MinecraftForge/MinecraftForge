@@ -12,7 +12,7 @@
              if (!iblockstate1.func_185915_l())
              {
 -                boolean flag = p_176341_1_.func_180495_p(blockpos).func_185896_q() || p_176341_1_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150426_aN;
-+                boolean flag = p_176341_1_.func_180495_p(blockpos).isSideSolid(p_176341_1_, blockpos, EnumFacing.UP) || p_176341_1_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150426_aN;
++                boolean flag = iblockstate.func_177230_c().isTopSolid(iblockstate, p_176341_1_, blockpos) || iblockstate.func_177230_c() == Blocks.field_150426_aN;
  
 -                if (flag && func_176346_d(p_176341_1_.func_180495_p(blockpos.func_177984_a())))
 +                if (flag && func_176340_e(p_176341_1_, blockpos.func_177984_a()))
@@ -25,7 +25,7 @@
      {
 -        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() || p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c() == Blocks.field_150426_aN;
 +        IBlockState downState = p_176196_1_.func_180495_p(p_176196_2_.func_177977_b());
-+        return downState.func_185896_q() || downState.func_193401_d(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID || p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c() == Blocks.field_150426_aN;
++        return downState.func_177230_c().isTopSolid(downState, p_176196_1_, p_176196_2_.func_177977_b()) || downState.func_177230_c() == Blocks.field_150426_aN;
      }
  
      private IBlockState func_176338_e(World p_176338_1_, BlockPos p_176338_2_, IBlockState p_176338_3_)

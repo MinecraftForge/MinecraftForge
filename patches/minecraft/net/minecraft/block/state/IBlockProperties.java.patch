@@ -18,7 +18,7 @@
  
      RayTraceResult func_185910_a(World p_185910_1_, BlockPos p_185910_2_, Vec3d p_185910_3_, Vec3d p_185910_4_);
  
-+    @Deprecated // Forge: Use isSideSolid(IBlockAccess, BlockPos, EnumFacing.UP) instead
++    @Deprecated // Forge: Use Block#isTopSolid(IBlockState, IBlockAccess, BlockPos) instead
      boolean func_185896_q();
  
 +    //Forge added functions

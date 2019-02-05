@@ -23,7 +23,7 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
 -        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q();
-+        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).isSideSolid(p_176196_1_, p_176196_2_.func_177977_b(), EnumFacing.UP);
++        return net.minecraftforge.common.ForgeHooks.isTopSolid(p_176196_1_, p_176196_2_.func_177977_b());
      }
  
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
@@ -36,28 +36,28 @@
              boolean flag = false;
  
 -            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q())
-+            if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).isSideSolid(p_189540_2_, p_189540_3_.func_177977_b(), EnumFacing.UP))
++            if (!net.minecraftforge.common.ForgeHooks.isTopSolid(p_189540_2_, p_189540_3_.func_177977_b()))
              {
                  flag = true;
              }
  
 -            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_EAST && !p_189540_2_.func_180495_p(p_189540_3_.func_177974_f()).func_185896_q())
-+            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_EAST && !p_189540_2_.func_180495_p(p_189540_3_.func_177974_f()).isSideSolid(p_189540_2_, p_189540_3_.func_177974_f(), EnumFacing.UP))
++            if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_EAST && !net.minecraftforge.common.ForgeHooks.isTopSolid(p_189540_2_, p_189540_3_.func_177974_f()))
              {
                  flag = true;
              }
 -            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_WEST && !p_189540_2_.func_180495_p(p_189540_3_.func_177976_e()).func_185896_q())
-+            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_WEST && !p_189540_2_.func_180495_p(p_189540_3_.func_177976_e()).isSideSolid(p_189540_2_, p_189540_3_.func_177976_e(), EnumFacing.UP))
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_WEST && !net.minecraftforge.common.ForgeHooks.isTopSolid(p_189540_2_, p_189540_3_.func_177976_e()))
              {
                  flag = true;
              }
 -            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_NORTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177978_c()).func_185896_q())
-+            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_NORTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177978_c()).isSideSolid(p_189540_2_, p_189540_3_.func_177978_c(), EnumFacing.UP))
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_NORTH && !net.minecraftforge.common.ForgeHooks.isTopSolid(p_189540_2_, p_189540_3_.func_177978_c()))
              {
                  flag = true;
              }
 -            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_SOUTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177968_d()).func_185896_q())
-+            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_SOUTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177968_d()).isSideSolid(p_189540_2_, p_189540_3_.func_177968_d(), EnumFacing.UP))
++            else if (blockrailbase$enumraildirection == BlockRailBase.EnumRailDirection.ASCENDING_SOUTH && !net.minecraftforge.common.ForgeHooks.isTopSolid(p_189540_2_, p_189540_3_.func_177968_d()))
              {
                  flag = true;
              }

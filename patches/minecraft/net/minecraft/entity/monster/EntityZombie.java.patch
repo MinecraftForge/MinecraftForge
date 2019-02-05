@@ -44,7 +44,7 @@
                      int k1 = k + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);
  
 -                    if (this.field_70170_p.func_180495_p(new BlockPos(i1, j1 - 1, k1)).func_185896_q() && this.field_70170_p.func_175671_l(new BlockPos(i1, j1, k1)) < 10)
-+                    if (this.field_70170_p.func_180495_p(new BlockPos(i1, j1 - 1, k1)).isSideSolid(this.field_70170_p, new BlockPos(i1, j1 - 1, k1), net.minecraft.util.EnumFacing.UP) && this.field_70170_p.func_175671_l(new BlockPos(i1, j1, k1)) < 10)
++                    if (net.minecraftforge.common.ForgeHooks.isTopSolid(this.field_70170_p, new BlockPos(i1, j1 - 1, k1)) && this.field_70170_p.func_175671_l(new BlockPos(i1, j1, k1)) < 10)
                      {
                          entityzombie.func_70107_b((double)i1, (double)j1, (double)k1);
  

@@ -5,7 +5,7 @@
      public IBlockState func_176221_a(IBlockState p_176221_1_, IBlockAccess p_176221_2_, BlockPos p_176221_3_)
      {
 -        return !p_176221_2_.func_180495_p(p_176221_3_.func_177977_b()).func_185896_q() && !Blocks.field_150480_ab.func_176535_e(p_176221_2_, p_176221_3_.func_177977_b()) ? p_176221_1_.func_177226_a(field_176545_N, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177978_c()))).func_177226_a(field_176546_O, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177974_f()))).func_177226_a(field_176541_P, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177968_d()))).func_177226_a(field_176539_Q, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177976_e()))).func_177226_a(field_176542_R, Boolean.valueOf(this.func_176535_e(p_176221_2_, p_176221_3_.func_177984_a()))) : this.func_176223_P();
-+        if (!p_176221_2_.func_180495_p(p_176221_3_.func_177977_b()).isSideSolid(p_176221_2_, p_176221_3_.func_177977_b(), EnumFacing.UP) && !Blocks.field_150480_ab.canCatchFire(p_176221_2_, p_176221_3_.func_177977_b(), EnumFacing.UP))
++        if (!net.minecraftforge.common.ForgeHooks.isTopSolid(p_176221_2_, p_176221_3_.func_177977_b()) && !Blocks.field_150480_ab.canCatchFire(p_176221_2_, p_176221_3_.func_177977_b(), EnumFacing.UP))
 +        {
 +            return p_176221_1_.func_177226_a(field_176545_N, this.canCatchFire(p_176221_2_, p_176221_3_.func_177978_c(), EnumFacing.SOUTH))
 +                        .func_177226_a(field_176546_O,  this.canCatchFire(p_176221_2_, p_176221_3_.func_177974_f(), EnumFacing.WEST))
@@ -52,7 +52,7 @@
                      if (!this.func_176533_e(p_180650_1_, p_180650_2_))
                      {
 -                        if (!p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).func_185896_q() || i > 3)
-+                        if (!p_180650_1_.func_180495_p(p_180650_2_.func_177977_b()).isSideSolid(p_180650_1_, p_180650_2_.func_177977_b(), EnumFacing.UP) || i > 3)
++                        if (!net.minecraftforge.common.ForgeHooks.isTopSolid(p_180650_1_, p_180650_2_.func_177977_b()) || i > 3)
                          {
                              p_180650_1_.func_175698_g(p_180650_2_);
                          }
@@ -151,7 +151,7 @@
          }
  
 -        if (!p_180655_2_.func_180495_p(p_180655_3_.func_177977_b()).func_185896_q() && !Blocks.field_150480_ab.func_176535_e(p_180655_2_, p_180655_3_.func_177977_b()))
-+        if (!p_180655_2_.func_180495_p(p_180655_3_.func_177977_b()).isSideSolid(p_180655_2_, p_180655_3_.func_177977_b(), EnumFacing.UP) && !Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177977_b(), EnumFacing.UP))
++        if (!net.minecraftforge.common.ForgeHooks.isTopSolid(p_180655_2_, p_180655_3_.func_177977_b()) && !Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177977_b(), EnumFacing.UP))
          {
 -            if (Blocks.field_150480_ab.func_176535_e(p_180655_2_, p_180655_3_.func_177976_e()))
 +            if (Blocks.field_150480_ab.canCatchFire(p_180655_2_, p_180655_3_.func_177976_e(), EnumFacing.EAST))
