@@ -288,6 +288,15 @@ public class GameData
             this.identityMap.clear();
             this.objectList.clear();
         }
+
+        void remove(I key)
+        {
+            Integer prev = this.identityMap.remove(key);
+            if (prev != null)
+            {
+                this.objectList.set(prev, null);
+            }
+        }
     }
 
 
@@ -301,6 +310,14 @@ public class GameData
         {
             @SuppressWarnings("unchecked")
             ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
+
+            if (oldBlock != null)
+            {
+                for (IBlockState state : oldBlock.getBlockState().getValidStates())
+                {
+                    blockstateMap.remove(state);
+                }
+            }
 
             if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
             {
@@ -387,6 +404,12 @@ public class GameData
         @Override
         public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item, @Nullable Item oldItem)
         {
+            if (oldItem instanceof ItemBlock)
+            {
+                @SuppressWarnings("unchecked")
+                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+                blockToItem.remove(((ItemBlock)oldItem).getBlock());
+            }
             if (item instanceof ItemBlock)
             {
                 @SuppressWarnings("unchecked")
@@ -477,6 +500,10 @@ public class GameData
             }
             @SuppressWarnings("unchecked")
             Map<Class<? extends Entity>, EntityEntry> map = owner.getSlaveMap(ENTITY_CLASS_TO_ENTRY, Map.class);
+            if (oldEntry != null)
+            {
+                map.remove(oldEntry.getEntityClass());
+            }
             map.put(entry.getEntityClass(), entry);
         }
 
@@ -797,14 +824,33 @@ public class GameData
         */
     }
 
+    /**
+     * @deprecated Use {@link #checkPrefix(String, boolean)}.
+     */
+    @Deprecated
     public static ResourceLocation checkPrefix(String name)
+    {
+        return checkPrefix(name, true);
+    }
+
+    /**
+     * Check a name for a domain prefix, and if not present infer it from the
+     * current active mod container.
+     * 
+     * @param name          The name or resource location
+     * @param warnOverrides If true, logs a warning if domain differs from that of
+     *                      the currently currently active mod container
+     * 
+     * @return The {@link ResourceLocation} with given or inferred domain
+     */
+    public static ResourceLocation checkPrefix(String name, boolean warnOverrides)
     {
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
         name = index == -1 ? name : name.substring(index + 1);
         ModContainer mc = Loader.instance().activeModContainer();
         String prefix = mc == null || (mc instanceof InjectedModContainer && ((InjectedModContainer)mc).wrappedContainer instanceof FMLContainer) ? "minecraft" : mc.getModId().toLowerCase(Locale.ROOT);
-        if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
+        if (warnOverrides && !oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
             FMLLog.log.warn("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);
             prefix = oldPrefix;

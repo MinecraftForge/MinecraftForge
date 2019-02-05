@@ -63,7 +63,7 @@ public class ModList
     @SuppressWarnings("unchecked")
     public static List<ModList> getKnownLists(File mcdir)
     {
-        for (String list : new String[] {"mods/mod_list.json", "mods/" + ForgeVersion.mcVersion + "/mod_list.json", ((Map<String, String>)Launch.blackboard.get("launchArgs")).get("--modListFile")})
+        for (String list : new String[] {"mods/mod_list.json", "mods/" + ForgeVersion.mcVersion + "/mod_list.json", ((Map<String, String>)Launch.blackboard.get("forgeLaunchArgs")).get("--modListFile")})
         {
             if (list != null)
             {
@@ -84,7 +84,7 @@ public class ModList
         if (memory != null)
             lst.add(memory);
 
-        for (String list : new String[] {"mods/mod_list.json", "mods/" + ForgeVersion.mcVersion + "/mod_list.json", ((Map<String, String>)Launch.blackboard.get("launchArgs")).get("--modListFile")})
+        for (String list : new String[] {"mods/mod_list.json", "mods/" + ForgeVersion.mcVersion + "/mod_list.json", ((Map<String, String>)Launch.blackboard.get("forgeLaunchArgs")).get("--modListFile")})
         {
             if (list != null)
             {

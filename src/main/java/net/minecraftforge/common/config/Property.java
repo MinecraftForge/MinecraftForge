@@ -78,9 +78,12 @@ public class Property
     private String[] values;
     private String[] defaultValues;
     private String[] validValues;
+    private String[] validValuesDisplay;
     private String langKey;
     private String minValue;
     private String maxValue;
+    /** If true, will have a slider attached automatically in configuration UI */
+    private boolean hasSlidingControl;
 
     private Class<? extends IConfigEntry> configEntryClass = null;
     private Class<? extends IArrayEntry> arrayEntryClass = null;
@@ -98,35 +101,45 @@ public class Property
 
     public Property(String name, String value, Type type)
     {
-        this(name, value, type, false, new String[0], name);
+        this(name, value, type, false, new String[0], new String[0], name);
     }
 
     public Property(String name, String value, Type type, boolean read)
     {
-        this(name, value, type, read, new String[0], name);
+        this(name, value, type, read, new String[0], new String[0], name);
     }
 
     public Property(String name, String value, Type type, String[] validValues)
     {
-        this(name, value, type, false, validValues, name);
+        this(name, value, type, false, validValues, new String[0], name);
+    }
+
+    public Property(String name, String value, Type type, String[] validValues, String[] validValuesDisplay)
+    {
+        this(name, value, type, false, validValues, validValuesDisplay, name);
     }
 
     public Property(String name, String value, Type type, String langKey)
     {
-        this(name, value, type, false, new String[0], langKey);
+        this(name, value, type, false, new String[0], new String[0], langKey);
     }
 
     public Property(String name, String value, Type type, boolean read, String langKey)
     {
-        this(name, value, type, read, new String[0], langKey);
+        this(name, value, type, read, new String[0], new String[0], langKey);
     }
 
     public Property(String name, String value, Type type, String[] validValues, String langKey)
     {
-        this(name, value, type, false, validValues, langKey);
+        this(name, value, type, false, validValues, new String[0], langKey);
     }
 
-    Property(String name, String value, Type type, boolean read, String[] validValues, String langKey)
+    public Property(String name, String value, Type type, String[] validValues, String[] validValuesDisplay, String langKey)
+    {
+        this(name, value, type, false, validValues, validValuesDisplay, langKey);
+    }
+
+    Property(String name, String value, Type type, boolean read, String[] validValues, String[] validValuesDisplay, String langKey)
     {
         setName(name);
         this.value = value;
@@ -137,6 +150,7 @@ public class Property
         this.defaultValue = value;
         this.defaultValues = new String[0];
         this.validValues = validValues;
+        this.validValuesDisplay = validValues;
         this.isListLengthFixed = false;
         this.maxListLength = -1;
         this.minValue = String.valueOf(Integer.MIN_VALUE);
@@ -167,6 +181,11 @@ public class Property
 
     Property(String name, String[] values, Type type, boolean read, String[] validValues, String langKey)
     {
+        this(name, values, type, read, validValues, new String[0], langKey);
+    }
+
+    Property(String name, String[] values, Type type, boolean read, String[] validValues, String[] validValuesDisplay, String langKey)
+    {
         setName(name);
         this.type   = type;
         this.values = Arrays.copyOf(values, values.length);
@@ -179,6 +198,7 @@ public class Property
         this.defaultValue = this.defaultValue.replaceFirst(", ", "");
         this.defaultValues = Arrays.copyOf(values, values.length);
         this.validValues = validValues;
+        this.validValuesDisplay = validValues;
         this.isListLengthFixed = false;
         this.maxListLength = -1;
         this.minValue = String.valueOf(Integer.MIN_VALUE);
@@ -692,13 +712,35 @@ public class Property
     }
 
     /**
-     * Gets the array of valid values that this String Property can be set to, or null if not defined.
+     * Gets the array of valid values that this String Property can be set to, or null or empty if not defined.
      *
      * @return a String array of valid values
      */
     public String[] getValidValues()
     {
         return this.validValues;
+    }
+
+    /**
+     * Sets the array of the config GUI display versions of the valid values that this String Property can be set to.
+     * When an array of valid values is defined for a Property the GUI control for that property will be a value cycle button.
+     *
+     * @param validValueAliases a String array of the aliases of valid values
+     */
+    public Property setValidValuesDisplay(String[] validValuesDisplay)
+    {
+        this.validValuesDisplay = validValuesDisplay;
+        return this;
+    }
+
+    /**
+     * Gets the array of the config GUI display versions of the valid values that this String Property can be set to, or null or empty if not defined.
+     *
+     * @return a String array of the aliases of the valid values
+     */
+    public String[] getValidValuesDisplay()
+    {
+        return this.validValuesDisplay;
     }
 
     /**
@@ -1220,4 +1262,14 @@ public class Property
     public void set(long    value){ set(Long.toString(value));    }
     public void set(boolean value){ set(Boolean.toString(value)); }
     public void set(double  value){ set(Double.toString(value));  }
+
+    public boolean hasSlidingControl()
+    {
+        return hasSlidingControl;
+    }
+
+    public void setHasSlidingControl(boolean b)
+    {
+        hasSlidingControl=b;
+    }
 }

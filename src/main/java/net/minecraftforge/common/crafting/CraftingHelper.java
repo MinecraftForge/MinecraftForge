@@ -21,6 +21,7 @@ package net.minecraftforge.common.crafting;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
@@ -29,6 +30,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -42,6 +44,7 @@ import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -626,16 +629,16 @@ public class CraftingHelper {
 
     private static void loadFactories(ModContainer mod)
     {
-        Path fPath = null;
-        JsonContext ctx = new JsonContext(mod.getModId());
+        FileSystem fs = null;
         try
         {
+            Path fPath = null;
+            JsonContext ctx = new JsonContext(mod.getModId());
+
             if (mod.getSource().isFile())
             {
-                try (FileSystem fs = FileSystems.newFileSystem(mod.getSource().toPath(), null))
-                {
-                    fPath = fs.getPath("/assets/" + ctx.getModId() + "/recipes/_factories.json");
-                }
+                fs = FileSystems.newFileSystem(mod.getSource().toPath(), null);
+                fPath = fs.getPath("/assets/" + ctx.getModId() + "/recipes/_factories.json");
             }
             else if (mod.getSource().isDirectory())
             {
@@ -654,6 +657,10 @@ public class CraftingHelper {
         catch (IOException e)
         {
             e.printStackTrace();
+        }
+        finally
+        {
+            IOUtils.closeQuietly(fs);
         }
     }
 
@@ -756,84 +763,89 @@ public class CraftingHelper {
             }
         }
 
-        Path root = null;
-        if (source.isFile())
-        {
-            try (FileSystem fs = FileSystems.newFileSystem(source.toPath(), null);)
-            {
-                root = fs.getPath("/" + base);
-            }
-            catch (IOException e)
-            {
-                FMLLog.log.error("Error loading FileSystem from jar: ", e);
-                return false;
-            }
-        }
-        else if (source.isDirectory())
-        {
-            root = source.toPath().resolve(base);
-        }
-
-        if (root == null || !Files.exists(root))
-            return defaultUnfoundRoot;
-
-        if (preprocessor != null)
-        {
-            Boolean cont = preprocessor.apply(root);
-            if (cont == null || !cont.booleanValue())
-                return false;
-        }
-
+        FileSystem fs = null;
         boolean success = true;
 
-        if (processor != null)
+        try
         {
-            Iterator<Path> itr = null;
-            try
-            {
-                itr = Files.walk(root).iterator();
-            }
-            catch (IOException e)
-            {
-                FMLLog.log.error("Error iterating filesystem for: {}", mod.getModId(), e);
-                return false;
-            }
+            Path root = null;
 
-            while (itr != null && itr.hasNext())
+            if (source.isFile())
             {
-                Boolean cont = processor.apply(root, itr.next());
-
-                if (visitAllFiles)
+                try
                 {
-                    success &= cont != null && cont;
+                    fs = FileSystems.newFileSystem(source.toPath(), null);
+                    root = fs.getPath("/" + base);
                 }
-                else if (cont == null || !cont)
+                catch (IOException e)
                 {
+                    FMLLog.log.error("Error loading FileSystem from jar: ", e);
                     return false;
                 }
             }
+            else if (source.isDirectory())
+            {
+                root = source.toPath().resolve(base);
+            }
+    
+            if (root == null || !Files.exists(root))
+                return defaultUnfoundRoot;
+    
+            if (preprocessor != null)
+            {
+                Boolean cont = preprocessor.apply(root);
+                if (cont == null || !cont.booleanValue())
+                    return false;
+            }
+        
+            if (processor != null)
+            {
+                Iterator<Path> itr = null;
+                try
+                {
+                    itr = Files.walk(root).iterator();
+                }
+                catch (IOException e)
+                {
+                    FMLLog.log.error("Error iterating filesystem for: {}", mod.getModId(), e);
+                    return false;
+                }
+    
+                while (itr != null && itr.hasNext())
+                {
+                    Boolean cont = processor.apply(root, itr.next());
+    
+                    if (visitAllFiles)
+                    {
+                        success &= cont != null && cont;
+                    }
+                    else if (cont == null || !cont)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        finally
+        {
+            IOUtils.closeQuietly(fs);
         }
 
         return success;
     }
 
-    public static JsonContext loadContext(File file) throws IOException
+    public static JsonContext loadContext(ResourceLocation path) throws IOException
     {
         ModContainer mod = Loader.instance().activeModContainer();
         if(mod == null)
         {
-            throw new RuntimeException("Error loading constants, no mod to load for found");
+            throw new IllegalStateException("No active mod container");
         }
-        return loadContext(new JsonContext(mod.getModId()), file);
-    }
-
-    public static JsonContext loadContext(String path) throws IOException
+        return loadContext(path, mod);
+     }
+    
+    public static JsonContext loadContext(ResourceLocation path, ModContainer mod) throws IOException
     {
-        ModContainer mod = Loader.instance().activeModContainer();
-        if(mod == null)
-        {
-            throw new RuntimeException("Error loading constants, no mod to load for found");
-        }
         return loadContext(mod, new JsonContext(mod.getModId()), path);
     }
 
@@ -847,31 +859,32 @@ public class CraftingHelper {
         }
         catch (IOException e)
         {
-            FMLLog.log.error("Error loading constants from file: {}", file.getAbsolutePath(), e);
-            throw e;
+            throw new IOException("Error loading constants from file: " + file.getAbsolutePath(), e);
         }
     }
 
-    private static JsonContext loadContext(ModContainer mod, JsonContext ctx, String path) throws IOException
+    private static JsonContext loadContext(ModContainer mod, JsonContext ctx, ResourceLocation path) throws IOException
     {
         Path fPath = null;
         if(mod.getSource().isFile())
         {
             try(FileSystem fs = FileSystems.newFileSystem(mod.getSource().toPath(), null))
             {
-                fPath = fs.getPath("/assets/" + ctx.getModId() + path);
+                fPath = fs.getPath("assets", path.getResourceDomain(), path.getResourcePath());
             }
         }
         else if (mod.getSource().isDirectory())
         {
-            fPath = mod.getSource().toPath().resolve("assets/" + ctx.getModId() + path);
+            fPath = mod.getSource().toPath().resolve(Paths.get("assets", path.getResourceDomain(), path.getResourcePath()));
         }
 
         if (fPath != null && Files.exists(fPath))
         {
             return loadContext(ctx, fPath.toFile());
-        } else {
-            throw new IOException("path could not be resolved: " + path);
+        } 
+        else 
+        {
+            throw new FileNotFoundException(fPath != null ? fPath.toString() : path.toString());
         }
     }
 }
