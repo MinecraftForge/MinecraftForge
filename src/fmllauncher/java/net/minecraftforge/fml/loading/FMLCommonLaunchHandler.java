@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
@@ -68,8 +67,9 @@ public abstract class FMLCommonLaunchHandler
     }
 
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
-        Stream.of(LibraryFinder.commonLibPaths(ObjectArrays.concat(FMLLoader.getForgePath(), FMLLoader.getMCPaths()))).
-                forEach(builder::addTransformationPath);
+        builder.addTransformationPath(FMLLoader.getForgePath());
+        for (Path path : FMLLoader.getMCPaths())
+            builder.addTransformationPath(path);
         builder.setClassBytesLocator(getClassLoaderLocatorFunction());
         builder.setManifestLocator(getClassLoaderManifestLocatorFunction());
     }
