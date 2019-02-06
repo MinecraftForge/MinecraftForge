@@ -104,7 +104,7 @@
                 this.func_147050_b(itemgroup);
                 return true;
              }
-@@ -368,10 +412,12 @@
+@@ -368,12 +412,15 @@
     }
  
     private boolean func_147055_p() {
@@ -116,8 +116,11 @@
 +      if (p_147050_1_ == null) return;
        int i = field_147058_w;
        field_147058_w = p_147050_1_.func_78021_a();
++      slotColor = p_147050_1_.getSlotColor();
        GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
-@@ -447,13 +493,15 @@
+       this.field_147008_s.clear();
+       guicontainercreative$containercreative.field_148330_a.clear();
+@@ -447,13 +494,15 @@
        }
  
        if (this.field_147062_A != null) {
@@ -134,7 +137,7 @@
  
              this.func_147053_i();
           } else {
-@@ -512,16 +560,36 @@
+@@ -512,16 +561,36 @@
        this.func_146276_q_();
        super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
  
@@ -172,7 +175,7 @@
        GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
        GlStateManager.func_179140_f();
        this.func_191948_b(p_73863_1_, p_73863_2_);
-@@ -563,7 +631,10 @@
+@@ -563,7 +632,10 @@
              }
           }
  
@@ -184,7 +187,7 @@
        } else {
           super.func_146285_a(p_146285_1_, p_146285_2_, p_146285_3_);
        }
-@@ -575,14 +646,30 @@
+@@ -575,14 +647,30 @@
        RenderHelper.func_74520_c();
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
  
@@ -217,7 +220,7 @@
        this.func_73729_b(this.field_147003_i, this.field_147009_r, 0, 0, this.field_146999_f, this.field_147000_g);
        this.field_147062_A.func_195608_a(p_146976_2_, p_146976_3_, p_146976_1_);
        GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
-@@ -594,6 +681,9 @@
+@@ -594,6 +682,9 @@
           this.func_73729_b(i, j + (int)((float)(k - j - 17) * this.field_147067_x), 232 + (this.func_147055_p() ? 0 : 12), 0, 12, 15);
        }
  
@@ -227,7 +230,7 @@
        this.func_147051_a(itemgroup);
        if (itemgroup == ItemGroup.field_78036_m) {
           GuiInventory.func_147046_a(this.field_147003_i + 88, this.field_147009_r + 45, 20, (float)(this.field_147003_i + 88 - p_146976_2_), (float)(this.field_147009_r + 45 - 30 - p_146976_3_), this.field_146297_k.field_71439_g);
-@@ -602,6 +692,7 @@
+@@ -602,6 +693,7 @@
     }
  
     protected boolean func_195375_a(ItemGroup p_195375_1_, double p_195375_2_, double p_195375_4_) {
@@ -235,7 +238,7 @@
        int i = p_195375_1_.func_78020_k();
        int j = 28 * i;
        int k = 0;
-@@ -671,6 +762,8 @@
+@@ -671,6 +763,8 @@
        }
  
        GlStateManager.func_179140_f();
@@ -244,7 +247,7 @@
        this.func_73729_b(l, i1, j, k, 28, 32);
        this.field_73735_i = 100.0F;
        this.field_146296_j.field_77023_b = 100.0F;
-@@ -845,6 +938,31 @@
+@@ -845,6 +939,31 @@
        public boolean func_82869_a(EntityPlayer p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
        }

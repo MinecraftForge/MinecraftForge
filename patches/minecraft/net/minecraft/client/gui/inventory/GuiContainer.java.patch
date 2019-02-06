@@ -1,5 +1,23 @@
 --- a/net/minecraft/client/gui/inventory/GuiContainer.java
 +++ b/net/minecraft/client/gui/inventory/GuiContainer.java
+@@ -7,7 +7,6 @@
+ import net.minecraft.client.renderer.OpenGlHelper;
+ import net.minecraft.client.renderer.RenderHelper;
+ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+-import net.minecraft.client.renderer.texture.TextureMap;
+ import net.minecraft.client.util.InputMappings;
+ import net.minecraft.entity.player.InventoryPlayer;
+ import net.minecraft.inventory.ClickType;
+@@ -97,7 +96,8 @@
+             int j1 = slot.field_75223_e;
+             int k1 = slot.field_75221_f;
+             GlStateManager.func_179135_a(true, true, true, false);
+-            this.func_73733_a(j1, k1, j1 + 16, k1 + 16, -2130706433, -2130706433);
++            int slotColor = this.getSlotColor(i1);
++            this.func_73733_a(j1, k1, j1 + 16, k1 + 16, slotColor, slotColor);
+             GlStateManager.func_179135_a(true, true, true, true);
+             GlStateManager.func_179145_e();
+             GlStateManager.func_179126_j();
 @@ -107,6 +107,7 @@
        RenderHelper.func_74518_a();
        this.func_146979_b(p_73863_1_, p_73863_2_);
@@ -131,7 +149,7 @@
                 this.func_184098_a(this.field_147006_u, this.field_147006_u.field_75222_d, i, ClickType.SWAP);
                 return true;
              }
-@@ -556,4 +563,11 @@
+@@ -556,4 +563,16 @@
        }
  
     }
@@ -142,4 +160,9 @@
 +   public int getGuiTop() { return field_147009_r; }
 +   public int getXSize() { return field_146999_f; }
 +   public int getYSize() { return field_147000_g; }
++
++   public int slotColor = -2130706433;
++   public int getSlotColor(int index) {
++      return slotColor;
++   }
  }
