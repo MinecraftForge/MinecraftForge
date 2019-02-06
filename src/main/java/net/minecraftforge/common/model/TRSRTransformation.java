@@ -71,7 +71,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     private Vector3f scale;
     private Quat4f rightRot;
 
-    private Matrix4f normalTransform;
+    private Matrix3f normalTransform;
 
     public TRSRTransformation(@Nullable Matrix4f matrix)
     {
@@ -666,10 +666,10 @@ public final class TRSRTransformation implements IModelState, ITransformation
     {
         if (normalTransform == null)
         {
-            Matrix4f matrix = getMatrix();
-            matrix.invert();
-            matrix.transpose();
-            normalTransform = matrix;
+            normalTransform = new Matrix3f();
+            matrix.getRotationScale(normalTransform);
+            normalTransform.invert();
+            normalTransform.transpose();
         }
     }
 
