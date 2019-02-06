@@ -6,7 +6,7 @@
           this.func_193028_a();
 -         this.func_193029_f();
           this.field_146545_u = this.field_146550_h;
-+         this.func_193029_f(); //Forge: Bugfix, initButtons adds displaySlot to children, so se it first.
++         this.func_193029_f(); //Forge: Bugfix, initButtons adds displaySlot to children, so set it first to prevent NPE
           this.field_146543_v = false;
        }
  
