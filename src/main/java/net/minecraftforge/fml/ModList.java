@@ -19,9 +19,7 @@
 
 package net.minecraftforge.fml;
 
-import com.google.common.collect.Streams;
-import net.minecraftforge.fml.language.ModFileScanData;
-import net.minecraftforge.fml.loading.DefaultModInfos;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
@@ -36,7 +34,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.FutureTask;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -56,7 +56,14 @@ public class ModList
     private final Map<String, ModFileInfo> fileById;
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
-    private ForkJoinPool modLoadingThreadPool = new ForkJoinPool();
+    private ForkJoinPool modLoadingThreadPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), pool ->
+    {
+        ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+        thread.setName("modloading-worker-" + thread.getPoolIndex());
+        // The default sets it to the SystemClassloader, so copy the current one.
+        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+        return thread;
+    }, null, false);
     private List<ModFileScanData> modFileScanData;
 
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
@@ -76,6 +83,10 @@ public class ModList
         return INSTANCE;
     }
 
+    static BiConsumer<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>> inlineDispatcher = (event, errors) -> ModList.get().dispatchSynchronousEvent(event, errors);
+
+    static BiConsumer<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>> parallelDispatcher = (event, errors) -> ModList.get().dispatchParallelEvent(event, errors);
+
     public static ModList get() {
         return INSTANCE;
     }
@@ -85,15 +96,21 @@ public class ModList
         return modFiles;
     }
 
-
     public ModFileInfo getModFileById(String modid)
     {
         return this.fileById.get(modid);
     }
 
-    public void dispatchLifeCycleEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
+    private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
+        LOGGER.debug(LOADING, "Dispatching synchronous event {}", lifecycleEvent);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
-        DeferredWorkQueue.deferredWorkQueue.clear();
+        this.mods.forEach(m->m.transitionState(lifecycleEvent, errorHandler));
+        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
+    }
+    private void dispatchParallelEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
+        LOGGER.debug(LOADING, "Dispatching parallel event {}", lifecycleEvent);
+        FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
+        DeferredWorkQueue.clear();
         try
         {
             modLoadingThreadPool.submit(()->this.mods.parallelStream().forEach(m->m.transitionState(lifecycleEvent, errorHandler))).get();
@@ -102,13 +119,11 @@ public class ModList
         {
             LOGGER.error(LOADING, "Encountered an exception during parallel processing", e);
         }
-        LOGGER.debug(LOADING, "Dispatching synchronous work, {} jobs", DeferredWorkQueue.deferredWorkQueue.size());
-        DeferredWorkQueue.deferredWorkQueue.forEach(FutureTask::run);
-        LOGGER.debug(LOADING, "Synchronous work queue complete");
+        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
 
-    public void setLoadedMods(final List<ModContainer> modContainers)
+    void setLoadedMods(final List<ModContainer> modContainers)
     {
         this.mods = modContainers;
         this.indexedMods = modContainers.stream().collect(Collectors.toMap(ModContainer::getModId, Function.identity()));
@@ -124,7 +139,7 @@ public class ModList
     {
         return Optional.ofNullable(this.indexedMods.get(modId));
     }
-    
+
     public Optional<? extends ModContainer> getModContainerByObject(Object obj)
     {
         return mods.stream().filter(mc -> mc.getMod() == obj).findFirst();

@@ -28,17 +28,23 @@ import java.lang.annotation.*;
  * of 'Capability'
  *
  * Example:
- *  @CapabilityInject(IExampleCapability.class)
- *  private static final Capability<IExampleCapability> TEST_CAP = null;
+ * <pre>
+ * {@literal @}CapabilityInject(IExampleCapability.class)
+ * private static final Capability<IExampleCapability> TEST_CAP = null;
+ * </pre>
  *
  * When placed on a METHOD, the method will be invoked once the
  * capability is registered. This allows you to have a 'enable features'
  * callback. It MUST have one parameter of type 'Capability;
  *
  * Example:
- *  @CapabilityInject(IExampleCapability.class)
- *  private static void capRegistered(Capability<IExampleCapability> cap) {}
+ * <pre>
+ * {@literal @}CapabilityInject(IExampleCapability.class)
+ * private static void capRegistered(Capability<IExampleCapability> cap) {}
+ * </pre>
  *
+ * <b>Warning</b>: Capability injections are run in the thread that the capablity is registered.
+ * Due to parallel mod loading, this can potentially be off of the main thread.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})

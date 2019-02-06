@@ -1,6 +1,17 @@
 --- a/net/minecraft/entity/EntityTracker.java
 +++ b/net/minecraft/entity/EntityTracker.java
-@@ -296,4 +296,18 @@
+@@ -71,6 +71,10 @@
+    }
+ 
+    public void func_72786_a(Entity p_72786_1_) {
++      if (p_72786_1_.func_200600_R().hasCustomTracking()) {
++         this.func_72785_a(p_72786_1_, p_72786_1_.func_200600_R().getTrackingRange(), p_72786_1_.func_200600_R().getUpdateFrequency(), p_72786_1_.func_200600_R().shouldSendVelocityUpdates());
++         return;
++      }
+       if (p_72786_1_ instanceof EntityPlayerMP) {
+          this.func_72791_a(p_72786_1_, 512, 2);
+          EntityPlayerMP entityplayermp = (EntityPlayerMP)p_72786_1_;
+@@ -296,4 +300,18 @@
        }
  
     }

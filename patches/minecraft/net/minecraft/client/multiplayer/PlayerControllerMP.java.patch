@@ -92,7 +92,7 @@
        }
  
        return p_178893_1_.equals(this.field_178895_c) && flag;
-@@ -292,26 +298,45 @@
+@@ -292,17 +298,35 @@
           float f = (float)(p_187099_5_.field_72450_a - (double)p_187099_3_.func_177958_n());
           float f1 = (float)(p_187099_5_.field_72448_b - (double)p_187099_3_.func_177956_o());
           float f2 = (float)(p_187099_5_.field_72449_c - (double)p_187099_3_.func_177952_p());
@@ -133,19 +133,17 @@
                 if (!itemstack.func_190926_b() && !p_187099_1_.func_184811_cZ().func_185141_a(itemstack.func_77973_b())) {
                    ItemUseContext itemusecontext = new ItemUseContext(p_187099_1_, p_187099_1_.func_184586_b(p_187099_6_), p_187099_3_, p_187099_4_, f, f1, f2);
                    EnumActionResult enumactionresult;
-+                  ItemStack copyForUse = itemstack.func_77946_l();
-                   if (this.field_78779_k.func_77145_d()) {
--                     int i = itemstack.func_190916_E();
+@@ -311,7 +335,9 @@
                       enumactionresult = itemstack.func_196084_a(itemusecontext);
--                     itemstack.func_190920_e(i);
-+                     p_187099_1_.func_184611_a(p_187099_6_, copyForUse);
+                      itemstack.func_190920_e(i);
                    } else {
++                     ItemStack copyForUse = itemstack.func_77946_l();
                       enumactionresult = itemstack.func_196084_a(itemusecontext);
 +                     if (itemstack.func_190926_b()) net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(p_187099_1_, copyForUse, p_187099_6_);
                    }
  
                    return enumactionresult;
-@@ -319,6 +344,7 @@
+@@ -319,6 +345,7 @@
                    return EnumActionResult.PASS;
                 }
              }
@@ -153,7 +151,7 @@
           }
        }
     }
-@@ -333,11 +359,14 @@
+@@ -333,11 +360,14 @@
           if (p_187101_1_.func_184811_cZ().func_185141_a(itemstack.func_77973_b())) {
              return EnumActionResult.PASS;
           } else {
@@ -168,7 +166,7 @@
              }
  
              return actionresult.func_188397_a();
-@@ -362,6 +391,9 @@
+@@ -362,6 +392,9 @@
     public EnumActionResult func_187097_a(EntityPlayer p_187097_1_, Entity p_187097_2_, EnumHand p_187097_3_) {
        this.func_78750_j();
        this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187097_2_, p_187097_3_));
@@ -178,7 +176,7 @@
        return this.field_78779_k == GameType.SPECTATOR ? EnumActionResult.PASS : p_187097_1_.func_190775_a(p_187097_2_, p_187097_3_);
     }
  
-@@ -369,6 +401,9 @@
+@@ -369,6 +402,9 @@
        this.func_78750_j();
        Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
        this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));

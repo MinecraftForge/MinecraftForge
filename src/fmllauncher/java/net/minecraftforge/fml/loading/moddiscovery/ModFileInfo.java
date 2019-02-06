@@ -20,9 +20,9 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
-import net.minecraftforge.fml.loading.MavenVersionAdapter;
-import net.minecraftforge.fml.language.IModFileInfo;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.MavenVersionAdapter;
+import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.StringUtils;
 import org.apache.maven.artifact.versioning.VersionRange;
 
@@ -35,7 +35,6 @@ public class ModFileInfo implements IModFileInfo
 {
     private final UnmodifiableConfig config;
     private final ModFile modFile;
-    private final URL updateJSONURL;
     private final URL issueURL;
     private final String modLoader;
     private final VersionRange modLoaderVersion;
@@ -59,7 +58,6 @@ public class ModFileInfo implements IModFileInfo
             throw new InvalidModFileException("Missing mods list", this);
         }
         this.mods = modConfigs.stream().map(mi-> new ModInfo(this, mi)).collect(Collectors.toList());
-        this.updateJSONURL = config.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
         this.issueURL = config.<String>getOptional("issueTrackerURL").map(StringUtils::toURL).orElse(null);
     }
 
@@ -81,12 +79,6 @@ public class ModFileInfo implements IModFileInfo
     }
 
     @Override
-    public URL getUpdateURL(IModFileInfo modFileInfo)
-    {
-        return this.updateJSONURL;
-    }
-
-    @Override
     public String getModLoader()
     {
         return modLoader;
@@ -96,6 +88,11 @@ public class ModFileInfo implements IModFileInfo
     public VersionRange getModLoaderVersion()
     {
         return modLoaderVersion;
+    }
+
+    @Override
+    public Map<String, Object> getFileProperties() {
+        return this.properties;
     }
 
     public Optional<Manifest> getManifest() {

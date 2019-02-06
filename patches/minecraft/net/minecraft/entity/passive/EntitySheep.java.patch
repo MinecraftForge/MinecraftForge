@@ -18,6 +18,15 @@
           if (!this.field_70170_p.field_72995_K) {
              this.func_70893_e(true);
              int i = 1 + this.field_70146_Z.nextInt(3);
+@@ -329,7 +329,7 @@
+       EnumDyeColor enumdyecolor1 = ((EntitySheep)p_175511_2_).func_175509_cj();
+       this.field_90016_e.func_70299_a(0, new ItemStack(ItemDye.func_195961_a(enumdyecolor)));
+       this.field_90016_e.func_70299_a(1, new ItemStack(ItemDye.func_195961_a(enumdyecolor1)));
+-      ItemStack itemstack = p_175511_1_.field_70170_p.func_199532_z().func_199514_a(this.field_90016_e, ((EntitySheep)p_175511_1_).field_70170_p);
++      ItemStack itemstack = p_175511_1_.field_70170_p.func_199532_z().getResult(this.field_90016_e, ((EntitySheep)p_175511_1_).field_70170_p, net.minecraftforge.common.crafting.VanillaRecipeTypes.CRAFTING);
+       Item item = itemstack.func_77973_b();
+       EnumDyeColor enumdyecolor2;
+       if (item instanceof ItemDye) {
 @@ -344,4 +344,23 @@
     public float func_70047_e() {
        return 0.95F * this.field_70131_O;

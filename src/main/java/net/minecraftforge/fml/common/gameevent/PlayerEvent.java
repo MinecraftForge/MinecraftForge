@@ -35,8 +35,6 @@ public class PlayerEvent extends Event {
     }
 
     public static class ItemPickupEvent extends PlayerEvent {
-        @Deprecated
-        public final EntityItem pickedUp;
         /**
         * Original EntityItem with current remaining stack size
         */
@@ -49,7 +47,6 @@ public class PlayerEvent extends Event {
         {
             super(player);
             this.originalEntity = entPickedUp;
-            this.pickedUp = entPickedUp;
             this.stack = stack;
         }
 

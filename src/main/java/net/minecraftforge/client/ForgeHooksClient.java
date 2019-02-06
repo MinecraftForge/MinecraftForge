@@ -38,6 +38,7 @@ import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import net.minecraft.client.MouseHelper;
+import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -295,8 +296,7 @@ public class ForgeHooksClient
         //RenderingRegistry.registerBlockHandler(RenderBlockFluid.instance);
     }
 
-    private static int updatescrollcounter = 0;
-    public static String renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height, String splashText)
+    public static void renderMainMenu(GuiMainMenu gui, FontRenderer font, int width, int height)
     {
         VersionChecker.Status status = ForgeVersion.getStatus();
         if (status == BETA || status == BETA_OUTDATED)
@@ -324,8 +324,6 @@ public class ForgeHooksClient
             // if we have a line, render it in the bottom right, above Mojang's copyright line
             gui.drawString(font, line, width - font.getStringWidth(line) - 2, height - (2 * (font.FONT_HEIGHT + 1)), -1);
         }
-
-        return splashText;
     }
 
     public static ISound playSound(SoundManager manager, ISound sound)
@@ -809,5 +807,11 @@ public class ForgeHooksClient
     {
         Event event = new GuiScreenEvent.KeyboardCharTypedEvent.Post(guiScreen, codePoint, modifiers);
         return MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    public static void onRecipesUpdated()
+    {
+        Event event = new RecipesUpdatedEvent();
+        MinecraftForge.EVENT_BUS.post(event);
     }
 }

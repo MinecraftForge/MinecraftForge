@@ -28,7 +28,9 @@ import java.util.List;
 public class TextComponentMessageFormatHandler {
     public static int handle(final TextComponentTranslation parent, final List<ITextComponent> children, final Object[] formatArgs, final String format) {
         try {
-            children.add(new TextComponentString(ForgeI18n.parseFormat(format, formatArgs)));
+            TextComponentString component = new TextComponentString(ForgeI18n.parseFormat(format, formatArgs));
+            component.getStyle().setParentStyle(parent.getStyle());
+            children.add(component);
             return format.length();
         } catch (IllegalArgumentException ex) {
             return 0;

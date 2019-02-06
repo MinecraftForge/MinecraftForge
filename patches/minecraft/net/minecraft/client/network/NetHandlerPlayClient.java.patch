@@ -42,7 +42,15 @@
           }
  
           if (flag && this.field_147299_f.field_71462_r instanceof GuiCommandBlock) {
-@@ -1272,7 +1280,7 @@
+@@ -1182,6 +1190,7 @@
+       recipebookclient.func_199644_c();
+       recipebookclient.func_199642_d().forEach(searchtree::func_194043_a);
+       searchtree.func_194040_a();
++      net.minecraftforge.client.ForgeHooksClient.onRecipesUpdated();
+    }
+ 
+    public void func_200232_a(SPacketPlayerLook p_200232_1_) {
+@@ -1272,7 +1281,7 @@
        PacketThreadUtil.func_180031_a(p_147260_1_, this, this.field_147299_f);
        Entity entity = this.field_147300_g.func_73045_a(p_147260_1_.func_149426_d());
        if (entity instanceof EntityLivingBase) {
@@ -51,7 +59,7 @@
           if (potion != null) {
              PotionEffect potioneffect = new PotionEffect(potion, p_147260_1_.func_180755_e(), p_147260_1_.func_149428_f(), p_147260_1_.func_186984_g(), p_147260_1_.func_179707_f(), p_147260_1_.func_205527_h());
              potioneffect.func_100012_b(p_147260_1_.func_149429_c());
-@@ -1598,10 +1606,12 @@
+@@ -1598,10 +1607,12 @@
              ((DebugRendererWorldGenAttempts)this.field_147299_f.field_184132_p.field_201750_j).func_201734_a(packetbuffer.func_179259_c(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat(), packetbuffer.readFloat());
              field_147301_d.warn("Unknown custom packed identifier: {}", (Object)resourcelocation);
           } else {

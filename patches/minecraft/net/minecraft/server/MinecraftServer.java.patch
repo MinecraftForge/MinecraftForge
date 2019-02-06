@@ -96,7 +96,15 @@
              this.func_71240_o();
           }
  
-@@ -648,6 +669,7 @@
+@@ -628,6 +649,7 @@
+ 
+    public void func_71217_p() {
+       long i = Util.func_211178_c();
++      net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
+       ++this.field_71315_w;
+       if (this.field_71295_T) {
+          this.field_71295_T = false;
+@@ -648,6 +670,7 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -104,7 +112,15 @@
        }
  
        if (this.field_71315_w % 900 == 0) {
-@@ -686,16 +708,18 @@
+@@ -672,6 +695,7 @@
+       this.field_211152_ao = this.field_211152_ao * 0.8F + (float)l / 1000000.0F * 0.19999999F;
+       this.field_71304_b.func_76319_b();
+       this.field_71304_b.func_76319_b();
++      net.minecraftforge.fml.hooks.BasicEventHooks.onPostServerTick();
+    }
+ 
+    public void func_71190_q() {
+@@ -686,20 +710,23 @@
        this.func_193030_aL().func_73660_a();
        this.field_71304_b.func_76318_c("levels");
  
@@ -127,7 +143,20 @@
                 this.field_71304_b.func_76319_b();
              }
  
-@@ -724,9 +748,11 @@
+             this.field_71304_b.func_76320_a("tick");
++            net.minecraftforge.fml.hooks.BasicEventHooks.onPreWorldTick(worldserver);
+ 
+             try {
+                worldserver.func_72835_b();
+@@ -717,6 +744,7 @@
+                throw new ReportedException(crashreport1);
+             }
+ 
++            net.minecraftforge.fml.hooks.BasicEventHooks.onPostWorldTick(worldserver);
+             this.field_71304_b.func_76319_b();
+             this.field_71304_b.func_76320_a("tracker");
+             worldserver.func_73039_n().func_72788_a();
+@@ -724,9 +752,11 @@
              this.field_71304_b.func_76319_b();
           }
  
@@ -140,7 +169,7 @@
        this.field_71304_b.func_76318_c("connection");
        this.func_147137_ag().func_151269_c();
        this.field_71304_b.func_76318_c("players");
-@@ -749,6 +775,14 @@
+@@ -749,6 +779,14 @@
     }
  
     public static void main(String[] p_main_0_) {
@@ -155,7 +184,7 @@
        Bootstrap.func_151354_b();
  
        try {
-@@ -851,7 +885,7 @@
+@@ -851,7 +889,7 @@
     }
  
     public void func_71256_s() {
@@ -164,7 +193,7 @@
        this.field_175590_aa.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
           field_147145_h.error(p_195574_1_);
        });
-@@ -871,11 +905,7 @@
+@@ -871,11 +909,7 @@
     }
  
     public WorldServer func_71218_a(int p_71218_1_) {
@@ -177,7 +206,7 @@
     }
  
     public WorldServer func_200667_a(DimensionType p_200667_1_) {
-@@ -918,7 +948,7 @@
+@@ -918,7 +952,7 @@
     }
  
     public String getServerModName() {

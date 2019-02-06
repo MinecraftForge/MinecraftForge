@@ -69,3 +69,8 @@ key="value"
 [[mods]]
     # A minimal mod
     modId="minimalmod"
+# debug/misc
+[[mods]]
+    modId="enumplanttypetest"
+    version="1.0"
+    displayName="EnumPlantTypeTest"

@@ -28,18 +28,17 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 import net.minecraftforge.fml.ModThreadContext;
+import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
@@ -56,16 +55,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import net.minecraftforge.registries.IForgeRegistry.AddCallback;
-import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
-import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
-import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
-import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
-import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
-
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
     public static Marker REGISTRIES = MarkerManager.getMarker("REGISTRIES");
+    private static Marker REGISTRYDUMP = MarkerManager.getMarker("REGISTRYDUMP");
     private static Logger LOGGER = LogManager.getLogger();
     private final RegistryManager stage;
     private final BiMap<Integer, V> ids = HashBiMap.create();
@@ -78,6 +71,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private final AddCallback<V> add;
     private final ClearCallback<V> clear;
     private final ValidateCallback<V> validate;
+    private final BakeCallback<V> bake;
     private final MissingFactory<V> missing;
     private final BitSet availabilityMap;
     private final Set<ResourceLocation> dummies = Sets.newHashSet();
@@ -94,23 +88,29 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     private V defaultValue = null;
     boolean isFrozen = false;
 
-    ForgeRegistry(Class<V> superType, ResourceLocation defaultKey, int min, int max, @Nullable CreateCallback<V> create, @Nullable AddCallback<V> add, @Nullable ClearCallback<V> clear, @Nullable ValidateCallback<V> validate, RegistryManager stage, boolean allowOverrides, boolean isModifiable, @Nullable DummyFactory<V> dummyFactory, @Nullable MissingFactory<V> missing)
+    private final ResourceLocation name;
+    private final RegistryBuilder<V> builder;
+
+    ForgeRegistry(RegistryManager stage, ResourceLocation name, RegistryBuilder<V> builder)
     {
+        this.name = name;
+        this.builder = builder;
         this.stage = stage;
-        this.superType = superType;
-        this.defaultKey = defaultKey;
-        this.min = min;
-        this.max = max;
+        this.superType = builder.getType();
+        this.defaultKey = builder.getDefault();
+        this.min = builder.getMinId();
+        this.max = builder.getMaxId();
         this.availabilityMap = new BitSet(Math.min(max + 1, 0x0FFF));
-        this.create = create;
-        this.add = add;
-        this.clear = clear;
-        this.validate = validate;
-        this.missing = missing;
+        this.create = builder.getCreate();
+        this.add = builder.getAdd();
+        this.clear = builder.getClear();
+        this.validate = builder.getValidate();
+        this.bake = builder.getBake();
+        this.missing = builder.getMissingFactory();
+        this.dummyFactory = builder.getDummyFactory();
         this.isDelegated = ForgeRegistryEntry.class.isAssignableFrom(superType); //TODO: Make this IDelegatedRegistryEntry?
-        this.allowOverrides = allowOverrides;
-        this.isModifiable = isModifiable;
-        this.dummyFactory = dummyFactory;
+        this.allowOverrides = builder.getAllowOverrides();
+        this.isModifiable = builder.getAllowModifications();
         if (this.create != null)
             this.create.onCreate(this, stage);
     }
@@ -147,6 +147,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             }
             //TODO add remove support?
         };
+    }
+
+    @Override
+    public ResourceLocation getRegistryName()
+    {
+        return this.name;
     }
 
     @Override
@@ -268,12 +274,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     ForgeRegistry<V> copy(RegistryManager stage)
     {
-        return new ForgeRegistry<V>(superType, defaultKey, min, max, create, add, clear, validate, stage, allowOverrides, isModifiable, dummyFactory, missing);
+        return new ForgeRegistry<>(stage, name, builder);
     }
 
     int add(int id, V value)
     {
-        final String owner = ModThreadContext.get().getActiveContainer().getPrefix();
+        final String owner = ModThreadContext.get().getActiveContainer().getNamespace();
         return add(id, value, owner);
     }
 
@@ -465,6 +471,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         }
     }
 
+    public void bake()
+    {
+        if (this.bake != null)
+            this.bake.onBake(this, this.stage);
+    }
+
     void sync(ResourceLocation name, ForgeRegistry<V> from)
     {
         LOGGER.debug(REGISTRIES,"Registry {} Sync: {} -> {}", this.superType.getSimpleName(), this.stage.getName(), from.stage.getName());
@@ -616,13 +628,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     void dump(ResourceLocation name)
     {
-        List<Integer> ids = Lists.newArrayList();
-        getKeys().forEach(n -> ids.add(getID(n)));
-
-        Collections.sort(ids);
-
-        LOGGER.trace(REGISTRIES, "Registry Name : {}", name);
-        ids.forEach(id -> LOGGER.trace(REGISTRIES,"  Registry: {} {} {}", id, getKey(getValue(id)), getValue(id)));
+        LOGGER.debug(REGISTRYDUMP, ()-> new AdvancedLogMessageAdapter(sb-> {
+            sb.append("Registry Name: ").append(name).append('\n');
+            getKeys().stream().map(this::getID).sorted().forEach(id ->
+                    sb.append("\tEntry: ").append(id).append(", ").
+                    append(getKey(getValue(id))).append(", ").append(getValue(id)).append('\n'));
+        }));
     }
 
     public void loadIds(Map<ResourceLocation, Integer> ids, Map<ResourceLocation, String> overrides, Map<ResourceLocation, Integer> missing, Map<ResourceLocation, Integer[]> remapped, ForgeRegistry<V> old, ResourceLocation name)

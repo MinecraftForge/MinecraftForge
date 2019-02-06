@@ -22,7 +22,7 @@ package net.minecraftforge.fml;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation;
 import org.apache.logging.log4j.LogManager;
@@ -39,17 +39,19 @@ import static net.minecraftforge.fml.Logging.LOADING;
 
 /**
  * Automatic eventbus subscriber - reads {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber}
- * annotations and passes the class instances to the {@link net.minecraftforge.common.MinecraftForge.EVENT_BUS}
+ * annotations and passes the class instances to the {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus}
+ * defined by the annotation. Defaults to {@link MinecraftForge#EVENT_BUS}
  */
 public class AutomaticEventSubscriber
 {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final Type AUTO_SUBSCRIBER = Type.getType(Mod.EventBusSubscriber.class);
     public static void inject(final ModContainer mod, final ModFileScanData scanData, final ClassLoader loader)
     {
         if (scanData == null) return;
         LOGGER.debug(LOADING,"Attempting to inject @EventBusSubscriber classes into the eventbus for {}", mod.getModId());
         List<ModFileScanData.AnnotationData> ebsTargets = scanData.getAnnotations().stream().
-                filter(annotationData -> Objects.equals(annotationData.getAnnotationType(), Type.getType(Mod.EventBusSubscriber.class))).
+                filter(annotationData -> AUTO_SUBSCRIBER.equals(annotationData.getAnnotationType())).
                 collect(Collectors.toList());
 
         ebsTargets.forEach(ad -> {
@@ -58,11 +60,14 @@ public class AutomaticEventSubscriber
                     getOrDefault("value", Arrays.asList(new ModAnnotation.EnumHolder(null, "CLIENT"), new ModAnnotation.EnumHolder(null, "DEDICATED_SERVER")));
             final EnumSet<Dist> sides = sidesValue.stream().map(eh -> Dist.valueOf(eh.getValue())).
                     collect(Collectors.toCollection(() -> EnumSet.noneOf(Dist.class)));
-            final String modId = (String)ad.getAnnotationData().getOrDefault("modId", mod.getModId());
+            final String modId = (String)ad.getAnnotationData().getOrDefault("modid", mod.getModId());
+            final ModAnnotation.EnumHolder busTargetHolder = (ModAnnotation.EnumHolder)ad.getAnnotationData().getOrDefault("bus", new ModAnnotation.EnumHolder(null, "FORGE"));
+            final Mod.EventBusSubscriber.Bus busTarget = Mod.EventBusSubscriber.Bus.valueOf(busTargetHolder.getValue());
             if (Objects.equals(mod.getModId(), modId) && sides.contains(FMLEnvironment.dist)) {
                 try
                 {
-                    MinecraftForge.EVENT_BUS.register(Class.forName(ad.getClassType().getClassName(), true, loader));
+                    LOGGER.debug(LOADING, "Auto-subscribing {} to {}", ad.getClassType().getClassName(), busTarget);
+                    busTarget.bus().get().register(Class.forName(ad.getClassType().getClassName(), true, loader));
                 }
                 catch (ClassNotFoundException e)
                 {

@@ -190,6 +190,7 @@ public interface IForgeBlock
      * @param state State of the current block
      * @return True if block has a tile entity, false otherwise
      */
+    @SuppressWarnings("deprecation")
     default boolean hasTileEntity(IBlockState state)
     {
         return this instanceof ITileEntityProvider;
@@ -204,6 +205,7 @@ public interface IForgeBlock
      * @param world The world to create the TE in
      * @return A instance of a class extending TileEntity
      */
+    @SuppressWarnings("deprecation")
     @Nullable
     default TileEntity createTileEntity(IBlockState state, IBlockReader world)
     {
@@ -597,7 +599,7 @@ public interface IForgeBlock
      */
     default void onPlantGrow(IBlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
-        if (this.getBlock() == Blocks.GRASS || this.getBlock() == Blocks.FARMLAND || this.getBlock() == Blocks.AIR)
+        if (this.getBlock() == Blocks.GRASS_BLOCK || this.getBlock() == Blocks.MYCELIUM || this.getBlock() == Blocks.FARMLAND || this.getBlock() == Blocks.AIR)
             world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
     }
 
@@ -741,7 +743,7 @@ public interface IForgeBlock
     */
     default boolean shouldCheckWeakPower(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing side)
     {
-        return state.isTopSolid();
+        return state.isNormalCube(world, pos);
     }
 
     /**
@@ -1082,4 +1084,21 @@ public interface IForgeBlock
      {
          return state.isTopSolid();
      }
+
+    /**
+     * Ray traces through the blocks collision from start vector to end vector returning a ray trace hit.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @param start The start vector
+     * @param end The end vector
+     * @param original The original result from {@link Block#collisionRayTrace(IBlockState, World, BlockPos, Vec3d, Vec3d)}
+     * @return A result that suits your block
+     */
+    @Nullable
+    default RayTraceResult getRayTraceResult(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end, RayTraceResult original)
+    {
+        return original;
+    }
 }

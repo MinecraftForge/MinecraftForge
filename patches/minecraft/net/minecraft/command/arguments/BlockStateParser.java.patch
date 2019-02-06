@@ -1,0 +1,20 @@
+--- a/net/minecraft/command/arguments/BlockStateParser.java
++++ b/net/minecraft/command/arguments/BlockStateParser.java
+@@ -167,7 +167,7 @@
+    }
+ 
+    private CompletableFuture<Suggestions> func_197244_d(SuggestionsBuilder p_197244_1_) {
+-      if (p_197244_1_.getRemaining().isEmpty() && (this.field_197270_l == null || this.field_197270_l.func_177230_c().func_149716_u())) {
++      if (p_197244_1_.getRemaining().isEmpty() && (this.field_197270_l == null || this.field_197270_l.hasTileEntity())) {
+          p_197244_1_.suggest(String.valueOf('{'));
+       }
+ 
+@@ -252,7 +252,7 @@
+             p_197255_1_.suggest(String.valueOf('['));
+          }
+ 
+-         if (this.field_197270_l.func_177230_c().func_149716_u()) {
++         if (this.field_197270_l.hasTileEntity()) {
+             p_197255_1_.suggest(String.valueOf('{'));
+          }
+       }

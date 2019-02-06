@@ -19,9 +19,15 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.api.IEnvironment;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.forgespi.Environment;
 
 public class FMLEnvironment
 {
     public static final Dist dist = FMLLoader.getDist();
+
+    static void setupInteropEnvironment(IEnvironment environment) {
+        environment.computePropertyIfAbsent(Environment.Keys.DIST.get(), v->dist);
+    }
 }

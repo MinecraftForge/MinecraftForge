@@ -20,11 +20,11 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraftforge.fml.language.IModFileInfo;
-import net.minecraftforge.fml.language.IModInfo;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.fml.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

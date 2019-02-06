@@ -26,7 +26,14 @@
        ItemStackHelper.func_191282_a(p_189515_1_, this.field_145957_n);
        p_189515_1_.func_74777_a("RecipesUsedSize", (short)this.field_203901_m.size());
        int i = 0;
-@@ -254,6 +254,10 @@
+@@ -248,12 +248,16 @@
+       if (!this.field_145850_b.field_72995_K) {
+          ItemStack itemstack = this.field_145957_n.get(1);
+          if (this.func_145950_i() || !itemstack.func_190926_b() && !((ItemStack)this.field_145957_n.get(0)).func_190926_b()) {
+-            IRecipe irecipe = this.field_145850_b.func_199532_z().func_199515_b(this, this.field_145850_b);
++            IRecipe irecipe = this.field_145850_b.func_199532_z().getRecipe(this, this.field_145850_b, net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING);
+             if (!this.func_145950_i() && this.func_201566_b(irecipe)) {
+                this.field_145956_a = func_145952_a(itemstack);
                 this.field_145963_i = this.field_145956_a;
                 if (this.func_145950_i()) {
                    flag1 = true;
@@ -37,6 +44,15 @@
                    if (!itemstack.func_190926_b()) {
                       Item item = itemstack.func_77973_b();
                       itemstack.func_190918_g(1);
+@@ -293,7 +297,7 @@
+    }
+ 
+    private int func_201562_r() {
+-      FurnaceRecipe furnacerecipe = (FurnaceRecipe)this.field_145850_b.func_199532_z().func_199515_b(this, this.field_145850_b);
++      FurnaceRecipe furnacerecipe = this.field_145850_b.func_199532_z().getRecipe(this, this.field_145850_b, net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING);
+       return furnacerecipe != null ? furnacerecipe.func_201830_h() : 200;
+    }
+ 
 @@ -308,10 +312,10 @@
                 return true;
              } else if (!itemstack1.func_77969_a(itemstack)) {
@@ -80,11 +96,11 @@
        this.field_203901_m.clear();
     }
 +
-+   net.minecraftforge.common.capabilities.OptionalCapabilityInstance<? extends net.minecraftforge.items.IItemHandler>[] handlers =
++   net.minecraftforge.common.util.LazyOptional<? extends net.minecraftforge.items.IItemHandler>[] handlers =
 +           net.minecraftforge.items.wrapper.SidedInvWrapper.create(this, EnumFacing.UP, EnumFacing.DOWN, EnumFacing.NORTH);
 +
 +   @Override
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
 +      if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +         if (facing == EnumFacing.UP)
 +            return handlers[0].cast();

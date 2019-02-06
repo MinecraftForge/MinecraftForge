@@ -38,7 +38,7 @@ public class FileUtils
         {
             LOGGER.debug(CORE,"Making {} directory : {}", dirLabel, dirPath);
             try {
-                Files.createDirectory(dirPath);
+                Files.createDirectories(dirPath);
             } catch (IOException e) {
                 if (e instanceof FileAlreadyExistsException) {
                     LOGGER.fatal(CORE,"Failed to create {} directory - there is a file in the way", dirLabel);

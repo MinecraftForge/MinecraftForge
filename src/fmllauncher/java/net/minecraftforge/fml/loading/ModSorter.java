@@ -19,19 +19,31 @@
 
 package net.minecraftforge.fml.loading;
 
-import net.minecraftforge.fml.loading.toposort.TopologicalSort;
-import net.minecraftforge.fml.language.IModInfo;
+import com.google.common.collect.Streams;
+import com.google.common.graph.GraphBuilder;
+import com.google.common.graph.MutableGraph;
+import net.minecraftforge.forgespi.language.IModFileInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.fml.loading.EarlyLoadingException.ExceptionData;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
+import net.minecraftforge.fml.loading.toposort.CyclePresentException;
+import net.minecraftforge.fml.loading.toposort.TopologicalSort;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.StringBuilderFormattable;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -66,40 +78,64 @@ public class ModSorter
     }
 
     private void findLanguages() {
-        modFiles.stream().forEach(mf->mf.identifyLanguage());
+        modFiles.forEach(ModFile::identifyLanguage);
     }
 
+    @SuppressWarnings("UnstableApiUsage")
     private void sort()
     {
-        final TopologicalSort.DirectedGraph<Supplier<ModFileInfo>> topoGraph = new TopologicalSort.DirectedGraph<>();
-        modFiles.stream().map(ModFile::getModFileInfo).map(ModFileInfo.class::cast).forEach(mi -> topoGraph.addNode(() -> mi));
+        // lambdas are identity based, so sorting them is impossible unless you hold reference to them
+        final MutableGraph<ModFileInfo> graph = GraphBuilder.directed().build();
+        AtomicInteger counter = new AtomicInteger();
+        Map<IModFileInfo, Integer> infos = modFiles.stream().map(ModFile::getModFileInfo).collect(Collectors.toMap(Function.identity(), (e) -> counter.incrementAndGet()));
+        infos.keySet().forEach(i -> graph.addNode((ModFileInfo) i));
         modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).
                 map(IModInfo::getDependencies).flatMap(Collection::stream).
-                forEach(dep -> addDependency(topoGraph, dep));
-        final List<Supplier<ModFileInfo>> sorted;
+                forEach(dep -> addDependency(graph, dep));
+        final List<ModFileInfo> sorted;
         try
         {
-            sorted = TopologicalSort.topologicalSort(topoGraph);
+            sorted = TopologicalSort.topologicalSort(graph, Comparator.comparing(infos::get));
         }
-        catch (TopologicalSort.TopoSortException e)
+        catch (CyclePresentException e)
         {
-            TopologicalSort.TopoSortException.TopoSortExceptionData<Supplier<ModInfo>> data = e.getData();
-            LOGGER.error(LOADING, ()-> data);
-            throw new EarlyLoadingException("Sorting error", e, data.toExceptionData(mi-> mi.get().getModId()));
+            Set<Set<ModFileInfo>> cycles = e.getCycles();
+            LOGGER.error(LOADING, () -> ((StringBuilderFormattable) (buffer -> {
+                buffer.append("Mod Sorting failed.\n");
+                buffer.append("Detected Cycles: ");
+                buffer.append(cycles);
+                buffer.append('\n');
+            })));
+            List<ExceptionData> dataList = cycles.stream()
+                    .map(Set::stream)
+                    .map(stream -> stream
+                            .flatMap(modFileInfo -> modFileInfo.getMods().stream()
+                                    .map(IModInfo::getModId)).collect(Collectors.toList()))
+                    .map(list -> new ExceptionData("fml.modloading.cycle", list))
+                    .collect(Collectors.toList());
+            throw new EarlyLoadingException("Sorting error", e, dataList);
         }
-        this.sortedList = sorted.stream().map(Supplier::get).map(ModFileInfo::getMods).
+        this.sortedList = sorted.stream().map(ModFileInfo::getMods).
                 flatMap(Collection::stream).map(ModInfo.class::cast).collect(Collectors.toList());
-        this.modFiles = sorted.stream().map(Supplier::get).map(ModFileInfo::getFile).collect(Collectors.toList());
+        this.modFiles = sorted.stream().map(ModFileInfo::getFile).collect(Collectors.toList());
     }
 
-    private void addDependency(TopologicalSort.DirectedGraph<Supplier<ModFileInfo>> topoGraph,IModInfo.ModVersion dep)
+    @SuppressWarnings("UnstableApiUsage")
+    private void addDependency(MutableGraph<ModFileInfo> topoGraph, IModInfo.ModVersion dep)
     {
+        final ModFileInfo self = (ModFileInfo)dep.getOwner().getOwningFile();
+        final ModInfo targetModInfo = modIdNameLookup.get(dep.getModId());
+        // soft dep that doesn't exist. Just return. No edge required.
+        if (targetModInfo == null) return;
+        final ModFileInfo target = targetModInfo.getOwningFile();
+        if (self == target)
+            return; // in case a jar has two mods that have dependencies between
         switch (dep.getOrdering()) {
             case BEFORE:
-                topoGraph.addEdge(()->(ModFileInfo)dep.getOwner().getOwningFile(), ()->modIdNameLookup.get(dep.getModId()).getOwningFile());
+                topoGraph.putEdge(self, target);
                 break;
             case AFTER:
-                topoGraph.addEdge(()->modIdNameLookup.get(dep.getModId()).getOwningFile(), ()->(ModFileInfo)dep.getOwner().getOwningFile());
+                topoGraph.putEdge(target, self);
                 break;
             case NONE:
                 break;
@@ -108,7 +144,7 @@ public class ModSorter
 
     private void buildUniqueList()
     {
-        final Stream<ModInfo> modInfos = modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream).map(ModInfo.class::cast);
+        final Stream<ModInfo> modInfos = Stream.concat(DefaultModInfos.getModInfos().stream(), modFiles.stream().map(ModFile::getModInfos).flatMap(Collection::stream)).map(ModInfo.class::cast);
         final Map<String, List<ModInfo>> modIds = modInfos.collect(Collectors.groupingBy(IModInfo::getModId));
 
         // TODO: make this figure out dupe handling better

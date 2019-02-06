@@ -1,0 +1,36 @@
+--- a/net/minecraft/network/PacketBuffer.java
++++ b/net/minecraft/network/PacketBuffer.java
+@@ -256,6 +256,15 @@
+    }
+ 
+    public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
++      return writeItemStack(p_150788_1_, true);
++   }
++
++   /**
++    * Most ItemStack serialization is Server to Client,and doesn't need to know the FULL tag details.
++    * One exception is items from the creative menu, which must be sent from Client to Server with their full NBT.
++    * If you want to send the FULL tag set limitedTag to false
++    */
++   public PacketBuffer writeItemStack(ItemStack p_150788_1_, boolean limitedTag) {
+       if (p_150788_1_.func_190926_b()) {
+          this.writeShort(-1);
+       } else {
+@@ -264,7 +273,7 @@
+          this.writeByte(p_150788_1_.func_190916_E());
+          NBTTagCompound nbttagcompound = null;
+          if (item.func_77645_m() || item.func_77651_p()) {
+-            nbttagcompound = p_150788_1_.func_77978_p();
++            nbttagcompound = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
+          }
+ 
+          this.func_150786_a(nbttagcompound);
+@@ -280,7 +289,7 @@
+       } else {
+          int j = this.readByte();
+          ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);
+-         itemstack.func_77982_d(this.func_150793_b());
++         itemstack.readShareTag(this.func_150793_b());
+          return itemstack;
+       }
+    }

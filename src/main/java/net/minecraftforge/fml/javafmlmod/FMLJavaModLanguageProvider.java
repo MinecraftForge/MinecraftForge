@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fml.javafmlmod;
 
-import net.minecraftforge.fml.language.ILifecycleEvent;
-import net.minecraftforge.fml.language.IModLanguageProvider;
-import net.minecraftforge.fml.language.IModInfo;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ILifecycleEvent;
+import net.minecraftforge.forgespi.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.language.IModInfo;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.Type;

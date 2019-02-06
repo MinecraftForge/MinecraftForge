@@ -7,8 +7,6 @@
 modLoader="javafml" #mandatory
 # A version range to match for said mod loader - for regular FML @Mod it will be the forge version
 loaderVersion="[24,)" #mandatory (24 is current forge version)
-# A URL to query for updates for this mod. See the JSON update specification <here>
-updateJSONURL="http://myurl.me/" #optional
 # A URL to refer people to when problems occur with this mod
 issueTrackerURL="http://my.issue.tracker/" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
@@ -24,9 +22,11 @@ authors="Love, Cheese and small house plants" #optional
 # The modid of the mod
 modId="examplemod" #mandatory
 # The version number of the mod - there's a few well known ${} variables useable here or just hardcode it
-version="1.0" #mandatory
+version="${file.jarVersion}" #mandatory
  # A display name for the mod
 displayName="Example Mod" #mandatory
+# A URL to query for updates for this mod. See the JSON update specification <here>
+updateJSONURL="http://myurl.me/" #optional
 # The description text for the mod (multi line!) (#mandatory)
 description='''
 This is a long form description of the mod. You can write whatever you want here
@@ -35,7 +35,6 @@ Have some lorem ipsum.
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magna. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed sagittis luctus odio eu tempus. Interdum et malesuada fames ac ante ipsum primis in faucibus. Pellentesque volutpat ligula eget lacus auctor sagittis. In hac habitasse platea dictumst. Nunc gravida elit vitae sem vehicula efficitur. Donec mattis ipsum et arcu lobortis, eleifend sagittis sem rutrum. Cras pharetra quam eget posuere fermentum. Sed id tincidunt justo. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 '''
-
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.examplemod]] #optional
     # the modid of the dependency

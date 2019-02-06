@@ -23,7 +23,7 @@ import java.lang.annotation.ElementType;
 import java.util.ArrayList;
 import java.util.Map;
 
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.objectweb.asm.Type;
 
 import com.google.common.base.MoreObjects;
@@ -33,7 +33,7 @@ import com.google.common.collect.Maps;
 public class ModAnnotation
 {
     public static ModFileScanData.AnnotationData fromModAnnotation(final Type clazz, final ModAnnotation annotation) {
-        return new ModFileScanData.AnnotationData(annotation.asmType, clazz, annotation.member, annotation.values);
+        return new ModFileScanData.AnnotationData(annotation.asmType, annotation.type, clazz, annotation.member, annotation.values);
     }
 
     public static class EnumHolder

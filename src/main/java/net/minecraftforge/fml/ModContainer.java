@@ -19,14 +19,10 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.forgespi.language.IModInfo;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -46,13 +42,20 @@ import java.util.function.Supplier;
 public abstract class ModContainer
 {
     protected final String modId;
+    protected final String namespace;
     protected final IModInfo modInfo;
     protected ModLoadingStage modLoadingStage;
     protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
     protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
+    protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    protected Optional<Consumer<ModConfig.ModConfigEvent>> configHandler = Optional.empty();
+
     public ModContainer(IModInfo info)
     {
         this.modId = info.getModId();
+        // TODO: Currently not reading namespace from configuration..
+        this.namespace = this.modId;
         this.modInfo = info;
         this.triggerMap = new HashMap<>();
         this.modLoadingStage = ModLoadingStage.CONSTRUCT;
@@ -69,9 +72,9 @@ public abstract class ModContainer
     /**
      * @return the resource prefix for the mod
      */
-    public final String getPrefix()
+    public final String getNamespace()
     {
-        return modId;
+        return namespace;
     }
 
     /**
@@ -119,6 +122,14 @@ public abstract class ModContainer
     public <T> void registerExtensionPoint(ExtensionPoint point, Supplier<T> extension)
     {
         extensionPoints.put(point, extension);
+    }
+
+    public void addConfig(final ModConfig modConfig) {
+       configs.put(modConfig.getType(), modConfig);
+    }
+
+    public void dispatchConfigEvent(ModConfig.ModConfigEvent event) {
+        configHandler.ifPresent(configHandler->configHandler.accept(event));
     }
 
     /**

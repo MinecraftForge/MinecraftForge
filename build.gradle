@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenLocal()
+        //mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
@@ -30,6 +30,7 @@ plugins {
     id 'net.minecrell.licenser' version '0.4'
     id 'org.ajoberstar.grgit' version '2.3.0'
     id 'de.undercouch.download' version '3.3.0'
+    id "com.github.ben-manes.versions" version '0.20.0'
 }
 apply plugin: 'eclipse'
 
@@ -111,6 +112,17 @@ project(':forge') {
                 srcDir "$rootDir/src/main/resources"
             }
         }
+        test {
+            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
+            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
+            java {
+                // srcDir "$rootDir/src/test/java" TODO fix later
+                srcDir "$rootDir/src/fmllaunchertest/java"
+            }
+            resources {
+                srcDir "$rootDir/src/test/resources"
+            }
+        }
         userdev {
             compileClasspath += sourceSets.main.runtimeClasspath
             runtimeClasspath += sourceSets.main.runtimeClasspath
@@ -161,7 +173,7 @@ project(':forge') {
         exc = file("$rootDir/src/main/resources/forge.exc")
         srgPatches = true
         runs {
-            client = {
+            forge_client = {
                 main 'net.minecraftforge.fml.LaunchTesting'
                 environment = [
                     target: 'fmldevclient',
@@ -180,7 +192,7 @@ project(':forge') {
                     'fmllauncher.version': SPEC_VERSION
                 ]
             }
-            server = {
+            forge_server = {
                 main 'net.minecraftforge.fml.LaunchTesting'
                 environment = [
                     target: 'fmldevserver'
@@ -190,7 +202,8 @@ project(':forge') {
                     'mcp.version': MCP_VERSION,
                     'forge.version': "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
                     'forge.spec': SPEC_VERSION,
-                    'forge.group': project.group
+                    'forge.group': project.group, 
+                    'fmllauncher.version': SPEC_VERSION
                 ]
             }
         }
@@ -228,12 +241,12 @@ project(':forge') {
                 'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap,
             'net/minecraftforge/fml/loading/': [
-                    'Specification-Title':      'Launcher',
-                    'Specification-Vendor':     'Forge Development LLC',
-                    'Specification-Version':    '1',
-                    'Implementation-Title':     'FML Launcher',
-                    'Implementation-Version':   SPEC_VERSION,
-                    'Implementation-Vendor':    'Forge'
+                'Specification-Title':      'Launcher',
+                'Specification-Vendor':     'Forge Development LLC',
+                'Specification-Version':    '1',
+                'Implementation-Title':     'FML Launcher',
+                'Implementation-Version':   SPEC_VERSION,
+                'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap
         ]
     }
@@ -256,21 +269,24 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:0.4.0'
-        installer 'net.minecraftforge:accesstransformers:0.10+:shadowed'
-        installer 'net.minecraftforge:eventbus:0.1+:service'
-        installer 'net.minecraftforge:forgespi:0.1+'
-        installer 'net.minecraftforge:coremods:0.1+'
-        installer 'com.electronwill.night-config:core:3.4.0'
-        installer 'com.electronwill.night-config:toml:3.4.0'
+        installer 'cpw.mods:modlauncher:0.9.+'
+        installer 'net.minecraftforge:accesstransformers:0.14.+:shadowed'
+        installer 'net.minecraftforge:eventbus:0.6.+:service'
+        installer 'net.minecraftforge:forgespi:0.6.+'
+        installer 'net.minecraftforge:coremods:0.2.+'
+        installer 'com.electronwill.night-config:core:3.4.2'
+        installer 'com.electronwill.night-config:toml:3.4.2'
         installer 'org.jline:jline:3.5.1'
-        installer 'org.apache.maven:maven-artifact:3.5.3'
-        installer 'net.jodah:typetools:0.5.0'
+        installer 'org.apache.maven:maven-artifact:3.6.0'
+        installer 'net.jodah:typetools:0.6.0'
         installer 'java3d:vecmath:1.5.2'
         installer 'org.apache.logging.log4j:log4j-api:2.11.1'
         installer 'org.apache.logging.log4j:log4j-core:2.11.1'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
+        testImplementation "org.junit.jupiter:junit-jupiter-api:5.0.0"
+        testImplementation "org.opentest4j:opentest4j:1.0.0" // needed for junit 5
+        testImplementation "org.hamcrest:hamcrest-all:1.3" // needs advanced matching for list order
     }
 
     task runclient(type: JavaExec, dependsOn: [":forge:downloadAssets", ":forge:extractNatives"]) {
@@ -285,9 +301,9 @@ project(':forge') {
         }
         //jvmArgs = ['-verbose:class']
         classpath sourceSets.main.runtimeClasspath
-        main patcher.runs.client.main
-        systemProperties = patcher.runs.client.properties
-        environment += patcher.runs.client.environment
+        main patcher.runs.forge_client.main
+        systemProperties = patcher.runs.forge_client.properties
+        environment += patcher.runs.forge_client.environment
         workingDir 'runclient'
     }
 
@@ -302,10 +318,10 @@ project(':forge') {
             }
         }
         classpath sourceSets.main.runtimeClasspath
-        main patcher.runs.server.main
+        main patcher.runs.forge_server.main
         args 'nogui'
-        systemProperties = patcher.runs.server.properties
-        environment += patcher.runs.server.environment
+        systemProperties = patcher.runs.forge_server.properties
+        environment += patcher.runs.forge_server.environment
         workingDir 'runserver'
         standardInput = System.in
     }
@@ -679,10 +695,34 @@ project(':forge') {
             }
         }
     }
+    
+    task fmllauncherConfig(type: WriteProperties) {
+        outputFile file('build/server_launcher.properties')
+        encoding 'UTF8'
+        doFirst {
+            def artifacts = getArtifacts(project, project.configurations.installer, false).values().stream().map{a -> a.downloads.artifact.path}.sorted().collect() + [
+                "net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-data.jar",
+                "net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
+            ]
+            for (int x = 0; x < artifacts.size(); x++) {
+                property 'library.' + x.toString().padLeft(3, '0'), "libraries/${artifacts.get(x)}"
+            }
+            property 'library.count', artifacts.size()
+            property 'args', [
+              '--gameDir',          '.',
+              '--launchTarget',     'fmlserver',
+              '--fml.forgeVersion', "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
+              '--fml.mcpVersion',   MCP_VERSION,
+              '--fml.mcVersion',    MC_VERSION,
+              '--fml.forgeGroup',   project.group
+            ].join(' ')
+        }
+    }
 
-    task launcherJar(type: Jar) {
+    task launcherJar(type: Jar, dependsOn: [fmllauncherConfig]) {
         classifier 'launcher'
         from sourceSets.fmllauncher.output
+        from fmllauncherConfig.outputFile
         doFirst {
             def classpath = new StringBuilder()
             def artifacts = getArtifacts(project, project.configurations.installer, false)
@@ -808,7 +848,7 @@ project(':forge') {
             }
             server = {
                 main 'net.minecraftforge.userdev.UserdevLauncher'
-                environment 'target', 'fmldevserver'
+                environment 'target', 'fmluserdevserver'
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1)
                 environment 'FORGE_GROUP', project.group
                 environment 'MCP_VERSION', MCP_VERSION
@@ -849,7 +889,7 @@ project(':forge') {
     task userdevExtrasReobf(type:TaskReobfuscateJar) {
         dependsOn userdevExtras, createMcp2Srg
         input = tasks.userdevExtras.archivePath
-        classpath = project.configurations.getByName("compile")
+        classpath = project.configurations.compile
         srg = tasks.createMcp2Srg.output
     }
 

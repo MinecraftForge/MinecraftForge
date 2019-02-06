@@ -4,7 +4,7 @@
           ItemStack itemstack = ((Slot)this.field_75151_b.get(i)).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
-+            boolean clientStackChanged = !ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack);
++            boolean clientStackChanged = !itemstack1.equals(itemstack, true);
              itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
              this.field_75153_a.set(i, itemstack1);
  
@@ -41,3 +41,12 @@
        }
  
        p_94525_2_.func_190917_f(p_94525_3_);
+@@ -576,7 +579,7 @@
+       if (!p_192389_1_.field_72995_K) {
+          EntityPlayerMP entityplayermp = (EntityPlayerMP)p_192389_2_;
+          ItemStack itemstack = ItemStack.field_190927_a;
+-         IRecipe irecipe = p_192389_1_.func_73046_m().func_199529_aN().func_199515_b(p_192389_3_, p_192389_1_);
++         IRecipe irecipe = p_192389_1_.func_73046_m().func_199529_aN().getRecipe(p_192389_3_, p_192389_1_, net.minecraftforge.common.crafting.VanillaRecipeTypes.CRAFTING);
+          if (p_192389_4_.func_201561_a(p_192389_1_, entityplayermp, irecipe) && irecipe != null) {
+             itemstack = irecipe.func_77572_b(p_192389_3_);
+          }

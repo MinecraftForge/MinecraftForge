@@ -291,7 +291,7 @@ public class CraftingHelper
     }
 
     public static void reloadConstants(IResourceManager manager) {
-        Map<ResourceLocation, IItemList> ret = new HashMap<>();
+        Map<ResourceLocation, IItemList> tmp = new HashMap<>();
         for(ResourceLocation key : manager.getAllResourceLocations("recipes", filename -> filename.equals("_constants.json")))
         {
             String path = key.getPath();
@@ -304,11 +304,17 @@ public class CraftingHelper
                 for (int x = 0; x < elements.length; x++)
                 {
                     JsonObject json = elements[x];
+                    //Force namespace to the directory that this constants file is in, to prevent modders from overriding other's sneakily
+                    //TODO: Move back to a resource pack/mod specific constant list?
+                    ResourceLocation name = json.has("name") ? new ResourceLocation(JsonUtils.getString(json, "name")) : null;
+                    if (name != null)
+                        name = new ResourceLocation(key.getNamespace(), name.getPath());
+
                     if (json == null || json.size() == 0)
                         LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's null or empty", x, key);
                     else if (json.has("conditions") && !processConditions(JsonUtils.getJsonArray(json, "conditions")))
                         LOGGER.info(CRAFTHELPER, "Skipping loading constant #{} from {} as it's conditions were not met", x, key);
-                    else if (!json.has("name"))
+                    else if (name == null)
                         LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `name`", x, key);
                     else if (json.has("items"))
                     {
@@ -325,12 +331,12 @@ public class CraftingHelper
                             }
                         }
                         if (!items.isEmpty())
-                            constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), new StackList(items));
+                            tmp.put(name, new StackList(items));
                     }
                     else if (json.has("tag"))
-                        constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), Ingredient.deserializeItemList(json));
+                        tmp.put(name, Ingredient.deserializeItemList(json));
                     else if (json.has("item"))
-                        constants.put(new ResourceLocation(JsonUtils.getString(json, "name")), new StackList(Lists.newArrayList(getItemStack(JsonUtils.getJsonObject(json, "item"), true))));
+                        tmp.put(name, new StackList(Lists.newArrayList(getItemStack(JsonUtils.getJsonObject(json, "item"), true))));
                     else
                         LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `item` or `items` element", x, key);
                 }
@@ -345,6 +351,6 @@ public class CraftingHelper
                LOGGER.error(CRAFTHELPER, "Couldn't read constants from {}", key, e);
             }
         }
-        constants = ret;
+        constants = tmp;
     }
 }

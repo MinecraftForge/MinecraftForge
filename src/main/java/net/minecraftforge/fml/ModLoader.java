@@ -24,12 +24,17 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.registries.GameData;
+import net.minecraftforge.registries.ObjectHolderRegistry;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,6 +48,42 @@ import java.util.stream.Stream;
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.LOADING;
 
+/**
+ * Loads mods.
+ *
+ * Dispatch cycle is seen in {@link #loadMods()} and {@link #finishMods()}
+ *
+ * Overall sequence for loadMods is:
+ * <dl>
+ *     <dt>CONSTRUCT</dt>
+ *     <dd>Constructs the mod instance. Mods can typically setup basic environment such as Event listeners
+ *     and Configuration specifications here.</dd>
+ *     <dt>Automated dispatches</dt>
+ *     <dd>Dispatches automated elements : {@link net.minecraftforge.fml.common.Mod.EventBusSubscriber},
+ *     {@link net.minecraftforge.event.RegistryEvent}, {@link net.minecraftforge.common.capabilities.CapabilityInject}
+ *     and others</dd>
+ *     <dt>CONFIG_LOAD</dt>
+ *     <dd>Dispatches ConfigLoadEvent to mods</dd>
+ *     <dt>COMMON_SETUP</dt>
+ *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent} to mods</dd>
+ *     <dt>SIDED_SETUP</dt>
+ *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent} or
+ *     {@link net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent} to mods</dd>
+ * </dl>
+ *
+ * Overall sequence for finishMods is:
+ * <dl>
+ *     <dt>ENQUEUE_IMC</dt>
+ *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent} to mods,
+ *     for enqueuing {@link InterModComms} messages for other mods to receive subsequently</dd>
+ *     <dt>PROCESS_IMC</dt>
+ *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.InterModProcessEvent} to mods,
+ *     for processing {@link InterModComms} messages received from other mods prior to this event</dd>
+ *     <dt>COMPLETE</dt>
+ *     <dd>Dispatches {@link net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent} to mods,
+ *     and completes the mod loading sequence.</dd>
+ * </dl>
+ */
 public class ModLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -85,12 +126,14 @@ public class ModLoader
         }
         modList.setLoadedMods(modContainerStream.collect(Collectors.toList()));
         dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT);
-        GameData.fireCreateRegistryEvents();
+        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, this::dispatchAndHandleError);
+        ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
-        GameData.fireRegistryEvents();
-        dispatchAndHandleError(LifecycleEventProvider.PREINIT);
+        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, this::dispatchAndHandleError);
+        DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
+        dispatchAndHandleError(LifecycleEventProvider.SETUP);
         DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
-        dispatchAndHandleError(LifecycleEventProvider.SIDEDINIT);
+        dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);
     }
 
     private void dispatchAndHandleError(LifecycleEventProvider event) {
@@ -127,8 +170,8 @@ public class ModLoader
 
     public void finishMods()
     {
-        dispatchAndHandleError(LifecycleEventProvider.INIT);
-        dispatchAndHandleError(LifecycleEventProvider.POSTINIT);
+        dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC);
+        dispatchAndHandleError(LifecycleEventProvider.PROCESS_IMC);
         dispatchAndHandleError(LifecycleEventProvider.COMPLETE);
         GameData.freezeData();
     }

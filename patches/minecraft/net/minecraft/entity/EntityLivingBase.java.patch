@@ -302,7 +302,7 @@
  
              ItemStack itemstack1 = this.func_184582_a(entityequipmentslot);
              if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
-+               if (!ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack))
++               if (!itemstack1.equals(itemstack, true))
                 ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
 +               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, entityequipmentslot, itemstack, itemstack1));
                 if (!itemstack.func_190926_b()) {
@@ -411,10 +411,10 @@
 +      }
 +   }
 +
-+   private final net.minecraftforge.common.capabilities.OptionalCapabilityInstance<?>[] handlers = net.minecraftforge.items.wrapper.EntityEquipmentInvWrapper.create(this);
++   private final net.minecraftforge.common.util.LazyOptional<?>[] handlers = net.minecraftforge.items.wrapper.EntityEquipmentInvWrapper.create(this);
 +
 +   @Override
-+   public <T> net.minecraftforge.common.capabilities.OptionalCapabilityInstance<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
 +      if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +         if (facing == null) return handlers[2].cast();
 +         else if (facing.func_176740_k().func_200128_b()) return handlers[0].cast();

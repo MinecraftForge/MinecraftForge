@@ -76,7 +76,8 @@ public class ExplodedDirectoryLocator implements IModLocator {
         Path found = mods.get(modFile).getLeft().resolve(target);
         if (Files.exists(found)) return found;
         // then try left path (classes)
-        return mods.get(modFile).getRight().stream().map(p->p.resolve(target)).findFirst().orElse(found.resolve(target));
+        return mods.get(modFile).getRight().stream().map(p->p.resolve(target)).filter(Files::exists).
+                findFirst().orElse(found.resolve(target));
     }
 
     @Override

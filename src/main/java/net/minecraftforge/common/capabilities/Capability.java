@@ -25,7 +25,9 @@ import com.google.common.base.Throwables;
 
 import net.minecraft.nbt.INBTBase;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -133,6 +135,11 @@ public class Capability<T>
             Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
         }
+    }
+    
+    public @Nonnull <R> LazyOptional<R> orEmpty(Capability<R> toCheck, LazyOptional<T> inst)
+    {
+        return this == toCheck ? inst.cast() : LazyOptional.empty();
     }
 
     // INTERNAL

@@ -222,25 +222,11 @@ public final class MultiModel implements IUnbakedModel
     private final IUnbakedModel base;
     private final Map<String, Pair<IUnbakedModel, IModelState>> parts;
 
-    // TODO 1.13 remove, kept for binary compatibility
-    @Deprecated
-    public MultiModel(ResourceLocation location, @Nullable IUnbakedModel base, IModelState baseState, ImmutableMap<String, Pair<IUnbakedModel, IModelState>> parts)
-    {
-        this(location, base, parts);
-    }
-
     public MultiModel(ResourceLocation location, @Nullable IUnbakedModel base, ImmutableMap<String, Pair<IUnbakedModel, IModelState>> parts)
     {
         this.location = location;
         this.base = base;
         this.parts = parts;
-    }
-
-    // TODO 1.13 remove, kept for binary compatibility
-    @Deprecated
-    public MultiModel(ResourceLocation location, IUnbakedModel base, IModelState baseState, Map<String, Pair<IUnbakedModel, IModelState>> parts)
-    {
-        this(location, base, parts);
     }
 
     public MultiModel(ResourceLocation location, IUnbakedModel base, Map<String, Pair<IUnbakedModel, IModelState>> parts)

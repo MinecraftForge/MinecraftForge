@@ -29,11 +29,15 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.common.event.FMLServerAboutToStartEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
-import net.minecraftforge.fml.common.event.FMLServerStartedEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppedEvent;
-import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
+import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
+import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import org.apache.logging.log4j.LogManager;
@@ -41,6 +45,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -56,6 +62,9 @@ public class ServerLifecycleHooks
     {
         currentServer = server;
         LogicalSidedProvider.setServer(()->server);
+        final Path serverConfig = server.getActiveAnvilConverter().getFile(server.getFolderName(), "serverconfig").toPath();
+        FileUtils.getOrCreateDirectory(serverConfig, "serverconfig");
+        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.SERVER, serverConfig);
         ResourcePackLoader.loadResourcePacks(currentServer.getResourcePacks());
         return !MinecraftForge.EVENT_BUS.post(new FMLServerAboutToStartEvent(server));
     }

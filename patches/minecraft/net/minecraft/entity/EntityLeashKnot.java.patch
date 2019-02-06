@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/EntityLeashKnot.java
++++ b/net/minecraft/entity/EntityLeashKnot.java
+@@ -38,6 +38,7 @@
+       this.field_70165_t = (double)this.field_174861_a.func_177958_n() + 0.5D;
+       this.field_70163_u = (double)this.field_174861_a.func_177956_o() + 0.5D;
+       this.field_70161_v = (double)this.field_174861_a.func_177952_p() + 0.5D;
++      if (this.isAddedToWorld() && !this.field_70170_p.field_72995_K) this.field_70170_p.func_72866_a(this, false); // Forge - Process chunk registration after moving.
+    }
+ 
+    public void func_174859_a(EnumFacing p_174859_1_) {

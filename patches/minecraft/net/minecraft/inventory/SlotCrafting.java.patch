@@ -12,8 +12,9 @@
  
     public ItemStack func_190901_a(EntityPlayer p_190901_1_, ItemStack p_190901_2_) {
        this.func_75208_c(p_190901_2_);
+-      NonNullList<ItemStack> nonnulllist = p_190901_1_.field_70170_p.func_199532_z().func_199513_c(this.field_75239_a, p_190901_1_.field_70170_p);
 +      net.minecraftforge.common.ForgeHooks.setCraftingPlayer(p_190901_1_);
-       NonNullList<ItemStack> nonnulllist = p_190901_1_.field_70170_p.func_199532_z().func_199513_c(this.field_75239_a, p_190901_1_.field_70170_p);
++      NonNullList<ItemStack> nonnulllist = p_190901_1_.field_70170_p.func_199532_z().getRemainingItems(this.field_75239_a, p_190901_1_.field_70170_p, net.minecraftforge.common.crafting.VanillaRecipeTypes.CRAFTING);
 +      net.minecraftforge.common.ForgeHooks.setCraftingPlayer(null);
  
        for(int i = 0; i < nonnulllist.size(); ++i) {

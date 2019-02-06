@@ -34,6 +34,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
+import static net.minecraftforge.fml.Logging.CORE;
+
 public class ForgeI18n {
     private static final Logger LOGGER = LogManager.getLogger();
     private static Map<String,String> i18n;
@@ -44,9 +46,9 @@ public class ForgeI18n {
         // {0,modinfo,id} -> modid from ModInfo object; {0,modinfo,name} -> displayname from ModInfo object
         customFactories.put("modinfo", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> parseModInfo(formatString, stringBuffer, objectToParse)));
         // {0,lower} -> lowercase supplied string
-        customFactories.put("lower", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toLowerCase((String)objectToParse))));
+        customFactories.put("lower", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toLowerCase(String.valueOf(objectToParse)))));
         // {0,upper> -> uppercase supplied string
-        customFactories.put("upper", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toUpperCase((String)objectToParse))));
+        customFactories.put("upper", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> stringBuffer.append(StringUtils.toUpperCase(String.valueOf(objectToParse)))));
         // {0,exc,class} -> class of exception; {0,exc,msg} -> message from exception
         customFactories.put("exc", (name, formatString, locale) -> new CustomReadOnlyFormat((stringBuffer, objectToParse) -> parseException(formatString, stringBuffer, objectToParse)));
         // {0,vr} -> transform VersionRange into cleartext string using fml.messages.version.restriction.* strings
@@ -80,7 +82,7 @@ public class ForgeI18n {
     }
 
     public static void loadLanguageData(final Map<String, String> properties) {
-        LOGGER.debug("Loading I18N data entries: {}", properties.size());
+        LOGGER.debug(CORE,"Loading I18N data entries: {}", properties.size());
         i18n = properties;
     }
 

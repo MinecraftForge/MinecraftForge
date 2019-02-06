@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.common.registry;
 
-import io.netty.buffer.ByteBuf;
+import net.minecraft.network.PacketBuffer;
 
 /**
  * A interface for Entities that need extra information to be communicated
@@ -33,7 +33,7 @@ public interface IEntityAdditionalSpawnData
      *
      * @param buffer The packet data stream
      */
-    void writeSpawnData(ByteBuf buffer);
+    void writeSpawnData(PacketBuffer buffer);
 
     /**
      * Called by the client when it receives a Entity spawn packet.
@@ -41,5 +41,5 @@ public interface IEntityAdditionalSpawnData
      *
      * @param additionalData The packet data stream
      */
-    void readSpawnData(ByteBuf additionalData);
+    void readSpawnData(PacketBuffer additionalData);
 }

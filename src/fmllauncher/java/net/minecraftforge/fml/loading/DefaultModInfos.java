@@ -20,7 +20,7 @@
 package net.minecraftforge.fml.loading;
 
 import com.electronwill.nightconfig.core.file.FileConfig;
-import net.minecraftforge.fml.language.IModInfo;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import java.io.IOException;

@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
-import net.minecraftforge.fml.language.IModLanguageProvider;
-import net.minecraftforge.fml.language.ModFileScanData;
+import net.minecraftforge.forgespi.language.IModLanguageProvider;
+import net.minecraftforge.forgespi.language.ModFileScanData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassReader;
@@ -41,6 +41,7 @@ public class Scanner {
 
     public ModFileScanData scan() {
         ModFileScanData result = new ModFileScanData();
+        result.addModFileInfo(fileToScan.getModFileInfo());
         fileToScan.scanFile(p -> fileVisitor(p, result));
         final IModLanguageProvider loader = fileToScan.getLoader();
         LOGGER.debug(SCAN, "Scanning {} with language loader {}", fileToScan.getFilePath(), loader.name());

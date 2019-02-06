@@ -38,7 +38,7 @@ public final class ToolType
     {
         if (VALID_NAME.matcher(name).find())
             throw new IllegalArgumentException("ToolType.create() called with invalid name: " + name);
-        return values.putIfAbsent(name, new ToolType(name));
+        return values.computeIfAbsent(name, k -> new ToolType(name));
     }
 
     private final String name;

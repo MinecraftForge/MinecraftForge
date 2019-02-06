@@ -33,7 +33,7 @@
     public String func_193358_e() {
        return this.field_194137_e;
     }
-@@ -61,7 +71,6 @@
+@@ -61,13 +71,12 @@
        return this.field_77574_d;
     }
  
@@ -41,6 +41,13 @@
     public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
        return p_194133_1_ >= this.field_77576_b && p_194133_2_ >= this.field_77577_c;
     }
+ 
+    public boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_) {
+-      if (!(p_77569_1_ instanceof InventoryCrafting)) {
++      if (false) {
+          return false;
+       } else {
+          for(int i = 0; i <= p_77569_1_.func_174922_i() - this.field_77576_b; ++i) {
 @@ -117,10 +126,20 @@
        return this.field_77576_b;
     }

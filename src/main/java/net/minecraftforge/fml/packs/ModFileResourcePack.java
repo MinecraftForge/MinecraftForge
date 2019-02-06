@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.packs;
 
+import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 import net.minecraft.resources.AbstractResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
@@ -26,11 +27,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.channels.ByteChannel;
+import java.nio.channels.Channels;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.*;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -64,7 +67,16 @@ public class ModFileResourcePack extends AbstractResourcePack
     @Override
     protected InputStream getInputStream(String name) throws IOException
     {
-        return Files.newInputStream(modFile.getLocator().findPath(modFile, name));
+        // because paulscode is ancient, we can't return FileChannel based InputStreams here - it will cause a deadlock or crash
+        // Paulscode sends interrupt() to trigger thread processing behaviour, and FileChannels will interpret that interrupt() as
+        // a sign to close the FileChannel and throw an interrupt error. Tis brilliant!
+        // If the Path comes from the default filesystem provider, we will rather use the path to generate an old FileInputStream
+        final Path path = modFile.getLocator().findPath(modFile, name);
+        if (path.getFileSystem() == FileSystems.getDefault()) {
+            return new FileInputStream(path.toFile());
+        } else {
+            return Files.newInputStream(path, StandardOpenOption.READ);
+        }
     }
 
     @Override
@@ -79,7 +91,8 @@ public class ModFileResourcePack extends AbstractResourcePack
         try
         {
             Path root = modFile.getLocator().findPath(modFile, type.getDirectoryName()).toAbsolutePath();
-            Path inputPath = root.resolve(pathIn);
+            Path inputPath = root.getFileSystem().getPath(pathIn);
+
             return Files.walk(root).
                     map(path -> root.relativize(path.toAbsolutePath())).
                     filter(path -> path.getNameCount() > 1 && path.getNameCount() - 1 <= maxDepth). // Make sure the depth is within bounds, ignoring domain
@@ -107,6 +120,7 @@ public class ModFileResourcePack extends AbstractResourcePack
                     .map(path -> root.relativize(path.toAbsolutePath()))
                     .filter(path -> path.getNameCount() > 0) // skip the root entry
                     .map(p->p.toString().replaceAll("/$","")) // remove the trailing slash, if present
+                    .filter(s -> !s.isEmpty()) //filter empty strings, otherwise empty strings default to minecraft in ResourceLocations
                     .collect(Collectors.toSet());
         }
         catch (IOException e)

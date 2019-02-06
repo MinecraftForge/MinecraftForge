@@ -45,12 +45,6 @@ public enum KeyModifier {
         }
 
         @Override
-        public boolean isActive()
-        {
-            return GuiScreen.isCtrlKeyDown();
-        }
-
-        @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
             return GuiScreen.isCtrlKeyDown();
@@ -69,12 +63,6 @@ public enum KeyModifier {
         public boolean matches(InputMappings.Input key)
         {
             return key.getKeyCode() == GLFW.GLFW_KEY_LEFT_SHIFT || key.getKeyCode() == GLFW.GLFW_KEY_RIGHT_SHIFT;
-        }
-
-        @Override
-        public boolean isActive()
-        {
-            return GuiScreen.isShiftKeyDown();
         }
 
         @Override
@@ -97,12 +85,6 @@ public enum KeyModifier {
         }
 
         @Override
-        public boolean isActive()
-        {
-            return GuiScreen.isAltKeyDown();
-        }
-
-        @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
             return GuiScreen.isAltKeyDown();
@@ -119,12 +101,6 @@ public enum KeyModifier {
         public boolean matches(InputMappings.Input key)
         {
             return false;
-        }
-
-        @Override
-        public boolean isActive()
-        {
-            return true;
         }
 
         @Override
@@ -189,12 +165,6 @@ public enum KeyModifier {
     }
 
     public abstract boolean matches(InputMappings.Input key);
-
-    /**
-     * @deprecated use {@link #isActive(IKeyConflictContext)}
-     */
-    @Deprecated
-    public abstract boolean isActive();
 
     public abstract boolean isActive(@Nullable IKeyConflictContext conflictContext);
 

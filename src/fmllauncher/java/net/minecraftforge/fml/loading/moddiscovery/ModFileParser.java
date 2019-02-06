@@ -22,7 +22,7 @@ package net.minecraftforge.fml.loading.moddiscovery;
 import com.electronwill.nightconfig.core.file.FileConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import net.minecraftforge.fml.language.IModFileInfo;
+import net.minecraftforge.forgespi.language.IModFileInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

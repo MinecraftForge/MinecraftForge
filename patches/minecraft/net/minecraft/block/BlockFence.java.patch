@@ -45,6 +45,6 @@
 +   private boolean canFenceConnectTo(IBlockReader world, BlockPos pos, EnumFacing facing) {
 +      BlockPos offset = pos.func_177972_a(facing);
 +      IBlockState other = world.func_180495_p(offset);
-+      return other.canBeConnectedTo(world, offset, facing.func_176734_d()) || func_176223_P().canBeConnectedTo(world, pos, facing.func_176734_d());
++      return other.canBeConnectedTo(world, offset, facing.func_176734_d()) || func_176223_P().canBeConnectedTo(world, pos, facing);
 +   }
  }

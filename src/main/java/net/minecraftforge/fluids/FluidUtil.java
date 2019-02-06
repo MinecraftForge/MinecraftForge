@@ -41,7 +41,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
@@ -224,30 +224,6 @@ public class FluidUtil
      * @param maxAmount   Maximum amount of fluid to take from the tank.
      * @param player      The player that gets the items the inventory can't take.
      *                    Can be null, only used if the inventory cannot take the filled stack.
-     * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
-     * @deprecated use {@link #tryFillContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, boolean)}
-     */
-    @Deprecated // TODO remove in 1.13
-    @Nonnull
-    public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
-    {
-        return tryFillContainerAndStow(container, fluidSource, inventory, maxAmount, player, true);
-    }
-
-    /**
-     * Takes an Fluid Container Item and tries to fill it from the given tank.
-     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the filled container in the given inventory.
-     * If the inventory does not accept it, it will be given to the player or dropped at the players feet.
-     *      If player is null in this case, the action will be aborted.
-     *
-     * @param container   The Fluid Container ItemStack to fill.
-     *                    Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
-     * @param fluidSource The fluid source to fill from
-     * @param inventory   An inventory where any additionally created item (filled container if multiple empty are present) are put
-     * @param maxAmount   Maximum amount of fluid to take from the tank.
-     * @param player      The player that gets the items the inventory can't take.
-     *                    Can be null, only used if the inventory cannot take the filled stack.
      * @param doFill      true if the container should actually be filled, false if it should be simulated.
      * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
      */
@@ -301,29 +277,6 @@ public class FluidUtil
         }
 
         return FluidActionResult.FAILURE;
-    }
-
-    /**
-     * Takes an Fluid Container Item, tries to empty it into the fluid handler, and stows it in the given inventory.
-     * If the player is in creative mode, the container will not be modified on success, and no additional items created.
-     * If the input itemstack has a stacksize > 1 it will stow the emptied container in the given inventory.
-     * If the inventory does not accept the emptied container, it will be given to the player or dropped at the players feet.
-     *      If player is null in this case, the action will be aborted.
-     *
-     * @param container        The filled Fluid Container Itemstack to empty.
-     *                         Will not be modified directly, if modifications are necessary a modified copy is returned in the result.
-     * @param fluidDestination The fluid destination to fill from the fluid container.
-     * @param inventory        An inventory where any additionally created item (filled container if multiple empty are present) are put
-     * @param maxAmount        Maximum amount of fluid to take from the tank.
-     * @param player           The player that gets the items the inventory can't take. Can be null, only used if the inventory cannot take the filled stack.
-     * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
-     * @deprecated use {@link #tryEmptyContainerAndStow(ItemStack, IFluidHandler, IItemHandler, int, EntityPlayer, boolean)}
-     */
-    @Deprecated // TODO: remove in 1.13
-    @Nonnull
-    public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player)
-    {
-        return tryEmptyContainerAndStow(container, fluidDestination, inventory, maxAmount, player, true);
     }
 
     /**
@@ -481,7 +434,7 @@ public class FluidUtil
      *
      * Vanilla buckets will be converted to universal buckets if they are enabled.
      */
-    public static OptionalCapabilityInstance<IFluidHandlerItem> getFluidHandler(@Nonnull ItemStack itemStack)
+    public static LazyOptional<IFluidHandlerItem> getFluidHandler(@Nonnull ItemStack itemStack)
     {
         return itemStack.getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY);
     }
@@ -489,7 +442,7 @@ public class FluidUtil
     /**
      * Helper method to get the fluid contained in an itemStack
      */
-    public static OptionalCapabilityInstance<FluidStack> getFluidContained(@Nonnull ItemStack container)
+    public static LazyOptional<FluidStack> getFluidContained(@Nonnull ItemStack container)
     {
         if (!container.isEmpty())
         {
@@ -497,13 +450,13 @@ public class FluidUtil
             return getFluidHandler(container)
                     .map(handler -> handler.drain(Integer.MAX_VALUE, false));
         }
-        return OptionalCapabilityInstance.empty();
+        return LazyOptional.empty();
     }
 
     /**
      * Helper method to get an IFluidHandler for at a block position.
      */
-    public static OptionalCapabilityInstance<IFluidHandler> getFluidHandler(World world, BlockPos blockPos, @Nullable EnumFacing side)
+    public static LazyOptional<IFluidHandler> getFluidHandler(World world, BlockPos blockPos, @Nullable EnumFacing side)
     {
         IBlockState state = world.getBlockState(blockPos);
         Block block = state.getBlock();
@@ -525,7 +478,7 @@ public class FluidUtil
             return OptionalCapabilityInstance.of(() -> new BlockLiquidWrapper((BlockLiquid) block, world, blockPos));
         }
 */
-        return OptionalCapabilityInstance.empty();
+        return LazyOptional.empty();
     }
 
     /**

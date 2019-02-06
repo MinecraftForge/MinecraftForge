@@ -6,20 +6,6 @@
          this.field_152354_ay = null;
          this.field_71461_s = new LoadingScreenRenderer(this);
          this.field_184132_p = new DebugRenderer(this);
-@@ -1094,11 +1113,13 @@
- 
-         if (!this.field_71454_w)
-         {
-+            net.minecraftforge.fml.common.FMLCommonHandler.instance().onRenderTickStart(this.field_71428_T.field_194147_b);
-             this.field_71424_I.func_76318_c("gameRenderer");
-             this.field_71460_t.func_181560_a(this.field_71445_n ? this.field_193996_ah : this.field_71428_T.field_194147_b, i);
-             this.field_71424_I.func_76318_c("toasts");
-             this.field_193034_aS.func_191783_a(new ScaledResolution(this));
-             this.field_71424_I.func_76319_b();
-+            net.minecraftforge.fml.common.FMLCommonHandler.instance().onRenderTickEnd(this.field_71428_T.field_194147_b);
-         }
- 
-         this.field_71424_I.func_76319_b();
 @@ -1630,6 +1653,11 @@
              }
  
@@ -32,23 +18,6 @@
              Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
              this.func_175601_h();
          }
-@@ -1676,6 +1704,8 @@
-             --this.field_71467_ac;
-         }
- 
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreClientTick();
-+
-         this.field_71424_I.func_76320_a("gui");
- 
-         if (!this.field_71445_n)
-@@ -1877,6 +1907,7 @@
-         }
- 
-         this.field_71424_I.func_76319_b();
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostClientTick();
-         this.field_71423_H = func_71386_F();
-     }
- 
 @@ -1982,6 +2013,7 @@
                      }
                  }

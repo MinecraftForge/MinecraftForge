@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
+import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -65,6 +65,13 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     }
 
     @Override
+    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
+    {
+        super.configureTransformationClassLoader(builder);
+        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/RealmsVersion.class", "realms"));
+    }
+
+    @Override
     public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
     {
         return () -> {
@@ -84,6 +91,8 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
         final Path forgemodstoml = LibraryFinder.findJarPathFor("META-INF/mods.toml", "forgemodstoml");
         ((Map<String, List<Pair<Path,List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
                 add(Pair.of(forgemodstoml, Collections.singletonList(compiledClasses)));
+
+        processModClassesEnvironmentVariable((Map<String, List<Pair<Path, List<Path>>>>) arguments);
     }
 
     @Override

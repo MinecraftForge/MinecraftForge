@@ -30,7 +30,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -46,7 +46,7 @@ import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
  */
 public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvider
 {
-    private final OptionalCapabilityInstance<IFluidHandlerItem> holder = OptionalCapabilityInstance.of(() -> this);
+    private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
 
     @Nonnull
     protected ItemStack container;
@@ -97,14 +97,6 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
         {
             return null;
         }
-    }
-
-    /**
-     * @deprecated use the NBT-sensitive version {@link #setFluid(FluidStack)}
-     */
-    @Deprecated
-    protected void setFluid(@Nullable Fluid fluid) {
-        setFluid(new FluidStack(fluid, Fluid.BUCKET_VOLUME));
     }
 
     protected void setFluid(@Nullable FluidStack fluidStack)
@@ -183,8 +175,8 @@ public class FluidBucketWrapper implements IFluidHandlerItem, ICapabilityProvide
     
     @Override
     @Nonnull
-    public <T> OptionalCapabilityInstance<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
     {
-        return OptionalCapabilityInstance.orEmpty(capability, CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, holder);
+        return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
     }
 }

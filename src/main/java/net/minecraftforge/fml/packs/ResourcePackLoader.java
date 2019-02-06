@@ -19,39 +19,33 @@
 
 package net.minecraftforge.fml.packs;
 
-import net.minecraft.resources.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.IPackFinder;
+import net.minecraft.resources.ResourcePackInfo;
+import net.minecraft.resources.ResourcePackList;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static net.minecraftforge.fml.Logging.CORE;
+
 public class ResourcePackLoader
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static Map<ModFile, ModFileResourcePack> modResourcePacks;
     private static ResourcePackList<?> resourcePackList;
 
-    public static ModFileResourcePack getResourcePackFor(String modId)
+    public static Optional<ModFileResourcePack> getResourcePackFor(String modId)
     {
-        return modResourcePacks.get(ModList.get().getModFileById(modId).getFile());
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <T extends ResourcePackInfo> T getResourcePackInfoForModId(String modId) {
-        if (Objects.equals(modId, "minecraft")) {
-            // Additional resources for MC are associated with forge
-            return getResourcePackFor("forge").getPackInfo();
-        }
-        return getResourcePackFor(modId).getPackInfo();
+        return Optional.ofNullable(ModList.get().getModFileById(modId)).
+                map(ModFileInfo::getFile).map(mf->modResourcePacks.get(mf));
     }
 
     public static <T extends ResourcePackInfo> void loadResourcePacks(ResourcePackList<T> resourcePacks) {
@@ -69,9 +63,10 @@ public class ResourcePackLoader
         {
             for (Entry<ModFile, ModFileResourcePack> e : modResourcePacks.entrySet())
             {
-                String name = "modfile/" + e.getKey().getFileName();
-                final T packInfo = ResourcePackInfo.func_195793_a(name, true, () -> e.getValue(), factory, ResourcePackInfo.Priority.BOTTOM);
+                final String name = "mod:" + e.getKey().getModInfos().get(0).getModId();
+                final T packInfo = ResourcePackInfo.func_195793_a(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
                 e.getValue().setPackInfo(packInfo);
+                LOGGER.debug(CORE, "Generating PackInfo named {} for mod file {}", name, e.getKey().getFilePath());
                 packList.put(name, packInfo);
             }
         }

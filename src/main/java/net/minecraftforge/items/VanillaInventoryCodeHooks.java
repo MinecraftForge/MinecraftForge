@@ -31,7 +31,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.common.capabilities.OptionalCapabilityInstance;
+import net.minecraftforge.common.util.LazyOptional;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -51,7 +51,7 @@ public class VanillaInventoryCodeHooks
         return getItemHandler(dest, EnumFacing.UP)
                 .map(itemHandlerResult -> {
                     IItemHandler handler = itemHandlerResult.getKey();
-            
+
                     for (int i = 0; i < handler.getSlots(); i++)
                     {
                         ItemStack extractItem = handler.extractItem(i, 1, true);
@@ -76,7 +76,7 @@ public class VanillaInventoryCodeHooks
                             }
                         }
                     }
-            
+
                     return false;
                 })
                 .orElse(null); // TODO bad null
@@ -95,7 +95,7 @@ public class VanillaInventoryCodeHooks
                     Object destination = destinationResult.getValue();
                     ItemStack dispensedStack = stack.copy().split(1);
                     ItemStack remainder = putStackInInventoryAllSlots(dropper, destination, itemHandler, dispensedStack);
-        
+
                     if (remainder.isEmpty())
                     {
                         remainder = stack.copy();
@@ -105,7 +105,7 @@ public class VanillaInventoryCodeHooks
                     {
                         remainder = stack.copy();
                     }
-        
+
                     dropper.setInventorySlotContents(slot, remainder);
                     return false;
                 })
@@ -135,16 +135,16 @@ public class VanillaInventoryCodeHooks
                                 ItemStack originalSlotContents = hopper.getStackInSlot(i).copy();
                                 ItemStack insertStack = hopper.decrStackSize(i, 1);
                                 ItemStack remainder = putStackInInventoryAllSlots(hopper, destination, itemHandler, insertStack);
-        
+
                                 if (remainder.isEmpty())
                                 {
                                     return true;
                                 }
-        
+
                                 hopper.setInventorySlotContents(i, originalSlotContents);
                             }
                         }
-        
+
                         return false;
                     }
                 })
@@ -212,7 +212,7 @@ public class VanillaInventoryCodeHooks
         return stack;
     }
 
-    private static OptionalCapabilityInstance<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, EnumFacing hopperFacing)
+    private static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, EnumFacing hopperFacing)
     {
         double x = hopper.getXPos() + (double) hopperFacing.getXOffset();
         double y = hopper.getYPos() + (double) hopperFacing.getYOffset();
@@ -246,16 +246,15 @@ public class VanillaInventoryCodeHooks
         return true;
     }
 
-    public static OptionalCapabilityInstance<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
+    public static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
     {
         int i = MathHelper.floor(x);
         int j = MathHelper.floor(y);
         int k = MathHelper.floor(z);
         BlockPos blockpos = new BlockPos(i, j, k);
         net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
-        Block block = state.getBlock();
 
-        if (block.hasTileEntity(/* TODO Block patches // state */))
+        if (state.hasTileEntity())
         {
             TileEntity tileentity = worldIn.getTileEntity(blockpos);
             if (tileentity != null)
@@ -265,6 +264,6 @@ public class VanillaInventoryCodeHooks
             }
         }
 
-        return OptionalCapabilityInstance.empty();
+        return LazyOptional.empty();
     }
 }
