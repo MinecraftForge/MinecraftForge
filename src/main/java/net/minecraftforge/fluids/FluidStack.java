@@ -208,7 +208,6 @@ public class FluidStack
     {
         int code = 1;
         code = 31*code + getFluid().hashCode();
-        code = 31*code + amount;
         if (tag != null)
             code = 31*code + tag.hashCode();
         return code;
