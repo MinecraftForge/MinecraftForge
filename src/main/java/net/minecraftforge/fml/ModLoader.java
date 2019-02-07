@@ -159,6 +159,11 @@ public class ModLoader
         return modFile.getScanResult().getTargets().entrySet().stream().
                 map(e-> {
                     try {
+                        IModInfo info = modInfoMap.get(e.getKey());
+                        if (info == null) {
+                            loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingmetadata", null, e.getKey()));
+                            return null;
+                        }
                         return e.getValue().<ModContainer>loadMod(modInfoMap.get(e.getKey()), modClassLoader, modFile.getScanResult());
                     } catch (ModLoadingException mle) {
                         loadingExceptions.add(mle);

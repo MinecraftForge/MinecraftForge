@@ -3,10 +3,10 @@
     <Appenders>
         <Console name="SysOut" target="SYSTEM_OUT">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %msg%n}">
+                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %msg%n">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %msg%n}"/>
-                    <PatternMatch key="com.mojang." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %msg%n}"/>
+                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %msg%n"/>
+                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %msg%n"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Console>
