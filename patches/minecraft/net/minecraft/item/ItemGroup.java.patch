@@ -40,7 +40,7 @@
        return this.field_78033_n < 6;
     }
  
-@@ -220,4 +225,52 @@
+@@ -220,4 +225,58 @@
        }
  
     }
@@ -66,6 +66,12 @@
 +   @OnlyIn(Dist.CLIENT)
 +   public net.minecraft.util.ResourceLocation getBackgroundImage() {
 +      return new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.func_78015_f());
++   }
++
++   private static final net.minecraft.util.ResourceLocation CREATIVE_INVENTORY_TABS = new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
++   @OnlyIn(Dist.CLIENT)
++   public net.minecraft.util.ResourceLocation getTabsImage() {
++      return CREATIVE_INVENTORY_TABS;
 +   }
 +
 +   public int getLabelColor() {
