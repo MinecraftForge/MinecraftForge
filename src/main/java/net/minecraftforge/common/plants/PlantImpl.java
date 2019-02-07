@@ -36,7 +36,6 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
 
 /**
  * Extension interfaces for default implementations of {@link IPlant} / {@link IHarvestablePlant} / {@link IGrowablePlant} / {@link IPlantable}
@@ -45,6 +44,9 @@ import net.minecraft.world.World;
 public final class PlantImpl
 {
 
+    /**
+     * Implementation of IHarvestablePlant / IGrowablePlant for net.minecraft.block.BlockCrops
+     */
     public static interface Crops extends IHarvestablePlant, IGrowablePlant
     {
 
@@ -90,6 +92,9 @@ public final class PlantImpl
 
     }
 
+    /**
+     * Implementation of IHarvestablePlant / IGrowablePlant for net.minecraft.block.BlockNetherWart
+     */
     public static interface NetherWart extends IHarvestablePlant, IGrowablePlant
     {
 
@@ -153,6 +158,9 @@ public final class PlantImpl
 
     }
 
+    /**
+     * Implementation of IHarvestablePlant / IGrowablePlant for net.minecraft.block.BlockReed
+     */
     public static interface Reeds extends IHarvestablePlant, IGrowablePlant
     {
 
@@ -212,6 +220,9 @@ public final class PlantImpl
 
     }
 
+    /**
+     * Implementation of IHarvestablePlant / IGrowablePlant for net.minecraft.block.BlockCactus
+     */
     public static interface Cactus extends IHarvestablePlant, IGrowablePlant
     {
 
@@ -271,6 +282,9 @@ public final class PlantImpl
 
     }
 
+    /**
+     * Implementation of IHarvestablePlant / IGrowablePlant for net.minecraft.block.BlockCocoa
+     */
     public static interface Cocoa extends IHarvestablePlant, IGrowablePlant
     {
 
@@ -316,27 +330,21 @@ public final class PlantImpl
 
     }
 
+    /**
+     * Implementation of IPlantable for net.minecraft.item.ItemCocoa
+     */
     public static interface ItemCocoa extends IPlantable
     {
         @Override
-        default IBlockState getPlant(World world, BlockPos pos, ItemStack stack)
+        default IBlockState getPlant(IBlockReader world, BlockPos pos, ItemStack stack)
         {
             return Blocks.COCOA.getDefaultState();
         }
 
         @Override
-        default PlantType getPlantType(World world, BlockPos pos, ItemStack stack)
+        default PlantType getPlantType(IBlockReader world, BlockPos pos, ItemStack stack)
         {
             return PlantTypes.EPIPHYTE;
-        }
-    }
-
-    public static interface Chorus extends IPlant
-    {
-        @Override
-        default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
-        {
-            return PlantTypes.ENDER;
         }
     }
 

@@ -24,7 +24,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockReader;
 
 public class PlantableItemBlock extends ItemBlock implements IPlantable
 {
@@ -35,13 +35,13 @@ public class PlantableItemBlock extends ItemBlock implements IPlantable
     }
 
     @Override
-    public PlantType getPlantType(World world, BlockPos pos, ItemStack stack)
+    public PlantType getPlantType(IBlockReader world, BlockPos pos, ItemStack stack)
     {
         return ((IPlant) getBlock()).getPlantType(world, pos, getPlant(world, pos, stack));
     }
 
     @Override
-    public IBlockState getPlant(World world, BlockPos pos, ItemStack stack)
+    public IBlockState getPlant(IBlockReader world, BlockPos pos, ItemStack stack)
     {
         return getBlock().getDefaultState();
     }
