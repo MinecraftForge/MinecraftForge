@@ -5,7 +5,7 @@
  import net.minecraft.world.World;
  
 -public class BlockCocoa extends BlockHorizontal implements IGrowable {
-+public class BlockCocoa extends BlockHorizontal implements net.minecraftforge.common.plants.PlantImpl.Cocoa {
++public class BlockCocoa extends BlockHorizontal implements IGrowable, net.minecraftforge.common.plants.PlantImpl.Cocoa {
     public static final IntegerProperty field_176501_a = BlockStateProperties.field_208167_T;
     protected static final VoxelShape[] field_185535_b = new VoxelShape[]{Block.func_208617_a(11.0D, 7.0D, 6.0D, 15.0D, 12.0D, 10.0D), Block.func_208617_a(9.0D, 5.0D, 5.0D, 15.0D, 12.0D, 11.0D), Block.func_208617_a(7.0D, 3.0D, 4.0D, 15.0D, 12.0D, 12.0D)};
     protected static final VoxelShape[] field_185536_c = new VoxelShape[]{Block.func_208617_a(1.0D, 7.0D, 6.0D, 5.0D, 12.0D, 10.0D), Block.func_208617_a(1.0D, 5.0D, 5.0D, 7.0D, 12.0D, 11.0D), Block.func_208617_a(1.0D, 3.0D, 4.0D, 9.0D, 12.0D, 12.0D)};

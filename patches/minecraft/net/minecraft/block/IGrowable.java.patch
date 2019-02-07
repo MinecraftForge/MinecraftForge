@@ -1,10 +1,36 @@
 --- a/net/minecraft/block/IGrowable.java
 +++ b/net/minecraft/block/IGrowable.java
-@@ -6,6 +6,7 @@
+@@ -4,12 +4,32 @@
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.IBlockReader;
++import net.minecraft.world.IWorld;
  import net.minecraft.world.World;
  
+-public interface IGrowable {
 +@Deprecated //Forge: Plants that can grow should use IGrowablePlant.
- public interface IGrowable {
++public interface IGrowable extends net.minecraftforge.common.plants.IGrowablePlant {
     boolean func_176473_a(IBlockReader p_176473_1_, BlockPos p_176473_2_, IBlockState p_176473_3_, boolean p_176473_4_);
  
+    boolean func_180670_a(World p_180670_1_, Random p_180670_2_, BlockPos p_180670_3_, IBlockState p_180670_4_);
+ 
+    void func_176474_b(World p_176474_1_, Random p_176474_2_, BlockPos p_176474_3_, IBlockState p_176474_4_);
++
++   @Override
++   default boolean canGrow(IBlockReader reader, BlockPos pos, IBlockState state)
++   {
++      return func_176473_a(reader, pos, state, false);
++   }
++
++   @Override
++   default boolean canUseBonemeal(IBlockReader reader, Random rand, BlockPos pos, IBlockState state)
++   {
++      return reader instanceof World ? func_180670_a((World) reader, rand, pos, state) : false;
++   }
++
++   @Override
++   default void grow(IWorld world, Random rand, BlockPos pos, IBlockState state, boolean natural)
++   {
++      func_176474_b(world.func_201672_e(), rand, pos, state);
++   }
+ }

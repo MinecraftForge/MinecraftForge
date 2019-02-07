@@ -21,77 +21,47 @@ package net.minecraftforge.common.plants;
 
 import java.util.Random;
 
-import net.minecraft.block.IGrowable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 
 /**
  * The base interface of all growable plants. Implementers must override canGrow/grow, or callers will end up with a StackOverflowException. This class extends IGrowable in order
  * to reduce the number of patches needed. Modders should not override the IGrowable methods.
  */
-@SuppressWarnings("deprecation")
-public interface IGrowablePlant extends IPlant, IGrowable
+public interface IGrowablePlant extends IPlant
 {
 
     /**
-     * @param world
-     *            The world
-     * @param pos
-     *            The current pos
-     * @param state
-     *            The current state
+     * @param reader A block reader
+     * @param pos The current pos
+     * @param state The current state
      * 
      * @return If this plant can grow, and {@link IPlant#grow(World, Random, BlockPos, IBlockState)} will actually do something.
      */
-    default boolean canGrow(World world, BlockPos pos, IBlockState state)
-    {
-        return canGrow(world, pos, state, world.isRemote);
-    }
+    boolean canGrow(IBlockReader reader, BlockPos pos, IBlockState state);
 
     /**
-     * @param world
-     *            The world
-     * @param rand
-     *            A random
-     * @param pos
-     *            The current pos
-     * @param state
-     *            The current state
+     * @param reader A block reader
+     * @param rand A random
+     * @param pos The current pos
+     * @param state The current state
      * 
      * @return If this plant can be forcibly grown using bonemeal.
      */
-    boolean canUseBonemeal(World world, Random rand, BlockPos pos, IBlockState state);
+    boolean canUseBonemeal(IBlockReader reader, Random rand, BlockPos pos, IBlockState state);
 
     /**
      * This method is called to grow the plant. If this plant cannot be grown further, this method should do nothing. This method is not responsible for posting the forge
      * CropGrowPre/Post events. Callers should post those themselves.
      * 
-     * @param world
-     *            The world
-     * @param pos
-     *            The current pos
-     * @param state
-     *            The current state
-     * @param natural
-     *            If this grow call was a result of "natural" causes like random block updates, or artificial, from fertilizers such as bonemeal.
+     * @param world The world
+     * @param pos The current pos
+     * @param state The current state
+     * @param natural If this grow call was a result of "natural" causes like random block updates, or artificial, from fertilizers such as bonemeal.
      */
-    default void grow(World world, Random rand, BlockPos pos, IBlockState state, boolean natural)
-    {
-        grow(world, rand, pos, state);
-    }
-
-    @Deprecated
-    default boolean canGrow(IBlockReader world, BlockPos pos, IBlockState state, boolean isClient)
-    {
-        return canGrow((World) world, pos, state);
-    }
-
-    @Deprecated
-    default void grow(World world, Random rand, BlockPos pos, IBlockState state)
-    {
-        grow(world, rand, pos, state, false);
-    }
+    void grow(IWorld world, Random rand, BlockPos pos, IBlockState state, boolean natural);
 
 }

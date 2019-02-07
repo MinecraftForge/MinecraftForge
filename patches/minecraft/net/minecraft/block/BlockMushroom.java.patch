@@ -1,14 +1,5 @@
 --- a/net/minecraft/block/BlockMushroom.java
 +++ b/net/minecraft/block/BlockMushroom.java
-@@ -13,7 +13,7 @@
- import net.minecraft.world.gen.feature.IFeatureConfig;
- import net.minecraft.world.gen.feature.NoFeatureConfig;
- 
--public class BlockMushroom extends BlockBush implements IGrowable {
-+public class BlockMushroom extends BlockBush implements net.minecraftforge.common.plants.IGrowablePlant {
-    protected static final VoxelShape field_196385_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
- 
-    public BlockMushroom(Block.Builder p_i48363_1_) {
 @@ -64,7 +64,7 @@
        IBlockState iblockstate = p_196260_2_.func_180495_p(blockpos);
        Block block = iblockstate.func_177230_c();
