@@ -133,6 +133,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
 
             values.access &= values.access & ~Opcodes.ACC_FINAL; //Strip the final so JITer doesn't inline things.
 
+            mtd.access |= Opcodes.ACC_SYNCHRONIZED;
             mtd.instructions.clear();
             InstructionAdapter ins = new InstructionAdapter(mtd);
 
