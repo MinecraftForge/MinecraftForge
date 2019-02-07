@@ -24,7 +24,7 @@ import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 public class DoublePlantItemBlock extends PlantableItemBlock
 {
@@ -35,11 +35,11 @@ public class DoublePlantItemBlock extends PlantableItemBlock
     }
 
     @Override
-    public boolean placePlant(IBlockState state, World world, BlockPos pos)
+    public boolean placePlant(IBlockState state, IWorld world, BlockPos pos)
     {
         if (!world.isAirBlock(pos.up()))
             return false;
-        return super.placePlant(state, world, pos) && world.setBlockState(pos.up(), state.with(BlockDoublePlant.HALF, DoubleBlockHalf.UPPER));
+        return super.placePlant(state, world, pos) && world.setBlockState(pos.up(), state.with(BlockDoublePlant.HALF, DoubleBlockHalf.UPPER), 2);
     }
 
 }

@@ -23,7 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.World;
+import net.minecraft.world.IWorld;
 
 public interface IPlantable
 {
@@ -55,7 +55,7 @@ public interface IPlantable
      * 
      * @return If this placement was successful.
      */
-    default boolean placePlant(IBlockState state, World world, BlockPos pos)
+    default boolean placePlant(IBlockState state, IWorld world, BlockPos pos)
     {
         return world.setBlockState(pos, state, 3);
     }
