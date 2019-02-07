@@ -24,7 +24,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public abstract class IRenderHandler
+@FunctionalInterface
+public interface IRenderHandler
 {
     @OnlyIn(Dist.CLIENT)
     public abstract void render(float partialTicks, WorldClient world, Minecraft mc);
