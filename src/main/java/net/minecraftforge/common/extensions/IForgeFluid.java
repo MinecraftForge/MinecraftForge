@@ -53,7 +53,7 @@ public interface IForgeFluid
      */
     default boolean isEntityInside(IFluidState state, IWorldReader world, BlockPos pos, Entity entity, double yToTest, Tag<Fluid> tag, boolean testingHead)
     {
-        return state.isTagged(tag) && yToTest - pos.getY() < state.getHeight() + 0.1F;
+        return state.isTagged(tag) && yToTest < (double)(pos.getY() + state.getHeight() + 0.11111111F);
     }
 
     /**
@@ -99,7 +99,7 @@ public interface IForgeFluid
     {
         return state.getExplosionResistance();
     }
-    
+
     /**
      * Queries if this fluid should render in a given layer.
      * A custom {@link IBakedModel} can use {@link net.minecraftforge.client.MinecraftForgeClient#getRenderLayer()} to alter the model based on layer.
