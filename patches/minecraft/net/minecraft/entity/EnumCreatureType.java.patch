@@ -1,11 +1,20 @@
 --- a/net/minecraft/entity/EnumCreatureType.java
 +++ b/net/minecraft/entity/EnumCreatureType.java
+@@ -6,7 +6,7 @@
+ import net.minecraft.entity.passive.EntityWaterMob;
+ import net.minecraft.entity.passive.IAnimal;
+ 
+-public enum EnumCreatureType {
++public enum EnumCreatureType implements net.minecraftforge.common.IExtensibleEnum {
+    MONSTER(IMob.class, 70, false, false),
+    CREATURE(EntityAnimal.class, 10, true, true),
+    AMBIENT(EntityAmbientCreature.class, 15, true, false),
 @@ -39,4 +39,8 @@
     public boolean func_82705_e() {
        return this.field_82707_i;
     }
 +
 +   public static EnumCreatureType create(String name, Class<? extends IAnimal> p_i47849_3_, int p_i47849_4_, boolean p_i47849_5_, boolean p_i47849_6_) {
-+      return null;
++      throw new IllegalStateException("Enum not extended");
 +   }
  }
