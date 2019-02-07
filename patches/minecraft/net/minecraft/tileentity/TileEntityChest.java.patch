@@ -17,7 +17,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof TileEntityChest) {
              return ((TileEntityChest)tileentity).field_145987_o;
-@@ -235,4 +236,50 @@
+@@ -235,4 +236,57 @@
        p_199722_0_.func_199721_a(p_199722_1_.func_190576_q());
        p_199722_1_.func_199721_a(nonnulllist);
     }
@@ -33,7 +33,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, EnumFacing side) {
-+       if (cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++       if (!this.field_145846_f && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +          if (this.chestHandler == null) {
 +             this.chestHandler = net.minecraftforge.common.util.LazyOptional.of(this::createHandler);
 +          }
@@ -66,5 +66,12 @@
 +         }
 +      }
 +      return new net.minecraftforge.items.wrapper.InvWrapper(this);
++   }
++
++   @Override
++   public void func_145843_s() {
++      super.func_145843_s();
++      if (chestHandler != null)
++        chestHandler.invalidate();
 +   }
  }

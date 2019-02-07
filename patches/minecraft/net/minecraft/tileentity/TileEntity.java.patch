@@ -61,7 +61,15 @@
     public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_) {
        double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
        double d1 = (double)this.field_174879_c.func_177956_o() + 0.5D - p_145835_3_;
-@@ -179,4 +187,11 @@
+@@ -138,6 +146,7 @@
+ 
+    public void func_145843_s() {
+       this.field_145846_f = true;
++      this.invalidateCaps();
+    }
+ 
+    public void func_145829_t() {
+@@ -179,4 +188,11 @@
     public TileEntityType<?> func_200662_C() {
        return this.field_200663_e;
     }
