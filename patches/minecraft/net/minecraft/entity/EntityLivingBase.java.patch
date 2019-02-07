@@ -302,7 +302,7 @@
  
              ItemStack itemstack1 = this.func_184582_a(entityequipmentslot);
              if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
-+               if (!ItemStack.areItemStacksEqualUsingNBTShareTag(itemstack1, itemstack))
++               if (!itemstack1.equals(itemstack, true))
                 ((WorldServer)this.field_70170_p).func_73039_n().func_151247_a(this, new SPacketEntityEquipment(this.func_145782_y(), entityequipmentslot, itemstack1));
 +               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent(this, entityequipmentslot, itemstack, itemstack1));
                 if (!itemstack.func_190926_b()) {
@@ -369,7 +369,7 @@
           this.field_184627_bm.func_77974_b(this.field_70170_p, this, this.func_184605_cv());
        }
  
-@@ -2346,4 +2406,53 @@
+@@ -2346,4 +2406,60 @@
     @OnlyIn(Dist.CLIENT)
     public void func_191987_a(BlockPos p_191987_1_, boolean p_191987_2_) {
     }
@@ -415,11 +415,18 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
-+      if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++      if (!this.field_70128_L && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +         if (facing == null) return handlers[2].cast();
 +         else if (facing.func_176740_k().func_200128_b()) return handlers[0].cast();
 +         else if (facing.func_176740_k().func_176722_c()) return handlers[1].cast();
 +      }
 +      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void func_70106_y() {
++     super.func_70106_y();
++     for (int x = 0; x < handlers.length; x++)
++       handlers[x].invalidate();
 +   }
  }

@@ -29,9 +29,13 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
+
+import java.nio.file.Path;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,6 +51,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingMode;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -84,7 +91,27 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
-        ForgeConfig.load();
+        /*
+        FMLModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.spec);
+        FMLModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.chunk_spec);
+        FMLModLoadingContext.get().getModEventBus().register(ForgeConfig.class);
+        */
+        //Temporary, until I can talk to CPW about how certian types of config setups
+        loadConfig(ForgeConfig.spec, FMLPaths.CONFIGDIR.get().resolve("forge.toml"));
+        loadConfig(ForgeConfig.chunk_spec, FMLPaths.CONFIGDIR.get().resolve("forge_chunk.toml"));
+    }
+
+    private void loadConfig(ForgeConfigSpec spec, Path path) {
+        LOGGER.debug(FORGEMOD, "Loading config file {}", path);
+        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
+            .sync()
+            .autosave()
+            .writingMode(WritingMode.REPLACE)
+            .build();
+        LOGGER.debug(FORGEMOD, "Built TOML config for {}", path.toString());
+        configData.load();
+        LOGGER.debug(FORGEMOD, "Loaded TOML config file {}", path.toString());
+        spec.setConfig(configData);
     }
 
 /*
@@ -130,7 +157,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             universalBucket = new UniversalBucket();
             universalBucket.setUnlocalizedName("forge.bucketFilled");
-            event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
+            event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucket_filled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
         }
     }

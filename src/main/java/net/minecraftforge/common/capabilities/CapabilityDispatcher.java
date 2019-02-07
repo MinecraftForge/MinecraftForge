@@ -52,18 +52,20 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     private ICapabilityProvider[] caps;
     private INBTSerializable<INBTBase>[] writers;
     private String[] names;
+    private final List<Runnable> listeners;
 
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list)
+    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners)
     {
-        this(list, null);
+        this(list, listeners, null);
     }
 
     @SuppressWarnings("unchecked")
-    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, @Nullable ICapabilityProvider parent)
+    public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners, @Nullable ICapabilityProvider parent)
     {
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
         List<INBTSerializable<INBTBase>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
+        this.listeners = listeners;
 
         if (parent != null) // Parents go first!
         {
@@ -133,5 +135,10 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
         if (other == null) return this.writers.length == 0;  // Done this way so we can do some pre-checks before doing the costly NBT serialization and compare
         if (this.writers.length == 0) return other.writers.length == 0;
         return this.serializeNBT().equals(other.serializeNBT());
+    }
+
+    public void invalidate()
+    {
+        this.listeners.forEach(Runnable::run);
     }
 }

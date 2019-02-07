@@ -19,14 +19,10 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.forgespi.language.IModInfo;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -51,6 +47,9 @@ public abstract class ModContainer
     protected ModLoadingStage modLoadingStage;
     protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
     protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
+    protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    protected Optional<Consumer<ModConfig.ModConfigEvent>> configHandler = Optional.empty();
 
     public ModContainer(IModInfo info)
     {
@@ -123,6 +122,14 @@ public abstract class ModContainer
     public <T> void registerExtensionPoint(ExtensionPoint point, Supplier<T> extension)
     {
         extensionPoints.put(point, extension);
+    }
+
+    public void addConfig(final ModConfig modConfig) {
+       configs.put(modConfig.getType(), modConfig);
+    }
+
+    public void dispatchConfigEvent(ModConfig.ModConfigEvent event) {
+        configHandler.ifPresent(configHandler->configHandler.accept(event));
     }
 
     /**

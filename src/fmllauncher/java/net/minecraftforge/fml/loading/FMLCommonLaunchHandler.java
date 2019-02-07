@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
@@ -68,8 +67,9 @@ public abstract class FMLCommonLaunchHandler
     }
 
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
-        Stream.of(LibraryFinder.commonLibPaths(ObjectArrays.concat(FMLLoader.getForgePath(), FMLLoader.getMCPaths()))).
-                forEach(builder::addTransformationPath);
+        builder.addTransformationPath(FMLLoader.getForgePath());
+        for (Path path : FMLLoader.getMCPaths())
+            builder.addTransformationPath(path);
         builder.setClassBytesLocator(getClassLoaderLocatorFunction());
         builder.setManifestLocator(getClassLoaderManifestLocatorFunction());
     }
@@ -87,10 +87,11 @@ public abstract class FMLCommonLaunchHandler
     }
 
     protected void processModClassesEnvironmentVariable(final Map<String, List<Pair<Path, List<Path>>>> arguments) {
-        LOGGER.debug(CORE, "Got mod coordinates {} from env", System.getenv("MOD_CLASSES"));
+        final String modClasses = Optional.ofNullable(System.getenv("MOD_CLASSES")).orElse("");
+        LOGGER.debug(CORE, "Got mod coordinates {} from env", modClasses);
 
         // "a/b/;c/d/;" -> "modid%%c:\fish\pepper;modid%%c:\fish2\pepper2\;modid2%%c:\fishy\bums;modid2%%c:\hmm"
-        final Map<String, List<Path>> modClassPaths = Arrays.stream(System.getenv("MOD_CLASSES").split(File.pathSeparator)).
+        final Map<String, List<Path>> modClassPaths = Arrays.stream(modClasses.split(File.pathSeparator)).
                 map(inp -> inp.split("%%", 2)).map(this::buildModPair).
                 collect(Collectors.groupingBy(Pair::getLeft, Collectors.mapping(Pair::getRight, Collectors.toList())));
 

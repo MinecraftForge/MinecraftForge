@@ -599,7 +599,7 @@ public interface IForgeBlock
      */
     default void onPlantGrow(IBlockState state, IWorld world, BlockPos pos, BlockPos source)
     {
-        if (this.getBlock() == Blocks.GRASS || this.getBlock() == Blocks.FARMLAND || this.getBlock() == Blocks.AIR)
+        if (this.getBlock() == Blocks.GRASS_BLOCK || this.getBlock() == Blocks.MYCELIUM || this.getBlock() == Blocks.FARMLAND || this.getBlock() == Blocks.AIR)
             world.setBlockState(pos, Blocks.DIRT.getDefaultState(), 2);
     }
 
@@ -743,7 +743,7 @@ public interface IForgeBlock
     */
     default boolean shouldCheckWeakPower(IBlockState state, IWorldReader world, BlockPos pos, EnumFacing side)
     {
-        return state.isTopSolid();
+        return state.isNormalCube(world, pos);
     }
 
     /**

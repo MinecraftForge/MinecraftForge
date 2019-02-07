@@ -69,3 +69,17 @@ key="value"
 [[mods]]
     # A minimal mod
     modId="minimalmod"
+# debug/misc
+[[mods]]
+    modId="enumplanttypetest"
+    version="1.0"
+    displayName="EnumPlantTypeTest"
+# debug/chat
+[[mods]]
+    modId="command_event_test"
+    version="1.0"
+    displayName="CommandEventTest"
+[[mods]]
+    modId="entity_selector_test"
+    version="1.0"
+    displayName="EntitySelectorTest"

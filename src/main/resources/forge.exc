@@ -10,10 +10,8 @@ net/minecraft/entity/Entity.changeDimension(ILnet/minecraftforge/common/util/ITe
 #net/minecraft/entity/item/EntityMinecartContainer.changeDimension(ILnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_184204_1_,teleporter
 #net/minecraft/entity/player/EntityPlayerMP.changeDimension(ILnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_184204_1_,teleporter
 net/minecraft/entity/player/EntityPlayer.getDigSpeed(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
-#net/minecraft/server/management/PlayerList.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraft/world/Teleporter;)V=|p_187242_1_,p_187242_2_,teleporter
-#net/minecraft/server/management/PlayerList.transferPlayerToDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraftforge/common/util/ITeleporter;)V=|p_187242_1_,p_187242_2_,teleporter
-#net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/Teleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
-#net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
+net/minecraft/server/management/PlayerList.changePlayerDimension(Lnet/minecraft/entity/player/EntityPlayerMP;ILnet/minecraftforge/common/util/ITeleporter;)V=|p_187242_1_,p_187242_2_,teleporter
+net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;ILnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
 
 #net/minecraft/world/World.getBiomeGenForCoordsBody(II)Lnet/minecraft/world/biome/Biome;=|p_72807_1_,p_72807_2_
 #net/minecraft/world/World.getSunBrightnessFactor(F)F=|p_72967_1_
@@ -91,3 +89,6 @@ net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_8268
 #net/minecraft/client/audio/SoundManager.setListener(Lnet/minecraft/entity/Entity;F)V=|p_148615_1_,p_148615_2_
 
 net/minecraft/item/ArmorMaterial.create(Ljava/lang/String;Ljava/lang/String;I[IILnet/minecraft/util/SoundEvent;FLjava/util/function/Supplier;)Lnet/minecraft/item/ArmorMaterial;=|name,p_i48533_3_,p_i48533_4_,p_i48533_5_,p_i48533_6_,p_i48533_7_,p_i48533_8_,p_i48533_9_
+net/minecraft/entity/EnumCreatureType.create(Ljava/lang/String;Ljava/lang/Class;IZZ)Lnet/minecraft/entity/EnumCreatureType;=|name,p_i47849_3_,p_i47849_4_,p_i47849_5_,p_i47849_6_
+
+net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;=|p_150788_1_,limitedTag

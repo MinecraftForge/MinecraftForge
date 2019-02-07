@@ -105,11 +105,11 @@ public enum LifecycleEventProvider
             this.progression = p;
         }
 
-        public Event getOrBuildEvent(FMLModContainer fmlModContainer)
+        public Event getOrBuildEvent(ModContainer modContainer)
         {
             if (customEventSupplier!=null) return customEventSupplier.get();
 
-            return stage.getModEvent(fmlModContainer);
+            return stage.getModEvent(modContainer);
         }
 
         @Override

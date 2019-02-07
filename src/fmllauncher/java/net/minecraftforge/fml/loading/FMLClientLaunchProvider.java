@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
@@ -28,14 +27,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.stream.Stream;
 
 public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
@@ -56,6 +51,13 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
             Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };
+    }
+
+    @Override
+    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
+    {
+        super.configureTransformationClassLoader(builder);
+        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/RealmsVersion.class", "realms"));
     }
 
     @SuppressWarnings("unchecked")

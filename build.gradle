@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        mavenLocal()
+        //mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
@@ -241,12 +241,12 @@ project(':forge') {
                 'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap,
             'net/minecraftforge/fml/loading/': [
-                    'Specification-Title':      'Launcher',
-                    'Specification-Vendor':     'Forge Development LLC',
-                    'Specification-Version':    '1',
-                    'Implementation-Title':     'FML Launcher',
-                    'Implementation-Version':   SPEC_VERSION,
-                    'Implementation-Vendor':    'Forge'
+                'Specification-Title':      'Launcher',
+                'Specification-Vendor':     'Forge Development LLC',
+                'Specification-Version':    '1',
+                'Implementation-Title':     'FML Launcher',
+                'Implementation-Version':   SPEC_VERSION,
+                'Implementation-Vendor':    'Forge'
             ] as LinkedHashMap
         ]
     }
@@ -272,7 +272,7 @@ project(':forge') {
         installer 'cpw.mods:modlauncher:0.9.+'
         installer 'net.minecraftforge:accesstransformers:0.14.+:shadowed'
         installer 'net.minecraftforge:eventbus:0.6.+:service'
-        installer 'net.minecraftforge:forgespi:0.4.+'
+        installer 'net.minecraftforge:forgespi:0.6.+'
         installer 'net.minecraftforge:coremods:0.2.+'
         installer 'com.electronwill.night-config:core:3.4.2'
         installer 'com.electronwill.night-config:toml:3.4.2'
@@ -695,10 +695,34 @@ project(':forge') {
             }
         }
     }
+    
+    task fmllauncherConfig(type: WriteProperties) {
+        outputFile file('build/server_launcher.properties')
+        encoding 'UTF8'
+        doFirst {
+            def artifacts = getArtifacts(project, project.configurations.installer, false).values().stream().map{a -> a.downloads.artifact.path}.sorted().collect() + [
+                "net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-data.jar",
+                "net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
+            ]
+            for (int x = 0; x < artifacts.size(); x++) {
+                property 'library.' + x.toString().padLeft(3, '0'), "libraries/${artifacts.get(x)}"
+            }
+            property 'library.count', artifacts.size()
+            property 'args', [
+              '--gameDir',          '.',
+              '--launchTarget',     'fmlserver',
+              '--fml.forgeVersion', "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
+              '--fml.mcpVersion',   MCP_VERSION,
+              '--fml.mcVersion',    MC_VERSION,
+              '--fml.forgeGroup',   project.group
+            ].join(' ')
+        }
+    }
 
-    task launcherJar(type: Jar) {
+    task launcherJar(type: Jar, dependsOn: [fmllauncherConfig]) {
         classifier 'launcher'
         from sourceSets.fmllauncher.output
+        from fmllauncherConfig.outputFile
         doFirst {
             def classpath = new StringBuilder()
             def artifacts = getArtifacts(project, project.configurations.installer, false)
@@ -865,7 +889,7 @@ project(':forge') {
     task userdevExtrasReobf(type:TaskReobfuscateJar) {
         dependsOn userdevExtras, createMcp2Srg
         input = tasks.userdevExtras.archivePath
-        classpath = project.configurations.getByName("compile")
+        classpath = project.configurations.compile
         srg = tasks.createMcp2Srg.output
     }
 

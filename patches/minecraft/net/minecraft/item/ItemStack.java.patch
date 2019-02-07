@@ -193,7 +193,7 @@
        }
  
        return multimap;
-@@ -874,4 +897,89 @@
+@@ -874,4 +897,37 @@
     public void func_190918_g(int p_190918_1_) {
        this.func_190917_f(-p_190918_1_);
     }
@@ -229,57 +229,5 @@
 +   private Item getItemRaw()
 +   {
 +       return this.field_151002_e;
-+   }
-+
-+   /**
-+    * Modeled after ItemStack.areItemStacksEqual
-+    * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
-+    * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
-+    */
-+   public static boolean areItemStacksEqualUsingNBTShareTag(ItemStack stackA, ItemStack stackB)
-+   {
-+       if (stackA.func_190926_b())
-+           return stackB.func_190926_b();
-+       else
-+           return !stackB.func_190926_b() && stackA.isItemStackEqualUsingNBTShareTag(stackB);
-+   }
-+
-+   /**
-+    * Modeled after ItemStack.isItemStackEqual
-+    * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
-+    * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
-+    */
-+   private boolean isItemStackEqualUsingNBTShareTag(ItemStack other)
-+   {
-+       return this.field_77994_a == other.field_77994_a && this.func_77973_b() == other.func_77973_b() && areItemStackShareTagsEqual(this, other);
-+   }
-+
-+   /**
-+    * Modeled after ItemStack.areItemStackTagsEqual
-+    * Uses Item.getNBTShareTag for comparison instead of NBT and capabilities.
-+    * Only used for comparing itemStacks that were transferred from server to client using Item.getNBTShareTag.
-+    */
-+   public static boolean areItemStackShareTagsEqual(ItemStack stackA, ItemStack stackB)
-+   {
-+       NBTTagCompound shareTagA = stackA.func_77973_b().getNBTShareTag(stackA);
-+       NBTTagCompound shareTagB = stackB.func_77973_b().getNBTShareTag(stackB);
-+       if (shareTagA == null)
-+           return shareTagB == null;
-+       else
-+           return shareTagB != null && shareTagA.equals(shareTagB);
-+   }
-+
-+   /**
-+    *
-+    * Should this item, when held, allow sneak-clicks to pass through to the underlying block?
-+    *
-+    * @param world The world
-+    * @param pos Block position in world
-+    * @param player The Player that is wielding the item
-+    * @return
-+    */
-+   public boolean doesSneakBypassUse(net.minecraft.world.IWorldReader world, BlockPos pos, EntityPlayer player)
-+   {
-+       return this.func_190926_b() || this.func_77973_b().doesSneakBypassUse(this, world, pos, player);
 +   }
  }

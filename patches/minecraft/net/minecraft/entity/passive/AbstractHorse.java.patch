@@ -8,7 +8,7 @@
     }
  
     protected void func_110232_cE() {
-@@ -960,4 +961,13 @@
+@@ -960,4 +961,19 @@
  
        return p_204210_2_;
     }
@@ -17,8 +17,14 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
-+      if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
++      if (!this.field_70128_L && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void func_70106_y() {
++     super.func_70106_y();
++     itemHandler.invalidate();
 +   }
  }

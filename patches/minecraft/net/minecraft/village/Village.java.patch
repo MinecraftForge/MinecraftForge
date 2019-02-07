@@ -42,7 +42,15 @@
              if (entityplayer1 != null) {
                 double d1 = entityplayer1.func_70068_e(p_82685_1_);
                 if (!(d1 > d0)) {
-@@ -317,22 +320,47 @@
+@@ -276,6 +279,7 @@
+             villagedoorinfo.func_75466_d();
+          }
+ 
++         if (field_75586_a.func_175667_e(villagedoorinfo.func_179852_d())) // Forge: check that the door block is loaded to avoid loading chunks
+          if (!this.func_179860_f(villagedoorinfo.func_179852_d()) || Math.abs(this.field_75581_g - villagedoorinfo.func_75473_b()) > 1200) {
+             this.field_75585_c = this.field_75585_c.func_177973_b(villagedoorinfo.func_179852_d());
+             flag = true;
+@@ -317,22 +321,47 @@
        }
     }
  
@@ -51,12 +59,12 @@
 +      return this.getPlayerReputation(findUUID(p_82684_1_));
 +   }
 +
-+   public int getPlayerReputation(UUID p_82684_1_) 
++   public int getPlayerReputation(UUID p_82684_1_)
 +   {
        Integer integer = this.field_82693_j.get(p_82684_1_);
        return integer == null ? 0 : integer;
     }
-+   
+ 
 +   private UUID findUUID(String name)
 +   {
 +      if (this.field_75586_a == null || this.field_75586_a.func_73046_m() == null)
@@ -64,7 +72,7 @@
 +      GameProfile profile = this.field_75586_a.func_73046_m().func_152358_ax().func_152655_a(name);
 +      return profile == null ? EntityPlayer.func_175147_b(name) : profile.getId();
 +   }
- 
++
 +   @Deprecated //Hasn't worked since 1.9, use UUID version below.
     public int func_82688_a(String p_82688_1_, int p_82688_2_) {
 -      int i = this.func_82684_a(p_82688_1_);
@@ -86,13 +94,13 @@
  
 +   public boolean isPlayerReputationTooLow(UUID uuid)
 +   {
-+      return this.getPlayerReputation(uuid) <= -15;   
++      return this.getPlayerReputation(uuid) <= -15;
 +   }
 +
     public void func_82690_a(NBTTagCompound p_82690_1_) {
        this.field_75588_h = p_82690_1_.func_74762_e("PopSize");
        this.field_75583_e = p_82690_1_.func_74762_e("Radius");
-@@ -354,17 +382,14 @@
+@@ -354,17 +383,14 @@
  
        for(int j = 0; j < nbttaglist1.size(); ++j) {
           NBTTagCompound nbttagcompound1 = nbttaglist1.func_150305_b(j);
@@ -115,7 +123,7 @@
     }
  
     public void func_82689_b(NBTTagCompound p_82689_1_) {
-@@ -396,14 +421,12 @@
+@@ -396,14 +422,12 @@
        p_82689_1_.func_74782_a("Doors", nbttaglist);
        NBTTagList nbttaglist1 = new NBTTagList();
  
@@ -133,7 +141,7 @@
                 nbttagcompound1.func_74768_a("S", this.field_82693_j.get(s));
                 nbttaglist1.add((INBTBase)nbttagcompound1);
              }
-@@ -413,6 +436,8 @@
+@@ -413,6 +437,8 @@
        }
  
        p_82689_1_.func_74782_a("Players", nbttaglist1);
@@ -142,7 +150,7 @@
     }
  
     public void func_82692_h() {
-@@ -424,8 +449,8 @@
+@@ -424,8 +450,8 @@
     }
  
     public void func_82683_b(int p_82683_1_) {

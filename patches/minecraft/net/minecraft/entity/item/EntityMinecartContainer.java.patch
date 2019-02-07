@@ -14,7 +14,15 @@
     }
  
     public void func_70106_y() {
-@@ -163,6 +164,7 @@
+@@ -131,6 +132,7 @@
+       }
+ 
+       super.func_70106_y();
++      itemHandler.invalidate();
+    }
+ 
+    public void func_184174_b(boolean p_184174_1_) {
+@@ -163,6 +165,7 @@
     }
  
     public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_) {
@@ -22,7 +30,7 @@
        if (!this.field_70170_p.field_72995_K) {
           p_184230_1_.func_71007_a(this);
        }
-@@ -215,9 +217,9 @@
+@@ -215,9 +218,9 @@
              random = new Random(this.field_184291_d);
           }
  
@@ -34,7 +42,7 @@
           }
  
           loottable.func_186460_a(this, random, lootcontext$builder.func_186471_a());
-@@ -238,4 +240,13 @@
+@@ -238,4 +241,13 @@
     public ResourceLocation func_184276_b() {
        return this.field_184290_c;
     }
@@ -43,7 +51,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
-+      if (capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++      if (!this.field_70128_L && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }

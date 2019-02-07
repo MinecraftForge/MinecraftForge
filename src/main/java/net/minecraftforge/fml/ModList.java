@@ -34,6 +34,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.FutureTask;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -55,7 +56,14 @@ public class ModList
     private final Map<String, ModFileInfo> fileById;
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
-    private ForkJoinPool modLoadingThreadPool = new ForkJoinPool();
+    private ForkJoinPool modLoadingThreadPool = new ForkJoinPool(Runtime.getRuntime().availableProcessors(), pool ->
+    {
+        ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+        thread.setName("modloading-worker-" + thread.getPoolIndex());
+        // The default sets it to the SystemClassloader, so copy the current one.
+        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+        return thread;
+    }, null, false);
     private List<ModFileScanData> modFileScanData;
 
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
@@ -131,7 +139,7 @@ public class ModList
     {
         return Optional.ofNullable(this.indexedMods.get(modId));
     }
-    
+
     public Optional<? extends ModContainer> getModContainerByObject(Object obj)
     {
         return mods.stream().filter(mc -> mc.getMod() == obj).findFirst();

@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
+import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.api.distmarker.Dist;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -62,6 +62,13 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     public Path[] getMCPaths(final String mcVersion, final String mcpVersion, final String forgeVersion, final String forgeGroup) {
         // In forge dev, we just find the path for ForgeVersion for everything
         return new Path[] { compiledClasses, resources };
+    }
+
+    @Override
+    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
+    {
+        super.configureTransformationClassLoader(builder);
+        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/RealmsVersion.class", "realms"));
     }
 
     @Override

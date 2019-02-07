@@ -44,8 +44,8 @@ public enum ModLoadingStage
         this.modLifecycleEventFunction = modLifecycleEventFunction;
     }
 
-    public ModLifecycleEvent getModEvent(ModContainer fmlModContainer)
+    public ModLifecycleEvent getModEvent(ModContainer modContainer)
     {
-        return modLifecycleEventFunction.get().apply(fmlModContainer);
+        return modLifecycleEventFunction.get().apply(modContainer);
     }
 }

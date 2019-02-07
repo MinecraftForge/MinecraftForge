@@ -20,6 +20,7 @@
   "fml.button.open.mods.folder": "Open Mods Folder",
   "fml.loadingerrorscreen.header": "Error loading mods\n{0,choice,1#1 error has|1<{0} errors have} occurred during loading",
   "fml.language.missingversion": "Mod File {5} needs language provider {3}:{4,vr} to load\n\u00a77We have found {6,i18n,fml.messages.artifactversion}",
+  "fml.modloading.missingmetadata": "mods.toml missing metadata for modid {0}",
   "fml.modloading.failedtoloadmodclass":"{0,modinfo,name} has class loading errors\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadmod":"{0,modinfo,name} ({0,modinfo,id}) has failed to load correctly\n\u00a77{2,exc,msg}",
   "fml.modloading.errorduringevent":"{0,modinfo,name} ({0,modinfo,id}) encountered an error during the {1,lower} event phase\n\u00a77{2,exc,msg}",
@@ -69,6 +70,10 @@
   "commands.forge.tracking.timing_entry": "{0} - {1} [{2}, {3}, {4}]: {5}",
   "commands.forge.tracking.no_data": "No data has been recorded yet.",
 
+
+  "forge.update.beta.1": "%sWARNING: %sForge Beta",
+  "forge.update.beta.2": "Major issues may arise, verify before reporting.",
+  "forge.update.newversion": "New Forge version available: %s",
 
   "forge.configgui.clumpingThreshold.tooltip": "Controls the number threshold at which Packet51 is preferred over Packet52.",
   "forge.configgui.clumpingThreshold": "Packet Clumping Threshold",
