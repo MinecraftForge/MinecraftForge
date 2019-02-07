@@ -42,15 +42,15 @@ public interface IPlant
      */
     default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
     {
-        if (this instanceof BlockStem || this instanceof BlockAttachedStem) return DefaultPlantTypes.CROP;
-        if (this instanceof BlockSapling) return DefaultPlantTypes.SAPLING;
-        if (this == Blocks.DEAD_BUSH) return DefaultPlantTypes.DESERT;
-        if (this == Blocks.RED_MUSHROOM || this == Blocks.BROWN_MUSHROOM) return DefaultPlantTypes.CAVE;
-        if (this == Blocks.VINE) return DefaultPlantTypes.EPIPHYTE;
-        if (this == Blocks.LILY_PAD) return DefaultPlantTypes.WATER;
-        if (this instanceof ILiquidContainer) return DefaultPlantTypes.UNDERWATER;
-        if (this == Blocks.CHORUS_PLANT || this == Blocks.CHORUS_FLOWER) return DefaultPlantTypes.ENDER;
-        return DefaultPlantTypes.PLAINS;
+        if (this instanceof BlockStem || this instanceof BlockAttachedStem) return PlantTypes.CROP;
+        if (this instanceof BlockSapling) return PlantTypes.SAPLING;
+        if (this == Blocks.DEAD_BUSH) return PlantTypes.DESERT;
+        if (this == Blocks.RED_MUSHROOM || this == Blocks.BROWN_MUSHROOM) return PlantTypes.CAVE;
+        if (this == Blocks.VINE) return PlantTypes.EPIPHYTE;
+        if (this == Blocks.LILY_PAD) return PlantTypes.WATER;
+        if (this instanceof ILiquidContainer) return PlantTypes.UNDERWATER;
+        if (this == Blocks.CHORUS_PLANT || this == Blocks.CHORUS_FLOWER) return PlantTypes.ENDER;
+        return PlantTypes.PLAINS;
     }
 
 }

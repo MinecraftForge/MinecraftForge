@@ -25,7 +25,7 @@
 +
 +   @Override
 +   public net.minecraftforge.common.plants.PlantType getPlantType(net.minecraft.world.World world, BlockPos pos, ItemStack stack) {
-+      return net.minecraftforge.common.plants.DefaultPlantTypes.CROP;
++      return net.minecraftforge.common.plants.PlantTypes.CROP;
 +   }
 +
 +   @Override

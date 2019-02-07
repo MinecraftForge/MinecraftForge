@@ -85,7 +85,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
-import net.minecraftforge.common.plants.DefaultPlantTypes;
+import net.minecraftforge.common.plants.PlantTypes;
 import net.minecraftforge.common.plants.IPlant;
 import net.minecraftforge.common.plants.PlantType;
 
@@ -601,17 +601,14 @@ public interface IForgeBlock
             return true;
         */
 
-        if(type == DefaultPlantTypes.PLAINS) return this.getBlock() == Blocks.GRASS_BLOCK || Block.isDirt(getBlock()) || this.getBlock() == Blocks.FARMLAND;
-        if(type == DefaultPlantTypes.DESERT)
-        {
-        	return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.TERRACOTTA || this.getBlock() instanceof BlockGlazedTerracotta;
-        }
-        if(type == DefaultPlantTypes.NETHER) return this.getBlock() == Blocks.SOUL_SAND;
-        if(type == DefaultPlantTypes.ENDER) return this.getBlock() == Blocks.END_STONE;
-        if(type == DefaultPlantTypes.CROP) return this.getBlock() == Blocks.FARMLAND;
-        if(type == DefaultPlantTypes.CAVE) return state.isTopSolid();
-        if(type == DefaultPlantTypes.WATER) return state.getMaterial() == Material.WATER; //&& state.getValue(BlockLiquidWrapper)
-        if(type == DefaultPlantTypes.BEACH)
+        if(type == PlantTypes.PLAINS) return this.getBlock() == Blocks.GRASS_BLOCK || Block.isDirt(getBlock()) || this.getBlock() == Blocks.FARMLAND;
+        if(type == PlantTypes.DESERT) return this.getBlock() == Blocks.SAND || this.getBlock() == Blocks.TERRACOTTA || this.getBlock() instanceof BlockGlazedTerracotta;
+        if(type == PlantTypes.NETHER) return this.getBlock() == Blocks.SOUL_SAND;
+        if(type == PlantTypes.ENDER) return this.getBlock() == Blocks.END_STONE;
+        if(type == PlantTypes.CROP) return this.getBlock() == Blocks.FARMLAND;
+        if(type == PlantTypes.CAVE) return state.isTopSolid();
+        if(type == PlantTypes.WATER) return state.getMaterial() == Material.WATER; //&& state.getValue(BlockLiquidWrapper)
+        if(type == PlantTypes.BEACH)
         {
             boolean isBeach = this.getBlock() == Blocks.GRASS_BLOCK || Block.isDirt(getBlock()) || this.getBlock() == Blocks.SAND;
             if(!isBeach) return false;

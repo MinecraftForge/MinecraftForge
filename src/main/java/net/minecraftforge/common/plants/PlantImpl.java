@@ -79,7 +79,7 @@ public final class PlantImpl
         @Override
         default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
         {
-            return DefaultPlantTypes.CROP;
+            return PlantTypes.CROP;
         }
 
         default BlockCrops getThis()
@@ -142,7 +142,7 @@ public final class PlantImpl
         @Override
         default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
         {
-            return DefaultPlantTypes.NETHER;
+            return PlantTypes.NETHER;
         }
 
         default BlockNetherWart getThis()
@@ -201,7 +201,7 @@ public final class PlantImpl
         @Override
         default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
         {
-            return DefaultPlantTypes.BEACH;
+            return PlantTypes.BEACH;
         }
 
         default BlockReed getThis()
@@ -260,7 +260,7 @@ public final class PlantImpl
         @Override
         default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
         {
-            return DefaultPlantTypes.DESERT;
+            return PlantTypes.DESERT;
         }
 
         default BlockCactus getThis()
@@ -305,7 +305,7 @@ public final class PlantImpl
         @Override
         default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
         {
-            return DefaultPlantTypes.EPIPHYTE;
+            return PlantTypes.EPIPHYTE;
         }
 
         default BlockCocoa getThis()
@@ -326,7 +326,7 @@ public final class PlantImpl
         @Override
         default PlantType getPlantType(World world, BlockPos pos, ItemStack stack)
         {
-            return DefaultPlantTypes.EPIPHYTE;
+            return PlantTypes.EPIPHYTE;
         }
     }
 
@@ -335,7 +335,7 @@ public final class PlantImpl
         @Override
         default PlantType getPlantType(IBlockReader world, BlockPos pos, IBlockState state)
         {
-            return DefaultPlantTypes.ENDER;
+            return PlantTypes.ENDER;
         }
     }
 
