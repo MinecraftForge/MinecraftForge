@@ -5,7 +5,7 @@
              FontRenderer fontrenderer = this.field_146297_k.func_211500_ak().func_211504_a(Minecraft.field_71464_q);
              int j2 = 6839882;
 -            if ((l < i1 + 1 || this.field_146297_k.field_71439_g.field_71068_ca < l1) && !this.field_146297_k.field_71439_g.field_71075_bZ.field_75098_d) {
-+            if (((l < i1 + 1 || this.field_146297_k.field_71439_g.field_71068_ca < l1) && !this.field_146297_k.field_71439_g.field_71075_bZ.field_75098_d) || this.field_147075_G.field_185001_h[l] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
++            if (((l < i1 + 1 || this.field_146297_k.field_71439_g.field_71068_ca < l1) && !this.field_146297_k.field_71439_g.field_71075_bZ.field_75098_d) || this.field_147075_G.field_185001_h[i1] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
                 this.func_73729_b(j1, j + 14 + 19 * i1, 0, 185, 108, 19);
                 this.func_73729_b(j1 + 1, j + 15 + 19 * i1, 16 * i1, 239, 16, 16);
                 fontrenderer.func_78279_b(s1, k1, j + 16 + 19 * i1, i2, (j2 & 16711422) >> 1);
