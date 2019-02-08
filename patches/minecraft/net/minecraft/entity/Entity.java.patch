@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/Entity.java
 +++ b/net/minecraft/entity/Entity.java
-@@ -97,7 +97,7 @@
+@@ -97,12 +97,13 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,13 @@
     protected static final Logger field_184243_a = LogManager.getLogger();
     private static final List<ItemStack> field_190535_b = Collections.<ItemStack>emptyList();
     private static final AxisAlignedBB field_174836_a = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
-@@ -192,6 +192,7 @@
+    private static double field_70155_l = 1.0D;
+    private static int field_70152_a;
++   @Deprecated // Forge: Use the getter to allow overriding in mods
+    private final EntityType<?> field_200606_g;
+    private int field_145783_c;
+    public boolean field_70156_m;
+@@ -192,6 +193,7 @@
     private long field_191506_aJ;
  
     public Entity(EntityType<?> p_i48580_1_, World p_i48580_2_) {
@@ -17,7 +23,7 @@
        this.field_145783_c = field_70152_a++;
        this.field_184244_h = Lists.<Entity>newArrayList();
        this.field_70121_D = field_174836_a;
-@@ -210,7 +211,7 @@
+@@ -210,7 +212,7 @@
        this.field_70170_p = p_i48580_2_;
        this.func_70107_b(0.0D, 0.0D, 0.0D);
        if (p_i48580_2_ != null) {
@@ -26,7 +32,7 @@
        }
  
        this.field_70180_af = new EntityDataManager(this);
-@@ -221,6 +222,8 @@
+@@ -221,6 +223,8 @@
        this.field_70180_af.func_187214_a(field_184234_aB, false);
        this.field_70180_af.func_187214_a(field_189655_aD, false);
        this.func_70088_a();
@@ -35,7 +41,7 @@
     }
  
     public EntityType<?> func_200600_R() {
-@@ -290,6 +293,7 @@
+@@ -290,6 +294,7 @@
  
     public void func_70106_y() {
        this.field_70128_L = true;
@@ -43,7 +49,7 @@
     }
  
     public void func_184174_b(boolean p_184174_1_) {
-@@ -324,6 +328,7 @@
+@@ -324,6 +329,7 @@
        this.field_70165_t = p_70107_1_;
        this.field_70163_u = p_70107_3_;
        this.field_70161_v = p_70107_5_;
@@ -51,7 +57,7 @@
        float f = this.field_70130_N / 2.0F;
        float f1 = this.field_70131_O;
        this.func_174826_a(new AxisAlignedBB(p_70107_1_ - (double)f, p_70107_3_, p_70107_5_ - (double)f, p_70107_1_ + (double)f, p_70107_3_ + (double)f1, p_70107_5_ + (double)f));
-@@ -794,6 +799,7 @@
+@@ -794,6 +800,7 @@
        this.field_70165_t = (axisalignedbb.field_72340_a + axisalignedbb.field_72336_d) / 2.0D;
        this.field_70163_u = axisalignedbb.field_72338_b;
        this.field_70161_v = (axisalignedbb.field_72339_c + axisalignedbb.field_72334_f) / 2.0D;
@@ -59,7 +65,7 @@
     }
  
     protected SoundEvent func_184184_Z() {
-@@ -845,7 +851,7 @@
+@@ -845,7 +852,7 @@
  
     protected void func_180429_a(BlockPos p_180429_1_, IBlockState p_180429_2_) {
        if (!p_180429_2_.func_185904_a().func_76224_d()) {
@@ -68,7 +74,7 @@
           this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
        }
     }
-@@ -1040,6 +1046,7 @@
+@@ -1040,6 +1047,7 @@
        int k = MathHelper.func_76128_c(this.field_70161_v);
        BlockPos blockpos = new BlockPos(i, j, k);
        IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -76,7 +82,7 @@
        if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE) {
           this.field_70170_p.func_195594_a(new BlockParticleData(Particles.field_197611_d, iblockstate), this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, this.func_174813_aQ().field_72338_b + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, -this.field_70159_w * 4.0D, 1.5D, -this.field_70179_y * 4.0D);
        }
-@@ -1053,7 +1060,7 @@
+@@ -1053,7 +1061,7 @@
           double d0 = this.field_70163_u + (double)this.func_70047_e();
           BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
           IFluidState ifluidstate = this.field_70170_p.func_204610_c(blockpos);
@@ -85,7 +91,7 @@
        }
     }
  
-@@ -1122,6 +1129,7 @@
+@@ -1122,6 +1130,7 @@
           this.field_70126_B -= 360.0F;
        }
  
@@ -93,7 +99,7 @@
        this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
        this.func_70101_b(p_70080_7_, p_70080_8_);
     }
-@@ -1370,6 +1378,7 @@
+@@ -1370,6 +1379,7 @@
           if (this.field_184238_ar) {
              p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
           }
@@ -101,7 +107,7 @@
  
           if (!this.field_184236_aF.isEmpty()) {
              NBTTagList nbttaglist = new NBTTagList();
-@@ -1381,6 +1390,9 @@
+@@ -1381,6 +1391,9 @@
              p_189511_1_.func_74782_a("Tags", nbttaglist);
           }
  
@@ -111,7 +117,7 @@
           this.func_70014_b(p_189511_1_);
           if (this.func_184207_aI()) {
              NBTTagList nbttaglist1 = new NBTTagList();
-@@ -1466,6 +1478,8 @@
+@@ -1466,6 +1479,8 @@
           this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
           this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
           this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
@@ -120,7 +126,7 @@
           if (p_70020_1_.func_150297_b("Tags", 9)) {
              this.field_184236_aF.clear();
              NBTTagList nbttaglist1 = p_70020_1_.func_150295_c("Tags", 8);
-@@ -1546,6 +1560,8 @@
+@@ -1546,6 +1561,8 @@
        } else {
           EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
           entityitem.func_174869_p();
@@ -129,7 +135,7 @@
           this.field_70170_p.func_72838_d(entityitem);
           return entityitem;
        }
-@@ -1595,6 +1611,7 @@
+@@ -1595,6 +1612,7 @@
           this.field_70159_w = 0.0D;
           this.field_70181_x = 0.0D;
           this.field_70179_y = 0.0D;
@@ -137,7 +143,7 @@
           this.func_70071_h_();
           if (this.func_184218_aH()) {
              entity.func_184232_k(this);
-@@ -1636,6 +1653,7 @@
+@@ -1636,6 +1654,7 @@
           }
        }
  
@@ -145,7 +151,7 @@
        if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
           if (this.func_184218_aH()) {
              this.func_184210_p();
-@@ -1663,6 +1681,7 @@
+@@ -1663,6 +1682,7 @@
     public void func_184210_p() {
        if (this.field_184239_as != null) {
           Entity entity = this.field_184239_as;
@@ -153,7 +159,7 @@
           this.field_184239_as = null;
           entity.func_184225_p(this);
        }
-@@ -1789,10 +1808,15 @@
+@@ -1789,10 +1809,15 @@
        return !this.func_184188_bt().isEmpty();
     }
  
@@ -169,7 +175,16 @@
     public boolean func_70093_af() {
        return this.func_70083_f(1);
     }
-@@ -2053,6 +2077,14 @@
+@@ -1990,7 +2015,7 @@
+          func_207712_c(itextcomponent1);
+          return itextcomponent1;
+       } else {
+-         return new TextComponentTranslation(this.field_200606_g.func_210760_d(), new Object[0]);
++         return new TextComponentTranslation(this.func_200600_R().func_210760_d(), new Object[0]); // Forge: Use getter to allow overriding by mods
+       }
+    }
+ 
+@@ -2053,6 +2078,14 @@
  
     @Nullable
     public Entity func_184204_a(int p_184204_1_) {
@@ -184,7 +199,7 @@
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
           this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
           MinecraftServer minecraftserver = this.func_184102_h();
-@@ -2060,7 +2092,7 @@
+@@ -2060,7 +2093,7 @@
           WorldServer worldserver = minecraftserver.func_71218_a(i);
           WorldServer worldserver1 = minecraftserver.func_71218_a(p_184204_1_);
           this.field_71093_bK = p_184204_1_;
@@ -193,7 +208,7 @@
              worldserver1 = minecraftserver.func_200667_a(DimensionType.OVERWORLD);
              this.field_71093_bK = 0;
           }
-@@ -2069,16 +2101,17 @@
+@@ -2069,16 +2102,17 @@
           this.field_70128_L = false;
           this.field_70170_p.field_72984_F.func_76320_a("reposition");
           BlockPos blockpos;
@@ -216,7 +231,7 @@
                 d0 = MathHelper.func_151237_a(d0 * 8.0D, worldserver1.func_175723_af().func_177726_b() + 16.0D, worldserver1.func_175723_af().func_177728_d() - 16.0D);
                 d1 = MathHelper.func_151237_a(d1 * 8.0D, worldserver1.func_175723_af().func_177736_c() + 16.0D, worldserver1.func_175723_af().func_177733_e() - 16.0D);
              }
-@@ -2087,8 +2120,7 @@
+@@ -2087,8 +2121,7 @@
              d1 = (double)MathHelper.func_76125_a((int)d1, -29999872, 29999872);
              float f = this.field_70177_z;
              this.func_70012_b(d0, this.field_70163_u, d1, 90.0F, 0.0F);
@@ -226,7 +241,7 @@
              blockpos = new BlockPos(this);
           }
  
-@@ -2097,7 +2129,7 @@
+@@ -2097,7 +2130,7 @@
           Entity entity = this.func_200600_R().func_200721_a(worldserver1);
           if (entity != null) {
              entity.func_180432_n(this);
@@ -235,7 +250,7 @@
                 BlockPos blockpos1 = worldserver1.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, worldserver1.func_175694_M());
                 entity.func_174828_a(blockpos1, entity.field_70177_z, entity.field_70125_A);
              } else {
-@@ -2591,4 +2623,49 @@
+@@ -2591,4 +2624,49 @@
     public double func_212107_bY() {
        return this.field_211517_W;
     }
