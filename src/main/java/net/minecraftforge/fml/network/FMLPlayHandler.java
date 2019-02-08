@@ -33,5 +33,6 @@ public class FMLPlayHandler
     static
     {
         channel.registerMessage(0, FMLPlayMessages.SpawnEntity.class, FMLPlayMessages.SpawnEntity::encode, FMLPlayMessages.SpawnEntity::decode, FMLPlayMessages.SpawnEntity::handle);
+        channel.registerMessage(1, FMLPlayMessages.OpenContainer.class, FMLPlayMessages.OpenContainer::encode, FMLPlayMessages.OpenContainer::decode, FMLPlayMessages.OpenContainer::handle);
     }
 }

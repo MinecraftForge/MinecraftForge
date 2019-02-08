@@ -500,7 +500,7 @@
        if (this.func_70608_bn()) {
           f = 0.2F;
        } else if (!this.func_203007_ba() && !this.func_184613_cA() && this.field_70131_O != 0.6F) {
-@@ -1967,6 +2096,30 @@
+@@ -1967,6 +2096,41 @@
        return this.field_71075_bZ.field_75098_d && this.func_184840_I() >= 2;
     }
  
@@ -526,6 +526,17 @@
 +
 +   public Collection<ITextComponent> getSuffixes() {
 +       return this.suffixes;
++   }
++
++   /**
++    * Opens a modded container, based on {@code container.getGuiID}
++    * Container.getGuiID must return a valid ResourceLocation in String form. Vanilla follows this, but does not enforce it.
++    * @param container The container provider. The container will be obtained using {@link IInteractionObject#createContainer}.
++    * @param extraData Any extra data to communicate to the client
++    */
++   public void openGui(IInteractionObject container, @Nullable io.netty.buffer.ByteBuf extraData)
++   {
++      if (!field_70170_p.field_72995_K) net.minecraftforge.fml.network.NetworkHooks.openGui((EntityPlayerMP) this, container, extraData);
 +   }
 +
     public static enum EnumChatVisibility {

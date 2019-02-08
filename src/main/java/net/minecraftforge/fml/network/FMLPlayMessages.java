@@ -19,15 +19,20 @@
 
 package net.minecraftforge.fml.network;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class FMLPlayMessages
@@ -151,6 +156,47 @@ public class FMLPlayMessages
                 if (e instanceof IEntityAdditionalSpawnData)
                 {
                     ((IEntityAdditionalSpawnData) e).readSpawnData(msg.buf);
+                }
+            });
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
+    public static class OpenContainer
+    {
+        private final ResourceLocation id;
+        private final int windowId;
+        private final byte[] additionalData;
+
+        public OpenContainer(ResourceLocation id, int windowId, byte[] additionalData)
+        {
+            this.id = id;
+            this.windowId = windowId;
+            this.additionalData = additionalData;
+        }
+
+        public static void encode(OpenContainer msg, PacketBuffer buf)
+        {
+            buf.writeResourceLocation(msg.id);
+            buf.writeVarInt(msg.windowId);
+            buf.writeByteArray(msg.additionalData);
+        }
+
+        public static OpenContainer decode(PacketBuffer buf)
+        {
+            return new OpenContainer(buf.readResourceLocation(), buf.readVarInt(), buf.readByteArray());
+        }
+
+        public static void handle(OpenContainer msg, Supplier<NetworkEvent.Context> ctx)
+        {
+            ctx.get().enqueueWork(() -> {
+                Supplier<Function<ByteBuf, GuiScreen>> sup = NetworkRegistry.guiHandlers.get(msg.id);
+                if (sup != null) {
+                    GuiScreen gui = sup.get().apply(Unpooled.wrappedBuffer(msg.additionalData));
+                    if (gui != null) {
+                        Minecraft.getInstance().displayGuiScreen(gui);
+                        Minecraft.getInstance().player.openContainer.windowId = msg.windowId;
+                    }
                 }
             });
             ctx.get().setPacketHandled(true);
