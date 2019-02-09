@@ -393,14 +393,14 @@
     }
  
     public void func_72939_s() {
-@@ -953,6 +1017,7 @@
-          Entity entity = this.field_73007_j.get(i);
+@@ -954,6 +1018,7 @@
  
           try {
-+            if (entity.canUpdate()) continue;
              ++entity.field_70173_aa;
++            if (entity.canUpdate())
              entity.func_70071_h_();
           } catch (Throwable throwable2) {
+             CrashReport crashreport = CrashReport.func_85055_a(throwable2, "Ticking entity");
 @@ -964,6 +1029,10 @@
                 entity.func_85029_a(crashreportcategory);
              }

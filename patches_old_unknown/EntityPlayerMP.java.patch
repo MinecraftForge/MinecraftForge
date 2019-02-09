@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
++++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
+@@ -158,9 +158,9 @@
+         super(p_i45285_2_, p_i45285_3_);
+         p_i45285_4_.field_73090_b = this;
+         this.field_71134_c = p_i45285_4_;
+-        BlockPos blockpos = p_i45285_2_.func_175694_M();
++        BlockPos blockpos = p_i45285_2_.field_73011_w.getRandomizedSpawnPoint();
+ 
+-        if (p_i45285_2_.field_73011_w.func_191066_m() && p_i45285_2_.func_72912_H().func_76077_q() != GameType.ADVENTURE)
++        if (false && p_i45285_2_.field_73011_w.func_191066_m() && p_i45285_2_.func_72912_H().func_76077_q() != GameType.ADVENTURE)
+         {
+             int i = Math.max(0, p_i45285_1_.func_184108_a(p_i45285_2_));
+             int j = MathHelper.func_76128_c(p_i45285_2_.func_175723_af().func_177729_b((double)blockpos.func_177958_n(), (double)blockpos.func_177952_p()));
+ 

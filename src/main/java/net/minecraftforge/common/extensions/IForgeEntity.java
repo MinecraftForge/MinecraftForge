@@ -75,6 +75,14 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
     Collection<EntityItem> captureDrops();
     Collection<EntityItem> captureDrops(@Nullable Collection<EntityItem> captureDrops);
 
+
+    /**
+     * Returns a NBTTagCompound that can be used to store custom data for this entity.
+     * It will be written, and read from disc, so it persists over world saves.
+     * @return A NBTTagCompound
+     */
+    NBTTagCompound getEntityData();
+
     /**
      * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
      * @return false to prevent an entity that is mounted to this entity from displaying the 'sitting' animation.
@@ -83,7 +91,6 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
     {
         return true;
     }
-
 
     /**
      * Called when a user uses the creative pick block button on this entity.
