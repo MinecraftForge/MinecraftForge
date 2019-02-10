@@ -70,9 +70,9 @@ public final class TerminalHandler
 
                 line = line.trim();
                 if (!line.isEmpty())
-                {/* TODO Commands
-                    server.addPendingCommand(line, server);
-              */}
+                {
+                    server.handleConsoleInput(line, server.getCommandSource());
+                }
             }
         }
         catch (UserInterruptException e)

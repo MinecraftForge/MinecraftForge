@@ -51,7 +51,7 @@ public abstract class FMLCommonLaunchHandler
             "org.apache.logging.log4j.", "org.apache.http.", "org.apache.maven.", "org.objectweb.asm.",
             "paulscode.sound.", "com.ibm.icu.", "sun.", "gnu.trove.", "com.electronwill.nightconfig.",
             "net.minecraftforge.fml.loading.", "net.minecraftforge.fml.language.",
-            "net.minecraftforge.eventbus.", "net.minecraftforge.api."
+            "net.minecraftforge.eventbus.", "net.minecraftforge.api.", "com.mojang.util.QueueLogAppender"
     );
 
     protected Predicate<String> getPackagePredicate() {
