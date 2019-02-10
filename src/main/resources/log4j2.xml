@@ -10,6 +10,15 @@
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Console>
+        <Console name="SysOutColour" target="SYSTEM_OUT">
+            <PatternLayout>
+                <LoggerNamePatternSelector defaultPattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %msg%n}">
+                    <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
+                    <PatternMatch key="net.minecraft." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %msg%n}"/>
+                    <PatternMatch key="com.mojang." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %msg%n}"/>
+                </LoggerNamePatternSelector>
+            </PatternLayout>
+        </Console>
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
             <PatternLayout>
                 <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %msg%n">
@@ -56,6 +65,7 @@
                 <MarkerFilter marker="CORE" onMatch="${sys:forge.logging.marker.core:-ACCEPT}" onMismatch="NEUTRAL"/>
             </filters>
             <AppenderRef ref="SysOut" level="${sys:forge.logging.console.level:-info}"/>
+            <AppenderRef ref="SysOutColour" level="${sys:forge.logging.colourconsole.level:-off}"/>
             <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
             <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-trace}"/>
