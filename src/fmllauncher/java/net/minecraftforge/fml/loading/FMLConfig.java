@@ -39,9 +39,7 @@ public class FMLConfig
     private static ConfigSpec configSpec = new ConfigSpec();
     static {
         configSpec.define("splashscreen", Boolean.TRUE);
-        configSpec.defineInList("side", Dist.CLIENT.name(), Arrays.stream(Dist.values()).map(Enum::name).collect(Collectors.toList()));
-        configSpec.defineInRange("maxframerate", 60, 10, 120);
-        configSpec.defineInRange("minframerate", 60, 10, 120);
+        configSpec.define("maxThreads", -1);
     }
 
     private CommentedFileConfig configData;
@@ -70,7 +68,13 @@ public class FMLConfig
         LOGGER.debug(CORE, "Splash screen is {}", INSTANCE.splashScreenEnabled());
     }
 
-    public boolean splashScreenEnabled() {
-        return configData.<Boolean>getOptional("splashscreen").orElse(Boolean.FALSE);
+    public static boolean splashScreenEnabled() {
+        return INSTANCE.configData.<Boolean>getOptional("splashscreen").orElse(Boolean.FALSE);
+    }
+
+    public static int loadingThreadCount() {
+        int val = INSTANCE.configData.get("maxThreads");
+        if (val <= 0) return Runtime.getRuntime().availableProcessors();
+        return val;
     }
 }
