@@ -5,17 +5,18 @@
           return iblockstate.func_177229_b(field_203160_a);
        } else {
 -         return block != Blocks.field_150425_aM;
-+         return iblockstate.hasDownwardBubbleDrag(iblockstate, p_203157_0_, p_203157_1_);
++         return p_203157_0_.func_180495_p(p_203157_1_.func_177977_b()).func_203425_a(net.minecraftforge.common.Tags.Blocks.BUBBLE_SOURCES_WITH_DRAG);
        }
     }
  
-@@ -130,8 +130,7 @@
+@@ -130,8 +130,8 @@
     }
  
     public boolean func_196260_a(IBlockState p_196260_1_, IWorldReaderBase p_196260_2_, BlockPos p_196260_3_) {
 -      Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
 -      return block == Blocks.field_203203_C || block == Blocks.field_196814_hQ || block == Blocks.field_150425_aM;
-+      return p_196260_1_.canSupportBubbleColumn(p_196260_1_, (net.minecraft.world.IWorldReader) p_196260_2_, p_196260_3_.func_177977_b());
++      IBlockState stateBelow = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
++      return stateBelow.func_177230_c() == Blocks.field_203203_C || stateBelow.func_203425_a(net.minecraftforge.common.Tags.Blocks.BUBBLE_SOURCES);
     }
  
     public boolean func_149703_v() {

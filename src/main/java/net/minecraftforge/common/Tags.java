@@ -60,6 +60,8 @@ public class Tags
         public static final Tag<Block> STORAGE_BLOCKS_LAPIS = tag("storage_blocks/lapis");
         public static final Tag<Block> STORAGE_BLOCKS_QUARTZ = tag("storage_blocks/quartz");
         public static final Tag<Block> STORAGE_BLOCKS_REDSTONE = tag("storage_blocks/redstone");
+        public static final Tag<Block> BUBBLE_SOURCES = tag("bubble_sources");
+        public static final Tag<Block> BUBBLE_SOURCES_WITH_DRAG = tag("bubble_sources_with_drag");
 
         private static Tag<Block> tag(String name)
         {

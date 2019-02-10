@@ -937,28 +937,4 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos);
     }
-    
-    /**
-     * Determines if this block can produce a bubble column.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return True if this block can produce a bubble column.
-     */
-    default boolean canSupportBubbleColumn(IBlockState state, IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().canSupportBubbleColumn(state, world, pos);
-    }
-    
-    /**
-     * Determines if a bubble column produced by this block has downwards drag.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return True if a bubble column produced by this block has downwards drag.
-     */
-    default boolean hasDownwardBubbleDrag(IBlockState state, IBlockReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().hasDownwardBubbleDrag(state, world, pos);
-    }
 }
