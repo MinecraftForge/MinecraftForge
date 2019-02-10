@@ -1101,4 +1101,28 @@ public interface IForgeBlock
     {
         return original;
     }
+    
+    /**
+     * Determines if this block can produce a bubble column.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True if this block can produce a bubble column.
+     */
+    default boolean canSupportBubbleColumn(IBlockState state, IWorldReader world, BlockPos pos)
+    {
+        return this.getBlock() == Blocks.BUBBLE_COLUMN || this.getBlock() == Blocks.SOUL_SAND || this.getBlock() == Blocks.MAGMA_BLOCK;
+    }
+    
+    /**
+     * Determines if a bubble column produced by this block has downwards drag.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @return True if a bubble column produced by this block has downwards drag.
+     */
+    default boolean hasDownwardBubbleDrag(IBlockState state, IBlockReader world, BlockPos pos)
+    {
+        return this.getBlock() != Blocks.SOUL_SAND;
+    }
 }
