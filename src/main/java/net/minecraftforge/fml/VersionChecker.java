@@ -22,6 +22,7 @@ package net.minecraftforge.fml;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import net.minecraftforge.common.ForgeConfig;
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.versions.mcp.MCPVersion;
@@ -131,16 +132,13 @@ public class VersionChecker
             @Override
             public void run()
             {
-                if (ForgeConfig.GENERAL.disableVersionCheck.get())
+                if (!FMLConfig.runVersionCheck())
                 {
                     LOGGER.info("Global Forge version check system disabled, no further processing.");
                     return;
                 }
 
-                for (IModInfo entry : gatherMods())
-                {
-                    process(entry);
-                }
+                gatherMods().forEach(this::process);
             }
 
             /**

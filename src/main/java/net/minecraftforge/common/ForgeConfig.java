@@ -22,43 +22,30 @@ package net.minecraftforge.common;
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.config.ModConfig;
-import org.apache.logging.log4j.LogManager;
-
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.google.common.collect.Lists;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.config.ModConfig;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
 
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.fml.loading.FMLPaths;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class ForgeConfig
-{    
-    private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
-    
-    public static final General GENERAL = new General(BUILDER);
-    public static final Client CLIENT = new Client(BUILDER);
-    
-    public static class General {
-        
-        public final BooleanValue disableVersionCheck;
-        
-        public final BooleanValue removeErroringEntities; 
+{
+    public static class Server {
+        public final BooleanValue removeErroringEntities;
         public final BooleanValue removeErroringTileEntities;
     
         public final BooleanValue fullBoundingBoxLadders;
     
         public final DoubleValue zombieBaseSummonChance;
-        public final DoubleValue zombieBabyChance ;
+        public final DoubleValue zombieBabyChance;
     
         public final BooleanValue logCascadingWorldGeneration;
         public final BooleanValue fixVanillaCascading;
@@ -67,14 +54,9 @@ public class ForgeConfig
     
         public final IntValue clumpingThreshold;
         
-        General(ForgeConfigSpec.Builder builder) {
-            builder.comment("General settings that effect both the client and server")
-                   .push("general");
-            
-            disableVersionCheck = builder
-                    .comment("Set to true to disable Forge's version check mechanics. Forge queries a small json file on our server for version information. For more details see the ForgeVersion class in our github.")
-                    .translation("forge.configgui.disableVersionCheck")
-                    .define("disableVersionCheck", false);
+        Server(ForgeConfigSpec.Builder builder) {
+            builder.comment("Server configuration settings")
+                   .push("server");
             
             removeErroringEntities = builder
                     .comment("Set this to true to remove any Entity that throws an error in its update method instead of closing the server and reporting a crash log. BE WARNED THIS COULD SCREW UP EVERYTHING USE SPARINGLY WE ARE NOT RESPONSIBLE FOR DAMAGES.")
@@ -130,7 +112,10 @@ public class ForgeConfig
             builder.pop();
         }
     }
-    
+
+    /**
+     * Client specific configuration - only loaded clientside from forge-client.toml
+     */
     public static class Client {
         public final BooleanValue zoomInMissingModelTextInGui;
 
@@ -184,14 +169,31 @@ public class ForgeConfig
         }
     }
     
-    static final ForgeConfigSpec spec = BUILDER.build();
-    
+    static final ForgeConfigSpec clientSpec;
+    public static final Client CLIENT;
+    static {
+        final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
+        clientSpec = specPair.getRight();
+        CLIENT = specPair.getLeft();
+    }
+
+
+    static final ForgeConfigSpec serverSpec;
+    public static final Server SERVER;
+    static {
+        final Pair<Server, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Server::new);
+        serverSpec = specPair.getRight();
+        SERVER = specPair.getLeft();
+    }
+
+
+
     private static final ForgeConfigSpec.Builder CHUNK_BUILDER = new ForgeConfigSpec.Builder();
-    
+
     public static final Chunk CHUNK = new Chunk(CHUNK_BUILDER);
-    
+
     public static class Chunk {
-        
+
         public final BooleanValue enable;
 
         public final IntValue chunksPerTicket;
@@ -209,61 +211,61 @@ public class ForgeConfig
                 .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE).next()
                 .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE).next()
                 .build();
-        
+
         private final CommentedConfig modCfgDefault = CommentedConfig.inMemory();
 
-        
+
         Chunk(ForgeConfigSpec.Builder builder) {
             builder.comment("Default configuration for Forge chunk loading control")
-                   .push("defaults");
-            
+                    .push("defaults");
+
             enable = builder
-                .comment("Allow mod overrides, false will use default for everything.")
-                .translation("forge.configgui.enableModOverrides")
-                .define("enable", true);
-    
+                    .comment("Allow mod overrides, false will use default for everything.")
+                    .translation("forge.configgui.enableModOverrides")
+                    .define("enable", true);
+
             chunksPerTicket = builder
-                .comment("The default maximum number of chunks a mod can force, per ticket,",
-                         "for a mod without an override. This is the maximum number of chunks a single ticket can force.")
-                .translation("forge.configgui.maximumChunksPerTicket")
-                .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE);
-    
+                    .comment("The default maximum number of chunks a mod can force, per ticket,",
+                            "for a mod without an override. This is the maximum number of chunks a single ticket can force.")
+                    .translation("forge.configgui.maximumChunksPerTicket")
+                    .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE);
+
             maxTickets = builder
-                .comment("The default maximum ticket count for a mod which does not have an override",
-                         "in this file. This is the number of chunk loading requests a mod is allowed to make.")
-                .translation("forge.configgui.maximumTicketCount")
-                .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE);
-    
+                    .comment("The default maximum ticket count for a mod which does not have an override",
+                            "in this file. This is the number of chunk loading requests a mod is allowed to make.")
+                    .translation("forge.configgui.maximumTicketCount")
+                    .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE);
+
             playerTicketCount = builder
-                .comment("The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.")
-                .translation("forge.configgui.playerTicketCount")
-                .defineInRange("playerTicketCount", 500, 0, Integer.MAX_VALUE);
-    
+                    .comment("The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.")
+                    .translation("forge.configgui.playerTicketCount")
+                    .defineInRange("playerTicketCount", 500, 0, Integer.MAX_VALUE);
+
             dormantChunkCacheSize = builder
-                .comment("Unloaded chunks can first be kept in a dormant cache for quicker loading times. Specify the size (in chunks) of that cache here")
-                .translation("forge.configgui.dormantChunkCacheSize")
-                .defineInRange("dormantChunkCacheSize", 0, 0, Integer.MAX_VALUE);
-    
+                    .comment("Unloaded chunks can first be kept in a dormant cache for quicker loading times. Specify the size (in chunks) of that cache here")
+                    .translation("forge.configgui.dormantChunkCacheSize")
+                    .defineInRange("dormantChunkCacheSize", 0, 0, Integer.MAX_VALUE);
+
             asyncChunkLoading = builder
-                .comment("Load chunks asynchronously for players, reducing load on the server thread.",
-                         "Can be disabled to help troubleshoot chunk loading issues.")
-                .translation("forge.configgui.asyncChunkLoading")
-                .define("asyncChunkLoading", true);
-            
+                    .comment("Load chunks asynchronously for players, reducing load on the server thread.",
+                            "Can be disabled to help troubleshoot chunk loading issues.")
+                    .translation("forge.configgui.asyncChunkLoading")
+                    .define("asyncChunkLoading", true);
+
             chunkSpec.correct(modCfgDefault);
             builder.pop();
         }
-        
-        private final ConfigValue<List<? extends CommentedConfig>> mods = CHUNK_BUILDER
+
+        private final ForgeConfigSpec.ConfigValue<List<? extends CommentedConfig>> mods = CHUNK_BUILDER
                 .defineList("mods", Lists.newArrayList(modCfgDefault), o -> {
                     if (!(o instanceof CommentedConfig)) return false;
                     return chunkSpec.isCorrect((CommentedConfig) o);
                 });
-        
-        private int getByMod(ConfigValue<Integer> def, String name, String modid) {
+
+        private int getByMod(ForgeConfigSpec.ConfigValue<Integer> def, String name, String modid) {
             if (!enable.get() || modid == null)
                 return def.get();
-            
+
             return mods.get().stream().filter(c -> modid.equals(c.get("modid"))).findFirst()
                     .map(c -> c.<Integer>get(name))
                     .orElseGet(def::get);
@@ -272,12 +274,12 @@ public class ForgeConfig
         public int maxTickets(@Nullable String modid) {
             return getByMod(maxTickets, "maxTickets", modid);
         }
-        
+
         public int chunksPerTicket(@Nullable String modid) {
             return getByMod(chunksPerTicket, "chunksPerTicket", modid);
         }
     }
-    
+
     public static final ForgeConfigSpec chunk_spec = CHUNK_BUILDER.build();
 
 

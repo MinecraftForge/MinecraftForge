@@ -40,6 +40,7 @@ public class FMLConfig
     static {
         configSpec.define("splashscreen", Boolean.TRUE);
         configSpec.define("maxThreads", -1);
+        configSpec.define("versionCheck", Boolean.TRUE);
     }
 
     private CommentedFileConfig configData;
@@ -64,8 +65,10 @@ public class FMLConfig
     {
         final Path configFile = FMLPaths.FMLCONFIG.get();
         INSTANCE.loadFrom(configFile);
-        LOGGER.debug(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
-        LOGGER.debug(CORE, "Splash screen is {}", INSTANCE.splashScreenEnabled());
+        LOGGER.trace(CORE, "Loaded FML config from {}", FMLPaths.FMLCONFIG.get());
+        LOGGER.trace(CORE, "Splash screen is {}", FMLConfig::splashScreenEnabled);
+        LOGGER.trace(CORE, "Max threads for mod loading computed at {}", FMLConfig::loadingThreadCount);
+        LOGGER.trace(CORE, "Version check is {}", FMLConfig::runVersionCheck);
     }
 
     public static boolean splashScreenEnabled() {
@@ -73,8 +76,12 @@ public class FMLConfig
     }
 
     public static int loadingThreadCount() {
-        int val = INSTANCE.configData.get("maxThreads");
+        int val = INSTANCE.configData.<Integer>getOptional("maxThreads").orElse(-1);
         if (val <= 0) return Runtime.getRuntime().availableProcessors();
         return val;
+    }
+
+    public static boolean runVersionCheck() {
+        return INSTANCE.configData.<Boolean>getOptional("versionCheck").orElse(Boolean.TRUE);
     }
 }

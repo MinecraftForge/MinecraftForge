@@ -22,6 +22,7 @@ package net.minecraftforge.common;
 import net.minecraftforge.fml.FMLWorldPersistenceHook;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
@@ -91,14 +92,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
-        /*
-        FMLModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.spec);
-        FMLModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.chunk_spec);
+        FMLModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
+        FMLModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         FMLModLoadingContext.get().getModEventBus().register(ForgeConfig.class);
-        */
-        //Temporary, until I can talk to CPW about how certian types of config setups
-        loadConfig(ForgeConfig.spec, FMLPaths.CONFIGDIR.get().resolve("forge.toml"));
-        loadConfig(ForgeConfig.chunk_spec, FMLPaths.CONFIGDIR.get().resolve("forge_chunk.toml"));
+        loadConfig(ForgeConfig.chunk_spec, FMLPaths.CONFIGDIR.get().resolve("forge_chunks.toml"));
     }
 
     private void loadConfig(ForgeConfigSpec spec, Path path) {
