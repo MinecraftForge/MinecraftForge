@@ -12,10 +12,10 @@
         </TerminalConsole>
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}{strip}">
+                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}{strip}"/>
-                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}{strip}"/>
+                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}{strip}%n"/>
+                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}{strip}%n"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Queue>
