@@ -181,15 +181,16 @@ project(':forge') {
                     nativesDirectory: extractNatives.output
                 ]
                 properties = [
-                    'org.lwjgl.util.Debug': 'true',
-                    'org.lwjgl.util.DebugLoader': 'true',
+//                    'org.lwjgl.util.Debug': 'true',
+//                    'org.lwjgl.util.DebugLoader': 'true',
                     'org.lwjgl.system.SharedLibraryExtractDirectory': 'lwjgl_dll',
                     'mc.version': MC_VERSION,
                     'mcp.version': MCP_VERSION,
                     'forge.version': project.version.substring(MC_VERSION.length() + 1),
                     'forge.spec': SPEC_VERSION,
                     'forge.group': project.group, 
-                    'fmllauncher.version': SPEC_VERSION
+                    'fmllauncher.version': SPEC_VERSION,
+                    'terminal.ansi': 'true'
                 ]
             }
             forge_server = {
@@ -276,12 +277,13 @@ project(':forge') {
         installer 'net.minecraftforge:coremods:0.2.+'
         installer 'com.electronwill.night-config:core:3.4.2'
         installer 'com.electronwill.night-config:toml:3.4.2'
-        installer 'org.jline:jline:3.5.1'
+        installer 'org.jline:jline:3.9.0'
         installer 'org.apache.maven:maven-artifact:3.6.0'
         installer 'net.jodah:typetools:0.6.0'
         installer 'java3d:vecmath:1.5.2'
         installer 'org.apache.logging.log4j:log4j-api:2.11.1'
         installer 'org.apache.logging.log4j:log4j-core:2.11.1'
+        installer 'net.minecrell:terminalconsoleappender:1.1.+'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         testImplementation "org.junit.jupiter:junit-jupiter-api:5.0.0"

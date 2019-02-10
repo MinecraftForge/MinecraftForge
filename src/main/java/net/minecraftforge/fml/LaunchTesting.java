@@ -67,6 +67,8 @@ public class LaunchTesting
                             "--assetsDir", assets,
                             "--userProperties", "{}"
             }, String.class);
+        } else {
+            launchArgs = ObjectArrays.concat(launchArgs, args, String.class);
         }
         Launcher.main(launchArgs);
         Thread.sleep(10000);

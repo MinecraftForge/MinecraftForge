@@ -19,9 +19,8 @@
 
 package net.minecraftforge.server.console;
 
-import net.minecraftforge.server.terminalconsole.TerminalConsoleAppender;
-
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecrell.terminalconsole.TerminalConsoleAppender;
 import org.jline.reader.EndOfFileException;
 import org.jline.reader.LineReader;
 import org.jline.reader.LineReaderBuilder;
