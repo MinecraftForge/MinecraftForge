@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:soul_sand",
-    "minecraft:magma_block"
+    "#forge:bubble_sources_with_drag",
+    "#forge:bubble_sources_without_drag"
   ]
 }
