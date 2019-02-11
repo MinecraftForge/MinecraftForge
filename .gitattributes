@@ -13,3 +13,4 @@
 *.pyd binary
 *.cfg text eol=lf
 *.py text eol=lf
+*.jks binary
