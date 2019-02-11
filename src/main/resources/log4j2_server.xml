@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="net.minecraftforge.server.terminalconsole,com.mojang.util">
+<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mojang.util">
     <Appenders>
         <TerminalConsole name="Console">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss}] [%t/%level] [%logger]: %minecraftFormatting{%msg}%n%xEx">
+                <LoggerNamePatternSelector defaultPattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}%n%xEx}" disableAnsi="${sys:forge.logging.noansi:-true}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}%n%xEx"/>
-                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}%n%xEx"/>
+                    <PatternMatch key="net.minecraft." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}%n%xEx}"/>
+                    <PatternMatch key="com.mojang." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}%n%xEx}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </TerminalConsole>
@@ -41,7 +41,19 @@
         <Logger level="${sys:forge.logging.mojang.level:-info}" name="net.minecraft"/>
         <Root level="all">
             <filters>
-                <MarkerFilter marker="NETWORK_PACKETS" onMatch="DENY" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="NETWORK_PACKETS" onMatch="${sys:forge.logging.marker.networking:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="CLASSLOADING" onMatch="${sys:forge.logging.marker.classloading:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="LAUNCHPLUGIN" onMatch="${sys:forge.logging.marker.launchplugin:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="AXFORM" onMatch="${sys:forge.logging.marker.axform:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="EVENTBUS" onMatch="${sys:forge.logging.marker.eventbus:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="DISTXFORM" onMatch="${sys:forge.logging.marker.distxform:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="SCAN" onMatch="${sys:forge.logging.marker.scan:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="REGISTRIES" onMatch="${sys:forge.logging.marker.registries:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="REGISTRYDUMP" onMatch="${sys:forge.logging.marker.registrydump:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="SPLASH" onMatch="${sys:forge.logging.marker.splash:-DENY}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="FORGEMOD" onMatch="${sys:forge.logging.marker.forgemod:-ACCEPT}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="LOADING" onMatch="${sys:forge.logging.marker.loading:-ACCEPT}" onMismatch="NEUTRAL"/>
+                <MarkerFilter marker="CORE" onMatch="${sys:forge.logging.marker.core:-ACCEPT}" onMismatch="NEUTRAL"/>
             </filters>
             <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>

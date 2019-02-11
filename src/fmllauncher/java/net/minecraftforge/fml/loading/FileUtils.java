@@ -34,11 +34,14 @@ public class FileUtils
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static Path getOrCreateDirectory(Path dirPath, String dirLabel) {
+        if (!Files.isDirectory(dirPath.getParent())) {
+            getOrCreateDirectory(dirPath.getParent(), "parent of "+dirLabel);
+        }
         if (!Files.isDirectory(dirPath))
         {
             LOGGER.debug(CORE,"Making {} directory : {}", dirLabel, dirPath);
             try {
-                Files.createDirectories(dirPath);
+                Files.createDirectory(dirPath);
             } catch (IOException e) {
                 if (e instanceof FileAlreadyExistsException) {
                     LOGGER.fatal(CORE,"Failed to create {} directory - there is a file in the way", dirLabel);
