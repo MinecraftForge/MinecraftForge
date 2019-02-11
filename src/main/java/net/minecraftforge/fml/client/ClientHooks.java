@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,10 +58,12 @@ import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.resources.AbstractResourcePack;
 import net.minecraft.resources.FallbackResourceManager;
 import net.minecraft.resources.IResourcePack;
+import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.client.gui.GuiAccessDenied;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.registries.GameData;
@@ -233,7 +235,7 @@ public class ClientHooks
         // We can't handle many unicode points in the splash renderer
         return DISALLOWED_CHAR_MATCHER.removeFrom(net.minecraft.util.StringUtils.stripControlCodes(message));
     }
-    
+
     private static SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
     private static Set<String> badTextureDomains = Sets.newHashSet();
     private static Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
@@ -265,7 +267,7 @@ public class ClientHooks
         Logger logger = LogManager.getLogger("FML.TEXTURE_ERRORS");
         logger.error(Strings.repeat("+=", 25));
         logger.error("The following texture errors were found.");
-        Map<String,FallbackResourceManager> resManagers = null;// TODO ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager(), "field_110548"+"_a");
+        Map<String, FallbackResourceManager> resManagers = ObfuscationReflectionHelper.getPrivateValue(SimpleReloadableResourceManager.class, (SimpleReloadableResourceManager)Minecraft.getInstance().getResourceManager(), "field_199014"+"_c");
         for (String resourceDomain : badTextureDomains)
         {
             Set<ResourceLocation> missing = missingTextures.get(resourceDomain);
@@ -280,7 +282,7 @@ public class ClientHooks
             }
             else
             {
-                List<IResourcePack> resPacks = null;//ObfuscationReflectionHelper.getPrivateValue(FallbackResourceManager.class, fallbackResourceManager, "field_110540"+"_a");
+                List<IResourcePack> resPacks = fallbackResourceManager.resourcePacks;
                 logger.error("    domain {} has {} location{}:",resourceDomain, resPacks.size(), resPacks.size() != 1 ? "s" :"");
                 for (IResourcePack resPack : resPacks)
                 {
@@ -291,9 +293,7 @@ public class ClientHooks
                     }
                     else if (resPack instanceof AbstractResourcePack)
                     {
-                        AbstractResourcePack resourcePack = (AbstractResourcePack) resPack;
-                        File resPath = null;// TODO bfuscationReflectionHelper.getPrivateValue(AbstractResourcePack.class, resourcePack, "field_110597"+"_b");
-                        logger.error("      resource pack at path {}",resPath.getPath());
+                        logger.error("      resource pack at path {}", ((AbstractResourcePack)resPack).file.getPath());
                     }
                     else
                     {

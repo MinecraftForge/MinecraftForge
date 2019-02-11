@@ -63,7 +63,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
-+      if (facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++      if (!this.field_145846_f && facing != null && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +         if (facing == EnumFacing.UP)
 +            return handlers[0].cast();
 +         else if (facing == EnumFacing.DOWN)
@@ -78,6 +78,6 @@
 +   public void func_145843_s() {
 +      super.func_145843_s();
 +      for (int x = 0; x < handlers.length; x++)
-+          handlers[x].invalidate();
++        handlers[x].invalidate();
 +   }
  }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -32,6 +32,7 @@ import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
 
@@ -41,6 +42,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -157,14 +159,22 @@ public class ModLoader
 
         LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
         return modFile.getScanResult().getTargets().entrySet().stream().
-                map(e-> {
-                    try {
-                        return e.getValue().<ModContainer>loadMod(modInfoMap.get(e.getKey()), modClassLoader, modFile.getScanResult());
-                    } catch (ModLoadingException mle) {
-                        loadingExceptions.add(mle);
-                        return null;
-                    }
-                }).collect(Collectors.toList());
+                map(e-> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e)).collect(Collectors.toList());
+    }
+
+    private ModContainer buildModContainerFromTOML(final ModFile modFile, final TransformingClassLoader modClassLoader, final Map<String, IModInfo> modInfoMap, final Map.Entry<String, ? extends IModLanguageProvider.IModLanguageLoader> idToProviderEntry) {
+        try {
+            final String modId = idToProviderEntry.getKey();
+            final IModLanguageProvider.IModLanguageLoader languageLoader = idToProviderEntry.getValue();
+            IModInfo info = Optional.ofNullable(modInfoMap.get(modId)).
+                    // throw a missing metadata error if there is no matching modid in the modInfoMap from the mods.toml file
+                    orElseThrow(()->new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingmetadata", null, modId));
+            return languageLoader.loadMod(info, modClassLoader, modFile.getScanResult());
+        } catch (ModLoadingException mle) {
+            // exceptions are caught and added to the error list for later handling. Null is returned here.
+            loadingExceptions.add(mle);
+            return null;
+        }
     }
 
 

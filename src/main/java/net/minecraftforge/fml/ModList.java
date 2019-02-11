@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
@@ -34,7 +35,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -55,7 +56,7 @@ public class ModList
     private final Map<String, ModFileInfo> fileById;
     private List<ModContainer> mods;
     private Map<String, ModContainer> indexedMods;
-    private ForkJoinPool modLoadingThreadPool = new ForkJoinPool();
+    private ForkJoinPool modLoadingThreadPool;
     private List<ModFileScanData> modFileScanData;
 
     private ModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
@@ -67,6 +68,9 @@ public class ModList
         this.fileById = this.modFiles.stream().map(ModFileInfo::getMods).flatMap(Collection::stream).
                 map(ModInfo.class::cast).
                 collect(Collectors.toMap(ModInfo::getModId, ModInfo::getOwningFile));
+        final int loadingThreadCount = FMLConfig.loadingThreadCount();
+        LOGGER.debug(LOADING, "Using {} threads for parallel mod-loading", loadingThreadCount);
+        modLoadingThreadPool = new ForkJoinPool(loadingThreadCount, ModList::newForkJoinWorkerThread, null, false);
     }
 
     public static ModList of(List<ModFile> modFiles, List<ModInfo> sortedList)
@@ -81,6 +85,14 @@ public class ModList
 
     public static ModList get() {
         return INSTANCE;
+    }
+
+    private static ForkJoinWorkerThread newForkJoinWorkerThread(ForkJoinPool pool) {
+        ForkJoinWorkerThread thread = ForkJoinPool.defaultForkJoinWorkerThreadFactory.newThread(pool);
+        thread.setName("modloading-worker-" + thread.getPoolIndex());
+        // The default sets it to the SystemClassloader, so copy the current one.
+        thread.setContextClassLoader(Thread.currentThread().getContextClassLoader());
+        return thread;
     }
 
     public List<ModFileInfo> getModFiles()
@@ -131,7 +143,7 @@ public class ModList
     {
         return Optional.ofNullable(this.indexedMods.get(modId));
     }
-    
+
     public Optional<? extends ModContainer> getModContainerByObject(Object obj)
     {
         return mods.stream().filter(mc -> mc.getMod() == obj).findFirst();

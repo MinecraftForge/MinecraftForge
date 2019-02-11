@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -47,7 +47,7 @@ public class LibraryFinder {
         return libsPath;
     }
 
-    static Path findJarPathFor(final String className, final String jarName) {
+    public static Path findJarPathFor(final String className, final String jarName) {
         final URL resource = LibraryFinder.class.getClassLoader().getResource(className);
         return findJarPathFor(className, jarName, resource);
     }
@@ -67,11 +67,6 @@ public class LibraryFinder {
             LOGGER.fatal(CORE, "Failed to find JAR for class {} - {}", resourceName, jarName);
             throw new RuntimeException("Unable to locate "+resourceName+" - "+jarName, e);
         }
-    }
-
-    public static Path[] commonLibPaths(Path[] extras) {
-        final Path realms = findJarPathFor("com/mojang/realmsclient/RealmsVersion.class", "realms");
-        return ObjectArrays.concat(extras, realms);
     }
 
     static Path getForgeLibraryPath(final String mcVersion, final String forgeVersion, final String forgeGroup) {

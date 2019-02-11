@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,9 +30,13 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
+
+import java.nio.file.Path;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,6 +52,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.io.WritingMode;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -85,9 +92,23 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
-        FMLModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.spec);
-        FMLModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.chunk_spec);
+        FMLModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
+        FMLModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         FMLModLoadingContext.get().getModEventBus().register(ForgeConfig.class);
+        loadConfig(ForgeConfig.chunk_spec, FMLPaths.CONFIGDIR.get().resolve("forge_chunks.toml"));
+    }
+
+    private void loadConfig(ForgeConfigSpec spec, Path path) {
+        LOGGER.debug(FORGEMOD, "Loading config file {}", path);
+        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
+            .sync()
+            .autosave()
+            .writingMode(WritingMode.REPLACE)
+            .build();
+        LOGGER.debug(FORGEMOD, "Built TOML config for {}", path.toString());
+        configData.load();
+        LOGGER.debug(FORGEMOD, "Loaded TOML config file {}", path.toString());
+        spec.setConfig(configData);
     }
 
 /*

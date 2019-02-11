@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-public abstract class IRenderHandler
+@FunctionalInterface
+public interface IRenderHandler
 {
     @OnlyIn(Dist.CLIENT)
     public abstract void render(float partialTicks, WorldClient world, Minecraft mc);

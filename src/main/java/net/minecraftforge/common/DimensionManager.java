@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,7 +23,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Hashtable;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -395,7 +394,7 @@ public class DimensionManager
         {
             int id = queueIterator.nextInt();
             DimensionData dimension = dimensions.get(id);
-            if (dimension.ticksWaited < ForgeConfig.GENERAL.dimensionUnloadQueueDelay.get())
+            if (dimension.ticksWaited < ForgeConfig.SERVER.dimensionUnloadQueueDelay.get())
             {
                 dimension.ticksWaited++;
                 continue;

@@ -40,7 +40,7 @@
        return this.field_78033_n < 6;
     }
  
-@@ -220,4 +225,48 @@
+@@ -220,4 +225,58 @@
        }
  
     }
@@ -68,8 +68,18 @@
 +      return new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tab_" + this.func_78015_f());
 +   }
 +
++   private static final net.minecraft.util.ResourceLocation CREATIVE_INVENTORY_TABS = new net.minecraft.util.ResourceLocation("textures/gui/container/creative_inventory/tabs.png");
++   @OnlyIn(Dist.CLIENT)
++   public net.minecraft.util.ResourceLocation getTabsImage() {
++      return CREATIVE_INVENTORY_TABS;
++   }
++
 +   public int getLabelColor() {
 +      return 4210752;
++   }
++
++   public int getSlotColor() {
++      return -2130706433;
 +   }
 +   
 +   public static synchronized int getGroupCountSafe() {

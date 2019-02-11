@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -35,24 +35,25 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
 {
     private final @Nonnull Class<B> baseClass;
     private @Nullable CapabilityDispatcher capabilities;
-    
+    private boolean valid = true;
+
     protected CapabilityProvider(Class<B> baseClass)
     {
         this.baseClass = baseClass;
     }
-    
+
     protected final void gatherCapabilities() { gatherCapabilities(null); }
-    
+
     protected final void gatherCapabilities(@Nullable ICapabilityProvider parent)
     {
         this.capabilities = ForgeEventFactory.gatherCapabilities(baseClass, this, parent);
     }
-    
+
     protected final @Nullable CapabilityDispatcher getCapabilities()
     {
         return this.capabilities;
     }
-    
+
     public final boolean areCapsCompatible(CapabilityProvider<B> other)
     {
         return areCapsCompatible(other.getCapabilities());
@@ -71,23 +72,23 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
             {
                 return other.areCompatible(null);
             }
-        } 
+        }
         else
         {
             return disp.areCompatible(other);
         }
     }
-    
+
     protected final @Nullable NBTTagCompound serializeCaps()
     {
         final CapabilityDispatcher disp = getCapabilities();
-        if (disp != null) 
+        if (disp != null)
         {
             return disp.serializeNBT();
         }
         return null;
     }
-    
+
     protected final void deserializeCaps(NBTTagCompound tag)
     {
         final CapabilityDispatcher disp = getCapabilities();
@@ -97,11 +98,19 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
         }
     }
 
+    protected void invalidateCaps()
+    {
+        this.valid = false;
+        final CapabilityDispatcher disp = getCapabilities();
+        if (disp != null)
+            disp.invalidate();
+    }
+
     @Override
     @Nonnull
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side)
     {
         final CapabilityDispatcher disp = getCapabilities();
-        return disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
+        return !valid || disp == null ? LazyOptional.empty() : disp.getCapability(cap, side);
     }
 }

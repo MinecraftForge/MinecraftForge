@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -67,6 +67,8 @@ public class LaunchTesting
                             "--assetsDir", assets,
                             "--userProperties", "{}"
             }, String.class);
+        } else {
+            launchArgs = ObjectArrays.concat(launchArgs, args, String.class);
         }
         Launcher.main(launchArgs);
         Thread.sleep(10000);

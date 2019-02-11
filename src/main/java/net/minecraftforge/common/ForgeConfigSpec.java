@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,9 +36,12 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
@@ -434,12 +437,21 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             return this;
         }
 
+        public <T> Pair<T, ForgeConfigSpec> configure(Function<Builder, T> consumer) {
+            T o = consumer.apply(this);
+            return Pair.of(o, this.build());
+        }
+
         public ForgeConfigSpec build()
         {
             context.ensureEmpty();
             ForgeConfigSpec ret = new ForgeConfigSpec(storage, levelComments);
             values.forEach(v -> v.spec = ret);
             return ret;
+        }
+
+        public interface BuilderConsumer {
+            void accept(Builder builder);
         }
     }
 

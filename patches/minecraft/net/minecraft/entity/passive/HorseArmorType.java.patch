@@ -1,5 +1,14 @@
 --- a/net/minecraft/entity/passive/HorseArmorType.java
 +++ b/net/minecraft/entity/passive/HorseArmorType.java
+@@ -7,7 +7,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public enum HorseArmorType {
++public enum HorseArmorType implements net.minecraftforge.common.IExtensibleEnum {
+    NONE(0),
+    IRON(5, "iron", "meo"),
+    GOLD(7, "gold", "goo"),
 @@ -16,6 +16,7 @@
     private final String field_188586_e;
     private final String field_188587_f;
@@ -18,7 +27,7 @@
 +   }
 +
 +   public static HorseArmorType create(String name, int strength, String texture, String hash, Item item) {
-+       return null;
++      throw new IllegalStateException("Enum not extended");
 +   }
 +
     public int func_188579_a() {

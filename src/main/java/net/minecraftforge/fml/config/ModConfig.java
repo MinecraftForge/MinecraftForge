@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -86,8 +86,19 @@ public class ModConfig
 
     public enum Type {
         /**
-         * Client type config is exclusively for configuration affecting the client state.
-         * Graphical options, for example.
+         * Common mod config for configuration that needs to be loaded on both environments.
+         * Loaded on both servers and clients.
+         * Stored in the global config directory.
+         * Not synced.
+         * Suffix is "-common" by default.
+         */
+        COMMON,
+        /**
+         * Client config is for configuration affecting the ONLY client state such as graphical options.
+         * Only loaded on the client side.
+         * Stored in the global config directory.
+         * Not synced.
+         * Suffix is "-client" by default.
          */
         CLIENT,
 //        /**
@@ -97,7 +108,10 @@ public class ModConfig
 //        PLAYER,
         /**
          * Server type config is configuration that is associated with a server instance.
-         * It will be synced from a server to the client on connection.
+         * Only loaded during server startup.
+         * Stored in a server/save specific "serverconfig" directory.
+         * Synced to clients during connection.
+         * Suffix is "-server" by default.
          */
         SERVER;
 

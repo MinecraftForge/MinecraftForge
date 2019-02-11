@@ -1,0 +1,120 @@
+--- a/net/minecraft/entity/player/EntityPlayerMP.java
++++ b/net/minecraft/entity/player/EntityPlayerMP.java
+@@ -418,6 +418,7 @@
+    }
+ 
+    public void func_70645_a(DamageSource p_70645_1_) {
++      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  p_70645_1_)) return;
+       boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
+       this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
+       if (flag) {
+@@ -435,8 +436,10 @@
+ 
+       this.func_192030_dh();
+       if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v()) {
++         this.captureDrops(new java.util.ArrayList<>());
+          this.func_190776_cN();
+          this.field_71071_by.func_70436_m();
++         if (!field_70170_p.field_72995_K) net.minecraftforge.event.ForgeEventFactory.onPlayerDrops(this, p_70645_1_, captureDrops(null), field_70718_bc > 0);
+       }
+ 
+       this.func_96123_co().func_197893_a(IScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
+@@ -521,7 +524,9 @@
+    }
+ 
+    @Nullable
+-   public Entity func_184204_a(int p_184204_1_) {
++   @Override
++   public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return null;
+       this.field_184851_cj = true;
+       if (this.field_71093_bK == 0 && p_184204_1_ == -1) {
+          this.field_193110_cw = new Vec3d(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+@@ -529,7 +534,7 @@
+          this.field_193110_cw = null;
+       }
+ 
+-      if (this.field_71093_bK == 1 && p_184204_1_ == 1) {
++      if (this.field_71093_bK == 1 && p_184204_1_ == 1 && teleporter.isVanilla()) {
+          this.field_70170_p.func_72900_e(this);
+          if (!this.field_71136_j) {
+             this.field_71136_j = true;
+@@ -543,7 +548,7 @@
+             p_184204_1_ = 1;
+          }
+ 
+-         this.field_71133_b.func_184103_al().func_187242_a(this, p_184204_1_);
++         this.field_71133_b.func_184103_al().changePlayerDimension(this, p_184204_1_, teleporter);
+          this.field_71135_a.func_147359_a(new SPacketEffect(1032, BlockPos.field_177992_a, 0, false));
+          this.field_71144_ck = -1;
+          this.field_71149_ch = -1.0F;
+@@ -645,7 +650,7 @@
+       int k = MathHelper.func_76128_c(this.field_70161_v);
+       BlockPos blockpos = new BlockPos(i, j, k);
+       IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
+-      if (iblockstate.func_196958_f()) {
++      if (iblockstate.isAir(field_70170_p, blockpos)) {
+          BlockPos blockpos1 = blockpos.func_177977_b();
+          IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
+          Block block = iblockstate1.func_177230_c();
+@@ -676,6 +681,7 @@
+          this.field_71070_bA = p_180468_1_.func_174876_a(this.field_71071_by, this);
+          this.field_71070_bA.field_75152_c = this.field_71139_cq;
+          this.field_71070_bA.func_75132_a(this);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+       }
+    }
+ 
+@@ -707,6 +713,7 @@
+ 
+          this.field_71070_bA.field_75152_c = this.field_71139_cq;
+          this.field_71070_bA.func_75132_a(this);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+       }
+    }
+ 
+@@ -715,6 +722,7 @@
+       this.field_71070_bA = new ContainerMerchant(this.field_71071_by, p_180472_1_, this.field_70170_p);
+       this.field_71070_bA.field_75152_c = this.field_71139_cq;
+       this.field_71070_bA.func_75132_a(this);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+       IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
+       ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
+       this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
+@@ -738,6 +746,7 @@
+       this.field_71070_bA = new ContainerHorseInventory(this.field_71071_by, p_184826_2_, p_184826_1_, this);
+       this.field_71070_bA.field_75152_c = this.field_71139_cq;
+       this.field_71070_bA.func_75132_a(this);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+    }
+ 
+    public void func_184814_a(ItemStack p_184814_1_, EnumHand p_184814_2_) {
+@@ -800,6 +809,7 @@
+ 
+    public void func_71128_l() {
+       this.field_71070_bA.func_75134_a(this);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.field_71070_bA));
+       this.field_71070_bA = this.field_71069_bz;
+    }
+ 
+@@ -929,6 +939,20 @@
+       this.field_193110_cw = p_193104_1_.field_193110_cw;
+       this.func_192029_h(p_193104_1_.func_192023_dk());
+       this.func_192031_i(p_193104_1_.func_192025_dl());
++
++      this.spawnPosMap = p_193104_1_.spawnPosMap;
++      this.spawnForcedMap = p_193104_1_.spawnForcedMap;
++      if(p_193104_1_.field_71093_bK != 0) {
++          this.field_71077_c = p_193104_1_.field_71077_c;
++          this.field_82248_d = p_193104_1_.field_82248_d;
++      }
++
++      //Copy over a section of the Entity Data from the old player.
++      //Allows mods to specify data that persists after players respawn.
++      NBTTagCompound old = p_193104_1_.getEntityData();
++      if (old.func_74764_b(PERSISTED_NBT_TAG))
++          getEntityData().func_74782_a(PERSISTED_NBT_TAG, old.func_74781_a(PERSISTED_NBT_TAG));
++      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_193104_1_, !p_193104_2_);
+    }
+ 
+    protected void func_70670_a(PotionEffect p_70670_1_) {

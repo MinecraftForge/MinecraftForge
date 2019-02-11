@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="warn" packages="net.minecraftforge.server.terminalconsole.util">
+<Configuration status="warn" packages="net.minecrell.terminalconsole,net.minecrell.terminalconsole.util,com.mojang.util">
     <Appenders>
-        <Console name="SysOut" target="SYSTEM_OUT">
+        <TerminalConsole name="Console">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %msg%n}">
+                <LoggerNamePatternSelector defaultPattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}%n%xEx}" disableAnsi="${sys:forge.logging.noansi:-true}">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %msg%n}"/>
-                    <PatternMatch key="com.mojang." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %msg%n}"/>
+                    <PatternMatch key="net.minecraft." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}%n%xEx}"/>
+                    <PatternMatch key="com.mojang." pattern="%highlight{[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}%n%xEx}"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
-        </Console>
+        </TerminalConsole>
         <Queue name="ServerGuiConsole" ignoreExceptions="true">
             <PatternLayout>
-                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %msg%n">
+                <LoggerNamePatternSelector defaultPattern="[%d{HH:mm:ss.SSS}] [%t/%level] [%c{2.}/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n">
                     <!-- don't include the full logger name for Mojang's logs since they use full class names and it's very verbose -->
-                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %msg%n"/>
-                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %msg%n"/>
+                    <PatternMatch key="net.minecraft." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [minecraft/%logger{1}]: %minecraftFormatting{%msg}{strip}%n"/>
+                    <PatternMatch key="com.mojang." pattern="[%d{HH:mm:ss.SSS}] [%t/%level] [mojang/%logger{1}]: %minecraftFormatting{%msg}{strip}%n"/>
                 </LoggerNamePatternSelector>
             </PatternLayout>
         </Queue>
         <RollingRandomAccessFile name="File" fileName="logs/latest.log" filePattern="logs/%d{yyyy-MM-dd}-%i.log.gz">
-            <PatternLayout pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %msg%n"/>
+            <PatternLayout pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx"/>
             <Policies>
                 <TimeBasedTriggeringPolicy/>
                 <OnStartupTriggeringPolicy/>
             </Policies>
         </RollingRandomAccessFile>
         <RollingRandomAccessFile name="DebugFile" fileName="logs/debug.log" filePattern="logs/debug-%i.log.gz">
-            <PatternLayout pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %msg%n"/>
+            <PatternLayout pattern="[%d{ddMMMyyyy HH:mm:ss.SSS}] [%t/%level] [%logger/%markerSimpleName]: %minecraftFormatting{%msg}{strip}%n%xEx"/>
             <Policies>
                 <OnStartupTriggeringPolicy/>
                 <SizeBasedTriggeringPolicy size="200MB"/>
@@ -55,7 +55,7 @@
                 <MarkerFilter marker="LOADING" onMatch="${sys:forge.logging.marker.loading:-ACCEPT}" onMismatch="NEUTRAL"/>
                 <MarkerFilter marker="CORE" onMatch="${sys:forge.logging.marker.core:-ACCEPT}" onMismatch="NEUTRAL"/>
             </filters>
-            <AppenderRef ref="SysOut" level="${sys:forge.logging.console.level:-info}"/>
+            <AppenderRef ref="Console" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="ServerGuiConsole" level="${sys:forge.logging.console.level:-info}"/>
             <AppenderRef ref="File" level="${sys:forge.logging.file.level:-info}"/>
             <AppenderRef ref="DebugFile" level="${sys:forge.logging.debugFile.level:-trace}"/>

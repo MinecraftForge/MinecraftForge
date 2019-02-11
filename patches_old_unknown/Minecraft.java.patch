@@ -18,23 +18,6 @@
              Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
              this.func_175601_h();
          }
-@@ -1676,6 +1704,8 @@
-             --this.field_71467_ac;
-         }
- 
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPreClientTick();
-+
-         this.field_71424_I.func_76320_a("gui");
- 
-         if (!this.field_71445_n)
-@@ -1877,6 +1907,7 @@
-         }
- 
-         this.field_71424_I.func_76319_b();
-+        net.minecraftforge.fml.common.FMLCommonHandler.instance().onPostClientTick();
-         this.field_71423_H = func_71386_F();
-     }
- 
 @@ -1982,6 +2013,7 @@
                      }
                  }

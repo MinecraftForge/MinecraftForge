@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,8 @@
 package net.minecraftforge.common.asm;
 
 import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +45,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Type STRING = Type.getType(String.class);
     private final Type ENUM = Type.getType(Enum.class);
+    private final Type MARKER_IFACE = Type.getType("Lnet/minecraftforge/common/IExtensibleEnum;");
     private final Type ARRAY_UTILS = Type.getType("Lorg/apache/commons/lang3/ArrayUtils;"); //Don't directly reference this to prevent class loading.
     private final String ADD_DESC = Type.getMethodDescriptor(Type.getType(Object[].class), Type.getType(Object[].class), Type.getType(Object.class));
     private final Type UNSAFE_HACKS = Type.getType("Lnet/minecraftforge/fml/UnsafeHacks;"); //Again, not direct reference to prevent class loading.
@@ -75,13 +78,28 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
+        
+        if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
+            return classNode;
+        }
+        
         //Static methods named "create", with first argument as a string, and returning this type
-        classNode.methods.stream().filter(m -> ((m.access & Opcodes.ACC_STATIC) != 0) && m.name.equals("create") && Type.getReturnType(m.desc).equals(classType)).forEach(mtd ->
+        List<MethodNode> candidates = classNode.methods.stream()
+                .filter(m -> ((m.access & Opcodes.ACC_STATIC) != 0) && m.name.equals("create") && Type.getReturnType(m.desc).equals(classType))
+                .collect(Collectors.toList());
+        
+        candidates.forEach(mtd ->
         {
             Type[] args = Type.getArgumentTypes(mtd.desc);
-            if (args.length == 0 || !args[0].equals(STRING))
-                return;
-
+            if (args.length == 0 || !args[0].equals(STRING)) {
+                LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
+                    sb.append("Enum has create method without String as first parameter:\n");
+                    sb.append("  Enum: " + classType.getDescriptor()).append("\n");
+                    sb.append("  Target: ").append(mtd.name + mtd.desc).append("\n");
+                }));
+                throw new IllegalStateException("Enum has create method without String as first parameter: " + mtd.name + mtd.desc);
+            }
+            
             Type[] ctrArgs = new Type[args.length + 1];
             ctrArgs[0] = STRING;
             ctrArgs[1] = Type.INT_TYPE;
@@ -95,7 +113,8 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             {
                 LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
                     sb.append("Enum has create method with no matching constructor:\n");
-                    sb.append("  Enum: " + classType.getDescriptor()).append("\n");
+                    sb.append("  Enum: ").append(classType.getDescriptor()).append("\n");
+                    sb.append("  Candidate: ").append(mtd.desc).append("\n");
                     sb.append("  Target: ").append(desc).append("\n");
                     classNode.methods.stream().filter(m -> m.name.equals("<init>")).forEach(m -> sb.append("        : ").append(m.desc).append("\n"));
                 }));
@@ -114,6 +133,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
 
             values.access &= values.access & ~Opcodes.ACC_FINAL; //Strip the final so JITer doesn't inline things.
 
+            mtd.access |= Opcodes.ACC_SYNCHRONIZED;
             mtd.instructions.clear();
             InstructionAdapter ins = new InstructionAdapter(mtd);
 
