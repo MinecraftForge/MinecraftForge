@@ -271,7 +271,7 @@ public class VersionChecker
                 }
                 catch (Exception e)
                 {
-                    LOGGER.debug("Failed to process update information", e);
+                    LOGGER.warn("Failed to process update information", e);
                     status = FAILED;
                 }
                 results.put(mod, new CheckResult(status, target, changes, display_url));

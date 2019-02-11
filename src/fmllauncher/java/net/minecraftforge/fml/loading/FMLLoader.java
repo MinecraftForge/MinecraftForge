@@ -113,6 +113,8 @@ public class FMLLoader
         coreModProvider = coreModProviders.get(0);
         final Package coremodPackage = coreModProvider.getClass().getPackage();
         LOGGER.debug(CORE,"FML found CoreMod version : {}", coremodPackage.getImplementationVersion());
+
+        FixSSL.fixup();
     }
 
     static void setupLaunchHandler(final IEnvironment environment, final Map<String, ?> arguments)
