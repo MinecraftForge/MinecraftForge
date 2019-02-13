@@ -94,12 +94,12 @@ public class ForgeI18n {
         }
         catch (IllegalArgumentException e)
         {
-            LOGGER.warn(CORE, "Invalid translation pattern for key {}!", i18nMessage);
-            return i18nMessage+" - invalid pattern";
+            LOGGER.warn(CORE, "Invalid translation pattern for key {}: {}!", i18nMessage, e.getLocalizedMessage());
+            return i18nMessage;
         }
     }
 
-    public static String parseFormat(final String format, final Object... args) throws IllegalArgumentException{
+    public static String parseFormat(final String format, final Object... args) throws IllegalArgumentException {
         final ExtendedMessageFormat extendedMessageFormat = new ExtendedMessageFormat(format, customFactories);
         return extendedMessageFormat.format(args);
     }
