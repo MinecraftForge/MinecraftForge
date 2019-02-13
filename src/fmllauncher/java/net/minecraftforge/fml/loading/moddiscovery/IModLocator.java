@@ -42,4 +42,6 @@ public interface IModLocator {
     Optional<Manifest> findManifest(Path file);
 
     void initArguments(Map<String, ?> arguments);
+
+    boolean isValid(ModFile modFile);
 }
