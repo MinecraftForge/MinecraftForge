@@ -57,7 +57,7 @@ public final class ItemTextureQuadConverter
         List<UnpackedBakedQuad> horizontal = convertTextureHorizontal(format, transform, template, sprite, z, facing, color, tint);
         List<UnpackedBakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z, facing, color, tint);
 
-        return horizontal.size() >= vertical.size() ? horizontal : vertical;
+        return horizontal.size() <= vertical.size() ? horizontal : vertical;
     }
 
     /**
