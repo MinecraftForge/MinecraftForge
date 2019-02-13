@@ -19,15 +19,21 @@
 
 package net.minecraftforge.fml.network;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.handshake.client.CPacketHandshake;
 import net.minecraft.server.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.IInteractionObject;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class NetworkHooks
@@ -79,5 +85,27 @@ public class NetworkHooks
     public static boolean tickNegotiation(NetHandlerLoginServer netHandlerLoginServer, NetworkManager networkManager, EntityPlayerMP player)
     {
         return FMLHandshakeHandler.tickLogin(networkManager);
+    }
+
+    public static void openGui(EntityPlayerMP player, IInteractionObject container, @Nullable ByteBuf extraData)
+    {
+        ResourceLocation id = new ResourceLocation(container.getGuiID());
+        Container c = container.createContainer(player.inventory, player);
+        player.closeScreen();
+        player.getNextWindowId();
+        player.openContainer = c;
+        player.openContainer.windowId = player.currentWindowId;
+        player.openContainer.addListener(player);
+        MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
+
+        byte[] additional;
+        if (extraData == null) {
+            additional = new byte[0];
+        } else {
+            additional = new byte[extraData.readableBytes()];
+            extraData.readBytes(additional);
+        }
+        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, player.currentWindowId, additional);
+        FMLPlayHandler.channel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
     }
 }
