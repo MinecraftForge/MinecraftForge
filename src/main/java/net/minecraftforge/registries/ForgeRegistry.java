@@ -28,13 +28,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
-import net.minecraftforge.fml.ModThreadContext;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
@@ -280,7 +279,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     int add(int id, V value)
     {
-        final String owner = ModThreadContext.get().getActiveContainer().getNamespace();
+        final String owner = ModLoadingContext.get().getActiveContainer().getNamespace();
         return add(id, value, owner);
     }
 

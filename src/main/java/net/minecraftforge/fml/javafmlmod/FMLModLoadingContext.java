@@ -34,23 +34,26 @@ public class FMLModLoadingContext
         return context.get();
     }
 
-    public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension) {
-        getActiveContainer().registerExtensionPoint(point, extension);
-    }
-
     public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec) {
-        activeContainer.addConfig(new ModConfig(type, spec, activeContainer));
+        getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer()));
     }
 
     public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec, String fileName) {
-        activeContainer.addConfig(new ModConfig(type, spec, activeContainer, fileName));
+        getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer(), fileName));
     }
 
+    /**
+     * @return The mod's event bus, to allow subscription to Mod specific events
+     */
     public IEventBus getModEventBus()
     {
         return getActiveContainer().getEventBus();
     }
 
+    /**
+     * Only valid during {@link net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent} dispatch and Mod construction
+     * @return the active FML container
+     */
     public FMLModContainer getActiveContainer()
     {
         return activeContainer;

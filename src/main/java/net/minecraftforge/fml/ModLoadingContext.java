@@ -19,11 +19,13 @@
 
 package net.minecraftforge.fml;
 
-public class ModThreadContext
-{
-    private static ThreadLocal<ModThreadContext> context = ThreadLocal.withInitial(ModThreadContext::new);
+import java.util.function.Supplier;
 
-    public static ModThreadContext get() {
+public class ModLoadingContext
+{
+    private static ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
+
+    public static ModLoadingContext get() {
         return context.get();
     }
 
@@ -36,4 +38,15 @@ public class ModThreadContext
     public ModContainer getActiveContainer() {
         return activeContainer == null ? DefaultModContainers.MINECRAFT : activeContainer;
     }
+
+    /**
+     * Register an {@link ExtensionPoint} with the mod container.
+     * @param point The extension point to register
+     * @param extension An extension operator
+     * @param <T> The type signature of the extension operator
+     */
+    public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension) {
+        getActiveContainer().registerExtensionPoint(point, extension);
+    }
+
 }

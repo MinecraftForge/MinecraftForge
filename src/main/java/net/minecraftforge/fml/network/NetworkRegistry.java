@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.network;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetworkManager;
@@ -34,10 +32,12 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -51,21 +51,6 @@ public class NetworkRegistry
     private static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
 
     private static Map<ResourceLocation, NetworkInstance> instances = new HashMap<>();
-    static final Map<ResourceLocation, Supplier<Function<ByteBuf, GuiScreen>>> guiHandlers = new ConcurrentHashMap<>();
-
-    /**
-     * Registers a client-side GUI handler for the given ID.
-     * The function takes any extra data provided to {@link net.minecraft.entity.player.EntityPlayer#openGui}
-     * and returns a {@link GuiScreen} to display.
-     * Call this during {@link net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent}.
-     * This method is safe to call in parallel mod loading
-     * @param id
-     * @param handler
-     */
-    public static void registerGui(ResourceLocation id, Supplier<Function<ByteBuf, GuiScreen>> handler)
-    {
-        guiHandlers.put(id, handler);
-    }
 
     /**
      * Special value for clientAcceptedVersions and serverAcceptedVersions predicates indicating the other side lacks

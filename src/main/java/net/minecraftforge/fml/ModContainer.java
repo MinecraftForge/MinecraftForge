@@ -115,11 +115,11 @@ public abstract class ModContainer
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Optional<T> getCustomExtension(ExtensionPoint point) {
+    public <T> Optional<T> getCustomExtension(ExtensionPoint<T> point) {
         return Optional.ofNullable((T)extensionPoints.getOrDefault(point,()-> null).get());
     }
 
-    public <T> void registerExtensionPoint(ExtensionPoint point, Supplier<T> extension)
+    public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension)
     {
         extensionPoints.put(point, extension);
     }

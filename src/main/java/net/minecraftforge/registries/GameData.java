@@ -42,7 +42,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.ModThreadContext;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
@@ -51,8 +51,6 @@ import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -66,7 +64,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
 /**
@@ -828,7 +825,7 @@ public class GameData
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
         name = index == -1 ? name : name.substring(index + 1);
-        String prefix = ModThreadContext.get().getActiveContainer().getNamespace();
+        String prefix = ModLoadingContext.get().getActiveContainer().getNamespace();
         if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
             LogManager.getLogger().info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);

@@ -28,7 +28,7 @@ import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModThreadContext;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
@@ -94,7 +94,7 @@ public class FMLModContainer extends ModContainer
 
     private void beforeEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
         FMLModLoadingContext.get().setActiveContainer(this);
-        ModThreadContext.get().setActiveContainer(this);
+        ModLoadingContext.get().setActiveContainer(this);
     }
 
     private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
@@ -113,7 +113,7 @@ public class FMLModContainer extends ModContainer
     }
 
     private void afterEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        ModThreadContext.get().setActiveContainer(null);
+        ModLoadingContext.get().setActiveContainer(null);
         FMLModLoadingContext.get().setActiveContainer(null);
         if (getCurrentState() == ModLoadingStage.ERROR) {
             LOGGER.error(LOADING,"An error occurred while dispatching event {} to {}", lifecycleEvent.fromStage(), getModId());

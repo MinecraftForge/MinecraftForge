@@ -19,13 +19,14 @@
 
 package net.minecraftforge.fml.network;
 
-import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.CPacketHandshake;
 import net.minecraft.server.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
@@ -87,10 +88,22 @@ public class NetworkHooks
         return FMLHandshakeHandler.tickLogin(networkManager);
     }
 
-    public static void openGui(EntityPlayerMP player, IInteractionObject container, @Nullable ByteBuf extraData)
+    /**
+     * Server method to tell the client to open a GUI on behalf of the server
+     *
+     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
+     * It should refer to a valid modId namespace, to trigger opening on the client.
+     * The namespace is directly used to lookup the modId in the client side.
+     *
+     * @param player The player to open the GUI for
+     * @param containerSupplier The Container Supplier
+     * @param extraData Additional data for the GUI
+     */
+    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, @Nullable PacketBuffer extraData)
     {
-        ResourceLocation id = new ResourceLocation(container.getGuiID());
-        Container c = container.createContainer(player.inventory, player);
+        if (player.world.isRemote) return;
+        ResourceLocation id = new ResourceLocation(containerSupplier.getGuiID());
+        Container c = containerSupplier.createContainer(player.inventory, player);
         player.closeScreen();
         player.getNextWindowId();
         player.openContainer = c;
@@ -98,14 +111,13 @@ public class NetworkHooks
         player.openContainer.addListener(player);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
 
-        byte[] additional;
         if (extraData == null) {
-            additional = new byte[0];
-        } else {
-            additional = new byte[extraData.readableBytes()];
-            extraData.readBytes(additional);
+            extraData = new PacketBuffer(Unpooled.buffer());
         }
-        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, player.currentWindowId, additional);
+        if (extraData.readableBytes() > 32600) {
+            throw new IllegalArgumentException("GUI Open packet too large : "+ extraData.readableBytes());
+        }
+        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, player.currentWindowId, extraData);
         FMLPlayHandler.channel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
     }
 }
