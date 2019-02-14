@@ -21,7 +21,7 @@ package net.minecraftforge.client.model;
 
 import java.util.function.Predicate;
 
-import net.minecraft.client.renderer.block.model.IUnbakedModel;
+import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.resource.IResourceType;

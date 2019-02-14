@@ -6,7 +6,7 @@
  
 -public class BlockBush extends Block {
 +public class BlockBush extends Block implements net.minecraftforge.common.IPlantable {
-    protected BlockBush(Block.Builder p_i48437_1_) {
+    protected BlockBush(Block.Properties p_i48437_1_) {
        super(p_i48437_1_);
     }
 @@ -26,6 +26,8 @@

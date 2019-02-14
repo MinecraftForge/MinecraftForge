@@ -1,14 +1,14 @@
 --- a/net/minecraft/entity/player/EntityPlayerMP.java
 +++ b/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -418,6 +418,7 @@
+@@ -420,6 +420,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
 +      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  p_70645_1_)) return;
        boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
-       this.field_71135_a.func_147359_a(new SPacketCombatEvent(this.func_110142_aN(), SPacketCombatEvent.Event.ENTITY_DIED, flag));
        if (flag) {
-@@ -435,8 +436,10 @@
+          ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
+@@ -451,8 +452,10 @@
  
        this.func_192030_dh();
        if (!this.field_70170_p.func_82736_K().func_82766_b("keepInventory") && !this.func_175149_v()) {
@@ -18,37 +18,38 @@
 +         if (!field_70170_p.field_72995_K) net.minecraftforge.event.ForgeEventFactory.onPlayerDrops(this, p_70645_1_, captureDrops(null), field_70718_bc > 0);
        }
  
-       this.func_96123_co().func_197893_a(IScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
-@@ -521,7 +524,9 @@
+       this.func_96123_co().func_197893_a(ScoreCriteria.field_96642_c, this.func_195047_I_(), Score::func_96648_a);
+@@ -537,8 +540,10 @@
+       return this.field_71133_b.func_71219_W();
     }
  
-    @Nullable
--   public Entity func_184204_a(int p_184204_1_) {
 +   @Override
-+   public Entity changeDimension(int p_184204_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_184204_1_)) return null;
+    @Nullable
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
        this.field_184851_cj = true;
-       if (this.field_71093_bK == 0 && p_184204_1_ == -1) {
+       if (this.field_71093_bK == DimensionType.OVERWORLD && p_212321_1_ == DimensionType.NETHER) {
           this.field_193110_cw = new Vec3d(this.field_70165_t, this.field_70163_u, this.field_70161_v);
-@@ -529,7 +534,7 @@
+@@ -546,7 +551,7 @@
           this.field_193110_cw = null;
        }
  
--      if (this.field_71093_bK == 1 && p_184204_1_ == 1) {
-+      if (this.field_71093_bK == 1 && p_184204_1_ == 1 && teleporter.isVanilla()) {
+-      if (this.field_71093_bK == DimensionType.THE_END && p_212321_1_ == DimensionType.THE_END) {
++      if (this.field_71093_bK == DimensionType.THE_END && p_212321_1_ == DimensionType.THE_END && teleporter.isVanilla()) {
           this.field_70170_p.func_72900_e(this);
           if (!this.field_71136_j) {
              this.field_71136_j = true;
-@@ -543,7 +548,7 @@
-             p_184204_1_ = 1;
+@@ -560,7 +565,7 @@
+             p_212321_1_ = DimensionType.THE_END;
           }
  
--         this.field_71133_b.func_184103_al().func_187242_a(this, p_184204_1_);
-+         this.field_71133_b.func_184103_al().changePlayerDimension(this, p_184204_1_, teleporter);
+-         this.field_71133_b.func_184103_al().func_187242_a(this, p_212321_1_);
++         this.field_71133_b.func_184103_al().changePlayerDimension(this, p_212321_1_, teleporter);
           this.field_71135_a.func_147359_a(new SPacketEffect(1032, BlockPos.field_177992_a, 0, false));
           this.field_71144_ck = -1;
           this.field_71149_ch = -1.0F;
-@@ -645,7 +650,7 @@
+@@ -662,7 +667,7 @@
        int k = MathHelper.func_76128_c(this.field_70161_v);
        BlockPos blockpos = new BlockPos(i, j, k);
        IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -57,7 +58,7 @@
           BlockPos blockpos1 = blockpos.func_177977_b();
           IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
           Block block = iblockstate1.func_177230_c();
-@@ -676,6 +681,7 @@
+@@ -693,6 +698,7 @@
           this.field_71070_bA = p_180468_1_.func_174876_a(this.field_71071_by, this);
           this.field_71070_bA.field_75152_c = this.field_71139_cq;
           this.field_71070_bA.func_75132_a(this);
@@ -65,7 +66,7 @@
        }
     }
  
-@@ -707,6 +713,7 @@
+@@ -724,6 +730,7 @@
  
           this.field_71070_bA.field_75152_c = this.field_71139_cq;
           this.field_71070_bA.func_75132_a(this);
@@ -73,7 +74,7 @@
        }
     }
  
-@@ -715,6 +722,7 @@
+@@ -732,6 +739,7 @@
        this.field_71070_bA = new ContainerMerchant(this.field_71071_by, p_180472_1_, this.field_70170_p);
        this.field_71070_bA.field_75152_c = this.field_71139_cq;
        this.field_71070_bA.func_75132_a(this);
@@ -81,7 +82,7 @@
        IInventory iinventory = ((ContainerMerchant)this.field_71070_bA).func_75174_d();
        ITextComponent itextcomponent = p_180472_1_.func_145748_c_();
        this.field_71135_a.func_147359_a(new SPacketOpenWindow(this.field_71139_cq, "minecraft:villager", itextcomponent, iinventory.func_70302_i_()));
-@@ -738,6 +746,7 @@
+@@ -755,6 +763,7 @@
        this.field_71070_bA = new ContainerHorseInventory(this.field_71071_by, p_184826_2_, p_184826_1_, this);
        this.field_71070_bA.field_75152_c = this.field_71139_cq;
        this.field_71070_bA.func_75132_a(this);
@@ -89,7 +90,7 @@
     }
  
     public void func_184814_a(ItemStack p_184814_1_, EnumHand p_184814_2_) {
-@@ -800,6 +809,7 @@
+@@ -817,6 +826,7 @@
  
     public void func_71128_l() {
        this.field_71070_bA.func_75134_a(this);
@@ -97,14 +98,14 @@
        this.field_71070_bA = this.field_71069_bz;
     }
  
-@@ -929,6 +939,20 @@
+@@ -946,6 +956,20 @@
        this.field_193110_cw = p_193104_1_.field_193110_cw;
        this.func_192029_h(p_193104_1_.func_192023_dk());
        this.func_192031_i(p_193104_1_.func_192025_dl());
 +
 +      this.spawnPosMap = p_193104_1_.spawnPosMap;
 +      this.spawnForcedMap = p_193104_1_.spawnForcedMap;
-+      if(p_193104_1_.field_71093_bK != 0) {
++      if(p_193104_1_.field_71093_bK != net.minecraft.world.dimension.DimensionType.OVERWORLD) {
 +          this.field_71077_c = p_193104_1_.field_71077_c;
 +          this.field_82248_d = p_193104_1_.field_82248_d;
 +      }

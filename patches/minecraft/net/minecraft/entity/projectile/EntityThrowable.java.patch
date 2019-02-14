@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/projectile/EntityThrowable.java
 +++ b/net/minecraft/entity/projectile/EntityThrowable.java
-@@ -181,7 +181,7 @@
+@@ -178,7 +178,7 @@
        if (raytraceresult != null) {
           if (raytraceresult.field_72313_a == RayTraceResult.Type.BLOCK && this.field_70170_p.func_180495_p(raytraceresult.func_178782_a()).func_177230_c() == Blocks.field_150427_aO) {
              this.func_181015_d(raytraceresult.func_178782_a());

@@ -1,15 +1,15 @@
 --- a/net/minecraft/entity/item/EntityMinecart.java
 +++ b/net/minecraft/entity/item/EntityMinecart.java
-@@ -37,7 +37,7 @@
+@@ -38,7 +38,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public abstract class EntityMinecart extends Entity implements INameable {
 +public abstract class EntityMinecart extends Entity implements INameable, net.minecraftforge.common.extensions.IForgeEntityMinecart {
-    private static final DataParameter<Integer> field_184265_a = EntityDataManager.<Integer>func_187226_a(EntityMinecart.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Integer> field_184266_b = EntityDataManager.<Integer>func_187226_a(EntityMinecart.class, DataSerializers.field_187192_b);
-    private static final DataParameter<Float> field_184267_c = EntityDataManager.<Float>func_187226_a(EntityMinecart.class, DataSerializers.field_187193_c);
-@@ -58,6 +58,7 @@
+    private static final DataParameter<Integer> field_184265_a = EntityDataManager.func_187226_a(EntityMinecart.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Integer> field_184266_b = EntityDataManager.func_187226_a(EntityMinecart.class, DataSerializers.field_187192_b);
+    private static final DataParameter<Float> field_184267_c = EntityDataManager.func_187226_a(EntityMinecart.class, DataSerializers.field_187193_c);
+@@ -59,6 +59,7 @@
     private double field_70507_ar;
     @OnlyIn(Dist.CLIENT)
     private double field_70506_as;
@@ -17,7 +17,7 @@
  
     protected EntityMinecart(EntityType<?> p_i48538_1_, World p_i48538_2_) {
        super(p_i48538_1_, p_i48538_2_);
-@@ -110,11 +111,12 @@
+@@ -111,11 +112,12 @@
  
     @Nullable
     public AxisAlignedBB func_70114_g(Entity p_70114_1_) {
@@ -31,16 +31,16 @@
     }
  
     public double func_70042_X() {
-@@ -259,7 +261,7 @@
+@@ -260,7 +262,7 @@
  
-          BlockPos blockpos = new BlockPos(k, l, i1);
+          BlockPos blockpos = new BlockPos(j, k, l);
           IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
 -         if (iblockstate.func_203425_a(BlockTags.field_203437_y)) {
 +         if (canUseRail() && iblockstate.func_203425_a(BlockTags.field_203437_y)) {
              this.func_180460_a(blockpos, iblockstate);
              if (iblockstate.func_177230_c() == Blocks.field_150408_cc) {
-                this.func_96095_a(k, l, i1, iblockstate.func_177229_b(BlockRailPowered.field_176569_M));
-@@ -286,8 +288,11 @@
+                this.func_96095_a(j, k, l, iblockstate.func_177229_b(BlockRailPowered.field_176569_M));
+@@ -287,8 +289,11 @@
           }
  
           this.func_70101_b(this.field_70177_z, this.field_70125_A);
@@ -52,9 +52,9 @@
 +         if (canBeRidden() && this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y > 0.01D) {
 +            List<Entity> list = this.field_70170_p.func_175674_a(this, box, EntitySelectors.func_200823_a(this));
              if (!list.isEmpty()) {
-                for(int j1 = 0; j1 < list.size(); ++j1) {
-                   Entity entity1 = list.get(j1);
-@@ -299,7 +304,7 @@
+                for(int i1 = 0; i1 < list.size(); ++i1) {
+                   Entity entity1 = list.get(i1);
+@@ -300,7 +305,7 @@
                 }
              }
           } else {
@@ -63,7 +63,7 @@
                 if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof EntityMinecart) {
                    entity.func_70108_f(this);
                 }
-@@ -307,6 +312,7 @@
+@@ -308,6 +313,7 @@
           }
  
           this.func_70072_I();
@@ -71,7 +71,7 @@
        }
     }
  
-@@ -318,20 +324,30 @@
+@@ -319,20 +325,30 @@
     }
  
     protected void func_180459_n() {
@@ -107,12 +107,12 @@
        }
  
     }
-@@ -348,23 +364,23 @@
+@@ -349,23 +365,23 @@
           flag1 = !flag;
        }
  
 -      double d0 = 0.0078125D;
--      RailShape railshape = (RailShape)p_180460_2_.func_177229_b(blockrailbase.func_176560_l());
+-      RailShape railshape = p_180460_2_.func_177229_b(blockrailbase.func_176560_l());
 +      double slopeAdjustment = getSlopeAdjustment();
 +      RailShape railshape = ((BlockRailBase)p_180460_2_.func_177230_c()).getRailDirection(p_180460_2_, field_70170_p, p_180460_1_, this);
        switch(railshape) {
@@ -137,7 +137,7 @@
           ++this.field_70163_u;
        }
  
-@@ -400,7 +416,7 @@
+@@ -401,7 +417,7 @@
           }
        }
  
@@ -146,7 +146,7 @@
           double d17 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
           if (d17 < 0.03D) {
              this.field_70159_w *= 0.0D;
-@@ -435,17 +451,7 @@
+@@ -436,17 +452,7 @@
        this.field_70165_t = d18 + d1 * d10;
        this.field_70161_v = d19 + d2 * d10;
        this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
@@ -165,7 +165,7 @@
        if (aint[0][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[0][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[0][2]) {
           this.func_70107_b(this.field_70165_t, this.field_70163_u + (double)aint[0][1], this.field_70161_v);
        } else if (aint[1][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[1][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[1][2]) {
-@@ -473,7 +479,10 @@
+@@ -474,7 +480,10 @@
           this.field_70179_y = d5 * (double)(i - p_180460_1_.func_177952_p());
        }
  
@@ -177,25 +177,25 @@
           double d15 = Math.sqrt(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
           if (d15 > 0.01D) {
              double d16 = 0.06D;
-@@ -530,7 +539,7 @@
+@@ -531,7 +540,7 @@
  
        IBlockState iblockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (iblockstate.func_203425_a(BlockTags.field_203437_y)) {
--         RailShape railshape = (RailShape)iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l());
+-         RailShape railshape = iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l());
 +         RailShape railshape = ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(iblockstate, field_70170_p, new BlockPos(i, j, k), this);
           p_70495_3_ = (double)j;
           if (railshape.func_208092_c()) {
              p_70495_3_ = (double)(j + 1);
-@@ -567,7 +576,7 @@
+@@ -568,7 +577,7 @@
  
        IBlockState iblockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (iblockstate.func_203425_a(BlockTags.field_203437_y)) {
--         RailShape railshape = (RailShape)iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l());
+-         RailShape railshape = iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l());
 +         RailShape railshape = ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(iblockstate, field_70170_p, new BlockPos(i, j, k), this);
           int[][] aint = field_70500_g[railshape.func_208091_a()];
           double d0 = (double)i + 0.5D + (double)aint[0][0] * 0.5D;
           double d1 = (double)j + 0.0625D + (double)aint[0][1] * 0.5D;
-@@ -630,6 +639,11 @@
+@@ -631,6 +640,11 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
@@ -207,7 +207,7 @@
        if (!this.field_70170_p.field_72995_K) {
           if (!p_70108_1_.field_70145_X && !this.field_70145_X) {
              if (!this.func_184196_w(p_70108_1_)) {
-@@ -665,13 +679,13 @@
+@@ -666,13 +680,13 @@
  
                       double d7 = p_70108_1_.field_70159_w + this.field_70159_w;
                       double d8 = p_70108_1_.field_70179_y + this.field_70179_y;
@@ -223,7 +223,7 @@
                          p_70108_1_.field_70159_w *= (double)0.2F;
                          p_70108_1_.field_70179_y *= (double)0.2F;
                          p_70108_1_.func_70024_g(this.field_70159_w + d0, 0.0D, this.field_70179_y + d1);
-@@ -781,6 +795,32 @@
+@@ -782,6 +796,32 @@
        this.func_184212_Q().func_187227_b(field_184270_f, p_94096_1_);
     }
  

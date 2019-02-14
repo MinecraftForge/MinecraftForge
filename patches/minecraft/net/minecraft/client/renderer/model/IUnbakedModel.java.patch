@@ -1,0 +1,22 @@
+--- a/net/minecraft/client/renderer/model/IUnbakedModel.java
++++ b/net/minecraft/client/renderer/model/IUnbakedModel.java
+@@ -10,11 +10,17 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface IUnbakedModel {
++public interface IUnbakedModel extends net.minecraftforge.client.model.IModel<IUnbakedModel> {
+    Collection<ResourceLocation> func_187965_e();
+ 
+    Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_);
+ 
++   /**
++    * @deprecated Use {@link #bake(Function, Function, IModelState, boolean)}.
++    */
+    @Nullable
+-   IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_);
++   @Deprecated
++   default IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_) {
++       return bake(p_209558_1_, p_209558_2_, p_209558_3_, p_209558_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
++   }
+ }

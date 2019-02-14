@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/structure/StructureStart.java
 +++ b/net/minecraft/world/gen/feature/structure/StructureStart.java
-@@ -68,6 +68,9 @@
+@@ -70,6 +70,9 @@
     }
  
     public NBTTagCompound func_143021_a(int p_143021_1_, int p_143021_2_) {
@@ -10,7 +10,7 @@
        NBTTagCompound nbttagcompound = new NBTTagCompound();
        if (this.func_75069_d()) {
           nbttagcompound.func_74778_a("id", StructureIO.func_143033_a(this));
-@@ -105,7 +108,8 @@
+@@ -109,7 +112,8 @@
        NBTTagList nbttaglist = p_143020_2_.func_150295_c("Children", 10);
  
        for(int i = 0; i < nbttaglist.size(); ++i) {

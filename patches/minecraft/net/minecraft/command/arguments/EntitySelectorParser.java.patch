@@ -1,6 +1,6 @@
 --- a/net/minecraft/command/arguments/EntitySelectorParser.java
 +++ b/net/minecraft/command/arguments/EntitySelectorParser.java
-@@ -441,6 +441,10 @@
+@@ -435,6 +435,10 @@
           }
  
           this.field_197417_j.skip();
@@ -11,10 +11,10 @@
           this.func_197403_b();
        } else {
           this.func_197382_c();
-@@ -456,6 +460,7 @@
-       p_210326_0_.suggest("@r", new TextComponentTranslation("argument.entity.selector.randomPlayer", new Object[0]));
-       p_210326_0_.suggest("@s", new TextComponentTranslation("argument.entity.selector.self", new Object[0]));
-       p_210326_0_.suggest("@e", new TextComponentTranslation("argument.entity.selector.allEntities", new Object[0]));
+@@ -450,6 +454,7 @@
+       p_210326_0_.suggest("@r", new TextComponentTranslation("argument.entity.selector.randomPlayer"));
+       p_210326_0_.suggest("@s", new TextComponentTranslation("argument.entity.selector.self"));
+       p_210326_0_.suggest("@e", new TextComponentTranslation("argument.entity.selector.allEntities"));
 +      net.minecraftforge.common.command.EntitySelectorManager.fillSelectorSuggestions(p_210326_0_);
     }
  

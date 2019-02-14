@@ -22,7 +22,7 @@
           String s = resourcelocation.func_110623_a();
           ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), s.substring(field_199519_a, s.length() - field_199520_b));
 @@ -47,6 +48,8 @@
-             JsonObject jsonobject = (JsonObject)JsonUtils.func_188178_a(gson, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), JsonObject.class);
+             JsonObject jsonobject = JsonUtils.func_188178_a(gson, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), JsonObject.class);
              if (jsonobject == null) {
                 field_199521_c.error("Couldn't load recipe {} as it's null or empty", (Object)resourcelocation1);
 +            } else if (jsonobject.has("conditions") && !net.minecraftforge.common.crafting.CraftingHelper.processConditions(JsonUtils.func_151214_t(jsonobject, "conditions"))) {

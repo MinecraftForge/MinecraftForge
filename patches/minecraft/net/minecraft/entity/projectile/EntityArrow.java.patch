@@ -9,7 +9,7 @@
           VoxelShape voxelshape = iblockstate.func_196952_d(this.field_70170_p, blockpos);
           if (!voxelshape.func_197766_b()) {
              for(AxisAlignedBB axisalignedbb : voxelshape.func_197756_d()) {
-@@ -222,7 +222,7 @@
+@@ -223,7 +223,7 @@
              }
           }
  
@@ -18,7 +18,7 @@
              this.func_184549_a(raytraceresult);
              this.field_70160_al = true;
           }
-@@ -313,7 +313,7 @@
+@@ -314,7 +314,7 @@
           this.field_70254_i = true;
           this.field_70249_b = 7;
           this.func_70243_d(false);

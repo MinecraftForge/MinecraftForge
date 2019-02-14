@@ -1,42 +1,85 @@
 --- a/net/minecraft/world/dimension/DimensionType.java
 +++ b/net/minecraft/world/dimension/DimensionType.java
-@@ -2,7 +2,7 @@
+@@ -6,14 +6,17 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.IRegistry;
  
- import java.util.function.Supplier;
- 
--public enum DimensionType {
-+public enum DimensionType implements net.minecraftforge.common.IExtensibleEnum {
-    OVERWORLD(0, "overworld", "", OverworldDimension::new),
-    NETHER(-1, "the_nether", "_nether", NetherDimension::new),
-    THE_END(1, "the_end", "_end", EndDimension::new);
-@@ -11,12 +11,19 @@
-    private final String field_186075_e;
+-public class DimensionType {
++public class DimensionType extends net.minecraftforge.registries.ForgeRegistryEntry<DimensionType> {
+    public static final DimensionType OVERWORLD = func_212677_a("overworld", new DimensionType(1, "", "", OverworldDimension::new));
+    public static final DimensionType NETHER = func_212677_a("the_nether", new DimensionType(0, "_nether", "DIM-1", NetherDimension::new));
+    public static final DimensionType THE_END = func_212677_a("the_end", new DimensionType(2, "_end", "DIM1", EndDimension::new));
+    private final int field_186074_d;
     private final String field_186076_f;
-    private final Supplier<? extends Dimension> field_201038_g;
-+   private final boolean shouldLoadSpawn;
+    private final String field_212682_f;
+-   private final Supplier<? extends Dimension> field_201038_g;
++   private final java.util.function.Function<DimensionType, ? extends Dimension> field_201038_g;
++   private final boolean isVanilla;
++   private final net.minecraftforge.common.ModDimension modType;
++   private final net.minecraft.network.PacketBuffer data;
  
-    private DimensionType(int p_i48278_3_, String p_i48278_4_, String p_i48278_5_, Supplier<? extends Dimension> p_i48278_6_) {
-+      this(p_i48278_3_, p_i48278_4_, p_i48278_5_, p_i48278_6_, p_i48278_3_ == 0);
-+   }
-+   
-+   private DimensionType(int p_i48278_3_, String p_i48278_4_, String p_i48278_5_, Supplier<? extends Dimension> p_i48278_6_, boolean shouldLoadSpawn)
-+   {
-       this.field_186074_d = p_i48278_3_;
-       this.field_186075_e = p_i48278_4_;
-       this.field_186076_f = p_i48278_5_;
-       this.field_201038_g = p_i48278_6_;
-+      this.shouldLoadSpawn = shouldLoadSpawn;
+    public static void func_212680_a() {
+    }
+@@ -23,11 +26,19 @@
+       return p_212677_1_;
     }
  
-    public int func_186068_a() {
-@@ -54,4 +61,10 @@
- 
-       throw new IllegalArgumentException("Invalid dimension " + p_193417_0_);
-    }
-+   
-+   public boolean shouldLoadSpawn(){ return this.shouldLoadSpawn; }
-+   
-+   public static DimensionType create(String enumName, int id, String name, String suffix, Supplier<? extends Dimension> provider, boolean shouldLoadSpawn) {
-+      throw new IllegalStateException("Enum not extended");
+-   protected DimensionType(int p_i49807_1_, String p_i49807_2_, String p_i49807_3_, Supplier<? extends Dimension> p_i49807_4_) {
++   public DimensionType(int p_i49807_1_, String p_i49807_2_, String p_i49807_3_, Supplier<? extends Dimension> p_i49807_4_) {
++      this(p_i49807_1_, p_i49807_2_, p_i49807_3_, type -> p_i49807_4_.get(), null, null);
 +   }
- }
++
++   //Forge, Internal use only. Use DimensionManager instead.
++   public DimensionType(int p_i49807_1_, String p_i49807_2_, String p_i49807_3_, java.util.function.Function<DimensionType, ? extends Dimension> p_i49807_4_, @Nullable net.minecraftforge.common.ModDimension modType, @Nullable net.minecraft.network.PacketBuffer data) {
+       this.field_186074_d = p_i49807_1_;
+       this.field_186076_f = p_i49807_2_;
+       this.field_212682_f = p_i49807_3_;
+       this.field_201038_g = p_i49807_4_;
++      this.isVanilla = this.field_186074_d >= 0 && this.field_186074_d <= 2;
++      this.modType = modType;
++      this.data = data;
+    }
+ 
+    public static Iterable<DimensionType> func_212681_b() {
+@@ -38,8 +49,9 @@
+       return this.field_186074_d + -1;
+    }
+ 
++   @Deprecated //Forge Do not use, only used for villages backwards compatibility
+    public String func_186067_c() {
+-      return this.field_186076_f;
++      return isVanilla ? this.field_186076_f : "";
+    }
+ 
+    public File func_212679_a(File p_212679_1_) {
+@@ -47,7 +59,7 @@
+    }
+ 
+    public Dimension func_186070_d() {
+-      return this.field_201038_g.get();
++      return this.field_201038_g.apply(this);
+    }
+ 
+    public String toString() {
+@@ -59,7 +71,21 @@
+       return IRegistry.field_212622_k.func_148754_a(p_186069_0_ - -1);
+    }
+ 
++   public boolean isVanilla() {
++      return this.isVanilla;
++   }
++
+    @Nullable
++   public net.minecraftforge.common.ModDimension getModType() {
++      return this.modType;
++   }
++
++   @Nullable
++   public net.minecraft.network.PacketBuffer getData() {
++      return this.data;
++   }
++
++   @Nullable
+    public static DimensionType func_193417_a(ResourceLocation p_193417_0_) {
+       return IRegistry.field_212622_k.func_212608_b(p_193417_0_);
+    }

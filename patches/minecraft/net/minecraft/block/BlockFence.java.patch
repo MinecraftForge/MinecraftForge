@@ -12,13 +12,13 @@
 -      IBlockState iblockstate1 = iblockreader.func_180495_p(blockpos2);
 -      IBlockState iblockstate2 = iblockreader.func_180495_p(blockpos3);
 -      IBlockState iblockstate3 = iblockreader.func_180495_p(blockpos4);
--      return (IBlockState)((IBlockState)((IBlockState)((IBlockState)((IBlockState)super.func_196258_a(p_196258_1_).func_206870_a(field_196409_a, Boolean.valueOf(this.func_196416_a(iblockstate, iblockstate.func_193401_d(iblockreader, blockpos1, EnumFacing.SOUTH))))).func_206870_a(field_196411_b, Boolean.valueOf(this.func_196416_a(iblockstate1, iblockstate1.func_193401_d(iblockreader, blockpos2, EnumFacing.WEST))))).func_206870_a(field_196413_c, Boolean.valueOf(this.func_196416_a(iblockstate2, iblockstate2.func_193401_d(iblockreader, blockpos3, EnumFacing.NORTH))))).func_206870_a(field_196414_y, Boolean.valueOf(this.func_196416_a(iblockstate3, iblockstate3.func_193401_d(iblockreader, blockpos4, EnumFacing.EAST))))).func_206870_a(field_204514_u, Boolean.valueOf(ifluidstate.func_206886_c() == Fluids.field_204546_a));
+-      return super.func_196258_a(p_196258_1_).func_206870_a(field_196409_a, Boolean.valueOf(this.func_196416_a(iblockstate, iblockstate.func_193401_d(iblockreader, blockpos1, EnumFacing.SOUTH)))).func_206870_a(field_196411_b, Boolean.valueOf(this.func_196416_a(iblockstate1, iblockstate1.func_193401_d(iblockreader, blockpos2, EnumFacing.WEST)))).func_206870_a(field_196413_c, Boolean.valueOf(this.func_196416_a(iblockstate2, iblockstate2.func_193401_d(iblockreader, blockpos3, EnumFacing.NORTH)))).func_206870_a(field_196414_y, Boolean.valueOf(this.func_196416_a(iblockstate3, iblockstate3.func_193401_d(iblockreader, blockpos4, EnumFacing.EAST)))).func_206870_a(field_204514_u, Boolean.valueOf(ifluidstate.func_206886_c() == Fluids.field_204546_a));
 +      return super.func_196258_a(p_196258_1_)
-+          .func_206870_a(field_196409_a, canFenceConnectTo(iblockreader, blockpos, EnumFacing.NORTH))
-+          .func_206870_a(field_196411_b, canFenceConnectTo(iblockreader, blockpos, EnumFacing.EAST))
-+          .func_206870_a(field_196413_c, canFenceConnectTo(iblockreader, blockpos, EnumFacing.SOUTH))
-+          .func_206870_a(field_196414_y, canFenceConnectTo(iblockreader, blockpos, EnumFacing.WEST))
-+          .func_206870_a(field_204514_u, Boolean.valueOf(ifluidstate.func_206886_c() == Fluids.field_204546_a));
++              .func_206870_a(field_196409_a, canFenceConnectTo(iblockreader, blockpos, EnumFacing.NORTH))
++              .func_206870_a(field_196411_b, canFenceConnectTo(iblockreader, blockpos, EnumFacing.EAST))
++              .func_206870_a(field_196413_c, canFenceConnectTo(iblockreader, blockpos, EnumFacing.SOUTH))
++              .func_206870_a(field_196414_y, canFenceConnectTo(iblockreader, blockpos, EnumFacing.WEST))
++              .func_206870_a(field_204514_u, Boolean.valueOf(ifluidstate.func_206886_c() == Fluids.field_204546_a));
     }
  
     public IBlockState func_196271_a(IBlockState p_196271_1_, EnumFacing p_196271_2_, IBlockState p_196271_3_, IWorld p_196271_4_, BlockPos p_196271_5_, BlockPos p_196271_6_) {
@@ -26,8 +26,8 @@
           p_196271_4_.func_205219_F_().func_205360_a(p_196271_5_, Fluids.field_204546_a, Fluids.field_204546_a.func_205569_a(p_196271_4_));
        }
  
--      return p_196271_2_.func_176740_k().func_176716_d() == EnumFacing.Plane.HORIZONTAL ? (IBlockState)p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.func_196416_a(p_196271_3_, p_196271_3_.func_193401_d(p_196271_4_, p_196271_6_, p_196271_2_.func_176734_d())))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
-+      return p_196271_2_.func_176740_k().func_176716_d() == EnumFacing.Plane.HORIZONTAL ? (IBlockState)p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.canFenceConnectTo(p_196271_4_, p_196271_5_, p_196271_2_))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
+-      return p_196271_2_.func_176740_k().func_176716_d() == EnumFacing.Plane.HORIZONTAL ? p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.func_196416_a(p_196271_3_, p_196271_3_.func_193401_d(p_196271_4_, p_196271_6_, p_196271_2_.func_176734_d())))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
++      return p_196271_2_.func_176740_k().func_176716_d() == EnumFacing.Plane.HORIZONTAL ? p_196271_1_.func_206870_a(field_196415_z.get(p_196271_2_), Boolean.valueOf(this.canFenceConnectTo(p_196271_4_, p_196271_5_, p_196271_2_))) : super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
     }
  
     protected void func_206840_a(StateContainer.Builder<Block, IBlockState> p_206840_1_) {

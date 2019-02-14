@@ -19,9 +19,7 @@
 
 package net.minecraftforge.server.command;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,27 +27,23 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Maps;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
-import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
-import net.minecraft.command.arguments.BlockPosArgument;
+import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -75,16 +69,15 @@ class CommandEntity
                 .requires(cs->cs.hasPermissionLevel(2)) //permission
                 .then(Commands.argument("filter", StringArgumentType.string())
                     .suggests((ctx, builder) -> ISuggestionProvider.suggest(ForgeRegistries.ENTITIES.getKeys().stream().map(id -> id.toString()), builder))
-                    .then(Commands.argument("dim", IntegerArgumentType.integer())
-                        .suggests((ctx, builder) -> ISuggestionProvider.suggest(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
-                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), IntegerArgumentType.getInteger(ctx, "dim")))
+                    .then(Commands.argument("dim", DimensionArgument.func_212595_a())
+                        .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), DimensionArgument.func_212592_a(ctx, "dim")))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().dimension.getId()))
+                    .executes(ctx -> execute(ctx.getSource(), StringArgumentType.getString(ctx, "filter"), ctx.getSource().getWorld().dimension.getType()))
                 )
-                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getWorld().dimension.getId()));
+                .executes(ctx -> execute(ctx.getSource(), "*", ctx.getSource().getWorld().dimension.getType()));
         }
 
-        private static int execute(CommandSource sender, String filter, int dim) throws CommandSyntaxException
+        private static int execute(CommandSource sender, String filter, DimensionType dim) throws CommandSyntaxException
         {
             final String cleanFilter = filter.replace("?", ".?").replace("*", ".*?");
 
@@ -93,7 +86,7 @@ class CommandEntity
             if (names.isEmpty())
                 throw INVALID_FILTER.create();
 
-            WorldServer world = DimensionManager.getWorld(dim);
+            WorldServer world = DimensionManager.getWorld(sender.getServer(), dim, false, false);
             if (world == null)
                 throw INVALID_DIMENSION.create(dim);
 

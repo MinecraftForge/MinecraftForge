@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
@@ -272,6 +274,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Type: " + this.superType);
     }
 
+    @Nullable
+    public ResourceLocation getDefaultKey()
+    {
+        return this.defaultKey;
+    }
+
     ForgeRegistry<V> copy(RegistryManager stage)
     {
         return new ForgeRegistry<>(stage, name, builder);
@@ -358,7 +366,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return idToUse;
     }
 
-    private V getRaw(ResourceLocation key)
+    public V getRaw(ResourceLocation key)
     {
         V ret = this.names.get(key);
         key = this.aliases.get(key);

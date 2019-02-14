@@ -33,7 +33,7 @@ import net.minecraft.util.registry.RegistryNamespaced;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespaced<ResourceLocation, V> implements ILockableRegistry
+class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespaced<V> implements ILockableRegistry
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private boolean locked = false;
@@ -70,9 +70,9 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
     // Reading Functions
     @Override
     @Nullable
-    public V get(@Nullable ResourceLocation name)
+    public V func_212608_b(@Nullable ResourceLocation name)
     {
-        return this.delegate.getValue(name);
+        return this.delegate.getRaw(name); //get without default
     }
 
     @Override
@@ -83,7 +83,7 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
     }
 
     @Override
-    public boolean containsKey(ResourceLocation key)
+    public boolean func_212607_c(ResourceLocation key)
     {
         return this.delegate.containsKey(key);
     }

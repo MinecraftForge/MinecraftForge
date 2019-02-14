@@ -21,7 +21,7 @@ package net.minecraftforge.common.extensions;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;

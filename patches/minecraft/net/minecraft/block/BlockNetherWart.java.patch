@@ -1,17 +1,14 @@
 --- a/net/minecraft/block/BlockNetherWart.java
 +++ b/net/minecraft/block/BlockNetherWart.java
-@@ -33,26 +33,33 @@
+@@ -33,16 +33,22 @@
  
     public void func_196267_b(IBlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
        int i = p_196267_1_.func_177229_b(field_176486_a);
 -      if (i < 3 && p_196267_4_.nextInt(10) == 0) {
--         p_196267_1_ = (IBlockState)p_196267_1_.func_206870_a(field_176486_a, Integer.valueOf(i + 1));
--         p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_, 2);
 +      if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_4_.nextInt(10) == 0)) {
-+         IBlockState newState = (IBlockState)p_196267_1_.func_206870_a(field_176486_a, Integer.valueOf(i + 1));
-+         p_196267_2_.func_180501_a(p_196267_3_, newState, 2);
+          p_196267_1_ = p_196267_1_.func_206870_a(field_176486_a, Integer.valueOf(i + 1));
+          p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_, 2);
 +         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
-+         p_196267_1_ = newState;
        }
  
        super.func_196267_b(p_196267_1_, p_196267_2_, p_196267_3_, p_196267_4_);
@@ -19,22 +16,16 @@
  
     public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
 -      if (!p_196255_2_.field_72995_K) {
-+      super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, p_196255_5_);
-+   }
++       super.func_196255_a(p_196255_1_, p_196255_2_, p_196255_3_, p_196255_4_, p_196255_5_);
++    }
 +
 +   @Override
-+   public void getDrops(IBlockState state, net.minecraft.util.NonNullList<ItemStack> drops, World worldIn, BlockPos pos, int fortune) {
++   public void getDrops(IBlockState p_196255_1_, net.minecraft.util.NonNullList<ItemStack> drops, World p_196255_2_, BlockPos p_196255_3_, int p_196255_5_) {
 +      {
           int i = 1;
--         if (p_196255_1_.func_177229_b(field_176486_a) >= 3) {
--            i = 2 + p_196255_2_.field_73012_v.nextInt(3);
--            if (p_196255_5_ > 0) {
--               i += p_196255_2_.field_73012_v.nextInt(p_196255_5_ + 1);
-+         if (state.func_177229_b(field_176486_a) >= 3) {
-+            i = 2 + worldIn.field_73012_v.nextInt(3);
-+            if (fortune > 0) {
-+               i += worldIn.field_73012_v.nextInt(fortune + 1);
-             }
+          if (p_196255_1_.func_177229_b(field_176486_a) >= 3) {
+             i = 2 + p_196255_2_.field_73012_v.nextInt(3);
+@@ -52,7 +58,7 @@
           }
  
           for(int j = 0; j < i; ++j) {

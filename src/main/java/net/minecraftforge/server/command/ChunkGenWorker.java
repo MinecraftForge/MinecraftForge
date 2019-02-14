@@ -31,6 +31,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.SessionLockException;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.WorldWorkerManager.IWorker;
@@ -40,7 +41,7 @@ public class ChunkGenWorker implements IWorker
     private final CommandSource listener;
     protected final BlockPos start;
     protected final int total;
-    private final int dim;
+    private final DimensionType dim;
     private final Queue<BlockPos> queue;
     private final int notificationFrequency;
     private int lastNotification = 0;
@@ -48,7 +49,7 @@ public class ChunkGenWorker implements IWorker
     private int genned = 0;
     private Boolean keepingLoaded;
 
-    public ChunkGenWorker(CommandSource listener, BlockPos start, int total, int dim, int interval)
+    public ChunkGenWorker(CommandSource listener, BlockPos start, int total, DimensionType dim, int interval)
     {
         this.listener = listener;
         this.start = start;
@@ -99,11 +100,10 @@ public class ChunkGenWorker implements IWorker
     @Override
     public boolean doWork()
     {
-        WorldServer world = DimensionManager.getWorld(dim);
+        WorldServer world = DimensionManager.getWorld(listener.getServer(), dim, false, false);
         if (world == null)
         {
-            DimensionManager.initDimension(dim);
-            world = DimensionManager.getWorld(dim);
+            world = DimensionManager.initWorld(listener.getServer(), dim);
             if (world == null)
             {
                 listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.dim_fail", dim), true);
@@ -131,7 +131,7 @@ public class ChunkGenWorker implements IWorker
             // While we work we don't want to cause world load spam so pause unloading the world.
             if (keepingLoaded == null)
             {
-                keepingLoaded = DimensionManager.keepDimensionLoaded(dim, true);
+                keepingLoaded = DimensionManager.keepLoaded(dim, true);
             }
 
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
@@ -180,9 +180,9 @@ public class ChunkGenWorker implements IWorker
         if (queue.size() == 0)
         {
             listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.complete", genned, total, dim), true);
-            if (keepingLoaded != null && keepingLoaded)
+            if (keepingLoaded != null && !keepingLoaded)
             {
-                DimensionManager.keepDimensionLoaded(dim, false);
+                DimensionManager.keepLoaded(dim, false);
             }
             return false;
         }

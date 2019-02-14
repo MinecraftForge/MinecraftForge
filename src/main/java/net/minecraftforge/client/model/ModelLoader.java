@@ -42,31 +42,31 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.ItemModelMesher;
 import net.minecraft.client.renderer.Vector3f;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockPart;
-import net.minecraft.client.renderer.block.model.BlockPartFace;
-import net.minecraft.client.renderer.block.model.BlockPartRotation;
-import net.minecraft.client.renderer.block.model.BuiltInModel;
-import net.minecraft.client.renderer.block.model.FaceBakery;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.IUnbakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.block.model.ItemModelGenerator;
-import net.minecraft.client.renderer.block.model.ItemOverrideList;
-import net.minecraft.client.renderer.block.model.ModelBakery;
-import net.minecraft.client.renderer.block.model.ModelBlock;
-import net.minecraft.client.renderer.block.model.ModelBlockDefinition;
-import net.minecraft.client.renderer.block.model.ModelBlockDefinition.ContainerHolder;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.model.ModelRotation;
-import net.minecraft.client.renderer.block.model.MultipartBakedModel;
-import net.minecraft.client.renderer.block.model.SimpleBakedModel;
-import net.minecraft.client.renderer.block.model.Variant;
-import net.minecraft.client.renderer.block.model.VariantList;
-import net.minecraft.client.renderer.block.model.WeightedBakedModel;
-import net.minecraft.client.renderer.block.model.multipart.Multipart;
-import net.minecraft.client.renderer.block.model.multipart.Selector;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.BlockPart;
+import net.minecraft.client.renderer.model.BlockPartFace;
+import net.minecraft.client.renderer.model.BlockPartRotation;
+import net.minecraft.client.renderer.model.BuiltInModel;
+import net.minecraft.client.renderer.model.FaceBakery;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.IUnbakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.model.ItemModelGenerator;
+import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.model.ModelBlock;
+import net.minecraft.client.renderer.model.ModelBlockDefinition;
+import net.minecraft.client.renderer.model.ModelBlockDefinition.ContainerHolder;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.model.ModelRotation;
+import net.minecraft.client.renderer.model.MultipartBakedModel;
+import net.minecraft.client.renderer.model.SimpleBakedModel;
+import net.minecraft.client.renderer.model.Variant;
+import net.minecraft.client.renderer.model.VariantList;
+import net.minecraft.client.renderer.model.WeightedBakedModel;
+import net.minecraft.client.renderer.model.multipart.Multipart;
+import net.minecraft.client.renderer.model.multipart.Selector;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -951,7 +951,7 @@ public final class ModelLoader extends ModelBakery
     /**
      * Internal, do not use.
      */
-    public void onPostBakeEvent(IRegistry<ModelResourceLocation, IBakedModel> modelRegistry)
+    public void onPostBakeEvent(Map<ModelResourceLocation, IBakedModel> modelRegistry)
     {
         IBakedModel missingModel = modelRegistry.get(MODEL_MISSING);
         for(Map.Entry<ResourceLocation, Exception> entry : loadingExceptions.entrySet())

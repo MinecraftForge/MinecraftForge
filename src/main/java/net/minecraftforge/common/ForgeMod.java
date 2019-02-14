@@ -69,7 +69,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean zoomInMissingModelTextInGui = false;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
-    public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
+    public static boolean alwaysSetupTerrainOffThread = false; // In WorldRenderer.setupTerrain, always force the chunk render updates to be queued to the thread
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
                                                        // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
@@ -130,7 +130,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        UsernameCache.setUsername(event.player.getUniqueID(), event.player.getGameProfile().getName());
+        UsernameCache.setUsername(event.getPlayer().getUniqueID(), event.getPlayer().getGameProfile().getName());
     }
 
 
@@ -204,8 +204,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
         NBTTagCompound forgeData = new NBTTagCompound();
-        NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
-        forgeData.setTag("DimensionData", dimData);
+        NBTTagCompound dims = new NBTTagCompound();
+        DimensionManager.writeRegistry(dims);
+        if (!dims.isEmpty())
+            forgeData.setTag("dims", dims);
         // TODO fluids FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
@@ -213,7 +215,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     @Override
     public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
     {
-        DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompound("DimensionData") : null);
+        if (tag.contains("dims", 10))
+            DimensionManager.readRegistry(tag.getCompound("dims"));
         // TODO fluids FluidRegistry.loadFluidDefaults(tag);
     }
 

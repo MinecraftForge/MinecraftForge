@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/EntityVillager.java
 +++ b/net/minecraft/entity/passive/EntityVillager.java
-@@ -105,7 +105,7 @@
+@@ -106,7 +106,7 @@
     private boolean field_70959_by;
     private boolean field_175565_bs;
     private int field_70956_bz;
@@ -161,7 +161,7 @@
  
 -         if (s != null) {
 +         s = this.getProfessionForge().getCareer(this.field_175563_bv-1).getName();
-             ITextComponent itextcomponent1 = (new TextComponentTranslation(this.func_200600_R().func_210760_d() + '.' + s, new Object[0])).func_211710_a((p_211520_1_) -> {
+             ITextComponent itextcomponent1 = (new TextComponentTranslation(this.func_200600_R().func_210760_d() + '.' + s)).func_211710_a((p_211520_1_) -> {
                 p_211520_1_.func_150209_a(this.func_174823_aP()).func_179989_a(this.func_189512_bd());
              });
 @@ -576,9 +609,6 @@

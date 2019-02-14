@@ -1,26 +1,24 @@
 --- a/net/minecraft/world/gen/layer/LayerUtil.java
 +++ b/net/minecraft/world/gen/layer/LayerUtil.java
-@@ -67,12 +67,12 @@
-       if (p_202828_0_ == WorldType.field_77135_d) {
+@@ -69,11 +69,11 @@
           i = 6;
        }
-+      
-+      i = getModdedBiomeSize(p_202828_0_, i);
  
++      i = getModdedBiomeSize(p_202828_0_, i);
++
        IAreaFactory<T> lvt_7_1_ = func_202829_a(1000L, GenLayerZoom.NORMAL, iareafactory, 0, p_202828_2_);
        lvt_7_1_ = GenLayerRiverInit.INSTANCE.func_202713_a((IContextExtended)p_202828_2_.apply(100L), lvt_7_1_);
--      IAreaFactory<T> lvt_8_1_ = (new GenLayerBiome(p_202828_0_, p_202828_1_)).func_202713_a((IContextExtended)p_202828_2_.apply(200L), iareafactory);
+-      IAreaFactory<T> lvt_8_1_ = (new GenLayerBiome(p_202828_0_, p_202828_1_)).func_202713_a(p_202828_2_.apply(200L), iareafactory);
 -      lvt_8_1_ = func_202829_a(1000L, GenLayerZoom.NORMAL, lvt_8_1_, 2, p_202828_2_);
 -      lvt_8_1_ = GenLayerBiomeEdge.INSTANCE.func_202713_a((IContextExtended)p_202828_2_.apply(1000L), lvt_8_1_);
 +      IAreaFactory<T> lvt_8_1_ = p_202828_0_.getBiomeLayer(iareafactory, p_202828_1_, p_202828_2_);
        IAreaFactory<T> lvt_9_1_ = func_202829_a(1000L, GenLayerZoom.NORMAL, lvt_7_1_, 2, p_202828_2_);
        lvt_8_1_ = GenLayerHills.INSTANCE.func_202707_a((IContextExtended)p_202828_2_.apply(1000L), lvt_8_1_, lvt_9_1_);
        lvt_7_1_ = func_202829_a(1000L, GenLayerZoom.NORMAL, lvt_7_1_, 2, p_202828_2_);
-@@ -133,6 +133,15 @@
-          }
+@@ -135,6 +135,15 @@
        }
     }
-+   
+ 
 +   /* ======================================== FORGE START =====================================*/
 +   public static int getModdedBiomeSize(net.minecraft.world.WorldType worldType, int original)
 +   {
@@ -29,6 +27,7 @@
 +       return event.getNewSize();
 +   }
 +   /* ========================================= FORGE END ======================================*/
- 
++
     protected static boolean func_202827_a(int p_202827_0_) {
        return p_202827_0_ == field_203632_a || p_202827_0_ == field_203633_b || p_202827_0_ == field_202832_c || p_202827_0_ == field_203634_d || p_202827_0_ == field_202831_b || p_202827_0_ == field_203635_f || p_202827_0_ == field_203636_g || p_202827_0_ == field_202830_a || p_202827_0_ == field_203637_i || p_202827_0_ == field_203638_j;
+    }

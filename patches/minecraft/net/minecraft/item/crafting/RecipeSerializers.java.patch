@@ -4,14 +4,14 @@
  import net.minecraft.util.ResourceLocation;
  
  public class RecipeSerializers {
--   private static final Map<String, IRecipeSerializer<?>> field_199590_p = Maps.<String, IRecipeSerializer<?>>newHashMap();
+-   private static final Map<String, IRecipeSerializer<?>> field_199590_p = Maps.newHashMap();
 +   private static final Map<ResourceLocation, IRecipeSerializer<?>> field_199590_p = Maps.newHashMap();
     public static final IRecipeSerializer<ShapedRecipe> field_199575_a = func_199573_a(new ShapedRecipe.Serializer());
     public static final IRecipeSerializer<ShapelessRecipe> field_199576_b = func_199573_a(new ShapelessRecipe.Serializer());
-    public static final RecipeSerializers.SimpleSerializer<RecipesArmorDyes> field_199577_c = func_199573_a(new RecipeSerializers.SimpleSerializer<RecipesArmorDyes>("crafting_special_armordye", RecipesArmorDyes::new));
+    public static final RecipeSerializers.SimpleSerializer<RecipesArmorDyes> field_199577_c = func_199573_a(new RecipeSerializers.SimpleSerializer<>("crafting_special_armordye", RecipesArmorDyes::new));
 @@ -27,18 +27,19 @@
-    public static final RecipeSerializers.SimpleSerializer<ShieldRecipes> field_199588_n = func_199573_a(new RecipeSerializers.SimpleSerializer<ShieldRecipes>("crafting_special_shielddecoration", ShieldRecipes::new));
-    public static final RecipeSerializers.SimpleSerializer<ShulkerBoxColoringRecipe> field_199589_o = func_199573_a(new RecipeSerializers.SimpleSerializer<ShulkerBoxColoringRecipe>("crafting_special_shulkerboxcoloring", ShulkerBoxColoringRecipe::new));
+    public static final RecipeSerializers.SimpleSerializer<ShieldRecipes> field_199588_n = func_199573_a(new RecipeSerializers.SimpleSerializer<>("crafting_special_shielddecoration", ShieldRecipes::new));
+    public static final RecipeSerializers.SimpleSerializer<ShulkerBoxColoringRecipe> field_199589_o = func_199573_a(new RecipeSerializers.SimpleSerializer<>("crafting_special_shulkerboxcoloring", ShulkerBoxColoringRecipe::new));
     public static final IRecipeSerializer<FurnaceRecipe> field_201839_p = func_199573_a(new FurnaceRecipe.Serializer());
 +   private static final java.util.Set<ResourceLocation> VANILLA_TYPES = new java.util.HashSet<>(field_199590_p.keySet()); //Copy of vanilla so we can keep track for compatibility.
  

@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/renderer/vertex/VertexFormat.java
 +++ b/net/minecraft/client/renderer/vertex/VertexFormat.java
 @@ -16,6 +16,7 @@
-    private int field_177354_e;
-    private final List<Integer> field_177351_f;
-    private int field_177352_g;
+    private int field_177354_e = -1;
+    private final List<Integer> field_177351_f = Lists.newArrayList();
+    private int field_177352_g = -1;
 +   private int hashCode;
  
     public VertexFormat(VertexFormat p_i46097_1_) {
        this();
-@@ -42,6 +43,7 @@
+@@ -37,6 +38,7 @@
        this.field_177351_f.clear();
        this.field_177352_g = -1;
        this.field_177353_d = 0;
@@ -16,7 +16,7 @@
     }
  
     public VertexFormat func_181721_a(VertexFormatElement p_181721_1_) {
-@@ -63,6 +65,7 @@
+@@ -58,6 +60,7 @@
           }
  
           this.field_177353_d += p_181721_1_.func_177368_f();
@@ -24,7 +24,7 @@
           return this;
        }
     }
-@@ -157,9 +160,11 @@
+@@ -152,9 +155,11 @@
     }
  
     public int hashCode() {

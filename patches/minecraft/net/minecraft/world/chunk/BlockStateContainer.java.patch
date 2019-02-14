@@ -13,7 +13,7 @@
 +         this.field_186024_e = bitsIn;
           if (this.field_186024_e <= 4) {
              this.field_186024_e = 4;
-             this.field_186022_c = new BlockStatePaletteLinear<T>(this.field_205523_d, this.field_186024_e, this, this.field_205524_e);
+             this.field_186022_c = new BlockStatePaletteLinear<>(this.field_205523_d, this.field_186024_e, this, this.field_205524_e);
 @@ -73,6 +76,8 @@
           } else {
              this.field_186022_c = this.field_205521_b;

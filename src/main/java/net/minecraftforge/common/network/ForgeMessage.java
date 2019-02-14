@@ -20,54 +20,71 @@
 package net.minecraftforge.common.network;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Set;
+
+import javax.annotation.Nullable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Sets;
-
-import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ModDimension;
+import net.minecraftforge.registries.ForgeRegistries;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public abstract class ForgeMessage {
     private static final Logger LOGGER = LogManager.getLogger();
 
     public static class DimensionRegisterMessage extends ForgeMessage {
-        /** The dimension ID to register on client */
-        int dimensionId;
-        /** The provider ID to register with dimension on client */
-        String providerId;
+        int id;
+        ResourceLocation name;
+        ModDimension dim;
+        @Nullable
+        PacketBuffer data;
 
         public DimensionRegisterMessage(){}
-        public DimensionRegisterMessage(int dimensionId, String providerId)
+        public DimensionRegisterMessage(int id, ResourceLocation name, ModDimension dim, @Nullable PacketBuffer data)
         {
-            this.dimensionId = dimensionId;
-            this.providerId = providerId;
+            this.id = id;
+            this.dim = dim;
+            this.data = data;
         }
 
         @Override
-        void toBytes(ByteBuf bytes)
+        void toBytes(ByteBuf buff)
         {
-            bytes.writeInt(this.dimensionId);
-            byte[] data = this.providerId.getBytes(StandardCharsets.UTF_8);
-            bytes.writeShort(data.length);
-            bytes.writeBytes(data);
+            PacketBuffer output = new PacketBuffer(buff);
+            output.writeInt(id);
+            output.writeResourceLocation(name);
+            output.writeResourceLocation(dim.getRegistryName());
+
+            if (data == null)
+            {
+                output.writeShort(0);
+            }
+            else
+            {
+                ByteBuf dup = data.duplicate();
+                output.writeShort(dup.readableBytes());
+                output.writeBytes(dup);
+            }
         }
 
         @Override
-        void fromBytes(ByteBuf bytes)
+        void fromBytes(ByteBuf buff)
         {
-            dimensionId = bytes.readInt();
-            byte[] data = new byte[bytes.readShort()];
-            bytes.readBytes(data);
-            providerId = new String(data, StandardCharsets.UTF_8);
+            PacketBuffer input = new PacketBuffer(buff);
+            id = input.readInt();
+            name = input.readResourceLocation();
+            dim = ForgeRegistries.MOD_DIMENSIONS.getValue(input.readResourceLocation());
+
+            int len = input.readShort();
+            if (len != 0)
+            {
+                data = new PacketBuffer(Unpooled.buffer());
+                input.readBytes(data, len);
+            }
         }
     }
 /* TODO fluids

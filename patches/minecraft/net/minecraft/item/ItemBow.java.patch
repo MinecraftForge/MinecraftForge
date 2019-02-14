@@ -31,5 +31,5 @@
 +      if (ret != null) return ret;
 +
        if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
-          return flag ? new ActionResult(EnumActionResult.PASS, itemstack) : new ActionResult(EnumActionResult.FAIL, itemstack);
+          return flag ? new ActionResult<>(EnumActionResult.PASS, itemstack) : new ActionResult<>(EnumActionResult.FAIL, itemstack);
        } else {

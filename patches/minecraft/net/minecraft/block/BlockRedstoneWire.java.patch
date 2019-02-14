@@ -29,7 +29,7 @@
     }
  
     private IBlockState func_176338_e(World p_176338_1_, BlockPos p_176338_2_, IBlockState p_176338_3_) {
-@@ -337,36 +337,28 @@
+@@ -338,26 +338,18 @@
        IBlockState iblockstate = p_176339_1_.func_180495_p(blockpos);
        boolean flag = iblockstate.func_185915_l();
        boolean flag1 = p_176339_1_.func_180495_p(p_176339_2_.func_177984_a()).func_185915_l();
@@ -37,7 +37,7 @@
 +      if (!flag1 && flag && canConnectTo(p_176339_1_.func_180495_p(blockpos.func_177984_a()), p_176339_1_, blockpos.func_177984_a(), null)) {
           return true;
 -      } else if (func_176343_a(iblockstate, p_176339_3_)) {
-+      } else if (canConnectTo(iblockstate, p_176339_1_, p_176339_2_, p_176339_3_)) {
++      } else if (canConnectTo(iblockstate, p_176339_1_, blockpos, p_176339_3_)) {
           return true;
        } else if (iblockstate.func_177230_c() == Blocks.field_196633_cV && iblockstate.func_177229_b(BlockRedstoneDiode.field_196348_c) && iblockstate.func_177229_b(BlockRedstoneDiode.field_185512_D) == p_176339_3_) {
           return true;
@@ -56,24 +56,16 @@
 -   }
 -
 -   protected static boolean func_176343_a(IBlockState p_176343_0_, @Nullable EnumFacing p_176343_1_) {
--      Block block = p_176343_0_.func_177230_c();
-+   protected boolean canConnectTo(IBlockState blockState, IBlockReader world, BlockPos pos, @Nullable EnumFacing side) {
-+      Block block = blockState.func_177230_c();
++   protected boolean canConnectTo(IBlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable EnumFacing p_176343_1_) {
+       Block block = p_176343_0_.func_177230_c();
        if (block == Blocks.field_150488_af) {
           return true;
--      } else if (p_176343_0_.func_177230_c() == Blocks.field_196633_cV) {
--         EnumFacing enumfacing = (EnumFacing)p_176343_0_.func_177229_b(BlockRedstoneRepeater.field_185512_D);
--         return enumfacing == p_176343_1_ || enumfacing.func_176734_d() == p_176343_1_;
--      } else if (Blocks.field_190976_dk == p_176343_0_.func_177230_c()) {
--         return p_176343_1_ == p_176343_0_.func_177229_b(BlockObserver.field_176387_N);
-+      } else if (blockState.func_177230_c() == Blocks.field_196633_cV) {
-+         EnumFacing enumfacing = (EnumFacing)blockState.func_177229_b(BlockRedstoneRepeater.field_185512_D);
-+         return enumfacing == side || enumfacing.func_176734_d() == side;
-+      } else if (Blocks.field_190976_dk == blockState.func_177230_c()) {
-+         return side == blockState.func_177229_b(BlockObserver.field_176387_N);
+@@ -367,7 +359,7 @@
+       } else if (Blocks.field_190976_dk == p_176343_0_.func_177230_c()) {
+          return p_176343_1_ == p_176343_0_.func_177229_b(BlockObserver.field_176387_N);
        } else {
 -         return p_176343_0_.func_185897_m() && p_176343_1_ != null;
-+         return blockState.canConnectRedstone(world, pos, side);
++         return p_176343_0_.canConnectRedstone(world, pos, p_176343_1_) && p_176343_1_ != null;
        }
     }
  

@@ -6,7 +6,7 @@
  
 -public class EntitySnowman extends EntityGolem implements IRangedAttackMob {
 +public class EntitySnowman extends EntityGolem implements IRangedAttackMob, net.minecraftforge.common.IShearable {
-    private static final DataParameter<Byte> field_184749_a = EntityDataManager.<Byte>func_187226_a(EntitySnowman.class, DataSerializers.field_187191_a);
+    private static final DataParameter<Byte> field_184749_a = EntityDataManager.func_187226_a(EntitySnowman.class, DataSerializers.field_187191_a);
  
     public EntitySnowman(World p_i1692_1_) {
 @@ -85,7 +85,7 @@

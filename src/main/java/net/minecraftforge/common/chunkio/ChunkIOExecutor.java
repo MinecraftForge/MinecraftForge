@@ -35,6 +35,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 public class ChunkIOExecutor
@@ -124,7 +125,7 @@ public class ChunkIOExecutor
         ChunkIOProvider task = tasks.get(key);
         if (task == null)
         {
-            LOGGER.warn("Attempted to dequeue chunk that wasn't queued? {} @ ({}, {})", world.dimension.getId(), x, z);
+            LOGGER.warn("Attempted to dequeue chunk that wasn't queued? {} @ ({}, {})", DimensionType.func_212678_a(world.dimension.getType()).toString(), x, z);
             return;
         }
 

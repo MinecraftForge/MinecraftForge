@@ -1,15 +1,15 @@
 --- a/net/minecraft/client/particle/Particle.java
 +++ b/net/minecraft/client/particle/Particle.java
-@@ -253,6 +253,8 @@
+@@ -249,6 +249,8 @@
  
     public void func_187110_a(double p_187110_1_, double p_187110_3_, double p_187110_5_) {
        double d0 = p_187110_3_;
 +      double origX = p_187110_1_;
 +      double origZ = p_187110_5_;
        if (this.field_190017_n && (p_187110_1_ != 0.0D || p_187110_3_ != 0.0D || p_187110_5_ != 0.0D)) {
-          VoxelShape voxelshape = this.field_187122_b.func_199406_a((Entity)null, this.func_187116_l(), p_187110_1_, p_187110_3_, p_187110_5_);
-          p_187110_3_ = ShapeUtils.func_197884_a(EnumFacing.Axis.Y, this.func_187116_l(), voxelshape, p_187110_3_);
-@@ -271,12 +273,12 @@
+          ReuseableStream<VoxelShape> reuseablestream = new ReuseableStream<>(this.field_187122_b.func_199406_a((Entity)null, this.func_187116_l(), p_187110_1_, p_187110_3_, p_187110_5_));
+          p_187110_3_ = VoxelShapes.func_212437_a(EnumFacing.Axis.Y, this.func_187116_l(), reuseablestream.func_212761_a(), p_187110_3_);
+@@ -267,12 +269,12 @@
        }
  
        this.func_187118_j();

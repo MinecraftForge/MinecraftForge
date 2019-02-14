@@ -1,12 +1,10 @@
 --- a/net/minecraft/client/network/NetHandlerLoginClient.java
 +++ b/net/minecraft/client/network/NetHandlerLoginClient.java
-@@ -122,7 +122,9 @@
+@@ -122,6 +122,7 @@
     }
  
     public void func_209521_a(SPacketCustomPayloadLogin p_209521_1_) {
-+      if (!net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_209521_1_, this.field_147393_d)) {
-       this.field_209525_d.accept(new TextComponentTranslation("connect.negotiating", new Object[0]));
++      if (net.minecraftforge.fml.network.NetworkHooks.onCustomPayload(p_209521_1_, this.field_147393_d)) return;
+       this.field_209525_d.accept(new TextComponentTranslation("connect.negotiating"));
        this.field_147393_d.func_179290_a(new CPacketCustomPayloadLogin(p_209521_1_.func_209918_a(), (PacketBuffer)null));
     }
- }
-+}

@@ -28,7 +28,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.CPacketHandshake;
-import net.minecraft.server.network.NetHandlerLoginServer;
+import net.minecraft.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;

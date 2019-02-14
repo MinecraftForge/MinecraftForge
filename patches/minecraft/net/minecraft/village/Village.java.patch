@@ -7,19 +7,19 @@
 -public class Village {
 +public class Village extends net.minecraftforge.common.capabilities.CapabilityProvider<Village> implements net.minecraftforge.common.extensions.IForgeVillage {
     private World field_75586_a;
-    private final List<VillageDoorInfo> field_75584_b = Lists.<VillageDoorInfo>newArrayList();
+    private final List<VillageDoorInfo> field_75584_b = Lists.newArrayList();
     private BlockPos field_75585_c = BlockPos.field_177992_a;
 @@ -40,15 +40,18 @@
     private int field_75581_g;
     private int field_75588_h;
     private int field_82694_i;
--   private final Map<String, Integer> field_82693_j = Maps.<String, Integer>newHashMap();
-+   private final Map<UUID, Integer> field_82693_j = Maps.<UUID, Integer>newHashMap();
-    private final List<Village.VillageAggressor> field_75589_i = Lists.<Village.VillageAggressor>newArrayList();
+-   private final Map<String, Integer> field_82693_j = Maps.newHashMap();
++   private final Map<UUID, Integer> field_82693_j = Maps.newHashMap();
+    private final List<Village.VillageAggressor> field_75589_i = Lists.newArrayList();
     private int field_75587_j;
  
     public Village() {
-+       this(null);
++      this(null);
     }
  
     public Village(World p_i1675_1_) {
@@ -50,7 +50,7 @@
           if (!this.func_179860_f(villagedoorinfo.func_179852_d()) || Math.abs(this.field_75581_g - villagedoorinfo.func_75473_b()) > 1200) {
              this.field_75585_c = this.field_75585_c.func_177973_b(villagedoorinfo.func_179852_d());
              flag = true;
-@@ -317,22 +321,47 @@
+@@ -317,22 +321,43 @@
        }
     }
  
@@ -59,14 +59,12 @@
 +      return this.getPlayerReputation(findUUID(p_82684_1_));
 +   }
 +
-+   public int getPlayerReputation(UUID p_82684_1_)
-+   {
++   public int getPlayerReputation(UUID p_82684_1_) {
        Integer integer = this.field_82693_j.get(p_82684_1_);
        return integer == null ? 0 : integer;
     }
  
-+   private UUID findUUID(String name)
-+   {
++   private UUID findUUID(String name) {
 +      if (this.field_75586_a == null || this.field_75586_a.func_73046_m() == null)
 +         return EntityPlayer.func_175147_b(name);
 +      GameProfile profile = this.field_75586_a.func_73046_m().func_152358_ax().func_152655_a(name);
@@ -79,8 +77,7 @@
 +      return this.modifyPlayerReputation(findUUID(p_82688_1_), p_82688_2_);
 +   }
 +
-+   public int modifyPlayerReputation(UUID p_82688_1_, int p_82688_2_)
-+   {
++   public int modifyPlayerReputation(UUID p_82688_1_, int p_82688_2_) {
 +      int i = this.getPlayerReputation(p_82688_1_);
        int j = MathHelper.func_76125_a(i + p_82688_2_, -30, 10);
        this.field_82693_j.put(p_82688_1_, j);
@@ -92,15 +89,14 @@
 +      return this.isPlayerReputationTooLow(findUUID(p_82687_1_));
     }
  
-+   public boolean isPlayerReputationTooLow(UUID uuid)
-+   {
++   public boolean isPlayerReputationTooLow(UUID uuid) {
 +      return this.getPlayerReputation(uuid) <= -15;
 +   }
 +
     public void func_82690_a(NBTTagCompound p_82690_1_) {
        this.field_75588_h = p_82690_1_.func_74762_e("PopSize");
        this.field_75583_e = p_82690_1_.func_74762_e("Radius");
-@@ -354,17 +383,14 @@
+@@ -354,17 +379,14 @@
  
        for(int j = 0; j < nbttaglist1.size(); ++j) {
           NBTTagCompound nbttagcompound1 = nbttaglist1.func_150305_b(j);
@@ -123,7 +119,7 @@
     }
  
     public void func_82689_b(NBTTagCompound p_82689_1_) {
-@@ -396,14 +422,12 @@
+@@ -396,14 +418,12 @@
        p_82689_1_.func_74782_a("Doors", nbttaglist);
        NBTTagList nbttaglist1 = new NBTTagList();
  
@@ -141,7 +137,7 @@
                 nbttagcompound1.func_74768_a("S", this.field_82693_j.get(s));
                 nbttaglist1.add((INBTBase)nbttagcompound1);
              }
-@@ -413,6 +437,8 @@
+@@ -413,6 +433,8 @@
        }
  
        p_82689_1_.func_74782_a("Players", nbttaglist1);
@@ -150,7 +146,7 @@
     }
  
     public void func_82692_h() {
-@@ -424,8 +450,8 @@
+@@ -424,8 +446,8 @@
     }
  
     public void func_82683_b(int p_82683_1_) {

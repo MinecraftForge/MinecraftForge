@@ -1,17 +1,15 @@
 --- a/net/minecraft/potion/Potion.java
 +++ b/net/minecraft/potion/Potion.java
-@@ -23,8 +23,8 @@
+@@ -23,7 +23,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public class Potion {
--   public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = new RegistryNamespaced<ResourceLocation, Potion>();
 +public class Potion extends net.minecraftforge.registries.ForgeRegistryEntry<Potion> {
-+   public static final RegistryNamespaced<ResourceLocation, Potion> field_188414_b = net.minecraftforge.registries.GameData.getWrapper(Potion.class);
-    private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.<IAttribute, AttributeModifier>newHashMap();
+    private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.newHashMap();
     private final boolean field_76418_K;
     private final int field_76414_N;
-@@ -162,7 +162,6 @@
+@@ -161,7 +161,6 @@
        return this.field_76417_J;
     }
  
@@ -19,9 +17,9 @@
     public boolean func_76398_f() {
        return this.field_76418_K;
     }
-@@ -259,4 +258,70 @@
+@@ -258,4 +257,70 @@
     private static void func_210759_a(int p_210759_0_, String p_210759_1_, Potion p_210759_2_) {
-       field_188414_b.func_177775_a(p_210759_0_, new ResourceLocation(p_210759_1_), p_210759_2_);
+       IRegistry.field_212631_t.func_177775_a(p_210759_0_, new ResourceLocation(p_210759_1_), p_210759_2_);
     }
 +
 +   /**

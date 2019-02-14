@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.model;
 
-import net.minecraft.client.renderer.block.model.IUnbakedModel;
+import net.minecraft.client.renderer.model.IUnbakedModel;
 
 public interface ISmartVariant
 {

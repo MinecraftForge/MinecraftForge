@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/NetHandlerPlayServer.java
 +++ b/net/minecraft/network/NetHandlerPlayServer.java
-@@ -327,9 +327,11 @@
+@@ -328,9 +328,11 @@
              }
  
              entity.func_70080_a(d3, d4, d5, f, f1);
@@ -12,7 +12,7 @@
                 this.field_147371_a.func_179290_a(new SPacketMoveVehicle(entity));
                 return;
              }
-@@ -791,7 +793,9 @@
+@@ -798,7 +800,9 @@
           double d1 = this.field_147369_b.field_70163_u - ((double)blockpos.func_177956_o() + 0.5D) + 1.5D;
           double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
           double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -23,7 +23,7 @@
              return;
           } else if (blockpos.func_177956_o() >= this.field_147367_d.func_71207_Z()) {
              return;
-@@ -830,7 +834,9 @@
+@@ -837,7 +841,9 @@
        EnumFacing enumfacing = p_184337_1_.func_187024_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || enumfacing != EnumFacing.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -34,18 +34,18 @@
              this.field_147369_b.field_71134_c.func_187251_a(this.field_147369_b, worldserver, itemstack, enumhand, blockpos, enumfacing, p_184337_1_.func_187026_d(), p_184337_1_.func_187025_e(), p_184337_1_.func_187020_f());
           }
        } else {
-@@ -957,7 +963,9 @@
+@@ -962,7 +968,9 @@
           if (s.startsWith("/")) {
              this.func_147361_d(s);
           } else {
--            ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", new Object[]{this.field_147369_b.func_145748_c_(), s});
-+            ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", new Object[]{this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s)});
+-            ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), s);
++            ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
 +            itextcomponent = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, itextcomponent);
 +            if (itextcomponent == null) return;
              this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
           }
  
-@@ -1055,6 +1063,7 @@
+@@ -1060,6 +1068,7 @@
                 this.field_147369_b.func_190775_a(entity, enumhand);
              } else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT) {
                 EnumHand enumhand1 = p_147340_1_.func_186994_b();
@@ -53,16 +53,16 @@
                 entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), enumhand1);
              } else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK) {
                 if (entity instanceof EntityItem || entity instanceof EntityXPOrb || entity instanceof EntityArrow || entity == this.field_147369_b) {
-@@ -1085,7 +1094,7 @@
+@@ -1090,7 +1099,7 @@
                 return;
              }
  
--            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, 0, false);
+-            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, DimensionType.OVERWORLD, false);
 +            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, field_147369_b.field_71093_bK, false);
              if (this.field_147367_d.func_71199_h()) {
                 this.field_147369_b.func_71033_a(GameType.SPECTATOR);
                 this.field_147369_b.func_71121_q().func_82736_K().func_82764_b("spectatorsGenerateChunks", "false", this.field_147367_d);
-@@ -1265,5 +1274,7 @@
+@@ -1270,5 +1279,7 @@
     }
  
     public void func_147349_a(CPacketCustomPayload p_147349_1_) {

@@ -1,15 +1,22 @@
 --- a/net/minecraft/command/arguments/BlockStateParser.java
 +++ b/net/minecraft/command/arguments/BlockStateParser.java
-@@ -167,7 +167,7 @@
-    }
+@@ -168,13 +168,13 @@
  
-    private CompletableFuture<Suggestions> func_197244_d(SuggestionsBuilder p_197244_1_) {
--      if (p_197244_1_.getRemaining().isEmpty() && (this.field_197270_l == null || this.field_197270_l.func_177230_c().func_149716_u())) {
-+      if (p_197244_1_.getRemaining().isEmpty() && (this.field_197270_l == null || this.field_197270_l.hasTileEntity())) {
-          p_197244_1_.suggest(String.valueOf('{'));
-       }
- 
-@@ -252,7 +252,7 @@
+    private boolean func_212598_k() {
+       if (this.field_197270_l != null) {
+-         return this.field_197270_l.func_177230_c().func_149716_u();
++         return this.field_197270_l.hasTileEntity();
+       } else {
+          if (this.field_199833_p != null) {
+             Tag<Block> tag = BlockTags.func_199896_a().func_199910_a(this.field_199833_p);
+             if (tag != null) {
+                for(Block block : tag.func_199885_a()) {
+-                  if (block.func_149716_u()) {
++                  if (block.func_176223_P().hasTileEntity()) {
+                      return true;
+                   }
+                }
+@@ -291,7 +291,7 @@
              p_197255_1_.suggest(String.valueOf('['));
           }
  

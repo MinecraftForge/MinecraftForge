@@ -14,7 +14,7 @@
  
 -public class BlockWeb extends Block {
 +public class BlockWeb extends Block implements net.minecraftforge.common.IShearable {
-    public BlockWeb(Block.Builder p_i48296_1_) {
+    public BlockWeb(Block.Properties p_i48296_1_) {
        super(p_i48296_1_);
     }
 @@ -54,4 +55,10 @@

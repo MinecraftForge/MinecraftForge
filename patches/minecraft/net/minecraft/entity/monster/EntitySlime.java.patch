@@ -10,7 +10,7 @@
              float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
 @@ -255,7 +256,7 @@
  
-    public boolean func_205020_a(IWorld p_205020_1_) {
+    public boolean func_205020_a(IWorld p_205020_1_, boolean p_205020_2_) {
        BlockPos blockpos = new BlockPos(MathHelper.func_76128_c(this.field_70165_t), 0, MathHelper.func_76128_c(this.field_70161_v));
 -      if (p_205020_1_.func_72912_H().func_76067_t() == WorldType.field_77138_c && this.field_70146_Z.nextInt(4) != 1) {
 +      if (p_205020_1_.func_72912_H().func_76067_t().handleSlimeSpawnReduction(field_70146_Z, field_70170_p)) {

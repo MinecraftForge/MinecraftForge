@@ -14,9 +14,9 @@
 +    */
 +   public PacketBuffer writeItemStack(ItemStack p_150788_1_, boolean limitedTag) {
        if (p_150788_1_.func_190926_b()) {
-          this.writeShort(-1);
+          this.writeBoolean(false);
        } else {
-@@ -264,7 +273,7 @@
+@@ -265,7 +274,7 @@
           this.writeByte(p_150788_1_.func_190916_E());
           NBTTagCompound nbttagcompound = null;
           if (item.func_77645_m() || item.func_77651_p()) {
@@ -25,8 +25,8 @@
           }
  
           this.func_150786_a(nbttagcompound);
-@@ -280,7 +289,7 @@
-       } else {
+@@ -281,7 +290,7 @@
+          int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);
 -         itemstack.func_77982_d(this.func_150793_b());

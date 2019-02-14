@@ -1,7 +1,7 @@
 --- a/net/minecraft/init/Biomes.java
 +++ b/net/minecraft/init/Biomes.java
-@@ -3,6 +3,7 @@
- import net.minecraft.util.ResourceLocation;
+@@ -4,6 +4,7 @@
+ import net.minecraft.util.registry.IRegistry;
  import net.minecraft.world.biome.Biome;
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")

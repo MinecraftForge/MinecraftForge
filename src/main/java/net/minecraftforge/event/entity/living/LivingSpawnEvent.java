@@ -45,11 +45,11 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 public class LivingSpawnEvent extends LivingEvent
 {
     private final IWorld world;
-    private final float x;
-    private final float y;
-    private final float z;
+    private final double x;
+    private final double y;
+    private final double z;
 
-    public LivingSpawnEvent(EntityLiving entity, IWorld world, float x, float y, float z)
+    public LivingSpawnEvent(EntityLiving entity, IWorld world, double x, double y, double z)
     {
         super(entity);
         this.world = world;
@@ -59,9 +59,9 @@ public class LivingSpawnEvent extends LivingEvent
     }
 
     public IWorld getWorld() { return world; }
-    public float getX() { return x; }
-    public float getY() { return y; }
-    public float getZ() { return z; }
+    public double getX() { return x; }
+    public double getY() { return y; }
+    public double getZ() { return z; }
     /**
      * Fires before mob spawn events.
      *
@@ -87,7 +87,7 @@ public class LivingSpawnEvent extends LivingEvent
          * @param spawner position of the MobSpawner
          *                  null if it this spawn is coming from a WorldSpawner
          */
-        public CheckSpawn(EntityLiving entity, IWorld world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
+        public CheckSpawn(EntityLiving entity, IWorld world, double x, double y, double z, @Nullable MobSpawnerBaseLogic spawner)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;
@@ -127,7 +127,7 @@ public class LivingSpawnEvent extends LivingEvent
         /**
          * @param spawner the position of a tileentity or approximate position of an entity that initiated the spawn if any
          */
-        public SpecialSpawn(EntityLiving entity, World world, float x, float y, float z, @Nullable MobSpawnerBaseLogic spawner)
+        public SpecialSpawn(EntityLiving entity, World world, double x, double y, double z, @Nullable MobSpawnerBaseLogic spawner)
         {
             super(entity, world, x, y, z);
             this.spawner = spawner;
@@ -158,7 +158,7 @@ public class LivingSpawnEvent extends LivingEvent
     {
         public AllowDespawn(EntityLiving entity)
         {
-            super(entity, entity.world, (float)entity.posX, (float)entity.posY, (float)entity.posZ);
+            super(entity, entity.world, entity.posX, entity.posY, entity.posZ);
         }
 
     }

@@ -8,5 +8,5 @@
 -                  NativeImage nativeimage2 = NativeImage.func_195713_a(iresource1.func_199027_b());
 +                  NativeImage nativeimage2 = net.minecraftforge.client.MinecraftForgeClient.getImageLayer(new ResourceLocation(s), p_195413_1_);
                 ) {
-                   int j = ((EnumDyeColor)this.field_174950_i.get(i)).func_196057_c();
+                   int j = this.field_174950_i.get(i).func_196057_c();
                    if (nativeimage2.func_195702_a() == nativeimage1.func_195702_a() && nativeimage2.func_195714_b() == nativeimage1.func_195714_b()) {

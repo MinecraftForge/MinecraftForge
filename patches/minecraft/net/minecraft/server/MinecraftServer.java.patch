@@ -1,75 +1,54 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -148,7 +148,6 @@
-    private int field_71280_D;
-    private int field_143008_E;
-    public final long[] field_71311_j = new long[100];
--   public long[][] field_71312_k;
-    private KeyPair field_71292_I;
-    private String field_71293_J;
-    private String field_71294_K;
-@@ -287,8 +286,7 @@
-    public void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, JsonElement p_71247_6_) {
-       this.func_71237_c(p_71247_1_);
-       this.func_200245_b(new TextComponentTranslation("menu.loadingLevel", new Object[0]));
--      this.field_71305_c = new WorldServer[3];
--      this.field_71312_k = new long[this.field_71305_c.length][100];
-+      this.field_71305_c = new WorldServer[1]; //Forge only initialize overworld, we will do the rest.
-       ISaveHandler isavehandler = this.field_71310_m.func_197715_a(p_71247_1_, this);
-       this.func_175584_a(this.func_71270_I(), isavehandler);
-       WorldInfo worldinfo = isavehandler.func_75757_d();
-@@ -340,6 +338,18 @@
-          }
+@@ -335,20 +335,19 @@
+          worldserver.func_72912_H().func_76060_a(this.func_71265_f());
        }
  
-+      for (int dim : net.minecraftforge.common.DimensionManager.getStaticDimensionIDs()) {
-+         WorldServer world = this.field_71305_c[0];
-+         if (dim != 0) {
-+            world = (WorldServer)(new WorldServerMulti(this, isavehandler, dim, this.field_71305_c[0], this.field_71304_b).func_175643_b());
+-      WorldServerMulti worldservermulti = (new WorldServerMulti(this, p_212369_1_, DimensionType.NETHER, worldserver, this.field_71304_b)).func_212251_i__();
+-      this.field_71305_c.put(DimensionType.NETHER, worldservermulti);
+-      worldservermulti.func_72954_a(new ServerWorldEventHandler(this, worldservermulti));
+-      if (!this.func_71264_H()) {
+-         worldservermulti.func_72912_H().func_76060_a(this.func_71265_f());
++      for (DimensionType dim : DimensionType.func_212681_b()) {
++         WorldServer world = worldserver;
++         if (dim != DimensionType.OVERWORLD) {
++            world = (new WorldServerMulti(this, p_212369_1_, dim, worldserver, this.field_71304_b)).func_212251_i__();
++            this.field_71305_c.put(dim, world);
 +            world.func_72954_a(new ServerWorldEventHandler(this, world));
 +            if (!this.func_71264_H()) {
 +               world.func_72912_H().func_76060_a(func_71265_f());
 +            }
 +         }
 +         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
-+      }
-+
-       this.field_71318_t.func_72364_a(this.field_71305_c);
-       if (worldinfo.func_201357_P() != null) {
-          this.func_201300_aS().func_201381_a(worldinfo.func_201357_P());
-@@ -378,7 +388,7 @@
-       this.func_200245_b(new TextComponentTranslation("menu.generatingTerrain", new Object[0]));
-       int j1 = 0;
-       field_147145_h.info("Preparing start region for level 0");
--      WorldServer worldserver = this.field_71305_c[0];
-+      WorldServer worldserver = func_71218_a(0);
-       BlockPos blockpos = worldserver.func_175694_M();
-       List<ChunkPos> list = Lists.<ChunkPos>newArrayList();
-       Set<ChunkPos> set = Sets.<ChunkPos>newConcurrentHashSet();
-@@ -493,9 +503,14 @@
- 
-          for(WorldServer worldserver1 : this.field_71305_c) {
-             if (worldserver1 != null) {
-+               net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver1));
-                worldserver1.close();
-             }
-          }
-+
-+         WorldServer[] tmp = this.field_71305_c;
-+         for (WorldServer world : tmp)
-+             net.minecraftforge.common.DimensionManager.setWorld(world.field_73011_w.getId(), null, this);
        }
  
-       if (this.field_71307_n.func_76468_d()) {
-@@ -523,6 +538,7 @@
+-      WorldServerMulti worldservermulti1 = (new WorldServerMulti(this, p_212369_1_, DimensionType.THE_END, worldserver, this.field_71304_b)).func_212251_i__();
+-      this.field_71305_c.put(DimensionType.THE_END, worldservermulti1);
+-      worldservermulti1.func_72954_a(new ServerWorldEventHandler(this, worldservermulti1));
+-      if (!this.func_71264_H()) {
+-         worldservermulti1.func_72912_H().func_76060_a(this.func_71265_f());
+-      }
+-
+       this.func_184103_al().func_212504_a(worldserver);
+       if (p_212369_3_.func_201357_P() != null) {
+          this.func_201300_aS().func_201381_a(p_212369_3_.func_201357_P());
+@@ -514,6 +513,7 @@
+ 
+       for(WorldServer worldserver1 : this.func_212370_w()) {
+          if (worldserver1 != null) {
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver1));
+             worldserver1.close();
+          }
+       }
+@@ -547,6 +547,7 @@
     public void run() {
        try {
           if (this.func_71197_b()) {
 +            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarted(this);
              this.field_211151_aa = Util.func_211177_b();
              this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
-             this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.13", 393));
-@@ -546,7 +562,10 @@
+             this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.13.2", 404));
+@@ -570,7 +571,10 @@
  
                 this.field_71296_Q = true;
              }
@@ -80,7 +59,7 @@
              this.func_71228_a((CrashReport)null);
           }
        } catch (Throwable throwable1) {
-@@ -565,6 +584,7 @@
+@@ -589,6 +593,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -88,7 +67,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -573,6 +593,7 @@
+@@ -597,6 +602,7 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -96,15 +75,15 @@
              this.func_71240_o();
           }
  
-@@ -628,6 +649,7 @@
+@@ -652,6 +658,7 @@
  
-    public void func_71217_p() {
+    public void func_71217_p(BooleanSupplier p_71217_1_) {
        long i = Util.func_211178_c();
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
        ++this.field_71315_w;
        if (this.field_71295_T) {
           this.field_71295_T = false;
-@@ -648,6 +670,7 @@
+@@ -672,6 +679,7 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -112,43 +91,23 @@
        }
  
        if (this.field_71315_w % 900 == 0) {
-@@ -672,6 +695,7 @@
+@@ -696,6 +704,7 @@
        this.field_211152_ao = this.field_211152_ao * 0.8F + (float)l / 1000000.0F * 0.19999999F;
        this.field_71304_b.func_76319_b();
        this.field_71304_b.func_76319_b();
 +      net.minecraftforge.fml.hooks.BasicEventHooks.onPostServerTick();
     }
  
-    public void func_71190_q() {
-@@ -686,20 +710,23 @@
-       this.func_193030_aL().func_73660_a();
-       this.field_71304_b.func_76318_c("levels");
- 
--      for(int i = 0; i < this.field_71305_c.length; ++i) {
-+      Integer[] ids = net.minecraftforge.common.DimensionManager.getIDs(this.field_71315_w % 200 == 0);
-+      for(int x = 0; x < ids.length; ++x) {
-+         int id = ids[x];
-          long j = Util.func_211178_c();
--         if (i == 0 || this.func_71255_r()) {
--            WorldServer worldserver = this.field_71305_c[i];
-+         WorldServer worldserver = func_71218_a(id);
-+         if (id == 0 || this.func_71255_r()) {
-             this.field_71304_b.func_194340_a(() -> {
-                return worldserver.func_72912_H().func_76065_j();
-             });
-             if (this.field_71315_w % 20 == 0) {
-                this.field_71304_b.func_76320_a("timeSync");
--               this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.func_186058_p().func_186068_a());
-+               this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.getId());
-                this.field_71304_b.func_76319_b();
+    public void func_71190_q(BooleanSupplier p_71190_1_) {
+@@ -723,6 +732,7 @@
              }
  
              this.field_71304_b.func_76320_a("tick");
 +            net.minecraftforge.fml.hooks.BasicEventHooks.onPreWorldTick(worldserver);
  
              try {
-                worldserver.func_72835_b();
-@@ -717,6 +744,7 @@
+                worldserver.func_72835_b(p_71190_1_);
+@@ -740,6 +750,7 @@
                 throw new ReportedException(crashreport1);
              }
  
@@ -156,20 +115,16 @@
              this.field_71304_b.func_76319_b();
              this.field_71304_b.func_76320_a("tracker");
              worldserver.func_73039_n().func_72788_a();
-@@ -724,9 +752,11 @@
-             this.field_71304_b.func_76319_b();
-          }
- 
--         this.field_71312_k[i][this.field_71315_w % 100] = Util.func_211178_c() - j;
-+         worldserver.setTickTime(this.field_71315_w, Util.func_211178_c() - j);
+@@ -752,6 +763,8 @@
+          }))[this.field_71315_w % 100] = Util.func_211178_c() - i;
        }
  
 +      this.field_71304_b.func_76318_c("dim_unloading");
-+      net.minecraftforge.common.DimensionManager.unloadWorlds();
++      net.minecraftforge.common.DimensionManager.unloadWorlds(this, this.field_71315_w % 200 == 0);
        this.field_71304_b.func_76318_c("connection");
        this.func_147137_ag().func_151269_c();
        this.field_71304_b.func_76318_c("players");
-@@ -749,6 +779,14 @@
+@@ -774,6 +787,14 @@
     }
  
     public static void main(String[] p_main_0_) {
@@ -184,7 +139,7 @@
        Bootstrap.func_151354_b();
  
        try {
-@@ -851,7 +889,7 @@
+@@ -876,7 +897,7 @@
     }
  
     public void func_71256_s() {
@@ -193,20 +148,16 @@
        this.field_175590_aa.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
           field_147145_h.error(p_195574_1_);
        });
-@@ -871,11 +909,7 @@
+@@ -896,7 +917,7 @@
     }
  
-    public WorldServer func_71218_a(int p_71218_1_) {
--      if (p_71218_1_ == -1) {
--         return this.field_71305_c[1];
--      } else {
--         return p_71218_1_ == 1 ? this.field_71305_c[2] : this.field_71305_c[0];
--      }
-+      return net.minecraftforge.common.DimensionManager.getWorld(p_71218_1_, true, true);
+    public WorldServer func_71218_a(DimensionType p_71218_1_) {
+-      return this.field_71305_c.get(p_71218_1_);
++      return net.minecraftforge.common.DimensionManager.getWorld(this, p_71218_1_, true, true);
     }
  
-    public WorldServer func_200667_a(DimensionType p_200667_1_) {
-@@ -918,7 +952,7 @@
+    public Iterable<WorldServer> func_212370_w() {
+@@ -935,7 +956,7 @@
     }
  
     public String getServerModName() {
@@ -215,3 +166,18 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
+@@ -1472,4 +1493,14 @@
+          return 0;
+       }
+    }
++
++   @Nullable
++   public long[] getTickTime(DimensionType dim) {
++      return field_71312_k.get(dim);
++   }
++
++   @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.
++   public synchronized Map<DimensionType, WorldServer> forgeGetWorldMap() {
++      return this.field_71305_c;
++   }
+ }

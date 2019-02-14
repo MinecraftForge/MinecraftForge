@@ -33,7 +33,7 @@ import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespacedDefaultedByKey<ResourceLocation, V> implements ILockableRegistry
+class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespacedDefaultedByKey<V> implements ILockableRegistry
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private boolean locked = false;
@@ -66,18 +66,19 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
         register(-1, key, value);
     }
 
+    // Reading Functions
     @Override
-    public void validateKey()
+    @Nullable
+    public V func_212608_b(@Nullable ResourceLocation name)
     {
-        this.delegate.validateKey();
+        return this.delegate.getRaw(name); //get without default
     }
 
-    // Reading Functions
     @Override
     @Nullable
     public V get(@Nullable ResourceLocation name)
     {
-        return this.delegate.getValue(name);
+        return this.delegate.getValue(name); //getOrDefault
     }
 
     @Override
@@ -88,7 +89,7 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
     }
 
     @Override
-    public boolean containsKey(ResourceLocation key)
+    public boolean func_212607_c(ResourceLocation key)
     {
         return this.delegate.containsKey(key);
     }
@@ -124,6 +125,12 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
     {
         Collection<V> values = this.delegate.getValues();
         return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(null);
+    }
+
+    @Override
+    public ResourceLocation func_212609_b()
+    {
+        return this.delegate.getDefaultKey();
     }
 
     //internal

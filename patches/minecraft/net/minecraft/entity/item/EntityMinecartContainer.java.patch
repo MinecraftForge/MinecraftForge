@@ -1,20 +1,20 @@
 --- a/net/minecraft/entity/item/EntityMinecartContainer.java
 +++ b/net/minecraft/entity/item/EntityMinecartContainer.java
-@@ -119,10 +119,11 @@
+@@ -120,10 +120,11 @@
        return 64;
     }
  
 +   @Override
     @Nullable
--   public Entity func_184204_a(int p_184204_1_) {
-+   public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter) {
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
        this.field_94112_b = false;
--      return super.func_184204_a(p_184204_1_);
-+      return super.changeDimension(dimensionIn, teleporter);
+-      return super.func_212321_a(p_212321_1_);
++      return super.changeDimension(p_212321_1_, teleporter);
     }
  
     public void func_70106_y() {
-@@ -131,6 +132,7 @@
+@@ -132,6 +133,7 @@
        }
  
        super.func_70106_y();
@@ -22,7 +22,7 @@
     }
  
     public void func_184174_b(boolean p_184174_1_) {
-@@ -163,6 +165,7 @@
+@@ -164,6 +166,7 @@
     }
  
     public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_) {
@@ -30,7 +30,7 @@
        if (!this.field_70170_p.field_72995_K) {
           p_184230_1_.func_71007_a(this);
        }
-@@ -215,9 +218,9 @@
+@@ -216,9 +219,9 @@
              random = new Random(this.field_184291_d);
           }
  
@@ -42,7 +42,7 @@
           }
  
           loottable.func_186460_a(this, random, lootcontext$builder.func_186471_a());
-@@ -238,4 +241,13 @@
+@@ -239,4 +242,13 @@
     public ResourceLocation func_184276_b() {
        return this.field_184290_c;
     }

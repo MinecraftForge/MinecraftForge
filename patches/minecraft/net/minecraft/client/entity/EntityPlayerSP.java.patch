@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/entity/EntityPlayerSP.java
 +++ b/net/minecraft/client/entity/EntityPlayerSP.java
-@@ -137,6 +137,7 @@
+@@ -139,6 +139,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -8,7 +8,7 @@
        return false;
     }
  
-@@ -465,6 +466,11 @@
+@@ -468,6 +469,11 @@
     }
  
     public void func_184185_a(SoundEvent p_184185_1_, float p_184185_2_, float p_184185_3_) {
@@ -20,7 +20,7 @@
        this.field_70170_p.func_184134_a(this.field_70165_t, this.field_70163_u, this.field_70161_v, p_184185_1_, this.func_184176_by(), p_184185_2_, p_184185_3_, false);
     }
  
-@@ -670,6 +676,7 @@
+@@ -673,6 +679,7 @@
        float f = 0.8F;
        boolean flag2 = this.field_71158_b.field_192832_b >= 0.8F;
        this.field_71158_b.func_78898_a();
@@ -28,7 +28,7 @@
        this.field_71159_c.func_193032_ao().func_193293_a(this.field_71158_b);
        if (this.func_184587_cr() && !this.func_184218_aH()) {
           this.field_71158_b.field_78902_a *= 0.2F;
-@@ -685,10 +692,14 @@
+@@ -688,10 +695,14 @@
        }
  
        AxisAlignedBB axisalignedbb = this.func_174813_aQ();
@@ -43,7 +43,7 @@
        boolean flag4 = (float)this.func_71024_bL().func_75116_a() > 6.0F || this.field_71075_bZ.field_75101_c;
        if ((this.field_70122_E || this.func_204231_K()) && !flag1 && !flag2 && this.field_71158_b.field_192832_b >= 0.8F && !this.func_70051_ag() && flag4 && !this.func_184587_cr() && !this.func_70644_a(MobEffects.field_76440_q)) {
           if (this.field_71156_d <= 0 && !this.field_71159_c.field_71474_y.field_151444_V.func_151470_d()) {
-@@ -973,4 +984,16 @@
+@@ -979,4 +990,16 @@
           return this.field_204230_bP;
        }
     }

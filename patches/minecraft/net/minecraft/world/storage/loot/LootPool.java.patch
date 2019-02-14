@@ -76,9 +76,9 @@
        public LootPool deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
           JsonObject jsonobject = JsonUtils.func_151210_l(p_deserialize_1_, "loot pool");
 @@ -78,18 +117,20 @@
-          LootCondition[] alootcondition = (LootCondition[])JsonUtils.func_188177_a(jsonobject, "conditions", new LootCondition[0], p_deserialize_3_, LootCondition[].class);
-          RandomValueRange randomvaluerange = (RandomValueRange)JsonUtils.func_188174_a(jsonobject, "rolls", p_deserialize_3_, RandomValueRange.class);
-          RandomValueRange randomvaluerange1 = (RandomValueRange)JsonUtils.func_188177_a(jsonobject, "bonus_rolls", new RandomValueRange(0.0F, 0.0F), p_deserialize_3_, RandomValueRange.class);
+          LootCondition[] alootcondition = JsonUtils.func_188177_a(jsonobject, "conditions", new LootCondition[0], p_deserialize_3_, LootCondition[].class);
+          RandomValueRange randomvaluerange = JsonUtils.func_188174_a(jsonobject, "rolls", p_deserialize_3_, RandomValueRange.class);
+          RandomValueRange randomvaluerange1 = JsonUtils.func_188177_a(jsonobject, "bonus_rolls", new RandomValueRange(0.0F, 0.0F), p_deserialize_3_, RandomValueRange.class);
 -         return new LootPool(alootentry, alootcondition, randomvaluerange, randomvaluerange1);
 +         return new LootPool(alootentry, alootcondition, randomvaluerange, randomvaluerange1, net.minecraftforge.common.ForgeHooks.readPoolName(jsonobject));
        }

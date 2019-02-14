@@ -175,7 +175,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(new PlayerDestroyItemEvent(player, stack, hand));
     }
 
-    public static Result canEntitySpawn(EntityLiving entity, IWorld world, float x, float y, float z, MobSpawnerBaseLogic spawner)
+    public static Result canEntitySpawn(EntityLiving entity, IWorld world, double x, double y, double z, MobSpawnerBaseLogic spawner)
     {
         if (entity == null)
             return Result.DEFAULT;
@@ -188,7 +188,7 @@ public class ForgeEventFactory
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner);
         if (result == Result.DEFAULT)
-            return entity.getCanSpawnHere() && entity.isNotColliding(); // vanilla logic
+            return entity.canSpawn(world, true) && entity.isNotColliding(); // vanilla logic
         else
             return result == Result.ALLOW;
     }

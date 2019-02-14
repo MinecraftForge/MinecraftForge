@@ -1,0 +1,46 @@
+--- a/net/minecraft/client/renderer/model/ItemCameraTransforms.java
++++ b/net/minecraft/client/renderer/model/ItemCameraTransforms.java
+@@ -12,6 +12,10 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
++/**
++ * @deprecated use {@link net.minecraft.client.renderer.block.model.IBakedModel#handlePerspective(TransformType)} instead
++ */
++@Deprecated
+ @OnlyIn(Dist.CLIENT)
+ public class ItemCameraTransforms {
+    public static final ItemCameraTransforms field_178357_a = new ItemCameraTransforms();
+@@ -37,6 +41,7 @@
+       this(ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a, ItemTransformVec3f.field_178366_a);
+    }
+ 
++   @Deprecated
+    public ItemCameraTransforms(ItemCameraTransforms p_i46443_1_) {
+       this.field_188036_k = p_i46443_1_.field_188036_k;
+       this.field_188037_l = p_i46443_1_.field_188037_l;
+@@ -48,6 +53,7 @@
+       this.field_181700_p = p_i46443_1_.field_181700_p;
+    }
+ 
++   @Deprecated
+    public ItemCameraTransforms(ItemTransformVec3f p_i46569_1_, ItemTransformVec3f p_i46569_2_, ItemTransformVec3f p_i46569_3_, ItemTransformVec3f p_i46569_4_, ItemTransformVec3f p_i46569_5_, ItemTransformVec3f p_i46569_6_, ItemTransformVec3f p_i46569_7_, ItemTransformVec3f p_i46569_8_) {
+       this.field_188036_k = p_i46569_1_;
+       this.field_188037_l = p_i46569_2_;
+@@ -80,6 +86,7 @@
+       }
+    }
+ 
++   @Deprecated
+    public ItemTransformVec3f func_181688_b(ItemCameraTransforms.TransformType p_181688_1_) {
+       switch(p_181688_1_) {
+       case THIRD_PERSON_LEFT_HAND:
+@@ -136,7 +143,7 @@
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+-   public static enum TransformType {
++   public static enum TransformType implements net.minecraftforge.common.model.IModelPart {
+       NONE,
+       THIRD_PERSON_LEFT_HAND,
+       THIRD_PERSON_RIGHT_HAND,

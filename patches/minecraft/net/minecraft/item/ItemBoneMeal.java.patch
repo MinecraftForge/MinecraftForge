@@ -1,15 +1,15 @@
 --- a/net/minecraft/item/ItemBoneMeal.java
 +++ b/net/minecraft/item/ItemBoneMeal.java
-@@ -20,7 +20,7 @@
-    public EnumActionResult func_195939_a(ItemUseContext p_195939_1_) {
+@@ -27,7 +27,7 @@
        World world = p_195939_1_.func_195991_k();
        BlockPos blockpos = p_195939_1_.func_195995_a();
+       BlockPos blockpos1 = blockpos.func_177972_a(p_195939_1_.func_196000_l());
 -      if (func_195966_a(p_195939_1_.func_195996_i(), world, blockpos)) {
 +      if (applyBonemeal(p_195939_1_.func_195996_i(), world, blockpos, p_195939_1_.func_195999_j())) {
           if (!world.field_72995_K) {
              world.func_175718_b(2005, blockpos, 0);
           }
-@@ -40,8 +40,19 @@
+@@ -48,8 +48,19 @@
        }
     }
  
@@ -29,7 +29,7 @@
        if (iblockstate.func_177230_c() instanceof IGrowable) {
           IGrowable igrowable = (IGrowable)iblockstate.func_177230_c();
           if (igrowable.func_176473_a(p_195966_1_, p_195966_2_, iblockstate, p_195966_1_.field_72995_K)) {
-@@ -101,12 +112,13 @@
+@@ -125,12 +136,13 @@
        }
  
        IBlockState iblockstate = p_195965_0_.func_180495_p(p_195965_1_);

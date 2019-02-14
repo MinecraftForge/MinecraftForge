@@ -6,6 +6,6 @@
  
 -public abstract class Fluid {
 +public abstract class Fluid implements net.minecraftforge.common.extensions.IForgeFluid {
-    private static final ResourceLocation field_207199_a = new ResourceLocation("empty");
-    public static final RegistryNamespacedDefaultedByKey<ResourceLocation, Fluid> field_205588_a = new RegistryNamespacedDefaultedByKey<ResourceLocation, Fluid>(field_207199_a);
-    public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<IFluidState>();
+    public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<>();
+    protected final StateContainer<Fluid, IFluidState> field_207202_e;
+    private IFluidState field_207200_b;

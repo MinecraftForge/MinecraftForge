@@ -1,10 +1,6 @@
 --- a/net/minecraft/tileentity/TileEntity.java
 +++ b/net/minecraft/tileentity/TileEntity.java
-@@ -12,10 +12,11 @@
- import net.minecraft.world.World;
- import net.minecraftforge.api.distmarker.Dist;
- import net.minecraftforge.api.distmarker.OnlyIn;
-+
+@@ -16,7 +16,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -13,7 +9,7 @@
     private static final Logger field_145852_a = LogManager.getLogger();
     private final TileEntityType<?> field_200663_e;
     protected World field_145850_b;
-@@ -23,9 +24,13 @@
+@@ -24,9 +24,13 @@
     protected boolean field_145846_f;
     @Nullable
     private IBlockState field_195045_e;
@@ -27,7 +23,7 @@
     }
  
     @Nullable
-@@ -43,6 +48,8 @@
+@@ -44,6 +48,8 @@
  
     public void func_145839_a(NBTTagCompound p_145839_1_) {
        this.field_174879_c = new BlockPos(p_145839_1_.func_74762_e("x"), p_145839_1_.func_74762_e("y"), p_145839_1_.func_74762_e("z"));
@@ -36,7 +32,7 @@
     }
  
     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_) {
-@@ -58,6 +65,8 @@
+@@ -59,6 +65,8 @@
           p_189516_1_.func_74768_a("x", this.field_174879_c.func_177958_n());
           p_189516_1_.func_74768_a("y", this.field_174879_c.func_177956_o());
           p_189516_1_.func_74768_a("z", this.field_174879_c.func_177952_p());
@@ -45,7 +41,7 @@
           return p_189516_1_;
        }
     }
-@@ -91,14 +100,13 @@
+@@ -92,14 +100,13 @@
        if (this.field_145850_b != null) {
           this.field_195045_e = this.field_145850_b.func_180495_p(this.field_174879_c);
           this.field_145850_b.func_175646_b(this.field_174879_c, this);
@@ -61,7 +57,7 @@
     public double func_145835_a(double p_145835_1_, double p_145835_3_, double p_145835_5_) {
        double d0 = (double)this.field_174879_c.func_177958_n() + 0.5D - p_145835_1_;
        double d1 = (double)this.field_174879_c.func_177956_o() + 0.5D - p_145835_3_;
-@@ -138,6 +146,7 @@
+@@ -139,6 +146,7 @@
  
     public void func_145843_s() {
        this.field_145846_f = true;
@@ -69,7 +65,7 @@
     }
  
     public void func_145829_t() {
-@@ -179,4 +188,11 @@
+@@ -180,4 +188,11 @@
     public TileEntityType<?> func_200662_C() {
        return this.field_200663_e;
     }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/inventory/GuiContainerCreative.java
 +++ b/net/minecraft/client/gui/inventory/GuiContainerCreative.java
-@@ -53,6 +53,8 @@
+@@ -54,6 +54,8 @@
     private CreativeCrafting field_147059_E;
     private boolean field_195377_F;
     private boolean field_199506_G;
@@ -9,7 +9,7 @@
  
     public GuiContainerCreative(EntityPlayer p_i1088_1_) {
        super(new GuiContainerCreative.ContainerCreative(p_i1088_1_));
-@@ -230,6 +232,22 @@
+@@ -231,6 +233,22 @@
           this.func_147050_b(ItemGroup.field_78032_a[i]);
           this.field_147059_E = new CreativeCrafting(this.field_146297_k);
           this.field_146297_k.field_71439_g.field_71069_bz.func_75132_a(this.field_147059_E);
@@ -32,7 +32,7 @@
        } else {
           this.field_146297_k.func_147108_a(new GuiInventory(this.field_146297_k.field_71439_g));
        }
-@@ -255,7 +273,7 @@
+@@ -259,7 +277,7 @@
     public boolean charTyped(char p_charTyped_1_, int p_charTyped_2_) {
        if (this.field_195377_F) {
           return false;
@@ -41,7 +41,7 @@
           return false;
        } else {
           String s = this.field_147062_A.func_146179_b();
-@@ -273,7 +291,7 @@
+@@ -277,7 +295,7 @@
  
     public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
        this.field_195377_F = false;
@@ -50,7 +50,7 @@
           if (this.field_146297_k.field_71474_y.field_74310_D.func_197976_a(p_keyPressed_1_, p_keyPressed_2_)) {
              this.field_195377_F = true;
              this.func_147050_b(ItemGroup.field_78027_g);
-@@ -309,6 +327,32 @@
+@@ -313,6 +331,32 @@
     private void func_147053_i() {
        GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
        guicontainercreative$containercreative.field_148330_a.clear();
@@ -81,9 +81,9 @@
 +      }
 +
        if (this.field_147062_A.func_146179_b().isEmpty()) {
-          for(Item item : Item.field_150901_e) {
+          for(Item item : IRegistry.field_212630_s) {
              item.func_150895_a(ItemGroup.field_78027_g, guicontainercreative$containercreative.field_148330_a);
-@@ -323,9 +367,9 @@
+@@ -327,9 +371,9 @@
  
     protected void func_146979_b(int p_146979_1_, int p_146979_2_) {
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
@@ -95,7 +95,7 @@
        }
  
     }
-@@ -357,7 +401,7 @@
+@@ -361,7 +405,7 @@
           this.field_147066_y = false;
  
           for(ItemGroup itemgroup : ItemGroup.field_78032_a) {
@@ -104,7 +104,7 @@
                 this.func_147050_b(itemgroup);
                 return true;
              }
-@@ -368,12 +412,15 @@
+@@ -372,12 +416,15 @@
     }
  
     private boolean func_147055_p() {
@@ -120,7 +120,7 @@
        GuiContainerCreative.ContainerCreative guicontainercreative$containercreative = (GuiContainerCreative.ContainerCreative)this.field_147002_h;
        this.field_147008_s.clear();
        guicontainercreative$containercreative.field_148330_a.clear();
-@@ -447,13 +494,15 @@
+@@ -451,13 +498,15 @@
        }
  
        if (this.field_147062_A != null) {
@@ -137,7 +137,7 @@
  
              this.func_147053_i();
           } else {
-@@ -512,16 +561,36 @@
+@@ -517,16 +566,36 @@
        this.func_146276_q_();
        super.func_73863_a(p_73863_1_, p_73863_2_, p_73863_3_);
  
@@ -175,7 +175,7 @@
        GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
        GlStateManager.func_179140_f();
        this.func_191948_b(p_73863_1_, p_73863_2_);
-@@ -563,7 +632,10 @@
+@@ -568,7 +637,10 @@
              }
           }
  
@@ -187,7 +187,7 @@
        } else {
           super.func_146285_a(p_146285_1_, p_146285_2_, p_146285_3_);
        }
-@@ -575,25 +647,44 @@
+@@ -580,25 +652,44 @@
        RenderHelper.func_74520_c();
        ItemGroup itemgroup = ItemGroup.field_78032_a[field_147058_w];
  
@@ -236,7 +236,7 @@
        this.func_147051_a(itemgroup);
        if (itemgroup == ItemGroup.field_78036_m) {
           GuiInventory.func_147046_a(this.field_147003_i + 88, this.field_147009_r + 45, 20, (float)(this.field_147003_i + 88 - p_146976_2_), (float)(this.field_147009_r + 45 - 30 - p_146976_3_), this.field_146297_k.field_71439_g);
-@@ -602,6 +693,7 @@
+@@ -607,6 +698,7 @@
     }
  
     protected boolean func_195375_a(ItemGroup p_195375_1_, double p_195375_2_, double p_195375_4_) {
@@ -244,7 +244,7 @@
        int i = p_195375_1_.func_78020_k();
        int j = 28 * i;
        int k = 0;
-@@ -671,6 +763,8 @@
+@@ -676,6 +768,8 @@
        }
  
        GlStateManager.func_179140_f();
@@ -253,7 +253,7 @@
        this.func_73729_b(l, i1, j, k, 28, 32);
        this.field_73735_i = 100.0F;
        this.field_146296_j.field_77023_b = 100.0F;
-@@ -845,6 +939,31 @@
+@@ -850,6 +944,31 @@
        public boolean func_82869_a(EntityPlayer p_82869_1_) {
           return this.field_148332_b.func_82869_a(p_82869_1_);
        }

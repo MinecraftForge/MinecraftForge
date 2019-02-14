@@ -1,0 +1,23 @@
+--- a/net/minecraft/world/dimension/NetherDimension.java
++++ b/net/minecraft/world/dimension/NetherDimension.java
+@@ -15,6 +15,12 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ public class NetherDimension extends Dimension {
++   private final DimensionType type;
++   public NetherDimension() { this(DimensionType.NETHER); }
++   public NetherDimension(DimensionType type) {
++      this.type = type;
++   }
++
+    public void func_76572_b() {
+       this.field_76575_d = true;
+       this.field_76576_e = true;
+@@ -83,6 +89,6 @@
+    }
+ 
+    public DimensionType func_186058_p() {
+-      return DimensionType.NETHER;
++      return type;
+    }
+ }

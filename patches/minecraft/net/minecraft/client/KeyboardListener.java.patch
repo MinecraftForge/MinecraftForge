@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/KeyboardListener.java
 +++ b/net/minecraft/client/KeyboardListener.java
-@@ -266,10 +266,14 @@
+@@ -271,10 +271,14 @@
              GuiScreen.func_195121_a(() -> {
                 if (p_197961_5_ != 1 && (p_197961_5_ != 2 || !this.field_197973_b)) {
                    if (p_197961_5_ == 0) {
@@ -17,7 +17,7 @@
                 }
  
              }, "keyPressed event handler", iguieventlistener.getClass().getCanonicalName());
-@@ -346,12 +350,16 @@
+@@ -351,12 +355,16 @@
           if (iguieventlistener != null) {
              if (Character.charCount(p_197963_3_) == 1) {
                 GuiScreen.func_195121_a(() -> {

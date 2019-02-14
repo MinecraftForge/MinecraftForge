@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/crafting/RecipeItemHelper.java
 +++ b/net/minecraft/item/crafting/RecipeItemHelper.java
-@@ -25,9 +25,13 @@
+@@ -26,9 +26,13 @@
     }
  
     public void func_194112_a(ItemStack p_194112_1_) {

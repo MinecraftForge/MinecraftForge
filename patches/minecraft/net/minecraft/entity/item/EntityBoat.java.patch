@@ -1,15 +1,15 @@
 --- a/net/minecraft/entity/item/EntityBoat.java
 +++ b/net/minecraft/entity/item/EntityBoat.java
-@@ -461,7 +461,7 @@
+@@ -460,7 +460,7 @@
                          blockpos$pooledmutableblockpos.func_181079_c(l1, k2, i2);
                          IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
-                         if (!(iblockstate.func_177230_c() instanceof BlockLilyPad) && ShapeUtils.func_197879_c(iblockstate.func_196952_d(this.field_70170_p, blockpos$pooledmutableblockpos).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.AND)) {
+                         if (!(iblockstate.func_177230_c() instanceof BlockLilyPad) && VoxelShapes.func_197879_c(iblockstate.func_196952_d(this.field_70170_p, blockpos$pooledmutableblockpos).func_197751_a((double)l1, (double)k2, (double)i2), voxelshape, IBooleanFunction.AND)) {
 -                           f += iblockstate.func_177230_c().func_208618_m();
 +                           f += iblockstate.getSlipperiness(field_70170_p, blockpos$pooledmutableblockpos, this);
                             ++k1;
                          }
                       }
-@@ -780,6 +780,20 @@
+@@ -779,6 +779,20 @@
        this.field_184463_aC = p_184442_4_;
     }
  

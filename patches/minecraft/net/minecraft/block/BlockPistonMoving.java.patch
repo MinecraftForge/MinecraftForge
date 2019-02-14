@@ -22,5 +22,5 @@
 +   }
 +
     public VoxelShape func_196244_b(IBlockState p_196244_1_, IBlockReader p_196244_2_, BlockPos p_196244_3_) {
-       return ShapeUtils.func_197880_a();
+       return VoxelShapes.func_197880_a();
     }

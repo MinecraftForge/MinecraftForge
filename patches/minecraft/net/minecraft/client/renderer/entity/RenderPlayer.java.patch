@@ -16,12 +16,3 @@
     }
  
     private void func_177137_d(AbstractClientPlayer p_177137_1_) {
-@@ -104,6 +106,8 @@
-                EnumAction enumaction1 = itemstack1.func_77975_n();
-                if (enumaction1 == EnumAction.BLOCK) {
-                   modelbiped$armpose1 = ModelBiped.ArmPose.BLOCK;
-+               } else if (enumaction1 == EnumAction.BOW) { // FORGE: fix MC-88356 allow offhand to use bow and arrow animation TODO Remove in 1.13.1 - Fixed
-+                  modelbiped$armpose1 = ModelBiped.ArmPose.BOW_AND_ARROW;
-                } else if (enumaction1 == EnumAction.SPEAR) {
-                   modelbiped$armpose1 = ModelBiped.ArmPose.THROW_SPEAR;
-                }

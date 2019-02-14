@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/player/InventoryPlayer.java
 +++ b/net/minecraft/entity/player/InventoryPlayer.java
-@@ -216,7 +216,8 @@
+@@ -214,7 +214,8 @@
        int i = p_191973_2_.func_190916_E();
        ItemStack itemstack = this.func_70301_a(p_191973_1_);
        if (itemstack.func_190926_b()) {
@@ -10,7 +10,7 @@
           if (p_191973_2_.func_77942_o()) {
              itemstack.func_77982_d(p_191973_2_.func_77978_p().func_74737_b());
           }
-@@ -267,7 +268,7 @@
+@@ -265,7 +266,7 @@
              }
           }
        }
@@ -19,7 +19,7 @@
     }
  
     public boolean func_70441_a(ItemStack p_70441_1_) {
-@@ -320,6 +321,8 @@
+@@ -318,6 +319,8 @@
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.func_85055_a(throwable, "Adding item to inventory");
              CrashReportCategory crashreportcategory = crashreport.func_85058_a("Item being added");

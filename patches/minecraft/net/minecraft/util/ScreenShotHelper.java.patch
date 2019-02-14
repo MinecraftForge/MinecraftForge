@@ -1,25 +1,40 @@
 --- a/net/minecraft/util/ScreenShotHelper.java
 +++ b/net/minecraft/util/ScreenShotHelper.java
-@@ -39,10 +39,21 @@
-             file2 = new File(file1, p_148259_1_);
-          }
+@@ -34,19 +34,34 @@
+       NativeImage nativeimage = func_198052_a(p_148259_2_, p_148259_3_, p_148259_4_);
+       File file1 = new File(p_148259_0_, "screenshots");
+       file1.mkdir();
+-      File file2;
++      File target;
+       if (p_148259_1_ == null) {
+-         file2 = func_74290_a(file1);
++         target = func_74290_a(file1);
+       } else {
+-         file2 = new File(file1, p_148259_1_);
++         target = new File(file1, p_148259_1_);
+       }
  
-+         file2 = file2.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
-+         net.minecraftforge.client.event.ScreenshotEvent event = net.minecraftforge.client.ForgeHooksClient.onScreenshot(nativeimage, file2);
-+         if (event.isCanceled()) {
-+            return event.getCancelMessage();
-+         } else {
-+            file2 = event.getScreenshotFile();
-+         }
-          nativeimage.func_209271_a(file2);
-+         final File output = file2;
-          ITextComponent itextcomponent = (new TextComponentString(file2.getName())).func_211708_a(TextFormatting.UNDERLINE).func_211710_a((p_211564_1_) -> {
--            p_211564_1_.func_150241_a(new ClickEvent(ClickEvent.Action.OPEN_FILE, file2.getAbsolutePath()));
-+            p_211564_1_.func_150241_a(new ClickEvent(ClickEvent.Action.OPEN_FILE, output.getAbsolutePath()));
-          });
-+         if (event.getResultMessage() != null) {
-+            return event.getResultMessage();
-+         }
-          TextComponentTranslation textcomponenttranslation = new TextComponentTranslation("screenshot.success", new Object[]{itextcomponent});
-          return textcomponenttranslation;
-       } catch (Exception exception) {
++      try {
++         target = target.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
++      } catch (java.io.IOException e) {}
++      net.minecraftforge.client.event.ScreenshotEvent event = net.minecraftforge.client.ForgeHooksClient.onScreenshot(nativeimage, target);
++      if (event.isCanceled()) {
++         p_148259_5_.accept(event.getCancelMessage());
++         return;
++      } else {
++         target = event.getScreenshotFile();
++      }
++
++      final File file2 = target;
+       SimpleResource.field_199031_a.execute(() -> {
+          try {
+             nativeimage.func_209271_a(file2);
+             ITextComponent itextcomponent = (new TextComponentString(file2.getName())).func_211708_a(TextFormatting.UNDERLINE).func_211710_a((p_212451_1_) -> {
+                p_212451_1_.func_150241_a(new ClickEvent(ClickEvent.Action.OPEN_FILE, file2.getAbsolutePath()));
+             });
++            if (event.getResultMessage() != null) {
++               p_148259_5_.accept(event.getResultMessage());
++            } else
+             p_148259_5_.accept(new TextComponentTranslation("screenshot.success", itextcomponent));
+          } catch (Exception exception) {
+             field_148261_a.warn("Couldn't save screenshot", (Throwable)exception);

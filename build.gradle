@@ -1,6 +1,6 @@
 buildscript {
     repositories {
-        //mavenLocal()
+        mavenLocal()
         maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
         mavenCentral()
@@ -45,8 +45,8 @@ ext {
     }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20180921-1.13'
-    MC_VERSION = '1.13'
-    MCP_VERSION = '2018.09.12.04.11.00'
+    MC_VERSION = '1.13.2'
+    MCP_VERSION = '20190213.203750'
 }
 
 project(':mcp') {
@@ -75,7 +75,7 @@ project(':clean') {
             mkdir 'runclient'
         }
         classpath sourceSets.main.runtimeClasspath
-        args = ['--accessToken', '0', '--version', '1.13']
+        args = ['--accessToken', '0', '--version', MC_VERSION]
         main 'net.minecraft.client.main.Main'
         workingDir 'runclient'
     }
@@ -140,7 +140,7 @@ project(':forge') {
     }
 
     ext {
-        SPEC_VERSION = '24.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '25.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.

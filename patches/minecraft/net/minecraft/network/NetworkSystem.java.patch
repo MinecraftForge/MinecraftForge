@@ -1,22 +1,22 @@
 --- a/net/minecraft/network/NetworkSystem.java
 +++ b/net/minecraft/network/NetworkSystem.java
-@@ -41,12 +41,13 @@
+@@ -40,12 +40,13 @@
  import org.apache.logging.log4j.Logger;
  
  public class NetworkSystem {
 +   private static final int READ_TIMEOUT = Integer.parseInt(System.getProperty("forge.readTimeout", "30"));
     private static final Logger field_151275_b = LogManager.getLogger();
-    public static final LazyLoadBase<NioEventLoopGroup> field_151276_c = new LazyLoadBase<NioEventLoopGroup>(() -> {
+    public static final LazyLoadBase<NioEventLoopGroup> field_151276_c = new LazyLoadBase<>(() -> {
 -      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).build());
 +      return new NioEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
     });
-    public static final LazyLoadBase<EpollEventLoopGroup> field_181141_b = new LazyLoadBase<EpollEventLoopGroup>(() -> {
+    public static final LazyLoadBase<EpollEventLoopGroup> field_181141_b = new LazyLoadBase<>(() -> {
 -      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).build());
 +      return new EpollEventLoopGroup(0, (new ThreadFactoryBuilder()).setNameFormat("Netty Epoll Server IO #%d").setDaemon(true).setThreadFactory(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER).build());
     });
     private final MinecraftServer field_151273_d;
     public volatile boolean field_151277_a;
-@@ -59,6 +60,7 @@
+@@ -58,6 +59,7 @@
     }
  
     public void func_151265_a(@Nullable InetAddress p_151265_1_, int p_151265_2_) throws IOException {
@@ -24,7 +24,7 @@
        synchronized(this.field_151274_e) {
           Class<? extends ServerSocketChannel> oclass;
           LazyLoadBase<? extends EventLoopGroup> lazyloadbase;
-@@ -80,7 +82,7 @@
+@@ -79,7 +81,7 @@
                    ;
                 }
  

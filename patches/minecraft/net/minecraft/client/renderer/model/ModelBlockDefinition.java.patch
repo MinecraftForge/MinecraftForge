@@ -1,0 +1,19 @@
+--- a/net/minecraft/client/renderer/model/ModelBlockDefinition.java
++++ b/net/minecraft/client/renderer/model/ModelBlockDefinition.java
+@@ -30,10 +30,15 @@
+    private final Map<String, VariantList> field_178332_b = Maps.newLinkedHashMap();
+    private Multipart field_188005_c;
+ 
++   @Deprecated
+    public static ModelBlockDefinition func_209577_a(ModelBlockDefinition.ContainerHolder p_209577_0_, Reader p_209577_1_) {
+-      return JsonUtils.func_193839_a(p_209577_0_.field_209575_a, p_209577_1_, ModelBlockDefinition.class);
++      return fromJson(p_209577_0_, p_209577_1_, null);
+    }
+ 
++   public static ModelBlockDefinition fromJson(ModelBlockDefinition.ContainerHolder containerHolderIn, Reader readerIn, @Nullable net.minecraft.util.ResourceLocation location) {
++      return net.minecraftforge.client.model.BlockStateLoader.load(readerIn, location, containerHolderIn.field_209575_a);
++   }
++
+    public ModelBlockDefinition(Map<String, VariantList> p_i46572_1_, Multipart p_i46572_2_) {
+       this.field_188005_c = p_i46572_2_;
+       this.field_178332_b.putAll(p_i46572_1_);
