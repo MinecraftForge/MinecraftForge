@@ -63,6 +63,8 @@ public class FMLModContainer extends ModContainer
         triggerMap.put(ModLoadingStage.COMPLETE, dummy().andThen(this::beforeEvent).andThen(this::completeLoading).andThen(this::fireEvent).andThen(this::afterEvent));
         this.eventBus = IEventBus.create(this::onEventFailed);
         this.configHandler = Optional.of(event -> this.eventBus.post(event));
+        final FMLJavaModLoadingContext contextExtension = new FMLJavaModLoadingContext(this);
+        this.contextExtension = () -> contextExtension;
         try
         {
             modClass = Class.forName(className, true, modClassLoader);
@@ -93,8 +95,6 @@ public class FMLModContainer extends ModContainer
     }
 
     private void beforeEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        FMLModLoadingContext.get().setActiveContainer(this);
-        ModLoadingContext.get().setActiveContainer(this);
     }
 
     private void fireEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
@@ -113,8 +113,6 @@ public class FMLModContainer extends ModContainer
     }
 
     private void afterEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent) {
-        ModLoadingContext.get().setActiveContainer(null);
-        FMLModLoadingContext.get().setActiveContainer(null);
         if (getCurrentState() == ModLoadingStage.ERROR) {
             LOGGER.error(LOADING,"An error occurred while dispatching event {} to {}", lifecycleEvent.fromStage(), getModId());
         }

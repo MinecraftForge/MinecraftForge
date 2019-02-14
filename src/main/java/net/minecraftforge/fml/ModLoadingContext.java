@@ -19,11 +19,15 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.fml.config.ModConfig;
+
 import java.util.function.Supplier;
 
 public class ModLoadingContext
 {
     private static ThreadLocal<ModLoadingContext> context = ThreadLocal.withInitial(ModLoadingContext::new);
+    private Object languageExtension;
 
     public static ModLoadingContext get() {
         return context.get();
@@ -31,8 +35,9 @@ public class ModLoadingContext
 
     private ModContainer activeContainer;
 
-    public void setActiveContainer(final ModContainer container) {
+    public void setActiveContainer(final ModContainer container, final Object languageExtension) {
         this.activeContainer = container;
+        this.languageExtension = languageExtension;
     }
 
     public ModContainer getActiveContainer() {
@@ -49,4 +54,17 @@ public class ModLoadingContext
         getActiveContainer().registerExtensionPoint(point, extension);
     }
 
+    public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec) {
+        getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer()));
+    }
+
+    public void registerConfig(ModConfig.Type type, ForgeConfigSpec spec, String fileName) {
+        getActiveContainer().addConfig(new ModConfig(type, spec, getActiveContainer(), fileName));
+    }
+
+
+    @SuppressWarnings("unchecked")
+    public <T> T extension() {
+        return (T)languageExtension;
+    }
 }
