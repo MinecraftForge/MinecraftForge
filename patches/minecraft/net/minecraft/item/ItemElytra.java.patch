@@ -6,7 +6,7 @@
      }
 +
 +    /* ======================================== FORGE START =====================================*/
-+    private static final net.minecraft.entity.ai.attributes.AttributeModifier MODIFIER = new net.minecraft.entity.ai.attributes.AttributeModifier(java.util.UUID.fromString("D41556AA-466D-46E3-8071-262C78065B6A"), "Elytra modifier", 1.0D, 0);
++    public static final net.minecraft.entity.ai.attributes.AttributeModifier MODIFIER = new net.minecraft.entity.ai.attributes.AttributeModifier(java.util.UUID.fromString("D41556AA-466D-46E3-8071-262C78065B6A"), "Elytra modifier", 1.0D, 0);
 +    @Override
 +    public com.google.common.collect.Multimap<String, net.minecraft.entity.ai.attributes.AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack)
 +    {
