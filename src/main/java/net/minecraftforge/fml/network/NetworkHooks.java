@@ -94,6 +94,7 @@ public class NetworkHooks
      * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
      * It should refer to a valid modId namespace, to trigger opening on the client.
      * The namespace is directly used to lookup the modId in the client side.
+     * The maximum size for #extraData is 32600 bytes.
      *
      * @param player The player to open the GUI for
      * @param containerSupplier The Container Supplier
@@ -106,18 +107,24 @@ public class NetworkHooks
         Container c = containerSupplier.createContainer(player.inventory, player);
         player.closeScreen();
         player.getNextWindowId();
+        int openContainer = player.currentWindowId;
         player.openContainer = c;
-        player.openContainer.windowId = player.currentWindowId;
+        player.openContainer.windowId = openContainer;
         player.openContainer.addListener(player);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
 
+        PacketBuffer output = new PacketBuffer(Unpooled.buffer());
         if (extraData == null) {
-            extraData = new PacketBuffer(Unpooled.buffer());
+            output.writeVarInt(0);
+        } else {
+            output.writeVarInt(extraData.readableBytes());
+            output.writeBytes(extraData);
         }
-        if (extraData.readableBytes() > 32600) {
-            throw new IllegalArgumentException("GUI Open packet too large : "+ extraData.readableBytes());
+
+        if (output.readableBytes() > 32600 || output.readableBytes() < 1) {
+            throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
-        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, player.currentWindowId, extraData);
+        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, openContainer, output);
         FMLPlayHandler.channel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
     }
 }
