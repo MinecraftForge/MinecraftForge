@@ -53,8 +53,8 @@ public class ForgeRegistries
     public static final IForgeRegistry<PotionType>          POTION_TYPES = RegistryManager.ACTIVE.getRegistry(PotionType.class);
     public static final IForgeRegistry<Enchantment>         ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
     public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
-    public static final IForgeRegistry<EntityType<?>>       ENTITIES       = RegistryManager.ACTIVE.getRegistry(EntityType.class);
-    public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES  = RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
+    public static final IForgeRegistry<EntityType<?>>       ENTITIES       = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(EntityType.class); //Untyped casys needed to fix javac issues.
+    public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES  = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
     public static final IForgeRegistry<ModDimension>        MOD_DIMENSIONS = RegistryManager.ACTIVE.getRegistry(ModDimension.class);
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
