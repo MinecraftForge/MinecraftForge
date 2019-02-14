@@ -178,7 +178,7 @@ public class FMLPlayMessages
         {
             buf.writeResourceLocation(msg.id);
             buf.writeVarInt(msg.windowId);
-            buf.writeBytes(msg.additionalData);
+            buf.writeByteArray(msg.additionalData.readByteArray());
         }
 
         public static OpenContainer decode(PacketBuffer buf)
