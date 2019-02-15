@@ -208,7 +208,7 @@ public class AccessTransformer implements IClassTransformer
                 // if this is an inner class, also modify the access flags on the corresponding InnerClasses attribute
                 for (InnerClassNode innerClass : classNode.innerClasses)
                 {
-                    if (innerClass.name.replace('/', '.').equals(transformedName))
+                    if (innerClass.name.equals(classNode.name))
                     {
                         innerClass.access = getFixedAccess(innerClass.access, m);
                         break;
