@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/color/ItemColors.java
++++ b/net/minecraft/client/renderer/color/ItemColors.java
+@@ -80,6 +80,7 @@
+       itemcolors.func_199877_a((p_210237_0_, p_210237_1_) -> {
+          return p_210237_1_ == 0 ? -1 : ItemMap.func_190907_h(p_210237_0_);
+       }, Items.field_151098_aY);
++      net.minecraftforge.client.ForgeHooksClient.onItemColorsInit(itemcolors, p_186729_0_);
+       return itemcolors;
+    }
+ 
