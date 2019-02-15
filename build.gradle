@@ -265,7 +265,7 @@ project(':forge') {
         fmllauncherImplementation.extendsFrom(installer)
     }
     dependencies {
-        api 'net.minecraft:client:1.13:extra'
+        api 'net.minecraft:client:${MC_VERSION}:extra'
         installer 'com.paulscode:soundsystem:2018+'
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
