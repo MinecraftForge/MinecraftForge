@@ -59,7 +59,7 @@
   "commands.forge.setdim.invalid.dim": "The dimension ID specified ({0}) is not valid.",
   "commands.forge.setdim.invalid.nochange": "The entity selected ({0}) is already in the dimension specified ({1}).",
   "commands.forge.tps.invalid": "Invalid dimension {0} Possible values: {1}",
-  "commands.forge.tps.summary.all": "Overall: Mean tick time: {1} ms. Mean TPS: {2}",
+  "commands.forge.tps.summary.all": "Overall: Mean tick time: {0} ms. Mean TPS: {1}",
   "commands.forge.tps.summary.basic": "Dim {0}: Mean tick time: {1} ms. Mean TPS: {2}",
   "commands.forge.tps.summary.named": "Dim {0} ({1}): Mean tick time: {2} ms. Mean TPS: {3}",
   "commands.forge.tracking.entity.enabled": "Entity tracking enabled for %d seconds.",
