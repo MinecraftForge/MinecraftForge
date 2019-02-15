@@ -9,7 +9,7 @@
           if (!world.field_72995_K) {
              world.func_175718_b(2005, blockpos, 0);
           }
-@@ -48,8 +48,19 @@
+@@ -48,8 +48,20 @@
        }
     }
  
@@ -25,11 +25,12 @@
 +
 +      int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_195966_1_, p_195966_2_, iblockstate, p_195966_0_);
 +      if (hook != 0) return hook > 0;
++      if(net.minecraftforge.common.ForgeHooks.bonemealGrowablePlant(p_195966_0_, p_195966_1_, p_195966_2_, iblockstate)) return true;
 +
        if (iblockstate.func_177230_c() instanceof IGrowable) {
           IGrowable igrowable = (IGrowable)iblockstate.func_177230_c();
           if (igrowable.func_176473_a(p_195966_1_, p_195966_2_, iblockstate, p_195966_1_.field_72995_K)) {
-@@ -125,12 +136,13 @@
+@@ -125,12 +137,13 @@
        }
  
        IBlockState iblockstate = p_195965_0_.func_180495_p(p_195965_1_);

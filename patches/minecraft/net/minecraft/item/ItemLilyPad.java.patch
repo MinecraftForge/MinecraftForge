@@ -1,5 +1,14 @@
 --- a/net/minecraft/item/ItemLilyPad.java
 +++ b/net/minecraft/item/ItemLilyPad.java
+@@ -19,7 +19,7 @@
+ import net.minecraft.util.math.RayTraceResult;
+ import net.minecraft.world.World;
+ 
+-public class ItemLilyPad extends ItemBlock {
++public class ItemLilyPad extends ItemBlock implements net.minecraftforge.common.plants.PlantImpl.ItemLily {
+    public ItemLilyPad(Block p_i48456_1_, Item.Properties p_i48456_2_) {
+       super(p_i48456_1_, p_i48456_2_);
+    }
 @@ -45,7 +45,15 @@
              Material material = iblockstate.func_185904_a();
              IFluidState ifluidstate = p_77659_1_.func_204610_c(blockpos);

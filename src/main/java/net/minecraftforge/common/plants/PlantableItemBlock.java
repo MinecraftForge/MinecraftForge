@@ -21,6 +21,7 @@ package net.minecraftforge.common.plants;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +30,7 @@ import net.minecraft.world.IBlockReader;
 public class PlantableItemBlock extends ItemBlock implements IPlantable
 {
 
-    public PlantableItemBlock(Block block, Builder builder)
+    public PlantableItemBlock(Block block, Item.Properties builder)
     {
         super(block, builder);
     }

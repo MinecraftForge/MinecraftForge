@@ -22,6 +22,7 @@ package net.minecraftforge.common.plants;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoublePlant;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.item.Item;
 import net.minecraft.state.properties.DoubleBlockHalf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
@@ -29,7 +30,7 @@ import net.minecraft.world.IWorld;
 public class DoublePlantItemBlock extends PlantableItemBlock
 {
 
-    public DoublePlantItemBlock(Block block, Builder builder)
+    public DoublePlantItemBlock(Block block, Item.Properties builder)
     {
         super(block, builder);
     }

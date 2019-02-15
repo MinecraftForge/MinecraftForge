@@ -8,4 +8,4 @@
 +public class BlockKelp extends Block implements ILiquidContainer, net.minecraftforge.common.plants.IPlant {
     final BlockKelpTop field_209904_a;
  
-    protected BlockKelp(BlockKelpTop p_i49501_1_, Block.Builder p_i49501_2_) {
+    protected BlockKelp(BlockKelpTop p_i49501_1_, Block.Properties p_i49501_2_) {

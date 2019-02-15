@@ -6,6 +6,6 @@
  
 -public class ItemCocoa extends ItemDye {
 +public class ItemCocoa extends ItemDye implements net.minecraftforge.common.plants.PlantImpl.ItemCocoa {
-    public ItemCocoa(EnumDyeColor p_i48516_1_, Item.Builder p_i48516_2_) {
+    public ItemCocoa(EnumDyeColor p_i48516_1_, Item.Properties p_i48516_2_) {
        super(p_i48516_1_, p_i48516_2_);
     }

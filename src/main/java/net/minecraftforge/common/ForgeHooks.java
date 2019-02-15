@@ -1201,7 +1201,8 @@ public class ForgeHooks
     
     public static ItemBlock getItemBlock(Block block, @Nullable ItemGroup group)
     {
-        Item.Builder builder = new Item.Builder().group(group);
+        Item.Properties builder = new Item.Properties().group(group);
+        if(block == Blocks.LILY_PAD) return new ItemBlock(block, builder);
         if(block instanceof BlockDoublePlant) return new DoublePlantItemBlock(block, builder);
         if(block instanceof IPlant) return new PlantableItemBlock(block, builder);
         return new ItemBlock(block, builder);

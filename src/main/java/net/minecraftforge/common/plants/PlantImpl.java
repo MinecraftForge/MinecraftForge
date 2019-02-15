@@ -347,5 +347,23 @@ public final class PlantImpl
             return PlantTypes.EPIPHYTE;
         }
     }
+    
+    /**
+     * Implementation of IPlantable for net.minecraft.item.ItemLilyPad
+     */
+    public static interface ItemLily extends IPlantable
+    {
+        @Override
+        default IBlockState getPlant(IBlockReader world, BlockPos pos, ItemStack stack)
+        {
+            return Blocks.LILY_PAD.getDefaultState();
+        }
+
+        @Override
+        default PlantType getPlantType(IBlockReader world, BlockPos pos, ItemStack stack)
+        {
+            return PlantTypes.WATER;
+        }
+    }
 
 }
