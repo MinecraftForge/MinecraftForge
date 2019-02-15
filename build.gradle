@@ -91,7 +91,7 @@ project(':forge') {
     apply plugin: 'de.undercouch.download'
     
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-    group = 'net.minecraftforge.test' //TODO: remove test when we finish patches and want users to find it
+    group = 'net.minecraftforge' //TODO: remove test when we finish patches and want users to find it
 
     sourceSets {
         fmllauncher {
