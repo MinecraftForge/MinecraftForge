@@ -8,7 +8,7 @@
 +public class BlockDeadBush extends BlockBush implements net.minecraftforge.common.IShearable {
     protected static final VoxelShape field_196397_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
  
-    protected BlockDeadBush(Block.Builder p_i48418_1_) {
+    protected BlockDeadBush(Block.Properties p_i48418_1_) {
 @@ -46,4 +46,10 @@
  
        super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, flag ? Blocks.field_150350_a.func_176223_P() : p_180657_4_, p_180657_5_, p_180657_6_);

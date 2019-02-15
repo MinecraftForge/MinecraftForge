@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -31,6 +32,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.NetherDimension;
 import net.minecraft.world.dimension.OverworldDimension;
 import net.minecraft.world.storage.WorldInfo;
@@ -44,7 +46,7 @@ public interface IForgeDimension
     {
         return (Dimension) this;
     }
-    
+
     World getWorld();
 
     /**
@@ -81,7 +83,7 @@ public interface IForgeDimension
         }
         return 1.0;
     }
-    
+
     /**
      * If this method returns true, then chunks received by the client will
      * have {@link net.minecraft.world.chunk.Chunk#resetRelightChecks} called
@@ -97,17 +99,6 @@ public interface IForgeDimension
     {
         return !(this instanceof OverworldDimension);
     }
-
-    /**
-     * Sets the providers current dimension ID, used in default getSaveFolder()
-     * Added to allow default providers to be registered for multiple dimensions.
-     * This is to denote the exact dimension ID opposed to the 'type' in WorldType
-     *
-     * @param id Dimension ID
-     */
-    void setId(int id);
-
-    int getId();
 
     @OnlyIn(Dist.CLIENT)
     @Nullable
@@ -129,7 +120,7 @@ public interface IForgeDimension
 
     @OnlyIn(Dist.CLIENT)
     void setWeatherRenderer(IRenderHandler renderer);
-    
+
     /**
      * Allows for manipulating the coloring of the lightmap texture.
      * Will be called for each 16*16 combination of sky/block light values.
@@ -140,7 +131,7 @@ public interface IForgeDimension
      * @param blockLight Block light brightness factor.
      * @param colors The color values that will be used: [r, g, b].
      *
-     * @see net.minecraft.client.renderer.EntityRenderer#updateLightmap(float)
+     * @see net.minecraft.client.renderer.GameRenderer#updateLightmap(float)
      */
     default void getLightmapColors(float partialTicks, float sunBrightness, float skyLight, float blockLight, float[] colors) {}
 
@@ -167,7 +158,7 @@ public interface IForgeDimension
     {
         return null;
     }
-    
+
     /**
      * Determines if the player can sleep in this world (or if the bed should explode for example).
      *
@@ -316,11 +307,6 @@ public interface IForgeDimension
         return getWorld().getWorldInfo().getTerrainType().getHorizon(getWorld());
     }
 
-    default String getSaveFolder()
-    {
-        return getId() == 0 ? null : "DIM" + getId();
-    }
-
     /**
      * Determine if the cursor on the map should 'spin' when rendered, like it does for the player in the nether.
      *
@@ -332,7 +318,7 @@ public interface IForgeDimension
      */
     default boolean shouldMapSpin(String entity, double x, double z, double rotation)
     {
-        return getId() < 0;
+        return getDimension().getType() == DimensionType.NETHER;
     }
 
     /**
@@ -341,7 +327,7 @@ public interface IForgeDimension
      * @param player The player that is respawning
      * @return The dimension to respawn the player in
      */
-    default int getRespawnDimension(net.minecraft.entity.player.EntityPlayerMP player)
+    default DimensionType getRespawnDimension(EntityPlayerMP player)
     {
         return player.getSpawnDimension();
     }

@@ -1,11 +1,11 @@
 --- a/net/minecraft/command/Commands.java
 +++ b/net/minecraft/command/Commands.java
-@@ -189,7 +189,15 @@
+@@ -193,7 +193,15 @@
  
        try {
           try {
--            int lvt_4_3_ = this.field_197062_b.execute(p_197059_2_, p_197059_1_);
-+            com.mojang.brigadier.ParseResults<CommandSource> parse = this.field_197062_b.parse(p_197059_2_, p_197059_1_);
+-            int lvt_4_3_ = this.field_197062_b.execute(stringreader, p_197059_1_);
++            com.mojang.brigadier.ParseResults<CommandSource> parse = this.field_197062_b.parse(stringreader, p_197059_1_);
 +            net.minecraftforge.event.CommandEvent event = new net.minecraftforge.event.CommandEvent(parse);
 +            if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) {
 +               if (event.getException() != null) {

@@ -44,6 +44,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.dimension.DimensionType;
@@ -154,21 +155,6 @@ class CommandTrack
             }
             return 0;
         }
-
-        /**
-         * Translates a world dimension ID into a name
-         *
-         * @param dimId The dimension ID
-         * @return The name of the dimension
-         */
-        protected static String getWorldName(int dimId)
-        {
-            DimensionType type = DimensionManager.getProviderType(dimId);
-            if (type == null)
-                return "Dim " + dimId;
-            else
-                return type.getName();
-        }
     }
 
     private static class TrackResultsEntity
@@ -185,7 +171,7 @@ class CommandTrack
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "�s" : "ms");
 
-                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), TrackResults.getWorldName(entity.world.dimension.getId()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), DimensionType.func_212678_a(entity.world.dimension.getType()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }
@@ -205,7 +191,7 @@ class CommandTrack
 
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "�s" : "ms");
-                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), TrackResults.getWorldName(te.getWorld().dimension.getId()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), DimensionType.func_212678_a(te.getWorld().dimension.getType()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }

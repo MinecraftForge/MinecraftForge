@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/boss/EntityDragon.java
 +++ b/net/minecraft/entity/boss/EntityDragon.java
-@@ -415,10 +415,10 @@
+@@ -423,10 +423,10 @@
                 BlockPos blockpos = new BlockPos(k1, l1, i2);
                 IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
                 Block block = iblockstate.func_177230_c();

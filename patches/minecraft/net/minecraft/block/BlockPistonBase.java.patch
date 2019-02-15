@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BlockPistonBase.java
 +++ b/net/minecraft/block/BlockPistonBase.java
-@@ -235,7 +235,7 @@
+@@ -244,7 +244,7 @@
                 return false;
              }
  
@@ -9,19 +9,19 @@
           } else {
              return false;
           }
-@@ -266,7 +266,9 @@
+@@ -280,7 +280,9 @@
           for(int j = list2.size() - 1; j >= 0; --j) {
-             BlockPos blockpos1 = list2.get(j);
-             IBlockState iblockstate = p_176319_1_.func_180495_p(blockpos1);
--            iblockstate.func_196949_c(p_176319_1_, blockpos1, 0);
+             BlockPos blockpos2 = list2.get(j);
+             IBlockState iblockstate = p_176319_1_.func_180495_p(blockpos2);
+-            iblockstate.func_196949_c(p_176319_1_, blockpos2, 0);
 +            // Forge: With our change to how snowballs are dropped this needs to disallow to mimic vanilla behavior.
 +            float chance = iblockstate.func_177230_c() instanceof BlockSnow ? -1.0f : 1.0f;
-+            iblockstate.func_196941_a(p_176319_1_, blockpos1, chance, 0);
-             p_176319_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 18);
++            iblockstate.func_196941_a(p_176319_1_, blockpos2, chance, 0);
+             p_176319_1_.func_180501_a(blockpos2, Blocks.field_150350_a.func_176223_P(), 18);
              --k;
              aiblockstate[k] = iblockstate;
-@@ -320,6 +322,10 @@
-       return (IBlockState)p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a((EnumFacing)p_185499_1_.func_177229_b(field_176387_N)));
+@@ -333,6 +335,10 @@
+       return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
     }
  
 +   public IBlockState rotate(IBlockState state, net.minecraft.world.IWorld world, BlockPos pos, Rotation direction) {
@@ -29,5 +29,5 @@
 +   }
 +
     public IBlockState func_185471_a(IBlockState p_185471_1_, Mirror p_185471_2_) {
-       return p_185471_1_.func_185907_a(p_185471_2_.func_185800_a((EnumFacing)p_185471_1_.func_177229_b(field_176387_N)));
+       return p_185471_1_.func_185907_a(p_185471_2_.func_185800_a(p_185471_1_.func_177229_b(field_176387_N)));
     }

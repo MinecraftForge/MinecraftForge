@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/renderer/model/ModelResourceLocation.java
++++ b/net/minecraft/client/renderer/model/ModelResourceLocation.java
+@@ -2,10 +2,7 @@
+ 
+ import java.util.Locale;
+ import net.minecraft.util.ResourceLocation;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-@OnlyIn(Dist.CLIENT)
+ public class ModelResourceLocation extends ResourceLocation {
+    private final String field_177519_c;
+ 

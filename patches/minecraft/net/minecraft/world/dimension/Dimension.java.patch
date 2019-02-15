@@ -35,7 +35,7 @@
     public abstract IChunkGenerator<?> func_186060_c();
  
     @Nullable
-@@ -141,4 +142,72 @@
+@@ -141,4 +142,61 @@
     public abstract boolean func_76568_b(int p_76568_1_, int p_76568_2_);
  
     public abstract DimensionType func_186058_p();
@@ -44,17 +44,6 @@
 +   private net.minecraftforge.client.IRenderHandler skyRenderer = null;
 +   private net.minecraftforge.client.IRenderHandler cloudRenderer = null;
 +   private net.minecraftforge.client.IRenderHandler weatherRenderer = null;
-+   private int dimensionId;
-+
-+   @Override
-+   public void setId(int id) {
-+       this.dimensionId = id;
-+   }
-+
-+   @Override
-+   public int getId() {
-+       return this.dimensionId;
-+   }
 +
 +   @Nullable
 +   @OnlyIn(Dist.CLIENT)

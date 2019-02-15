@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/model/ModelBakery.java
++++ b/net/minecraft/client/renderer/model/ModelBakery.java
+@@ -198,7 +198,7 @@
+                         flag = true;
+                         lvt_9_4_ = this.field_177598_f.func_199004_b(resourcelocation1).stream().map((p_209591_1_) -> {
+                            try (InputStream inputstream = p_209591_1_.func_199027_b()) {
+-                              return Pair.of(p_209591_1_.func_199026_d(), ModelBlockDefinition.func_209577_a(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8)));
++                              return Pair.of(p_209591_1_.func_199026_d(), ModelBlockDefinition.fromJson(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8), p_209598_1_));
+                            } catch (Exception exception1) {
+                               throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_209591_1_.func_199029_a(), p_209591_1_.func_199026_d(), exception1.getMessage()));
+                            }

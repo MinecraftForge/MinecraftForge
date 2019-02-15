@@ -19,8 +19,8 @@
 
 package net.minecraftforge.client.extensions;
 
+import net.minecraft.client.renderer.chunk.RenderChunkCache;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 
 public interface IForgeRenderChunk
@@ -38,8 +38,8 @@ public interface IForgeRenderChunk
      *                 the cache a 20x20x20 cube, for a total of 8000 states in the cache.
      * @return new RegionRenderCache instance
      */
-    default ChunkCache createRegionRenderCache(World world, BlockPos from, BlockPos to, int subtract)
+    default RenderChunkCache createRegionRenderCache(World world, BlockPos from, BlockPos to, int subtract)
     {
-        return new ChunkCache(world, from, to, subtract);
+        return RenderChunkCache.func_212397_a(world, from, to, subtract);
     }
 }

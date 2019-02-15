@@ -39,7 +39,7 @@ import java.util.zip.ZipError;
 
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
-public class AbstractJarFileLocator {
+public abstract class AbstractJarFileLocator implements IModLocator {
     private static final Logger LOGGER = LogManager.getLogger();
     protected final Map<ModFile, FileSystem> modJars;
 
@@ -51,7 +51,7 @@ public class AbstractJarFileLocator {
         try {
             return FileSystems.newFileSystem(modFile.getFilePath(), modFile.getClass().getClassLoader());
         } catch (ZipError | IOException e) {
-            LOGGER.debug(SCAN,"Ignoring invalid JAR file {}", modFile.getFilePath());
+            LOGGER.debug(SCAN,"Invalid JAR file {} - no filesystem created", modFile.getFilePath());
             return null;
         }
     }
@@ -86,5 +86,10 @@ public class AbstractJarFileLocator {
         {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public boolean isValid(final ModFile modFile) {
+        return modJars.get(modFile) != null;
     }
 }

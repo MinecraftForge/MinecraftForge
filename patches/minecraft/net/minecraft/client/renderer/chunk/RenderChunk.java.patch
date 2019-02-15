@@ -1,33 +1,33 @@
 --- a/net/minecraft/client/renderer/chunk/RenderChunk.java
 +++ b/net/minecraft/client/renderer/chunk/RenderChunk.java
-@@ -37,7 +37,7 @@
+@@ -36,7 +36,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
 -public class RenderChunk {
 +public class RenderChunk implements net.minecraftforge.client.extensions.IForgeRenderChunk {
     private volatile World field_178588_d;
-    private final RenderGlobal field_178589_e;
+    private final WorldRenderer field_178589_e;
     public static int field_178592_a;
-@@ -128,7 +128,8 @@
+@@ -125,7 +125,8 @@
              p_178581_4_.func_178540_f().unlock();
           }
  
--         ChunkCache lvt_10_1_ = new ChunkCache(world, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
-+         ChunkCache lvt_10_1_ = createRegionRenderCache(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
+-         RenderChunkCache lvt_10_1_ = RenderChunkCache.func_212397_a(world, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
++         RenderChunkCache lvt_10_1_ = createRegionRenderCache(world, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
 +         net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(this.field_178588_d, this.field_178586_f, lvt_10_1_);
           VisGraph lvt_11_1_ = new VisGraph();
           HashSet lvt_12_1_ = Sets.newHashSet();
-          if (!lvt_10_1_.func_72806_N()) {
-@@ -145,22 +146,23 @@
+          if (lvt_10_1_ != null) {
+@@ -142,22 +143,23 @@
                    lvt_11_1_.func_178606_a(blockpos$mutableblockpos);
                 }
  
 -               if (block.func_149716_u()) {
-+               if (block.hasTileEntity(iblockstate)) {
-                   TileEntity tileentity = lvt_10_1_.func_190300_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
++               if (iblockstate.hasTileEntity()) {
+                   TileEntity tileentity = lvt_10_1_.func_212399_a(blockpos$mutableblockpos, Chunk.EnumCreateEntityType.CHECK);
                    if (tileentity != null) {
-                      TileEntityRenderer<TileEntity> tileentityrenderer = TileEntityRendererDispatcher.field_147556_a.<TileEntity>func_147547_b(tileentity);
+                      TileEntityRenderer<TileEntity> tileentityrenderer = TileEntityRendererDispatcher.field_147556_a.func_147547_b(tileentity);
                       if (tileentityrenderer != null) {
 -                        compiledchunk.func_178490_a(tileentity);
                          if (tileentityrenderer.func_188185_a(tileentity)) {
@@ -37,8 +37,7 @@
                       }
                    }
                 }
--
-+               
+ 
                 IFluidState ifluidstate = lvt_10_1_.func_204610_c(blockpos$mutableblockpos);
 -               if (!ifluidstate.func_206888_e()) {
 -                  BlockRenderLayer blockrenderlayer1 = ifluidstate.func_180664_k();
@@ -48,7 +47,7 @@
                    int j = blockrenderlayer1.ordinal();
                    BufferBuilder bufferbuilder = p_178581_4_.func_178545_d().func_179039_a(j);
                    if (!compiledchunk.func_178492_d(blockrenderlayer1)) {
-@@ -171,17 +173,18 @@
+@@ -168,17 +170,18 @@
                    aboolean[j] |= blockrendererdispatcher.func_205318_a(blockpos$mutableblockpos, lvt_10_1_, bufferbuilder, ifluidstate);
                 }
  

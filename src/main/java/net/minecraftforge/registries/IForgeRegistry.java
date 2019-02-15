@@ -47,6 +47,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 
     @Nullable V getValue(ResourceLocation key);
     @Nullable ResourceLocation getKey(V value);
+    @Nullable ResourceLocation getDefaultKey();
 
     @Nonnull Set<ResourceLocation>           getKeys();
     @Nonnull Collection<V>                   getValues();

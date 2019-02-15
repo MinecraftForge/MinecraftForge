@@ -1,6 +1,6 @@
 --- a/net/minecraft/item/ItemStack.java
 +++ b/net/minecraft/item/ItemStack.java
-@@ -63,7 +63,7 @@
+@@ -64,7 +64,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
     private static final Logger field_199558_c = LogManager.getLogger();
     public static final ItemStack field_190927_a = new ItemStack((Item)null);
     public static final DecimalFormat field_111284_a = func_208306_D();
-@@ -79,6 +79,9 @@
+@@ -80,6 +80,9 @@
     private BlockWorldState field_179550_j;
     private boolean field_179551_k;
  
@@ -19,7 +19,7 @@
     private static DecimalFormat func_208306_D() {
        DecimalFormat decimalformat = new DecimalFormat("#.##");
        decimalformat.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ROOT));
-@@ -89,10 +92,14 @@
+@@ -90,10 +93,14 @@
        this(p_i48203_1_, 1);
     }
  
@@ -35,16 +35,16 @@
     }
  
     private void func_190923_F() {
-@@ -101,6 +108,8 @@
+@@ -102,6 +109,8 @@
     }
  
     private ItemStack(NBTTagCompound p_i47263_1_) {
 +      super(ItemStack.class);
 +      this.capNBT = p_i47263_1_.func_74764_b("ForgeCaps") ? p_i47263_1_.func_74775_l("ForgeCaps") : null;
-       Item item = Item.field_150901_e.func_82594_a(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
+       Item item = IRegistry.field_212630_s.func_212608_b(new ResourceLocation(p_i47263_1_.func_74779_i("id")));
        this.field_151002_e = item == null ? Items.field_190931_a : item;
        this.field_77994_a = p_i47263_1_.func_74771_c("Count");
-@@ -114,6 +123,7 @@
+@@ -115,6 +124,7 @@
        }
  
        this.func_190923_F();
@@ -52,7 +52,7 @@
     }
  
     public static ItemStack func_199557_a(NBTTagCompound p_199557_0_) {
-@@ -128,7 +138,7 @@
+@@ -129,7 +139,7 @@
     public boolean func_190926_b() {
        if (this == field_190927_a) {
           return true;
@@ -61,7 +61,7 @@
           return this.field_77994_a <= 0;
        } else {
           return true;
-@@ -144,18 +154,27 @@
+@@ -145,18 +155,27 @@
     }
  
     public Item func_77973_b() {
@@ -95,7 +95,7 @@
           if (entityplayer != null && enumactionresult == EnumActionResult.SUCCESS) {
              entityplayer.func_71029_a(StatList.field_75929_E.func_199076_b(item));
           }
-@@ -183,12 +202,15 @@
+@@ -184,12 +203,15 @@
        if (this.field_77990_d != null) {
           p_77955_1_.func_74782_a("tag", this.field_77990_d);
        }
@@ -113,7 +113,7 @@
     }
  
     public boolean func_77985_e() {
-@@ -196,7 +218,7 @@
+@@ -197,7 +219,7 @@
     }
  
     public boolean func_77984_f() {
@@ -122,7 +122,7 @@
           NBTTagCompound nbttagcompound = this.func_77978_p();
           return nbttagcompound == null || !nbttagcompound.func_74767_n("Unbreakable");
        } else {
-@@ -205,7 +227,7 @@
+@@ -206,7 +228,7 @@
     }
  
     public boolean func_77951_h() {
@@ -131,7 +131,7 @@
     }
  
     public int func_77952_i() {
-@@ -217,7 +239,7 @@
+@@ -218,7 +240,7 @@
     }
  
     public int func_77958_k() {
@@ -140,7 +140,7 @@
     }
  
     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable EntityPlayerMP p_96631_3_) {
-@@ -285,7 +307,7 @@
+@@ -286,7 +308,7 @@
     }
  
     public boolean func_150998_b(IBlockState p_150998_1_) {
@@ -149,7 +149,7 @@
     }
  
     public boolean func_111282_a(EntityPlayer p_111282_1_, EntityLivingBase p_111282_2_, EnumHand p_111282_3_) {
-@@ -293,7 +315,7 @@
+@@ -294,7 +316,7 @@
     }
  
     public ItemStack func_77946_l() {
@@ -158,7 +158,7 @@
        itemstack.func_190915_d(this.func_190921_D());
        if (this.field_77990_d != null) {
           itemstack.field_77990_d = this.field_77990_d.func_74737_b();
-@@ -309,7 +331,7 @@
+@@ -310,7 +332,7 @@
           if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
              return false;
           } else {
@@ -167,7 +167,7 @@
           }
        } else {
           return false;
-@@ -332,7 +354,7 @@
+@@ -333,7 +355,7 @@
        } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
           return false;
        } else {
@@ -176,7 +176,7 @@
        }
     }
  
-@@ -633,6 +655,7 @@
+@@ -634,6 +656,7 @@
           }
        }
  
@@ -184,7 +184,7 @@
        return list;
     }
  
-@@ -743,7 +766,7 @@
+@@ -744,7 +767,7 @@
              }
           }
        } else {
@@ -193,7 +193,7 @@
        }
  
        return multimap;
-@@ -874,4 +897,37 @@
+@@ -875,4 +898,37 @@
     public void func_190918_g(int p_190918_1_) {
        this.func_190917_f(-p_190918_1_);
     }

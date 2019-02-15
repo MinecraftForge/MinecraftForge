@@ -1,14 +1,14 @@
 --- a/net/minecraft/client/gui/GuiButton.java
 +++ b/net/minecraft/client/gui/GuiButton.java
 @@ -22,6 +22,7 @@
-    public boolean field_146125_m;
+    public boolean field_146125_m = true;
     protected boolean field_146123_n;
     private boolean field_194832_o;
 +   public int packedFGColor; // FML
  
     public GuiButton(int p_i1020_1_, int p_i1020_2_, int p_i1020_3_, String p_i1020_4_) {
        this(p_i1020_1_, p_i1020_2_, p_i1020_3_, 200, 20, p_i1020_4_);
-@@ -66,6 +67,11 @@
+@@ -62,6 +63,11 @@
           this.func_73729_b(this.field_146128_h + this.field_146120_f / 2, this.field_146129_i, 200 - this.field_146120_f / 2, 46 + i * 20, this.field_146120_f / 2, this.field_146121_g);
           this.func_146119_b(minecraft, p_194828_1_, p_194828_2_);
           int j = 14737632;

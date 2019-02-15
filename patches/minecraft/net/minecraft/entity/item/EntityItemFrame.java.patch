@@ -7,7 +7,7 @@
 -      if (p_110131_1_.func_77973_b() == Items.field_151098_aY) {
 +      if (p_110131_1_.func_77973_b() instanceof net.minecraft.item.ItemMap) {
           MapData mapdata = ItemMap.func_195950_a(p_110131_1_, this.field_70170_p);
-          mapdata.field_76203_h.remove("frame-" + this.func_145782_y());
+          mapdata.func_212441_a(this.field_174861_a, this.func_145782_y());
        }
  
        p_110131_1_.func_82842_a((EntityItemFrame)null);

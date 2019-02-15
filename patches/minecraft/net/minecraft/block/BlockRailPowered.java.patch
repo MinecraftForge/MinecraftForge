@@ -6,14 +6,14 @@
     public static final BooleanProperty field_176569_M = BlockStateProperties.field_208194_u;
 +   private final boolean isActivator;
  
-    protected BlockRailPowered(Block.Builder p_i48349_1_) {
+    protected BlockRailPowered(Block.Properties p_i48349_1_) {
 -      super(true, p_i48349_1_);
 +      this(p_i48349_1_, false);
 +   }
 +
-+   protected BlockRailPowered(Block.Builder builder, boolean isActivator) {
++   protected BlockRailPowered(Block.Properties builder, boolean isActivator) {
 +      super(true, builder);
-       this.func_180632_j((IBlockState)((IBlockState)(this.field_176227_L.func_177621_b()).func_206870_a(field_176568_b, RailShape.NORTH_SOUTH)).func_206870_a(field_176569_M, Boolean.valueOf(false)));
+       this.func_180632_j(this.field_176227_L.func_177621_b().func_206870_a(field_176568_b, RailShape.NORTH_SOUTH).func_206870_a(field_176569_M, Boolean.valueOf(false)));
 +      this.isActivator = isActivator;
     }
  
@@ -26,4 +26,4 @@
 +      if (!(iblockstate.func_177230_c() instanceof BlockRailPowered) || isActivator != ((BlockRailPowered)iblockstate.func_177230_c()).isActivator) {
           return false;
        } else {
-          RailShape railshape = (RailShape)iblockstate.func_177229_b(field_176568_b);
+          RailShape railshape = iblockstate.func_177229_b(field_176568_b);

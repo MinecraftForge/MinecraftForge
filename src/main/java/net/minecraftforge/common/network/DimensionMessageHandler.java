@@ -21,10 +21,8 @@ package net.minecraftforge.common.network;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.network.ForgeMessage.DimensionRegisterMessage;
-import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 
 import org.apache.logging.log4j.Logger;
@@ -36,9 +34,9 @@ public class DimensionMessageHandler extends SimpleChannelInboundHandler<ForgeMe
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, DimensionRegisterMessage msg) throws Exception
     {
-        if (!DimensionManager.isDimensionRegistered(msg.dimensionId))
+        if (DimensionManager.getRegistry().get(msg.id) == null)
         {
-            DimensionManager.registerDimension(msg.dimensionId, DimensionType.valueOf(msg.providerId));
+            DimensionManager.registerDimensionInternal(msg.id + 1, msg.name, msg.dim, msg.data);
         }
     }
     @Override

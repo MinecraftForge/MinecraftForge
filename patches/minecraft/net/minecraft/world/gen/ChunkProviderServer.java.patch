@@ -1,26 +1,18 @@
 --- a/net/minecraft/world/gen/ChunkProviderServer.java
 +++ b/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -248,6 +248,7 @@
+@@ -239,6 +239,7 @@
+                   Chunk chunk = this.field_73244_f.get(olong);
+                   if (chunk != null) {
+                      chunk.func_76623_d();
++                     net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
+                      this.func_73242_b(chunk);
+                      this.field_73244_f.remove(olong);
+                      this.field_212472_f = null;
+@@ -250,6 +251,7 @@
  
-    public boolean func_73156_b() {
-       if (!this.field_73251_h.field_73058_d) {
-+         field_73251_h.getPersistentChunks().keySet().forEach(pos -> field_73248_b.remove(ChunkPos.func_77272_a(pos.field_77276_a, pos.field_77275_b)));
-          if (!this.field_73248_b.isEmpty()) {
-             Iterator<Long> iterator = this.field_73248_b.iterator();
- 
-@@ -256,6 +257,7 @@
-                Chunk chunk = (Chunk)this.field_73244_f.get(olong);
-                if (chunk != null && chunk.field_189550_d) {
-                   chunk.func_76623_d();
-+                  net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
-                   this.func_73242_b(chunk);
-                   this.func_73243_a(chunk);
-                   this.field_73244_f.remove(olong);
-@@ -264,6 +266,7 @@
-             }
-          }
- 
-+         if (this.field_73244_f.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.field_73251_h.field_73011_w.getId());
-          this.field_201723_f.func_208484_a();
-          this.field_73247_e.func_75817_a();
+          this.field_201723_f.func_208484_a(p_73156_1_);
        }
++      if (this.field_73244_f.isEmpty()) net.minecraftforge.common.DimensionManager.unloadWorld(this.field_73251_h);
+ 
+       return false;
+    }

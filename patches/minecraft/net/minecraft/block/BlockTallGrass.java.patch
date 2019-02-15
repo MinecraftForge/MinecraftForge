@@ -8,7 +8,7 @@
 +public class BlockTallGrass extends BlockBush implements IGrowable, net.minecraftforge.common.IShearable {
     protected static final VoxelShape field_196389_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
  
-    protected BlockTallGrass(Block.Builder p_i48310_1_) {
+    protected BlockTallGrass(Block.Properties p_i48310_1_) {
 @@ -27,7 +27,7 @@
     }
  

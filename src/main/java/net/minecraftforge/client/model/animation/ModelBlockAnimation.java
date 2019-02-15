@@ -40,7 +40,7 @@ import javax.vecmath.Vector3f;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.client.renderer.block.model.BlockPart;
+import net.minecraft.client.renderer.model.BlockPart;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;

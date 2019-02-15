@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/renderer/model/VariantList.java
++++ b/net/minecraft/client/renderer/model/VariantList.java
+@@ -56,14 +56,15 @@
+    }
+ 
+    @Nullable
+-   public IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_) {
++   @Override
++   public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, net.minecraftforge.common.model.IModelState p_209558_3_, boolean p_209558_4_, net.minecraft.client.renderer.vertex.VertexFormat format) {
+       if (this.func_188114_a().isEmpty()) {
+          return null;
+       } else {
+          WeightedBakedModel.Builder weightedbakedmodel$builder = new WeightedBakedModel.Builder();
+ 
+          for(Variant variant : this.func_188114_a()) {
+-            IBakedModel ibakedmodel = p_209558_1_.apply(variant.func_188046_a()).func_209558_a(p_209558_1_, p_209558_2_, variant.func_188048_b(), variant.func_188049_c());
++            IBakedModel ibakedmodel = p_209558_1_.apply(variant.func_188046_a()).bake(p_209558_1_, p_209558_2_, variant.getState(), variant.func_188049_c(), format);
+             weightedbakedmodel$builder.func_177677_a(ibakedmodel, variant.func_188047_d());
+          }
+ 

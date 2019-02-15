@@ -1,17 +1,17 @@
 --- a/net/minecraft/entity/item/EntityItem.java
 +++ b/net/minecraft/entity/item/EntityItem.java
 @@ -34,6 +34,10 @@
+    private int field_70291_e = 5;
     private UUID field_145801_f;
     private UUID field_145802_g;
-    public float field_70290_d;
 +   /**
 +    * The maximum age of this EntityItem.  The item is expired once this is reached.
 +    */
 +   public int lifespan = 6000;
+    public float field_70290_d = (float)(Math.random() * Math.PI * 2.0D);
  
     public EntityItem(World p_i1711_1_) {
-       super(EntityType.field_200765_E, p_i1711_1_);
-@@ -54,6 +58,7 @@
+@@ -53,6 +57,7 @@
     public EntityItem(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_) {
        this(p_i1710_1_, p_i1710_2_, p_i1710_4_, p_i1710_6_);
        this.func_92058_a(p_i1710_8_);
@@ -19,7 +19,7 @@
     }
  
     protected boolean func_70041_e_() {
-@@ -65,6 +70,7 @@
+@@ -64,6 +69,7 @@
     }
  
     public void func_70071_h_() {
@@ -27,7 +27,7 @@
        if (this.func_92059_d().func_190926_b()) {
           this.func_70106_y();
        } else {
-@@ -108,7 +114,8 @@
+@@ -107,7 +113,8 @@
  
           float f = 0.98F;
           if (this.field_70122_E) {
@@ -37,7 +37,7 @@
           }
  
           this.field_70159_w *= (double)f;
-@@ -133,7 +140,14 @@
+@@ -132,7 +139,14 @@
              }
           }
  
@@ -53,7 +53,7 @@
              this.func_70106_y();
           }
  
-@@ -176,6 +190,8 @@
+@@ -175,6 +189,8 @@
                    return p_70289_1_.func_70289_a(this);
                 } else if (itemstack1.func_190916_E() + itemstack.func_190916_E() > itemstack1.func_77976_d()) {
                    return false;
@@ -62,7 +62,7 @@
                 } else {
                    itemstack1.func_190917_f(itemstack.func_190916_E());
                    p_70289_1_.field_145804_b = Math.max(p_70289_1_.field_145804_b, this.field_145804_b);
-@@ -204,6 +220,7 @@
+@@ -203,6 +219,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
@@ -70,7 +70,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (!this.func_92059_d().func_190926_b() && this.func_92059_d().func_77973_b() == Items.field_151156_bN && p_70097_1_.func_94541_c()) {
-@@ -223,6 +240,7 @@
+@@ -222,6 +239,7 @@
        p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
        p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
        p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -78,7 +78,7 @@
        if (this.func_200214_m() != null) {
           p_70014_1_.func_74782_a("Thrower", NBTUtil.func_186862_a(this.func_200214_m()));
        }
-@@ -243,6 +261,7 @@
+@@ -242,6 +260,7 @@
        if (p_70037_1_.func_74764_b("PickupDelay")) {
           this.field_145804_b = p_70037_1_.func_74765_d("PickupDelay");
        }
@@ -86,7 +86,7 @@
  
        if (p_70037_1_.func_150297_b("Owner", 10)) {
           this.field_145802_g = NBTUtil.func_186860_b(p_70037_1_.func_74775_l("Owner"));
-@@ -262,12 +281,20 @@
+@@ -261,12 +280,20 @@
  
     public void func_70100_b_(EntityPlayer p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
@@ -109,20 +109,20 @@
                 this.func_70106_y();
                 itemstack.func_190920_e(i);
              }
-@@ -287,9 +314,10 @@
+@@ -286,9 +313,10 @@
        return false;
     }
  
 +   @Override
     @Nullable
--   public Entity func_184204_a(int p_184204_1_) {
--      Entity entity = super.func_184204_a(p_184204_1_);
-+   public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      Entity entity = super.changeDimension(dimensionIn, teleporter);
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
+-      Entity entity = super.func_212321_a(p_212321_1_);
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      Entity entity = super.changeDimension(p_212321_1_, teleporter);
        if (!this.field_70170_p.field_72995_K && entity instanceof EntityItem) {
           ((EntityItem)entity).func_85054_d();
        }
-@@ -354,6 +382,6 @@
+@@ -353,6 +381,6 @@
  
     public void func_174870_v() {
        this.func_174871_r();

@@ -8,4 +8,4 @@
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(EntityEvoker.this.field_70170_p, EntityEvoker.this)) {
              return false;
           } else {
-             List<EntitySheep> list = EntityEvoker.this.field_70170_p.<EntitySheep>func_175647_a(EntitySheep.class, EntityEvoker.this.func_174813_aQ().func_72314_b(16.0D, 4.0D, 16.0D), this.field_190879_a);
+             List<EntitySheep> list = EntityEvoker.this.field_70170_p.func_175647_a(EntitySheep.class, EntityEvoker.this.func_174813_aQ().func_72314_b(16.0D, 4.0D, 16.0D), this.field_190879_a);

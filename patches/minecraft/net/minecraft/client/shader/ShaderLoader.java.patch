@@ -2,7 +2,7 @@
 +++ b/net/minecraft/client/shader/ShaderLoader.java
 @@ -51,7 +51,8 @@
     public static ShaderLoader func_195655_a(IResourceManager p_195655_0_, ShaderLoader.ShaderType p_195655_1_, String p_195655_2_) throws IOException {
-       ShaderLoader shaderloader = (ShaderLoader)p_195655_1_.func_148064_d().get(p_195655_2_);
+       ShaderLoader shaderloader = p_195655_1_.func_148064_d().get(p_195655_2_);
        if (shaderloader == null) {
 -         ResourceLocation resourcelocation = new ResourceLocation("shaders/program/" + p_195655_2_ + p_195655_1_.func_148063_b());
 +         ResourceLocation rl = ResourceLocation.func_208304_a(p_195655_2_);

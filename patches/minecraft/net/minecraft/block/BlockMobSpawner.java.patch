@@ -6,7 +6,7 @@
  public class BlockMobSpawner extends BlockContainer {
 +   private static final java.util.Random RAND = new java.util.Random();
 +
-    protected BlockMobSpawner(Block.Builder p_i48364_1_) {
+    protected BlockMobSpawner(Block.Properties p_i48364_1_) {
        super(p_i48364_1_);
     }
 @@ -27,10 +29,13 @@

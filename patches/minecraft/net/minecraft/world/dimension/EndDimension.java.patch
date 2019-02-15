@@ -1,24 +1,40 @@
 --- a/net/minecraft/world/dimension/EndDimension.java
 +++ b/net/minecraft/world/dimension/EndDimension.java
-@@ -23,7 +23,7 @@
+@@ -20,9 +20,14 @@
+ public class EndDimension extends Dimension {
+    public static final BlockPos field_209958_g = new BlockPos(100, 50, 0);
     private DragonFightManager field_186064_g;
++   private final DimensionType type;
++   public EndDimension() { this(DimensionType.THE_END); }
++   public EndDimension(DimensionType type) {
++      this.type = type;
++   }
  
     public void func_76572_b() {
 -      NBTTagCompound nbttagcompound = this.field_76579_a.func_72912_H().func_186347_a(DimensionType.THE_END);
-+      NBTTagCompound nbttagcompound = this.field_76579_a.func_72912_H().getDimensionData(this.field_76579_a.field_73011_w.getId());
++      NBTTagCompound nbttagcompound = this.field_76579_a.func_72912_H().func_186347_a(this.field_76579_a.field_73011_w.func_186058_p());
        this.field_186064_g = this.field_76579_a instanceof WorldServer ? new DragonFightManager((WorldServer)this.field_76579_a, nbttagcompound.func_74775_l("DragonFight")) : null;
        this.field_191067_f = false;
     }
-@@ -109,7 +109,7 @@
+@@ -99,7 +104,7 @@
+    }
+ 
+    public DimensionType func_186058_p() {
+-      return DimensionType.THE_END;
++      return type;
+    }
+ 
+    public void func_186057_q() {
+@@ -108,7 +113,7 @@
           nbttagcompound.func_74782_a("DragonFight", this.field_186064_g.func_186088_a());
        }
  
 -      this.field_76579_a.func_72912_H().func_186345_a(DimensionType.THE_END, nbttagcompound);
-+      this.field_76579_a.func_72912_H().setDimensionData(this.field_76579_a.field_73011_w.getId(), nbttagcompound);
++      this.field_76579_a.func_72912_H().func_186345_a(this.field_76579_a.field_73011_w.func_186058_p(), nbttagcompound);
     }
  
     public void func_186059_r() {
-@@ -123,4 +123,18 @@
+@@ -122,4 +127,18 @@
     public DragonFightManager func_186063_s() {
        return this.field_186064_g;
     }

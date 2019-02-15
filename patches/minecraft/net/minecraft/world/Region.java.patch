@@ -1,0 +1,59 @@
+--- a/net/minecraft/world/Region.java
++++ b/net/minecraft/world/Region.java
+@@ -55,13 +55,14 @@
+ 
+    @Nullable
+    public TileEntity func_175625_s(BlockPos p_175625_1_) {
+-      return this.func_190300_a(p_175625_1_, Chunk.EnumCreateEntityType.IMMEDIATE);
++      return this.func_190300_a(p_175625_1_, Chunk.EnumCreateEntityType.CHECK); // Forge: don't modify world from other threads
+    }
+ 
+    @Nullable
+    public TileEntity func_190300_a(BlockPos p_190300_1_, Chunk.EnumCreateEntityType p_190300_2_) {
+       int i = (p_190300_1_.func_177958_n() >> 4) - this.field_72818_a;
+       int j = (p_190300_1_.func_177952_p() >> 4) - this.field_72816_b;
++      if (!withinBounds(i, j)) return null;
+       return this.field_72817_c[i][j].func_177424_a(p_190300_1_, p_190300_2_);
+    }
+ 
+@@ -194,6 +195,7 @@
+    public Biome func_180494_b(BlockPos p_180494_1_) {
+       int i = (p_180494_1_.func_177958_n() >> 4) - this.field_72818_a;
+       int j = (p_180494_1_.func_177952_p() >> 4) - this.field_72816_b;
++      if (!withinBounds(i, j)) return net.minecraft.init.Biomes.field_76772_c;
+       return this.field_72817_c[i][j].func_201600_k(p_180494_1_);
+    }
+ 
+@@ -220,6 +222,7 @@
+          } else {
+             int i = (p_175629_2_.func_177958_n() >> 4) - this.field_72818_a;
+             int j = (p_175629_2_.func_177952_p() >> 4) - this.field_72816_b;
++            if (!withinBounds(i, j)) return p_175629_1_.field_77198_c;
+             return this.field_72817_c[i][j].func_177413_a(p_175629_1_, p_175629_2_);
+          }
+       } else {
+@@ -228,13 +231,14 @@
+    }
+ 
+    public boolean func_175623_d(BlockPos p_175623_1_) {
+-      return this.func_180495_p(p_175623_1_).func_196958_f();
++      return this.func_180495_p(p_175623_1_).isAir(this, p_175623_1_);
+    }
+ 
+    public int func_175642_b(EnumLightType p_175642_1_, BlockPos p_175642_2_) {
+       if (p_175642_2_.func_177956_o() >= 0 && p_175642_2_.func_177956_o() < 256) {
+          int i = (p_175642_2_.func_177958_n() >> 4) - this.field_72818_a;
+          int j = (p_175642_2_.func_177952_p() >> 4) - this.field_72816_b;
++         if (!withinBounds(i, j)) return p_175642_1_.field_77198_c;
+          return this.field_72817_c[i][j].func_177413_a(p_175642_1_, p_175642_2_);
+       } else {
+          return p_175642_1_.field_77198_c;
+@@ -252,4 +256,8 @@
+    public int func_181545_F() {
+       throw new RuntimeException("Not yet implemented");
+    }
++
++   private boolean withinBounds(int x, int z) {
++      return x >= 0 && x < field_72817_c.length && z >= 0 && z < field_72817_c[x].length && field_72817_c[x][z] != null;
++   }
+ }

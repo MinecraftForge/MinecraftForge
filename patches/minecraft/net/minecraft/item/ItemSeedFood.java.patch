@@ -8,7 +8,7 @@
 +public class ItemSeedFood extends ItemFood implements net.minecraftforge.common.plants.IPlantable {
     private final IBlockState field_195972_b;
  
-    public ItemSeedFood(int p_i48473_1_, float p_i48473_2_, Block p_i48473_3_, Item.Builder p_i48473_4_) {
+    public ItemSeedFood(int p_i48473_1_, float p_i48473_2_, Block p_i48473_3_, Item.Properties p_i48473_4_) {
 @@ -21,7 +21,7 @@
     public EnumActionResult func_195939_a(ItemUseContext p_195939_1_) {
        IWorld iworld = p_195939_1_.func_195991_k();

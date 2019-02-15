@@ -1,7 +1,7 @@
 --- a/net/minecraft/inventory/Container.java
 +++ b/net/minecraft/inventory/Container.java
 @@ -67,9 +67,11 @@
-          ItemStack itemstack = ((Slot)this.field_75151_b.get(i)).func_75211_c();
+          ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
           ItemStack itemstack1 = this.field_75153_a.get(i);
           if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
 +            boolean clientStackChanged = !itemstack1.equals(itemstack, true);
@@ -10,7 +10,7 @@
  
 +            if (clientStackChanged)
              for(int j = 0; j < this.field_75149_d.size(); ++j) {
-                ((IContainerListener)this.field_75149_d.get(j)).func_71111_a(this, i, itemstack1);
+                this.field_75149_d.get(j).func_71111_a(this, i, itemstack1);
              }
 @@ -430,14 +432,15 @@
              ItemStack itemstack = slot.func_75211_c();

@@ -28,6 +28,7 @@ import static org.lwjgl.opengl.GL20.*;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 
@@ -55,20 +56,20 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.renderer.block.model.BakedQuad;
-import net.minecraft.client.renderer.block.model.BlockFaceUV;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ItemTransformVec3f;
-import net.minecraft.client.renderer.block.model.ModelManager;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.model.ModelRotation;
-import net.minecraft.client.renderer.block.model.SimpleBakedModel;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.model.BakedQuad;
+import net.minecraft.client.renderer.model.BlockFaceUV;
+import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.model.ItemTransformVec3f;
+import net.minecraft.client.renderer.model.ModelManager;
+import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.model.ModelRotation;
+import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.entity.model.ModelBiped;
@@ -140,17 +141,17 @@ public class ForgeHooksClient
         return result != null ? result : _default;
     }
 
-    public static boolean onDrawBlockHighlight(RenderGlobal context, EntityPlayer player, RayTraceResult target, int subID, float partialTicks)
+    public static boolean onDrawBlockHighlight(WorldRenderer context, EntityPlayer player, RayTraceResult target, int subID, float partialTicks)
     {
         return MinecraftForge.EVENT_BUS.post(new DrawBlockHighlightEvent(context, player, target, subID, partialTicks));
     }
 
-    public static void dispatchRenderLast(RenderGlobal context, float partialTicks)
+    public static void dispatchRenderLast(WorldRenderer context, float partialTicks)
     {
         MinecraftForge.EVENT_BUS.post(new RenderWorldLastEvent(context, partialTicks));
     }
 
-    public static boolean renderFirstPersonHand(RenderGlobal context, float partialTicks)
+    public static boolean renderFirstPersonHand(WorldRenderer context, float partialTicks)
     {
         return MinecraftForge.EVENT_BUS.post(new RenderHandEvent(context, partialTicks));
     }
@@ -234,7 +235,7 @@ public class ForgeHooksClient
         return fovUpdateEvent.getNewfov();
     }
 
-    public static double getFOVModifier(EntityRenderer renderer, Entity entity, IBlockState blockState, IFluidState fluidState, double renderPartialTicks, double fov) {
+    public static double getFOVModifier(GameRenderer renderer, Entity entity, IBlockState blockState, IFluidState fluidState, double renderPartialTicks, double fov) {
         EntityViewRenderEvent.FOVModifier event = new EntityViewRenderEvent.FOVModifier(renderer, entity, blockState, fluidState, renderPartialTicks, fov);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getFOV();
@@ -348,26 +349,26 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new GuiScreenEvent.DrawScreenEvent.Post(screen, mouseX, mouseY, partialTicks));
     }
 
-    public static float getFogDensity(FogRenderer fogRenderer, EntityRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, float partial, float density)
+    public static float getFogDensity(FogRenderer fogRenderer, GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, float partial, float density)
     {
         EntityViewRenderEvent.FogDensity event = new EntityViewRenderEvent.FogDensity(fogRenderer, renderer, entity, state, fluidState, partial, density);
         if (MinecraftForge.EVENT_BUS.post(event)) return event.getDensity();
         return -1;
     }
 
-    public static void onFogRender(FogRenderer fogRenderer, EntityRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, float partial, int mode, float distance)
+    public static void onFogRender(FogRenderer fogRenderer, GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, float partial, int mode, float distance)
     {
         MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(fogRenderer, renderer, entity, state, fluidState, partial, mode, distance));
     }
 
-    public static void onModelBake(ModelManager modelManager, IRegistry<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
+    public static void onModelBake(ModelManager modelManager, Map<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
     {
         MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 
     @SuppressWarnings("deprecation")
-    public static Matrix4f getMatrix(net.minecraft.client.renderer.block.model.ItemTransformVec3f transform)
+    public static Matrix4f getMatrix(net.minecraft.client.renderer.model.ItemTransformVec3f transform)
     {
         javax.vecmath.Matrix4f m = new javax.vecmath.Matrix4f(), t = new javax.vecmath.Matrix4f();
         m.setIdentity();
@@ -600,7 +601,7 @@ public class ForgeHooksClient
         return Optional.of(new TRSRTransformation(matrix));
     }
 
-    public static void loadEntityShader(Entity entity, EntityRenderer entityRenderer)
+    public static void loadEntityShader(Entity entity, GameRenderer entityRenderer)
     {
         if (entity != null)
         {

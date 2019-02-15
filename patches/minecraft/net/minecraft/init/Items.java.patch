@@ -1,8 +1,8 @@
 --- a/net/minecraft/init/Items.java
 +++ b/net/minecraft/init/Items.java
-@@ -3,6 +3,7 @@
- import net.minecraft.item.Item;
+@@ -4,6 +4,7 @@
  import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.IRegistry;
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class Items {

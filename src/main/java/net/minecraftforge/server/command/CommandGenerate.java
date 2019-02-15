@@ -36,6 +36,7 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
+import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
@@ -52,14 +53,13 @@ class CommandGenerate
             .requires(cs->cs.hasPermissionLevel(4)) //permission
             .then(Commands.argument("pos", BlockPosArgument.blockPos())
                 .then(Commands.argument("count", IntegerArgumentType.integer(1))
-                    .then(Commands.argument("dim", IntegerArgumentType.integer())
-                        .suggests((ctx, builder) -> ISuggestionProvider.suggest(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
+                    .then(Commands.argument("dim", DimensionArgument.func_212595_a())
                         .then(Commands.argument("interval", IntegerArgumentType.integer())
-                            .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), getInt(ctx, "dim"), getInt(ctx, "interval")))
+                            .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), DimensionArgument.func_212592_a(ctx, "dim"), getInt(ctx, "interval")))
                         )
-                        .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), getInt(ctx, "dim"), -1))
+                        .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), DimensionArgument.func_212592_a(ctx, "dim"), -1))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().getWorld().dimension.getId(), -1))
+                    .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), ctx.getSource().getWorld().dimension.getType(), -1))
                 )
             );
     }
@@ -69,14 +69,14 @@ class CommandGenerate
         return IntegerArgumentType.getInteger(ctx, name);
     }
 
-    private static int execute(CommandSource source, BlockPos pos, int count, int dim, int interval) throws CommandException
+    private static int execute(CommandSource source, BlockPos pos, int count, DimensionType dim, int interval) throws CommandException
     {
         BlockPos chunkpos = new BlockPos(pos.getX() >> 4, 0, pos.getZ() >> 4);
 
         ChunkGenWorker worker = new ChunkGenWorker(source, chunkpos, count, dim, interval);
         source.sendFeedback(worker.getStartMessage(source), true);
         WorldWorkerManager.addWorker(worker);
-        
+
         return 0;
     }
 }

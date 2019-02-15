@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/renderer/color/BlockColors.java
 +++ b/net/minecraft/client/renderer/color/BlockColors.java
-@@ -21,7 +21,8 @@
+@@ -22,7 +22,8 @@
  
  @OnlyIn(Dist.CLIENT)
  public class BlockColors {
--   private final ObjectIntIdentityMap<IBlockColor> field_186725_a = new ObjectIntIdentityMap<IBlockColor>(32);
+-   private final ObjectIntIdentityMap<IBlockColor> field_186725_a = new ObjectIntIdentityMap<>(32);
 +   // FORGE: Use RegistryDelegates as non-Vanilla block ids are not constant
 +   private final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Block>, IBlockColor> field_186725_a = new java.util.HashMap<>();
  
     public static BlockColors func_186723_a() {
        BlockColors blockcolors = new BlockColors();
-@@ -62,11 +63,12 @@
+@@ -63,11 +64,12 @@
        blockcolors.func_186722_a((p_210228_0_, p_210228_1_, p_210228_2_, p_210228_3_) -> {
           return p_210228_1_ != null && p_210228_2_ != null ? 2129968 : 7455580;
        }, Blocks.field_196651_dG);
@@ -19,23 +19,23 @@
     }
  
     public int func_189991_a(IBlockState p_189991_1_, World p_189991_2_, BlockPos p_189991_3_) {
--      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Block.field_149771_c.func_148757_b(p_189991_1_.func_177230_c()));
+-      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(IRegistry.field_212618_g.func_148757_b(p_189991_1_.func_177230_c()));
 +      IBlockColor iblockcolor = this.field_186725_a.get(p_189991_1_.func_177230_c().delegate);
        if (iblockcolor != null) {
           return iblockcolor.getColor(p_189991_1_, (IWorldReaderBase)null, (BlockPos)null, 0);
        } else {
-@@ -76,13 +78,13 @@
+@@ -77,13 +79,13 @@
     }
  
     public int func_186724_a(IBlockState p_186724_1_, @Nullable IWorldReaderBase p_186724_2_, @Nullable BlockPos p_186724_3_, int p_186724_4_) {
--      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Block.field_149771_c.func_148757_b(p_186724_1_.func_177230_c()));
+-      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(IRegistry.field_212618_g.func_148757_b(p_186724_1_.func_177230_c()));
 +      IBlockColor iblockcolor = this.field_186725_a.get(p_186724_1_.func_177230_c().delegate);
        return iblockcolor == null ? -1 : iblockcolor.getColor(p_186724_1_, p_186724_2_, p_186724_3_, p_186724_4_);
     }
  
     public void func_186722_a(IBlockColor p_186722_1_, Block... p_186722_2_) {
        for(Block block : p_186722_2_) {
--         this.field_186725_a.func_148746_a(p_186722_1_, Block.field_149771_c.func_148757_b(block));
+-         this.field_186725_a.func_148746_a(p_186722_1_, IRegistry.field_212618_g.func_148757_b(block));
 +         this.field_186725_a.put(block.delegate, p_186722_1_);
        }
  

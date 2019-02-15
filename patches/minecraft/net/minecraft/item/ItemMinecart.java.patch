@@ -4,16 +4,22 @@
           double d2 = p_82487_1_.func_82616_c() + (double)enumfacing.func_82599_e() * 1.125D;
           BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(enumfacing);
           IBlockState iblockstate = world.func_180495_p(blockpos);
--         RailShape railshape = iblockstate.func_177230_c() instanceof BlockRailBase ? (RailShape)iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
+-         RailShape railshape = iblockstate.func_177230_c() instanceof BlockRailBase ? iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
 +         RailShape railshape = iblockstate.func_177230_c() instanceof BlockRailBase ? ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(iblockstate, world, blockpos, null) : RailShape.NORTH_SOUTH;
           double d3;
           if (iblockstate.func_203425_a(BlockTags.field_203437_y)) {
              if (railshape.func_208092_c()) {
-@@ -40,7 +40,7 @@
+@@ -35,12 +35,12 @@
+                d3 = 0.1D;
+             }
+          } else {
+-            if (!iblockstate.func_196958_f() || !world.func_180495_p(blockpos.func_177977_b()).func_203425_a(BlockTags.field_203437_y)) {
++            if (!iblockstate.isAir(world, blockpos) || !world.func_180495_p(blockpos.func_177977_b()).func_203425_a(BlockTags.field_203437_y)) {
+                return this.field_96465_b.dispense(p_82487_1_, p_82487_2_);
              }
  
              IBlockState iblockstate1 = world.func_180495_p(blockpos.func_177977_b());
--            RailShape railshape1 = iblockstate1.func_177230_c() instanceof BlockRailBase ? (RailShape)iblockstate1.func_177229_b(((BlockRailBase)iblockstate1.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
+-            RailShape railshape1 = iblockstate1.func_177230_c() instanceof BlockRailBase ? iblockstate1.func_177229_b(((BlockRailBase)iblockstate1.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
 +            RailShape railshape1 = iblockstate1.func_177230_c() instanceof BlockRailBase ? ((BlockRailBase)iblockstate1.func_177230_c()).getRailDirection(iblockstate1, world, blockpos, null) : RailShape.NORTH_SOUTH;
              if (enumfacing != EnumFacing.DOWN && railshape1.func_208092_c()) {
                 d3 = -0.4D;
@@ -22,7 +28,7 @@
        } else {
           ItemStack itemstack = p_195939_1_.func_195996_i();
           if (!world.field_72995_K) {
--            RailShape railshape = iblockstate.func_177230_c() instanceof BlockRailBase ? (RailShape)iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
+-            RailShape railshape = iblockstate.func_177230_c() instanceof BlockRailBase ? iblockstate.func_177229_b(((BlockRailBase)iblockstate.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
 +            RailShape railshape = iblockstate.func_177230_c() instanceof BlockRailBase ? ((BlockRailBase)iblockstate.func_177230_c()).getRailDirection(iblockstate, world, blockpos, null) : RailShape.NORTH_SOUTH;
              double d0 = 0.0D;
              if (railshape.func_208092_c()) {

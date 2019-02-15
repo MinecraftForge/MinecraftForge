@@ -45,6 +45,7 @@ public abstract class ModContainer
     protected final String namespace;
     protected final IModInfo modInfo;
     protected ModLoadingStage modLoadingStage;
+    protected Supplier<?> contextExtension;
     protected final Map<ModLoadingStage, Consumer<LifecycleEventProvider.LifecycleEvent>> triggerMap;
     protected final Map<ExtensionPoint, Supplier<?>> extensionPoints = new IdentityHashMap<>();
     protected final EnumMap<ModConfig.Type, ModConfig> configs = new EnumMap<>(ModConfig.Type.class);
@@ -95,8 +96,10 @@ public abstract class ModContainer
         {
             try
             {
+                ModLoadingContext.get().setActiveContainer(this, contextExtension.get());
                 triggerMap.getOrDefault(modLoadingStage, e->{}).accept(event);
                 modLoadingStage = event.toStage();
+                ModLoadingContext.get().setActiveContainer(null, null);
             }
             catch (ModLoadingException e)
             {
@@ -115,11 +118,11 @@ public abstract class ModContainer
     }
 
     @SuppressWarnings("unchecked")
-    public <T> Optional<T> getCustomExtension(ExtensionPoint point) {
+    public <T> Optional<T> getCustomExtension(ExtensionPoint<T> point) {
         return Optional.ofNullable((T)extensionPoints.getOrDefault(point,()-> null).get());
     }
 
-    public <T> void registerExtensionPoint(ExtensionPoint point, Supplier<T> extension)
+    public <T> void registerExtensionPoint(ExtensionPoint<T> point, Supplier<T> extension)
     {
         extensionPoints.put(point, extension);
     }

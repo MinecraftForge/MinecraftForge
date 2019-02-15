@@ -32,7 +32,7 @@
        } else {
           Entity entity = this.field_70170_p.func_72890_a(this, -1.0D);
           if (entity != null) {
-@@ -675,7 +682,6 @@
+@@ -671,7 +678,6 @@
        return !p_205019_1_.func_72953_d(this.func_174813_aQ()) && p_205019_1_.func_195586_b(this, this.func_174813_aQ()) && p_205019_1_.func_195587_c(this, this.func_174813_aQ());
     }
  
@@ -40,7 +40,7 @@
     public float func_70603_bj() {
        return 1.0F;
     }
-@@ -803,6 +809,8 @@
+@@ -799,6 +805,8 @@
     }
  
     public static EntityEquipmentSlot func_184640_d(ItemStack p_184640_0_) {
@@ -49,7 +49,7 @@
        Item item = p_184640_0_.func_77973_b();
        if (item != Blocks.field_196625_cS.func_199767_j() && (!(item instanceof ItemBlock) || !(((ItemBlock)item).func_179223_d() instanceof BlockAbstractSkull))) {
           if (item instanceof ItemArmor) {
-@@ -810,7 +818,7 @@
+@@ -806,7 +814,7 @@
           } else if (item == Items.field_185160_cR) {
              return EntityEquipmentSlot.CHEST;
           } else {
@@ -58,7 +58,7 @@
           }
        } else {
           return EntityEquipmentSlot.HEAD;
-@@ -1133,10 +1141,10 @@
+@@ -1129,10 +1137,10 @@
              EntityPlayer entityplayer = (EntityPlayer)p_70652_1_;
              ItemStack itemstack = this.func_184614_ca();
              ItemStack itemstack1 = entityplayer.func_184587_cr() ? entityplayer.func_184607_cu() : ItemStack.field_190927_a;

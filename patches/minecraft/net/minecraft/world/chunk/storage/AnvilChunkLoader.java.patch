@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ b/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -214,6 +214,9 @@
+@@ -225,6 +225,9 @@
              this.func_202156_a((ChunkPrimer)p_75816_2_, p_75816_1_, nbttagcompound1);
           }
  
@@ -10,7 +10,7 @@
           this.func_75824_a(chunkpos, nbttagcompound);
        } catch (Exception exception) {
           field_151505_a.error("Failed to save chunk", (Throwable)exception);
-@@ -391,10 +394,14 @@
+@@ -388,10 +391,14 @@
        for(int j = 0; j < p_75820_1_.func_177429_s().length; ++j) {
           for(Entity entity : p_75820_1_.func_177429_s()[j]) {
              NBTTagCompound nbttagcompound = new NBTTagCompound();
@@ -25,7 +25,7 @@
           }
        }
  
-@@ -405,7 +412,11 @@
+@@ -402,7 +409,11 @@
           TileEntity tileentity = p_75820_1_.func_175625_s(blockpos);
           if (tileentity != null) {
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
@@ -38,7 +38,7 @@
              nbttagcompound1.func_74757_a("keepPacked", false);
              nbttaglist2.add((INBTBase)nbttagcompound1);
           } else {
-@@ -445,6 +456,16 @@
+@@ -442,6 +453,16 @@
  
        p_75820_3_.func_74782_a("Heightmaps", nbttagcompound2);
        p_75820_3_.func_74782_a("Structures", this.func_202160_a(p_75820_1_.field_76635_g, p_75820_1_.field_76647_h, p_75820_1_.func_201609_c(), p_75820_1_.func_201604_d()));
@@ -55,7 +55,7 @@
     }
  
     private Chunk func_75823_a(IWorld p_75823_1_, NBTTagCompound p_75823_2_) {
-@@ -511,6 +532,10 @@
+@@ -508,6 +529,10 @@
           chunk.func_177427_f(true);
        }
  
@@ -66,7 +66,7 @@
        return chunk;
     }
  
-@@ -813,4 +838,8 @@
+@@ -809,4 +834,8 @@
  
        return flag;
     }

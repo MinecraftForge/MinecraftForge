@@ -47,6 +47,7 @@ public class LoadingModList
     private final Map<String, ModFileInfo> fileById;
     private BackgroundScanHandler scanner;
     private final List<EarlyLoadingException> preLoadErrors;
+    private List<ModFile> brokenFiles;
 
     private LoadingModList(final List<ModFile> modFiles, final List<ModInfo> sortedList)
     {
@@ -130,5 +131,9 @@ public class LoadingModList
 
     public List<EarlyLoadingException> getErrors() {
         return preLoadErrors;
+    }
+
+    public void setBrokenFiles(final List<ModFile> brokenFiles) {
+        this.brokenFiles = brokenFiles;
     }
 }

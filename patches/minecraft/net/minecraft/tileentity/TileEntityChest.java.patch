@@ -8,7 +8,7 @@
  
     protected TileEntityChest(TileEntityType<?> p_i48287_1_) {
        super(p_i48287_1_);
-@@ -220,7 +221,7 @@
+@@ -219,7 +220,7 @@
  
     public static int func_195481_a(IBlockReader p_195481_0_, BlockPos p_195481_1_) {
        IBlockState iblockstate = p_195481_0_.func_180495_p(p_195481_1_);
@@ -17,7 +17,7 @@
           TileEntity tileentity = p_195481_0_.func_175625_s(p_195481_1_);
           if (tileentity instanceof TileEntityChest) {
              return ((TileEntityChest)tileentity).field_145987_o;
-@@ -235,4 +236,57 @@
+@@ -234,4 +235,57 @@
        p_199722_0_.func_199721_a(p_199722_1_.func_190576_q());
        p_199722_1_.func_199721_a(nonnulllist);
     }

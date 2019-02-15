@@ -1,6 +1,6 @@
 --- a/net/minecraft/inventory/ContainerEnchantment.java
 +++ b/net/minecraft/inventory/ContainerEnchantment.java
-@@ -66,7 +66,7 @@
+@@ -61,7 +61,7 @@
        });
        this.func_75146_a(new Slot(this.field_75168_e, 1, 35, 47) {
           public boolean func_75214_a(ItemStack p_75214_1_) {
@@ -9,7 +9,7 @@
           }
        });
  
-@@ -126,40 +126,29 @@
+@@ -121,40 +121,29 @@
  
     }
  
@@ -61,7 +61,7 @@
                          }
                       }
                    }
-@@ -168,12 +157,13 @@
+@@ -163,12 +152,13 @@
                 this.field_75169_l.setSeed((long)this.field_178149_f);
  
                 for(int i1 = 0; i1 < 3; ++i1) {
@@ -76,15 +76,15 @@
                 }
  
                 for(int j1 = 0; j1 < 3; ++j1) {
-@@ -305,9 +295,8 @@
+@@ -300,9 +290,8 @@
                 return ItemStack.field_190927_a;
              }
  
 -            if (itemstack1.func_77942_o() && itemstack1.func_190916_E() == 1) {
--               ((Slot)this.field_75151_b.get(0)).func_75215_d(itemstack1.func_77946_l());
+-               this.field_75151_b.get(0).func_75215_d(itemstack1.func_77946_l());
 -               itemstack1.func_190920_e(0);
 +            if (itemstack1.func_77942_o()) { // Forge: Fix MC-17431
 +               ((Slot)this.field_75151_b.get(0)).func_75215_d(itemstack1.func_77979_a(1));
              } else if (!itemstack1.func_190926_b()) {
-                ((Slot)this.field_75151_b.get(0)).func_75215_d(new ItemStack(itemstack1.func_77973_b()));
+                this.field_75151_b.get(0).func_75215_d(new ItemStack(itemstack1.func_77973_b()));
                 itemstack1.func_190918_g(1);

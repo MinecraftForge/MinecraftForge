@@ -43,7 +43,7 @@ public class ClientRegistry
      */
     public static synchronized <T extends TileEntity> void bindTileEntitySpecialRenderer(Class<T> tileEntityClass, TileEntityRenderer<? super T> specialRenderer)
     {
-        TileEntityRendererDispatcher.instance.renderers.put(tileEntityClass, specialRenderer);
+        TileEntityRendererDispatcher.instance.setSpecialRenderer(tileEntityClass, specialRenderer);
         specialRenderer.setRendererDispatcher(TileEntityRendererDispatcher.instance);
     }
 

@@ -1,46 +1,10 @@
 --- a/net/minecraft/world/storage/MapData.java
 +++ b/net/minecraft/world/storage/MapData.java
-@@ -24,7 +24,7 @@
- public class MapData extends WorldSavedData {
-    public int field_76201_a;
-    public int field_76199_b;
--   public byte field_76200_c;
-+   public int field_76200_c; //Forge: byte->int
-    public boolean field_186210_e;
-    public boolean field_191096_f;
-    public byte field_76197_d;
-@@ -41,7 +41,7 @@
-    public void func_195926_a(int p_195926_1_, int p_195926_2_, int p_195926_3_, boolean p_195926_4_, boolean p_195926_5_, int p_195926_6_) {
-       this.field_76197_d = (byte)p_195926_3_;
-       this.func_176054_a((double)p_195926_1_, (double)p_195926_2_, this.field_76197_d);
--      this.field_76200_c = (byte)p_195926_6_;
-+      this.field_76200_c = p_195926_6_;
-       this.field_186210_e = p_195926_4_;
-       this.field_191096_f = p_195926_5_;
-       this.func_76188_b();
-@@ -56,7 +56,7 @@
-    }
- 
-    public void func_76184_a(NBTTagCompound p_76184_1_) {
--      this.field_76200_c = p_76184_1_.func_74771_c("dimension");
-+      this.field_76200_c = p_76184_1_.func_74762_e("dimension");
-       this.field_76201_a = p_76184_1_.func_74762_e("xCenter");
-       this.field_76199_b = p_76184_1_.func_74762_e("zCenter");
-       this.field_76197_d = (byte)MathHelper.func_76125_a(p_76184_1_.func_74771_c("scale"), 0, 4);
-@@ -78,7 +78,7 @@
-    }
- 
-    public NBTTagCompound func_189551_b(NBTTagCompound p_189551_1_) {
--      p_189551_1_.func_74774_a("dimension", this.field_76200_c);
-+      p_189551_1_.func_74768_a("dimension", this.field_76200_c);
-       p_189551_1_.func_74768_a("xCenter", this.field_76201_a);
-       p_189551_1_.func_74768_a("zCenter", this.field_76199_b);
-       p_189551_1_.func_74774_a("scale", this.field_76197_d);
-@@ -172,8 +172,8 @@
+@@ -198,8 +198,8 @@
        if (f >= -63.0F && f1 >= -63.0F && f <= 63.0F && f1 <= 63.0F) {
           p_191095_8_ = p_191095_8_ + (p_191095_8_ < 0.0D ? -8.0D : 8.0D);
           b2 = (byte)((int)(p_191095_8_ * 16.0D / 360.0D));
--         if (this.field_76200_c < 0 && p_191095_2_ != null) {
+-         if (this.field_76200_c == DimensionType.NETHER && p_191095_2_ != null) {
 -            int l = (int)(p_191095_2_.func_72912_H().func_76073_f() / 10L);
 +         if (p_191095_2_ != null && p_191095_2_.func_201672_e().field_73011_w.shouldMapSpin(p_191095_3_, p_191095_4_, p_191095_6_, p_191095_8_)) {
 +            int l = (int)(p_191095_2_.func_201672_e().func_72820_D() / 10L);

@@ -6,8 +6,8 @@
  
 -public interface IBlockState extends IStateHolder<IBlockState> {
 +public interface IBlockState extends IStateHolder<IBlockState>, net.minecraftforge.common.extensions.IForgeBlockState {
-    ThreadLocal<Object2ByteMap<IBlockState>> field_208776_a = ThreadLocal.<Object2ByteMap<IBlockState>>withInitial(() -> {
-       Object2ByteOpenHashMap<IBlockState> object2byteopenhashmap = new Object2ByteOpenHashMap<IBlockState>();
+    ThreadLocal<Object2ByteMap<IBlockState>> field_208776_a = ThreadLocal.withInitial(() -> {
+       Object2ByteOpenHashMap<IBlockState> object2byteopenhashmap = new Object2ByteOpenHashMap<>();
        object2byteopenhashmap.defaultReturnValue((byte)127);
 @@ -97,6 +97,7 @@
        return this.func_177230_c().func_149750_m(this);

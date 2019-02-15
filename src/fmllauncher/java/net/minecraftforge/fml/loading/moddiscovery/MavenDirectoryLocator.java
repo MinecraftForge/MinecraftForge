@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class MavenDirectoryLocator extends AbstractJarFileLocator implements IModLocator {
+public class MavenDirectoryLocator extends AbstractJarFileLocator {
     private List<Path> modCoords;
 
     @Override

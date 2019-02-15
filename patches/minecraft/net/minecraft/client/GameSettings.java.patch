@@ -1,22 +1,22 @@
 --- a/net/minecraft/client/GameSettings.java
 +++ b/net/minecraft/client/GameSettings.java
-@@ -168,6 +168,7 @@
+@@ -167,6 +167,7 @@
     public boolean field_211842_aO;
  
     public GameSettings(Minecraft p_i46326_1_, File p_i46326_2_) {
 +      setForgeKeybindProperties();
-       this.field_74324_K = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[]{this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X, this.field_193629_ap, this.field_193630_aq, this.field_194146_ao}, this.field_151456_ac);
-       this.field_74318_M = EnumDifficulty.NORMAL;
-       this.field_74332_R = "";
-@@ -186,6 +187,7 @@
+       this.field_74317_L = p_i46326_1_;
+       this.field_74354_ai = new File(p_i46326_2_, "options.txt");
+       if (p_i46326_1_.func_147111_S() && Runtime.getRuntime().maxMemory() >= 1000000000L) {
+@@ -180,6 +181,7 @@
     }
  
     public GameSettings() {
 +      setForgeKeybindProperties();
-       this.field_74324_K = (KeyBinding[])ArrayUtils.addAll(new KeyBinding[]{this.field_74312_F, this.field_74313_G, this.field_74351_w, this.field_74370_x, this.field_74368_y, this.field_74366_z, this.field_74314_A, this.field_74311_E, this.field_151444_V, this.field_74316_C, this.field_151445_Q, this.field_74310_D, this.field_74321_H, this.field_74322_I, this.field_74323_J, this.field_151447_Z, this.field_151457_aa, this.field_151458_ab, this.field_152395_am, this.field_178883_an, this.field_186718_X, this.field_193629_ap, this.field_193630_aq, this.field_194146_ao}, this.field_151456_ac);
-       this.field_74318_M = EnumDifficulty.NORMAL;
-       this.field_74332_R = "";
-@@ -247,7 +249,7 @@
+    }
+ 
+    public void func_198014_a(KeyBinding p_198014_1_, InputMappings.Input p_198014_2_) {
+@@ -236,7 +238,7 @@
              this.field_74317_L.func_147117_R().func_147633_a(this.field_151442_I);
              this.field_74317_L.func_110434_K().func_110577_a(TextureMap.field_110575_b);
              this.field_74317_L.func_147117_R().func_174937_a(false, this.field_151442_I > 0);
@@ -25,7 +25,7 @@
           }
        }
  
-@@ -857,7 +859,11 @@
+@@ -846,7 +848,11 @@
  
                 for(KeyBinding keybinding : this.field_74324_K) {
                    if (s1.equals("key_" + keybinding.func_151464_g())) {
@@ -38,7 +38,7 @@
                    }
                 }
  
-@@ -905,6 +911,7 @@
+@@ -894,6 +900,7 @@
     }
  
     public void func_74303_b() {
@@ -46,7 +46,7 @@
        PrintWriter printwriter = null;
  
        try {
-@@ -982,7 +989,7 @@
+@@ -971,7 +978,7 @@
           printwriter.println("glDebugVerbosity:" + this.field_209231_W);
  
           for(KeyBinding keybinding : this.field_74324_K) {
@@ -55,7 +55,7 @@
           }
  
           for(SoundCategory soundcategory : SoundCategory.values()) {
-@@ -1084,6 +1091,33 @@
+@@ -1073,6 +1080,33 @@
        p_198017_1_.func_198985_a(set);
     }
  

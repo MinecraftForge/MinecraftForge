@@ -1,0 +1,24 @@
+--- a/net/minecraft/client/renderer/model/ModelManager.java
++++ b/net/minecraft/client/renderer/model/ModelManager.java
+@@ -21,9 +21,10 @@
+    }
+ 
+    public void func_195410_a(IResourceManager p_195410_1_) {
+-      ModelBakery modelbakery = new ModelBakery(p_195410_1_, this.field_174956_b);
++      net.minecraftforge.client.model.ModelLoader modelbakery = new net.minecraftforge.client.model.ModelLoader(p_195410_1_, this.field_174956_b);
+       this.field_174958_a = modelbakery.func_177570_a();
+       this.field_174955_d = this.field_174958_a.get(ModelBakery.field_177604_a);
++      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.field_174958_a, modelbakery);
+       this.field_174957_c.func_178124_c();
+    }
+ 
+@@ -38,4 +39,9 @@
+    public BlockModelShapes func_174954_c() {
+       return this.field_174957_c;
+    }
++
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.MODELS;
++   }
+ }

@@ -19,7 +19,9 @@
 
 package net.minecraftforge.common;
 
+import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.FMLWorldPersistenceHook;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.WorldPersistenceHooks;
 import net.minecraftforge.fml.config.ModConfig;
@@ -29,7 +31,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -67,7 +69,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public static boolean forgeLightPipelineEnabled = true;
     public static boolean zoomInMissingModelTextInGui = false;
     public static boolean disableStairSlabCulling = false; // Also known as the "DontCullStairsBecauseIUseACrappyTexturePackThatBreaksBasicBlockShapesSoICantTrustBasicBlockCulling" flag
-    public static boolean alwaysSetupTerrainOffThread = false; // In RenderGlobal.setupTerrain, always force the chunk render updates to be queued to the thread
+    public static boolean alwaysSetupTerrainOffThread = false; // In WorldRenderer.setupTerrain, always force the chunk render updates to be queued to the thread
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
                                                        // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
@@ -86,15 +88,16 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         INSTANCE = this;
         WorldPersistenceHooks.addHook(this);
         WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
-        FMLModLoadingContext.get().getModEventBus().addListener(this::preInit);
-        FMLModLoadingContext.get().getModEventBus().addListener(this::postInit);
-        FMLModLoadingContext.get().getModEventBus().addListener(this::onAvailable);
+        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        modEventBus.addListener(this::preInit);
+        modEventBus.addListener(this::postInit);
+        modEventBus.addListener(this::onAvailable);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
-        FMLModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
-        FMLModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
-        FMLModLoadingContext.get().getModEventBus().register(ForgeConfig.class);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
+        modEventBus.register(ForgeConfig.class);
         loadConfig(ForgeConfig.chunk_spec, FMLPaths.CONFIGDIR.get().resolve("forge_chunks.toml"));
     }
 
@@ -127,7 +130,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
 
     public void playerLogin(PlayerEvent.PlayerLoggedInEvent event)
     {
-        UsernameCache.setUsername(event.player.getUniqueID(), event.player.getGameProfile().getName());
+        UsernameCache.setUsername(event.getPlayer().getUniqueID(), event.getPlayer().getGameProfile().getName());
     }
 
 
@@ -201,8 +204,10 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
     {
         NBTTagCompound forgeData = new NBTTagCompound();
-        NBTTagCompound dimData = DimensionManager.saveDimensionDataMap();
-        forgeData.setTag("DimensionData", dimData);
+        NBTTagCompound dims = new NBTTagCompound();
+        DimensionManager.writeRegistry(dims);
+        if (!dims.isEmpty())
+            forgeData.setTag("dims", dims);
         // TODO fluids FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
@@ -210,7 +215,8 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     @Override
     public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
     {
-        DimensionManager.loadDimensionDataMap(tag.hasKey("DimensionData") ? tag.getCompound("DimensionData") : null);
+        if (tag.contains("dims", 10))
+            DimensionManager.readRegistry(tag.getCompound("dims"));
         // TODO fluids FluidRegistry.loadFluidDefaults(tag);
     }
 

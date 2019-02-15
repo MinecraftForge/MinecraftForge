@@ -117,4 +117,9 @@ public class ExplodedDirectoryLocator implements IModLocator {
             rootDirs.addAll(explodedTargets);
         }
     }
+
+    @Override
+    public boolean isValid(final ModFile modFile) {
+        return mods.get(modFile) != null;
+    }
 }

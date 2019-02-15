@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/WorldGenRegion.java
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
-@@ -128,7 +128,7 @@
+@@ -121,7 +121,7 @@
     }
  
     public boolean func_175623_d(BlockPos p_175623_1_) {
@@ -9,7 +9,7 @@
     }
  
     public Biome func_180494_b(BlockPos p_180494_1_) {
-@@ -180,7 +180,7 @@
+@@ -173,7 +173,7 @@
           NBTTagCompound nbttagcompound = ichunk.func_201579_g(p_175625_1_);
           if (nbttagcompound != null) {
              if ("DUMMY".equals(nbttagcompound.func_74779_i("id"))) {
@@ -18,7 +18,7 @@
              } else {
                 tileentity = TileEntity.func_203403_c(nbttagcompound);
              }
-@@ -191,7 +191,7 @@
+@@ -184,7 +184,7 @@
              }
           }
  
@@ -27,7 +27,7 @@
              field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
           }
  
-@@ -203,9 +203,9 @@
+@@ -196,9 +196,9 @@
        IChunk ichunk = this.func_205771_y(p_180501_1_);
        IBlockState iblockstate = ichunk.func_177436_a(p_180501_1_, p_180501_2_, false);
        Block block = p_180501_2_.func_177230_c();
@@ -39,7 +39,7 @@
           } else {
              NBTTagCompound nbttagcompound = new NBTTagCompound();
              nbttagcompound.func_74768_a("x", p_180501_1_.func_177958_n());
-@@ -214,7 +214,7 @@
+@@ -207,7 +207,7 @@
              nbttagcompound.func_74778_a("id", "DUMMY");
              ichunk.func_201591_a(nbttagcompound);
           }

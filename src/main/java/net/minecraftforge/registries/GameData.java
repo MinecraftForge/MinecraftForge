@@ -39,10 +39,11 @@ import net.minecraft.util.registry.RegistryNamespaced;
 import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.fml.LifecycleEventProvider;
-import net.minecraftforge.fml.ModThreadContext;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
@@ -51,8 +52,6 @@ import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.Marker;
-import org.apache.logging.log4j.MarkerManager;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
@@ -66,7 +65,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
 /**
@@ -87,15 +85,16 @@ public class GameData
     public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
     public static final ResourceLocation TILEENTITIES = new ResourceLocation("minecraft:tileentities");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
+    public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
+    private static final int MAX_REGISTRY_SIZE = Integer.MAX_VALUE >> 5;
     private static final int MAX_BLOCK_ID = 4095;
-    private static final int MIN_ITEM_ID = MAX_BLOCK_ID + 1;
     private static final int MAX_ITEM_ID = 31999;
     private static final int MAX_POTION_ID = 255; // SPacketEntityEffect sends bytes, we can only use 255
     private static final int MAX_BIOME_ID = 255; // Maximum number in a byte in the chunk
     private static final int MAX_SOUND_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSoundEffect)
-    private static final int MAX_POTIONTYPE_ID = Integer.MAX_VALUE >> 5; // Int (SPacketEffect)
+    private static final int MAX_POTIONTYPE_ID = MAX_REGISTRY_SIZE; // Int (SPacketEffect)
     private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
-    private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
+    private static final int MAX_ENTITY_ID = MAX_REGISTRY_SIZE; // Varint (SPacketSpawnMob)
     private static final int MAX_TILE_ENTITY_ID = Integer.MAX_VALUE; //Doesnt seem to be serialized anywhere, so no max.
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
 
@@ -121,7 +120,7 @@ public class GameData
             return;
         hasInit = true;
         makeRegistry(BLOCKS,       Block.class,       MAX_BLOCK_ID, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).create();
-        makeRegistry(ITEMS,        Item.class,        MIN_ITEM_ID, MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).create();
+        makeRegistry(ITEMS,        Item.class,        MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).create();
         makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).create();
         makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).create();
         makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
@@ -131,12 +130,9 @@ public class GameData
         // TODO do we need the callback and the static field anymore?
         makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).create();
         makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).disableSaving().create();
+        makeRegistry(MODDIMENSIONS, ModDimension.class, MAX_REGISTRY_SIZE).disableSaving().create();
     }
 
-    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int min, int max)
-    {
-        return new RegistryBuilder<T>().setName(name).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
-    }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max)
     {
         return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedWrapper.Factory<T>());
@@ -146,22 +142,22 @@ public class GameData
         return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(_default);
     }
 
-    public static <V extends IForgeRegistryEntry<V>> RegistryNamespacedDefaultedByKey<ResourceLocation, V> getWrapperDefaulted(Class<V> cls)
+    public static <V extends IForgeRegistryEntry<V>> RegistryNamespacedDefaultedByKey<V> getWrapperDefaulted(Class<V> cls)
     {
         IForgeRegistry<V> reg = RegistryManager.ACTIVE.getRegistry(cls);
         Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + cls.toString());
         @SuppressWarnings("unchecked")
-        RegistryNamespacedDefaultedByKey<ResourceLocation, V> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
+        RegistryNamespacedDefaultedByKey<V> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
         Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + cls.toString());
         return ret;
     }
 
-    public static <V extends IForgeRegistryEntry<V>> RegistryNamespaced<ResourceLocation, V> getWrapper(Class<V> cls)
+    public static <V extends IForgeRegistryEntry<V>> RegistryNamespaced<V> getWrapper(Class<V> cls)
     {
         IForgeRegistry<V> reg = RegistryManager.ACTIVE.getRegistry(cls);
         Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + cls.toString());
         @SuppressWarnings("unchecked")
-        RegistryNamespaced<ResourceLocation, V> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
+        RegistryNamespaced<V> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
         Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + cls.toString());
         return ret;
     }
@@ -385,7 +381,7 @@ public class GameData
         @Override
         public Block createDummy(ResourceLocation key)
         {
-            Block ret = new BlockDummyAir(Block.Builder.create(Material.AIR));
+            Block ret = new BlockDummyAir(Block.Properties.create(Material.AIR));
             GameData.forceRegistryName(ret, key);
             return ret;
         }
@@ -407,9 +403,9 @@ public class GameData
 
         private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
-            private BlockDummyAir(Block.Builder builder)
+            private BlockDummyAir(Block.Properties properties)
             {
-                super(builder);
+                super(properties);
             }
 
             @Override
@@ -828,7 +824,7 @@ public class GameData
         int index = name.lastIndexOf(':');
         String oldPrefix = index == -1 ? "" : name.substring(0, index).toLowerCase(Locale.ROOT);
         name = index == -1 ? name : name.substring(index + 1);
-        String prefix = ModThreadContext.get().getActiveContainer().getNamespace();
+        String prefix = ModLoadingContext.get().getActiveContainer().getNamespace();
         if (!oldPrefix.equals(prefix) && oldPrefix.length() > 0)
         {
             LogManager.getLogger().info("Potentially Dangerous alternative prefix `{}` for name `{}`, expected `{}`. This could be a intended override, but in most cases indicates a broken mod.", oldPrefix, name, prefix);

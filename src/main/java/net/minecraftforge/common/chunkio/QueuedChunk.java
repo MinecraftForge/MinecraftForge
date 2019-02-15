@@ -20,6 +20,7 @@
 package net.minecraftforge.common.chunkio;
 
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 
 class QueuedChunk {
     final int x;
@@ -57,7 +58,7 @@ class QueuedChunk {
         result.append(" x: " + x + NEW_LINE);
         result.append(" z: " + z + NEW_LINE);
         result.append(" world: " + world.getWorldInfo().getWorldName() + NEW_LINE);
-        result.append(" dimension: " + world.dimension.getId() + NEW_LINE);
+        result.append(" dimension: " + DimensionType.func_212678_a(world.dimension.getType()).toString() + NEW_LINE);
         result.append(" provider: " + world.dimension.getClass().getName() + NEW_LINE);
         result.append("}");
 

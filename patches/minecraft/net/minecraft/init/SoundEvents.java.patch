@@ -1,8 +1,8 @@
 --- a/net/minecraft/init/SoundEvents.java
 +++ b/net/minecraft/init/SoundEvents.java
-@@ -3,6 +3,7 @@
- import net.minecraft.util.ResourceLocation;
+@@ -4,6 +4,7 @@
  import net.minecraft.util.SoundEvent;
+ import net.minecraft.util.registry.IRegistry;
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class SoundEvents {

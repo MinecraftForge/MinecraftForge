@@ -9,9 +9,9 @@
 +      if (ret != null) return ret;
 +
        if (raytraceresult == null) {
-          return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+          return new ActionResult<>(EnumActionResult.PASS, itemstack);
        } else if (raytraceresult.field_72313_a == RayTraceResult.Type.BLOCK) {
-@@ -150,4 +154,12 @@
+@@ -152,4 +156,12 @@
        SoundEvent soundevent = this.field_77876_a.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187627_L : SoundEvents.field_187624_K;
        p_203791_2_.func_184133_a(p_203791_1_, p_203791_3_, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
     }

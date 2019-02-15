@@ -25,7 +25,12 @@
           BlockPos blockpos = p_180546_1_.func_174877_v();
           this.func_203602_a(p_180546_1_, (double)blockpos.func_177958_n() - field_147554_b, (double)blockpos.func_177956_o() - field_147555_c, (double)blockpos.func_177952_p() - field_147552_d, p_180546_2_, p_180546_3_, false);
        }
-@@ -137,6 +140,9 @@
+@@ -133,10 +136,13 @@
+       TileEntityRenderer<TileEntity> tileentityrenderer = this.func_147547_b(p_203602_1_);
+       if (tileentityrenderer != null) {
+          try {
+-            if (!p_203602_10_ && (!p_203602_1_.func_145830_o() || !p_203602_1_.func_195044_w().func_177230_c().func_149716_u())) {
++            if (!p_203602_10_ && (!p_203602_1_.func_145830_o() || !p_203602_1_.func_195044_w().hasTileEntity())) {
                 return;
              }
  
@@ -35,12 +40,11 @@
              tileentityrenderer.func_199341_a(p_203602_1_, p_203602_2_, p_203602_4_, p_203602_6_, p_203602_8_, p_203602_9_);
           } catch (Throwable throwable) {
              CrashReport crashreport = CrashReport.func_85055_a(throwable, "Rendering Block Entity");
-@@ -159,4 +165,53 @@
+@@ -159,4 +165,51 @@
     public FontRenderer func_147548_a() {
        return this.field_147557_n;
     }
-+   
-+   /* ======================================== FORGE START =====================================*/
++
 +   /**
 +    * Buffer used for batched TESRs
 +    */
@@ -51,8 +55,7 @@
 +    * Prepare for a batched TESR rendering.
 +    * You probably shouldn't call this manually.
 +    */
-+   public void preDrawBatch()
-+   {
++   public void preDrawBatch() {
 +       batchBuffer.func_178180_c().func_181668_a(org.lwjgl.opengl.GL11.GL_QUADS, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
 +       drawingBatch = true;
 +   }
@@ -61,25 +64,20 @@
 +    * Render all TESRs batched so far.
 +    * You probably shouldn't call this manually.
 +    */
-+   public void drawBatch(int pass)
-+   {
++   public void drawBatch(int pass) {
 +      field_147553_e.func_110577_a(net.minecraft.client.renderer.texture.TextureMap.field_110575_b);
 +      net.minecraft.client.renderer.RenderHelper.func_74518_a();
 +      GlStateManager.func_179112_b(org.lwjgl.opengl.GL11.GL_SRC_ALPHA, org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA);
 +      GlStateManager.func_179147_l();
 +      GlStateManager.func_179129_p();
 +
-+      if (net.minecraft.client.Minecraft.func_71379_u())
-+      {
++      if (net.minecraft.client.Minecraft.func_71379_u()) {
 +         GlStateManager.func_179103_j(org.lwjgl.opengl.GL11.GL_SMOOTH);
-+      }
-+      else
-+      {
++      } else {
 +         GlStateManager.func_179103_j(org.lwjgl.opengl.GL11.GL_FLAT);
 +      }
 +
-+      if(pass > 0)
-+      {
++      if(pass > 0) {
 +         net.minecraft.util.math.Vec3d cameraPos = net.minecraft.client.renderer.ActiveRenderInfo.getCameraPosition();
 +         batchBuffer.func_178180_c().func_181674_a((float)cameraPos.field_72450_a, (float)cameraPos.field_72448_b, (float)cameraPos.field_72449_c);
 +      }
@@ -87,5 +85,10 @@
 +
 +      net.minecraft.client.renderer.RenderHelper.func_74519_b();
 +      drawingBatch = false;
++   }
++
++   //Internal, Do not call Use ClientRegistry.
++   public synchronized <T extends TileEntity> void setSpecialRenderer(Class<T> tileEntityClass, TileEntityRenderer<? super T> specialRenderer) {
++      this.field_147559_m.put(tileEntityClass, specialRenderer);
 +   }
  }

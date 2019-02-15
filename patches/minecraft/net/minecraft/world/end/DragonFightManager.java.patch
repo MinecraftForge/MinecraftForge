@@ -29,5 +29,5 @@
 +   }
 +
     class LoadManager {
-       private DragonFightManager.LoadState field_210826_b;
+       private DragonFightManager.LoadState field_210826_b = DragonFightManager.LoadState.UNKNOWN;
  

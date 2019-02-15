@@ -6,6 +6,6 @@
        if (p_180641_1_.func_177229_b(field_176574_M)) {
 +         List<EntityMinecart> carts = this.func_200878_a(p_180641_2_, p_180641_3_, EntityMinecart.class, null);
 +         if (!carts.isEmpty() && carts.get(0).getComparatorLevel() > -1) return carts.get(0).getComparatorLevel();
-          List<EntityMinecartCommandBlock> list = this.<EntityMinecartCommandBlock>func_200878_a(p_180641_2_, p_180641_3_, EntityMinecartCommandBlock.class, (Predicate)null);
+          List<EntityMinecartCommandBlock> list = this.func_200878_a(p_180641_2_, p_180641_3_, EntityMinecartCommandBlock.class, (Predicate<Entity>)null);
           if (!list.isEmpty()) {
-             return ((EntityMinecartCommandBlock)list.get(0)).func_145822_e().func_145760_g();
+             return list.get(0).func_145822_e().func_145760_g();

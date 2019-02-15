@@ -19,36 +19,24 @@
 
 package net.minecraftforge.server.command;
 
-import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
+import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ITeleporter;
 
-import javax.annotation.Nullable;
-
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
-import it.unimi.dsi.fastutil.ints.IntSortedSet;
-
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 public class CommandSetDimension
 {
@@ -59,24 +47,23 @@ public class CommandSetDimension
         return Commands.literal("setdimension")
             .requires(cs->cs.hasPermissionLevel(2)) //permission
             .then(Commands.argument("targets", EntityArgument.multipleEntities())
-                .then(Commands.argument("dim", IntegerArgumentType.integer())
-                    .suggests((ctx, builder) -> ISuggestionProvider.suggest(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
+                .then(Commands.argument("dim", DimensionArgument.func_212595_a())
                     .then(Commands.argument("pos", BlockPosArgument.blockPos())
-                        .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), IntegerArgumentType.getInteger(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
+                        .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.func_212592_a(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
                     )
-                    .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), IntegerArgumentType.getInteger(ctx, "dim"), new BlockPos(ctx.getSource().getPos())))
+                    .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.func_212592_a(ctx, "dim"), new BlockPos(ctx.getSource().getPos())))
                 )
             );
     }
 
-    private static int execute(CommandSource sender, Collection<? extends Entity> entities, int dim, BlockPos pos) throws CommandSyntaxException
+    private static int execute(CommandSource sender, Collection<? extends Entity> entities, DimensionType dim, BlockPos pos) throws CommandSyntaxException
     {
         entities.removeIf(CommandSetDimension::checkEntity);
         if (entities.isEmpty())
             throw NO_ENTITIES.create();
 
-        if (!DimensionManager.isDimensionRegistered(dim))
-            throw INVALID_DIMENSION.create(dim);
+        //if (!DimensionManager.isDimensionRegistered(dim))
+        //    throw INVALID_DIMENSION.create(dim);
 
         final ITeleporter teleporter = new CommandTeleporter(pos);
         entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TextComponentTranslation("commands.forge.setdim.invalid.nochange", e.getDisplayName(), dim), true));

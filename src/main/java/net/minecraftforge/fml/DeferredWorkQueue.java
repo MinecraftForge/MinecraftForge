@@ -109,7 +109,7 @@ public class DeferredWorkQueue
      * @return A {@link CompletableFuture} that completes at said time
      */
     public static CompletableFuture<Void> runLater(Runnable workToEnqueue) {
-        currentOwner.set(ModThreadContext.get().getActiveContainer());
+        currentOwner.set(ModLoadingContext.get().getActiveContainer());
         return CompletableFuture.runAsync(workToEnqueue, deferredExecutor).exceptionally(DeferredWorkQueue.handleException());
     }
 
@@ -154,7 +154,7 @@ public class DeferredWorkQueue
      * @return A {@link CompletableFuture} that completes at said time
      */
     public static <T> CompletableFuture<T> getLater(Supplier<T> workToEnqueue) {
-        currentOwner.set(ModThreadContext.get().getActiveContainer());
+        currentOwner.set(ModLoadingContext.get().getActiveContainer());
         return CompletableFuture.supplyAsync(workToEnqueue, deferredExecutor).exceptionally(DeferredWorkQueue.handleException());
     }
 

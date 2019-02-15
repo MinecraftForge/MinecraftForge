@@ -40,17 +40,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
-import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.minecraft.item.Item.Builder;
 
 /**
  * A universal bucket that can hold any liquid
@@ -63,9 +59,9 @@ public class UniversalBucket extends Item
     private final ItemStack empty; // empty item to return and recognize when filling
     private final boolean nbtSensitive;
 
-    public UniversalBucket(Builder builder)
+    public UniversalBucket(Properties properties)
     {
-        this(builder, Fluid.BUCKET_VOLUME, new ItemStack(Items.BUCKET), false);
+        this(properties, Fluid.BUCKET_VOLUME, new ItemStack(Items.BUCKET), false);
     }
 
     /**
@@ -73,13 +69,13 @@ public class UniversalBucket extends Item
      * @param empty           Item used for filling with the bucket event and returned when emptied
      * @param nbtSensitive    Whether the empty item is NBT sensitive (usually true if empty and full are the same items)
      */
-    public UniversalBucket(Builder builder, int capacity, @Nonnull ItemStack empty, boolean nbtSensitive)
+    public UniversalBucket(Properties properties, int capacity, @Nonnull ItemStack empty, boolean nbtSensitive)
     {
-        super(builder);
+        super(properties);
         this.capacity = capacity;
         this.empty = empty;
         this.nbtSensitive = nbtSensitive;
-        
+
         /* TODO move to builder construction
         this.setMaxStackSize(1);
 

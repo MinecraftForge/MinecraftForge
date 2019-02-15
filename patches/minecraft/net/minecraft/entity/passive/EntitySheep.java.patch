@@ -6,7 +6,7 @@
  
 -public class EntitySheep extends EntityAnimal {
 +public class EntitySheep extends EntityAnimal implements net.minecraftforge.common.IShearable {
-    private static final DataParameter<Byte> field_184774_bv = EntityDataManager.<Byte>func_187226_a(EntitySheep.class, DataSerializers.field_187191_a);
+    private static final DataParameter<Byte> field_184774_bv = EntityDataManager.func_187226_a(EntitySheep.class, DataSerializers.field_187191_a);
     private final InventoryCrafting field_90016_e = new InventoryCrafting(new Container() {
        public boolean func_75145_c(EntityPlayer p_75145_1_) {
 @@ -214,7 +214,7 @@

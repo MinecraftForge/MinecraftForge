@@ -24,12 +24,12 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
+import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
@@ -39,7 +39,6 @@ import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfessio
  * Created to have a central place to access the registries directly if modders need.
  * It is still advised that if you are registering things to go through {@link GameRegistry} register methods, but queries and iterations can use this.
  */
-@SuppressWarnings("unchecked")
 public class ForgeRegistries
 {
     static { init(); } // This must be above the fields so we guarantee it's run before findRegistry is called. Yay static inializers
@@ -52,8 +51,9 @@ public class ForgeRegistries
     public static final IForgeRegistry<PotionType>          POTION_TYPES = RegistryManager.ACTIVE.getRegistry(PotionType.class);
     public static final IForgeRegistry<Enchantment>         ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
     public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
-    public static final IForgeRegistry<EntityType<?>>       ENTITIES     = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(EntityType.class);
-    public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES = (IForgeRegistry)RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
+    public static final IForgeRegistry<EntityType<?>>       ENTITIES       = RegistryManager.ACTIVE.getRegistry(EntityType.class); //Untyped casys needed to fix javac issues.
+    public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES  = RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
+    public static final IForgeRegistry<ModDimension>        MOD_DIMENSIONS = RegistryManager.ACTIVE.getRegistry(ModDimension.class);
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
      */

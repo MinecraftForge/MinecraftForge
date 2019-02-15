@@ -1,6 +1,6 @@
 --- a/net/minecraft/potion/PotionBrewing.java
 +++ b/net/minecraft/potion/PotionBrewing.java
-@@ -67,7 +67,7 @@
+@@ -68,7 +68,7 @@
  
        for(int j = field_185214_b.size(); i < j; ++i) {
           PotionBrewing.MixPredicate<Item> mixpredicate = field_185214_b.get(i);
@@ -9,7 +9,7 @@
              return true;
           }
        }
-@@ -81,7 +81,7 @@
+@@ -82,7 +82,7 @@
  
        for(int j = field_185213_a.size(); i < j; ++i) {
           PotionBrewing.MixPredicate<PotionType> mixpredicate = field_185213_a.get(i);
@@ -18,7 +18,7 @@
              return true;
           }
        }
-@@ -97,8 +97,8 @@
+@@ -98,8 +98,8 @@
  
           for(int j = field_185214_b.size(); i < j; ++i) {
              PotionBrewing.MixPredicate<Item> mixpredicate = field_185214_b.get(i);
@@ -29,7 +29,7 @@
              }
           }
  
-@@ -106,8 +106,8 @@
+@@ -107,8 +107,8 @@
  
           for(int k = field_185213_a.size(); i < k; ++i) {
              PotionBrewing.MixPredicate<PotionType> mixpredicate1 = field_185213_a.get(i);
@@ -40,8 +40,8 @@
              }
           }
        }
-@@ -200,15 +200,15 @@
-       field_185213_a.add(new PotionBrewing.MixPredicate<PotionType>(p_193357_0_, Ingredient.func_199804_a(p_193357_1_), p_193357_2_));
+@@ -201,15 +201,15 @@
+       field_185213_a.add(new PotionBrewing.MixPredicate<>(p_193357_0_, Ingredient.func_199804_a(p_193357_1_), p_193357_2_));
     }
  
 -   static class MixPredicate<T> {

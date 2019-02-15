@@ -19,15 +19,22 @@
 
 package net.minecraftforge.fml.network;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.Container;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.CPacketHandshake;
-import net.minecraft.server.network.NetHandlerLoginServer;
+import net.minecraft.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.IInteractionObject;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 
+import javax.annotation.Nullable;
 import java.util.Objects;
 
 public class NetworkHooks
@@ -79,5 +86,45 @@ public class NetworkHooks
     public static boolean tickNegotiation(NetHandlerLoginServer netHandlerLoginServer, NetworkManager networkManager, EntityPlayerMP player)
     {
         return FMLHandshakeHandler.tickLogin(networkManager);
+    }
+
+    /**
+     * Server method to tell the client to open a GUI on behalf of the server
+     *
+     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
+     * It should refer to a valid modId namespace, to trigger opening on the client.
+     * The namespace is directly used to lookup the modId in the client side.
+     * The maximum size for #extraData is 32600 bytes.
+     *
+     * @param player The player to open the GUI for
+     * @param containerSupplier The Container Supplier
+     * @param extraData Additional data for the GUI
+     */
+    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, @Nullable PacketBuffer extraData)
+    {
+        if (player.world.isRemote) return;
+        ResourceLocation id = new ResourceLocation(containerSupplier.getGuiID());
+        Container c = containerSupplier.createContainer(player.inventory, player);
+        player.closeScreen();
+        player.getNextWindowId();
+        int openContainer = player.currentWindowId;
+        player.openContainer = c;
+        player.openContainer.windowId = openContainer;
+        player.openContainer.addListener(player);
+        MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
+
+        PacketBuffer output = new PacketBuffer(Unpooled.buffer());
+        if (extraData == null) {
+            output.writeVarInt(0);
+        } else {
+            output.writeVarInt(extraData.readableBytes());
+            output.writeBytes(extraData);
+        }
+
+        if (output.readableBytes() > 32600 || output.readableBytes() < 1) {
+            throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
+        }
+        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, openContainer, output);
+        FMLPlayHandler.channel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
     }
 }

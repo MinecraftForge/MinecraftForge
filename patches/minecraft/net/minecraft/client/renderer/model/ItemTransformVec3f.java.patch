@@ -1,0 +1,17 @@
+--- a/net/minecraft/client/renderer/model/ItemTransformVec3f.java
++++ b/net/minecraft/client/renderer/model/ItemTransformVec3f.java
+@@ -12,8 +12,13 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
++/**
++ * @deprecated use {@link net.minecraftforge.client.model.IModelState} and {@link net.minecraftforge.client.model.TRSRTransformation}
++ */
+ @OnlyIn(Dist.CLIENT)
+-public class ItemTransformVec3f {
++@Deprecated
++public class ItemTransformVec3f implements net.minecraftforge.common.model.IModelState {
++   public java.util.Optional<net.minecraftforge.common.model.TRSRTransformation> apply(java.util.Optional<? extends net.minecraftforge.common.model.IModelPart> part) { return net.minecraftforge.client.ForgeHooksClient.applyTransform(this, part); }
+    public static final ItemTransformVec3f field_178366_a = new ItemTransformVec3f(new Vector3f(), new Vector3f(), new Vector3f(1.0F, 1.0F, 1.0F));
+    public final Vector3f field_178364_b;
+    public final Vector3f field_178365_c;

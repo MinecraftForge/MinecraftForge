@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/storage/loot/LootEntryItem.java
 +++ b/net/minecraft/world/storage/loot/LootEntryItem.java
-@@ -17,8 +17,8 @@
+@@ -18,8 +18,8 @@
     protected final Item field_186368_a;
     protected final LootFunction[] field_186369_b;
  
@@ -11,7 +11,7 @@
        this.field_186368_a = p_i46644_1_;
        this.field_186369_b = p_i46644_4_;
     }
-@@ -33,7 +33,7 @@
+@@ -34,7 +34,7 @@
        }
  
        if (!itemstack.func_190926_b()) {
@@ -20,7 +20,7 @@
              p_186363_1_.add(itemstack);
           } else {
              int i = itemstack.func_190916_E();
-@@ -71,6 +71,6 @@
+@@ -72,6 +72,6 @@
           alootfunction = new LootFunction[0];
        }
  

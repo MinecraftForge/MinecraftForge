@@ -19,12 +19,17 @@
 
 package net.minecraftforge.fml.network;
 
+import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EntityType;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.ModList;
+import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import java.util.UUID;
@@ -46,7 +51,7 @@ public class FMLPlayMessages
         SpawnEntity(Entity e)
         {
             this.entity = e;
-            this.typeId = EntityType.REGISTRY.getId(e.getType());
+            this.typeId = IRegistry.field_212629_r.getId(e.getType());
             this.entityId = e.getEntityId();
             this.uuid = e.getUniqueID();
             this.posX = e.posX;
@@ -117,7 +122,7 @@ public class FMLPlayMessages
         public static void handle(SpawnEntity msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                EntityType<?> type = EntityType.REGISTRY.get(msg.typeId);
+                EntityType<?> type = IRegistry.field_212629_r.get(msg.typeId);
                 if (type == null)
                 {
                     throw new RuntimeException(String.format("Could not spawn entity (id %d) with unknown type at (%f, %f, %f)", msg.entityId, msg.posX, msg.posY, msg.posZ));
@@ -154,6 +159,54 @@ public class FMLPlayMessages
                 }
             });
             ctx.get().setPacketHandled(true);
+        }
+    }
+
+    public static class OpenContainer
+    {
+        private final ResourceLocation id;
+        private final int windowId;
+        private final PacketBuffer additionalData;
+
+        OpenContainer(ResourceLocation id, int windowId, PacketBuffer additionalData)
+        {
+            this.id = id;
+            this.windowId = windowId;
+            this.additionalData = additionalData;
+        }
+
+        public static void encode(OpenContainer msg, PacketBuffer buf)
+        {
+            buf.writeResourceLocation(msg.id);
+            buf.writeVarInt(msg.windowId);
+            buf.writeByteArray(msg.additionalData.readByteArray());
+        }
+
+        public static OpenContainer decode(PacketBuffer buf)
+        {
+            return new OpenContainer(buf.readResourceLocation(), buf.readVarInt(), new PacketBuffer(Unpooled.wrappedBuffer(buf.readByteArray(32600))));
+        }
+
+        public static void handle(OpenContainer msg, Supplier<NetworkEvent.Context> ctx)
+        {
+            ctx.get().enqueueWork(() -> ModList.get().getModContainerById(msg.id.getNamespace()).ifPresent(mc->
+            mc.getCustomExtension(ExtensionPoint.GUIFACTORY).map(f -> f.apply(msg)).ifPresent(gui-> {
+                    Minecraft.getInstance().displayGuiScreen(gui);
+                    Minecraft.getInstance().player.openContainer.windowId = msg.windowId;
+            })));
+            ctx.get().setPacketHandled(true);
+        }
+
+        public final ResourceLocation getId() {
+            return this.id;
+        }
+
+        public int getWindowId() {
+            return windowId;
+        }
+
+        public PacketBuffer getAdditionalData() {
+            return additionalData;
         }
     }
 }

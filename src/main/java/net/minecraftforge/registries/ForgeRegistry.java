@@ -28,13 +28,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
-import net.minecraftforge.fml.ModThreadContext;
+import javax.annotation.Nullable;
+
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.commons.lang3.Validate;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
@@ -273,6 +274,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             Validate.notNull(this.defaultValue, "Missing default of ForgeRegistry: " + this.defaultKey + " Type: " + this.superType);
     }
 
+    @Nullable
+    public ResourceLocation getDefaultKey()
+    {
+        return this.defaultKey;
+    }
+
     ForgeRegistry<V> copy(RegistryManager stage)
     {
         return new ForgeRegistry<>(stage, name, builder);
@@ -280,7 +287,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
 
     int add(int id, V value)
     {
-        final String owner = ModThreadContext.get().getActiveContainer().getNamespace();
+        final String owner = ModLoadingContext.get().getActiveContainer().getNamespace();
         return add(id, value, owner);
     }
 
@@ -359,7 +366,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         return idToUse;
     }
 
-    private V getRaw(ResourceLocation key)
+    public V getRaw(ResourceLocation key)
     {
         V ret = this.names.get(key);
         key = this.aliases.get(key);

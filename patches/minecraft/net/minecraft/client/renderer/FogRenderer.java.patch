@@ -1,31 +1,30 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -116,6 +116,9 @@
-          if (f4 > 1.0F / this.field_205095_e) {
+@@ -103,6 +103,9 @@
+             f3 = 1.0F / this.field_205095_e;
+          }
+ 
++         // Forge: fix MC-4647 and MC-10480
++         if (Float.isInfinite(f3)) f3 = Math.nextAfter(f3, 0.0);
++
+          this.field_205093_c = this.field_205093_c * (1.0F - f1) + this.field_205093_c * f3 * f1;
+          this.field_205094_d = this.field_205094_d * (1.0F - f1) + this.field_205094_d * f3 * f1;
+          this.field_205095_e = this.field_205095_e * (1.0F - f1) + this.field_205095_e * f3 * f1;
+@@ -117,11 +120,21 @@
              f4 = 1.0F / this.field_205095_e;
           }
-+         
+ 
 +         // Forge: fix MC-4647 and MC-10480
 +         if (Float.isInfinite(f4)) f4 = Math.nextAfter(f4, 0.0);
- 
++
           this.field_205093_c = this.field_205093_c * (1.0F - f2) + this.field_205093_c * f4 * f2;
           this.field_205094_d = this.field_205094_d * (1.0F - f2) + this.field_205094_d * f4 * f2;
-@@ -130,12 +133,22 @@
-          if (f5 > 1.0F / this.field_205095_e) {
-             f5 = 1.0F / this.field_205095_e;
-          }
-+         
-+         // Forge: fix MC-4647 and MC-10480
-+         if (Float.isInfinite(f5)) f5 = Math.nextAfter(f5, 0.0);
- 
-          this.field_205093_c = this.field_205093_c * (1.0F - f3) + this.field_205093_c * f5 * f3;
-          this.field_205094_d = this.field_205094_d * (1.0F - f3) + this.field_205094_d * f5 * f3;
-          this.field_205095_e = this.field_205095_e * (1.0F - f3) + this.field_205095_e * f5 * f3;
+          this.field_205095_e = this.field_205095_e * (1.0F - f2) + this.field_205095_e * f4 * f2;
        }
-+      
+ 
 +      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(this, this.field_205104_n, entity, ActiveRenderInfo.func_186703_a(world, entity, p_78466_1_), ifluidstate, p_78466_1_, this.field_205093_c, this.field_205094_d, this.field_205095_e);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
- 
++
 +      this.field_205093_c = event.getRed();
 +      this.field_205094_d = event.getGreen();
 +      this.field_205095_e = event.getBlue();
@@ -33,7 +32,7 @@
        GlStateManager.func_179082_a(this.field_205093_c, this.field_205094_d, this.field_205095_e, 0.0F);
     }
  
-@@ -227,6 +240,10 @@
+@@ -213,6 +226,10 @@
        GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
        GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
        IFluidState ifluidstate = ActiveRenderInfo.func_206243_b(this.field_205105_o.field_71441_e, entity, p_78468_2_);
@@ -44,7 +43,7 @@
        if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q)) {
           float f2 = 5.0F;
           int i = ((EntityLivingBase)entity).func_70660_b(MobEffects.field_76440_q).func_76459_b();
-@@ -286,6 +303,7 @@
+@@ -272,6 +289,7 @@
              GlStateManager.func_179102_b(f1 * 0.05F);
              GlStateManager.func_179153_c(Math.min(f1, 192.0F) * 0.5F);
           }

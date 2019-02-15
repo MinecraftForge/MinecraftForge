@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/renderer/model/ItemOverrideList.java
++++ b/net/minecraft/client/renderer/model/ItemOverrideList.java
+@@ -25,7 +25,8 @@
+       this.field_209582_c = Collections.emptyList();
+    }
+ 
+-   public ItemOverrideList(ModelBlock p_i49525_1_, Function<ResourceLocation, IUnbakedModel> p_i49525_2_, Function<ResourceLocation, TextureAtlasSprite> p_i49525_3_, List<ItemOverride> p_i49525_4_) {
++   // FORGE: No reason for first param to be limited to ModelBlock
++   public ItemOverrideList(IUnbakedModel p_i49525_1_, Function<ResourceLocation, IUnbakedModel> p_i49525_2_, Function<ResourceLocation, TextureAtlasSprite> p_i49525_3_, List<ItemOverride> p_i49525_4_) {
+       this.field_209582_c = p_i49525_4_.stream().map((p_209580_3_) -> {
+          IUnbakedModel iunbakedmodel = p_i49525_2_.apply(p_209580_3_.func_188026_a());
+          return Objects.equals(iunbakedmodel, p_i49525_1_) ? null : iunbakedmodel.func_209558_a(p_i49525_2_, p_i49525_3_, ModelRotation.X0_Y0, false);
+@@ -56,4 +57,8 @@
+ 
+       return p_209581_1_;
+    }
++
++   public com.google.common.collect.ImmutableList<ItemOverride> getOverrides() {
++      return com.google.common.collect.ImmutableList.copyOf(field_188023_b);
++   }
+ }

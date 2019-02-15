@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/renderer/model/IBakedModel.java
++++ b/net/minecraft/client/renderer/model/IBakedModel.java
+@@ -10,7 +10,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public interface IBakedModel {
++public interface IBakedModel extends net.minecraftforge.client.extensions.IForgeBakedModel {
+    List<BakedQuad> func_200117_a(@Nullable IBlockState p_200117_1_, @Nullable EnumFacing p_200117_2_, Random p_200117_3_);
+ 
+    boolean func_177555_b();
+@@ -21,7 +21,8 @@
+ 
+    TextureAtlasSprite func_177554_e();
+ 
+-   ItemCameraTransforms func_177552_f();
++   @Deprecated
++   default ItemCameraTransforms func_177552_f() { return ItemCameraTransforms.field_178357_a; }
+ 
+    ItemOverrideList func_188617_f();
+ }

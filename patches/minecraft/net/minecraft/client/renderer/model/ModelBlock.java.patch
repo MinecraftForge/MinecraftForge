@@ -1,0 +1,63 @@
+--- a/net/minecraft/client/renderer/model/ModelBlock.java
++++ b/net/minecraft/client/renderer/model/ModelBlock.java
+@@ -79,6 +79,9 @@
+       return this.field_178315_d != null;
+    }
+ 
++   @Nullable
++   public ResourceLocation getParentLocation() { return field_178316_e; }
++
+    public boolean func_178309_b() {
+       return this.func_178295_k() ? this.field_178315_d.func_178309_b() : this.field_178322_i;
+    }
+@@ -178,14 +181,18 @@
+       return set1;
+    }
+ 
+-   public IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_) {
+-      return this.func_209565_a(this, p_209558_1_, p_209558_2_, p_209558_3_, p_209558_4_);
++   @Override
++   public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, net.minecraftforge.common.model.IModelState p_209558_3_, boolean p_209558_4_, net.minecraft.client.renderer.vertex.VertexFormat format) {
++       if (!net.minecraftforge.client.model.Attributes.moreSpecific(format, net.minecraftforge.client.model.Attributes.DEFAULT_BAKED_FORMAT)) {
++           throw new IllegalArgumentException("Cannot bake vanilla model to format other than BLOCK");
+    }
++       return bake(this, p_209558_1_, p_209558_2_, p_209558_3_, p_209558_4_);
++   }
+ 
+-   private IBakedModel func_209565_a(ModelBlock p_209565_1_, Function<ResourceLocation, IUnbakedModel> p_209565_2_, Function<ResourceLocation, TextureAtlasSprite> p_209565_3_, ModelRotation p_209565_4_, boolean p_209565_5_) {
++   private IBakedModel bake(ModelBlock p_209565_1_, Function<ResourceLocation, IUnbakedModel> p_209565_2_, Function<ResourceLocation, TextureAtlasSprite> p_209565_3_, net.minecraftforge.common.model.IModelState p_209565_4_, boolean p_209565_5_) {
+       ModelBlock modelblock = this.func_178310_f();
+       if (modelblock == ModelBakery.field_177606_o) {
+-         return field_209571_g.func_209579_a(p_209565_3_, this).func_209565_a(p_209565_1_, p_209565_2_, p_209565_3_, p_209565_4_, p_209565_5_);
++         return field_209571_g.func_209579_a(p_209565_3_, this).bake(p_209565_1_, p_209565_2_, p_209565_3_, p_209565_4_, p_209565_5_);
+       } else if (modelblock == ModelBakery.field_177616_r) {
+          return new BuiltInModel(this.func_181682_g(), this.func_209568_a(p_209565_1_, p_209565_2_, p_209565_3_));
+       } else {
+@@ -197,9 +204,10 @@
+                BlockPartFace blockpartface = blockpart.field_178240_c.get(enumfacing);
+                TextureAtlasSprite textureatlassprite1 = p_209565_3_.apply(new ResourceLocation(this.func_178308_c(blockpartface.field_178242_d)));
+                if (blockpartface.field_178244_b == null) {
+-                  simplebakedmodel$builder.func_177648_a(func_209567_a(blockpart, blockpartface, textureatlassprite1, enumfacing, p_209565_4_, p_209565_5_));
++                  simplebakedmodel$builder.func_177648_a(makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, p_209565_4_, p_209565_5_));
+                } else {
+-                  simplebakedmodel$builder.func_177650_a(p_209565_4_.func_177523_a(blockpartface.field_178244_b), func_209567_a(blockpart, blockpartface, textureatlassprite1, enumfacing, p_209565_4_, p_209565_5_));
++
++                  simplebakedmodel$builder.func_177650_a(p_209565_4_.apply(java.util.Optional.empty()).map(trsr -> trsr.rotate(enumfacing)).orElse(enumfacing), makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, p_209565_4_, p_209565_5_));
+                }
+             }
+          }
+@@ -209,9 +217,13 @@
+    }
+ 
+    private static BakedQuad func_209567_a(BlockPart p_209567_0_, BlockPartFace p_209567_1_, TextureAtlasSprite p_209567_2_, EnumFacing p_209567_3_, ModelRotation p_209567_4_, boolean p_209567_5_) {
+-      return field_209572_h.func_199332_a(p_209567_0_.field_178241_a, p_209567_0_.field_178239_b, p_209567_1_, p_209567_2_, p_209567_3_, p_209567_4_, p_209567_0_.field_178237_d, p_209567_5_, p_209567_0_.field_178238_e);
++      return makeBakedQuad(p_209567_0_, p_209567_1_, p_209567_2_, p_209567_3_, (net.minecraftforge.common.model.IModelState) p_209567_4_, p_209567_5_);
+    }
+ 
++   public static BakedQuad makeBakedQuad(BlockPart p_209567_0, BlockPartFace p_209567_1_, TextureAtlasSprite p_209567_2_, EnumFacing p_209567_3_, net.minecraftforge.common.model.IModelState p_209567_4_, boolean p_209567_5_) {
++      return field_209572_h.makeBakedQuad(p_209567_0.field_178241_a, p_209567_0.field_178239_b, p_209567_1_, p_209567_2_, p_209567_3_, p_209567_4_.apply(java.util.Optional.empty()).orElse(net.minecraftforge.common.model.TRSRTransformation.identity()), p_209567_0.field_178237_d, p_209567_5_, p_209567_0.field_178238_e);
++   }
++
+    public boolean func_178300_b(String p_178300_1_) {
+       return !MissingTextureSprite.func_195677_a().func_195668_m().toString().equals(this.func_178308_c(p_178300_1_));
+    }

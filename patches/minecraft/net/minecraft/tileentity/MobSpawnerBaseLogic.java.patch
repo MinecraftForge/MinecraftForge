@@ -1,17 +1,17 @@
 --- a/net/minecraft/tileentity/MobSpawnerBaseLogic.java
 +++ b/net/minecraft/tileentity/MobSpawnerBaseLogic.java
-@@ -113,8 +113,9 @@
+@@ -114,8 +114,9 @@
  
                 EntityLiving entityliving = entity instanceof EntityLiving ? (EntityLiving)entity : null;
                 entity.func_70012_b(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v, world.field_73012_v.nextFloat() * 360.0F, 0.0F);
--               if (entityliving == null || entityliving.func_70601_bi() && entityliving.func_70058_J()) {
+-               if (entityliving == null || entityliving.func_205020_a(world, true) && entityliving.func_70058_J()) {
 +               if (entityliving == null || net.minecraftforge.event.ForgeEventFactory.canEntitySpawnSpawner(entityliving, func_98271_a(), (float)entity.field_70165_t, (float)entity.field_70163_u, (float)entity.field_70161_v, this)) {
                    if (this.field_98282_f.func_185277_b().func_186856_d() == 1 && this.field_98282_f.func_185277_b().func_150297_b("id", 8) && entity instanceof EntityLiving) {
 +                     if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, this.func_98271_a(), (float)entity.field_70165_t, (float)entity.field_70163_u, (float)entity.field_70161_v, this))
                       ((EntityLiving)entity).func_204210_a(world.func_175649_E(new BlockPos(entity)), (IEntityLivingData)null, (NBTTagCompound)null);
                    }
  
-@@ -256,4 +257,9 @@
+@@ -257,4 +258,9 @@
     public double func_177223_e() {
        return this.field_98284_d;
     }

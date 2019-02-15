@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/particle/ParticleManager.java
 +++ b/net/minecraft/client/particle/ParticleManager.java
-@@ -145,6 +145,7 @@
+@@ -146,6 +146,7 @@
     }
  
     public void func_78873_a(Particle p_78873_1_) {
@@ -8,7 +8,7 @@
        this.field_187241_h.add(p_78873_1_);
     }
  
-@@ -332,7 +333,7 @@
+@@ -337,7 +338,7 @@
     }
  
     public void func_180533_a(BlockPos p_180533_1_, IBlockState p_180533_2_) {
@@ -17,7 +17,7 @@
           VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
           double d0 = 0.25D;
           voxelshape.func_197755_b((p_199284_3_, p_199284_5_, p_199284_7_, p_199284_9_, p_199284_11_, p_199284_13_) -> {
-@@ -411,4 +412,10 @@
+@@ -416,4 +417,10 @@
  
        return String.valueOf(i);
     }

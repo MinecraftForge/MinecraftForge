@@ -30,8 +30,8 @@
           for(AdvancementTabType advancementtabtype : AdvancementTabType.values()) {
 -            if (p_193936_2_ < advancementtabtype.func_192650_a()) {
 -               return new GuiAdvancementTab(p_193936_0_, p_193936_1_, advancementtabtype, p_193936_2_, p_193936_3_, p_193936_3_.func_192068_c());
-+            if ((p_193936_2_ % AdvancementTabType.field_192659_e) < advancementtabtype.func_192650_a()) {
-+               return new GuiAdvancementTab(p_193936_0_, p_193936_1_, advancementtabtype, p_193936_2_ % AdvancementTabType.field_192659_e, p_193936_2_ / AdvancementTabType.field_192659_e, p_193936_3_, p_193936_3_.func_192068_c());
++            if ((p_193936_2_ % AdvancementTabType.MAX_TABS) < advancementtabtype.func_192650_a()) {
++               return new GuiAdvancementTab(p_193936_0_, p_193936_1_, advancementtabtype, p_193936_2_ % AdvancementTabType.MAX_TABS, p_193936_2_ / AdvancementTabType.MAX_TABS, p_193936_3_, p_193936_3_.func_192068_c());
              }
  
              p_193936_2_ -= advancementtabtype.func_192650_a();

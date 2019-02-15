@@ -29,13 +29,13 @@ import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.chunk.RenderChunkCache;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -102,25 +102,28 @@ public class MinecraftForgeClient
         }
     }
 
-    private static final LoadingCache<Pair<World, BlockPos>, ChunkCache> regionCache = CacheBuilder.newBuilder()
+    private static final LoadingCache<Pair<World, BlockPos>, RenderChunkCache> regionCache = CacheBuilder.newBuilder()
         .maximumSize(500)
         .concurrencyLevel(5)
         .expireAfterAccess(1, TimeUnit.SECONDS)
-        .build(new CacheLoader<Pair<World, BlockPos>, ChunkCache>()
+        .build(new CacheLoader<Pair<World, BlockPos>, RenderChunkCache>()
         {
             @Override
-            public ChunkCache load(Pair<World, BlockPos> key)
+            public RenderChunkCache load(Pair<World, BlockPos> key)
             {
-                return new ChunkCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
+                return RenderChunkCache.func_212397_a(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
             }
         });
 
-    public static void onRebuildChunk(World world, BlockPos position, ChunkCache cache)
+    public static void onRebuildChunk(World world, BlockPos position, RenderChunkCache cache)
     {
-        regionCache.put(Pair.of(world, position), cache);
+        if (cache == null)
+            regionCache.invalidate(Pair.of(world, position));
+        else
+            regionCache.put(Pair.of(world, position), cache);
     }
 
-    public static ChunkCache getRegionRenderCache(World world, BlockPos pos)
+    public static RenderChunkCache getRegionRenderCache(World world, BlockPos pos)
     {
         int x = pos.getX() & ~0xF;
         int y = pos.getY() & ~0xF;

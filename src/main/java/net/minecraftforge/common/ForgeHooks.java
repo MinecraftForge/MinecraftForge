@@ -105,6 +105,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockReader;
@@ -757,7 +758,7 @@ public class ForgeHooks
         return stack.isEmpty() || !stack.getItem().onLeftClickEntity(stack, player, target);
     }
 
-    public static boolean onTravelToDimension(Entity entity, int dimension)
+    public static boolean onTravelToDimension(Entity entity, DimensionType dimension)
     {
         EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimension);
         MinecraftForge.EVENT_BUS.post(event);
@@ -1108,7 +1109,7 @@ public class ForgeHooks
         return event.getVanillaNoteId();
     }
 
-    public static int canEntitySpawn(EntityLiving entity, IWorld world, float x, float y, float z, MobSpawnerBaseLogic spawner) {
+    public static int canEntitySpawn(EntityLiving entity, IWorld world, double x, double y, double z, MobSpawnerBaseLogic spawner) {
         Result res = ForgeEventFactory.canEntitySpawn(entity, world, x, y, z, null);
         return res == Result.DEFAULT ? 0 : res == Result.DENY ? -1 : 1;
     }

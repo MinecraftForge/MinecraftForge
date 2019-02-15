@@ -1,8 +1,8 @@
 --- a/net/minecraft/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/item/crafting/ShapedRecipe.java
-@@ -20,10 +20,21 @@
- import net.minecraft.util.NonNullList;
+@@ -21,10 +21,21 @@
  import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.IRegistry;
  import net.minecraft.world.World;
 -import net.minecraftforge.api.distmarker.Dist;
 -import net.minecraftforge.api.distmarker.OnlyIn;
@@ -25,7 +25,7 @@
     private final int field_77576_b;
     private final int field_77577_c;
     private final NonNullList<Ingredient> field_77574_d;
-@@ -48,7 +59,6 @@
+@@ -49,7 +60,6 @@
        return RecipeSerializers.field_199575_a;
     }
  
@@ -33,7 +33,7 @@
     public String func_193358_e() {
        return this.field_194137_e;
     }
-@@ -61,13 +71,12 @@
+@@ -62,13 +72,12 @@
        return this.field_77574_d;
     }
  
@@ -48,7 +48,7 @@
           return false;
        } else {
           for(int i = 0; i <= p_77569_1_.func_174922_i() - this.field_77576_b; ++i) {
-@@ -117,10 +126,20 @@
+@@ -118,10 +127,20 @@
        return this.field_77576_b;
     }
  
@@ -67,9 +67,9 @@
 +   }
 +
     private static NonNullList<Ingredient> func_192402_a(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
-       NonNullList<Ingredient> nonnulllist = NonNullList.<Ingredient>func_191197_a(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
+       NonNullList<Ingredient> nonnulllist = NonNullList.func_191197_a(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
        Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
-@@ -202,15 +221,15 @@
+@@ -203,15 +222,15 @@
  
     private static String[] func_192407_a(JsonArray p_192407_0_) {
        String[] astring = new String[p_192407_0_.size()];
@@ -89,7 +89,7 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -257,6 +276,7 @@
+@@ -258,6 +277,7 @@
     }
  
     public static class Serializer implements IRecipeSerializer<ShapedRecipe> {
@@ -97,7 +97,7 @@
        public ShapedRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
           String s = JsonUtils.func_151219_a(p_199425_2_, "group", "");
           Map<String, Ingredient> map = ShapedRecipe.func_192408_a(JsonUtils.func_152754_s(p_199425_2_, "key"));
-@@ -268,8 +288,9 @@
+@@ -269,8 +289,9 @@
           return new ShapedRecipe(p_199425_1_, s, i, j, nonnulllist, itemstack);
        }
  

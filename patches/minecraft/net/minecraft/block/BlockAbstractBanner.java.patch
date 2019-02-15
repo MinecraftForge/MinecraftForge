@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/BlockAbstractBanner.java
 +++ b/net/minecraft/block/BlockAbstractBanner.java
-@@ -50,7 +50,7 @@
+@@ -51,7 +51,7 @@
     }
  
     public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
@@ -9,7 +9,7 @@
     }
  
     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
-@@ -73,4 +73,10 @@
+@@ -75,4 +75,10 @@
     public EnumDyeColor func_196285_M_() {
        return this.field_196286_a;
     }

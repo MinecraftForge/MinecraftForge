@@ -1,0 +1,17 @@
+--- a/net/minecraft/client/renderer/model/multipart/Multipart.java
++++ b/net/minecraft/client/renderer/model/multipart/Multipart.java
+@@ -81,11 +81,12 @@
+    }
+ 
+    @Nullable
+-   public IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_) {
++   @Override
++   public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, net.minecraftforge.common.model.IModelState p_209558_3_, boolean p_209558_4_, net.minecraft.client.renderer.vertex.VertexFormat format) {
+       MultipartBakedModel.Builder multipartbakedmodel$builder = new MultipartBakedModel.Builder();
+ 
+       for(Selector selector : this.func_188136_a()) {
+-         IBakedModel ibakedmodel = selector.func_188165_a().func_209558_a(p_209558_1_, p_209558_2_, p_209558_3_, p_209558_4_);
++         IBakedModel ibakedmodel = selector.func_188165_a().bake(p_209558_1_, p_209558_2_, p_209558_3_, p_209558_4_, format);
+          if (ibakedmodel != null) {
+             multipartbakedmodel$builder.func_188648_a(selector.func_188166_a(this.field_188140_b), ibakedmodel);
+          }

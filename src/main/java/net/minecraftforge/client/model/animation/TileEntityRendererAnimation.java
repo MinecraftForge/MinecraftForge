@@ -23,7 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -40,7 +40,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import java.util.Random;
 
 /**
- * Generic {@link TileEntityRenderer} that works with the Forge model system and animations.
+ * Generic {@link TileGameRenderer} that works with the Forge model system and animations.
  */
 public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntityRendererFast<T> implements IEventHandler<T>
 {

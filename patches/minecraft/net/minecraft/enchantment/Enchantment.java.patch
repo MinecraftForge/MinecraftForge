@@ -1,17 +1,15 @@
 --- a/net/minecraft/enchantment/Enchantment.java
 +++ b/net/minecraft/enchantment/Enchantment.java
-@@ -18,8 +18,8 @@
+@@ -18,7 +18,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public abstract class Enchantment {
--   public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = new RegistryNamespaced<ResourceLocation, Enchantment>();
 +public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
-+   public static final RegistryNamespaced<ResourceLocation, Enchantment> field_185264_b = net.minecraftforge.registries.GameData.getWrapper(Enchantment.class);
     private final EntityEquipmentSlot[] field_185263_a;
     private final Enchantment.Rarity field_77333_a;
     @Nullable
-@@ -114,7 +114,7 @@
+@@ -115,7 +115,7 @@
     }
  
     public boolean func_92089_a(ItemStack p_92089_1_) {
@@ -20,7 +18,7 @@
     }
  
     public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_) {
-@@ -131,6 +131,24 @@
+@@ -132,6 +132,24 @@
        return false;
     }
  

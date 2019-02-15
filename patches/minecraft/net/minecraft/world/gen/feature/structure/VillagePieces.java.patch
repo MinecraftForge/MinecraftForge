@@ -19,8 +19,8 @@
        return villagepieces$village;
 @@ -1288,17 +1291,24 @@
        public List<VillagePieces.PieceWeight> field_74931_h;
-       public List<StructurePiece> field_74932_i = Lists.<StructurePiece>newArrayList();
-       public List<StructurePiece> field_74930_j = Lists.<StructurePiece>newArrayList();
+       public List<StructurePiece> field_74932_i = Lists.newArrayList();
+       public List<StructurePiece> field_74930_j = Lists.newArrayList();
 +      public @javax.annotation.Nullable net.minecraft.world.biome.Biome biome;
  
        public Start() {

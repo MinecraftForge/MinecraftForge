@@ -4,8 +4,8 @@
  import net.minecraft.world.World;
  
  public class BlockFlowerPot extends Block {
--   private static final Map<Block, Block> field_196451_b = Maps.<Block, Block>newHashMap();
-+   private static final Map<Block, Block> field_196451_b = Maps.<Block, Block>newHashMap(); //TODO: Delegates
+-   private static final Map<Block, Block> field_196451_b = Maps.newHashMap();
++   private static final Map<Block, Block> field_196451_b = Maps.newHashMap();  //TODO: Delegates
     protected static final VoxelShape field_196450_a = Block.func_208617_a(5.0D, 0.0D, 5.0D, 11.0D, 6.0D, 11.0D);
     private final Block field_196452_c;
  

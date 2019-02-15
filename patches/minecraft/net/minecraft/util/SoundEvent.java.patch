@@ -1,13 +1,11 @@
 --- a/net/minecraft/util/SoundEvent.java
 +++ b/net/minecraft/util/SoundEvent.java
-@@ -4,8 +4,8 @@
+@@ -4,7 +4,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public class SoundEvent {
--   public static final RegistryNamespaced<ResourceLocation, SoundEvent> field_187505_a = new RegistryNamespaced<ResourceLocation, SoundEvent>();
 +public class SoundEvent extends net.minecraftforge.registries.ForgeRegistryEntry<SoundEvent> {
-+   public static final RegistryNamespaced<ResourceLocation, SoundEvent> field_187505_a = net.minecraftforge.registries.GameData.getWrapper(SoundEvent.class);
     private final ResourceLocation field_187506_b;
  
     public SoundEvent(ResourceLocation p_i46834_1_) {

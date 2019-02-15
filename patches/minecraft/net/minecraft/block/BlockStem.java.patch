@@ -11,7 +11,7 @@
 +         if (net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_4_.nextInt((int)(25.0F / f) + 1) == 0)) {
              int i = p_196267_1_.func_177229_b(field_176484_a);
              if (i < 7) {
--               p_196267_1_ = (IBlockState)p_196267_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1));
+-               p_196267_1_ = p_196267_1_.func_206870_a(field_176484_a, Integer.valueOf(i + 1));
 -               p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_, 2);
 +               p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_.func_206870_a(field_176484_a, i + 1), 2);
              } else {
@@ -23,7 +23,7 @@
 +               Block block = soil.func_177230_c();
 +               if (p_196267_2_.func_180495_p(blockpos).isAir(p_196267_2_, blockpos) && (soil.canSustainPlant(p_196267_2_, blockpos.func_177977_b(), EnumFacing.UP, func_176223_P(), this) || block == Blocks.field_150346_d || block == Blocks.field_196660_k || block == Blocks.field_196661_l || block == Blocks.field_196658_i)) {
                    p_196267_2_.func_175656_a(blockpos, this.field_149877_a.func_176223_P());
-                   p_196267_2_.func_175656_a(p_196267_3_, (IBlockState)this.field_149877_a.func_196523_e().func_176223_P().func_206870_a(BlockHorizontal.field_185512_D, enumfacing));
+                   p_196267_2_.func_175656_a(p_196267_3_, this.field_149877_a.func_196523_e().func_176223_P().func_206870_a(BlockHorizontal.field_185512_D, enumfacing));
                 }
              }
 +            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);

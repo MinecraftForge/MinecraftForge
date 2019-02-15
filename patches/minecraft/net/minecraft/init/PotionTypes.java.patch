@@ -1,8 +1,8 @@
 --- a/net/minecraft/init/PotionTypes.java
 +++ b/net/minecraft/init/PotionTypes.java
-@@ -5,6 +5,7 @@
- import net.minecraft.potion.PotionType;
+@@ -6,6 +6,7 @@
  import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.IRegistry;
  
 +@net.minecraftforge.registries.ObjectHolder("minecraft")
  public class PotionTypes {

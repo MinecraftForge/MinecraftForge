@@ -11,7 +11,7 @@
     public void func_196267_b(IBlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
 @@ -172,6 +172,8 @@
     protected void func_176400_h(World p_176400_1_, BlockPos p_176400_2_, IBlockState p_176400_3_) {
-       EnumFacing enumfacing = (EnumFacing)p_176400_3_.func_177229_b(field_185512_D);
+       EnumFacing enumfacing = p_176400_3_.func_177229_b(field_185512_D);
        BlockPos blockpos = p_176400_2_.func_177972_a(enumfacing.func_176734_d());
 +      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_176400_1_, p_176400_2_, p_176400_1_.func_180495_p(p_176400_2_), java.util.EnumSet.of(enumfacing.func_176734_d()), false).isCanceled())
 +         return;

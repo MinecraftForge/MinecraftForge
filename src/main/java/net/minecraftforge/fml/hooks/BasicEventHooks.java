@@ -24,6 +24,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
@@ -43,7 +44,7 @@ public class BasicEventHooks
         MinecraftForge.EVENT_BUS.post(new InputEvent.KeyInputEvent());
     }
 
-    public static void firePlayerChangedDimensionEvent(EntityPlayer player, int fromDim, int toDim)
+    public static void firePlayerChangedDimensionEvent(EntityPlayer player, DimensionType fromDim, DimensionType toDim)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
     }

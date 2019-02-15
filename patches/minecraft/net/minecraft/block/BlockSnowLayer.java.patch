@@ -3,7 +3,7 @@
 @@ -84,30 +84,45 @@
  
     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
-       Integer integer = (Integer)p_180657_4_.func_177229_b(field_176315_a);
+       Integer integer = p_180657_4_.func_177229_b(field_176315_a);
 -      if (this.func_149700_E() && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0) {
 +      net.minecraft.util.NonNullList<ItemStack> items = net.minecraft.util.NonNullList.func_191196_a();
 +      int fortune = EnchantmentHelper.func_77506_a(Enchantments.field_185308_t, p_180657_6_);

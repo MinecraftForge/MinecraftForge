@@ -13,8 +13,8 @@
        int k = MathHelper.func_76128_c(this.field_70161_v);
        BlockPos blockpos = new BlockPos(i, j, k);
        Block block = p_205020_1_.func_180495_p(blockpos.func_177977_b()).func_177230_c();
--      return block instanceof BlockLeaves || block == Blocks.field_150349_c || block instanceof BlockLog || block == Blocks.field_150350_a && super.func_205020_a(p_205020_1_);
-+      return block instanceof BlockLeaves || block == Blocks.field_196658_i || block instanceof BlockLog || block == Blocks.field_150350_a && super.func_205020_a(p_205020_1_);
+-      return block instanceof BlockLeaves || block == Blocks.field_150349_c || block instanceof BlockLog || block == Blocks.field_150350_a && super.func_205020_a(p_205020_1_, p_205020_2_);
++      return block instanceof BlockLeaves || block == Blocks.field_196658_i || block instanceof BlockLog || block == Blocks.field_150350_a && super.func_205020_a(p_205020_1_, p_205020_2_);
     }
  
     public void func_180430_e(float p_180430_1_, float p_180430_2_) {

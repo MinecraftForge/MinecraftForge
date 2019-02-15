@@ -6,11 +6,11 @@
  @OnlyIn(Dist.CLIENT)
 -public class KeyBinding implements Comparable<KeyBinding> {
 +public class KeyBinding implements Comparable<KeyBinding>, net.minecraftforge.client.extensions.IForgeKeybinding {
-    private static final Map<String, KeyBinding> field_74516_a = Maps.<String, KeyBinding>newHashMap();
--   private static final Map<InputMappings.Input, KeyBinding> field_74514_b = Maps.<InputMappings.Input, KeyBinding>newHashMap();
+    private static final Map<String, KeyBinding> field_74516_a = Maps.newHashMap();
+-   private static final Map<InputMappings.Input, KeyBinding> field_74514_b = Maps.newHashMap();
 +   private static final net.minecraftforge.client.settings.KeyBindingMap field_74514_b = new net.minecraftforge.client.settings.KeyBindingMap();
-    private static final Set<String> field_151473_c = Sets.<String>newHashSet();
-    private static final Map<String, Integer> field_193627_d = (Map)Util.func_200696_a(Maps.newHashMap(), (p_205215_0_) -> {
+    private static final Set<String> field_151473_c = Sets.newHashSet();
+    private static final Map<String, Integer> field_193627_d = Util.func_200696_a(Maps.newHashMap(), (p_205215_0_) -> {
        p_205215_0_.put("key.categories.movement", 1);
 @@ -33,7 +33,7 @@
     private int field_151474_i;
@@ -58,51 +58,43 @@
     }
  
     public String func_151466_e() {
-@@ -122,17 +122,41 @@
+@@ -122,7 +122,13 @@
     }
  
     public int compareTo(KeyBinding p_compareTo_1_) {
--      return this.field_151471_f.equals(p_compareTo_1_.field_151471_f) ? I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c)) : ((Integer)field_193627_d.get(this.field_151471_f)).compareTo(field_193627_d.get(p_compareTo_1_.field_151471_f));
-+       if (this.field_151471_f.equals(p_compareTo_1_.field_151471_f)) return I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c));
-+       Integer tCat = field_193627_d.get(this.field_151471_f);
-+       Integer oCat = field_193627_d.get(p_compareTo_1_.field_151471_f);
-+       if (tCat == null && oCat != null) return 1;
-+       if (tCat != null && oCat == null) return -1;
-+       if (tCat == null && oCat == null) return I18n.func_135052_a(this.field_151471_f).compareTo(I18n.func_135052_a(p_compareTo_1_.field_151471_f));
-+       return  tCat.compareTo(oCat);
+-      return this.field_151471_f.equals(p_compareTo_1_.field_151471_f) ? I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c)) : field_193627_d.get(this.field_151471_f).compareTo(field_193627_d.get(p_compareTo_1_.field_151471_f));
++      if (this.field_151471_f.equals(p_compareTo_1_.field_151471_f)) return I18n.func_135052_a(this.field_74515_c).compareTo(I18n.func_135052_a(p_compareTo_1_.field_74515_c));
++      Integer tCat = field_193627_d.get(this.field_151471_f);
++      Integer oCat = field_193627_d.get(p_compareTo_1_.field_151471_f);
++      if (tCat == null && oCat != null) return 1;
++      if (tCat != null && oCat == null) return -1;
++      if (tCat == null && oCat == null) return I18n.func_135052_a(this.field_151471_f).compareTo(I18n.func_135052_a(p_compareTo_1_.field_151471_f));
++      return  tCat.compareTo(oCat);
     }
  
     public static Supplier<String> func_193626_b(String p_193626_0_) {
-       KeyBinding keybinding = field_74516_a.get(p_193626_0_);
-       return keybinding == null ? () -> {
-          return p_193626_0_;
--      } : keybinding::func_197978_k;
-+      } : () -> keybinding.func_197978_k();
+@@ -133,6 +139,20 @@
     }
  
     public boolean func_197983_b(KeyBinding p_197983_1_) {
-+      if (getKeyConflictContext().conflicts(p_197983_1_.getKeyConflictContext()) || p_197983_1_.getKeyConflictContext().conflicts(getKeyConflictContext()))
-+      {
++      if (getKeyConflictContext().conflicts(p_197983_1_.getKeyConflictContext()) || p_197983_1_.getKeyConflictContext().conflicts(getKeyConflictContext())) {
 +         net.minecraftforge.client.settings.KeyModifier keyModifier = getKeyModifier();
 +         net.minecraftforge.client.settings.KeyModifier otherKeyModifier = p_197983_1_.getKeyModifier();
-+         if (keyModifier.matches(p_197983_1_.getKey()) || otherKeyModifier.matches(getKey()))
-+         {
++         if (keyModifier.matches(p_197983_1_.getKey()) || otherKeyModifier.matches(getKey())) {
 +            return true;
-+         }
-+         else if (getKey().equals(p_197983_1_.getKey()))
-+         {
++         } else if (getKey().equals(p_197983_1_.getKey())) {
++            // IN_GAME key contexts have a conflict when at least one modifier is NONE.
++            // For example: If you hold shift to crouch, you can still press E to open your inventory. This means that a Shift+E hotkey is in conflict with E.
++            // GUI and other key contexts do not have this limitation.
 +            return keyModifier == otherKeyModifier ||
-+                    // IN_GAME key contexts have a conflict when at least one modifier is NONE.
-+                    // For example: If you hold shift to crouch, you can still press E to open your inventory. This means that a Shift+E hotkey is in conflict with E.
-+                    // GUI and other key contexts do not have this limitation.
-+                    (getKeyConflictContext().conflicts(net.minecraftforge.client.settings.KeyConflictContext.IN_GAME) &&
-+                            (keyModifier == net.minecraftforge.client.settings.KeyModifier.NONE || otherKeyModifier == net.minecraftforge.client.settings.KeyModifier.NONE));
++               (getKeyConflictContext().conflicts(net.minecraftforge.client.settings.KeyConflictContext.IN_GAME) &&
++               (keyModifier == net.minecraftforge.client.settings.KeyModifier.NONE || otherKeyModifier == net.minecraftforge.client.settings.KeyModifier.NONE));
 +         }
 +      }
        return this.field_74512_d.equals(p_197983_1_.field_74512_d);
     }
  
-@@ -153,14 +177,94 @@
+@@ -153,14 +173,94 @@
     }
  
     public String func_197978_k() {
@@ -155,11 +147,11 @@
 +   }
 +
 +   @Override
-+   public InputMappings.Input getKey() 
++   public InputMappings.Input getKey()
 +   {
 +      return this.field_74512_d;
 +   }
-+   
++
 +   @Override
 +   public void setKeyConflictContext(net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext)
 +   {

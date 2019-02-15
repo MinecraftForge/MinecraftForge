@@ -68,8 +68,8 @@ public abstract class FMLCommonLaunchHandler
 
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder) {
         builder.addTransformationPath(FMLLoader.getForgePath());
-        for (Path path : FMLLoader.getMCPaths())
-            builder.addTransformationPath(path);
+        Arrays.stream(FMLLoader.getMCPaths()).forEach(builder::addTransformationPath);
+        FMLLoader.getLanguageLoadingProvider().getLibraries().forEach(builder::addTransformationPath);
         builder.setClassBytesLocator(getClassLoaderLocatorFunction());
         builder.setManifestLocator(getClassLoaderManifestLocatorFunction());
     }

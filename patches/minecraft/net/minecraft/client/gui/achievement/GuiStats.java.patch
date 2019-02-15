@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/gui/achievement/GuiStats.java
 +++ b/net/minecraft/client/gui/achievement/GuiStats.java
-@@ -118,8 +118,8 @@
+@@ -122,8 +122,8 @@
     public void func_193026_g() {
        if (this.field_146543_v) {
           this.func_193028_a();

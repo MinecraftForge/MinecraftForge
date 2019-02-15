@@ -1,7 +1,7 @@
 --- a/net/minecraft/client/gui/advancements/GuiScreenAdvancements.java
 +++ b/net/minecraft/client/gui/advancements/GuiScreenAdvancements.java
 @@ -24,6 +24,7 @@
-    private final Map<Advancement, GuiAdvancementTab> field_191947_i = Maps.<Advancement, GuiAdvancementTab>newLinkedHashMap();
+    private final Map<Advancement, GuiAdvancementTab> field_191947_i = Maps.newLinkedHashMap();
     private GuiAdvancementTab field_191940_s;
     private boolean field_191944_v;
 +   private static int tabPage, maxPages;
@@ -13,7 +13,7 @@
           this.field_191946_h.func_194230_a(this.field_191940_s == null ? null : this.field_191940_s.func_193935_c(), true);
        }
 -
-+      if (this.field_191947_i.size() > AdvancementTabType.field_192659_e) {
++      if (this.field_191947_i.size() > AdvancementTabType.MAX_TABS) {
 +          int guiLeft = (this.field_146294_l - 252) / 2;
 +          int guiTop = (this.field_146295_m - 140) / 2;
 +          func_189646_b(new net.minecraft.client.gui.GuiButton(101, guiLeft, guiTop - 50, 20, 20, "<") {
@@ -28,7 +28,7 @@
 +                tabPage = Math.min(tabPage + 1, maxPages);
 +             }
 +          });
-+          maxPages = this.field_191947_i.size() / AdvancementTabType.field_192659_e;
++          maxPages = this.field_191947_i.size() / AdvancementTabType.MAX_TABS;
 +      }
     }
  

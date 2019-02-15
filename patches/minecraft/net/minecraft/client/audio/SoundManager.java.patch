@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/audio/SoundManager.java
 +++ b/net/minecraft/client/audio/SoundManager.java
-@@ -75,6 +75,7 @@
+@@ -69,6 +69,7 @@
        try {
           SoundSystemConfig.addLibrary(LibraryLWJGL3.class);
           SoundSystemConfig.setCodec("ogg", CodecJOrbis.class);
@@ -8,7 +8,7 @@
        } catch (SoundSystemException soundsystemexception) {
           field_148621_b.error(field_148623_a, "Error linking with the LibraryJavaSound plug-in", (Throwable)soundsystemexception);
        }
-@@ -94,6 +95,7 @@
+@@ -88,6 +89,7 @@
  
        this.func_148613_b();
        this.func_148608_i();
@@ -16,7 +16,7 @@
     }
  
     private synchronized void func_148608_i() {
-@@ -299,6 +301,8 @@
+@@ -293,6 +295,8 @@
  
     public void func_148611_c(ISound p_148611_1_) {
        if (this.field_148617_f) {
@@ -25,7 +25,7 @@
           SoundEventAccessor soundeventaccessor = p_148611_1_.func_184366_a(this.field_148622_c);
           ResourceLocation resourcelocation = p_148611_1_.func_147650_b();
           if (soundeventaccessor == null) {
-@@ -340,8 +344,10 @@
+@@ -334,8 +338,10 @@
                       ResourceLocation resourcelocation1 = sound.func_188721_b();
                       if (sound.func_188723_h()) {
                          this.field_148620_e.newStreamingSource(p_148611_1_.func_204200_l(), s, func_148612_a(resourcelocation1), resourcelocation1.toString(), flag, p_148611_1_.func_147649_g(), p_148611_1_.func_147654_h(), p_148611_1_.func_147651_i(), p_148611_1_.func_147656_j().func_148586_a(), f);
@@ -36,7 +36,7 @@
                       }
  
                       field_148621_b.debug(field_148623_a, "Playing sound {} for event {} as channel {}", sound.func_188719_a(), resourcelocation, s);
-@@ -429,12 +435,16 @@
+@@ -423,12 +429,16 @@
     }
  
     public void func_148615_a(EntityPlayer p_148615_1_, float p_148615_2_) {

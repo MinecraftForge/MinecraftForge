@@ -7,11 +7,11 @@
 +   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
 +    
     private final int field_147971_a;
-    private final Set<Stitcher.Holder> field_94319_a = Sets.<Stitcher.Holder>newHashSetWithExpectedSize(256);
-    private final List<Stitcher.Slot> field_94317_b = Lists.<Stitcher.Slot>newArrayListWithCapacity(256);
+    private final Set<Stitcher.Holder> field_94319_a = Sets.newHashSetWithExpectedSize(256);
+    private final List<Stitcher.Slot> field_94317_b = Lists.newArrayListWithCapacity(256);
 @@ -48,16 +50,22 @@
     public void func_94305_f() {
-       Stitcher.Holder[] astitcher$holder = (Stitcher.Holder[])this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
+       Stitcher.Holder[] astitcher$holder = this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
        Arrays.sort((Object[])astitcher$holder);
 +      try(net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture stitching", astitcher$holder.length)) {
  

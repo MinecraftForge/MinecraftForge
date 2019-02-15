@@ -1,13 +1,13 @@
 --- a/net/minecraft/inventory/ContainerFurnace.java
 +++ b/net/minecraft/inventory/ContainerFurnace.java
-@@ -161,8 +161,8 @@
+@@ -160,8 +160,8 @@
     }
  
     private boolean func_206253_a(ItemStack p_206253_1_) {
 -      for(IRecipe irecipe : this.field_201773_f.func_199532_z().func_199510_b()) {
--         if (irecipe instanceof FurnaceRecipe && ((Ingredient)irecipe.func_192400_c().get(0)).test(p_206253_1_)) {
+-         if (irecipe instanceof FurnaceRecipe && irecipe.func_192400_c().get(0).test(p_206253_1_)) {
 +      for(IRecipe irecipe : this.field_201773_f.func_199532_z().getRecipes(net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING)) {
-+         if (((Ingredient)irecipe.func_192400_c().get(0)).test(p_206253_1_)) {
++         if (irecipe.func_192400_c().get(0).test(p_206253_1_)) {
              return true;
           }
        }

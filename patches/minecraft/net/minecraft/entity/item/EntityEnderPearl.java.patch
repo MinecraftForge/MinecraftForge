@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/EntityEnderPearl.java
 +++ b/net/minecraft/entity/item/EntityEnderPearl.java
-@@ -74,6 +74,9 @@
+@@ -75,6 +75,9 @@
           if (entitylivingbase instanceof EntityPlayerMP) {
              EntityPlayerMP entityplayermp = (EntityPlayerMP)entitylivingbase;
              if (entityplayermp.field_71135_a.func_147362_b().func_150724_d() && entityplayermp.field_70170_p == this.field_70170_p && !entityplayermp.func_70608_bn()) {
@@ -10,7 +10,7 @@
                 if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_82766_b("doMobSpawning")) {
                    EntityEndermite entityendermite = new EntityEndermite(this.field_70170_p);
                    entityendermite.func_175496_a(true);
-@@ -85,9 +88,10 @@
+@@ -86,9 +89,10 @@
                    entitylivingbase.func_184210_p();
                 }
  
@@ -23,20 +23,19 @@
              }
           } else if (entitylivingbase != null) {
              entitylivingbase.func_70634_a(this.field_70165_t, this.field_70163_u, this.field_70161_v);
-@@ -109,12 +113,13 @@
+@@ -110,12 +114,13 @@
  
     }
  
 +   @Override
     @Nullable
--   public Entity func_184204_a(int p_184204_1_) {
--      if (this.field_70192_c.field_71093_bK != p_184204_1_) {
-+   public Entity changeDimension(int dimensionIn, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (this.field_70192_c.field_71093_bK != dimensionIn) {
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
+       if (this.field_70192_c.field_71093_bK != p_212321_1_) {
           this.field_70192_c = null;
        }
  
--      return super.func_184204_a(p_184204_1_);
-+      return super.changeDimension(dimensionIn, teleporter);
+-      return super.func_212321_a(p_212321_1_);
++      return super.changeDimension(p_212321_1_, teleporter);
     }
  }

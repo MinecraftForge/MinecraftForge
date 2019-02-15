@@ -21,33 +21,31 @@ package net.minecraftforge.server.command;
 
 import java.text.DecimalFormat;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
+import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.DimensionManager;
 
 class CommandTps
 {
-    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TextComponentTranslation("commands.forge.tps.invalid", dim, DimensionManager.getIDStream().sorted().map(id -> id.toString()).collect(Collectors.joining(", "))));
+    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TextComponentTranslation("commands.forge.tps.invalid", dim, StreamSupport.stream(DimensionType.func_212681_b().spliterator(), false).map(d -> DimensionType.func_212678_a(d).toString()).sorted().collect(Collectors.joining(", "))));
     private static final DecimalFormat TIME_FORMATTER = new DecimalFormat("########0.000");
 
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("tps")
             .requires(cs->cs.hasPermissionLevel(0)) //permission
-            .then(Commands.argument("dim", IntegerArgumentType.integer())
-                .suggests((ctx, builder) -> ISuggestionProvider.suggest(DimensionManager.getIDStream().sorted().map(id -> id.toString()), builder))
-                .executes(ctx -> sendTime(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "dim")))
+            .then(Commands.argument("dim", DimensionArgument.func_212595_a())
+                .executes(ctx -> sendTime(ctx.getSource(), DimensionArgument.func_212592_a(ctx, "dim")))
             )
             .executes(ctx -> {
-                for (Integer dim : (Iterable<Integer>)DimensionManager.getIDStream().sorted()::iterator)
+                for (DimensionType dim : DimensionType.func_212681_b())
                     sendTime(ctx.getSource(), dim);
 
                 double meanTickTime = mean(ctx.getSource().getServer().tickTimeArray) * 1.0E-6D;
@@ -59,26 +57,16 @@ class CommandTps
         );
     }
 
-    private static long[] getTimes(int dim)
+    private static int sendTime(CommandSource cs, DimensionType dim) throws CommandSyntaxException
     {
-        //TODO: Implement, needs patch.
-        return  null;
-    }
-
-    private static int sendTime(CommandSource cs, int dim) throws CommandSyntaxException
-    {
-        long[] times = getTimes(dim);
+        long[] times = cs.getServer().getTickTime(dim);
 
         if (times == null)
-            throw INVALID_DIMENSION.create(dim);
+            throw INVALID_DIMENSION.create(DimensionType.func_212678_a(dim));
 
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        DimensionType type = DimensionManager.getProviderType(dim);
-        if (type == null)
-            cs.sendFeedback(new TextComponentTranslation("commands.forge.tps.summary.basic", dim, TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
-        else
-            cs.sendFeedback(new TextComponentTranslation("commands.forge.tps.summary.named", dim, type.getName(), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
+        cs.sendFeedback(new TextComponentTranslation("commands.forge.tps.summary.named", dim.getId(), DimensionType.func_212678_a(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
 
         return 1;
     }

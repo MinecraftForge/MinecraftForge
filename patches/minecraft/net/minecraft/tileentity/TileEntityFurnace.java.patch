@@ -1,8 +1,8 @@
 --- a/net/minecraft/tileentity/TileEntityFurnace.java
 +++ b/net/minecraft/tileentity/TileEntityFurnace.java
-@@ -185,9 +185,9 @@
+@@ -184,9 +184,9 @@
        super.func_145839_a(p_145839_1_);
-       this.field_145957_n = NonNullList.<ItemStack>func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
+       this.field_145957_n = NonNullList.func_191197_a(this.func_70302_i_(), ItemStack.field_190927_a);
        ItemStackHelper.func_191283_b(p_145839_1_, this.field_145957_n);
 -      this.field_145956_a = p_145839_1_.func_74765_d("BurnTime");
 -      this.field_174906_k = p_145839_1_.func_74765_d("CookTime");
@@ -13,7 +13,7 @@
        this.field_145963_i = func_145952_a(this.field_145957_n.get(1));
        int i = p_145839_1_.func_74765_d("RecipesUsedSize");
  
-@@ -205,9 +205,9 @@
+@@ -204,9 +204,9 @@
  
     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_) {
        super.func_189515_b(p_189515_1_);
@@ -26,10 +26,10 @@
        ItemStackHelper.func_191282_a(p_189515_1_, this.field_145957_n);
        p_189515_1_.func_74777_a("RecipesUsedSize", (short)this.field_203901_m.size());
        int i = 0;
-@@ -248,12 +248,16 @@
+@@ -247,12 +247,16 @@
        if (!this.field_145850_b.field_72995_K) {
           ItemStack itemstack = this.field_145957_n.get(1);
-          if (this.func_145950_i() || !itemstack.func_190926_b() && !((ItemStack)this.field_145957_n.get(0)).func_190926_b()) {
+          if (this.func_145950_i() || !itemstack.func_190926_b() && !this.field_145957_n.get(0).func_190926_b()) {
 -            IRecipe irecipe = this.field_145850_b.func_199532_z().func_199515_b(this, this.field_145850_b);
 +            IRecipe irecipe = this.field_145850_b.func_199532_z().getRecipe(this, this.field_145850_b, net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING);
              if (!this.func_145950_i() && this.func_201566_b(irecipe)) {
@@ -44,7 +44,7 @@
                    if (!itemstack.func_190926_b()) {
                       Item item = itemstack.func_77973_b();
                       itemstack.func_190918_g(1);
-@@ -293,7 +297,7 @@
+@@ -292,7 +296,7 @@
     }
  
     private int func_201562_r() {
@@ -53,7 +53,7 @@
        return furnacerecipe != null ? furnacerecipe.func_201830_h() : 200;
     }
  
-@@ -308,10 +312,10 @@
+@@ -307,10 +311,10 @@
                 return true;
              } else if (!itemstack1.func_77969_a(itemstack)) {
                 return false;
@@ -66,7 +66,7 @@
              }
           }
        } else {
-@@ -327,7 +331,7 @@
+@@ -326,7 +330,7 @@
           if (itemstack2.func_190926_b()) {
              this.field_145957_n.set(2, itemstack1.func_77946_l());
           } else if (itemstack2.func_77973_b() == itemstack1.func_77973_b()) {
@@ -75,7 +75,7 @@
           }
  
           if (!this.field_145850_b.field_72995_K) {
-@@ -347,12 +351,13 @@
+@@ -346,12 +350,13 @@
           return 0;
        } else {
           Item item = p_145952_0_.func_77973_b();
@@ -91,7 +91,7 @@
     }
  
     public boolean func_70300_a(EntityPlayer p_70300_1_) {
-@@ -501,4 +506,27 @@
+@@ -500,4 +505,27 @@
  
        this.field_203901_m.clear();
     }

@@ -4,7 +4,7 @@
     }
  
     public VoxelShape func_196244_b(IBlockState p_196244_1_, IBlockReader p_196244_2_, BlockPos p_196244_3_) {
--      RailShape railshape = p_196244_1_.func_177230_c() == this ? (RailShape)p_196244_1_.func_177229_b(this.func_176560_l()) : null;
+-      RailShape railshape = p_196244_1_.func_177230_c() == this ? p_196244_1_.func_177229_b(this.func_176560_l()) : null;
 +      RailShape railshape = p_196244_1_.func_177230_c() == this ? getRailDirection(p_196244_1_, p_196244_2_, p_196244_3_, null) : null;
        return railshape != null && railshape.func_208092_c() ? field_190959_b : field_185590_a;
     }
@@ -22,7 +22,7 @@
  
     public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_) {
        if (!p_189540_2_.field_72995_K) {
--         RailShape railshape = (RailShape)p_189540_1_.func_177229_b(this.func_176560_l());
+-         RailShape railshape = p_189540_1_.func_177229_b(this.func_176560_l());
 +         RailShape railshape = getRailDirection(p_189540_1_, p_189540_2_, p_189540_3_, null);
           boolean flag = false;
 -         if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q()) {
@@ -48,7 +48,7 @@
     public void func_196243_a(IBlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, IBlockState p_196243_4_, boolean p_196243_5_) {
        if (!p_196243_5_) {
           super.func_196243_a(p_196243_1_, p_196243_2_, p_196243_3_, p_196243_4_, p_196243_5_);
--         if (((RailShape)p_196243_1_.func_177229_b(this.func_176560_l())).func_208092_c()) {
+-         if (p_196243_1_.func_177229_b(this.func_176560_l()).func_208092_c()) {
 +         if (getRailDirection(p_196243_1_, p_196243_2_, p_196243_3_, null).func_208092_c()) {
              p_196243_2_.func_195593_d(p_196243_3_.func_177984_a(), this);
           }
