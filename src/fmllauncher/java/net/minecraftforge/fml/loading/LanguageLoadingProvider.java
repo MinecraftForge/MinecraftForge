@@ -51,6 +51,7 @@ public class LanguageLoadingProvider
     private final List<IModLanguageProvider> languageProviders = new ArrayList<>();
     private final ServiceLoader<IModLanguageProvider> serviceLoader;
     private final Map<String, ModLanguageWrapper> languageProviderMap = new HashMap<>();
+    private List<Path> languagePaths = new ArrayList<>();
 
     public void forEach(final Consumer<IModLanguageProvider> consumer)
     {
@@ -60,13 +61,13 @@ public class LanguageLoadingProvider
     private static class ModLanguageWrapper {
 
         private final IModLanguageProvider modLanguageProvider;
+
         private final ArtifactVersion version;
         public ModLanguageWrapper(IModLanguageProvider modLanguageProvider, ArtifactVersion version)
         {
             this.modLanguageProvider = modLanguageProvider;
             this.version = version;
         }
-
         public ArtifactVersion getVersion()
         {
             return version;
@@ -77,14 +78,15 @@ public class LanguageLoadingProvider
             return modLanguageProvider;
         }
 
+
     }
     private static class LanguageClassLoader extends URLClassLoader
     {
-
         public LanguageClassLoader() {
             super(new URL[0]);
         }
-            @Override
+
+        @Override
         public void addURL(final URL url) {
             LOGGER.debug(CORE, "Adding {} to languageloader classloader", url);
             super.addURL(url);
@@ -96,7 +98,6 @@ public class LanguageLoadingProvider
         serviceLoader = ServiceLoader.load(IModLanguageProvider.class, languageClassLoader);
         loadLanguageProviders();
     }
-
     private void loadLanguageProviders() {
         LOGGER.debug(CORE, "Found {} language providers", ServiceLoaderStreamUtils.toList(serviceLoader).size());
         serviceLoader.forEach(languageProviders::add);
@@ -133,7 +134,7 @@ public class LanguageLoadingProvider
     private void addLanguagePaths(final Stream<Path> langPaths) {
         languageProviders.clear();
         languageProviderMap.clear();
-        langPaths.map(Path::toFile).map(File::toURI).map(rethrowFunction(URI::toURL)).forEach(languageClassLoader::addURL);
+        langPaths.peek(languagePaths::add).map(Path::toFile).map(File::toURI).map(rethrowFunction(URI::toURL)).forEach(languageClassLoader::addURL);
     }
 
     public void addAdditionalLanguages(List<ModFile> modFiles)
@@ -143,6 +144,10 @@ public class LanguageLoadingProvider
         addLanguagePaths(langPaths);
         serviceLoader.reload();
         loadLanguageProviders();
+    }
+
+    Stream<Path> getLibraries() {
+        return languagePaths.stream();
     }
 
     public IModLanguageProvider findLanguage(ModFile mf, String modLoader, VersionRange modLoaderVersion) {
