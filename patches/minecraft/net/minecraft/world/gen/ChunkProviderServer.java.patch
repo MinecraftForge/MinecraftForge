@@ -1,14 +1,6 @@
 --- a/net/minecraft/world/gen/ChunkProviderServer.java
 +++ b/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -239,6 +239,7 @@
-                   Chunk chunk = this.field_73244_f.get(olong);
-                   if (chunk != null) {
-                      chunk.func_76623_d();
-+                     net.minecraftforge.common.ForgeChunkManager.putDormantChunk(ChunkPos.func_77272_a(chunk.field_76635_g, chunk.field_76647_h), chunk);
-                      this.func_73242_b(chunk);
-                      this.field_73244_f.remove(olong);
-                      this.field_212472_f = null;
-@@ -250,6 +251,7 @@
+@@ -250,6 +250,7 @@
  
           this.field_201723_f.func_208484_a(p_73156_1_);
        }

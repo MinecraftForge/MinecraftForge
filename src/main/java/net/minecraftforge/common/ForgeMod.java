@@ -98,20 +98,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         modEventBus.register(ForgeConfig.class);
-        loadConfig(ForgeConfig.chunk_spec, FMLPaths.CONFIGDIR.get().resolve("forge_chunks.toml"));
-    }
-
-    private void loadConfig(ForgeConfigSpec spec, Path path) {
-        LOGGER.debug(FORGEMOD, "Loading config file {}", path);
-        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
-            .sync()
-            .autosave()
-            .writingMode(WritingMode.REPLACE)
-            .build();
-        LOGGER.debug(FORGEMOD, "Built TOML config for {}", path.toString());
-        configData.load();
-        LOGGER.debug(FORGEMOD, "Loaded TOML config file {}", path.toString());
-        spec.setConfig(configData);
     }
 
 /*
