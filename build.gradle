@@ -47,6 +47,7 @@ ext {
     MAPPING_VERSION = '20180921-1.13'
     MC_VERSION = '1.13.2'
     MCP_VERSION = '20190213.203750'
+    ASSET_INDEX = '1.13.1'
 }
 
 project(':mcp') {
@@ -186,6 +187,7 @@ project(':forge') {
                     'org.lwjgl.system.SharedLibraryExtractDirectory': 'lwjgl_dll',
                     'mc.version': MC_VERSION,
                     'mcp.version': MCP_VERSION,
+                    'asset.index' : ASSET_INDEX,
                     'forge.version': project.version.substring(MC_VERSION.length() + 1),
                     'forge.spec': SPEC_VERSION,
                     'forge.group': project.group, 
@@ -845,6 +847,7 @@ project(':forge') {
                 environment 'FORGE_GROUP', project.group
                 environment 'MCP_VERSION', MCP_VERSION
                 environment 'MC_VERSION', MC_VERSION
+                environment 'ASSET_INDEX', ASSET_INDEX
                 environment 'MOD_CLASSES', '{source_roots}'
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
             }

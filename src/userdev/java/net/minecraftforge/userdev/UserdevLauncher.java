@@ -65,7 +65,7 @@ public class UserdevLauncher
             launchArgs = ObjectArrays.concat(launchArgs, new String[] {
                     "--accessToken", "blah",
                     "--version", "FMLDev",
-                    "--assetIndex", "1.13",
+                    "--assetIndex", System.getenv("ASSET_INDEX"),
                     "--assetsDir", assets,
                     "--userProperties", "{}"
             }, String.class);

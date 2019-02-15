@@ -63,7 +63,7 @@ public class LaunchTesting
             launchArgs = ObjectArrays.concat(launchArgs, new String[] {
                             "--accessToken", "blah",
                             "--version", "FMLDev",
-                            "--assetIndex", "1.13",
+                            "--assetIndex", System.getProperty("asset.index"),
                             "--assetsDir", assets,
                             "--userProperties", "{}"
             }, String.class);
