@@ -18,7 +18,15 @@
        BlockDispenser.func_199774_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem() {
           private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
  
-@@ -429,6 +433,7 @@
+@@ -420,6 +424,7 @@
+             PaintingType.func_200831_a();
+             StatList.func_212734_a();
+             IRegistry.func_212613_e();
++            net.minecraftforge.fml.common.registry.VillagerRegistry.instance();
+             if (SharedConstants.field_206244_b) {
+                func_210839_a("block", IRegistry.field_212618_g, Block::func_149739_a);
+                func_210839_a("biome", IRegistry.field_212624_m, Biome::func_210773_k);
+@@ -429,6 +434,7 @@
                 func_210839_a("entity", IRegistry.field_212629_r, EntityType::func_210760_d);
              }
  
