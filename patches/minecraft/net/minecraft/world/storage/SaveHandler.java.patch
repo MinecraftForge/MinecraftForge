@@ -17,7 +17,16 @@
     }
  
     public void func_75755_a(WorldInfo p_75755_1_, @Nullable NBTTagCompound p_75755_2_) {
-@@ -148,6 +148,7 @@
+@@ -109,6 +109,8 @@
+       NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+       nbttagcompound1.func_74782_a("Data", nbttagcompound);
+ 
++      net.minecraftforge.fml.WorldPersistenceHooks.handleWorldDataSave(this, p_75755_1_, nbttagcompound1);
++
+       try {
+          File file1 = new File(this.field_75770_b, "level.dat_new");
+          File file2 = new File(this.field_75770_b, "level.dat_old");
+@@ -148,6 +150,7 @@
           }
  
           file1.renameTo(file2);
@@ -25,7 +34,7 @@
        } catch (Exception var5) {
           field_151478_a.warn("Failed to save player data for {}", (Object)p_75753_1_.func_200200_C_().getString());
        }
-@@ -171,6 +172,7 @@
+@@ -171,6 +174,7 @@
           int i = nbttagcompound.func_150297_b("DataVersion", 3) ? nbttagcompound.func_74762_e("DataVersion") : -1;
           p_75752_1_.func_70020_e(NBTUtil.func_210822_a(this.field_186341_a, DataFixTypes.PLAYER, nbttagcompound, i));
        }
@@ -33,7 +42,7 @@
  
        return nbttagcompound;
     }
-@@ -210,4 +212,20 @@
+@@ -210,4 +214,20 @@
     public DataFixer func_197718_i() {
        return this.field_186341_a;
     }
