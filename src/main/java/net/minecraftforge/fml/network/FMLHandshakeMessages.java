@@ -119,7 +119,6 @@ public class FMLHandshakeMessages
     }
 
     public static class S2CRegistry extends LoginIndexedMessage {
-
         public S2CRegistry(final ResourceLocation key, final ForgeRegistry<? extends IForgeRegistryEntry<?>> registry) {
         }
 
@@ -131,6 +130,34 @@ public class FMLHandshakeMessages
 
         public static S2CRegistry decode(final PacketBuffer buffer) {
             return new S2CRegistry();
+        }
+    }
+
+
+    public static class S2CConfigData extends LoginIndexedMessage {
+        private final String fileName;
+        private final byte[] fileData;
+
+        public S2CConfigData(final String configFileName, final byte[] configFileData) {
+            this.fileName = configFileName;
+            this.fileData = configFileData;
+        }
+
+        void encode(final PacketBuffer buffer) {
+            buffer.writeString(this.fileName);
+            buffer.writeByteArray(this.fileData);
+        }
+
+        public static S2CConfigData decode(final PacketBuffer buffer) {
+            return new S2CConfigData(buffer.readString(128), buffer.readByteArray());
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public byte[] getBytes() {
+            return fileData;
         }
     }
 }

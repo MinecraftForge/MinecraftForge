@@ -25,6 +25,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.fml.util.ThreeConsumer;
 import net.minecraftforge.registries.RegistryManager;
@@ -108,6 +109,13 @@ public class FMLHandshakeHandler {
                 buildLoginPacketList(RegistryManager::generateRegistryPackets).
                 consumer(biConsumerFor(FMLHandshakeHandler::handleRegistryMessage)).
                 add();
+        channel.messageBuilder(FMLHandshakeMessages.S2CConfigData.class, 4).
+                loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
+                decoder(FMLHandshakeMessages.S2CConfigData::decode).
+                encoder(FMLHandshakeMessages.S2CConfigData::encode).
+                buildLoginPacketList(ConfigTracker.INSTANCE::syncConfigs).
+                consumer(biConsumerFor(FMLHandshakeHandler::handleConfigSync)).
+                add();
     }
 
     /**
@@ -172,7 +180,7 @@ public class FMLHandshakeHandler {
     {
         this.direction = side;
         this.manager = networkManager;
-        this.messageList = NetworkRegistry.gatherLoginPayloads();
+        this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction);
         LOGGER.debug(FMLHSMARKER, "Starting new modded network connection. Found {} messages to dispatch.", this.messageList.size());
     }
 
@@ -224,6 +232,13 @@ public class FMLHandshakeHandler {
         contextSupplier.get().setPacketHandled(true);
     }
 
+    private void handleConfigSync(final FMLHandshakeMessages.S2CConfigData msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+        LOGGER.debug(FMLHSMARKER, "Received config sync from server");
+        ConfigTracker.INSTANCE.receiveSyncedConfig(msg, contextSupplier);
+        contextSupplier.get().setPacketHandled(true);
+        final FMLHandshakeMessages.C2SAcknowledge reply = new FMLHandshakeMessages.C2SAcknowledge();
+        channel.reply(reply, contextSupplier.get());
+    }
     /**
      * FML will send packets, from Server to Client, from the messages queue until the queue is drained. Each message
      * will be indexed, and placed into the "pending acknowledgement" queue.

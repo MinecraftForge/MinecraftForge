@@ -79,6 +79,7 @@ public class NetworkHooks
 
     public static void registerClientLoginChannel(NetworkManager manager)
     {
+        if (manager == null) return;
         manager.channel().attr(FMLNetworking.FML_MARKER).set(NETVERSION);
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
     }

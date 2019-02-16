@@ -33,6 +33,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -204,8 +205,10 @@ public class NetworkRegistry
      * Dispatches {@link net.minecraftforge.fml.network.NetworkEvent.GatherLoginPayloadsEvent} to each {@link NetworkInstance}.
      *
      * @return The {@link LoginPayload} list
+     * @param direction the network direction for the request - only gathers for LOGIN_TO_CLIENT
      */
-    static List<LoginPayload> gatherLoginPayloads() {
+    static List<LoginPayload> gatherLoginPayloads(final NetworkDirection direction) {
+        if (direction!=NetworkDirection.LOGIN_TO_CLIENT) return Collections.emptyList();
         List<LoginPayload> gatheredPayloads = new ArrayList<>();
         instances.values().forEach(ni->ni.dispatchGatherLogin(gatheredPayloads));
         return gatheredPayloads;

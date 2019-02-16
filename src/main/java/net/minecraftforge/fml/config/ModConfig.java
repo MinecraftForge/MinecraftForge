@@ -19,11 +19,18 @@
 
 package net.minecraftforge.fml.config;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.loading.StringUtils;
+
+import java.nio.file.Path;
+import java.util.concurrent.Callable;
+import java.util.function.Consumer;
+
+import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
 
 public class ModConfig
 {
@@ -32,7 +39,8 @@ public class ModConfig
     private final String fileName;
     private final ModContainer container;
     private final ConfigFileTypeHandler configHandler;
-    private CommentedFileConfig configData;
+    private CommentedConfig configData;
+    private Callable<Void> saveHandler;
 
     public ModConfig(final Type type, final ForgeConfigSpec spec, final ModContainer container, final String fileName) {
         this.type = type;
@@ -71,17 +79,25 @@ public class ModConfig
         return container.getModId();
     }
 
-    public CommentedFileConfig getConfigData() {
+    public CommentedConfig getConfigData() {
         return this.configData;
     }
 
-    void setConfigData(final CommentedFileConfig configData) {
+    void setConfigData(final CommentedConfig configData) {
         this.configData = configData;
         this.spec.setConfig(this.configData);
     }
 
     void fireEvent(final ModConfigEvent configEvent) {
         this.container.dispatchConfigEvent(configEvent);
+    }
+
+    public void save() {
+        ((CommentedFileConfig)this.configData).save();
+    }
+
+    public Path getFullPath() {
+        return ((CommentedFileConfig)this.configData).getNioPath();
     }
 
     public enum Type {

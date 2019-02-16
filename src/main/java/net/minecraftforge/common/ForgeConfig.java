@@ -22,8 +22,6 @@ package net.minecraftforge.common;
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.google.common.collect.Lists;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,9 +30,6 @@ import org.apache.logging.log4j.LogManager;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 public class ForgeConfig
 {

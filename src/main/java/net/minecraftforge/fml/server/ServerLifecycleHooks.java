@@ -36,7 +36,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.FileUtils;
 import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
@@ -46,7 +45,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -132,6 +130,8 @@ public class ServerLifecycleHooks
             manager.closeChannel(text);
             return false;
         }
+
+        if (packet.getRequestedState() == EnumConnectionState.STATUS) return true;
 
         NetworkHooks.registerServerLoginChannel(manager, packet);
         return true;

@@ -133,6 +133,7 @@ public class ModLoader
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, this::dispatchAndHandleError);
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
+        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
         dispatchAndHandleError(LifecycleEventProvider.SETUP);
         DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
         dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);
