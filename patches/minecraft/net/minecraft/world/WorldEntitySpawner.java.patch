@@ -56,7 +56,7 @@
           default:
              IBlockState iblockstate1 = p_209382_1_.func_180495_p(p_209382_2_.func_177977_b());
 -            if (iblockstate1.func_185896_q() || p_209382_3_ != null && EntitySpawnPlacementRegistry.func_209345_a(p_209382_3_, iblockstate1)) {
-+            if (iblockstate.canCreatureSpawn(p_209382_1_, p_209382_2_, p_209382_0_, p_209382_3_)) {
++            if (iblockstate1.canCreatureSpawn(p_209382_1_, p_209382_2_, p_209382_0_, p_209382_3_)) {
                 Block block = iblockstate1.func_177230_c();
                 boolean flag = block != Blocks.field_150357_h && block != Blocks.field_180401_cv;
                 return flag && func_206851_a(iblockstate, ifluidstate) && func_206851_a(p_209382_1_.func_180495_p(p_209382_2_.func_177984_a()), p_209382_1_.func_204610_c(p_209382_2_.func_177984_a()));
