@@ -40,8 +40,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.storage.loot.functions.LootFunctionManager;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.loot.functions.FortuneEnchantBonus;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -122,6 +124,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CapabilityEnergy.register();
         MinecraftForge.EVENT_BUS.register(MinecraftForge.INTERNAL_HANDLER);
         MinecraftForge.EVENT_BUS.register(this);
+        LootFunctionManager.registerFunction(new FortuneEnchantBonus.Serializer());
 
         if (!ForgeMod.disableVersionCheck)
         {

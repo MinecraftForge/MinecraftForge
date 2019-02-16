@@ -1,0 +1,27 @@
+{
+  "pools": [
+    {
+      "name": "default_grass_drop",
+      "conditions": [
+        {
+          "condition": "random_chance",
+          "chance": 0.125
+        }
+      ],
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:wheat_seeds",
+          "functions": [
+            {
+              "function": "forge:fortune_enchant",
+              "multiplier": 2,
+              "offset": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

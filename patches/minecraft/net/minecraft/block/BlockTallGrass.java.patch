@@ -18,7 +18,7 @@
     }
  
     public int func_196251_a(IBlockState p_196251_1_, int p_196251_2_, World p_196251_3_, BlockPos p_196251_4_, Random p_196251_5_) {
-@@ -64,4 +64,18 @@
+@@ -64,4 +64,24 @@
     public Block.EnumOffsetType func_176218_Q() {
        return Block.EnumOffsetType.XYZ;
     }
@@ -31,9 +31,15 @@
 +
 +   @Override
 +   public void getDrops(IBlockState state, net.minecraft.util.NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
-+      if (world.field_73012_v.nextInt(8) != 0) return;
-+      ItemStack seed = net.minecraftforge.common.ForgeHooks.getGrassSeed(world.field_73012_v, fortune);
-+      if (!seed.func_190926_b())
-+         drops.add(seed);
++      if (world instanceof net.minecraft.world.WorldServer) {
++         net.minecraft.world.storage.loot.LootContext context = new net.minecraft.world.storage.loot.LootContext.Builder((net.minecraft.world.WorldServer) world).func_186470_a(harvesters.get()).func_186471_a();
++         java.util.List<ItemStack> poll = world.func_73046_m().func_200249_aQ().func_186521_a(GRASS_SEEDS).func_186462_a(world.field_73012_v, context);
++         if (!poll.isEmpty()) {
++            java.util.Collections.shuffle(poll, world.field_73012_v);
++            drops.add(poll.get(0));
++         }
++      }
 +   }
++
++   private static final net.minecraft.util.ResourceLocation GRASS_SEEDS = new net.minecraft.util.ResourceLocation("forge", "grass_seeds");
  }

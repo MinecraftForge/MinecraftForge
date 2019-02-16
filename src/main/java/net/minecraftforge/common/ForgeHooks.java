@@ -22,13 +22,10 @@ package net.minecraftforge.common;
 import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -150,38 +147,6 @@ public class ForgeHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
-    //TODO: Loot tables?
-    static class SeedEntry extends WeightedRandom.Item
-    {
-        @Nonnull
-        public final ItemStack seed;
-        public SeedEntry(@Nonnull ItemStack seed, int weight)
-        {
-            super(weight);
-            this.seed = seed;
-        }
-        @Nonnull
-        public ItemStack getStack(Random rand, int fortune)
-        {
-            return seed.copy();
-        }
-    }
-    static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
-
-    @Nonnull
-    public static ItemStack getGrassSeed(Random rand, int fortune)
-    {
-        if (seedList.size() == 0)
-        {
-            return ItemStack.EMPTY; //Some bad mods hack in and empty our list, so lets not hard crash -.-
-        }
-        SeedEntry entry = WeightedRandom.getRandomItem(rand, seedList);
-        if (entry == null || entry.seed.isEmpty())
-        {
-            return ItemStack.EMPTY;
-        }
-        return entry.getStack(rand, fortune);
-    }
 
     public static boolean canHarvestBlock(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
     {
