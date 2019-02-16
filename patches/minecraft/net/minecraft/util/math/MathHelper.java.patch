@@ -1,0 +1,25 @@
+--- a/net/minecraft/util/math/MathHelper.java
++++ b/net/minecraft/util/math/MathHelper.java
+@@ -90,18 +90,18 @@
+    }
+ 
+    public static float func_76131_a(float p_76131_0_, float p_76131_1_, float p_76131_2_) {
+-      if (p_76131_0_ < p_76131_1_) {
++      if (!(p_76131_0_ >= p_76131_1_)) {
+          return p_76131_1_;
+       } else {
+-         return p_76131_0_ > p_76131_2_ ? p_76131_2_ : p_76131_0_;
++         return !(p_76131_0_ <= p_76131_2_) ? p_76131_2_ : p_76131_0_;
+       }
+    }
+ 
+    public static double func_151237_a(double p_151237_0_, double p_151237_2_, double p_151237_4_) {
+-      if (p_151237_0_ < p_151237_2_) {
++      if (!(p_151237_0_ >= p_151237_2_)) {
+          return p_151237_2_;
+       } else {
+-         return p_151237_0_ > p_151237_4_ ? p_151237_4_ : p_151237_0_;
++         return !(p_151237_0_ <= p_151237_4_) ? p_151237_4_ : p_151237_0_;
+       }
+    }
+ 
