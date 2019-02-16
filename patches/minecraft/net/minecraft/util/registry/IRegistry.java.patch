@@ -27,10 +27,11 @@
 +   @Deprecated IRegistry<TileEntityType<?>> field_212626_o = func_212610_a("block_entity_type", (IRegistry<TileEntityType<?>>)net.minecraftforge.registries.GameData.getWrapper(TileEntityType.class));
     IRegistry<ChunkGeneratorType<?, ?>> field_212627_p = func_212610_a("chunk_generator_type", new RegistryNamespaced<>());
 -   IRegistry<Enchantment> field_212628_q = func_212610_a("enchantment", new RegistryNamespaced<>());
-+   @Deprecated IRegistry<Enchantment> field_212628_q = func_212610_a("enchantment", net.minecraftforge.registries.GameData.getWrapper(Enchantment.class));
-    IRegistry<EntityType<?>> field_212629_r = func_212610_a("entity_type", new RegistryNamespaced<>());
+-   IRegistry<EntityType<?>> field_212629_r = func_212610_a("entity_type", new RegistryNamespaced<>());
 -   IRegistry<Item> field_212630_s = func_212610_a("item", new RegistryNamespaced<>());
 -   IRegistry<Potion> field_212631_t = func_212610_a("mob_effect", new RegistryNamespaced<>());
++   @Deprecated IRegistry<Enchantment> field_212628_q = func_212610_a("enchantment", net.minecraftforge.registries.GameData.getWrapper(Enchantment.class));
++   IRegistry<EntityType<?>> field_212629_r = func_212610_a("entity_type", (IRegistry<EntityType<?>>) net.minecraftforge.registries.GameData.getWrapper(EntityType.class));
 +   @Deprecated IRegistry<Item> field_212630_s = func_212610_a("item",  net.minecraftforge.registries.GameData.getWrapper(Item.class));
 +   @Deprecated IRegistry<Potion> field_212631_t = func_212610_a("mob_effect", net.minecraftforge.registries.GameData.getWrapper(Potion.class));
     IRegistry<ParticleType<? extends IParticleData>> field_212632_u = func_212610_a("particle_type", new RegistryNamespaced<>());
