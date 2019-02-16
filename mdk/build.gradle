@@ -83,7 +83,7 @@ jar {
     manifest {
         attributes(["Specification-Title": "examplemod",
                     "Specification-Vendor": "examplemodsareus",
-                    "Specification-Version": "24.0", // We are version 1 of the modlauncher specification
+                    "Specification-Version": "1", // We are version 1 of ourselves
                     "Implementation-Title": project.name,
                     "Implementation-Version": "${version}",
                     "Implementation-Vendor" :"examplemodsareus",
