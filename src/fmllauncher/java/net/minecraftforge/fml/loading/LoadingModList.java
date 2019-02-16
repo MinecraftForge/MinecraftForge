@@ -105,8 +105,11 @@ public class LoadingModList
         return null;
     }
 
-    public URL findURLForResource(final String resourceName) {
+    public URL findURLForResource(String resourceName) {
         for (ModFileInfo mf : modFiles) {
+            // strip a leading slash
+            if (resourceName.startsWith("/")) resourceName = resourceName.substring(1);
+
             final Path resource = mf.getFile().findResource(resourceName);
             if (Files.exists(resource)) {
                 try {
