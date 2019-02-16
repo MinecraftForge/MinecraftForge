@@ -119,8 +119,8 @@ public class ModLoader
         final List<ModContainer> modContainers = loadingModList.getModFiles().stream().
                 map(ModFileInfo::getFile).
                 map(mf -> buildMods(mf, launchClassLoader)).
-                flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                flatMap(Collection::stream).
+                collect(Collectors.toList());
         if (!loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Failed to initialize mod containers");
             throw new LoadingFailedException(loadingExceptions);
