@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.javafmlmod;
 
 import net.minecraftforge.eventbus.EventBusErrorMessage;
+import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
@@ -28,7 +29,6 @@ import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModLoadingException;
 import net.minecraftforge.fml.ModLoadingStage;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.ModFileScanData;
 
@@ -61,7 +61,7 @@ public class FMLModContainer extends ModContainer
         triggerMap.put(ModLoadingStage.ENQUEUE_IMC, dummy().andThen(this::beforeEvent).andThen(this::initMod).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.PROCESS_IMC, dummy().andThen(this::beforeEvent).andThen(this::fireEvent).andThen(this::afterEvent));
         triggerMap.put(ModLoadingStage.COMPLETE, dummy().andThen(this::beforeEvent).andThen(this::completeLoading).andThen(this::fireEvent).andThen(this::afterEvent));
-        this.eventBus = IEventBus.create(this::onEventFailed);
+        this.eventBus = BusBuilder.builder().setExceptionHandler(this::onEventFailed).setTrackPhases(false).build();
         this.configHandler = Optional.of(event -> this.eventBus.post(event));
         final FMLJavaModLoadingContext contextExtension = new FMLJavaModLoadingContext(this);
         this.contextExtension = () -> contextExtension;
