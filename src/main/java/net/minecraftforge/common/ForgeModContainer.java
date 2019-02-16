@@ -56,7 +56,6 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.network.ForgeNetworkHandler;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.RegistryEvent.MissingMappings;
 import net.minecraftforge.event.terraingen.DeferredBiomeDecorator;
@@ -509,22 +508,6 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
             universalBucket.setUnlocalizedName("forge.bucketFilled");
             event.getRegistry().register(universalBucket.setRegistryName(ForgeVersion.MOD_ID, "bucketFilled"));
             MinecraftForge.EVENT_BUS.register(universalBucket);
-        }
-    }
-
-    @SubscribeEvent
-    public void injectGrassSeedLootTable(LootTableLoadEvent event)
-    {
-        if (ForgeHooks.GRASS_SEED_TABLE.equals(event.getName()))
-        {
-            if (!event.getTable().isFrozen())
-            {
-                event.getTable().addPool(new ForgeHooks.SeedListPool());
-            }
-            else
-            {
-                log.error("Failed to inject legacy grass seed list into loot table, this should not happen");
-            }
         }
     }
 

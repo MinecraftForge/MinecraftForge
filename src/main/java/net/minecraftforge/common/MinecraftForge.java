@@ -67,11 +67,12 @@ public class MinecraftForge
      * @param weight The relative probability of the seeds,
      *               where wheat seeds are 10.
      *
-     * @deprecated Forge now reserves a dummy loot table at path of forge:grass_seed, and
-     *             Forge will draw items from that loot table. While this method has been
-     *             retrofitted into loot table system and thus will remain functional,
-     *             it is advised to inject your own loot table into that dummy table via
-     *             {@link net.minecraftforge.event.LootTableLoadEvent LootTableLoadEvent}.
+     * @deprecated Forge now reserves a dummy loot table at the path of forge:grass_seed,
+     *             and Forge will draw items from that loot table for drops of grass.
+     *             While this method has been retrofitted into loot table system and thus
+     *             will remain functional, it is advised to inject your own loot table into
+     *             that dummy table via {@link net.minecraftforge.event.LootTableLoadEvent
+     *             LootTableLoadEvent}.
      *
      * TODO: Remove both methods before 1.14 when all block drops use loot table system
      */

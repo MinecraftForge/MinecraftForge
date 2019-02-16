@@ -25,6 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -102,6 +103,22 @@ public class ForgeInternalHandler
     {
         if (!event.getWorld().isRemote)
             FarmlandWaterManager.removeTickets(event.getChunk());
+    }
+
+    @SubscribeEvent
+    public void onLootTableLoad(LootTableLoadEvent event)
+    {
+        if (ForgeHooks.GRASS_SEED_TABLE.equals(event.getName()))
+        {
+            if (!event.getTable().isFrozen())
+            {
+                event.getTable().addPool(new ForgeHooks.SeedListPool());
+            }
+            else
+            {
+                ForgeModContainer.log.error("Cannot inject legacy grass seed list into a frozen loot table, this should not happen");
+            }
+        }
     }
 }
 

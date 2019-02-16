@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -186,8 +187,9 @@ public class ForgeHooks
 
     /**
      * A hacked LootPool implementation that makes sure that the old seedList are still supported
-     * for sake of backward compatiblities and can draw items from that list using the old logic as well.
-     * This implementation is NOT for public uses! Modders should use vanilla LootTable directly instead.
+     * for sake of backward compatibilities, and that Forge can still draw items from that list
+     * using the old logic as well. This implementation is NOT for public uses! Modders should
+     * directly use vanilla LootTable instead.
      */
     // TODO Remove this when MinecraftForge#addGrassSeed are removed
     static final class SeedListPool extends LootPool
@@ -219,13 +221,15 @@ public class ForgeHooks
 
     /**
      * Path of dummy loot table used by populating grass seed drop. The actual content is injected via
-     * {@link ForgeModContainer#injectGrassSeedLootTable}.
+     * {@link ForgeInternalHandler#onLootTableLoad}.
      */
     static final ResourceLocation GRASS_SEED_TABLE = new ResourceLocation(ForgeVersion.MOD_ID, "grass_seed");
 
     @Nonnull
     public static ItemStack getGrassSeed(Random rand, int fortune)
     {
+        // Passes fortune level as "luck" to the LootContext so that it can be used
+        // TODO Properly introduce EntityPlayer as new param of getGrassSeed
         LootContext.Builder contextBuilder = new LootContext.Builder(FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0)).withLuck(fortune);
         List<ItemStack> poll = FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(0).getLootTableManager().getLootTableFromLocation(GRASS_SEED_TABLE).generateLootForPools(rand, contextBuilder.build());
         if (poll.isEmpty())
@@ -234,6 +238,7 @@ public class ForgeHooks
         }
         else
         {
+            Collections.shuffle(poll, rand);
             return poll.get(0);
         }
     }
