@@ -1,14 +1,16 @@
 --- a/net/minecraft/item/Item.java
 +++ b/net/minecraft/item/Item.java
-@@ -48,7 +48,7 @@
+@@ -48,8 +48,8 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public class Item implements IItemProvider {
+-   public static final Map<Block, Item> field_179220_a = Maps.newHashMap();
 +public class Item extends net.minecraftforge.registries.ForgeRegistryEntry<Item> implements IItemProvider, net.minecraftforge.common.extensions.IForgeItem {
-    public static final Map<Block, Item> field_179220_a = Maps.newHashMap();
++   public static final Map<Block, Item> field_179220_a = net.minecraftforge.registries.GameData.getBlockItemMap();
     private static final IItemPropertyGetter field_185046_b = (p_210306_0_, p_210306_1_, p_210306_2_) -> {
        return p_210306_0_.func_77951_h() ? 1.0F : 0.0F;
+    };
 @@ -96,6 +96,10 @@
        this.field_77700_c = p_i48487_1_.field_200922_c;
        this.field_77699_b = p_i48487_1_.field_200921_b;
