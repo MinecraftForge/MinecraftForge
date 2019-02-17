@@ -61,11 +61,11 @@ public class LaunchTesting
         if (Objects.equals(target,"fmldevclient")) {
             hackNatives();
             launchArgs = ObjectArrays.concat(launchArgs, new String[] {
-                            "--accessToken", "blah",
-                            "--version", "FMLDev",
-                            "--assetIndex", "1.13.1",
-                            "--assetsDir", assets,
-                            "--userProperties", "{}"
+                    "--accessToken", "blah",
+                    "--version", "FMLDev",
+                    "--assetIndex", System.getenv("assetIndex"),
+                    "--assetsDir", assets,
+                    "--userProperties", "{}"
             }, String.class);
         } else {
             launchArgs = ObjectArrays.concat(launchArgs, args, String.class);
