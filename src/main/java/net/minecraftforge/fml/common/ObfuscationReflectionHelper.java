@@ -162,7 +162,7 @@ public class ObfuscationReflectionHelper
     {
         Preconditions.checkNotNull(clazz);
         Preconditions.checkNotNull(methodName);
-        Preconditions.checkArgument(methodName.isEmpty(), "Method name cannot be empty");
+        Preconditions.checkArgument(!methodName.isEmpty(), "Method name cannot be empty");
 
         try
         {
