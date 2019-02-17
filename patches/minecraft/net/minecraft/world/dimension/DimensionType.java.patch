@@ -52,7 +52,7 @@
     }
  
     public File func_212679_a(File p_212679_1_) {
-@@ -47,7 +59,7 @@
+@@ -47,11 +59,11 @@
     }
  
     public Dimension func_186070_d() {
@@ -61,6 +61,11 @@
     }
  
     public String toString() {
+-      return func_212678_a(this).toString();
++      return "DimensionType{" + func_212678_a(this) + "}";
+    }
+ 
+    @Nullable
 @@ -59,7 +71,21 @@
        return IRegistry.field_212622_k.func_148754_a(p_186069_0_ - -1);
     }
