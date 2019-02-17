@@ -36,6 +36,7 @@ import net.minecraftforge.event.entity.player.PlayerContainerEvent;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class NetworkHooks
 {
@@ -89,19 +90,24 @@ public class NetworkHooks
         return FMLHandshakeHandler.tickLogin(networkManager);
     }
 
+    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier)
+    {
+        openGui(player, containerSupplier, buf -> {});
+    }
+
     /**
      * Server method to tell the client to open a GUI on behalf of the server
      *
      * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
      * It should refer to a valid modId namespace, to trigger opening on the client.
      * The namespace is directly used to lookup the modId in the client side.
-     * The maximum size for #extraData is 32600 bytes.
+     * The maximum size for #extraDataWriter is 32600 bytes.
      *
      * @param player The player to open the GUI for
      * @param containerSupplier The Container Supplier
-     * @param extraData Additional data for the GUI
+     * @param extraDataWriter Consumer to write any additional data the GUI needs
      */
-    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, @Nullable PacketBuffer extraData)
+    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, Consumer<PacketBuffer> extraDataWriter)
     {
         if (player.world.isRemote) return;
         ResourceLocation id = new ResourceLocation(containerSupplier.getGuiID());
@@ -114,13 +120,13 @@ public class NetworkHooks
         player.openContainer.addListener(player);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
 
+        PacketBuffer extraData = new PacketBuffer(Unpooled.buffer());
+        extraDataWriter.accept(extraData);
+        extraData.readerIndex(0); // reset to beginning in case modders read for whatever reason
+
         PacketBuffer output = new PacketBuffer(Unpooled.buffer());
-        if (extraData == null) {
-            output.writeVarInt(0);
-        } else {
-            output.writeVarInt(extraData.readableBytes());
-            output.writeBytes(extraData);
-        }
+        output.writeVarInt(extraData.readableBytes());
+        output.writeBytes(extraData);
 
         if (output.readableBytes() > 32600 || output.readableBytes() < 1) {
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
