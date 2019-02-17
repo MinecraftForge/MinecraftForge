@@ -52,7 +52,7 @@ public class TextComponentHelper
         {
             EntityPlayerMP playerMP = (EntityPlayerMP) sender;
             NetHandlerPlayServer channel = playerMP.connection;
-            return NetworkHooks.getConnectionType(channel) == ConnectionType.VANILLA;
+            return NetworkHooks.getConnectionType(()->channel.netManager) == ConnectionType.VANILLA;
         }
         return false;
     }

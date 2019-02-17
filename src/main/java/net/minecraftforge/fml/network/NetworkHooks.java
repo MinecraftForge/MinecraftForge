@@ -23,7 +23,6 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -33,13 +32,17 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.fml.config.ConfigTracker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class NetworkHooks
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     public static final String NETVERSION = "FML1";
     public static final String NOVERSION = "NONE";
 
@@ -53,9 +56,9 @@ public class NetworkHooks
         return Objects.equals(packet.getFMLVersion(), NETVERSION) || NetworkRegistry.acceptsVanillaConnections();
     }
 
-    public static ConnectionType getConnectionType(final NetHandlerPlayServer connection)
+    public static ConnectionType getConnectionType(final Supplier<NetworkManager> connection)
     {
-        return ConnectionType.forVersionFlag(connection.netManager.channel().attr(FMLNetworking.FML_MARKER).get());
+        return ConnectionType.forVersionFlag(connection.get().channel().attr(FMLNetworking.FML_MARKER).get());
     }
 
     public static Packet<?> getEntitySpawningPacket(Entity entity)
@@ -80,9 +83,19 @@ public class NetworkHooks
 
     public static void registerClientLoginChannel(NetworkManager manager)
     {
-        if (manager == null) return;
-        manager.channel().attr(FMLNetworking.FML_MARKER).set(NETVERSION);
+        if (manager == null || manager.channel() == null) return;
+        manager.channel().attr(FMLNetworking.FML_MARKER).set(NOVERSION);
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
+    }
+
+    public static void handleClientLoginSuccess(NetworkManager manager) {
+        if (manager == null || manager.channel() == null) return;
+        if (getConnectionType(()->manager) == ConnectionType.VANILLA) {
+            LOGGER.info("Connected to a vanilla server. Catching up missing behaviour.");
+            ConfigTracker.INSTANCE.loadDefaultServerConfigs();
+        } else {
+            LOGGER.info("Connected to a modded server.");
+        }
     }
 
     public static boolean tickNegotiation(NetHandlerLoginServer netHandlerLoginServer, NetworkManager networkManager, EntityPlayerMP player)

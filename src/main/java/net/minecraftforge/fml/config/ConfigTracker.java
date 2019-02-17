@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.config;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.toml.TomlFormat;
 import net.minecraft.client.Minecraft;
@@ -97,5 +98,13 @@ public class ConfigTracker {
                 mc.fireEvent(new ModConfig.ConfigReloading(mc));
             });
         }
+    }
+
+    public void loadDefaultServerConfigs() {
+        configSets.get(ModConfig.Type.SERVER).forEach(modConfig -> {
+            final CommentedConfig commentedConfig = CommentedConfig.inMemory();
+            modConfig.getSpec().correct(commentedConfig);
+            modConfig.setConfigData(commentedConfig);
+        });
     }
 }

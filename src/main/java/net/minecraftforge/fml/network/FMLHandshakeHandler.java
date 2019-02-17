@@ -197,6 +197,8 @@ public class FMLHandshakeHandler {
         final FMLHandshakeMessages.C2SModListReply reply = new FMLHandshakeMessages.C2SModListReply();
         channel.reply(reply, c.get());
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
+        // Set the modded marker on the channel so we know we got packets
+        c.get().getNetworkManager().channel().attr(FMLNetworking.FML_MARKER).set(NetworkHooks.NETVERSION);
     }
 
     private <MSG extends FMLHandshakeMessages.LoginIndexedMessage> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
