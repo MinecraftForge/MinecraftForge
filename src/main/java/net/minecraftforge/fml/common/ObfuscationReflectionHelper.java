@@ -153,7 +153,7 @@ public class ObfuscationReflectionHelper
      * Throws an exception if the method is not found.
      *
      * @param clazz          The class to find the method on.
-     * @param methodName     The MCP (obfuscated) name of the method to find(e.g. "func_72820_D").
+     * @param methodName     The SRG (obfuscated) name of the method to find(e.g. "func_72820_D").
      * @param parameterTypes The parameter types of the method to find.
      * @return The method with the specified name and parameters in the given class.
      */
