@@ -64,13 +64,23 @@ public interface IRecipeInventory extends IInventory
     int getHeight();
 
     /**
-     * returns the width of this inventory.
+     * Returns the width of this inventory.
      */
     int getWidth();
 
+    /**
+     * Removes the stack contained in this slot from the underlying handler, and returns it.
+     */
+    default ItemStack removeStackFromSlot(int index)
+    {
+        ItemStack s = getStackInSlot(index);
+        if(s.isEmpty()) return ItemStack.EMPTY;
+        setInventorySlotContents(index, ItemStack.EMPTY);
+        return s;
+    }
+
     //The following methods are never used by vanilla in crafting.  They are defaulted and defunct as mods need not override them.
     default boolean isEmpty() { return false; }
-    default ItemStack removeStackFromSlot(int index) { return ItemStack.EMPTY; }
     default int getInventoryStackLimit() { return 0; }
     default void markDirty() {}
     default boolean isUsableByPlayer(EntityPlayer player) { return false; }

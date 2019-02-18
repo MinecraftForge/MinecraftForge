@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import com.google.common.collect.Maps;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.resources.IResourceManager;
@@ -82,6 +83,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
     /**
      * Used to find a matching recipe for the given inv, world, and type.
      * Since this requires an IInventory, modders can use {@link IRecipeInventory} or {@link RecipeStackHandler} to avoid direct implementation.
+     * For crafting recipes, it is advised to still use {@link InventoryCrafting}.  The dynamic vanilla recipes require they be crafted in one.
      * @param input An inventory.
      * @param world The world.
      * @param type The type of recipe to match against.
