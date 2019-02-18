@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.*;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -84,6 +85,21 @@ public class SimpleChannel
     public <MSG> void sendTo(MSG message, NetworkManager manager, NetworkDirection direction)
     {
         manager.sendPacket(toVanillaPacket(message, direction));
+    }
+
+    /**
+     * Send a message to the {@link PacketDistributor.PacketTarget} from a {@link PacketDistributor} instance.
+     *
+     * <pre>
+     *     channel.send(PacketDistributor.PLAYER.with(()->player), message)
+     * </pre>
+     *
+     * @param target The curried target from a PacketDistributor
+     * @param message The message to send
+     * @param <MSG> The type of the message
+     */
+    public <MSG> void send(PacketDistributor.PacketTarget target, MSG message) {
+        target.send(toVanillaPacket(message, target.getDirection()));
     }
 
     public <MSG> Packet<?> toVanillaPacket(MSG message, NetworkDirection direction)
