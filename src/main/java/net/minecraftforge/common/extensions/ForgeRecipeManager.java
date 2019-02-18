@@ -40,6 +40,9 @@ import net.minecraftforge.common.crafting.RecipeType;
 @SuppressWarnings("deprecation")
 public abstract class ForgeRecipeManager implements IResourceManagerReloadListener
 {
+	/**
+	 * Master list of sorted recipes.
+	 */
     protected final Map<RecipeType<? extends IRecipe>, List<? extends IRecipe>> sortedRecipes = Maps.newHashMap();
 
     @Override
@@ -48,12 +51,25 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
         CraftingHelper.reloadConstants(resourceManager);
     }
 
+    /**
+     * Returns all the recipes that match this type.
+     * @param type A recipe type.
+     * @return A mutable view of all the recipes that match this type.  Callers should not modify the returned list.
+     */
     @SuppressWarnings("unchecked")
     public <T extends IRecipe> List<T> getRecipes(RecipeType<T> type)
     {
         return (List<T>) this.sortedRecipes.computeIfAbsent(type, t -> new ArrayList<>());
     }
 
+    /**
+     * Automatically returns a result from the first recipe that matches this inv and type.
+     * Modders should probably not use this, and instead use {@link #getRecipe(IInventory, World, RecipeType)} since you get the recipe object itself.
+     * @param input An inventory.
+     * @param world The world.
+     * @param type The type of recipe to match against.
+     * @return The output of the first matching recipe, or {@link ItemStack#EMPTY} if no recipes match.
+     */
     public ItemStack getResult(IInventory input, World world, RecipeType<?> type)
     {
         for(IRecipe irecipe : getRecipes(type))
@@ -61,6 +77,13 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
         return ItemStack.EMPTY;
     }
 
+    /**
+     * Used to find a matching recipe for the given inv, world, and type.
+     * @param input An inventory.
+     * @param world The world.
+     * @param type The type of recipe to match against.
+     * @return The first matching recipe.
+     */
 	@Nullable
     public <T extends IRecipe> T getRecipe(IInventory input, World world, RecipeType<T> type)
     {
@@ -72,6 +95,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
     /**
      * Modders should not use this if possible.  In the context that this is used, you should already have the recipe.  Do not run extra lookups using this method.
      */
+	@Deprecated
     public NonNullList<ItemStack> getRemainingItems(IInventory input, World world, RecipeType<?> type)
     {
         for(IRecipe irecipe : getRecipes(type))
