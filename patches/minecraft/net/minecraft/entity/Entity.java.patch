@@ -177,7 +177,7 @@
           this.field_184239_as = null;
           entity.func_184225_p(this);
        }
-@@ -1790,10 +1810,15 @@
+@@ -1790,6 +1810,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
@@ -185,15 +185,7 @@
     public boolean func_205710_ba() {
        return true;
     }
- 
-+   public boolean canBeRiddenInWater(Entity rider) {
-+      return func_205710_ba();
-+   }
-+
-    public boolean func_70093_af() {
-       return this.func_70083_f(1);
-    }
-@@ -1991,7 +2016,7 @@
+@@ -1991,7 +2012,7 @@
           func_207712_c(itextcomponent1);
           return itextcomponent1;
        } else {
@@ -202,7 +194,7 @@
        }
     }
  
-@@ -2054,6 +2079,14 @@
+@@ -2054,6 +2075,14 @@
  
     @Nullable
     public Entity func_212321_a(DimensionType p_212321_1_) {
@@ -210,14 +202,14 @@
 +      return changeDimension(p_212321_1_, this.func_184102_h().func_71218_a(p_212321_1_).func_85176_s());
 +   }
 +
-+   @Nullable // Forge: Entities that require custom handling should override this method, not the other
-+   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter)
-+   {
++   @Nullable
++   @Override
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
           this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
           MinecraftServer minecraftserver = this.func_184102_h();
-@@ -2061,7 +2094,7 @@
+@@ -2061,7 +2090,7 @@
           WorldServer worldserver = minecraftserver.func_71218_a(dimensiontype);
           WorldServer worldserver1 = minecraftserver.func_71218_a(p_212321_1_);
           this.field_71093_bK = p_212321_1_;
@@ -226,7 +218,7 @@
              worldserver1 = minecraftserver.func_71218_a(DimensionType.OVERWORLD);
              this.field_71093_bK = DimensionType.OVERWORLD;
           }
-@@ -2070,16 +2103,16 @@
+@@ -2070,16 +2099,16 @@
           this.field_70128_L = false;
           this.field_70170_p.field_72984_F.func_76320_a("reposition");
           BlockPos blockpos;
@@ -249,7 +241,7 @@
                 d0 = MathHelper.func_151237_a(d0 * 8.0D, worldserver1.func_175723_af().func_177726_b() + 16.0D, worldserver1.func_175723_af().func_177728_d() - 16.0D);
                 d1 = MathHelper.func_151237_a(d1 * 8.0D, worldserver1.func_175723_af().func_177736_c() + 16.0D, worldserver1.func_175723_af().func_177733_e() - 16.0D);
              }
-@@ -2088,8 +2121,7 @@
+@@ -2088,8 +2117,7 @@
              d1 = (double)MathHelper.func_76125_a((int)d1, -29999872, 29999872);
              float f = this.field_70177_z;
              this.func_70012_b(d0, this.field_70163_u, d1, 90.0F, 0.0F);
@@ -259,7 +251,7 @@
              blockpos = new BlockPos(this);
           }
  
-@@ -2098,7 +2130,7 @@
+@@ -2098,7 +2126,7 @@
           Entity entity = this.func_200600_R().func_200721_a(worldserver1);
           if (entity != null) {
              entity.func_180432_n(this);
@@ -268,10 +260,12 @@
                 BlockPos blockpos1 = worldserver1.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, worldserver1.func_175694_M());
                 entity.func_174828_a(blockpos1, entity.field_70177_z, entity.field_70125_A);
              } else {
-@@ -2592,4 +2624,56 @@
+@@ -2592,4 +2620,57 @@
     public double func_212107_bY() {
        return this.field_211517_W;
     }
++   
++   /* ================================== Forge Start =====================================*/
 +
 +   private boolean canUpdate = true;
 +   @Override
@@ -308,7 +302,6 @@
 +         && this.field_70130_N * this.field_70130_N * this.field_70131_O > 0.512F;
 +   }
 +
-+   /* ================================== Forge Start =====================================*/
 +   /**
 +    * Internal use for keeping track of entities that are tracked by a world, to
 +    * allow guarantees that entity position changes will force a chunk load, avoiding
