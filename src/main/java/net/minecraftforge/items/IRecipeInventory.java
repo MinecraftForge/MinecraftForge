@@ -43,7 +43,7 @@ public interface IRecipeInventory extends IInventory
     /**
      * Returns the stack in this slot.  This stack should be a modifiable reference, not a copy of a stack in your inventory.
      */
-    ItemStack getStackInSlot(int index);
+    ItemStack getStack(int index);
 
     /**
      * Attempts to remove n items from the specified slot.  Returns the split stack that was removed.  Modifies the inventory.

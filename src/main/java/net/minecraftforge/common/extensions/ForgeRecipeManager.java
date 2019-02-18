@@ -36,6 +36,8 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.RecipeType;
+import net.minecraftforge.items.IRecipeInventory;
+import net.minecraftforge.items.RecipeStackHandler;
 
 @SuppressWarnings("deprecation")
 public abstract class ForgeRecipeManager implements IResourceManagerReloadListener
@@ -79,6 +81,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
 
     /**
      * Used to find a matching recipe for the given inv, world, and type.
+     * Since this requires an IInventory, modders can use {@link IRecipeInventory} or {@link RecipeStackHandler} to avoid direct implementation.
      * @param input An inventory.
      * @param world The world.
      * @param type The type of recipe to match against.

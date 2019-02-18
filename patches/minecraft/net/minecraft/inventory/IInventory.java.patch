@@ -1,0 +1,20 @@
+--- a/net/minecraft/inventory/IInventory.java
++++ b/net/minecraft/inventory/IInventory.java
+@@ -9,7 +9,7 @@
+ 
+    boolean func_191420_l();
+ 
+-   ItemStack func_70301_a(int p_70301_1_);
++   default ItemStack func_70301_a(int p_70301_1_) { return getStack(p_70301_1_); }
+ 
+    ItemStack func_70298_a(int p_70298_1_, int p_70298_2_);
+ 
+@@ -44,4 +44,8 @@
+    default int func_174922_i() {
+       return 0;
+    }
++   //This is a hack to avoid obfuscation issues in IRecipeInventory.
++   default ItemStack getStack(int index) {
++      return ItemStack.field_190927_a;
++   }
+ }
