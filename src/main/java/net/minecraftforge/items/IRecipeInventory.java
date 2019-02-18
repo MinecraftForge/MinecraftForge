@@ -27,7 +27,7 @@ import net.minecraft.util.text.ITextComponent;
 /**
  * This is an extension of IInventory that can be used for matching with recipes.  This defaults all the methods that are not used by crafting recipes.
  * Mods should take into account what methods are defaulted here when calling IInventory methods during recipe matching or crafting.
- * See 
+ * See {@link RecipeStackHandler}.
  */
 public interface IRecipeInventory extends IInventory
 {
