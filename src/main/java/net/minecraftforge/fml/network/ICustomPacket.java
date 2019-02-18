@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.network;
 
-import io.netty.buffer.Unpooled;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceArrayMap;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -28,14 +27,13 @@ import net.minecraft.network.login.server.SPacketCustomPayloadLogin;
 import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.UnsafeHacks;
+import net.minecraftforge.fml.unsafe.UnsafeHacks;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

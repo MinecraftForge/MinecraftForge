@@ -293,6 +293,7 @@ project(':forge') {
         installer 'net.minecraftforge:eventbus:0.7.+:service'
         installer 'net.minecraftforge:forgespi:0.6.+'
         installer 'net.minecraftforge:coremods:0.3.+'
+        installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.4.2'
         installer 'com.electronwill.night-config:toml:3.4.2'
         installer 'org.jline:jline:3.9.0'
