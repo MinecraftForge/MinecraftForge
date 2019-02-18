@@ -43,9 +43,9 @@ import net.minecraftforge.items.RecipeStackHandler;
 @SuppressWarnings("deprecation")
 public abstract class ForgeRecipeManager implements IResourceManagerReloadListener
 {
-	/**
-	 * Master list of sorted recipes.
-	 */
+    /**
+     * Master list of sorted recipes.
+     */
     protected final Map<RecipeType<? extends IRecipe>, List<? extends IRecipe>> sortedRecipes = Maps.newHashMap();
 
     @Override
@@ -89,7 +89,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
      * @param type The type of recipe to match against.
      * @return The first matching recipe.
      */
-	@Nullable
+    @Nullable
     public <T extends IRecipe> T getRecipe(IInventory input, World world, RecipeType<T> type)
     {
         for(T irecipe : getRecipes(type))
@@ -100,7 +100,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
     /**
      * Modders should not use this if possible.  In the context that this is used, you should already have the recipe.  Do not run extra lookups using this method.
      */
-	@Deprecated
+    @Deprecated
     public NonNullList<ItemStack> getRemainingItems(IInventory input, World world, RecipeType<?> type)
     {
         for(IRecipe irecipe : getRecipes(type))
