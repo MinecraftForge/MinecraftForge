@@ -8,13 +8,17 @@
        field_209347_a.put(p_209346_0_, new EntitySpawnPlacementRegistry.Entry(p_209346_2_, p_209346_1_, p_209346_3_));
     }
  
-@@ -109,5 +110,20 @@
-    public static enum SpawnPlacementType {
+@@ -106,8 +107,23 @@
+       }
+    }
+ 
+-   public static enum SpawnPlacementType {
++   public static enum SpawnPlacementType implements net.minecraftforge.common.IExtensibleEnum {
        ON_GROUND,
        IN_WATER;
 +
 +      public static SpawnPlacementType create(String name, net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReaderBase, net.minecraft.util.math.BlockPos, EntityType<? extends EntityLiving>> predicate) {
-+         return null;
++         throw new IllegalStateException("Enum not extended");
 +      }
 +
 +      private net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReaderBase, net.minecraft.util.math.BlockPos, EntityType<? extends EntityLiving>> predicate;
