@@ -31,6 +31,9 @@ net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;
 net/minecraft/server/management/PlayerList.changePlayerDimension(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_187242_1_,p_187242_2_,teleporter
 net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
 
+net/minecraft/tileentity/BannerPattern.create(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/tileentity/BannerPattern;=|enumName,p_i47246_3_,p_i47246_4_,p_i47246_5_
+net/minecraft/tileentity/BannerPattern.create(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/minecraft/tileentity/BannerPattern;=|enumName,p_i47247_3_,p_i47247_4_,p_i47247_5_,p_i47247_6_,p_i47247_7_
+
 net/minecraft/village/Village.getPlayerReputation(Ljava/util/UUID;)I=|p_82684_1_
 net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_82688_1_,p_82688_2_
 
