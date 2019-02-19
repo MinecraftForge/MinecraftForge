@@ -1,0 +1,40 @@
+--- a/net/minecraft/block/BlockSeaGrass.java
++++ b/net/minecraft/block/BlockSeaGrass.java
+@@ -23,7 +23,7 @@
+ import net.minecraft.world.IWorld;
+ import net.minecraft.world.World;
+ 
+-public class BlockSeaGrass extends BlockBush implements IGrowable, ILiquidContainer {
++public class BlockSeaGrass extends BlockBush implements IGrowable, ILiquidContainer, net.minecraftforge.common.IShearable {
+    protected static final VoxelShape field_207798_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 12.0D, 14.0D);
+ 
+    protected BlockSeaGrass(Block.Properties p_i48780_1_) {
+@@ -54,11 +54,7 @@
+    }
+ 
+    public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
+-      if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ) {
+-         p_180657_2_.func_71029_a(StatList.field_188065_ae.func_199076_b(this));
+-         p_180657_2_.func_71020_j(0.005F);
+-         func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(this));
+-      } else {
++      {
+          super.func_180657_a(p_180657_1_, p_180657_2_, p_180657_3_, p_180657_4_, p_180657_5_, p_180657_6_);
+       }
+ 
+@@ -102,4 +98,15 @@
+    public int func_200011_d(IBlockState p_200011_1_, IBlockReader p_200011_2_, BlockPos p_200011_3_) {
+       return Blocks.field_150355_j.func_176223_P().func_200016_a(p_200011_2_, p_200011_3_);
+    }
++   
++   @Override
++   public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos) {
++      return true;
++   }
++
++   @Override
++   public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, BlockPos pos, int fortune) {
++      world.func_180501_a(pos, Blocks.field_150350_a.func_176223_P(), 11);
++      return java.util.Arrays.asList(new ItemStack(this));
++   }
+ }
