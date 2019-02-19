@@ -102,7 +102,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         this.defaultKey = builder.getDefault();
         this.min = builder.getMinId();
         this.max = builder.getMaxId();
-        this.availabilityMap = new BitSet(Math.min(max + 1, 0x0FFF));
+        this.availabilityMap = new BitSet(Math.min(max, 0x0FFF) + 1);
         this.create = builder.getCreate();
         this.add = builder.getAdd();
         this.clear = builder.getClear();

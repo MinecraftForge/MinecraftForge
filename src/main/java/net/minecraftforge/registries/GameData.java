@@ -86,17 +86,8 @@ public class GameData
     public static final ResourceLocation TILEENTITIES = new ResourceLocation("minecraft:tileentities");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
-    private static final int MAX_REGISTRY_SIZE = Integer.MAX_VALUE >> 5;
-    private static final int MAX_BLOCK_ID = 4095;
-    private static final int MAX_ITEM_ID = 31999;
+
     private static final int MAX_POTION_ID = 255; // SPacketEntityEffect sends bytes, we can only use 255
-    private static final int MAX_BIOME_ID = 255; // Maximum number in a byte in the chunk
-    private static final int MAX_SOUND_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSoundEffect)
-    private static final int MAX_POTIONTYPE_ID = MAX_REGISTRY_SIZE; // Int (SPacketEffect)
-    private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
-    private static final int MAX_ENTITY_ID = MAX_REGISTRY_SIZE; // Varint (SPacketSpawnMob)
-    private static final int MAX_TILE_ENTITY_ID = Integer.MAX_VALUE; //Doesnt seem to be serialized anywhere, so no max.
-    private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
 
     private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
@@ -119,27 +110,28 @@ public class GameData
         if (hasInit)
             return;
         hasInit = true;
-        makeRegistry(BLOCKS,       Block.class,       MAX_BLOCK_ID, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).create();
-        makeRegistry(ITEMS,        Item.class,        MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).create();
-        makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).create();
-        makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).create();
-        makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
-        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
-        makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
+        makeRegistry(BLOCKS,        Block.class, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).create();
+        makeRegistry(ITEMS,         Item.class).addCallback(ItemCallbacks.INSTANCE).create();
+        makeRegistry(POTIONS,       Potion.class).setMaxID(MAX_POTION_ID).create();
+        makeRegistry(BIOMES,        Biome.class).create();
+        makeRegistry(SOUNDEVENTS,   SoundEvent.class).create();
+        makeRegistry(POTIONTYPES,   PotionType.class, new ResourceLocation("empty")).create();
+        makeRegistry(ENCHANTMENTS,  Enchantment.class).create();
+        makeRegistry(PROFESSIONS,   VillagerProfession.class).create();
         // TODO do we need the callback and the static field anymore?
-        makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).create();
-        makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).disableSaving().create();
-        makeRegistry(MODDIMENSIONS, ModDimension.class, MAX_REGISTRY_SIZE).disableSaving().create();
+        makeRegistry(ENTITIES,      EntityType.class).create();
+        makeRegistry(TILEENTITIES,  TileEntityType.class).disableSaving().create();
+        makeRegistry(MODDIMENSIONS, ModDimension.class).disableSaving().create();
     }
 
-    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max)
+    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(name).setType(type).addCallback(new NamespacedWrapper.Factory<T>());
     }
-    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max, ResourceLocation _default)
+
+    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, ResourceLocation _default)
     {
-        return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(_default);
+        return new RegistryBuilder<T>().setName(name).setType(type).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(_default);
     }
 
     public static <V extends IForgeRegistryEntry<V>> RegistryNamespacedDefaultedByKey<V> getWrapperDefaulted(Class<V> cls)
@@ -312,44 +304,13 @@ public class GameData
                     }));
                     throw new RuntimeException("Invalid vanilla replacement. See log for details.");
                 }
-            }
-/*
 
-            if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
-            {
-                for (int meta = 0; meta < 15; meta++)
-                    blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta);
-            }
-
-            //So, due to blocks having more in-world states then metadata allows, we have to turn the map into a semi-milti-bimap.
-            //We can do this however because the implementation of the map is last set wins. So we can add all states, then fix the meta bimap.
-            //Multiple states -> meta. But meta to CORRECT state.
-
-            final boolean[] usedMeta = new boolean[16]; //Hold a list of known meta from all states.
-            for (IBlockState state : block.getBlockState().getValidStates())
-            {
-                final int meta = block.getMetaFromState(state);
-                blockstateMap.put(state, id << 4 | meta); //Add ALL the things!
-                usedMeta[meta] = true;
-            }
-
-            for (int meta = 0; meta < 16; meta++)
-            {
-                if (block.getClass() == BlockObserver.class)
-                    continue; //Observers are bad and have non-cyclical states. So we HAVE to use the vanilla logic above.
-                if (usedMeta[meta])
-                    blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
-            }
-
-            if (oldBlock != null)
-            {
                 @SuppressWarnings("unchecked")
                 BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
                 Item item = blockToItem.get(oldBlock);
                 if (item != null)
                     blockToItem.forcePut(block, item);
             }
-*/
         }
 
         @Override
@@ -361,20 +322,7 @@ public class GameData
         @Override
         public void onCreate(IForgeRegistryInternal<Block> owner, RegistryManager stage)
         {
-            final ClearableObjectIntIdentityMap<IBlockState> idMap = new ClearableObjectIntIdentityMap<IBlockState>()
-            {
-                @Override
-                public int get(IBlockState key)
-                {
-                    Integer integer = (Integer)this.identityMap.get(key);
-                    // There are some cases where this map is queried to serialize a state that is valid,
-                    //but somehow not in this list, so attempt to get real metadata. Doing this hear saves us 7 patches
-                    //if (integer == null && key != null)
-                    //    integer = this.identityMap.get(key.getBlock().getStateFromMeta(key.getBlock().getMetaFromState(key)));
-                    return integer == null ? -1 : integer.intValue();
-                }
-            };
-            owner.setSlaveMap(BLOCKSTATE_TO_ID, idMap);
+            owner.setSlaveMap(BLOCKSTATE_TO_ID, new ClearableObjectIntIdentityMap<IBlockState>());
             owner.setSlaveMap(BLOCK_TO_ITEM, Maps.newHashMap());
         }
 

@@ -21,6 +21,7 @@ package net.minecraftforge.registries;
 
 import java.util.List;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 
 import net.minecraft.util.ResourceLocation;
@@ -30,13 +31,11 @@ import javax.annotation.Nullable;
 
 public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 {
-    private static final int MAX_ID = Integer.MAX_VALUE - 1;
-
     private ResourceLocation registryName;
     private Class<T> registryType;
     private ResourceLocation optionalDefaultKey;
     private int minId = 0;
-    private int maxId = MAX_ID;
+    private int maxId = Integer.MAX_VALUE;
     private List<AddCallback<T>> addCallback = Lists.newArrayList();
     private List<ClearCallback<T>> clearCallback = Lists.newArrayList();
     private List<CreateCallback<T>> createCallback = Lists.newArrayList();
@@ -62,8 +61,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
 
     public RegistryBuilder<T> setIDRange(int min, int max)
     {
-        this.minId = Math.max(min, 0);
-        this.maxId = Math.min(max, MAX_ID);
+        Preconditions.checkArgument(min >= 0, "min ID must be at least zero");
+        Preconditions.checkArgument(max >= min, "max ID must be at least min ID");
+        this.minId = min;
+        this.maxId = max;
         return this;
     }
 
