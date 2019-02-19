@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/Minecraft.java
 +++ b/net/minecraft/client/Minecraft.java
+@@ -314,7 +314,7 @@
+             supplier = p_211818_2_;
+          }
+ 
+-         return new ResourcePackInfoClient(p_211818_0_, p_211818_1_, supplier, p_211818_3_, p_211818_4_, p_211818_5_);
++         return new ResourcePackInfoClient(p_211818_0_, p_211818_1_, supplier, p_211818_3_, p_211818_4_, p_211818_5_, p_211818_3_.isHidden());
+       });
+       this.field_110448_aq.func_198982_a(this.field_195554_ax);
+       this.field_110448_aq.func_198982_a(new FolderPackFinder(this.field_130070_K));
 @@ -322,7 +322,6 @@
        this.field_152355_az = (new YggdrasilAuthenticationService(this.field_110453_aa, UUID.randomUUID().toString())).createMinecraftSessionService();
        this.field_71449_j = p_i45547_1_.field_178745_a.field_178752_a;

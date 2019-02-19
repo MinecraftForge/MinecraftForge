@@ -218,4 +218,9 @@ public class ModFileResourcePack extends AbstractResourcePack
     <T extends ResourcePackInfo> T getPackInfo() {
         return (T)this.packInfo;
     }
+    
+    @Override
+    public boolean isHidden() {
+    	return true;
+    }
 }
