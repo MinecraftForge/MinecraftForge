@@ -27,6 +27,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
+import org.objectweb.asm.tree.FieldNode;
 
 /**
  * Removes the final modifier from fields with the @CapabilityInject annotation, prevents the JITer from in lining them so our runtime replacements can work.
@@ -60,14 +61,18 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
     public ClassNode processClass(ClassNode classNode, Type classType)
     {
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
-
-        classNode.fields.stream().filter(f -> ((f.access & flags) == flags) && f.desc.equals(CAP) && hasHolder(f.visibleAnnotations)).forEach(f ->
+        boolean touched = false;
+        for (FieldNode f : classNode.fields)
         {
-           f.access &= ~Opcodes.ACC_FINAL; //Strip final
-           f.access |= Opcodes.ACC_SYNTHETIC; //Add Synthetic so we can check in runtime.
-        });
+            if (((f.access & flags) == flags) && f.desc.equals(CAP) && hasHolder(f.visibleAnnotations))
+            {
+                touched = true;
+                f.access &= ~Opcodes.ACC_FINAL; //Strip final
+                f.access |= Opcodes.ACC_SYNTHETIC; //Add Synthetic so we can check in runtime.
+            }
+        }
 
-        return classNode;
+        return touched ? classNode : null;
     }
 
 }

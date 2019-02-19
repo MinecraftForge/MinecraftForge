@@ -71,12 +71,14 @@ public class RuntimeDistCleaner implements ILaunchPluginService
             throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
         }
 
+        boolean touched = false;
         Iterator<FieldNode> fields = classNode.fields.iterator();
         while(fields.hasNext())
         {
             FieldNode field = fields.next();
             if (remove(field.visibleAnnotations, DIST))
             {
+                touched = true;
                 LOGGER.debug(DISTXFORM,"Removing field: {}.{}", classNode.name, field.name);
                 fields.remove();
             }
@@ -89,6 +91,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
             MethodNode method = methods.next();
             if (remove(method.visibleAnnotations, DIST))
             {
+                touched = true;
                 LOGGER.debug(DISTXFORM,"Removing method: {}.{}{}", classNode.name, method.name, method.desc);
                 methods.remove();
                 lambdaGatherer.accept(method);
@@ -107,13 +110,14 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 {
                     if (method.name.equals(dynamicLambdaHandle.getName()) && method.desc.equals(dynamicLambdaHandle.getDesc()))
                     {
+                        touched = true;
                         LOGGER.debug(DISTXFORM,"Removing lambda method: {}.{}{}", classNode.name, method.name, method.desc);
                         methods.remove();
                     }
                 }
             }
         }
-        return classNode;
+        return touched ? classNode : null;
     }
 
     private boolean remove(final List<AnnotationNode> anns, final String side)

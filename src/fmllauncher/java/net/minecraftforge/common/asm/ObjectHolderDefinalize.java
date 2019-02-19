@@ -27,6 +27,7 @@ import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
+import org.objectweb.asm.tree.FieldNode;
 
 /**
  * Removes the final modifier from fields with the @ObjectHolder annotation, prevents the JITer from in lining them so our runtime replacements can work.
@@ -76,15 +77,21 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
         //Must be public static finals, and non-array objects
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
 
+        boolean touched = false;
         //Fix Annotated Fields before injecting from class level
-        classNode.fields.stream().filter(f -> ((f.access & flags) == flags) && f.desc.startsWith("L") && hasHolder(f.visibleAnnotations)).forEach(f ->
+        for (FieldNode f : classNode.fields)
         {
-           f.access &= ~Opcodes.ACC_FINAL; //Strip final
-           f.access |= Opcodes.ACC_SYNTHETIC; //Add Synthetic so we can check in runtime. ? Good idea?
-        });
+            if (((f.access & flags) == flags) && f.desc.startsWith("L") && hasHolder(f.visibleAnnotations))
+            {
+                touched = true;
+                f.access &= ~Opcodes.ACC_FINAL; //Strip final
+                f.access |= Opcodes.ACC_SYNTHETIC; //Add Synthetic so we can check in runtime. ? Good idea?
+            }
+        }
 
         if (hasHolder(classNode.visibleAnnotations)) //Class level, de-finalize all fields and add @ObjectHolder to them!
         {
+            touched = true;
             @SuppressWarnings("unused")
             String value = getValue(classNode.visibleAnnotations);
             classNode.fields.stream().filter(f -> ((f.access & flags) == flags) && f.desc.startsWith("L")).forEach(f ->
@@ -100,7 +107,7 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
                }*/
             });
         }
-        return classNode;
+        return touched ? classNode : null;
     }
 
 }

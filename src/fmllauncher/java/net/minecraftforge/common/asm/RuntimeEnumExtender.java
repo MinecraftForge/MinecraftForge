@@ -72,7 +72,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
     public ClassNode processClass(ClassNode classNode, Type classType)
     {
         if ((classNode.access & Opcodes.ACC_ENUM) == 0)
-            return classNode;
+            return null;
 
         Type array = Type.getType("[" + classType.getDescriptor());
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
@@ -80,7 +80,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
         
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
-            return classNode;
+            return null;
         }
         
         //Static methods named "create", with first argument as a string, and returning this type
