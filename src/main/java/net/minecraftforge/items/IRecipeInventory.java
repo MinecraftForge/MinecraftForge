@@ -35,6 +35,7 @@ public interface IRecipeInventory extends IInventory
     /**
      * Returns the size of this inventory.  Must be equivalent to {@link #getHeight()} * {@link #getWidth()}.
      */
+    @Override
     default int getSizeInventory()
     {
         return getHeight() * getWidth();
@@ -43,11 +44,13 @@ public interface IRecipeInventory extends IInventory
     /**
      * Returns the stack in this slot.  This stack should be a modifiable reference, not a copy of a stack in your inventory.
      */
+    @Override
     ItemStack getStack(int index);
 
     /**
      * Attempts to remove n items from the specified slot.  Returns the split stack that was removed.  Modifies the inventory.
      */
+    @Override
     default ItemStack decrStackSize(int index, int count)
     {
         return getStackInSlot(index).isEmpty() ? ItemStack.EMPTY : getStackInSlot(index).split(count);
@@ -56,21 +59,25 @@ public interface IRecipeInventory extends IInventory
     /**
      * Sets the contents of this slot to the provided stack.
      */
+    @Override
     void setInventorySlotContents(int index, ItemStack stack);
 
     /**
      * Returns the height of this inventory.
      */
+    @Override
     int getHeight();
 
     /**
      * Returns the width of this inventory.
      */
+    @Override
     int getWidth();
 
     /**
      * Removes the stack contained in this slot from the underlying handler, and returns it.
      */
+    @Override
     default ItemStack removeStackFromSlot(int index)
     {
         ItemStack s = getStackInSlot(index);
@@ -80,19 +87,33 @@ public interface IRecipeInventory extends IInventory
     }
 
     //The following methods are never used by vanilla in crafting.  They are defaulted and defunct as mods need not override them.
+    @Override
     default boolean isEmpty() { return false; }
+    @Override
     default int getInventoryStackLimit() { return 0; }
+    @Override
     default void markDirty() {}
+    @Override
     default boolean isUsableByPlayer(EntityPlayer player) { return false; }
+    @Override
     default void openInventory(EntityPlayer player) {}
+    @Override
     default void closeInventory(EntityPlayer player) {}
+    @Override
     default boolean isItemValidForSlot(int index, ItemStack stack) { return false; }
+    @Override
     default int getField(int id) { return 0; }
+    @Override
     default void setField(int id, int value) {}
+    @Override
     default int getFieldCount() { return 0; }
+    @Override
     default void clear() {}
+    @Override
     default ITextComponent getName() { return null; }
+    @Override
     default boolean hasCustomName() { return false; }
+    @Override
     default ITextComponent getCustomName() { return null; }
  
 }

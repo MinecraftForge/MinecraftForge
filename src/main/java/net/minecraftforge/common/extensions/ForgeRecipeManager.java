@@ -99,6 +99,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
 
     /**
      * Modders should not use this if possible.  In the context that this is used, you should already have the recipe.  Do not run extra lookups using this method.
+     * Use {@link IRecipe#getRemainingItems(IInventory)}.
      */
     @Deprecated
     public NonNullList<ItemStack> getRemainingItems(IInventory input, World world, RecipeType<?> type)
