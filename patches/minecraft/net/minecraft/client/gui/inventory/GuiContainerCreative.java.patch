@@ -148,7 +148,7 @@
 +      boolean rendered = false;
 +
 +      for(ItemGroup itemgroup : java.util.Arrays.copyOfRange(ItemGroup.field_78032_a, start, end)) {
-+         if (itemgroup != null) continue;
++         if (itemgroup == null) continue;
           if (this.func_147052_b(itemgroup, p_73863_1_, p_73863_2_)) {
 +            rendered = true;
              break;
