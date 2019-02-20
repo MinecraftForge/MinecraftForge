@@ -221,6 +221,6 @@ public class ModFileResourcePack extends AbstractResourcePack
     
     @Override
     public boolean isHidden() {
-    	return true;
+    	return (Boolean) modFile.getModFileInfo().getFileProperties().getOrDefault("hiddenResources", true);
     }
 }
