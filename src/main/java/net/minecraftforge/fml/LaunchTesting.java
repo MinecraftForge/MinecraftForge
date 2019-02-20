@@ -44,15 +44,14 @@ public class LaunchTesting
 
         String assets = System.getenv().getOrDefault("assetDirectory", "assets");
         String target = System.getenv().get("target");
-        String[] launchArgs = new String[]{
+        String[] launchArgs = ObjectArrays.concat(args, new String[]{
                 "--gameDir", ".",
                 "--launchTarget", target,
                 "--fml.forgeVersion", System.getProperty("forge.version"),
                 "--fml.mcpVersion", System.getProperty("mcp.version"),
                 "--fml.mcVersion", System.getProperty("mc.version"),
                 "--fml.forgeGroup", System.getProperty("forge.group")
-        };
-
+        }, String.class);
 
         if (target == null) {
             throw new IllegalArgumentException("Environment variable target must be set.");
@@ -67,9 +66,8 @@ public class LaunchTesting
                     "--assetsDir", assets,
                     "--userProperties", "{}"
             }, String.class);
-        } else {
-            launchArgs = ObjectArrays.concat(launchArgs, args, String.class);
         }
+
         Launcher.main(launchArgs);
         Thread.sleep(10000);
     }

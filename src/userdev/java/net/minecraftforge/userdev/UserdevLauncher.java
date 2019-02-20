@@ -46,7 +46,7 @@ public class UserdevLauncher
             throw new IllegalArgumentException("Environment variable 'target' must be set to 'fmluserdevclient' or 'fmluserdevserver'.");
         }
 
-        String[] launchArgs = new String[]{
+        String[] launchArgs = ObjectArrays.concat(args, new String[]{
                 "--gameDir", ".",
                 "--launchTarget", target,
                 "--fml.forgeVersion", System.getenv("FORGE_VERSION"),
@@ -54,7 +54,7 @@ public class UserdevLauncher
                 "--fml.mcpMappings", System.getenv("MCP_MAPPINGS"),
                 "--fml.mcVersion", System.getenv("MC_VERSION"),
                 "--fml.forgeGroup", System.getenv("FORGE_GROUP")
-        };
+        }, String.class);
 
         if (Objects.equals(target,"fmluserdevclient")) {
             if (assets == null || !new File(assets).exists()) {
