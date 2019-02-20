@@ -18,6 +18,15 @@
                 }, "mouseReleased event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
              }
           }
+@@ -103,7 +107,7 @@
+                }
+             }
+          }
+-
++         net.minecraftforge.client.ForgeHooksClient.fireMouseInput(p_198023_3_, p_198023_4_, p_198023_5_);
+       }
+    }
+ 
 @@ -111,7 +115,9 @@
        if (p_198020_1_ == Minecraft.func_71410_x().field_195558_d.func_198092_i()) {
           double d0 = p_198020_5_ * this.field_198036_a.field_71474_y.field_208033_V;

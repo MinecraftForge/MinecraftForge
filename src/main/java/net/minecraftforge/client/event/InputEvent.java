@@ -22,7 +22,25 @@ package net.minecraftforge.client.event;
 import net.minecraftforge.eventbus.api.Event;
 
 public class InputEvent extends Event {
-    public static class MouseInputEvent extends InputEvent {}
+    public static class MouseInputEvent extends InputEvent
+    {
+        private final int button;
+        private final int action;
+        private final int mods;
+        public MouseInputEvent(int button, int action, int mods)
+        {
+            this.button = button;
+            this.action = action;
+            this.mods = mods;
+        }
+
+        public int getButton() { return this.button; }
+
+        public int getAction() { return this.action; }
+
+        public int getMods() { return this.mods; }
+    }
+
     public static class KeyInputEvent extends InputEvent
     {
         private final int key;
@@ -43,6 +61,6 @@ public class InputEvent extends Event {
 
         public int getAction() { return this.action; }
 
-        public int getModifiers() { return  this.modifiers; }
+        public int getModifiers() { return this.modifiers; }
     }
 }
