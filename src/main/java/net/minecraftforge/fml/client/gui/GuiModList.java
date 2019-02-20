@@ -19,6 +19,27 @@
 
 package net.minecraftforge.fml.client.gui;
 
+import static net.minecraft.util.StringUtils.stripControlCodes;
+
+import java.awt.Dimension;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.maven.artifact.versioning.ComparableVersion;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -28,6 +49,7 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiUtilRenderComponents;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Rectangle2d;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -42,30 +64,12 @@ import net.minecraftforge.fml.ModContainer;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.ConfigGuiHandler;
+import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.loading.StringUtils;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import net.minecraftforge.forgespi.language.IModInfo;
-import net.minecraftforge.fml.loading.StringUtils;
-import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.maven.artifact.versioning.ComparableVersion;
-
-import javax.annotation.Nullable;
-import java.awt.Dimension;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static net.minecraft.util.StringUtils.stripControlCodes;
 
 /**
  * @author cpw
@@ -212,7 +216,6 @@ public class GuiModList extends GuiScreen
                 return ret;
             }
 
-
             @Override
             public void drawEntry(int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
             {
@@ -223,8 +226,10 @@ public class GuiModList extends GuiScreen
                     mc.getTextureManager().bindTexture(logoPath);
                     GlStateManager.enableBlend();
                     GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    Gui.drawModalRectWithCustomSizedTexture(left, top, 0.0F, 0.0F, logoDims.width, logoDims.height, logoDims.width, logoDims.height);
-                    top += logoDims.height + 10;
+                    // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
+                    int headerHeight = 50;
+                    GuiUtils.drawInscribedRect(left, top, entryWidth - 5, headerHeight, logoDims.width, logoDims.height, false, true);
+                    top += headerHeight;
                 }
 
                 for (ITextComponent line : lines)
