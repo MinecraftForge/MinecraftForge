@@ -40,7 +40,7 @@
     }
  
 +   public ResourcePackInfo(String p_i47908_1_, boolean p_i47908_2_, Supplier<IResourcePack> p_i47908_3_, IResourcePack p_i47908_4_, PackMetadataSection p_i47908_5_, ResourcePackInfo.Priority p_i47908_6_, boolean hidden) {
-+      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, new TextComponentString(p_i47908_4_.func_195762_a()), p_i47908_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i47908_5_.func_198962_b()), p_i47908_6_, false, hidden);
++      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, new TextComponentString(p_i47908_4_.func_195762_a()), p_i47908_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i47908_5_.func_198962_b()), p_i47908_6_, hidden, hidden);
 +   }
 +
     @OnlyIn(Dist.CLIENT)
