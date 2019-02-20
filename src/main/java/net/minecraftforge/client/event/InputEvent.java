@@ -17,11 +17,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.gameevent;
+package net.minecraftforge.client.event;
 
 import net.minecraftforge.eventbus.api.Event;
 
 public class InputEvent extends Event {
     public static class MouseInputEvent extends InputEvent {}
-    public static class KeyInputEvent extends InputEvent {}
+    public static class KeyInputEvent extends InputEvent
+    {
+        private final int key;
+        private final int scanCode;
+        private final int action;
+        private final int modifiers;
+        public KeyInputEvent(int key, int scanCode, int action, int modifiers)
+        {
+            this.key = key;
+            this.scanCode = scanCode;
+            this.action = action;
+            this.modifiers = modifiers;
+        }
+
+        public int getKey() { return this.key; }
+
+        public int getScanCode() { return this.scanCode; }
+
+        public int getAction() { return this.action; }
+
+        public int getModifiers() { return  this.modifiers; }
+    }
 }

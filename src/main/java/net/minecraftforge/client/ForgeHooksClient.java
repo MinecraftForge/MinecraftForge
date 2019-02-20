@@ -127,6 +127,7 @@ import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelPart;
@@ -1035,5 +1036,15 @@ public class ForgeHooksClient
         {
             LOGGER.error("Unable to invalidate log4j thread cache, thread fields in logs may be inaccurate", e);
         }
+    }
+
+    public static void fireMouseInput()
+    {
+        MinecraftForge.EVENT_BUS.post(new InputEvent.MouseInputEvent());
+    }
+
+    public static void fireKeyInput(int key, int scanCode, int action, int modifiers)
+    {
+        MinecraftForge.EVENT_BUS.post(new InputEvent.KeyInputEvent(key, scanCode, action, modifiers));
     }
 }

@@ -41,7 +41,7 @@
              }
           }
 -
-+         net.minecraftforge.fml.hooks.BasicEventHooks.fireKeyInput();
++         net.minecraftforge.client.ForgeHooksClient.fireKeyInput(p_197961_3_, p_197961_4_, p_197961_5_, p_197961_6_);
        }
     }
  
