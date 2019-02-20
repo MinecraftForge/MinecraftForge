@@ -1,5 +1,14 @@
 --- a/net/minecraft/block/BlockFarmland.java
 +++ b/net/minecraft/block/BlockFarmland.java
+@@ -65,7 +65,7 @@
+          func_199610_d(p_196267_1_, p_196267_2_, p_196267_3_);
+       } else {
+          int i = p_196267_1_.func_177229_b(field_176531_a);
+-         if (!func_176530_e(p_196267_2_, p_196267_3_) && !p_196267_2_.func_175727_C(p_196267_3_.func_177984_a())) {
++         if (!hasWater(p_196267_2_, p_196267_3_) && !p_196267_2_.func_175727_C(p_196267_3_.func_177984_a())) {
+             if (i > 0) {
+                p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_.func_206870_a(field_176531_a, Integer.valueOf(i - 1)), 2);
+             } else if (!func_176529_d(p_196267_2_, p_196267_3_)) {
 @@ -79,7 +79,7 @@
     }
  
@@ -9,7 +18,7 @@
           func_199610_d(p_180658_1_.func_180495_p(p_180658_2_), p_180658_1_, p_180658_2_);
        }
  
-@@ -90,9 +90,9 @@
+@@ -90,19 +90,19 @@
        p_199610_1_.func_175656_a(p_199610_2_, func_199601_a(p_199610_0_, Blocks.field_150346_d.func_176223_P(), p_199610_1_, p_199610_2_));
     }
  
@@ -21,4 +30,17 @@
 +      return state.func_177230_c() instanceof net.minecraftforge.common.IPlantable && canSustainPlant(state, p_176529_0_, p_176529_1_, EnumFacing.UP, (net.minecraftforge.common.IPlantable)state.func_177230_c());
     }
  
-    private static boolean func_176530_e(IWorldReaderBase p_176530_0_, BlockPos p_176530_1_) {
+-   private static boolean func_176530_e(IWorldReaderBase p_176530_0_, BlockPos p_176530_1_) {
+-      for(BlockPos.MutableBlockPos blockpos$mutableblockpos : BlockPos.func_177975_b(p_176530_1_.func_177982_a(-4, 0, -4), p_176530_1_.func_177982_a(4, 1, 4))) {
++   private static boolean hasWater(IWorld p_176530_0_, BlockPos worldIn) {
++      for(BlockPos.MutableBlockPos blockpos$mutableblockpos : BlockPos.func_177975_b(worldIn.func_177982_a(-4, 0, -4), worldIn.func_177982_a(4, 1, 4))) {
+          if (p_176530_0_.func_204610_c(blockpos$mutableblockpos).func_206884_a(FluidTags.field_206959_a)) {
+             return true;
+          }
+       }
+ 
+-      return false;
++      return net.minecraftforge.common.FarmlandWaterManager.hasBlockWaterTicket(p_176530_0_, worldIn);
+    }
+ 
+    public IItemProvider func_199769_a(IBlockState p_199769_1_, World p_199769_2_, BlockPos p_199769_3_, int p_199769_4_) {
