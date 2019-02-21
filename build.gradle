@@ -493,7 +493,7 @@ project(':forge') {
         ext {
             output = file('build/install_profile.json')
             INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.0.3'
-            JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.0.4'
+            JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.0'
         }
         doFirst {
             ext.BIN_PATCHER = 'net.minecraftforge:binarypatcher:' + genClientBinPatches.resolvedVersion
@@ -544,14 +544,6 @@ project(':forge') {
                         client: "'${sha1(tasks.getByName('downloadClientSlim').output)}'",
                         server: "'${sha1(tasks.getByName('downloadServerSlim').output)}'"
                     ],
-                    MC_DATA: [
-                        client: "[net.minecraft:client:${MC_VERSION}:data]",
-                        server: "[net.minecraft:server:${MC_VERSION}:data]"
-                    ],
-                    MC_DATA_SHA: [
-                        client: "'${sha1(tasks.getByName('downloadClientData').output)}'",
-                        server: "'${sha1(tasks.getByName('downloadServerData').output)}'"
-                    ],
                     MC_EXTRA: [
                         client: "[net.minecraft:client:${MC_VERSION}:extra]",
                         server: "[net.minecraft:server:${MC_VERSION}:extra]"
@@ -589,13 +581,11 @@ project(':forge') {
                         args: [
                             '--input', '{MINECRAFT_JAR}',
                             '--slim',  '{MC_SLIM}',
-                            '--data',  '{MC_DATA}',
                             '--extra', '{MC_EXTRA}',
                             '--srg', '{MAPPINGS}'
                         ],
                         outputs: [
                             '{MC_SLIM}': '{MC_SLIM_SHA}',
-                            '{MC_DATA}': '{MC_DATA_SHA}',
                             '{MC_EXTRA}': '{MC_EXTRA_SHA}'
                         ]
                     ], [ // SpecialSource has a bug where it won't create the nessasary directories, remove when they fix that.
@@ -635,7 +625,7 @@ project(':forge') {
     }
     
     ['client', 'server'].each { side ->
-        ['slim', 'extra', 'data'].each { type -> 
+        ['slim', 'extra'].each { type -> 
             def name = "download${side.capitalize()}${type.capitalize()}"
             task "${name}"(type: DownloadMavenArtifact) {
                 artifact = "net.minecraft:${side}:${MC_VERSION}:${type}"
@@ -896,6 +886,8 @@ project(':forge') {
     applyRangeMap {
         setSources sourceSets.userdev.java.srcDirs.findAll({f -> (f != patcher.patchedSrc) })
     }
+    
+    tasks.eclipse.dependsOn('genEclipseRuns')
     
     publishing {
         publications {
