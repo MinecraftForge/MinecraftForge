@@ -53,7 +53,7 @@ public interface IRecipeInventory extends IInventory
     @Override
     default ItemStack decrStackSize(int index, int count)
     {
-        return getStackInSlot(index).isEmpty() ? ItemStack.EMPTY : getStackInSlot(index).split(count);
+        return getStack(index).isEmpty() ? ItemStack.EMPTY : getStack(index).split(count);
     }
 
     /**
