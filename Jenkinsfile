@@ -12,12 +12,22 @@ pipeline {
     }
     environment {
         GRADLE_ARGS = '--no-daemon --console=plain' // No daemon for now as FG3 kinda derps. //'-Dorg.gradle.daemon.idletimeout=5000'
+        DISCORD_WEBHOOK = 'https://discordapp.com/api/webhooks/455030234916323328/6egcSG3jeQZ_rzUbbbX9BnjBt2-W6KkeG77Iu9Jf_oWJwpmJ0hanLwoKIvP14UCTcLsA'
+        DISCORD_PREFIX = "Job: Forge Branch: ${BRANCH_NAME} Build: #${BUILD_NUMBER}"
+        JENKINS_HEAD = 'https://wiki.jenkins-ci.org/download/attachments/2916393/headshot.png'
     }
 
     stages {
         stage('fetch') {
             steps {
                 checkout scm
+                discordSend(
+                    title: "${DISCORD_PREFIX} Started",
+                    successful: true,
+                    result: 'ABORTED', //White border
+                    thumbnail: JENKINS_HEAD,
+                    webhookURL: DISCORD_WEBHOOK
+                )
             }
         }
         stage('setup') {
@@ -50,10 +60,10 @@ pipeline {
                 cache(maxCacheSize: 250/*MB*/, caches: [
                     [$class: 'ArbitraryFileCache', excludes: '', includes: 'output.txt', path: '${WORKSPACE}/projects/forge/build/extractRangeMap/'] //Cache the rangemap to help speed up builds
                 ]){
-                    sh './gradlew ${GRADLE_ARGS} :forge:publish -PforgeMavenUser=${FORGE_MAVEN_USR} -PforgeMavenPassword=${FORGE_MAVEN_PSW} -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
+                    //sh './gradlew ${GRADLE_ARGS} :forge:publish -PforgeMavenUser=${FORGE_MAVEN_USR} -PforgeMavenPassword=${FORGE_MAVEN_PSW} -PkeystoreKeyPass=${KEYSTORE_KEYPASS} -PkeystoreStorePass=${KEYSTORE_STOREPASS} -Pkeystore=${KEYSTORE} -PcrowdinKey=${CROWDIN}'
                 }
                 //We're not testing anymore so don't use the test group
-                sh 'curl --user ${FORGE_MAVEN} http://files.minecraftforge.net/maven/manage/promote/latest/net.minecraftforge.forge/${MYVERSION}'
+                //sh 'curl --user ${FORGE_MAVEN} http://files.minecraftforge.net/maven/manage/promote/latest/net.minecraftforge.forge/${MYVERSION}'
             }
         }
         stage('test_publish_pr') { //Publish to local repo to test full process, but don't include credentials so it can't sign/publish to maven
@@ -74,9 +84,20 @@ pipeline {
     }
     post {
         always {
-            archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.*', fingerprint: true
-            //junit 'build/test-results/*/*.xml'
-            //jacoco sourcePattern: '**/src/*/java'
+            script {
+                archiveArtifacts artifacts: 'projects/forge/build/libs/**/*.*', fingerprint: true, onlyIfSuccessful: true, allowEmptyArchive: true
+                //junit 'build/test-results/*/*.xml'
+                //jacoco sourcePattern: '**/src/*/java'
+                
+                discordSend(
+                    title: "${DISCORD_PREFIX} Finished ${currentBuild.currentResult}",
+                    description: '```\n' + getChanges(currentBuild) + '\n```',
+                    successful: currentBuild.resultIsBetterOrEqualTo("SUCCESS"),
+                    result: currentBuild.currentResult,
+                    thumbnail: JENKINS_HEAD,
+                    webhookURL: DISCORD_WEBHOOK
+                )
+            }
         }
     }
 }
