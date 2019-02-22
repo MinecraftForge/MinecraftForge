@@ -12,7 +12,7 @@ pipeline {
     }
     environment {
         GRADLE_ARGS = '--no-daemon --console=plain' // No daemon for now as FG3 kinda derps. //'-Dorg.gradle.daemon.idletimeout=5000'
-        DISCORD_WEBHOOK = 'https://discordapp.com/api/webhooks/455030234916323328/6egcSG3jeQZ_rzUbbbX9BnjBt2-W6KkeG77Iu9Jf_oWJwpmJ0hanLwoKIvP14UCTcLsA'
+        DISCORD_WEBHOOK = credentials('forge-discord-jenkins-webhook')
         DISCORD_PREFIX = "Job: Forge Branch: ${BRANCH_NAME} Build: #${BUILD_NUMBER}"
         JENKINS_HEAD = 'https://wiki.jenkins-ci.org/download/attachments/2916393/headshot.png'
     }
