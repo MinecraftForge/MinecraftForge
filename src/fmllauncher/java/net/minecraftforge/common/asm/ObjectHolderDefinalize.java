@@ -20,7 +20,9 @@
 package net.minecraftforge.common.asm;
 
 import java.nio.file.Path;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -41,14 +43,14 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
         return "object_holder_definalize";
     }
 
-    @Override public void addResource(Path resource, String name) { }
 
-    @Override public <T> T getExtension() { return null; } // ?
+    private static final EnumSet<Phase> YAY = EnumSet.of(Phase.AFTER);
+    private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
 
     @Override
-    public boolean handlesClass(Type classType, boolean isEmpty)
+    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty)
     {
-        return !isEmpty; //Check for annotations?
+        return isEmpty ? NAY : YAY;
     }
 
     private boolean hasHolder(List<AnnotationNode> lst)
@@ -71,16 +73,19 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
     }
 
     @Override
-    public ClassNode processClass(ClassNode classNode, Type classType)
+    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
     {
+        AtomicBoolean changes = new AtomicBoolean();
         //Must be public static finals, and non-array objects
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
 
         //Fix Annotated Fields before injecting from class level
         classNode.fields.stream().filter(f -> ((f.access & flags) == flags) && f.desc.startsWith("L") && hasHolder(f.visibleAnnotations)).forEach(f ->
         {
-           f.access &= ~Opcodes.ACC_FINAL; //Strip final
-           f.access |= Opcodes.ACC_SYNTHETIC; //Add Synthetic so we can check in runtime. ? Good idea?
+            int prev = f.access;
+            f.access &= ~Opcodes.ACC_FINAL; //Strip final
+            f.access |= Opcodes.ACC_SYNTHETIC; //Add Synthetic so we can check in runtime. ? Good idea?
+            changes.compareAndSet(false, prev != f.access);
         });
 
         if (hasHolder(classNode.visibleAnnotations)) //Class level, de-finalize all fields and add @ObjectHolder to them!
@@ -89,18 +94,20 @@ public class ObjectHolderDefinalize implements ILaunchPluginService {
             String value = getValue(classNode.visibleAnnotations);
             classNode.fields.stream().filter(f -> ((f.access & flags) == flags) && f.desc.startsWith("L")).forEach(f ->
             {
-               f.access &= ~Opcodes.ACC_FINAL;
-               f.access |= Opcodes.ACC_SYNTHETIC;
-               /*if (!hasHolder(f.visibleAnnotations)) //Add field level annotation, doesn't do anything until after we figure out how ASMDataTable is gatherered
-               {
+                int prev = f.access;
+                f.access &= ~Opcodes.ACC_FINAL;
+                f.access |= Opcodes.ACC_SYNTHETIC;
+                /*if (!hasHolder(f.visibleAnnotations)) //Add field level annotation, doesn't do anything until after we figure out how ASMDataTable is gatherered
+                {
                    if (value == null)
                        f.visitAnnotation(OBJECT_HOLDER, true);
                    else
                        f.visitAnnotation(OBJECT_HOLDER, true).visit("value", value + ":" + f.name.toLowerCase());
-               }*/
+                }*/
+                changes.compareAndSet(false, prev != f.access);
             });
         }
-        return classNode;
+        return changes.get();
     }
 
 }

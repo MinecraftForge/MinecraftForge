@@ -29,6 +29,7 @@ import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+import net.minecraftforge.registries.RegistryManager;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,6 +52,7 @@ public class FMLHandshakeMessages
      */
     public static class S2CModList extends LoginIndexedMessage
     {
+        private List<String> registries;
         private NBTTagList channels;
         private List<String> modList;
 
@@ -62,6 +64,7 @@ public class FMLHandshakeMessages
         {
             this.modList = nbtTagCompound.getList("modlist", 8).stream().map(INBTBase::getString).collect(Collectors.toList());
             this.channels = nbtTagCompound.getList("channels", 10);
+            this.registries = nbtTagCompound.getList("registries", 8).stream().map(INBTBase::getString).collect(Collectors.toList());
         }
 
         public static S2CModList decode(PacketBuffer packetBuffer)
@@ -75,6 +78,7 @@ public class FMLHandshakeMessages
             NBTTagCompound tag = new NBTTagCompound();
             tag.setTag("modlist",modList.stream().map(NBTTagString::new).collect(Collectors.toCollection(NBTTagList::new)));
             tag.setTag("channels", NetworkRegistry.buildChannelVersions());
+            tag.setTag("registries", RegistryManager.registryNames().stream().map(NBTTagString::new).collect(Collectors.toCollection(NBTTagList::new)));
             packetBuffer.writeCompoundTag(tag);
         }
 
@@ -82,6 +86,9 @@ public class FMLHandshakeMessages
             return String.join(",", modList);
         }
 
+        List<String> getRegistries() {
+            return this.registries;
+        }
         NBTTagList getChannels() {
             return this.channels;
         }
@@ -119,17 +126,26 @@ public class FMLHandshakeMessages
     }
 
     public static class S2CRegistry extends LoginIndexedMessage {
+        private String registryName;
+
         public S2CRegistry(final ResourceLocation key, final ForgeRegistry<? extends IForgeRegistryEntry<?>> registry) {
+            registryName = key.toString();
         }
 
-        S2CRegistry() {
+        private S2CRegistry(final String registryName) {
+            this.registryName = registryName;
         }
 
         void encode(final PacketBuffer buffer) {
+            buffer.writeString(registryName, 128);
         }
 
         public static S2CRegistry decode(final PacketBuffer buffer) {
-            return new S2CRegistry();
+            return new S2CRegistry(buffer.readString(128));
+        }
+
+        public String getRegistryName() {
+            return registryName;
         }
     }
 

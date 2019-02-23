@@ -28,6 +28,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.fml.util.ThreeConsumer;
+import net.minecraftforge.registries.ForgeRegistry;
 import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,9 +36,13 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
+
+import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
 /**
  * Instance responsible for handling the overall FML network handshake.
@@ -176,6 +181,9 @@ public class FMLHandshakeHandler {
     private final NetworkDirection direction;
     private final NetworkManager manager;
     private int packetPosition;
+    private ForgeRegistry.Snapshot registrySnapshot;
+    private Set<String> registriesToReceive;
+
     private FMLHandshakeHandler(NetworkManager networkManager, NetworkDirection side)
     {
         this.direction = side;
@@ -199,6 +207,8 @@ public class FMLHandshakeHandler {
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(FMLNetworking.FML_MARKER).set(NetworkHooks.NETVERSION);
+        this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
+        LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
     }
 
     private <MSG extends FMLHandshakeMessages.LoginIndexedMessage> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
@@ -223,10 +233,12 @@ public class FMLHandshakeHandler {
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
     }
     private void handleRegistryMessage(final FMLHandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier) {
+        this.registriesToReceive.remove(registryPacket.getRegistryName());
         RegistryManager.acceptRegistry(registryPacket, contextSupplier);
         contextSupplier.get().setPacketHandled(true);
         final FMLHandshakeMessages.C2SAcknowledge reply = new FMLHandshakeMessages.C2SAcknowledge();
         channel.reply(reply, contextSupplier.get());
+        if (this.registriesToReceive.isEmpty()) {}//injectSnapshot
     }
 
     private void handleClientAck(final FMLHandshakeMessages.C2SAcknowledge msg, final Supplier<NetworkEvent.Context> contextSupplier) {

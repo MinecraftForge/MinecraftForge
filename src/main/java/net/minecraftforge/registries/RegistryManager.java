@@ -39,6 +39,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
+
 public class RegistryManager
 {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -154,7 +156,11 @@ public class RegistryManager
                 collect(Collectors.toList());
     }
 
+    public static List<String> registryNames() {
+        return ACTIVE.registries.entrySet().stream().map(Map.Entry::getKey).map(Object::toString).collect(Collectors.toList());
+    }
+
     public static void acceptRegistry(final FMLHandshakeMessages.S2CRegistry registryUpdate, final Supplier<NetworkEvent.Context> contextSupplier) {
-        LOGGER.debug("Received registry packet");
+        LOGGER.debug(REGISTRIES,"Received registry packet for {}", registryUpdate.getRegistryName());
     }
 }

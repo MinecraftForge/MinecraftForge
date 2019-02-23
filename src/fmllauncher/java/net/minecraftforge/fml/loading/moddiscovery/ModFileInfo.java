@@ -98,4 +98,9 @@ public class ModFileInfo implements IModFileInfo
     public Optional<Manifest> getManifest() {
         return modFile.getLocator().findManifest(modFile.getFilePath());
     }
+
+    @Override
+    public boolean showAsResourcePack() {
+        return false; // noop right now
+    }
 }

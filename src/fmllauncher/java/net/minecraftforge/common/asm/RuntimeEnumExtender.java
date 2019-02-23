@@ -20,6 +20,7 @@
 package net.minecraftforge.common.asm;
 
 import java.nio.file.Path;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -58,21 +59,20 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         return "runtime_enum_extender";
     }
 
-    @Override public void addResource(Path resource, String name) { }
-
-    @Override public <T> T getExtension() { return null; } // ?
+    private static final EnumSet<Phase> YAY = EnumSet.of(Phase.AFTER);
+    private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
 
     @Override
-    public boolean handlesClass(Type classType, boolean isEmpty)
+    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty)
     {
-        return !isEmpty; //Any way to determine if its a enum at this level?
+        return isEmpty ? NAY : YAY;
     }
 
     @Override
-    public ClassNode processClass(ClassNode classNode, Type classType)
+    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
     {
         if ((classNode.access & Opcodes.ACC_ENUM) == 0)
-            return classNode;
+            return false;
 
         Type array = Type.getType("[" + classType.getDescriptor());
         final int flags = Opcodes.ACC_PRIVATE | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
@@ -80,7 +80,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
         FieldNode values = classNode.fields.stream().filter(f -> f.desc.contentEquals(array.getDescriptor()) && ((f.access & flags) == flags)).findFirst().orElse(null);
         
         if (!classNode.interfaces.contains(MARKER_IFACE.getInternalName())) {
-            return classNode;
+            return false;
         }
         
         //Static methods named "create", with first argument as a string, and returning this type
@@ -205,7 +205,7 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 ins.areturn(classType);
             }
         });
-        return classNode;
+        return true;
     }
 
 }

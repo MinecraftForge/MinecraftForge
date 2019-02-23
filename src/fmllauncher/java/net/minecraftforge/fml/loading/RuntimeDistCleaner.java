@@ -19,11 +19,12 @@
 
 package net.minecraftforge.fml.loading;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 import com.google.common.collect.Streams;
@@ -57,17 +58,12 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     }
 
     @Override
-    public void addResource(Path resource, String name)
+    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
     {
-
-    }
-
-    @Override
-    public ClassNode processClass(ClassNode classNode, Type classType)
-    {
+        AtomicBoolean changes = new AtomicBoolean();
         if (remove(classNode.visibleAnnotations, DIST))
         {
-            LOGGER.debug(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
+            LOGGER.fatal(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
             throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
         }
 
@@ -79,6 +75,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
             {
                 LOGGER.debug(DISTXFORM,"Removing field: {}.{}", classNode.name, field.name);
                 fields.remove();
+                changes.compareAndSet(false, true);
             }
         }
 
@@ -92,6 +89,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                 LOGGER.debug(DISTXFORM,"Removing method: {}.{}{}", classNode.name, method.name, method.desc);
                 methods.remove();
                 lambdaGatherer.accept(method);
+                changes.compareAndSet(false, true);
             }
         }
 
@@ -109,11 +107,12 @@ public class RuntimeDistCleaner implements ILaunchPluginService
                     {
                         LOGGER.debug(DISTXFORM,"Removing lambda method: {}.{}{}", classNode.name, method.name, method.desc);
                         methods.remove();
+                        changes.compareAndSet(false, true);
                     }
                 }
             }
         }
-        return classNode;
+        return changes.get();
     }
 
     private boolean remove(final List<AnnotationNode> anns, final String side)
@@ -133,10 +132,13 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         };
     }
 
+    private static final EnumSet<Phase> YAY = EnumSet.of(Phase.AFTER);
+    private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
+
     @Override
-    public boolean handlesClass(Type classType, boolean isEmpty)
+    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty)
     {
-        return !isEmpty;
+        return isEmpty ? NAY : YAY;
     }
 
     private static class LambdaGatherer extends MethodVisitor {
