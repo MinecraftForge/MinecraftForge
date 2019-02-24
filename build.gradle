@@ -675,7 +675,6 @@ project(':forge') {
         encoding 'UTF8'
         doFirst {
             def artifacts = getArtifacts(project, project.configurations.installer, false).values().stream().map{a -> a.downloads.artifact.path}.sorted().collect() + [
-                "net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-data.jar",
                 "net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
             ]
             for (int x = 0; x < artifacts.size(); x++) {
@@ -703,7 +702,6 @@ project(':forge') {
             artifacts.each { key, lib ->
                 classpath += "libraries/${lib.downloads.artifact.path} "
             }
-            classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-data.jar "
             classpath += "libraries/net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
             
             MANIFESTS.each{ pkg, values ->

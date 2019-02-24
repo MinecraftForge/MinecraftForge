@@ -18,8 +18,7 @@
  */
 
 package net.minecraftforge.fml.client.gui;
-import net.minecraft.client.gui.GuiOptionButton;
-import net.minecraft.client.resources.I18n;
+import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.StartupQuery;
 
 public class GuiConfirmation extends GuiNotification
@@ -32,23 +31,19 @@ public class GuiConfirmation extends GuiNotification
     @Override
     public void initGui()
     {
-        this.buttons.add(new GuiOptionButton(0, this.width / 2 - 155, this.height - 38, I18n.format("gui.yes"))
-        {
-            public void onClick(double mouseX, double mouseY)
+        this.addButton(new GuiButtonClickConsumer(0, this.width / 2 - 104, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.yes"),(x, y)->
             {
-                GuiConfirmation.this.mc.displayGuiScreen(null);
+                GuiConfirmation.this.mc.currentScreen = null;
                 query.setResult(true);
                 query.finish();
             }
-        });
-        this.buttons.add(new GuiOptionButton(1, this.width / 2 - 155 + 160, this.height - 38, I18n.format("gui.no"))
-        {
-            public void onClick(double mouseX, double mouseY)
+        ));
+        this.addButton(new GuiButtonClickConsumer(1, this.width / 2 + 4, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.no"), (x,y)->
             {
-                GuiConfirmation.this.mc.displayGuiScreen(null);
+                GuiConfirmation.this.mc.currentScreen = null;
                 query.setResult(false);
                 query.finish();
             }
-        });
+        ));
     }
 }
