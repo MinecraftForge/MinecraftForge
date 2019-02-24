@@ -29,6 +29,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.CPacketHandshake;
 import net.minecraft.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
@@ -103,13 +104,47 @@ public class NetworkHooks
         return FMLHandshakeHandler.tickLogin(networkManager);
     }
 
+    /**
+     * Request to open a GUI on the client, from the server
+     *
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * these GUI requests on the client.
+     *
+     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
+     * It should refer to a valid modId namespace, to trigger opening on the client.
+     * The namespace is directly used to lookup the modId in the client side.
+     *
+     * @param player The player to open the GUI for
+     * @param containerSupplier A supplier of container properties including the registry name of the container
+     */
     public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier)
     {
         openGui(player, containerSupplier, buf -> {});
     }
 
     /**
-     * Server method to tell the client to open a GUI on behalf of the server
+     * Request to open a GUI on the client, from the server
+     *
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * these GUI requests on the client.
+     *
+     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
+     * It should refer to a valid modId namespace, to trigger opening on the client.
+     * The namespace is directly used to lookup the modId in the client side.
+     *
+     * @param player The player to open the GUI for
+     * @param containerSupplier A supplier of container properties including the registry name of the container
+     * @param pos A block pos, which will be encoded into the auxillary data for this request
+     */
+    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, BlockPos pos)
+    {
+        openGui(player, containerSupplier, buf -> buf.writeBlockPos(pos));
+    }
+    /**
+     * Request to open a GUI on the client, from the server
+     *
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * these GUI requests on the client.
      *
      * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
      * It should refer to a valid modId namespace, to trigger opening on the client.
@@ -117,22 +152,16 @@ public class NetworkHooks
      * The maximum size for #extraDataWriter is 32600 bytes.
      *
      * @param player The player to open the GUI for
-     * @param containerSupplier The Container Supplier
+     * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param extraDataWriter Consumer to write any additional data the GUI needs
      */
     public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, Consumer<PacketBuffer> extraDataWriter)
     {
         if (player.world.isRemote) return;
         ResourceLocation id = new ResourceLocation(containerSupplier.getGuiID());
-        Container c = containerSupplier.createContainer(player.inventory, player);
-        player.closeScreen();
+        player.closeContainer();
         player.getNextWindowId();
-        int openContainer = player.currentWindowId;
-        player.openContainer = c;
-        player.openContainer.windowId = openContainer;
-        player.openContainer.addListener(player);
-        MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
-
+        int openContainerId = player.currentWindowId;
         PacketBuffer extraData = new PacketBuffer(Unpooled.buffer());
         extraDataWriter.accept(extraData);
         extraData.readerIndex(0); // reset to beginning in case modders read for whatever reason
@@ -144,7 +173,13 @@ public class NetworkHooks
         if (output.readableBytes() > 32600 || output.readableBytes() < 1) {
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
-        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, openContainer, output);
+        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, openContainerId, output);
         FMLPlayHandler.channel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+
+        Container c = containerSupplier.createContainer(player.inventory, player);
+        player.openContainer = c;
+        player.openContainer.windowId = openContainerId;
+        player.openContainer.addListener(player);
+        MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
     }
 }
