@@ -35,10 +35,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
@@ -188,8 +185,13 @@ public class FMLHandshakeHandler {
     {
         this.direction = side;
         this.manager = networkManager;
-        this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction);
-        LOGGER.debug(FMLHSMARKER, "Starting new modded network connection. Found {} messages to dispatch.", this.messageList.size());
+        if (NetworkHooks.getConnectionType(()->this.manager)==ConnectionType.VANILLA) {
+            this.messageList = Collections.emptyList();
+            LOGGER.debug(FMLHSMARKER, "Starting new vanilla network connection.");
+        } else {
+            this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction);
+            LOGGER.debug(FMLHSMARKER, "Starting new modded network connection. Found {} messages to dispatch.", this.messageList.size());
+        }
     }
 
     private void handleServerModListOnClient(FMLHandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)

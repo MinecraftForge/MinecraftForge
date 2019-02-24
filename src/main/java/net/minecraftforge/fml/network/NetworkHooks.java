@@ -54,7 +54,7 @@ public class NetworkHooks
 
     public static boolean accepts(final CPacketHandshake packet)
     {
-        return Objects.equals(packet.getFMLVersion(), NETVERSION) || NetworkRegistry.acceptsVanillaConnections();
+        return Objects.equals(packet.getFMLVersion(), NETVERSION) || NetworkRegistry.acceptsVanillaClientConnections();
     }
 
     public static ConnectionType getConnectionType(final Supplier<NetworkManager> connection)

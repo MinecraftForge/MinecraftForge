@@ -60,13 +60,16 @@ public class NetworkRegistry
     @SuppressWarnings("RedundantStringConstructorCall")
     public static String ABSENT = new String("ABSENT \uD83E\uDD14");
 
+    @SuppressWarnings("RedundantStringConstructorCall")
+    public static String ACCEPTVANILLA  = new String("ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93");
+
     public static List<String> getNonVanillaNetworkMods()
     {
-        return instances.keySet().stream().map(Object::toString).collect(Collectors.toList());
+        return listRejectedVanillaMods(NetworkInstance::tryClientVersionOnServer);
     }
 
-    static boolean acceptsVanillaConnections() {
-        return instances.isEmpty();
+    static boolean acceptsVanillaClientConnections() {
+        return instances.isEmpty() || getNonVanillaNetworkMods().isEmpty();
     }
 
 
@@ -150,6 +153,23 @@ public class NetworkRegistry
         }).collect(Collectors.toCollection(NBTTagList::new));
     }
 
+    static List<String> listRejectedVanillaMods(BiFunction<NetworkInstance, String, Boolean> testFunction) {
+        final List<Pair<ResourceLocation, Boolean>> results = instances.values().stream().
+                map(ni -> {
+                    final String incomingVersion = ACCEPTVANILLA;
+                    final boolean test = testFunction.apply(ni, incomingVersion);
+                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED");
+                    return Pair.of(ni.getChannelName(), test);
+                }).filter(p->!p.getRight()).collect(Collectors.toList());
+
+        if (!results.isEmpty()) {
+            LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections",
+                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+            return results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.toList());
+        }
+        LOGGER.debug(NETREGISTRY, "Accepting channel list from vanilla");
+        return Collections.emptyList();
+    }
     /**
      * Validate the channels from the server on the client. Tests the client predicates against the server
      * supplied network protocol version.
