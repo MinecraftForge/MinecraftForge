@@ -1,21 +1,21 @@
 {
   "replace": false,
   "values": [
-    "#forge:glass_panes/white_glass_panes",
-    "#forge:glass_panes/orange_glass_panes",
-    "#forge:glass_panes/magenta_glass_panes",
-    "#forge:glass_panes/light_blue_glass_panes",
-    "#forge:glass_panes/yellow_glass_panes",
-    "#forge:glass_panes/lime_glass_panes",
-    "#forge:glass_panes/pink_glass_panes",
-    "#forge:glass_panes/gray_glass_panes",
-    "#forge:glass_panes/light_gray_glass_panes",
-    "#forge:glass_panes/cyan_glass_panes",
-    "#forge:glass_panes/purple_glass_panes",
-    "#forge:glass_panes/blue_glass_panes",
-    "#forge:glass_panes/brown_glass_panes",
-    "#forge:glass_panes/green_glass_panes",
-    "#forge:glass_panes/red_glass_panes",
-    "#forge:glass_panes/black_glass_panes"
+    "#forge:glass_panes/white",
+    "#forge:glass_panes/orange",
+    "#forge:glass_panes/magenta",
+    "#forge:glass_panes/light_blue",
+    "#forge:glass_panes/yellow",
+    "#forge:glass_panes/lime",
+    "#forge:glass_panes/pink",
+    "#forge:glass_panes/gray",
+    "#forge:glass_panes/light_gray",
+    "#forge:glass_panes/cyan",
+    "#forge:glass_panes/purple",
+    "#forge:glass_panes/blue",
+    "#forge:glass_panes/brown",
+    "#forge:glass_panes/green",
+    "#forge:glass_panes/red",
+    "#forge:glass_panes/black"
   ]
 }
