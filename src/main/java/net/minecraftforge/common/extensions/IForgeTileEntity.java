@@ -93,12 +93,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      */
      default void onLoad()
      {
-         TileEntity te = getTileEntity();
-         World world = te.getWorld();
-         if (world != null && world.isRemote)
-         {
-             ModelDataManager.requestModelDataRefresh(te);
-         }
+         requestModelDataUpdate();
      }
      
      default boolean shouldRenderInPass(int pass)
