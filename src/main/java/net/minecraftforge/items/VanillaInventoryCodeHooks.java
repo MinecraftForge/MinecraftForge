@@ -109,7 +109,7 @@ public class VanillaInventoryCodeHooks
                     dropper.setInventorySlotContents(slot, remainder);
                     return false;
                 })
-                .orElse(false);
+                .orElse(true);
     }
 
     /**
