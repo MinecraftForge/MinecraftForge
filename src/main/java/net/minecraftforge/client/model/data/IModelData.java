@@ -1,12 +1,10 @@
 package net.minecraftforge.client.model.data;
 
-import javax.annotation.Nonnull;
-
 public interface IModelData
 {
-    boolean hasProperty(IModelProperty<?> prop);
+    boolean hasProperty(ModelProperty<?> prop);
     
-    <T> T getData(IModelProperty<T> prop);
+    <T> T getData(ModelProperty<T> prop);
     
-    <T> T setData(IModelProperty<T> prop, T data);
+    <T> T setData(ModelProperty<T> prop, T data);
 }

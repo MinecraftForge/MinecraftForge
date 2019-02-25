@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/IBakedModel.java
 +++ b/net/minecraft/client/renderer/model/IBakedModel.java
-@@ -10,7 +10,7 @@
+@@ -10,7 +10,9 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)

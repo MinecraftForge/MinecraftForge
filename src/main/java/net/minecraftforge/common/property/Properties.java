@@ -20,7 +20,7 @@
 package net.minecraftforge.common.property;
 
 import net.minecraft.state.BooleanProperty;
-import net.minecraftforge.client.model.data.IModelProperty;
+import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.common.model.IModelState;
 
 public class Properties
@@ -33,5 +33,5 @@ public class Properties
     /**
      * Property holding the IModelState used for animating the model in the TESR.
      */
-    public static final IModelProperty<IModelState> AnimationProperty = new IModelProperty<IModelState>(){};
+    public static final ModelProperty<IModelState> AnimationProperty = new ModelProperty<IModelState>();
 }

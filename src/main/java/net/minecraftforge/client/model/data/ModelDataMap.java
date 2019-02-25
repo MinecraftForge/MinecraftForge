@@ -9,10 +9,10 @@ import com.google.common.collect.Sets;
 
 public class ModelDataMap implements IModelData
 {
-    private final Set<IModelProperty<?>> validProperties;
-    private final Map<IModelProperty<?>, Object> backingMap;
+    private final Set<ModelProperty<?>> validProperties;
+    private final Map<ModelProperty<?>, Object> backingMap;
     
-    private ModelDataMap(Map<IModelProperty<?>, Object> map)
+    private ModelDataMap(Map<ModelProperty<?>, Object> map)
     {
         this.validProperties = Sets.newIdentityHashSet();
         this.validProperties.addAll(map.keySet());
@@ -20,36 +20,37 @@ public class ModelDataMap implements IModelData
     }
 
     @Override
-    public boolean hasProperty(IModelProperty<?> prop)
+    public boolean hasProperty(ModelProperty<?> prop)
     {
         return validProperties.contains(prop);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T getData(IModelProperty<T> prop)
+    public <T> T getData(ModelProperty<T> prop)
     {
         return (T) backingMap.get(prop);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T setData(IModelProperty<T> prop, T data)
+    public <T> T setData(ModelProperty<T> prop, T data)
     {
         Preconditions.checkArgument(hasProperty(prop), "Cannot set model property here as it does not exist");
+        Preconditions.checkArgument(prop.test(data), "Value is invalid for this property");
         return (T) backingMap.put(prop, data);
     }
     
     public static class Builder
     {
-        private final Map<IModelProperty<?>, Object> defaults = new IdentityHashMap<>();
+        private final Map<ModelProperty<?>, Object> defaults = new IdentityHashMap<>();
         
-        public Builder withProperty(IModelProperty<?> prop)
+        public Builder withProperty(ModelProperty<?> prop)
         {
             return withInitial(prop, null);
         }
         
-        public <T> Builder withInitial(IModelProperty<T> prop, T data)
+        public <T> Builder withInitial(ModelProperty<T> prop, T data)
         {
             this.defaults.put(prop, data);
             return this;

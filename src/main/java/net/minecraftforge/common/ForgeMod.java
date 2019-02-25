@@ -53,9 +53,10 @@ import net.minecraft.world.IWorldReader;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
 import net.minecraftforge.client.model.data.IModelData;
-import net.minecraftforge.client.model.data.IModelProperty;
+import net.minecraftforge.client.model.data.ModelProperty;
 import net.minecraftforge.client.model.data.ModelDataMap;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
@@ -142,7 +143,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 */
     
-    private static final IModelProperty<Boolean> MAGIC_PROP = new IModelProperty<Boolean>() {};
+    private static final ModelProperty<Boolean> MAGIC_PROP = new ModelProperty<Boolean>() {};
     
     public void modelBake(ModelBakeEvent event)
     {
@@ -229,7 +230,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().register(new BlockContainer(Block.Builder.create(Material.ROCK, MapColor.AIR))
+        event.getRegistry().register(new BlockContainer(Block.Properties.create(Material.ROCK))
         {
             
             @Override

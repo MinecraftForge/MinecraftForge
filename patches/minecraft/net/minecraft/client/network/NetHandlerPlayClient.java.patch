@@ -9,7 +9,7 @@
           chunk.func_76613_n();
        }
  
-@@ -667,7 +664,7 @@
+@@ -667,7 +667,7 @@
           BlockPos blockpos = new BlockPos(nbttagcompound.func_74762_e("x"), nbttagcompound.func_74762_e("y"), nbttagcompound.func_74762_e("z"));
           TileEntity tileentity = this.field_147300_g.func_175625_s(blockpos);
           if (tileentity != null) {
