@@ -9,7 +9,7 @@
     BASE("base", "b"),
     SQUARE_BOTTOM_LEFT("square_bottom_left", "bl", "   ", "   ", "#  "),
     SQUARE_BOTTOM_RIGHT("square_bottom_right", "br", "   ", "   ", "  #"),
-@@ -108,4 +108,12 @@
+@@ -106,4 +106,12 @@
  
        return null;
     }
