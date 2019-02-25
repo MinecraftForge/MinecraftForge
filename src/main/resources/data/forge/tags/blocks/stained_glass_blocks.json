@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:glass_blocks/white_glass_blocks",
+    "#forge:glass_blocks/orange_glass_blocks",
+    "#forge:glass_blocks/magenta_glass_blocks",
+    "#forge:glass_blocks/light_blue_glass_blocks",
+    "#forge:glass_blocks/yellow_glass_blocks",
+    "#forge:glass_blocks/lime_glass_blocks",
+    "#forge:glass_blocks/pink_glass_blocks",
+    "#forge:glass_blocks/gray_glass_blocks",
+    "#forge:glass_blocks/light_gray_glass_blocks",
+    "#forge:glass_blocks/cyan_glass_blocks",
+    "#forge:glass_blocks/purple_glass_blocks",
+    "#forge:glass_blocks/blue_glass_blocks",
+    "#forge:glass_blocks/brown_glass_blocks",
+    "#forge:glass_blocks/green_glass_blocks",
+    "#forge:glass_blocks/red_glass_blocks",
+    "#forge:glass_blocks/black_glass_blocks"
+  ]
+}
