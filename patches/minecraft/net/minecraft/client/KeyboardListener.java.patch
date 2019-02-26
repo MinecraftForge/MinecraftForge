@@ -45,7 +45,8 @@
        }
     }
  
-@@ -351,12 +358,16 @@          if (iguieventlistener != null) {
+@@ -351,12 +358,16 @@
+          if (iguieventlistener != null) {
              if (Character.charCount(p_197963_3_) == 1) {
                 GuiScreen.func_195121_a(() -> {
 -                  iguieventlistener.charTyped((char)p_197963_3_, p_197963_4_);
