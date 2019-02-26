@@ -288,7 +288,7 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:0.10.+'
+        installer 'cpw.mods:modlauncher:0.11.+'
         installer 'net.minecraftforge:accesstransformers:0.15.+:shadowed'
         installer 'net.minecraftforge:eventbus:0.8.+:service'
         installer 'net.minecraftforge:forgespi:0.8.+'
@@ -303,6 +303,7 @@ project(':forge') {
         installer 'org.apache.logging.log4j:log4j-api:2.11.1'
         installer 'org.apache.logging.log4j:log4j-core:2.11.1'
         installer 'net.minecrell:terminalconsoleappender:1.1.+'
+        installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
         testImplementation "org.junit.jupiter:junit-jupiter-api:5.0.0"
@@ -670,32 +671,9 @@ project(':forge') {
         }
     }
     
-    task fmllauncherConfig(type: WriteProperties) {
-        outputFile file('build/server_launcher.properties')
-        encoding 'UTF8'
-        doFirst {
-            def artifacts = getArtifacts(project, project.configurations.installer, false).values().stream().map{a -> a.downloads.artifact.path}.sorted().collect() + [
-                "net/minecraft/server/${MC_VERSION}/server-${MC_VERSION}-extra.jar"
-            ]
-            for (int x = 0; x < artifacts.size(); x++) {
-                property 'library.' + x.toString().padLeft(3, '0'), "libraries/${artifacts.get(x)}"
-            }
-            property 'library.count', artifacts.size()
-            property 'args', [
-              '--gameDir',          '.',
-              '--launchTarget',     'fmlserver',
-              '--fml.forgeVersion', "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
-              '--fml.mcpVersion',   MCP_VERSION,
-              '--fml.mcVersion',    MC_VERSION,
-              '--fml.forgeGroup',   project.group
-            ].join(' ')
-        }
-    }
-
-    task launcherJar(type: Jar, dependsOn: [fmllauncherConfig]) {
+    task launcherJar(type: Jar) {
         classifier 'launcher'
         from sourceSets.fmllauncher.output
-        from fmllauncherConfig.outputFile
         doFirst {
             def classpath = new StringBuilder()
             def artifacts = getArtifacts(project, project.configurations.installer, false)
@@ -708,7 +686,15 @@ project(':forge') {
                 if (pkg == '/') {
                     manifest.attributes(values += [
                         'Main-Class': 'net.minecraftforge.server.ServerMain',
-                        'Class-Path': classpath.toString()
+                        'Class-Path': classpath.toString(),
+                        'ServerLaunchArgs': [
+                            '--gameDir',          '.',
+                            '--launchTarget',     'fmlserver',
+                            '--fml.forgeVersion', "${project.version.substring(MC_VERSION.length() + 1)}".toString(),
+                            '--fml.mcpVersion',   MCP_VERSION,
+                            '--fml.mcVersion',    MC_VERSION,
+                            '--fml.forgeGroup',   project.group
+                    ].join(' ')
                     ])
                 } else {
                     manifest.attributes(values, pkg)

@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
@@ -78,7 +79,10 @@ public class FMLLoader
         LOGGER.debug(CORE, "Initializing modjar URL handler");
         URL.setURLStreamHandlerFactory(p->p.equals("modjar") ? new ModJarURLHandler() : null);
 
-        accessTransformer = environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> new IncompatibleEnvironmentException("Missing AccessTransformer, cannot run"));
+        accessTransformer = environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> {
+            LOGGER.fatal(CORE,"Access Transformer library is missing, we need this to run");
+            return new IncompatibleEnvironmentException("Missing AccessTransformer, cannot run");
+        });
 
         final Package atPackage = accessTransformer.getClass().getPackage();
         LOGGER.debug(CORE,"FML found AccessTransformer version : {}", atPackage.getImplementationVersion());
@@ -87,7 +91,10 @@ public class FMLLoader
             throw new IncompatibleEnvironmentException("Incompatible accesstransformer found "+atPackage.getSpecificationVersion());
         }
 
-        eventBus = environment.findLaunchPlugin("eventbus").orElseThrow(()-> new IncompatibleEnvironmentException("Missing EventBus, cannot run"));
+        eventBus = environment.findLaunchPlugin("eventbus").orElseThrow(()-> {
+            LOGGER.fatal(CORE,"Event Bus library is missing, we need this to run");
+            return new IncompatibleEnvironmentException("Missing EventBus, cannot run");
+        });
 
         final Package eventBusPackage = eventBus.getClass().getPackage();
         LOGGER.debug(CORE,"FML found EventBus version : {}", eventBusPackage.getImplementationVersion());
@@ -96,11 +103,14 @@ public class FMLLoader
             throw new IncompatibleEnvironmentException("Incompatible eventbus found "+eventBusPackage.getSpecificationVersion());
         }
 
-        runtimeDistCleaner = (RuntimeDistCleaner)environment.findLaunchPlugin("runtimedistcleaner").orElseThrow(()->new IncompatibleEnvironmentException("Missing RuntimeDistCleaner, cannot run!"));
+        runtimeDistCleaner = (RuntimeDistCleaner)environment.findLaunchPlugin("runtimedistcleaner").orElseThrow(()-> {
+            LOGGER.fatal(CORE,"Dist Cleaner is missing, we need this to run");
+            return new IncompatibleEnvironmentException("Missing DistCleaner, cannot run!");
+        });
         LOGGER.debug(CORE, "Found Runtime Dist Cleaner");
 
         final ArrayList<ICoreModProvider> coreModProviders = new ArrayList<>();
-        ServiceLoader.load(ICoreModProvider.class).forEach(coreModProviders::add);
+        ServiceLoaderStreamUtils.errorHandlingServiceLoader(ICoreModProvider.class, serviceConfigurationError -> LOGGER.fatal(CORE, "Failed to load a coremod library, expect problems", serviceConfigurationError)).forEach(coreModProviders::add);
 
         if (coreModProviders.isEmpty()) {
             LOGGER.fatal(CORE, "Found no coremod provider. Cannot run");
@@ -114,6 +124,13 @@ public class FMLLoader
         final Package coremodPackage = coreModProvider.getClass().getPackage();
         LOGGER.debug(CORE,"FML found CoreMod version : {}", coremodPackage.getImplementationVersion());
 
+        try {
+            Class.forName("com.electronwill.nightconfig.core.Config", false, environment.getClass().getClassLoader());
+            Class.forName("com.electronwill.nightconfig.toml.TomlFormat", false, environment.getClass().getClassLoader());
+        } catch (ClassNotFoundException e) {
+            LOGGER.fatal(CORE, "Failed to load NightConfig");
+            throw new IncompatibleEnvironmentException("Missing NightConfig");
+        }
         FixSSL.fixup();
     }
 
