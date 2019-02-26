@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import net.minecraft.client.renderer.model.IUnbakedModel;
@@ -51,8 +52,7 @@ public interface ICustomModelLoader extends ISelectiveResourceReloadListener
     /*
      * loads (or reloads) specified model
      */
-    IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception;
-
+    IUnbakedModel loadModel(Function<ResourceLocation, IUnbakedModel> modelGetter, ResourceLocation modelLocation) throws Exception;
 
     @Override
     default IResourceType getResourceType()

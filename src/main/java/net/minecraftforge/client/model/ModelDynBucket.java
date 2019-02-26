@@ -177,7 +177,7 @@ public final class ModelDynBucket implements IUnbakedModel
             }
         }
 
-        return new BakedDynBucket(this, builder.build(), particleSprite, format, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity());
+        return new BakedDynBucket(this, builder.build(), particleSprite, format, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity(), new BakedDynBucketOverrideHandler(modelGetter));
     }
 
     /**
@@ -286,7 +286,7 @@ public final class ModelDynBucket implements IUnbakedModel
         }
 
         @Override
-        public IUnbakedModel loadModel(ResourceLocation modelLocation)
+        public IUnbakedModel loadModel(Function<ResourceLocation, IUnbakedModel> modelGetter, ResourceLocation modelLocation)
         {
             return MODEL;
         }
@@ -427,8 +427,12 @@ public final class ModelDynBucket implements IUnbakedModel
 
     private static final class BakedDynBucketOverrideHandler extends ItemOverrideList
     {
-        public static final BakedDynBucketOverrideHandler INSTANCE = new BakedDynBucketOverrideHandler();
-        private BakedDynBucketOverrideHandler() {}
+        private final Function<ResourceLocation, IUnbakedModel> modelGetter;
+        
+        BakedDynBucketOverrideHandler(Function<ResourceLocation, IUnbakedModel> modelGetter)
+        {
+            this.modelGetter = modelGetter;
+        }
 
         @Override
         public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
@@ -446,7 +450,7 @@ public final class ModelDynBucket implements IUnbakedModel
                             Function<ResourceLocation, TextureAtlasSprite> textureGetter;
                             textureGetter = location -> Minecraft.getInstance().getTextureMap().getAtlasSprite(location.toString());
 
-                            IBakedModel bakedModel = parent.bake(ModelLoader.defaultModelGetter(), textureGetter, new SimpleModelState(model.transforms), false, model.format);
+                            IBakedModel bakedModel = parent.bake(modelGetter, textureGetter, new SimpleModelState(model.transforms), false, model.format);
                             model.cache.put(name, bakedModel);
                             return bakedModel;
                         }
@@ -465,15 +469,16 @@ public final class ModelDynBucket implements IUnbakedModel
         private final Map<String, IBakedModel> cache; // contains all the baked models since they'll never change
         private final VertexFormat format;
 
-        BakedDynBucket(ModelDynBucket parent,
-                       ImmutableList<BakedQuad> quads,
-                       TextureAtlasSprite particle,
-                       VertexFormat format,
-                       ImmutableMap<TransformType, TRSRTransformation> transforms,
-                       Map<String, IBakedModel> cache,
-                       boolean untransformed)
+        public BakedDynBucket(ModelDynBucket parent,
+                              ImmutableList<BakedQuad> quads,
+                              TextureAtlasSprite particle,
+                              VertexFormat format,
+                              ImmutableMap<TransformType, TRSRTransformation> transforms,
+                              Map<String, IBakedModel> cache,
+                              boolean untransformed,
+                              ItemOverrideList overrides)
         {
-            super(quads, particle, transforms, BakedDynBucketOverrideHandler.INSTANCE, untransformed);
+            super(quads, particle, transforms, overrides);
             this.format = format;
             this.parent = parent;
             this.cache = cache;

@@ -87,7 +87,7 @@ public final class MultiLayerModel implements IUnbakedModel
         ImmutableMap.Builder<Optional<BlockRenderLayer>, IBakedModel> builder = ImmutableMap.builder();
         for(Optional<BlockRenderLayer> key : models.keySet())
         {
-        	IUnbakedModel model = ModelLoaderRegistry.getModelOrLogError(models.get(key), "Couldn't load MultiLayerModel dependency: " + models.get(key));
+        	IUnbakedModel model = ModelLoaderRegistry.getModelOrLogError(modelGetter, models.get(key), "Couldn't load MultiLayerModel dependency: " + models.get(key));
             builder.put(key, model.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(state, model.getDefaultState()), uvlock, format));
         }
         return builder.build();
@@ -96,7 +96,7 @@ public final class MultiLayerModel implements IUnbakedModel
     @Override
     public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
     {
-        IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
+        IUnbakedModel missing = ModelLoaderRegistry.getMissingModel(modelGetter);
         return new MultiLayerBakedModel(
             buildModels(models, state, uvlock, format, modelGetter, bakedTextureGetter),
             missing.bake(modelGetter, bakedTextureGetter, missing.getDefaultState(), uvlock, format),
@@ -230,7 +230,7 @@ public final class MultiLayerModel implements IUnbakedModel
         }
 
         @Override
-        public IUnbakedModel loadModel(ResourceLocation modelLocation)
+        public IUnbakedModel loadModel(Function<ResourceLocation, IUnbakedModel> modelGetter, ResourceLocation modelLocation)
         {
             return MultiLayerModel.INSTANCE;
         }

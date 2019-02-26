@@ -126,7 +126,7 @@ public enum B3DLoader implements ICustomModelLoader
 
     @Override
     @SuppressWarnings("unchecked")
-    public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
+    public IUnbakedModel loadModel(Function<ResourceLocation, IUnbakedModel> modelGetter, ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
         if(!cache.containsKey(file))

@@ -22,9 +22,9 @@ package net.minecraftforge.client.event;
 import java.util.Map;
 
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelManager;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
 
 /**
  * Fired when the ModelManager is notified of the resource manager reloading.
@@ -35,13 +35,13 @@ public class ModelBakeEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final ModelManager modelManager;
     private final Map<ModelResourceLocation, IBakedModel> modelRegistry;
-    private final ModelLoader modelLoader;
+    private final ModelBakery modelBakery;
 
-    public ModelBakeEvent(ModelManager modelManager, Map<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
+    public ModelBakeEvent(ModelManager modelManager, Map<ModelResourceLocation, IBakedModel> modelRegistry, ModelBakery modelBakery)
     {
         this.modelManager = modelManager;
         this.modelRegistry = modelRegistry;
-        this.modelLoader = modelLoader;
+        this.modelBakery = modelBakery;
     }
 
     public ModelManager getModelManager()
@@ -54,8 +54,8 @@ public class ModelBakeEvent extends net.minecraftforge.eventbus.api.Event
         return modelRegistry;
     }
 
-    public ModelLoader getModelLoader()
+    public ModelBakery getModelBakery()
     {
-        return modelLoader;
+        return modelBakery;
     }
 }

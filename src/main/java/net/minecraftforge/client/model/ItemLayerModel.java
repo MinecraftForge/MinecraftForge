@@ -73,9 +73,9 @@ public final class ItemLayerModel implements IUnbakedModel
         this.overrides = overrides;
     }
 
-    public ItemLayerModel(ModelBlock model)
+    public ItemLayerModel(Function<ResourceLocation, IUnbakedModel> modelGetter, ModelBlock model)
     {
-        this(getTextures(model), model.getOverrides(model, ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter()));
+        this(getTextures(model), model.getOverrides(model, modelGetter, ModelLoader.defaultTextureGetter()));
     }
 
     private static ImmutableList<ResourceLocation> getTextures(ModelBlock model)
@@ -466,7 +466,7 @@ public final class ItemLayerModel implements IUnbakedModel
         }
 
         @Override
-        public IUnbakedModel loadModel(ResourceLocation modelLocation)
+        public IUnbakedModel loadModel(Function<ResourceLocation, IUnbakedModel> modelGetter, ResourceLocation modelLocation)
         {
             return ItemLayerModel.INSTANCE;
         }

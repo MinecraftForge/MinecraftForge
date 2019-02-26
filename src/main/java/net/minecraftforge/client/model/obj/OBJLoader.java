@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.resources.IResource;
@@ -72,7 +73,7 @@ public enum OBJLoader implements ICustomModelLoader {
     }
 
     @Override
-    public IUnbakedModel loadModel(ResourceLocation modelLocation) throws Exception
+    public IUnbakedModel loadModel(Function<ResourceLocation, IUnbakedModel> modelGetter, ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getNamespace(), modelLocation.getPath());
         if (!cache.containsKey(file))

@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.function.Function;
 
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelBlockDefinition;
@@ -189,11 +190,11 @@ public class BlockStateLoader
          * Used to replace the base model with a re-textured model containing sub-models.
          */
         @Override
-        public IUnbakedModel process(IUnbakedModel base)
+        public IUnbakedModel process(Function<ResourceLocation, IUnbakedModel> modelGetter, IUnbakedModel base)
         {
             int size = parts.size();
             // FIXME: should missing base be handled this way?
-            boolean hasBase = base != ModelLoaderRegistry.getMissingModel();
+            boolean hasBase = base != ModelLoaderRegistry.getMissingModel(modelGetter);
 
             if (hasBase)
             {
@@ -213,11 +214,11 @@ public class BlockStateLoader
                 if (modelLocation == null)
                 {
                     LOGGER.error("model not found for variant {} for blockstate {}", entry.getKey(), blockstateLocation);
-                    model = ModelLoaderRegistry.getMissingModel(blockstateLocation, new Throwable());
+                    model = ModelLoaderRegistry.getMissingModel(modelGetter, blockstateLocation, new Throwable());
                 }
                 else
                 {
-                    model = ModelLoaderRegistry.getModelOrLogError(modelLocation, "Unable to load block sub-model: \'" + modelLocation);
+                    model = ModelLoaderRegistry.getModelOrLogError(modelGetter, modelLocation, "Unable to load block sub-model: \'" + modelLocation);
                 }
 
                 models.put(entry.getKey(), Pair.of(runModelHooks(model, Optional.of(part.smooth), Optional.of(part.gui3d), part.getTextures(), part.getCustomData()), part.getState()));

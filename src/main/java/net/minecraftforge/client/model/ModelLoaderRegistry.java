@@ -23,6 +23,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,12 +36,10 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader.VanillaLoader;
-import net.minecraftforge.client.model.ModelLoader.VariantLoader;
 import net.minecraftforge.client.model.b3d.B3DLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.common.animation.ITimeValue;
@@ -87,20 +86,12 @@ public class ModelLoaderRegistry
         return cache.containsKey(location);
     }
 
-
-    public static ResourceLocation getActualLocation(ResourceLocation location)
-    {
-        if(location instanceof ModelResourceLocation) return location;
-        if(location.getPath().startsWith("builtin/")) return location;
-        return new ResourceLocation(location.getNamespace(), "models/" + location.getPath());
-    }
-
     /**
      * Primary method to get IModel instances.
      * ResourceLocation argument will be passed directly to the custom model loaders,
      * ModelResourceLocation argument will be loaded through the blockstate system.
      */
-    public static IUnbakedModel getModel(ResourceLocation location) throws Exception
+    public static IUnbakedModel getModel(Function<ResourceLocation, IUnbakedModel> fallback, ResourceLocation location) throws LoaderException
     {
         IUnbakedModel model;
 
@@ -118,15 +109,14 @@ public class ModelLoaderRegistry
         try
         {
             ResourceLocation aliased = aliases.get(location);
-            if (aliased != null) return getModel(aliased);
+            if (aliased != null) return getModel(fallback, aliased);
 
-            ResourceLocation actual = getActualLocation(location);
             ICustomModelLoader accepted = null;
             for(ICustomModelLoader loader : loaders)
             {
                 try
                 {
-                    if(loader.accepts(actual))
+                    if(loader.accepts(location))
                     {
                         if(accepted != null)
                         {
@@ -141,40 +131,24 @@ public class ModelLoaderRegistry
                 }
             }
 
-            // no custom loaders found, try vanilla ones
             if(accepted == null)
             {
-                if(VariantLoader.INSTANCE.accepts(actual))
-                {
-                     accepted = VariantLoader.INSTANCE;
-                }
-                else if(VanillaLoader.INSTANCE.accepts(actual))
-                {
-                    accepted = VanillaLoader.INSTANCE;
-                }
+                return null;
             }
-
-            if(accepted == null)
-            {
-                throw new LoaderException("no suitable loader found for the model " + location + ", skipping");
-            }
+            
             try
             {
-                model = accepted.loadModel(actual);
+                model = accepted.loadModel(fallback, location);
             }
             catch(Exception e)
             {
                 throw new LoaderException(String.format("Exception loading model %s with loader %s, skipping", location, accepted), e);
             }
-            if(model == getMissingModel())
-            {
-                throw new LoaderException(String.format("Loader %s returned missing model while loading model %s", accepted, location));
-            }
             if(model == null)
             {
                 throw new LoaderException(String.format("Loader %s returned null while loading model %s", accepted, location));
             }
-            textures.addAll(model.getTextures(ModelLoader.defaultModelGetter(), new HashSet<>()));
+            textures.addAll(model.getTextures(fallback, new HashSet<>()));
         }
         finally
         {
@@ -187,7 +161,7 @@ public class ModelLoaderRegistry
         cache.put(location, model);
         for (ResourceLocation dep : model.getOverrideLocations())
         {
-            getModelOrMissing(dep);
+            getModelOrMissing(fallback, dep);
         }
         return model;
     }
@@ -195,48 +169,43 @@ public class ModelLoaderRegistry
     /**
      * Use this if you don't care about the exception and want some model anyway.
      */
-    public static IUnbakedModel getModelOrMissing(ResourceLocation location)
+    public static IUnbakedModel getModelOrMissing(Function<ResourceLocation, IUnbakedModel> fallback, ResourceLocation location)
     {
         try
         {
-            return getModel(location);
+            return getModel(fallback, location);
         }
         catch(Exception e)
         {
-            return getMissingModel(location, e);
+            return getMissingModel(fallback, location, e);
         }
     }
 
     /**
      * Use this if you want the model, but need to log the error.
      */
-    public static IUnbakedModel getModelOrLogError(ResourceLocation location, String error)
+    public static IUnbakedModel getModelOrLogError(Function<ResourceLocation, IUnbakedModel> fallback, ResourceLocation location, String error)
     {
         try
         {
-            return getModel(location);
+            return getModel(fallback, location);
         }
         catch(Exception e)
         {
             LOGGER.error(error, e);
-            return getMissingModel(location, e);
+            return getMissingModel(fallback, location, e);
         }
     }
 
-    public static IUnbakedModel getMissingModel()
+    public static IUnbakedModel getMissingModel(Function<ResourceLocation, IUnbakedModel> getter)
     {
-        final ModelLoader loader = VanillaLoader.INSTANCE.getLoader();
-        if(loader == null)
-        {
-            throw new IllegalStateException("Using ModelLoaderRegistry too early.");
-        }
-        return loader.getMissingModel();
+        return getter.apply(ModelBakery.MODEL_MISSING);
     }
 
-    static IUnbakedModel getMissingModel(ResourceLocation location, Throwable cause)
+    static IUnbakedModel getMissingModel(Function<ResourceLocation, IUnbakedModel> getter, ResourceLocation location, Throwable cause)
     {
         //IModel model =  new FancyMissingModel(ExceptionUtils.getStackTrace(cause).replaceAll("\\t", "    "));
-        IUnbakedModel model = new FancyMissingModel(getMissingModel(), location.toString());
+        IUnbakedModel model = getMissingModel(getter);//new FancyMissingModel(getMissingModel(), location.toString());
         textures.addAll(model.getTextures(null, null));
         return model;
     }
@@ -278,8 +247,8 @@ public class ModelLoaderRegistry
         private static final long serialVersionUID = 1L;
     }
 
-    public static IAnimationStateMachine loadASM(ResourceLocation location, ImmutableMap<String, ITimeValue> customParameters)
+    public static IAnimationStateMachine loadASM(ResourceLocation location, ImmutableMap<String, ITimeValue> customParameters, Function<ResourceLocation, IUnbakedModel> modelGetter)
     {
-        return AnimationStateMachine.load(manager, location, customParameters);
+        return AnimationStateMachine.load(manager, location, customParameters, modelGetter);
     }
 }

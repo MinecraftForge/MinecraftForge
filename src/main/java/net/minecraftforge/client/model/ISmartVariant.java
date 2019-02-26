@@ -19,11 +19,14 @@
 
 package net.minecraftforge.client.model;
 
+import java.util.function.Function;
+
 import net.minecraft.client.renderer.model.IUnbakedModel;
+import net.minecraft.util.ResourceLocation;
 
 public interface ISmartVariant
 {
-    default IUnbakedModel process(IUnbakedModel base) {
+    default IUnbakedModel process(Function<ResourceLocation, IUnbakedModel> modelGetter, IUnbakedModel base) {
         return base;
     }
 }

@@ -281,7 +281,7 @@ public final class MultiModel implements IUnbakedModel
         if(bakedBase == null && parts.isEmpty())
         {
             LOGGER.error("MultiModel {} is empty (no base model or parts were provided/resolved)", location);
-            IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
+            IUnbakedModel missing = ModelLoaderRegistry.getMissingModel(modelGetter);
             return missing.bake(modelGetter, bakedTextureGetter, missing.getDefaultState(), uvlock, format);
         }
         return new Baked(location, true, bakedBase, mapBuilder.build());

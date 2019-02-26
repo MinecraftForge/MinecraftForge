@@ -19,15 +19,30 @@
 
 package net.minecraftforge.client.model;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.function.Function;
+
+import javax.annotation.Nullable;
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
+import javax.vecmath.Vector3f;
+
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.ibm.icu.text.Transform;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
@@ -40,47 +55,30 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nullable;
-import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
 
 final class FancyMissingModel implements IUnbakedModel
 {
     private static final ResourceLocation font = new ResourceLocation("minecraft", "textures/font/ascii.png");
     private static final ResourceLocation font2 = new ResourceLocation("minecraft", "font/ascii");
     private static final TRSRTransformation smallTransformation = TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, null, new Vector3f(.25f, .25f, .25f), null));
-    private static final LoadingCache<VertexFormat, SimpleModelFontRenderer> fontCache = CacheBuilder.newBuilder().maximumSize(3).build(new CacheLoader<VertexFormat, SimpleModelFontRenderer>()
+    private static final LoadingCache<VertexFormat, FontRenderer> fontCache = CacheBuilder.newBuilder().maximumSize(3).build(new CacheLoader<VertexFormat, FontRenderer>()
     {
         @Override
-        public SimpleModelFontRenderer load(VertexFormat format) throws Exception
+        public FontRenderer load(VertexFormat format) throws Exception
         {
             Matrix4f m = new Matrix4f();
             m.m20 = 1f / 128f;
             m.m01 = m.m12 = -m.m20;
             m.m33 = 1;
             m.setTranslation(new Vector3f(1, 1 + 1f / 0x100, 0));
-            return new SimpleModelFontRenderer(
+            return new FontRenderer(Minecraft.getInstance().getTextureManager(), new TransformedFont(
                 Minecraft.getInstance().gameSettings,
                 font,
                 Minecraft.getInstance().getTextureManager(),
                 false,
                 m,
                 format
-            ) {/* TODO Implement once SimpleModelFontRenderer is fixed
-                @Override
-                protected float renderUnicodeChar(char c, boolean italic)
-                {
-                    return super.renderDefaultChar(126, italic);
-                }
-          */};
+            ));
         }
     });
 
@@ -116,7 +114,7 @@ final class FancyMissingModel implements IUnbakedModel
 
     static final class BakedModel implements IBakedModel
     {
-        private final SimpleModelFontRenderer fontRenderer;
+        private final FontRenderer fontRenderer;
         private final String message;
         private final TextureAtlasSprite fontTexture;
         private final IBakedModel missingModel;
@@ -124,7 +122,7 @@ final class FancyMissingModel implements IUnbakedModel
         private final boolean big;
         private ImmutableList<BakedQuad> quads;
 
-        public BakedModel(IBakedModel bigMissing, IBakedModel smallMissing, SimpleModelFontRenderer fontRenderer, String message, TextureAtlasSprite fontTexture)
+        public BakedModel(IBakedModel bigMissing, IBakedModel smallMissing, FontRenderer fontRenderer, String message, TextureAtlasSprite fontTexture)
         {
             this.missingModel = bigMissing;
             otherModel = new BakedModel(smallMissing, fontRenderer, message, fontTexture, this);
@@ -134,7 +132,7 @@ final class FancyMissingModel implements IUnbakedModel
             this.fontTexture = fontTexture;
         }
 
-        public BakedModel(IBakedModel smallMissing, SimpleModelFontRenderer fontRenderer, String message, TextureAtlasSprite fontTexture, BakedModel big)
+        public BakedModel(IBakedModel smallMissing, FontRenderer fontRenderer, String message, TextureAtlasSprite fontTexture, BakedModel big)
         {
             this.missingModel = smallMissing;
             otherModel = big;
@@ -151,8 +149,9 @@ final class FancyMissingModel implements IUnbakedModel
             {
                 if (quads == null)
                 {
-                    fontRenderer.setSprite(fontTexture);
-                    fontRenderer.setFillBlanks(true);
+                    TransformedFont font = null;//(TransformedFont) fontRenderer.getFont();
+                    font.setSprite(fontTexture);
+                    font.setFillBlanks(true);
                     String[] lines = message.split("\\r?\\n");
                     List<String> splitLines = Lists.newArrayList();
                     for (int y = 0; y < lines.length; y++)
@@ -164,8 +163,8 @@ final class FancyMissingModel implements IUnbakedModel
                         fontRenderer.drawString(splitLines.get(y), 0, ((y - splitLines.size() / 2f) * fontRenderer.FONT_HEIGHT) + 0x40, 0xFF00FFFF);
                     }
                     ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
-                    builder.addAll(missingModel.getQuads (state, side, rand));
-                    builder.addAll(fontRenderer.build());
+                    builder.addAll(missingModel.getQuads(state, side, rand));
+                    builder.addAll(font.build());
                     quads = builder.build();
                 }
                 return quads;

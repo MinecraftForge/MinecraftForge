@@ -48,19 +48,21 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     private final IUnbakedModel model;
     private final IModelState state;
     private final VertexFormat format;
+    private final Function<ResourceLocation, IUnbakedModel> modelGetter;
     private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
 
-    public AnimationItemOverrideList(IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
+    public AnimationItemOverrideList(IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, ItemOverrideList overrides)
     {
-        this(model, state, format, bakedTextureGetter, overrides.getOverrides().reverse());
+        this(model, state, format, modelGetter, bakedTextureGetter, overrides.getOverrides().reverse());
     }
 
-    public AnimationItemOverrideList(IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
+    public AnimationItemOverrideList(IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
     {
-        super(model, ModelLoader.defaultModelGetter(), bakedTextureGetter, overrides);
+        super(model, modelGetter, bakedTextureGetter, overrides);
         this.model = model;
         this.state = state;
         this.format = format;
+        this.modelGetter = modelGetter;
         this.bakedTextureGetter = bakedTextureGetter;
     }
 
@@ -83,7 +85,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
                 return asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             })
             // TODO where should uvlock data come from?
-            .map(state -> model.bake(ModelLoader.defaultModelGetter(), bakedTextureGetter, new ModelStateComposition(state, this.state), false, format))
+            .map(state -> model.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(state, this.state), false, format))
             .orElseGet(() -> super.getModelWithOverrides(originalModel, stack, world, entity));
     }
 }

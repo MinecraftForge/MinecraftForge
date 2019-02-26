@@ -21,6 +21,7 @@ package net.minecraftforge.client.model.animation;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -55,11 +56,13 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
 {
     private final VertexLighterFlat lighter;
     private final ResourceLocation modelLocation;
+    private final Function<ResourceLocation, IUnbakedModel> modelGetter;
 
-    public AnimationModelBase(ResourceLocation modelLocation, VertexLighterFlat lighter)
+    public AnimationModelBase(ResourceLocation modelLocation, VertexLighterFlat lighter, Function<ResourceLocation, IUnbakedModel> modelGetter)
     {
         this.modelLocation = modelLocation;
         this.lighter = lighter;
+        this.modelGetter = modelGetter;
     }
 
     @SuppressWarnings("unchecked")
@@ -70,9 +73,9 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
             .map(cap -> cap.apply(timeAlive / 20))
             .map(pair -> {
                 handleEvents((T) entity, timeAlive / 20, pair.getRight());
-                IUnbakedModel unbaked = ModelLoaderRegistry.getModelOrMissing(modelLocation);
+                IUnbakedModel unbaked = ModelLoaderRegistry.getModelOrMissing(modelGetter, modelLocation);
                 // TODO where should uvlock data come from?
-                return unbaked.bake(ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter(), pair.getLeft(), false, DefaultVertexFormats.ITEM);
+                return unbaked.bake(modelGetter, ModelLoader.defaultTextureGetter(), pair.getLeft(), false, DefaultVertexFormats.ITEM);
             }).ifPresent(model -> drawModel(model, entity));
     }
 

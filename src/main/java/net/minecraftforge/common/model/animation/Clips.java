@@ -93,9 +93,9 @@ public final class Clips
      * Retrieves the clip from the model.
      */
     @OnlyIn(Dist.CLIENT)
-    public static IClip getModelClipNode(ResourceLocation modelLocation, String clipName)
+    public static IClip getModelClipNode(ResourceLocation modelLocation, String clipName, Function<ResourceLocation, IUnbakedModel> modelGetter)
     {
-        IUnbakedModel model = ModelLoaderRegistry.getModelOrMissing(modelLocation);
+        IUnbakedModel model = ModelLoaderRegistry.getModelOrMissing(modelGetter, modelLocation);
         Optional<? extends IClip> clip = model.getClip(clipName);
         if (clip.isPresent())
         {
@@ -443,11 +443,17 @@ public final class Clips
     {
         INSTANCE;
 
-        private final ThreadLocal<Function<String, IClip>> clipResolver = new ThreadLocal<Function<String, IClip>>();
+        private final ThreadLocal<Function<String, IClip>> clipResolver = new ThreadLocal<>();
+        private final ThreadLocal<Function<ResourceLocation, IUnbakedModel>> modelResolver = new ThreadLocal<>();
 
         public void setClipResolver(@Nullable Function<String, IClip> clipResolver)
         {
             this.clipResolver.set(clipResolver);
+        }
+        
+        public void setModelResolver(Function<ResourceLocation, IUnbakedModel> modelResolver)
+        {
+            this.modelResolver.set(modelResolver);
         }
 
         @Override
@@ -571,7 +577,7 @@ public final class Clips
                                 {
                                     model = new ResourceLocation(location);
                                 }
-                                return getModelClipNode(model, clipName);
+                                return getModelClipNode(model, clipName, modelResolver.get());
                             }
                         default:
                             throw new IOException("expected Clip, got " + in.peek());

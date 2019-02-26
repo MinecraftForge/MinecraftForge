@@ -5,7 +5,7 @@
  
     public void func_195410_a(IResourceManager p_195410_1_) {
 -      ModelBakery modelbakery = new ModelBakery(p_195410_1_, this.field_174956_b);
-+      net.minecraftforge.client.model.ModelLoader modelbakery = new net.minecraftforge.client.model.ModelLoader(p_195410_1_, this.field_174956_b);
++      ModelBakery modelbakery = new ModelBakery(p_195410_1_, field_174956_b);
        this.field_174958_a = modelbakery.func_177570_a();
        this.field_174955_d = this.field_174958_a.get(ModelBakery.field_177604_a);
 +      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.field_174958_a, modelbakery);

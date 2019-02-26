@@ -112,4 +112,9 @@ public class ClientModLoader
     {
         return loading;
     }
+    
+    public static boolean isErrored()
+    {
+        return error != null;
+    }
 }
