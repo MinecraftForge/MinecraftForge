@@ -34,9 +34,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSidedProvider;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
