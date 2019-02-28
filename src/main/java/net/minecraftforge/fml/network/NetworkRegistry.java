@@ -68,7 +68,7 @@ public class NetworkRegistry
         return listRejectedVanillaMods(NetworkInstance::tryClientVersionOnServer);
     }
 
-    static boolean acceptsVanillaClientConnections() {
+    public static boolean acceptsVanillaClientConnections() {
         return instances.isEmpty() || getNonVanillaNetworkMods().isEmpty();
     }
 

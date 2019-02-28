@@ -72,7 +72,7 @@ import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
  * final login phase will commence.
  */
 public class FMLHandshakeHandler {
-    static final Marker FMLHSMARKER = MarkerManager.getMarker("FMLHANDSHAKE").setParents(FMLNetworking.NETWORK);
+    static final Marker FMLHSMARKER = MarkerManager.getMarker("FMLHANDSHAKE").setParents(FMLNetworkConstants.NETWORK);
     private static final Logger LOGGER = LogManager.getLogger();
     static final ResourceLocation FML_HANDSHAKE_RESOURCE = new ResourceLocation("fml:handshake");
     private static final AttributeKey<FMLHandshakeHandler> FML_HANDSHAKE_HANDLER_ATTRIBUTE_KEY = AttributeKey.newInstance("fml:handshake");
@@ -83,7 +83,7 @@ public class FMLHandshakeHandler {
         channel = NetworkRegistry.ChannelBuilder.named(FML_HANDSHAKE_RESOURCE).
                 clientAcceptedVersions(a -> true).
                 serverAcceptedVersions(a -> true).
-                networkProtocolVersion(() -> NetworkHooks.NETVERSION).
+                networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION).
                 simpleChannel();
         channel.messageBuilder(FMLHandshakeMessages.C2SAcknowledge.class, 99).
                 loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
@@ -208,7 +208,7 @@ public class FMLHandshakeHandler {
         channel.reply(reply, c.get());
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
-        c.get().getNetworkManager().channel().attr(FMLNetworking.FML_MARKER).set(NetworkHooks.NETVERSION);
+        c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_MARKER).set(FMLNetworkConstants.NETVERSION);
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
     }

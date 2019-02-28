@@ -23,8 +23,15 @@ import io.netty.util.AttributeKey;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
-public class FMLNetworking
+/**
+ * Constants related to networking
+ */
+public class FMLNetworkConstants
 {
+    public static final String FMLNETMARKER = "FML";
+    public static final int FMLNETVERSION = 1;
+    public static final String NETVERSION = FMLNETMARKER + FMLNETVERSION;
+    public static final String NOVERSION = "NONE";
     static final Marker NETWORK = MarkerManager.getMarker("FMLNETWORK");
     static final AttributeKey<String> FML_MARKER = AttributeKey.valueOf("fml:marker");
 }

@@ -28,7 +28,7 @@ public class FMLPlayHandler
             .named(new ResourceLocation("fml", "play"))
             .clientAcceptedVersions(a -> true)
             .serverAcceptedVersions(a -> true)
-            .networkProtocolVersion(() -> NetworkHooks.NETVERSION)
+            .networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION)
             .simpleChannel();
     static
     {

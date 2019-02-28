@@ -41,7 +41,7 @@ public class FMLLoginWrapper {
         wrapperChannel = NetworkRegistry.ChannelBuilder.named(FMLLoginWrapper.WRAPPER).
                 clientAcceptedVersions(a->true).
                 serverAcceptedVersions(a->true).
-                networkProtocolVersion(()->NetworkHooks.NETVERSION)
+                networkProtocolVersion(()-> FMLNetworkConstants.NETVERSION)
                 .eventNetworkChannel();
         wrapperChannel.addListener(this::wrapperReceived);
     }
