@@ -19,20 +19,23 @@
 
 package net.minecraftforge.fml.network;
 
-import net.minecraft.nbt.INBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.HexDumper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryManager;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.annotation.Nullable;
+
+import com.google.common.collect.Maps;
 
 public class FMLHandshakeMessages
 {
@@ -52,66 +55,140 @@ public class FMLHandshakeMessages
      */
     public static class S2CModList extends LoginIndexedMessage
     {
-        private List<String> registries;
-        private NBTTagList channels;
-        private List<String> modList;
+        private List<String> mods;
+        private Map<ResourceLocation, String> channels;
+        private List<ResourceLocation> registries;
 
-        public S2CModList() {
-            this.modList = ModList.get().getMods().stream().map(ModInfo::getModId).collect(Collectors.toList());
-        }
-
-        S2CModList(NBTTagCompound nbtTagCompound)
+        public S2CModList()
         {
-            this.modList = nbtTagCompound.getList("modlist", 8).stream().map(INBTBase::getString).collect(Collectors.toList());
-            this.channels = nbtTagCompound.getList("channels", 10);
-            this.registries = nbtTagCompound.getList("registries", 8).stream().map(INBTBase::getString).collect(Collectors.toList());
+            this.mods = ModList.get().getMods().stream().map(ModInfo::getModId).collect(Collectors.toList());
+            this.channels = NetworkRegistry.buildChannelVersions();
+            this.registries = RegistryManager.registryNames();
         }
 
-        public static S2CModList decode(PacketBuffer packetBuffer)
+        private S2CModList(List<String> mods, Map<ResourceLocation, String> channels, List<ResourceLocation> registries)
         {
-            final NBTTagCompound nbtTagCompound = packetBuffer.readCompoundTag();
-            return new S2CModList(nbtTagCompound);
+            this.mods = mods;
+            this.channels = channels;
+            this.registries = registries;
         }
 
-        public void encode(PacketBuffer packetBuffer)
+        public static S2CModList decode(PacketBuffer input)
         {
-            NBTTagCompound tag = new NBTTagCompound();
-            tag.setTag("modlist",modList.stream().map(NBTTagString::new).collect(Collectors.toCollection(NBTTagList::new)));
-            tag.setTag("channels", NetworkRegistry.buildChannelVersions());
-            tag.setTag("registries", RegistryManager.registryNames().stream().map(NBTTagString::new).collect(Collectors.toCollection(NBTTagList::new)));
-            packetBuffer.writeCompoundTag(tag);
+            List<String> mods = new ArrayList<>();
+            int len = input.readVarInt();
+            for (int x = 0; x < len; x++)
+                mods.add(input.readString(0x100));
+
+            Map<ResourceLocation, String> channels = new HashMap<>();
+            len = input.readVarInt();
+            for (int x = 0; x < len; x++)
+                channels.put(input.readResourceLocation(), input.readString(0x100));
+
+            List<ResourceLocation> registries = new ArrayList<>();
+            len = input.readVarInt();
+            for (int x = 0; x < len; x++)
+                registries.add(input.readResourceLocation());
+
+            return new S2CModList(mods, channels, registries);
         }
 
-        String getModList() {
-            return String.join(",", modList);
+        public void encode(PacketBuffer output)
+        {
+            output.writeVarInt(mods.size());
+            mods.forEach(m -> output.writeString(m, 0x100));
+
+            output.writeVarInt(channels.size());
+            channels.forEach((k, v) -> {
+                output.writeResourceLocation(k);
+                output.writeString(v, 0x100);
+            });
+
+            output.writeVarInt(registries.size());
+            registries.forEach(output::writeResourceLocation);
         }
 
-        List<String> getRegistries() {
+        public List<String> getModList() {
+            return mods;
+        }
+
+        public List<ResourceLocation> getRegistries() {
             return this.registries;
         }
-        NBTTagList getChannels() {
+
+        public Map<ResourceLocation, String> getChannels() {
             return this.channels;
         }
     }
 
-    public static class C2SModListReply extends S2CModList
+    public static class C2SModListReply extends LoginIndexedMessage
     {
-        public C2SModListReply() {
-            super();
-        }
+        private List<String> mods;
+        private Map<ResourceLocation, String> channels;
+        private Map<ResourceLocation, String> registries;
 
-        C2SModListReply(final NBTTagCompound buffer) {
-            super(buffer);
-        }
-
-        public static C2SModListReply decode(PacketBuffer buffer)
+        public C2SModListReply()
         {
-            return new C2SModListReply(buffer.readCompoundTag());
+            this.mods = ModList.get().getMods().stream().map(ModInfo::getModId).collect(Collectors.toList());
+            this.channels = NetworkRegistry.buildChannelVersions();
+            this.registries = Maps.newHashMap(); //TODO: Fill with known hashes, which requires keeping a file cache
         }
 
-        public void encode(PacketBuffer buffer)
+        private C2SModListReply(List<String> mods, Map<ResourceLocation, String> channels, Map<ResourceLocation, String> registries)
         {
-            super.encode(buffer);
+            this.mods = mods;
+            this.channels = channels;
+            this.registries = registries;
+        }
+
+        public static C2SModListReply decode(PacketBuffer input)
+        {
+            List<String> mods = new ArrayList<>();
+            int len = input.readVarInt();
+            for (int x = 0; x < len; x++)
+                mods.add(input.readString(0x100));
+
+            Map<ResourceLocation, String> channels = new HashMap<>();
+            len = input.readVarInt();
+            for (int x = 0; x < len; x++)
+                channels.put(input.readResourceLocation(), input.readString(0x100));
+
+            Map<ResourceLocation, String> registries = new HashMap<>();
+            len = input.readVarInt();
+            for (int x = 0; x < len; x++)
+                registries.put(input.readResourceLocation(), input.readString(0x100));
+
+            return new C2SModListReply(mods, channels, registries);
+        }
+
+        public void encode(PacketBuffer output)
+        {
+            output.writeVarInt(mods.size());
+            mods.forEach(m -> output.writeString(m, 0x100));
+
+            output.writeVarInt(channels.size());
+            channels.forEach((k, v) -> {
+                output.writeResourceLocation(k);
+                output.writeString(v, 0x100);
+            });
+
+            output.writeVarInt(registries.size());
+            registries.forEach((k, v) -> {
+                output.writeResourceLocation(k);
+                output.writeString(v, 0x100);
+            });
+        }
+
+        public List<String> getModList() {
+            return mods;
+        }
+
+        public Map<ResourceLocation, String> getRegistries() {
+            return this.registries;
+        }
+
+        public Map<ResourceLocation, String> getChannels() {
+            return this.channels;
         }
     }
 
@@ -126,26 +203,42 @@ public class FMLHandshakeMessages
     }
 
     public static class S2CRegistry extends LoginIndexedMessage {
-        private String registryName;
+        private ResourceLocation registryName;
+        @Nullable
+        private ForgeRegistry.Snapshot snapshot;
 
-        public S2CRegistry(final ResourceLocation key, final ForgeRegistry<? extends IForgeRegistryEntry<?>> registry) {
-            registryName = key.toString();
-        }
-
-        private S2CRegistry(final String registryName) {
-            this.registryName = registryName;
+        public S2CRegistry(final ResourceLocation name, @Nullable ForgeRegistry.Snapshot snapshot) {
+            this.registryName = name;
+            this.snapshot = snapshot;
         }
 
         void encode(final PacketBuffer buffer) {
-            buffer.writeString(registryName, 128);
+            buffer.writeResourceLocation(registryName);
+            buffer.writeBoolean(hasSnapshot());
+            if (hasSnapshot())
+                buffer.writeBytes(snapshot.getPacketData());
         }
 
         public static S2CRegistry decode(final PacketBuffer buffer) {
-            return new S2CRegistry(buffer.readString(128));
+System.out.println("Readable: " + buffer.readableBytes());
+            ResourceLocation name = buffer.readResourceLocation();
+            ForgeRegistry.Snapshot snapshot = null;
+            if (buffer.readBoolean())
+                snapshot = ForgeRegistry.Snapshot.read(buffer);
+            return new S2CRegistry(name, snapshot);
         }
 
-        public String getRegistryName() {
+        public ResourceLocation getRegistryName() {
             return registryName;
+        }
+
+        public boolean hasSnapshot() {
+            return snapshot != null;
+        }
+
+        @Nullable
+        public ForgeRegistry.Snapshot getSnapshot() {
+            return snapshot;
         }
     }
 

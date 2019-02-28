@@ -29,7 +29,7 @@ import org.apache.logging.log4j.MarkerManager;
 public class FMLNetworkConstants
 {
     public static final String FMLNETMARKER = "FML";
-    public static final int FMLNETVERSION = 1;
+    public static final int FMLNETVERSION = 2;
     public static final String NETVERSION = FMLNETMARKER + FMLNETVERSION;
     public static final String NOVERSION = "NONE";
     static final Marker NETWORK = MarkerManager.getMarker("FMLNETWORK");

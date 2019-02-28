@@ -35,6 +35,8 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import com.google.common.collect.Maps;
+
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -108,7 +110,7 @@ public class FMLHandshakeHandler {
                 loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
                 decoder(FMLHandshakeMessages.S2CRegistry::decode).
                 encoder(FMLHandshakeMessages.S2CRegistry::encode).
-                buildLoginPacketList(RegistryManager::generateRegistryPackets).
+                buildLoginPacketList(RegistryManager::generateRegistryPackets). //TODO: Make this non-static, and store a cache on the client.
                 consumer(biConsumerFor(FMLHandshakeHandler::handleRegistryMessage)).
                 add();
         channel.messageBuilder(FMLHandshakeMessages.S2CConfigData.class, 4).
@@ -178,8 +180,9 @@ public class FMLHandshakeHandler {
     private final NetworkDirection direction;
     private final NetworkManager manager;
     private int packetPosition;
-    private ForgeRegistry.Snapshot registrySnapshot;
-    private Set<String> registriesToReceive;
+    private Map<ResourceLocation, ForgeRegistry.Snapshot> registrySnapshots;
+    private Set<ResourceLocation> registriesToReceive;
+    private Map<ResourceLocation, String> registryHashes;
 
     private FMLHandshakeHandler(NetworkManager networkManager, NetworkDirection side)
     {
@@ -196,7 +199,7 @@ public class FMLHandshakeHandler {
 
     private void handleServerModListOnClient(FMLHandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
     {
-        LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", serverModList.getModList());
+        LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", String.join(", ", serverModList.getModList()));
         boolean accepted = NetworkRegistry.validateClientChannels(serverModList.getChannels());
         c.get().setPacketHandled(true);
         if (!accepted) {
@@ -204,12 +207,14 @@ public class FMLHandshakeHandler {
             c.get().getNetworkManager().closeChannel(new TextComponentString("Connection closed - mismatched mod channel list"));
             return;
         }
-        final FMLHandshakeMessages.C2SModListReply reply = new FMLHandshakeMessages.C2SModListReply();
-        channel.reply(reply, c.get());
+        channel.reply(new FMLHandshakeMessages.C2SModListReply(), c.get());
+
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
         c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_MARKER).set(FMLNetworkConstants.NETVERSION);
+
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
+        this.registrySnapshots = Maps.newHashMap();
         LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
     }
 
@@ -224,7 +229,7 @@ public class FMLHandshakeHandler {
 
     private void handleClientModListOnServer(FMLHandshakeMessages.C2SModListReply clientModList, Supplier<NetworkEvent.Context> c)
     {
-        LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]", clientModList.getModList());
+        LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
         boolean accepted = NetworkRegistry.validateServerChannels(clientModList.getChannels());
         c.get().setPacketHandled(true);
         if (!accepted) {
@@ -234,13 +239,18 @@ public class FMLHandshakeHandler {
         }
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
     }
-    private void handleRegistryMessage(final FMLHandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier) {
+
+    private void handleRegistryMessage(final FMLHandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier){
+        LOGGER.debug(FMLHSMARKER,"Received registry packet for {}", registryPacket.getRegistryName());
         this.registriesToReceive.remove(registryPacket.getRegistryName());
-        RegistryManager.acceptRegistry(registryPacket, contextSupplier);
+        this.registrySnapshots.put(registryPacket.getRegistryName(), registryPacket.getSnapshot());
         contextSupplier.get().setPacketHandled(true);
-        final FMLHandshakeMessages.C2SAcknowledge reply = new FMLHandshakeMessages.C2SAcknowledge();
-        channel.reply(reply, contextSupplier.get());
-        if (this.registriesToReceive.isEmpty()) {}//injectSnapshot
+        channel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
+
+        if (this.registriesToReceive.isEmpty()) {
+          //TODO: @cpw injectSnapshot Needs to be on the world thread. And maybe block the network/login so we don't get world data before we finish?
+          registrySnapshots = null;
+        }
     }
 
     private void handleClientAck(final FMLHandshakeMessages.C2SAcknowledge msg, final Supplier<NetworkEvent.Context> contextSupplier) {
@@ -252,8 +262,7 @@ public class FMLHandshakeHandler {
         LOGGER.debug(FMLHSMARKER, "Received config sync from server");
         ConfigTracker.INSTANCE.receiveSyncedConfig(msg, contextSupplier);
         contextSupplier.get().setPacketHandled(true);
-        final FMLHandshakeMessages.C2SAcknowledge reply = new FMLHandshakeMessages.C2SAcknowledge();
-        channel.reply(reply, contextSupplier.get());
+        channel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
     }
     /**
      * FML will send packets, from Server to Client, from the messages queue until the queue is drained. Each message
