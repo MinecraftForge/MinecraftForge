@@ -29,6 +29,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.ExtensionPoint;
+import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModList;
 import net.minecraft.util.registry.IRegistry;
@@ -130,8 +131,9 @@ public class FMLPlayMessages
                 {
                     throw new RuntimeException(String.format("Could not spawn entity (id %d) with unknown type at (%f, %f, %f)", msg.entityId, msg.posX, msg.posY, msg.posZ));
                 }
-
-                Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getLogicalSide());
+                
+                LogicalSide side = ctx.get().getDirection().getLogicalSide() == LogicalSide.SERVER ? LogicalSide.CLIENT : LogicalSide.SERVER;
+                Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(side);
                 Entity e = world.map(w->type.handleSpawnMessage(w, msg)).orElse(null);
                 if (e == null)
                 {
