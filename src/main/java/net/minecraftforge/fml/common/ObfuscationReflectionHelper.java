@@ -40,7 +40,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Some reflection helper code.
- * This may not work properly in Java 9 with it's new, more restrictive, reflection management.
+ * This may not work properly in Java 9 with its new, more restrictive, reflection management.
  * As such, if issues are encountered, please report them and we can see what we can do to expand
  * the compatibility.
  *
