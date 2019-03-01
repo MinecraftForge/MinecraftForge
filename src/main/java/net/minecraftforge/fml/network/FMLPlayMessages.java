@@ -131,7 +131,7 @@ public class FMLPlayMessages
                     throw new RuntimeException(String.format("Could not spawn entity (id %d) with unknown type at (%f, %f, %f)", msg.entityId, msg.posX, msg.posY, msg.posZ));
                 }
 
-                Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getLogicalSide());
+                Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
                 Entity e = world.map(w->type.handleSpawnMessage(w, msg)).orElse(null);
                 if (e == null)
                 {
