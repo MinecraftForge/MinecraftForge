@@ -240,7 +240,7 @@ public class ObfuscationReflectionHelper
                 return;
             for (String file  : new String[]{"fields.csv", "methods.csv"})
             {
-                URL path = ClassLoader.getSystemResource(file); //We EXPLICITLY go throught the SystemClassLoader here because this is dev-time only. And will be on the root classpath.
+                URL path = ClassLoader.getSystemResource(file); //We EXPLICITLY go through the SystemClassLoader here because this is dev-time only. And will be on the root classpath.
                 if (path == null)
                     continue;
 
