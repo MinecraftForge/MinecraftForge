@@ -38,7 +38,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Some reflection helper code.
- * This may not work properly in Java9 with their new more restrictive reflection management.
+ * This may not work properly in Java 9 with its new, more restrictive, reflection management.
  * As such, if issues are encountered, please report them and we can see what we can do to expand
  * the compatibility.
  *
@@ -130,12 +130,12 @@ public class ObfuscationReflectionHelper
 
     /**
      * Finds a method with the specified name and parameters in the given class and makes it accessible.
-     * Note: for performance, store the returned value and avoid calling this repeatedly.
+     * Note: For performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Throws an exception if the method is not found.
      *
      * @param clazz          The class to find the method on.
-     * @param methodName     The SRG (obfuscated) name of the method to find(e.g. "func_72820_D").
+     * @param methodName     The SRG (obfuscated) name of the method to find(e.g. "func_12820_D").
      * @param parameterTypes The parameter types of the method to find.
      * @return The method with the specified name and parameters in the given class.
      */
