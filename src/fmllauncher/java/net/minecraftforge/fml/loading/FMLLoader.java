@@ -129,6 +129,7 @@ public class FMLLoader
         LOGGER.debug(CORE, "Found ForgeSPI package implementation version {}", Environment.class.getPackage().getImplementationVersion());
         LOGGER.debug(CORE, "Found ForgeSPI package specification {}", Environment.class.getPackage().getSpecificationVersion());
         if (Integer.parseInt(Environment.class.getPackage().getSpecificationVersion()) < 2) {
+            LOGGER.fatal(CORE, "Found an out of date ForgeSPI implementation: {}, loading cannot continue", Environment.class.getPackage().getSpecificationVersion());
             throw new IncompatibleEnvironmentException("ForgeSPI is out of date, we cannot continue");
         }
 
