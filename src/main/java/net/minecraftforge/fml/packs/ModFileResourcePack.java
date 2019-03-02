@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.packs;
 
-import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 import net.minecraft.resources.AbstractResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
@@ -28,23 +27,26 @@ import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.channels.ByteChannel;
-import java.nio.channels.Channels;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.*;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import com.google.common.base.Joiner;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import static net.minecraftforge.fml.Logging.CORE;
 
 public class ModFileResourcePack extends AbstractResourcePack
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private final ModFile modFile;
     private ResourcePackInfo packInfo;
 
@@ -73,9 +75,30 @@ public class ModFileResourcePack extends AbstractResourcePack
         // If the Path comes from the default filesystem provider, we will rather use the path to generate an old FileInputStream
         final Path path = modFile.getLocator().findPath(modFile, name);
         if (path.getFileSystem() == FileSystems.getDefault()) {
+            LOGGER.trace(CORE, "Request for resource {} returning FileInputStream for regular file {}", name, path);
             return new FileInputStream(path.toFile());
+        } else if (Objects.equals(Thread.currentThread().getStackTrace()[0].getClassName(), "paulscode.sound.CommandThread")) {
+            final Path tempFile = Files.createTempFile("modpack", "soundresource");
+            Files.copy(Files.newInputStream(path, StandardOpenOption.READ), tempFile);
+            LOGGER.trace(CORE, "Request for resource {} returning DeletingTemporaryFileInputStream for packed file {} on paulscode thread", name, path);
+            return new DeletingTemporaryFileInputStream(tempFile);
         } else {
             return Files.newInputStream(path, StandardOpenOption.READ);
+        }
+    }
+
+    private final class DeletingTemporaryFileInputStream extends FileInputStream {
+        private final Path tempfile;
+
+        DeletingTemporaryFileInputStream(final Path tempfile) throws FileNotFoundException {
+            super(tempfile.toFile());
+            this.tempfile = tempfile;
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            Files.deleteIfExists(tempfile);
         }
     }
 
