@@ -23,6 +23,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.Launcher;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.MarkerManager;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
@@ -37,7 +38,10 @@ public class UserdevLauncher
     public static void main(String... args) throws InterruptedException
     {
         final String markerselection = System.getProperty("forge.logging.markers", "");
-        Arrays.stream(markerselection.split(",")).forEach(marker-> System.setProperty("forge.logging.marker."+ marker.toLowerCase(Locale.ROOT), "ACCEPT"));
+        Arrays.stream(markerselection.split(",")).forEach(marker-> {
+            System.setProperty("forge.logging.marker." + marker.toLowerCase(Locale.ROOT), "ACCEPT");
+            MarkerManager.getMarker(marker.toUpperCase(Locale.ROOT));
+        });
 
         String assets = System.getenv().getOrDefault("assetDirectory", "assets");
         String target = System.getenv().get("target");
