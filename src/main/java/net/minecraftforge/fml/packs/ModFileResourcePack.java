@@ -23,18 +23,26 @@ import net.minecraft.resources.AbstractResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.StackTraceUtils;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.*;
+import java.nio.channels.FileChannel;
+import java.nio.channels.SeekableByteChannel;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -49,6 +57,25 @@ public class ModFileResourcePack extends AbstractResourcePack
     private static final Logger LOGGER = LogManager.getLogger();
     private final ModFile modFile;
     private ResourcePackInfo packInfo;
+    private static final ExecutorService STUPIDPAULSCODEISSTUPIDWORKAROUNDTHREAD = Executors.newSingleThreadExecutor();
+    private static final Path tempDir;
+
+    static {
+        try {
+            tempDir = Files.createTempDirectory("modpacktmp");
+            Runtime.getRuntime().addShutdownHook(new Thread(()-> {
+                try {
+                    Files.walk(tempDir).forEach(f->{try {Files.deleteIfExists(f);}catch (IOException ioe) {}});
+                    Files.delete(tempDir);
+                } catch (IOException ioe) {
+                    LOGGER.fatal("Failed to clean up tempdir {}", tempDir);
+                }
+            }));
+        } catch (IOException e) {
+            LOGGER.fatal(CORE, "Failed to create temporary directory", e);
+            throw new RuntimeException(e);
+        }
+    }
 
     public ModFileResourcePack(final ModFile modFile)
     {
@@ -77,28 +104,37 @@ public class ModFileResourcePack extends AbstractResourcePack
         if (path.getFileSystem() == FileSystems.getDefault()) {
             LOGGER.trace(CORE, "Request for resource {} returning FileInputStream for regular file {}", name, path);
             return new FileInputStream(path.toFile());
-        } else if (Objects.equals(Thread.currentThread().getStackTrace()[0].getClassName(), "paulscode.sound.CommandThread")) {
-            final Path tempFile = Files.createTempFile("modpack", "soundresource");
-            Files.copy(Files.newInputStream(path, StandardOpenOption.READ), tempFile);
-            LOGGER.trace(CORE, "Request for resource {} returning DeletingTemporaryFileInputStream for packed file {} on paulscode thread", name, path);
-            return new DeletingTemporaryFileInputStream(tempFile);
+        // If the resource is in a zip file, and paulscode is the requester, we need to return a file input stream,
+        // but we can't just use path.tofile to do it. Instead, we copy the resource to a temporary file. As all operations
+        // with an nio channel are interruptible, we do this at arms length on another thread, while paulscode spams
+        // interrupts on the paulscode main thread, which we politely ignore.
+        } else if (StackTraceUtils.threadClassNameEquals("paulscode.sound.CommandThread")) {
+            final Path tempFile = Files.createTempFile(tempDir, "modpack", "soundresource");
+            Future<FileInputStream> fis = STUPIDPAULSCODEISSTUPIDWORKAROUNDTHREAD.submit(()->{
+                try (final SeekableByteChannel resourceChannel = Files.newByteChannel(path, StandardOpenOption.READ);
+                     final FileChannel tempFileChannel = FileChannel.open(tempFile, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+                    long size = resourceChannel.size();
+                    for (long written = 0; written < size; ) {
+                        written += tempFileChannel.transferFrom(resourceChannel, written, size - written);
+                    }
+                }
+                LOGGER.trace(CORE, "Request for resource {} returning DeletingTemporaryFileInputStream for packed file {} on paulscode thread", name, path);
+                return new FileInputStream(tempFile.toFile());
+            });
+            try {
+                while (true) {
+                    try {
+                        return fis.get();
+                    } catch (InterruptedException ie) {
+                        // no op
+                    }
+                }
+            } catch (ExecutionException  e) {
+                LOGGER.fatal(CORE, "Encountered fatal exception copying sound resource", e);
+                throw new RuntimeException(e);
+            }
         } else {
             return Files.newInputStream(path, StandardOpenOption.READ);
-        }
-    }
-
-    private final class DeletingTemporaryFileInputStream extends FileInputStream {
-        private final Path tempfile;
-
-        DeletingTemporaryFileInputStream(final Path tempfile) throws FileNotFoundException {
-            super(tempfile.toFile());
-            this.tempfile = tempfile;
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            Files.deleteIfExists(tempfile);
         }
     }
 
