@@ -86,4 +86,8 @@ public class ModDiscoverer {
         loadingModList.setBrokenFiles(brokenFiles);
         return backgroundScanHandler;
     }
+
+    public void addExplodedTarget(final Path compiledClasses, final Path forgemodstoml) {
+
+    }
 }

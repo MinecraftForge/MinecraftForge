@@ -190,7 +190,8 @@ public class ModLoader
         GameData.freezeData();
     }
 
-    public List<ModLoadingWarning> getWarnings() {
+    public List<ModLoadingWarning> getWarnings()
+    {
         return ImmutableList.copyOf(this.loadingWarnings);
     }
 
