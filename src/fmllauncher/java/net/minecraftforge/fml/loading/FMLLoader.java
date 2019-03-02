@@ -31,6 +31,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
+import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -123,6 +124,13 @@ public class FMLLoader
         coreModProvider = coreModProviders.get(0);
         final Package coremodPackage = coreModProvider.getClass().getPackage();
         LOGGER.debug(CORE,"FML found CoreMod version : {}", coremodPackage.getImplementationVersion());
+
+
+        LOGGER.debug(CORE, "Found ForgeSPI package implementation version {}", Environment.class.getPackage().getImplementationVersion());
+        LOGGER.debug(CORE, "Found ForgeSPI package specification {}", Environment.class.getPackage().getSpecificationVersion());
+        if (Integer.parseInt(Environment.class.getPackage().getSpecificationVersion()) < 2) {
+            throw new IncompatibleEnvironmentException("ForgeSPI is out of date, we cannot continue");
+        }
 
         try {
             Class.forName("com.electronwill.nightconfig.core.Config", false, environment.getClass().getClassLoader());
