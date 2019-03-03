@@ -57,5 +57,6 @@ public class LivingAttackEvent extends LivingEvent
     }
 
     public DamageSource getSource() { return source; }
+    public void setDamageSource(DamageSource source) { this.source = source; }
     public float getAmount() { return amount; }
 }
