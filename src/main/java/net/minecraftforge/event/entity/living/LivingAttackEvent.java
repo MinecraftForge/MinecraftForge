@@ -47,7 +47,7 @@ import net.minecraft.entity.EntityLivingBase;
 @Cancelable
 public class LivingAttackEvent extends LivingEvent
 {
-    private final DamageSource source;
+    private DamageSource source;
     private final float amount;
     public LivingAttackEvent(EntityLivingBase entity, DamageSource source, float amount)
     {
