@@ -30,6 +30,10 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraftforge.fml.ModList;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -78,6 +82,14 @@ public class CraftingHelper
     public static final IConditionSerializer CONDITION_ITEM_EXISTS = condition("item_exists", json -> {
                                                                         String itemName = JsonUtils.getString(json, "item");
                                                                         return () -> ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemName));
+                                                                    });
+    public static final IConditionSerializer CONDITION_TAG_EXISTS = condition("tag_exists", json -> {
+                                                                        String tagName = JsonUtils.getString(json, "tag");
+                                                                        Tag<Item> itemTag = ItemTags.getCollection().get(new ResourceLocation(tagName));
+                                                                        Tag<Block> blockTag = BlockTags.getCollection().get(new ResourceLocation(tagName));
+                                                                        if (itemTag == null || blockTag == null)
+                                                                            return () -> false;
+                                                                        return () -> !itemTag.getAllElements().isEmpty() || !blockTag.getAllElements().isEmpty();
                                                                     });
     public static final IConditionSerializer CONDITION_NOT = condition("not", json -> {
                                                                 BooleanSupplier child = CraftingHelper.getCondition(JsonUtils.getJsonObject(json, "value"));
