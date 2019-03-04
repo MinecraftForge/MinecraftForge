@@ -20,16 +20,24 @@
 package net.minecraftforge.common.util.math;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Preconditions;
+
+import javax.annotation.Nonnegative;
 
 public final class Rectangle
 {
     public final int x;
     public final int y;
+    @Nonnegative
     public final int width;
+    @Nonnegative
     public final int height;
 
-    public Rectangle(int x, int y, int width, int height)
+    @SuppressWarnings("ConstantConditions")
+    public Rectangle(int x, int y, @Nonnegative int width, @Nonnegative int height)
     {
+        Preconditions.checkArgument(width >= 0, "width must be greater or equal 0");
+        Preconditions.checkArgument(height >= 0, "height must be greater or equal 0");
         this.x = x;
         this.y = y;
         this.width = width;
