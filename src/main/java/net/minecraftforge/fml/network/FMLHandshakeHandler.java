@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.network;
 
-import io.netty.util.AttributeKey;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.NetHandlerLoginServer;
@@ -27,9 +26,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
-import net.minecraftforge.fml.util.ThreeConsumer;
 import net.minecraftforge.registries.ForgeRegistry;
-import net.minecraftforge.registries.RegistryManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -37,8 +34,12 @@ import org.apache.logging.log4j.MarkerManager;
 
 import com.google.common.collect.Maps;
 
-import java.util.*;
-import java.util.function.BiConsumer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
@@ -47,9 +48,9 @@ import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
  * Instance responsible for handling the overall FML network handshake.
  *
  * <p>An instance is created during {@link net.minecraft.network.handshake.client.CPacketHandshake} handling, and attached
- * to the {@link NetworkManager#channel} via {@link #FML_HANDSHAKE_HANDLER_ATTRIBUTE_KEY}.
+ * to the {@link NetworkManager#channel} via {@link FMLNetworkConstants#FML_HANDSHAKE_HANDLER}.
  *
- * <p>The {@link #channel} is a {@link SimpleChannel} with standard messages flowing in both directions.
+ * <p>The {@link FMLNetworkConstants#handshakeChannel} is a {@link SimpleChannel} with standard messages flowing in both directions.
  *
  * <p>The {@link #loginWrapper} transforms these messages into {@link net.minecraft.network.login.client.CPacketCustomPayloadLogin}
  * and {@link net.minecraft.network.login.server.SPacketCustomPayloadLogin} compatible messages, by means of wrapping.
@@ -76,75 +77,10 @@ import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 public class FMLHandshakeHandler {
     static final Marker FMLHSMARKER = MarkerManager.getMarker("FMLHANDSHAKE").setParents(FMLNetworkConstants.NETWORK);
     private static final Logger LOGGER = LogManager.getLogger();
-    static final ResourceLocation FML_HANDSHAKE_RESOURCE = new ResourceLocation("fml:handshake");
-    private static final AttributeKey<FMLHandshakeHandler> FML_HANDSHAKE_HANDLER_ATTRIBUTE_KEY = AttributeKey.newInstance("fml:handshake");
 
     private static final FMLLoginWrapper loginWrapper = new FMLLoginWrapper();
-    private static SimpleChannel channel;
+
     static {
-        channel = NetworkRegistry.ChannelBuilder.named(FML_HANDSHAKE_RESOURCE).
-                clientAcceptedVersions(a -> true).
-                serverAcceptedVersions(a -> true).
-                networkProtocolVersion(() -> FMLNetworkConstants.NETVERSION).
-                simpleChannel();
-        channel.messageBuilder(FMLHandshakeMessages.C2SAcknowledge.class, 99).
-                loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
-                decoder(FMLHandshakeMessages.C2SAcknowledge::decode).
-                encoder(FMLHandshakeMessages.C2SAcknowledge::encode).
-                consumer(indexFirst(FMLHandshakeHandler::handleClientAck)).
-                add();
-        channel.messageBuilder(FMLHandshakeMessages.S2CModList.class, 1).
-                loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
-                decoder(FMLHandshakeMessages.S2CModList::decode).
-                encoder(FMLHandshakeMessages.S2CModList::encode).
-                markAsLoginPacket().
-                consumer(biConsumerFor(FMLHandshakeHandler::handleServerModListOnClient)).
-                add();
-        channel.messageBuilder(FMLHandshakeMessages.C2SModListReply.class, 2).
-                loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
-                decoder(FMLHandshakeMessages.C2SModListReply::decode).
-                encoder(FMLHandshakeMessages.C2SModListReply::encode).
-                consumer(indexFirst(FMLHandshakeHandler::handleClientModListOnServer)).
-                add();
-        channel.messageBuilder(FMLHandshakeMessages.S2CRegistry.class, 3).
-                loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
-                decoder(FMLHandshakeMessages.S2CRegistry::decode).
-                encoder(FMLHandshakeMessages.S2CRegistry::encode).
-                buildLoginPacketList(RegistryManager::generateRegistryPackets). //TODO: Make this non-static, and store a cache on the client.
-                consumer(biConsumerFor(FMLHandshakeHandler::handleRegistryMessage)).
-                add();
-        channel.messageBuilder(FMLHandshakeMessages.S2CConfigData.class, 4).
-                loginIndex(FMLHandshakeMessages.LoginIndexedMessage::getLoginIndex, FMLHandshakeMessages.LoginIndexedMessage::setLoginIndex).
-                decoder(FMLHandshakeMessages.S2CConfigData::decode).
-                encoder(FMLHandshakeMessages.S2CConfigData::encode).
-                buildLoginPacketList(ConfigTracker.INSTANCE::syncConfigs).
-                consumer(biConsumerFor(FMLHandshakeHandler::handleConfigSync)).
-                add();
-    }
-
-    /**
-     * Transforms a two-argument instance method reference into a {@link BiConsumer} based on the {@link #getHandshake(Supplier)} function.
-     *
-     * @param consumer A two argument instance method reference
-     * @param <MSG> message type
-     * @return A {@link BiConsumer} for use in message handling
-     */
-    private static <MSG extends FMLHandshakeMessages.LoginIndexedMessage> BiConsumer<MSG, Supplier<NetworkEvent.Context>> biConsumerFor(ThreeConsumer<FMLHandshakeHandler, ? super MSG, ? super Supplier<NetworkEvent.Context>> consumer)
-    {
-        return (m, c) -> ThreeConsumer.bindArgs(consumer, m, c).accept(getHandshake(c));
-    }
-
-    /**
-     * Transforms a two-argument instance method reference into a {@link BiConsumer} {@link #biConsumerFor(ThreeConsumer)}, first calling the {@link #handleIndexedMessage(FMLHandshakeMessages.LoginIndexedMessage, Supplier)}
-     * method to handle index tracking. Used for client to server replies.
-     * @param next The method reference to call after index handling
-     * @param <MSG> message type
-     * @return A {@link BiConsumer} for use in message handling
-     */
-    private static <MSG extends FMLHandshakeMessages.LoginIndexedMessage> BiConsumer<MSG, Supplier<NetworkEvent.Context>> indexFirst(ThreeConsumer<FMLHandshakeHandler, MSG, Supplier<NetworkEvent.Context>> next)
-    {
-        final BiConsumer<MSG, Supplier<NetworkEvent.Context>> loginIndexedMessageSupplierBiConsumer = biConsumerFor(FMLHandshakeHandler::handleIndexedMessage);
-        return loginIndexedMessageSupplierBiConsumer.andThen(biConsumerFor(next));
     }
 
     /**
@@ -155,22 +91,12 @@ public class FMLHandshakeHandler {
      * @param direction The {@link NetworkDirection} for this connection: {@link NetworkDirection#LOGIN_TO_SERVER} or {@link NetworkDirection#LOGIN_TO_CLIENT}
      */
     static void registerHandshake(NetworkManager manager, NetworkDirection direction) {
-        manager.channel().attr(FML_HANDSHAKE_HANDLER_ATTRIBUTE_KEY).compareAndSet(null, new FMLHandshakeHandler(manager, direction));
-    }
-
-    /**
-     * Retrieve the handshake from the {@link NetworkEvent.Context}
-     *
-     * @param contextSupplier the {@link NetworkEvent.Context}
-     * @return The handshake handler for the connection
-     */
-    private static FMLHandshakeHandler getHandshake(Supplier<NetworkEvent.Context> contextSupplier) {
-        return contextSupplier.get().attr(FML_HANDSHAKE_HANDLER_ATTRIBUTE_KEY).get();
+        manager.channel().attr(FMLNetworkConstants.FML_HANDSHAKE_HANDLER).compareAndSet(null, new FMLHandshakeHandler(manager, direction));
     }
 
     static boolean tickLogin(NetworkManager networkManager)
     {
-        return networkManager.channel().attr(FML_HANDSHAKE_HANDLER_ATTRIBUTE_KEY).get().tickServer();
+        return networkManager.channel().attr(FMLNetworkConstants.FML_HANDSHAKE_HANDLER).get().tickServer();
     }
 
     private List<NetworkRegistry.LoginPayload> messageList;
@@ -197,7 +123,7 @@ public class FMLHandshakeHandler {
         }
     }
 
-    private void handleServerModListOnClient(FMLHandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
+    void handleServerModListOnClient(FMLHandshakeMessages.S2CModList serverModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Logging into server with mod list [{}]", String.join(", ", serverModList.getModList()));
         boolean accepted = NetworkRegistry.validateClientChannels(serverModList.getChannels());
@@ -207,18 +133,18 @@ public class FMLHandshakeHandler {
             c.get().getNetworkManager().closeChannel(new TextComponentString("Connection closed - mismatched mod channel list"));
             return;
         }
-        channel.reply(new FMLHandshakeMessages.C2SModListReply(), c.get());
+        FMLNetworkConstants.handshakeChannel.reply(new FMLHandshakeMessages.C2SModListReply(), c.get());
 
         LOGGER.debug(FMLHSMARKER, "Accepted server connection");
         // Set the modded marker on the channel so we know we got packets
-        c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_MARKER).set(FMLNetworkConstants.NETVERSION);
+        c.get().getNetworkManager().channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NETVERSION);
 
         this.registriesToReceive = new HashSet<>(serverModList.getRegistries());
         this.registrySnapshots = Maps.newHashMap();
         LOGGER.debug(REGISTRIES, "Expecting {} registries: {}", ()->this.registriesToReceive.size(), ()->this.registriesToReceive);
     }
 
-    private <MSG extends FMLHandshakeMessages.LoginIndexedMessage> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
+    <MSG extends FMLHandshakeMessages.LoginIndexedMessage> void handleIndexedMessage(MSG message, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Received client indexed reply {} of type {}", message.getLoginIndex(), message.getClass().getName());
         boolean removed = this.sentMessages.removeIf(i->i==message.getLoginIndex());
@@ -227,7 +153,7 @@ public class FMLHandshakeHandler {
         }
     }
 
-    private void handleClientModListOnServer(FMLHandshakeMessages.C2SModListReply clientModList, Supplier<NetworkEvent.Context> c)
+    void handleClientModListOnServer(FMLHandshakeMessages.C2SModListReply clientModList, Supplier<NetworkEvent.Context> c)
     {
         LOGGER.debug(FMLHSMARKER, "Received client connection with modlist [{}]",  String.join(", ", clientModList.getModList()));
         boolean accepted = NetworkRegistry.validateServerChannels(clientModList.getChannels());
@@ -240,12 +166,12 @@ public class FMLHandshakeHandler {
         LOGGER.debug(FMLHSMARKER, "Accepted client connection mod list");
     }
 
-    private void handleRegistryMessage(final FMLHandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier){
+    void handleRegistryMessage(final FMLHandshakeMessages.S2CRegistry registryPacket, final Supplier<NetworkEvent.Context> contextSupplier){
         LOGGER.debug(FMLHSMARKER,"Received registry packet for {}", registryPacket.getRegistryName());
         this.registriesToReceive.remove(registryPacket.getRegistryName());
         this.registrySnapshots.put(registryPacket.getRegistryName(), registryPacket.getSnapshot());
         contextSupplier.get().setPacketHandled(true);
-        channel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
+        FMLNetworkConstants.handshakeChannel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
 
         if (this.registriesToReceive.isEmpty()) {
           //TODO: @cpw injectSnapshot Needs to be on the world thread. And maybe block the network/login so we don't get world data before we finish?
@@ -253,16 +179,16 @@ public class FMLHandshakeHandler {
         }
     }
 
-    private void handleClientAck(final FMLHandshakeMessages.C2SAcknowledge msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+    void handleClientAck(final FMLHandshakeMessages.C2SAcknowledge msg, final Supplier<NetworkEvent.Context> contextSupplier) {
         LOGGER.debug(FMLHSMARKER, "Received acknowledgement from client");
         contextSupplier.get().setPacketHandled(true);
     }
 
-    private void handleConfigSync(final FMLHandshakeMessages.S2CConfigData msg, final Supplier<NetworkEvent.Context> contextSupplier) {
+    void handleConfigSync(final FMLHandshakeMessages.S2CConfigData msg, final Supplier<NetworkEvent.Context> contextSupplier) {
         LOGGER.debug(FMLHSMARKER, "Received config sync from server");
         ConfigTracker.INSTANCE.receiveSyncedConfig(msg, contextSupplier);
         contextSupplier.get().setPacketHandled(true);
-        channel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
+        FMLNetworkConstants.handshakeChannel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
     }
     /**
      * FML will send packets, from Server to Client, from the messages queue until the queue is drained. Each message
@@ -289,7 +215,7 @@ public class FMLHandshakeHandler {
         // we're done when sentMessages is empty
         if (sentMessages.isEmpty() && packetPosition >= messageList.size()-1) {
             // clear ourselves - we're done!
-            this.manager.channel().attr(FML_HANDSHAKE_HANDLER_ATTRIBUTE_KEY).set(null);
+            this.manager.channel().attr(FMLNetworkConstants.FML_HANDSHAKE_HANDLER).set(null);
             LOGGER.debug(FMLHSMARKER, "Handshake complete!");
             return true;
         }
