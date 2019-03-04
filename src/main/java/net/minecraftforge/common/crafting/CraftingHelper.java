@@ -30,8 +30,6 @@ import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.Block;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraftforge.fml.ModList;
@@ -86,10 +84,9 @@ public class CraftingHelper
     public static final IConditionSerializer CONDITION_TAG_EXISTS = condition("tag_exists", json -> {
                                                                         String tagName = JsonUtils.getString(json, "tag");
                                                                         Tag<Item> itemTag = ItemTags.getCollection().get(new ResourceLocation(tagName));
-                                                                        Tag<Block> blockTag = BlockTags.getCollection().get(new ResourceLocation(tagName));
-                                                                        if (itemTag == null || blockTag == null)
+                                                                        if (itemTag == null)
                                                                             return () -> false;
-                                                                        return () -> !itemTag.getAllElements().isEmpty() || !blockTag.getAllElements().isEmpty();
+                                                                        return () -> !itemTag.getAllElements().isEmpty();
                                                                     });
     public static final IConditionSerializer CONDITION_NOT = condition("not", json -> {
                                                                 BooleanSupplier child = CraftingHelper.getCondition(JsonUtils.getJsonObject(json, "value"));
