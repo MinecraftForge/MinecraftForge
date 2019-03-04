@@ -21,7 +21,6 @@ package net.minecraftforge.fml.client.gui;
 
 import static net.minecraft.util.StringUtils.stripControlCodes;
 
-import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -58,6 +57,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.math.Dimension;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.ModContainer;
