@@ -24,7 +24,7 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnegative;
 
-public final class Dimension
+public final class Size2i
 {
     @Nonnegative
     public final int width;
@@ -32,7 +32,7 @@ public final class Dimension
     public final int height;
 
     @SuppressWarnings("ConstantConditions")
-    public Dimension(@Nonnegative int width, @Nonnegative int height)
+    public Size2i(@Nonnegative int width, @Nonnegative int height)
     {
         Preconditions.checkArgument(width >= 0, "width must be greater or equal 0");
         Preconditions.checkArgument(height >= 0, "height must be greater or equal 0");
@@ -43,9 +43,9 @@ public final class Dimension
     @Override
     public boolean equals(Object obj)
     {
-        if (obj instanceof Dimension)
+        if (obj instanceof Size2i)
         {
-            Dimension other = (Dimension)obj;
+            Size2i other = (Size2i)obj;
             return (width == other.width) && (height == other.height);
         }
         return false;
