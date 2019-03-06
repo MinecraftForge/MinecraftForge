@@ -219,7 +219,6 @@ public class FMLHandshakeMessages
         }
 
         public static S2CRegistry decode(final PacketBuffer buffer) {
-System.out.println("Readable: " + buffer.readableBytes());
             ResourceLocation name = buffer.readResourceLocation();
             ForgeRegistry.Snapshot snapshot = null;
             if (buffer.readBoolean())

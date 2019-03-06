@@ -71,7 +71,15 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
         final String fjpath = fjroot.toString();
         LOGGER.debug(CORE, "Injecting forge as mod {} from maven path {}", userdevVersion, fjpath);
         mavenRoots.add(fjpath);
-        mods.add(forgeGroup+":forge:"+userdevVersion);
+
+        String classifier = "";
+        if (forgeJar.getFileName().endsWith(".jar")) {
+            if (!("forge-" + userdevVersion + ".jar").equals(forgeJar.getFileName().toString())) {
+                String suffix = forgeJar.getFileName().toString().substring(userdevVersion.length() + 7); //"forge-" + version + "-"
+                suffix = suffix.substring(0, suffix.length() - 4); // Remove ".jar"
+            }
+        }
+        mods.add(forgeGroup+":forge:"+userdevVersion + classifier);
 
         try {
             final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources("META-INF/mods.toml");
