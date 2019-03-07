@@ -191,6 +191,12 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
     }
 
     @Override
+    public boolean isEmpty()
+    {
+        return this.names.isEmpty();
+    }
+
+    @Override
     public V getValue(ResourceLocation key)
     {
         V ret = this.names.get(key);
