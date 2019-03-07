@@ -26,76 +26,52 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
-
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
     private static final Logger LOGGER = LogManager.getLogger();
     private Path forgeJar;
     private Path mcJars;
+    private static final String FORGE_VERSION_CLASS = "net/minecraftforge/versions/forge/ForgeVersion.class";
 
     @Override
     public Path getForgePath(final String mcVersion, final String forgeVersion, final String forgeGroup) {
-        final URL forgePath = getClass().getClassLoader().getResource("net/minecraftforge/versions/forge/ForgeVersion.class");
+        final URL forgePath = getClass().getClassLoader().getResource(FORGE_VERSION_CLASS);
         if (forgePath == null) {
             LOGGER.fatal(CORE, "Unable to locate forge on the classpath");
             throw new RuntimeException("Unable to locate forge on the classpath");
         }
-        forgeJar = LibraryFinder.findJarPathFor("ForgeVersion.class", "forge", forgePath);
+        forgeJar = LibraryFinder.findJarPathFor(FORGE_VERSION_CLASS, "forge", forgePath);
         return forgeJar;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void setup(final IEnvironment environment, final Map<String, ?> arguments) {
+        if (!forgeJar.getFileName().toString().endsWith(".jar")) {
+            LOGGER.fatal(CORE, "Userdev Launcher attempted to be used with non-jar version of Forge: {}" + forgeJar);
+            throw new RuntimeException("Userdev Launcher can only be used with dev-jar version of Forge");
+        }
+
         final List<String> mavenRoots = new ArrayList<>((List<String>) arguments.get("mavenRoots"));
-        final List<String> mods = new ArrayList<>((List<String>) arguments.get("mods"));
-        final String forgeVersion = (String) arguments.get("forgeVersion");
-        final String mcVersion = (String) arguments.get("mcVersion");
-        final String mcpVersion = (String) arguments.get("mcpVersion");
-        final String mcpMappings = (String) arguments.get("mcpMappings");
         final String forgeGroup = (String) arguments.get("forgeGroup");
-        final String userdevVersion = mcVersion + "-" + forgeVersion + "_mapped_" + mcpMappings;
         int dirs = forgeGroup.split("\\.").length + 2;
+
         Path fjroot = forgeJar;
         do {
             fjroot = fjroot.getParent();
         } while (dirs-- > 0);
         final String fjpath = fjroot.toString();
-        LOGGER.debug(CORE, "Injecting forge as mod {} from maven path {}", userdevVersion, fjpath);
         mavenRoots.add(fjpath);
-
-        String classifier = "";
-        if (forgeJar.getFileName().endsWith(".jar")) {
-            if (!("forge-" + userdevVersion + ".jar").equals(forgeJar.getFileName().toString())) {
-                String suffix = forgeJar.getFileName().toString().substring(userdevVersion.length() + 7); //"forge-" + version + "-"
-                suffix = suffix.substring(0, suffix.length() - 4); // Remove ".jar"
-            }
-        }
-        mods.add(forgeGroup+":forge:"+userdevVersion + classifier);
-
-        try {
-            final Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources("META-INF/mods.toml");
-            final ArrayList<URL> modstoml = Collections.list(resources);
-            modstoml.stream().filter(u-> !u.getPath().contains("!"));
-
-        } catch (IOException e) {
-            LOGGER.fatal(CORE,"Error trying to find resources", e);
-            throw new RuntimeException("wha?", e);
-        }
+        LOGGER.debug(CORE, "Injecting maven path {}", fjpath);
 
         processModClassesEnvironmentVariable((Map<String, List<Pair<Path, List<Path>>>>) arguments);
 
         // generics are gross yea?
         ((Map)arguments).put("mavenRoots", mavenRoots);
-        ((Map)arguments).put("mods", mods);
     }
 
     @Override

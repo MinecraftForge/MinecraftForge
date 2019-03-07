@@ -19,11 +19,9 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ObjectArrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;

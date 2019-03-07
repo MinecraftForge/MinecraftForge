@@ -17,29 +17,27 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftforge.userdev;
 
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
-import cpw.mods.modlauncher.api.ITransformingClassLoaderBuilder;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
+import net.minecraftforge.fml.loading.LibraryFinder;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
-public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
+public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
-
     private static final Logger LOGGER = LogManager.getLogger();
     private Path compiledClasses;
     private Path resources;
@@ -47,7 +45,7 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     @Override
     public String name()
     {
-        return "fmldevclient";
+        return "fmldevserver";
     }
 
     @Override
@@ -65,25 +63,18 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     }
 
     @Override
-    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
-    {
-        super.configureTransformationClassLoader(builder);
-        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/RealmsVersion.class", "realms"));
-    }
-
-    @Override
     public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
     {
         return () -> {
             LOGGER.debug(CORE, "Launching minecraft in {} with arguments {}", launchClassLoader, arguments);
             super.beforeStart(launchClassLoader);
             launchClassLoader.addTargetPackageFilter(getPackagePredicate());
-            Class.forName("net.minecraft.client.main.Main", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
+            Thread.currentThread().setContextClassLoader(launchClassLoader.getInstance());
+            Class.forName("net.minecraft.server.MinecraftServer", true, launchClassLoader.getInstance()).getMethod("main", String[].class).invoke(null, (Object)arguments);
             return null;
         };
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void setup(IEnvironment environment, final Map<String, ?> arguments)
     {
@@ -91,17 +82,11 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
         final Path forgemodstoml = LibraryFinder.findJarPathFor("META-INF/mods.toml", "forgemodstoml");
         ((Map<String, List<Pair<Path,List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
                 add(Pair.of(forgemodstoml, Collections.singletonList(compiledClasses)));
-
-        processModClassesEnvironmentVariable((Map<String, List<Pair<Path, List<Path>>>>) arguments);
     }
 
     @Override
     public Dist getDist()
     {
-        return Dist.CLIENT;
-    }
-
-    @Override
-    protected void validatePaths(final Path forgePath, final Path[] mcPaths, final String forgeVersion, final String mcVersion, final String mcpVersion) {
+        return Dist.DEDICATED_SERVER;
     }
 }
