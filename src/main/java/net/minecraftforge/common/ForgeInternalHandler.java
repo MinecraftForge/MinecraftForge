@@ -37,6 +37,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 public class ForgeInternalHandler
 {
+    
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
@@ -45,7 +46,6 @@ public class ForgeInternalHandler
         {
             ItemStack stack = ((EntityItem)entity).getItem();
             Item item = stack.getItem();
-/*
             if (item.hasCustomEntity(stack))
             {
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
@@ -56,7 +56,6 @@ public class ForgeInternalHandler
                     event.getWorld().spawnEntity(newEntity);
                 }
             }
-*/
         }
     }
 
