@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.util;
 
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+
 /**
  * A class containing constants for magic numbers used in the minecraft codebase.
  * Everything here should be checked each update, and have a comment relating to where to check it.
@@ -185,12 +187,32 @@ public class Constants
      * Can be found by searching for the usages of getFlag
      */
     public static class EntityFlags {
-        public static final int BURNING = 0;
-        public static final int SNEAKING = 1;
-        public static final int SPRINTING = 3;
-        public static final int INVISIBLE = 5;
-        public static final int GLOWING = 6;
+        public static final int BURNING       = 0;
+        public static final int SNEAKING      = 1;
+        public static final int SPRINTING     = 3;
+        public static final int INVISIBLE     = 5;
+        public static final int GLOWING       = 6;
         public static final int ELYTRA_FLYING = 7;
+    }
+
+    /**
+     * The operation used for Attribute modifier operations, {@link net.minecraft.entity.ai.attributes.AttributeModifier#AttributeModifier(String, double, int)}<br>
+     * Can be found at {@link ModifiableAttributeInstance#computeValue()}<br>
+     * Order of operations are {@link #ADD}, {@link #ADD_MULTIPLE}, {@link #MULTIPLY}
+     */
+    public static class AttributeModifierOperation {
+        /**
+         * The modifier value is added onto the total value
+         */
+        public static final int ADD          = 0;
+        /**
+         * The modifier value is multiplied by the original base value then added onto the total value
+         */
+        public static final int ADD_MULTIPLE = 1;
+        /**
+         * The total value is multiplied by 1 + the modifier value
+         */
+        public static final int MULTIPLY     = 2;
     }
 
 }
