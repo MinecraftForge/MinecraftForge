@@ -27,17 +27,27 @@ import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.SidedProvider;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.Collections;
+import java.util.List;
+
+import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 @OnlyIn(Dist.CLIENT)
 public class ClientModLoader
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static boolean loading;
     private static Minecraft mc;
     private static LoadingFailedException error;
@@ -76,8 +86,17 @@ public class ClientModLoader
     {
         GlStateManager.disableTexture2D();
         GlStateManager.enableTexture2D();
-        if (error != null) {
-            mc.displayGuiScreen(new LoadingErrorScreen(error));
+        List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
+        if (!ForgeConfig.CLIENT.showLoadWarnings.get()) {
+            //User disabled warning screen, as least log them
+            if (!warnings.isEmpty()) {
+                LOGGER.warn(LOADING, "Mods loaded with {} warning(s)", warnings.size());
+                warnings.forEach(warning -> LOGGER.warn(LOADING, warning.formatToString()));
+            }
+            warnings = Collections.emptyList(); //Clear warnings, as the user does not want to see them
+        }
+        if (error != null || !warnings.isEmpty()) {
+            mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
         } else {
             ClientHooks.logMissingTextureErrors();
         }
