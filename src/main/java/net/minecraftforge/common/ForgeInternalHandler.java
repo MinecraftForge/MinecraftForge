@@ -51,7 +51,7 @@ public class ForgeInternalHandler
                 Entity newEntity = item.createEntity(event.getWorld(), entity, stack);
                 if (newEntity != null)
                 {
-                    entity.setDead();
+                    entity.remove();
                     event.setCanceled(true);
                     event.getWorld().spawnEntity(newEntity);
                 }
