@@ -139,7 +139,7 @@ public class FMLPlayMessages
                 }
 
                 EntityTracker.updateServerPosition(e, msg.posX, msg.posY, msg.posZ);
-                e.setPositionAndRotation(msg.posX, msg.posY, msg.posZ, (msg.pitch * 360) / 256.0F, (msg.yaw * 360) / 256.0F);
+                e.setPositionAndRotation(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
                 e.setRotationYawHead((msg.headYaw * 360) / 256.0F);
                 e.setRenderYawOffset((msg.headYaw * 360) / 256.0F);
 
