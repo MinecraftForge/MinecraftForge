@@ -220,7 +220,7 @@
              float f2 = this.func_110143_aJ();
 -            this.func_70606_j(f2 - p_70665_2_);
              this.func_110142_aN().func_94547_a(p_70665_1_, f2, p_70665_2_);
-+            this.func_70606_j(f1 - p_70665_2_); // Forge: moved to fix MC-121048
++            this.func_70606_j(f2 - p_70665_2_); // Forge: moved to fix MC-121048
              this.func_110149_m(this.func_110139_bj() - p_70665_2_);
           }
        }

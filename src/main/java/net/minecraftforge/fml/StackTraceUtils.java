@@ -17,25 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.network;
+package net.minecraftforge.fml;
 
-import java.util.function.Function;
+import java.util.Objects;
 
-public enum ConnectionType
-{
-    MODDED(s->Integer.valueOf(s.substring(FMLNetworkConstants.FMLNETMARKER.length()))), VANILLA(s->0);
+public final class StackTraceUtils {
+    private StackTraceUtils() {}
 
-    private final Function<String, Integer> versionExtractor;
-
-    ConnectionType(Function<String, Integer> versionExtractor) {
-        this.versionExtractor = versionExtractor;
-    }
-    public static ConnectionType forVersionFlag(String vers)
-    {
-        return vers.startsWith(FMLNetworkConstants.FMLNETMARKER) ? MODDED : VANILLA;
-    }
-
-    public int getFMLVersionNumber(final String fmlVersion) {
-        return versionExtractor.apply(fmlVersion);
+    public static boolean threadClassNameEquals(final String className) {
+        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        return Objects.equals(stackTrace[stackTrace.length-1].getClassName(), className);
     }
 }

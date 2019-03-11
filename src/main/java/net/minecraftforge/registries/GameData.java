@@ -637,8 +637,8 @@ public class GameData
                 if (!lst.isEmpty())
                 {
                     LOGGER.error(REGISTRIES,()->new AdvancedLogMessageAdapter(sb->{
-                       sb.append("Unidentified mapping from registry").append(name).append('\n');
-                       lst.forEach(map->sb.append("    ").append(map.key).append(": ").append(map.id).append('\n'));
+                       sb.append("Unidentified mapping from registry ").append(name).append('\n');
+                       lst.forEach(map->sb.append('\t').append(map.key).append(": ").append(map.id).append('\n'));
                     }));
                 }
                 event.getAllMappings().stream().filter(e -> e.getAction() == MissingMappings.Action.FAIL).forEach(fail -> failed.put(name, fail.key));

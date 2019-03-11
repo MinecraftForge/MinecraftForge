@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
@@ -79,7 +80,13 @@ public class ConfigTracker {
     }
 
     public List<Pair<String, FMLHandshakeMessages.S2CConfigData>> syncConfigs() {
-        final Map<String, byte[]> configData = configSets.get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, rethrowFunction(mc -> Files.readAllBytes(mc.getFullPath()))));
+        final Map<String, byte[]> configData = configSets.get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> { //TODO: Test cpw's LambdaExceptionUtils on Oracle javac.
+            try {
+                return Files.readAllBytes(mc.getFullPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
         return configData.entrySet().stream().map(e->Pair.of("Config "+e.getKey(), new FMLHandshakeMessages.S2CConfigData(e.getKey(), e.getValue()))).collect(Collectors.toList());
     }
 

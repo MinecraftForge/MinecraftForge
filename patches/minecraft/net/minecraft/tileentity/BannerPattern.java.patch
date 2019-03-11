@@ -1,0 +1,24 @@
+--- a/net/minecraft/tileentity/BannerPattern.java
++++ b/net/minecraft/tileentity/BannerPattern.java
+@@ -7,7 +7,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public enum BannerPattern {
++public enum BannerPattern implements net.minecraftforge.common.IExtensibleEnum {
+    BASE("base", "b"),
+    SQUARE_BOTTOM_LEFT("square_bottom_left", "bl", "   ", "   ", "#  "),
+    SQUARE_BOTTOM_RIGHT("square_bottom_right", "br", "   ", "   ", "  #"),
+@@ -106,4 +106,12 @@
+ 
+       return null;
+    }
++   
++   public static BannerPattern create(String enumName, String p_i47246_3_, String p_i47246_4_, ItemStack p_i47246_5_) {
++	   throw new IllegalStateException("Enum not extended");
++   }
++   
++   public static BannerPattern create(String enumName, String p_i47247_3_, String p_i47247_4_, String p_i47247_5_, String p_i47247_6_, String p_i47247_7_) {
++	   throw new IllegalStateException("Enum not extended");
++   }
+ }

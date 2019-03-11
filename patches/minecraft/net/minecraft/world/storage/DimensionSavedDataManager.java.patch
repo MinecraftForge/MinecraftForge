@@ -1,0 +1,20 @@
+--- a/net/minecraft/world/storage/DimensionSavedDataManager.java
++++ b/net/minecraft/world/storage/DimensionSavedDataManager.java
+@@ -38,6 +38,7 @@
+    @Nullable
+    public <T extends WorldSavedData> T func_201067_a(Function<String, T> p_201067_1_, String p_201067_2_) {
+       WorldSavedData worldsaveddata = this.field_212778_c.get(p_201067_2_);
++      if (worldsaveddata == net.minecraftforge.common.util.DummyWorldSaveData.DUMMY) return null;
+       if (worldsaveddata == null && this.field_212780_e != null) {
+          try {
+             File file1 = this.field_212780_e.func_212423_a(this.field_212777_b, p_201067_2_);
+@@ -45,6 +46,9 @@
+                worldsaveddata = (WorldSavedData)p_201067_1_.apply(p_201067_2_);
+                worldsaveddata.func_76184_a(func_212774_a(this.field_212780_e, this.field_212777_b, p_201067_2_, 1631).func_74775_l("data"));
+                this.field_212778_c.put(p_201067_2_, worldsaveddata);
++            } else {
++               this.field_212778_c.put(p_201067_2_, net.minecraftforge.common.util.DummyWorldSaveData.DUMMY);
++               return null;
+             }
+          } catch (Exception exception) {
+             field_212776_a.error("Error loading saved data: {}", p_201067_2_, exception);

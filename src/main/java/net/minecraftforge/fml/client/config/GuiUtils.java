@@ -21,6 +21,7 @@ package net.minecraftforge.fml.client.config;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -445,5 +446,25 @@ public class GuiUtils
         GlStateManager.disableBlend();
         GlStateManager.enableAlphaTest();
         GlStateManager.enableTexture2D();
+    }
+
+    public static void drawInscribedRect(int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight)
+    {
+        drawInscribedRect(x, y, boundsWidth, boundsHeight, rectWidth, rectHeight, true, true);
+    }
+
+    public static void drawInscribedRect(int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight, boolean centerX, boolean centerY)
+    {
+        if (rectWidth * boundsHeight > rectHeight * boundsWidth) {
+            int h = boundsHeight;
+            boundsHeight = (int) (boundsWidth * ((double) rectHeight / rectWidth));
+            if (centerY) y += (h - boundsHeight) / 2;
+        } else {
+            int w = boundsWidth;
+            boundsWidth = (int) (boundsHeight * ((double) rectWidth / rectHeight));
+            if (centerX) x += (w - boundsWidth) / 2;
+        }
+
+        Gui.drawScaledCustomSizeModalRect(x, y, 0, 0, rectWidth, rectHeight, boundsWidth, boundsHeight, rectWidth, rectHeight);
     }
 }

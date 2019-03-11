@@ -24,8 +24,6 @@ import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.loading.JarVersionLookupHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 import javax.annotation.Nullable;
 
@@ -43,11 +41,11 @@ public class ForgeVersion
 
     static {
         LOGGER.debug(CORE, "Forge Version package {} from {}", ForgeVersion.class.getPackage(), ForgeVersion.class.getClassLoader());
-        String vers = JarVersionLookupHandler.getImplementationVersion(ForgeVersion.class).orElse(System.getProperty("forge.version"));
+        String vers = JarVersionLookupHandler.getImplementationVersion(ForgeVersion.class).orElse(System.getenv("FORGE_VERSION"));
         if (vers == null) throw new RuntimeException("Missing forge version, cannot continue");
-        String spec = JarVersionLookupHandler.getSpecificationVersion(ForgeVersion.class).orElse(System.getProperty("forge.spec"));
+        String spec = JarVersionLookupHandler.getSpecificationVersion(ForgeVersion.class).orElse(System.getenv("FORGE_SPEC"));
         if (spec == null) throw new RuntimeException("Missing forge spec, cannot continue");
-        String group = JarVersionLookupHandler.getImplementationTitle(ForgeVersion.class).orElse(System.getProperty("forge.group"));
+        String group = JarVersionLookupHandler.getImplementationTitle(ForgeVersion.class).orElse(System.getenv("FORGE_GROUP"));
         if (group == null) {
             group = "net.minecraftforge"; // If all else fails, Our normal group
         }

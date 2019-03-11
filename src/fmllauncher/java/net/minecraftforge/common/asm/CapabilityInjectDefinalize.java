@@ -20,7 +20,9 @@
 package net.minecraftforge.common.asm;
 
 import java.nio.file.Path;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -41,14 +43,13 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
         return "capability_inject_definalize";
     }
 
-    @Override public void addResource(Path resource, String name) { }
-
-    @Override public <T> T getExtension() { return null; } // ?
+    private static final EnumSet<Phase> YAY = EnumSet.of(Phase.AFTER);
+    private static final EnumSet<Phase> NAY = EnumSet.noneOf(Phase.class);
 
     @Override
-    public boolean handlesClass(Type classType, boolean isEmpty)
+    public EnumSet<Phase> handlesClass(Type classType, boolean isEmpty)
     {
-        return !isEmpty; //Check for annotations?
+        return isEmpty ? NAY : YAY;
     }
 
     private boolean hasHolder(List<AnnotationNode> lst)
@@ -57,17 +58,19 @@ public class CapabilityInjectDefinalize implements ILaunchPluginService {
     }
 
     @Override
-    public ClassNode processClass(ClassNode classNode, Type classType)
+    public boolean processClass(Phase phase, ClassNode classNode, Type classType)
     {
         final int flags = Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL;
-
+        AtomicBoolean changed = new AtomicBoolean();
         classNode.fields.stream().filter(f -> ((f.access & flags) == flags) && f.desc.equals(CAP) && hasHolder(f.visibleAnnotations)).forEach(f ->
         {
-           f.access &= ~Opcodes.ACC_FINAL; //Strip final
-           f.access |= Opcodes.ACC_SYNTHETIC; //Add Synthetic so we can check in runtime.
+            int prev = f.access;
+            f.access &= ~Opcodes.ACC_FINAL; //Strip final
+            f.access |= Opcodes.ACC_SYNTHETIC; //Add Synthetic so we can check in runtime.
+            changed.compareAndSet(false, prev != f.access);
         });
 
-        return classNode;
+        return changed.get();
     }
 
 }
