@@ -138,7 +138,7 @@
 +               if (itemstack2.func_190926_b() && !copy.func_190926_b()) {
 +                  net.minecraftforge.event.ForgeEventFactory.onPlayerDestroyItem(this.field_73090_b, copy, EnumHand.MAIN_HAND);
 +               }
-+               flag1 = this.func_180235_c(p_180237_1_);
++               flag1 = this.removeBlock(p_180237_1_, flag);
                 if (flag1 && flag) {
                    ItemStack itemstack1 = itemstack2.func_190926_b() ? ItemStack.field_190927_a : itemstack2.func_77946_l();
                    iblockstate.func_177230_c().func_180657_a(this.field_73092_a, this.field_73090_b, p_180237_1_, iblockstate, tileentity, itemstack1);

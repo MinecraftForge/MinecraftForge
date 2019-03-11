@@ -4,7 +4,7 @@
     protected void func_75208_c(ItemStack p_75208_1_) {
        if (this.field_75237_g > 0) {
           p_75208_1_.func_77980_a(this.field_75238_b.field_70170_p, this.field_75238_b, this.field_75237_g);
-+         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerCraftingEvent(this.field_75238_b, p_75208_1_, this.field_75224_c);
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerCraftingEvent(this.field_75238_b, p_75208_1_, this.field_75239_a);
        }
  
        ((IRecipeHolder)this.field_75224_c).func_201560_d(this.field_75238_b);

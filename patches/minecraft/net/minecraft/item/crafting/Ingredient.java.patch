@@ -80,20 +80,17 @@
     public static Ingredient func_193369_a(ItemStack... p_193369_0_) {
        return func_209357_a(Arrays.stream(p_193369_0_).map((p_209356_0_) -> {
           return new Ingredient.SingleItemList(p_209356_0_);
-@@ -145,7 +173,12 @@
-    }
+@@ -146,6 +174,9 @@
  
     public static Ingredient func_199566_b(PacketBuffer p_199566_0_) {
-+      p_199566_0_.markReaderIndex();
        int i = p_199566_0_.func_150792_a();
 +      if (i == -1) {
-+         p_199566_0_.resetReaderIndex();
 +         return net.minecraftforge.common.crafting.CraftingHelper.getIngredient(p_199566_0_.func_192575_l(), p_199566_0_);
 +      }
        return func_209357_a(Stream.generate(() -> {
           return new Ingredient.SingleItemList(p_199566_0_.func_150791_c());
        }).limit((long)i));
-@@ -153,6 +186,8 @@
+@@ -153,6 +184,8 @@
  
     public static Ingredient func_199802_a(@Nullable JsonElement p_199802_0_) {
        if (p_199802_0_ != null && !p_199802_0_.isJsonNull()) {
@@ -102,7 +99,7 @@
           if (p_199802_0_.isJsonObject()) {
              return func_209357_a(Stream.of(func_199803_a(p_199802_0_.getAsJsonObject())));
           } else if (p_199802_0_.isJsonArray()) {
-@@ -173,6 +208,11 @@
+@@ -173,6 +206,11 @@
     }
  
     public static Ingredient.IItemList func_199803_a(JsonObject p_199803_0_) {
@@ -114,7 +111,7 @@
        if (p_199803_0_.has("item") && p_199803_0_.has("tag")) {
           throw new JsonParseException("An ingredient entry is either a tag or an item, not both");
        } else if (p_199803_0_.has("item")) {
-@@ -196,6 +236,12 @@
+@@ -196,6 +234,12 @@
        }
     }
  
