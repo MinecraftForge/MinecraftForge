@@ -24,9 +24,16 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 public interface IForgeWorld extends ICapabilityProvider
 {
     /**
-     * Used in the getEntitiesWithinAABB functions to expand the search area for entities.
-     * Modders should change this variable to a higher value if it is less then the radius
-     * of one of there entities.
+     * The maximum radius to scan for entities when trying to check bounding boxes. Vanilla's default is
+     * 2.0D But mods that add larger entities may increase this.
      */
-    public static double MAX_ENTITY_RADIUS = 2.0D;
+    public double getMaxEntityRadius();
+    /**
+     * Increases the max entity radius, this is safe to call with any value.
+     * The setter will verify the input value is larger then the current setting.
+     *
+     * @param value New max radius to set.
+     * @return The new max radius
+     */
+    public double increaseMaxEntityRadius(double value);
 }

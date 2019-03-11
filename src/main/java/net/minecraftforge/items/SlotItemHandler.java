@@ -44,27 +44,9 @@ public class SlotItemHandler extends Slot
     @Override
     public boolean isItemValid(@Nonnull ItemStack stack)
     {
-        if (stack.isEmpty() || !itemHandler.isItemValid(index, stack))
+        if (stack.isEmpty())
             return false;
-
-        IItemHandler handler = this.getItemHandler();
-        ItemStack remainder;
-        if (handler instanceof IItemHandlerModifiable)
-        {
-            IItemHandlerModifiable handlerModifiable = (IItemHandlerModifiable) handler;
-            ItemStack currentStack = handlerModifiable.getStackInSlot(index);
-
-            handlerModifiable.setStackInSlot(index, ItemStack.EMPTY);
-
-            remainder = handlerModifiable.insertItem(index, stack, true);
-
-            handlerModifiable.setStackInSlot(index, currentStack);
-        }
-        else
-        {
-            remainder = handler.insertItem(index, stack, true);
-        }
-        return remainder.getCount() < stack.getCount();
+        return itemHandler.isItemValid(index, stack);
     }
 
     @Override

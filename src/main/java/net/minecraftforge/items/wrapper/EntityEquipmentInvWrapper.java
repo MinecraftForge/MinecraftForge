@@ -183,7 +183,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     @Override
     public boolean isItemValid(int slot, @Nonnull ItemStack stack)
     {
-        return IItemHandlerModifiable.super.isItemValid(slot, stack);
+        return true;
     }
 
     protected EntityEquipmentSlot validateSlotIndex(final int slot)
