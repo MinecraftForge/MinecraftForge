@@ -43,6 +43,7 @@ import net.minecraftforge.eventbus.api.Event;
 import com.google.common.collect.ImmutableList;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
@@ -167,25 +168,54 @@ public class BlockEvent extends Event
     }
 
     /**
+     * Called when a block is placed.
+     *
+     * If a Block Place event is cancelled, the block will not be placed.
+     */
+    @Cancelable
+    public static class EntityPlaceEvent extends BlockEvent
+    {
+        private final Entity entity;
+        private final BlockSnapshot blockSnapshot;
+        private final IBlockState placedBlock;
+        private final IBlockState placedAgainst;
+
+        public EntityPlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull IBlockState placedAgainst, @Nullable Entity entity)
+        {
+            super(blockSnapshot.getWorld(), blockSnapshot.getPos(), !(entity instanceof EntityPlayer) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock());
+            this.entity = entity;
+            this.blockSnapshot = blockSnapshot;
+            this.placedBlock = !(entity instanceof EntityPlayer) ? blockSnapshot.getReplacedBlock() : blockSnapshot.getCurrentBlock();
+            this.placedAgainst = placedAgainst;
+
+            if (DEBUG)
+            {
+                System.out.printf("Created EntityPlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][Entity: %s ]\n", getPlacedBlock(), placedAgainst, entity);
+            }
+        }
+
+        @Nullable
+        public Entity getEntity() { return entity; }
+        public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
+        public IBlockState getPlacedBlock() { return placedBlock; }
+        public IBlockState getPlacedAgainst() { return placedAgainst; }
+    }
+
+    /**
      * Called when a block is placed by a player.
      *
      * If a Block Place event is cancelled, the block will not be placed.
      */
     @Cancelable
-    public static class PlaceEvent extends BlockEvent
+    @Deprecated // Remove in 1.13
+    public static class PlaceEvent extends EntityPlaceEvent
     {
         private final EntityPlayer player;
-        private final BlockSnapshot blockSnapshot;
-        private final IBlockState placedBlock;
-        private final IBlockState placedAgainst;
         private final EnumHand hand;
 
         public PlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
-            super(blockSnapshot.getWorld(), blockSnapshot.getPos(), blockSnapshot.getCurrentBlock());
+            super(blockSnapshot, placedAgainst, player);
             this.player = player;
-            this.blockSnapshot = blockSnapshot;
-            this.placedBlock = blockSnapshot.getCurrentBlock();
-            this.placedAgainst = placedAgainst;
             this.hand = hand;
             if (DEBUG)
             {
@@ -194,11 +224,45 @@ public class BlockEvent extends Event
         }
 
         public EntityPlayer getPlayer() { return player; }
-        public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
-        public IBlockState getPlacedBlock() { return placedBlock; }
-        public IBlockState getPlacedAgainst() { return placedAgainst; }
+        @Nonnull
+        @Deprecated
+        public ItemStack getItemInHand() { return player.getHeldItem(hand); }
         public EnumHand getHand() { return hand; }
     }
+
+    /**
+     * Fired when a single block placement triggers the
+     * creation of multiple blocks(e.g. placing a bed block). The block returned
+     * by {@link #state} and its related methods is the block where
+     * the placed block would exist if the placement only affected a single
+     * block.
+     */
+    @Cancelable
+    public static class EntityMultiPlaceEvent extends EntityPlaceEvent
+    {
+        private final List<BlockSnapshot> blockSnapshots;
+
+        public EntityMultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull IBlockState placedAgainst, @Nullable Entity entity) {
+            super(blockSnapshots.get(0), placedAgainst, entity);
+            this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
+            if (DEBUG)
+            {
+                System.out.printf("Created EntityMultiPlaceEvent - [PlacedAgainst: %s ][Entity: %s ]\n", placedAgainst, entity);
+            }
+        }
+
+        /**
+         * Gets a list of BlockSnapshots for all blocks which were replaced by the
+         * placement of the new blocks. Most of these blocks will just be of type AIR.
+         *
+         * @return immutable list of replaced BlockSnapshots
+         */
+        public List<BlockSnapshot> getReplacedBlockSnapshots()
+        {
+            return blockSnapshots;
+        }
+    }
+
 
     /**
      * Fired when a single block placement action of a player triggers the

@@ -20,6 +20,15 @@
              return false;
           } else {
              return this.field_179475_a.func_70681_au().nextInt(2000) == 0;
+@@ -373,7 +375,7 @@
+          IBlockState iblockstate = iworld.func_180495_p(blockpos);
+          IBlockState iblockstate1 = iworld.func_180495_p(blockpos.func_177977_b());
+          IBlockState iblockstate2 = this.field_179475_a.func_195405_dq();
+-         if (iblockstate2 != null && this.func_195924_a(iworld, blockpos, iblockstate2, iblockstate, iblockstate1)) {
++         if (iblockstate2 != null && this.func_195924_a(iworld, blockpos, iblockstate2, iblockstate, iblockstate1) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(field_179475_a, new net.minecraftforge.common.util.BlockSnapshot(field_179475_a.field_70170_p, blockpos, iblockstate), net.minecraft.util.EnumFacing.UP)) {
+             iworld.func_180501_a(blockpos, iblockstate2, 3);
+             this.field_179475_a.func_195406_b((IBlockState)null);
+          }
 @@ -395,7 +397,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {
