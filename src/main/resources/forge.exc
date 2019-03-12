@@ -31,7 +31,7 @@ net/minecraft/item/ItemStack.<init>(Lnet/minecraft/util/IItemProvider;ILnet/mine
 
 net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;=|p_150788_1_,limitedTag
 
-net/minecraft/resources/ResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZZ)V=|namp_i47907_1_,p_i47907_2_,p_i47907_3_,p_i47907_4_,p_i47907_5_,p_i47907_6_,p_i47907_7_,p_i47907_8_,hidden
+net/minecraft/resources/ResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZZ)V=|p_i47907_1_,p_i47907_2_,p_i47907_3_,p_i47907_4_,p_i47907_5_,p_i47907_6_,p_i47907_7_,p_i47907_8_,hidden
 net/minecraft/resources/ResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/resources/IResourcePack;Lnet/minecraft/resources/data/PackMetadataSection;Lnet/minecraft/resources/ResourcePackInfo$Priority;Z)V=|p_i47908_1_,p_i47908_2_,p_i47908_3_,p_i47908_4_,p_i47908_5_,p_i47908_6_,hidden
 
 net/minecraft/server/management/PlayerList.changePlayerDimension(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_187242_1_,p_187242_2_,teleporter
