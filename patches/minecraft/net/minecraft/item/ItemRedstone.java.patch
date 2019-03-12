@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemRedstone.java
++++ ../src-work/minecraft/net/minecraft/item/ItemRedstone.java
+@@ -25,7 +25,7 @@
+         BlockPos blockpos = flag ? p_180614_3_ : p_180614_3_.func_177972_a(p_180614_5_);
+         ItemStack itemstack = p_180614_1_.func_184586_b(p_180614_4_);
+ 
+-        if (p_180614_1_.func_175151_a(blockpos, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(p_180614_2_.func_180495_p(blockpos).func_177230_c(), blockpos, false, p_180614_5_, (Entity)null) && Blocks.field_150488_af.func_176196_c(p_180614_2_, blockpos))
++        if (p_180614_1_.func_175151_a(blockpos, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(p_180614_2_.func_180495_p(blockpos).func_177230_c(), blockpos, false, p_180614_5_, p_180614_1_) && Blocks.field_150488_af.func_176196_c(p_180614_2_, blockpos))
+         {
+             p_180614_2_.func_175656_a(blockpos, Blocks.field_150488_af.func_176223_P());
+ 
