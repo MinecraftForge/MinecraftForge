@@ -1,8 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlockSpecial.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlockSpecial.java
-@@ -43,7 +43,7 @@
+@@ -41,9 +41,9 @@
  
-         if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150935_a, p_180614_3_, false, p_180614_5_, (Entity)null))
+         ItemStack itemstack = p_180614_1_.func_184586_b(p_180614_4_);
+ 
+-        if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150935_a, p_180614_3_, false, p_180614_5_, (Entity)null))
++        if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150935_a, p_180614_3_, false, p_180614_5_, p_180614_1_))
          {
 -            IBlockState iblockstate1 = this.field_150935_a.func_180642_a(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, 0, p_180614_1_);
 +            IBlockState iblockstate1 = this.field_150935_a.getStateForPlacement(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, 0, p_180614_1_, p_180614_4_);

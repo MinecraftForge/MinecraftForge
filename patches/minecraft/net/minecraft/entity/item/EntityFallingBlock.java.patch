@@ -8,7 +8,15 @@
                      if (!flag1 && BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - 0.009999999776482582D, this.field_70161_v))))
                      {
                          this.field_70122_E = false;
-@@ -189,7 +190,7 @@
+@@ -182,14 +183,14 @@
+ 
+                         if (!this.field_145808_f)
+                         {
+-                            if (this.field_70170_p.func_190527_a(block, blockpos1, true, EnumFacing.UP, (Entity)null) && (flag1 || !BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(blockpos1.func_177977_b()))) && this.field_70170_p.func_180501_a(blockpos1, this.field_175132_d, 3))
++                            if (this.field_70170_p.func_190527_a(block, blockpos1, true, EnumFacing.UP, this) && (flag1 || !BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(blockpos1.func_177977_b()))) && this.field_70170_p.func_180501_a(blockpos1, this.field_175132_d, 3))
+                             {
+                                 if (block instanceof BlockFalling)
+                                 {
                                      ((BlockFalling)block).func_176502_a_(this.field_70170_p, blockpos1, this.field_175132_d, iblockstate);
                                  }
  
