@@ -8,7 +8,13 @@
                 if (!flag1 && BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - (double)0.01F, this.field_70161_v)))) {
                    this.field_70122_E = false;
                    return;
-@@ -149,7 +150,7 @@
+@@ -144,12 +145,12 @@
+                if (iblockstate.func_177230_c() != Blocks.field_196603_bb) {
+                   this.func_70106_y();
+                   if (!this.field_145808_f) {
+-                     if (iblockstate.func_185904_a().func_76222_j() && (flag1 || !BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(blockpos1.func_177977_b()))) && this.field_70170_p.func_180501_a(blockpos1, this.field_175132_d, 3)) {
++                     if (iblockstate.func_185904_a().func_76222_j() && (flag1 || !BlockFalling.func_185759_i(this.field_70170_p.func_180495_p(blockpos1.func_177977_b()))) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(this, new net.minecraftforge.common.util.BlockSnapshot(func_130014_f_(), func_180425_c(), iblockstate), net.minecraft.util.EnumFacing.UP) && this.field_70170_p.func_180501_a(blockpos1, this.field_175132_d, 3)) {
+                         if (block instanceof BlockFalling) {
                             ((BlockFalling)block).func_176502_a_(this.field_70170_p, blockpos1, this.field_175132_d, iblockstate);
                          }
  

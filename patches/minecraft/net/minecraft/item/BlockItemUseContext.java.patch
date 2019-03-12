@@ -1,0 +1,19 @@
+--- a/net/minecraft/item/BlockItemUseContext.java
++++ b/net/minecraft/item/BlockItemUseContext.java
+@@ -5,6 +5,7 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import net.minecraftforge.event.terraingen.BiomeEvent.GetGrassColor;
+ 
+ public class BlockItemUseContext extends ItemUseContext {
+    private final BlockPos field_196014_j;
+@@ -25,7 +26,7 @@
+    }
+ 
+    public boolean func_196011_b() {
+-      return this.field_196013_a || this.func_195991_k().func_180495_p(this.func_195995_a()).func_196953_a(this);
++      return (this.field_196013_a || this.func_195991_k().func_180495_p(this.func_195995_a()).func_196953_a(this));
+    }
+ 
+    public boolean func_196012_c() {
