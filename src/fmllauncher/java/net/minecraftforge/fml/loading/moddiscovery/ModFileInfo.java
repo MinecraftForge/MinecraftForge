@@ -93,12 +93,6 @@ public class ModFileInfo implements IModFileInfo
     }
 
     @Override
-    public boolean showAsResourcePack()
-    {
-        return this.showAsResourcePack;
-    }
-
-    @Override
     public Map<String, Object> getFileProperties() {
         return this.properties;
     }
@@ -109,6 +103,6 @@ public class ModFileInfo implements IModFileInfo
 
     @Override
     public boolean showAsResourcePack() {
-        return false; // noop right now
+        return this.showAsResourcePack;
     }
 }
