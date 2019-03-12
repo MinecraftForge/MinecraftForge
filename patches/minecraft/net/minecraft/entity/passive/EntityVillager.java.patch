@@ -121,7 +121,12 @@
           } else {
              this.field_82189_bL = null;
           }
-@@ -473,11 +512,10 @@
+@@ -469,15 +508,14 @@
+          this.func_175554_cu();
+       }
+ 
+-      return this.field_70963_i;
++      return net.minecraftforge.event.ForgeEventFactory.listTradeOffers(this, p_70934_1_, field_70963_i);
     }
  
     private void func_175554_cu() {
