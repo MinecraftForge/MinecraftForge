@@ -587,20 +587,23 @@ public class GameData
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
-        List<ResourceLocation> missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).collect(Collectors.toList());
-        if (missingRegs.size() > 0)
+        if (isLocalWorld)
         {
-            String text = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
-                    "There are " + missingRegs.size() + " missing registries in this save.\n" +
-                    "If you continue the missing registries will get removed.\n" +
-                    "This may cause issues, it is advised that you create a world backup before continuing.\n\n" +
-                    "Missing Registries:\n";
+            List<ResourceLocation> missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).collect(Collectors.toList());
+            if (missingRegs.size() > 0)
+            {
+                String text = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
+                        "There are " + missingRegs.size() + " missing registries in this save.\n" +
+                        "If you continue the missing registries will get removed.\n" +
+                        "This may cause issues, it is advised that you create a world backup before continuing.\n\n" +
+                        "Missing Registries:\n";
 
-            for (ResourceLocation s : missingRegs)
-                text += s.toString() + "\n";
+                for (ResourceLocation s : missingRegs)
+                    text += s.toString() + "\n";
 
-            if (!StartupQuery.confirm(text))
-                StartupQuery.abort();
+                if (!StartupQuery.confirm(text))
+                    StartupQuery.abort();
+            }
         }
 
         RegistryManager STAGING = new RegistryManager("STAGING");
