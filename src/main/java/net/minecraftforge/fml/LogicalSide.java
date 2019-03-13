@@ -21,5 +21,21 @@ package net.minecraftforge.fml;
 
 public enum LogicalSide
 {
-    CLIENT, SERVER
+    CLIENT, SERVER;
+
+    /**
+     * @return if the logical side is a client.
+     */
+    public boolean isServer()
+    {
+        return !isClient();
+    }
+
+    /**
+     * @return if the logical side is a server.
+     */
+    public boolean isClient()
+    {
+        return this == CLIENT;
+    }
 }
