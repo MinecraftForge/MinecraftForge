@@ -1,4 +1,2 @@
 net.minecraftforge.fml.loading.FMLClientLaunchProvider
 net.minecraftforge.fml.loading.FMLServerLaunchProvider
-net.minecraftforge.fml.loading.FMLDevClientLaunchProvider
-net.minecraftforge.fml.loading.FMLDevServerLaunchProvider

@@ -68,7 +68,7 @@ public class NetworkRegistry
         return listRejectedVanillaMods(NetworkInstance::tryClientVersionOnServer);
     }
 
-    static boolean acceptsVanillaClientConnections() {
+    public static boolean acceptsVanillaClientConnections() {
         return instances.isEmpty() || getNonVanillaNetworkMods().isEmpty();
     }
 
@@ -137,20 +137,13 @@ public class NetworkRegistry
     }
 
     /**
-     * Construct the NBT representation of the channel list, for use during login handshaking
+     * Construct the Map representation of the channel list, for use during login handshaking
      *
      * @see FMLHandshakeMessages.S2CModList
      * @see FMLHandshakeMessages.C2SModListReply
-     *
-     * @return An nbt tag list
      */
-    static NBTTagList buildChannelVersions() {
-        return instances.entrySet().stream().map(e-> {
-            final NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("name", e.getKey().toString());
-            tag.setString("version", e.getValue().getNetworkProtocolVersion());
-            return tag;
-        }).collect(Collectors.toCollection(NBTTagList::new));
+    static Map<ResourceLocation, String> buildChannelVersions() {
+        return instances.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getNetworkProtocolVersion()));
     }
 
     static List<String> listRejectedVanillaMods(BiFunction<NetworkInstance, String, Boolean> testFunction) {
@@ -174,34 +167,32 @@ public class NetworkRegistry
      * Validate the channels from the server on the client. Tests the client predicates against the server
      * supplied network protocol version.
      *
-     * @param channels An @{@link NBTTagList} of name->version pairs for testing
+     * @param channels An @{@link Map} of name->version pairs for testing
      * @return true if all channels accept themselves
      */
-    static boolean validateClientChannels(final NBTTagList channels) {
+    static boolean validateClientChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "server", NetworkInstance::tryServerVersionOnClient);
     }
 
     /**
      * Validate the channels from the client on the server. Tests the server predicates against the client
      * supplied network protocol version.
-     * @param channels An @{@link NBTTagList} of name->version pairs for testing
+     * @param channels An @{@link Map} of name->version pairs for testing
      * @return true if all channels accept themselves
      */
-    static boolean validateServerChannels(final NBTTagList channels) {
+    static boolean validateServerChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "client", NetworkInstance::tryClientVersionOnServer);
     }
 
     /**
-     * Tests if the nbt list matches with the supplied predicate tester
+     * Tests if the map matches with the supplied predicate tester
      *
-     * @param channels An @{@link NBTTagList} of name->version pairs for testing
+     * @param channels An @{@link Map} of name->version pairs for testing
      * @param originName A label for use in logging (where the version pairs came from)
      * @param testFunction The test function to use for testing
      * @return true if all channels accept themselves
      */
-    private static boolean validateChannels(final NBTTagList channels, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
-        Map<ResourceLocation, String> incoming = channels.stream().map(NBTTagCompound.class::cast).collect(Collectors.toMap(tag->new ResourceLocation(tag.getString("name")),tag->tag.getString("version")));
-
+    private static boolean validateChannels(final Map<ResourceLocation, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
         final List<Pair<ResourceLocation, Boolean>> results = instances.values().stream().
                 map(ni -> {
                     final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);

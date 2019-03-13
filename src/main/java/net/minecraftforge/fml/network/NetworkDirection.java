@@ -79,10 +79,12 @@ public enum NetworkDirection
         return this.eventSupplier.apply(buffer, manager);
     }
 
-    public LogicalSide getLogicalSide()
+    public LogicalSide getOriginationSide()
     {
         return logicalSide;
     }
+
+    public LogicalSide getReceptionSide() { return reply().logicalSide; };
 
     @SuppressWarnings("unchecked")
     public <T extends Packet<?>> ICustomPacket<T> buildPacket(Pair<PacketBuffer,Integer> packetData, ResourceLocation channelName)

@@ -31,14 +31,14 @@ public class MCPVersion {
     static {
         String vers = MCPVersion.class.getPackage().getSpecificationVersion();
         if (vers == null) {
-            vers = System.getProperty("mc.version");
+            vers = System.getenv("MC_VERSION");
         }
         if (vers == null) throw new RuntimeException("Missing MC version, cannot continue");
         mcVersion = vers;
 
         vers = MCPVersion.class.getPackage().getImplementationVersion();
         if (vers == null) {
-            vers = System.getProperty("mcp.version");
+            vers = System.getenv("MCP_VERSION");
         }
         if (vers == null) throw new RuntimeException("Missing MCP version, cannot continue");
         mcpVersion = vers;

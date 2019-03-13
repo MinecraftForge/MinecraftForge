@@ -610,10 +610,10 @@
 -      int j = MathHelper.func_76128_c((p_175674_2_.field_72336_d + 2.0D) / 16.0D);
 -      int k = MathHelper.func_76128_c((p_175674_2_.field_72339_c - 2.0D) / 16.0D);
 -      int l = MathHelper.func_76128_c((p_175674_2_.field_72334_f + 2.0D) / 16.0D);
-+      int i = MathHelper.func_76128_c((p_175674_2_.field_72340_a - MAX_ENTITY_RADIUS) / 16.0D);
-+      int j = MathHelper.func_76128_c((p_175674_2_.field_72336_d + MAX_ENTITY_RADIUS) / 16.0D);
-+      int k = MathHelper.func_76128_c((p_175674_2_.field_72339_c - MAX_ENTITY_RADIUS) / 16.0D);
-+      int l = MathHelper.func_76128_c((p_175674_2_.field_72334_f + MAX_ENTITY_RADIUS) / 16.0D);
++      int i = MathHelper.func_76128_c((p_175674_2_.field_72340_a - getMaxEntityRadius()) / 16.0D);
++      int j = MathHelper.func_76128_c((p_175674_2_.field_72336_d + getMaxEntityRadius()) / 16.0D);
++      int k = MathHelper.func_76128_c((p_175674_2_.field_72339_c - getMaxEntityRadius()) / 16.0D);
++      int l = MathHelper.func_76128_c((p_175674_2_.field_72334_f + getMaxEntityRadius()) / 16.0D);
  
        for(int i1 = i; i1 <= j; ++i1) {
           for(int j1 = k; j1 <= l; ++j1) {
@@ -625,10 +625,10 @@
 -      int j = MathHelper.func_76143_f((p_175647_2_.field_72336_d + 2.0D) / 16.0D);
 -      int k = MathHelper.func_76128_c((p_175647_2_.field_72339_c - 2.0D) / 16.0D);
 -      int l = MathHelper.func_76143_f((p_175647_2_.field_72334_f + 2.0D) / 16.0D);
-+      int i = MathHelper.func_76128_c((p_175647_2_.field_72340_a - MAX_ENTITY_RADIUS) / 16.0D);
-+      int j = MathHelper.func_76143_f((p_175647_2_.field_72336_d + MAX_ENTITY_RADIUS) / 16.0D);
-+      int k = MathHelper.func_76128_c((p_175647_2_.field_72339_c - MAX_ENTITY_RADIUS) / 16.0D);
-+      int l = MathHelper.func_76143_f((p_175647_2_.field_72334_f + MAX_ENTITY_RADIUS) / 16.0D);
++      int i = MathHelper.func_76128_c((p_175647_2_.field_72340_a - getMaxEntityRadius()) / 16.0D);
++      int j = MathHelper.func_76143_f((p_175647_2_.field_72336_d + getMaxEntityRadius()) / 16.0D);
++      int k = MathHelper.func_76128_c((p_175647_2_.field_72339_c - getMaxEntityRadius()) / 16.0D);
++      int l = MathHelper.func_76143_f((p_175647_2_.field_72334_f + getMaxEntityRadius()) / 16.0D);
        List<T> list = Lists.newArrayList();
  
        for(int i1 = i; i1 < j; ++i1) {
@@ -766,7 +766,7 @@
                    iblockstate.func_189546_a(this, blockpos, p_175666_2_, p_175666_1_);
                 }
              }
-@@ -2464,4 +2590,28 @@
+@@ -2464,4 +2590,40 @@
     public abstract RecipeManager func_199532_z();
  
     public abstract NetworkTagManager func_205772_D();
@@ -793,5 +793,17 @@
 +         }
 +      }
 +      return ret;
++   }
++
++   private double maxEntityRadius = 2.0D;
++   @Override
++   public double getMaxEntityRadius() {
++      return maxEntityRadius;
++   }
++   @Override
++   public double increaseMaxEntityRadius(double value) {
++       if (value > maxEntityRadius)
++           maxEntityRadius = value;
++       return maxEntityRadius;
 +   }
  }

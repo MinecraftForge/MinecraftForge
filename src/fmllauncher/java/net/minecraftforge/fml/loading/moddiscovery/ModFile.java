@@ -57,6 +57,7 @@ public class ModFile
     private final String jarVersion;
     private Map<String, Object> fileProperties;
     private IModLanguageProvider loader;
+    private Throwable scanError;
 
     public void setFileProperties(Map<String, Object> fileProperties)
     {
@@ -159,12 +160,18 @@ public class ModFile
                 e.printStackTrace();
             }
         }
+        if (this.scanError != null) {
+            throw new RuntimeException(this.scanError);
+        }
         return this.fileModFileScanData;
     }
 
     public void setScanResult(final ModFileScanData modFileScanData, final Throwable throwable) {
         this.futureScanResult = null;
         this.fileModFileScanData = modFileScanData;
+        if (throwable != null) {
+            this.scanError = throwable;
+        }
     }
 
     @Override

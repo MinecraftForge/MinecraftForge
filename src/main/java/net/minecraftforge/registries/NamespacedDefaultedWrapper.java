@@ -133,6 +133,12 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
         return this.delegate.getDefaultKey();
     }
 
+    @Override
+    public boolean isEmpty()
+    {
+        return this.delegate.isEmpty();
+    }
+
     //internal
     @Override
     public void lock(){ this.locked = true; }

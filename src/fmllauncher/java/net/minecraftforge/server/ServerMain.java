@@ -19,49 +19,64 @@
 
 package net.minecraftforge.server;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
-import com.google.common.collect.ObjectArrays;
+import cpw.mods.modlauncher.InvalidLauncherSetupException;
 import cpw.mods.modlauncher.Launcher;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
+import java.util.Optional;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+
 public class ServerMain {
-    public static void main(String[] args) throws IOException {
-        final Properties props = new Properties();
-        try(InputStream stream = ServerMain.class.getClassLoader().getResourceAsStream("server_launcher.properties")) {
-            if (stream == null) {
-                System.out.println("ERROR: could not load server_launcher.properties, invalid launcher jar, you must specify all arguments");
-                return;
+    public static void main(String[] args) {
+        try {
+            Class.forName("cpw.mods.modlauncher.Launcher", false, ClassLoader.getSystemClassLoader());
+            Class.forName("net.minecraftforge.forgespi.Environment", false, ClassLoader.getSystemClassLoader());
+        } catch (ClassNotFoundException cnfe) {
+            System.err.println("FATAL ERROR, You need to run the installer. The libraries required to launch a server are missing");
+            System.exit(1);
+        }
+
+        final String launchArgs = Optional.ofNullable(ServerMain.class.getProtectionDomain()).
+                map(ProtectionDomain::getCodeSource).
+                map(CodeSource::getLocation).
+                map(ServerMain::urlToManifest).
+                map(Manifest::getMainAttributes).
+                map(a -> a.getValue("ServerLaunchArgs")).
+                orElseThrow(ServerMain::throwMissingManifest);
+        String[] defaultargs = launchArgs.split(" ");
+        String[] result = new String[args.length + defaultargs.length];
+        System.arraycopy(defaultargs, 0, result, 0, defaultargs.length);
+        System.arraycopy(args, 0, result, defaultargs.length, args.length);
+        // separate class, so the exception can resolve
+        new Runner().runLauncher(result);
+    }
+
+    private static class Runner {
+        private void runLauncher(final String[] result) {
+            try {
+                Launcher.main(result);
+            } catch (InvalidLauncherSetupException e) {
+                System.err.println("The server is missing critical libraries and cannot load. Please run the installer to correct this");
+                System.exit(1);
             }
-            props.load(stream);
         }
-
-        boolean exit = false;
-        int lib_count = Integer.parseInt(props.getProperty("library.count"));
-        for (int x = 0; x < lib_count; x++) {
-            String lib = props.getProperty(String.format("library.%03d", x));
-            if (lib == null) {
-                System.out.println("Invalid server launcher properties, missing library: " + x);
-                exit = true;
-            } else if (!new File(lib).exists()) {
-                System.out.println("Missing library: " + lib);
-                exit = true;
-            }
+    }
+    private static Manifest urlToManifest(URL url) {
+        try {
+            return new JarFile(new File(url.toURI())).getManifest();
+        } catch (URISyntaxException | IOException e) {
+            return null;
         }
+    }
 
-        if (exit)
-            return;
-
-        String defaults = props.getProperty("args");
-        if (defaults == null) {
-            System.out.println("Null default argumetns found, you must specify all arguments.");
-            return;
-        }
-
-        System.out.println("Appending default arguments: " + defaults);
-        final String[] argArray = ObjectArrays.concat(defaults.split(" "), args, String.class);
-        Launcher.main(argArray);
+    private static RuntimeException throwMissingManifest() {
+        System.err.println("This is not being run from a valid JAR file, essential data is missing.");
+        return new RuntimeException("Missing the manifest");
     }
 }

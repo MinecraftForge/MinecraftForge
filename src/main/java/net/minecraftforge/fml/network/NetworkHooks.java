@@ -44,29 +44,22 @@ import java.util.function.Supplier;
 public class NetworkHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final String NETVERSION = "FML1";
-    public static final String NOVERSION = "NONE";
 
     public static String getFMLVersion(final String ip)
     {
-        return ip.contains("\0") ? Objects.equals(ip.split("\0")[1], NETVERSION) ? NETVERSION : ip.split("\0")[1] : NOVERSION;
-    }
-
-    public static boolean accepts(final CPacketHandshake packet)
-    {
-        return Objects.equals(packet.getFMLVersion(), NETVERSION) || NetworkRegistry.acceptsVanillaClientConnections();
+        return ip.contains("\0") ? Objects.equals(ip.split("\0")[1], FMLNetworkConstants.NETVERSION) ? FMLNetworkConstants.NETVERSION : ip.split("\0")[1] : FMLNetworkConstants.NOVERSION;
     }
 
     public static ConnectionType getConnectionType(final Supplier<NetworkManager> connection)
     {
-        return ConnectionType.forVersionFlag(connection.get().channel().attr(FMLNetworking.FML_MARKER).get());
+        return ConnectionType.forVersionFlag(connection.get().channel().attr(FMLNetworkConstants.FML_NETVERSION).get());
     }
 
     public static Packet<?> getEntitySpawningPacket(Entity entity)
     {
         if (!entity.getType().usesVanillaSpawning())
         {
-            return FMLPlayHandler.channel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
+            return FMLNetworkConstants.playChannel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
         }
         return null;
     }
@@ -78,14 +71,14 @@ public class NetworkHooks
 
     public static void registerServerLoginChannel(NetworkManager manager, CPacketHandshake packet)
     {
-        manager.channel().attr(FMLNetworking.FML_MARKER).set(packet.getFMLVersion());
+        manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(packet.getFMLVersion());
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_CLIENT);
     }
 
     public static void registerClientLoginChannel(NetworkManager manager)
     {
         if (manager == null || manager.channel() == null) return;
-        manager.channel().attr(FMLNetworking.FML_MARKER).set(NOVERSION);
+        manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NOVERSION);
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
     }
 
@@ -174,7 +167,7 @@ public class NetworkHooks
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
         FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, openContainerId, output);
-        FMLPlayHandler.channel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+        FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
 
         Container c = containerSupplier.createContainer(player.inventory, player);
         player.openContainer = c;

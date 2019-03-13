@@ -22,7 +22,6 @@ package net.minecraftforge.registries;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.BiMap;
@@ -33,13 +32,10 @@ import com.google.common.collect.Sets.SetView;
 
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.network.FMLHandshakeMessages;
-import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.registries.ForgeRegistry.Snapshot;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
 public class RegistryManager
 {
@@ -150,17 +146,15 @@ public class RegistryManager
         this.superTypes.clear();
     }
 
-    public static List<Pair<String, FMLHandshakeMessages.S2CRegistry>> generateRegistryPackets() {
-        return ACTIVE.registries.entrySet().stream().
-                map(e->Pair.of("Registry "+e.getKey(), new FMLHandshakeMessages.S2CRegistry(e.getKey(), e.getValue()))).
+    public static List<Pair<String, FMLHandshakeMessages.S2CRegistry>> generateRegistryPackets()
+    {
+        return ACTIVE.takeSnapshot(false).entrySet().stream().
+                map(e->Pair.of("Registry " + e.getKey(), new FMLHandshakeMessages.S2CRegistry(e.getKey(), e.getValue()))).
                 collect(Collectors.toList());
     }
 
-    public static List<String> registryNames() {
-        return ACTIVE.registries.entrySet().stream().map(Map.Entry::getKey).map(Object::toString).collect(Collectors.toList());
-    }
-
-    public static void acceptRegistry(final FMLHandshakeMessages.S2CRegistry registryUpdate, final Supplier<NetworkEvent.Context> contextSupplier) {
-        LOGGER.debug(REGISTRIES,"Received registry packet for {}", registryUpdate.getRegistryName());
+    public static List<ResourceLocation> registryNames()
+    {
+        return ACTIVE.registries.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
     }
 }

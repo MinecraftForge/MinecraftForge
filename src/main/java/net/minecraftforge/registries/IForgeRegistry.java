@@ -44,6 +44,7 @@ public interface IForgeRegistry<V extends IForgeRegistryEntry<V>> extends Iterab
 
     boolean containsKey(ResourceLocation key);
     boolean containsValue(V value);
+    boolean isEmpty();
 
     @Nullable V getValue(ResourceLocation key);
     @Nullable ResourceLocation getKey(V value);
