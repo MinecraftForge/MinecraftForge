@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:huge_mushrooms/red",
+    "#forge:huge_mushrooms/brown",
+    "#forge:huge_mushrooms/stem"
+  ]
+}
