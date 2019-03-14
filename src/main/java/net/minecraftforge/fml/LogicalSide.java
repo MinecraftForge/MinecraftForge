@@ -24,7 +24,7 @@ public enum LogicalSide
     CLIENT, SERVER;
 
     /**
-     * @return if the logical side is a client.
+     * @return if the logical side is a server.
      */
     public boolean isServer()
     {
@@ -32,7 +32,7 @@ public enum LogicalSide
     }
 
     /**
-     * @return if the logical side is a server.
+     * @return if the logical side is a client.
      */
     public boolean isClient()
     {
