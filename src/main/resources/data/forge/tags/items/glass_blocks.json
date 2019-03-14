@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:glass_blocks/colorless",
+    "#forge:stained_glass_blocks"
+  ]
+}
