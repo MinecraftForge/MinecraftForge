@@ -198,7 +198,9 @@ public class Constants
     /**
      * The operation used for Attribute modifier operations, {@link net.minecraft.entity.ai.attributes.AttributeModifier#AttributeModifier(String, double, int)}<br>
      * Can be found at {@link ModifiableAttributeInstance#computeValue()}<br>
+     * The total value starts with the base value.<br>
      * Order of operations are {@link #ADD}, {@link #ADD_MULTIPLE}, {@link #MULTIPLY}
+     * @see <a href="https://minecraft.gamepedia.com/Attribute#Operations">Minecraft Wiki</a>
      */
     public static class AttributeModifierOperation {
         /**
