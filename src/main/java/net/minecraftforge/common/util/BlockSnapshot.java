@@ -176,11 +176,13 @@ public class BlockSnapshot
         IBlockState current = getCurrentBlock();
         IBlockState replaced = getReplacedBlock();
 
+        int flags = notifyNeighbors ? Constants.BlockFlags.DEFAULT : Constants.BlockFlags.SEND_TO_CLIENTS;
+
         if (current != replaced)
         {
             if (force)
             {
-                world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
+                world.setBlockState(pos, replaced, flags);
             }
             else
             {
@@ -188,8 +190,8 @@ public class BlockSnapshot
             }
         }
 
-        world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
-        world.notifyBlockUpdate(pos, current, replaced, notifyNeighbors ? 3 : 2);
+        world.setBlockState(pos, replaced, flags);
+        world.notifyBlockUpdate(pos, current, replaced, flags);
 
         TileEntity te = null;
         if (getNbt() != null)
