@@ -40,3 +40,14 @@
              }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
           }
  
+@@ -224,6 +232,10 @@
+       return this.field_198039_d;
+    }
+ 
++   public boolean isMiddleDown() {
++      return this.field_198038_c;
++   }
++
+    public double func_198024_e() {
+       return this.field_198040_e;
+    }
