@@ -19,23 +19,23 @@
 
 package net.minecraftforge.fml.network;
 
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.function.Function;
 
 public enum ConnectionType
 {
-    MODDED(NetworkHooks.NETVERSION), VANILLA(NetworkHooks.NOVERSION);
+    MODDED(s->Integer.valueOf(s.substring(FMLNetworkConstants.FMLNETMARKER.length()))), VANILLA(s->0);
 
-    private final String versionString;
+    private final Function<String, Integer> versionExtractor;
 
-    ConnectionType(String versionString)
-    {
-        this.versionString = versionString;
+    ConnectionType(Function<String, Integer> versionExtractor) {
+        this.versionExtractor = versionExtractor;
     }
-
     public static ConnectionType forVersionFlag(String vers)
     {
-        return Arrays.stream(values()).filter(ct->Objects.equals(ct.versionString, vers)).
-                findFirst().orElse(ConnectionType.VANILLA);
+        return vers.startsWith(FMLNetworkConstants.FMLNETMARKER) ? MODDED : VANILLA;
+    }
+
+    public int getFMLVersionNumber(final String fmlVersion) {
+        return versionExtractor.apply(fmlVersion);
     }
 }

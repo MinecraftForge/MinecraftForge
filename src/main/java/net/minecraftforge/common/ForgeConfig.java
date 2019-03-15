@@ -124,6 +124,8 @@ public class ForgeConfig
 
         public final BooleanValue selectiveResourceReloadEnabled;
 
+        public final BooleanValue showLoadWarnings;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -159,6 +161,11 @@ public class ForgeConfig
                 .comment("When enabled, makes specific reload tasks such as language changing quicker to run.")
                 .translation("forge.configgui.selectiveResourceReloadEnabled")
                 .define("selectiveResourceReloadEnabled", true);
+
+            showLoadWarnings = builder
+                .comment("When enabled, forge will show any warnings that occurred during loading")
+                .translation("forge.configgui.showloadwarnings")
+                .define("showLoadWarnings", true);
 
             builder.pop();
         }

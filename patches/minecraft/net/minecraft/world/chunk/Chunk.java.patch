@@ -165,8 +165,8 @@
     public void func_177414_a(@Nullable Entity p_177414_1_, AxisAlignedBB p_177414_2_, List<Entity> p_177414_3_, Predicate<? super Entity> p_177414_4_) {
 -      int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76128_c((p_177414_2_.field_72337_e + 2.0D) / 16.0D);
-+      int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - net.minecraftforge.common.extensions.IForgeWorld.MAX_ENTITY_RADIUS) / 16.0D);
-+      int j = MathHelper.func_76128_c((p_177414_2_.field_72337_e + net.minecraftforge.common.extensions.IForgeWorld.MAX_ENTITY_RADIUS) / 16.0D);
++      int i = MathHelper.func_76128_c((p_177414_2_.field_72338_b - this.field_76637_e.getMaxEntityRadius()) / 16.0D);
++      int j = MathHelper.func_76128_c((p_177414_2_.field_72337_e + this.field_76637_e.getMaxEntityRadius()) / 16.0D);
        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  
@@ -176,8 +176,8 @@
     public <T extends Entity> void func_177430_a(Class<? extends T> p_177430_1_, AxisAlignedBB p_177430_2_, List<T> p_177430_3_, @Nullable Predicate<? super T> p_177430_4_) {
 -      int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - 2.0D) / 16.0D);
 -      int j = MathHelper.func_76128_c((p_177430_2_.field_72337_e + 2.0D) / 16.0D);
-+      int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - net.minecraftforge.common.extensions.IForgeWorld.MAX_ENTITY_RADIUS) / 16.0D);
-+      int j = MathHelper.func_76128_c((p_177430_2_.field_72337_e + net.minecraftforge.common.extensions.IForgeWorld.MAX_ENTITY_RADIUS) / 16.0D);
++      int i = MathHelper.func_76128_c((p_177430_2_.field_72338_b - this.field_76637_e.getMaxEntityRadius()) / 16.0D);
++      int j = MathHelper.func_76128_c((p_177430_2_.field_72337_e + this.field_76637_e.getMaxEntityRadius()) / 16.0D);
        i = MathHelper.func_76125_a(i, 0, this.field_76645_j.length - 1);
        j = MathHelper.func_76125_a(j, 0, this.field_76645_j.length - 1);
  

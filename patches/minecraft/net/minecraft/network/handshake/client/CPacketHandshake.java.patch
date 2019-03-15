@@ -4,7 +4,7 @@
     private String field_149598_b;
     private int field_149599_c;
     private EnumConnectionState field_149597_d;
-+   private String fmlVersion = net.minecraftforge.fml.network.NetworkHooks.NETVERSION;
++   private String fmlVersion = net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION;
  
     public CPacketHandshake() {
     }
@@ -19,7 +19,7 @@
     public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
        p_148840_1_.func_150787_b(this.field_149600_a);
 -      p_148840_1_.func_180714_a(this.field_149598_b);
-+      p_148840_1_.func_180714_a(this.field_149598_b + "\0"+net.minecraftforge.fml.network.NetworkHooks.NETVERSION+"\0");
++      p_148840_1_.func_180714_a(this.field_149598_b + "\0"+net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION+"\0");
        p_148840_1_.writeShort(this.field_149599_c);
        p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
     }

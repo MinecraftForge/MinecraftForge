@@ -9,3 +9,13 @@
              return true;
           } else if (p_196250_2_.field_72995_K) {
              return true;
+@@ -173,4 +173,9 @@
+    public boolean func_196266_a(IBlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+       return false;
+    }
++
++   @Override
++   public boolean canSilkHarvest(IBlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, EntityPlayer player) {
++       return true;
++   }
+ }

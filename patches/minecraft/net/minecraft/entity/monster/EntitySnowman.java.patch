@@ -27,10 +27,15 @@
           this.func_184747_a(false);
           itemstack.func_77972_a(1, p_184645_1_);
        }
-@@ -166,4 +166,10 @@
+@@ -166,4 +166,15 @@
  
     public void func_184724_a(boolean p_184724_1_) {
     }
++
++   @Override
++   public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos) {
++      return this.func_184748_o();
++   }
 +
 +   @Override
 +   public java.util.List<ItemStack> onSheared(ItemStack item, net.minecraft.world.IWorld world, BlockPos pos, int fortune) {

@@ -34,9 +34,7 @@ import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSidedProvider;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -131,7 +129,7 @@ public class NetworkEvent extends Event
         /**
          * The {@link NetworkDirection} this message has been received on.
          */
-        private final NetworkDirection side;
+        private final NetworkDirection networkDirection;
 
         /**
          * The packet dispatcher for this event. Sends back to the origin.
@@ -139,19 +137,19 @@ public class NetworkEvent extends Event
         private final PacketDispatcher packetDispatcher;
         private boolean packetHandled;
 
-        Context(NetworkManager netHandler, NetworkDirection side, int index)
+        Context(NetworkManager netHandler, NetworkDirection networkDirection, int index)
         {
-            this(netHandler, side, new PacketDispatcher.NetworkManagerDispatcher(netHandler, index, side.reply()::buildPacket));
+            this(netHandler, networkDirection, new PacketDispatcher.NetworkManagerDispatcher(netHandler, index, networkDirection.reply()::buildPacket));
         }
 
-        Context(NetworkManager networkManager, NetworkDirection side, PacketDispatcher dispatcher) {
+        Context(NetworkManager networkManager, NetworkDirection networkDirection, PacketDispatcher dispatcher) {
             this.networkManager = networkManager;
-            this.side = side;
+            this.networkDirection = networkDirection;
             this.packetDispatcher = dispatcher;
         }
 
         public NetworkDirection getDirection() {
-            return side;
+            return networkDirection;
         }
 
         public PacketDispatcher getPacketDispatcher() {
@@ -173,7 +171,7 @@ public class NetworkEvent extends Event
 
         @SuppressWarnings("unchecked")
         public <V> ListenableFuture<V> enqueueWork(Runnable runnable) {
-            return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().reply().getLogicalSide()).addScheduledTask(runnable);
+            return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().getReceptionSide()).addScheduledTask(runnable);
         }
 
         /**

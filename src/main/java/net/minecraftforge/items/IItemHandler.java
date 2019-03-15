@@ -117,6 +117,5 @@ public interface IItemHandler
      * @return true if the slot can insert the ItemStack, not considering the current state of the inventory.
      *         false if the slot can never insert the ItemStack in any situation.
      */
-    //todo Make non-default and/or replace in 1.13
-    default boolean isItemValid(int slot, @Nonnull ItemStack stack) { return true; }
+    boolean isItemValid(int slot, @Nonnull ItemStack stack);
 }

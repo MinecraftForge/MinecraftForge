@@ -17,25 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.util;
+package net.minecraftforge.fml;
 
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.storage.WorldSavedData;
+import java.util.Objects;
 
-public class DummyWorldSaveData extends WorldSavedData {
-    public static final DummyWorldSaveData DUMMY = new DummyWorldSaveData();
-    private DummyWorldSaveData() {
-        super("DUMMYDUMMY \uD83D\uDC4C\uD83D\uDC4C\uD83D\uDC4C");
-    }
+public final class StackTraceUtils {
+    private StackTraceUtils() {}
 
-    @Override
-    public void read(final NBTTagCompound nbt) {
-        // NOOP
-    }
-
-    @Override
-    public NBTTagCompound write(final NBTTagCompound compound) {
-        // NOOP
-        return null;
+    public static boolean threadClassNameEquals(final String className) {
+        final StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        return Objects.equals(stackTrace[stackTrace.length-1].getClassName(), className);
     }
 }

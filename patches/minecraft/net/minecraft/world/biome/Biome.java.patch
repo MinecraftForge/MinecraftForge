@@ -12,7 +12,7 @@
 @@ -322,11 +322,11 @@
     }
  
-    public void func_201866_a(EnumCreatureType p_201866_1_, Biome.SpawnListEntry p_201866_2_) {
+    protected void func_201866_a(EnumCreatureType p_201866_1_, Biome.SpawnListEntry p_201866_2_) {
 -      this.field_201880_ax.get(p_201866_1_).add(p_201866_2_);
 +      this.field_201880_ax.computeIfAbsent(p_201866_1_, k -> Lists.newArrayList()).add(p_201866_2_);
     }

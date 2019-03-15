@@ -25,7 +25,7 @@
 +
 +   @Override
 +   public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockReader world, BlockPos pos) {
-+      return net.minecraftforge.common.EnumPlantType.Crop;
++      return this.field_195978_a.func_177230_c() == net.minecraft.init.Blocks.field_150388_bm ? net.minecraftforge.common.EnumPlantType.Nether : net.minecraftforge.common.EnumPlantType.Crop;
 +   }
 +
 +   @Override

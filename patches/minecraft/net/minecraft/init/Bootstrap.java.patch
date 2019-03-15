@@ -12,9 +12,9 @@
        BlockDispenser.func_199774_a(Items.field_203797_aN, ibehaviordispenseitem);
        BlockDispenser.func_199774_a(Items.field_203795_aL, ibehaviordispenseitem);
        BlockDispenser.func_199774_a(Items.field_204272_aO, ibehaviordispenseitem);
-+      BlockDispenser.func_199774_a(Items.field_151117_aB, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
-+      BlockDispenser.func_199774_a(Items.field_151133_ar, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
-+      if (false)
++      /*BlockDispenser.registerDispenseBehavior(Items.MILK_BUCKET, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
++      BlockDispenser.registerDispenseBehavior(Items.BUCKET, net.minecraftforge.fluids.DispenseFluidContainer.getInstance());
++      if (false)*/
        BlockDispenser.func_199774_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem() {
           private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
  

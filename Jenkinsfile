@@ -21,6 +21,15 @@ pipeline {
         stage('fetch') {
             steps {
                 checkout scm
+            }
+        }
+        stage('notify_start') {
+            when {
+                not {
+                    changeRequest()
+                }
+            }
+            steps {
                 discordSend(
                     title: "${DISCORD_PREFIX} Started",
                     successful: true,
@@ -37,10 +46,15 @@ pipeline {
                     env.MYVERSION = sh(returnStdout: true, script: './gradlew :forge:properties -q | grep "version:" | awk \'{print $2}\'').trim()
                 }
             }
-            post {
-                success {
-                    writeChangelog(currentBuild, 'build/changelog.txt')
+        }
+        stage('changelog') {
+            when {
+                not {
+                    changeRequest()
                 }
+            }
+            steps {
+                writeChangelog(currentBuild, 'build/changelog.txt')
             }
         }
         stage('publish') {
@@ -89,14 +103,16 @@ pipeline {
                 //junit 'build/test-results/*/*.xml'
                 //jacoco sourcePattern: '**/src/*/java'
                 
-                discordSend(
-                    title: "${DISCORD_PREFIX} Finished ${currentBuild.currentResult}",
-                    description: '```\n' + getChanges(currentBuild) + '\n```',
-                    successful: currentBuild.resultIsBetterOrEqualTo("SUCCESS"),
-                    result: currentBuild.currentResult,
-                    thumbnail: JENKINS_HEAD,
-                    webhookURL: DISCORD_WEBHOOK
-                )
+                if (env.CHANGE_ID == null) { // This is unset for non-PRs
+                    discordSend(
+                        title: "${DISCORD_PREFIX} Finished ${currentBuild.currentResult}",
+                        description: '```\n' + getChanges(currentBuild) + '\n```',
+                        successful: currentBuild.resultIsBetterOrEqualTo("SUCCESS"),
+                        result: currentBuild.currentResult,
+                        thumbnail: JENKINS_HEAD,
+                        webhookURL: DISCORD_WEBHOOK
+                    )
+                }
             }
         }
     }

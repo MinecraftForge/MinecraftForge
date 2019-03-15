@@ -125,26 +125,28 @@
  
           if (!this.field_184236_aF.isEmpty()) {
              NBTTagList nbttaglist = new NBTTagList();
-@@ -1382,6 +1392,9 @@
+@@ -1382,6 +1392,10 @@
              p_189511_1_.func_74782_a("Tags", nbttaglist);
           }
  
 +         NBTTagCompound caps = serializeCaps();
 +         if (caps != null) p_189511_1_.func_74782_a("ForgeCaps", caps);
++         if (entityData != null) p_189511_1_.func_74782_a("ForgeData", entityData);
 +
           this.func_70014_b(p_189511_1_);
           if (this.func_184207_aI()) {
              NBTTagList nbttaglist1 = new NBTTagList();
-@@ -1467,6 +1480,8 @@
+@@ -1467,6 +1481,9 @@
           this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
           this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
           this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
++         if (p_70020_1_.func_150297_b("ForgeData", 10)) entityData = p_70020_1_.func_74775_l("ForgeData");
 +         if (p_70020_1_.func_150297_b("CanUpdate", 99)) this.canUpdate(p_70020_1_.func_74767_n("CanUpdate"));
 +         if (p_70020_1_.func_150297_b("ForgeCaps", 10)) deserializeCaps(p_70020_1_.func_74775_l("ForgeCaps"));
           if (p_70020_1_.func_150297_b("Tags", 9)) {
              this.field_184236_aF.clear();
              NBTTagList nbttaglist1 = p_70020_1_.func_150295_c("Tags", 8);
-@@ -1547,6 +1562,8 @@
+@@ -1547,6 +1564,8 @@
        } else {
           EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
           entityitem.func_174869_p();
@@ -153,7 +155,7 @@
           this.field_70170_p.func_72838_d(entityitem);
           return entityitem;
        }
-@@ -1596,6 +1613,7 @@
+@@ -1596,6 +1615,7 @@
           this.field_70159_w = 0.0D;
           this.field_70181_x = 0.0D;
           this.field_70179_y = 0.0D;
@@ -161,7 +163,7 @@
           this.func_70071_h_();
           if (this.func_184218_aH()) {
              entity.func_184232_k(this);
-@@ -1637,6 +1655,7 @@
+@@ -1637,6 +1657,7 @@
           }
        }
  
@@ -169,7 +171,7 @@
        if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
           if (this.func_184218_aH()) {
              this.func_184210_p();
-@@ -1664,6 +1683,7 @@
+@@ -1664,6 +1685,7 @@
     public void func_184210_p() {
        if (this.field_184239_as != null) {
           Entity entity = this.field_184239_as;
@@ -177,7 +179,7 @@
           this.field_184239_as = null;
           entity.func_184225_p(this);
        }
-@@ -1790,6 +1810,7 @@
+@@ -1790,6 +1812,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
@@ -185,7 +187,7 @@
     public boolean func_205710_ba() {
        return true;
     }
-@@ -1991,7 +2012,7 @@
+@@ -1991,7 +2014,7 @@
           func_207712_c(itextcomponent1);
           return itextcomponent1;
        } else {
@@ -194,7 +196,7 @@
        }
     }
  
-@@ -2054,6 +2075,14 @@
+@@ -2054,6 +2077,14 @@
  
     @Nullable
     public Entity func_212321_a(DimensionType p_212321_1_) {
@@ -209,7 +211,7 @@
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
           this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
           MinecraftServer minecraftserver = this.func_184102_h();
-@@ -2061,7 +2090,7 @@
+@@ -2061,7 +2092,7 @@
           WorldServer worldserver = minecraftserver.func_71218_a(dimensiontype);
           WorldServer worldserver1 = minecraftserver.func_71218_a(p_212321_1_);
           this.field_71093_bK = p_212321_1_;
@@ -218,7 +220,7 @@
              worldserver1 = minecraftserver.func_71218_a(DimensionType.OVERWORLD);
              this.field_71093_bK = DimensionType.OVERWORLD;
           }
-@@ -2070,16 +2099,16 @@
+@@ -2070,16 +2101,16 @@
           this.field_70128_L = false;
           this.field_70170_p.field_72984_F.func_76320_a("reposition");
           BlockPos blockpos;
@@ -241,7 +243,7 @@
                 d0 = MathHelper.func_151237_a(d0 * 8.0D, worldserver1.func_175723_af().func_177726_b() + 16.0D, worldserver1.func_175723_af().func_177728_d() - 16.0D);
                 d1 = MathHelper.func_151237_a(d1 * 8.0D, worldserver1.func_175723_af().func_177736_c() + 16.0D, worldserver1.func_175723_af().func_177733_e() - 16.0D);
              }
-@@ -2088,8 +2117,7 @@
+@@ -2088,8 +2119,7 @@
              d1 = (double)MathHelper.func_76125_a((int)d1, -29999872, 29999872);
              float f = this.field_70177_z;
              this.func_70012_b(d0, this.field_70163_u, d1, 90.0F, 0.0F);
@@ -251,7 +253,7 @@
              blockpos = new BlockPos(this);
           }
  
-@@ -2098,7 +2126,7 @@
+@@ -2098,7 +2128,7 @@
           Entity entity = this.func_200600_R().func_200721_a(worldserver1);
           if (entity != null) {
              entity.func_180432_n(this);
@@ -260,11 +262,11 @@
                 BlockPos blockpos1 = worldserver1.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, worldserver1.func_175694_M());
                 entity.func_174828_a(blockpos1, entity.field_70177_z, entity.field_70125_A);
              } else {
-@@ -2592,4 +2620,57 @@
+@@ -2592,4 +2622,57 @@
     public double func_212107_bY() {
        return this.field_211517_W;
     }
-+   
++
 +   /* ================================== Forge Start =====================================*/
 +
 +   private boolean canUpdate = true;
