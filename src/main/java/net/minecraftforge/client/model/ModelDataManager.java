@@ -68,10 +68,10 @@ public class ModelDataManager
     
     private static void refreshModelData(World world, ChunkPos chunk)
     {
-        cleanCaches(world);
         Set<BlockPos> needUpdate;
         synchronized (needModelDataRefresh)
         {
+            cleanCaches(world);
             needUpdate = needModelDataRefresh.remove(chunk);
         }
         if (needUpdate != null)
