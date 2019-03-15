@@ -9,7 +9,7 @@
        this.field_175025_e = new BlockFluidRenderer();
     }
  
-@@ -40,12 +40,16 @@
+@@ -40,12 +40,17 @@
        if (p_175020_1_.func_185901_i() == EnumBlockRenderType.MODEL) {
           IBakedModel ibakedmodel = this.field_175028_a.func_178125_b(p_175020_1_);
           long i = p_175020_1_.func_209533_a(p_175020_2_);
@@ -19,6 +19,7 @@
        }
     }
  
++   @Deprecated
     public boolean func_195475_a(IBlockState p_195475_1_, BlockPos p_195475_2_, IWorldReader p_195475_3_, BufferBuilder p_195475_4_, Random p_195475_5_) {
 +       return renderBlock(p_195475_1_, p_195475_2_, p_195475_3_, p_195475_4_, p_195475_5_, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
 +   }
@@ -27,7 +28,7 @@
        try {
           EnumBlockRenderType enumblockrendertype = p_195475_1_.func_185901_i();
           if (enumblockrendertype == EnumBlockRenderType.INVISIBLE) {
-@@ -53,7 +57,7 @@
+@@ -53,7 +58,7 @@
           } else {
              switch(enumblockrendertype) {
              case MODEL:
@@ -36,7 +37,7 @@
              case ENTITYBLOCK_ANIMATED:
                 return false;
              default:
-@@ -105,4 +109,9 @@
+@@ -105,4 +110,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175025_e.func_178268_a();
     }
