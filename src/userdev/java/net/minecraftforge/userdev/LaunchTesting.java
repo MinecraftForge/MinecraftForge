@@ -32,12 +32,9 @@ import java.net.Proxy;
 import java.util.Arrays;
 import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class LaunchTesting
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     public static void main(String... args) throws InterruptedException
     {
         final String markerselection = System.getProperty("forge.logging.markers", "");
@@ -130,7 +127,7 @@ public class LaunchTesting
         try {
             auth.logIn();
         } catch (AuthenticationException e) {
-            LOGGER.error("Login failed!", e);
+            LogManager.getLogger().error("Login failed!", e);
             throw new RuntimeException(e); // don't set other variables
         }
 

@@ -96,8 +96,8 @@ public class NetworkInstance
         return this.serverAcceptedVersions.test(clientVersion);
     }
 
-    void dispatchGatherLogin(final List<NetworkRegistry.LoginPayload> loginPayloadList) {
-        this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(loginPayloadList));
+    void dispatchGatherLogin(final List<NetworkRegistry.LoginPayload> loginPayloadList, boolean isLocal) {
+        this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(loginPayloadList, isLocal));
     }
 
     void dispatchLoginPacket(final NetworkEvent.LoginPayloadEvent loginPayloadEvent) {

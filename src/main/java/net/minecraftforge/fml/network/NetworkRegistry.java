@@ -218,10 +218,10 @@ public class NetworkRegistry
      * @return The {@link LoginPayload} list
      * @param direction the network direction for the request - only gathers for LOGIN_TO_CLIENT
      */
-    static List<LoginPayload> gatherLoginPayloads(final NetworkDirection direction) {
+    static List<LoginPayload> gatherLoginPayloads(final NetworkDirection direction, boolean isLocal) {
         if (direction!=NetworkDirection.LOGIN_TO_CLIENT) return Collections.emptyList();
         List<LoginPayload> gatheredPayloads = new ArrayList<>();
-        instances.values().forEach(ni->ni.dispatchGatherLogin(gatheredPayloads));
+        instances.values().forEach(ni->ni.dispatchGatherLogin(gatheredPayloads, isLocal));
         return gatheredPayloads;
     }
 
