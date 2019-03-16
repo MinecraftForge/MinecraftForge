@@ -450,18 +450,7 @@ project(':forge') {
                 type: 'release',
                 mainClass: 'cpw.mods.modlauncher.Launcher',
                 inheritsFrom: MC_VERSION,
-                logging: [ 
-                    client: [
-                        argument: '-Dlog4j.configurationFile=${path}',
-                        file: [
-                            id:'client-1.12.xml',
-                            sha1:'ef4f57b922df243d0cef096efe808c72db042149',
-                            size:877,
-                            url:'https://launcher.mojang.com/v1/objects/ef4f57b922df243d0cef096efe808c72db042149/client-1.12.xml'
-                        ],
-                        type: 'log4j2-xml'
-                    ]
-                ],
+                logging: {},
                 arguments: [
                     game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"]
                 ],
