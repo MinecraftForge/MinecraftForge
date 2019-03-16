@@ -31,6 +31,7 @@
   "fml.modloading.cycle": "Detected a mod dependency cycle: {0}",
   "fml.modloading.failedtoprocesswork":"{0,modinfo,name} ({0,modinfo,id}) encountered an error processing deferred work\n\u00a77{2,exc,msg}",
   "fml.modloading.brokenfile": "File {2} is not a valid mod file",
+  "fml.modloading.brokenresources": "File {2} failed to load a valid ResourcePackInfo",
 
   "fml.messages.artifactversion.ornotinstalled":"{0,ornull,fml.messages.artifactversion.notinstalled}",
   "fml.messages.artifactversion":"{0,ornull,fml.messages.artifactversion.none}",
