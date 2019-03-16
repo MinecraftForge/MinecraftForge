@@ -19,6 +19,8 @@
 
 package net.minecraftforge.registries;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -146,15 +148,15 @@ public class RegistryManager
         this.superTypes.clear();
     }
 
-    public static List<Pair<String, FMLHandshakeMessages.S2CRegistry>> generateRegistryPackets()
+    public static List<Pair<String, FMLHandshakeMessages.S2CRegistry>> generateRegistryPackets(boolean isLocal)
     {
-        return ACTIVE.takeSnapshot(false).entrySet().stream().
+        return !isLocal ? ACTIVE.takeSnapshot(false).entrySet().stream().
                 map(e->Pair.of("Registry " + e.getKey(), new FMLHandshakeMessages.S2CRegistry(e.getKey(), e.getValue()))).
-                collect(Collectors.toList());
+                collect(Collectors.toList()) : Collections.emptyList();
     }
 
     public static List<ResourceLocation> registryNames()
     {
-        return ACTIVE.registries.entrySet().stream().map(Map.Entry::getKey).collect(Collectors.toList());
+        return new ArrayList<>(ACTIVE.registries.keySet());
     }
 }
