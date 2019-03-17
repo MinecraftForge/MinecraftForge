@@ -19,19 +19,26 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import com.google.common.collect.Lists;
+import cpw.mods.modlauncher.api.LamdbaExceptionUtils;
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.uncheck;
 import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 
 /**
@@ -40,7 +47,7 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 public class ModsFolderLocator extends AbstractJarFileLocator {
     private static final String SUFFIX = ".jar";
     private static final Logger LOGGER = LogManager.getLogger();
-    private final Path modFolder;
+    private final List<Path> modFolders;
 
     public ModsFolderLocator() {
         this(FMLPaths.MODSDIR.get());
@@ -48,13 +55,20 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
 
     ModsFolderLocator(Path modFolder) {
         super();
-        this.modFolder = modFolder;
+        this.modFolders = Lists.newArrayList(new Path[]{modFolder}); //Path is iterable, so just putting modFolder there makes it iterate over all path entries
     }
 
     @Override
     public List<ModFile> scanMods() {
-        LOGGER.debug(SCAN,"Scanning mods dir {} for mods", this.modFolder);
-        return uncheck(()-> Files.list(this.modFolder)).
+        LOGGER.debug(SCAN,"Scanning mods dirs {} for mods", this.modFolders.stream().map(Path::toString).collect(Collectors.joining(File.pathSeparator)));
+        return  modFolders.stream().flatMap(x -> {
+                    try {
+                        return Files.list(x);
+                    } catch (IOException e) {
+                        LOGGER.warn(SCAN, "Potential mods dir {} does not exist, ignoring", x.toString());
+                        return Stream.empty();
+                    }
+                }).
                 sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString()))).
                 filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX)).
                 map(p->new ModFile(p, this)).
@@ -69,11 +83,11 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
 
     @Override
     public String toString() {
-        return "{ModJarsFolder locator at "+this.modFolder+"}";
+        return "{ModJarsFolder locator at "+this.modFolders.stream().map(Path::toString).collect(Collectors.joining(File.pathSeparator))+"}";
     }
 
     @Override
     public void initArguments(final Map<String, ?> arguments) {
-
+        modFolders.addAll(modFolders.stream().map(p->p.resolve((String)arguments.get("mcVersion"))).collect(Collectors.toList()));
     }
 }
