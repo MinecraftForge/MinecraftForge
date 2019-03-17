@@ -33,6 +33,7 @@ import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.registries.GameData;
@@ -190,6 +191,7 @@ public class ModLoader
         dispatchAndHandleError(LifecycleEventProvider.PROCESS_IMC);
         dispatchAndHandleError(LifecycleEventProvider.COMPLETE);
         GameData.freezeData();
+        NetworkRegistry.lock();
     }
 
     public List<ModLoadingWarning> getWarnings()

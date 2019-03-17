@@ -20,16 +20,20 @@
 package net.minecraftforge.fml.client;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.*;
+import net.minecraft.client.gui.*;
+import net.minecraftforge.fml.ForgeI18n;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.registries.RegistryManager;
+import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -38,19 +42,8 @@ import org.apache.logging.log4j.MarkerManager;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Strings;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.SetMultimap;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
-import com.google.gson.JsonObject;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiConnecting;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiWorldSelection;
-import net.minecraft.client.gui.ServerListEntryNormal;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.network.NetworkManager;
@@ -62,7 +55,6 @@ import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.fml.StartupQuery;
-import net.minecraftforge.fml.client.gui.GuiAccessDenied;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.packs.ModFileResourcePack;
@@ -76,108 +68,78 @@ public class ClientHooks
     private static final String ALLOWED_CHARS = "\u00c0\u00c1\u00c2\u00c8\u00ca\u00cb\u00cd\u00d3\u00d4\u00d5\u00da\u00df\u00e3\u00f5\u011f\u0130\u0131\u0152\u0153\u015e\u015f\u0174\u0175\u017e\u0207\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000\u00c7\u00fc\u00e9\u00e2\u00e4\u00e0\u00e5\u00e7\u00ea\u00eb\u00e8\u00ef\u00ee\u00ec\u00c4\u00c5\u00c9\u00e6\u00c6\u00f4\u00f6\u00f2\u00fb\u00f9\u00ff\u00d6\u00dc\u00f8\u00a3\u00d8\u00d7\u0192\u00e1\u00ed\u00f3\u00fa\u00f1\u00d1\u00aa\u00ba\u00bf\u00ae\u00ac\u00bd\u00bc\u00a1\u00ab\u00bb\u2591\u2592\u2593\u2502\u2524\u2561\u2562\u2556\u2555\u2563\u2551\u2557\u255d\u255c\u255b\u2510\u2514\u2534\u252c\u251c\u2500\u253c\u255e\u255f\u255a\u2554\u2569\u2566\u2560\u2550\u256c\u2567\u2568\u2564\u2565\u2559\u2558\u2552\u2553\u256b\u256a\u2518\u250c\u2588\u2584\u258c\u2590\u2580\u03b1\u03b2\u0393\u03c0\u03a3\u03c3\u03bc\u03c4\u03a6\u0398\u03a9\u03b4\u221e\u2205\u2208\u2229\u2261\u00b1\u2265\u2264\u2320\u2321\u00f7\u2248\u00b0\u2219\u00b7\u221a\u207f\u00b2\u25a0\u0000";
     private static final CharMatcher DISALLOWED_CHAR_MATCHER = CharMatcher.anyOf(ALLOWED_CHARS).negate();
 
-    private static Map<ServerStatusResponse,JsonObject> extraServerListData;
-    private static Map<ServerData, ExtendedServerListData> serverDataTag;
-
-    public static void setupServerList()
-    {
-        extraServerListData = Collections.synchronizedMap(new HashMap<>());
-        serverDataTag = Collections.synchronizedMap(new HashMap<>());
-    }
-
-    public static void captureAdditionalData(ServerStatusResponse serverstatusresponse, JsonObject jsonobject)
-    {
-        if (jsonobject.has("modinfo"))
-        {
-            JsonObject fmlData = jsonobject.get("modinfo").getAsJsonObject();
-            extraServerListData.put(serverstatusresponse, fmlData);
-        }
-    }
-    public static void bindServerListData(ServerData data, ServerStatusResponse originalResponse)
-    {
-/*
-        if (extraServerListData.containsKey(originalResponse))
-        {
-            JsonObject jsonData = extraServerListData.get(originalResponse);
-            String type = jsonData.get("type").getAsString();
-            JsonArray modDataArray = jsonData.get("modList").getAsJsonArray();
-            boolean moddedClientAllowed = !jsonData.has("clientModsAllowed") || jsonData.get("clientModsAllowed").getAsBoolean();
-            ImmutableMap.Builder<String, String> modListBldr = ImmutableMap.builder();
-            for (JsonElement obj : modDataArray)
-            {
-                JsonObject modObj = obj.getAsJsonObject();
-                modListBldr.put(modObj.get("modid").getAsString(), modObj.get("version").getAsString());
-            }
-
-            Map<String,String> modListMap = modListBldr.build();
-            String modRejections = FMLNetworkHandler.checkModList(modListMap, LogicalSide.SERVER);
-            serverDataTag.put(data, new ExtendedServerListData(type, modRejections == null, modListMap, !moddedClientAllowed));
-        }
-        else
-        {
-            String serverDescription = data.serverMOTD;
-            boolean moddedClientAllowed = true;
-            if (!Strings.isNullOrEmpty(serverDescription))
-            {
-                moddedClientAllowed = !serverDescription.endsWith(":NOFML§r");
-            }
-            serverDataTag.put(data, new ExtendedServerListData("VANILLA", false, ImmutableMap.of(), !moddedClientAllowed));
-        }
-*/
-        startupConnectionData.countDown();
-    }
-
-    private static final ResourceLocation iconSheet = new ResourceLocation("fml:textures/gui/icons.png");
-    private static final CountDownLatch startupConnectionData = new CountDownLatch(1);
-
+    private static final ResourceLocation iconSheet = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/icons.png");
     @Nullable
-    public static String enhanceServerListEntry(ServerListEntryNormal serverListEntry, ServerData serverEntry, int x, int width, int y, int relativeMouseX, int relativeMouseY)
+    public static void processForgeListPingData(ServerStatusResponse packet, ServerData target)
     {
-        String tooltip;
+        if(packet.getForgeData() != null){
+            int numberOfMods = packet.getForgeData().getNumberOfMods();
+            MapDifference<ResourceLocation, Integer> difference = Maps.difference(packet.getForgeData().getRegistryHashes(), RegistryManager.ACTIVE.computeRegistryHashes());
+            int fmlver = packet.getForgeData().getFMLNetworkVersion();
+
+            boolean b = NetworkRegistry.checkListPingCompatibilityForClient(packet.getForgeData().getPresentMods())
+                    && difference.areEqual()
+                    && fmlver == FMLNetworkConstants.FMLNETVERSION;
+
+            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, {} mods, channels: [{}] - compatible: {}", target.serverIP, fmlver, numberOfMods, packet.getForgeData().getPresentMods().entrySet(), b);
+            difference.entriesDiffering().forEach((k,vd)-> LOGGER.debug(CLIENTHOOKS, "Registry {}: Local: {}, Remote: {}", k, vd.rightValue(), vd.leftValue()));
+            difference.entriesOnlyOnLeft().forEach((k,vd)-> LOGGER.debug(CLIENTHOOKS, "Registry {} is only on server with hash {}", k, vd));
+            difference.entriesOnlyOnRight().forEach((k,vd)-> LOGGER.debug(CLIENTHOOKS, "Registry {} is missing on server with hash {}", k, vd));
+            difference.entriesInCommon().forEach((k,vd)-> LOGGER.debug(CLIENTHOOKS, "Registry {} is equal, hash={}", k, vd));
+
+            String extraReason = null;
+            if(fmlver<FMLNetworkConstants.FMLNETVERSION)
+                extraReason = "fml.menu.multiplayer.serveroutdated";
+            else if(fmlver > FMLNetworkConstants.FMLNETVERSION)
+                extraReason = "fml.menu.multiplayer.clientoutdated";
+
+            target.forgeData = new ExtendedServerListData("FML", b, packet.getForgeData().getPresentMods(), numberOfMods, extraReason);
+        }else{
+            target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(), Maps.newHashMap(), 0, null);
+        }
+
+    }
+
+    public static void drawForgePingInfo(GuiMultiplayer gui, ServerData target, int x, int y, int width, int relativeMouseX, int relativeMouseY){
         int idx;
-        boolean blocked = false;
-        if (serverDataTag.containsKey(serverEntry))
-        {
-            ExtendedServerListData extendedData = serverDataTag.get(serverEntry);
-            if ("FML".equals(extendedData.type) && extendedData.isCompatible)
-            {
-                idx = 0;
-                tooltip = String.format("Compatible FML modded server\n%d mods present", extendedData.modData.size());
-            }
-            else if ("FML".equals(extendedData.type) && !extendedData.isCompatible)
-            {
-                idx = 16;
-                tooltip = String.format("Incompatible FML modded server\n%d mods present", extendedData.modData.size());
-            }
-            else if ("BUKKIT".equals(extendedData.type))
-            {
-                idx = 32;
-                tooltip = String.format("Bukkit modded server");
-            }
-            else if ("VANILLA".equals(extendedData.type))
-            {
-                idx = 48;
-                tooltip = String.format("Vanilla server");
-            }
-            else
-            {
+        String tooltip;
+        if(target.forgeData == null)
+            return;
+        switch (target.forgeData.type){
+            case "FML":
+                if (target.forgeData.isCompatible) {
+                    idx = 0;
+                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.compatible", target.forgeData.numberOfMods);
+                } else {
+                    idx = 16;
+                    if(target.forgeData.extraReason != null) {
+                        String extraReason = ForgeI18n.parseMessage(target.forgeData.extraReason);
+                        tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible.extra", extraReason);
+                    } else {
+                        tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.incompatible");
+                    }
+                }
+                break;
+            case "VANILLA":
+                if(target.forgeData.isCompatible) {
+                    idx = 48;
+                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla");
+                } else {
+                    idx = 80;
+                    tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla.incompatible");
+                }
+                break;
+            default:
                 idx = 64;
-                tooltip = String.format("Unknown server data");
-            }
-            blocked = extendedData.isBlocked;
+                tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.unknown", target.forgeData.type);
         }
-        else
-        {
-            return null;
-        }
+
         Minecraft.getInstance().getTextureManager().bindTexture(iconSheet);
         Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, (float)idx, 16, 16, 256.0f, 256.0f);
-        if (blocked)
-        {
-            Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, 80, 16, 16, 256.0f, 256.0f);
-        }
 
-        return relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26 ? tooltip : null;
+        if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26)
+            gui.setHoveringText(tooltip);
+
     }
 
     public static String fixDescription(String description)
@@ -217,18 +179,6 @@ public class ClientHooks
         }
     }
 
-    public static void connectToServer(GuiScreen guiMultiplayer, ServerData serverEntry)
-    {
-        ExtendedServerListData extendedData = serverDataTag.get(serverEntry);
-        if (extendedData != null && extendedData.isBlocked)
-        {
-            Minecraft.getInstance().displayGuiScreen(new GuiAccessDenied(guiMultiplayer, serverEntry));
-        }
-        else
-        {
-            Minecraft.getInstance().displayGuiScreen(new GuiConnecting(guiMultiplayer, Minecraft.getInstance(), serverEntry));
-        }
-    }
 
     public static String stripSpecialChars(String message)
     {

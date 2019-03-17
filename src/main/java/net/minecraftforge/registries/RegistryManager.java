@@ -159,4 +159,8 @@ public class RegistryManager
     {
         return new ArrayList<>(ACTIVE.registries.keySet());
     }
+
+    public Map<ResourceLocation, Integer> computeRegistryHashes() {
+        return this.registries.entrySet().stream().map(p -> Pair.of(p.getKey(), p.getValue().getKeys().hashCode())).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    }
 }
