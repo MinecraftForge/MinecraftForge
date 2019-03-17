@@ -57,7 +57,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.common.util.math.Size2i;
+import net.minecraftforge.common.util.Size2i;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.ModContainer;

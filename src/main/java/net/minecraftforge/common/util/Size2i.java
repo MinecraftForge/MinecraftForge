@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.common.util.math;
+package net.minecraftforge.common.util;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
