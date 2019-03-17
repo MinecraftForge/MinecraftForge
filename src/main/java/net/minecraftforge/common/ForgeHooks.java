@@ -1009,14 +1009,10 @@ public class ForgeHooks
                 if (enchantmentsNbt.size() == 1)
                 {
                     NBTTagCompound nbttagcompound = enchantmentsNbt.getCompound(0);
-                    Enchantment enchantment = Enchantment.getEnchantmentByID(nbttagcompound.getShort("id"));
-                    if (enchantment != null)
+                    ResourceLocation resourceLocation = ResourceLocation.makeResourceLocation(nbttagcompound.getString("id"));
+                    if (resourceLocation != null && ForgeRegistries.ENCHANTMENTS.containsKey(resourceLocation))
                     {
-                        ResourceLocation resourceLocation = ForgeRegistries.ENCHANTMENTS.getKey(enchantment);
-                        if (resourceLocation != null)
-                        {
-                            return resourceLocation.getNamespace();
-                        }
+                        return resourceLocation.getNamespace();
                     }
                 }
             }
