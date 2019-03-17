@@ -222,6 +222,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                             parent.put(e, lightmap[v]);
                             break;
                         }
+                        // else fallthrough to default
                     default:
                         parent.put(e, quadData[e][v]);
                 }
