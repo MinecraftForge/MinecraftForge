@@ -121,6 +121,12 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
         return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(null);
     }
 
+    @Override
+    public boolean isEmpty()
+    {
+        return this.delegate.isEmpty();
+    }
+
     //internal
     @Override
     public void lock(){ this.locked = true; }

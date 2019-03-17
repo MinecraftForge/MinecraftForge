@@ -192,7 +192,7 @@ project(':forge') {
             forge_client {
                 taskName 'forge_client'
 
-                main 'net.minecraftforge.fml.LaunchTesting'
+                main 'net.minecraftforge.userdev.LaunchTesting'
                 workingDirectory project.file('run')
 
                 environment 'target', 'fmldevclient'
@@ -200,30 +200,30 @@ project(':forge') {
                 environment 'assetDirectory', downloadAssets.output
                 environment 'nativesDirectory', extractNatives.output
 
-                property 'mc.version', MC_VERSION
-                property 'forge.spec', SPEC_VERSION
-                property 'mcp.version', MCP_VERSION
-                property 'forge.group', project.group
-                property 'forge.version', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'terminal.ansi', 'true'
-                property 'fmllauncher.version', SPEC_VERSION
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
             }
 
             forge_server {
                 taskName 'forge_server'
 
-                main 'net.minecraftforge.fml.LaunchTesting'
+                main 'net.minecraftforge.userdev.LaunchTesting'
                 workingDirectory project.file('run')
 
                 environment 'target', 'fmldevserver'
 
-                property 'mc.version', MC_VERSION
-                property 'forge.spec', SPEC_VERSION
-                property 'mcp.version', MCP_VERSION
-                property 'forge.group', project.group
-                property 'forge.version', project.version.substring(MC_VERSION.length() + 1).toString()
-                property 'fmllauncher.version', SPEC_VERSION
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
             }
         }
     }
@@ -793,7 +793,7 @@ project(':forge') {
         addLibrary("${project.group}:${project.name}:${project.version}:launcher")
         runs {
             client {
-                main 'net.minecraftforge.userdev.UserdevLauncher'
+                main 'net.minecraftforge.userdev.LaunchTesting'
 
                 environment 'target', 'fmluserdevclient'
                 environment 'assetIndex', '{asset_index}'
@@ -809,7 +809,7 @@ project(':forge') {
             }
 
             server {
-                main 'net.minecraftforge.userdev.UserdevLauncher'
+                main 'net.minecraftforge.userdev.LaunchTesting'
 
                 environment 'target', 'fmluserdevserver'
 

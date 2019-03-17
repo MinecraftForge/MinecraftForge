@@ -36,7 +36,7 @@ import static net.minecraftforge.fluids.capability.templates.EmptyFluidHandler.E
  */
 public class VoidFluidHandler implements IFluidHandler, IFluidTank
 {
-    public static final EmptyFluidHandler INSTANCE = new EmptyFluidHandler();
+    public static final VoidFluidHandler INSTANCE = new VoidFluidHandler();
 
     public VoidFluidHandler() {}
 

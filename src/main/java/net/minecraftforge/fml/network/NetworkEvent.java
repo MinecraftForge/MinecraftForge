@@ -101,13 +101,19 @@ public class NetworkEvent extends Event
 
     public static class GatherLoginPayloadsEvent extends Event {
         private final List<NetworkRegistry.LoginPayload> collected;
+        private final boolean isLocal;
 
-        public GatherLoginPayloadsEvent(final List<NetworkRegistry.LoginPayload> loginPayloadList) {
+        public GatherLoginPayloadsEvent(final List<NetworkRegistry.LoginPayload> loginPayloadList, boolean isLocal) {
             this.collected = loginPayloadList;
+            this.isLocal = isLocal;
         }
 
         public void add(PacketBuffer buffer, ResourceLocation channelName, String context) {
             collected.add(new NetworkRegistry.LoginPayload(buffer, channelName, context));
+        }
+
+        public boolean isLocal() {
+            return isLocal;
         }
     }
 

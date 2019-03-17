@@ -49,7 +49,7 @@ public class FMLLoginWrapper {
     private <T extends NetworkEvent> void wrapperReceived(final T packet) {
         final NetworkEvent.Context wrappedContext = packet.getSource().get();
         final PacketBuffer payload = packet.getPayload();
-        ResourceLocation targetNetworkReceiver = FMLHandshakeHandler.FML_HANDSHAKE_RESOURCE;
+        ResourceLocation targetNetworkReceiver = FMLNetworkConstants.FML_HANDSHAKE_RESOURCE;
         PacketBuffer data = null;
         if (payload != null) {
             targetNetworkReceiver = payload.readResourceLocation();

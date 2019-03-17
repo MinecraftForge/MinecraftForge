@@ -22,10 +22,18 @@ package net.minecraftforge.fml.server;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
+import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.SidedProvider;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
+
+import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
 public class ServerModLoader
 {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static DedicatedServer server;
     public static void begin(DedicatedServer dedicatedServer) {
         ServerModLoader.server = dedicatedServer;
@@ -37,5 +45,10 @@ public class ServerModLoader
 
     public static void end() {
         ModLoader.get().finishMods();
+        List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
+        if (!warnings.isEmpty()) {
+            LOGGER.warn(LOADING, "Mods loaded with {} warnings", warnings.size());
+            warnings.forEach(warning -> LOGGER.warn(LOADING, warning.formatToString()));
+        }
     }
 }

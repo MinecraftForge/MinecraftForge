@@ -21,7 +21,6 @@ package net.minecraftforge.fml.network;
 
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.HexDumper;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.minecraftforge.registries.ForgeRegistry;
@@ -220,7 +219,6 @@ public class FMLHandshakeMessages
         }
 
         public static S2CRegistry decode(final PacketBuffer buffer) {
-System.out.println("Readable: " + buffer.readableBytes());
             ResourceLocation name = buffer.readResourceLocation();
             ForgeRegistry.Snapshot snapshot = null;
             if (buffer.readBoolean())

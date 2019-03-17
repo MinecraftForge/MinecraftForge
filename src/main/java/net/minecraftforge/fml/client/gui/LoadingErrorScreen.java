@@ -19,37 +19,43 @@
 
 package net.minecraftforge.fml.client.gui;
 
+import com.google.common.base.Strings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiListExtended;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Util;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.ModLoadingException;
-import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.ModLoadingWarning;
+import net.minecraftforge.fml.client.ClientHooks;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
-
-import static net.minecraft.util.StringUtils.stripControlCodes;
+import java.util.Objects;
 
 public class LoadingErrorScreen extends GuiErrorScreen {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Path modsDir;
     private final Path logFile;
-    private final LoadingFailedException loadingFailedException;
-    private LoadingErrorList errorList;
-    public LoadingErrorScreen(LoadingFailedException loadingException)
+    private final List<ModLoadingException> modLoadErrors;
+    private final List<ModLoadingWarning> modLoadWarnings;
+    private LoadingEntryList entryList;
+    private String errorHeader;
+    private String warningHeader;
+
+    public LoadingErrorScreen(LoadingFailedException loadingException, List<ModLoadingWarning> warnings)
     {
         super(null, null);
-        this.loadingFailedException = loadingException;
+        this.modLoadWarnings = warnings;
+        this.modLoadErrors = loadingException == null ? Collections.emptyList() : loadingException.getErrors();
         this.modsDir = FMLPaths.MODSDIR.get();
         this.logFile = FMLPaths.GAMEDIR.get().resolve(Paths.get("logs","latest.log"));
     }
@@ -66,26 +72,44 @@ public class LoadingErrorScreen extends GuiErrorScreen {
         return 0.0;
     }
 
+    private double continueGame(double mouseX, double mouseY)
+    {
+        ClientHooks.logMissingTextureErrors();
+        mc.displayGuiScreen(null);
+        return 0.0;
+    }
+
     @Override
     public void initGui()
     {
         super.initGui();
         this.buttons.clear();
         this.children.clear();
-        this.addButton(new GuiButtonClickConsumer(10, 50, this.height - 38, this.width / 2 - 55, 20,
+
+        this.errorHeader = TextFormatting.RED + ForgeI18n.parseMessage("fml.loadingerrorscreen.errorheader", this.modLoadErrors.size()) + TextFormatting.RESET;
+        this.warningHeader = TextFormatting.YELLOW + ForgeI18n.parseMessage("fml.loadingerrorscreen.warningheader", this.modLoadErrors.size()) + TextFormatting.RESET;
+
+        int yOffset = this.modLoadErrors.isEmpty() ? 46 : 38;
+        this.addButton(new GuiButtonClickConsumer(10, 50, this.height - yOffset, this.width / 2 - 55, 20,
                 ForgeI18n.parseMessage("fml.button.open.mods.folder"), this::openModsDir));
-        this.addButton(new GuiButtonClickConsumer(11, this.width / 2 + 5, this.height - 38, this.width / 2 - 55, 20,
+        this.addButton(new GuiButtonClickConsumer(11, this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20,
                 ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName()), this::openLogFile));
-        this.errorList = new LoadingErrorList(this, this.loadingFailedException.getErrors());
-        this.children.add(this.errorList);
+        if (this.modLoadErrors.isEmpty()) {
+            this.addButton(new GuiButtonClickConsumer(12, this.width / 4, this.height - 24, this.width / 2, 20,
+                    ForgeI18n.parseMessage("fml.button.continue.launch"), this::continueGame));
+        }
+
+        this.entryList = new LoadingEntryList(this, this.modLoadErrors, this.modLoadWarnings);
+        this.children.add(this.entryList);
+        this.setFocused(this.entryList);
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.drawDefaultBackground();
-        this.errorList.drawScreen(mouseX, mouseY, partialTicks);
-        drawMultiLineCenteredString(fontRenderer, ForgeI18n.parseMessage("fml.loadingerrorscreen.header", this.loadingFailedException.getErrors().size()), this.width / 2, 10);
+        this.entryList.drawScreen(mouseX, mouseY, partialTicks);
+        drawMultiLineCenteredString(fontRenderer, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
         this.buttons.forEach(button -> button.render(mouseX, mouseY, partialTicks));
     }
 
@@ -95,10 +119,19 @@ public class LoadingErrorScreen extends GuiErrorScreen {
             y+=fr.FONT_HEIGHT;
         }
     }
-    public static class LoadingErrorList extends GuiListExtended<LoadingErrorList.ErrorEntry> {
-        LoadingErrorList(final LoadingErrorScreen parent, final List<ModLoadingException> errors) {
-            super(parent.mc,parent.width,parent.height,35,parent.height - 50, 2 * parent.mc.fontRenderer.FONT_HEIGHT + 8);
-            errors.forEach(e->addEntry(new ErrorEntry(e)));
+    public static class LoadingEntryList extends GuiListExtended<LoadingEntryList.LoadingMessageEntry> {
+        LoadingEntryList(final LoadingErrorScreen parent, final List<ModLoadingException> errors, final List<ModLoadingWarning> warnings) {
+            super(parent.mc, parent.width, parent.height, 35, parent.height - 50, 2 * parent.mc.fontRenderer.FONT_HEIGHT + 8);
+            boolean both = !errors.isEmpty() && !warnings.isEmpty();
+            if (both)
+                addEntry(new LoadingMessageEntry(parent.errorHeader, true));
+            errors.forEach(e->addEntry(new LoadingMessageEntry(e.formatToString())));
+            if (both) {
+                int maxChars = (this.width - 10) / parent.mc.fontRenderer.getStringWidth("-");
+                addEntry(new LoadingMessageEntry("\n" + Strings.repeat("-", maxChars) + "\n"));
+                addEntry(new LoadingMessageEntry(parent.warningHeader, true));
+            }
+            warnings.forEach(w->addEntry(new LoadingMessageEntry(w.formatToString())));
         }
 
         @Override
@@ -113,11 +146,17 @@ public class LoadingErrorScreen extends GuiErrorScreen {
             return this.width;
         }
 
-        public class ErrorEntry extends GuiListExtended.IGuiListEntry<ErrorEntry> {
-            private final ModLoadingException error;
+        public class LoadingMessageEntry extends GuiListExtended.IGuiListEntry<LoadingMessageEntry> {
+            private final String message;
+            private final boolean center;
 
-            ErrorEntry(final ModLoadingException e) {
-                this.error = e;
+            LoadingMessageEntry(final String message) {
+                this(message, false);
+            }
+
+            LoadingMessageEntry(final String message, final boolean center) {
+                this.message = Objects.requireNonNull(message);
+                this.center = center;
             }
 
             @Override
@@ -125,11 +164,14 @@ public class LoadingErrorScreen extends GuiErrorScreen {
                 int top = this.getY();
                 int left = this.getX();
                 FontRenderer font = Minecraft.getInstance().fontRenderer;
-                final List<String> strings = font.listFormattedStringToWidth(error.formatToString(), LoadingErrorList.this.width);
-                float f = (float)top + 2;
+                final List<String> strings = font.listFormattedStringToWidth(message, LoadingEntryList.this.width);
+                int y = top + 2;
                 for (int i = 0; i < Math.min(strings.size(), 2); i++) {
-                    font.drawString(strings.get(i), left + 5, f, 0xFFFFFF);
-                    f += font.FONT_HEIGHT;
+                    if (center)
+                        font.drawString(strings.get(i), left + (width  / 2F) - font.getStringWidth(strings.get(i)) / 2F, y, 0xFFFFFF);
+                    else
+                        font.drawString(strings.get(i), left + 5, y, 0xFFFFFF);
+                    y += font.FONT_HEIGHT;
                 }
             }
         }

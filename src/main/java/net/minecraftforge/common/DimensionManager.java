@@ -87,7 +87,7 @@ public class DimensionManager
      * @param type Dimension Type.
      * @param data Configuration data for this dimension, passed into
      */
-    public static void registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data)
+    public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data)
     {
         Validate.notNull(name, "Can not register a dimesnion with null name");
         Validate.isTrue(!REGISTRY.func_212607_c(name), "Dimension: " + name + " Already registered");
@@ -105,6 +105,7 @@ public class DimensionManager
         DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), type, data);
         REGISTRY.register(id, name, instance);
         LOGGER.info(DIMMGR, "Registered dimension {} of type {} and id {}", name.toString(), type.getRegistryName().toString(), id);
+        return instance;
     }
 
     /**
@@ -170,7 +171,7 @@ public class DimensionManager
         dimensions.remove(id);
     }
 
-    public static void registerDimensionInternal(int id, ResourceLocation name, ModDimension type, PacketBuffer data)
+    public static DimensionType registerDimensionInternal(int id, ResourceLocation name, ModDimension type, PacketBuffer data)
     {
         Validate.notNull(name, "Can not register a dimesnion with null name");
         Validate.notNull(type, "Can not register a null dimension type");
@@ -180,6 +181,7 @@ public class DimensionManager
         DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), type, data);
         REGISTRY.register(id, name, instance);
         LOGGER.info(DIMMGR, "Registered dimension {} of type {} and id {}", name.toString(), type.getRegistryName().toString(), id);
+        return instance;
     }
 
     @SuppressWarnings("deprecation")

@@ -56,4 +56,15 @@ public class FileUtils
         }
         return dirPath;
     }
+
+
+    public static String fileExtension(final Path path) {
+        String fileName = path.getFileName().toString();
+        int idx = fileName.lastIndexOf('.');
+        if (idx > -1) {
+            return fileName.substring(idx+1);
+        } else {
+            return "";
+        }
+    }
 }

@@ -17,13 +17,15 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.loading;
+package net.minecraftforge.userdev;
 
-import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.fml.loading.FMLCommonLaunchHandler;
+import net.minecraftforge.fml.loading.LibraryFinder;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -73,6 +75,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
         };
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setup(IEnvironment environment, final Map<String, ?> arguments)
     {
@@ -80,6 +83,8 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
         final Path forgemodstoml = LibraryFinder.findJarPathFor("META-INF/mods.toml", "forgemodstoml");
         ((Map<String, List<Pair<Path,List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
                 add(Pair.of(forgemodstoml, Collections.singletonList(compiledClasses)));
+
+        processModClassesEnvironmentVariable((Map<String, List<Pair<Path, List<Path>>>>) arguments);
     }
 
     @Override
