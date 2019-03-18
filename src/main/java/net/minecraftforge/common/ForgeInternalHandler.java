@@ -37,7 +37,6 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
 
 public class ForgeInternalHandler
 {
-    
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
