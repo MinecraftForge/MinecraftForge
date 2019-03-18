@@ -59,7 +59,15 @@
     public NonNullList<ItemStack> func_199513_c(IInventory p_199513_1_, World p_199513_2_) {
        for(IRecipe irecipe : this.field_199522_d.values()) {
           if (irecipe.func_77569_a(p_199513_1_, p_199513_2_)) {
-@@ -123,5 +131,7 @@
+@@ -112,6 +120,7 @@
+       return this.field_199522_d.get(p_199517_1_);
+    }
+ 
++   //Callers should NOT remove recipes using this.  Use ForgeRecipeManager#removeRecipe(IRecipe)
+    public Collection<IRecipe> func_199510_b() {
+       return this.field_199522_d.values();
+    }
+@@ -123,5 +132,7 @@
     @OnlyIn(Dist.CLIENT)
     public void func_199518_d() {
        this.field_199522_d.clear();

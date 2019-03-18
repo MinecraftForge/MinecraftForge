@@ -31,14 +31,14 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.RecipeType;
-import net.minecraftforge.items.IRecipeInventory;
-import net.minecraftforge.items.RecipeStackHandler;
+import net.minecraftforge.items.wrapper.RecipeWrapper;
 
 @SuppressWarnings("deprecation")
 public abstract class ForgeRecipeManager implements IResourceManagerReloadListener
@@ -49,7 +49,8 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
     protected final Map<RecipeType<? extends IRecipe>, List<? extends IRecipe>> sortedRecipes = Maps.newHashMap();
 
     @Override
-    public void onResourceManagerReload(IResourceManager resourceManager) {
+    public void onResourceManagerReload(IResourceManager resourceManager)
+    {
         this.sortedRecipes.clear();
         CraftingHelper.reloadConstants(resourceManager);
     }
@@ -57,7 +58,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
     /**
      * Returns all the recipes that match this type.
      * @param type A recipe type.
-     * @return A mutable view of all the recipes that match this type.  Callers should not modify the returned list.
+     * @return A live view of all recipes for this type.  Callers should NOT remove recipes using this.  Use {@link ForgeRecipeManager#removeRecipe(IRecipe)}
      */
     @SuppressWarnings("unchecked")
     public <T extends IRecipe> List<T> getRecipes(RecipeType<T> type)
@@ -82,7 +83,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
 
     /**
      * Used to find a matching recipe for the given inv, world, and type.
-     * Since this requires an IInventory, modders can use {@link IRecipeInventory} or {@link RecipeStackHandler} to avoid direct implementation.
+     * Since this requires an IInventory, modders can use {@link RecipeWrapper} to avoid direct implementation.
      * For crafting recipes, it is advised to still use {@link InventoryCrafting}.  The dynamic vanilla recipes require they be crafted in one.
      * @param input An inventory.
      * @param world The world.
@@ -113,6 +114,23 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
             nonnulllist.set(i, input.getStackInSlot(i));
         
         return nonnulllist;
+    }
+
+    /**
+     * Attempts to remove a recipe from the manager.  This is advised over direct manipulation of recipe maps due to sorting.
+     * @param recipe The recipe to remove.
+     * @return If this recipe was successfully removed.  Will return false if the recipe was not found in both maps or otherwise cannot be removed.
+     */
+    public boolean removeRecipe(IRecipe recipe)
+    {
+        RecipeManager manager = (RecipeManager) this;
+        if(manager.getRecipes().contains(recipe) && sortedRecipes.get(recipe.getType()).contains(recipe))
+        {
+            manager.getRecipes().remove(recipe);
+            sortedRecipes.get(recipe.getType()).remove(recipe);
+            return true;
+        }
+        return false;
     }
 
 }
