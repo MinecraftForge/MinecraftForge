@@ -87,7 +87,15 @@ public class GameData
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
 
-    private static final int MAX_POTION_ID = 255; // SPacketEntityEffect sends bytes, we can only use 255
+    /**
+     * Limited to an unsigned byte by SPacketEntityEffect/SPacketRemoveEntityEffect,
+     * as well as NBT serialization in PotionEffect.
+     * Otherwise, limited to a short by SPacketWindowProperty for the beacon.
+     */
+    private static final int MAX_POTION_ID = 255;
+
+    /** Limited to a short by SPacketWindowProperty for the enchantment table. */
+    private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE;
 
     private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
@@ -116,7 +124,7 @@ public class GameData
         makeRegistry(BIOMES,        Biome.class).create();
         makeRegistry(SOUNDEVENTS,   SoundEvent.class).create();
         makeRegistry(POTIONTYPES,   PotionType.class, new ResourceLocation("empty")).create();
-        makeRegistry(ENCHANTMENTS,  Enchantment.class).create();
+        makeRegistry(ENCHANTMENTS,  Enchantment.class).setMaxID(MAX_ENCHANTMENT_ID).create();
         makeRegistry(PROFESSIONS,   VillagerProfession.class).create();
         // TODO do we need the callback and the static field anymore?
         makeRegistry(ENTITIES,      EntityType.class).create();
