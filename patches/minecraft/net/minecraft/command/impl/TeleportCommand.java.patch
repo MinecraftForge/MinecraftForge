@@ -1,0 +1,23 @@
+--- a/net/minecraft/command/impl/TeleportCommand.java
++++ b/net/minecraft/command/impl/TeleportCommand.java
+@@ -135,9 +135,9 @@
+             p_201127_1_.func_70034_d(f);
+          } else {
+             WorldServer worldserver = (WorldServer)p_201127_1_.field_70170_p;
+-            worldserver.func_72900_e(p_201127_1_);
++            worldserver.removeEntity(p_201127_1_, true); //Forge: Delay invalidating caps until we copy.
+             p_201127_1_.field_71093_bK = p_201127_2_.field_73011_w.func_186058_p();
+-            p_201127_1_.field_70128_L = false;
++            p_201127_1_.revive();
+             Entity entity = p_201127_1_;
+             p_201127_1_ = p_201127_1_.func_200600_R().func_200721_a(p_201127_2_);
+             if (p_201127_1_ == null) {
+@@ -152,7 +152,7 @@
+             p_201127_2_.func_72838_d(p_201127_1_);
+             p_201127_1_.field_98038_p = flag;
+             p_201127_2_.func_72866_a(p_201127_1_, false);
+-            entity.field_70128_L = true;
++            entity.remove(false); //Forge: now invalidate everything.
+          }
+       }
+ 

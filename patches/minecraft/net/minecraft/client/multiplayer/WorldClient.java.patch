@@ -15,3 +15,15 @@
     }
  
     public void func_72835_b(BooleanSupplier p_72835_1_) {
+@@ -179,6 +181,11 @@
+ 
+    public void func_72900_e(Entity p_72900_1_) {
+       super.func_72900_e(p_72900_1_);
++   }
++
++   @Override
++   public void removeEntity(Entity p_72900_1_, boolean keepData) {
++      super.removeEntity(p_72900_1_, keepData);
+       this.field_73032_d.remove(p_72900_1_);
+    }
+ 
