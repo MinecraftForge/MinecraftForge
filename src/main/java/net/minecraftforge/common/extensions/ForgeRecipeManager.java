@@ -31,7 +31,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraft.util.NonNullList;
@@ -58,7 +57,7 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
     /**
      * Returns all the recipes that match this type.
      * @param type A recipe type.
-     * @return A live view of all recipes for this type.  Callers should NOT remove recipes using this.  Use {@link ForgeRecipeManager#removeRecipe(IRecipe)}
+     * @return All recipes that are of the passed type.  This list may be empty.
      */
     @SuppressWarnings("unchecked")
     public <T extends IRecipe> List<T> getRecipes(RecipeType<T> type)
@@ -114,23 +113,6 @@ public abstract class ForgeRecipeManager implements IResourceManagerReloadListen
             nonnulllist.set(i, input.getStackInSlot(i));
         
         return nonnulllist;
-    }
-
-    /**
-     * Attempts to remove a recipe from the manager.  This is advised over direct manipulation of recipe maps due to sorting.
-     * @param recipe The recipe to remove.
-     * @return If this recipe was successfully removed.  Will return false if the recipe was not found in both maps or otherwise cannot be removed.
-     */
-    public boolean removeRecipe(IRecipe recipe)
-    {
-        RecipeManager manager = (RecipeManager) this;
-        if(manager.getRecipes().contains(recipe) && sortedRecipes.get(recipe.getType()).contains(recipe))
-        {
-            manager.getRecipes().remove(recipe);
-            sortedRecipes.get(recipe.getType()).remove(recipe);
-            return true;
-        }
-        return false;
     }
 
 }
