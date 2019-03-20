@@ -288,7 +288,7 @@
           this.field_70170_p.field_72984_F.func_76319_b();
           worldserver.func_82742_i();
           worldserver1.func_82742_i();
-@@ -2592,4 +2628,60 @@
+@@ -2592,4 +2628,63 @@
     public double func_212107_bY() {
        return this.field_211517_W;
     }
@@ -347,5 +347,8 @@
 +   public void onRemovedFromWorld() { this.isAddedToWorld = false; }
 +
 +   @Override
-+   public void revive() { this.field_70128_L = false; }
++   public void revive() {
++      this.field_70128_L = false;
++      this.reviveCaps();
++   }
  }

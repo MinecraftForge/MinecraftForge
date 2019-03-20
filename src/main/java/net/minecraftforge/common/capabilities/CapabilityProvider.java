@@ -106,6 +106,11 @@ public abstract class CapabilityProvider<B extends CapabilityProvider<B>> implem
             disp.invalidate();
     }
 
+    protected void reviveCaps()
+    {
+        this.valid = true; //Stupid players don't copy the entity when transporting across worlds.
+    }
+
     @Override
     @Nonnull
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable EnumFacing side)
