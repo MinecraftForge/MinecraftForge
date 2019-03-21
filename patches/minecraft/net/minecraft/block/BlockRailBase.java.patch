@@ -9,16 +9,17 @@
        return railshape != null && railshape.func_208092_c() ? field_190959_b : field_185590_a;
     }
  
-@@ -50,7 +50,7 @@
+@@ -50,7 +50,8 @@
     }
  
     public boolean func_196260_a(IBlockState p_196260_1_, IWorldReaderBase p_196260_2_, BlockPos p_196260_3_) {
 -      return p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_185896_q();
-+      return p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_193401_d(p_196260_2_, p_196260_3_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID;
++      IBlockState down = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
++      return down.func_185896_q() || down.func_193401_d(p_196260_2_, p_196260_3_.func_177977_b(), EnumFacing.UP) == BlockFaceShape.SOLID;
     }
  
     public void func_196259_b(IBlockState p_196259_1_, World p_196259_2_, BlockPos p_196259_3_, IBlockState p_196259_4_) {
-@@ -67,19 +67,19 @@
+@@ -67,19 +68,19 @@
  
     public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_) {
        if (!p_189540_2_.field_72995_K) {
@@ -26,25 +27,25 @@
 +         RailShape railshape = getRailDirection(p_189540_1_, p_189540_2_, p_189540_3_, null);
           boolean flag = false;
 -         if (!p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_185896_q()) {
-+         if (p_189540_2_.func_180495_p(p_189540_3_.func_177977_b()).func_193401_d(p_189540_2_, p_189540_3_.func_177977_b(), EnumFacing.UP) != BlockFaceShape.SOLID) {
++         if (!p_189540_1_.func_196955_c(p_189540_2_, p_189540_3_)) {
              flag = true;
           }
  
 -         if (railshape == RailShape.ASCENDING_EAST && !p_189540_2_.func_180495_p(p_189540_3_.func_177974_f()).func_185896_q()) {
-+         if (railshape == RailShape.ASCENDING_EAST && p_189540_2_.func_180495_p(p_189540_3_.func_177974_f()).func_193401_d(p_189540_2_, p_189540_3_.func_177974_f(), EnumFacing.UP) != BlockFaceShape.SOLID) {
++         if (railshape == RailShape.ASCENDING_EAST && !p_189540_1_.func_196955_c(p_189540_2_, p_189540_3_.func_177974_f().func_177984_a())) {
              flag = true;
 -         } else if (railshape == RailShape.ASCENDING_WEST && !p_189540_2_.func_180495_p(p_189540_3_.func_177976_e()).func_185896_q()) {
-+         } else if (railshape == RailShape.ASCENDING_WEST && p_189540_2_.func_180495_p(p_189540_3_.func_177976_e()).func_193401_d(p_189540_2_, p_189540_3_.func_177976_e(), EnumFacing.UP) != BlockFaceShape.SOLID) {
++         } else if (railshape == RailShape.ASCENDING_WEST && !p_189540_1_.func_196955_c(p_189540_2_, p_189540_3_.func_177976_e().func_177984_a())) {
              flag = true;
 -         } else if (railshape == RailShape.ASCENDING_NORTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177978_c()).func_185896_q()) {
-+         } else if (railshape == RailShape.ASCENDING_NORTH && p_189540_2_.func_180495_p(p_189540_3_.func_177978_c()).func_193401_d(p_189540_2_, p_189540_3_.func_177978_c(), EnumFacing.UP) != BlockFaceShape.SOLID) {
++         } else if (railshape == RailShape.ASCENDING_NORTH && !p_189540_1_.func_196955_c(p_189540_2_, p_189540_3_.func_177978_c().func_177984_a())) {
              flag = true;
 -         } else if (railshape == RailShape.ASCENDING_SOUTH && !p_189540_2_.func_180495_p(p_189540_3_.func_177968_d()).func_185896_q()) {
-+         } else if (railshape == RailShape.ASCENDING_SOUTH && p_189540_2_.func_180495_p(p_189540_3_.func_177968_d()).func_193401_d(p_189540_2_, p_189540_3_.func_177968_d(), EnumFacing.UP) != BlockFaceShape.SOLID) {
++         } else if (railshape == RailShape.ASCENDING_SOUTH && !p_189540_1_.func_196955_c(p_189540_2_, p_189540_3_.func_177968_d().func_177984_a())) {
              flag = true;
           }
  
-@@ -111,7 +111,7 @@
+@@ -111,7 +112,7 @@
     public void func_196243_a(IBlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, IBlockState p_196243_4_, boolean p_196243_5_) {
        if (!p_196243_5_) {
           super.func_196243_a(p_196243_1_, p_196243_2_, p_196243_3_, p_196243_4_, p_196243_5_);
@@ -53,7 +54,7 @@
              p_196243_2_.func_195593_d(p_196243_3_.func_177984_a(), this);
           }
  
-@@ -123,5 +123,66 @@
+@@ -123,5 +124,66 @@
        }
     }
  

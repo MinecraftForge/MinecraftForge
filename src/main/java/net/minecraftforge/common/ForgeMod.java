@@ -32,12 +32,9 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.server.command.ForgeCommand;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
-
-import java.nio.file.Path;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,9 +51,6 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
-
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
-import com.electronwill.nightconfig.core.io.WritingMode;
 
 @Mod("forge")
 public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
@@ -86,6 +80,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     {
         LOGGER.info(FORGEMOD,"Forge mod loading, version {}, for MC {} with MCP {}", ForgeVersion.getVersion(), MCPVersion.getMCVersion(), MCPVersion.getMCPVersion());
         INSTANCE = this;
+        MinecraftForge.initialize();
         WorldPersistenceHooks.addHook(this);
         WorldPersistenceHooks.addHook(new FMLWorldPersistenceHook());
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -98,20 +93,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ForgeConfig.clientSpec);
         ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ForgeConfig.serverSpec);
         modEventBus.register(ForgeConfig.class);
-        loadConfig(ForgeConfig.chunk_spec, FMLPaths.CONFIGDIR.get().resolve("forge_chunks.toml"));
-    }
-
-    private void loadConfig(ForgeConfigSpec spec, Path path) {
-        LOGGER.debug(FORGEMOD, "Loading config file {}", path);
-        final CommentedFileConfig configData = CommentedFileConfig.builder(path)
-            .sync()
-            .autosave()
-            .writingMode(WritingMode.REPLACE)
-            .build();
-        LOGGER.debug(FORGEMOD, "Built TOML config for {}", path.toString());
-        configData.load();
-        LOGGER.debug(FORGEMOD, "Loaded TOML config file {}", path.toString());
-        spec.setConfig(configData);
     }
 
 /*

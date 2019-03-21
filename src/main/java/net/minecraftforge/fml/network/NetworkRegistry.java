@@ -33,6 +33,7 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,13 +60,16 @@ public class NetworkRegistry
     @SuppressWarnings("RedundantStringConstructorCall")
     public static String ABSENT = new String("ABSENT \uD83E\uDD14");
 
+    @SuppressWarnings("RedundantStringConstructorCall")
+    public static String ACCEPTVANILLA  = new String("ALLOWVANILLA \uD83D\uDC93\uD83D\uDC93\uD83D\uDC93");
+
     public static List<String> getNonVanillaNetworkMods()
     {
-        return instances.keySet().stream().map(Object::toString).collect(Collectors.toList());
+        return listRejectedVanillaMods(NetworkInstance::tryClientVersionOnServer);
     }
 
-    static boolean acceptsVanillaConnections() {
-        return instances.isEmpty();
+    public static boolean acceptsVanillaClientConnections() {
+        return instances.isEmpty() || getNonVanillaNetworkMods().isEmpty();
     }
 
 
@@ -133,54 +137,62 @@ public class NetworkRegistry
     }
 
     /**
-     * Construct the NBT representation of the channel list, for use during login handshaking
+     * Construct the Map representation of the channel list, for use during login handshaking
      *
      * @see FMLHandshakeMessages.S2CModList
      * @see FMLHandshakeMessages.C2SModListReply
-     *
-     * @return An nbt tag list
      */
-    static NBTTagList buildChannelVersions() {
-        return instances.entrySet().stream().map(e-> {
-            final NBTTagCompound tag = new NBTTagCompound();
-            tag.setString("name", e.getKey().toString());
-            tag.setString("version", e.getValue().getNetworkProtocolVersion());
-            return tag;
-        }).collect(Collectors.toCollection(NBTTagList::new));
+    static Map<ResourceLocation, String> buildChannelVersions() {
+        return instances.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().getNetworkProtocolVersion()));
     }
 
+    static List<String> listRejectedVanillaMods(BiFunction<NetworkInstance, String, Boolean> testFunction) {
+        final List<Pair<ResourceLocation, Boolean>> results = instances.values().stream().
+                map(ni -> {
+                    final String incomingVersion = ACCEPTVANILLA;
+                    final boolean test = testFunction.apply(ni, incomingVersion);
+                    LOGGER.debug(NETREGISTRY, "Channel '{}' : Vanilla acceptance test: {}", ni.getChannelName(), test ? "ACCEPTED" : "REJECTED");
+                    return Pair.of(ni.getChannelName(), test);
+                }).filter(p->!p.getRight()).collect(Collectors.toList());
+
+        if (!results.isEmpty()) {
+            LOGGER.error(NETREGISTRY, "Channels [{}] rejected vanilla connections",
+                    results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.joining(",")));
+            return results.stream().map(Pair::getLeft).map(Object::toString).collect(Collectors.toList());
+        }
+        LOGGER.debug(NETREGISTRY, "Accepting channel list from vanilla");
+        return Collections.emptyList();
+    }
     /**
      * Validate the channels from the server on the client. Tests the client predicates against the server
      * supplied network protocol version.
      *
-     * @param channels An @{@link NBTTagList} of name->version pairs for testing
+     * @param channels An @{@link Map} of name->version pairs for testing
      * @return true if all channels accept themselves
      */
-    static boolean validateClientChannels(final NBTTagList channels) {
+    static boolean validateClientChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "server", NetworkInstance::tryServerVersionOnClient);
     }
 
     /**
      * Validate the channels from the client on the server. Tests the server predicates against the client
      * supplied network protocol version.
-     * @param channels An @{@link NBTTagList} of name->version pairs for testing
+     * @param channels An @{@link Map} of name->version pairs for testing
      * @return true if all channels accept themselves
      */
-    static boolean validateServerChannels(final NBTTagList channels) {
+    static boolean validateServerChannels(final Map<ResourceLocation, String> channels) {
         return validateChannels(channels, "client", NetworkInstance::tryClientVersionOnServer);
     }
 
     /**
-     * Tests if the nbt list matches with the supplied predicate tester
+     * Tests if the map matches with the supplied predicate tester
      *
-     * @param channels An @{@link NBTTagList} of name->version pairs for testing
+     * @param channels An @{@link Map} of name->version pairs for testing
      * @param originName A label for use in logging (where the version pairs came from)
      * @param testFunction The test function to use for testing
      * @return true if all channels accept themselves
      */
-    private static boolean validateChannels(final NBTTagList channels, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
-        Map<ResourceLocation, String> incoming = channels.stream().map(NBTTagCompound.class::cast).collect(Collectors.toMap(tag->new ResourceLocation(tag.getString("name")),tag->tag.getString("version")));
-
+    private static boolean validateChannels(final Map<ResourceLocation, String> incoming, final String originName, BiFunction<NetworkInstance, String, Boolean> testFunction) {
         final List<Pair<ResourceLocation, Boolean>> results = instances.values().stream().
                 map(ni -> {
                     final String incomingVersion = incoming.getOrDefault(ni.getChannelName(), ABSENT);
@@ -204,10 +216,12 @@ public class NetworkRegistry
      * Dispatches {@link net.minecraftforge.fml.network.NetworkEvent.GatherLoginPayloadsEvent} to each {@link NetworkInstance}.
      *
      * @return The {@link LoginPayload} list
+     * @param direction the network direction for the request - only gathers for LOGIN_TO_CLIENT
      */
-    static List<LoginPayload> gatherLoginPayloads() {
+    static List<LoginPayload> gatherLoginPayloads(final NetworkDirection direction, boolean isLocal) {
+        if (direction!=NetworkDirection.LOGIN_TO_CLIENT) return Collections.emptyList();
         List<LoginPayload> gatheredPayloads = new ArrayList<>();
-        instances.values().forEach(ni->ni.dispatchGatherLogin(gatheredPayloads));
+        instances.values().forEach(ni->ni.dispatchGatherLogin(gatheredPayloads, isLocal));
         return gatheredPayloads;
     }
 

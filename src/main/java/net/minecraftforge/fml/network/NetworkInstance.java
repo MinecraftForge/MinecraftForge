@@ -20,12 +20,11 @@
 package net.minecraftforge.fml.network;
 
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.IEventListener;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -51,7 +50,7 @@ public class NetworkInstance
         this.networkProtocolVersion = networkProtocolVersion.get();
         this.clientAcceptedVersions = clientAcceptedVersions;
         this.serverAcceptedVersions = serverAcceptedVersions;
-        this.networkEventBus = IEventBus.create(this::handleError);
+        this.networkEventBus = BusBuilder.builder().setExceptionHandler(this::handleError).build();
     }
 
     private void handleError(IEventBus iEventBus, Event event, IEventListener[] iEventListeners, int i, Throwable throwable)
@@ -97,8 +96,8 @@ public class NetworkInstance
         return this.serverAcceptedVersions.test(clientVersion);
     }
 
-    void dispatchGatherLogin(final List<NetworkRegistry.LoginPayload> loginPayloadList) {
-        this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(loginPayloadList));
+    void dispatchGatherLogin(final List<NetworkRegistry.LoginPayload> loginPayloadList, boolean isLocal) {
+        this.networkEventBus.post(new NetworkEvent.GatherLoginPayloadsEvent(loginPayloadList, isLocal));
     }
 
     void dispatchLoginPacket(final NetworkEvent.LoginPayloadEvent loginPayloadEvent) {

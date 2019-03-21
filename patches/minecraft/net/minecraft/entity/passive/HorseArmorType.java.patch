@@ -17,12 +17,14 @@
  
     private HorseArmorType(int p_i46799_3_) {
        this.field_188588_g = p_i46799_3_;
-@@ -29,6 +30,15 @@
+@@ -29,6 +30,17 @@
        this.field_188587_f = p_i46800_5_;
     }
  
 +   private HorseArmorType(int strength, String texture, String hash, Item item) {
-+       this(strength, texture, hash);
++       this.field_188588_g = strength;
++       this.field_188586_e = texture;
++       this.field_188587_f = hash;
 +       this.item = item;
 +   }
 +
@@ -33,7 +35,7 @@
     public int func_188579_a() {
        return this.ordinal();
     }
-@@ -48,25 +58,38 @@
+@@ -48,25 +60,38 @@
        return this.field_188586_e;
     }
  

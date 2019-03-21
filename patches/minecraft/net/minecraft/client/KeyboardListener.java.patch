@@ -1,6 +1,25 @@
 --- a/net/minecraft/client/KeyboardListener.java
 +++ b/net/minecraft/client/KeyboardListener.java
-@@ -271,10 +271,14 @@
+@@ -246,7 +246,8 @@
+          }
+ 
+          IGuiEventListener iguieventlistener = this.field_197972_a.field_71462_r;
+-         if (p_197961_5_ == 1 && (!(this.field_197972_a.field_71462_r instanceof GuiControls) || ((GuiControls)iguieventlistener).field_152177_g <= Util.func_211177_b() - 20L)) {
++         if ((!(this.field_197972_a.field_71462_r instanceof GuiControls) || ((GuiControls)iguieventlistener).field_152177_g <= Util.func_211177_b() - 20L)) {
++            if (p_197961_5_ == 1) {
+             if (this.field_197972_a.field_71474_y.field_152395_am.func_197976_a(p_197961_3_, p_197961_4_)) {
+                this.field_197972_a.field_195558_d.func_198077_g();
+                return;
+@@ -264,6 +265,8 @@
+                });
+                return;
+             }
++            } else if (p_197961_5_ == 0 /*GLFW_RELEASE*/ && this.field_197972_a.field_71462_r instanceof GuiControls)
++               ((GuiControls)this.field_197972_a.field_71462_r).field_146491_f = null; //Forge: Unset pure modifiers.
+          }
+ 
+          if (iguieventlistener != null) {
+@@ -271,10 +274,14 @@
              GuiScreen.func_195121_a(() -> {
                 if (p_197961_5_ != 1 && (p_197961_5_ != 2 || !this.field_197973_b)) {
                    if (p_197961_5_ == 0) {
@@ -17,7 +36,7 @@
                 }
  
              }, "keyPressed event handler", iguieventlistener.getClass().getCanonicalName());
-@@ -351,12 +355,16 @@
+@@ -351,12 +358,16 @@
           if (iguieventlistener != null) {
              if (Character.charCount(p_197963_3_) == 1) {
                 GuiScreen.func_195121_a(() -> {

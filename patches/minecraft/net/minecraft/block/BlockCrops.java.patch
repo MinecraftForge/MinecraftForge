@@ -37,7 +37,7 @@
                    f1 = 3.0F;
                 }
              }
-@@ -135,15 +137,19 @@
+@@ -135,15 +137,20 @@
     }
  
     public void func_196255_a(IBlockState p_196255_1_, World p_196255_2_, BlockPos p_196255_3_, float p_196255_4_, int p_196255_5_) {
@@ -49,6 +49,7 @@
 +
 +   @Override
 +   public void getDrops(IBlockState state, net.minecraft.util.NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune) {
++      super.getDrops(state, drops, world, pos, 0);
 +      {
 +         int i = this.func_185527_x(state);
           if (i >= this.func_185526_g()) {

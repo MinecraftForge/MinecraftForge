@@ -40,11 +40,6 @@ public class ForgeInternalHandler
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
-        if (!event.getWorld().isRemote)
-        {
-            ForgeChunkManager.loadEntity(event.getEntity());
-        }
-
         Entity entity = event.getEntity();
         if (entity.getClass().equals(EntityItem.class))
         {
@@ -65,22 +60,10 @@ public class ForgeInternalHandler
         }
     }
 
-    @net.minecraftforge.eventbus.api.SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.HIGHEST)
-    public void onDimensionLoad(WorldEvent.Load event)
-    {
-        ForgeChunkManager.loadWorld(event.getWorld());
-    }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onDimensionSave(WorldEvent.Save event)
-    {
-        ForgeChunkManager.saveWorld(event.getWorld());
-    }
-
-    @net.minecraftforge.eventbus.api.SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionUnload(WorldEvent.Unload event)
     {
-        ForgeChunkManager.unloadWorld(event.getWorld());
         if (event.getWorld() instanceof WorldServer)
             FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
     }

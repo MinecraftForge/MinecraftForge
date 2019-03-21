@@ -14,7 +14,7 @@
 -      RailShape railshape = p_i47755_3_.func_177229_b(this.field_196922_c.func_176560_l());
 -      this.field_208513_e = this.field_196922_c.func_208490_b();
 +      RailShape railshape = this.field_196922_c.getRailDirection(field_196923_d, p_i47755_1_, p_i47755_2_, null);
-+      this.field_208513_e = this.field_196922_c.isFlexibleRail(field_196923_d, p_i47755_1_, p_i47755_2_);
++      this.field_208513_e = !this.field_196922_c.isFlexibleRail(field_196923_d, p_i47755_1_, p_i47755_2_);
 +      this.canMakeSlopes = this.field_196922_c.canMakeSlopes(field_196923_d, p_i47755_1_, p_i47755_2_);
        this.func_208509_a(railshape);
     }

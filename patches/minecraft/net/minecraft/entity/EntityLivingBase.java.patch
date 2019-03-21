@@ -220,7 +220,7 @@
              float f2 = this.func_110143_aJ();
 -            this.func_70606_j(f2 - p_70665_2_);
              this.func_110142_aN().func_94547_a(p_70665_1_, f2, p_70665_2_);
-+            this.func_70606_j(f1 - p_70665_2_); // Forge: moved to fix MC-121048
++            this.func_70606_j(f2 - p_70665_2_); // Forge: moved to fix MC-121048
              this.func_110149_m(this.func_110139_bj() - p_70665_2_);
           }
        }
@@ -371,7 +371,7 @@
           this.field_184627_bm.func_77974_b(this.field_70170_p, this, this.func_184605_cv());
        }
  
-@@ -2363,4 +2423,60 @@
+@@ -2363,4 +2423,62 @@
     @OnlyIn(Dist.CLIENT)
     public void func_191987_a(BlockPos p_191987_1_, boolean p_191987_2_) {
     }
@@ -417,7 +417,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
-+      if (!this.field_70128_L && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++      if (this.func_70089_S() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
 +         if (facing == null) return handlers[2].cast();
 +         else if (facing.func_176740_k().func_200128_b()) return handlers[0].cast();
 +         else if (facing.func_176740_k().func_176722_c()) return handlers[1].cast();
@@ -426,9 +426,11 @@
 +   }
 +
 +   @Override
-+   public void func_70106_y() {
-+     super.func_70106_y();
-+     for (int x = 0; x < handlers.length; x++)
-+       handlers[x].invalidate();
++   public void remove(boolean keepData) {
++      super.remove(keepData);
++      if (!keepData) {
++         for (int x = 0; x < handlers.length; x++)
++            handlers[x].invalidate();
++      }
 +   }
  }

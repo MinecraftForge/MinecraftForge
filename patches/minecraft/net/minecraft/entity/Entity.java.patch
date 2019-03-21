@@ -15,7 +15,15 @@
     private final EntityType<?> field_200606_g;
     private int field_145783_c;
     public boolean field_70156_m;
-@@ -192,6 +193,7 @@
+@@ -132,6 +133,7 @@
+    public boolean field_70133_I;
+    protected boolean field_70134_J;
+    private boolean field_174835_g;
++   @Deprecated //Forge: Use isAlive, remove(boolean) and revive() instead of directly accessing this field. To allow the entity to react to and better control this information.
+    public boolean field_70128_L;
+    public float field_70130_N;
+    public float field_70131_O;
+@@ -192,6 +194,7 @@
     private long field_191506_aJ;
  
     public Entity(EntityType<?> p_i48580_1_, World p_i48580_2_) {
@@ -23,7 +31,7 @@
        this.field_145783_c = field_70152_a++;
        this.field_184244_h = Lists.newArrayList();
        this.field_70121_D = field_174836_a;
-@@ -221,6 +223,8 @@
+@@ -221,6 +224,8 @@
        this.field_70180_af.func_187214_a(field_184234_aB, false);
        this.field_70180_af.func_187214_a(field_189655_aD, false);
        this.func_70088_a();
@@ -32,15 +40,21 @@
     }
  
     public EntityType<?> func_200600_R() {
-@@ -290,6 +294,7 @@
+@@ -289,7 +294,13 @@
+    }
  
     public void func_70106_y() {
++      this.remove(false);
++   }
++
++   public void remove(boolean keepData) {
        this.field_70128_L = true;
-+      this.invalidateCaps();
++      if (!keepData)
++         this.invalidateCaps();
     }
  
     public void func_184174_b(boolean p_184174_1_) {
-@@ -324,6 +329,7 @@
+@@ -324,6 +335,7 @@
        this.field_70165_t = p_70107_1_;
        this.field_70163_u = p_70107_3_;
        this.field_70161_v = p_70107_5_;
@@ -48,7 +62,7 @@
        float f = this.field_70130_N / 2.0F;
        float f1 = this.field_70131_O;
        this.func_174826_a(new AxisAlignedBB(p_70107_1_ - (double)f, p_70107_3_, p_70107_5_ - (double)f, p_70107_1_ + (double)f, p_70107_3_ + (double)f1, p_70107_5_ + (double)f));
-@@ -697,7 +703,7 @@
+@@ -697,7 +709,7 @@
           int k1 = MathHelper.func_76128_c(this.field_70161_v);
           BlockPos blockpos = new BlockPos(j1, k, k1);
           IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -57,7 +71,7 @@
              BlockPos blockpos1 = blockpos.func_177977_b();
              IBlockState iblockstate1 = this.field_70170_p.func_180495_p(blockpos1);
              Block block1 = iblockstate1.func_177230_c();
-@@ -735,7 +741,7 @@
+@@ -735,7 +747,7 @@
  
              this.field_70140_Q = (float)((double)this.field_70140_Q + (double)MathHelper.func_76133_a(d21 * d21 + d23 * d23) * 0.6D);
              this.field_82151_R = (float)((double)this.field_82151_R + (double)MathHelper.func_76133_a(d21 * d21 + d22 * d22 + d23 * d23) * 0.6D);
@@ -66,7 +80,7 @@
                 this.field_70150_b = this.func_203009_ad();
                 if (this.func_70090_H()) {
                    Entity entity = this.func_184207_aI() && this.func_184179_bs() != null ? this.func_184179_bs() : this;
-@@ -749,7 +755,7 @@
+@@ -749,7 +761,7 @@
                 } else {
                    this.func_180429_a(blockpos, iblockstate);
                 }
@@ -75,7 +89,7 @@
                 this.field_191959_ay = this.func_191954_d(this.field_82151_R);
              }
           }
-@@ -795,6 +801,7 @@
+@@ -795,6 +807,7 @@
        this.field_70165_t = (axisalignedbb.field_72340_a + axisalignedbb.field_72336_d) / 2.0D;
        this.field_70163_u = axisalignedbb.field_72338_b;
        this.field_70161_v = (axisalignedbb.field_72339_c + axisalignedbb.field_72334_f) / 2.0D;
@@ -83,7 +97,7 @@
     }
  
     protected SoundEvent func_184184_Z() {
-@@ -846,7 +853,7 @@
+@@ -846,7 +859,7 @@
  
     protected void func_180429_a(BlockPos p_180429_1_, IBlockState p_180429_2_) {
        if (!p_180429_2_.func_185904_a().func_76224_d()) {
@@ -92,7 +106,7 @@
           this.func_184185_a(soundtype.func_185844_d(), soundtype.func_185843_a() * 0.15F, soundtype.func_185847_b());
        }
     }
-@@ -1041,6 +1048,7 @@
+@@ -1041,6 +1054,7 @@
        int k = MathHelper.func_76128_c(this.field_70161_v);
        BlockPos blockpos = new BlockPos(i, j, k);
        IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -100,7 +114,7 @@
        if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE) {
           this.field_70170_p.func_195594_a(new BlockParticleData(Particles.field_197611_d, iblockstate), this.field_70165_t + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, this.func_174813_aQ().field_72338_b + 0.1D, this.field_70161_v + ((double)this.field_70146_Z.nextFloat() - 0.5D) * (double)this.field_70130_N, -this.field_70159_w * 4.0D, 1.5D, -this.field_70179_y * 4.0D);
        }
-@@ -1054,7 +1062,7 @@
+@@ -1054,7 +1068,7 @@
           double d0 = this.field_70163_u + (double)this.func_70047_e();
           BlockPos blockpos = new BlockPos(this.field_70165_t, d0, this.field_70161_v);
           IFluidState ifluidstate = this.field_70170_p.func_204610_c(blockpos);
@@ -109,7 +123,7 @@
        }
     }
  
-@@ -1123,6 +1131,7 @@
+@@ -1123,6 +1137,7 @@
           this.field_70126_B -= 360.0F;
        }
  
@@ -117,7 +131,7 @@
        this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
        this.func_70101_b(p_70080_7_, p_70080_8_);
     }
-@@ -1371,6 +1380,7 @@
+@@ -1371,6 +1386,7 @@
           if (this.field_184238_ar) {
              p_189511_1_.func_74757_a("Glowing", this.field_184238_ar);
           }
@@ -125,26 +139,28 @@
  
           if (!this.field_184236_aF.isEmpty()) {
              NBTTagList nbttaglist = new NBTTagList();
-@@ -1382,6 +1392,9 @@
+@@ -1382,6 +1398,10 @@
              p_189511_1_.func_74782_a("Tags", nbttaglist);
           }
  
 +         NBTTagCompound caps = serializeCaps();
 +         if (caps != null) p_189511_1_.func_74782_a("ForgeCaps", caps);
++         if (entityData != null) p_189511_1_.func_74782_a("ForgeData", entityData);
 +
           this.func_70014_b(p_189511_1_);
           if (this.func_184207_aI()) {
              NBTTagList nbttaglist1 = new NBTTagList();
-@@ -1467,6 +1480,8 @@
+@@ -1467,6 +1487,9 @@
           this.func_174810_b(p_70020_1_.func_74767_n("Silent"));
           this.func_189654_d(p_70020_1_.func_74767_n("NoGravity"));
           this.func_184195_f(p_70020_1_.func_74767_n("Glowing"));
++         if (p_70020_1_.func_150297_b("ForgeData", 10)) entityData = p_70020_1_.func_74775_l("ForgeData");
 +         if (p_70020_1_.func_150297_b("CanUpdate", 99)) this.canUpdate(p_70020_1_.func_74767_n("CanUpdate"));
 +         if (p_70020_1_.func_150297_b("ForgeCaps", 10)) deserializeCaps(p_70020_1_.func_74775_l("ForgeCaps"));
           if (p_70020_1_.func_150297_b("Tags", 9)) {
              this.field_184236_aF.clear();
              NBTTagList nbttaglist1 = p_70020_1_.func_150295_c("Tags", 8);
-@@ -1547,6 +1562,8 @@
+@@ -1547,6 +1570,8 @@
        } else {
           EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
           entityitem.func_174869_p();
@@ -153,7 +169,7 @@
           this.field_70170_p.func_72838_d(entityitem);
           return entityitem;
        }
-@@ -1596,6 +1613,7 @@
+@@ -1596,6 +1621,7 @@
           this.field_70159_w = 0.0D;
           this.field_70181_x = 0.0D;
           this.field_70179_y = 0.0D;
@@ -161,7 +177,7 @@
           this.func_70071_h_();
           if (this.func_184218_aH()) {
              entity.func_184232_k(this);
-@@ -1637,6 +1655,7 @@
+@@ -1637,6 +1663,7 @@
           }
        }
  
@@ -169,7 +185,7 @@
        if (p_184205_2_ || this.func_184228_n(p_184205_1_) && p_184205_1_.func_184219_q(this)) {
           if (this.func_184218_aH()) {
              this.func_184210_p();
-@@ -1664,6 +1683,7 @@
+@@ -1664,6 +1691,7 @@
     public void func_184210_p() {
        if (this.field_184239_as != null) {
           Entity entity = this.field_184239_as;
@@ -177,7 +193,7 @@
           this.field_184239_as = null;
           entity.func_184225_p(this);
        }
-@@ -1790,10 +1810,15 @@
+@@ -1790,6 +1818,7 @@
        return !this.func_184188_bt().isEmpty();
     }
  
@@ -185,15 +201,7 @@
     public boolean func_205710_ba() {
        return true;
     }
- 
-+   public boolean canBeRiddenInWater(Entity rider) {
-+      return func_205710_ba();
-+   }
-+
-    public boolean func_70093_af() {
-       return this.func_70083_f(1);
-    }
-@@ -1991,7 +2016,7 @@
+@@ -1991,7 +2020,7 @@
           func_207712_c(itextcomponent1);
           return itextcomponent1;
        } else {
@@ -202,7 +210,7 @@
        }
     }
  
-@@ -2054,6 +2079,14 @@
+@@ -2054,6 +2083,14 @@
  
     @Nullable
     public Entity func_212321_a(DimensionType p_212321_1_) {
@@ -210,14 +218,14 @@
 +      return changeDimension(p_212321_1_, this.func_184102_h().func_71218_a(p_212321_1_).func_85176_s());
 +   }
 +
-+   @Nullable // Forge: Entities that require custom handling should override this method, not the other
-+   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter)
-+   {
++   @Nullable
++   @Override
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
 +      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
           this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
           MinecraftServer minecraftserver = this.func_184102_h();
-@@ -2061,7 +2094,7 @@
+@@ -2061,25 +2098,25 @@
           WorldServer worldserver = minecraftserver.func_71218_a(dimensiontype);
           WorldServer worldserver1 = minecraftserver.func_71218_a(p_212321_1_);
           this.field_71093_bK = p_212321_1_;
@@ -226,8 +234,11 @@
              worldserver1 = minecraftserver.func_71218_a(DimensionType.OVERWORLD);
              this.field_71093_bK = DimensionType.OVERWORLD;
           }
-@@ -2070,16 +2103,16 @@
-          this.field_70128_L = false;
+ 
+-         this.field_70170_p.func_72900_e(this);
+-         this.field_70128_L = false;
++         this.field_70170_p.removeEntity(this, true); //Forge: Keep data until we copy.
++         this.revive();
           this.field_70170_p.field_72984_F.func_76320_a("reposition");
           BlockPos blockpos;
 -         if (p_212321_1_ == DimensionType.THE_END) {
@@ -249,7 +260,7 @@
                 d0 = MathHelper.func_151237_a(d0 * 8.0D, worldserver1.func_175723_af().func_177726_b() + 16.0D, worldserver1.func_175723_af().func_177728_d() - 16.0D);
                 d1 = MathHelper.func_151237_a(d1 * 8.0D, worldserver1.func_175723_af().func_177736_c() + 16.0D, worldserver1.func_175723_af().func_177733_e() - 16.0D);
              }
-@@ -2088,8 +2121,7 @@
+@@ -2088,8 +2125,7 @@
              d1 = (double)MathHelper.func_76125_a((int)d1, -29999872, 29999872);
              float f = this.field_70177_z;
              this.func_70012_b(d0, this.field_70163_u, d1, 90.0F, 0.0F);
@@ -259,7 +270,7 @@
              blockpos = new BlockPos(this);
           }
  
-@@ -2098,7 +2130,7 @@
+@@ -2098,7 +2134,7 @@
           Entity entity = this.func_200600_R().func_200721_a(worldserver1);
           if (entity != null) {
              entity.func_180432_n(this);
@@ -268,10 +279,21 @@
                 BlockPos blockpos1 = worldserver1.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, worldserver1.func_175694_M());
                 entity.func_174828_a(blockpos1, entity.field_70177_z, entity.field_70125_A);
              } else {
-@@ -2592,4 +2624,56 @@
+@@ -2112,7 +2148,7 @@
+             worldserver1.func_72866_a(entity, false);
+          }
+ 
+-         this.field_70128_L = true;
++         this.remove(false); //Forge: now invalidate old entity
+          this.field_70170_p.field_72984_F.func_76319_b();
+          worldserver.func_82742_i();
+          worldserver1.func_82742_i();
+@@ -2592,4 +2628,63 @@
     public double func_212107_bY() {
        return this.field_211517_W;
     }
++
++   /* ================================== Forge Start =====================================*/
 +
 +   private boolean canUpdate = true;
 +   @Override
@@ -308,7 +330,6 @@
 +         && this.field_70130_N * this.field_70130_N * this.field_70131_O > 0.512F;
 +   }
 +
-+   /* ================================== Forge Start =====================================*/
 +   /**
 +    * Internal use for keeping track of entities that are tracked by a world, to
 +    * allow guarantees that entity position changes will force a chunk load, avoiding
@@ -324,4 +345,10 @@
 +
 +   @Override
 +   public void onRemovedFromWorld() { this.isAddedToWorld = false; }
++
++   @Override
++   public void revive() {
++      this.field_70128_L = false;
++      this.reviveCaps();
++   }
  }

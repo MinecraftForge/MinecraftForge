@@ -130,9 +130,11 @@
 -      p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
 +      p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
        this.func_187243_f(p_187242_1_);
-       worldserver.func_72973_f(p_187242_1_);
-       p_187242_1_.field_70128_L = false;
+-      worldserver.func_72973_f(p_187242_1_);
+-      p_187242_1_.field_70128_L = false;
 -      this.func_82448_a(p_187242_1_, dimensiontype, worldserver, worldserver1);
++      worldserver.removeEntityDangerously(p_187242_1_, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
++      p_187242_1_.revive();
 +      this.transferEntityToWorld(p_187242_1_, dimensiontype, worldserver, worldserver1, teleporter);
        this.func_72375_a(p_187242_1_, worldserver);
        p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);

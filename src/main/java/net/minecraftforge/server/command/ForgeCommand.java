@@ -35,6 +35,7 @@ public class ForgeCommand
             .then(CommandGenerate.register())
             .then(CommandDimensions.register())
             .then(CommandSetDimension.register())
+            .then(CommandModList.register())
         );
     }
 }

@@ -19,19 +19,34 @@
 
 package net.minecraftforge.fml.config;
 
+import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.toml.TomlFormat;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.fml.network.FMLHandshakeMessages;
+import net.minecraftforge.fml.network.NetworkEvent;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import static cpw.mods.modlauncher.api.LamdbaExceptionUtils.rethrowFunction;
 
 public class ConfigTracker {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -44,6 +59,7 @@ public class ConfigTracker {
         this.fileMap = new ConcurrentHashMap<>();
         this.configSets = new EnumMap<>(ModConfig.Type.class);
         this.configSets.put(ModConfig.Type.CLIENT, Collections.synchronizedSet(new LinkedHashSet<>()));
+        this.configSets.put(ModConfig.Type.COMMON, Collections.synchronizedSet(new LinkedHashSet<>()));
 //        this.configSets.put(ModConfig.Type.PLAYER, new ConcurrentSkipListSet<>());
         this.configSets.put(ModConfig.Type.SERVER, Collections.synchronizedSet(new LinkedHashSet<>()));
     }
@@ -63,11 +79,39 @@ public class ConfigTracker {
         this.configSets.get(type).forEach(config -> openConfig(config, configBasePath));
     }
 
+    public List<Pair<String, FMLHandshakeMessages.S2CConfigData>> syncConfigs(boolean isLocal) {
+        final Map<String, byte[]> configData = configSets.get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> { //TODO: Test cpw's LambdaExceptionUtils on Oracle javac.
+            try {
+                return Files.readAllBytes(mc.getFullPath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }));
+        return configData.entrySet().stream().map(e->Pair.of("Config "+e.getKey(), new FMLHandshakeMessages.S2CConfigData(e.getKey(), e.getValue()))).collect(Collectors.toList());
+    }
+
     private void openConfig(final ModConfig config, final Path configBasePath) {
         LOGGER.debug(CONFIG, "Loading config file type {} at {} for {}", config.getType(), config.getFileName(), config.getModId());
         final CommentedFileConfig configData = config.getHandler().reader(configBasePath).apply(config);
         config.setConfigData(configData);
         config.fireEvent(new ModConfig.Loading(config));
-        config.getConfigData().save();
+        config.save();
+    }
+
+    public void receiveSyncedConfig(final FMLHandshakeMessages.S2CConfigData s2CConfigData, final Supplier<NetworkEvent.Context> contextSupplier) {
+        if (!Minecraft.getInstance().isIntegratedServerRunning()) {
+            Optional.ofNullable(fileMap.get(s2CConfigData.getFileName())).ifPresent(mc-> {
+                mc.setConfigData(TomlFormat.instance().createParser().parse(new ByteArrayInputStream(s2CConfigData.getBytes())));
+                mc.fireEvent(new ModConfig.ConfigReloading(mc));
+            });
+        }
+    }
+
+    public void loadDefaultServerConfigs() {
+        configSets.get(ModConfig.Type.SERVER).forEach(modConfig -> {
+            final CommentedConfig commentedConfig = CommentedConfig.inMemory();
+            modConfig.getSpec().correct(commentedConfig);
+            modConfig.setConfigData(commentedConfig);
+        });
     }
 }

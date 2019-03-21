@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -26,26 +27,26 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LoadingModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
+import net.minecraftforge.forgespi.language.IModInfo;
 import net.minecraftforge.forgespi.language.IModLanguageProvider;
 import net.minecraftforge.registries.GameData;
 import net.minecraftforge.registries.ObjectHolderRegistry;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.Logging.LOADING;
@@ -94,6 +95,7 @@ public class ModLoader
     private final LoadingModList loadingModList;
 
     private final List<ModLoadingException> loadingExceptions;
+    private final List<ModLoadingWarning> loadingWarnings;
     private ModLoader()
     {
         INSTANCE = this;
@@ -101,6 +103,9 @@ public class ModLoader
         this.loadingModList = FMLLoader.getLoadingModList();
         this.loadingExceptions = FMLLoader.getLoadingModList().
                 getErrors().stream().flatMap(ModLoadingException::fromEarlyException).collect(Collectors.toList());
+        this.loadingWarnings = FMLLoader.getLoadingModList().
+                getBrokenFiles().stream().map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE, "fml.modloading.brokenfile", file.getFileName())).collect(Collectors.toList());
+        LOGGER.info(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.NETVERSION);
     }
 
     public static ModLoader get()
@@ -118,21 +123,23 @@ public class ModLoader
         if (!this.loadingExceptions.isEmpty()) {
             throw new LoadingFailedException(loadingExceptions);
         }
-        final Stream<ModContainer> modContainerStream = loadingModList.getModFiles().stream().
+        final List<ModContainer> modContainers = loadingModList.getModFiles().stream().
                 map(ModFileInfo::getFile).
                 map(mf -> buildMods(mf, launchClassLoader)).
-                flatMap(Collection::stream);
+                flatMap(Collection::stream).
+                collect(Collectors.toList());
         if (!loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Failed to initialize mod containers");
             throw new LoadingFailedException(loadingExceptions);
         }
-        modList.setLoadedMods(modContainerStream.collect(Collectors.toList()));
+        modList.setLoadedMods(modContainers);
         dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT);
         GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, this::dispatchAndHandleError);
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, this::dispatchAndHandleError);
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
+        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
         dispatchAndHandleError(LifecycleEventProvider.SETUP);
         DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
         dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);
@@ -177,7 +184,6 @@ public class ModLoader
         }
     }
 
-
     public void finishMods()
     {
         dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC);
@@ -186,4 +192,13 @@ public class ModLoader
         GameData.freezeData();
     }
 
+    public List<ModLoadingWarning> getWarnings()
+    {
+        return ImmutableList.copyOf(this.loadingWarnings);
+    }
+
+    public void addWarning(ModLoadingWarning warning)
+    {
+        this.loadingWarnings.add(warning);
+    }
 }

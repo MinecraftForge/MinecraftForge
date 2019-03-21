@@ -22,8 +22,6 @@ package net.minecraftforge.common;
 import static net.minecraftforge.fml.Logging.CORE;
 import static net.minecraftforge.fml.loading.LogMarkers.FORGEMOD;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import com.google.common.collect.Lists;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.config.ModConfig;
 import org.apache.commons.lang3.tuple.Pair;
@@ -32,9 +30,6 @@ import org.apache.logging.log4j.LogManager;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-
-import javax.annotation.Nullable;
-import java.util.List;
 
 public class ForgeConfig
 {
@@ -129,6 +124,8 @@ public class ForgeConfig
 
         public final BooleanValue selectiveResourceReloadEnabled;
 
+        public final BooleanValue showLoadWarnings;
+
         Client(ForgeConfigSpec.Builder builder) {
             builder.comment("Client only settings, mostly things related to rendering")
                    .push("client");
@@ -165,6 +162,11 @@ public class ForgeConfig
                 .translation("forge.configgui.selectiveResourceReloadEnabled")
                 .define("selectiveResourceReloadEnabled", true);
 
+            showLoadWarnings = builder
+                .comment("When enabled, forge will show any warnings that occurred during loading")
+                .translation("forge.configgui.showloadwarnings")
+                .define("showLoadWarnings", true);
+
             builder.pop();
         }
     }
@@ -185,103 +187,6 @@ public class ForgeConfig
         serverSpec = specPair.getRight();
         SERVER = specPair.getLeft();
     }
-
-
-
-    private static final ForgeConfigSpec.Builder CHUNK_BUILDER = new ForgeConfigSpec.Builder();
-
-    public static final Chunk CHUNK = new Chunk(CHUNK_BUILDER);
-
-    public static class Chunk {
-
-        public final BooleanValue enable;
-
-        public final IntValue chunksPerTicket;
-
-        public final IntValue maxTickets;
-
-        public final IntValue playerTicketCount;
-
-        public final IntValue dormantChunkCacheSize;
-
-        public final BooleanValue asyncChunkLoading;
-
-        private final ForgeConfigSpec chunkSpec = new ForgeConfigSpec.Builder()
-                .define("modid", "forge").next()
-                .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE).next()
-                .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE).next()
-                .build();
-
-        private final CommentedConfig modCfgDefault = CommentedConfig.inMemory();
-
-
-        Chunk(ForgeConfigSpec.Builder builder) {
-            builder.comment("Default configuration for Forge chunk loading control")
-                    .push("defaults");
-
-            enable = builder
-                    .comment("Allow mod overrides, false will use default for everything.")
-                    .translation("forge.configgui.enableModOverrides")
-                    .define("enable", true);
-
-            chunksPerTicket = builder
-                    .comment("The default maximum number of chunks a mod can force, per ticket,",
-                            "for a mod without an override. This is the maximum number of chunks a single ticket can force.")
-                    .translation("forge.configgui.maximumChunksPerTicket")
-                    .defineInRange("chunksPerTicket", 25, 0, Integer.MAX_VALUE);
-
-            maxTickets = builder
-                    .comment("The default maximum ticket count for a mod which does not have an override",
-                            "in this file. This is the number of chunk loading requests a mod is allowed to make.")
-                    .translation("forge.configgui.maximumTicketCount")
-                    .defineInRange("maxTickets", 200, 0, Integer.MAX_VALUE);
-
-            playerTicketCount = builder
-                    .comment("The number of tickets a player can be assigned instead of a mod. This is shared across all mods and it is up to the mods to use it.")
-                    .translation("forge.configgui.playerTicketCount")
-                    .defineInRange("playerTicketCount", 500, 0, Integer.MAX_VALUE);
-
-            dormantChunkCacheSize = builder
-                    .comment("Unloaded chunks can first be kept in a dormant cache for quicker loading times. Specify the size (in chunks) of that cache here")
-                    .translation("forge.configgui.dormantChunkCacheSize")
-                    .defineInRange("dormantChunkCacheSize", 0, 0, Integer.MAX_VALUE);
-
-            asyncChunkLoading = builder
-                    .comment("Load chunks asynchronously for players, reducing load on the server thread.",
-                            "Can be disabled to help troubleshoot chunk loading issues.")
-                    .translation("forge.configgui.asyncChunkLoading")
-                    .define("asyncChunkLoading", true);
-
-            chunkSpec.correct(modCfgDefault);
-            builder.pop();
-        }
-
-        private final ForgeConfigSpec.ConfigValue<List<? extends CommentedConfig>> mods = CHUNK_BUILDER
-                .defineList("mods", Lists.newArrayList(modCfgDefault), o -> {
-                    if (!(o instanceof CommentedConfig)) return false;
-                    return chunkSpec.isCorrect((CommentedConfig) o);
-                });
-
-        private int getByMod(ForgeConfigSpec.ConfigValue<Integer> def, String name, String modid) {
-            if (!enable.get() || modid == null)
-                return def.get();
-
-            return mods.get().stream().filter(c -> modid.equals(c.get("modid"))).findFirst()
-                    .map(c -> c.<Integer>get(name))
-                    .orElseGet(def::get);
-        }
-
-        public int maxTickets(@Nullable String modid) {
-            return getByMod(maxTickets, "maxTickets", modid);
-        }
-
-        public int chunksPerTicket(@Nullable String modid) {
-            return getByMod(chunksPerTicket, "chunksPerTicket", modid);
-        }
-    }
-
-    public static final ForgeConfigSpec chunk_spec = CHUNK_BUILDER.build();
-
 
     @SubscribeEvent
     public static void onLoad(final ModConfig.Loading configEvent) {

@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.*;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -38,7 +39,7 @@ public class SimpleChannel
 {
     private final NetworkInstance instance;
     private final IndexedMessageCodec indexedCodec;
-    private List<Supplier<? extends List<? extends Pair<String,?>>>> loginPackets;
+    private List<Function<Boolean, ? extends List<? extends Pair<String,?>>>> loginPackets;
 
     public SimpleChannel(NetworkInstance instance)
     {
@@ -51,7 +52,7 @@ public class SimpleChannel
 
     private void networkLoginGather(final NetworkEvent.GatherLoginPayloadsEvent gatherEvent) {
         loginPackets.forEach(packetGenerator->{
-            packetGenerator.get().forEach(p->{
+            packetGenerator.apply(gatherEvent.isLocal()).forEach(p->{
                 PacketBuffer pb = new PacketBuffer(Unpooled.buffer());
                 this.indexedCodec.build(p.getRight(), pb);
                 gatherEvent.add(pb, this.instance.getChannelName(), p.getLeft());
@@ -86,6 +87,21 @@ public class SimpleChannel
         manager.sendPacket(toVanillaPacket(message, direction));
     }
 
+    /**
+     * Send a message to the {@link PacketDistributor.PacketTarget} from a {@link PacketDistributor} instance.
+     *
+     * <pre>
+     *     channel.send(PacketDistributor.PLAYER.with(()->player), message)
+     * </pre>
+     *
+     * @param target The curried target from a PacketDistributor
+     * @param message The message to send
+     * @param <MSG> The type of the message
+     */
+    public <MSG> void send(PacketDistributor.PacketTarget target, MSG message) {
+        target.send(toVanillaPacket(message, target.getDirection()));
+    }
+
     public <MSG> Packet<?> toVanillaPacket(MSG message, NetworkDirection direction)
     {
         return direction.buildPacket(toBuffer(message), instance.getChannelName()).getThis();
@@ -109,7 +125,7 @@ public class SimpleChannel
         private BiConsumer<MSG, Supplier<NetworkEvent.Context>> consumer;
         private Function<MSG, Integer> loginIndexGetter;
         private BiConsumer<MSG, Integer> loginIndexSetter;
-        private Supplier<List<Pair<String,MSG>>> loginPacketGenerators;
+        private Function<Boolean, List<Pair<String, MSG>>> loginPacketGenerators;
 
         private static <MSG> MessageBuilder<MSG> forType(final SimpleChannel channel, final Class<MSG> type, int id) {
             MessageBuilder<MSG> builder = new MessageBuilder<>();
@@ -135,18 +151,18 @@ public class SimpleChannel
             return this;
         }
 
-        public MessageBuilder<MSG> buildLoginPacketList(Supplier<List<Pair<String,MSG>>> loginPacketGenerators) {
+        public MessageBuilder<MSG> buildLoginPacketList(Function<Boolean, List<Pair<String,MSG>>> loginPacketGenerators) {
             this.loginPacketGenerators = loginPacketGenerators;
             return this;
         }
 
         public MessageBuilder<MSG> markAsLoginPacket()
         {
-            this.loginPacketGenerators = () -> {
+            this.loginPacketGenerators = (isLocal) -> {
                 try {
                     return Collections.singletonList(Pair.of(type.getName(), type.newInstance()));
                 } catch (InstantiationException | IllegalAccessException e) {
-                    throw new RuntimeException("Inaccessible no-arg constructor for message "+type.getName(),e);
+                    throw new RuntimeException("Inaccessible no-arg constructor for message "+type.getName(), e);
                 }
             };
             return this;

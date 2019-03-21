@@ -20,8 +20,6 @@
 package net.minecraftforge.fml;
 
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
-import net.minecraftforge.fml.javafmlmod.FMLModContainer;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 
 import java.util.List;

@@ -25,7 +25,7 @@
 +
 +   @Override
 +   public net.minecraftforge.common.plants.PlantType getPlantType(net.minecraft.world.IBlockReader world, BlockPos pos, ItemStack stack) {
-+      return net.minecraftforge.common.plants.PlantTypes.CROP;
++      return this.field_195978_a.func_177230_c() == net.minecraft.init.Blocks.field_150388_bm ? net.minecraftforge.common.plants.PlantTypes.NETHER : net.minecraftforge.common.plants.PlantTypes.CROP;
 +   }
 +
 +   @Override

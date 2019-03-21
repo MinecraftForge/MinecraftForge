@@ -3,6 +3,7 @@ net/minecraft/block/BlockNetherWart.getDrops(Lnet/minecraft/block/state/IBlockSt
 net/minecraft/block/BlockRailPowered.<init>(Lnet/minecraft/block/Block$Properties;Z)=|p_i48349_1_,isActivator
 net/minecraft/block/BlockRedstoneWire.canConnectTo(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)Z=|p_176343_0_,world,pos,p_176343_1_
 
+net/minecraft/client/multiplayer/WorldClient.removeEntity(Lnet/minecraft/entity/Entity;Z)V=|p_72900_1_,keepData
 net/minecraft/client/renderer/model/BakedQuad.<init>([IILnet/minecraft/util/EnumFacing;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting,format
 net/minecraft/client/renderer/model/FaceBakery.makeBakedQuad(Lnet/minecraft/client/renderer/Vector3f;Lnet/minecraft/client/renderer/Vector3f;Lnet/minecraft/client/renderer/model/BlockPartFace;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/util/EnumFacing;Lnet/minecraftforge/common/model/ITransformation;Lnet/minecraft/client/renderer/model/BlockPartRotation;ZZ)Lnet/minecraft/client/renderer/model/BakedQuad;=|p_199332_1_,p_199332_2_,p_199332_3_,p_199332_4_,p_199332_5_,p_199332_6_,p_199332_7_,p_199332_8_,p_199332_9_
 net/minecraft/client/renderer/model/FaceBakery.makeQuadVertexData(Lnet/minecraft/client/renderer/model/BlockFaceUV;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/util/EnumFacing;[FLnet/minecraftforge/common/model/ITransformation;Lnet/minecraft/client/renderer/model/BlockPartRotation;Z)[I=|p_188012_1_,p_188012_2_,p_188012_3_,p_188012_4_,p_188012_5_,p_188012_6_,p_188012_7_
@@ -31,6 +32,9 @@ net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;
 net/minecraft/server/management/PlayerList.changePlayerDimension(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_187242_1_,p_187242_2_,teleporter
 net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
 
+net/minecraft/tileentity/BannerPattern.create(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/tileentity/BannerPattern;=|enumName,p_i47246_3_,p_i47246_4_,p_i47246_5_
+net/minecraft/tileentity/BannerPattern.create(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/minecraft/tileentity/BannerPattern;=|enumName,p_i47247_3_,p_i47247_4_,p_i47247_5_,p_i47247_6_,p_i47247_7_
+
 net/minecraft/village/Village.getPlayerReputation(Ljava/util/UUID;)I=|p_82684_1_
 net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_82688_1_,p_82688_2_
 
@@ -40,6 +44,8 @@ net/minecraft/world/World.getSunBrightnessFactor(F)F=|p_72967_1_
 net/minecraft/world/World.getSunBrightnessBody(F)F=|p_72971_1_
 net/minecraft/world/World.getSkyColorBody(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/util/math/Vec3d;=|p_72833_1_,p_72833_2_
 net/minecraft/world/World.getCloudColorBody(F)Lnet/minecraft/util/math/Vec3d;=|p_72824_1_
+net/minecraft/world/World.removeEntity(Lnet/minecraft/entity/Entity;Z)V=|p_72900_1_,keepData
+net/minecraft/world/World.removeEntityDangerously(Lnet/minecraft/entity/Entity;Z)V=|p_72973_1_,keepData
 net/minecraft/world/WorldServer.canMineBlockBody(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/math/BlockPos;)Z=|p_175660_1_,p_175660_2_
 net/minecraft/world/WorldEntitySpawner.canSpawnAtBody(Lnet/minecraft/entity/EntitySpawnPlacementRegistry$SpawnPlacementType;Lnet/minecraft/world/IWorldReaderBase;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z=|p_209382_0_,p_209382_1_,p_209382_2_,p_209382_3_
 net/minecraft/world/storage/SaveFormatOld.getWorldData(Ljava/io/File;Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/world/storage/SaveHandler;)Lnet/minecraft/world/storage/WorldInfo;=|p_186353_0_,p_186353_1_,saveHandler

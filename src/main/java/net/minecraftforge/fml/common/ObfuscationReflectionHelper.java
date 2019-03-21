@@ -153,9 +153,7 @@ public class ObfuscationReflectionHelper
      * Throws an exception if the method is not found.
      *
      * @param clazz          The class to find the method on.
-     * @param methodName     The name of the method to find (used in developer environments, i.e. "getWorldTime").
-     * @param methodObfName  The obfuscated name of the method to find (used in obfuscated environments, i.e. "func_72820_D").
-     *                       If the name you are looking for is on a class that is never obfuscated, this should be null.
+     * @param methodName     The SRG (obfuscated) name of the method to find(e.g. "func_72820_D").
      * @param parameterTypes The parameter types of the method to find.
      * @return The method with the specified name and parameters in the given class.
      */
@@ -164,7 +162,7 @@ public class ObfuscationReflectionHelper
     {
         Preconditions.checkNotNull(clazz);
         Preconditions.checkNotNull(methodName);
-        Preconditions.checkArgument(methodName.isEmpty(), "Method name cannot be empty");
+        Preconditions.checkArgument(!methodName.isEmpty(), "Method name cannot be empty");
 
         try
         {

@@ -26,7 +26,7 @@ import net.minecraft.resources.IResource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.packs.ResourcePackLoader;
+import net.minecraftforge.fml.ForgeI18n;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -91,6 +91,17 @@ public class LanguageHook
         });
 
     }
+
+    static void loadForgeAndMCLangs() {
+        modTable = new HashMap<>(5000);
+        final InputStream mc = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/minecraft/lang/en_us.json");
+        final InputStream forge = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/forge/lang/en_us.json");
+        loadLocaleData(mc);
+        loadLocaleData(forge);
+        capturedTables.forEach(t->t.putAll(modTable));
+        ForgeI18n.loadLanguageData(modTable);
+    }
+
     static void loadLanguagesOnServer(MinecraftServer server) {
         modTable = new HashMap<>(5000);
         // Possible multi-language server support?
@@ -98,5 +109,6 @@ public class LanguageHook
             loadLanguage(lang, server);
         }
         capturedTables.forEach(t->t.putAll(modTable));
+        ForgeI18n.loadLanguageData(modTable);
     }
 }

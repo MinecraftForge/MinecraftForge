@@ -94,7 +94,7 @@
        return this.field_74512_d.equals(p_197983_1_.field_74512_d);
     }
  
-@@ -153,14 +173,94 @@
+@@ -153,14 +173,110 @@
     }
  
     public String func_197978_k() {
@@ -120,9 +120,25 @@
 +   /**
 +    * Convenience constructor for creating KeyBindings with keyConflictContext set.
 +    */
++   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, final InputMappings.Type inputType, final int keyCode, String category)
++   {
++      this(description, keyConflictContext, inputType.func_197944_a(keyCode), category);
++   }
++
++   /**
++    * Convenience constructor for creating KeyBindings with keyConflictContext set.
++    */
 +   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, InputMappings.Input keyCode, String category)
 +   {
 +       this(description, keyConflictContext, net.minecraftforge.client.settings.KeyModifier.NONE, keyCode, category);
++   }
++
++   /**
++    * Convenience constructor for creating KeyBindings with keyConflictContext and keyModifier set.
++    */
++   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, final InputMappings.Type inputType, final int keyCode, String category)
++   {
++      this(description, keyConflictContext, keyModifier, inputType.func_197944_a(keyCode), category);
 +   }
 +
 +   /**

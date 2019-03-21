@@ -9,8 +9,9 @@ buildscript {
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+// Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 apply plugin: 'eclipse'
+apply plugin: 'maven-publish'
 
 version = '1.0'
 group = 'com.yourname.modid' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -19,34 +20,49 @@ archivesBaseName = 'modid'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
+    // The mappings can be changed at any time, and must be in the following format.
+    // snapshot_YYYYMMDD   Snapshot are built nightly.
+    // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
+    // Simply re-run your setup task after changing the mappings to update your workspace.
     mappings channel: '@MAPPING_CHANNEL@', version: '@MAPPING_VERSION@'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
-    //accessTransformer = file('my_at.cfg')
+    // accessTransformer = file('build/resources/main/META-INF/accesstransformer.cfg')
 
-    // default run configurations.
-    // these can be tweaked, removed, or duplicated as needed.
+    // Default run configurations.
+    // These can be tweaked, removed, or duplicated as needed.
     runs {
-        client = {
-            // recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-            // recommended logging level for the console
-            properties 'forge.logging.console.level': 'debug'
-            workingDirectory project.file('run').canonicalPath
-            source sourceSets.main
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
         }
-        server = {
-            // recommended logging data for a userdev environment
-            properties 'forge.logging.markers': 'SCAN,REGISTRIES,REGISTRYDUMP'
-            // recommended logging level for the console
-            properties 'forge.logging.console.level': 'debug'
-            workingDirectory project.file('run').canonicalPath
-            source sourceSets.main
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+
+            // Recommended logging level for the console
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                examplemod {
+                    source sourceSets.main
+                }
+            }
         }
     }
 }
@@ -57,22 +73,21 @@ dependencies {
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft '@FORGE_GROUP@:@FORGE_NAME@:@FORGE_VERSION@'
 
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
+    // You may put jars on which you depend on in ./libs or you may define them like so..
+    // compile "some.group:artifact:version:classifier"
+    // compile "some.group:artifact:version"
 
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+    // Real examples
+    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
+    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
 
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
+    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
     // These dependencies get remapped to your current MCP mappings
-    //deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
 
-    // for more info...
+    // For more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
@@ -81,12 +96,36 @@ dependencies {
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
     manifest {
-        attributes(["Specification-Title": "examplemod",
-                    "Specification-Vendor": "examplemodsareus",
-                    "Specification-Version": "24.0", // We are version 1 of the modlauncher specification
-                    "Implementation-Title": project.name,
-                    "Implementation-Version": "${version}",
-                    "Implementation-Vendor" :"examplemodsareus",
-                    "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")],)
+        attributes([
+            "Specification-Title": "examplemod",
+            "Specification-Vendor": "examplemodsareus",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"examplemodsareus",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+// Example configuration to allow publishing using the maven-publish task
+// we define a custom artifact that is sourced from the reobfJar output task
+// and then declare that to be published
+// Note you'll need to add a repository here
+def reobfFile = file("$buildDir/reobfJar/output.jar")
+def reobfArtifact = artifacts.add('default', reobfFile) {
+    type 'jar'
+    builtBy 'reobfJar'
+}
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact reobfArtifact
+        }
+    }
+    repositories {
+        maven {
+            url "file:///${project.projectDir}/mcmodsrepo"
+        }
     }
 }

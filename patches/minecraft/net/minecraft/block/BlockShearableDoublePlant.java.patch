@@ -27,7 +27,7 @@
 +
 +   @Override
 +   public boolean isShearable(ItemStack item, net.minecraft.world.IWorldReader world, BlockPos pos) {
-+      return false;
++      return true;
 +   }
 +
 +   @Override

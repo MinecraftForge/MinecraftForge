@@ -119,3 +119,14 @@
     }
  
     protected void func_70670_a(PotionEffect p_70670_1_) {
+@@ -1179,8 +1203,8 @@
+          this.field_71093_bK = p_200619_1_.field_73011_w.func_186058_p();
+          this.field_71135_a.func_147359_a(new SPacketRespawn(this.field_71093_bK, worldserver.func_175659_aa(), worldserver.func_72912_H().func_76067_t(), this.field_71134_c.func_73081_b()));
+          this.field_71133_b.func_184103_al().func_187243_f(this);
+-         worldserver.func_72973_f(this);
+-         this.field_70128_L = false;
++         worldserver.removeEntityDangerously(this, true); //Forge: The player entity itself is moved, and not cloned. So we need to keep the data alive with no matching invalidate call later.
++         this.revive();
+          this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
+          if (this.func_70089_S()) {
+             worldserver.func_72866_a(this, false);

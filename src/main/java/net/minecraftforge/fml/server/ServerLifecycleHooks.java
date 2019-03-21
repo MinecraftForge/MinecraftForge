@@ -36,9 +36,11 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
 import net.minecraftforge.fml.event.server.FMLServerStoppingEvent;
-import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.FileUtils;
+import net.minecraftforge.fml.network.ConnectionType;
+import net.minecraftforge.fml.network.FMLNetworkConstants;
 import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +48,6 @@ import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -122,20 +123,34 @@ public class ServerLifecycleHooks
             return false;
         }
 
-        if (packet.getRequestedState() == EnumConnectionState.LOGIN && !NetworkHooks.accepts(packet))
-        {
-            manager.setConnectionState(EnumConnectionState.LOGIN);
-            TextComponentString text = new TextComponentString("This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
-            List<String> modNames = net.minecraftforge.fml.network.NetworkRegistry.getNonVanillaNetworkMods();
-            LOGGER.info(SERVERHOOKS,"Disconnecting vanilla connection attempt. Required mods {}", modNames);
-            manager.sendPacket(new SPacketDisconnectLogin(text));
-            manager.closeChannel(text);
-            return false;
+        if (packet.getRequestedState() == EnumConnectionState.LOGIN) {
+            final ConnectionType connectionType = ConnectionType.forVersionFlag(packet.getFMLVersion());
+            final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
+
+            if (connectionType == ConnectionType.MODDED && versionNumber != FMLNetworkConstants.FMLNETVERSION) {
+                rejectConnection(manager, connectionType, "This modded server is not network compatible with your modded client. Please verify your Forge version closely matches the server. Got net version "+ versionNumber + " this server is net version "+FMLNetworkConstants.FMLNETVERSION);
+                return false;
+            }
+
+            if (connectionType == ConnectionType.VANILLA && !NetworkRegistry.acceptsVanillaClientConnections()) {
+                rejectConnection(manager, connectionType, "This server has mods that require Forge to be installed on the client. Contact your server admin for more details.");
+                return false;
+            }
         }
+
+        if (packet.getRequestedState() == EnumConnectionState.STATUS) return true;
 
         NetworkHooks.registerServerLoginChannel(manager, packet);
         return true;
 
+    }
+
+    private static void rejectConnection(final NetworkManager manager, ConnectionType type, String message) {
+        manager.setConnectionState(EnumConnectionState.LOGIN);
+        LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: ", type, message);
+        TextComponentString text = new TextComponentString(message);
+        manager.sendPacket(new SPacketDisconnectLogin(text));
+        manager.closeChannel(text);
     }
 
     public static void handleExit(int retVal)

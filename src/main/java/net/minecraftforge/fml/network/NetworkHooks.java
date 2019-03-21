@@ -23,45 +23,43 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.handshake.client.CPacketHandshake;
 import net.minecraft.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IInteractionObject;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.fml.config.ConfigTracker;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class NetworkHooks
 {
-    public static final String NETVERSION = "FML1";
-    public static final String NOVERSION = "NONE";
+    private static final Logger LOGGER = LogManager.getLogger();
 
     public static String getFMLVersion(final String ip)
     {
-        return ip.contains("\0") ? Objects.equals(ip.split("\0")[1], NETVERSION) ? NETVERSION : ip.split("\0")[1] : NOVERSION;
+        return ip.contains("\0") ? Objects.equals(ip.split("\0")[1], FMLNetworkConstants.NETVERSION) ? FMLNetworkConstants.NETVERSION : ip.split("\0")[1] : FMLNetworkConstants.NOVERSION;
     }
 
-    public static boolean accepts(final CPacketHandshake packet)
+    public static ConnectionType getConnectionType(final Supplier<NetworkManager> connection)
     {
-        return Objects.equals(packet.getFMLVersion(), NETVERSION) || NetworkRegistry.acceptsVanillaConnections();
-    }
-
-    public static ConnectionType getConnectionType(final NetHandlerPlayServer connection)
-    {
-        return ConnectionType.forVersionFlag(connection.netManager.channel().attr(FMLNetworking.FML_MARKER).get());
+        return ConnectionType.forVersionFlag(connection.get().channel().attr(FMLNetworkConstants.FML_NETVERSION).get());
     }
 
     public static Packet<?> getEntitySpawningPacket(Entity entity)
     {
         if (!entity.getType().usesVanillaSpawning())
         {
-            return FMLPlayHandler.channel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
+            return FMLNetworkConstants.playChannel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
         }
         return null;
     }
@@ -73,14 +71,25 @@ public class NetworkHooks
 
     public static void registerServerLoginChannel(NetworkManager manager, CPacketHandshake packet)
     {
-        manager.channel().attr(FMLNetworking.FML_MARKER).set(packet.getFMLVersion());
+        manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(packet.getFMLVersion());
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_CLIENT);
     }
 
     public static void registerClientLoginChannel(NetworkManager manager)
     {
-        manager.channel().attr(FMLNetworking.FML_MARKER).set(NETVERSION);
+        if (manager == null || manager.channel() == null) return;
+        manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NOVERSION);
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
+    }
+
+    public static void handleClientLoginSuccess(NetworkManager manager) {
+        if (manager == null || manager.channel() == null) return;
+        if (getConnectionType(()->manager) == ConnectionType.VANILLA) {
+            LOGGER.info("Connected to a vanilla server. Catching up missing behaviour.");
+            ConfigTracker.INSTANCE.loadDefaultServerConfigs();
+        } else {
+            LOGGER.info("Connected to a modded server.");
+        }
     }
 
     public static boolean tickNegotiation(NetHandlerLoginServer netHandlerLoginServer, NetworkManager networkManager, EntityPlayerMP player)
@@ -89,42 +98,81 @@ public class NetworkHooks
     }
 
     /**
-     * Server method to tell the client to open a GUI on behalf of the server
+     * Request to open a GUI on the client, from the server
+     *
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * these GUI requests on the client.
      *
      * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
      * It should refer to a valid modId namespace, to trigger opening on the client.
      * The namespace is directly used to lookup the modId in the client side.
-     * The maximum size for #extraData is 32600 bytes.
      *
      * @param player The player to open the GUI for
-     * @param containerSupplier The Container Supplier
-     * @param extraData Additional data for the GUI
+     * @param containerSupplier A supplier of container properties including the registry name of the container
      */
-    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, @Nullable PacketBuffer extraData)
+    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier)
+    {
+        openGui(player, containerSupplier, buf -> {});
+    }
+
+    /**
+     * Request to open a GUI on the client, from the server
+     *
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * these GUI requests on the client.
+     *
+     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
+     * It should refer to a valid modId namespace, to trigger opening on the client.
+     * The namespace is directly used to lookup the modId in the client side.
+     *
+     * @param player The player to open the GUI for
+     * @param containerSupplier A supplier of container properties including the registry name of the container
+     * @param pos A block pos, which will be encoded into the auxillary data for this request
+     */
+    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, BlockPos pos)
+    {
+        openGui(player, containerSupplier, buf -> buf.writeBlockPos(pos));
+    }
+    /**
+     * Request to open a GUI on the client, from the server
+     *
+     * Refer to {@link net.minecraftforge.fml.ExtensionPoint#GUIFACTORY} for how to provide a function to consume
+     * these GUI requests on the client.
+     *
+     * The {@link IInteractionObject#getGuiID()} is treated as a {@link ResourceLocation}.
+     * It should refer to a valid modId namespace, to trigger opening on the client.
+     * The namespace is directly used to lookup the modId in the client side.
+     * The maximum size for #extraDataWriter is 32600 bytes.
+     *
+     * @param player The player to open the GUI for
+     * @param containerSupplier A supplier of container properties including the registry name of the container
+     * @param extraDataWriter Consumer to write any additional data the GUI needs
+     */
+    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, Consumer<PacketBuffer> extraDataWriter)
     {
         if (player.world.isRemote) return;
         ResourceLocation id = new ResourceLocation(containerSupplier.getGuiID());
-        Container c = containerSupplier.createContainer(player.inventory, player);
-        player.closeScreen();
+        player.closeContainer();
         player.getNextWindowId();
-        int openContainer = player.currentWindowId;
-        player.openContainer = c;
-        player.openContainer.windowId = openContainer;
-        player.openContainer.addListener(player);
-        MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
+        int openContainerId = player.currentWindowId;
+        PacketBuffer extraData = new PacketBuffer(Unpooled.buffer());
+        extraDataWriter.accept(extraData);
+        extraData.readerIndex(0); // reset to beginning in case modders read for whatever reason
 
         PacketBuffer output = new PacketBuffer(Unpooled.buffer());
-        if (extraData == null) {
-            output.writeVarInt(0);
-        } else {
-            output.writeVarInt(extraData.readableBytes());
-            output.writeBytes(extraData);
-        }
+        output.writeVarInt(extraData.readableBytes());
+        output.writeBytes(extraData);
 
         if (output.readableBytes() > 32600 || output.readableBytes() < 1) {
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
-        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, openContainer, output);
-        FMLPlayHandler.channel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, openContainerId, output);
+        FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
+
+        Container c = containerSupplier.createContainer(player.inventory, player);
+        player.openContainer = c;
+        player.openContainer.windowId = openContainerId;
+        player.openContainer.addListener(player);
+        MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
     }
 }

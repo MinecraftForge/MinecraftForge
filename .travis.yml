@@ -33,3 +33,5 @@ notifications:
 branches:
   except:
     - 1.13-pre
+    - 1.13.x
+    - /^noci-.*$/
