@@ -34,8 +34,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(modid = ReachDistanceAttributeTest.MODID, name = ReachDistanceAttributeTest.MODID, version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = ReachDistanceAttributeTest.MODID, name = ReachDistanceAttributeTest.MODID, version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class ReachDistanceAttributeTest
 {
     public static final String MODID = "reachdistanceattributetest";
@@ -46,7 +46,7 @@ public class ReachDistanceAttributeTest
         evt.getRegistry().register(PLATE);
     }
 
-    @Mod.EventBusSubscriber(Side.CLIENT)
+    //@Mod.EventBusSubscriber(Side.CLIENT)
     public static class ClientEvents
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

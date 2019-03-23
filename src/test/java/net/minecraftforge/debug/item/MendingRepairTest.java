@@ -33,8 +33,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod.EventBusSubscriber
-@Mod(modid = MendingRepairTest.MOD_ID, name = "Mending repair amount test mod", version = "1.0")
+//@Mod.EventBusSubscriber
+//@Mod(modid = MendingRepairTest.MOD_ID, name = "Mending repair amount test mod", version = "1.0")
 public class MendingRepairTest
 {
     static final boolean ENABLED = true;

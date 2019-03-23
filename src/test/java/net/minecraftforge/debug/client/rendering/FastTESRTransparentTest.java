@@ -59,7 +59,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.api.distmarker.Dist;
 
-@Mod(modid = FastTESRTransparentTest.MODID, name = "TransparentFastTESRTest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = FastTESRTransparentTest.MODID, name = "TransparentFastTESRTest", version = "1.0", acceptableRemoteVersions = "*")
 public class FastTESRTransparentTest
 {
 
@@ -214,7 +214,7 @@ public class FastTESRTransparentTest
         }
     };
 
-    @EventBusSubscriber
+    //@EventBusSubscriber
     public static class BlockHolder
     {
 
@@ -253,7 +253,7 @@ public class FastTESRTransparentTest
         GameRegistry.registerTileEntity(TransparentFastTE.class, MODID + ":fast-tesr-te");
     }
 
-    @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientLoader
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

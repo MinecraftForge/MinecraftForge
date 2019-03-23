@@ -28,7 +28,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = BonemealEventTest.MODID, name = "Bonemeal Event Test", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = BonemealEventTest.MODID, name = "Bonemeal Event Test", version = "1.0", acceptableRemoteVersions = "*")
 public class BonemealEventTest
 {
     public static final String MODID = "bonemealeventtest";

@@ -50,7 +50,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "forge.testcapmod", name = "Forge TestCapMod", version = "1.0", acceptableRemoteVersions = "*")
 public class CapabilityTest
 {
     // A Holder/Marker for if this capability is installed.

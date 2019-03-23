@@ -27,7 +27,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "difficultychangeeventtest", name = "DifficultyChangeEventTest", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "difficultychangeeventtest", name = "DifficultyChangeEventTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class DifficultyChangeEventTest
 {
     private static final boolean ENABLE = false;

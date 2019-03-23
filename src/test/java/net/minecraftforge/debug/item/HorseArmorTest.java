@@ -37,8 +37,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@EventBusSubscriber
-@Mod(modid = HorseArmorTest.MODID, name = "HorseArmorTest", version = "1.0", acceptableRemoteVersions = "*")
+//@EventBusSubscriber
+//@Mod(modid = HorseArmorTest.MODID, name = "HorseArmorTest", version = "1.0", acceptableRemoteVersions = "*")
 public class HorseArmorTest 
 {
     public static final String MODID = "horse_armor_test";
@@ -63,7 +63,7 @@ public class HorseArmorTest
             event.getRegistry().register(new ItemTestHorseArmor().setRegistryName(MODID, "test_armor").setUnlocalizedName(MODID + ".testArmor"));
     }
 
-    @EventBusSubscriber(modid = MODID, value = Side.CLIENT)
+    //@EventBusSubscriber(modid = MODID, value = Side.CLIENT)
     public static class ClientEventHandler
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

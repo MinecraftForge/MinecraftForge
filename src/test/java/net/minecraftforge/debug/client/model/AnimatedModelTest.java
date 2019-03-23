@@ -81,7 +81,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = AnimatedModelTest.MODID, name = "ForgeDebugModelAnimation", version = AnimatedModelTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = AnimatedModelTest.MODID, name = "ForgeDebugModelAnimation", version = AnimatedModelTest.VERSION, acceptableRemoteVersions = "*")
 public class AnimatedModelTest
 {
     public static final String MODID = "forgedebugmodelanimation";
@@ -107,7 +107,7 @@ public class AnimatedModelTest
     private static Logger logger;
 
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -283,7 +283,7 @@ public class AnimatedModelTest
 
     public static class ServerProxy extends CommonProxy {}
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientProxy extends CommonProxy
     {
 
