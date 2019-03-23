@@ -87,7 +87,13 @@ public class ClientModLoader
         GlStateManager.disableTexture2D();
         GlStateManager.enableTexture2D();
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
-        if (!ForgeConfig.CLIENT.showLoadWarnings.get()) {
+        boolean showWarnings = true;
+        try {
+            showWarnings = ForgeConfig.CLIENT.showLoadWarnings.get();
+        } catch (NullPointerException e) {
+            // We're in an early error state, config is not available. Assume true.
+        }
+        if (!showWarnings) {
             //User disabled warning screen, as least log them
             if (!warnings.isEmpty()) {
                 LOGGER.warn(LOADING, "Mods loaded with {} warning(s)", warnings.size());
