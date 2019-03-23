@@ -85,7 +85,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidTest.MODID, acceptableRemoteVersions = "*")
+//@Mod(modid = DynBucketTest.MODID, name = "DynBucketTest", version = "0.1", dependencies = "after:" + ModelFluidTest.MODID, acceptableRemoteVersions = "*")
 public class DynBucketTest
 {
     public static final String MODID = "dynbuckettest";
@@ -179,7 +179,7 @@ public class DynBucketTest
         }
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

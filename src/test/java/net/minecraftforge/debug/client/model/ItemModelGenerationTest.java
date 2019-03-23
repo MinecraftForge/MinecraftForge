@@ -30,8 +30,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod.EventBusSubscriber
-@Mod(modid = ItemModelGenerationTest.MOD_ID, name = "Item model generation test", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
+//@Mod(modid = ItemModelGenerationTest.MOD_ID, name = "Item model generation test", version = "1.0", acceptableRemoteVersions = "*")
 public class ItemModelGenerationTest
 {
     static final String MOD_ID = "item_model_generation_test";
@@ -78,7 +78,7 @@ public class ItemModelGenerationTest
         );
     }
 
-    @Mod.EventBusSubscriber(modid = MOD_ID, value = Side.CLIENT)
+    //@Mod.EventBusSubscriber(modid = MOD_ID, value = Side.CLIENT)
     public static class ClientEventHandler
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

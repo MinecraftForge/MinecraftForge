@@ -34,7 +34,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
 
-@Mod("entity_selector_test")
+//@Mod("entity_selector_test")
 public class EntitySelectorTest
 {
     public EntitySelectorTest()

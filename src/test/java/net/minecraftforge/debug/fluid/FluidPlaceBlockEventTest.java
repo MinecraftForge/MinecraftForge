@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  *  - Replace the result of a stone generator with either diamond, or emerald when in a biome where emerald spawns naturally.
  *  - Prevent lava from setting surrounding blocks on fire.
  */
-@Mod(modid = "fluidplaceblocktest", name = "FluidPlaceBlockTest", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "fluidplaceblocktest", name = "FluidPlaceBlockTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class FluidPlaceBlockEventTest
 {
     private static final boolean ENABLED = false;

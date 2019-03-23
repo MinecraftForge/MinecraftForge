@@ -43,7 +43,7 @@ import net.minecraftforge.fml.event.FMLServerStartingEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = DamageEventTest.MODID, name = "ForgeDebugLivingDamage", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = DamageEventTest.MODID, name = "ForgeDebugLivingDamage", version = "1.0", acceptableRemoteVersions = "*")
 public class DamageEventTest
 {
 
@@ -151,7 +151,7 @@ public class DamageEventTest
         evt.registerServerCommand(new CommandDamage());
     }
 
-    @EventBusSubscriber
+    //@EventBusSubscriber
     public static class TestEventHandler
     {
 

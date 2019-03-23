@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = ConfigAnnotationTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = ConfigAnnotationTest.MODID, name = "ConfigTest", version = "1.0", acceptableRemoteVersions = "*")
 public class ConfigAnnotationTest
 {
     public static final String MODID = "config_test";

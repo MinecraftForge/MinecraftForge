@@ -59,7 +59,7 @@ import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Arrays;
 
-@Mod(modid = "mapdatatest", name = "mapdatatest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "mapdatatest", name = "mapdatatest", version = "1.0", acceptableRemoteVersions = "*")
 public class MapDataTest
 {
     @GameRegistry.ObjectHolder("mapdatatest:custom_map")

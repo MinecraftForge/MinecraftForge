@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = BabyEntitySpawnEventTest.MODID, name = "BreedingTest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = BabyEntitySpawnEventTest.MODID, name = "BreedingTest", version = "1.0", acceptableRemoteVersions = "*")
 public class BabyEntitySpawnEventTest
 {
     public static final String MODID = "breedingtest";

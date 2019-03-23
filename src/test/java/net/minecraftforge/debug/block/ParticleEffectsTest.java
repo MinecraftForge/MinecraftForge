@@ -50,8 +50,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import static net.minecraftforge.debug.block.ParticleEffectsTest.MOD_ID;
 import static net.minecraftforge.debug.block.ParticleEffectsTest.MOD_NAME;
 
-@EventBusSubscriber
-@Mod (modid = MOD_ID, name = MOD_NAME, version = "1.0", acceptableRemoteVersions = "*")
+//@EventBusSubscriber
+//@Mod(modid = MOD_ID, name = MOD_NAME, version = "1.0", acceptableRemoteVersions = "*")
 public class ParticleEffectsTest
 {
 
@@ -117,7 +117,7 @@ public class ParticleEffectsTest
         event.getRegistry().register(item.setRegistryName(particleBlockLocation));
     }
 
-    @EventBusSubscriber (value = Side.CLIENT, modid = MOD_ID)
+    //@EventBusSubscriber (value = Side.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {
 

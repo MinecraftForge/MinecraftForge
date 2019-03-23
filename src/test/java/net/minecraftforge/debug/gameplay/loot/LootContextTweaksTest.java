@@ -49,8 +49,8 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-@EventBusSubscriber
-@Mod(modid = LootContextTweaksTest.MODID, name = "LootContextTweaksTest", version = "1.0", acceptableRemoteVersions = "*")
+//@EventBusSubscriber
+//@Mod(modid = LootContextTweaksTest.MODID, name = "LootContextTweaksTest", version = "1.0", acceptableRemoteVersions = "*")
 public class LootContextTweaksTest 
 {
     public static final String MODID = "loot_context_tweaks_test";

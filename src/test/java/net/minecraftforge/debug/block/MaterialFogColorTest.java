@@ -48,8 +48,8 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@EventBusSubscriber
-@Mod(modid = MaterialFogColorTest.MODID, name = "FogColor inside material debug.", version = "1.0", acceptableRemoteVersions = "*")
+//@EventBusSubscriber
+//@Mod(modid = MaterialFogColorTest.MODID, name = "FogColor inside material debug.", version = "1.0", acceptableRemoteVersions = "*")
 public class MaterialFogColorTest
 {
     static final boolean ENABLED = false; // <-- enable mod
@@ -122,7 +122,7 @@ public class MaterialFogColorTest
         }
     }
 
-    @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
         @SubscribeEvent

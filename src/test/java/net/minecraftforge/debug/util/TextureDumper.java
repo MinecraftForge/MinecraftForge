@@ -36,7 +36,7 @@ import java.io.IOException;
 import java.nio.IntBuffer;
 
 // TODO 1.13: implement without java.awt
-@Mod(modid = TextureDumper.MODID, name = "Forge Texture Atlas Dump", version = TextureDumper.VERSION, clientSideOnly = true)
+//@Mod(modid = TextureDumper.MODID, name = "Forge Texture Atlas Dump", version = TextureDumper.VERSION, clientSideOnly = true)
 public class TextureDumper
 {
     public static final String MODID = "forge_texture_dump";

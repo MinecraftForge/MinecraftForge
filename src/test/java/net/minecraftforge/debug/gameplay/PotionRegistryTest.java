@@ -36,8 +36,10 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
-@Mod.EventBusSubscriber
-@Mod(modid = PotionRegistryTest.MOD_ID, name = "ForgePotionRegistry", version = "1.0", acceptableRemoteVersions = "*")
+import java.util.Random;
+
+//@Mod.EventBusSubscriber
+//@Mod(modid = PotionRegistryTest.MODID, name = "ForgePotionRegistry", version = "1.0", acceptableRemoteVersions = "*")
 public class PotionRegistryTest
 {
     public static final String MOD_ID = "forge_potion_registry";

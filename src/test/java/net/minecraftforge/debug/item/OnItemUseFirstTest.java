@@ -35,8 +35,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import javax.annotation.Nonnull;
 
-@Mod(modid = OnItemUseFirstTest.MODID, name = "OnItemUseFirstTest", version = "0.0.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = OnItemUseFirstTest.MODID, name = "OnItemUseFirstTest", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class OnItemUseFirstTest
 {
     public static final boolean ENABLE = true;

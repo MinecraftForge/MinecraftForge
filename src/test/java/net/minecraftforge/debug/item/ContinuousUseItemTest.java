@@ -38,8 +38,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = ContinuousUseItemTest.MOD_ID, name = "Test for canContinueUsing", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = ContinuousUseItemTest.MOD_ID, name = "Test for canContinueUsing", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class ContinuousUseItemTest
 {
     static final String MOD_ID = "continuous_use_item_test";

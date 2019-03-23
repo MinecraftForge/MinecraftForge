@@ -43,7 +43,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.util.Collections;
 
-@Mod(modid = TileEntityLoadingTest.MODID, name = "TileEntity#onLoad() test mod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = TileEntityLoadingTest.MODID, name = "TileEntity#onLoad() test mod", version = "1.0", acceptableRemoteVersions = "*")
 public class TileEntityLoadingTest
 {
     public static final boolean ENABLED = false;
@@ -54,7 +54,7 @@ public class TileEntityLoadingTest
     @ObjectHolder(TestBlock.NAME)
     private static final Block TEST_BLOCK = null;
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -73,7 +73,7 @@ public class TileEntityLoadingTest
         }
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

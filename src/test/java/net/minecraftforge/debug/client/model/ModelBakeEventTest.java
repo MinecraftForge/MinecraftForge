@@ -68,7 +68,7 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod(modid = ModelBakeEventTest.MODID, name = "ForgeDebugModelBakeEvent", version = ModelBakeEventTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = ModelBakeEventTest.MODID, name = "ForgeDebugModelBakeEvent", version = ModelBakeEventTest.VERSION, acceptableRemoteVersions = "*")
 public class ModelBakeEventTest
 {
     public static final String MODID = "forgedebugmodelbakeevent";
@@ -95,7 +95,7 @@ public class ModelBakeEventTest
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @SubscribeEvent
@@ -112,7 +112,7 @@ public class ModelBakeEventTest
         }
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class BakeEventHandler
     {
         @SubscribeEvent

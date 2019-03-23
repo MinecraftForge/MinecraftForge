@@ -33,8 +33,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.server.FMLServerStartedEvent;
 
-@Mod(ConstantLoadingTest.MODID)
-@Mod.EventBusSubscriber
+//@Mod(ConstantLoadingTest.MODID)
+//@Mod.EventBusSubscriber
 public class ConstantLoadingTest
 {
     public static final String MODID = "constantloadingtest";

@@ -47,7 +47,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 
-@Mod(modid = FarmlandWaterTest.ID, name = "Farmland Water Test", version = "1.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = FarmlandWaterTest.ID, name = "Farmland Water Test", version = "1.0.0", acceptableRemoteVersions = "*")
 public class FarmlandWaterTest
 {
     //This adds a block that creates a 4x4x4 watered region when activated
