@@ -30,7 +30,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = "potioneventtest", name = "PotionEventTest", version = "1.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "potioneventtest", name = "PotionEventTest", version = "1.0.0", acceptableRemoteVersions = "*")
 public class PotionEventTest
 {
     public static final boolean ENABLE = false;

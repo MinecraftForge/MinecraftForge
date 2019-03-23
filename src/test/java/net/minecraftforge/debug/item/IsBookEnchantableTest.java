@@ -29,8 +29,8 @@ import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(modid = IsBookEnchantableTest.MOD_ID, name = "Test for isBookEnchantable", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = IsBookEnchantableTest.MOD_ID, name = "Test for isBookEnchantable", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class IsBookEnchantableTest
 {
     public static final boolean ENABLED = false;
@@ -47,7 +47,7 @@ public class IsBookEnchantableTest
         }
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

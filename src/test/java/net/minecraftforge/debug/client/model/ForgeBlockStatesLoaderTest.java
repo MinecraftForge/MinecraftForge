@@ -40,8 +40,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import java.util.Map;
 import java.util.Map.Entry;
 
-@Mod(modid = ForgeBlockStatesLoaderTest.MODID, name = "ForgeBlockStatesLoader", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = ForgeBlockStatesLoaderTest.MODID, name = "ForgeBlockStatesLoader", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class ForgeBlockStatesLoaderTest
 {
     public static final String MODID = "forgeblockstatesloader";
@@ -82,7 +82,7 @@ public class ForgeBlockStatesLoaderTest
 
     //public static final Block blockCustom = new CustomMappedBlock();
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

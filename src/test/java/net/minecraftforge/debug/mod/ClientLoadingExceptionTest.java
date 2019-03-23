@@ -32,7 +32,7 @@ import net.minecraftforge.fml.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(modid = "clientexceptiontest", version = "1.0", name = "Client Exception Test", clientSideOnly = true)
+//@Mod(modid = "clientexceptiontest", version = "1.0", name = "Client Exception Test", clientSideOnly = true)
 public class ClientLoadingExceptionTest
 {
 

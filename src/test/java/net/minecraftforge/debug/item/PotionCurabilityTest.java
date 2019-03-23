@@ -46,7 +46,7 @@ import java.util.List;
  * 3. Drink incurable_potion from Brewing creative tab
  * 4. Relog to test that changes to curative items persist, then try drinking milk and eating medicine: they should have no effect
  */
-@Mod(modid = PotionCurabilityTest.MODID, name = "Potion Curative Item Debug", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = PotionCurabilityTest.MODID, name = "Potion Curative Item Debug", version = "1.0", acceptableRemoteVersions = "*")
 public class PotionCurabilityTest
 {
     public static final boolean ENABLED = false;
@@ -56,7 +56,7 @@ public class PotionCurabilityTest
     public static final Item MEDICINE = null;
     private static Potion INCURABLE_POTION;
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @SubscribeEvent
@@ -88,7 +88,7 @@ public class PotionCurabilityTest
         }
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
         @SubscribeEvent

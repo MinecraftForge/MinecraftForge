@@ -24,8 +24,8 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = PlaceEventTest.MOD_ID, name = "BlockPlaceEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = PlaceEventTest.MOD_ID, name = "BlockPlaceEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class PlaceEventTest
 {
     static final String MOD_ID = "block_place_event_test";

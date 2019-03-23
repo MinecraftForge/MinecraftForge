@@ -34,8 +34,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = SwimSpeedAttributeTest.MODID, name = SwimSpeedAttributeTest.MODID, version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = SwimSpeedAttributeTest.MODID, name = SwimSpeedAttributeTest.MODID, version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class SwimSpeedAttributeTest
 {
     public static final String MODID = "swimspeedattributetest";
@@ -46,7 +46,7 @@ public class SwimSpeedAttributeTest
         evt.getRegistry().register(PLATE);
     }
 
-    @Mod.EventBusSubscriber(Side.CLIENT)
+    //@Mod.EventBusSubscriber(Side.CLIENT)
     public static class ClientEvents
     {
         @SubscribeEvent

@@ -42,8 +42,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = GetCollisionBoxesEventTest.MODID, name = "CollisionBoxesEventTest", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = GetCollisionBoxesEventTest.MODID, name = "CollisionBoxesEventTest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class GetCollisionBoxesEventTest
 {
     public static final String MODID = "collisionboxexeventtest";

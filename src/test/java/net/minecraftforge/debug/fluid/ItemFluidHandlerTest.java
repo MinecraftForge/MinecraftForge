@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-@Mod(modid = "fluidhandlertest", name = "FluidHandlerTest", version = "0.0.0", clientSideOnly = true)
+//@Mod(modid = "fluidhandlertest", name = "FluidHandlerTest", version = "0.0.0", clientSideOnly = true)
 public class ItemFluidHandlerTest
 {
     public static final boolean ENABLE = false;

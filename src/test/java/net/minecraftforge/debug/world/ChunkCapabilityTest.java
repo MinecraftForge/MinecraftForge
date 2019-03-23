@@ -47,7 +47,7 @@ import javax.annotation.Nullable;
  * Simple mod to test chunk capabilities.
  * Use flint and steel to increase pollution in a chunk and saplings to decrease pollution in a chunk.
  */
-@Mod(modid = ChunkCapabilityTest.MODID, name = "Chunk Capability Test", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = ChunkCapabilityTest.MODID, name = "Chunk Capability Test", version = "0.0.0", acceptableRemoteVersions = "*")
 public class ChunkCapabilityTest
 {
     public static final String MODID = "chunkcapabilitypollutiontest";

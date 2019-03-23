@@ -30,8 +30,8 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@EventBusSubscriber(Side.CLIENT)
-@Mod (modid = "guicontainereventtest", name = "GuiContainer Event Tests!", version = "1.0", acceptableRemoteVersions = "*")
+//@EventBusSubscriber(Side.CLIENT)
+//@Mod(modid = "guicontainereventtest", name = "GuiContainer Event Tests!", version = "1.0", acceptableRemoteVersions = "*")
 public class ContainerDrawForegroundEventTest
 {
     static final boolean ENABLED = false;

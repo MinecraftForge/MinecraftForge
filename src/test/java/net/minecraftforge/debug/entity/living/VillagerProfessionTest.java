@@ -26,8 +26,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerCareer;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
-@Mod(modid = "professiontest", name = "ProfessionTest2000", version = "1.0", acceptableRemoteVersions = "*")
-@EventBusSubscriber
+//@Mod(modid = "professiontest", name = "ProfessionTest2000", version = "1.0", acceptableRemoteVersions = "*")
+//@EventBusSubscriber
 public class VillagerProfessionTest
 {
     @SubscribeEvent

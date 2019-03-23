@@ -29,7 +29,7 @@ import net.minecraftforge.fml.javafmlmod.FMLModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod("enumplanttypetest")
+//@Mod("enumplanttypetest")
 public class EnumPlantTypeTest
 {
     private static final Logger LOGGER = LogManager.getLogger();

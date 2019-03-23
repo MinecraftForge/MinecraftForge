@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.event.FMLInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(modid = "playerdamagereworktest", name = "PlayerDamageReworkTest", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "playerdamagereworktest", name = "PlayerDamageReworkTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class DamageReworkTest
 {
     private static final boolean ENABLE = false;

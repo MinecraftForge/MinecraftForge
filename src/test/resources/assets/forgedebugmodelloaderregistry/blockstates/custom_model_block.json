@@ -11,10 +11,6 @@
         }
      },
     "variants": {
-        "normal": [{}],
-        "inventory": [{
-            "transform": "forge:default-block"
-        }],
         "facing": {
             "down": {"x": 90},
             "up": {"x": 270},

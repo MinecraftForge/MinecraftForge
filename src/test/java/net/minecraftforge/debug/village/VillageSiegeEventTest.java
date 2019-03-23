@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  * Tests {@link VillageSiegeEvent}. When enabled, players holding a diamond sword in the mainhand
  * slot are not counted in determining where the zombie siege occurs.
  */
-@Mod(modid = VillageSiegeEventTest.MODID, name = VillageSiegeEventTest.NAME, version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = VillageSiegeEventTest.MODID, name = VillageSiegeEventTest.NAME, version = "0.0.0", acceptableRemoteVersions = "*")
 public class VillageSiegeEventTest
 {
     public static final String MODID = "villagesiegeeventtest";

@@ -35,7 +35,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
  * This mod makes it so when you right click the air with a piece of dirt in your hand, you get another piece of dirt.
  * It's not a dupe glitch...it's a dupe "feature"...
  */
-@Mod(modid = "giveitemtoplayertest", name = "ItemHandlerHelper.giveItemToPlayer Test", version = "1.0")
+//@Mod(modid = "giveitemtoplayertest", name = "ItemHandlerHelper.giveItemToPlayer Test", version = "1.0")
 public class GiveItemToPlayerTest {
     private static final boolean ENABLED = false;
 
