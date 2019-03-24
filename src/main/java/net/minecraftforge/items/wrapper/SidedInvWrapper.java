@@ -235,6 +235,6 @@ public class SidedInvWrapper implements IItemHandlerModifiable
     public boolean isItemValid(int slot, @Nonnull ItemStack stack)
     {
         int slot1 = getSlot(inv, slot, side);
-        return slot1 == -1 ? false : inv.isItemValidForSlot(slot, stack);
+        return slot1 == -1 ? false : inv.isItemValidForSlot(slot1, stack);
     }
 }
