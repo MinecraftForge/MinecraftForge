@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.client.gui;
 
-import java.awt.Desktop;
 import java.io.File;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
