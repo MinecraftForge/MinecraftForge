@@ -31,7 +31,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraftforge.api.distmarker.Dist;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -40,6 +39,7 @@ import static net.minecraftforge.eventbus.api.Event.Result.DEFAULT;
 import static net.minecraftforge.eventbus.api.Event.Result.DENY;
 
 import net.minecraftforge.eventbus.api.Event.Result;
+import net.minecraftforge.fml.LogicalSide;
 
 /**
  * PlayerInteractEvent is fired when a player interacts in some way.
@@ -371,11 +371,11 @@ public class PlayerInteractEvent extends PlayerEvent
     }
 
     /**
-     * @return The effective, i.e. logical, side of this interaction. This will be {@link Dist#CLIENT} on the client thread, and {@link Dist#DEDICATED_SERVER} on the server thread.
+     * @return The effective, i.e. logical, side of this interaction. This will be {@link LogicalSide#CLIENT} on the client thread, and {@link LogicalSide#SERVER} on the server thread.
      */
-    public Dist getSide()
+    public LogicalSide getSide()
     {
-        return getWorld().isRemote ? Dist.CLIENT : Dist.DEDICATED_SERVER;
+        return getWorld().isRemote ? LogicalSide.CLIENT : LogicalSide.SERVER;
     }
 
     /**
