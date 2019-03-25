@@ -74,18 +74,12 @@ public class ClientHooks
     {
         if(packet.getForgeData() != null){
             int numberOfMods = packet.getForgeData().getNumberOfMods();
-            MapDifference<ResourceLocation, Integer> difference = Maps.difference(packet.getForgeData().getRegistryHashes(), RegistryManager.ACTIVE.computeRegistryHashes());
             int fmlver = packet.getForgeData().getFMLNetworkVersion();
 
             boolean b = NetworkRegistry.checkListPingCompatibilityForClient(packet.getForgeData().getPresentMods())
-                    && difference.areEqual()
                     && fmlver == FMLNetworkConstants.FMLNETVERSION;
 
             LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, {} mods, channels: [{}] - compatible: {}", target.serverIP, fmlver, numberOfMods, packet.getForgeData().getPresentMods().entrySet(), b);
-            difference.entriesDiffering().forEach((k,vd)-> LOGGER.debug(CLIENTHOOKS, "Registry {}: Local: {}, Remote: {}", k, vd.rightValue(), vd.leftValue()));
-            difference.entriesOnlyOnLeft().forEach((k,vd)-> LOGGER.debug(CLIENTHOOKS, "Registry {} is only on server with hash {}", k, vd));
-            difference.entriesOnlyOnRight().forEach((k,vd)-> LOGGER.debug(CLIENTHOOKS, "Registry {} is missing on server with hash {}", k, vd));
-            difference.entriesInCommon().forEach((k,vd)-> LOGGER.debug(CLIENTHOOKS, "Registry {} is equal, hash={}", k, vd));
 
             String extraReason = null;
             if(fmlver<FMLNetworkConstants.FMLNETVERSION)
