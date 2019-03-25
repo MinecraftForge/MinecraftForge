@@ -38,6 +38,7 @@ public class ModFileInfo implements IModFileInfo
     private final URL issueURL;
     private final String modLoader;
     private final VersionRange modLoaderVersion;
+    private final boolean showAsResourcePack;
     private final List<IModInfo> mods;
     private final Map<String,Object> properties;
 
@@ -50,6 +51,7 @@ public class ModFileInfo implements IModFileInfo
         this.modLoaderVersion = config.<String>getOptional("loaderVersion").
                 map(MavenVersionAdapter::createFromVersionSpec).
                 orElseThrow(()->new InvalidModFileException("Missing ModLoader version in file", this));
+        this.showAsResourcePack = config.<Boolean>getOrElse("showAsResourcePack", false);
         this.properties = config.<UnmodifiableConfig>getOptional("properties").
                 map(UnmodifiableConfig::valueMap).orElse(Collections.emptyMap());
         this.modFile.setFileProperties(this.properties);
@@ -101,6 +103,6 @@ public class ModFileInfo implements IModFileInfo
 
     @Override
     public boolean showAsResourcePack() {
-        return false; // noop right now
+        return this.showAsResourcePack;
     }
 }
