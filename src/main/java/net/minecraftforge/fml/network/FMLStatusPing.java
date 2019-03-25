@@ -35,19 +35,16 @@ public class FMLStatusPing {
     private Map<ResourceLocation, Pair<String, Boolean>> channelVersions;
     private int numberOfMods;
     private int fmlNetworkVer;
-    private Map<ResourceLocation, Integer> registrySnapshots;
 
     public FMLStatusPing(){
         this.channelVersions = NetworkRegistry.buildChannelVersionsForListPing();
         this.numberOfMods = ModList.get().size();
-        this.registrySnapshots = RegistryManager.ACTIVE.computeRegistryHashes();
         this.fmlNetworkVer = FMLNetworkConstants.FMLNETVERSION;
     }
 
-    private FMLStatusPing(Map<ResourceLocation, Pair<String, Boolean>> deserialized, Map<ResourceLocation, Integer> registryHashes, int nom, int fmlNetVer){
+    private FMLStatusPing(Map<ResourceLocation, Pair<String, Boolean>> deserialized, int nom, int fmlNetVer){
         this.channelVersions = ImmutableMap.copyOf(deserialized);
         this.numberOfMods = nom;
-        this.registrySnapshots = registryHashes;
         this.fmlNetworkVer = fmlNetVer;
     }
 
@@ -64,14 +61,7 @@ public class FMLStatusPing {
                     Boolean canBeAbsent = JsonUtils.getBoolean(jo, "mayBeAbsent");
                     versions.put(name, Pair.of(version, canBeAbsent));
                 }
-                JsonArray reghashes = JsonUtils.getJsonArray(forgeData, "registryKeys");
-                Map<ResourceLocation, Integer> registyData = Maps.newHashMap();
-                for(JsonElement el : reghashes){
-                    JsonObject jo = el.getAsJsonObject();
-                    ResourceLocation name = new ResourceLocation(JsonUtils.getString(jo, "namespace"), JsonUtils.getString(jo, "path"));
-                    registyData.put(name, JsonUtils.getInt(jo, "hash"));
-                }
-                return new FMLStatusPing(versions, registyData, JsonUtils.getInt(forgeData, "numberOfMods"), JsonUtils.getInt(forgeData, "fmlNetworkVersion"));
+                return new FMLStatusPing(versions, JsonUtils.getInt(forgeData, "numberOfMods"), JsonUtils.getInt(forgeData, "fmlNetworkVersion"));
             }catch (Exception c){
                 return null;
             }
@@ -89,15 +79,6 @@ public class FMLStatusPing {
                 return mi;
             }).forEach(mods::add);
             obj.add("mods", mods);
-            JsonArray regdata = new JsonArray();
-            forgeData.registrySnapshots.entrySet().stream().map(p -> {
-                JsonObject mi = new JsonObject();
-                mi.addProperty("namespace", p.getKey().getNamespace());
-                mi.addProperty("path", p.getKey().getPath());
-                mi.addProperty("hash", p.getValue());
-                return mi;
-            }).forEach(regdata::add);
-            obj.add("registryKeys", regdata);
             obj.addProperty("numberOfMods", forgeData.numberOfMods);
             obj.addProperty("fmlNetworkVersion", forgeData.fmlNetworkVer);
             return obj;
@@ -110,10 +91,6 @@ public class FMLStatusPing {
 
     public int getNumberOfMods(){
         return numberOfMods;
-    }
-
-    public Map<ResourceLocation, Integer> getRegistryHashes(){
-        return registrySnapshots;
     }
 
     public int getFMLNetworkVersion(){
