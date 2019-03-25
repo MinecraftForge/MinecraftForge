@@ -19,8 +19,6 @@
 
 package net.minecraftforge.debug.fluid;
 
-import java.awt.Color;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.ResourceLocation;
@@ -41,7 +39,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 public class ColoredFluidTest
 {
     static final boolean ENABLED = false;      // <-- enable mod
-    static final Color COLOR = Color.PINK; // <-- change this to try other colors
+    static final int COLOR = 0xFFAFAF; // <-- change this to try other colors
     
     static final String MODID = "fluidadditionalfields";
     static final ResourceLocation RES_LOC = new ResourceLocation(MODID, "slime");

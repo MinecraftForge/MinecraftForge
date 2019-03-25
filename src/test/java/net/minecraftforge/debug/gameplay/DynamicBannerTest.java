@@ -19,7 +19,6 @@
 
 package net.minecraftforge.debug.gameplay;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -44,6 +43,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO 1.13: implement without java.awt
 @Mod(modid = DynamicBannerTest.MODID, name = "ForgeDebugDynamicBanner", version = DynamicBannerTest.VERSION, acceptableRemoteVersions = "*")
 public class DynamicBannerTest
 {
