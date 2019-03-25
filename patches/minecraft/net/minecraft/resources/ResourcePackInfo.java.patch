@@ -1,0 +1,52 @@
+--- a/net/minecraft/resources/ResourcePackInfo.java
++++ b/net/minecraft/resources/ResourcePackInfo.java
+@@ -29,6 +29,7 @@
+    private final ResourcePackInfo.Priority field_195805_g;
+    private final boolean field_195806_h;
+    private final boolean field_195807_i;
++   private final boolean hidden; // Forge: Allow packs to be hidden from the UI entirely
+ 
+    @Nullable
+    public static <T extends ResourcePackInfo> T func_195793_a(String p_195793_0_, boolean p_195793_1_, Supplier<IResourcePack> p_195793_2_, ResourcePackInfo.IFactory<T> p_195793_3_, ResourcePackInfo.Priority p_195793_4_) {
+@@ -52,7 +53,12 @@
+       return (T)null;
+    }
+ 
++   @Deprecated
+    public ResourcePackInfo(String p_i47907_1_, boolean p_i47907_2_, Supplier<IResourcePack> p_i47907_3_, ITextComponent p_i47907_4_, ITextComponent p_i47907_5_, PackCompatibility p_i47907_6_, ResourcePackInfo.Priority p_i47907_7_, boolean p_i47907_8_) {
++      this(p_i47907_1_, p_i47907_2_, p_i47907_3_, p_i47907_4_, p_i47907_5_, p_i47907_6_, p_i47907_7_, p_i47907_8_, false);
++   }
++
++   public ResourcePackInfo(String p_i47907_1_, boolean p_i47907_2_, Supplier<IResourcePack> p_i47907_3_, ITextComponent p_i47907_4_, ITextComponent p_i47907_5_, PackCompatibility p_i47907_6_, ResourcePackInfo.Priority p_i47907_7_, boolean p_i47907_8_, boolean hidden) {
+       this.field_195800_b = p_i47907_1_;
+       this.field_195801_c = p_i47907_3_;
+       this.field_195802_d = p_i47907_4_;
+@@ -61,12 +67,18 @@
+       this.field_195806_h = p_i47907_2_;
+       this.field_195805_g = p_i47907_7_;
+       this.field_195807_i = p_i47907_8_;
++      this.hidden = hidden;
+    }
+ 
++   @Deprecated
+    public ResourcePackInfo(String p_i47908_1_, boolean p_i47908_2_, Supplier<IResourcePack> p_i47908_3_, IResourcePack p_i47908_4_, PackMetadataSection p_i47908_5_, ResourcePackInfo.Priority p_i47908_6_) {
+-      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, new TextComponentString(p_i47908_4_.func_195762_a()), p_i47908_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i47908_5_.func_198962_b()), p_i47908_6_, false);
++      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, p_i47908_4_, p_i47908_5_, p_i47908_6_, false);
+    }
+ 
++   public ResourcePackInfo(String p_i47908_1_, boolean p_i47908_2_, Supplier<IResourcePack> p_i47908_3_, IResourcePack p_i47908_4_, PackMetadataSection p_i47908_5_, ResourcePackInfo.Priority p_i47908_6_, boolean hidden) {
++      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, new TextComponentString(p_i47908_4_.func_195762_a()), p_i47908_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i47908_5_.func_198962_b()), p_i47908_6_, hidden, hidden);
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public ITextComponent func_195789_b() {
+       return this.field_195802_d;
+@@ -106,6 +118,8 @@
+    public ResourcePackInfo.Priority func_195792_i() {
+       return this.field_195805_g;
+    }
++   
++   public boolean isHidden() { return hidden; }
+ 
+    public boolean equals(Object p_equals_1_) {
+       if (this == p_equals_1_) {

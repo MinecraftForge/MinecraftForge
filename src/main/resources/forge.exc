@@ -16,6 +16,9 @@ net/minecraft/client/renderer/model/ModelBlock.makeBakedQuad(Lnet/minecraft/clie
 net/minecraft/client/renderer/model/VariantList.bake(Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraftforge/common/model/IModelState;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_209558_1_,p_209558_2_,p_209558_3_,p_209558_4_,format
 net/minecraft/client/renderer/model/multipart/Multipart.bake(Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraftforge/common/model/IModelState;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_209558_1_,p_209558_2_,p_209558_3_,p_209558_4_,format
 
+net/minecraft/client/resources/ResourcePackInfoClient.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/resources/IResourcePack;Lnet/minecraft/resources/data/PackMetadataSection;Lnet/minecraft/resources/ResourcePackInfo$Priority;Z)V=|p_i48113_1_,p_i48113_2_,p_i48113_3_,p_i48113_4_,p_i48113_5_,p_i48113_6_,hidden
+net/minecraft/client/resources/ResourcePackInfoClient.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZLnet/minecraft/client/renderer/texture/NativeImage;Z)V=|p_i48114_1_,p_i48114_2_,p_i48114_3_,p_i48114_4_,p_i48114_5_,p_i48114_6_,p_i48114_7_,p_i48114_8_,p_i48114_9_,hidden
+
 net/minecraft/entity/Entity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
 net/minecraft/entity/EnumCreatureType.create(Ljava/lang/String;Ljava/lang/Class;IZZ)Lnet/minecraft/entity/EnumCreatureType;=|name,p_i47849_3_,p_i47849_4_,p_i47849_5_,p_i47849_6_
 net/minecraft/entity/item/EntityEnderPearl.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
@@ -28,6 +31,9 @@ net/minecraft/item/ArmorMaterial.create(Ljava/lang/String;Ljava/lang/String;I[II
 net/minecraft/item/ItemStack.<init>(Lnet/minecraft/util/IItemProvider;ILnet/minecraft/nbt/NBTTagCompound;)V=|p_i48204_1_,p_i48204_2_,capNBT
 
 net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;=|p_150788_1_,limitedTag
+
+net/minecraft/resources/ResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZZ)V=|p_i47907_1_,p_i47907_2_,p_i47907_3_,p_i47907_4_,p_i47907_5_,p_i47907_6_,p_i47907_7_,p_i47907_8_,hidden
+net/minecraft/resources/ResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/resources/IResourcePack;Lnet/minecraft/resources/data/PackMetadataSection;Lnet/minecraft/resources/ResourcePackInfo$Priority;Z)V=|p_i47908_1_,p_i47908_2_,p_i47908_3_,p_i47908_4_,p_i47908_5_,p_i47908_6_,hidden
 
 net/minecraft/server/management/PlayerList.changePlayerDimension(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_187242_1_,p_187242_2_,teleporter
 net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
