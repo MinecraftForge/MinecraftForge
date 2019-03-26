@@ -498,7 +498,7 @@
        if (this.func_70608_bn()) {
           f = 0.2F;
        } else if (!this.func_203007_ba() && !this.func_184613_cA() && this.field_70131_O != 0.6F) {
-@@ -1973,6 +2100,30 @@
+@@ -1973,6 +2100,54 @@
        return this.field_71075_bZ.field_75098_d && this.func_184840_I() >= 2;
     }
  
@@ -524,6 +524,30 @@
 +
 +   public Collection<ITextComponent> getSuffixes() {
 +       return this.suffixes;
++   }
++   
++   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
++         playerMainHandler = net.minecraftforge.common.util.LazyOptional.of(
++               () -> new net.minecraftforge.items.wrapper.PlayerMainInvWrapper(field_71071_by));
++   
++   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
++         playerEquipmentHandler = net.minecraftforge.common.util.LazyOptional.of(
++               () -> new net.minecraftforge.items.wrapper.CombinedInvWrapper(
++                     new net.minecraftforge.items.wrapper.PlayerArmorInvWrapper(field_71071_by),
++                     new net.minecraftforge.items.wrapper.PlayerOffhandInvWrapper(field_71071_by)));
++   
++   private final net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler>
++         playerJoinedHandler = net.minecraftforge.common.util.LazyOptional.of(
++               () -> new net.minecraftforge.items.wrapper.PlayerInvWrapper(field_71071_by));
++   
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable EnumFacing facing) {
++      if (this.func_70089_S() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
++         if (facing == null) return playerJoinedHandler.cast();
++         else if (facing.func_176740_k().func_200128_b()) return playerMainHandler.cast();
++         else if (facing.func_176740_k().func_176722_c()) return playerEquipmentHandler.cast();
++      }
++      return super.getCapability(capability, facing);
 +   }
 +
     public static enum EnumChatVisibility {
