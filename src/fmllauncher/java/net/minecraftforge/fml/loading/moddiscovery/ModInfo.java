@@ -51,9 +51,11 @@ public class ModInfo implements IModInfo
     private final String displayName;
     private final String description;
     private final URL updateJSONURL;
+    private final boolean configUI;
     private final List<IModInfo.ModVersion> dependencies;
     private final Map<String,Object> properties;
     private final UnmodifiableConfig modConfig;
+
 
     public ModInfo(final ModFileInfo owningFile, final UnmodifiableConfig modConfig)
     {
@@ -75,6 +77,7 @@ public class ModInfo implements IModInfo
         this.displayName = modConfig.<String>getOptional("displayName").orElse(null);
         this.description = modConfig.get("description");
         this.updateJSONURL = modConfig.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
+        this.configUI = modConfig.<Boolean>getOptional("configUI").orElse(false);
         if (owningFile != null) {
             this.dependencies = owningFile.getConfig().<List<UnmodifiableConfig>>getOptional(Arrays.asList("dependencies", this.modId)).
                     orElse(Collections.emptyList()).stream().map(dep -> new ModVersion(this, dep)).collect(Collectors.toList());
@@ -145,6 +148,6 @@ public class ModInfo implements IModInfo
 
     public boolean hasConfigUI()
     {
-        return false;
+        return configUI;
     }
 }
