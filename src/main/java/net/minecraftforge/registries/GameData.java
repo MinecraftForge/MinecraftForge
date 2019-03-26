@@ -48,6 +48,7 @@ import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
 import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
+import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
@@ -224,7 +225,7 @@ public class GameData
         });
 
         // the id mapping is finalized, no ids actually changed but this is a good place to tell everyone to 'bake' their stuff.
-        //Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
+        fireRemapEvent(ImmutableMap.of(), true);
 
         LOGGER.debug(REGISTRIES, "All registries frozen");
     }
@@ -247,7 +248,7 @@ public class GameData
         }
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.bake());
         // the id mapping has reverted, fire remap events for those that care about id changes
-        //Loader.instance().fireRemapEvent(ImmutableMap.of(), true);
+        fireRemapEvent(ImmutableMap.of(), true);
 
         ObjectHolderRegistry.applyObjectHolders();
         // the id mapping has reverted, ensure we sync up the object holders
@@ -737,13 +738,17 @@ public class GameData
         });
 
         // Tell mods that the ids have changed
-        //Loader.instance().fireRemapEvent(remaps, false);
+        fireRemapEvent(remaps, false);
 
         // The id map changed, ensure we apply object holders
         ObjectHolderRegistry.applyObjectHolders();
 
         // Return an empty list, because we're good
         return ArrayListMultimap.create();
+    }
+
+    private static void fireRemapEvent(final Map<ResourceLocation, Map<ResourceLocation, Integer[]>> remaps, final boolean isFreezing) {
+        MinecraftForge.EVENT_BUS.post(new FMLModIdMappingEvent(remaps, isFreezing));
     }
 
     //Has to be split because of generics, Yay!
