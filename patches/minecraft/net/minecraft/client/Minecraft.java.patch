@@ -237,11 +237,9 @@
           this.func_195542_b(false);
  
           try {
-@@ -1396,8 +1431,14 @@
-       NetworkManager networkmanager = NetworkManager.func_150722_a(socketaddress);
+@@ -1397,7 +1432,12 @@
        networkmanager.func_150719_a(new NetHandlerLoginClient(networkmanager, this, (GuiScreen)null, (p_209507_0_) -> {
        }));
-+      net.minecraftforge.fml.network.NetworkHooks.registerClientLoginChannel(networkmanager);
        networkmanager.func_179290_a(new CPacketHandshake(socketaddress.toString(), 0, EnumConnectionState.LOGIN));
 -      networkmanager.func_179290_a(new CPacketLoginStart(this.func_110432_I().func_148256_e()));
 +      com.mojang.authlib.GameProfile gameProfile = this.func_110432_I().func_148256_e();
@@ -253,7 +251,7 @@
        this.field_71453_ak = networkmanager;
     }
  
-@@ -1411,6 +1452,7 @@
+@@ -1411,6 +1451,7 @@
     }
  
     public void func_205055_a(@Nullable WorldClient p_205055_1_, GuiScreen p_205055_2_) {
@@ -261,7 +259,7 @@
        if (p_205055_1_ == null) {
           NetHandlerPlayClient nethandlerplayclient = this.func_147114_u();
           if (nethandlerplayclient != null) {
-@@ -1447,6 +1489,7 @@
+@@ -1447,6 +1488,7 @@
        }
  
        TileEntityRendererDispatcher.field_147556_a.func_147543_a(p_205055_1_);
@@ -269,7 +267,7 @@
        if (p_205055_1_ != null) {
           if (!this.field_71455_al) {
              AuthenticationService authenticationservice = new YggdrasilAuthenticationService(this.field_110453_aa, UUID.randomUUID().toString());
-@@ -1493,6 +1536,7 @@
+@@ -1493,6 +1535,7 @@
        EntityPlayerSP entityplayersp = this.field_71439_g;
        this.field_71439_g = this.field_71442_b.func_199681_a(this.field_71441_e, this.field_71439_g == null ? new StatisticsManager() : this.field_71439_g.func_146107_m(), this.field_71439_g == null ? new RecipeBookClient(new RecipeManager()) : this.field_71439_g.func_199507_B());
        this.field_71439_g.func_184212_Q().func_187218_a(entityplayersp.func_184212_Q().func_187231_c());
@@ -277,7 +275,7 @@
        this.field_71439_g.field_71093_bK = p_212315_1_;
        this.field_175622_Z = this.field_71439_g;
        this.field_71439_g.func_70065_x();
-@@ -1532,110 +1576,8 @@
+@@ -1532,110 +1575,8 @@
  
     private void func_147112_ai() {
        if (this.field_71476_x != null && this.field_71476_x.field_72313_a != RayTraceResult.Type.MISS) {
@@ -390,7 +388,7 @@
        }
     }
  
-@@ -1712,6 +1654,7 @@
+@@ -1712,6 +1653,7 @@
        return field_71432_P;
     }
  
@@ -398,7 +396,7 @@
     public ListenableFuture<Object> func_175603_A() {
        return this.func_152344_a(this::func_110436_a);
     }
-@@ -1871,6 +1814,8 @@
+@@ -1871,6 +1813,8 @@
     }
  
     public MusicTicker.MusicType func_147109_W() {
@@ -407,7 +405,7 @@
        if (this.field_71462_r instanceof GuiWinGame) {
           return MusicTicker.MusicType.CREDITS;
        } else if (this.field_71439_g == null) {
-@@ -2010,4 +1955,12 @@
+@@ -2010,4 +1954,12 @@
     public FontResourceManager func_211500_ak() {
        return this.field_211501_aD;
     }

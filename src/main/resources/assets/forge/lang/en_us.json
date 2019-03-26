@@ -22,7 +22,7 @@
   "fml.loadingerrorscreen.errorheader": "Error loading mods\n{0,choice,1#1 error has|1<{0} errors have} occurred during loading",
   "fml.loadingerrorscreen.warningheader": "{0,choice,1#Warning|1<Warnings} while loading mods\n{0,choice,1#1 warning has|1<{0} warnings have} occurred during loading",
   "fml.language.missingversion": "Mod File {5} needs language provider {3}:{4,vr} to load\n\u00a77We have found {6,i18n,fml.messages.artifactversion}",
-  "fml.modloading.missingmetadata": "mods.toml missing metadata for modid {0}",
+  "fml.modloading.missingmetadata": "mods.toml missing metadata for modid {3}",
   "fml.modloading.failedtoloadmodclass":"{0,modinfo,name} has class loading errors\n\u00a77{2,exc,msg}",
   "fml.modloading.failedtoloadmod":"{0,modinfo,name} ({0,modinfo,id}) has failed to load correctly\n\u00a77{2,exc,msg}",
   "fml.modloading.errorduringevent":"{0,modinfo,name} ({0,modinfo,id}) encountered an error during the {1,lower} event phase\n\u00a77{2,exc,msg}",
