@@ -914,7 +914,7 @@
          else
          {
 -            return iblockstate1.func_185904_a().func_76222_j() && p_190527_1_.func_176198_a(this, p_190527_2_, p_190527_4_);
-+            return iblockstate1.func_177230_c().func_176200_f(this, p_190527_2_);
++            return iblockstate1.func_177230_c().func_176200_f(this, p_190527_2_) && p_190527_1_.func_176198_a(this, p_190527_2_, p_190527_4_);
          }
      }
  
