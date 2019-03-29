@@ -571,7 +571,6 @@ public interface IForgeBlockState
         return getBlockState().getBlock().rotate(getBlockState(), world, pos, direction);
     }
 
-
    /**
     * Determines the amount of enchanting power this block can provide to an enchanting table.
     * @param world The World

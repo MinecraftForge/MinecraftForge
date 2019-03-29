@@ -9,19 +9,21 @@
     ThreadLocal<Object2ByteMap<IBlockState>> field_208776_a = ThreadLocal.withInitial(() -> {
        Object2ByteOpenHashMap<IBlockState> object2byteopenhashmap = new Object2ByteOpenHashMap<>();
        object2byteopenhashmap.defaultReturnValue((byte)127);
-@@ -97,6 +97,7 @@
+@@ -97,6 +97,8 @@
        return this.func_177230_c().func_149750_m(this);
     }
  
-+   @Deprecated //Forge: Use position sensitive version
++   /** @deprecated use {@link IBlockState#isAir(IBlockReader, BlockPos) */
++   @Deprecated
     default boolean func_196958_f() {
        return this.func_177230_c().func_196261_e(this);
     }
-@@ -109,6 +110,7 @@
+@@ -109,6 +111,8 @@
        return this.func_177230_c().func_180659_g(this, p_185909_1_, p_185909_2_);
     }
  
-+   @Deprecated //Forge: Use position sensitive version
++   /** @deprecated use {@link IBlockState#rotate(IWorld, BlockPos, Rotation) */
++   @Deprecated
     default IBlockState func_185907_a(Rotation p_185907_1_) {
        return this.func_177230_c().func_185499_a(this, p_185907_1_);
     }

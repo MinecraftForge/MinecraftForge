@@ -39,13 +39,6 @@ public final class ItemTextureQuadConverter
         // non-instantiable
     }
 
-    /** @deprecated use {@link #convertTexture(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)}*/
-    @Deprecated // TODO: remove
-    public static List<UnpackedBakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
-    {
-        return convertTexture(format, transform, template, sprite, z, facing, color, -1);
-    }
-
     /**
      * Takes a texture and converts it into BakedQuads.
      * The conversion is done by scanning the texture horizontally and vertically and creating "strips" of the texture.
@@ -65,13 +58,6 @@ public final class ItemTextureQuadConverter
         List<UnpackedBakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z, facing, color, tint);
 
         return horizontal.size() >= vertical.size() ? horizontal : vertical;
-    }
-
-    /** @deprecated use {@link #convertTextureHorizontal(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)} */
-    @Deprecated // TODO: remove
-    public static List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
-    {
-        return convertTextureHorizontal(format, transform, template, sprite, z, facing, color, -1);
     }
 
     /**
@@ -143,13 +129,6 @@ public final class ItemTextureQuadConverter
         }
 
         return quads;
-    }
-
-    /** @deprecated use {@link #convertTextureVertical(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)} */
-    @Deprecated // TODO: remove
-    public static List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color)
-    {
-        return convertTextureVertical(format, transform, template, sprite, z, facing, color, -1);
     }
 
     /**
@@ -226,13 +205,6 @@ public final class ItemTextureQuadConverter
     private static boolean isVisible(int color)
     {
         return (color >> 24 & 255) / 255f > 0.1f;
-    }
-
-    /** @deprecated use {@link #genQuad(VertexFormat, TRSRTransformation, float, float, float, float, float, TextureAtlasSprite, EnumFacing, int, int)} */
-    @Deprecated // TODO: remove
-    public static UnpackedBakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color)
-    {
-        return genQuad(format, transform, x1, y1, x2, y2, z, sprite, facing, color, -1);
     }
 
     /**
