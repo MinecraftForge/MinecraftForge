@@ -194,9 +194,6 @@ public class BlockEvent extends Event
         }
 
         public EntityPlayer getPlayer() { return player; }
-        @Nonnull
-        @Deprecated
-        public ItemStack getItemInHand() { return player.getHeldItem(hand); }
         public BlockSnapshot getBlockSnapshot() { return blockSnapshot; }
         public IBlockState getPlacedBlock() { return placedBlock; }
         public IBlockState getPlacedAgainst() { return placedAgainst; }
