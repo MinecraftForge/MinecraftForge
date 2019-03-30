@@ -126,7 +126,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
     public static boolean logCascadingWorldGeneration = true; // see Chunk#logCascadingWorldGeneration()
     public static boolean fixVanillaCascading = false; // There are various places in vanilla that cause cascading worldgen. Enabling this WILL change where blocks are placed to prevent this.
                                                        // DO NOT contact Forge about worldgen not 'matching' vanilla if this flag is set.
-    public static boolean flushNetworkOnTick = false; //because vanilla spamms TCP packets
+    public static boolean flushNetworkOnTick = false; //because vanilla spmms TCP packets
 
     static final Logger log = LogManager.getLogger(ForgeVersion.MOD_ID);
 
@@ -313,7 +313,7 @@ public class ForgeModContainer extends DummyModContainer implements WorldAccessC
         propOrder.add(prop.getName());
         
         prop = config.get(Configuration.CATEGORY_GENERAL, "flushNetworkOnTick", true,
-        		"When enabled, packets are send once per tick, which greatly reduces network traffic but might increase latency (<50ms). When disabled packets are send immediatly.");
+        		"When enabled, packets are send once per tick, which greatly reduces network traffic but might increase latency (<50ms). When disabled packets are sent immediately.");
         flushNetworkOnTick = prop.getBoolean();
         prop.setLanguageKey("forge.configgui.flushNetworkOnTick");
         propOrder.add(prop.getName());
