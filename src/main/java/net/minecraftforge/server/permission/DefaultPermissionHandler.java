@@ -21,6 +21,7 @@ package net.minecraftforge.server.permission;
 
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.fml.server.ServerModLoader;
 import net.minecraftforge.server.permission.context.IContext;
 
 import javax.annotation.Nullable;
@@ -30,7 +31,7 @@ import java.util.HashMap;
 
 /**
  * Default implementation of PermissionAPI.
- * {@link #hasPermission(GameProfile, String, IContext)} is based on DefaultPermissionLevel
+ * {@link #hasPermission(MinecraftServer, GameProfile, String, IContext)} is based on DefaultPermissionLevel
  *
  * @see IPermissionHandler
  */
@@ -58,7 +59,7 @@ public enum DefaultPermissionHandler implements IPermissionHandler
     }
 
     @Override
-    public boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
+    public boolean hasPermission(@Nullable MinecraftServer server, GameProfile profile, String node, @Nullable IContext context)
     {
         DefaultPermissionLevel level = getDefaultPermissionLevel(node);
 
@@ -71,7 +72,6 @@ public enum DefaultPermissionHandler implements IPermissionHandler
             return true;
         }
 
-        MinecraftServer server = null; // TODO FMLCommonHandler FMLCommonHandler.instance().getMinecraftServerInstance();
         return server != null && server.getPlayerList().canSendCommands(profile);
     }
 

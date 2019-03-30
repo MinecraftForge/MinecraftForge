@@ -22,6 +22,7 @@ package net.minecraftforge.server.permission;
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.server.permission.context.IContext;
 import net.minecraftforge.server.permission.context.PlayerContext;
 
@@ -77,22 +78,22 @@ public class PermissionAPI
      * @return true, if player has permission, false if he does not.
      * @see DefaultPermissionHandler
      */
-    public static boolean hasPermission(GameProfile profile, String node, @Nullable IContext context)
+    public static boolean hasPermission(@Nullable MinecraftServer server, GameProfile profile, String node, @Nullable IContext context)
     {
         Preconditions.checkNotNull(profile, "GameProfile can't be null!");
         Preconditions.checkNotNull(node, "Permission node can't be null!");
         Preconditions.checkArgument(!node.isEmpty(), "Permission node can't be empty!");
-        return permissionHandler.hasPermission(profile, node, context);
+        return permissionHandler.hasPermission(server, profile, node, context);
     }
 
     /**
      * Shortcut method using EntityPlayer and creating PlayerContext
      *
-     * @see PermissionAPI#hasPermission(GameProfile, String, IContext)
+     * @see PermissionAPI#hasPermission(MinecraftServer, GameProfile, String, IContext)
      */
     public static boolean hasPermission(EntityPlayer player, String node)
     {
         Preconditions.checkNotNull(player, "Player can't be null!");
-        return hasPermission(player.getGameProfile(), node, new PlayerContext(player));
+        return hasPermission(player.getServer(), player.getGameProfile(), node, new PlayerContext(player));
     }
 }

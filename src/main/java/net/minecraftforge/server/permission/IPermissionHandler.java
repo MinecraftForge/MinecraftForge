@@ -20,6 +20,7 @@
 package net.minecraftforge.server.permission;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.server.permission.context.IContext;
 
 import javax.annotation.Nullable;
@@ -38,9 +39,9 @@ public interface IPermissionHandler
     Collection<String> getRegisteredNodes();
 
     /**
-     * Use {@link PermissionAPI#hasPermission(GameProfile, String, IContext)}
+     * Use {@link PermissionAPI#hasPermission(MinecraftServer, GameProfile, String, IContext)}
      */
-    boolean hasPermission(GameProfile profile, String node, @Nullable IContext context);
+    boolean hasPermission(@Nullable MinecraftServer server, GameProfile profile, String node, @Nullable IContext context);
 
     /**
      * @param node Permission node
