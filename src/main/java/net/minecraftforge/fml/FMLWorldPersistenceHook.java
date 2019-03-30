@@ -90,6 +90,9 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
             {
                 NBTTagCompound mod = modList.getCompound(i);
                 String modId = mod.getString("ModId");
+                if (Objects.equals("minecraft",  modId)) {
+                    continue;
+                }
                 String modVersion = mod.getString("ModVersion");
                 Optional<? extends ModContainer> container = ModList.get().getModContainerById(modId);
                 if (!container.isPresent())

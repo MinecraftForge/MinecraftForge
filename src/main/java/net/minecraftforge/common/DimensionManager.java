@@ -53,6 +53,7 @@ import net.minecraft.world.WorldServerMulti;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.registries.ClearableRegistry;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -150,6 +151,11 @@ public class DimensionManager
     {
         Validate.notNull(server, "Must provide server when creating world");
         Validate.notNull(dim, "Dimension type must not be null");
+
+        // If we're in the early stages of loading, we need to return null so CommandSource can work properly for command function
+        if (StartupQuery.pendingQuery()) {
+            return null;
+        }
 
         if (resetUnloadDelay && unloadQueue.contains(dim.getId()))
             getData(dim).ticksWaited = 0;
