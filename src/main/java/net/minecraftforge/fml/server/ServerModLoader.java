@@ -24,6 +24,7 @@ import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingWarning;
 import net.minecraftforge.fml.SidedProvider;
+import net.minecraftforge.fml.network.FMLStatusPing;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,5 +51,6 @@ public class ServerModLoader
             LOGGER.warn(LOADING, "Mods loaded with {} warnings", warnings.size());
             warnings.forEach(warning -> LOGGER.warn(LOADING, warning.formatToString()));
         }
+        server.getServerStatusResponse().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
     }
 }
