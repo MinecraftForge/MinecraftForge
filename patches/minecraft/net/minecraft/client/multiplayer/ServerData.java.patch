@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/multiplayer/ServerData.java
++++ b/net/minecraft/client/multiplayer/ServerData.java
+@@ -20,6 +20,7 @@
+    private ServerData.ServerResourceMode field_152587_j = ServerData.ServerResourceMode.PROMPT;
+    private String field_147411_m;
+    private boolean field_181042_l;
++   public net.minecraftforge.fml.client.ExtendedServerListData forgeData = null;
+ 
+    public ServerData(String p_i46420_1_, String p_i46420_2_, boolean p_i46420_3_) {
+       this.field_78847_a = p_i46420_1_;
