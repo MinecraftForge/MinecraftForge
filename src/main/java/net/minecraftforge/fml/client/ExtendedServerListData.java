@@ -19,23 +19,16 @@
 
 package net.minecraftforge.fml.client;
 
-import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.Map;
-
 public class ExtendedServerListData {
     public final String type;
     public final boolean isCompatible;
-    public final Map<ResourceLocation, Pair<String, Boolean>> channelData;
     public int numberOfMods;
     public String extraReason;
 
-    public ExtendedServerListData(String type, boolean isCompatible, Map<ResourceLocation, Pair<String, Boolean>> channelData, int num, String extraReason)
+    public ExtendedServerListData(String type, boolean isCompatible, int num, String extraReason)
     {
         this.type = type;
         this.isCompatible = isCompatible;
-        this.channelData = channelData;
         this.numberOfMods = num;
         this.extraReason = extraReason;
     }
