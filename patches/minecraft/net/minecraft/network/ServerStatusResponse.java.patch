@@ -4,7 +4,7 @@
     private ServerStatusResponse.Players field_151324_b;
     private ServerStatusResponse.Version field_151325_c;
     private String field_151323_d;
-+   private net.minecraftforge.fml.network.FMLStatusPing forgeData;
++   private transient net.minecraftforge.fml.network.FMLStatusPing forgeData;
  
 +   public net.minecraftforge.fml.network.FMLStatusPing getForgeData() {
 +      return this.forgeData;

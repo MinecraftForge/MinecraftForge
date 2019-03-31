@@ -22,18 +22,28 @@ package net.minecraftforge.fml.client;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.*;
-import net.minecraft.client.gui.*;
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
+import com.google.common.collect.Sets;
+import com.google.common.collect.Table;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiMultiplayer;
+import net.minecraft.client.gui.GuiWorldSelection;
+import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ForgeI18n;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
 import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.registries.RegistryManager;
 import net.minecraftforge.versions.forge.ForgeVersion;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -70,36 +80,59 @@ public class ClientHooks
 
     private static final ResourceLocation iconSheet = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/icons.png");
     @Nullable
+
     public static void processForgeListPingData(ServerStatusResponse packet, ServerData target)
     {
-        if(packet.getForgeData() != null){
-            int numberOfMods = packet.getForgeData().getNumberOfMods();
-            int fmlver = packet.getForgeData().getFMLNetworkVersion();
+        if (packet.getForgeData() != null) {
+            final Map<String, String> mods = packet.getForgeData().getRemoteModData();
+            final Map<ResourceLocation, Pair<String, Boolean>> remoteChannels = packet.getForgeData().getRemoteChannels();
+            final int fmlver = packet.getForgeData().getFMLNetworkVersion();
 
-            boolean b = NetworkRegistry.checkListPingCompatibilityForClient(packet.getForgeData().getPresentMods())
-                    && fmlver == FMLNetworkConstants.FMLNETVERSION;
+            boolean fmlNetMatches = fmlver == FMLNetworkConstants.FMLNETVERSION;
+            boolean channelsMatch = NetworkRegistry.checkListPingCompatibilityForClient(remoteChannels);
+            AtomicBoolean result = new AtomicBoolean(true);
+            ModList.get().forEachModContainer((modid, mc)-> mc.getCustomExtension(ExtensionPoint.DISPLAYTEST).ifPresent(ext->
+                    result.compareAndSet(true, ext.getRight().test(mods.get(modid), true))));
+            boolean modsMatch = result.get();
 
-            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, {} mods, channels: [{}] - compatible: {}", target.serverIP, fmlver, numberOfMods, packet.getForgeData().getPresentMods().entrySet(), b);
+            final Map<String, String> extraServerMods = mods.entrySet().stream().
+                    filter(e -> !Objects.equals(FMLNetworkConstants.IGNORESERVERONLY, e.getValue())).
+                    filter(e -> !ModList.get().isLoaded(e.getKey())).
+                    collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+            LOGGER.debug(CLIENTHOOKS, "Received FML ping data from server at {}: FMLNETVER={}, mod list is compatible : {}, channel list is compatible: {}, extra server mods: {}", target.serverIP, fmlver, modsMatch, channelsMatch, extraServerMods);
 
             String extraReason = null;
-            if(fmlver<FMLNetworkConstants.FMLNETVERSION)
-                extraReason = "fml.menu.multiplayer.serveroutdated";
-            else if(fmlver > FMLNetworkConstants.FMLNETVERSION)
-                extraReason = "fml.menu.multiplayer.clientoutdated";
 
-            target.forgeData = new ExtendedServerListData("FML", b, packet.getForgeData().getPresentMods(), numberOfMods, extraReason);
-        }else{
-            target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(), Maps.newHashMap(), 0, null);
+            if (!extraServerMods.isEmpty()) {
+                extraReason = "fml.menu.multiplayer.extraservermods";
+            }
+            if (!modsMatch) {
+                extraReason = "fml.menu.multiplayer.modsincompatible";
+            }
+            if (!channelsMatch) {
+                extraReason = "fml.menu.multiplayer.networkincompatible";
+            }
+
+            if (fmlver < FMLNetworkConstants.FMLNETVERSION) {
+                extraReason = "fml.menu.multiplayer.serveroutdated";
+            }
+            if (fmlver > FMLNetworkConstants.FMLNETVERSION) {
+                extraReason = "fml.menu.multiplayer.clientoutdated";
+            }
+            target.forgeData = new ExtendedServerListData("FML", extraServerMods.isEmpty() && fmlNetMatches && channelsMatch && modsMatch, mods.size(), extraReason);
+        } else {
+            target.forgeData = new ExtendedServerListData("VANILLA", NetworkRegistry.canConnectToVanillaServer(),0, null);
         }
 
     }
 
-    public static void drawForgePingInfo(GuiMultiplayer gui, ServerData target, int x, int y, int width, int relativeMouseX, int relativeMouseY){
+    public static void drawForgePingInfo(GuiMultiplayer gui, ServerData target, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
         int idx;
         String tooltip;
-        if(target.forgeData == null)
+        if (target.forgeData == null)
             return;
-        switch (target.forgeData.type){
+        switch (target.forgeData.type) {
             case "FML":
                 if (target.forgeData.isCompatible) {
                     idx = 0;
@@ -115,7 +148,7 @@ public class ClientHooks
                 }
                 break;
             case "VANILLA":
-                if(target.forgeData.isCompatible) {
+                if (target.forgeData.isCompatible) {
                     idx = 48;
                     tooltip = ForgeI18n.parseMessage("fml.menu.multiplayer.vanilla");
                 } else {
