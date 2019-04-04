@@ -905,20 +905,22 @@
          }
      }
  
-@@ -2948,6 +3169,7 @@
+@@ -2948,7 +3169,8 @@
          IBlockState iblockstate1 = this.func_180495_p(p_190527_2_);
          AxisAlignedBB axisalignedbb = p_190527_3_ ? null : p_190527_1_.func_176223_P().func_185890_d(this, p_190527_2_);
  
+-        if (axisalignedbb != Block.field_185506_k && !this.func_72917_a(axisalignedbb.func_186670_a(p_190527_2_), p_190527_5_))
 +        if (!((p_190527_5_ instanceof EntityPlayer) || !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_190527_5_, new net.minecraftforge.common.util.BlockSnapshot(this, p_190527_2_, p_190527_1_.func_176223_P()), p_190527_4_).isCanceled())) return false;
-         if (axisalignedbb != Block.field_185506_k && !this.func_72917_a(axisalignedbb.func_186670_a(p_190527_2_), p_190527_5_))
++        if (axisalignedbb != Block.field_185506_k && !this.func_72855_b(axisalignedbb.func_186670_a(p_190527_2_))) // Forge: Remove second parameter, we patch placer to be non-null, passing it here skips collision checks for the placer
          {
              return false;
+         }
 @@ -2958,7 +3180,7 @@
          }
          else
          {
 -            return iblockstate1.func_185904_a().func_76222_j() && p_190527_1_.func_176198_a(this, p_190527_2_, p_190527_4_);
-+            return iblockstate1.func_177230_c().func_176200_f(this, p_190527_2_);
++            return iblockstate1.func_177230_c().func_176200_f(this, p_190527_2_) && p_190527_1_.func_176198_a(this, p_190527_2_, p_190527_4_);
          }
      }
  
