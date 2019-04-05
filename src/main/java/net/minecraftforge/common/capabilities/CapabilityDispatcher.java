@@ -105,7 +105,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             {
                 throw new RuntimeException(
                         String.format(
-                                "Provider %s.getCapability() returned null; this is not allowed!",
+                                "Provider %s.getCapability() returned null; return LazyOptional.empty() instead!",
                                 c.getClass().getTypeName()
                         )
                 );
