@@ -111,7 +111,7 @@
        this.field_177454_f.put(entityplayermp.func_110124_au(), entityplayermp);
        entityplayermp.func_71116_b();
        entityplayermp.func_70606_j(entityplayermp.func_110143_aJ());
-+      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent( p_72368_1_, p_72368_3_ );
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(entityplayermp, p_72368_3_);
        return entityplayermp;
     }
  
