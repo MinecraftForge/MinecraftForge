@@ -18,19 +18,17 @@
  */
 
 package net.minecraftforge.fml.common;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
 import javax.annotation.Nonnull;
 
+import cpw.mods.modlauncher.api.INameMappingService;
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -59,25 +57,9 @@ public class ObfuscationReflectionHelper
 
 
 
-    public static String[] remapNames(String... names)
+    public static String remapName(INameMappingService.Domain domain, String name)
     {
-        loadMappings();
-        if (map.isEmpty())
-            return names;
-
-        String[] mappedNames = new String[names.length];
-        int i = 0;
-        for (String name : names)
-            mappedNames[i++] = map.getOrDefault(name, name);
-        return mappedNames;
-    }
-
-    public static String remapName(String name)
-    {
-        loadMappings();
-        if (map.isEmpty())
-            return name;
-        return map.getOrDefault(name, name);
+        return FMLLoader.getNameFunction("srg").map(f->f.apply(domain, name)).orElse(name);
     }
 
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex)
@@ -99,16 +81,16 @@ public class ObfuscationReflectionHelper
     {
         try
         {
-            return (T)findField(classToAccess, remapName(fieldName)).get(instance);
+            return (T)findField(classToAccess, remapName(INameMappingService.Domain.FIELD, fieldName)).get(instance);
         }
         catch (UnableToFindFieldException e)
         {
-            LOGGER.error("Unable to locate field {} ({}) on type {}", fieldName, remapName(fieldName), classToAccess.getName(), e);
+            LOGGER.error(REFLECTION,"Unable to locate field {} ({}) on type {}", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
             throw e;
         }
         catch (IllegalAccessException e)
         {
-            LOGGER.error("Unable to access field {} ({}) on type {}", fieldName, remapName(fieldName), classToAccess.getName(), e);
+            LOGGER.error(REFLECTION,"Unable to access field {} ({}) on type {}", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -132,7 +114,7 @@ public class ObfuscationReflectionHelper
     {
         try
         {
-            findField(classToAccess, remapName(fieldName)).set(instance, value);
+            findField(classToAccess, remapName(INameMappingService.Domain.FIELD, fieldName)).set(instance, value);
         }
         catch (UnableToFindFieldException e)
         {
@@ -166,7 +148,7 @@ public class ObfuscationReflectionHelper
 
         try
         {
-            Method m = clazz.getDeclaredMethod(remapName(methodName), parameterTypes);
+            Method m = clazz.getDeclaredMethod(remapName(INameMappingService.Domain.METHOD, methodName), parameterTypes);
             m.setAccessible(true);
             return m;
         }
@@ -229,38 +211,6 @@ public class ObfuscationReflectionHelper
         }
     }
 
-    private static void loadMappings()
-    {
-        if (loaded)
-            return;
-
-        synchronized(map) //Just in case?
-        {
-            if (loaded) //Incase something else loaded while we were here, jump out
-                return;
-            for (String file  : new String[]{"fields.csv", "methods.csv"})
-            {
-                URL path = ClassLoader.getSystemResource(file); //We EXPLICITLY go throught the SystemClassLoader here because this is dev-time only. And will be on the root classpath.
-                if (path == null)
-                    continue;
-
-                int count = map.size();
-                LOGGER.info(REFLECTION, "Loading Mappings: {}", path);
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(path.openStream())))
-                {
-                    reader.lines().skip(1).map(e -> e.split(",")).forEach(e -> map.put(e[0], e[1]));
-                }
-                catch (IOException e1)
-                {
-                    LOGGER.error(REFLECTION, "Error reading mappings", e1);
-                }
-                LOGGER.info(REFLECTION, "Loaded {} entries", map.size() - count);
-            }
-            loaded = true;
-        }
-    }
-
-    //Add SRG names to these exception?
     public static class UnableToAccessFieldException extends RuntimeException
     {
         private UnableToAccessFieldException(Exception e)

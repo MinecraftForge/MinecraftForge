@@ -92,4 +92,10 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     {
         return Dist.DEDICATED_SERVER;
     }
+
+    @Override
+    protected String getNaming() {
+        return "srg";
+    }
+
 }

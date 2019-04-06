@@ -89,4 +89,10 @@ public abstract class FMLUserdevLaunchProvider extends FMLCommonLaunchHandler {
         mcJars = LibraryFinder.findJarPathFor("en_us.json","mcdata", mcDataPath);
         return new Path[] {mcJars};
     }
+
+    @Override
+    protected String getNaming() {
+        return "mcp";
+    }
+
 }

@@ -19,27 +19,35 @@
 
 package net.minecraftforge.fml.loading;
 
+import cpw.mods.modlauncher.Launcher;
 import cpw.mods.modlauncher.ServiceLoaderStreamUtils;
 import cpw.mods.modlauncher.TransformingClassLoader;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
+import cpw.mods.modlauncher.api.INameMappingService;
 import cpw.mods.modlauncher.api.ITransformationService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
 import cpw.mods.modlauncher.api.IncompatibleEnvironmentException;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
+import net.minecraftforge.accesstransformer.service.AccessTransformerService;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.loading.moddiscovery.BackgroundScanHandler;
 import net.minecraftforge.fml.loading.moddiscovery.ModDiscoverer;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.forgespi.Environment;
 import net.minecraftforge.forgespi.coremod.ICoreModProvider;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -49,12 +57,13 @@ import static net.minecraftforge.fml.loading.LogMarkers.SCAN;
 public class FMLLoader
 {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static ILaunchPluginService accessTransformer;
+    private static AccessTransformerService accessTransformer;
     private static ModDiscoverer modDiscoverer;
     private static ICoreModProvider coreModProvider;
     private static ILaunchPluginService eventBus;
     private static LanguageLoadingProvider languageLoadingProvider;
     private static Dist dist;
+    private static String naming;
     private static LoadingModList loadingModList;
     private static TransformingClassLoader launchClassLoader;
     private static RuntimeDistCleaner runtimeDistCleaner;
@@ -73,14 +82,14 @@ public class FMLLoader
         LOGGER.debug(CORE,"FML {} loading", version);
         final Package modLauncherPackage = ITransformationService.class.getPackage();
         LOGGER.debug(CORE,"FML found ModLauncher version : {}", modLauncherPackage.getImplementationVersion());
-        if (!modLauncherPackage.isCompatibleWith("1.0")) {
+        if (!modLauncherPackage.isCompatibleWith("2.0")) {
             LOGGER.fatal(CORE,"Found incompatible ModLauncher specification : {}, version {} from {}", modLauncherPackage.getSpecificationVersion(), modLauncherPackage.getImplementationVersion(), modLauncherPackage.getImplementationVendor());
             throw new IncompatibleEnvironmentException("Incompatible modlauncher found "+modLauncherPackage.getSpecificationVersion());
         }
         LOGGER.debug(CORE, "Initializing modjar URL handler");
         URL.setURLStreamHandlerFactory(p->p.equals("modjar") ? new ModJarURLHandler() : null);
 
-        accessTransformer = environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> {
+        accessTransformer = (AccessTransformerService) environment.findLaunchPlugin("accesstransformer").orElseThrow(()-> {
             LOGGER.fatal(CORE,"Access Transformer library is missing, we need this to run");
             return new IncompatibleEnvironmentException("Missing AccessTransformer, cannot run");
         });
@@ -160,7 +169,9 @@ public class FMLLoader
         gamePath = environment.getProperty(IEnvironment.Keys.GAMEDIR.get()).orElse(Paths.get(".").toAbsolutePath());
 
         FMLCommonLaunchHandler commonLaunchHandler = (FMLCommonLaunchHandler)launchHandler.get();
+        naming = commonLaunchHandler.getNaming();
         dist = commonLaunchHandler.getDist();
+        accessTransformer.getExtension().accept(Pair.of(naming, "srg"));
 
         mcVersion = (String) arguments.get("mcVersion");
         mcpVersion = (String) arguments.get("mcpVersion");
@@ -244,5 +255,13 @@ public class FMLLoader
 
     public static Predicate<String> getClassLoaderExclusions() {
         return classLoaderExclusions;
+    }
+
+    public static String getNaming() {
+        return naming;
+    }
+
+    public static Optional<BiFunction<INameMappingService.Domain, String, String>> getNameFunction(final String naming) {
+        return Launcher.INSTANCE.environment().findNameMapping(naming);
     }
 }
