@@ -80,4 +80,9 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     {
         return Dist.CLIENT;
     }
+
+    @Override
+    protected String getNaming() {
+        return "srg";
+    }
 }

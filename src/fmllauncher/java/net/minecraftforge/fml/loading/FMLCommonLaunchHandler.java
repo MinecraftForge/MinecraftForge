@@ -135,4 +135,6 @@ public abstract class FMLCommonLaunchHandler
             return Optional.empty();
         };
     }
+
+    protected abstract String getNaming();
 }

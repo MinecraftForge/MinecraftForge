@@ -55,6 +55,7 @@ public class FMLServiceProvider implements ITransformationService
     private String targetMcpVersion;
     private String targetMcpMappings;
     private String targetForgeGroup;
+    private Map<String, Object> arguments;
 
     @Override
     public String name()
@@ -63,13 +64,12 @@ public class FMLServiceProvider implements ITransformationService
     }
 
     @Override
-    public void initialize(IEnvironment environment)
-    {
-        LOGGER.debug(CORE,"Setting up basic FML game directories");
+    public void initialize(IEnvironment environment) {
+        LOGGER.debug(CORE, "Setting up basic FML game directories");
         FMLPaths.setup(environment);
-        LOGGER.debug(CORE,"Loading configuration");
+        LOGGER.debug(CORE, "Loading configuration");
         FMLConfig.load();
-        final Map<String, Object> arguments = new HashMap<>();
+        arguments = new HashMap<>();
         arguments.put("modLists", modListsArgumentList);
         arguments.put("mods", modsArgumentList);
         arguments.put("mavenRoots", mavenRootsArgumentList);
@@ -82,6 +82,10 @@ public class FMLServiceProvider implements ITransformationService
         FMLLoader.setupLaunchHandler(environment, arguments);
         FMLEnvironment.setupInteropEnvironment(environment);
         Environment.build(environment);
+    }
+
+    @Override
+    public void beginScanning(final IEnvironment environment) {
         LOGGER.debug(CORE,"Initiating mod scan");
         FMLLoader.beginModScan(arguments);
     }
