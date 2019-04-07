@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecart;
@@ -48,7 +50,7 @@ public interface IMinecartCollisionHandler
      * @param other The entity requesting the collision box.
      * @return The collision box or null.
      */
-    AxisAlignedBB getCollisionBox(EntityMinecart cart, Entity other);
+    @Nullable AxisAlignedBB getCollisionBox(EntityMinecart cart, Entity other);
 
     /**
      * This function is used to define the box used for detecting minecart collisions.
@@ -64,6 +66,6 @@ public interface IMinecartCollisionHandler
      * @param cart The cart for which the bounding box was requested.
      * @return The bounding box or null.
      */
-    AxisAlignedBB getBoundingBox(EntityMinecart cart);
+    @Nullable AxisAlignedBB getBoundingBox(EntityMinecart cart);
 }
 

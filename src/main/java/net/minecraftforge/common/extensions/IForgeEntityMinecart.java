@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.extensions;
 
+import javax.annotation.Nullable;
+
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.MoverType;
@@ -37,13 +39,17 @@ import net.minecraftforge.common.IMinecartCollisionHandler;
 
 public interface IForgeEntityMinecart
 {
-    public static float DEFAULT_MAX_SPEED_AIR_LATERAL = 0.4f;
-    public static float DEFAULT_MAX_SPEED_AIR_VERTICAL = -1.0f;
-    public static double DEFAULT_AIR_DRAG = 0.95f;
-    public static IMinecartCollisionHandler COLLISIONS = null;
+    float DEFAULT_MAX_SPEED_AIR_LATERAL = 0.4f;
+    float DEFAULT_MAX_SPEED_AIR_VERTICAL = -1.0f;
+    double DEFAULT_AIR_DRAG = 0.95f;
+    double DEFAULT_GROUND_DRAG = 0.5d;
 
     default EntityMinecart getMinecart() {
         return (EntityMinecart)this;
+    }
+
+    static void setCollisionHandler(IMinecartCollisionHandler handler) {
+        ExtensionFields.minecartCollisionHandler = handler;
     }
 
     /**
@@ -51,8 +57,8 @@ public interface IForgeEntityMinecart
      * is registered, returns null
      * @return The collision handler or null
      */
-    default IMinecartCollisionHandler getCollisionHandler() {
-        return COLLISIONS;
+    default  @Nullable IMinecartCollisionHandler getCollisionHandler() {
+        return ExtensionFields.minecartCollisionHandler;
     }
 
     /**
@@ -178,6 +184,8 @@ public interface IForgeEntityMinecart
     void setMaxSpeedAirVertical(float value);
     double getDragAir();
     void setDragAir(double value);
+    double getDragOnGround();
+    void setDragOnGround(double value);
 
     default double getSlopeAdjustment() {
         return 0.0078125D;
