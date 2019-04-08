@@ -93,6 +93,9 @@ public class FMLServiceProvider implements ITransformationService
     @Override
     public void onLoad(IEnvironment environment, Set<String> otherServices) throws IncompatibleEnvironmentException
     {
+        LOGGER.debug("Injecting tracing printstreams for STDOUT/STDERR.");
+        System.setOut(new TracingPrintStream(LogManager.getLogger("STDOUT"), System.out));
+        System.setErr(new TracingPrintStream(LogManager.getLogger("STDERR"), System.err));
         FMLLoader.onInitialLoad(environment, otherServices);
     }
 
