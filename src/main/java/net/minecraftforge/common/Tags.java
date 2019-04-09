@@ -39,7 +39,7 @@ public class Tags
         public static final Tag<Block> FENCE_GATES = tag("fence_gates");
         public static final Tag<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
         public static final Tag<Block> FENCES = tag("fences");
-        public static final Tag<Block> FENCES_NETHER_BRRICK = tag("fences/nether_brick");
+        public static final Tag<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
         public static final Tag<Block> FENCES_WOODEN = tag("fences/wooden");
         public static final Tag<Block> ORES = tag("ores");
         public static final Tag<Block> ORES_COAL = tag("ores/coal");
