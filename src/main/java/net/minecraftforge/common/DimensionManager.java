@@ -90,7 +90,7 @@ public class DimensionManager
      */
     public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data)
     {
-        Validate.notNull(name, "Can not register a dimesnion with null name");
+        Validate.notNull(name, "Can not register a dimension with null name");
         Validate.isTrue(!REGISTRY.func_212607_c(name), "Dimension: " + name + " Already registered");
         Validate.notNull(type, "Can not register a null dimension type");
 
@@ -179,7 +179,7 @@ public class DimensionManager
 
     public static DimensionType registerDimensionInternal(int id, ResourceLocation name, ModDimension type, PacketBuffer data)
     {
-        Validate.notNull(name, "Can not register a dimesnion with null name");
+        Validate.notNull(name, "Can not register a dimension with null name");
         Validate.notNull(type, "Can not register a null dimension type");
         Validate.isTrue(!REGISTRY.func_212607_c(name), "Dimension: " + name + " Already registered");
         Validate.isTrue(REGISTRY.get(id) == null, "Dimension with id " + id + " already registered as name " + REGISTRY.getKey(REGISTRY.get(id)));
