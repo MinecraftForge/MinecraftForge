@@ -30,7 +30,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector4f;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -44,6 +43,8 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
@@ -399,15 +400,19 @@ public final class ModelFluid implements IUnbakedModel
         private BakedQuad buildQuad(EnumFacing side, TextureAtlasSprite texture, boolean flip, boolean offset, VertexParameter x, VertexParameter y, VertexParameter z, VertexParameter u, VertexParameter v)
         {
             UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+
             builder.setQuadOrientation(side);
             builder.setTexture(texture);
             builder.setQuadTint(0);
+
+            boolean hasTransform = transformation.isPresent() && !transformation.get().isIdentity();
+            IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transformation.get()) : builder;
 
             for (int i = 0; i < 4; i++)
             {
                 int vertex = flip ? 3 - i : i;
                 putVertex(
-                    builder, side, offset,
+                    consumer, side, offset,
                     x.get(vertex), y.get(vertex), z.get(vertex),
                     texture.getInterpolatedU(u.get(vertex)),
                     texture.getInterpolatedV(v.get(vertex))
@@ -417,7 +422,7 @@ public final class ModelFluid implements IUnbakedModel
             return builder.build();
         }
 
-        private void putVertex(UnpackedBakedQuad.Builder builder, EnumFacing side, boolean offset, float x, float y, float z, float u, float v)
+        private void putVertex(IVertexConsumer consumer, EnumFacing side, boolean offset, float x, float y, float z, float u, float v)
         {
             for(int e = 0; e < format.getElementCount(); e++)
             {
@@ -427,32 +432,30 @@ public final class ModelFluid implements IUnbakedModel
                     float dx = offset ? side.getDirectionVec().getX() * eps : 0f;
                     float dy = offset ? side.getDirectionVec().getY() * eps : 0f;
                     float dz = offset ? side.getDirectionVec().getZ() * eps : 0f;
-                    float[] data = { x - dx, y - dy, z - dz, 1f };
-                    if(transformation.isPresent() && !transformation.get().isIdentity())
-                    {
-                        Vector4f vec = new Vector4f(data);
-                        transformation.get().getMatrixVec().transform(vec);
-                        vec.get(data);
-                    }
-                    builder.put(e, data);
+                    consumer.put(e, x - dx, y - dy, z - dz, 1f);
                     break;
                 case COLOR:
-                    builder.put(e,
-                        ((color >> 16) & 0xFF) / 255f,
-                        ((color >> 8) & 0xFF) / 255f,
-                        (color & 0xFF) / 255f,
-                        ((color >> 24) & 0xFF) / 255f);
+                    float r = ((color >> 16) & 0xFF) / 255f;
+                    float g = ((color >>  8) & 0xFF) / 255f;
+                    float b = ( color        & 0xFF) / 255f;
+                    float a = ((color >> 24) & 0xFF) / 255f;
+                    consumer.put(e, r, g, b, a);
                     break;
-                case UV: if(format.getElement(e).getIndex() == 0)
-                {
-                    builder.put(e, u, v, 0f, 1f);
-                    break;
-                }
                 case NORMAL:
-                    builder.put(e, (float)side.getXOffset(), (float)side.getYOffset(), (float)side.getZOffset(), 0f);
+                    float offX = (float) side.getXOffset();
+                    float offY = (float) side.getYOffset();
+                    float offZ = (float) side.getZOffset();
+                    consumer.put(e, offX, offY, offZ, 0f);
                     break;
+                case UV:
+                    if(format.getElement(e).getIndex() == 0)
+                    {
+                        consumer.put(e, u, v, 0f, 1f);
+                        break;
+                    }
+                    // else fallthrough to default
                 default:
-                    builder.put(e);
+                    consumer.put(e);
                     break;
                 }
             }

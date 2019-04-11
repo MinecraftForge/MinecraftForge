@@ -478,6 +478,7 @@ public class ForgeHooksClient
             case GENERIC:
                 glEnableVertexAttribArray(attr.getIndex());
                 glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
+                break;
             default:
                 LOGGER.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -508,6 +509,7 @@ public class ForgeHooksClient
                 break;
             case GENERIC:
                 glDisableVertexAttribArray(attr.getIndex());
+                break;
             default:
                 LOGGER.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
