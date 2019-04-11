@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
@@ -79,6 +80,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
+import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
@@ -90,6 +92,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
@@ -141,6 +144,10 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.DataSerializerEntry;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -1179,5 +1186,32 @@ public class ForgeHooks
                 items.addAll(this.resolvedTag.getAllElements());
             }
         }
+    }
+
+    private static final Map<DataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
+    //private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
+    // Do not reimplement this ^ it introduces a chicken-egg scenario by classloading registries during bootstrap 
+
+    @Nullable
+    public static DataSerializer<?> getSerializer(int id, IntIdentityHashBiMap<DataSerializer<?>> vanilla)
+    {
+        DataSerializer<?> serializer = vanilla.get(id);
+        if (serializer == null)
+        {
+            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getValue(id);
+            if (entry != null) serializer = entry.getSerializer();
+        }
+        return serializer;
+    }
+
+    public static int getSerializerId(DataSerializer<?> serializer, IntIdentityHashBiMap<DataSerializer<?>> vanilla)
+    {
+        int id = vanilla.getId(serializer);
+        if (id < 0)
+        {
+            DataSerializerEntry entry = serializerEntries.get(serializer);
+            if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getID(entry);
+        }
+        return id;
     }
 }

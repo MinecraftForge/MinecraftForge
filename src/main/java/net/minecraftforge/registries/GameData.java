@@ -28,6 +28,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.state.StateContainer;
@@ -57,6 +58,7 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -87,6 +89,8 @@ public class GameData
     public static final ResourceLocation TILEENTITIES = new ResourceLocation("minecraft:tileentities");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
+    public static final ResourceLocation SERIALIZERS  = new ResourceLocation("minecraft:dataserializers");
+    
     private static final int MAX_REGISTRY_SIZE = Integer.MAX_VALUE >> 5;
     private static final int MAX_BLOCK_ID = 4095;
     private static final int MAX_ITEM_ID = 31999;
@@ -98,9 +102,13 @@ public class GameData
     private static final int MAX_ENTITY_ID = MAX_REGISTRY_SIZE; // Varint (SPacketSpawnMob)
     private static final int MAX_TILE_ENTITY_ID = Integer.MAX_VALUE; //Doesnt seem to be serialized anywhere, so no max.
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
+    private static final int MIN_SERIALIZER_ID = 256; // Leave room for vanilla entries
+    private static final int MAX_SERIALIZER_ID = Integer.MAX_VALUE >> 5; // Varint (EntityDataManager)
 
     private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
+    private static final ResourceLocation SERIALIZER_TO_ENTRY   = new ResourceLocation("forge:serializer_to_entry");
+
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
     private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
@@ -132,11 +140,16 @@ public class GameData
         makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).create();
         makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).disableSaving().create();
         makeRegistry(MODDIMENSIONS, ModDimension.class, MAX_REGISTRY_SIZE).disableSaving().create();
+        makeRegistry(SERIALIZERS,  DataSerializerEntry.class, MIN_SERIALIZER_ID, MAX_SERIALIZER_ID).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max)
     {
         return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedWrapper.Factory<T>());
+    }
+    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int min, int max)
+    {
+        return new RegistryBuilder<T>().setName(name).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max, ResourceLocation _default)
     {
@@ -173,6 +186,12 @@ public class GameData
     public static ObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
     {
         return RegistryManager.ACTIVE.getRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<DataSerializer<?>, DataSerializerEntry> getSerializerMap()
+    {
+        return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
@@ -538,6 +557,32 @@ public class GameData
         }
     }
 */
+
+    private static class SerializerCallbacks implements IForgeRegistry.AddCallback<DataSerializerEntry>, IForgeRegistry.ClearCallback<DataSerializerEntry>, IForgeRegistry.CreateCallback<DataSerializerEntry>
+    {
+        static final SerializerCallbacks INSTANCE = new SerializerCallbacks();
+
+        @Override
+        public void onAdd(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage, int id, DataSerializerEntry entry, @Nullable DataSerializerEntry oldEntry)
+        {
+            @SuppressWarnings("unchecked")
+            Map<DataSerializer<?>, DataSerializerEntry> map = owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
+            if (oldEntry != null) map.remove(oldEntry.getSerializer());
+            map.put(entry.getSerializer(), entry);
+        }
+
+        @Override
+        public void onClear(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
+        {
+            owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class).clear();
+        }
+
+        @Override
+        public void onCreate(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
+        {
+            owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
+        }
+    }
 
     private static <T extends IForgeRegistryEntry<T>> void loadRegistry(final ResourceLocation registryName, final RegistryManager from, final RegistryManager to, final Class<T> regType, boolean freeze)
     {
