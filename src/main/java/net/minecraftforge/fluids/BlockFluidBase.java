@@ -813,4 +813,11 @@ public abstract class BlockFluidBase extends Block implements IFluidBlock
         return filled < 0 ? vec.y > pos.getY() + filled + 1
                           : vec.y < pos.getY() + filled;
     }
+    
+    @Override
+    public float getBlockLiquidHeight(World world, BlockPos pos, IBlockState state, Material material)
+    {
+        float filled = getFilledPercentage(world, pos);
+        return Math.max(filled, 0);
+    }
 }
