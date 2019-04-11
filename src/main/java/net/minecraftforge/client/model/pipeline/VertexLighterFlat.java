@@ -25,6 +25,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.EnumFacing;
@@ -107,7 +108,16 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         updateIndices();
     }
 
-    private static VertexFormat withNormal(VertexFormat format)
+    private static final VertexFormat BLOCK_WITH_NORMAL = withNormalUncached(DefaultVertexFormats.BLOCK);
+    static VertexFormat withNormal(VertexFormat format)
+    {
+        //This is the case in 99.99%. Cache the value, so we don't have to redo it every time, and the speed up the equals check in LightUtil
+        if (format == DefaultVertexFormats.BLOCK)
+            return BLOCK_WITH_NORMAL;
+        return withNormalUncached(format);
+    }
+
+    private static VertexFormat withNormalUncached(VertexFormat format)
     {
         if (format == null || format.hasNormal()) return format;
         return new VertexFormat(format).addElement(NORMAL_4F);
@@ -210,19 +220,19 @@ public class VertexLighterFlat extends QuadGatheringTransformer
                         pos[2] += blockInfo.getBlockPos().getZ();*/
                         parent.put(e, position[v]);
                         break;
-                    case NORMAL: if(normalIndex != -1)
-                    {
+                    case NORMAL:
                         parent.put(e, normal[v]);
                         break;
-                    }
                     case COLOR:
                         parent.put(e, color[v]);
                         break;
-                    case UV: if(element.getIndex() == 1)
-                    {
-                        parent.put(e, lightmap[v]);
-                        break;
-                    }
+                    case UV:
+                        if(element.getIndex() == 1)
+                        {
+                            parent.put(e, lightmap[v]);
+                            break;
+                        }
+                        // else fallthrough to default
                     default:
                         parent.put(e, quadData[e][v]);
                 }

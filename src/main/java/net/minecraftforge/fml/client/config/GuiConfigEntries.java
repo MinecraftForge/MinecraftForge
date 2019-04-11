@@ -138,9 +138,19 @@ public class GuiConfigEntries extends GuiListExtended
                     else if (configElement.getType() == ConfigGuiType.BOOLEAN)
                         this.listEntries.add(new GuiConfigEntries.BooleanEntry(this.owningScreen, this, configElement));
                     else if (configElement.getType() == ConfigGuiType.INTEGER)
-                        this.listEntries.add(new GuiConfigEntries.IntegerEntry(this.owningScreen, this, configElement));
+                    {
+                        if(configElement.hasSlidingControl())
+                            listEntries.add(new GuiConfigEntries.NumberSliderEntry(owningScreen,this,configElement));
+                        else
+                            this.listEntries.add(new GuiConfigEntries.IntegerEntry(this.owningScreen, this, configElement));
+                    }
                     else if (configElement.getType() == ConfigGuiType.DOUBLE)
-                        this.listEntries.add(new GuiConfigEntries.DoubleEntry(this.owningScreen, this, configElement));
+                    {
+                        if(configElement.hasSlidingControl())
+                            listEntries.add(new NumberSliderEntry(owningScreen,this,configElement));
+                        else
+                            this.listEntries.add(new GuiConfigEntries.DoubleEntry(this.owningScreen, this, configElement));
+                    }
                     else if (configElement.getType() == ConfigGuiType.COLOR)
                     {
                         if (configElement.getValidValues() != null && configElement.getValidValues().length > 0)
@@ -476,7 +486,13 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void updateValueButtonText()
         {
-            this.btnValue.displayString = I18n.format(configElement.getValidValues()[currentIndex]);
+            this.btnValue.displayString = I18n.format(getValidValueDisplay());
+        }
+
+        protected String getValidValueDisplay()
+        {
+            String[] validValuesDisplay = configElement.getValidValuesDisplay();
+            return validValuesDisplay != null && validValuesDisplay.length > 0 ? validValuesDisplay[currentIndex] : configElement.getValidValues()[currentIndex];
         }
 
         @Override
@@ -564,14 +580,14 @@ public class GuiConfigEntries extends GuiListExtended
         @Override
         public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected, float partial)
         {
-            this.btnValue.packedFGColour = GuiUtils.getColorCode(this.configElement.getValidValues()[currentIndex].charAt(0), true);
+            this.btnValue.packedFGColour = GuiUtils.getColorCode(getValidValueDisplay().charAt(0), true);
             super.drawEntry(slotIndex, x, y, listWidth, slotHeight, mouseX, mouseY, isSelected, partial);
         }
 
         @Override
         public void updateValueButtonText()
         {
-            this.btnValue.displayString = I18n.format(configElement.getValidValues()[currentIndex]) + " - " + I18n.format("fml.configgui.sampletext");
+            this.btnValue.displayString = I18n.format(getValidValueDisplay()) + " - " + I18n.format("fml.configgui.sampletext");
         }
     }
 

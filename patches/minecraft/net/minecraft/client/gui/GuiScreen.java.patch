@@ -20,6 +20,15 @@
      }
  
      public List<String> func_191927_a(ItemStack p_191927_1_)
+@@ -142,7 +146,7 @@
+         {
+             if (i == 0)
+             {
+-                list.set(i, p_191927_1_.func_77953_t().field_77937_e + (String)list.get(i));
++                list.set(i, p_191927_1_.func_77973_b().getForgeRarity(p_191927_1_).getColor() + (String)list.get(i));
+             }
+             else
+             {
 @@ -170,7 +174,13 @@
  
      public void func_146283_a(List<String> p_146283_1_, int p_146283_2_, int p_146283_3_)

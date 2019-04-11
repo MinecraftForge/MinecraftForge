@@ -409,7 +409,11 @@
      public abstract EnumHandSide func_184591_cq();
  
      public boolean func_184587_cr()
-@@ -2595,12 +2670,19 @@
+@@ -2592,15 +2667,23 @@
+         if (this.func_184587_cr())
+         {
+             ItemStack itemstack = this.func_184586_b(this.func_184600_cs());
++            if (net.minecraftforge.common.ForgeHooks.canContinueUsing(this.field_184627_bm, itemstack)) this.field_184627_bm = itemstack;
  
              if (itemstack == this.field_184627_bm)
              {
@@ -430,7 +434,7 @@
                  {
                      this.func_71036_o();
                  }
-@@ -2618,8 +2700,10 @@
+@@ -2618,8 +2701,10 @@
  
          if (!itemstack.func_190926_b() && !this.func_184587_cr())
          {
@@ -442,7 +446,7 @@
  
              if (!this.field_70170_p.field_72995_K)
              {
-@@ -2700,7 +2784,10 @@
+@@ -2700,7 +2785,10 @@
          if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr())
          {
              this.func_184584_a(this.field_184627_bm, 16);
@@ -454,7 +458,7 @@
              this.func_184602_cy();
          }
      }
-@@ -2724,7 +2811,8 @@
+@@ -2724,7 +2812,8 @@
      {
          if (!this.field_184627_bm.func_190926_b())
          {
@@ -464,7 +468,7 @@
          }
  
          this.func_184602_cy();
-@@ -2852,6 +2940,31 @@
+@@ -2852,6 +2941,31 @@
          return true;
      }
  
@@ -496,7 +500,7 @@
      public boolean func_190631_cK()
      {
          return true;
-@@ -2861,4 +2974,30 @@
+@@ -2861,4 +2975,30 @@
      public void func_191987_a(BlockPos p_191987_1_, boolean p_191987_2_)
      {
      }

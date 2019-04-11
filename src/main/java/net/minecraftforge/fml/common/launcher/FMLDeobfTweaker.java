@@ -49,6 +49,7 @@ public class FMLDeobfTweaker implements ITweaker {
         classLoader.registerTransformer("net.minecraftforge.fml.common.asm.transformers.ItemStackTransformer");
         classLoader.registerTransformer("net.minecraftforge.fml.common.asm.transformers.ItemBlockTransformer");
         classLoader.registerTransformer("net.minecraftforge.fml.common.asm.transformers.ItemBlockSpecialTransformer");
+        classLoader.registerTransformer("net.minecraftforge.fml.common.asm.transformers.PotionEffectTransformer");
         try
         {
             FMLLog.log.debug("Validating minecraft");

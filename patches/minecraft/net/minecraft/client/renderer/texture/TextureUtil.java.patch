@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
 +++ ../src-work/minecraft/net/minecraft/client/renderer/texture/TextureUtil.java
+@@ -63,7 +63,7 @@
+         {
+             boolean flag = false;
+ 
+-            for (int i = 0; i < p_147949_2_.length; ++i)
++            for (int i = 0; i < p_147949_2_[0].length; ++i)
+             {
+                 if (p_147949_2_[0][i] >> 24 == 0)
+                 {
 @@ -83,6 +83,7 @@
                      int[] aint1 = aint[l1 - 1];
                      int[] aint2 = new int[aint1.length >> 2];
