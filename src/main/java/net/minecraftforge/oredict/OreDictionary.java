@@ -226,6 +226,8 @@ public class OreDictionary
             registerOre("paneGlass",     Blocks.GLASS_PANE);
             registerOre("paneGlass",     new ItemStack(Blocks.STAINED_GLASS_PANE, 1, WILDCARD_VALUE));
             //paneGlass{Color} is added below with dyes
+            registerOre("wool",          new ItemStack(Blocks.WOOL, 1, WILDCARD_VALUE));
+            //wool{Color} is added below with dyes
 
             // chests
             registerOre("chest",        Blocks.CHEST);
@@ -323,15 +325,18 @@ public class OreDictionary
         for(int i = 0; i < 16; i++)
         {
             ItemStack dye = new ItemStack(Items.DYE, 1, i);
+            ItemStack wool = new ItemStack(Blocks.WOOL, 1, 15 - i);
             ItemStack block = new ItemStack(Blocks.STAINED_GLASS, 1, 15 - i);
             ItemStack pane = new ItemStack(Blocks.STAINED_GLASS_PANE, 1, 15 - i);
             if (!hasInit)
             {
                 registerOre("dye" + dyes[i], dye);
+                registerOre("wool" + dyes[i], wool);
                 registerOre("blockGlass" + dyes[i], block);
                 registerOre("paneGlass"  + dyes[i], pane);
             }
             replacements.put(dye,   "dye" + dyes[i]);
+            replacements.put(wool,  "wool" + dyes[i]);
             replacements.put(block, "blockGlass" + dyes[i]);
             replacements.put(pane,  "paneGlass" + dyes[i]);
         }

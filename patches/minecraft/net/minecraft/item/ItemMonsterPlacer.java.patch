@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
+@@ -234,6 +234,7 @@
+                     entity.func_70012_b(p_77840_2_, p_77840_4_, p_77840_6_, MathHelper.func_76142_g(p_77840_0_.field_73012_v.nextFloat() * 360.0F), 0.0F);
+                     entityliving.field_70759_as = entityliving.field_70177_z;
+                     entityliving.field_70761_aq = entityliving.field_70177_z;
++                    if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, p_77840_0_, (float) p_77840_2_, (float) p_77840_4_, (float) p_77840_6_, null)) return null;
+                     entityliving.func_180482_a(p_77840_0_.func_175649_E(new BlockPos(entityliving)), (IEntityLivingData)null);
+                     p_77840_0_.func_72838_d(entity);
+                     entityliving.func_70642_aH();

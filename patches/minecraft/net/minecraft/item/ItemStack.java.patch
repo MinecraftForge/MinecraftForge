@@ -223,7 +223,15 @@
          return list;
      }
  
-@@ -987,7 +1012,7 @@
+@@ -871,6 +896,7 @@
+         return this.func_77973_b().func_77636_d(this);
+     }
+ 
++    @Deprecated // use Forge version on item
+     public EnumRarity func_77953_t()
+     {
+         return this.func_77973_b().func_77613_e(this);
+@@ -987,7 +1013,7 @@
          }
          else
          {
@@ -232,7 +240,16 @@
          }
  
          return multimap;
-@@ -1130,4 +1155,128 @@
+@@ -1032,7 +1058,7 @@
+         {
+             NBTTagCompound nbttagcompound = this.func_77955_b(new NBTTagCompound());
+             itextcomponent.func_150256_b().func_150209_a(new HoverEvent(HoverEvent.Action.SHOW_ITEM, new TextComponentString(nbttagcompound.toString())));
+-            itextcomponent.func_150256_b().func_150238_a(this.func_77953_t().field_77937_e);
++            itextcomponent.func_150256_b().func_150238_a(this.func_77973_b().getForgeRarity(this).getColor());
+         }
+ 
+         return itextcomponent;
+@@ -1130,4 +1156,128 @@
      {
          this.func_190917_f(-p_190918_1_);
      }

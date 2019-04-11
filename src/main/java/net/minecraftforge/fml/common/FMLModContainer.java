@@ -133,7 +133,20 @@ public class FMLModContainer implements ModContainer
         String modid = (String)this.descriptor.get("modid");
         if (Strings.isNullOrEmpty(modid))
         {
-            throw new IllegalArgumentException("The modId is null or empty");
+            // In FML 1.13, the "value" field is used for modid, not the "modid" field.
+            // This is a VERY strong indicator that this is a 1.13 mod. Strong enough that we will assume it is, and
+            // treat it accordingly
+            modid = (String) this.descriptor.get("value");
+            if (Strings.isNullOrEmpty(modid)) {
+                throw new IllegalArgumentException("The modId is null or empty");
+            } else {
+                // This is a 1.13 mod
+                FMLLog.bigWarning("The mod {} has been identified as a probable 1.13 or greater mod. Things will not work well.", modid);
+                // This is a 1.13+ mod, lets tell the crashing code about that
+                this.descriptor.put("acceptedMinecraftVersions", "[1.13,)");
+                // We'll push our "modid" back into the map, so that crashing code can print a sensible value
+                this.descriptor.put("modid", modid);
+            }
         }
         if (modid.length() > 64)
         {

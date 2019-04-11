@@ -52,6 +52,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InnerClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
@@ -204,6 +205,15 @@ public class AccessTransformer implements IClassTransformer
                 {
                     FMLLog.log.debug("Class: {} {} -> {}", name, toBinary(m.oldAccess), toBinary(m.newAccess));
                 }
+                // if this is an inner class, also modify the access flags on the corresponding InnerClasses attribute
+                for (InnerClassNode innerClass : classNode.innerClasses)
+                {
+                    if (innerClass.name.equals(classNode.name))
+                    {
+                        innerClass.access = getFixedAccess(innerClass.access, m);
+                        break;
+                    }
+                }
                 continue;
             }
             if (m.desc.isEmpty())
@@ -261,7 +271,10 @@ public class AccessTransformer implements IClassTransformer
                     }
                 }
 
-                replaceInvokeSpecial(classNode, nowOverrideable);
+                if (!nowOverrideable.isEmpty())
+                {
+                    replaceInvokeSpecial(classNode, nowOverrideable);
+                }
             }
         }
 

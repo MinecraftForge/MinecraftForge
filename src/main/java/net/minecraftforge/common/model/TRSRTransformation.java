@@ -71,6 +71,8 @@ public final class TRSRTransformation implements IModelState, ITransformation
     private Vector3f scale;
     private Quat4f rightRot;
 
+    private Matrix3f normalTransform;
+
     public TRSRTransformation(@Nullable Matrix4f matrix)
     {
         if(matrix == null)
@@ -646,6 +648,29 @@ public final class TRSRTransformation implements IModelState, ITransformation
     {
         // FIXME check if this is good enough
         return vertexIndex;
+    }
+
+    public void transformPosition(Vector4f position)
+    {
+        matrix.transform(position);
+    }
+
+    public void transformNormal(Vector3f normal)
+    {
+        checkNormalTransform();
+        normalTransform.transform(normal);
+        normal.normalize();
+    }
+
+    private void checkNormalTransform()
+    {
+        if (normalTransform == null)
+        {
+            normalTransform = new Matrix3f();
+            matrix.getRotationScale(normalTransform);
+            normalTransform.invert();
+            normalTransform.transpose();
+        }
     }
 
     @Override

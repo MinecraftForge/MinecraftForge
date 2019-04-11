@@ -24,10 +24,10 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.TRSRTransformation;
-
-import javax.vecmath.Vector4f;
 
 import java.util.List;
 
@@ -63,7 +63,7 @@ public final class ItemTextureQuadConverter
         List<UnpackedBakedQuad> horizontal = convertTextureHorizontal(format, transform, template, sprite, z, facing, color, tint);
         List<UnpackedBakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z, facing, color, tint);
 
-        return horizontal.size() >= vertical.size() ? horizontal : vertical;
+        return horizontal.size() <= vertical.size() ? horizontal : vertical;
     }
 
     /** @deprecated use {@link #convertTextureHorizontal(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)} */
@@ -273,65 +273,59 @@ public final class ItemTextureQuadConverter
         builder.setQuadOrientation(side);
         builder.setTexture(sprite);
 
+        // only apply the transform if it's not identity
+        boolean hasTransform = !transform.isIdentity();
+        IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform) : builder;
+
         if (side == EnumFacing.SOUTH)
         {
-            putVertex(builder, format, transform, side, x1, y1, z, u1, v2, color);
-            putVertex(builder, format, transform, side, x2, y1, z, u2, v2, color);
-            putVertex(builder, format, transform, side, x2, y2, z, u2, v1, color);
-            putVertex(builder, format, transform, side, x1, y2, z, u1, v1, color);
+            putVertex(consumer, format, side, x1, y1, z, u1, v2, color);
+            putVertex(consumer, format, side, x2, y1, z, u2, v2, color);
+            putVertex(consumer, format, side, x2, y2, z, u2, v1, color);
+            putVertex(consumer, format, side, x1, y2, z, u1, v1, color);
         }
         else
         {
-            putVertex(builder, format, transform, side, x1, y1, z, u1, v2, color);
-            putVertex(builder, format, transform, side, x1, y2, z, u1, v1, color);
-            putVertex(builder, format, transform, side, x2, y2, z, u2, v1, color);
-            putVertex(builder, format, transform, side, x2, y1, z, u2, v2, color);
+            putVertex(consumer, format, side, x1, y1, z, u1, v2, color);
+            putVertex(consumer, format, side, x1, y2, z, u1, v1, color);
+            putVertex(consumer, format, side, x2, y2, z, u2, v1, color);
+            putVertex(consumer, format, side, x2, y1, z, u2, v2, color);
         }
         return builder.build();
     }
 
-    private static void putVertex(UnpackedBakedQuad.Builder builder, VertexFormat format, TRSRTransformation transform, EnumFacing side,
+    private static void putVertex(IVertexConsumer consumer, VertexFormat format, EnumFacing side,
                                   float x, float y, float z, float u, float v, int color)
     {
-        Vector4f vec = new Vector4f();
         for (int e = 0; e < format.getElementCount(); e++)
         {
             switch (format.getElement(e).getUsage())
             {
                 case POSITION:
-                    if (transform.isIdentity())
-                    {
-                        builder.put(e, x, y, z, 1);
-                    }
-                    // only apply the transform if it's not identity
-                    else
-                    {
-                        vec.x = x;
-                        vec.y = y;
-                        vec.z = z;
-                        vec.w = 1;
-                        transform.getMatrix().transform(vec);
-                        builder.put(e, vec.x, vec.y, vec.z, vec.w);
-                    }
+                    consumer.put(e, x, y, z, 1f);
                     break;
                 case COLOR:
                     float r = ((color >> 16) & 0xFF) / 255f; // red
-                    float g = ((color >> 8) & 0xFF) / 255f; // green
-                    float b = ((color >> 0) & 0xFF) / 255f; // blue
+                    float g = ((color >>  8) & 0xFF) / 255f; // green
+                    float b = ((color >>  0) & 0xFF) / 255f; // blue
                     float a = ((color >> 24) & 0xFF) / 255f; // alpha
-                    builder.put(e, r, g, b, a);
+                    consumer.put(e, r, g, b, a);
+                    break;
+                case NORMAL:
+                    float offX = (float) side.getFrontOffsetX();
+                    float offY = (float) side.getFrontOffsetY();
+                    float offZ = (float) side.getFrontOffsetZ();
+                    consumer.put(e, offX, offY, offZ, 0f);
                     break;
                 case UV:
                     if (format.getElement(e).getIndex() == 0)
                     {
-                        builder.put(e, u, v, 0f, 1f);
+                        consumer.put(e, u, v, 0f, 1f);
                         break;
                     }
-                case NORMAL:
-                    builder.put(e, (float) side.getFrontOffsetX(), (float) side.getFrontOffsetY(), (float) side.getFrontOffsetZ(), 0f);
-                    break;
+                    // else fallthrough to default
                 default:
-                    builder.put(e);
+                    consumer.put(e);
                     break;
             }
         }

@@ -1,7 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -49,24 +49,12 @@
-         if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150939_a, p_180614_3_, false, p_180614_5_, (Entity)null))
+@@ -46,27 +46,15 @@
+ 
+         ItemStack itemstack = p_180614_1_.func_184586_b(p_180614_4_);
+ 
+-        if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150939_a, p_180614_3_, false, p_180614_5_, (Entity)null))
++        if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150939_a, p_180614_3_, false, p_180614_5_, p_180614_1_))
          {
              int i = this.func_77647_b(itemstack.func_77960_j());
 -            IBlockState iblockstate1 = this.field_150939_a.func_180642_a(p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_1_);
@@ -37,6 +41,15 @@
          {
              p_179222_3_ = EnumFacing.UP;
          }
+@@ -136,7 +124,7 @@
+             p_179222_2_ = p_179222_2_.func_177972_a(p_179222_3_);
+         }
+ 
+-        return p_179222_1_.func_190527_a(this.field_150939_a, p_179222_2_, false, p_179222_3_, (Entity)null);
++        return p_179222_1_.func_190527_a(this.field_150939_a, p_179222_2_, false, p_179222_3_, p_179222_4_);
+     }
+ 
+     public String func_77667_c(ItemStack p_77667_1_)
 @@ -171,6 +159,36 @@
  
      public Block func_179223_d()

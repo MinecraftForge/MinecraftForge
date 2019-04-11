@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/village/VillageSiege.java
++++ ../src-work/minecraft/net/minecraft/village/VillageSiege.java
+@@ -146,6 +146,7 @@
+ 
+                     if (vec3d != null)
+                     {
++                        if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, field_75537_a, entityplayer, field_75531_f, vec3d))) return false;
+                         break;
+                     }
+                 }
