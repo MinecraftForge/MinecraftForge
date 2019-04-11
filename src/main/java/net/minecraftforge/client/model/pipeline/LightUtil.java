@@ -250,6 +250,7 @@ public class LightUtil
     }
 
     private static IVertexConsumer tessellator = null;
+    @Deprecated // TODO: remove
     public static IVertexConsumer getTessellator()
     {
         if(tessellator == null)
@@ -262,6 +263,7 @@ public class LightUtil
     }
 
     private static ItemConsumer itemConsumer = null;
+    @Deprecated // TODO: remove
     public static ItemConsumer getItemConsumer()
     {
         if(itemConsumer == null)
@@ -271,20 +273,29 @@ public class LightUtil
         return itemConsumer;
     }
 
-    // renders quad in any Vertex Format, but is slower
-    public static void renderQuadColorSlow(BufferBuilder wr, BakedQuad quad, int auxColor)
+    private static final class ItemPipeline
     {
-        ItemConsumer cons;
-        if(wr == Tessellator.getInstance().getBuffer())
+        final VertexBufferConsumer bufferConsumer;
+        final ItemConsumer itemConsumer;
+
+        ItemPipeline()
         {
-            cons = getItemConsumer();
+            this.bufferConsumer = new VertexBufferConsumer();
+            this.itemConsumer = new ItemConsumer(bufferConsumer);
         }
-        else
-        {
-            cons = new ItemConsumer(new VertexBufferConsumer(wr));
-        }
-        float b = (float)(auxColor & 0xFF) / 0xFF;
-        float g = (float)((auxColor >>> 8) & 0xFF) / 0xFF;
+    }
+
+    private static final ThreadLocal<ItemPipeline> itemPipeline = ThreadLocal.withInitial(ItemPipeline::new);
+
+    // renders quad in any Vertex Format, but is slower
+    public static void renderQuadColorSlow(BufferBuilder buffer, BakedQuad quad, int auxColor)
+    {
+        ItemPipeline pipeline = itemPipeline.get();
+        pipeline.bufferConsumer.setBuffer(buffer);
+        ItemConsumer cons = pipeline.itemConsumer;
+
+        float b = (float)( auxColor         & 0xFF) / 0xFF;
+        float g = (float)((auxColor >>>  8) & 0xFF) / 0xFF;
         float r = (float)((auxColor >>> 16) & 0xFF) / 0xFF;
         float a = (float)((auxColor >>> 24) & 0xFF) / 0xFF;
 
@@ -292,16 +303,19 @@ public class LightUtil
         quad.pipe(cons);
     }
 
-    public static void renderQuadColor(BufferBuilder wr, BakedQuad quad, int auxColor)
+    public static void renderQuadColor(BufferBuilder buffer, BakedQuad quad, int auxColor)
     {
-        if (quad.getFormat().equals(wr.getVertexFormat())) 
+        if (quad.getFormat().equals(buffer.getVertexFormat()))
         {
-            wr.addVertexData(quad.getVertexData());
-            ForgeHooksClient.putQuadColor(wr, quad, auxColor);
+            buffer.addVertexData(quad.getVertexData());
+            if (buffer.getVertexFormat().hasColor())
+            {
+                ForgeHooksClient.putQuadColor(buffer, quad, auxColor);
+            }
         }
         else
         {
-            renderQuadColorSlow(wr, quad, auxColor);
+            renderQuadColorSlow(buffer, quad, auxColor);
         }
     }
 
@@ -328,7 +342,8 @@ public class LightUtil
             if(getVertexFormat().getElement(element).getUsage() == EnumUsage.COLOR)
             {
                 System.arraycopy(auxColor, 0, buf, 0, buf.length);
-                for(int i = 0; i < 4; i++)
+                int n = Math.min(4, data.length);
+                for(int i = 0; i < n; i++)
                 {
                     buf[i] *= data[i];
                 }
