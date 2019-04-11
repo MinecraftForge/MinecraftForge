@@ -237,7 +237,7 @@ public class CraftingHelper
                 if(element.isJsonObject())
                     nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
                 else
-                    nbt = JsonToNBT.getTagFromJson(element.getAsString());
+                    nbt = JsonToNBT.getTagFromJson(JsonUtils.getString(element, "nbt"));
 
                 NBTTagCompound tmp = new NBTTagCompound();
                 if (nbt.hasKey("ForgeCaps"))
@@ -259,6 +259,11 @@ public class CraftingHelper
         }
 
         return new ItemStack(item, JsonUtils.getInt(json, "count", 1));
+    }
+
+    public static boolean processConditions(JsonObject json, String memberName)
+    {
+        return !json.has(memberName) || processConditions(JsonUtils.getJsonArray(json, memberName));
     }
 
     public static boolean processConditions(JsonArray conditions)
@@ -312,7 +317,7 @@ public class CraftingHelper
 
                     if (json == null || json.size() == 0)
                         LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's null or empty", x, key);
-                    else if (json.has("conditions") && !processConditions(JsonUtils.getJsonArray(json, "conditions")))
+                    else if (!processConditions(json, "conditions"))
                         LOGGER.info(CRAFTHELPER, "Skipping loading constant #{} from {} as it's conditions were not met", x, key);
                     else if (name == null)
                         LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `name`", x, key);
