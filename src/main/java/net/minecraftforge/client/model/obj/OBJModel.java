@@ -857,8 +857,6 @@ public class OBJModel implements IUnbakedModel
 
         public Face bake(TRSRTransformation transform)
         {
-            Matrix4f m = transform.getMatrixVec();
-            Matrix3f mn = null;
             Vertex[] vertices = new Vertex[verts.length];
 //            Normal[] normals = norms != null ? new Normal[norms.length] : null;
 //            TextureCoordinate[] textureCoords = texCoords != null ? new TextureCoordinate[texCoords.length] : null;
@@ -869,24 +867,16 @@ public class OBJModel implements IUnbakedModel
 //                Normal n = norms != null ? norms[i] : null;
 //                TextureCoordinate t = texCoords != null ? texCoords[i] : null;
 
-                Vector4f pos = new Vector4f(v.getPos()), newPos = new Vector4f();
+                Vector4f pos = new Vector4f(v.getPos());
                 pos.w = 1;
-                m.transform(pos, newPos);
-                vertices[i] = new Vertex(newPos, v.getMaterial());
+                transform.transformPosition(pos);
+                vertices[i] = new Vertex(pos, v.getMaterial());
 
                 if (v.hasNormal())
                 {
-                    if(mn == null)
-                    {
-                        mn = new Matrix3f();
-                        m.getRotationScale(mn);
-                        mn.invert();
-                        mn.transpose();
-                    }
-                    Vector3f normal = new Vector3f(v.getNormal().getData()), newNormal = new Vector3f();
-                    mn.transform(normal, newNormal);
-                    newNormal.normalize();
-                    vertices[i].setNormal(new Normal(newNormal));
+                    Vector3f normal = new Vector3f(v.getNormal().getData());
+                    transform.transformNormal(normal);
+                    vertices[i].setNormal(new Normal(normal));
                 }
 
                 if (v.hasTextureCoordinate()) vertices[i].setTextureCoordinate(v.getTextureCoordinate());
