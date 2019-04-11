@@ -32,7 +32,15 @@
        if (p_70037_1_.func_150297_b("ConversionTime", 99) && p_70037_1_.func_74762_e("ConversionTime") > -1) {
           this.func_191991_a(p_70037_1_.func_186855_b("ConversionPlayer") ? p_70037_1_.func_186857_a("ConversionPlayer") : null, p_70037_1_.func_74762_e("ConversionTime"));
        }
-@@ -145,7 +153,7 @@
+@@ -77,6 +85,7 @@
+    @Nullable
+    public IEntityLivingData func_204210_a(DifficultyInstance p_204210_1_, @Nullable IEntityLivingData p_204210_2_, @Nullable NBTTagCompound p_204210_3_) {
+       this.func_190733_a(this.field_70170_p.field_73012_v.nextInt(6));
++      net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(this, this.field_70170_p.field_73012_v);
+       return super.func_204210_a(p_204210_1_, p_204210_2_, p_204210_3_);
+    }
+ 
+@@ -145,7 +154,7 @@
     protected void func_190738_dp() {
        EntityVillager entityvillager = new EntityVillager(this.field_70170_p);
        entityvillager.func_82149_j(this);
@@ -41,7 +49,7 @@
        entityvillager.func_190672_a(this.field_70170_p.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null, (NBTTagCompound)null, false);
        entityvillager.func_82187_q();
        if (this.func_70631_g_()) {
-@@ -224,4 +232,28 @@
+@@ -224,4 +233,28 @@
     protected ItemStack func_190732_dj() {
        return ItemStack.field_190927_a;
     }

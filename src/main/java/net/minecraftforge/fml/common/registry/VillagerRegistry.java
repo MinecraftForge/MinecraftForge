@@ -320,12 +320,10 @@ public class VillagerRegistry
         entity.setProfession(INSTANCE.REGISTRY.getRandom(rand));
     }
 
-
-
-
-
-
-
+    public static void setRandomProfession(EntityZombieVillager entity, Random rand)
+    {
+        entity.setProfession(INSTANCE.REGISTRY.getRandom(rand));
+    }
 
     //Below this is INTERNAL USE ONLY DO NOT USE MODDERS
     public static void onSetProfession(EntityVillager entity, int network)

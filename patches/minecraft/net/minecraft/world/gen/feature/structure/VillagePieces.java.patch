@@ -64,22 +64,24 @@
           }
  
        }
-@@ -1480,13 +1492,12 @@
+@@ -1480,13 +1492,14 @@
                    EntityZombieVillager entityzombievillager = new EntityZombieVillager(p_74893_1_.func_201672_e());
                    entityzombievillager.func_70012_b((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
                    entityzombievillager.func_204210_a(p_74893_1_.func_175649_E(new BlockPos(entityzombievillager)), (IEntityLivingData)null, (NBTTagCompound)null);
 -                  entityzombievillager.func_190733_a(this.func_180779_c(i, 0));
++                  entityzombievillager.setProfession(this.chooseForgeProfession(i, net.minecraftforge.fml.common.registry.VillagerRegistry.FARMER.orElseThrow(() -> new IllegalStateException("Farmer profession not initialized?"))));
                    entityzombievillager.func_110163_bv();
                    p_74893_1_.func_72838_d(entityzombievillager);
                 } else {
                    EntityVillager entityvillager = new EntityVillager(p_74893_1_.func_201672_e());
                    entityvillager.func_70012_b((double)j + 0.5D, (double)k, (double)l + 0.5D, 0.0F, 0.0F);
 -                  entityvillager.func_70938_b(this.func_180779_c(i, p_74893_1_.func_201674_k().nextInt(6)));
++                  net.minecraftforge.fml.common.registry.VillagerRegistry.setRandomProfession(entityvillager, p_74893_1_.func_201674_k());
 +                  entityvillager.setProfession(this.chooseForgeProfession(i, entityvillager.getProfessionForge()));
                    entityvillager.func_190672_a(p_74893_1_.func_175649_E(new BlockPos(entityvillager)), (IEntityLivingData)null, (NBTTagCompound)null, false);
                    p_74893_1_.func_72838_d(entityvillager);
                 }
-@@ -1495,11 +1506,19 @@
+@@ -1495,11 +1508,19 @@
           }
        }
  
