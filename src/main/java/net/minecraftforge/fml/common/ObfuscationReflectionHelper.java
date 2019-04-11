@@ -72,7 +72,7 @@ public class ObfuscationReflectionHelper
         }
         catch (Exception e)
         {
-            LOGGER.error(REFLECTION, "There was a problem getting field index {} from {}", classToAccess.getName(), e);
+            LOGGER.error(REFLECTION, "There was a problem getting field index {} from {}", fieldIndex, classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -105,7 +105,7 @@ public class ObfuscationReflectionHelper
         }
         catch (IllegalAccessException e)
         {
-            LOGGER.error("There was a problem setting field index {} on type {}", classToAccess.getName(), e);
+            LOGGER.error("There was a problem setting field index {} on type {}", fieldIndex, classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -118,12 +118,12 @@ public class ObfuscationReflectionHelper
         }
         catch (UnableToFindFieldException e)
         {
-            LOGGER.error("Unable to locate any field {} on type {}", classToAccess.getName(), e);
+            LOGGER.error("Unable to locate any field {} on type {}", fieldName, classToAccess.getName(), e);
             throw e;
         }
         catch (IllegalAccessException e)
         {
-            LOGGER.error("Unable to set any field {} on type {}", classToAccess.getName(), e);
+            LOGGER.error("Unable to set any field {} on type {}", fieldName, classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
