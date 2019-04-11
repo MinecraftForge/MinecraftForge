@@ -54,6 +54,8 @@ public class ForgeRegistries
     public static final IForgeRegistry<EntityType<?>>       ENTITIES       = RegistryManager.ACTIVE.getRegistry(EntityType.class); //Untyped casys needed to fix javac issues.
     public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES  = RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
     public static final IForgeRegistry<ModDimension>        MOD_DIMENSIONS = RegistryManager.ACTIVE.getRegistry(ModDimension.class);
+    public static final IForgeRegistry<DataSerializerEntry> DATA_SERIALIZERS = RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class);
+
     /**
      * This function is just to make sure static inializers in other classes have run and setup their registries before we query them.
      */
