@@ -19,10 +19,16 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.client.util.InputMappings;
 import net.minecraftforge.eventbus.api.Event;
+
+import org.lwjgl.glfw.GLFW;
 
 public class InputEvent extends Event
 {
+    /**
+     * This event fires when a mouse button is pressed.
+     */
     public static class MouseInputEvent extends InputEvent
     {
         private final int button;
@@ -51,6 +57,9 @@ public class InputEvent extends Event
         }
     }
 
+    /**
+     * This event fires when keyboard input is detected.
+     */
     public static class KeyInputEvent extends InputEvent
     {
         private final int key;
@@ -65,11 +74,25 @@ public class InputEvent extends Event
             this.modifiers = modifiers;
         }
 
+        /**
+         * The keyboard key that was pressed or released
+         * https://www.glfw.org/docs/latest/group__keys.html
+         *
+         * @see GLFW key constants starting with "GLFW_KEY_"
+         */
         public int getKey()
         {
             return this.key;
         }
 
+        /**
+         * Platform-specific scan code.
+         * Used for {@link InputMappings#getInputByCode(int, int)}
+         *
+         * The scan code is unique for every key, regardless of whether it has a key code.
+         * Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
+         * on the platform but they are safe to save to disk as custom key bindings.
+         */
         public int getScanCode()
         {
             return this.scanCode;
@@ -80,6 +103,14 @@ public class InputEvent extends Event
             return this.action;
         }
 
+        /**
+         * Bit field representing the modifier keys pressed.
+         *
+         * @see GLFW#GLFW_MOD_SHIFT
+         * @see GLFW#GLFW_MOD_CONTROL
+         * @see GLFW#GLFW_MOD_ALT
+         * @see GLFW#GLFW_MOD_SUPER
+         */
         public int getModifiers()
         {
             return this.modifiers;
