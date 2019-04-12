@@ -113,6 +113,15 @@ public interface IForgeItem
      * @return True if reparable
      */
     boolean isRepairable();
+    
+    /**
+    * Determines the amount of durability the mending enchantment
+    * will repair, on average, per point of experience.
+    */
+    default float getXpRepairRatio(ItemStack stack)
+    {
+        return 2f;
+    }
 
     /**
      * Override this method to change the NBT data being sent to the client. You

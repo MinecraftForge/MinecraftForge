@@ -18,7 +18,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else {
-@@ -178,6 +180,7 @@
+@@ -178,12 +180,14 @@
     public void func_70100_b_(EntityPlayer p_70100_1_) {
        if (!this.field_70170_p.field_72995_K) {
           if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0) {
@@ -26,3 +26,22 @@
              p_70100_1_.field_71090_bL = 2;
              p_70100_1_.func_71001_a(this, 1);
              ItemStack itemstack = EnchantmentHelper.func_92099_a(Enchantments.field_185296_A, p_70100_1_);
+             if (!itemstack.func_190926_b() && itemstack.func_77951_h()) {
+-               int i = Math.min(this.func_184514_c(this.field_70530_e), itemstack.func_77952_i());
+-               this.field_70530_e -= this.func_184515_b(i);
++               float ratio = itemstack.func_77973_b().getXpRepairRatio(itemstack);
++               int i = Math.min(roundAverage(this.field_70530_e * ratio), itemstack.func_77952_i());
++               this.field_70530_e -= roundAverage(i / ratio);
+                itemstack.func_196085_b(itemstack.func_77952_i() - i);
+             }
+ 
+@@ -261,4 +265,9 @@
+    public boolean func_70075_an() {
+       return false;
+    }
++   
++   private static int roundAverage(float value) {
++      double floor = Math.floor(value);
++      return (int) floor + (Math.random() < value - floor ? 1 : 0);
++   }
+ }
