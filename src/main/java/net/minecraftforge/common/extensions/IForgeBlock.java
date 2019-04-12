@@ -920,7 +920,7 @@ public interface IForgeBlock
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(IBlockState state, IBlockReader world, BlockPos pos)
+    default PathNodeType getAiPathNodeType(IBlockState state, IBlockReader world, BlockPos pos, @Nullable EntityLiving entity)
     {
         return state.isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
     }
