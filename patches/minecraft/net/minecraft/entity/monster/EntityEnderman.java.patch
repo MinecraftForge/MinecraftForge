@@ -39,6 +39,15 @@
                  {
                      return false;
                  }
+@@ -508,7 +522,7 @@
+                 IBlockState iblockstate1 = world.func_180495_p(blockpos.func_177977_b());
+                 IBlockState iblockstate2 = this.field_179475_a.func_175489_ck();
+ 
+-                if (iblockstate2 != null && this.func_188518_a(world, blockpos, iblockstate2.func_177230_c(), iblockstate, iblockstate1))
++                if (iblockstate2 != null && this.func_188518_a(world, blockpos, iblockstate2.func_177230_c(), iblockstate, iblockstate1) && net.minecraftforge.event.ForgeEventFactory.onBlockPlace(field_179475_a, new net.minecraftforge.common.util.BlockSnapshot(world, blockpos, iblockstate2), net.minecraft.util.EnumFacing.UP).isCanceled())
+                 {
+                     world.func_180501_a(blockpos, iblockstate2, 3);
+                     this.field_179475_a.func_175490_a((IBlockState)null);
 @@ -551,7 +565,7 @@
                  {
                      return false;

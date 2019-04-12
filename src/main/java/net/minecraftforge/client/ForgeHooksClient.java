@@ -491,6 +491,7 @@ public class ForgeHooksClient
             case GENERIC:
                 GL20.glEnableVertexAttribArray(attr.getIndex());
                 GL20.glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
+                break;
             default:
                 FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -521,6 +522,7 @@ public class ForgeHooksClient
                 break;
             case GENERIC:
                 GL20.glDisableVertexAttribArray(attr.getIndex());
+                break;
             default:
                 FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -555,9 +557,10 @@ public class ForgeHooksClient
         VertexFormat format = quad.getFormat();
         int size = format.getIntegerSize();
         int offset = format.getColorOffset() / 4; // assumes that color is aligned
+        boolean hasColor = format.hasColor();
         for(int i = 0; i < 4; i++)
         {
-            int vc = quad.getVertexData()[offset + size * i];
+            int vc = hasColor ? quad.getVertexData()[offset + size * i] : 0xFFFFFFFF;
             float vcr = vc & 0xFF;
             float vcg = (vc >>> 8) & 0xFF;
             float vcb = (vc >>> 16) & 0xFF;

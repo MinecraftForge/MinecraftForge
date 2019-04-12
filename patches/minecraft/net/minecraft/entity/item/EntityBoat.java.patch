@@ -1,6 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityBoat.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityBoat.java
-@@ -508,7 +508,7 @@
+@@ -449,6 +449,12 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(l1, k1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
++                        Boolean result = iblockstate.func_177230_c().isAABBInsideMaterial(field_70170_p, blockpos$pooledmutableblockpos, new AxisAlignedBB(blockpos$pooledmutableblockpos), Material.field_151586_h);
++                        if (result != null) {
++                            if (!result) continue;
++                            f = Math.max(f, iblockstate.func_177230_c().getBlockLiquidHeight(field_70170_p, blockpos$pooledmutableblockpos, iblockstate, Material.field_151586_h) + blockpos$pooledmutableblockpos.func_177956_o());
++                        }
++
+                         if (iblockstate.func_185904_a() == Material.field_151586_h)
+                         {
+                             f = Math.max(f, BlockLiquid.func_190973_f(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos));
+@@ -508,7 +514,7 @@
  
                                  if (!list.isEmpty())
                                  {
@@ -9,7 +22,42 @@
                                      ++k1;
                                  }
  
-@@ -980,4 +980,20 @@
+@@ -551,6 +557,15 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
++                        Boolean result = iblockstate.func_177230_c().isAABBInsideMaterial(field_70170_p, blockpos$pooledmutableblockpos, axisalignedbb, Material.field_151586_h);
++                        if (result != null) {
++                            if (!result) continue;
++                            
++                            float f = iblockstate.func_177230_c().getBlockLiquidHeight(field_70170_p, blockpos$pooledmutableblockpos, iblockstate, Material.field_151586_h) + blockpos$pooledmutableblockpos.func_177956_o();
++                            this.field_184465_aD = Math.max((double)f, this.field_184465_aD);
++                            flag |= axisalignedbb.field_72338_b < (double)f;
++                        }
++
+                         if (iblockstate.func_185904_a() == Material.field_151586_h)
+                         {
+                             float f = BlockLiquid.func_190972_g(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos);
+@@ -594,6 +609,18 @@
+                         blockpos$pooledmutableblockpos.func_181079_c(k1, l1, i2);
+                         IBlockState iblockstate = this.field_70170_p.func_180495_p(blockpos$pooledmutableblockpos);
+ 
++                        Boolean result = iblockstate.func_177230_c().isAABBInsideMaterial(field_70170_p, blockpos$pooledmutableblockpos, axisalignedbb, Material.field_151586_h);
++                        if (result != null) {
++                            if (!result) continue;
++                            
++                            if(iblockstate.func_177230_c().getBlockLiquidHeight(field_70170_p, blockpos$pooledmutableblockpos, iblockstate, Material.field_151586_h) > 0)
++                            {   
++                                blockpos$pooledmutableblockpos.func_185344_t();
++                                return EntityBoat.Status.UNDER_FLOWING_WATER;
++                            } else
++                                continue;
++                        }
++
+                         if (iblockstate.func_185904_a() == Material.field_151586_h && d0 < (double)BlockLiquid.func_190972_g(iblockstate, this.field_70170_p, blockpos$pooledmutableblockpos))
+                         {
+                             if (((Integer)iblockstate.func_177229_b(BlockLiquid.field_176367_b)).intValue() != 0)
+@@ -980,4 +1007,20 @@
              return values()[0];
          }
      }

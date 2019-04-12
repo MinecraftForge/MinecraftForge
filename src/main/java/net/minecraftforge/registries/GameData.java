@@ -37,6 +37,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionType;
 import net.minecraft.util.ObjectIntIdentityMap;
@@ -100,6 +101,8 @@ public class GameData
     public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
     public static final ResourceLocation RECIPES      = new ResourceLocation("minecraft:recipes");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
+    public static final ResourceLocation SERIALIZERS  = new ResourceLocation("minecraft:dataserializers");
+
     private static final int MAX_BLOCK_ID = 4095;
     private static final int MIN_ITEM_ID = MAX_BLOCK_ID + 1;
     private static final int MAX_ITEM_ID = 31999;
@@ -111,10 +114,14 @@ public class GameData
     private static final int MAX_ENTITY_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSpawnMob)
     private static final int MAX_RECIPE_ID = Integer.MAX_VALUE >> 5; // Varint CPacketRecipeInfo/SPacketRecipeBook
     private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
+    private static final int MIN_SERIALIZER_ID = 256; // Leave room for vanilla entries
+    private static final int MAX_SERIALIZER_ID = Integer.MAX_VALUE >> 5; // Varint (EntityDataManager)
 
     private static final ResourceLocation BLOCK_TO_ITEM         = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID      = new ResourceLocation("minecraft:blockstatetoid");
     private static final ResourceLocation ENTITY_CLASS_TO_ENTRY = new ResourceLocation("forge:entity_class_to_entry");
+    private static final ResourceLocation SERIALIZER_TO_ENTRY   = new ResourceLocation("forge:serializer_to_entry");
+
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
     private static final BiConsumer<ResourceLocation, ForgeRegistry<?>> LOCK_VANILLA = (name, reg) -> reg.slaves.values().stream().filter(o -> o instanceof ILockableRegistry).forEach(o -> ((ILockableRegistry)o).lock());
@@ -142,6 +149,7 @@ public class GameData
         makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
         makeRegistry(RECIPES,      IRecipe.class,     MAX_RECIPE_ID).disableSaving().allowModification().addCallback(RecipeCallbacks.INSTANCE).create();
         makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
+        makeRegistry(SERIALIZERS,  DataSerializerEntry.class, MIN_SERIALIZER_ID, MAX_SERIALIZER_ID).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
         entityRegistry = (ForgeRegistry<EntityEntry>)makeRegistry(ENTITIES, EntityEntry.class, MAX_ENTITY_ID).addCallback(EntityCallbacks.INSTANCE).create();
     }
 
@@ -194,6 +202,12 @@ public class GameData
     public static Map<Class<? extends Entity>, EntityEntry> getEntityClassMap()
     {
         return GameRegistry.findRegistry(EntityEntry.class).getSlaveMap(ENTITY_CLASS_TO_ENTRY, Map.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static Map<DataSerializer<?>, DataSerializerEntry> getSerializerMap()
+    {
+        return GameRegistry.findRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
 
     public static <K extends IForgeRegistryEntry<K>> K register_impl(K value)
@@ -520,6 +534,32 @@ public class GameData
         }
     }
 
+    private static class SerializerCallbacks implements IForgeRegistry.AddCallback<DataSerializerEntry>, IForgeRegistry.ClearCallback<DataSerializerEntry>, IForgeRegistry.CreateCallback<DataSerializerEntry>
+    {
+        static final SerializerCallbacks INSTANCE = new SerializerCallbacks();
+
+        @Override
+        public void onAdd(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage, int id, DataSerializerEntry entry, @Nullable DataSerializerEntry oldEntry)
+        {
+            @SuppressWarnings("unchecked")
+            Map<DataSerializer<?>, DataSerializerEntry> map = owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
+            if (oldEntry != null) map.remove(oldEntry.getSerializer());
+            map.put(entry.getSerializer(), entry);
+        }
+
+        @Override
+        public void onClear(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
+        {
+            owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class).clear();
+        }
+
+        @Override
+        public void onCreate(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage)
+        {
+            owner.setSlaveMap(SERIALIZER_TO_ENTRY, new IdentityHashMap<>());
+        }
+    }
+
     private static <T extends IForgeRegistryEntry<T>> void loadRegistry(final ResourceLocation registryName, final RegistryManager from, final RegistryManager to, final Class<T> regType, boolean freeze)
     {
         ForgeRegistry<T> fromRegistry = from.getRegistry(registryName);
@@ -568,20 +608,23 @@ public class GameData
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
 
-        List<ResourceLocation> missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).collect(Collectors.toList());
-        if (missingRegs.size() > 0)
+        if (isLocalWorld)
         {
-            String text = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
-                    "There are " + missingRegs.size() + " missing registries in this save.\n" +
-                    "If you continue the missing registries will get removed.\n" +
-                    "This may cause issues, it is advised that you create a world backup before continuing.\n\n" +
-                    "Missing Registries:\n";
+            List<ResourceLocation> missingRegs = snapshot.keySet().stream().filter(name -> !RegistryManager.ACTIVE.registries.containsKey(name)).collect(Collectors.toList());
+            if (missingRegs.size() > 0)
+            {
+                String text = "Forge Mod Loader detected missing/unknown registrie(s).\n\n" +
+                        "There are " + missingRegs.size() + " missing registries in this save.\n" +
+                        "If you continue the missing registries will get removed.\n" +
+                        "This may cause issues, it is advised that you create a world backup before continuing.\n\n" +
+                        "Missing Registries:\n";
 
-            for (ResourceLocation s : missingRegs)
-                text += s.toString() + "\n";
+                for (ResourceLocation s : missingRegs)
+                    text += s.toString() + "\n";
 
-            if (!StartupQuery.confirm(text))
-                StartupQuery.abort();
+                if (!StartupQuery.confirm(text))
+                    StartupQuery.abort();
+            }
         }
 
         RegistryManager STAGING = new RegistryManager("STAGING");

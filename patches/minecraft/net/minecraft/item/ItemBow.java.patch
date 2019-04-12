@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBow.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBow.java
+@@ -37,7 +37,7 @@
+                 }
+                 else
+                 {
+-                    return p_185085_3_.func_184607_cu().func_77973_b() != Items.field_151031_f ? 0.0F : (float)(p_185085_1_.func_77988_m() - p_185085_3_.func_184605_cv()) / 20.0F;
++                    return !(p_185085_3_.func_184607_cu().func_77973_b() instanceof ItemBow) ? 0.0F : (float)(p_185085_1_.func_77988_m() - p_185085_3_.func_184605_cv()) / 20.0F;
+                 }
+             }
+         });
 @@ -90,6 +90,10 @@
              boolean flag = entityplayer.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
              ItemStack itemstack = this.func_185060_a(entityplayer);
@@ -11,7 +20,7 @@
              if (!itemstack.func_190926_b() || flag)
              {
                  if (itemstack.func_190926_b())
-@@ -97,12 +101,11 @@
+@@ -97,17 +101,17 @@
                      itemstack = new ItemStack(Items.field_151032_g);
                  }
  
@@ -25,7 +34,13 @@
  
                      if (!p_77615_2_.field_72995_K)
                      {
-@@ -190,6 +193,9 @@
+                         ItemArrow itemarrow = (ItemArrow)(itemstack.func_77973_b() instanceof ItemArrow ? itemstack.func_77973_b() : Items.field_151032_g);
+                         EntityArrow entityarrow = itemarrow.func_185052_a(p_77615_2_, itemstack, entityplayer);
++                        entityarrow = this.customizeArrow(entityarrow);
+                         entityarrow.func_184547_a(entityplayer, entityplayer.field_70125_A, entityplayer.field_70177_z, 0.0F, f * 3.0F, 1.0F);
+ 
+                         if (f == 1.0F)
+@@ -190,6 +194,9 @@
          ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
          boolean flag = !this.func_185060_a(p_77659_2_).func_190926_b();
  
@@ -35,3 +50,13 @@
          if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag)
          {
              return flag ? new ActionResult(EnumActionResult.PASS, itemstack) : new ActionResult(EnumActionResult.FAIL, itemstack);
+@@ -205,4 +212,9 @@
+     {
+         return 1;
+     }
++
++    public EntityArrow customizeArrow(EntityArrow arrow)
++    {
++        return arrow;
++    }
+ }
