@@ -1377,7 +1377,7 @@ public class ForgeHooks
                         reader = Files.newBufferedReader(file);
                         String contents = IOUtils.toString(reader);
                         JsonObject json = JsonUtils.gsonDeserialize(CraftingHelper.GSON, contents, JsonObject.class);
-                        if (json.has("conditions") && !CraftingHelper.processConditions(JsonUtils.getJsonArray(json, "conditions"), ctx))
+                        if (!CraftingHelper.processConditions(json, "conditions", ctx))
                             return true;
                         Advancement.Builder builder = JsonUtils.gsonDeserialize(AdvancementManager.GSON, contents, Advancement.Builder.class);
                         map.put(key, builder);
