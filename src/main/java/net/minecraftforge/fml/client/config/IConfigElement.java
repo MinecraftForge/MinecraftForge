@@ -171,7 +171,16 @@ public interface IConfigElement
      * select a value from a list of valid values.
      */
     String[] getValidValues();
-    
+
+    /**
+     * [Property] Gets a String array of the versions of this property's valid values that will display in the config GUI.
+     * This is generally used for String properties to allow the user to select a value from a list of valid values.
+     */
+    default String[] getValidValuesDisplay()
+    {
+    	return null;
+    }
+
     /**
      * [Property] Gets this property's minimum value.
      */
@@ -186,4 +195,12 @@ public interface IConfigElement
      * [Property] Gets a Pattern object used in String property input validation.
      */
     Pattern getValidationPattern();
+
+    /**
+     * @return true if this element is going to have a slider attached
+     */
+    default boolean hasSlidingControl()
+    {
+        return false;
+    }
 }

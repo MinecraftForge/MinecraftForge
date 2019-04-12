@@ -164,6 +164,15 @@
          GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
          GlStateManager.func_179140_f();
          this.func_191948_b(p_73863_1_, p_73863_2_);
+@@ -654,7 +719,7 @@
+             {
+                 if (i == 0)
+                 {
+-                    list.set(i, p_146285_1_.func_77953_t().field_77937_e + (String)list.get(i));
++                    list.set(i, p_146285_1_.func_77973_b().getForgeRarity(p_146285_1_).getColor() + (String)list.get(i));
+                 }
+                 else
+                 {
 @@ -662,7 +727,10 @@
                  }
              }

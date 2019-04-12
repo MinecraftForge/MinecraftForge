@@ -14,7 +14,7 @@
              ItemStack itemstack = abstractclientplayer.func_184607_cu();
  
 -            if (itemstack.func_77973_b() == Items.field_151031_f)
-+            if (!itemstack.func_190926_b() && itemstack.func_77973_b() == Items.field_151031_f) //Forge: Data watcher can desync and cause this to NPE...
++            if (itemstack.func_77973_b() instanceof net.minecraft.item.ItemBow)
              {
                  EnumHand enumhand1 = abstractclientplayer.func_184600_cs();
                  flag = enumhand1 == EnumHand.MAIN_HAND;

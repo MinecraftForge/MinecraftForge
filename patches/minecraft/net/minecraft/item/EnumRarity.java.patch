@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/item/EnumRarity.java
++++ ../src-work/minecraft/net/minecraft/item/EnumRarity.java
+@@ -2,7 +2,7 @@
+ 
+ import net.minecraft.util.text.TextFormatting;
+ 
+-public enum EnumRarity
++public enum EnumRarity implements net.minecraftforge.common.IRarity
+ {
+     COMMON(TextFormatting.WHITE, "Common"),
+     UNCOMMON(TextFormatting.YELLOW, "Uncommon"),
+@@ -17,4 +17,16 @@
+         this.field_77937_e = p_i45349_3_;
+         this.field_77934_f = p_i45349_4_;
+     }
++
++    @Override
++    public TextFormatting getColor()
++    {
++        return this.field_77937_e;
++    }
++
++    @Override
++    public String getName()
++    {
++        return this.field_77934_f;
++    }
+ }
