@@ -234,7 +234,7 @@
              guiscreenworking.func_200209_c(new TextComponentString(""));
           }
  
-+         if (!net.minecraftforge.fml.StartupQuery.check()) {
++         if (!net.minecraftforge.fml.StartupQuery.check() || this.field_71437_Z.func_71241_aa()) {
 +            this.func_147108_a(null);
 +            return;
 +         } else {
