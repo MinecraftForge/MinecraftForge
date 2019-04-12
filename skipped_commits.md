@@ -10,5 +10,8 @@
 |[Fix patches from #5160 setting rotation as well as position (#5233)](https://github.com/MinecraftForge/MinecraftForge/commit/ebc4eaddac66e8d9eee6a859b473d3165b1bbfdb) | No | Apparently I included it in [this commit](https://github.com/MinecraftForge/MinecraftForge/commit/958bbf6c9a3c55aa2a1543679f95b4b985a31ed3) accidentally. |
 |[Use HTTPS for files website.](https://github.com/MinecraftForge/MinecraftForge/commit/607da1bd9b07ed07d8332530d90bca869503cc6d) | No | Irrelevant, buildscript was completely changed |
 |[Prevent RecipeBook from crashing on empty modded ingredients (#5234)](https://github.com/MinecraftForge/MinecraftForge/commit/e406137b19596224997397ebfbd033f21defefce) | No | Fixed in vanilla |
+|[Improve reflection helper methods (#4853)](https://github.com/MinecraftForge/MinecraftForge/commit/d16472d0ba38c04d46fbdb59cc035c6796b4798f) | No | ObfuscationReflectionHelper refactored |
+|[Clean up logged mod states (#5227)](https://github.com/MinecraftForge/MinecraftForge/commit/0b47ccc015dd1ac2a1d9210b49938cff6f2596d7) | Yes | Currently the mod state table dump is absent from crash reports, should revisit once that is added again |
+|[Fix minor issue in getFilledPercentage for Fluid rendering (#5206)](https://github.com/MinecraftForge/MinecraftForge/commit/3cf97f43fec5514033f24b099218c3254753dff8) | No | Fluid block classes are gone |
 
-Currently updated through: e406137b19596224997397ebfbd033f21defefce
+Currently updated through: 5771c8ffea9a4b31043358a26ec456218a724ac0
