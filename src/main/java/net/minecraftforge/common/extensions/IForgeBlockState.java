@@ -775,17 +775,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
-     *
-     * @return the PathNodeType
-     */
-    @Nullable
-    default PathNodeType getAiPathNodeType(IWorldReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos);
-    }
-
-    /**
      * @param blockState The state for this block
      * @param world The world this block is in
      * @param pos The position of this block
@@ -932,8 +921,8 @@ public interface IForgeBlockState
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos)
+    default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos, @Nullable EntityLiving entity)
     {
-        return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos);
+        return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos, entity);
     }
 }
