@@ -17,7 +17,7 @@
     public boolean func_76398_f() {
        return this.field_76418_K;
     }
-@@ -258,4 +257,70 @@
+@@ -258,4 +257,73 @@
     private static void func_210759_a(int p_210759_0_, String p_210759_1_, Potion p_210759_2_) {
        IRegistry.field_212631_t.func_177775_a(p_210759_0_, new ResourceLocation(p_210759_1_), p_210759_2_);
     }
@@ -46,25 +46,28 @@
 +   /**
 +    * Called to draw the this Potion onto the player's inventory when it's active.
 +    * This can be used to e.g. render Potion icons from your own texture.
++    *
++    * @param effect the active PotionEffect
++    * @param gui the gui instance
 +    * @param x the x coordinate
 +    * @param y the y coordinate
-+    * @param effect the active PotionEffect
-+    * @param mc the Minecraft instance, for convenience
++    * @param z the z level
 +    */
 +   @OnlyIn(Dist.CLIENT)
-+   public void renderInventoryEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc) { }
++   public void renderInventoryEffect(PotionEffect effect, net.minecraft.client.gui.Gui gui, int x, int y, float z) { }
 +
 +   /**
 +    * Called to draw the this Potion onto the player's ingame HUD when it's active.
 +    * This can be used to e.g. render Potion icons from your own texture.
++    * @param effect the active PotionEffect
++    * @param gui the gui instance
 +    * @param x the x coordinate
 +    * @param y the y coordinate
-+    * @param effect the active PotionEffect
-+    * @param mc the Minecraft instance, for convenience
++    * @param z the z level
 +    * @param alpha the alpha value, blinks when the potion is about to run out
 +    */
 +   @OnlyIn(Dist.CLIENT)
-+   public void renderHUDEffect(int x, int y, PotionEffect effect, net.minecraft.client.Minecraft mc, float alpha) { }
++   public void renderHUDEffect(PotionEffect effect, net.minecraft.client.gui.Gui gui, int x, int y, float z, float alpha) { }
 +
 +   /**
 +    * Get a fresh list of items that can cure this Potion.
