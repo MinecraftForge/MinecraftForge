@@ -12,7 +12,7 @@
 -               field_190303_a.debug("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
 +               // Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
 +               if (field_190303_a.isDebugEnabled()) field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
-+               else field_190303_a.debug("defineId called for: {} from {}", p_187226_0_, oclass);
++               else field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass);
              }
           } catch (ClassNotFoundException var5) {
              ;
