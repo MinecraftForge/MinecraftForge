@@ -38,7 +38,7 @@
 +                     if (block == Blocks.field_150434_aF || type == PathNodeType.DAMAGE_CACTUS) {
                          p_193578_5_ = PathNodeType.DANGER_CACTUS;
 -                     } else if (block == Blocks.field_150480_ab) {
-+                     } else if (block == Blocks.field_150480_ab || state.isBurning(p_193578_1_, blockpos$pooledmutableblockpos) || type == PathNodeType.DAMAGE_FIRE) {
++                     } else if (block == Blocks.field_150480_ab || type == PathNodeType.DAMAGE_FIRE) {
                          p_193578_5_ = PathNodeType.DANGER_FIRE;
 +                     } else if (type == PathNodeType.DAMAGE_OTHER) {
 +                        p_193578_5_ = PathNodeType.DAMAGE_OTHER;
