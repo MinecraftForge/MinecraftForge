@@ -13,5 +13,8 @@
 |[Improve reflection helper methods (#4853)](https://github.com/MinecraftForge/MinecraftForge/commit/d16472d0ba38c04d46fbdb59cc035c6796b4798f) | No | ObfuscationReflectionHelper refactored |
 |[Clean up logged mod states (#5227)](https://github.com/MinecraftForge/MinecraftForge/commit/0b47ccc015dd1ac2a1d9210b49938cff6f2596d7) | Yes | Currently the mod state table dump is absent from crash reports, should revisit once that is added again |
 |[Fix minor issue in getFilledPercentage for Fluid rendering (#5206)](https://github.com/MinecraftForge/MinecraftForge/commit/3cf97f43fec5514033f24b099218c3254753dff8) | No | Fluid block classes are gone |
+|[Fix missing comments in configs created with annotations (#5189)](https://github.com/MinecraftForge/MinecraftForge/commit/3dfe47944d80432c31108b8497b6ed9376faf4be) | No | Configs rewritten |
+|[Compute ASMDataTable submaps parallel, speeds up contructing mods (#5246)](https://github.com/MinecraftForge/MinecraftForge/commit/7f337cf2309631bccd2d6c573c1a348f48f067f3) | No | ASMData is no more |
+|[Add methods to allow loading json constants outside of _constants (#4975)](https://github.com/MinecraftForge/MinecraftForge/commit/5f56b7cd096add31687b21bbb8b6be92a112e7c0) | Yes | CraftingHelper was overhauled quite a bit, is this necessary still? |
 
-Currently updated through: 5771c8ffea9a4b31043358a26ec456218a724ac0
+Currently updated through: 32c24be6b49769b6d9be73b46144f62cabe13175
