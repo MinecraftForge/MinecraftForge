@@ -16,5 +16,8 @@
 |[Fix missing comments in configs created with annotations (#5189)](https://github.com/MinecraftForge/MinecraftForge/commit/3dfe47944d80432c31108b8497b6ed9376faf4be) | No | Configs rewritten |
 |[Compute ASMDataTable submaps parallel, speeds up contructing mods (#5246)](https://github.com/MinecraftForge/MinecraftForge/commit/7f337cf2309631bccd2d6c573c1a348f48f067f3) | No | ASMData is no more |
 |[Add methods to allow loading json constants outside of _constants (#4975)](https://github.com/MinecraftForge/MinecraftForge/commit/5f56b7cd096add31687b21bbb8b6be92a112e7c0) | Yes | CraftingHelper was overhauled quite a bit, is this necessary still? |
+|[Fix crash from CraftingHelper due to FileSystem being closed early](https://github.com/MinecraftForge/MinecraftForge/commit/5ef199f6d71f2baba34fd4cc4ac3fa160274d580) | No | Not applicable as it only fixes the above commit |
+|[Clean up CraftingHelper constants loading API](https://github.com/MinecraftForge/MinecraftForge/commit/f1d1e8853b278ab2c09df264583ae6cc76d0c752) | No | " |
+|[Fix issue with --modListFile. (#5316)](https://github.com/MinecraftForge/MinecraftForge/commit/c5402d50fad5dbb649015d9b6d9bead6b710e035) | No | --modListFile is gone |
 
-Currently updated through: 32c24be6b49769b6d9be73b46144f62cabe13175
+Currently updated through: c5402d50fad5dbb649015d9b6d9bead6b710e035
