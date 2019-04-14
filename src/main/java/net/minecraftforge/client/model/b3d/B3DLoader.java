@@ -61,6 +61,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResource;
@@ -729,7 +730,7 @@ public enum B3DLoader implements ICustomModelLoader
                     if(f.getBrush() != null) textures = f.getBrush().getTextures();
                     TextureAtlasSprite sprite;
                     if(textures == null || textures.isEmpty()) sprite = this.textures.get("missingno");
-                    else if(textures.get(0) == B3DModel.Texture.White) sprite = ModelLoader.White.INSTANCE;
+                    else if(textures.get(0) == B3DModel.Texture.MISSING) sprite = MissingTextureSprite.getSprite();
                     else sprite = this.textures.get(textures.get(0).getPath());
                     quadBuilder.setTexture(sprite);
                     putVertexData(quadBuilder, f.getV1(), f.getNormal(), sprite);

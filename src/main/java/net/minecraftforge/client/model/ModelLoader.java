@@ -547,12 +547,6 @@ public final class ModelLoader extends ModelBakery
         }
     }
 
-    // Temporary to compile things
-    public static final class White {
-        public static final ResourceLocation LOCATION = new ResourceLocation("white");
-        public static final TextureAtlasSprite INSTANCE = MissingTextureSprite.getSprite();
-    }
-
     /**
      * 16x16 pure white sprite.
      */

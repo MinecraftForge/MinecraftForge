@@ -47,6 +47,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResource;
@@ -127,7 +128,6 @@ public class OBJModel implements IUnbakedModel
     public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
     {
         ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
-        builder.put(ModelLoader.White.LOCATION.toString(), ModelLoader.White.INSTANCE);
         TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
         for (Map.Entry<String, Material> e : matLib.materials.entrySet())
         {
@@ -1262,7 +1262,7 @@ public class OBJModel implements IUnbakedModel
         private final VertexFormat format;
         private ImmutableList<BakedQuad> quads;
         private ImmutableMap<String, TextureAtlasSprite> textures;
-        private TextureAtlasSprite sprite = ModelLoader.White.INSTANCE;
+        private TextureAtlasSprite sprite = MissingTextureSprite.getSprite();
 
         public OBJBakedModel(OBJModel model, IModelState state, VertexFormat format, ImmutableMap<String, TextureAtlasSprite> textures)
         {
@@ -1368,7 +1368,7 @@ public class OBJModel implements IUnbakedModel
                             v.setMaterial(this.model.getMatLib().getMaterial(v.getMaterial().getName()));
                         }
                     }
-                    sprite = ModelLoader.White.INSTANCE;
+                    sprite = MissingTextureSprite.getSprite();
                 }
                 else sprite = this.textures.get(f.getMaterialName());
                 UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
