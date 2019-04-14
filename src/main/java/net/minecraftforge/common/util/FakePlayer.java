@@ -35,6 +35,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends EntityPlayerMP
@@ -55,5 +56,5 @@ public class FakePlayer extends EntityPlayerMP
     @Override public void tick(){ return; }
     @Override public Entity changeDimension(DimensionType dim, ITeleporter teleporter){ return this; }
     @Override public void handleClientSettings(CPacketClientSettings pkt){ return; }
-    @Override @Nullable public MinecraftServer getServer() { return FMLCommonHandler.instance().getMinecraftServerInstance(); }
+    @Override @Nullable public MinecraftServer getServer() { return ServerLifecycleHooks.getCurrentServer(); }
 }
