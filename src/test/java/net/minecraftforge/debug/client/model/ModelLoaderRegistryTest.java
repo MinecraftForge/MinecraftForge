@@ -55,6 +55,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -186,6 +188,8 @@ public class ModelLoaderRegistryTest
             };
         }
     }
+    
+    static final VoxelShape SHAPE = VoxelShapes.create(1/16D, 1/16D, 1/16D, 15/16D, 15/16D, 15/16D); // We don't really care, just not solid
 
     public static class CustomModelBlock extends Block
     {
@@ -198,6 +202,12 @@ public class ModelLoaderRegistryTest
             super(Properties.create(Material.IRON));
             this.setDefaultState(this.getStateContainer().getBaseState().with(FACING, EnumFacing.NORTH));
             setRegistryName(new ResourceLocation(MODID, name));
+        }
+        
+        @Override
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
+        {
+            return SHAPE;
         }
 
         @Override
@@ -284,6 +294,12 @@ public class ModelLoaderRegistryTest
         public TileEntity createTileEntity(IBlockState state, IBlockReader world)
         {
             return new OBJTesseractTileEntity();
+        }
+        
+        @Override
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
+        {
+            return SHAPE;
         }
 
         @Override
@@ -430,6 +446,12 @@ public class ModelLoaderRegistryTest
             super(Properties.create(Material.IRON));
             setRegistryName(new ResourceLocation(MODID, name));
         }
+        
+        @Override
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
+        {
+            return SHAPE;
+        }
 
         @Override
         public boolean isFullCube(IBlockState state)
@@ -475,7 +497,13 @@ public class ModelLoaderRegistryTest
         {
             builder.add(FACING);
         }
-
+        
+        @Override
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
+        {
+            return SHAPE;
+        }
+        
         @Override
         public boolean isFullCube(IBlockState state)
         {
@@ -614,6 +642,12 @@ public class ModelLoaderRegistryTest
             this.setDefaultState(this.getStateContainer().getBaseState().with(FACING, EnumFacing.NORTH));
             setRegistryName(new ResourceLocation(MODID, name));
         }
+        
+        @Override
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
+        {
+            return SHAPE;
+        }
 
         @Override
         public boolean isFullCube(IBlockState state)
@@ -659,6 +693,12 @@ public class ModelLoaderRegistryTest
             super(Properties.create(Material.IRON));
             this.setDefaultState(this.getStateContainer().getBaseState().with(NORTH, false).with(SOUTH, false).with(WEST, false).with(EAST, false));
             setRegistryName(new ResourceLocation(MODID, name));
+        }
+        
+        @Override
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
+        {
+            return SHAPE;
         }
 
         @Override
@@ -706,6 +746,12 @@ public class ModelLoaderRegistryTest
         public TileEntity createTileEntity(IBlockState state, IBlockReader world)
         {
             return new OBJDynamicEyeTileEntity();
+        }
+        
+        @Override
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
+        {
+            return SHAPE;
         }
 
         @Override

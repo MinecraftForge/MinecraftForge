@@ -5,8 +5,7 @@
         "model": "forgedebugmodelloaderregistry:eye.obj"
      },
     "variants": {
-        "normal": [{}],
-        "inventory": [{
+        "": [{
             "transform": {
                 "thirdperson": {
                     "translation": [0, 0.09375, -0.171875],
