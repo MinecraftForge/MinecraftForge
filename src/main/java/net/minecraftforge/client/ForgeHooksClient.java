@@ -59,8 +59,10 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.gui.BossInfoClient;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiScreenWorking;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.FogRenderer;
@@ -109,6 +111,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.storage.ISaveFormat;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -134,6 +138,7 @@ import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.resource.ReloadRequirements;
 import net.minecraftforge.resource.SelectiveReloadStateHandler;
@@ -1035,5 +1040,21 @@ public class ForgeHooksClient
         {
             LOGGER.error("Unable to invalidate log4j thread cache, thread fields in logs may be inaccurate", e);
         }
+    }
+    
+    /**
+     * fixes MC-30646 and MC-96521
+     * @see net.minecraft.client.gui.GuiGameOver
+     */
+    public static void deleteHardcoreWorld()
+    {
+        Minecraft mc = Minecraft.getInstance();
+        mc.displayGuiScreen(new GuiScreenWorking());
+        mc.world.sendQuittingDisconnectingPacket(); 
+        ISaveFormat saveFormat = mc.getSaveLoader();
+        saveFormat.flushCache();
+        java.io.File worldDir = ServerLifecycleHooks.getCurrentServer().forgeGetWorldMap().get(DimensionType.OVERWORLD).getSaveHandler().getWorldDirectory();
+        mc.loadWorld(null);
+        saveFormat.deleteWorldDirectory(worldDir.getName());
     }
 }
