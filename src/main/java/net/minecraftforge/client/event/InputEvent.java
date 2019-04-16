@@ -41,16 +41,36 @@ public class InputEvent extends Event
             this.mods = mods;
         }
 
+        /**
+         * The mouse button that was pressed or released
+         * https://www.glfw.org/docs/latest/group__buttons.html
+         *
+         * @see GLFW key constants starting with "GLFW_MOUSE_BUTTON_"
+         */
         public int getButton()
         {
             return this.button;
         }
 
+        /**
+         * Bit field representing the action of the button pressed.
+         *
+         * @see GLFW#GLFW_PRESS
+         * @see GLFW#GLFW_RELEASE
+         */
         public int getAction()
         {
             return this.action;
         }
 
+        /**
+         * Bit field representing the modifier keys pressed.
+         *
+         * @see GLFW#GLFW_MOD_SHIFT
+         * @see GLFW#GLFW_MOD_CONTROL
+         * @see GLFW#GLFW_MOD_ALT
+         * @see GLFW#GLFW_MOD_SUPER
+         */
         public int getMods()
         {
             return this.mods;
@@ -98,6 +118,12 @@ public class InputEvent extends Event
             return this.scanCode;
         }
 
+        /**
+         * Bit field representing the action of the key pressed.
+         *
+         * @see GLFW#GLFW_PRESS
+         * @see GLFW#GLFW_RELEASE
+         */
         public int getAction()
         {
             return this.action;
