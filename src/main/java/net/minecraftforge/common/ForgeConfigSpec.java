@@ -362,12 +362,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         }
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, Supplier<V> defaultSupplier, EnumGetMethod converter, Predicate<Object> validator, Class<V> clazz) {
             context.setClazz(clazz);
-            return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context) {
-                @Override
-                public Object correct(Object value) {
-                    return ((Enum<?>)super.correct(value)).name();
-                }
-            }, defaultSupplier).getPath(), defaultSupplier, converter, clazz);
+            return new EnumValue<V>(this, define(path, new ValueSpec(defaultSupplier, validator, context), defaultSupplier).getPath(), defaultSupplier, converter, clazz);
         }
 
         //boolean
