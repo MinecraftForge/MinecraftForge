@@ -28,22 +28,11 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.client.model.animation.Animation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class BasicEventHooks
 {
-    public static void fireMouseInput()
-    {
-        MinecraftForge.EVENT_BUS.post(new InputEvent.MouseInputEvent());
-    }
-
-    public static void fireKeyInput()
-    {
-        MinecraftForge.EVENT_BUS.post(new InputEvent.KeyInputEvent());
-    }
-
     public static void firePlayerChangedDimensionEvent(EntityPlayer player, DimensionType fromDim, DimensionType toDim)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));

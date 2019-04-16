@@ -18,14 +18,6 @@
              Display.setVSyncEnabled(this.field_71474_y.field_74352_v);
              this.func_175601_h();
          }
-@@ -1982,6 +2013,7 @@
-                     }
-                 }
-             }
-+            net.minecraftforge.fml.common.FMLCommonHandler.instance().fireKeyInput();
-         }
- 
-         this.func_184117_aA();
 @@ -2239,6 +2271,8 @@
      {
          while (Mouse.next())
@@ -34,14 +26,6 @@
 +
              int i = Mouse.getEventButton();
              KeyBinding.func_74510_a(i - 100, Mouse.getEventButtonState());
- 
-@@ -2294,6 +2328,7 @@
-                     this.field_71462_r.func_146274_d();
-                 }
-             }
-+            net.minecraftforge.fml.common.FMLCommonHandler.instance().fireMouseInput();
-         }
-     }
  
 @@ -2304,6 +2339,7 @@
  
