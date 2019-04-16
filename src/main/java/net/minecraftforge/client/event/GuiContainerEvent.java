@@ -75,4 +75,38 @@ public class GuiContainerEvent extends Event
             return mouseY;
         }
     }
+    
+    /**
+     * This event is fired directly after the GuiContainer has draw any background elements,
+     * This is useful for drawing new background elements.
+     */
+    public static class DrawBackground extends GuiContainerEvent
+    {
+        private final int mouseX;
+        private final int mouseY;
+
+        /**
+         * Called directly after the GuiContainer has drawn any background elements.
+         *
+         * @param guiContainer The container.
+         * @param mouseX       The current X position of the players mouse.
+         * @param mouseY       The current Y position of the players mouse.
+         */
+        public DrawBackground(GuiContainer guiContainer, int mouseX, int mouseY)
+        {
+            super(guiContainer);
+            this.mouseX = mouseX;
+            this.mouseY = mouseY;
+        }
+
+        public int getMouseX()
+        {
+            return mouseX;
+        }
+
+        public int getMouseY()
+        {
+            return mouseY;
+        }
+    }
 }
