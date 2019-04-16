@@ -45,7 +45,7 @@ public class InputEvent extends Event
          * The mouse button that was pressed or released
          * https://www.glfw.org/docs/latest/group__buttons.html
          *
-         * @see GLFW key constants starting with "GLFW_MOUSE_BUTTON_"
+         * @see GLFW mouse constants starting with "GLFW_MOUSE_BUTTON_"
          */
         public int getButton()
         {
