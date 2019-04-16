@@ -27,7 +27,7 @@ import org.lwjgl.glfw.GLFW;
 public class InputEvent extends Event
 {
     /**
-     * This event fires when a mouse button is pressed.
+     * Event fired when a mouse input is detected.
      */
     public static class MouseInputEvent extends InputEvent
     {
@@ -42,7 +42,7 @@ public class InputEvent extends Event
         }
 
         /**
-         * The mouse button that was pressed or released
+         * The mouse button triggered this event.
          * https://www.glfw.org/docs/latest/group__buttons.html
          *
          * @see GLFW mouse constants starting with "GLFW_MOUSE_BUTTON_"
@@ -53,7 +53,7 @@ public class InputEvent extends Event
         }
 
         /**
-         * Integer representing the action of the button pressed.
+         * Integer representing the mouse button's action.
          *
          * @see GLFW#GLFW_PRESS
          * @see GLFW#GLFW_RELEASE
@@ -79,7 +79,7 @@ public class InputEvent extends Event
     }
 
     /**
-     * This event fires when keyboard input is detected.
+     * Event fired when a keyboard input is detected.
      */
     public static class KeyInputEvent extends InputEvent
     {
@@ -96,7 +96,7 @@ public class InputEvent extends Event
         }
 
         /**
-         * The keyboard key that was pressed or released
+         * The keyboard key that triggered this event.
          * https://www.glfw.org/docs/latest/group__keys.html
          *
          * @see GLFW key constants starting with "GLFW_KEY_"
@@ -120,7 +120,7 @@ public class InputEvent extends Event
         }
 
         /**
-         * Integer representing the action of the key pressed.
+         * Integer representing the key's action.
          *
          * @see GLFW#GLFW_PRESS
          * @see GLFW#GLFW_RELEASE
