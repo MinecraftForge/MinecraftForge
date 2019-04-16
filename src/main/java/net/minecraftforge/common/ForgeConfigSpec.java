@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -193,7 +194,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
 
     public static class Builder
     {
-        private final Config storage = InMemoryFormat.withUniversalSupport().createConfig();
+        private final Config storage = Config.of(LinkedHashMap::new, InMemoryFormat.withUniversalSupport()); // Use LinkedHashMap for consistent ordering
         private BuilderContext context = new BuilderContext();
         private Map<List<String>, String> levelComments = new HashMap<>();
         private List<String> currentPath = new ArrayList<>();
