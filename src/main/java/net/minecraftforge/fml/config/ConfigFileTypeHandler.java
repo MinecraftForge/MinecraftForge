@@ -39,6 +39,7 @@ public class ConfigFileTypeHandler {
         return (c) -> {
             final Path configPath = configBasePath.resolve(c.getFileName());
             final CommentedFileConfig configData = CommentedFileConfig.builder(configPath).sync().
+                    preserveInsertionOrder().
                     autosave().
                     writingMode(WritingMode.REPLACE).
                     build();
