@@ -140,7 +140,7 @@
     }
  
     public void func_70037_a(NBTTagCompound p_70037_1_) {
-@@ -740,6 +765,14 @@
+@@ -740,6 +765,17 @@
           this.field_82248_d = p_70037_1_.func_74767_n("SpawnForced");
        }
  
@@ -148,14 +148,17 @@
 +         NBTTagCompound data = (NBTTagCompound)e;
 +         ResourceLocation dim = new ResourceLocation(data.func_74779_i("Dim"));
 +         this.spawnPosMap.put(dim, new BlockPos(data.func_74762_e("SpawnX"), data.func_74762_e("SpawnY"), data.func_74762_e("SpawnZ")));
-+         this.spawnForcedMap.put(dim, data.func_74767_n("DpawnForced"));
++         this.spawnForcedMap.put(dim, data.func_74767_n("SpawnForced"));
 +      });
-+      this.spawnDimension = net.minecraft.world.dimension.DimensionType.func_186069_a(p_70037_1_.func_150297_b("SpawnDimension", 99) ? p_70037_1_.func_74762_e("SpawnDimension") : 0);
++      net.minecraft.world.dimension.DimensionType spawnDim = null;
++      if (p_70037_1_.func_150297_b("SpawnDimension", net.minecraftforge.common.util.Constants.NBT.TAG_STRING))
++         spawnDim = net.minecraft.world.dimension.DimensionType.func_193417_a(new ResourceLocation(p_70037_1_.func_74779_i("SpawnDimension")));
++      this.spawnDimension = spawnDim != null ? spawnDim : net.minecraft.world.dimension.DimensionType.OVERWORLD;
 +
        this.field_71100_bB.func_75112_a(p_70037_1_);
        this.field_71075_bZ.func_75095_b(p_70037_1_);
        if (p_70037_1_.func_150297_b("EnderItems", 9)) {
-@@ -786,9 +819,26 @@
+@@ -786,9 +822,26 @@
           p_70014_1_.func_74782_a("ShoulderEntityRight", this.func_192025_dl());
        }
  
@@ -173,7 +176,7 @@
 +      });
 +      p_70014_1_.func_74782_a("Spawns", spawnlist);
 +      if (spawnDimension != net.minecraft.world.dimension.DimensionType.OVERWORLD) {
-+         p_70014_1_.func_74768_a("SpawnDimension", spawnDimension.func_186068_a());
++         p_70014_1_.func_74778_a("SpawnDimension", spawnDimension.getRegistryName().toString());
 +      }
     }
  
@@ -182,7 +185,7 @@
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (this.field_71075_bZ.field_75102_a && !p_70097_1_.func_76357_e()) {
-@@ -824,7 +874,7 @@
+@@ -824,7 +877,7 @@
  
     protected void func_190629_c(EntityLivingBase p_190629_1_) {
        super.func_190629_c(p_190629_1_);
@@ -191,7 +194,7 @@
           this.func_190777_m(true);
        }
  
-@@ -845,11 +895,13 @@
+@@ -845,11 +898,13 @@
     }
  
     protected void func_184590_k(float p_184590_1_) {
@@ -206,7 +209,7 @@
              if (enumhand == EnumHand.MAIN_HAND) {
                 this.func_184201_a(EntityEquipmentSlot.MAINHAND, ItemStack.field_190927_a);
              } else {
-@@ -877,11 +929,14 @@
+@@ -877,11 +932,14 @@
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
        if (!this.func_180431_b(p_70665_1_)) {
@@ -221,7 +224,7 @@
           float f1 = f - p_70665_2_;
           if (f1 > 0.0F && f1 < 3.4028235E37F) {
              this.func_195067_a(StatList.field_212738_J, Math.round(f1 * 10.0F));
-@@ -935,6 +990,8 @@
+@@ -935,6 +993,8 @@
  
           return EnumActionResult.PASS;
        } else {
@@ -230,7 +233,7 @@
           ItemStack itemstack = this.func_184586_b(p_190775_2_);
           ItemStack itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
           if (p_190775_1_.func_184230_a(this, p_190775_2_)) {
-@@ -942,6 +999,10 @@
+@@ -942,6 +1002,10 @@
                 itemstack.func_190920_e(itemstack1.func_190916_E());
              }
  
@@ -241,7 +244,7 @@
              return EnumActionResult.SUCCESS;
           } else {
              if (!itemstack.func_190926_b() && p_190775_1_ instanceof EntityLivingBase) {
-@@ -951,6 +1012,7 @@
+@@ -951,6 +1015,7 @@
  
                 if (itemstack.func_111282_a(this, (EntityLivingBase)p_190775_1_, p_190775_2_)) {
                    if (itemstack.func_190926_b() && !this.field_71075_bZ.field_75098_d) {
@@ -249,7 +252,7 @@
                       this.func_184611_a(p_190775_2_, ItemStack.field_190927_a);
                    }
  
-@@ -973,6 +1035,7 @@
+@@ -973,6 +1038,7 @@
     }
  
     public void func_71059_n(Entity p_71059_1_) {
@@ -257,7 +260,7 @@
        if (p_71059_1_.func_70075_an()) {
           if (!p_71059_1_.func_85031_j(this)) {
              float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
-@@ -1000,8 +1063,11 @@
+@@ -1000,8 +1066,11 @@
  
                 boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(MobEffects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof EntityLivingBase;
                 flag2 = flag2 && !this.func_70051_ag();
@@ -270,7 +273,7 @@
                 }
  
                 f = f + f1;
-@@ -1097,8 +1163,10 @@
+@@ -1097,8 +1166,10 @@
                    }
  
                    if (!itemstack1.func_190926_b() && entity instanceof EntityLivingBase) {
@@ -281,7 +284,7 @@
                          this.func_184611_a(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
                       }
                    }
-@@ -1140,7 +1208,7 @@
+@@ -1140,7 +1211,7 @@
        }
  
        if (this.field_70146_Z.nextFloat() < f) {
@@ -290,7 +293,7 @@
           this.func_184602_cy();
           this.field_70170_p.func_72960_a(this, (byte)30);
        }
-@@ -1188,7 +1256,11 @@
+@@ -1188,7 +1259,11 @@
     }
  
     public EntityPlayer.SleepResult func_180469_a(BlockPos p_180469_1_) {
@@ -303,7 +306,7 @@
        if (!this.field_70170_p.field_72995_K) {
           if (this.func_70608_bn() || !this.func_70089_S()) {
              return EntityPlayer.SleepResult.OTHER_PROBLEM;
-@@ -1198,7 +1270,7 @@
+@@ -1198,7 +1273,7 @@
              return EntityPlayer.SleepResult.NOT_POSSIBLE_HERE;
           }
  
@@ -312,7 +315,7 @@
              return EntityPlayer.SleepResult.NOT_POSSIBLE_NOW;
           }
  
-@@ -1223,7 +1295,7 @@
+@@ -1223,7 +1298,7 @@
        this.func_192030_dh();
        this.func_175145_a(StatList.field_199092_j.func_199076_b(StatList.field_203284_n));
        this.func_70105_a(0.2F, 0.2F);
@@ -321,7 +324,7 @@
           float f1 = 0.5F + (float)enumfacing.func_82601_c() * 0.4F;
           float f = 0.5F + (float)enumfacing.func_82599_e() * 0.4F;
           this.func_175139_a(enumfacing);
-@@ -1248,6 +1320,8 @@
+@@ -1248,6 +1323,8 @@
     private boolean func_190774_a(BlockPos p_190774_1_, EnumFacing p_190774_2_) {
        if (Math.abs(this.field_70165_t - (double)p_190774_1_.func_177958_n()) <= 3.0D && Math.abs(this.field_70163_u - (double)p_190774_1_.func_177956_o()) <= 2.0D && Math.abs(this.field_70161_v - (double)p_190774_1_.func_177952_p()) <= 3.0D) {
           return true;
@@ -330,7 +333,7 @@
        } else {
           BlockPos blockpos = p_190774_1_.func_177972_a(p_190774_2_.func_176734_d());
           return Math.abs(this.field_70165_t - (double)blockpos.func_177958_n()) <= 3.0D && Math.abs(this.field_70163_u - (double)blockpos.func_177956_o()) <= 2.0D && Math.abs(this.field_70161_v - (double)blockpos.func_177952_p()) <= 3.0D;
-@@ -1260,16 +1334,19 @@
+@@ -1260,16 +1337,19 @@
     }
  
     public void func_70999_a(boolean p_70999_1_, boolean p_70999_2_, boolean p_70999_3_) {
@@ -354,7 +357,7 @@
        }
  
        this.field_71083_bS = false;
-@@ -1285,29 +1362,30 @@
+@@ -1285,29 +1365,30 @@
     }
  
     private boolean func_175143_p() {
@@ -391,7 +394,7 @@
           switch(enumfacing) {
           case SOUTH:
              return 90.0F;
-@@ -1339,23 +1417,67 @@
+@@ -1339,23 +1420,67 @@
     public void func_146105_b(ITextComponent p_146105_1_, boolean p_146105_2_) {
     }
  
@@ -403,11 +406,11 @@
  
 +   /**
 +    * A dimension aware version of getBedLocation.
-+    * @param dimension The dimension to get the bed spawn for
++    * @param dim The dimension to get the bed spawn for
 +    * @return The player specific spawn location for the dimension.  May be null.
 +    */
 +   public BlockPos getBedLocation(net.minecraft.world.dimension.DimensionType dim) {
-+      return dim == net.minecraft.world.dimension.DimensionType.OVERWORLD ? field_71081_bT : spawnPosMap.get(dim);
++      return dim == net.minecraft.world.dimension.DimensionType.OVERWORLD ? field_71081_bT : spawnPosMap.get(dim.getRegistryName());
 +   }
 +
 +   @Deprecated //Forge: Use Dimension sensitive version
@@ -420,11 +423,11 @@
 +    * A dimension aware version of isSpawnForced.
 +    * Noramally isSpawnForced is used to determine if the respawn system should check for a bed or not.
 +    * This just extends that to be dimension aware.
-+    * @param dimension The dimension to get whether to check for a bed before spawning for
++    * @param dim The dimension to get whether to check for a bed before spawning for
 +    * @return The player specific spawn location for the dimension.  May be null.
 +    */
 +   public boolean isSpawnForced(net.minecraft.world.dimension.DimensionType dim) {
-+      return dim == net.minecraft.world.dimension.DimensionType.OVERWORLD ? field_82248_d : spawnForcedMap.getOrDefault(dim, false);
++      return dim == net.minecraft.world.dimension.DimensionType.OVERWORLD ? field_82248_d : spawnForcedMap.getOrDefault(dim.getRegistryName(), false);
 +   }
 +
 +   @Deprecated //Forge: Use Dimension sensitive version
@@ -444,9 +447,9 @@
 +    * This functions identically, but allows you to specify which dimension to affect, rather than affecting the player's current dimension.
 +    * @param pos The spawn point to set as the player-specific spawn point for the dimension
 +    * @param forced Whether or not the respawn code should check for a bed at this location (true means it won't check for a bed)
-+    * @param dimension Which dimension to apply the player-specific respawn point to
++    * @param dim Which dimension to apply the player-specific respawn point to
 +    */
-+   public void setSpawnPoint(BlockPos pos, boolean forced, net.minecraft.world.dimension.DimensionType dim) {
++   public void setSpawnPoint(@Nullable BlockPos pos, boolean forced, net.minecraft.world.dimension.DimensionType dim) {
 +       if(net.minecraftforge.event.ForgeEventFactory.onPlayerSpawnSet(this, pos, forced)) return;
 +       if (dim != net.minecraft.world.dimension.DimensionType.OVERWORLD) {
 +          if (pos == null) {
@@ -468,7 +471,7 @@
     }
  
     public void func_195066_a(ResourceLocation p_195066_1_) {
-@@ -1525,6 +1647,8 @@
+@@ -1525,6 +1650,8 @@
           }
  
           super.func_180430_e(p_180430_1_, p_180430_2_);
@@ -477,7 +480,7 @@
        }
     }
  
-@@ -1786,7 +1910,10 @@
+@@ -1786,7 +1913,10 @@
     }
  
     public ITextComponent func_145748_c_() {
@@ -489,7 +492,7 @@
        return this.func_208016_c(itextcomponent);
     }
  
-@@ -1806,7 +1933,7 @@
+@@ -1806,7 +1936,7 @@
     }
  
     public float func_70047_e() {
@@ -498,7 +501,7 @@
        if (this.func_70608_bn()) {
           f = 0.2F;
        } else if (!this.func_203007_ba() && !this.func_184613_cA() && this.field_70131_O != 0.6F) {
-@@ -1973,6 +2100,54 @@
+@@ -1973,6 +2103,54 @@
        return this.field_71075_bZ.field_75098_d && this.func_184840_I() >= 2;
     }
  
