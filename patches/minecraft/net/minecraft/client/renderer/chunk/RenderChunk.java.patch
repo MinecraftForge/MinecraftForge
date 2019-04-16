@@ -15,7 +15,7 @@
  
 -         RenderChunkCache lvt_10_1_ = RenderChunkCache.func_212397_a(world, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
 +         RenderChunkCache lvt_10_1_ = createRegionRenderCache(world, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
-+         net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(this.field_178588_d, this.field_178586_f, lvt_10_1_);
++         net.minecraftforge.client.MinecraftForgeClient.onRebuildChunk(world, blockpos, lvt_10_1_);
           VisGraph lvt_11_1_ = new VisGraph();
           HashSet lvt_12_1_ = Sets.newHashSet();
           if (lvt_10_1_ != null) {
