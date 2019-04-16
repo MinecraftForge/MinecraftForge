@@ -47,14 +47,14 @@ public class TracingPrintStream extends PrintStream
     private static String getPrefix()
     {
         StackTraceElement[] elems = Thread.currentThread().getStackTrace();
-        StackTraceElement elem = elems[BASE_DEPTH]; // The caller is always at BASE_DEPTH, including this call.
+        StackTraceElement elem = elems[Math.min(BASE_DEPTH, elems.length - 1)]; // The caller is always at BASE_DEPTH, including this call.
         if (elem.getClassName().startsWith("kotlin.io."))
         {
-            elem = elems[BASE_DEPTH + 2]; // Kotlins IoPackage masks origins 2 deeper in the stack.
+            elem = elems[Math.min(BASE_DEPTH + 2, elems.length - 1)]; // Kotlins IoPackage masks origins 2 deeper in the stack.
         }
         else if (elem.getClassName().startsWith("java.lang.Throwable"))
         {
-            elem = elems[BASE_DEPTH + 4];
+            elem = elems[Math.min(BASE_DEPTH + 4, elems.length - 1)];
         }
         return "[" + elem.getClassName() + ":" + elem.getMethodName() + ":" + elem.getLineNumber() + "]: ";
     }
