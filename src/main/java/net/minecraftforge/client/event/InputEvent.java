@@ -53,7 +53,7 @@ public class InputEvent extends Event
         }
 
         /**
-         * Bit field representing the action of the button pressed.
+         * Integer representing the action of the button pressed.
          *
          * @see GLFW#GLFW_PRESS
          * @see GLFW#GLFW_RELEASE
@@ -120,7 +120,7 @@ public class InputEvent extends Event
         }
 
         /**
-         * Bit field representing the action of the key pressed.
+         * Integer representing the action of the key pressed.
          *
          * @see GLFW#GLFW_PRESS
          * @see GLFW#GLFW_RELEASE
