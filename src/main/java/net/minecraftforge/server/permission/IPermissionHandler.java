@@ -39,9 +39,9 @@ public interface IPermissionHandler
     Collection<String> getRegisteredNodes();
 
     /**
-     * Use {@link PermissionAPI#hasPermission(MinecraftServer, GameProfile, String, IContext)}
+     * Use {@link PermissionAPI#hasPermission(GameProfile, String, IContext)}
      */
-    boolean hasPermission(@Nullable MinecraftServer server, GameProfile profile, String node, @Nullable IContext context);
+    boolean hasPermission(GameProfile profile, String node, @Nullable IContext context);
 
     /**
      * @param node Permission node
