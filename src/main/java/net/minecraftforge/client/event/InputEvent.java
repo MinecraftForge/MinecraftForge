@@ -65,6 +65,7 @@ public class InputEvent extends Event
 
         /**
          * Bit field representing the modifier keys pressed.
+         * https://www.glfw.org/docs/latest/group__mods.html
          *
          * @see GLFW#GLFW_MOD_SHIFT
          * @see GLFW#GLFW_MOD_CONTROL
@@ -123,6 +124,7 @@ public class InputEvent extends Event
          *
          * @see GLFW#GLFW_PRESS
          * @see GLFW#GLFW_RELEASE
+         * @see GLFW#GLFW_REPEAT
          */
         public int getAction()
         {
@@ -131,6 +133,7 @@ public class InputEvent extends Event
 
         /**
          * Bit field representing the modifier keys pressed.
+         * https://www.glfw.org/docs/latest/group__mods.html
          *
          * @see GLFW#GLFW_MOD_SHIFT
          * @see GLFW#GLFW_MOD_CONTROL
