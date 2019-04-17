@@ -28,6 +28,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -133,7 +135,7 @@ public class BlockSnapshot
         World world = this.world != null ? this.world.get() : null;
         if (world == null)
         {
-            world = null; // TODO Server static access? FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(getDimId());
+            world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(getDimId()));
             this.world = new WeakReference<World>(world);
         }
         return world;
