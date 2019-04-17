@@ -19,22 +19,23 @@
 
 package net.minecraftforge.server.console;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.List;
-import java.util.Collections;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
-
+import com.mojang.brigadier.ParseResults;
+import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.suggestion.Suggestion;
+import com.mojang.brigadier.suggestion.Suggestions;
+import net.minecraft.command.CommandSource;
+import net.minecraft.server.dedicated.DedicatedServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import net.minecraft.server.dedicated.DedicatedServer;
 import org.jline.reader.Candidate;
 import org.jline.reader.Completer;
 import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 final class ConsoleCommandCompleter implements Completer
 {
@@ -62,12 +63,18 @@ final class ConsoleCommandCompleter implements Completer
         }
 
         final String input = buffer;
-        Future<List<String>> tabComplete = new FutureTask<>(() -> Collections.emptyList());// TODO commands this.server.callFromMainThread(() -> this.server.getTabCompletions(this.server, input, this.server.getPosition(), false));
+        //See NetHandlerPlayServer#processTabComplete
+        StringReader stringReader = new StringReader(input);
+        if (stringReader.canRead() && stringReader.peek() == '/')
+            stringReader.skip();
 
         try
         {
-            for (String completion : tabComplete.get())
+            ParseResults<CommandSource> results = this.server.callFromMainThread(() -> this.server.getCommandManager().getDispatcher().parse(stringReader, this.server.getCommandSource())).get();
+            Suggestions tabComplete = this.server.getCommandManager().getDispatcher().getCompletionSuggestions(results).get();
+            for (Suggestion suggestion : tabComplete.getList())
             {
+                String completion = suggestion.getText();
                 if (!completion.isEmpty())
                 {
                     boolean hasPrefix = prefix || completion.charAt(0) != '/';
