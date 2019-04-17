@@ -1,6 +1,57 @@
 --- a/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ b/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -225,6 +225,8 @@
+@@ -32,6 +32,7 @@
+ import net.minecraft.nbt.NBTTagShort;
+ import net.minecraft.nbt.NBTUtil;
+ import net.minecraft.tileentity.TileEntity;
++import net.minecraft.util.datafix.DataFixesManager;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.registry.IRegistry;
+@@ -59,6 +60,8 @@
+ import net.minecraft.world.storage.SessionLockException;
+ import net.minecraft.world.storage.ThreadedFileIOBase;
+ import net.minecraft.world.storage.WorldSavedDataStorage;
++import net.minecraftforge.fml.fixers.ModFixes;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -66,13 +69,11 @@
+    private static final Logger field_151505_a = LogManager.getLogger();
+    private final Map<ChunkPos, NBTTagCompound> field_75828_a = Maps.newHashMap();
+    public final File field_75825_d;
+-   private final DataFixer field_193416_e;
+    private LegacyStructureDataUtil field_208031_e;
+    private boolean field_183014_e;
+ 
+-   public AnvilChunkLoader(File p_i49571_1_, DataFixer p_i49571_2_) {
+-      this.field_75825_d = p_i49571_1_;
+-      this.field_193416_e = p_i49571_2_;
++   public AnvilChunkLoader(File chunkSaveLocationIn) {
++      this.field_75825_d = chunkSaveLocationIn;
+    }
+ 
+    @Nullable
+@@ -94,14 +95,15 @@
+             datainputstream.close();
+             int i = nbttagcompound1.func_150297_b("DataVersion", 99) ? nbttagcompound1.func_74762_e("DataVersion") : -1;
+             if (i < 1493) {
+-               nbttagcompound1 = NBTUtil.func_210821_a(this.field_193416_e, DataFixTypes.CHUNK, nbttagcompound1, i, 1493);
++               nbttagcompound1 = NBTUtil.updateSingle(DataFixesManager.func_210901_a(), DataFixTypes.CHUNK, nbttagcompound1, i, 1493);
+                if (nbttagcompound1.func_74775_l("Level").func_74767_n("hasLegacyStructureData")) {
+                   this.func_212429_a(p_212146_1_, p_212146_2_);
+                   nbttagcompound1 = this.field_208031_e.func_212181_a(nbttagcompound1);
+                }
+             }
+ 
+-            nbttagcompound1 = NBTUtil.func_210822_a(this.field_193416_e, DataFixTypes.CHUNK, nbttagcompound1, Math.max(1493, i));
++            nbttagcompound1 = NBTUtil.update(ModFixes.getFixVersionsNoVanilla(nbttagcompound1, -1), DataFixTypes.CHUNK, nbttagcompound1);
++            nbttagcompound1 = NBTUtil.updateSingle(DataFixesManager.func_210901_a(), DataFixTypes.CHUNK, nbttagcompound1, Math.max(1493, i), DataFixesManager.FIXER_VERSION);
+             if (i < 1631) {
+                nbttagcompound1.func_74768_a("DataVersion", 1631);
+                this.func_75824_a(new ChunkPos(p_212146_3_, p_212146_4_), nbttagcompound1);
+@@ -225,6 +227,8 @@
              this.func_202156_a((ChunkPrimer)p_75816_2_, p_75816_1_, nbttagcompound1);
           }
  
@@ -9,7 +60,7 @@
           this.func_75824_a(chunkpos, nbttagcompound);
        } catch (Exception exception) {
           field_151505_a.error("Failed to save chunk", (Throwable)exception);
-@@ -388,10 +390,14 @@
+@@ -388,10 +392,14 @@
        for(int j = 0; j < p_75820_1_.func_177429_s().length; ++j) {
           for(Entity entity : p_75820_1_.func_177429_s()[j]) {
              NBTTagCompound nbttagcompound = new NBTTagCompound();
@@ -24,7 +75,7 @@
           }
        }
  
-@@ -402,7 +408,11 @@
+@@ -402,7 +410,11 @@
           TileEntity tileentity = p_75820_1_.func_175625_s(blockpos);
           if (tileentity != null) {
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
@@ -37,7 +88,7 @@
              nbttagcompound1.func_74757_a("keepPacked", false);
              nbttaglist2.add((INBTBase)nbttagcompound1);
           } else {
-@@ -442,6 +452,16 @@
+@@ -442,6 +454,16 @@
  
        p_75820_3_.func_74782_a("Heightmaps", nbttagcompound2);
        p_75820_3_.func_74782_a("Structures", this.func_202160_a(p_75820_1_.field_76635_g, p_75820_1_.field_76647_h, p_75820_1_.func_201609_c(), p_75820_1_.func_201604_d()));
@@ -54,7 +105,7 @@
     }
  
     private Chunk func_75823_a(IWorld p_75823_1_, NBTTagCompound p_75823_2_) {
-@@ -508,6 +528,10 @@
+@@ -508,6 +530,10 @@
           chunk.func_177427_f(true);
        }
  
@@ -65,7 +116,7 @@
        return chunk;
     }
  
-@@ -809,4 +833,8 @@
+@@ -809,4 +835,8 @@
  
        return flag;
     }

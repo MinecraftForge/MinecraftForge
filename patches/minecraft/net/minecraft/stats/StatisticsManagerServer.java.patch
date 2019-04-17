@@ -1,0 +1,38 @@
+--- a/net/minecraft/stats/StatisticsManagerServer.java
++++ b/net/minecraft/stats/StatisticsManagerServer.java
+@@ -27,6 +27,8 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.IRegistry;
++import net.minecraftforge.fml.fixers.ModFixes;
++
+ import org.apache.commons.io.FileUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -43,7 +45,7 @@
+       this.field_150887_d = p_i45306_2_;
+       if (p_i45306_2_.isFile()) {
+          try {
+-            this.func_199062_a(p_i45306_1_.func_195563_aC(), FileUtils.readFileToString(p_i45306_2_));
++            this.parseLocal(FileUtils.readFileToString(p_i45306_2_));
+          } catch (IOException ioexception) {
+             field_150889_b.error("Couldn't read statistics file {}", p_i45306_2_, ioexception);
+          } catch (JsonParseException jsonparseexception) {
+@@ -73,7 +75,7 @@
+       return set;
+    }
+ 
+-   public void func_199062_a(DataFixer p_199062_1_, String p_199062_2_) {
++   public void parseLocal(String p_199062_2_) {
+       try (JsonReader jsonreader = new JsonReader(new StringReader(p_199062_2_))) {
+          jsonreader.setLenient(false);
+          JsonElement jsonelement = Streams.parse(jsonreader);
+@@ -83,7 +85,7 @@
+                nbttagcompound.func_74768_a("DataVersion", 1343);
+             }
+ 
+-            nbttagcompound = NBTUtil.func_210822_a(p_199062_1_, DataFixTypes.STATS, nbttagcompound, nbttagcompound.func_74762_e("DataVersion"));
++            nbttagcompound = NBTUtil.update(ModFixes.getFixVersions(nbttagcompound, nbttagcompound.func_74762_e("DataVersion"), -1), DataFixTypes.STATS, nbttagcompound);
+             if (nbttagcompound.func_150297_b("stats", 10)) {
+                NBTTagCompound nbttagcompound1 = nbttagcompound.func_74775_l("stats");
+ 

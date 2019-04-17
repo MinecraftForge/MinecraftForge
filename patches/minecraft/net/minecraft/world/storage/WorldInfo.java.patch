@@ -1,6 +1,77 @@
 --- a/net/minecraft/world/storage/WorldInfo.java
 +++ b/net/minecraft/world/storage/WorldInfo.java
-@@ -325,6 +325,7 @@
+@@ -6,6 +6,9 @@
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.datafixers.Dynamic;
+ import com.mojang.datafixers.types.JsonOps;
++import com.mojang.datafixers.util.Pair;
++
++import java.util.Collections;
+ import java.util.Map;
+ import java.util.Set;
+ import java.util.Map.Entry;
+@@ -18,6 +21,7 @@
+ import net.minecraft.nbt.NBTTagString;
+ import net.minecraft.nbt.NBTUtil;
+ import net.minecraft.util.Util;
++import net.minecraft.util.datafix.DataFixesManager;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.EnumDifficulty;
+ import net.minecraft.world.GameRules;
+@@ -27,6 +31,7 @@
+ import net.minecraft.world.dimension.DimensionType;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
++import net.minecraftforge.fml.fixers.ModFixes;
+ 
+ public class WorldInfo {
+    private String field_186349_b;
+@@ -45,9 +50,7 @@
+    private long field_76094_f;
+    private long field_76095_g;
+    private long field_76107_h;
+-   @Nullable
+-   private final DataFixer field_209226_o;
+-   private final int field_209227_p;
++   private Map<DataFixer, Pair<Integer, Integer>> dataVersions;
+    private boolean field_209228_q;
+    private NBTTagCompound field_76108_i;
+    private int field_76105_j;
+@@ -81,13 +84,11 @@
+    private final GameRules field_82577_x = new GameRules();
+ 
+    protected WorldInfo() {
+-      this.field_209226_o = null;
+-      this.field_209227_p = 1631;
++      this.dataVersions = Collections.singletonMap(DataFixesManager.func_210901_a(), Pair.of(DataFixesManager.FIXER_VERSION, DataFixesManager.FIXER_VERSION));
+       this.func_212242_b(new NBTTagCompound());
+    }
+ 
+-   public WorldInfo(NBTTagCompound p_i49564_1_, DataFixer p_i49564_2_, int p_i49564_3_, @Nullable NBTTagCompound p_i49564_4_) {
+-      this.field_209226_o = p_i49564_2_;
++   public WorldInfo(NBTTagCompound p_i49564_1_, Map<DataFixer, Pair<Integer, Integer>> dataVersions, @Nullable NBTTagCompound p_i49564_4_) {
+       if (p_i49564_1_.func_150297_b("Version", 10)) {
+          NBTTagCompound nbttagcompound = p_i49564_1_.func_74775_l("Version");
+          this.field_186349_b = nbttagcompound.func_74779_i("Name");
+@@ -158,7 +159,7 @@
+          this.field_76110_t = this.field_76113_q == GameType.CREATIVE;
+       }
+ 
+-      this.field_209227_p = p_i49564_3_;
++      this.dataVersions = dataVersions;
+       if (p_i49564_4_ != null) {
+          this.field_76108_i = p_i49564_4_;
+       }
+@@ -241,8 +242,6 @@
+    }
+ 
+    public WorldInfo(WorldSettings p_i2158_1_, String p_i2158_2_) {
+-      this.field_209226_o = null;
+-      this.field_209227_p = 1631;
+       this.func_176127_a(p_i2158_1_);
+       this.field_76106_k = p_i2158_2_;
+       this.field_176158_z = field_176156_a;
+@@ -325,6 +324,7 @@
        NBTTagCompound nbttagcompound1 = new NBTTagCompound();
  
        for(Entry<DimensionType, NBTTagCompound> entry : this.field_186348_N.entrySet()) {
@@ -8,3 +79,19 @@
           nbttagcompound1.func_74782_a(String.valueOf(entry.getKey().func_186068_a()), entry.getValue());
        }
  
+@@ -386,14 +386,8 @@
+ 
+    private void func_209225_Q() {
+       if (!this.field_209228_q && this.field_76108_i != null) {
+-         if (this.field_209227_p < 1631) {
+-            if (this.field_209226_o == null) {
+-               throw new NullPointerException("Fixer Upper not set inside LevelData, and the player tag is not upgraded.");
+-            }
++         this.field_76108_i = NBTUtil.checkedUpdate(dataVersions, DataFixTypes.PLAYER, this.field_76108_i);
+ 
+-            this.field_76108_i = NBTUtil.func_210822_a(this.field_209226_o, DataFixTypes.PLAYER, this.field_76108_i, this.field_209227_p);
+-         }
+-
+          this.field_76105_j = this.field_76108_i.func_74762_e("Dimension");
+          this.field_209228_q = true;
+       }

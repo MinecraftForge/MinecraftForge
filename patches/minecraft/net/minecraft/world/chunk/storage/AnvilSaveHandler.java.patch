@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
++++ b/net/minecraft/world/chunk/storage/AnvilSaveHandler.java
+@@ -1,6 +1,5 @@
+ package net.minecraft.world.chunk.storage;
+ 
+-import com.mojang.datafixers.DataFixer;
+ import java.io.File;
+ import javax.annotation.Nullable;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -11,14 +10,14 @@
+ import net.minecraft.world.storage.WorldInfo;
+ 
+ public class AnvilSaveHandler extends SaveHandler {
+-   public AnvilSaveHandler(File p_i49568_1_, String p_i49568_2_, @Nullable MinecraftServer p_i49568_3_, DataFixer p_i49568_4_) {
+-      super(p_i49568_1_, p_i49568_2_, p_i49568_3_, p_i49568_4_);
++   public AnvilSaveHandler(File p_i49568_1_, String p_i49568_2_, @Nullable MinecraftServer p_i49568_3_) {
++      super(p_i49568_1_, p_i49568_2_, p_i49568_3_);
+    }
+ 
+    public IChunkLoader func_75763_a(Dimension p_75763_1_) {
+       File file1 = p_75763_1_.func_186058_p().func_212679_a(this.func_75765_b());
+       file1.mkdirs();
+-      return new AnvilChunkLoader(file1, this.field_186341_a);
++      return new AnvilChunkLoader(file1);
+    }
+ 
+    public void func_75755_a(WorldInfo p_75755_1_, @Nullable NBTTagCompound p_75755_2_) {

@@ -1,6 +1,23 @@
 --- a/net/minecraft/advancements/PlayerAdvancements.java
 +++ b/net/minecraft/advancements/PlayerAdvancements.java
-@@ -174,6 +174,8 @@
+@@ -31,6 +31,7 @@
+ import net.minecraft.network.play.server.SPacketSelectAdvancementsTab;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.ResourceLocation;
++import net.minecraft.util.datafix.DataFixesManager;
+ import net.minecraft.util.text.TextComponentTranslation;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -122,7 +123,7 @@
+                dynamic = dynamic.set("DataVersion", dynamic.createInt(1343));
+             }
+ 
+-            dynamic = this.field_192756_d.func_195563_aC().update(DataFixTypes.ADVANCEMENTS, dynamic, dynamic.getInt("DataVersion"), 1631);
++            dynamic = DataFixesManager.func_210901_a().update(DataFixTypes.ADVANCEMENTS, dynamic, dynamic.getInt("DataVersion"), DataFixesManager.FIXER_VERSION);
+             dynamic = dynamic.remove("DataVersion");
+             Map<ResourceLocation, AdvancementProgress> map = field_192754_b.getAdapter(field_192755_c).fromJsonTree(dynamic.getValue());
+             if (map == null) {
+@@ -174,6 +175,8 @@
     }
  
     public boolean func_192750_a(Advancement p_192750_1_, String p_192750_2_) {
@@ -9,7 +26,7 @@
        boolean flag = false;
        AdvancementProgress advancementprogress = this.func_192747_a(p_192750_1_);
        boolean flag1 = advancementprogress.func_192105_a();
-@@ -186,6 +188,7 @@
+@@ -186,6 +189,7 @@
              if (p_192750_1_.func_192068_c() != null && p_192750_1_.func_192068_c().func_193220_i() && this.field_192762_j.field_70170_p.func_82736_K().func_82766_b("announceAdvancements")) {
                 this.field_192756_d.func_184103_al().func_148539_a(new TextComponentTranslation("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()));
              }

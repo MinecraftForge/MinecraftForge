@@ -1,0 +1,16 @@
+--- a/net/minecraft/world/storage/ISaveHandler.java
++++ b/net/minecraft/world/storage/ISaveHandler.java
+@@ -1,6 +1,5 @@
+ package net.minecraft.world.storage;
+ 
+-import com.mojang.datafixers.DataFixer;
+ import java.io.File;
+ import javax.annotation.Nullable;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -31,6 +30,4 @@
+    File func_212423_a(DimensionType p_212423_1_, String p_212423_2_);
+ 
+    TemplateManager func_186340_h();
+-
+-   DataFixer func_197718_i();
+ }

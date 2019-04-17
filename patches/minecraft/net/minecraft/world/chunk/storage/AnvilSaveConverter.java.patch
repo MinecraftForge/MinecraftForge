@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/chunk/storage/AnvilSaveConverter.java
++++ b/net/minecraft/world/chunk/storage/AnvilSaveConverter.java
+@@ -1,7 +1,6 @@
+ package net.minecraft.world.chunk.storage;
+ 
+ import com.google.common.collect.Lists;
+-import com.mojang.datafixers.DataFixer;
+ import java.io.DataInputStream;
+ import java.io.DataOutputStream;
+ import java.io.File;
+@@ -41,8 +40,8 @@
+ public class AnvilSaveConverter extends SaveFormatOld {
+    private static final Logger field_151480_b = LogManager.getLogger();
+ 
+-   public AnvilSaveConverter(Path p_i49567_1_, Path p_i49567_2_, DataFixer p_i49567_3_) {
+-      super(p_i49567_1_, p_i49567_2_, p_i49567_3_);
++   public AnvilSaveConverter(Path p_i49567_1_, Path p_i49567_2_) {
++      super(p_i49567_1_, p_i49567_2_);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+@@ -89,7 +88,7 @@
+    }
+ 
+    public ISaveHandler func_197715_a(String p_197715_1_, @Nullable MinecraftServer p_197715_2_) {
+-      return new AnvilSaveHandler(this.field_75808_a.toFile(), p_197715_1_, p_197715_2_, this.field_186354_b);
++      return new AnvilSaveHandler(this.field_75808_a.toFile(), p_197715_1_, p_197715_2_);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

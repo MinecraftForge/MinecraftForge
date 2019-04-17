@@ -1,0 +1,19 @@
+--- a/net/minecraft/data/CommandsReport.java
++++ b/net/minecraft/data/CommandsReport.java
+@@ -10,7 +10,6 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.server.dedicated.DedicatedServer;
+ import net.minecraft.server.management.PlayerProfileCache;
+-import net.minecraft.util.datafix.DataFixesManager;
+ 
+ public class CommandsReport implements IDataProvider {
+    private final DataGenerator field_200400_a;
+@@ -25,7 +24,7 @@
+       GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
+       File file1 = new File(this.field_200400_a.func_200391_b().toFile(), "tmp");
+       PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(file1, MinecraftServer.field_152367_a.getName()));
+-      MinecraftServer minecraftserver = new DedicatedServer(file1, DataFixesManager.func_210901_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
++      MinecraftServer minecraftserver = new DedicatedServer(file1, yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
+       minecraftserver.func_195571_aL().func_200378_a(this.field_200400_a.func_200391_b().resolve("reports/commands.json").toFile());
+    }
+ 

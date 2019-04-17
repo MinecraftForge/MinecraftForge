@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/WorldOptimizer.java
++++ b/net/minecraft/util/WorldOptimizer.java
+@@ -76,7 +76,7 @@
+       Builder<DimensionType, AnvilChunkLoader> builder = ImmutableMap.builder();
+ 
+       for(DimensionType dimensiontype : DimensionType.func_212681_b()) {
+-         builder.put(dimensiontype, new AnvilChunkLoader(dimensiontype.func_212679_a(file1), this.field_212221_c.func_197718_i()));
++         builder.put(dimensiontype, new AnvilChunkLoader(dimensiontype.func_212679_a(file1)));
+       }
+ 
+       Map<DimensionType, AnvilChunkLoader> map = builder.build();

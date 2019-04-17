@@ -1,0 +1,80 @@
+--- a/net/minecraft/nbt/NBTUtil.java
++++ b/net/minecraft/nbt/NBTUtil.java
+@@ -1,16 +1,24 @@
+ package net.minecraft.nbt;
+ 
++import java.util.Map;
++import java.util.Map.Entry;
++import java.util.Optional;
++import java.util.UUID;
++
++import javax.annotation.Nullable;
++
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
+ import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.ImmutableMap;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.properties.Property;
++import com.mojang.datafixers.DSL.TypeReference;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.datafixers.Dynamic;
+-import com.mojang.datafixers.DSL.TypeReference;
+-import java.util.Optional;
+-import java.util.UUID;
+-import java.util.Map.Entry;
+-import javax.annotation.Nullable;
++import com.mojang.datafixers.util.Pair;
++
+ import net.minecraft.block.Block;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.init.Blocks;
+@@ -21,8 +29,6 @@
+ import net.minecraft.util.StringUtils;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.registry.IRegistry;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+ 
+ public final class NBTUtil {
+    private static final Logger field_193591_a = LogManager.getLogger();
+@@ -234,11 +240,33 @@
+       return p_190010_0_.func_177702_a((T)p_190010_1_);
+    }
+ 
+-   public static NBTTagCompound func_210822_a(DataFixer p_210822_0_, TypeReference p_210822_1_, NBTTagCompound p_210822_2_, int p_210822_3_) {
+-      return func_210821_a(p_210822_0_, p_210822_1_, p_210822_2_, p_210822_3_, 1631);
++   public static NBTTagCompound update(Map<DataFixer, Pair<Integer, Integer>> versions, TypeReference p_210822_1_, NBTTagCompound p_210822_2) {
++      for(DataFixer dataFixer : versions.keySet()) {
++          if(versions.containsKey(dataFixer)) {
++              p_210822_2 = updateSingle(dataFixer, p_210822_1_, p_210822_2, versions.get(dataFixer).getFirst(), versions.get(dataFixer).getSecond());
++          } else {
++              field_193591_a.warn("Tried updating type {} on datafixer for mod {}, but no version for this mod was supplied. This is a Forge issue.");
++          }
++      }
++      return p_210822_2;
+    }
+-
+-   public static NBTTagCompound func_210821_a(DataFixer p_210821_0_, TypeReference p_210821_1_, NBTTagCompound p_210821_2_, int p_210821_3_, int p_210821_4_) {
+-      return (NBTTagCompound)p_210821_0_.update(p_210821_1_, new Dynamic<>(NBTDynamicOps.field_210820_a, p_210821_2_), p_210821_3_, p_210821_4_).getValue();
++   
++   public static NBTTagCompound checkedUpdate(Map<DataFixer, Pair<Integer, Integer>> versions, TypeReference p_210822_1_, NBTTagCompound p_210822_2) {
++       for(DataFixer dataFixer : versions.keySet()) {
++           if(versions.containsKey(dataFixer)) {
++               int oldV = versions.get(dataFixer).getFirst();
++               int newV = versions.get(dataFixer).getSecond();
++               if(oldV < newV) {
++                   p_210822_2 = updateSingle(dataFixer, p_210822_1_, p_210822_2, oldV, newV);
++               }
++           } else {
++               field_193591_a.warn("Tried updating type {} on datafixer for mod {}, but no version for this mod was supplied. This is a Forge issue.");
++           }
++       }
++       return p_210822_2;
++    }
++   
++   public static NBTTagCompound updateSingle(DataFixer fixer, TypeReference type, NBTTagCompound nbt, int version, int newVersion) {
++       return (NBTTagCompound)fixer.update(type, new Dynamic<>(NBTDynamicOps.field_210820_a, nbt), version, newVersion).getValue();
+    }
+ }

@@ -1,5 +1,14 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
+@@ -49,7 +49,7 @@
+    private UUID field_211528_n;
+ 
+    public IntegratedServer(Minecraft p_i46523_1_, String p_i46523_2_, String p_i46523_3_, WorldSettings p_i46523_4_, YggdrasilAuthenticationService p_i46523_5_, MinecraftSessionService p_i46523_6_, GameProfileRepository p_i46523_7_, PlayerProfileCache p_i46523_8_) {
+-      super(new File(p_i46523_1_.field_71412_D, "saves"), p_i46523_1_.func_110437_J(), p_i46523_1_.func_184126_aj(), new Commands(false), p_i46523_5_, p_i46523_6_, p_i46523_7_, p_i46523_8_);
++      super(new File(p_i46523_1_.field_71412_D, "saves"), p_i46523_1_.func_110437_J(), new Commands(false), p_i46523_5_, p_i46523_6_, p_i46523_7_, p_i46523_8_);
+       this.func_71224_l(p_i46523_1_.func_110432_I().func_111285_a());
+       this.func_71261_m(p_i46523_2_);
+       this.func_71246_n(p_i46523_3_);
 @@ -91,9 +91,10 @@
        this.func_71245_h(true);
        field_147148_h.info("Generating keypair");

@@ -1,22 +1,89 @@
 --- a/net/minecraft/world/storage/SaveFormatOld.java
 +++ b/net/minecraft/world/storage/SaveFormatOld.java
-@@ -86,13 +86,23 @@
+@@ -1,8 +1,5 @@
+ package net.minecraft.world.storage;
+ 
+-import com.google.common.collect.Lists;
+-import com.mojang.datafixers.DataFixTypes;
+-import com.mojang.datafixers.DataFixer;
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+@@ -10,7 +7,18 @@
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.util.List;
++import java.util.Map;
++
+ import javax.annotation.Nullable;
++
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
++import com.google.common.collect.Lists;
++import com.mojang.datafixers.DataFixTypes;
++import com.mojang.datafixers.DataFixer;
++import com.mojang.datafixers.util.Pair;
++
+ import net.minecraft.client.AnvilConverterException;
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -19,18 +27,14 @@
+ import net.minecraft.util.IProgressUpdate;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
++import net.minecraftforge.fml.fixers.ModFixes;
+ 
+ public class SaveFormatOld implements ISaveFormat {
+    private static final Logger field_151479_b = LogManager.getLogger();
+    public final Path field_75808_a;
+    protected final Path field_197717_b;
+-   protected final DataFixer field_186354_b;
+ 
+-   public SaveFormatOld(Path p_i49565_1_, Path p_i49565_2_, DataFixer p_i49565_3_) {
+-      this.field_186354_b = p_i49565_3_;
+-
++   public SaveFormatOld(Path p_i49565_1_, Path p_i49565_2_) {
+       try {
+          Files.createDirectories(Files.exists(p_i49565_1_) ? p_i49565_1_.toRealPath() : p_i49565_1_);
+       } catch (IOException ioexception) {
+@@ -73,26 +77,38 @@
+       } else {
+          File file2 = new File(file1, "level.dat");
+          if (file2.exists()) {
+-            WorldInfo worldinfo = func_186353_a(file2, this.field_186354_b);
++            WorldInfo worldinfo = getWorldData(file2);
+             if (worldinfo != null) {
+                return worldinfo;
+             }
+          }
+ 
+          file2 = new File(file1, "level.dat_old");
+-         return file2.exists() ? func_186353_a(file2, this.field_186354_b) : null;
++         return file2.exists() ? getWorldData(file2) : null;
+       }
+    }
  
     @Nullable
-    public static WorldInfo func_186353_a(File p_186353_0_, DataFixer p_186353_1_) {
-+       return getWorldData(p_186353_0_, p_186353_1_, null);
+-   public static WorldInfo func_186353_a(File p_186353_0_, DataFixer p_186353_1_) {
++   public static WorldInfo getWorldData(File p_186353_0_) {
++       return getWorldData(p_186353_0_, null);
 +   }
 +
 +   @Nullable
-+   public static WorldInfo getWorldData(File p_186353_0_, DataFixer p_186353_1_, @Nullable SaveHandler saveHandler) {
++   public static WorldInfo getWorldData(File p_186353_0_, @Nullable SaveHandler saveHandler) {
        try {
           NBTTagCompound nbttagcompound = CompressedStreamTools.func_74796_a(new FileInputStream(p_186353_0_));
           NBTTagCompound nbttagcompound1 = nbttagcompound.func_74775_l("Data");
           NBTTagCompound nbttagcompound2 = nbttagcompound1.func_150297_b("Player", 10) ? nbttagcompound1.func_74775_l("Player") : null;
           nbttagcompound1.func_82580_o("Player");
++         
           int i = nbttagcompound1.func_150297_b("DataVersion", 99) ? nbttagcompound1.func_74762_e("DataVersion") : -1;
 -         return new WorldInfo(NBTUtil.func_210822_a(p_186353_1_, DataFixTypes.LEVEL, nbttagcompound1, i), p_186353_1_, i, nbttagcompound2);
-+         WorldInfo ret = new WorldInfo(NBTUtil.func_210822_a(p_186353_1_, DataFixTypes.LEVEL, nbttagcompound1, i), p_186353_1_, i, nbttagcompound2);
++         Map<DataFixer, Pair<Integer, Integer>> versions = ModFixes.getFixVersions(nbttagcompound1, false);
++         WorldInfo ret = new WorldInfo(NBTUtil.update(versions, DataFixTypes.LEVEL, nbttagcompound1), versions, nbttagcompound2);
 +         if (saveHandler != null)
 +            net.minecraftforge.fml.WorldPersistenceHooks.handleWorldDataLoad(saveHandler, ret, nbttagcompound);
 +         return ret;
@@ -25,3 +92,12 @@
        } catch (Exception exception) {
           field_151479_b.error("Exception reading {}", p_186353_0_, exception);
           return null;
+@@ -182,7 +198,7 @@
+    }
+ 
+    public ISaveHandler func_197715_a(String p_197715_1_, @Nullable MinecraftServer p_197715_2_) {
+-      return new SaveHandler(this.field_75808_a.toFile(), p_197715_1_, p_197715_2_, this.field_186354_b);
++      return new SaveHandler(this.field_75808_a.toFile(), p_197715_1_, p_197715_2_);
+    }
+ 
+    @OnlyIn(Dist.CLIENT)

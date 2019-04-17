@@ -1,6 +1,58 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -335,20 +335,19 @@
+@@ -13,7 +13,6 @@
+ import com.mojang.authlib.GameProfileRepository;
+ import com.mojang.authlib.minecraft.MinecraftSessionService;
+ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+-import com.mojang.datafixers.DataFixer;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufOutputStream;
+ import io.netty.buffer.Unpooled;
+@@ -88,7 +87,6 @@
+ import net.minecraft.util.ITickable;
+ import net.minecraft.util.Util;
+ import net.minecraft.util.WorldOptimizer;
+-import net.minecraft.util.datafix.DataFixesManager;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.math.MathHelper;
+@@ -133,7 +131,6 @@
+    private final NetworkSystem field_147144_o;
+    private final ServerStatusResponse field_147147_p = new ServerStatusResponse();
+    private final Random field_147146_q = new Random();
+-   private final DataFixer field_184112_s;
+    private String field_71320_r;
+    private int field_71319_s = -1;
+    private final Map<DimensionType, WorldServer> field_71305_c = Maps.newIdentityHashMap();
+@@ -194,17 +191,16 @@
+    private boolean field_212205_ao;
+    private float field_211152_ao;
+ 
+-   public MinecraftServer(@Nullable File p_i49697_1_, Proxy p_i49697_2_, DataFixer p_i49697_3_, Commands p_i49697_4_, YggdrasilAuthenticationService p_i49697_5_, MinecraftSessionService p_i49697_6_, GameProfileRepository p_i49697_7_, PlayerProfileCache p_i49697_8_) {
+-      this.field_110456_c = p_i49697_2_;
+-      this.field_195579_af = p_i49697_4_;
+-      this.field_152364_T = p_i49697_5_;
+-      this.field_147143_S = p_i49697_6_;
+-      this.field_152365_W = p_i49697_7_;
+-      this.field_152366_X = p_i49697_8_;
+-      this.field_71308_o = p_i49697_1_;
+-      this.field_147144_o = p_i49697_1_ == null ? null : new NetworkSystem(this);
+-      this.field_71310_m = p_i49697_1_ == null ? null : new AnvilSaveConverter(p_i49697_1_.toPath(), p_i49697_1_.toPath().resolve("../backups"), p_i49697_3_);
+-      this.field_184112_s = p_i49697_3_;
++   public MinecraftServer(@Nullable File anvilFileIn, Proxy serverProxyIn, Commands commandManagerIn, YggdrasilAuthenticationService authServiceIn, MinecraftSessionService sessionServiceIn, GameProfileRepository profileRepoIn, PlayerProfileCache profileCacheIn) {
++      this.field_110456_c = serverProxyIn;
++      this.field_195579_af = commandManagerIn;
++      this.field_152364_T = authServiceIn;
++      this.field_147143_S = sessionServiceIn;
++      this.field_152365_W = profileRepoIn;
++      this.field_152366_X = profileCacheIn;
++      this.field_71308_o = anvilFileIn;
++      this.field_147144_o = anvilFileIn == null ? null : new NetworkSystem(this);
++      this.field_71310_m = anvilFileIn == null ? null : new AnvilSaveConverter(anvilFileIn.toPath(), anvilFileIn.toPath().resolve("../backups"));
+       this.field_195576_ac.func_199006_a(this.field_199736_ah);
+       this.field_195576_ac.func_199006_a(this.field_199530_ag);
+       this.field_195576_ac.func_199006_a(this.field_200256_aj);
+@@ -335,20 +331,19 @@
           worldserver.func_72912_H().func_76060_a(this.func_71265_f());
        }
  
@@ -32,7 +84,7 @@
        this.func_184103_al().func_212504_a(worldserver);
        if (p_212369_3_.func_201357_P() != null) {
           this.func_201300_aS().func_201381_a(p_212369_3_.func_201357_P());
-@@ -514,6 +513,7 @@
+@@ -514,6 +509,7 @@
  
        for(WorldServer worldserver1 : this.func_212370_w()) {
           if (worldserver1 != null) {
@@ -40,7 +92,7 @@
              worldserver1.close();
           }
        }
-@@ -547,6 +547,7 @@
+@@ -547,6 +543,7 @@
     public void run() {
        try {
           if (this.func_71197_b()) {
@@ -48,7 +100,7 @@
              this.field_211151_aa = Util.func_211177_b();
              this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
              this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.13.2", 404));
-@@ -570,7 +571,10 @@
+@@ -570,7 +567,10 @@
  
                 this.field_71296_Q = true;
              }
@@ -59,7 +111,7 @@
              this.func_71228_a((CrashReport)null);
           }
        } catch (Throwable throwable1) {
-@@ -589,6 +593,7 @@
+@@ -589,6 +589,7 @@
              field_147145_h.error("We were unable to save this crash report to disk.");
           }
  
@@ -67,7 +119,7 @@
           this.func_71228_a(crashreport);
        } finally {
           try {
-@@ -597,6 +602,7 @@
+@@ -597,6 +598,7 @@
           } catch (Throwable throwable) {
              field_147145_h.error("Exception stopping the server", throwable);
           } finally {
@@ -75,7 +127,7 @@
              this.func_71240_o();
           }
  
-@@ -652,6 +658,7 @@
+@@ -652,6 +654,7 @@
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
        long i = Util.func_211178_c();
@@ -83,7 +135,7 @@
        ++this.field_71315_w;
        if (this.field_71295_T) {
           this.field_71295_T = false;
-@@ -672,6 +679,7 @@
+@@ -672,6 +675,7 @@
  
           Collections.shuffle(Arrays.asList(agameprofile));
           this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
@@ -91,7 +143,7 @@
        }
  
        if (this.field_71315_w % 900 == 0) {
-@@ -696,6 +704,7 @@
+@@ -696,6 +700,7 @@
        this.field_211152_ao = this.field_211152_ao * 0.8F + (float)l / 1000000.0F * 0.19999999F;
        this.field_71304_b.func_76319_b();
        this.field_71304_b.func_76319_b();
@@ -99,7 +151,7 @@
     }
  
     public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -723,6 +732,7 @@
+@@ -723,6 +728,7 @@
              }
  
              this.field_71304_b.func_76320_a("tick");
@@ -107,7 +159,7 @@
  
              try {
                 worldserver.func_72835_b(p_71190_1_);
-@@ -740,6 +750,7 @@
+@@ -740,6 +746,7 @@
                 throw new ReportedException(crashreport1);
              }
  
@@ -115,7 +167,7 @@
              this.field_71304_b.func_76319_b();
              this.field_71304_b.func_76320_a("tracker");
              worldserver.func_73039_n().func_72788_a();
-@@ -752,6 +763,8 @@
+@@ -752,6 +759,8 @@
           }))[this.field_71315_w % 100] = Util.func_211178_c() - i;
        }
  
@@ -124,7 +176,7 @@
        this.field_71304_b.func_76318_c("connection");
        this.func_147137_ag().func_151269_c();
        this.field_71304_b.func_76318_c("players");
-@@ -774,6 +787,14 @@
+@@ -774,6 +783,14 @@
     }
  
     public static void main(String[] p_main_0_) {
@@ -139,7 +191,16 @@
        Bootstrap.func_151354_b();
  
        try {
-@@ -876,7 +897,7 @@
+@@ -828,7 +845,7 @@
+          MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
+          GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
+          PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(s1, field_152367_a.getName()));
+-         final DedicatedServer dedicatedserver = new DedicatedServer(new File(s1), DataFixesManager.func_210901_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
++         final DedicatedServer dedicatedserver = new DedicatedServer(new File(s1), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
+          if (s != null) {
+             dedicatedserver.func_71224_l(s);
+          }
+@@ -876,7 +893,7 @@
     }
  
     public void func_71256_s() {
@@ -148,7 +209,7 @@
        this.field_175590_aa.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
           field_147145_h.error(p_195574_1_);
        });
-@@ -896,7 +917,7 @@
+@@ -896,7 +913,7 @@
     }
  
     public WorldServer func_71218_a(DimensionType p_71218_1_) {
@@ -157,7 +218,7 @@
     }
  
     public Iterable<WorldServer> func_212370_w() {
-@@ -935,7 +956,7 @@
+@@ -935,7 +952,7 @@
     }
  
     public String getServerModName() {
@@ -166,7 +227,18 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1472,4 +1493,14 @@
+@@ -1310,10 +1327,6 @@
+       return this.field_175590_aa;
+    }
+ 
+-   public DataFixer func_195563_aC() {
+-      return this.field_184112_s;
+-   }
+-
+    public int func_184108_a(@Nullable WorldServer p_184108_1_) {
+       return p_184108_1_ != null ? p_184108_1_.func_82736_K().func_180263_c("spawnRadius") : 10;
+    }
+@@ -1472,4 +1485,14 @@
           return 0;
        }
     }

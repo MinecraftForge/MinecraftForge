@@ -1,6 +1,25 @@
 --- a/net/minecraft/tileentity/TileEntityType.java
 +++ b/net/minecraft/tileentity/TileEntityType.java
-@@ -12,7 +12,7 @@
+@@ -1,18 +1,26 @@
+ package net.minecraft.tileentity;
+ 
+ import com.mojang.datafixers.DataFixUtils;
++import com.mojang.datafixers.DataFixer;
++import com.mojang.datafixers.schemas.Schema;
+ import com.mojang.datafixers.types.Type;
++
++import java.util.NoSuchElementException;
+ import java.util.function.Supplier;
+ import javax.annotation.Nullable;
++
++import net.minecraft.entity.EntityType;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.SharedConstants;
+ import net.minecraft.util.datafix.DataFixesManager;
+ import net.minecraft.util.datafix.TypeReferences;
+ import net.minecraft.util.registry.IRegistry;
++import net.minecraftforge.fml.fixers.ModFixes;
++
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,12 +28,67 @@
     private static final Logger field_206866_A = LogManager.getLogger();
     public static final TileEntityType<TileEntityFurnace> field_200971_b = func_200966_a("furnace", TileEntityType.Builder.func_200963_a(TileEntityFurnace::new));
     public static final TileEntityType<TileEntityChest> field_200972_c = func_200966_a("chest", TileEntityType.Builder.func_200963_a(TileEntityChest::new));
-@@ -52,7 +52,7 @@
+@@ -49,15 +57,15 @@
  
+    public static <T extends TileEntity> TileEntityType<T> func_200966_a(String p_200966_0_, TileEntityType.Builder<T> p_200966_1_) {
+       Type<?> type = null;
+-
++      
        try {
-          type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(TypeReferences.field_211294_j, p_200966_0_);
+-         type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(TypeReferences.field_211294_j, p_200966_0_);
 -      } catch (IllegalStateException illegalstateexception) {
+-         if (SharedConstants.field_206244_b) {
+-            throw illegalstateexception;
+-         }
++          type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(TypeReferences.field_211294_j, p_200966_0_);
 +      } catch (IllegalArgumentException illegalstateexception) {
-          if (SharedConstants.field_206244_b) {
-             throw illegalstateexception;
-          }
++          if (SharedConstants.field_206244_b) {
++              throw illegalstateexception;
++          }
+ 
+-         field_206866_A.warn("No data fixer registered for block entity {}", (Object)p_200966_0_);
++          field_206866_A.warn("No data fixer registered for block entity {}", (Object)p_200966_0_);
+       }
+ 
+       TileEntityType<T> tileentitytype = p_200966_1_.func_206865_a(type);
+@@ -94,6 +102,40 @@
+       public static <T extends TileEntity> TileEntityType.Builder<T> func_200963_a(Supplier<? extends T> p_200963_0_) {
+          return new TileEntityType.Builder<>(p_200963_0_);
+       }
++      
++      public TileEntityType<T> build(ResourceLocation name) {
++          Type<?> type = null;
++          try {
++              ModFixes idFix = ModFixes.getBuilders().get(name.func_110624_b().toString());
++              if(idFix != null) {
++                  try {
++                      DataFixer fixer = idFix.getBuiltFixer();
++                      try {
++                          Schema schema = fixer.getSchema(idFix.dataVersion);
++                          type = schema.getChoiceType(TypeReferences.field_211294_j, name.toString());
++                      } catch(NoSuchElementException e1) {
++                          TileEntityType.field_206866_A.error("No schema exists for current mod data version {} from {}", idFix.dataVersion, name.func_110624_b().toString());
++                          e1.printStackTrace();
++                      }
++                  } catch(IllegalArgumentException e1) {}
++              }
++              if(type == null) {
++                  for(ModFixes fix : ModFixes.getBuilders().values()) {
++                      DataFixer fixer = fix.getBuiltFixer();
++                      try {
++                          Schema schema = fixer.getSchema(fix.dataVersion);
++                          type = schema.getChoiceType(TypeReferences.field_211294_j, name.toString());
++                      } catch(NoSuchElementException e1) {
++                          TileEntityType.field_206866_A.error("No schema exists for current mod data version {} from {}", fix.dataVersion, name.func_110624_b().toString());
++                          e1.printStackTrace();
++                      }
++                  }
++              }
++          } catch (IllegalArgumentException illegalstateexception) {
++              field_206866_A.warn("No data fixer registered for block entity {} in mod {}", name.toString(), name.func_110624_b().toString());
++          }
++          return new TileEntityType<>(this.field_200965_a, type);
++      }
+ 
+       public TileEntityType<T> func_206865_a(Type<?> p_206865_1_) {
+          return new TileEntityType<>(this.field_200965_a, p_206865_1_);

@@ -1,6 +1,49 @@
 --- a/net/minecraft/world/storage/DimensionSavedDataManager.java
 +++ b/net/minecraft/world/storage/DimensionSavedDataManager.java
-@@ -38,6 +38,7 @@
+@@ -1,25 +1,35 @@
+ package net.minecraft.world.storage;
+ 
+-import com.google.common.collect.Maps;
+-import com.mojang.datafixers.DataFixTypes;
+-import it.unimi.dsi.fastutil.objects.Object2IntMap;
+-import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+-import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
+ import java.io.DataInputStream;
+ import java.io.DataOutputStream;
+ import java.io.File;
+ import java.io.FileInputStream;
+ import java.io.FileOutputStream;
+ import java.io.IOException;
++import java.util.HashMap;
+ import java.util.Map;
+ import java.util.function.Function;
++
+ import javax.annotation.Nullable;
++
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++
++import com.google.common.collect.Maps;
++import com.mojang.datafixers.DataFixTypes;
++import com.mojang.datafixers.DataFixer;
++import com.mojang.datafixers.util.Pair;
++
++import it.unimi.dsi.fastutil.objects.Object2IntMap;
++import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
++import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.nbt.NBTUtil;
++import net.minecraft.util.datafix.DataFixesManager;
+ import net.minecraft.world.dimension.DimensionType;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
++import net.minecraftforge.common.util.Constants;
++import net.minecraftforge.fml.fixers.ModFixes;
+ 
+ public class DimensionSavedDataManager {
+    private static final Logger field_212776_a = LogManager.getLogger();
+@@ -38,6 +48,7 @@
     @Nullable
     public <T extends WorldSavedData> T func_201067_a(Function<String, T> p_201067_1_, String p_201067_2_) {
        WorldSavedData worldsaveddata = this.field_212778_c.get(p_201067_2_);
@@ -8,7 +51,7 @@
        if (worldsaveddata == null && this.field_212780_e != null) {
           try {
              File file1 = this.field_212780_e.func_212423_a(this.field_212777_b, p_201067_2_);
-@@ -45,6 +46,9 @@
+@@ -45,6 +56,9 @@
                 worldsaveddata = (WorldSavedData)p_201067_1_.apply(p_201067_2_);
                 worldsaveddata.func_76184_a(func_212774_a(this.field_212780_e, this.field_212777_b, p_201067_2_, 1631).func_74775_l("data"));
                 this.field_212778_c.put(p_201067_2_, worldsaveddata);
@@ -18,3 +61,13 @@
              }
           } catch (Exception exception) {
              field_212776_a.error("Error loading saved data: {}", p_201067_2_, exception);
+@@ -116,8 +130,7 @@
+       NBTTagCompound nbttagcompound1;
+       try (FileInputStream fileinputstream = new FileInputStream(file1)) {
+          NBTTagCompound nbttagcompound = CompressedStreamTools.func_74796_a(fileinputstream);
+-         int i = nbttagcompound.func_150297_b("DataVersion", 99) ? nbttagcompound.func_74762_e("DataVersion") : 1343;
+-         nbttagcompound1 = NBTUtil.func_210821_a(p_212774_0_.func_197718_i(), DataFixTypes.SAVED_DATA, nbttagcompound, i, p_212774_3_);
++         nbttagcompound1 = NBTUtil.update(ModFixes.getFixVersions(nbttagcompound, true), DataFixTypes.SAVED_DATA, nbttagcompound);
+       }
+ 
+       return nbttagcompound1;

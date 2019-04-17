@@ -34,10 +34,6 @@ import java.util.function.Supplier;
 public enum SidedProvider
 {
     // All of these need to be careful not to directly dereference the client and server elements in their signatures
-    DATAFIXER(
-            c->c.get().getDataFixer(),
-            s->s.get().getDataFixer(),
-            ()-> { throw new UnsupportedOperationException(); }),
     SIDED_SETUP_EVENT(
             (Function<Supplier<Minecraft>, Function<ModContainer, Event>>)c-> mc->new FMLClientSetupEvent(c, mc),
             s-> mc->new FMLDedicatedServerSetupEvent(s, mc),

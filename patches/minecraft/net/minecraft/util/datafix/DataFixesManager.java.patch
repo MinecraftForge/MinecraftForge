@@ -1,0 +1,15 @@
+--- a/net/minecraft/util/datafix/DataFixesManager.java
++++ b/net/minecraft/util/datafix/DataFixesManager.java
+@@ -126,10 +126,11 @@
+ public class DataFixesManager {
+    private static final BiFunction<Integer, Schema, Schema> field_207592_e = Schema::new;
+    private static final BiFunction<Integer, Schema, Schema> field_207593_f = NamespacedSchema::new;
++   public static final int FIXER_VERSION = 1631;
+    private static final DataFixer field_210902_d = func_188279_a();
+ 
+    private static DataFixer func_188279_a() {
+-      DataFixerBuilder datafixerbuilder = new DataFixerBuilder(1631);
++      DataFixerBuilder datafixerbuilder = new DataFixerBuilder(FIXER_VERSION);
+       func_210891_a(datafixerbuilder);
+       return datafixerbuilder.build(ForkJoinPool.commonPool());
+    }

@@ -1,11 +1,40 @@
 --- a/net/minecraft/world/storage/SaveHandler.java
 +++ b/net/minecraft/world/storage/SaveHandler.java
+@@ -19,6 +19,8 @@
+ import net.minecraft.world.dimension.Dimension;
+ import net.minecraft.world.dimension.DimensionType;
+ import net.minecraft.world.gen.feature.template.TemplateManager;
++import net.minecraftforge.fml.fixers.ModFixes;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -29,17 +31,15 @@
+    private final long field_75769_e = Util.func_211177_b();
+    private final String field_75767_f;
+    private final TemplateManager field_186342_h;
+-   protected final DataFixer field_186341_a;
+ 
+-   public SaveHandler(File p_i49566_1_, String p_i49566_2_, @Nullable MinecraftServer p_i49566_3_, DataFixer p_i49566_4_) {
+-      this.field_186341_a = p_i49566_4_;
++   public SaveHandler(File p_i49566_1_, String p_i49566_2_, @Nullable MinecraftServer p_i49566_3_) {
+       this.field_75770_b = new File(p_i49566_1_, p_i49566_2_);
+       this.field_75770_b.mkdirs();
+       this.field_75771_c = new File(this.field_75770_b, "playerdata");
+       this.field_75767_f = p_i49566_2_;
+       if (p_i49566_3_ != null) {
+          this.field_75771_c.mkdirs();
+-         this.field_186342_h = new TemplateManager(p_i49566_3_, this.field_75770_b, p_i49566_4_);
++         this.field_186342_h = new TemplateManager(p_i49566_3_, this.field_75770_b);
+       } else {
+          this.field_186342_h = null;
+       }
 @@ -94,14 +94,14 @@
     public WorldInfo func_75757_d() {
        File file1 = new File(this.field_75770_b, "level.dat");
        if (file1.exists()) {
 -         WorldInfo worldinfo = SaveFormatOld.func_186353_a(file1, this.field_186341_a);
-+         WorldInfo worldinfo = SaveFormatOld.getWorldData(file1, this.field_186341_a, this);
++         WorldInfo worldinfo = SaveFormatOld.getWorldData(file1, this);
           if (worldinfo != null) {
              return worldinfo;
           }
@@ -13,7 +42,7 @@
  
        file1 = new File(this.field_75770_b, "level.dat_old");
 -      return file1.exists() ? SaveFormatOld.func_186353_a(file1, this.field_186341_a) : null;
-+      return file1.exists() ? SaveFormatOld.getWorldData(file1, this.field_186341_a, this) : null;
++      return file1.exists() ? SaveFormatOld.getWorldData(file1, this) : null;
     }
  
     public void func_75755_a(WorldInfo p_75755_1_, @Nullable NBTTagCompound p_75755_2_) {
@@ -34,26 +63,30 @@
        } catch (Exception var5) {
           field_151478_a.warn("Failed to save player data for {}", (Object)p_75753_1_.func_200200_C_().getString());
        }
-@@ -171,6 +174,7 @@
+@@ -169,8 +172,9 @@
+ 
+       if (nbttagcompound != null) {
           int i = nbttagcompound.func_150297_b("DataVersion", 3) ? nbttagcompound.func_74762_e("DataVersion") : -1;
-          p_75752_1_.func_70020_e(NBTUtil.func_210822_a(this.field_186341_a, DataFixTypes.PLAYER, nbttagcompound, i));
+-         p_75752_1_.func_70020_e(NBTUtil.func_210822_a(this.field_186341_a, DataFixTypes.PLAYER, nbttagcompound, i));
++         p_75752_1_.func_70020_e(NBTUtil.update(ModFixes.getFixVersions(nbttagcompound, false), DataFixTypes.PLAYER, nbttagcompound));
        }
 +      net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_75752_1_, field_75771_c, p_75752_1_.func_110124_au().toString());
  
        return nbttagcompound;
     }
-@@ -210,4 +214,20 @@
-    public DataFixer func_197718_i() {
-       return this.field_186341_a;
+@@ -207,7 +211,19 @@
+       return this.field_186342_h;
     }
-+
+ 
+-   public DataFixer func_197718_i() {
+-      return this.field_186341_a;
 +   public NBTTagCompound getPlayerNBT(net.minecraft.entity.player.EntityPlayerMP player) {
 +      try {
 +         File file1 = new File(this.field_75771_c, player.func_189512_bd() + ".dat");
 +         if (file1.exists() && file1.isFile()) {
 +            NBTTagCompound nbt = CompressedStreamTools.func_74796_a(new FileInputStream(file1));
 +            if (nbt != null) {
-+               nbt = NBTUtil.func_210822_a(this.field_186341_a, DataFixTypes.PLAYER, nbt, nbt.func_150297_b("DataVersion", 3) ? nbt.func_74762_e("DataVersion") : -1);
++               nbt = NBTUtil.update(ModFixes.getFixVersions(nbt, false), DataFixTypes.PLAYER, nbt);
 +            }
 +            return nbt;
 +         }
@@ -61,5 +94,5 @@
 +         field_151478_a.warn("Failed to load player data for " + player.func_200200_C_());
 +      }
 +      return null;
-+   }
+    }
  }

@@ -1,0 +1,39 @@
+--- a/net/minecraft/world/gen/feature/template/TemplateManager.java
++++ b/net/minecraft/world/gen/feature/template/TemplateManager.java
+@@ -25,21 +25,21 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.ResourceLocationException;
+ import net.minecraft.util.Util;
++import net.minecraftforge.fml.fixers.ModFixes;
++
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+ public class TemplateManager implements IResourceManagerReloadListener {
+    private static final Logger field_195431_a = LogManager.getLogger();
+    private final Map<ResourceLocation, Template> field_186240_a = Maps.newHashMap();
+-   private final DataFixer field_191154_c;
+    private final MinecraftServer field_195432_d;
+    private final Path field_195433_e;
+ 
+-   public TemplateManager(MinecraftServer p_i49570_1_, File p_i49570_2_, DataFixer p_i49570_3_) {
+-      this.field_195432_d = p_i49570_1_;
+-      this.field_191154_c = p_i49570_3_;
+-      this.field_195433_e = p_i49570_2_.toPath().resolve("generated").normalize();
+-      p_i49570_1_.func_195570_aG().func_199006_a(this);
++   public TemplateManager(MinecraftServer server, File templateFolder) {
++      this.field_195432_d = server;
++      this.field_195433_e = templateFolder.toPath().resolve("generated").normalize();
++      server.func_195570_aG().func_199006_a(this);
+    }
+ 
+    public Template func_200220_a(ResourceLocation p_200220_1_) {
+@@ -128,7 +128,7 @@
+       }
+ 
+       Template template = new Template();
+-      template.func_186256_b(NBTUtil.func_210822_a(this.field_191154_c, DataFixTypes.STRUCTURE, nbttagcompound, nbttagcompound.func_74762_e("DataVersion")));
++      template.func_186256_b(NBTUtil.update(ModFixes.getFixVersions(nbttagcompound, nbttagcompound.func_74762_e("DataVersion"), -1), DataFixTypes.STRUCTURE, nbttagcompound));
+       return template;
+    }
+ 
