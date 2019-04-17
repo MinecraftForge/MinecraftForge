@@ -6,8 +6,10 @@ import java.util.concurrent.ForkJoinPool;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
+import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -99,6 +101,16 @@ public class ModFixes extends DataFixerBuilder
     public String getModId()
     {
         return mod;
+    }
+    
+    public void addSchema(final Schema schema) {
+        super.addSchema(schema);
+        fixer = null;
+    }
+
+    public void addFixer(final DataFix fix) {
+        super.addFixer(fix);
+        fixer = null;
     }
 
     public DataFixer getBuiltFixer()
