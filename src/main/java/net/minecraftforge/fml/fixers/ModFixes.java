@@ -6,10 +6,8 @@ import java.util.concurrent.ForkJoinPool;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.mojang.datafixers.DataFix;
 import com.mojang.datafixers.DataFixer;
 import com.mojang.datafixers.DataFixerBuilder;
-import com.mojang.datafixers.schemas.Schema;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -43,15 +41,15 @@ public class ModFixes extends DataFixerBuilder
         return ImmutableMap.copyOf(builders);
     }
 
-    public static Map<DataFixer, Pair<Integer, Integer>> getFixVersions(NBTTagCompound nbttagcompound, int defaultMC, int defaultForge)
+    public static Map<DataFixer, Pair<Integer, Integer>> getFixVersions(NBTTagCompound nbttagcompound, int defaultMC, int defaultForge, boolean useLatestInstead)
     {
-        Map<DataFixer, Pair<Integer, Integer>> versions = getFixVersionsNoVanilla(nbttagcompound, defaultForge);
+        Map<DataFixer, Pair<Integer, Integer>> versions = getFixVersionsNoVanilla(nbttagcompound, defaultForge, useLatestInstead);
         int i = nbttagcompound.contains("DataVersion", Constants.NBT.TAG_ANY_NUMERIC) ? nbttagcompound.getInt("DataVersion") : defaultMC;
         versions.put(DataFixesManager.getDataFixer(), Pair.of(i, DataFixesManager.FIXER_VERSION));
         return versions;
     }
 
-    public static Map<DataFixer, Pair<Integer, Integer>> getFixVersionsNoVanilla(NBTTagCompound nbttagcompound, int defaultForge)
+    public static Map<DataFixer, Pair<Integer, Integer>> getFixVersionsNoVanilla(NBTTagCompound nbttagcompound, int defaultForge, boolean useLatestInstead)
     {
         Map<DataFixer, Pair<Integer, Integer>> versions = new HashMap<DataFixer, Pair<Integer, Integer>>();
         if (nbttagcompound.contains("ForgeDataVersions", Constants.NBT.TAG_COMPOUND))
@@ -61,7 +59,7 @@ public class ModFixes extends DataFixerBuilder
             {
                 ModFixes fixes = builders.get(modid);
                 int newVersion = fixes.dataVersion;
-                int version = defaultForge == -2492 ? newVersion : defaultForge;
+                int version = useLatestInstead ? newVersion : defaultForge;
                 if (vers.contains(modid, Constants.NBT.TAG_ANY_NUMERIC))
                 {
                     version = vers.getInt(modid);
@@ -75,12 +73,12 @@ public class ModFixes extends DataFixerBuilder
 
     public static Map<DataFixer, Pair<Integer, Integer>> getFixVersions(NBTTagCompound nbttagcompound, boolean useLatestOtherwiseN1)
     {
-        return getFixVersions(nbttagcompound, (useLatestOtherwiseN1 ? DataFixesManager.FIXER_VERSION : -1), (useLatestOtherwiseN1 ? -2492 : -1));
+        return getFixVersions(nbttagcompound, (useLatestOtherwiseN1 ? DataFixesManager.FIXER_VERSION : -1), -1, useLatestOtherwiseN1);
     }
 
     public static Map<DataFixer, Pair<Integer, Integer>> getFixVersionsNoVanilla(NBTTagCompound nbttagcompound, boolean useLatestOtherwiseN1)
     {
-        return getFixVersionsNoVanilla(nbttagcompound, (useLatestOtherwiseN1 ? -2492 : -1));
+        return getFixVersionsNoVanilla(nbttagcompound, -1, useLatestOtherwiseN1);
     }
 
     /*
@@ -101,16 +99,6 @@ public class ModFixes extends DataFixerBuilder
     public String getModId()
     {
         return mod;
-    }
-    
-    public void addSchema(final Schema schema) {
-        super.addSchema(schema);
-        fixer = null;
-    }
-
-    public void addFixer(final DataFix fix) {
-        super.addFixer(fix);
-        fixer = null;
     }
 
     public DataFixer getBuiltFixer()

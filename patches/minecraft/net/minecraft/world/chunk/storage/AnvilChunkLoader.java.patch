@@ -33,7 +33,7 @@
     }
  
     @Nullable
-@@ -94,14 +95,15 @@
+@@ -94,18 +95,35 @@
              datainputstream.close();
              int i = nbttagcompound1.func_150297_b("DataVersion", 99) ? nbttagcompound1.func_74762_e("DataVersion") : -1;
              if (i < 1493) {
@@ -46,12 +46,32 @@
              }
  
 -            nbttagcompound1 = NBTUtil.func_210822_a(this.field_193416_e, DataFixTypes.CHUNK, nbttagcompound1, Math.max(1493, i));
-+            nbttagcompound1 = NBTUtil.update(ModFixes.getFixVersionsNoVanilla(nbttagcompound1, -1), DataFixTypes.CHUNK, nbttagcompound1);
++            nbttagcompound1 = NBTUtil.update(ModFixes.getFixVersionsNoVanilla(nbttagcompound1, -1, false), DataFixTypes.CHUNK, nbttagcompound1);
 +            nbttagcompound1 = NBTUtil.updateSingle(DataFixesManager.func_210901_a(), DataFixTypes.CHUNK, nbttagcompound1, Math.max(1493, i), DataFixesManager.FIXER_VERSION);
              if (i < 1631) {
                 nbttagcompound1.func_74768_a("DataVersion", 1631);
                 this.func_75824_a(new ChunkPos(p_212146_3_, p_212146_4_), nbttagcompound1);
-@@ -225,6 +227,8 @@
+             }
++            // Forge: Save mod fix versions
++            if(!ModFixes.getBuilders().isEmpty()) {
++                NBTTagCompound forgeCompound;
++                if(!nbttagcompound1.func_74764_b("ForgeDataVersions")) {
++                    forgeCompound = new NBTTagCompound();
++                    nbttagcompound1.func_74782_a("ForgeDataVersions", forgeCompound);
++                } else {
++                    forgeCompound = nbttagcompound.func_74775_l("ForgeDataVersions");
++                }
++                for(String id : ModFixes.getBuilders().keySet()) {
++                    ModFixes fixes = ModFixes.getBuilders().get(id);
++                    if(!forgeCompound.func_74764_b(id) || forgeCompound.func_74762_e(id) < fixes.dataVersion) {
++                        forgeCompound.func_74768_a(id, fixes.dataVersion);
++                    }
++                }
++            }
+ 
+             return nbttagcompound1;
+          }
+@@ -225,6 +243,8 @@
              this.func_202156_a((ChunkPrimer)p_75816_2_, p_75816_1_, nbttagcompound1);
           }
  
@@ -60,7 +80,7 @@
           this.func_75824_a(chunkpos, nbttagcompound);
        } catch (Exception exception) {
           field_151505_a.error("Failed to save chunk", (Throwable)exception);
-@@ -388,10 +392,14 @@
+@@ -388,10 +408,14 @@
        for(int j = 0; j < p_75820_1_.func_177429_s().length; ++j) {
           for(Entity entity : p_75820_1_.func_177429_s()[j]) {
              NBTTagCompound nbttagcompound = new NBTTagCompound();
@@ -75,7 +95,7 @@
           }
        }
  
-@@ -402,7 +410,11 @@
+@@ -402,7 +426,11 @@
           TileEntity tileentity = p_75820_1_.func_175625_s(blockpos);
           if (tileentity != null) {
              NBTTagCompound nbttagcompound1 = new NBTTagCompound();
@@ -88,7 +108,7 @@
              nbttagcompound1.func_74757_a("keepPacked", false);
              nbttaglist2.add((INBTBase)nbttagcompound1);
           } else {
-@@ -442,6 +454,16 @@
+@@ -442,6 +470,16 @@
  
        p_75820_3_.func_74782_a("Heightmaps", nbttagcompound2);
        p_75820_3_.func_74782_a("Structures", this.func_202160_a(p_75820_1_.field_76635_g, p_75820_1_.field_76647_h, p_75820_1_.func_201609_c(), p_75820_1_.func_201604_d()));
@@ -105,7 +125,7 @@
     }
  
     private Chunk func_75823_a(IWorld p_75823_1_, NBTTagCompound p_75823_2_) {
-@@ -508,6 +530,10 @@
+@@ -508,6 +546,10 @@
           chunk.func_177427_f(true);
        }
  
@@ -116,7 +136,7 @@
        return chunk;
     }
  
-@@ -809,4 +835,8 @@
+@@ -809,4 +851,8 @@
  
        return flag;
     }

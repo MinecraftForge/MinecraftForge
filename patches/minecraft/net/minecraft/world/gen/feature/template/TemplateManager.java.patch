@@ -33,7 +33,7 @@
  
        Template template = new Template();
 -      template.func_186256_b(NBTUtil.func_210822_a(this.field_191154_c, DataFixTypes.STRUCTURE, nbttagcompound, nbttagcompound.func_74762_e("DataVersion")));
-+      template.func_186256_b(NBTUtil.update(ModFixes.getFixVersions(nbttagcompound, nbttagcompound.func_74762_e("DataVersion"), -1), DataFixTypes.STRUCTURE, nbttagcompound));
++      template.func_186256_b(NBTUtil.update(ModFixes.getFixVersions(nbttagcompound, nbttagcompound.func_74762_e("DataVersion"), -1, false), DataFixTypes.STRUCTURE, nbttagcompound));
        return template;
     }
  

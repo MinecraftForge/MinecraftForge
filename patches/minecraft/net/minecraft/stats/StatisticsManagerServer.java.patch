@@ -32,7 +32,7 @@
              }
  
 -            nbttagcompound = NBTUtil.func_210822_a(p_199062_1_, DataFixTypes.STATS, nbttagcompound, nbttagcompound.func_74762_e("DataVersion"));
-+            nbttagcompound = NBTUtil.update(ModFixes.getFixVersions(nbttagcompound, nbttagcompound.func_74762_e("DataVersion"), -1), DataFixTypes.STATS, nbttagcompound);
++            nbttagcompound = NBTUtil.update(ModFixes.getFixVersions(nbttagcompound, nbttagcompound.func_74762_e("DataVersion"), -1, true), DataFixTypes.STATS, nbttagcompound);
              if (nbttagcompound.func_150297_b("stats", 10)) {
                 NBTTagCompound nbttagcompound1 = nbttagcompound.func_74775_l("stats");
  
