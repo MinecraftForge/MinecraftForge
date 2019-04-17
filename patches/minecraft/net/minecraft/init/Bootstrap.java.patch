@@ -1,6 +1,25 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -264,6 +264,9 @@
+@@ -193,15 +193,11 @@
+                 double d0 = p_82487_1_.func_82615_a() + (double)enumfacing.func_82601_c();
+                 double d1 = (double)((float)(p_82487_1_.func_180699_d().func_177956_o() + enumfacing.func_96559_d()) + 0.2F);
+                 double d2 = p_82487_1_.func_82616_c() + (double)enumfacing.func_82599_e();
+-                Entity entity = ItemMonsterPlacer.func_77840_a(p_82487_1_.func_82618_k(), ItemMonsterPlacer.func_190908_h(p_82487_2_), d0, d1, d2);
++                Entity entity = ItemMonsterPlacer.spawnCreature(p_82487_1_.func_82618_k(), p_82487_2_, d0, d1, d2, null);
+ 
+-                if (entity instanceof EntityLivingBase && p_82487_2_.func_82837_s())
+-                {
+-                    entity.func_96094_a(p_82487_2_.func_82833_r());
+-                }
++                if (entity != null)
++                    p_82487_2_.func_190918_g(1);
+ 
+-                ItemMonsterPlacer.func_185079_a(p_82487_1_.func_82618_k(), (EntityPlayer)null, p_82487_2_, entity);
+-                p_82487_2_.func_190918_g(1);
+                 return p_82487_2_;
+             }
+         });
+@@ -264,6 +260,9 @@
          };
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151129_at, ibehaviordispenseitem);
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151131_as, ibehaviordispenseitem);
@@ -10,7 +29,7 @@
          BlockDispenser.field_149943_a.func_82595_a(Items.field_151133_ar, new BehaviorDefaultDispenseItem()
          {
              private final BehaviorDefaultDispenseItem field_150840_b = new BehaviorDefaultDispenseItem();
-@@ -489,6 +492,7 @@
+@@ -489,6 +488,7 @@
          if (!field_151355_a)
          {
              field_151355_a = true;
@@ -18,7 +37,7 @@
              func_179868_d();
              SoundEvent.func_187504_b();
              Block.func_149671_p();
-@@ -524,6 +528,8 @@
+@@ -524,6 +524,8 @@
                      field_179871_c.error("Errors with built-in loot tables");
                  }
              }

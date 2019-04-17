@@ -1,10 +1,86 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
-@@ -234,6 +234,7 @@
-                     entity.func_70012_b(p_77840_2_, p_77840_4_, p_77840_6_, MathHelper.func_76142_g(p_77840_0_.field_73012_v.nextFloat() * 360.0F), 0.0F);
-                     entityliving.field_70759_as = entityliving.field_70177_z;
-                     entityliving.field_70761_aq = entityliving.field_70177_z;
-+                    if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(entityliving, p_77840_0_, (float) p_77840_2_, (float) p_77840_4_, (float) p_77840_6_, null)) return null;
-                     entityliving.func_180482_a(p_77840_0_.func_175649_E(new BlockPos(entityliving)), (IEntityLivingData)null);
-                     p_77840_0_.func_72838_d(entity);
-                     entityliving.func_70642_aH();
+@@ -218,36 +218,65 @@
+     }
+ 
+     @Nullable
+-    public static Entity func_77840_a(World p_77840_0_, @Nullable ResourceLocation p_77840_1_, double p_77840_2_, double p_77840_4_, double p_77840_6_)
++    public static Entity spawnCreature(World worldIn, ResourceLocation entityID, @Nullable String displayName, @Nullable NBTTagCompound nbtTagCompound,
++                                       @Nullable EntityPlayer player, double x, double y, double z)
+     {
+-        if (p_77840_1_ != null && EntityList.field_75627_a.containsKey(p_77840_1_))
++        if (entityID != null && EntityList.field_75627_a.containsKey(entityID))
+         {
+-            Entity entity = null;
++            Entity entity = EntityList.func_188429_b(entityID, worldIn);
+ 
+-            for (int i = 0; i < 1; ++i)
++            if (entity instanceof EntityLiving)
+             {
+-                entity = EntityList.func_188429_b(p_77840_1_, p_77840_0_);
++                EntityLiving entityLiving = (EntityLiving) entity;
++                entityLiving.func_70012_b(x, y, z, MathHelper.func_76142_g(worldIn.field_73012_v.nextFloat() * 360.0F), 0.0F);
++                entityLiving.field_70759_as = entityLiving.field_70177_z;
++                entityLiving.field_70761_aq = entityLiving.field_70177_z;
++                entityLiving.func_180482_a(worldIn.func_175649_E(new BlockPos(entityLiving)), (IEntityLivingData)null);
+ 
+-                if (entity instanceof EntityLiving)
++                if (displayName != null)
+                 {
+-                    EntityLiving entityliving = (EntityLiving)entity;
+-                    entity.func_70012_b(p_77840_2_, p_77840_4_, p_77840_6_, MathHelper.func_76142_g(p_77840_0_.field_73012_v.nextFloat() * 360.0F), 0.0F);
+-                    entityliving.field_70759_as = entityliving.field_70177_z;
+-                    entityliving.field_70761_aq = entityliving.field_70177_z;
+-                    entityliving.func_180482_a(p_77840_0_.func_175649_E(new BlockPos(entityliving)), (IEntityLivingData)null);
+-                    p_77840_0_.func_72838_d(entity);
+-                    entityliving.func_70642_aH();
++                    entityLiving.func_96094_a(displayName);
+                 }
+-            }
+ 
++                MinecraftServer minecraftserver = worldIn.func_73046_m();
++
++                if (nbtTagCompound != null && nbtTagCompound.func_150297_b("EntityTag", 10))
++                {
++                    if (worldIn.field_72995_K || !entity.func_184213_bq() || (player != null && minecraftserver.func_184103_al().func_152596_g(player.func_146103_bH())))
++                    {
++                        NBTTagCompound nbttagcompound1 = entity.func_189511_e(new NBTTagCompound());
++                        UUID uuid = entity.func_110124_au();
++                        nbttagcompound1.func_179237_a(nbtTagCompound.func_74775_l("EntityTag"));
++                        entity.func_184221_a(uuid);
++                        entity.func_70020_e(nbttagcompound1);
++                    }
++                }
++
++                if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((EntityLiving) entity, worldIn, (float) x, (float) y, (float) z, null))
++                {
++                    return null;
++                }
++
++                worldIn.func_72838_d(entity);
++                entityLiving.func_70642_aH();
++            }
+             return entity;
+         }
+-        else
+-        {
+-            return null;
+-        }
++        return null;
+     }
+ 
++    @Nullable
++    public static Entity spawnCreature(World worldIn, ItemStack stack, double x, double y, double z, @Nullable EntityPlayer player)
++    {
++        return spawnCreature(worldIn, func_190908_h(stack), stack.func_82837_s() ? stack.func_82833_r() : null, stack.func_77978_p(), player, x, y, z);
++    }
++
++    @Nullable
++    public static Entity func_77840_a(World p_77840_0_, @Nullable ResourceLocation p_77840_1_, double p_77840_2_, double p_77840_4_, double p_77840_6_)
++    {
++        return spawnCreature(p_77840_0_, p_77840_1_, null, null, null, p_77840_2_, p_77840_4_, p_77840_6_);
++    }
++
+     public void func_150895_a(CreativeTabs p_150895_1_, NonNullList<ItemStack> p_150895_2_)
+     {
+         if (this.func_194125_a(p_150895_1_))
