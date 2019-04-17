@@ -19,28 +19,39 @@ public class ModFixes extends DataFixerBuilder
     private static Map<String, ModFixes> builders = Maps.newHashMap();
 
     /**
-     * Create and return a builder instance to add fixes to.
-     * 
+     * Create and return a builder instance to add fixes to. This will only return an instance ONCE, so store the returned builder!
      * @param modid - The modid of the mod.
-     * @param version - The data version of the mod. Any {@link com.mojang.datafixers.schemas.Schema} added with a lower version will execute.
+     * @param version - The data version of the mod. Any {@link com.mojang.datafixers.schemas.Schema} added with a lower version will execute. 
+     * This is based off vanilla versions, which are multiplied by ten. The same happens for Schemas you add.
      * @return The builder for the mod.
      */
     public static ModFixes init(String modid, int version)
     {
         if (builders.containsKey(modid))
         {
-            return builders.get(modid);
+            return null;
         }
         ModFixes builder = new ModFixes(modid, version * 10);
         builders.put(modid, builder);
         return builder;
     }
-
+    
+    /*
+     * Modders: Do not use this! For forge use only.
+     */
     public static ImmutableMap<String, ModFixes> getBuilders()
     {
         return ImmutableMap.copyOf(builders);
     }
-
+    
+    /**
+     * Returns a list of built datafixers with their dataversions, including vanilla.
+     * @param nbttagcompound - Compound to retrieve DataVersions from
+     * @param defaultMC - If no key is found for MC, use this number as the dataversion.
+     * @param defaultForge - If no key is found for a mod, use this number as the dataversion.
+     * @param useLatestInstead - If this is true, it will override defaultForge and instead use that mod's current dataversion.
+     * @return A Map of built datafixers to a pair of savedOrDefaultVersion -> currentVersion
+     */
     public static Map<DataFixer, Pair<Integer, Integer>> getFixVersions(NBTTagCompound nbttagcompound, int defaultMC, int defaultForge, boolean useLatestInstead)
     {
         Map<DataFixer, Pair<Integer, Integer>> versions = getFixVersionsNoVanilla(nbttagcompound, defaultForge, useLatestInstead);
@@ -48,7 +59,14 @@ public class ModFixes extends DataFixerBuilder
         versions.put(DataFixesManager.getDataFixer(), Pair.of(i, DataFixesManager.FIXER_VERSION));
         return versions;
     }
-
+    
+    /**
+     * Returns a list of built datafixers with their dataversions, excluding vanilla.
+     * @param nbttagcompound - Compound to retrieve DataVersions from
+     * @param defaultForge - If no key is found for a mod, use this number as the dataversion.
+     * @param useLatestInstead - If this is true, it will override defaultForge and instead use that mod's current dataversion.
+     * @return A Map of built datafixers to a pair of savedOrDefaultVersion -> currentVersion
+     */
     public static Map<DataFixer, Pair<Integer, Integer>> getFixVersionsNoVanilla(NBTTagCompound nbttagcompound, int defaultForge, boolean useLatestInstead)
     {
         Map<DataFixer, Pair<Integer, Integer>> versions = new HashMap<DataFixer, Pair<Integer, Integer>>();
@@ -70,12 +88,24 @@ public class ModFixes extends DataFixerBuilder
         }
         return versions;
     }
-
+    
+    /**
+     * Returns a list of built datafixers with their dataversions, including vanilla.
+     * @param nbttagcompound - Compound to retrieve DataVersions from
+     * @param useLatestOtherwiseN1 - If this is true, it will use the latest version for a DataFixer. If false, it will use -1.
+     * @return A Map of built datafixers to a pair of savedOrDefaultVersion -> currentVersion
+     */
     public static Map<DataFixer, Pair<Integer, Integer>> getFixVersions(NBTTagCompound nbttagcompound, boolean useLatestOtherwiseN1)
     {
         return getFixVersions(nbttagcompound, (useLatestOtherwiseN1 ? DataFixesManager.FIXER_VERSION : -1), -1, useLatestOtherwiseN1);
     }
-
+    
+    /**
+     * Returns a list of built datafixers with their dataversions, excluding vanilla.
+     * @param nbttagcompound - Compound to retrieve DataVersions from
+     * @param useLatestOtherwiseN1 - If this is true, it will use the latest version for a DataFixer. If false, it will use -1.
+     * @return A Map of built datafixers to a pair of savedOrDefaultVersion -> currentVersion
+     */
     public static Map<DataFixer, Pair<Integer, Integer>> getFixVersionsNoVanilla(NBTTagCompound nbttagcompound, boolean useLatestOtherwiseN1)
     {
         return getFixVersionsNoVanilla(nbttagcompound, -1, useLatestOtherwiseN1);
@@ -100,7 +130,11 @@ public class ModFixes extends DataFixerBuilder
     {
         return mod;
     }
-
+    
+    /**
+     * Use this instead of {@link DataFixerBuilder#build(java.util.concurrent.Executor)}
+     * This will only build on this first run, as mod fixers cannot be rebuilt.
+     */
     public DataFixer getBuiltFixer()
     {
         if (fixer != null)
