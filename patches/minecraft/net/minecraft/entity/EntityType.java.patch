@@ -90,7 +90,7 @@
        }
  
        public static <T extends Entity> EntityType.Builder<T> func_201757_a(Class<? extends T> p_201757_0_, Function<? super World, ? extends T> p_201757_1_) {
-@@ -417,21 +463,66 @@
+@@ -417,21 +463,69 @@
           return this;
        }
  
@@ -115,7 +115,8 @@
 -               type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
 -            } catch (IllegalStateException illegalstateexception) {
 +               try {
-+                   type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
++                   Schema schema = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(1631));
++                   type = schema.getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
 +               } catch(IllegalArgumentException e) {
 +                   ModFixes idFix = ModFixes.getBuilders().get(p_206830_1_.split(":")[0]);
 +                   if(idFix != null) {
@@ -135,7 +136,9 @@
 +                           DataFixer fixer = fix.getBuiltFixer();
 +                           try {
 +                               Schema schema = fixer.getSchema(fix.dataVersion);
-+                               type = schema.getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
++                               try {
++                                   type = schema.getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
++                               } catch(IllegalArgumentException e1) {}
 +                           } catch(NoSuchElementException e1) {
 +                               EntityType.field_200731_aJ.error("No schema exists for current mod data version {} from EntityType id {}", fix.dataVersion, p_206830_1_);
 +                               e1.printStackTrace();

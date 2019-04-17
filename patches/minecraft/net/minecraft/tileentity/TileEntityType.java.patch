@@ -51,7 +51,7 @@
        }
  
        TileEntityType<T> tileentitytype = p_200966_1_.func_206865_a(type);
-@@ -94,6 +102,40 @@
+@@ -94,6 +102,45 @@
        public static <T extends TileEntity> TileEntityType.Builder<T> func_200963_a(Supplier<? extends T> p_200963_0_) {
           return new TileEntityType.Builder<>(p_200963_0_);
        }
@@ -77,11 +77,16 @@
 +                      DataFixer fixer = fix.getBuiltFixer();
 +                      try {
 +                          Schema schema = fixer.getSchema(fix.dataVersion);
-+                          type = schema.getChoiceType(TypeReferences.field_211294_j, name.toString());
++                          try {
++                              type = schema.getChoiceType(TypeReferences.field_211294_j, name.toString());
++                          } catch(IllegalArgumentException e1) {}
 +                      } catch(NoSuchElementException e1) {
 +                          TileEntityType.field_206866_A.error("No schema exists for current mod data version {} from {}", fix.dataVersion, name.func_110624_b().toString());
 +                          e1.printStackTrace();
 +                      }
++                  }
++                  if(type == null) {
++                      throw new IllegalArgumentException();
 +                  }
 +              }
 +          } catch (IllegalArgumentException illegalstateexception) {

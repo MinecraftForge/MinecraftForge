@@ -1,15 +1,62 @@
 --- a/net/minecraft/util/datafix/DataFixesManager.java
 +++ b/net/minecraft/util/datafix/DataFixesManager.java
-@@ -126,10 +126,11 @@
- public class DataFixesManager {
+@@ -2,6 +2,7 @@
+ 
+ import com.google.common.collect.ImmutableMap;
+ import com.mojang.datafixers.DSL;
++import com.mojang.datafixers.DataFix;
+ import com.mojang.datafixers.DataFixer;
+ import com.mojang.datafixers.DataFixerBuilder;
+ import com.mojang.datafixers.Typed;
+@@ -123,19 +124,44 @@
+ import net.minecraft.util.datafix.versions.V1486;
+ import net.minecraft.util.datafix.versions.V1510;
+ 
+-public class DataFixesManager {
++public class DataFixesManager extends DataFixerBuilder {
     private static final BiFunction<Integer, Schema, Schema> field_207592_e = Schema::new;
     private static final BiFunction<Integer, Schema, Schema> field_207593_f = NamespacedSchema::new;
+-   private static final DataFixer field_210902_d = func_188279_a();
 +   public static final int FIXER_VERSION = 1631;
-    private static final DataFixer field_210902_d = func_188279_a();
++   private static DataFixesManager BUILDER = getBuilder();
++   private DataFixer fixer;
++   
++   private DataFixesManager(int dataVersion) {
++       super(dataVersion);
++       func_210891_a(this);
++   }
++   
++   public void addSchema(final Schema schema) {
++       super.addSchema(schema);
++       fixer = null;
++   }
  
-    private static DataFixer func_188279_a() {
+-   private static DataFixer func_188279_a() {
 -      DataFixerBuilder datafixerbuilder = new DataFixerBuilder(1631);
-+      DataFixerBuilder datafixerbuilder = new DataFixerBuilder(FIXER_VERSION);
-       func_210891_a(datafixerbuilder);
-       return datafixerbuilder.build(ForkJoinPool.commonPool());
+-      func_210891_a(datafixerbuilder);
+-      return datafixerbuilder.build(ForkJoinPool.commonPool());
++   public void addFixer(final DataFix fix) {
++       super.addFixer(fix);
++       fixer = null;
     }
+ 
++   private DataFixer func_188279_a() {
++      if(fixer != null) {
++          return fixer;
++      }
++      return fixer = this.build(ForkJoinPool.commonPool());
++   }
++   
++   public static DataFixesManager getBuilder() {
++       if(BUILDER == null) {
++           return new DataFixesManager(FIXER_VERSION);
++       }
++       return BUILDER;
++   }
++
+    public static DataFixer func_210901_a() {
+-      return field_210902_d;
++      return getBuilder().func_188279_a();
+    }
+ 
+    private static void func_210891_a(DataFixerBuilder p_210891_0_) {
