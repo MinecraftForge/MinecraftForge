@@ -43,17 +43,17 @@ public class ModFileParser {
 
     public static IModFileInfo readModList(final ModFile modFile) {
         LOGGER.debug(LOADING,"Parsing mod file candidate {}", modFile.getFilePath());
-        final Path modsjson = modFile.getLocator().findPath(modFile, "META-INF", "mods.toml");
-        if (!Files.exists(modsjson)) {
+        final Path modstoml = modFile.getLocator().findPath(modFile, "META-INF", "mods.toml");
+        if (!Files.exists(modstoml)) {
             LOGGER.warn(LOADING, "Mod file {} is missing mods.toml file", modFile);
             return null;
         }
-        return loadModFile(modFile, modsjson);
+        return loadModFile(modFile, modstoml);
     }
 
-    public static IModFileInfo loadModFile(final ModFile file, final Path modsjson)
+    public static IModFileInfo loadModFile(final ModFile file, final Path modstoml)
     {
-        final FileConfig fileConfig = FileConfig.builder(modsjson).build();
+        final FileConfig fileConfig = FileConfig.builder(modstoml).build();
         fileConfig.load();
         fileConfig.close();
         return new ModFileInfo(file, fileConfig);
