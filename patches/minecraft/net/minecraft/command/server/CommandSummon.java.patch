@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/command/server/CommandSummon.java
++++ ../src-work/minecraft/net/minecraft/command/server/CommandSummon.java
+@@ -94,7 +94,7 @@
+                 }
+ 
+                 nbttagcompound.func_74778_a("id", s);
+-                Entity entity = AnvilChunkLoader.func_186054_a(nbttagcompound, world, d0, d1, d2, true);
++                Entity entity = AnvilChunkLoader.func_186054_a(nbttagcompound, world, d0, d1, d2, false);
+ 
+                 if (entity == null)
+                 {
+@@ -102,14 +102,22 @@
+                 }
+                 else
+                 {
++                    boolean success = true;
+                     entity.func_70012_b(d0, d1, d2, entity.field_70177_z, entity.field_70125_A);
+ 
+-                    if (!flag && entity instanceof EntityLiving)
++                    if (entity instanceof EntityLiving)
+                     {
+                         ((EntityLiving)entity).func_180482_a(world.func_175649_E(new BlockPos(entity)), (IEntityLivingData)null);
++                        if (net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((EntityLiving) entity, world, (float)blockpos.func_177958_n(), (float)blockpos.func_177956_o(), (float)blockpos.func_177952_p(), null))
++                            success = false;
+                     }
+-
+-                    func_152373_a(p_184881_2_, this, "commands.summon.success", new Object[0]);
++                    if (success)
++                    {
++                        AnvilChunkLoader.func_186052_a(entity, world);
++                        func_152373_a(p_184881_2_, this, "commands.summon.success", new Object[0]);
++                    }
++                    else
++                        func_152373_a(p_184881_2_, this, "commands.summon.failed", new Object[] {"Command cancelled"});
+                 }
+             }
+         }
