@@ -22,6 +22,7 @@ package net.minecraftforge.common;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 import javax.annotation.Nullable;
 
@@ -104,7 +106,7 @@ public class ForgeChunkManager
 
     private static Map<String, LoadingCallback> callbacks = Maps.newHashMap();
 
-    private static Map<World, ImmutableSetMultimap<ChunkPos,Ticket>> forcedChunks = new MapMaker().weakKeys().makeMap();
+    private static Map<World, ImmutableSetMultimap<ChunkPos,Ticket>> forcedChunks = Collections.synchronizedMap(new WeakHashMap<>());
     private static BiMap<UUID,Ticket> pendingEntities = HashBiMap.create();
 
     private static Map<World,Cache<Long, ChunkEntry>> dormantChunkCache = new MapMaker().weakKeys().makeMap();
@@ -613,13 +615,14 @@ public class ForgeChunkManager
 
     static void unloadWorld(World world)
     {
+        forcedChunks.remove(world);
+
         // World save fires before this event so the chunk loading info will be done
         if (!(world instanceof WorldServer))
         {
             return;
         }
 
-        forcedChunks.remove(world);
         if (dormantChunkCacheSize != 0) // only if in use
         {
             dormantChunkCache.remove(world);
@@ -888,7 +891,9 @@ public class ForgeChunkManager
      */
     public static ImmutableSetMultimap<ChunkPos, Ticket> getPersistentChunksFor(World world)
     {
-        return forcedChunks.containsKey(world) ? forcedChunks.get(world) : ImmutableSetMultimap.of();
+        if (world.isRemote) return ImmutableSetMultimap.of();
+        ImmutableSetMultimap<ChunkPos, Ticket> persistentChunks = forcedChunks.get(world);
+        return persistentChunks != null ? persistentChunks : ImmutableSetMultimap.of();
     }
 
     static void saveWorld(World world)

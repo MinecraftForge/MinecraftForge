@@ -576,7 +576,7 @@
 -            int l2 = 32;
  
 -            if (p_72866_2_ && !this.func_175663_a(j2 - 32, 0, k2 - 32, j2 + 32, 0, k2 + 32, true))
-+            boolean isForced = getPersistentChunks().containsKey(new net.minecraft.util.math.ChunkPos(j2 >> 4, k2 >> 4));
++            boolean isForced = !this.field_72995_K && getPersistentChunks().containsKey(new net.minecraft.util.math.ChunkPos(j2 >> 4, k2 >> 4));
 +            int range = isForced ? 0 : 32;
 +            boolean canUpdate = !p_72866_2_ || this.func_175663_a(j2 - range, 0, k2 - range, j2 + range, 0, k2 + range, true);
 +            if (!canUpdate) canUpdate = net.minecraftforge.event.ForgeEventFactory.canEntityUpdate(p_72866_1_);
