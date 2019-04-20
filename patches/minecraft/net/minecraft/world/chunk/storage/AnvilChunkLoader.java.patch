@@ -55,11 +55,11 @@
 +            // Forge: Save mod fix versions
 +            if(!ModFixes.getBuilders().isEmpty()) {
 +                NBTTagCompound forgeCompound;
-+                if(!nbttagcompound1.func_74764_b("ForgeDataVersions")) {
++                if(!nbttagcompound1.func_74764_b("ForgeDataVersion")) {
 +                    forgeCompound = new NBTTagCompound();
-+                    nbttagcompound1.func_74782_a("ForgeDataVersions", forgeCompound);
++                    nbttagcompound1.func_74782_a("ForgeDataVersion", forgeCompound);
 +                } else {
-+                    forgeCompound = nbttagcompound.func_74775_l("ForgeDataVersions");
++                    forgeCompound = nbttagcompound.func_74775_l("ForgeDataVersion");
 +                }
 +                for(String id : ModFixes.getBuilders().keySet()) {
 +                    ModFixes fixes = ModFixes.getBuilders().get(id);

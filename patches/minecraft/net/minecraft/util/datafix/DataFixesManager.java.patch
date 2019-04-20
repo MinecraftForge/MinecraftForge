@@ -1,22 +1,42 @@
 --- a/net/minecraft/util/datafix/DataFixesManager.java
 +++ b/net/minecraft/util/datafix/DataFixesManager.java
-@@ -2,6 +2,7 @@
+@@ -1,14 +1,17 @@
+ package net.minecraft.util.datafix;
  
++import java.util.Objects;
++import java.util.concurrent.ForkJoinPool;
++import java.util.function.BiFunction;
++
  import com.google.common.collect.ImmutableMap;
  import com.mojang.datafixers.DSL;
 +import com.mojang.datafixers.DataFix;
  import com.mojang.datafixers.DataFixer;
  import com.mojang.datafixers.DataFixerBuilder;
  import com.mojang.datafixers.Typed;
-@@ -123,19 +124,44 @@
+ import com.mojang.datafixers.schemas.Schema;
+-import java.util.Objects;
+-import java.util.concurrent.ForkJoinPool;
+-import java.util.function.BiFunction;
++
+ import net.minecraft.util.datafix.fixes.AddBedTileEntity;
+ import net.minecraft.util.datafix.fixes.AddNewChoices;
+ import net.minecraft.util.datafix.fixes.AdvancementsFix;
+@@ -122,21 +125,62 @@
+ import net.minecraft.util.datafix.versions.V1483;
  import net.minecraft.util.datafix.versions.V1486;
  import net.minecraft.util.datafix.versions.V1510;
++import net.minecraftforge.fml.fixers.ForgeTypesSchema;
  
 -public class DataFixesManager {
 +public class DataFixesManager extends DataFixerBuilder {
     private static final BiFunction<Integer, Schema, Schema> field_207592_e = Schema::new;
     private static final BiFunction<Integer, Schema, Schema> field_207593_f = NamespacedSchema::new;
 -   private static final DataFixer field_210902_d = func_188279_a();
+-
+-   private static DataFixer func_188279_a() {
+-      DataFixerBuilder datafixerbuilder = new DataFixerBuilder(1631);
+-      func_210891_a(datafixerbuilder);
+-      return datafixerbuilder.build(ForkJoinPool.commonPool());
 +   public static final int FIXER_VERSION = 1631;
 +   private static DataFixesManager BUILDER = getBuilder();
 +   private DataFixer fixer;
@@ -24,39 +44,71 @@
 +   private DataFixesManager(int dataVersion) {
 +       super(dataVersion);
 +       func_210891_a(this);
-+   }
+    }
 +   
++   /* 
++    * This generally will not actually work, use Forge provided Schemas as parenting does not work after static init
++    */
 +   public void addSchema(final Schema schema) {
 +       super.addSchema(schema);
 +       fixer = null;
 +   }
- 
--   private static DataFixer func_188279_a() {
--      DataFixerBuilder datafixerbuilder = new DataFixerBuilder(1631);
--      func_210891_a(datafixerbuilder);
--      return datafixerbuilder.build(ForkJoinPool.commonPool());
++   
++   /* 
++    * This generally will not actually work, use Forge provided Schemas as parenting does not work after static init
++    */
 +   public void addFixer(final DataFix fix) {
 +       super.addFixer(fix);
 +       fixer = null;
-    }
- 
-+   private DataFixer func_188279_a() {
-+      if(fixer != null) {
-+          return fixer;
-+      }
-+      return fixer = this.build(ForkJoinPool.commonPool());
 +   }
 +   
 +   public static DataFixesManager getBuilder() {
 +       if(BUILDER == null) {
-+           return new DataFixesManager(FIXER_VERSION);
++           return BUILDER = new DataFixesManager(FIXER_VERSION);
 +       }
 +       return BUILDER;
 +   }
-+
++   
++   /* For Forge use only */
++   public static void markDirty() {
++       BUILDER = null;
++   }
+ 
     public static DataFixer func_210901_a() {
 -      return field_210902_d;
-+      return getBuilder().func_188279_a();
++      DataFixesManager builder = getBuilder();
++      if(builder.fixer == null) {
++          builder.buildFixer();
++      }
++      return builder.fixer;
     }
++   
++   /*
++    * For Forge use only
++    */
++   public void buildFixer() {
++       fixer = this.build(ForkJoinPool.commonPool());
++   }
  
     private static void func_210891_a(DataFixerBuilder p_210891_0_) {
+       Schema schema = p_210891_0_.addSchema(99, V0099::new);
+@@ -214,6 +258,9 @@
+       Schema schema33 = p_210891_0_.addSchema(1125, V1125::new);
+       p_210891_0_.addFixer(new AddBedTileEntity(schema33, true));
+       p_210891_0_.addFixer(new BedItemColor(schema33, false));
++      Schema forgeTypesSchema1 = p_210891_0_.addSchema(1300, ForgeTypesSchema::new);
++      p_210891_0_.addFixer(new AddNewChoices(forgeTypesSchema1, "Add entity types - Forge", TypeReferences.field_211299_o));
++      p_210891_0_.addFixer(new AddNewChoices(forgeTypesSchema1, "Add tile entity types - Forge", TypeReferences.field_211294_j));
+       Schema schema34 = p_210891_0_.addSchema(1344, field_207593_f);
+       p_210891_0_.addFixer(new LWJGL3KeyOptions(schema34, false));
+       Schema schema35 = p_210891_0_.addSchema(1446, field_207593_f);
+@@ -253,6 +300,9 @@
+       p_210891_0_.addFixer(new CustomNameStringToComponentFixTileEntity(schema47, false));
+       Schema schema48 = p_210891_0_.addSchema(1460, V1460::new);
+       p_210891_0_.addFixer(new PaintingMotive(schema48, false));
++      Schema forgeTypesSchema = p_210891_0_.addSchema(1465, ForgeTypesSchema::new);
++      p_210891_0_.addFixer(new AddNewChoices(forgeTypesSchema, "Add entity types - Forge", TypeReferences.field_211299_o));
++      p_210891_0_.addFixer(new AddNewChoices(forgeTypesSchema, "Add tile entity types - Forge", TypeReferences.field_211294_j));
+       Schema schema49 = p_210891_0_.addSchema(1466, V1466::new);
+       p_210891_0_.addFixer(new ChunkGenStatus(schema49, true));
+       Schema schema50 = p_210891_0_.addSchema(1470, V1470::new);

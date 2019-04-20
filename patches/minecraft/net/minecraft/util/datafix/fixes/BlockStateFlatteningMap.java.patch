@@ -1,0 +1,25 @@
+--- a/net/minecraft/util/datafix/fixes/BlockStateFlatteningMap.java
++++ b/net/minecraft/util/datafix/fixes/BlockStateFlatteningMap.java
+@@ -11,14 +11,20 @@
+ 
+ public class BlockStateFlatteningMap {
+    private static final Logger field_199199_a = LogManager.getLogger();
+-   private static final Dynamic<?>[] field_199200_b = new Dynamic[4095];
++   private static final Dynamic<?>[] field_199200_b = new Dynamic[10000];
+    private static final Object2IntMap<Dynamic<?>> field_199201_c = DataFixUtils.make(new Object2IntOpenHashMap<>(), (p_209420_0_) -> {
+       p_209420_0_.defaultReturnValue(-1);
+    });
+    private static final Object2IntMap<String> field_199202_d = DataFixUtils.make(new Object2IntOpenHashMap<>(), (p_209419_0_) -> {
+       p_209419_0_.defaultReturnValue(-1);
+    });
+-
++   
++   private static int index = 4096;
++   
++   public static void addEntry(String fixedNBT, String... sourceNBTs) {
++       func_199194_a(index++, fixedNBT, sourceNBTs);
++   }
++   
+    static void func_199194_a(int p_199194_0_, String p_199194_1_, String... p_199194_2_) {
+       field_199200_b[p_199194_0_] = func_210048_b(p_199194_1_);
+ 

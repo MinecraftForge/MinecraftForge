@@ -23,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.datafix.DataFixesManager;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -35,6 +36,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
 import net.minecraftforge.fml.common.gameevent.TickEvent.ServerTickEvent;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.fixers.ModFixes;
 
 public class ForgeInternalHandler
 {
@@ -87,6 +90,15 @@ public class ForgeInternalHandler
     {
         if (!event.getWorld().isRemote())
             FarmlandWaterManager.removeTickets(event.getChunk());
+    }
+    
+    
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void preLoadingEvent(FMLServerAboutToStartEvent e)
+    {
+        // Force unbuilt fixers to build so they can be optimized when run
+        ModFixes.getBuilders().forEach((a, b) -> b.getBuiltFixer());
+        DataFixesManager.getBuilder().buildFixer();
     }
 }
 

@@ -72,7 +72,7 @@ public class ModFixes extends DataFixerBuilder
         Map<DataFixer, Pair<Integer, Integer>> versions = new HashMap<DataFixer, Pair<Integer, Integer>>();
         if (nbttagcompound.contains("ForgeDataVersions", Constants.NBT.TAG_COMPOUND))
         {
-            NBTTagCompound vers = nbttagcompound.getCompound("ForgeDataVersions");
+            NBTTagCompound vers = nbttagcompound.getCompound("ForgeDataVersion");
             for (String modid : ModFixes.getBuilders().keySet())
             {
                 ModFixes fixes = builders.get(modid);
