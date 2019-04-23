@@ -22,6 +22,8 @@
 |[Fix incorrect indexing in mipmap generation code (#5201)](https://github.com/MinecraftForge/MinecraftForge/commit/3dd8c8ae6f197c75b23008f5533160b2794a1c85) | No | TAS was totally refactored, this was likely fixed by vanilla in the process |
 |[Allow config GUI cycling button elements generated from enums to display toString return values, rather than actual values. (#5125)](https://github.com/MinecraftForge/MinecraftForge/commit/d3f27cf6fbb36f5ff7189fba0c985955e3cf45b5) | No | Config GUI is gone |
 |[Add an annotation for @config elements which will automatically create a slider control (#5026)](https://github.com/MinecraftForge/MinecraftForge/commit/d1478ca52996894e1d83a9f9a6694bb9c84e3af0) | No | Config annotations are gone |
+|[Added an additional constructor to every implementation of IFluidBlock. It is now possible to create a fluid block with a Fluid, Material and MapColor, so that the Material's MapColor isn't used for the blocks MapColor. (#5293)](https://github.com/MinecraftForge/MinecraftForge/commit/21f7c31f6217d91b9d6a0afc012b068e1a59b744) | No | IFluidBlock etc. are defunct for the moment |
+|[Add default impl to IConfigElement#getValidValuesDisplay](https://github.com/MinecraftForge/MinecraftForge/commit/d5ff207fabd9d50c8739c6df5dc98d8ede7ea562) | No | IConfigElement etc. are gone |
 
 
-Currently updated through: 4e11c95d0e0f657273bbfcf336ccb405101b0838
+Currently updated through: d1adf00158abb9f5491ab0348f982e6c222173dc
