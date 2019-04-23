@@ -349,10 +349,14 @@
                 if (!itemstack.func_190926_b()) {
                    this.func_110140_aT().func_111148_a(itemstack.func_111283_C(entityequipmentslot));
                 }
-@@ -2134,11 +2186,18 @@
+@@ -2133,12 +2185,21 @@
+ 
     protected void func_184608_ct() {
        if (this.func_184587_cr()) {
-          if (this.func_184586_b(this.func_184600_cs()) == this.field_184627_bm) {
+-         if (this.func_184586_b(this.func_184600_cs()) == this.field_184627_bm) {
++         ItemStack itemstack = this.func_184586_b(this.func_184600_cs());
++         if (net.minecraftforge.common.ForgeHooks.canContinueUsing(this.field_184627_bm, itemstack)) this.field_184627_bm = itemstack;
++         if (itemstack == this.field_184627_bm) {
 +
 +            if (!this.field_184627_bm.func_190926_b()) {
 +               field_184628_bn = net.minecraftforge.event.ForgeEventFactory.onItemUseTick(this, field_184627_bm, field_184628_bn);
@@ -369,7 +373,7 @@
                 this.func_71036_o();
              }
           } else {
-@@ -2172,8 +2231,10 @@
+@@ -2172,8 +2233,10 @@
     public void func_184598_c(EnumHand p_184598_1_) {
        ItemStack itemstack = this.func_184586_b(p_184598_1_);
        if (!itemstack.func_190926_b() && !this.func_184587_cr()) {
@@ -381,7 +385,7 @@
           if (!this.field_70170_p.field_72995_K) {
              this.func_204802_c(1, true);
              this.func_204802_c(2, p_184598_1_ == EnumHand.OFF_HAND);
-@@ -2229,6 +2290,9 @@
+@@ -2229,6 +2292,9 @@
           vec3d1 = vec3d1.func_178789_a(-this.field_70125_A * ((float)Math.PI / 180F));
           vec3d1 = vec3d1.func_178785_b(-this.field_70177_z * ((float)Math.PI / 180F));
           vec3d1 = vec3d1.func_72441_c(this.field_70165_t, this.field_70163_u + (double)this.func_70047_e(), this.field_70161_v);
@@ -391,7 +395,7 @@
           this.field_70170_p.func_195594_a(new ItemParticleData(Particles.field_197591_B, p_195062_1_), vec3d1.field_72450_a, vec3d1.field_72448_b, vec3d1.field_72449_c, vec3d.field_72450_a, vec3d.field_72448_b + 0.05D, vec3d.field_72449_c);
        }
  
-@@ -2237,7 +2301,9 @@
+@@ -2237,7 +2303,9 @@
     protected void func_71036_o() {
        if (!this.field_184627_bm.func_190926_b() && this.func_184587_cr()) {
           this.func_184584_a(this.field_184627_bm, 16);
@@ -402,7 +406,7 @@
           this.func_184602_cy();
        }
  
-@@ -2257,6 +2323,7 @@
+@@ -2257,6 +2325,7 @@
  
     public void func_184597_cx() {
        if (!this.field_184627_bm.func_190926_b()) {
@@ -410,7 +414,7 @@
           this.field_184627_bm.func_77974_b(this.field_70170_p, this, this.func_184605_cv());
        }
  
-@@ -2363,4 +2430,62 @@
+@@ -2363,4 +2432,62 @@
     @OnlyIn(Dist.CLIENT)
     public void func_191987_a(BlockPos p_191987_1_, boolean p_191987_2_) {
     }
