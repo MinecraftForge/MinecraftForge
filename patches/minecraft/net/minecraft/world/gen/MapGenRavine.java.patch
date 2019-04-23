@@ -79,7 +79,7 @@
 +    {
 +        net.minecraft.world.biome.Biome biome = field_75039_c.func_180494_b(new BlockPos(x + chunkX * 16, 0, z + chunkZ * 16));
 +        IBlockState state = data.func_177856_a(x, y, z);
-+        return (isExceptionBiome(biome) ? state.func_177230_c() == Blocks.field_150349_c : state.func_177230_c() == biome.field_76752_A);
++        return (isExceptionBiome(biome) ? state.func_177230_c() == Blocks.field_150349_c : state == biome.field_76752_A);
 +    }
 +
 +    /**
