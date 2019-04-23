@@ -183,6 +183,15 @@ public class ForgeHooks
         return entry.getStack(rand, fortune);
     }
 
+    public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
+    {
+        if (!from.isEmpty() && !to.isEmpty())
+        {
+            return from.getItem().canContinueUsing(from, to);
+        }
+        return false;
+    }
+
     public static boolean canHarvestBlock(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
     {
         //state = state.getActualState(world, pos);

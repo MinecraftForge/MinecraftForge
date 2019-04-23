@@ -648,6 +648,20 @@ public interface IForgeItem
     }
 
     /**
+     * Called while an item is in 'active' use to determine if usage should
+     * continue. Allows items to continue being used while sustaining damage, for
+     * example.
+     *
+     * @param oldStack the previous 'active' stack
+     * @param newStack the stack currently in the active hand
+     * @return true to set the new stack to active and continue using it
+     */
+    default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
+    {
+        return oldStack.equals(newStack);
+    }
+
+    /**
      * Called to get the Mod ID of the mod that *created* the ItemStack, instead of
      * the real Mod ID that *registered* it.
      *
