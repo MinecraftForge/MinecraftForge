@@ -465,10 +465,14 @@ public interface IForgeBlock
      */
     default boolean canPlaceTorchOnTop(IBlockState state, IWorldReaderBase world, BlockPos pos)
     {
-        if (state.isTopSolid() || state.getBlockFaceShape(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
-            return this.getBlock() != Blocks.END_GATEWAY;
-        else
-            return this.getBlock() instanceof BlockFence || this.getBlock() instanceof BlockStainedGlass || this.getBlock() == Blocks.GLASS || this.getBlock() == Blocks.COBBLESTONE_WALL || this.getBlock() == Blocks.MOSSY_COBBLESTONE_WALL;
+        if (this == Blocks.END_GATEWAY) {
+            return false;
+        } else if (state.isTopSolid() || this instanceof BlockFence || this == Blocks.GLASS || this == Blocks.COBBLESTONE_WALL || this instanceof BlockStainedGlass) {
+            return true;
+        } else {
+            BlockFaceShape shape = state.getBlockFaceShape(world, pos, EnumFacing.UP);
+            return (shape == BlockFaceShape.SOLID || shape == BlockFaceShape.CENTER || shape == BlockFaceShape.CENTER_BIG) && !Block.isExceptionBlockForAttaching(getBlock());
+        }
     }
 
     /**
