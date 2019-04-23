@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/entity/AbstractClientPlayer.java
 +++ b/net/minecraft/client/entity/AbstractClientPlayer.java
+@@ -114,7 +114,7 @@
+          f = 1.0F;
+       }
+ 
+-      if (this.func_184587_cr() && this.func_184607_cu().func_77973_b() == Items.field_151031_f) {
++      if (this.func_184587_cr() && this.func_184607_cu().func_77973_b() instanceof net.minecraft.item.ItemBow) {
+          int i = this.func_184612_cw();
+          float f1 = (float)i / 20.0F;
+          if (f1 > 1.0F) {
 @@ -126,6 +126,6 @@
           f *= 1.0F - f1 * 0.15F;
        }
