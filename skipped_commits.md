@@ -19,5 +19,9 @@
 |[Fix crash from CraftingHelper due to FileSystem being closed early](https://github.com/MinecraftForge/MinecraftForge/commit/5ef199f6d71f2baba34fd4cc4ac3fa160274d580) | No | Not applicable as it only fixes the above commit |
 |[Clean up CraftingHelper constants loading API](https://github.com/MinecraftForge/MinecraftForge/commit/f1d1e8853b278ab2c09df264583ae6cc76d0c752) | No | " |
 |[Fix issue with --modListFile. (#5316)](https://github.com/MinecraftForge/MinecraftForge/commit/c5402d50fad5dbb649015d9b6d9bead6b710e035) | No | --modListFile is gone |
+|[Fix incorrect indexing in mipmap generation code (#5201)](https://github.com/MinecraftForge/MinecraftForge/commit/3dd8c8ae6f197c75b23008f5533160b2794a1c85) | No | TAS was totally refactored, this was likely fixed by vanilla in the process |
+|[Allow config GUI cycling button elements generated from enums to display toString return values, rather than actual values. (#5125)](https://github.com/MinecraftForge/MinecraftForge/commit/d3f27cf6fbb36f5ff7189fba0c985955e3cf45b5) | No | Config GUI is gone |
+|[Add an annotation for @config elements which will automatically create a slider control (#5026)](https://github.com/MinecraftForge/MinecraftForge/commit/d1478ca52996894e1d83a9f9a6694bb9c84e3af0) | No | Config annotations are gone |
 
-Currently updated through: c5402d50fad5dbb649015d9b6d9bead6b710e035
+
+Currently updated through: 4e11c95d0e0f657273bbfcf336ccb405101b0838
