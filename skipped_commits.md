@@ -29,6 +29,9 @@
 |[Improve tracking of used dimension IDs (#5249)](https://github.com/MinecraftForge/MinecraftForge/commit/bcbf18491542b6eb8ef5516beb71a7ed9f1aa6a9) | No | Dimensions now have a proper registry |
 |[Apply access-level changes to inner class attributes (#5468)](https://github.com/MinecraftForge/MinecraftForge/commit/e6fbf39591b920532ea464d36dad24671c6d08fd) | No | AccessTransformer has been rewritten and seems to handle this case already |
 |[Generalise EnumRarity to an interface (#5182)](https://github.com/MinecraftForge/MinecraftForge/commit/cc95c40b5ba0b2219d492b6506fa1040fa9e9fb1) | Yes | This involves a lot of patches for a rather niche feature, that would be now be best implemented with `@ExtensibleEnum`. Needs to be re-evaluated later. |
+|[Fix block placement not checking for player collision](https://github.com/MinecraftForge/MinecraftForge/commit/3870951a3738389bea521bd13b2b08efba542f77) | No | Bug was not introduced in cherry-picked commit |
+|[Fix #5651 Re-add canPlaceBlockOnSide check in World#mayPlace](https://github.com/MinecraftForge/MinecraftForge/commit/e7beed487531d199ca1ddffa7b7cc314024bf8a8) | No | " |
+|[Try and make 1.13 mods more obviously wrong in 1.12..](https://github.com/MinecraftForge/MinecraftForge/commit/1f12642a05e4f97ff1d83abb1a7c787422490900) | No |  |
 
 
-Currently updated through: 1b15c127a694b4f5d5e5ee0ef609e54b11a76ec7
+Currently updated through: 1f12642a05e4f97ff1d83abb1a7c787422490900
