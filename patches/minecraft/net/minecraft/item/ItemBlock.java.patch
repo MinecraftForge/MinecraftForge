@@ -1,18 +1,6 @@
 --- a/net/minecraft/item/ItemBlock.java
 +++ b/net/minecraft/item/ItemBlock.java
-@@ -40,9 +40,10 @@
-          return EnumActionResult.FAIL;
-       } else {
-          IBlockState iblockstate = this.func_195945_b(p_195942_1_);
-+         IBlockState currentState = p_195942_1_.func_195991_k().func_180495_p(p_195942_1_.func_195995_a());
-          if (iblockstate == null) {
-             return EnumActionResult.FAIL;
--         } else if (!this.func_195941_b(p_195942_1_, iblockstate)) {
-+         } else if (!net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_195942_1_.func_195999_j(), new net.minecraftforge.common.util.BlockSnapshot(p_195942_1_.func_195991_k(), p_195942_1_.func_195995_a(), currentState), net.minecraft.util.EnumFacing.UP) && !this.func_195941_b(p_195942_1_, iblockstate)) {
-             return EnumActionResult.FAIL;
-          } else {
-             BlockPos blockpos = p_195942_1_.func_195995_a();
-@@ -59,7 +60,7 @@
+@@ -59,7 +59,7 @@
                 }
              }
  
@@ -21,7 +9,7 @@
              world.func_184133_a(entityplayer, blockpos, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
              itemstack.func_190918_g(1);
              return EnumActionResult.SUCCESS;
-@@ -134,6 +135,10 @@
+@@ -134,6 +134,10 @@
     }
  
     public Block func_179223_d() {

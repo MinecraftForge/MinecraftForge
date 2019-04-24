@@ -202,35 +202,6 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Called when a block is placed by a player.
-     *
-     * If a Block Place event is cancelled, the block will not be placed.
-     */
-    @Cancelable
-    @Deprecated // Remove in 1.13
-    public static class PlaceEvent extends EntityPlaceEvent
-    {
-        private final EntityPlayer player;
-        private final EnumHand hand;
-
-        public PlaceEvent(@Nonnull BlockSnapshot blockSnapshot, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
-            super(blockSnapshot, placedAgainst, player);
-            this.player = player;
-            this.hand = hand;
-            if (DEBUG)
-            {
-                System.out.printf("Created PlaceEvent - [PlacedBlock: %s ][PlacedAgainst: %s ][ItemStack: %s ][Player: %s ][Hand: %s]\n", getPlacedBlock(), placedAgainst, player.getHeldItem(hand), player, hand);
-            }
-        }
-
-        public EntityPlayer getPlayer() { return player; }
-        @Nonnull
-        @Deprecated
-        public ItemStack getItemInHand() { return player.getHeldItem(hand); }
-        public EnumHand getHand() { return hand; }
-    }
-
-    /**
      * Fired when a single block placement triggers the
      * creation of multiple blocks(e.g. placing a bed block). The block returned
      * by {@link #state} and its related methods is the block where
@@ -248,40 +219,6 @@ public class BlockEvent extends Event
             if (DEBUG)
             {
                 System.out.printf("Created EntityMultiPlaceEvent - [PlacedAgainst: %s ][Entity: %s ]\n", placedAgainst, entity);
-            }
-        }
-
-        /**
-         * Gets a list of BlockSnapshots for all blocks which were replaced by the
-         * placement of the new blocks. Most of these blocks will just be of type AIR.
-         *
-         * @return immutable list of replaced BlockSnapshots
-         */
-        public List<BlockSnapshot> getReplacedBlockSnapshots()
-        {
-            return blockSnapshots;
-        }
-    }
-
-
-    /**
-     * Fired when a single block placement action of a player triggers the
-     * creation of multiple blocks(e.g. placing a bed block). The block returned
-     * by {@link #state} and its related methods is the block where
-     * the placed block would exist if the placement only affected a single
-     * block.
-     */
-    @Cancelable
-    public static class MultiPlaceEvent extends PlaceEvent
-    {
-        private final List<BlockSnapshot> blockSnapshots;
-
-        public MultiPlaceEvent(@Nonnull List<BlockSnapshot> blockSnapshots, @Nonnull IBlockState placedAgainst, @Nonnull EntityPlayer player, @Nonnull EnumHand hand) {
-            super(blockSnapshots.get(0), placedAgainst, player, hand);
-            this.blockSnapshots = ImmutableList.copyOf(blockSnapshots);
-            if (DEBUG)
-            {
-                System.out.printf("Created MultiPlaceEvent - [PlacedAgainst: %s ][ItemInHand: %s ][Player: %s ]\n", placedAgainst, player.getHeldItem(hand), player);
             }
         }
 
