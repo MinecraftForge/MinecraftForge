@@ -20,7 +20,14 @@
 package net.minecraftforge.common.util;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.IWorldEventListener;
+import net.minecraft.world.World;
 
 /**
  * A class containing constants for magic numbers used in the minecraft codebase.
@@ -145,41 +152,61 @@ public class Constants
 
 
     /**
-     * The flags used when calling {@link net.minecraft.world.World#setBlockState}<br>
-     * Can be found from {@link net.minecraft.world.World#markAndNotifyBlock} and {@link net.minecraft.client.renderer.WorldRenderer#notifyBlockUpdate}<br>
+     * The flags used when calling
+     * {@link World#setBlockState(BlockPos, IBlockState, int)}<br>
+     * Can be found from {@link World#setBlockState(BlockPos, IBlockState, int)},
+     * {@link World#markAndNotifyBlock}, and
+     * {@link WorldRenderer#notifyBlockUpdate}<br>
      * Flags can be combined with bitwise OR
      */
     public static class BlockFlags {
         /**
          * Calls
-         * {@link Block#neighborChanged(net.minecraft.block.state.IBlockState, net.minecraft.world.World, net.minecraft.util.math.BlockPos, Block, net.minecraft.util.math.BlockPos)
+         * {@link Block#neighborChanged(IBlockState, World, BlockPos, Block, BlockPos)
          * neighborChanged} on surrounding blocks. Also updates comparator output state.
          */
-        public static final int NOTIFY_NEIGHBORS     = 0b00001;
+        public static final int NOTIFY_NEIGHBORS     = (1 << 0);
         /**
-         * Sends the update to the client
+         * Calls
+         * {@link IWorldEventListener#notifyBlockUpdate(IBlockReader, BlockPos, IBlockState, IBlockState, int)}
+         * to be called on all of the world's {@link IWorldEventListener event
+         * listeners}. As a secondary effect, sends the update to the client.
          */
-        public static final int SEND_TO_CLIENTS      = 0b00010;
+        public static final int NOTIFY_LISTENERS     = (1 << 1);
         /**
          * Stops the blocks from being marked for a render update
          */
-        public static final int NO_RERENDER          = 0b00100;
+        public static final int NO_RERENDER          = (1 << 2);
         /**
          * Makes the block be re-rendered immediately, on the main thread.
          * If NO_RERENDER is set, then this will be ignored
          */
-        public static final int RERENDER_MAIN_THREAD = 0b01000;
+        public static final int RERENDER_MAIN_THREAD = (1 << 3);
         /**
          * Causes neighbor updates to be sent to all surrounding blocks (including
          * diagonals). This in turn will call
-         * {@link Block#updateDiagonalNeighbors(net.minecraft.block.state.IBlockState, net.minecraft.world.IWorld, net.minecraft.util.math.BlockPos, int)
+         * {@link Block#updateDiagonalNeighbors(IBlockState, IWorld, BlockPos, int)
          * updateDiagonalNeighbors} on both old and new states, and
-         * {@link Block#updateNeighbors(net.minecraft.block.state.IBlockState, net.minecraft.world.IWorld, net.minecraft.util.math.BlockPos, int)
+         * {@link Block#updateNeighbors(IBlockState, IWorld, BlockPos, int)
          * updateNeighbors} on the new state.
          */
-        public static final int UPDATE_NEIGHBORS     = 0b10000;
+        public static final int UPDATE_NEIGHBORS     = (1 << 4);
 
-        public static final int DEFAULT = NOTIFY_NEIGHBORS | SEND_TO_CLIENTS;
+        /**
+         * Prevents neighbor changes from spawning item drops, used by
+         * {@link Block#replaceBlock(IBlockState, IBlockState, IWorld, BlockPos, int)}.
+         */
+        public static final int NO_NEIGHBOR_DROPS    = (1 << 5);
+
+        /**
+         * Tell the block being changed that it was moved, rather than removed/replaced,
+         * the boolean value is eventually passed to
+         * {@link Block#onReplaced(IBlockState, World, BlockPos, IBlockState, boolean)}
+         * as the last parameter.
+         */
+        public static final int IS_MOVING            = (1 << 6);
+
+        public static final int DEFAULT = NOTIFY_NEIGHBORS | NOTIFY_LISTENERS;
         public static final int DEFAULT_AND_RERENDER = DEFAULT | RERENDER_MAIN_THREAD;
     }
 
