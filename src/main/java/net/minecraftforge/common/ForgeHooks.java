@@ -66,6 +66,7 @@ import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemPotion;
@@ -73,6 +74,7 @@ import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTippedArrow;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -80,6 +82,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.stats.StatList;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
@@ -110,6 +113,7 @@ import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -608,19 +612,17 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    /* TODO: Talk to Sponge folk about World rollbacks.
     public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemUseContext context)
     {
         ItemStack itemstack = context.getItem();
         World world = context.getWorld();
 
         // handle all placement events here
-        int meta = itemstack.getItemDamage();
         int size = itemstack.getCount();
         NBTTagCompound nbt = null;
-        if (itemstack.getTagCompound() != null)
+        if (itemstack.hasTag())
         {
-            nbt = itemstack.getTagCompound().copy();
+            nbt = itemstack.getTag().copy();
         }
 
         if (!(itemstack.getItem() instanceof ItemBucket)) // if not bucket
@@ -634,39 +636,37 @@ public class ForgeHooks
         if (ret == EnumActionResult.SUCCESS)
         {
             // save new item data
-            int newMeta = itemstack.getItemDamage();
             int newSize = itemstack.getCount();
             NBTTagCompound newNBT = null;
-            if (itemstack.getTagCompound() != null)
+            if (itemstack.hasTag())
             {
-                newNBT = itemstack.getTagCompound().copy();
+                newNBT = itemstack.getTag().copy();
             }
-            BlockEvent.PlaceEvent placeEvent = null;
             @SuppressWarnings("unchecked")
             List<BlockSnapshot> blockSnapshots = (List<BlockSnapshot>)world.capturedBlockSnapshots.clone();
             world.capturedBlockSnapshots.clear();
 
             // make sure to set pre-placement item data for event
-            itemstack.setDamage(meta);
             itemstack.setCount(size);
             if (nbt != null)
             {
-                itemstack.setTagCompound(nbt);
+                itemstack.setTag(nbt);
             }
 
             EntityPlayer player = context.getPlayer();
             EnumFacing side = context.getFace();
 
+            boolean eventResult = false;
             if (blockSnapshots.size() > 1)
             {
-                placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(player, blockSnapshots, side, hand);
+                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
             }
             else if (blockSnapshots.size() == 1)
             {
-                placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshots.get(0), side, hand);
+                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side);
             }
 
-            if (placeEvent != null && placeEvent.isCanceled())
+            if (eventResult)
             {
                 ret = EnumActionResult.FAIL; // cancel placement
                 // revert back all captured blocks
@@ -680,11 +680,10 @@ public class ForgeHooks
             else
             {
                 // Change the stack to its new content
-                itemstack.setDamage(newMeta);
                 itemstack.setCount(newSize);
                 if (nbt != null)
                 {
-                    itemstack.setTagCompound(newNBT);
+                    itemstack.setTag(newNBT);
                 }
 
                 for (BlockSnapshot snap : blockSnapshots)
@@ -694,19 +693,18 @@ public class ForgeHooks
                     IBlockState newBlock = world.getBlockState(snap.getPos());
                     if (!newBlock.getBlock().hasTileEntity(newBlock)) // Containers get placed automatically
                     {
-                        newBlock.getBlock().onBlockAdded(world, snap.getPos(), newBlock);
+                        newBlock.onBlockAdded(world, snap.getPos(), oldBlock);
                     }
 
                     world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(StatList.getObjectUseStats(itemstack.getItem()));
+                player.addStat(StatList.ITEM_USED.get(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();
 
         return ret;
     }
-    */
 
     public static boolean onAnvilChange(ContainerRepair container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
