@@ -55,7 +55,7 @@ public class Constants
 
     /**
      * The world event IDS, used when calling {@link net.minecraft.world.World#playEvent(net.minecraft.entity.player.EntityPlayer, int, net.minecraft.util.math.BlockPos, int)}. <br>
-     * Can be found from {@link net.minecraft.client.renderer.RenderGlobal#playEvent}<br>
+     * Can be found from {@link net.minecraft.client.renderer.WorldRenderer#playEvent}<br>
      * Some of the events use the {@code data} parameter. If this is the case, an explanation of what {@code data} does is also provided
      */
     public static class WorldEvents {
@@ -102,6 +102,9 @@ public class Constants
         public static final int BREWING_STAND_BREW_SOUND        = 1035;
         public static final int IRON_TRAPDOOR_CLOSE_SOUND       = 1036;
         public static final int IRON_TRAPDOOR_OPEN_SOUND        = 1037;
+        public static final int PHANTOM_BITE_SOUND              = 1039;
+        public static final int ZOMBIE_CONVERT_TO_DROWNED_SOUND = 1040;
+        public static final int HUSK_CONVERT_TO_ZOMBIE_SOUND    = 1041;
         /**
          * {@code data} is the direction of the smoke, as a grid around the dispenser as follows (with 4 being the position of the dispenser):
          * <pre>
@@ -148,7 +151,9 @@ public class Constants
      */
     public static class BlockFlags {
         /**
-         * Calls {@link Block#neighborChanged(net.minecraft.block.state.IBlockState, net.minecraft.world.World, net.minecraft.util.math.BlockPos, Block, net.minecraft.util.math.BlockPos) neighborChanged} on surrounding blocks
+         * Calls
+         * {@link Block#neighborChanged(net.minecraft.block.state.IBlockState, net.minecraft.world.World, net.minecraft.util.math.BlockPos, Block, net.minecraft.util.math.BlockPos)
+         * neighborChanged} on surrounding blocks. Also updates comparator output state.
          */
         public static final int NOTIFY_NEIGHBORS     = 0b00001;
         /**
@@ -165,9 +170,14 @@ public class Constants
          */
         public static final int RERENDER_MAIN_THREAD = 0b01000;
         /**
-         * Disables observers from seeing this update
+         * Causes neighbor updates to be sent to all surrounding blocks (including
+         * diagonals). This in turn will call
+         * {@link Block#updateDiagonalNeighbors(net.minecraft.block.state.IBlockState, net.minecraft.world.IWorld, net.minecraft.util.math.BlockPos, int)
+         * updateDiagonalNeighbors} on both old and new states, and
+         * {@link Block#updateNeighbors(net.minecraft.block.state.IBlockState, net.minecraft.world.IWorld, net.minecraft.util.math.BlockPos, int)
+         * updateNeighbors} on the new state.
          */
-        public static final int NO_OBSERVERS         = 0b10000;
+        public static final int UPDATE_NEIGHBORS     = 0b10000;
 
         public static final int DEFAULT = NOTIFY_NEIGHBORS | SEND_TO_CLIENTS;
         public static final int DEFAULT_AND_RERENDER = DEFAULT | RERENDER_MAIN_THREAD;
