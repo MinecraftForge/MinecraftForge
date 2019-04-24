@@ -24,6 +24,11 @@
 |[Add an annotation for @config elements which will automatically create a slider control (#5026)](https://github.com/MinecraftForge/MinecraftForge/commit/d1478ca52996894e1d83a9f9a6694bb9c84e3af0) | No | Config annotations are gone |
 |[Added an additional constructor to every implementation of IFluidBlock. It is now possible to create a fluid block with a Fluid, Material and MapColor, so that the Material's MapColor isn't used for the blocks MapColor. (#5293)](https://github.com/MinecraftForge/MinecraftForge/commit/21f7c31f6217d91b9d6a0afc012b068e1a59b744) | No | IFluidBlock etc. are defunct for the moment |
 |[Add default impl to IConfigElement#getValidValuesDisplay](https://github.com/MinecraftForge/MinecraftForge/commit/d5ff207fabd9d50c8739c6df5dc98d8ede7ea562) | No | IConfigElement etc. are gone |
+|[Remove FluidStack amount from hashcode calculation (#5272)](https://github.com/MinecraftForge/MinecraftForge/commit/41a098e2f789a507d8d56f4aa3facfe9c8088164) | No | FluidStack is gone |
+|[Fixed incorrect string representation of string list config property default values in their comments.](https://github.com/MinecraftForge/MinecraftForge/commit/965d8728564420983ef15377612c61274c2cd54f) | No | Configuration is gone |
+|[Improve tracking of used dimension IDs (#5249)](https://github.com/MinecraftForge/MinecraftForge/commit/bcbf18491542b6eb8ef5516beb71a7ed9f1aa6a9) | No | Dimensions now have a proper registry |
+|[Apply access-level changes to inner class attributes (#5468)](https://github.com/MinecraftForge/MinecraftForge/commit/e6fbf39591b920532ea464d36dad24671c6d08fd) | No | AccessTransformer has been rewritten and seems to handle this case already |
+|[Generalise EnumRarity to an interface (#5182)](https://github.com/MinecraftForge/MinecraftForge/commit/cc95c40b5ba0b2219d492b6506fa1040fa9e9fb1) | Yes | This involves a lot of patches for a rather niche feature, that would be now be best implemented with `@ExtensibleEnum`. Needs to be re-evaluated later. |
 
 
-Currently updated through: d1adf00158abb9f5491ab0348f982e6c222173dc
+Currently updated through: 1b15c127a694b4f5d5e5ee0ef609e54b11a76ec7
