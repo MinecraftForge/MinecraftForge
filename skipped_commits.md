@@ -34,4 +34,4 @@
 |[Try and make 1.13 mods more obviously wrong in 1.12..](https://github.com/MinecraftForge/MinecraftForge/commit/1f12642a05e4f97ff1d83abb1a7c787422490900) | No |  |
 
 
-Currently updated through: 1f12642a05e4f97ff1d83abb1a7c787422490900
+Currently updated through: 1752e57ea03394e5fe184301599b2a2e6c453e42
