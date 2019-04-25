@@ -32,6 +32,10 @@
 |[Fix block placement not checking for player collision](https://github.com/MinecraftForge/MinecraftForge/commit/3870951a3738389bea521bd13b2b08efba542f77) | No | Bug was not introduced in cherry-picked commit |
 |[Fix #5651 Re-add canPlaceBlockOnSide check in World#mayPlace](https://github.com/MinecraftForge/MinecraftForge/commit/e7beed487531d199ca1ddffa7b7cc314024bf8a8) | No | " |
 |[Try and make 1.13 mods more obviously wrong in 1.12..](https://github.com/MinecraftForge/MinecraftForge/commit/1f12642a05e4f97ff1d83abb1a7c787422490900) | No |  |
+|[Fixed boat not taking care of block-liquid hooks (#5086)](https://github.com/MinecraftForge/MinecraftForge/commit/6162f438f18f5e78f31239cdef1a62aab374f95a) | No | No longer applies to new fluid blocks |
+|[Added Wool to OreDictionary (#5414)](https://github.com/MinecraftForge/MinecraftForge/commit/3e7b8809b626e6db9230a9a364bdc9eb2961024b) | No | OreDictionary is gone |
+|[Invalidate tile entities that are queued for removal (#5512)](https://github.com/MinecraftForge/MinecraftForge/commit/75788f63eea6c33ccef7e5cbcab27ad9ad2c2a04) | No | Reverted later |
+|[Revert "Invalidate tile entities that are queued for removal (#5512)"](https://github.com/MinecraftForge/MinecraftForge/commit/633fd9bd2eea06abd2eb42484439a5250236435b) | No |  |
 
 
-Currently updated through: 1752e57ea03394e5fe184301599b2a2e6c453e42
+Currently updated through: 633fd9bd2eea06abd2eb42484439a5250236435b
