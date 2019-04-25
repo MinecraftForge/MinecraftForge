@@ -83,9 +83,9 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
             return false;
         }
         
-        //Static methods named "create", with first argument as a string, and returning this type
+        //Static methods named "create" with first argument as a string
         List<MethodNode> candidates = classNode.methods.stream()
-                .filter(m -> ((m.access & Opcodes.ACC_STATIC) != 0) && m.name.equals("create") && Type.getReturnType(m.desc).equals(classType))
+                .filter(m -> ((m.access & Opcodes.ACC_STATIC) != 0) && m.name.equals("create"))
                 .collect(Collectors.toList());
         
         if (candidates.isEmpty()) {
@@ -102,6 +102,17 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                     sb.append("  Target: ").append(mtd.name + mtd.desc).append("\n");
                 }));
                 throw new IllegalStateException("Enum has create method without String as first parameter: " + mtd.name + mtd.desc);
+            }
+
+            Type ret = Type.getReturnType(mtd.desc);
+            if (!ret.equals(classType)) {
+                LOGGER.fatal(()->new AdvancedLogMessageAdapter(sb-> {
+                    sb.append("Enum has create method with incorrect return type:\n");
+                    sb.append("  Enum: " + classType.getDescriptor()).append("\n");
+                    sb.append("  Target: ").append(mtd.name + mtd.desc).append("\n");
+                    sb.append("  Found: ").append(ret.getClassName()).append(", Expected: ").append(classType.getClassName());
+                }));
+                throw new IllegalStateException("Enum has create method with incorrect return type: " + mtd.name + mtd.desc);
             }
             
             Type[] ctrArgs = new Type[args.length + 1];
