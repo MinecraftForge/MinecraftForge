@@ -88,6 +88,10 @@ public class RuntimeEnumExtender implements ILaunchPluginService {
                 .filter(m -> ((m.access & Opcodes.ACC_STATIC) != 0) && m.name.equals("create") && Type.getReturnType(m.desc).equals(classType))
                 .collect(Collectors.toList());
         
+        if (candidates.isEmpty()) {
+            throw new IllegalStateException("IExtensibleEnum has no candidate factory methods: " + classType.getClassName());
+        }
+        
         candidates.forEach(mtd ->
         {
             Type[] args = Type.getArgumentTypes(mtd.desc);
