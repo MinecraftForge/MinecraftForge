@@ -1,9 +1,7 @@
 --- a/net/minecraft/item/EnumRarity.java
 +++ b/net/minecraft/item/EnumRarity.java
-@@ -1,8 +1,9 @@
- package net.minecraft.item;
+@@ -2,7 +2,7 @@
  
-+import net.minecraft.tileentity.BannerPattern;
  import net.minecraft.util.text.TextFormatting;
  
 -public enum EnumRarity {
@@ -11,12 +9,12 @@
     COMMON(TextFormatting.WHITE),
     UNCOMMON(TextFormatting.YELLOW),
     RARE(TextFormatting.AQUA),
-@@ -13,4 +14,8 @@
+@@ -13,4 +13,8 @@
     private EnumRarity(TextFormatting p_i48837_3_) {
        this.field_77937_e = p_i48837_3_;
     }
 +   
-+   public static BannerPattern create(String enumName, TextFormatting p_i48837_3_) {
++   public static EnumRarity create(String enumName, TextFormatting p_i48837_3_) {
 +       throw new IllegalStateException("Enum not extended");
 +   }
  }
