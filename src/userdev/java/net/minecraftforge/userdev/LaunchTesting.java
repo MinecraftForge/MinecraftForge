@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 
 public class LaunchTesting
-{    
+{
     public static void main(String... args) throws InterruptedException
     {
         final String markerselection = System.getProperty("forge.logging.markers", "");
