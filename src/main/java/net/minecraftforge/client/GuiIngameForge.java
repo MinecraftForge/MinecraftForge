@@ -92,7 +92,7 @@ public class GuiIngameForge extends GuiIngame
     /*
      * If the Euclidian distance to the moused-over block in meters is less than this value, the "Looking at" text will appear on the debug overlay.
      */
-    public static double ray_trace_distance = 20.0D;
+    public static double rayTraceDistance = 20.0D;
 
     private FontRenderer fontrenderer = null;
     private RenderGameOverlayEvent eventParent;
@@ -841,8 +841,8 @@ public class GuiIngameForge extends GuiIngame
         public void update()
         {
             Entity entity = this.mc.getRenderViewEntity();
-            this.rayTraceBlock = entity.rayTrace(ray_trace_distance, 0.0F, RayTraceFluidMode.NEVER);
-            this.rayTraceFluid = entity.rayTrace(ray_trace_distance, 0.0F, RayTraceFluidMode.ALWAYS);
+            this.rayTraceBlock = entity.rayTrace(rayTraceDistance, 0.0F, RayTraceFluidMode.NEVER);
+            this.rayTraceFluid = entity.rayTrace(rayTraceDistance, 0.0F, RayTraceFluidMode.ALWAYS);
         }
         @Override protected void renderDebugInfoLeft(){}
         @Override protected void renderDebugInfoRight(){}

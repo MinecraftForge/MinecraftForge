@@ -39,6 +39,6 @@ public class LookingAtDistanceTest
             return;
         }
 
-        GuiIngameForge.ray_trace_distance *= 10;
+        GuiIngameForge.rayTraceDistance *= 10;
     }
 }
