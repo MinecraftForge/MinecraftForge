@@ -27,7 +27,7 @@
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
 +            NBTBase nbtbase = this.field_74747_a.get(i);
-+            if (nbtbase.func_74732_a() == 1)
++            if (nbtbase.func_74732_a() == net.minecraftforge.common.util.Constants.NBT.TAG_BYTE)
 +                return ((NBTTagByte)nbtbase).func_150290_f();
 +        }
 +        return 0;
@@ -43,7 +43,7 @@
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
 +            NBTBase nbtbase = this.field_74747_a.get(i);
-+            if (nbtbase.func_74732_a() == 2)
++            if (nbtbase.func_74732_a() == net.minecraftforge.common.util.Constants.NBT.TAG_SHORT)
 +                return ((NBTTagShort)nbtbase).func_150289_e();
 +        }
 +        return 0;
@@ -54,7 +54,7 @@
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
 +            NBTBase nbtbase = this.field_74747_a.get(i);
-+            if (nbtbase.func_74732_a() == 4)
++            if (nbtbase.func_74732_a() == net.minecraftforge.common.util.Constants.NBT.TAG_LONG)
 +                return ((NBTTagLong)nbtbase).func_150291_c();
 +        }
 +        return 0;
@@ -65,7 +65,7 @@
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
 +            NBTBase nbtbase = this.field_74747_a.get(i);
-+            if (nbtbase.func_74732_a() == 7)
++            if (nbtbase.func_74732_a() == net.minecraftforge.common.util.Constants.NBT.TAG_BYTE_ARRAY)
 +                return ((NBTTagByteArray)nbtbase).func_150292_c();
 +        }
 +        return new byte[0];
@@ -76,7 +76,7 @@
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
 +            NBTBase nbtbase = this.field_74747_a.get(i);
-+            if (nbtbase.func_74732_a() == 9)
++            if (nbtbase.func_74732_a() == net.minecraftforge.common.util.Constants.NBT.TAG_LIST)
 +            {
 +                NBTTagList nbttaglist = (NBTTagList) nbtbase;
 +                if (!nbttaglist.func_82582_d() && nbttaglist.func_150303_d() != type)
@@ -92,7 +92,7 @@
 +        if (i >= 0 && i < this.field_74747_a.size())
 +        {
 +            NBTBase nbtbase = this.field_74747_a.get(i);
-+            if (nbtbase.func_74732_a() == 12)
++            if (nbtbase.func_74732_a() == net.minecraftforge.common.util.Constants.NBT.TAG_LONG_ARRAY)
 +                return ((NBTTagLongArray)nbtbase).getLongArray();
 +        }
 +        return new long[0];

@@ -24,7 +24,7 @@
          NBTBase nbtbase = NBTBase.func_150284_a(p_152449_0_);
  
          try
-@@ -533,4 +535,25 @@
+@@ -533,4 +536,25 @@
      {
          return field_193583_c.matcher(p_193582_0_).matches() ? p_193582_0_ : NBTTagString.func_193588_a(p_193582_0_);
      }
