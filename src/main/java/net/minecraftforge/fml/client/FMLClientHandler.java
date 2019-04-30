@@ -941,7 +941,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     private SetMultimap<String,ResourceLocation> missingTextures = HashMultimap.create();
     private Set<String> badTextureDomains = Sets.newHashSet();
     private Table<String, String, Set<ResourceLocation>> brokenTextures = HashBasedTable.create();
-    private Map<String, Set<String>> badResources = Maps.newHashMap();
+    private SetMultimap<String, String> badResources = HashMultimap.create();
     private boolean showResourceErrorScreen = false;
 
     public void trackMissingTexture(ResourceLocation resourceLocation)
@@ -1041,7 +1041,7 @@ public class FMLClientHandler implements IFMLSidedHandler
     @Override
     public void trackBadResource(String type, String modid)
     {
-        badResources.computeIfAbsent(type, (k) -> Sets.newHashSet()).add(modid);
+        badResources.put(type, modid);
         ModContainer container = Loader.instance().getIndexedModList().get(modid);
         showResourceErrorScreen |= container == null || container.getSource().isDirectory();
     }
