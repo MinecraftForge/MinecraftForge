@@ -122,7 +122,13 @@
              }
              else
              {
-@@ -617,15 +656,13 @@
+@@ -612,20 +651,18 @@
+             this.func_175554_cu();
+         }
+ 
+-        return this.field_70963_i;
++        return net.minecraftforge.event.ForgeEventFactory.listTradeOffers(this, p_70934_1_, field_70963_i);
+     }
  
      private void func_175554_cu()
      {

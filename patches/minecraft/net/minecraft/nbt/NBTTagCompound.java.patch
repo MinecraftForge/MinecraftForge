@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/nbt/NBTTagCompound.java
 +++ ../src-work/minecraft/net/minecraft/nbt/NBTTagCompound.java
-@@ -477,6 +477,7 @@
+@@ -82,6 +82,7 @@
+ 
+     public void func_74782_a(String p_74782_1_, NBTBase p_74782_2_)
+     {
++        if (p_74782_2_ == null) throw new IllegalArgumentException("Invalid null NBT value with key " + p_74782_1_);
+         this.field_74784_a.put(p_74782_1_, p_74782_2_);
+     }
+ 
+@@ -477,6 +478,7 @@
  
      private static byte func_152447_a(DataInput p_152447_0_, NBTSizeTracker p_152447_1_) throws IOException
      {
@@ -8,7 +16,7 @@
          return p_152447_0_.readByte();
      }
  
-@@ -487,6 +488,7 @@
+@@ -487,6 +489,7 @@
  
      static NBTBase func_152449_a(byte p_152449_0_, String p_152449_1_, DataInput p_152449_2_, int p_152449_3_, NBTSizeTracker p_152449_4_) throws IOException
      {

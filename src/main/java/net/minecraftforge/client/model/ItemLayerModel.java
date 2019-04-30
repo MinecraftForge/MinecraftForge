@@ -19,8 +19,6 @@
 
 package net.minecraftforge.client.model;
 
-import javax.vecmath.Vector4f;
-
 import net.minecraftforge.common.ForgeVersion;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -33,6 +31,8 @@ import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
@@ -395,53 +395,49 @@ public final class ItemLayerModel implements IModel
         float x3, float y3, float z3, float u3, float v3)
     {
         UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+
         builder.setQuadTint(tint);
         builder.setQuadOrientation(side);
         builder.setTexture(sprite);
-        putVertex(builder, format, transform, side, x0, y0, z0, u0, v0);
-        putVertex(builder, format, transform, side, x1, y1, z1, u1, v1);
-        putVertex(builder, format, transform, side, x2, y2, z2, u2, v2);
-        putVertex(builder, format, transform, side, x3, y3, z3, u3, v3);
+
+        boolean hasTransform = transform.isPresent() && !transform.get().isIdentity();
+        IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform.get()) : builder;
+
+        putVertex(consumer, format, side, x0, y0, z0, u0, v0);
+        putVertex(consumer, format, side, x1, y1, z1, u1, v1);
+        putVertex(consumer, format, side, x2, y2, z2, u2, v2);
+        putVertex(consumer, format, side, x3, y3, z3, u3, v3);
+
         return builder.build();
     }
 
-    private static void putVertex(UnpackedBakedQuad.Builder builder, VertexFormat format, Optional<TRSRTransformation> transform, EnumFacing side, float x, float y, float z, float u, float v)
+    private static void putVertex(IVertexConsumer consumer, VertexFormat format, EnumFacing side, float x, float y, float z, float u, float v)
     {
-        Vector4f vec = new Vector4f();
-        boolean hasTransform = transform.isPresent() && !transform.get().isIdentity();
-
         for(int e = 0; e < format.getElementCount(); e++)
         {
             switch(format.getElement(e).getUsage())
             {
             case POSITION:
-                if(hasTransform)
-                {
-                    vec.x = x;
-                    vec.y = y;
-                    vec.z = z;
-                    vec.w = 1;
-                    transform.get().getMatrix().transform(vec);
-                    builder.put(e, vec.x, vec.y, vec.z, vec.w);
-                }
-                else
-                {
-                    builder.put(e, x, y, z, 1);
-                }
+                consumer.put(e, x, y, z, 1f);
                 break;
             case COLOR:
-                builder.put(e, 1f, 1f, 1f, 1f);
+                consumer.put(e, 1f, 1f, 1f, 1f);
                 break;
-            case UV: if(format.getElement(e).getIndex() == 0)
-            {
-                builder.put(e, u, v, 0f, 1f);
-                break;
-            }
             case NORMAL:
-                builder.put(e, (float)side.getFrontOffsetX(), (float)side.getFrontOffsetY(), (float)side.getFrontOffsetZ(), 0f);
+                float offX = (float) side.getFrontOffsetX();
+                float offY = (float) side.getFrontOffsetY();
+                float offZ = (float) side.getFrontOffsetZ();
+                consumer.put(e, offX, offY, offZ, 0f);
                 break;
+            case UV:
+                if(format.getElement(e).getIndex() == 0)
+                {
+                    consumer.put(e, u, v, 0f, 1f);
+                    break;
+                }
+                // else fallthrough to default
             default:
-                builder.put(e);
+                consumer.put(e);
                 break;
             }
         }

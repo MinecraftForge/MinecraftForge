@@ -491,6 +491,7 @@ public class ForgeHooksClient
             case GENERIC:
                 GL20.glEnableVertexAttribArray(attr.getIndex());
                 GL20.glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
+                break;
             default:
                 FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -521,6 +522,7 @@ public class ForgeHooksClient
                 break;
             case GENERIC:
                 GL20.glDisableVertexAttribArray(attr.getIndex());
+                break;
             default:
                 FMLLog.log.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -555,9 +557,10 @@ public class ForgeHooksClient
         VertexFormat format = quad.getFormat();
         int size = format.getIntegerSize();
         int offset = format.getColorOffset() / 4; // assumes that color is aligned
+        boolean hasColor = format.hasColor();
         for(int i = 0; i < 4; i++)
         {
-            int vc = quad.getVertexData()[offset + size * i];
+            int vc = hasColor ? quad.getVertexData()[offset + size * i] : 0xFFFFFFFF;
             float vcr = vc & 0xFF;
             float vcg = (vc >>> 8) & 0xFF;
             float vcb = (vc >>> 16) & 0xFF;
@@ -658,15 +661,15 @@ public class ForgeHooksClient
         List<BakedQuad> segment = new ArrayList<>();
 
         // Lighting of the current segment
-        int segmentBlockLight = -1;
-        int segmentSkyLight = -1;
-        // Coloring of the current segment
-        int segmentColorMultiplier = color;
+        int segmentBlockLight = 0;
+        int segmentSkyLight = 0;
+        // Diffuse lighting state
+        boolean segmentShading = true;
+        // State changed by the current segment
+        boolean segmentLightingDirty = false;
+        boolean segmentShadingDirty = false;
         // If the current segment contains lighting data
         boolean hasLighting = false;
-
-        // Tint index cache to avoid unnecessary IItemColor lookups
-        int prevTintIndex = -1;
 
         for (int i = 0; i < allquads.size(); i++) 
         {
@@ -687,55 +690,40 @@ public class ForgeHooksClient
                 }
             }
 
-            int colorMultiplier = segmentColorMultiplier;
-
-            // If there is no color override, and this quad is tinted, we need to apply IItemColor
-            if (color == 0xFFFFFFFF && q.hasTintIndex())
-            {
-                int tintIndex = q.getTintIndex();
-
-                if (prevTintIndex != tintIndex)
-                {
-                    colorMultiplier = getColorMultiplier(stack, tintIndex);
-                }
-                prevTintIndex = tintIndex;
-            }
-            else
-            {
-                colorMultiplier = color;
-                prevTintIndex = -1;
-            }
+            boolean shade = q.shouldApplyDiffuseLighting();
 
             boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
-            boolean colorDirty = hasLighting && segmentColorMultiplier != colorMultiplier;
+            boolean shadeDirty = shade != segmentShading; 
 
             // If lighting or color data has changed, draw the segment and flush it
-            if (lightingDirty || colorDirty)
+            if (lightingDirty || shadeDirty)
             {
                 if (i > 0) // Make sure this isn't the first quad being processed
                 {
-                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, lightingDirty && (hasLighting || segment.size() < i), colorDirty);
+                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < i), segmentShadingDirty);
                 }
                 segmentBlockLight = bl;
                 segmentSkyLight = sl;
-                segmentColorMultiplier = colorMultiplier;
-                hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0;
+                segmentShading = shade;
+                segmentLightingDirty = lightingDirty;
+                segmentShadingDirty = shadeDirty;
+                hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0 || !segmentShading;
             }
 
             segment.add(q);
         }
 
-        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentColorMultiplier, hasLighting || segment.size() < allquads.size(), false);
+        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < allquads.size()), segmentShadingDirty);
 
         // Clean up render state if necessary
         if (hasLighting)
         {
             OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
-            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(0, 0, 0, 1));
+            GlStateManager.enableLighting();
         }
     }
 
-    private static void drawSegment(RenderItem ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, int tintColor, boolean updateLighting, boolean updateColor)
+    private static void drawSegment(RenderItem ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, boolean shade, boolean updateLighting, boolean updateShading)
     {
         BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
@@ -743,20 +731,24 @@ public class ForgeHooksClient
         float lastBl = OpenGlHelper.lastBrightnessX;
         float lastSl = OpenGlHelper.lastBrightnessY;
 
-        if (updateLighting || updateColor)
+        if (updateShading)
         {
-            float emissive = Math.max(bl, sl) / 240f;
-            
-            float r = (tintColor >>> 16 & 0xff) / 255f;
-            float g = (tintColor >>>  8 & 0xff) / 255f;
-            float b = (tintColor        & 0xff) / 255f;
-            
-            GL11.glMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_EMISSION, RenderHelper.setColorBuffer(emissive * r, emissive * g, emissive * b, 1));
-
-            if (updateLighting)
+            if (shade)
             {
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
+                // (Re-)enable lighting for normal look with shading
+                GlStateManager.enableLighting();
             }
+            else
+            {
+                // Disable lighting to simulate a lack of diffuse lighting
+                GlStateManager.disableLighting();
+            }
+        }
+        
+        if (updateLighting)
+        {
+            // Force lightmap coords to simulate synthetic lighting
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, Math.max(bl, lastBl), Math.max(sl, lastSl));
         }
 
         ri.renderQuads(bufferbuilder, segment, baseColor, stack);
@@ -767,23 +759,6 @@ public class ForgeHooksClient
         OpenGlHelper.lastBrightnessY = lastSl;
 
         segment.clear();
-    }
-    
-    private static int getColorMultiplier(ItemStack stack, int tintIndex)
-    {
-        if (tintIndex == -1 || stack.isEmpty()) return 0xFFFFFFFF;
-
-        int colorMultiplier = Minecraft.getMinecraft().getItemColors().colorMultiplier(stack, tintIndex);
-
-        if (EntityRenderer.anaglyphEnable)
-        {
-            colorMultiplier = TextureUtil.anaglyphColor(colorMultiplier);
-        }
-
-        // Always full opacity
-        colorMultiplier |= 0xff << 24; // -16777216
-
-        return colorMultiplier;
     }
 
     /**

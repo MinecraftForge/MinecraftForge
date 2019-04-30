@@ -22,7 +22,6 @@ package net.minecraftforge.common;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Hashtable;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -75,12 +74,13 @@ public class DimensionManager
     }
 
     private static boolean hasInit = false;
+    private static int lastUsedId = 0;
 
     private static final Int2ObjectMap<WorldServer> worlds = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final Int2ObjectMap<Dimension> dimensions = Int2ObjectMaps.synchronize(new Int2ObjectLinkedOpenHashMap<>());
     private static final IntSet keepLoaded = IntSets.synchronize(new IntOpenHashSet());
     private static final IntSet unloadQueue = IntSets.synchronize(new IntLinkedOpenHashSet());
-    private static final BitSet dimensionMap = new BitSet(Long.SIZE << 4);
+    private static final IntSet usedIds = new IntOpenHashSet();
     private static final ConcurrentMap<World, World> weakWorldMap = new MapMaker().weakKeys().weakValues().makeMap();
     private static final Multiset<Integer> leakedWorlds = HashMultiset.create();
 
@@ -136,7 +136,7 @@ public class DimensionManager
         dimensions.put(id, new Dimension(type));
         if (id >= 0)
         {
-            dimensionMap.set(id);
+            usedIds.add(id);
         }
     }
 
@@ -412,42 +412,38 @@ public class DimensionManager
      * block of free ids. Always call for each individual ID you wish to get.
      * @return the next free dimension ID
      */
-    public static int getNextFreeDimId() {
-        int next = 0;
-        while (true)
+    public static int getNextFreeDimId()
+    {
+        int next = lastUsedId;
+        while (usedIds.contains(next) || !checkAvailable(next))
         {
-            next = dimensionMap.nextClearBit(next);
-            if (dimensions.containsKey(next))
-            {
-                dimensionMap.set(next);
-            }
-            else
-            {
-                return next;
-            }
+            next++;
         }
+        return lastUsedId = next;
+    }
+
+    private static boolean checkAvailable(int id)
+    {
+        if (dimensions.containsKey(id))
+        {
+            usedIds.add(id);
+            return false;
+        }
+        return true;
     }
 
     public static NBTTagCompound saveDimensionDataMap()
     {
-        int[] data = new int[(dimensionMap.length() + Integer.SIZE - 1 )/ Integer.SIZE];
         NBTTagCompound dimMap = new NBTTagCompound();
-        for (int i = 0; i < data.length; i++)
-        {
-            int val = 0;
-            for (int j = 0; j < Integer.SIZE; j++)
-            {
-                val |= dimensionMap.get(i * Integer.SIZE + j) ? (1 << j) : 0;
-            }
-            data[i] = val;
-        }
-        dimMap.setIntArray("DimensionArray", data);
+        dimMap.setIntArray("UsedIDs", usedIds.toIntArray());
         return dimMap;
     }
 
     public static void loadDimensionDataMap(@Nullable NBTTagCompound compoundTag)
     {
-        dimensionMap.clear();
+        usedIds.clear();
+        lastUsedId = 0;
+
         if (compoundTag == null)
         {
             IntIterator iterator = dimensions.keySet().iterator();
@@ -456,18 +452,26 @@ public class DimensionManager
                 int id = iterator.nextInt();
                 if (id >= 0)
                 {
-                    dimensionMap.set(id);
+                    usedIds.add(id);
                 }
             }
         }
         else
         {
+            for (int id : compoundTag.getIntArray("UsedIDs"))
+            {
+                usedIds.add(id);
+            }
+
+            // legacy data (load but don't save)
             int[] intArray = compoundTag.getIntArray("DimensionArray");
             for (int i = 0; i < intArray.length; i++)
             {
+                int data = intArray[i];
+                if (data == 0) continue;
                 for (int j = 0; j < Integer.SIZE; j++)
                 {
-                    dimensionMap.set(i * Integer.SIZE + j, (intArray[i] & (1 << j)) != 0);
+                    if ((data & (1 << j)) != 0) usedIds.add(i * Integer.SIZE + j);
                 }
             }
         }

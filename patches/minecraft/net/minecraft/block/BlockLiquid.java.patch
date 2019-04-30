@@ -17,7 +17,17 @@
                      this.func_180688_d(p_176365_1_, p_176365_2_);
                      return true;
                  }
-@@ -452,4 +452,29 @@
+@@ -448,8 +448,39 @@
+         return (float)p_190972_2_.func_177956_o() + func_190973_f(p_190972_0_, p_190972_1_, p_190972_2_);
+     }
+ 
++    @Override
++    public float getBlockLiquidHeight(World world, BlockPos pos, IBlockState state, Material material)
++    {
++        return BlockLiquid.func_190973_f(state, world, pos);
++    }
++
+     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
      {
          return BlockFaceShape.UNDEFINED;
      }
