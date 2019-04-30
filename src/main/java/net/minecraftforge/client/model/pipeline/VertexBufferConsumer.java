@@ -32,16 +32,17 @@ import net.minecraft.util.EnumFacing;
 public class VertexBufferConsumer implements IVertexConsumer
 {
     private static final float[] dummyColor = new float[]{ 1, 1, 1, 1 };
-    private final BufferBuilder renderer;
-    private final int[] quadData;
+
+    private BufferBuilder renderer;
+    private int[] quadData;
     private int v = 0;
     private BlockPos offset = BlockPos.ORIGIN;
 
-    public VertexBufferConsumer(BufferBuilder renderer)
+    public VertexBufferConsumer() {}
+
+    public VertexBufferConsumer(BufferBuilder buffer)
     {
-        super();
-        this.renderer = renderer;
-        quadData = new int[renderer.getVertexFormat().getNextOffset()/* / 4 * 4 */];
+        setBuffer(buffer);
     }
 
     @Override
@@ -70,6 +71,20 @@ public class VertexBufferConsumer implements IVertexConsumer
                 v = 0;
             }
         }
+    }
+
+    private void checkVertexFormat()
+    {
+        if (quadData == null || renderer.getVertexFormat().getNextOffset() != quadData.length)
+        {
+            quadData = new int[renderer.getVertexFormat().getNextOffset()];
+        }
+    }
+
+    public void setBuffer(BufferBuilder buffer)
+    {
+        this.renderer = buffer;
+        checkVertexFormat();
     }
 
     public void setOffset(BlockPos offset)

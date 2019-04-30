@@ -36,10 +36,8 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
 {
     private final ThreadLocal<VertexLighterFlat> lighterFlat;
     private final ThreadLocal<VertexLighterSmoothAo> lighterSmooth;
-    private final ThreadLocal<VertexBufferConsumer> wrFlat = new ThreadLocal<>();
-    private final ThreadLocal<VertexBufferConsumer> wrSmooth = new ThreadLocal<>();
-    private final ThreadLocal<BufferBuilder> lastRendererFlat = new ThreadLocal<>();
-    private final ThreadLocal<BufferBuilder> lastRendererSmooth = new ThreadLocal<>();
+    private final ThreadLocal<VertexBufferConsumer> consumerFlat = ThreadLocal.withInitial(VertexBufferConsumer::new);
+    private final ThreadLocal<VertexBufferConsumer> consumerSmooth = ThreadLocal.withInitial(VertexBufferConsumer::new);
 
     public ForgeBlockModelRenderer(BlockColors colors)
     {
@@ -53,15 +51,14 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
-            if(buffer != lastRendererFlat.get())
-            {
-                lastRendererFlat.set(buffer);
-                VertexBufferConsumer newCons = new VertexBufferConsumer(buffer);
-                wrFlat.set(newCons);
-                lighterFlat.get().setParent(newCons);
-            }
-            wrFlat.get().setOffset(pos);
-            return render(lighterFlat.get(), world, model, state, pos, buffer, checkSides, rand);
+            VertexBufferConsumer consumer = consumerFlat.get();
+            consumer.setBuffer(buffer);
+            consumer.setOffset(pos);
+
+            VertexLighterFlat lighter = lighterFlat.get();
+            lighter.setParent(consumer);
+
+            return render(lighter, world, model, state, pos, buffer, checkSides, rand);
         }
         else
         {
@@ -74,15 +71,14 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     {
         if(ForgeModContainer.forgeLightPipelineEnabled)
         {
-            if(buffer != lastRendererSmooth.get())
-            {
-                lastRendererSmooth.set(buffer);
-                VertexBufferConsumer newCons = new VertexBufferConsumer(buffer);
-                wrSmooth.set(newCons);
-                lighterSmooth.get().setParent(newCons);
-            }
-            wrSmooth.get().setOffset(pos);
-            return render(lighterSmooth.get(), world, model, state, pos, buffer, checkSides, rand);
+            VertexBufferConsumer consumer = consumerSmooth.get();
+            consumer.setBuffer(buffer);
+            consumer.setOffset(pos);
+
+            VertexLighterSmoothAo lighter = lighterSmooth.get();
+            lighter.setParent(consumer);
+
+            return render(lighter, world, model, state, pos, buffer, checkSides, rand);
         }
         else
         {

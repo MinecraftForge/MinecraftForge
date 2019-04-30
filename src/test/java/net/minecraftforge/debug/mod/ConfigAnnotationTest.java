@@ -132,7 +132,25 @@ public class ConfigAnnotationTest
         public static TEST        enu = TEST.BIG;
         public static NestedType  Inner = new NestedType();
 
-        public enum TEST { BIG, BAD, WOLF; }
+        public enum TEST
+        {
+            BIG("Big"),
+            BAD("Bad"),
+            WOLF("Wolf");
+
+            private String name;
+
+            private TEST(String name)
+            {
+                this.name = name;
+            }
+
+            @Override
+            public String toString()
+            {
+                return name;
+            }
+        }
         public static class NestedType
         {
             public String HeyLook = "I'm Inside!";
