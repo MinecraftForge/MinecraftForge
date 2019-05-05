@@ -9,7 +9,7 @@
      }
  
      public void func_190056_a(World p_190056_1_, TextureManager p_190056_2_, FontRenderer p_190056_3_, Entity p_190056_4_, RayTraceResult p_190056_5_, float p_190056_6_)
-@@ -117,12 +117,15 @@
+@@ -117,13 +117,17 @@
      {
          if (p_180546_1_.func_145835_a(this.field_147560_j, this.field_147561_k, this.field_147558_l) < p_180546_1_.func_145833_n())
          {
@@ -23,9 +23,11 @@
              GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
 +            }
              BlockPos blockpos = p_180546_1_.func_174877_v();
++            if (this.field_147550_f.func_175668_a(blockpos, false)) // Forge: fix MC-123363
              this.func_192854_a(p_180546_1_, (double)blockpos.func_177958_n() - field_147554_b, (double)blockpos.func_177956_o() - field_147555_c, (double)blockpos.func_177952_p() - field_147552_d, p_180546_2_, p_180546_3_, 1.0F);
          }
-@@ -146,6 +149,9 @@
+     }
+@@ -146,6 +150,9 @@
          {
              try
              {
@@ -35,7 +37,7 @@
                  tileentityspecialrenderer.func_192841_a(p_192854_1_, p_192854_2_, p_192854_4_, p_192854_6_, p_192854_8_, p_192854_9_, p_192854_10_);
              }
              catch (Throwable throwable)
-@@ -172,4 +178,53 @@
+@@ -172,4 +179,53 @@
      {
          return this.field_147557_n;
      }
