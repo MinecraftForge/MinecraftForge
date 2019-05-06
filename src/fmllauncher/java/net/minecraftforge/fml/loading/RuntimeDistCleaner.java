@@ -20,17 +20,20 @@
 package net.minecraftforge.fml.loading;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Streams;
 import cpw.mods.modlauncher.serviceapi.ILaunchPluginService;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.api.distmarker.OnlyIns;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -51,6 +54,7 @@ public class RuntimeDistCleaner implements ILaunchPluginService
     private static final Marker DISTXFORM = MarkerManager.getMarker("DISTXFORM");
     private static String DIST;
     private static final String ONLYIN = Type.getDescriptor(OnlyIn.class);
+    private static final String ONLYINS = Type.getDescriptor(OnlyIns.class);
     @Override
     public String name()
     {
@@ -65,6 +69,34 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         {
             LOGGER.fatal(DISTXFORM, "Attempted to load class {} for invalid dist {}", classNode.name, DIST);
             throw new RuntimeException("Attempted to load class "+ classNode.name  + " for invalid dist "+ DIST);
+        }
+
+        if (classNode.interfaces != null )
+        {
+            unpack(classNode.visibleAnnotations).stream()
+                .filter(ann->Objects.equals(ann.desc, ONLYIN))
+                .filter(ann->ann.values.indexOf("_interface") != -1)
+                .filter(ann->!Objects.equals(((String[])ann.values.get(ann.values.indexOf("value") + 1))[1], DIST))
+                .map(ann -> ((Type)ann.values.get(ann.values.indexOf("_interface") + 1)).getInternalName())
+                .forEach(intf -> {
+                    if (classNode.interfaces.remove(intf)) {
+                        LOGGER.debug(DISTXFORM,"Removing Interface: {} implements {}", classNode.name, intf);
+                        changes.compareAndSet(false, true);
+                    }
+                });
+
+            //Remove Class level @OnlyIn/@OnlyIns annotations, this is important if anyone gets ambitious and tries to reflect an annotation with _interface set.
+            if (classNode.visibleAnnotations != null) {
+                Iterator<AnnotationNode> itr = classNode.visibleAnnotations.iterator();
+                while (itr.hasNext()) {
+                    AnnotationNode ann = itr.next();
+                    if (Objects.equals(ann.desc, ONLYIN) || Objects.equals(ann.desc, ONLYINS)) {
+                        LOGGER.debug(DISTXFORM,"Removing Class Annotation: {} @{}", classNode.name, ann.desc);
+                        itr.remove();
+                        changes.compareAndSet(false, true);
+                    }
+                }
+            }
         }
 
         Iterator<FieldNode> fields = classNode.fields.iterator();
@@ -118,10 +150,22 @@ public class RuntimeDistCleaner implements ILaunchPluginService
         return changes.get();
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<AnnotationNode> unpack(final List<AnnotationNode> anns) {
+        if (anns == null) return Collections.emptyList();
+        List<AnnotationNode> ret = anns.stream().filter(ann->Objects.equals(ann.desc, ONLYIN)).collect(Collectors.toList());
+        anns.stream().filter(ann->Objects.equals(ann.desc, ONLYINS) && ann.values != null)
+            .map( ann -> (List<AnnotationNode>)ann.values.get(ann.values.indexOf("value") + 1))
+            .filter(v -> v != null)
+            .forEach(v -> v.forEach(ret::add));
+        return ret;
+    }
+
     private boolean remove(final List<AnnotationNode> anns, final String side)
     {
-        return !(anns == null) && anns.stream().
+        return unpack(anns).stream().
                 filter(ann->Objects.equals(ann.desc, ONLYIN)).
+                filter(ann->ann.values.indexOf("_interface") == -1).
                 anyMatch(ann -> !Objects.equals(((String[])ann.values.get(ann.values.indexOf("value")+1))[1], side));
     }
 

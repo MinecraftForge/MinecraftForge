@@ -235,17 +235,15 @@ public class VersionChecker
                     {
                         ComparableVersion latest = new ComparableVersion(lat);
                         if (current.compareTo(latest) < 0)
-                        {
                             status = BETA_OUTDATED;
-                            target = latest;
-                        }
                         else
                             status = BETA;
+                        target = latest;
                     }
                     else
                         status = BETA;
 
-                    LOGGER.info("[{}] Found status: {} Target: {}", mod.getModId(), status, target);
+                    LOGGER.info("[{}] Found status: {} Current: {} Target: {}", mod.getModId(), status, current, target);
 
                     changes = new LinkedHashMap<>();
                     @SuppressWarnings("unchecked")
