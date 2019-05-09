@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/renderer/chunk/ChunkRenderTask.java
++++ b/net/minecraft/client/renderer/chunk/ChunkRenderTask.java
+@@ -19,11 +19,14 @@
+    private CompiledChunk field_178547_f;
+    private ChunkRenderTask.Status field_178548_g = ChunkRenderTask.Status.PENDING;
+    private boolean field_178554_h;
++   private java.util.Map<net.minecraft.util.math.BlockPos, net.minecraftforge.client.model.data.IModelData> modelData;
+ 
+    public ChunkRenderTask(RenderChunk p_i46560_1_, ChunkRenderTask.Type p_i46560_2_, double p_i46560_3_) {
+       this.field_178553_a = p_i46560_1_;
+       this.field_178549_d = p_i46560_2_;
+       this.field_188229_e = p_i46560_3_;
++      
++      modelData = net.minecraftforge.client.model.ModelDataManager.getModelData(net.minecraft.client.Minecraft.func_71410_x().field_71441_e, new net.minecraft.util.math.ChunkPos(p_i46560_1_.func_178568_j()));
+    }
+ 
+    public ChunkRenderTask.Status func_178546_a() {
+@@ -128,4 +131,8 @@
+       REBUILD_CHUNK,
+       RESORT_TRANSPARENCY;
+    }
++   
++   public net.minecraftforge.client.model.data.IModelData getModelData(net.minecraft.util.math.BlockPos pos) {
++       return modelData.getOrDefault(pos, net.minecraftforge.client.model.data.EmptyModelData.INSTANCE);
++   }
+ }

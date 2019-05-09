@@ -19,7 +19,7 @@
           VisGraph lvt_11_1_ = new VisGraph();
           HashSet lvt_12_1_ = Sets.newHashSet();
           if (lvt_10_1_ != null) {
-@@ -142,22 +143,23 @@
+@@ -142,22 +143,24 @@
                    lvt_11_1_.func_178606_a(blockpos$mutableblockpos);
                 }
  
@@ -41,13 +41,14 @@
                 IFluidState ifluidstate = lvt_10_1_.func_204610_c(blockpos$mutableblockpos);
 -               if (!ifluidstate.func_206888_e()) {
 -                  BlockRenderLayer blockrenderlayer1 = ifluidstate.func_180664_k();
++               net.minecraftforge.client.model.data.IModelData modelData = p_178581_4_.getModelData(blockpos$mutableblockpos);
 +               for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
 +                   net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
 +               if (!ifluidstate.func_206888_e() && ifluidstate.canRenderInLayer(blockrenderlayer1)) {
                    int j = blockrenderlayer1.ordinal();
                    BufferBuilder bufferbuilder = p_178581_4_.func_178545_d().func_179039_a(j);
                    if (!compiledchunk.func_178492_d(blockrenderlayer1)) {
-@@ -168,17 +170,18 @@
+@@ -168,17 +171,18 @@
                    aboolean[j] |= blockrendererdispatcher.func_205318_a(blockpos$mutableblockpos, lvt_10_1_, bufferbuilder, ifluidstate);
                 }
  
@@ -64,7 +65,8 @@
                       this.func_178573_a(bufferbuilder1, blockpos);
                    }
  
-                   aboolean[k] |= blockrendererdispatcher.func_195475_a(iblockstate, blockpos$mutableblockpos, lvt_10_1_, bufferbuilder1, random);
+-                  aboolean[k] |= blockrendererdispatcher.func_195475_a(iblockstate, blockpos$mutableblockpos, lvt_10_1_, bufferbuilder1, random);
++                  aboolean[k] |= blockrendererdispatcher.renderBlock(iblockstate, blockpos$mutableblockpos, lvt_10_1_, bufferbuilder1, random, modelData);
                 }
 +               }
 +               net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);

@@ -19,25 +19,25 @@
 
 package net.minecraftforge.client.model.animation;
 
+import java.util.Random;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.client.model.ModelDataManager;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.animation.Event;
 import net.minecraftforge.common.animation.IEventHandler;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.common.model.animation.IAnimationStateMachine;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.common.util.LazyOptional;
-
-import java.util.Random;
 
 /**
  * Generic {@link TileGameRenderer} that works with the Forge model system and animations.
@@ -58,30 +58,23 @@ public class TileEntityRendererAnimation<T extends TileEntity> extends TileEntit
         BlockPos pos = te.getPos();
         IWorldReader world = MinecraftForgeClient.getRegionRenderCache(te.getWorld(), pos);
         IBlockState state = world.getBlockState(pos);
-        if(state.getBlock().getStateContainer().getProperties().contains(Properties.StaticProperty))
+        IBakedModel model = blockRenderer.getBlockModelShapes().getModel(state);
+        IModelData data = model.getModelData(world, pos, state, ModelDataManager.getModelData(te.getWorld(), pos));
+        if (data.hasProperty(Properties.AnimationProperty))
         {
-            state = state.with(Properties.StaticProperty, false);
-        }
-        if(state instanceof IExtendedBlockState)
-        {
-            IExtendedBlockState exState = (IExtendedBlockState)state;
-            if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
-            {
-                float time = Animation.getWorldTime(getWorld(), partialTick);
-                cap
-                    .map(asm -> asm.apply(time))
-                    .ifPresent(pair -> {
-                        handleEvents(te, time, pair.getRight());
+            float time = Animation.getWorldTime(getWorld(), partialTick);
+            cap
+                .map(asm -> asm.apply(time))
+                .ifPresent(pair -> {
+                    handleEvents(te, time, pair.getRight());
 
-                        // TODO: caching?
-                        IBakedModel model = blockRenderer.getBlockModelShapes().getModel(exState.getClean());
-                        IExtendedBlockState animState = (IExtendedBlockState) exState.withProperty(Properties.AnimationProperty, pair.getLeft());
+                    // TODO: caching?
+                    data.setData(Properties.AnimationProperty, pair.getLeft());
 
-                        renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
+                    renderer.setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
 
-                        blockRenderer.getBlockModelRenderer().renderModel(world, model, animState, pos, renderer, false, new Random(), 42);
-                    });
-            }
+                    blockRenderer.getBlockModelRenderer().renderModel(world, model, state, pos, renderer, false, new Random(), 42, data);
+                });
         }
     }
 
