@@ -1,14 +1,6 @@
 --- a/net/minecraft/client/renderer/model/ModelBakery.java
 +++ b/net/minecraft/client/renderer/model/ModelBakery.java
-@@ -15,6 +15,7 @@
- import java.io.Reader;
- import java.io.StringReader;
- import java.nio.charset.StandardCharsets;
-+import java.util.Collection;
- import java.util.Iterator;
- import java.util.List;
- import java.util.Map;
-@@ -47,7 +48,7 @@
+@@ -47,7 +47,7 @@
  import org.apache.logging.log4j.Logger;
  
  @OnlyIn(Dist.CLIENT)
@@ -17,7 +9,7 @@
     public static final ResourceLocation field_207763_a = new ResourceLocation("block/fire_0");
     public static final ResourceLocation field_207764_b = new ResourceLocation("block/fire_1");
     public static final ResourceLocation field_207766_d = new ResourceLocation("block/lava_flow");
-@@ -151,10 +152,11 @@
+@@ -151,10 +151,11 @@
                    this.func_209598_b(resourcelocation);
                 }
              } catch (ModelBakery.BlockStateDefinitionException modelbakery$blockstatedefinitionexception) {
@@ -31,7 +23,7 @@
                 this.field_209608_D.put(resourcelocation, iunbakedmodel);
              } finally {
                 this.field_209609_E.remove(resourcelocation);
-@@ -166,6 +168,11 @@
+@@ -166,6 +167,11 @@
     }
  
     private void func_209598_b(ResourceLocation p_209598_1_) throws Exception {
@@ -43,7 +35,7 @@
        if (!(p_209598_1_ instanceof ModelResourceLocation)) {
           this.func_209593_a(p_209598_1_, this.func_177594_c(p_209598_1_));
        } else {
-@@ -198,7 +205,7 @@
+@@ -198,7 +204,7 @@
                          flag = true;
                          lvt_9_4_ = this.field_177598_f.func_199004_b(resourcelocation1).stream().map((p_209591_1_) -> {
                             try (InputStream inputstream = p_209591_1_.func_199027_b()) {
@@ -52,7 +44,7 @@
                             } catch (Exception exception1) {
                                throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_209591_1_.func_199029_a(), p_209591_1_.func_199026_d(), exception1.getMessage()));
                             }
-@@ -382,4 +389,13 @@
+@@ -382,4 +388,13 @@
           super(p_i49526_1_);
        }
     }
