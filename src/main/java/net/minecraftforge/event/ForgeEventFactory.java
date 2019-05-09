@@ -837,11 +837,13 @@ public class ForgeEventFactory
         return event.getList();
     }
 
-    public static boolean onPistonExtend(World world, BlockPos pos, EnumFacing facing) {
+    public static boolean onPistonExtend(World world, BlockPos pos, EnumFacing facing)
+    {
         return MinecraftForge.EVENT_BUS.post(new PistonEvent.Extend(world, pos, facing));
     }
     
-    public static boolean onPistonRetract(World world, BlockPos pos, EnumFacing facing) {
+    public static boolean onPistonRetract(World world, BlockPos pos, EnumFacing facing)
+    {
         return MinecraftForge.EVENT_BUS.post(new PistonEvent.Retract(world, pos, facing));
     }
     
