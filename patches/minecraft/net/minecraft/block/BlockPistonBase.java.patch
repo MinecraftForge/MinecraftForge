@@ -1,6 +1,22 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -241,7 +241,7 @@
+@@ -198,6 +198,7 @@
+ 
+         if (p_189539_4_ == 0)
+         {
++            if(net.minecraftforge.event.ForgeEventFactory.onPistonExtend(p_189539_2_, p_189539_3_, enumfacing)) return false;
+             if (!this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, true))
+             {
+                 return false;
+@@ -208,6 +209,7 @@
+         }
+         else if (p_189539_4_ == 1)
+         {
++            if(net.minecraftforge.event.ForgeEventFactory.onPistonRetract(p_189539_2_, p_189539_3_, enumfacing)) return false;
+             TileEntity tileentity1 = p_189539_2_.func_175625_s(p_189539_3_.func_177972_a(enumfacing));
+ 
+             if (tileentity1 instanceof TileEntityPiston)
+@@ -241,7 +243,7 @@
                      }
                  }
  
@@ -9,7 +25,7 @@
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
                  }
-@@ -307,7 +307,7 @@
+@@ -307,7 +309,7 @@
                      return false;
                  }
  
@@ -18,7 +34,7 @@
              }
              else
              {
-@@ -353,7 +353,9 @@
+@@ -353,7 +355,9 @@
              {
                  BlockPos blockpos1 = list2.get(j);
                  IBlockState iblockstate = p_176319_1_.func_180495_p(blockpos1);
@@ -29,7 +45,7 @@
                  p_176319_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 4);
                  --k;
                  aiblockstate[k] = iblockstate;
-@@ -434,6 +436,13 @@
+@@ -434,6 +438,13 @@
          return new BlockStateContainer(this, new IProperty[] {field_176387_N, field_176320_b});
      }
  

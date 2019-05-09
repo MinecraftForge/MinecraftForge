@@ -132,6 +132,7 @@ import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.BlockEvent.PlaceEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
+import net.minecraftforge.event.world.PistonEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -835,4 +836,13 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
         return event.getList();
     }
+
+    public static boolean onPistonExtend(World world, BlockPos pos, EnumFacing facing) {
+        return MinecraftForge.EVENT_BUS.post(new PistonEvent.Extend(world, pos, facing));
+    }
+    
+    public static boolean onPistonRetract(World world, BlockPos pos, EnumFacing facing) {
+        return MinecraftForge.EVENT_BUS.post(new PistonEvent.Retract(world, pos, facing));
+    }
+    
 }
