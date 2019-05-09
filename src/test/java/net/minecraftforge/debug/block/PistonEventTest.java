@@ -24,7 +24,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  * This test mod blocks pistons from moving cobblestone at all except indirectly
  * This test mod adds a block that moves upwards when pushed by a piston
  * This test mod informs the user what will happen the piston and affected blocks when changes are made
- * @author its_meow
  */
 @Mod.EventBusSubscriber(modid = PistonEventTest.MODID)
 @Mod(modid = PistonEventTest.MODID)

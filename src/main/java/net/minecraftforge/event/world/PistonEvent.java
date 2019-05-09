@@ -7,7 +7,6 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 
 /**
  * Base piston event, use {@link PistonEvent.Extend} and {@link PistonEvent.Retract} for specific movement types
- * @author its_meow
  */
 public class PistonEvent extends BlockEvent
 {
@@ -43,8 +42,8 @@ public class PistonEvent extends BlockEvent
     }
 
     /**
-     * Fired when a piston extends. Canceling prevents extension
-     * @author its_meow
+     * Fired when a piston extends at any point, only once per extension.
+     * Canceling prevents extension.
      */
     @Cancelable
     public static class Extend extends PistonEvent
@@ -56,8 +55,8 @@ public class PistonEvent extends BlockEvent
     }
 
     /**
-     * Fired when a piston retracts. Canceling prevents retraction.
-     * @author its_meow
+     * Fired when a piston retracts at any point, only once retraction.
+     * Canceling prevents retraction.
      */
     @Cancelable
     public static class Retract extends PistonEvent
