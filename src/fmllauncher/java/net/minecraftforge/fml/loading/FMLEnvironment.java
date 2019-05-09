@@ -26,8 +26,10 @@ import net.minecraftforge.forgespi.Environment;
 public class FMLEnvironment
 {
     public static final Dist dist = FMLLoader.getDist();
+    public static final String naming = FMLLoader.getNaming();
 
     static void setupInteropEnvironment(IEnvironment environment) {
+        environment.computePropertyIfAbsent(IEnvironment.Keys.NAMING.get(), v->naming);
         environment.computePropertyIfAbsent(Environment.Keys.DIST.get(), v->dist);
     }
 }

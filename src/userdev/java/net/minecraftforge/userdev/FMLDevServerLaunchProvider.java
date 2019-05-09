@@ -75,6 +75,7 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
         };
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void setup(IEnvironment environment, final Map<String, ?> arguments)
     {
@@ -82,6 +83,8 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
         final Path forgemodstoml = LibraryFinder.findJarPathFor("META-INF/mods.toml", "forgemodstoml");
         ((Map<String, List<Pair<Path,List<Path>>>>) arguments).computeIfAbsent("explodedTargets", a->new ArrayList<>()).
                 add(Pair.of(forgemodstoml, Collections.singletonList(compiledClasses)));
+
+        processModClassesEnvironmentVariable((Map<String, List<Pair<Path, List<Path>>>>) arguments);
     }
 
     @Override
@@ -89,4 +92,10 @@ public class FMLDevServerLaunchProvider extends FMLCommonLaunchHandler implement
     {
         return Dist.DEDICATED_SERVER;
     }
+
+    @Override
+    protected String getNaming() {
+        return "srg";
+    }
+
 }

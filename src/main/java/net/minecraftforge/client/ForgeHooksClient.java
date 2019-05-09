@@ -26,8 +26,11 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -43,7 +46,10 @@ import net.minecraftforge.client.event.RecipesUpdatedEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.async.ThreadNameCachingStrategy;
+import org.apache.logging.log4j.core.impl.ReusableLogEventFactory;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.GameSettings;
@@ -59,7 +65,10 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.BlockFaceUV;
@@ -76,6 +85,7 @@ import net.minecraft.client.renderer.entity.model.ModelBiped;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
@@ -116,6 +126,8 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.client.model.ModelDynBucket;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.animation.Animation;
+import net.minecraftforge.client.model.pipeline.QuadGatheringTransformer;
+import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.model.IModelPart;
@@ -466,6 +478,7 @@ public class ForgeHooksClient
             case GENERIC:
                 glEnableVertexAttribArray(attr.getIndex());
                 glVertexAttribPointer(attr.getIndex(), count, constant, false, stride, buffer);
+                break;
             default:
                 LOGGER.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -496,6 +509,7 @@ public class ForgeHooksClient
                 break;
             case GENERIC:
                 glDisableVertexAttribArray(attr.getIndex());
+                break;
             default:
                 LOGGER.fatal("Unimplemented vanilla attribute upload: {}", attrType.getDisplayName());
         }
@@ -530,9 +544,10 @@ public class ForgeHooksClient
         VertexFormat format = quad.getFormat();
         int size = format.getIntegerSize();
         int offset = format.getColorOffset() / 4; // assumes that color is aligned
+        boolean hasColor = format.hasColor();
         for(int i = 0; i < 4; i++)
         {
-            int vc = quad.getVertexData()[offset + size * i];
+            int vc = hasColor ? quad.getVertexData()[offset + size * i] : 0xFFFFFFFF;
             float vcr = vc & 0xFF;
             float vcg = (vc >>> 8) & 0xFF;
             float vcb = (vc >>> 16) & 0xFF;
@@ -543,6 +558,174 @@ public class ForgeHooksClient
             int nca = Math.min(0xFF, (int)(ca * vca / 0xFF));
             renderer.putColorRGBA(renderer.getColorIndex(4 - i), ncr, ncg, ncb, nca);
         }
+    }
+
+    private static class LightGatheringTransformer extends QuadGatheringTransformer {
+
+        private static final VertexFormat FORMAT = new VertexFormat().addElement(DefaultVertexFormats.TEX_2F).addElement(DefaultVertexFormats.TEX_2S);
+
+        int blockLight, skyLight;
+
+        { setVertexFormat(FORMAT); }
+
+        boolean hasLighting() 
+        {
+            return dataLength[1] >= 2;
+        }
+
+        @Override
+        protected void processQuad() 
+        {
+            // Reset light data
+            blockLight = 0;
+            skyLight = 0;
+            // Compute average light for all 4 vertices
+            for (int i = 0; i < 4; i++) 
+            {
+                blockLight += (int) ((quadData[1][i][0] * 0xFFFF) / 0x20);
+                skyLight += (int) ((quadData[1][i][1] * 0xFFFF) / 0x20);
+            }
+            // Values must be multiplied by 16, divided by 4 for average => x4
+            blockLight *= 4;
+            skyLight *= 4;
+        }
+
+        // Dummy overrides
+
+        @Override
+        public void setQuadTint(int tint) {}
+
+        @Override
+        public void setQuadOrientation(EnumFacing orientation) {}
+
+        @Override
+        public void setApplyDiffuseLighting(boolean diffuse) {}
+
+        @Override
+        public void setTexture(TextureAtlasSprite texture) {}
+    }
+
+    private static final LightGatheringTransformer lightGatherer = new LightGatheringTransformer();
+
+    public static void renderLitItem(ItemRenderer ri, IBakedModel model, int color, ItemStack stack)
+    {
+        List<BakedQuad> allquads = new ArrayList<>();
+        Random random = new Random();
+        long seed = 42L;
+
+        for (EnumFacing enumfacing : EnumFacing.values())
+        {
+            random.setSeed(seed);
+            allquads.addAll(model.getQuads(null, enumfacing, random));
+        }
+
+        random.setSeed(seed);
+        allquads.addAll(model.getQuads(null, null, random));
+
+        if (allquads.isEmpty()) return;
+
+        // Current list of consecutive quads with the same lighting
+        List<BakedQuad> segment = new ArrayList<>();
+
+        // Lighting of the current segment
+        int segmentBlockLight = 0;
+        int segmentSkyLight = 0;
+        // Diffuse lighting state
+        boolean segmentShading = true;
+        // State changed by the current segment
+        boolean segmentLightingDirty = false;
+        boolean segmentShadingDirty = false;
+        // If the current segment contains lighting data
+        boolean hasLighting = false;
+
+        for (int i = 0; i < allquads.size(); i++) 
+        {
+            BakedQuad q = allquads.get(i);
+
+            // Lighting of the current quad
+            int bl = 0;
+            int sl = 0;
+
+            // Fail-fast on ITEM, as it cannot have light data
+            if (q.getFormat() != DefaultVertexFormats.ITEM && q.getFormat().hasUv(1))
+            {
+                q.pipe(lightGatherer);
+                if (lightGatherer.hasLighting())
+                {
+                    bl = lightGatherer.blockLight;
+                    sl = lightGatherer.skyLight;
+                }
+            }
+
+            boolean shade = q.shouldApplyDiffuseLighting();
+
+            boolean lightingDirty = segmentBlockLight != bl || segmentSkyLight != sl;
+            boolean shadeDirty = shade != segmentShading; 
+
+            // If lighting or color data has changed, draw the segment and flush it
+            if (lightingDirty || shadeDirty)
+            {
+                if (i > 0) // Make sure this isn't the first quad being processed
+                {
+                    drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < i), segmentShadingDirty);
+                }
+                segmentBlockLight = bl;
+                segmentSkyLight = sl;
+                segmentShading = shade;
+                segmentLightingDirty = lightingDirty;
+                segmentShadingDirty = shadeDirty;
+                hasLighting = segmentBlockLight > 0 || segmentSkyLight > 0 || !segmentShading;
+            }
+
+            segment.add(q);
+        }
+
+        drawSegment(ri, color, stack, segment, segmentBlockLight, segmentSkyLight, segmentShading, segmentLightingDirty && (hasLighting || segment.size() < allquads.size()), segmentShadingDirty);
+
+        // Clean up render state if necessary
+        if (hasLighting)
+        {
+            OpenGlHelper.glMultiTexCoord2f(OpenGlHelper.GL_TEXTURE0, OpenGlHelper.lastBrightnessX, OpenGlHelper.lastBrightnessY);
+            GlStateManager.enableLighting();
+        }
+    }
+
+    private static void drawSegment(ItemRenderer ri, int baseColor, ItemStack stack, List<BakedQuad> segment, int bl, int sl, boolean shade, boolean updateLighting, boolean updateShading)
+    {
+        BufferBuilder bufferbuilder = Tessellator.getInstance().getBuffer();
+        bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.ITEM);
+
+        float lastBl = OpenGlHelper.lastBrightnessX;
+        float lastSl = OpenGlHelper.lastBrightnessY;
+
+        if (updateShading)
+        {
+            if (shade)
+            {
+                // (Re-)enable lighting for normal look with shading
+                GlStateManager.enableLighting();
+            }
+            else
+            {
+                // Disable lighting to simulate a lack of diffuse lighting
+                GlStateManager.disableLighting();
+            }
+        }
+        
+        if (updateLighting)
+        {
+            // Force lightmap coords to simulate synthetic lighting
+            OpenGlHelper.glMultiTexCoord2f(OpenGlHelper.GL_TEXTURE0, Math.max(bl, lastBl), Math.max(sl, lastSl));
+        }
+
+        ri.renderQuads(bufferbuilder, segment, baseColor, stack);
+        Tessellator.getInstance().draw();
+
+        // Preserve this as it represents the "world" lighting
+        OpenGlHelper.lastBrightnessX = lastBl;
+        OpenGlHelper.lastBrightnessY = lastSl;
+
+        segment.clear();
     }
 
     /**
@@ -814,5 +997,34 @@ public class ForgeHooksClient
     {
         Event event = new RecipesUpdatedEvent();
         MinecraftForge.EVENT_BUS.post(event);
+    }
+
+    // Resets cached thread fields in ThreadNameCachingStrategy and ReusableLogEventFactory to be repopulated during their next access.
+    // This serves a workaround for no built-in method of triggering this type of refresh as brought up by LOG4J2-2178.
+    public static void invalidateLog4jThreadCache()
+    {
+        try
+        {
+            Field nameField = ThreadNameCachingStrategy.class.getDeclaredField("THREADLOCAL_NAME");
+            Field logEventField = ReusableLogEventFactory.class.getDeclaredField("mutableLogEventThreadLocal");
+            nameField.setAccessible(true);
+            logEventField.setAccessible(true);
+            ((ThreadLocal<?>) nameField.get(null)).set(null);
+            ((ThreadLocal<?>) logEventField.get(null)).set(null);
+        }
+        catch (ReflectiveOperationException | NoClassDefFoundError e)
+        {
+            LOGGER.error("Unable to invalidate log4j thread cache, thread fields in logs may be inaccurate", e);
+        }
+    }
+
+    public static void fireMouseInput(int button, int action, int mods)
+    {
+        MinecraftForge.EVENT_BUS.post(new InputEvent.MouseInputEvent(button, action, mods));
+    }
+
+    public static void fireKeyInput(int key, int scanCode, int action, int modifiers)
+    {
+        MinecraftForge.EVENT_BUS.post(new InputEvent.KeyInputEvent(key, scanCode, action, modifiers));
     }
 }

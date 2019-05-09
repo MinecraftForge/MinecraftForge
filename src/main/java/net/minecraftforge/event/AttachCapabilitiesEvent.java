@@ -82,9 +82,8 @@ public class AttachCapabilitiesEvent<T> extends GenericEvent<T>
         return view;
     }
 
-
     /**
-     * Adds a callback that is fired when the attacked object is invalidated.
+     * Adds a callback that is fired when the attached object is invalidated.
      * Such as a Entity/TileEntity being removed from world.
      * All attached providers should invalidate all of their held capability instances.
      */

@@ -21,7 +21,6 @@ package net.minecraftforge.fml.client.gui;
 
 import static net.minecraft.util.StringUtils.stripControlCodes;
 
-import java.awt.Dimension;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -58,6 +57,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.Size2i;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.MavenVersionStringHelper;
 import net.minecraftforge.fml.ModContainer;
@@ -184,10 +184,10 @@ public class GuiModList extends GuiScreen
         class Info extends GuiListExtended.IGuiListEntry<Info>
         {
             private ResourceLocation logoPath;
-            private Dimension logoDims;
+            private Size2i logoDims;
             private List<ITextComponent> lines;
 
-            public Info(GuiListExtended<Info> parent, List<String> lines, @Nullable ResourceLocation logoPath, Dimension logoDims)
+            public Info(GuiListExtended<Info> parent, List<String> lines, @Nullable ResourceLocation logoPath, Size2i logoDims)
             {
                 this.list = parent;
                 this.lines    = resizeContent(lines);
@@ -439,7 +439,7 @@ public class GuiModList extends GuiScreen
         List<String> lines = new ArrayList<>();
         VersionChecker.CheckResult vercheck = VersionChecker.getResult(selectedMod);
 
-        Pair<ResourceLocation, Dimension> logoData = selectedMod.getLogoFile().map(logoFile->
+        Pair<ResourceLocation, Size2i> logoData = selectedMod.getLogoFile().map(logoFile->
         {
             TextureManager tm = mc.getTextureManager();
             final ModFileResourcePack resourcePack = ResourcePackLoader.getResourcePackFor(selectedMod.getModId())
@@ -453,12 +453,12 @@ public class GuiModList extends GuiScreen
                     logo = NativeImage.read(logoResource);
                 if (logo != null)
                 {
-                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Dimension(logo.getWidth(), logo.getHeight()));
+                    return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Size2i(logo.getWidth(), logo.getHeight()));
                 }
             }
             catch (IOException e) { }
-            return Pair.<ResourceLocation, Dimension>of(null, new Dimension(0, 0));
-        }).orElse(Pair.of(null, new Dimension(0, 0)));
+            return Pair.<ResourceLocation, Size2i>of(null, new Size2i(0, 0));
+        }).orElse(Pair.of(null, new Size2i(0, 0)));
 
         lines.add(selectedMod.getDisplayName());
         lines.add(ForgeI18n.parseMessage("fml.menu.mods.info.version", MavenVersionStringHelper.artifactVersionToString(selectedMod.getVersion())));

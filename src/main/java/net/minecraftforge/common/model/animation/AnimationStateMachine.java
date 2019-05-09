@@ -93,12 +93,6 @@ public final class AnimationStateMachine implements IAnimationStateMachine
             }
         });
 
-    @Deprecated
-    public AnimationStateMachine(ImmutableMap<String, ITimeValue> parameters, ImmutableMap<String, IClip> clips, ImmutableList<String> states, ImmutableMap<String, String> transitions, String startState)
-    {
-        this(parameters, clips, states, ImmutableMultimap.copyOf(Multimaps.newSetMultimap(Maps.transformValues(transitions, ImmutableSet::of), Sets::newHashSet)), startState);
-    }
-
     public AnimationStateMachine(ImmutableMap<String, ITimeValue> parameters, ImmutableMap<String, IClip> clips, ImmutableList<String> states, ImmutableMultimap<String, String> transitions, String startState)
     {
         this.parameters = parameters;

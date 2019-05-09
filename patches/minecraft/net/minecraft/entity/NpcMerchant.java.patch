@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/NpcMerchant.java
++++ b/net/minecraft/entity/NpcMerchant.java
+@@ -36,7 +36,7 @@
+ 
+    @Nullable
+    public MerchantRecipeList func_70934_b(EntityPlayer p_70934_1_) {
+-      return this.field_70936_c;
++      return net.minecraftforge.event.ForgeEventFactory.listTradeOffers(this, p_70934_1_, this.field_70936_c);
+    }
+ 
+    public void func_70930_a(@Nullable MerchantRecipeList p_70930_1_) {

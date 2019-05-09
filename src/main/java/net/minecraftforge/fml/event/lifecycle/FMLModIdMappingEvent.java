@@ -39,8 +39,7 @@ import net.minecraft.util.ResourceLocation;
  * this event to update caches or other in-mod artifacts that might be impacted by an ID
  * change.
  *
- * @see net.minecraftforge.fml.common.Mod.EventHandler for how to subscribe to this event
- * @author cpw
+ * Fired on the {@link net.minecraftforge.common.MinecraftForge#EVENT_BUS}
  */
 public class FMLModIdMappingEvent extends ModLifecycleEvent
 {

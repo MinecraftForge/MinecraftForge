@@ -465,10 +465,15 @@ public interface IForgeBlock
      */
     default boolean canPlaceTorchOnTop(IBlockState state, IWorldReaderBase world, BlockPos pos)
     {
-        if (state.isTopSolid() || state.getBlockFaceShape(world, pos, EnumFacing.UP) == BlockFaceShape.SOLID)
-            return this.getBlock() != Blocks.END_GATEWAY;
-        else
-            return this.getBlock() instanceof BlockFence || this.getBlock() instanceof BlockStainedGlass || this.getBlock() == Blocks.GLASS || this.getBlock() == Blocks.COBBLESTONE_WALL || this.getBlock() == Blocks.MOSSY_COBBLESTONE_WALL;
+        // Keep conditionals in sync with BlockTorch#isValidPosition
+        if (this == Blocks.END_GATEWAY) {
+            return false;
+        } else if (this instanceof BlockFence || this instanceof BlockStainedGlass || this == Blocks.GLASS || this == Blocks.COBBLESTONE_WALL || this == Blocks.MOSSY_COBBLESTONE_WALL || state.isTopSolid()) {
+            return true;
+        } else {
+            BlockFaceShape shape = state.getBlockFaceShape(world, pos, EnumFacing.UP);
+            return (shape == BlockFaceShape.SOLID || shape == BlockFaceShape.CENTER || shape == BlockFaceShape.CENTER_BIG) && !Block.isExceptionBlockForAttaching(getBlock());
+        }
     }
 
     /**
@@ -920,7 +925,7 @@ public interface IForgeBlock
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(IBlockState state, IBlockReader world, BlockPos pos)
+    default PathNodeType getAiPathNodeType(IBlockState state, IBlockReader world, BlockPos pos, @Nullable EntityLiving entity)
     {
         return state.isBurning(world, pos) ? PathNodeType.DAMAGE_FIRE : null;
     }

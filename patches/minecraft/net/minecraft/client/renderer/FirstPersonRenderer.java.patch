@@ -1,5 +1,14 @@
 --- a/net/minecraft/client/renderer/FirstPersonRenderer.java
 +++ b/net/minecraft/client/renderer/FirstPersonRenderer.java
+@@ -273,7 +273,7 @@
+       boolean flag1 = true;
+       if (abstractclientplayer.func_184587_cr()) {
+          ItemStack itemstack = abstractclientplayer.func_184607_cu();
+-         if (itemstack.func_77973_b() == Items.field_151031_f) {
++         if (itemstack.func_77973_b() instanceof net.minecraft.item.ItemBow) {
+             flag = abstractclientplayer.func_184600_cs() == EnumHand.MAIN_HAND;
+             flag1 = !flag;
+          }
 @@ -286,12 +286,14 @@
        if (flag) {
           float f4 = enumhand == EnumHand.MAIN_HAND ? f : 0.0F;

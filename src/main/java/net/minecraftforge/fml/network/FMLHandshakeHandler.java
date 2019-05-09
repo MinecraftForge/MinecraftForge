@@ -19,14 +19,17 @@
 
 package net.minecraftforge.fml.network;
 
+import com.google.common.collect.Multimap;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.NetHandlerLoginServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.config.ConfigTracker;
+import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -40,6 +43,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
@@ -114,11 +119,14 @@ public class FMLHandshakeHandler {
     {
         this.direction = side;
         this.manager = networkManager;
-        if (NetworkHooks.getConnectionType(()->this.manager)==ConnectionType.VANILLA) {
+        if (networkManager.isLocalChannel()) {
+            this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction, true);
+            LOGGER.debug(FMLHSMARKER, "Starting local connection.");
+        } else if (NetworkHooks.getConnectionType(()->this.manager)==ConnectionType.VANILLA) {
             this.messageList = Collections.emptyList();
             LOGGER.debug(FMLHSMARKER, "Starting new vanilla network connection.");
         } else {
-            this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction);
+            this.messageList = NetworkRegistry.gatherLoginPayloads(this.direction, false);
             LOGGER.debug(FMLHSMARKER, "Starting new modded network connection. Found {} messages to dispatch.", this.messageList.size());
         }
     }
@@ -170,13 +178,48 @@ public class FMLHandshakeHandler {
         LOGGER.debug(FMLHSMARKER,"Received registry packet for {}", registryPacket.getRegistryName());
         this.registriesToReceive.remove(registryPacket.getRegistryName());
         this.registrySnapshots.put(registryPacket.getRegistryName(), registryPacket.getSnapshot());
-        contextSupplier.get().setPacketHandled(true);
-        FMLNetworkConstants.handshakeChannel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
 
+        boolean continueHandshake = true;
         if (this.registriesToReceive.isEmpty()) {
-          //TODO: @cpw injectSnapshot Needs to be on the world thread. And maybe block the network/login so we don't get world data before we finish?
-          registrySnapshots = null;
+            continueHandshake = handleRegistryLoading(contextSupplier);
         }
+        // The handshake reply isn't sent until we have processed the message
+        contextSupplier.get().setPacketHandled(true);
+        if (!continueHandshake) {
+            LOGGER.error(FMLHSMARKER, "Connection closed, not continuing handshake");
+        } else {
+            FMLNetworkConstants.handshakeChannel.reply(new FMLHandshakeMessages.C2SAcknowledge(), contextSupplier.get());
+        }
+    }
+
+    private boolean handleRegistryLoading(final Supplier<NetworkEvent.Context> contextSupplier) {
+        // We use a countdown latch to suspend the network thread pending the client thread processing the registry data
+        AtomicBoolean successfulConnection = new AtomicBoolean(false);
+        CountDownLatch block = new CountDownLatch(1);
+        contextSupplier.get().enqueueWork(() -> {
+            LOGGER.debug(FMLHSMARKER, "Injecting registry snapshot from server.");
+            final Multimap<ResourceLocation, ResourceLocation> missingData = GameData.injectSnapshot(registrySnapshots, false, false);
+            LOGGER.debug(FMLHSMARKER, "Snapshot injected.");
+            if (!missingData.isEmpty()) {
+                LOGGER.error(FMLHSMARKER, "Missing registry data for network connection:\n{}", new AdvancedLogMessageAdapter(sb->
+                        missingData.forEach((reg, entry)-> sb.append("\t").append(reg).append(": ").append(entry).append('\n'))));
+            }
+            successfulConnection.set(missingData.isEmpty());
+            block.countDown();
+        });
+        LOGGER.debug(FMLHSMARKER, "Waiting for registries to load.");
+        try {
+            block.await();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        }
+        if (successfulConnection.get()) {
+            LOGGER.debug(FMLHSMARKER, "Registry load complete, continuing handshake.");
+        } else {
+            LOGGER.error(FMLHSMARKER, "Failed to load registry, closing connection.");
+            this.manager.closeChannel(new TextComponentString("Failed to synchronize registry data from server, closing connection"));
+        }
+        return successfulConnection.get();
     }
 
     void handleClientAck(final FMLHandshakeMessages.C2SAcknowledge msg, final Supplier<NetworkEvent.Context> contextSupplier) {

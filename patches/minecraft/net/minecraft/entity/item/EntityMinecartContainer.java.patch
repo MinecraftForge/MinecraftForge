@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/EntityMinecartContainer.java
 +++ b/net/minecraft/entity/item/EntityMinecartContainer.java
-@@ -120,10 +120,11 @@
+@@ -120,18 +120,26 @@
        return 64;
     }
  
@@ -14,15 +14,23 @@
     }
  
     public void func_70106_y() {
-@@ -132,6 +133,7 @@
++      super.func_70106_y();
++   }
++
++   @Override
++   public void remove(boolean keepData) {
+       if (this.field_94112_b) {
+          InventoryHelper.func_180176_a(this.field_70170_p, this, this);
        }
  
-       super.func_70106_y();
-+      itemHandler.invalidate();
+-      super.func_70106_y();
++      super.remove(keepData);
++      if (!keepData)
++         itemHandler.invalidate();
     }
  
     public void func_184174_b(boolean p_184174_1_) {
-@@ -164,6 +166,7 @@
+@@ -164,6 +172,7 @@
     }
  
     public boolean func_184230_a(EntityPlayer p_184230_1_, EnumHand p_184230_2_) {
@@ -30,7 +38,7 @@
        if (!this.field_70170_p.field_72995_K) {
           p_184230_1_.func_71007_a(this);
        }
-@@ -216,9 +219,9 @@
+@@ -216,9 +225,9 @@
              random = new Random(this.field_184291_d);
           }
  
@@ -42,7 +50,7 @@
           }
  
           loottable.func_186460_a(this, random, lootcontext$builder.func_186471_a());
-@@ -239,4 +242,13 @@
+@@ -239,4 +248,13 @@
     public ResourceLocation func_184276_b() {
        return this.field_184290_c;
     }
@@ -51,7 +59,7 @@
 +
 +   @Override
 +   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing) {
-+      if (!this.field_70128_L && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
++      if (this.func_70089_S() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
 +         return itemHandler.cast();
 +      return super.getCapability(capability, facing);
 +   }

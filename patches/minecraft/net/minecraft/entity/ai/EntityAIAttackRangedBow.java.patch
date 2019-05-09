@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/EntityAIAttackRangedBow.java
++++ b/net/minecraft/entity/ai/EntityAIAttackRangedBow.java
+@@ -35,7 +35,7 @@
+    }
+ 
+    protected boolean func_188498_f() {
+-      return !this.field_188499_a.func_184614_ca().func_190926_b() && this.field_188499_a.func_184614_ca().func_77973_b() == Items.field_151031_f;
++      return !this.field_188499_a.func_184614_ca().func_190926_b() && this.field_188499_a.func_184614_ca().func_77973_b() instanceof net.minecraft.item.ItemBow;
+    }
+ 
+    public boolean func_75253_b() {

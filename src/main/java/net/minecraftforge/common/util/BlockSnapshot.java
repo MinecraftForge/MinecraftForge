@@ -28,6 +28,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
@@ -133,7 +135,7 @@ public class BlockSnapshot
         World world = this.world != null ? this.world.get() : null;
         if (world == null)
         {
-            world = null; // TODO Server static access? FMLCommonHandler.instance().getMinecraftServerInstance().getWorld(getDimId());
+            world = ServerLifecycleHooks.getCurrentServer().getWorld(DimensionType.getById(getDimId()));
             this.world = new WeakReference<World>(world);
         }
         return world;
@@ -174,11 +176,13 @@ public class BlockSnapshot
         IBlockState current = getCurrentBlock();
         IBlockState replaced = getReplacedBlock();
 
+        int flags = notifyNeighbors ? Constants.BlockFlags.DEFAULT : Constants.BlockFlags.NOTIFY_LISTENERS;
+
         if (current != replaced)
         {
             if (force)
             {
-                world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
+                world.setBlockState(pos, replaced, flags);
             }
             else
             {
@@ -186,8 +190,8 @@ public class BlockSnapshot
             }
         }
 
-        world.setBlockState(pos, replaced, notifyNeighbors ? 3 : 2);
-        world.notifyBlockUpdate(pos, current, replaced, notifyNeighbors ? 3 : 2);
+        world.setBlockState(pos, replaced, flags);
+        world.notifyBlockUpdate(pos, current, replaced, flags);
 
         TileEntity te = null;
         if (getNbt() != null)

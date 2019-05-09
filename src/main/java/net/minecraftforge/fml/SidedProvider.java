@@ -48,8 +48,8 @@ public enum SidedProvider
             ()-> str->str),
     @SuppressWarnings("Convert2MethodRef") // need to not be methodrefs to avoid classloading all of StartupQuery's data (supplier is coming from StartupQuery)
     STARTUPQUERY(
-            c->StartupQuery.QueryWrapper.clientQuery(c),
-            s->StartupQuery.QueryWrapper.dedicatedServerQuery(s),
+            c->StartupQuery.QueryWrapperClient.clientQuery(c),
+            s->StartupQuery.QueryWrapperServer.dedicatedServerQuery(s),
             ()-> { throw new UnsupportedOperationException(); });
 
     private static Supplier<Minecraft> client;

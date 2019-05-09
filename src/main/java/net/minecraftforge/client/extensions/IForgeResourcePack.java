@@ -17,11 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fml.common.gameevent;
+package net.minecraftforge.client.extensions;
 
-import net.minecraftforge.eventbus.api.Event;
-
-public class InputEvent extends Event {
-    public static class MouseInputEvent extends InputEvent {}
-    public static class KeyInputEvent extends InputEvent {}
+public interface IForgeResourcePack
+{
+    default boolean isHidden()
+    {
+        return false;
+    }
 }

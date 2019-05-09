@@ -173,10 +173,10 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
      * Override instead of
      * {@link Entity#changeDimension(DimensionType, ITeleporter)} if your entity
      * needs special handling for specific teleporters.
-     * 
+     *
      * @param type The target dimension
      * @param teleporter The teleporter being used to move the entity to the dimension
-     * @return The entity to be placed in the target dimension. {@code null} if the entity should despawn. 
+     * @return The entity to be placed in the target dimension. {@code null} if the entity should despawn.
      */
     @Nullable
     Entity changeDimension(DimensionType type, ITeleporter teleporter);
@@ -225,4 +225,11 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
      * to prevent MC-136995.
      */
     void onRemovedFromWorld();
+
+    /**
+     * Revives an entity that has been removed from a world.
+     * Used as replacement for entity.removed = true. Having it as a function allows
+     * the entity to react to being revived.
+     */
+    void revive();
 }

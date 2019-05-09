@@ -30,6 +30,7 @@ public enum ConnectionType
     ConnectionType(Function<String, Integer> versionExtractor) {
         this.versionExtractor = versionExtractor;
     }
+
     public static ConnectionType forVersionFlag(String vers)
     {
         return vers.startsWith(FMLNetworkConstants.FMLNETMARKER) ? MODDED : VANILLA;

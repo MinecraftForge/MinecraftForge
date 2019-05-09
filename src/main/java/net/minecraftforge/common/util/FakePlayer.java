@@ -19,12 +19,15 @@
 
 package net.minecraftforge.common.util;
 
+import javax.annotation.Nullable;
+
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.client.CPacketClientSettings;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.stats.Stat;
 import net.minecraft.util.DamageSource;
@@ -32,6 +35,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 
 //Preliminary, simple Fake Player class
 public class FakePlayer extends EntityPlayerMP
@@ -52,4 +56,5 @@ public class FakePlayer extends EntityPlayerMP
     @Override public void tick(){ return; }
     @Override public Entity changeDimension(DimensionType dim, ITeleporter teleporter){ return this; }
     @Override public void handleClientSettings(CPacketClientSettings pkt){ return; }
+    @Override @Nullable public MinecraftServer getServer() { return ServerLifecycleHooks.getCurrentServer(); }
 }

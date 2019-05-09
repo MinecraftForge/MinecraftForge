@@ -1,0 +1,32 @@
+--- a/net/minecraft/client/resources/ResourcePackInfoClient.java
++++ b/net/minecraft/client/resources/ResourcePackInfoClient.java
+@@ -23,8 +23,13 @@
+    @Nullable
+    private ResourceLocation field_195810_b;
+ 
++   @Deprecated
+    public ResourcePackInfoClient(String p_i48113_1_, boolean p_i48113_2_, Supplier<IResourcePack> p_i48113_3_, IResourcePack p_i48113_4_, PackMetadataSection p_i48113_5_, ResourcePackInfo.Priority p_i48113_6_) {
+-      super(p_i48113_1_, p_i48113_2_, p_i48113_3_, p_i48113_4_, p_i48113_5_, p_i48113_6_);
++	  this(p_i48113_1_, p_i48113_2_, p_i48113_3_, p_i48113_4_, p_i48113_5_, p_i48113_6_, false);
++   }
++
++   public ResourcePackInfoClient(String p_i48113_1_, boolean p_i48113_2_, Supplier<IResourcePack> p_i48113_3_, IResourcePack p_i48113_4_, PackMetadataSection p_i48113_5_, ResourcePackInfo.Priority p_i48113_6_, boolean hidden) {
++      super(p_i48113_1_, p_i48113_2_, p_i48113_3_, p_i48113_4_, p_i48113_5_, p_i48113_6_, hidden);
+       NativeImage nativeimage = null;
+ 
+       try (InputStream inputstream = p_i48113_4_.func_195763_b("pack.png")) {
+@@ -36,8 +41,13 @@
+       this.field_195809_a = nativeimage;
+    }
+ 
++   @Deprecated
+    public ResourcePackInfoClient(String p_i48114_1_, boolean p_i48114_2_, Supplier<IResourcePack> p_i48114_3_, ITextComponent p_i48114_4_, ITextComponent p_i48114_5_, PackCompatibility p_i48114_6_, ResourcePackInfo.Priority p_i48114_7_, boolean p_i48114_8_, @Nullable NativeImage p_i48114_9_) {
+-      super(p_i48114_1_, p_i48114_2_, p_i48114_3_, p_i48114_4_, p_i48114_5_, p_i48114_6_, p_i48114_7_, p_i48114_8_);
++      this(p_i48114_1_, p_i48114_2_, p_i48114_3_, p_i48114_4_, p_i48114_5_, p_i48114_6_, p_i48114_7_, p_i48114_8_, p_i48114_9_, false);
++   }
++
++   public ResourcePackInfoClient(String p_i48114_1_, boolean p_i48114_2_, Supplier<IResourcePack> p_i48114_3_, ITextComponent p_i48114_4_, ITextComponent p_i48114_5_, PackCompatibility p_i48114_6_, ResourcePackInfo.Priority p_i48114_7_, boolean p_i48114_8_, @Nullable NativeImage p_i48114_9_, boolean hidden) {
++      super(p_i48114_1_, p_i48114_2_, p_i48114_3_, p_i48114_4_, p_i48114_5_, p_i48114_6_, p_i48114_7_, p_i48114_8_, hidden);
+       this.field_195809_a = p_i48114_9_;
+    }
+ 

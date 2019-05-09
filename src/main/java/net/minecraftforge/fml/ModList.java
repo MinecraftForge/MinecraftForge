@@ -183,4 +183,8 @@ public class ModList
     {
         modFiles.stream().map(ModFileInfo::getFile).forEach(fileConsumer);
     }
+
+    public void forEachModContainer(BiConsumer<String, ModContainer> modContainerConsumer) {
+        indexedMods.forEach(modContainerConsumer);
+    }
 }

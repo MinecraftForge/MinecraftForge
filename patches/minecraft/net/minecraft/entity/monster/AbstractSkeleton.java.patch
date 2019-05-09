@@ -1,0 +1,20 @@
+--- a/net/minecraft/entity/monster/AbstractSkeleton.java
++++ b/net/minecraft/entity/monster/AbstractSkeleton.java
+@@ -161,7 +161,7 @@
+          this.field_70714_bg.func_85156_a(this.field_85038_e);
+          this.field_70714_bg.func_85156_a(this.field_85037_d);
+          ItemStack itemstack = this.func_184614_ca();
+-         if (itemstack.func_77973_b() == Items.field_151031_f) {
++         if (itemstack.func_77973_b() instanceof net.minecraft.item.ItemBow) {
+             int i = 20;
+             if (this.field_70170_p.func_175659_aa() != EnumDifficulty.HARD) {
+                i = 40;
+@@ -178,6 +178,8 @@
+ 
+    public void func_82196_d(EntityLivingBase p_82196_1_, float p_82196_2_) {
+       EntityArrow entityarrow = this.func_190726_a(p_82196_2_);
++      if (this.func_184614_ca().func_77973_b() instanceof net.minecraft.item.ItemBow)
++         entityarrow = ((net.minecraft.item.ItemBow) this.func_184614_ca().func_77973_b()).customizeArrow(entityarrow);
+       double d0 = p_82196_1_.field_70165_t - this.field_70165_t;
+       double d1 = p_82196_1_.func_174813_aQ().field_72338_b + (double)(p_82196_1_.field_70131_O / 3.0F) - entityarrow.field_70163_u;
+       double d2 = p_82196_1_.field_70161_v - this.field_70161_v;

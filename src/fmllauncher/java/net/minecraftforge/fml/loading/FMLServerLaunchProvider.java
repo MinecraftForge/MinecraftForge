@@ -19,7 +19,6 @@
 
 package net.minecraftforge.fml.loading;
 
-import com.google.common.collect.ObjectArrays;
 import cpw.mods.modlauncher.api.IEnvironment;
 import cpw.mods.modlauncher.api.ILaunchHandlerService;
 import cpw.mods.modlauncher.api.ITransformingClassLoader;
@@ -27,7 +26,6 @@ import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,4 +72,10 @@ public class FMLServerLaunchProvider extends FMLCommonLaunchHandler implements I
     {
         return Dist.DEDICATED_SERVER;
     }
+
+    @Override
+    protected String getNaming() {
+        return "srg";
+    }
+
 }

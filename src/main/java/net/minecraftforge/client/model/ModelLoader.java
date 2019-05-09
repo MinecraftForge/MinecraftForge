@@ -19,9 +19,6 @@
 
 package net.minecraftforge.client.model;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -463,7 +460,7 @@ public final class ModelLoader extends ModelBakery
             Map<TransformType, TRSRTransformation> tMap = Maps.newEnumMap(TransformType.class);
             tMap.putAll(PerspectiveMapWrapper.getTransforms(transforms));
             tMap.putAll(PerspectiveMapWrapper.getTransforms(state));
-            IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap));
+            IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap), state.apply(Optional.empty()));
 
             if(model == ModelBakery.MODEL_GENERATED)
             {

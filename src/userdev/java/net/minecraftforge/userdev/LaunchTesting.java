@@ -31,13 +31,13 @@ import java.lang.reflect.Field;
 import java.net.Proxy;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class LaunchTesting
 {
-    private static final Logger LOGGER = LogManager.getLogger();
-
     public static void main(String... args) throws InterruptedException
     {
         final String markerselection = System.getProperty("forge.logging.markers", "");
@@ -71,7 +71,18 @@ public class LaunchTesting
 
             if (!lst.hasValue("accessToken")) {
                 if (!login(lst)) {
-                    lst.putLazy("username", "Test");
+                    String username = lst.get("username");
+                    if (username != null) { // Replace '#' placeholders with random numbers
+                        Matcher m = Pattern.compile("#+").matcher(username);
+                        StringBuffer replaced = new StringBuffer();
+                        while (m.find()) {
+                            m.appendReplacement(replaced, getRandomNumbers(m.group().length()));
+                        }
+                        m.appendTail(replaced);
+                        lst.put("username", replaced.toString());
+                    } else {
+                        lst.putLazy("username", "Dev");
+                    }
                     lst.put("accessToken", "DONT_CRASH");
                     lst.put("userProperties", "{}");
                 }
@@ -86,6 +97,11 @@ public class LaunchTesting
 
         Launcher.main(lst.getArguments());
         Thread.sleep(10000);// Why do we have this? -Lex 03/06/19
+    }
+
+    private static String getRandomNumbers(int length)
+    {   // Generate a time-based random number, to mimic how n.m.client.Main works
+        return Long.toString(System.nanoTime() % (int) Math.pow(10, length));
     }
 
     private static void hackNatives()
@@ -130,7 +146,7 @@ public class LaunchTesting
         try {
             auth.logIn();
         } catch (AuthenticationException e) {
-            LOGGER.error("Login failed!", e);
+            LogManager.getLogger().error("Login failed!", e);
             throw new RuntimeException(e); // don't set other variables
         }
 

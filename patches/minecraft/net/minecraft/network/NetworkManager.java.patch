@@ -1,14 +1,40 @@
 --- a/net/minecraft/network/NetworkManager.java
 +++ b/net/minecraft/network/NetworkManager.java
-@@ -264,6 +264,7 @@
+@@ -75,6 +75,7 @@
+    private float field_211397_t;
+    private int field_211398_u;
+    private boolean field_211399_v;
++   private java.util.function.Consumer<NetworkManager> activationHandler;
+ 
+    public NetworkManager(EnumPacketDirection p_i46004_1_) {
+       this.field_179294_g = p_i46004_1_;
+@@ -84,6 +85,7 @@
+       super.channelActive(p_channelActive_1_);
+       this.field_150746_k = p_channelActive_1_.channel();
+       this.field_150743_l = this.field_150746_k.remoteAddress();
++      if (activationHandler != null) activationHandler.accept(this);
+ 
+       try {
+          this.func_150723_a(EnumConnectionState.HANDSHAKING);
+@@ -264,7 +266,9 @@
  
     @OnlyIn(Dist.CLIENT)
     public static NetworkManager func_181124_a(InetAddress p_181124_0_, int p_181124_1_, boolean p_181124_2_) {
 +      if (p_181124_0_ instanceof java.net.Inet6Address) System.setProperty("java.net.preferIPv4Stack", "false");
        final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
++      networkmanager.activationHandler = net.minecraftforge.fml.network.NetworkHooks::registerClientLoginChannel;
        Class<? extends SocketChannel> oclass;
        LazyLoadBase<? extends EventLoopGroup> lazyloadbase;
-@@ -383,6 +384,14 @@
+       if (Epoll.isAvailable() && p_181124_2_) {
+@@ -292,6 +296,7 @@
+    @OnlyIn(Dist.CLIENT)
+    public static NetworkManager func_150722_a(SocketAddress p_150722_0_) {
+       final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
++      networkmanager.activationHandler = net.minecraftforge.fml.network.NetworkHooks::registerClientLoginChannel;
+       (new Bootstrap()).group(field_179296_e.func_179281_c()).handler(new ChannelInitializer<Channel>() {
+          protected void initChannel(Channel p_initChannel_1_) throws Exception {
+             p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
+@@ -383,6 +388,14 @@
        return this.field_211397_t;
     }
  

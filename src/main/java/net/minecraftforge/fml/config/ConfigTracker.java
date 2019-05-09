@@ -79,7 +79,7 @@ public class ConfigTracker {
         this.configSets.get(type).forEach(config -> openConfig(config, configBasePath));
     }
 
-    public List<Pair<String, FMLHandshakeMessages.S2CConfigData>> syncConfigs() {
+    public List<Pair<String, FMLHandshakeMessages.S2CConfigData>> syncConfigs(boolean isLocal) {
         final Map<String, byte[]> configData = configSets.get(ModConfig.Type.SERVER).stream().collect(Collectors.toMap(ModConfig::getFileName, mc -> { //TODO: Test cpw's LambdaExceptionUtils on Oracle javac.
             try {
                 return Files.readAllBytes(mc.getFullPath());
