@@ -54,13 +54,13 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.*;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.common.property.Properties;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -1255,36 +1255,7 @@ public class OBJModel implements IUnbakedModel
         }
     }
 
-    @Deprecated
-    public enum OBJProperty implements IUnlistedProperty<OBJState>
-    {
-        INSTANCE;
-        @Override
-        public String getName()
-        {
-            return "OBJProperty";
-        }
-
-        @Override
-        public boolean isValid(OBJState value)
-        {
-            return value instanceof OBJState;
-        }
-
-        @Override
-        public Class<OBJState> getType()
-        {
-            return OBJState.class;
-        }
-
-        @Override
-        public String valueToString(OBJState value)
-        {
-            return value.toString();
-        }
-    }
-
-    public class OBJBakedModel implements IBakedModel
+    public class OBJBakedModel implements IDynamicBakedModel
     {
         private final OBJModel model;
         private IModelState state;
@@ -1308,26 +1279,18 @@ public class OBJModel implements IUnbakedModel
 
         // FIXME: merge with getQuads
         @Override
-        public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, Random rand, IModelData modelData)
         {
             if (side != null) return ImmutableList.of();
             if (quads == null)
             {
                 quads = buildQuads(this.state);
             }
-            if (blockState instanceof IExtendedBlockState)
+            IModelState newState = modelData.getData(Properties.AnimationProperty);
+            if (newState != null)
             {
-                IExtendedBlockState exState = (IExtendedBlockState) blockState;
-                if (exState.getUnlistedNames().contains(Properties.AnimationProperty))
-                {
-
-                    IModelState newState = exState.getValue(Properties.AnimationProperty);
-                    if (newState != null)
-                    {
-                        newState = new ModelStateComposition(this.state, newState);
-                        return buildQuads(newState);
-                    }
-                }
+                newState = new ModelStateComposition(this.state, newState);
+                return buildQuads(newState);
             }
             return quads;
         }
