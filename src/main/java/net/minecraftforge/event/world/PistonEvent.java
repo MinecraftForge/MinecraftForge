@@ -42,7 +42,7 @@ public class PistonEvent extends BlockEvent
     }
 
     /**
-     * Fired when a piston extends at any point, only once per extension.
+     * Fired when a piston extends at any point, only once per extension. (This includes indirect extension movement, it still fires once)
      * Canceling prevents extension.
      */
     @Cancelable
@@ -55,7 +55,7 @@ public class PistonEvent extends BlockEvent
     }
 
     /**
-     * Fired when a piston retracts at any point, only once retraction.
+     * Fired when a piston retracts at any point, only once per retraction. (This includes indirect retraction movement, it still fires once)
      * Canceling prevents retraction.
      */
     @Cancelable
