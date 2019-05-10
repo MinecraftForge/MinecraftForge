@@ -72,7 +72,8 @@ public class PistonEvent extends BlockEvent
     }
 
     /**
-     * @return A piston structure helper for this movement. This is equivalent to <code>new BlockPistonStructureHelper(this.getWorld(), this.getPos(), this.getFacing(), this.getDirection().isExtend)</code>
+     * @return A piston structure helper for this movement. This is equivalent to
+     *         <code>new BlockPistonStructureHelper(this.getWorld(), this.getPos(), this.getFacing(), this.getDirection().isExtend)</code>
      */
     public BlockPistonStructureHelper getStructureHelper()
     {
@@ -108,12 +109,12 @@ public class PistonEvent extends BlockEvent
 
     public static enum PistonMoveDirection
     {
-        EXTEND(true),
-        RETRACT(false);
+        EXTEND(true), RETRACT(false);
 
         public final boolean isExtend;
 
-        PistonMoveDirection(boolean isExtend) {
+        PistonMoveDirection(boolean isExtend)
+        {
             this.isExtend = isExtend;
         }
     }

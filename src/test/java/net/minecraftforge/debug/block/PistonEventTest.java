@@ -51,7 +51,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 @Mod.EventBusSubscriber(modid = PistonEventTest.MODID)
 @Mod(modid = PistonEventTest.MODID)
-public class PistonEventTest {
+public class PistonEventTest
+{
 
     public static final String MODID = "pistoneventtest";
 
@@ -71,15 +72,15 @@ public class PistonEventTest {
 
     @SubscribeEvent
     public static void pistonPre(PistonEvent.Pre event)
-    {   
-        if(event.getDirection() == PistonMoveDirection.EXTEND)
+    {
+        if (event.getDirection() == PistonMoveDirection.EXTEND)
         {
             World world = event.getWorld();
             BlockPistonStructureHelper pistonHelper = event.getStructureHelper();
             if (world.isRemote)
             {
                 EntityPlayer player = Minecraft.getMinecraft().player;
-                if (pistonHelper.canMove()) 
+                if (pistonHelper.canMove())
                 {
                     player.sendMessage(new TextComponentString(String.format("Piston will extend moving %d blocks and destroy %d blocks", pistonHelper.getBlocksToMove().size(), pistonHelper.getBlocksToDestroy().size())));
                 }
@@ -89,13 +90,13 @@ public class PistonEventTest {
                 }
             }
 
-            if(pistonHelper.canMove())
+            if (pistonHelper.canMove())
             {
                 List<BlockPos> posList = pistonHelper.getBlocksToMove();
-                for(BlockPos newPos : posList)
+                for (BlockPos newPos : posList)
                 {
                     IBlockState state = event.getWorld().getBlockState(newPos);
-                    if(state.getBlock() == Blocks.WOOL)
+                    if (state.getBlock() == Blocks.WOOL)
                     {
                         state.getBlock().dropBlockAsItem(world, newPos, state, 0);
                         world.setBlockToAir(newPos);
@@ -110,7 +111,7 @@ public class PistonEventTest {
                 world.setBlockToAir(pushedBlockPos);
                 world.setBlockState(pushedBlockPos.up(), shiftOnMove.getDefaultState());
             }
-            
+
             // Block pushing cobblestone (directly, indirectly works)
             event.setCanceled(event.getWorld().getBlockState(event.getFaceOffsetPos()).getBlock() == Blocks.COBBLESTONE);
         }

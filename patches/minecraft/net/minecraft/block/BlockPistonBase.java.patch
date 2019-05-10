@@ -4,7 +4,7 @@
  
          if (p_189539_4_ == 0)
          {
-+            if(net.minecraftforge.event.ForgeEventFactory.onPistonExtend(p_189539_2_, p_189539_3_, enumfacing)) return false;
++            if(net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_189539_2_, p_189539_3_, enumfacing, true)) return false;
              if (!this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, true))
              {
                  return false;
@@ -12,7 +12,7 @@
          }
          else if (p_189539_4_ == 1)
          {
-+            if(net.minecraftforge.event.ForgeEventFactory.onPistonRetract(p_189539_2_, p_189539_3_, enumfacing)) return false;
++            if(net.minecraftforge.event.ForgeEventFactory.onPistonMovePre(p_189539_2_, p_189539_3_, enumfacing, false)) return false;
              TileEntity tileentity1 = p_189539_2_.func_175625_s(p_189539_3_.func_177972_a(enumfacing));
  
              if (tileentity1 instanceof TileEntityPiston)
@@ -45,6 +45,15 @@
                  p_176319_1_.func_180501_a(blockpos1, Blocks.field_150350_a.func_176223_P(), 4);
                  --k;
                  aiblockstate[k] = iblockstate;
+@@ -396,7 +400,7 @@
+             {
+                 p_176319_1_.func_175685_c(blockpos2, Blocks.field_150332_K, false);
+             }
+-
++            net.minecraftforge.event.ForgeEventFactory.onPistonMovePost(p_176319_1_, p_176319_2_, p_176319_3_, p_176319_4_);
+             return true;
+         }
+     }
 @@ -434,6 +438,13 @@
          return new BlockStateContainer(this, new IProperty[] {field_176387_N, field_176320_b});
      }
