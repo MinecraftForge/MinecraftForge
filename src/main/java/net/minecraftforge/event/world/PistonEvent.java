@@ -19,6 +19,7 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraft.block.state.BlockPistonStructureHelper;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -71,6 +72,15 @@ public class PistonEvent extends BlockEvent
         {
             super(world, pos, facing);
         }
+        
+        /**
+         * @return A piston structure helper for this extension. This is equivalent to <code>new BlockPistonStructureHelper(this.getWorld(), this.getPos(), this.getFacing(), true)</code>
+         */
+        public BlockPistonStructureHelper getStructureHelper()
+        {
+            return new BlockPistonStructureHelper(this.getWorld(), this.getPos(), this.getFacing(), true);
+        }
+        
     }
 
     /**
@@ -83,6 +93,14 @@ public class PistonEvent extends BlockEvent
         public Retract(World world, BlockPos pos, EnumFacing facing)
         {
             super(world, pos, facing);
+        }
+        
+        /**
+         * @return A piston structure helper for this retraction. This is equivalent to <code>new BlockPistonStructureHelper(this.getWorld(), this.getPos(), this.getFacing(), false)</code>
+         */
+        public BlockPistonStructureHelper getStructureHelper()
+        {
+            return new BlockPistonStructureHelper(this.getWorld(), this.getPos(), this.getFacing(), false);
         }
     }
 }
