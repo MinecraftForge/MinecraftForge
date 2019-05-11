@@ -131,7 +131,7 @@ project(':forge') {
             compileClasspath += sourceSets.fmllauncher.runtimeClasspath
             runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
             java {
-                // srcDir "$rootDir/src/test/java" TODO fix later
+                srcDir "$rootDir/src/test/java"
                 srcDir "$rootDir/src/fmllaunchertest/java"
             }
             resources {
@@ -210,6 +210,17 @@ project(':forge') {
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
             }
 
+            forge_test_client {
+                parent runs.forge_client
+                taskName 'forge_test_client'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    TestMods { sources sourceSets.test }
+                }
+            }
+
             forge_server {
                 taskName 'forge_server'
 
@@ -224,6 +235,17 @@ project(':forge') {
                 environment 'FORGE_SPEC', SPEC_VERSION
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
+            }
+
+            forge_test_server {
+                parent runs.forge_server
+                taskName 'forge_test_server'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    TestMods { sources sourceSets.test }
+                }
             }
         }
     }
