@@ -208,6 +208,11 @@ project(':forge') {
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'terminal.ansi', 'true'
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
             }
 
             forge_test_client {
@@ -235,6 +240,11 @@ project(':forge') {
                 environment 'FORGE_SPEC', SPEC_VERSION
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
             }
 
             forge_test_server {
