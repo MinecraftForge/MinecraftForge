@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 /**
  * Base piston event, use {@link PistonEvent.Post} and {@link PistonEvent.Pre}
  */
-public class PistonEvent extends BlockEvent
+public abstract class PistonEvent extends BlockEvent
 {
 
     private final EnumFacing facing;
