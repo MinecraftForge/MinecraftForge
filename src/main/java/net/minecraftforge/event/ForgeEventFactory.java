@@ -28,6 +28,9 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import com.google.common.collect.Lists;
+
+import net.minecraft.advancements.Advancement;
 import net.minecraft.block.BlockPortal;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -38,16 +41,21 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayer.SleepResult;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.ContainerRepair;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
@@ -61,10 +69,11 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.village.MerchantRecipeList;
-import net.minecraft.village.Village;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
@@ -72,6 +81,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.IChunk;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
@@ -91,21 +101,37 @@ import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityMobGriefingEvent;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
+import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
+import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
+import net.minecraftforge.event.entity.living.LootingLevelEvent;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
+import net.minecraftforge.event.entity.player.AdvancementEvent;
+import net.minecraftforge.event.entity.player.AnvilRepairEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
 import net.minecraftforge.event.entity.player.ArrowNockEvent;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.BonemealEvent;
+import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -113,6 +139,7 @@ import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
 import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerFlyableFallEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerSetSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerSleepInBedEvent;
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
@@ -129,6 +156,7 @@ import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
 import net.minecraftforge.event.world.BlockEvent.NeighborNotifyEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
+import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.event.world.SaplingGrowTreeEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -711,5 +739,256 @@ public class ForgeEventFactory
         MerchantTradeOffersEvent event = new MerchantTradeOffersEvent(merchant, player, dupeList);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getList();
+    }
+
+    public static void onDifficultyChange(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
+    {
+        MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
+    }
+
+    public static void onLivingSetAttackTarget(EntityLivingBase entity, EntityLivingBase target)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
+    }
+
+    public static boolean onLivingUpdate(EntityLivingBase entity)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingEvent.LivingUpdateEvent(entity));
+    }
+
+    public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
+    {
+        return entity instanceof EntityPlayer || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+    }
+
+    public static boolean onPlayerAttack(EntityLivingBase entity, DamageSource src, float amount)
+    {
+        return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
+    }
+
+    public static LivingKnockBackEvent onLivingKnockBack(EntityLivingBase target, Entity attacker, float strength, double ratioX, double ratioZ)
+    {
+        LivingKnockBackEvent event = new LivingKnockBackEvent(target, attacker, strength, ratioX, ratioZ);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event;
+    }
+
+    public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
+    {
+        LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
+    }
+
+    public static float onLivingDamage(EntityLivingBase entity, DamageSource src, float amount)
+    {
+        LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
+        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
+    }
+
+    public static boolean onLivingDeath(EntityLivingBase entity, DamageSource src)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
+    }
+
+    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, Collection<EntityItem> drops, int lootingLevel, boolean recentlyHit)
+    {
+        return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
+    }
+
+    @Nullable
+    public static float[] onLivingFall(EntityLivingBase entity, float distance, float damageMultiplier)
+    {
+        LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
+        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
+    }
+
+    public static int getLootingLevel(EntityLivingBase target, DamageSource cause, int level)
+    {
+        LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
+        MinecraftForge.EVENT_BUS.post(event);
+        return event.getLootingLevel();
+    }
+
+    public static double getPlayerVisibilityDistance(EntityPlayer player, double xzDistance, double maxXZDistance)
+    {
+        PlayerEvent.Visibility event = new PlayerEvent.Visibility(player);
+        MinecraftForge.EVENT_BUS.post(event);
+        double value = event.getVisibilityModifier() * xzDistance;
+        return value >= maxXZDistance ? maxXZDistance : value;
+    }
+
+    public static void onLivingJump(EntityLivingBase entity)
+    {
+        MinecraftForge.EVENT_BUS.post(new LivingEvent.LivingJumpEvent(entity));
+    }
+
+    @Nullable
+    public static EntityItem onPlayerTossEvent(@Nonnull EntityPlayer player, @Nonnull ItemStack item, boolean includeName)
+    {
+        player.captureDrops(Lists.newArrayList());
+        EntityItem ret = player.dropItem(item, false, includeName);
+        player.captureDrops(null);
+
+        if (ret == null)
+            return null;
+
+        ItemTossEvent event = new ItemTossEvent(ret, player);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return null;
+
+        if (!player.world.isRemote)
+            player.getEntityWorld().spawnEntity(event.getEntityItem());
+        return event.getEntityItem();
+    }
+
+    @Nullable
+    public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
+    {
+        ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
+        if (MinecraftForge.EVENT_BUS.post(event))
+        {
+            return null;
+        }
+        return event.getComponent();
+    }
+
+    public static boolean onAnvilChange(ContainerRepair container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
+    {
+        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
+        if (MinecraftForge.EVENT_BUS.post(e)) return false;
+        if (e.getOutput().isEmpty()) return true;
+
+        outputSlot.setInventorySlotContents(0, e.getOutput());
+        container.maximumCost = e.getCost();
+        container.materialCost = e.getMaterialCost();
+        return false;
+    }
+
+    public static float onAnvilRepair(EntityPlayer player, @Nonnull ItemStack output, @Nonnull ItemStack left, @Nonnull ItemStack right)
+    {
+        AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
+        MinecraftForge.EVENT_BUS.post(e);
+        return e.getBreakChance();
+    }
+
+    public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
+    {
+        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) return false;
+        ItemStack stack = player.getHeldItemMainhand();
+        return stack.isEmpty() || !stack.getItem().onLeftClickEntity(stack, player, target);
+    }
+
+    public static boolean onTravelToDimension(Entity entity, DimensionType dimension)
+    {
+        EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimension);
+        MinecraftForge.EVENT_BUS.post(event);
+        if (event.isCanceled())
+        {
+            // Revert variable back to true as it would have been set to false
+            if (entity instanceof EntityMinecartContainer)
+            {
+                ((EntityMinecartContainer) entity).dropContentsWhenDead = true;
+            }
+        }
+        return !event.isCanceled();
+    }
+
+    public static EnumActionResult onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, EnumHand hand)
+    {
+        Vec3d vec3d = new Vec3d(ray.hitVec.x - entity.posX, ray.hitVec.y - entity.posY, ray.hitVec.z - entity.posZ);
+        return onInteractEntityAt(player, entity, vec3d, hand);
+    }
+
+    public static EnumActionResult onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, EnumHand hand)
+    {
+        PlayerInteractEvent.EntityInteractSpecific evt = new PlayerInteractEvent.EntityInteractSpecific(player, hand, entity, vec3d);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt.isCanceled() ? evt.getCancellationResult() : null;
+    }
+
+    public static EnumActionResult onInteractEntity(EntityPlayer player, Entity entity, EnumHand hand)
+    {
+        PlayerInteractEvent.EntityInteract evt = new PlayerInteractEvent.EntityInteract(player, hand, entity);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt.isCanceled() ? evt.getCancellationResult() : null;
+    }
+
+    public static EnumActionResult onItemRightClick(EntityPlayer player, EnumHand hand)
+    {
+        PlayerInteractEvent.RightClickItem evt = new PlayerInteractEvent.RightClickItem(player, hand);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt.isCanceled() ? evt.getCancellationResult() : null;
+    }
+
+    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(EntityPlayer player, BlockPos pos, EnumFacing face, Vec3d hitVec)
+    {
+        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face, hitVec);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face, Vec3d hitVec)
+    {
+        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, face, hitVec);
+        MinecraftForge.EVENT_BUS.post(evt);
+        return evt;
+    }
+
+    public static void onEmptyClick(EntityPlayer player, EnumHand hand)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
+    }
+
+    public static void onEmptyLeftClick(EntityPlayer player)
+    {
+        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
+    }
+
+    public static boolean onCropsGrowPre(World worldIn, BlockPos pos, IBlockState state, boolean def)
+    {
+        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(worldIn,pos,state);
+        MinecraftForge.EVENT_BUS.post(ev);
+        return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
+    }
+
+    public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state)
+    {
+        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
+    }
+
+    @Nullable
+    public static CriticalHitEvent getCriticalHit(EntityPlayer player, Entity target, boolean vanillaCritical, float damageModifier)
+    {
+        CriticalHitEvent hitResult = new CriticalHitEvent(player, target, damageModifier, vanillaCritical);
+        MinecraftForge.EVENT_BUS.post(hitResult);
+        if (hitResult.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (vanillaCritical && hitResult.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT))
+        {
+            return hitResult;
+        }
+        return null;
+    }
+
+    public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
+    {
+        MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
+    }
+
+    public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
+    {
+        if (entity.canTrample(state, pos, fallDistance))
+        {
+            BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
+            MinecraftForge.EVENT_BUS.post(event);
+            return !event.isCanceled();
+        }
+        return false;
+    }
+
+    public static int onNoteChange(World world, BlockPos pos, IBlockState state, int old, int _new)
+    {
+        NoteBlockEvent.Change event = new NoteBlockEvent.Change(world, pos, state, old, _new);
+        if (MinecraftForge.EVENT_BUS.post(event))
+            return -1;
+        return event.getVanillaNoteId();
     }
 }

@@ -4,7 +4,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
-+      net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, p_70097_1_, p_70097_2_);
++      net.minecraftforge.event.ForgeEventFactory.onPlayerAttack(this, p_70097_1_, p_70097_2_);
        return false;
     }
  
@@ -24,7 +24,7 @@
        float f = 0.8F;
        boolean flag2 = this.field_71158_b.field_192832_b >= 0.8F;
        this.field_71158_b.func_78898_a();
-+      net.minecraftforge.client.ForgeHooksClient.onInputUpdate(this, this.field_71158_b);
++      net.minecraftforge.client.event.ForgeClientEventFactory.onInputUpdate(this, this.field_71158_b);
        this.field_71159_c.func_193032_ao().func_193293_a(this.field_71158_b);
        if (this.func_184587_cr() && !this.func_184218_aH()) {
           this.field_71158_b.field_78902_a *= 0.2F;

@@ -23,7 +23,7 @@
           }
  
 -         return d0;
-+         return net.minecraftforge.client.ForgeHooksClient.getFOVModifier(this, entity, ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_195459_1_), ifluidstate, p_195459_1_, d0);
++         return net.minecraftforge.client.event.ForgeClientEventFactory.getFOVModifier(this, entity, ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_195459_1_), ifluidstate, p_195459_1_, d0);
        }
     }
  
@@ -50,7 +50,7 @@
           }
  
           boolean flag = this.field_78531_r.func_175606_aa() instanceof EntityLivingBase && ((EntityLivingBase)this.field_78531_r.func_175606_aa()).func_70608_bn();
-+         if (!net.minecraftforge.client.ForgeHooksClient.renderFirstPersonHand(field_78531_r.field_71438_f, p_195457_1_))
++         if (!net.minecraftforge.client.event.ForgeClientEventFactory.renderFirstPersonHand(field_78531_r.field_71438_f, p_195457_1_))
           if (this.field_78531_r.field_71474_y.field_74320_O == 0 && !flag && !this.field_78531_r.field_71474_y.field_74319_N && this.field_78531_r.field_71442_b.func_178889_l() != GameType.SPECTATOR) {
              this.func_180436_i();
              this.field_78516_c.func_78440_a(p_195457_1_);
@@ -69,7 +69,7 @@
  
              try {
 -               this.field_78531_r.field_71462_r.func_73863_a(i, j, this.field_78531_r.func_193989_ak());
-+               net.minecraftforge.client.ForgeHooksClient.drawScreen(this.field_78531_r.field_71462_r, i, j, this.field_78531_r.func_193989_ak());
++               net.minecraftforge.client.event.ForgeClientEventFactory.drawScreen(this.field_78531_r.field_71462_r, i, j, this.field_78531_r.func_193989_ak());
              } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.func_85055_a(throwable, "Rendering screen");
                 CrashReportCategory crashreportcategory = crashreport.func_85058_a("Screen render details");
@@ -118,7 +118,7 @@
           EntityPlayer entityplayer = (EntityPlayer)entity;
           GlStateManager.func_179118_c();
           this.field_78531_r.field_71424_I.func_76318_c("outline");
-+         if (!net.minecraftforge.client.ForgeHooksClient.onDrawBlockHighlight(worldrenderer, entityplayer, field_78531_r.field_71476_x, 0, p_181560_1_))
++         if (!net.minecraftforge.client.event.ForgeClientEventFactory.onDrawBlockHighlight(worldrenderer, entityplayer, field_78531_r.field_71476_x, 0, p_181560_1_))
           worldrenderer.func_72731_b(entityplayer, this.field_78531_r.field_71476_x, 0, p_181560_1_);
           GlStateManager.func_179141_d();
        }
@@ -127,7 +127,7 @@
        }
  
 +      this.field_78531_r.field_71424_I.func_76318_c("forge_render_last");
-+      net.minecraftforge.client.ForgeHooksClient.dispatchRenderLast(worldrenderer, p_181560_1_);
++      net.minecraftforge.client.event.ForgeClientEventFactory.dispatchRenderLast(worldrenderer, p_181560_1_);
 +
        this.field_78531_r.field_71424_I.func_76318_c("hand");
        if (this.field_175074_C) {

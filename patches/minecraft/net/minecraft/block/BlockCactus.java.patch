@@ -21,7 +21,7 @@
  
              if (i < 3) {
                 int j = p_196267_1_.func_177229_b(field_176587_a);
-+               if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, blockpos, p_196267_1_, true)) {
++               if(net.minecraftforge.event.ForgeEventFactory.onCropsGrowPre(p_196267_2_, blockpos, p_196267_1_, true)) {
                 if (j == 15) {
                    p_196267_2_.func_175656_a(blockpos, this.func_176223_P());
                    IBlockState iblockstate = p_196267_1_.func_206870_a(field_176587_a, Integer.valueOf(0));
@@ -30,7 +30,7 @@
                    p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_.func_206870_a(field_176587_a, Integer.valueOf(j + 1)), 4);
                 }
 -
-+               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
++               net.minecraftforge.event.ForgeEventFactory.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
 +               }
              }
           }

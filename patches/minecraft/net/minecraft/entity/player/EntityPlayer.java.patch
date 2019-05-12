@@ -72,7 +72,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
-+      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  p_70645_1_)) return;
++      if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this,  p_70645_1_)) return;
        super.func_70645_a(p_70645_1_);
        this.func_70105_a(0.2F, 0.2F);
        this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
@@ -97,13 +97,13 @@
 -      return this.func_146097_a(this.field_71071_by.func_70298_a(this.field_71071_by.field_70461_c, p_71040_1_ && !this.field_71071_by.func_70448_g().func_190926_b() ? this.field_71071_by.func_70448_g().func_190916_E() : 1), false, true);
 +      ItemStack stack = field_71071_by.func_70448_g();
 +      if (stack.func_190926_b() || !stack.onDroppedByPlayer(this)) return null;
-+      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, this.field_71071_by.func_70298_a(this.field_71071_by.field_70461_c, p_71040_1_ && !this.field_71071_by.func_70448_g().func_190926_b() ? this.field_71071_by.func_70448_g().func_190916_E() : 1), true);
++      return net.minecraftforge.event.ForgeEventFactory.onPlayerTossEvent(this, this.field_71071_by.func_70298_a(this.field_71071_by.field_70461_c, p_71040_1_ && !this.field_71071_by.func_70448_g().func_190926_b() ? this.field_71071_by.func_70448_g().func_190916_E() : 1), true);
     }
  
     @Nullable
     public EntityItem func_71019_a(ItemStack p_71019_1_, boolean p_71019_2_) {
 -      return this.func_146097_a(p_71019_1_, false, p_71019_2_);
-+      return net.minecraftforge.common.ForgeHooks.onPlayerTossEvent(this, p_71019_1_, false);
++      return net.minecraftforge.event.ForgeEventFactory.onPlayerTossEvent(this, p_71019_1_, false);
     }
  
     @Nullable
@@ -181,7 +181,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
-+      if (!net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, p_70097_1_, p_70097_2_)) return false;
++      if (!net.minecraftforge.event.ForgeEventFactory.onPlayerAttack(this, p_70097_1_, p_70097_2_)) return false;
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (this.field_71075_bZ.field_75102_a && !p_70097_1_.func_76357_e()) {
@@ -213,14 +213,14 @@
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
        if (!this.func_180431_b(p_70665_1_)) {
-+         p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
++         p_70665_2_ = net.minecraftforge.event.ForgeEventFactory.onLivingHurt(this, p_70665_1_, p_70665_2_);
 +         if (p_70665_2_ <= 0) return;
           p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
           p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
           float f = p_70665_2_;
           p_70665_2_ = Math.max(p_70665_2_ - this.func_110139_bj(), 0.0F);
           this.func_110149_m(this.func_110139_bj() - (f - p_70665_2_));
-+         p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_70665_1_, p_70665_2_);
++         p_70665_2_ = net.minecraftforge.event.ForgeEventFactory.onLivingDamage(this, p_70665_1_, p_70665_2_);
           float f1 = f - p_70665_2_;
           if (f1 > 0.0F && f1 < 3.4028235E37F) {
              this.func_195067_a(StatList.field_212738_J, Math.round(f1 * 10.0F));
@@ -228,7 +228,7 @@
  
           return EnumActionResult.PASS;
        } else {
-+         EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(this, p_190775_1_, p_190775_2_);
++         EnumActionResult cancelResult = net.minecraftforge.event.ForgeEventFactory.onInteractEntity(this, p_190775_1_, p_190775_2_);
 +         if (cancelResult != null) return cancelResult;
           ItemStack itemstack = this.func_184586_b(p_190775_2_);
           ItemStack itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
@@ -256,7 +256,7 @@
     }
  
     public void func_71059_n(Entity p_71059_1_) {
-+      if (!net.minecraftforge.common.ForgeHooks.onPlayerAttackTarget(this, p_71059_1_)) return;
++      if (!net.minecraftforge.event.ForgeEventFactory.onPlayerAttackTarget(this, p_71059_1_)) return;
        if (p_71059_1_.func_70075_an()) {
           if (!p_71059_1_.func_85031_j(this)) {
              float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
@@ -265,7 +265,7 @@
                 boolean flag2 = flag && this.field_70143_R > 0.0F && !this.field_70122_E && !this.func_70617_f_() && !this.func_70090_H() && !this.func_70644_a(MobEffects.field_76440_q) && !this.func_184218_aH() && p_71059_1_ instanceof EntityLivingBase;
                 flag2 = flag2 && !this.func_70051_ag();
 +
-+               net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.common.ForgeHooks.getCriticalHit(this, p_71059_1_, flag2, flag2 ? 1.5F : 1.0F);
++               net.minecraftforge.event.entity.player.CriticalHitEvent hitResult = net.minecraftforge.event.ForgeEventFactory.getCriticalHit(this, p_71059_1_, flag2, flag2 ? 1.5F : 1.0F);
 +               flag2 = hitResult != null;
                 if (flag2) {
 -                  f *= 1.5F;

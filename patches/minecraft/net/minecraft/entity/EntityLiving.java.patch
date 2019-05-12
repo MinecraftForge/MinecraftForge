@@ -4,7 +4,7 @@
  
     public void func_70624_b(@Nullable EntityLivingBase p_70624_1_) {
        this.field_70696_bz = p_70624_1_;
-+      net.minecraftforge.common.ForgeHooks.onLivingSetAttackTarget(this, p_70624_1_);
++      net.minecraftforge.event.ForgeEventFactory.onLivingSetAttackTarget(this, p_70624_1_);
     }
  
     public boolean func_70686_a(Class<? extends EntityLivingBase> p_70686_1_) {

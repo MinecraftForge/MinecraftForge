@@ -221,7 +221,7 @@
 +   @Nullable
 +   @Override
 +   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
++      if (!net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_212321_1_)) return null;
        if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
           this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
           MinecraftServer minecraftserver = this.func_184102_h();

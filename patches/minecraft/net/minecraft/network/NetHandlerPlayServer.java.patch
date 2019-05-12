@@ -40,7 +40,7 @@
           } else {
 -            ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), s);
 +            ITextComponent itextcomponent = new TextComponentTranslation("chat.type.text", this.field_147369_b.func_145748_c_(), net.minecraftforge.common.ForgeHooks.newChatWithLinks(s));
-+            itextcomponent = net.minecraftforge.common.ForgeHooks.onServerChatEvent(this, s, itextcomponent);
++            itextcomponent = net.minecraftforge.event.ForgeEventFactory.onServerChatEvent(this, s, itextcomponent);
 +            if (itextcomponent == null) return;
              this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
           }
@@ -49,7 +49,7 @@
                 this.field_147369_b.func_190775_a(entity, enumhand);
              } else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.INTERACT_AT) {
                 EnumHand enumhand1 = p_147340_1_.func_186994_b();
-+               if (net.minecraftforge.common.ForgeHooks.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), enumhand1) != null) return;
++               if (net.minecraftforge.event.ForgeEventFactory.onInteractEntityAt(field_147369_b, entity, p_147340_1_.func_179712_b(), enumhand1) != null) return;
                 entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), enumhand1);
              } else if (p_147340_1_.func_149565_c() == CPacketUseEntity.Action.ATTACK) {
                 if (entity instanceof EntityItem || entity instanceof EntityXPOrb || entity instanceof EntityArrow || entity == this.field_147369_b) {

@@ -189,7 +189,7 @@
                 }
  
                 this.field_71439_g.func_184821_cY();
-+               net.minecraftforge.common.ForgeHooks.onEmptyLeftClick(this.field_71439_g);
++               net.minecraftforge.event.ForgeEventFactory.onEmptyLeftClick(this.field_71439_g);
              }
  
              this.field_71439_g.func_184609_a(EnumHand.MAIN_HAND);
@@ -207,7 +207,7 @@
                 }
  
 +               if (itemstack.func_190926_b() && (this.field_71476_x == null || this.field_71476_x.field_72313_a == RayTraceResult.Type.MISS))
-+                  net.minecraftforge.common.ForgeHooks.onEmptyClick(this.field_71439_g, enumhand);
++                  net.minecraftforge.event.ForgeEventFactory.onEmptyClick(this.field_71439_g, enumhand);
 +
                 if (!itemstack.func_190926_b() && this.field_71442_b.func_187101_a(this.field_71439_g, this.field_71441_e, enumhand) == EnumActionResult.SUCCESS) {
                    this.field_71460_t.field_78516_c.func_187460_a(enumhand);
@@ -391,7 +391,7 @@
 -            }
 -
 -         }
-+         net.minecraftforge.common.ForgeHooks.onPickBlock(this.field_71476_x, this.field_71439_g, this.field_71441_e);
++         net.minecraftforge.client.ForgeHooksClient.onPickBlock(this.field_71476_x, this.field_71439_g, this.field_71441_e);
 +         // We delete this code wholly instead of commenting it out, to make sure we detect changes in it between MC versions
        }
     }

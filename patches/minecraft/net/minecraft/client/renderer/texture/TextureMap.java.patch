@@ -4,7 +4,7 @@
  
     public void func_195426_a(IResourceManager p_195426_1_, Iterable<ResourceLocation> p_195426_2_) {
        this.field_195427_i.clear();
-+      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
++      net.minecraftforge.client.event.ForgeClientEventFactory.onTextureStitchedPre(this);
        p_195426_2_.forEach((p_195423_2_) -> {
           this.func_199362_a(p_195426_1_, p_195423_2_);
        });
@@ -67,7 +67,7 @@
           }
        }
  
-+      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
++      net.minecraftforge.client.event.ForgeClientEventFactory.onTextureStitchedPost(this);
 +      }; // Forge: end progress bar
     }
  

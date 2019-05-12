@@ -13,14 +13,14 @@
        if (flag) {
           float f4 = enumhand == EnumHand.MAIN_HAND ? f : 0.0F;
           float f3 = 1.0F - (this.field_187470_g + (this.field_187469_f - this.field_187470_g) * p_78440_1_);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(EnumHand.MAIN_HAND, p_78440_1_, f1, f4, f3, this.field_187467_d))
++         if(!net.minecraftforge.client.event.ForgeClientEventFactory.renderSpecificFirstPersonHand(EnumHand.MAIN_HAND, p_78440_1_, f1, f4, f3, this.field_187467_d))
           this.func_187457_a(abstractclientplayer, p_78440_1_, f1, EnumHand.MAIN_HAND, f4, this.field_187467_d, f3);
        }
  
        if (flag1) {
           float f5 = enumhand == EnumHand.OFF_HAND ? f : 0.0F;
           float f6 = 1.0F - (this.field_187472_i + (this.field_187471_h - this.field_187472_i) * p_78440_1_);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(EnumHand.OFF_HAND, p_78440_1_, f1, f5, f6, this.field_187468_e))
++         if(!net.minecraftforge.client.event.ForgeClientEventFactory.renderSpecificFirstPersonHand(EnumHand.OFF_HAND, p_78440_1_, f1, f5, f6, this.field_187468_e))
           this.func_187457_a(abstractclientplayer, p_78440_1_, f1, EnumHand.OFF_HAND, f5, this.field_187468_e, f6);
        }
  

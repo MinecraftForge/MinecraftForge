@@ -44,27 +44,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import net.minecraft.advancements.Advancement;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Fluids;
-import net.minecraft.inventory.ContainerRepair;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemBucket;
@@ -78,7 +69,6 @@ import net.minecraft.item.ItemTippedArrow;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.play.server.SPacketBlockChange;
@@ -91,7 +81,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
@@ -107,8 +96,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.IWorld;
@@ -117,31 +104,8 @@ import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.event.AnvilUpdateEvent;
-import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.EntityTravelToDimensionEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
-import net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent;
-import net.minecraftforge.event.entity.living.LootingLevelEvent;
-import net.minecraftforge.event.entity.player.AnvilRepairEvent;
-import net.minecraftforge.event.entity.player.AttackEntityEvent;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.DataSerializerEntry;
@@ -270,152 +234,14 @@ public class ForgeHooks
             blockToolSetter.accept(block, ToolType.PICKAXE, 1);
     }
 
-    /**
-     * Called when a player uses 'pick block', calls new Entity and Block hooks.
-     */
-    public static boolean onPickBlock(RayTraceResult target, EntityPlayer player, World world)
-    {
-        ItemStack result;
-        boolean isCreative = player.abilities.isCreativeMode;
-        TileEntity te = null;
-
-        if (target.type == RayTraceResult.Type.BLOCK)
-        {
-            IBlockState state = world.getBlockState(target.getBlockPos());
-
-            if (state.isAir(world, target.getBlockPos()))
-                return false;
-
-            if (isCreative && GuiScreen.isCtrlKeyDown() && state.hasTileEntity())
-                te = world.getTileEntity(target.getBlockPos());
-
-            result = state.getBlock().getPickBlock(state, target, world, target.getBlockPos(), player);
-        }
-        else
-        {
-            if (target.type != RayTraceResult.Type.ENTITY || target.entity == null || !isCreative)
-            {
-                return false;
-            }
-
-            result = target.entity.getPickedResult(target);
-        }
-
-        if (result.isEmpty())
-        {
-            return false;
-        }
-
-        if (te != null)
-        {
-            Minecraft.getInstance().storeTEInStack(result, te);
-        }
-
-        if (isCreative)
-        {
-            player.inventory.setPickedItemStack(result);
-            Minecraft.getInstance().playerController.sendSlotPacket(player.getHeldItem(EnumHand.MAIN_HAND), 36 + player.inventory.currentItem);
-            return true;
-        }
-        int slot = player.inventory.getSlotFor(result);
-        if (slot != -1)
-        {
-            if (InventoryPlayer.isHotbar(slot))
-                player.inventory.currentItem = slot;
-            else
-                Minecraft.getInstance().playerController.pickItem(slot);
-            return true;
-        }
-        return false;
-    }
-
-    public static void onDifficultyChange(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
-    {
-        MinecraftForge.EVENT_BUS.post(new DifficultyChangeEvent(difficulty, oldDifficulty));
-    }
-
-    //Optifine Helper Functions u.u, these are here specifically for Optifine
-    //Note: When using Optifine, these methods are invoked using reflection, which
-    //incurs a major performance penalty.
-    public static void onLivingSetAttackTarget(EntityLivingBase entity, EntityLivingBase target)
-    {
-        MinecraftForge.EVENT_BUS.post(new LivingSetAttackTargetEvent(entity, target));
-    }
-
-    public static boolean onLivingUpdate(EntityLivingBase entity)
-    {
-        return MinecraftForge.EVENT_BUS.post(new LivingUpdateEvent(entity));
-    }
-
-    public static boolean onLivingAttack(EntityLivingBase entity, DamageSource src, float amount)
-    {
-        return entity instanceof EntityPlayer || !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
-    }
-
-    public static boolean onPlayerAttack(EntityLivingBase entity, DamageSource src, float amount)
-    {
-        return !MinecraftForge.EVENT_BUS.post(new LivingAttackEvent(entity, src, amount));
-    }
-
-    public static LivingKnockBackEvent onLivingKnockBack(EntityLivingBase target, Entity attacker, float strength, double ratioX, double ratioZ)
-    {
-        LivingKnockBackEvent event = new LivingKnockBackEvent(target, attacker, strength, ratioX, ratioZ);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event;
-    }
-
-    public static float onLivingHurt(EntityLivingBase entity, DamageSource src, float amount)
-    {
-        LivingHurtEvent event = new LivingHurtEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
-    }
-
-    public static float onLivingDamage(EntityLivingBase entity, DamageSource src, float amount)
-    {
-        LivingDamageEvent event = new LivingDamageEvent(entity, src, amount);
-        return (MinecraftForge.EVENT_BUS.post(event) ? 0 : event.getAmount());
-    }
-
-    public static boolean onLivingDeath(EntityLivingBase entity, DamageSource src)
-    {
-        return MinecraftForge.EVENT_BUS.post(new LivingDeathEvent(entity, src));
-    }
-
-    public static boolean onLivingDrops(EntityLivingBase entity, DamageSource source, Collection<EntityItem> drops, int lootingLevel, boolean recentlyHit)
-    {
-        return MinecraftForge.EVENT_BUS.post(new LivingDropsEvent(entity, source, drops, lootingLevel, recentlyHit));
-    }
-
-    @Nullable
-    public static float[] onLivingFall(EntityLivingBase entity, float distance, float damageMultiplier)
-    {
-        LivingFallEvent event = new LivingFallEvent(entity, distance, damageMultiplier);
-        return (MinecraftForge.EVENT_BUS.post(event) ? null : new float[]{event.getDistance(), event.getDamageMultiplier()});
-    }
-
     public static int getLootingLevel(Entity target, @Nullable Entity killer, DamageSource cause)
     {
         int looting = 0;
         if (killer instanceof EntityLivingBase)
             looting = EnchantmentHelper.getLootingModifier((EntityLivingBase)killer);
         if (target instanceof EntityLivingBase)
-            looting = getLootingLevel((EntityLivingBase)target, cause, looting);
+            looting = ForgeEventFactory.getLootingLevel((EntityLivingBase)target, cause, looting);
         return looting;
-    }
-
-    public static int getLootingLevel(EntityLivingBase target, DamageSource cause, int level)
-    {
-        LootingLevelEvent event = new LootingLevelEvent(target, cause, level);
-        MinecraftForge.EVENT_BUS.post(event);
-        return event.getLootingLevel();
-    }
-
-    public static double getPlayerVisibilityDistance(EntityPlayer player, double xzDistance, double maxXZDistance)
-    {
-        PlayerEvent.Visibility event = new PlayerEvent.Visibility(player);
-        MinecraftForge.EVENT_BUS.post(event);
-        double value = event.getVisibilityModifier() * xzDistance;
-        return value >= maxXZDistance ? maxXZDistance : value;
     }
 
     public static boolean isLivingOnLadder(@Nonnull IBlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull EntityLivingBase entity)
@@ -450,42 +276,6 @@ public class ForgeHooks
             return false;
         }
     }
-
-    public static void onLivingJump(EntityLivingBase entity)
-    {
-        MinecraftForge.EVENT_BUS.post(new LivingJumpEvent(entity));
-    }
-
-    @Nullable
-    public static EntityItem onPlayerTossEvent(@Nonnull EntityPlayer player, @Nonnull ItemStack item, boolean includeName)
-    {
-        player.captureDrops(Lists.newArrayList());
-        EntityItem ret = player.dropItem(item, false, includeName);
-        player.captureDrops(null);
-
-        if (ret == null)
-            return null;
-
-        ItemTossEvent event = new ItemTossEvent(ret, player);
-        if (MinecraftForge.EVENT_BUS.post(event))
-            return null;
-
-        if (!player.world.isRemote)
-            player.getEntityWorld().spawnEntity(event.getEntityItem());
-        return event.getEntityItem();
-    }
-
-    @Nullable
-    public static ITextComponent onServerChatEvent(NetHandlerPlayServer net, String raw, ITextComponent comp)
-    {
-        ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
-        if (MinecraftForge.EVENT_BUS.post(event))
-        {
-            return null;
-        }
-        return event.getComponent();
-    }
-
 
     static final Pattern URL_PATTERN = Pattern.compile(
             //         schema                          ipv4            OR        namespace                 port     path         ends
@@ -713,25 +503,6 @@ public class ForgeHooks
         return ret;
     }
 
-    public static boolean onAnvilChange(ContainerRepair container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
-    {
-        AnvilUpdateEvent e = new AnvilUpdateEvent(left, right, name, baseCost);
-        if (MinecraftForge.EVENT_BUS.post(e)) return false;
-        if (e.getOutput().isEmpty()) return true;
-
-        outputSlot.setInventorySlotContents(0, e.getOutput());
-        container.maximumCost = e.getCost();
-        container.materialCost = e.getMaterialCost();
-        return false;
-    }
-
-    public static float onAnvilRepair(EntityPlayer player, @Nonnull ItemStack output, @Nonnull ItemStack left, @Nonnull ItemStack right)
-    {
-        AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
-        MinecraftForge.EVENT_BUS.post(e);
-        return e.getBreakChance();
-    }
-
     private static ThreadLocal<EntityPlayer> craftingPlayer = new ThreadLocal<EntityPlayer>();
     public static void setCraftingPlayer(EntityPlayer player)
     {
@@ -757,28 +528,6 @@ public class ForgeHooks
         return ItemStack.EMPTY;
     }
 
-    public static boolean onPlayerAttackTarget(EntityPlayer player, Entity target)
-    {
-        if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(player, target))) return false;
-        ItemStack stack = player.getHeldItemMainhand();
-        return stack.isEmpty() || !stack.getItem().onLeftClickEntity(stack, player, target);
-    }
-
-    public static boolean onTravelToDimension(Entity entity, DimensionType dimension)
-    {
-        EntityTravelToDimensionEvent event = new EntityTravelToDimensionEvent(entity, dimension);
-        MinecraftForge.EVENT_BUS.post(event);
-        if (event.isCanceled())
-        {
-            // Revert variable back to true as it would have been set to false
-            if (entity instanceof EntityMinecartContainer)
-            {
-               ((EntityMinecartContainer) entity).dropContentsWhenDead = true;
-            }
-        }
-        return !event.isCanceled();
-    }
-
     @Nullable
     public static RayTraceResult rayTraceEyes(EntityLivingBase entity, double length)
     {
@@ -792,57 +541,6 @@ public class ForgeHooks
     {
         RayTraceResult git = rayTraceEyes(entity, length);
         return git == null ? null : git.hitVec;
-    }
-
-    public static EnumActionResult onInteractEntityAt(EntityPlayer player, Entity entity, RayTraceResult ray, EnumHand hand)
-    {
-        Vec3d vec3d = new Vec3d(ray.hitVec.x - entity.posX, ray.hitVec.y - entity.posY, ray.hitVec.z - entity.posZ);
-        return onInteractEntityAt(player, entity, vec3d, hand);
-    }
-
-    public static EnumActionResult onInteractEntityAt(EntityPlayer player, Entity entity, Vec3d vec3d, EnumHand hand)
-    {
-        PlayerInteractEvent.EntityInteractSpecific evt = new PlayerInteractEvent.EntityInteractSpecific(player, hand, entity, vec3d);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt.isCanceled() ? evt.getCancellationResult() : null;
-    }
-
-    public static EnumActionResult onInteractEntity(EntityPlayer player, Entity entity, EnumHand hand)
-    {
-        PlayerInteractEvent.EntityInteract evt = new PlayerInteractEvent.EntityInteract(player, hand, entity);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt.isCanceled() ? evt.getCancellationResult() : null;
-    }
-
-    public static EnumActionResult onItemRightClick(EntityPlayer player, EnumHand hand)
-    {
-        PlayerInteractEvent.RightClickItem evt = new PlayerInteractEvent.RightClickItem(player, hand);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt.isCanceled() ? evt.getCancellationResult() : null;
-    }
-
-    public static PlayerInteractEvent.LeftClickBlock onLeftClickBlock(EntityPlayer player, BlockPos pos, EnumFacing face, Vec3d hitVec)
-    {
-        PlayerInteractEvent.LeftClickBlock evt = new PlayerInteractEvent.LeftClickBlock(player, pos, face, hitVec);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt;
-    }
-
-    public static PlayerInteractEvent.RightClickBlock onRightClickBlock(EntityPlayer player, EnumHand hand, BlockPos pos, EnumFacing face, Vec3d hitVec)
-    {
-        PlayerInteractEvent.RightClickBlock evt = new PlayerInteractEvent.RightClickBlock(player, hand, pos, face, hitVec);
-        MinecraftForge.EVENT_BUS.post(evt);
-        return evt;
-    }
-
-    public static void onEmptyClick(EntityPlayer player, EnumHand hand)
-    {
-        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.RightClickEmpty(player, hand));
-    }
-
-    public static void onEmptyLeftClick(EntityPlayer player)
-    {
-        MinecraftForge.EVENT_BUS.post(new PlayerInteractEvent.LeftClickEmpty(player));
     }
 
     private static ThreadLocal<Deque<LootTableContext>> lootContext = new ThreadLocal<Deque<LootTableContext>>();
@@ -977,35 +675,6 @@ public class ForgeHooks
     public static LootEntry deserializeJsonLootEntry(String type, JsonObject json, int weight, int quality, LootCondition[] conditions){ return null; }
     public static String getLootEntryType(LootEntry entry){ return null; } //Companion to above function
 
-    public static boolean onCropsGrowPre(World worldIn, BlockPos pos, IBlockState state, boolean def)
-    {
-        BlockEvent ev = new BlockEvent.CropGrowEvent.Pre(worldIn,pos,state);
-        MinecraftForge.EVENT_BUS.post(ev);
-        return (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (ev.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT && def));
-    }
-
-    public static void onCropsGrowPost(World worldIn, BlockPos pos, IBlockState state)
-    {
-        MinecraftForge.EVENT_BUS.post(new BlockEvent.CropGrowEvent.Post(worldIn, pos, state, worldIn.getBlockState(pos)));
-    }
-
-    @Nullable
-    public static CriticalHitEvent getCriticalHit(EntityPlayer player, Entity target, boolean vanillaCritical, float damageModifier)
-    {
-        CriticalHitEvent hitResult = new CriticalHitEvent(player, target, damageModifier, vanillaCritical);
-        MinecraftForge.EVENT_BUS.post(hitResult);
-        if (hitResult.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || (vanillaCritical && hitResult.getResult() == net.minecraftforge.eventbus.api.Event.Result.DEFAULT))
-        {
-            return hitResult;
-        }
-        return null;
-    }
-
-    public static void onAdvancement(EntityPlayerMP player, Advancement advancement)
-    {
-        MinecraftForge.EVENT_BUS.post(new AdvancementEvent(player, advancement));
-    }
-
     /**
      * Used as the default implementation of {@link Item#getCreatorModId}. Call that method instead.
      */
@@ -1051,17 +720,6 @@ public class ForgeHooks
         return modId;
     }
 
-    public static boolean onFarmlandTrample(World world, BlockPos pos, IBlockState state, float fallDistance, Entity entity)
-    {
-        if (entity.canTrample(state, pos, fallDistance))
-        {
-            BlockEvent.FarmlandTrampleEvent event = new BlockEvent.FarmlandTrampleEvent(world, pos, state, fallDistance, entity);
-            MinecraftForge.EVENT_BUS.post(event);
-            return !event.isCanceled();
-        }
-        return false;
-    }
-
     private static TriConsumer<Block, ToolType, Integer> blockToolSetter;
     //Internal use only Modders, this is specifically hidden from you, as you shouldn't be editing other people's blocks.
     public static void setBlockToolSetter(TriConsumer<Block, ToolType, Integer> setter)
@@ -1102,13 +760,6 @@ public class ForgeHooks
             return Fluids.EMPTY.getDefaultState();
         }
 
-    }
-
-    public static int onNoteChange(World world, BlockPos pos, IBlockState state, int old, int _new) {
-        NoteBlockEvent.Change event = new NoteBlockEvent.Change(world, pos, state, old, _new);
-        if (MinecraftForge.EVENT_BUS.post(event))
-            return -1;
-        return event.getVanillaNoteId();
     }
 
     public static int canEntitySpawn(EntityLiving entity, IWorld world, double x, double y, double z, MobSpawnerBaseLogic spawner) {

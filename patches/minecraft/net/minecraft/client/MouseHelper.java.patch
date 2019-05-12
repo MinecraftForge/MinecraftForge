@@ -5,16 +5,16 @@
              if (flag) {
                 GuiScreen.func_195121_a(() -> {
 -                  aboolean[0] = this.field_198036_a.field_71462_r.mouseClicked(d0, d1, pFinal);
-+                  aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseClickedPre(this.field_198036_a.field_71462_r, d0, d1, pFinal);
++                  aboolean[0] = net.minecraftforge.client.event.ForgeClientEventFactory.onGuiMouseClickedPre(this.field_198036_a.field_71462_r, d0, d1, pFinal);
 +                  if (!aboolean[0]) aboolean[0] = this.field_198036_a.field_71462_r.mouseClicked(d0, d1, pFinal);
-+                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseClickedPost(this.field_198036_a.field_71462_r, d0, d1, pFinal);
++                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.event.ForgeClientEventFactory.onGuiMouseClickedPost(this.field_198036_a.field_71462_r, d0, d1, pFinal);
                 }, "mouseClicked event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
              } else {
                 GuiScreen.func_195121_a(() -> {
 -                  aboolean[0] = this.field_198036_a.field_71462_r.mouseReleased(d0, d1, pFinal);
-+                  aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseReleasedPre(this.field_198036_a.field_71462_r, d0, d1, pFinal);
++                  aboolean[0] = net.minecraftforge.client.event.ForgeClientEventFactory.onGuiMouseReleasedPre(this.field_198036_a.field_71462_r, d0, d1, pFinal);
 +                  if (!aboolean[0]) aboolean[0] = this.field_198036_a.field_71462_r.mouseReleased(d0, d1, pFinal);
-+                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiMouseReleasedPost(this.field_198036_a.field_71462_r, d0, d1, pFinal);
++                  if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.event.ForgeClientEventFactory.onGuiMouseReleasedPost(this.field_198036_a.field_71462_r, d0, d1, pFinal);
                 }, "mouseReleased event handler", this.field_198036_a.field_71462_r.getClass().getCanonicalName());
              }
           }
@@ -23,7 +23,7 @@
              }
           }
 -
-+         net.minecraftforge.client.ForgeHooksClient.fireMouseInput(p_198023_3_, p_198023_4_, p_198023_5_);
++         net.minecraftforge.client.event.ForgeClientEventFactory.fireMouseInput(p_198023_3_, p_198023_4_, p_198023_5_);
        }
     }
  
@@ -32,9 +32,9 @@
           double d0 = p_198020_5_ * this.field_198036_a.field_71474_y.field_208033_V;
           if (this.field_198036_a.field_71462_r != null) {
 -            this.field_198036_a.field_71462_r.mouseScrolled(d0);
-+            if (net.minecraftforge.client.ForgeHooksClient.onGuiMouseScrollPre(this, this.field_198036_a.field_71462_r, d0)) return;
++            if (net.minecraftforge.client.event.ForgeClientEventFactory.onGuiMouseScrollPre(this, this.field_198036_a.field_71462_r, d0)) return;
 +            if (this.field_198036_a.field_71462_r.mouseScrolled(d0)) return;
-+            net.minecraftforge.client.ForgeHooksClient.onGuiMouseScrollPost(this, this.field_198036_a.field_71462_r, d0);
++            net.minecraftforge.client.event.ForgeClientEventFactory.onGuiMouseScrollPost(this, this.field_198036_a.field_71462_r, d0);
           } else if (this.field_198036_a.field_71439_g != null) {
              if (this.field_200542_o != 0.0D && Math.signum(d0) != Math.signum(this.field_200542_o)) {
                 this.field_200542_o = 0.0D;
@@ -43,9 +43,9 @@
              double d3 = (p_198022_5_ - this.field_198041_f) * (double)this.field_198036_a.field_195558_d.func_198087_p() / (double)this.field_198036_a.field_195558_d.func_198083_n();
              GuiScreen.func_195121_a(() -> {
 -               iguieventlistener.mouseDragged(d0, d1, this.field_198042_g, d2, d3);
-+               if (net.minecraftforge.client.ForgeHooksClient.onGuiMouseDragPre(this.field_198036_a.field_71462_r, d0, d1, this.field_198042_g, d2, d3)) return;
++               if (net.minecraftforge.client.event.ForgeClientEventFactory.onGuiMouseDragPre(this.field_198036_a.field_71462_r, d0, d1, this.field_198042_g, d2, d3)) return;
 +               if (iguieventlistener.mouseDragged(d0, d1, this.field_198042_g, d2, d3)) return;
-+               net.minecraftforge.client.ForgeHooksClient.onGuiMouseDragPost(this.field_198036_a.field_71462_r, d0, d1, this.field_198042_g, d2, d3);
++               net.minecraftforge.client.event.ForgeClientEventFactory.onGuiMouseDragPost(this.field_198036_a.field_71462_r, d0, d1, this.field_198042_g, d2, d3);
              }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
           }
  

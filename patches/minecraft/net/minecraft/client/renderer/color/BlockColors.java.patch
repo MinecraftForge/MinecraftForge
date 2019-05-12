@@ -14,7 +14,7 @@
        blockcolors.func_186722_a((p_210228_0_, p_210228_1_, p_210228_2_, p_210228_3_) -> {
           return p_210228_1_ != null && p_210228_2_ != null ? 2129968 : 7455580;
        }, Blocks.field_196651_dG);
-+      net.minecraftforge.client.ForgeHooksClient.onBlockColorsInit(blockcolors);
++      net.minecraftforge.client.event.ForgeClientEventFactory.onBlockColorsInit(blockcolors);
        return blockcolors;
     }
  

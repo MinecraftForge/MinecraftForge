@@ -37,7 +37,7 @@
        GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
        IFluidState ifluidstate = ActiveRenderInfo.func_206243_b(this.field_205105_o.field_71441_e, entity, p_78468_2_);
 +      net.minecraft.block.state.IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.field_205105_o.field_71441_e, entity, p_78468_2_);
-+      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(this, this.field_205104_n, entity, iblockstate, ifluidstate, p_78468_2_, 0.1F);
++      float hook = net.minecraftforge.client.event.ForgeClientEventFactory.getFogDensity(this, this.field_205104_n, entity, iblockstate, ifluidstate, p_78468_2_, 0.1F);
 +      if (hook >= 0) GlStateManager.func_179095_a(hook);
 +      else
        if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q)) {
@@ -47,7 +47,7 @@
              GlStateManager.func_179102_b(f1 * 0.05F);
              GlStateManager.func_179153_c(Math.min(f1, 192.0F) * 0.5F);
           }
-+         net.minecraftforge.client.ForgeHooksClient.onFogRender(this, this.field_205104_n, entity, iblockstate, ifluidstate, p_78468_2_, p_78468_1_, f1);
++         net.minecraftforge.client.event.ForgeClientEventFactory.onFogRender(this, this.field_205104_n, entity, iblockstate, ifluidstate, p_78468_2_, p_78468_1_, f1);
        }
  
        GlStateManager.func_179142_g();

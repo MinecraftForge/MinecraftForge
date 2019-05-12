@@ -148,7 +148,7 @@
     }
  
     public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
-+      if (!net.minecraftforge.common.ForgeHooks.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
++      if (!net.minecraftforge.event.ForgeEventFactory.onLivingAttack(this, p_70097_1_, p_70097_2_)) return false;
        if (this.func_180431_b(p_70097_1_)) {
           return false;
        } else if (this.field_70170_p.field_72995_K) {
@@ -173,7 +173,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
-+      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this, p_70645_1_)) return;
++      if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this, p_70645_1_)) return;
        if (!this.field_70729_aU) {
           Entity entity = p_70645_1_.func_76346_g();
           EntityLivingBase entitylivingbase = this.func_94060_bK();
@@ -193,7 +193,7 @@
                 this.func_184610_a(flag, i, p_70645_1_);
              }
 +            Collection<EntityItem> drops = captureDrops(null);
-+            if (!net.minecraftforge.common.ForgeHooks.onLivingDrops(this, p_70645_1_, drops, i, field_70718_bc > 0))
++            if (!net.minecraftforge.event.ForgeEventFactory.onLivingDrops(this, p_70645_1_, drops, i, field_70718_bc > 0))
 +               drops.forEach(e -> field_70170_p.func_72838_d(e));
           }
  
@@ -202,7 +202,7 @@
     }
  
     public void func_70653_a(Entity p_70653_1_, float p_70653_2_, double p_70653_3_, double p_70653_5_) {
-+      net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.common.ForgeHooks.onLivingKnockBack(this, p_70653_1_, p_70653_2_, p_70653_3_, p_70653_5_);
++      net.minecraftforge.event.entity.living.LivingKnockBackEvent event = net.minecraftforge.event.ForgeEventFactory.onLivingKnockBack(this, p_70653_1_, p_70653_2_, p_70653_3_, p_70653_5_);
 +      if(event.isCanceled()) return;
 +      p_70653_2_ = event.getStrength(); p_70653_3_ = event.getRatioX(); p_70653_5_ = event.getRatioZ();
        if (!(this.field_70146_Z.nextDouble() < this.func_110148_a(SharedMonsterAttributes.field_111266_c).func_111126_e())) {
@@ -226,7 +226,7 @@
     }
  
     public void func_180430_e(float p_180430_1_, float p_180430_2_) {
-+      float[] ret = net.minecraftforge.common.ForgeHooks.onLivingFall(this, p_180430_1_, p_180430_2_);
++      float[] ret = net.minecraftforge.event.ForgeEventFactory.onLivingFall(this, p_180430_1_, p_180430_2_);
 +      if (ret == null) return;
 +      p_180430_1_ = ret[0]; p_180430_2_ = ret[1];
        super.func_180430_e(p_180430_1_, p_180430_2_);
@@ -245,7 +245,7 @@
  
     protected void func_70665_d(DamageSource p_70665_1_, float p_70665_2_) {
        if (!this.func_180431_b(p_70665_1_)) {
-+         p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingHurt(this, p_70665_1_, p_70665_2_);
++         p_70665_2_ = net.minecraftforge.event.ForgeEventFactory.onLivingHurt(this, p_70665_1_, p_70665_2_);
 +         if (p_70665_2_ <= 0) return;
           p_70665_2_ = this.func_70655_b(p_70665_1_, p_70665_2_);
           p_70665_2_ = this.func_70672_c(p_70665_1_, p_70665_2_);
@@ -254,7 +254,7 @@
              ((EntityPlayerMP)p_70665_1_.func_76346_g()).func_195067_a(StatList.field_212735_F, Math.round(f1 * 10.0F));
           }
  
-+         p_70665_2_ = net.minecraftforge.common.ForgeHooks.onLivingDamage(this, p_70665_1_, p_70665_2_);
++         p_70665_2_ = net.minecraftforge.event.ForgeEventFactory.onLivingDamage(this, p_70665_1_, p_70665_2_);
           if (p_70665_2_ != 0.0F) {
              float f2 = this.func_110143_aJ();
 -            this.func_70606_j(f2 - p_70665_2_);
@@ -298,7 +298,7 @@
        }
  
        this.field_70160_al = true;
-+      net.minecraftforge.common.ForgeHooks.onLivingJump(this);
++      net.minecraftforge.event.ForgeEventFactory.onLivingJump(this);
     }
  
     @OnlyIn(Dist.CLIENT)
@@ -335,7 +335,7 @@
     }
  
     public void func_70071_h_() {
-+      if (net.minecraftforge.common.ForgeHooks.onLivingUpdate(this)) return;
++      if (net.minecraftforge.event.ForgeEventFactory.onLivingUpdate(this)) return;
        super.func_70071_h_();
        this.func_184608_ct();
        this.func_205014_p();

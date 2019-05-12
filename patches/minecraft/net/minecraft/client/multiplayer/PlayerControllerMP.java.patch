@@ -42,14 +42,14 @@
           if (this.field_78779_k.func_77145_d()) {
              this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180511_1_, this.field_78776_a.field_71441_e.func_180495_p(p_180511_1_), 1.0F);
              this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.START_DESTROY_BLOCK, p_180511_1_, p_180511_2_));
-+            if (!net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(this.field_78776_a.field_71439_g, func_78757_d() + 1)).isCanceled())
++            if (!net.minecraftforge.event.ForgeEventFactory.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(this.field_78776_a.field_71439_g, func_78757_d() + 1)).isCanceled())
              func_178891_a(this.field_78776_a, this, p_180511_1_, p_180511_2_);
              this.field_78781_i = 5;
           } else if (!this.field_78778_j || !this.func_178893_a(p_180511_1_)) {
              if (this.field_78778_j) {
                 this.field_78774_b.func_147297_a(new CPacketPlayerDigging(CPacketPlayerDigging.Action.ABORT_DESTROY_BLOCK, this.field_178895_c, p_180511_2_));
              }
-+            net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.common.ForgeHooks.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(this.field_78776_a.field_71439_g, func_78757_d() + 1));
++            net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickBlock event = net.minecraftforge.event.ForgeEventFactory.onLeftClickBlock(this.field_78776_a.field_71439_g, p_180511_1_, p_180511_2_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(this.field_78776_a.field_71439_g, func_78757_d() + 1));
  
              IBlockState iblockstate = this.field_78776_a.field_71441_e.func_180495_p(p_180511_1_);
              this.field_78776_a.func_193032_ao().func_193294_a(this.field_78776_a.field_71441_e, p_180511_1_, iblockstate, 0.0F);
@@ -96,7 +96,7 @@
           float f = (float)(p_187099_5_.field_72450_a - (double)p_187099_3_.func_177958_n());
           float f1 = (float)(p_187099_5_.field_72448_b - (double)p_187099_3_.func_177956_o());
           float f2 = (float)(p_187099_5_.field_72449_c - (double)p_187099_3_.func_177952_p());
-+         net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.common.ForgeHooks
++         net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event = net.minecraftforge.event.ForgeEventFactory
 +                 .onRightClickBlock(p_187099_1_, p_187099_6_, p_187099_3_, p_187099_4_, net.minecraftforge.common.ForgeHooks.rayTraceEyeHitVec(p_187099_1_, func_78757_d() + 1));
 +         if (event.isCanceled()) {
 +            // Give the server a chance to fire event as well. That way server event is not dependant on client event.
@@ -155,7 +155,7 @@
           if (p_187101_1_.func_184811_cZ().func_185141_a(itemstack.func_77973_b())) {
              return EnumActionResult.PASS;
           } else {
-+            EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onItemRightClick(p_187101_1_, p_187101_3_);
++            EnumActionResult cancelResult = net.minecraftforge.event.ForgeEventFactory.onItemRightClick(p_187101_1_, p_187101_3_);
 +            if (cancelResult != null) return cancelResult;
              int i = itemstack.func_190916_E();
              ActionResult<ItemStack> actionresult = itemstack.func_77957_a(p_187101_2_, p_187101_1_, p_187101_3_);
@@ -171,7 +171,7 @@
        this.func_78750_j();
        this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187097_2_, p_187097_3_));
 +      if (this.field_78779_k == GameType.SPECTATOR) return EnumActionResult.PASS; // don't fire for spectators to match non-specific EntityInteract
-+      EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntity(p_187097_1_, p_187097_2_, p_187097_3_);
++      EnumActionResult cancelResult = net.minecraftforge.event.ForgeEventFactory.onInteractEntity(p_187097_1_, p_187097_2_, p_187097_3_);
 +      if(cancelResult != null) return cancelResult;
        return this.field_78779_k == GameType.SPECTATOR ? EnumActionResult.PASS : p_187097_1_.func_190775_a(p_187097_2_, p_187097_3_);
     }
@@ -181,7 +181,7 @@
        Vec3d vec3d = new Vec3d(p_187102_3_.field_72307_f.field_72450_a - p_187102_2_.field_70165_t, p_187102_3_.field_72307_f.field_72448_b - p_187102_2_.field_70163_u, p_187102_3_.field_72307_f.field_72449_c - p_187102_2_.field_70161_v);
        this.field_78774_b.func_147297_a(new CPacketUseEntity(p_187102_2_, p_187102_4_, vec3d));
 +      if (this.field_78779_k == GameType.SPECTATOR) return EnumActionResult.PASS; // don't fire for spectators to match non-specific EntityInteract
-+      EnumActionResult cancelResult = net.minecraftforge.common.ForgeHooks.onInteractEntityAt(p_187102_1_, p_187102_2_, p_187102_3_, p_187102_4_);
++      EnumActionResult cancelResult = net.minecraftforge.event.ForgeEventFactory.onInteractEntityAt(p_187102_1_, p_187102_2_, p_187102_3_, p_187102_4_);
 +      if(cancelResult != null) return cancelResult;
        return this.field_78779_k == GameType.SPECTATOR ? EnumActionResult.PASS : p_187102_2_.func_184199_a(p_187102_1_, vec3d, p_187102_4_);
     }

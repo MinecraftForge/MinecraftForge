@@ -17,7 +17,7 @@
 +      try {
 +         target = target.getCanonicalFile(); // FORGE: Fix errors on Windows with paths that include \.\
 +      } catch (java.io.IOException e) {}
-+      net.minecraftforge.client.event.ScreenshotEvent event = net.minecraftforge.client.ForgeHooksClient.onScreenshot(nativeimage, target);
++      net.minecraftforge.client.event.ScreenshotEvent event = net.minecraftforge.client.event.ForgeClientEventFactory.onScreenshot(nativeimage, target);
 +      if (event.isCanceled()) {
 +         p_148259_5_.accept(event.getCancelMessage());
 +         return;

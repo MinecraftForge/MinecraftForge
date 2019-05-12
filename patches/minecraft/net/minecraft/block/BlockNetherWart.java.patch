@@ -5,10 +5,10 @@
     public void func_196267_b(IBlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
        int i = p_196267_1_.func_177229_b(field_176486_a);
 -      if (i < 3 && p_196267_4_.nextInt(10) == 0) {
-+      if (i < 3 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_4_.nextInt(10) == 0)) {
++      if (i < 3 && net.minecraftforge.event.ForgeEventFactory.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_4_.nextInt(10) == 0)) {
           p_196267_1_ = p_196267_1_.func_206870_a(field_176486_a, Integer.valueOf(i + 1));
           p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_, 2);
-+         net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
++         net.minecraftforge.event.ForgeEventFactory.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
        }
  
        super.func_196267_b(p_196267_1_, p_196267_2_, p_196267_3_, p_196267_4_);

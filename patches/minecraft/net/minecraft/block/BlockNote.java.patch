@@ -14,7 +14,7 @@
           return true;
        } else {
 -         p_196250_1_ = p_196250_1_.func_177231_a(field_196485_c);
-+         int _new = net.minecraftforge.common.ForgeHooks.onNoteChange(p_196250_2_, p_196250_3_, p_196250_1_, p_196250_1_.func_177229_b(field_196485_c), p_196250_1_.func_177231_a(field_196485_c).func_177229_b(field_196485_c));
++         int _new = net.minecraftforge.event.ForgeEventFactory.onNoteChange(p_196250_2_, p_196250_3_, p_196250_1_, p_196250_1_.func_177229_b(field_196485_c), p_196250_1_.func_177231_a(field_196485_c).func_177229_b(field_196485_c));
 +         if (_new == -1) return false;
 +         p_196250_1_ = (IBlockState)p_196250_1_.func_206870_a(field_196485_c, _new);
           p_196250_2_.func_180501_a(p_196250_3_, p_196250_1_, 3);

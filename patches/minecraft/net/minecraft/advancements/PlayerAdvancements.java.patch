@@ -13,7 +13,7 @@
              if (p_192750_1_.func_192068_c() != null && p_192750_1_.func_192068_c().func_193220_i() && this.field_192762_j.field_70170_p.func_82736_K().func_82766_b("announceAdvancements")) {
                 this.field_192756_d.func_184103_al().func_148539_a(new TextComponentTranslation("chat.type.advancement." + p_192750_1_.func_192068_c().func_192291_d().func_192307_a(), this.field_192762_j.func_145748_c_(), p_192750_1_.func_193123_j()));
              }
-+            net.minecraftforge.common.ForgeHooks.onAdvancement(this.field_192762_j, p_192750_1_);
++            net.minecraftforge.event.ForgeEventFactory.onAdvancement(this.field_192762_j, p_192750_1_);
           }
        }
  

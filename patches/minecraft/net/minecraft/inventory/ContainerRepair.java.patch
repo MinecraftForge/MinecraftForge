@@ -4,7 +4,7 @@
                 p_190901_1_.func_82242_a(-ContainerRepair.this.field_82854_e);
              }
  
-+            float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_190901_1_, p_190901_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
++            float breakChance = net.minecraftforge.event.ForgeEventFactory.onAnvilRepair(p_190901_1_, p_190901_2_, ContainerRepair.this.field_82853_g.func_70301_a(0), ContainerRepair.this.field_82853_g.func_70301_a(1));
 +
              ContainerRepair.this.field_82853_g.func_70299_a(0, ItemStack.field_190927_a);
              if (ContainerRepair.this.field_82856_l > 0) {
@@ -26,7 +26,7 @@
 +
           if (!itemstack2.func_190926_b()) {
 -            boolean flag = itemstack2.func_77973_b() == Items.field_151134_bR && !ItemEnchantedBook.func_92110_g(itemstack2).isEmpty();
-+            if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, j)) return;
++            if (!net.minecraftforge.event.ForgeEventFactory.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, j)) return;
 +            flag = itemstack2.func_77973_b() == Items.field_151134_bR && !ItemEnchantedBook.func_92110_g(itemstack2).isEmpty();
              if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2)) {
                 int l2 = Math.min(itemstack1.func_77952_i(), itemstack1.func_77958_k() / 4);

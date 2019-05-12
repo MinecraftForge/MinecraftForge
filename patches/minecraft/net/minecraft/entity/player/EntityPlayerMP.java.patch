@@ -4,7 +4,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
-+      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  p_70645_1_)) return;
++      if (net.minecraftforge.event.ForgeEventFactory.onLivingDeath(this,  p_70645_1_)) return;
        boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
        if (flag) {
           ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
@@ -27,7 +27,7 @@
     @Nullable
 -   public Entity func_212321_a(DimensionType p_212321_1_) {
 +   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
++      if (!net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_212321_1_)) return null;
        this.field_184851_cj = true;
        if (this.field_71093_bK == DimensionType.OVERWORLD && p_212321_1_ == DimensionType.NETHER) {
           this.field_193110_cw = new Vec3d(this.field_70165_t, this.field_70163_u, this.field_70161_v);
@@ -124,7 +124,7 @@
        if (p_200619_1_ == this.field_70170_p) {
           this.field_71135_a.func_147364_a(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
 -      } else {
-+      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_200619_1_.field_73011_w.func_186058_p())) {
++      } else if (net.minecraftforge.event.ForgeEventFactory.onTravelToDimension(this, p_200619_1_.field_73011_w.func_186058_p())) {
           WorldServer worldserver = this.func_71121_q();
           this.field_71093_bK = p_200619_1_.field_73011_w.func_186058_p();
 -         this.field_71135_a.func_147359_a(new SPacketRespawn(this.field_71093_bK, worldserver.func_175659_aa(), worldserver.func_72912_H().func_76067_t(), this.field_71134_c.func_73081_b()));
