@@ -77,9 +77,9 @@ public final class GetCollisionShapeEvent extends Event {
 	public static GetCollisionShapeEvent getAndReset(final IWorldReaderBase worldReaderBase, final BlockPos pos, final Entity entityIn) {
 		final GetCollisionShapeEvent event = EVENT_THREAD_LOCAL.get();
 
-//      event.isCanceled = false; // Not needed because this event is not Cancelable
-//      event.result = Result.DEFAULT; // Not needed because this event does not have a result
-//		event.phase = null;
+//		event.isCanceled = false; // Not needed because this event is not Cancelable
+//		event.result = Result.DEFAULT; // Not needed because this event does not have a result
+		event.phase = null;
 
 		event.worldReaderBase = worldReaderBase;
 		event.pos = pos;
