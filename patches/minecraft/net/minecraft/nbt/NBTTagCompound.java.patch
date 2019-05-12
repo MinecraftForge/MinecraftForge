@@ -40,12 +40,12 @@
 +    {
 +        try
 +        {
-+            if (this.func_150297_b(key, 12))
++            if (this.func_150297_b(key, net.minecraftforge.common.util.Constants.NBT.TAG_LONG_ARRAY))
 +                return ((NBTTagLongArray) this.field_74784_a.get(key)).getLongArray();
 +        }
 +        catch (ClassCastException classcastexception)
 +        {
-+            throw new ReportedException(this.func_82581_a(key, 12, classcastexception));
++            throw new ReportedException(this.func_82581_a(key, net.minecraftforge.common.util.Constants.NBT.TAG_LONG_ARRAY, classcastexception));
 +        }
 +        return new long[0];
 +    }
