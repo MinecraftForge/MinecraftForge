@@ -166,8 +166,16 @@ public class ModLoader
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
         LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
-        return modFile.getScanResult().getTargets().entrySet().stream().
-                map(e-> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e)).collect(Collectors.toList());
+        final List<ModContainer> containers = modFile.getScanResult().getTargets().entrySet().stream().
+                map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e)).collect(Collectors.toList());
+        if (containers.size() != modInfoMap.size()) {
+            LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
+                    modFile.getFilePath(),
+                    containers.size(), containers.stream().map(ModContainer::getModId).collect(Collectors.toList()),
+                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).collect(Collectors.toList()));
+            loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
+        }
+        return containers;
     }
 
     private ModContainer buildModContainerFromTOML(final ModFile modFile, final TransformingClassLoader modClassLoader, final Map<String, IModInfo> modInfoMap, final Map.Entry<String, ? extends IModLanguageProvider.IModLanguageLoader> idToProviderEntry) {
