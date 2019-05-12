@@ -5,6 +5,10 @@ loaderVersion="[2.0,)"
 
 # debug/client/model
 [[mods]]
+	modId="forgedebugmodeldata"
+	version="1.0"
+	displayName="ModelDataTest"
+[[mods]]
     modId="forgedebugmodelloaderregistry"
     version="1.0"
     displayName="ModelLoaderRegistryTest"
