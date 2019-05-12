@@ -28,6 +28,7 @@ import net.minecraft.resources.ResourcePackList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfig;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
@@ -61,6 +62,7 @@ public class ClientModLoader
         try {
             ModLoader.get().loadMods();
         } catch (LoadingFailedException e) {
+            MinecraftForge.EVENT_BUS.shutdown();
             error = e;
         }
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
@@ -71,6 +73,7 @@ public class ClientModLoader
         try {
             ModLoader.get().finishMods();
         } catch (LoadingFailedException e) {
+            MinecraftForge.EVENT_BUS.shutdown();
             if (error == null) error = e;
         }
         loading = false;
