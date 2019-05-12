@@ -1,0 +1,35 @@
+--- a/net/minecraft/world/IWorldReaderBase.java
++++ b/net/minecraft/world/IWorldReaderBase.java
+@@ -111,6 +111,12 @@
+    }
+ 
+    default Stream<VoxelShape> func_212391_a(VoxelShape p_212391_1_, VoxelShape p_212391_2_, boolean p_212391_3_) {
++      // Forge: add entity parameter on overloaded getCollisionShapes method to allow mods to change their voxel shape
++      // depending on the entity
++      return getCollisionShapes(null, p_212391_2_, p_212391_2_, p_212391_3_);
++   }
++
++   default Stream<VoxelShape> getCollisionShapes(@Nullable Entity entityIn, VoxelShape p_212391_1_, VoxelShape p_212391_2_, boolean p_212391_3_) {
+       int i = MathHelper.func_76128_c(p_212391_1_.func_197762_b(EnumFacing.Axis.X)) - 1;
+       int j = MathHelper.func_76143_f(p_212391_1_.func_197758_c(EnumFacing.Axis.X)) + 1;
+       int k = MathHelper.func_76128_c(p_212391_1_.func_197762_b(EnumFacing.Axis.Y)) - 1;
+@@ -132,6 +138,10 @@
+          boolean flag3 = i2 == i1 || i2 == j1 - 1;
+          if ((!flag1 || !flag2) && (!flag2 || !flag3) && (!flag3 || !flag1) && this.func_175667_e(p_212390_12_)) {
+             VoxelShape voxelshape;
++            final VoxelShape hookShape = net.minecraftforge.event.ForgeEventFactory.getCollisionShape(this, p_212390_12_, entityIn);
++            if (hookShape != null) {
++               voxelshape = hookShape;
++            } else
+             if (p_212391_3_ && !flag && !worldborder.func_177746_a(p_212390_12_)) {
+                voxelshape = VoxelShapes.func_197868_b();
+             } else {
+@@ -179,7 +189,7 @@
+          p_212392_1_.func_174821_h(!flag1);
+       }
+ 
+-      return this.func_212391_a(p_212392_2_, p_212392_3_, flag1);
++      return this.getCollisionShapes(p_212392_1_, p_212392_2_, p_212392_3_, flag1);
+    }
+ 
+    default boolean func_191503_g(Entity p_191503_1_) {
