@@ -148,12 +148,12 @@ public class ModLoader
 
     private void dispatchAndHandleError(LifecycleEventProvider event) {
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.error("Skipping lifecycle event {}, {} errors found.", event, loadingExceptions.size());
+            LOGGER.error(LOADING,"Skipping lifecycle event {}, {} errors found.", event, loadingExceptions.size());
         } else {
             event.dispatch(this::accumulateErrors);
         }
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.fatal("Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
+            LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
             throw new LoadingFailedException(loadingExceptions);
         }
     }
