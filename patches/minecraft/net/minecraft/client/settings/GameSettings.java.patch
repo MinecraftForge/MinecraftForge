@@ -34,7 +34,24 @@
          }
  
          if (p_74306_1_ == GameSettings.Options.GRAPHICS)
-@@ -1068,7 +1070,12 @@
+@@ -724,6 +726,7 @@
+ 
+     public void func_74300_a()
+     {
++        FileInputStream fileInputStream = null; // Forge: fix MC-151173
+         try
+         {
+             if (!this.field_74354_ai.exists())
+@@ -732,7 +735,7 @@
+             }
+ 
+             this.field_186714_aM.clear();
+-            List<String> list = IOUtils.readLines(new FileInputStream(this.field_74354_ai));
++            List<String> list = IOUtils.readLines(fileInputStream = new FileInputStream(this.field_74354_ai), StandardCharsets.UTF_8); // Forge: fix MC-117449, MC-151173
+             NBTTagCompound nbttagcompound = new NBTTagCompound();
+ 
+             for (String s : list)
+@@ -1068,7 +1071,12 @@
                      {
                          if (s1.equals("key_" + keybinding.func_151464_g()))
                          {
@@ -48,7 +65,15 @@
                          }
                      }
  
-@@ -1132,6 +1139,7 @@
+@@ -1100,6 +1108,7 @@
+         {
+             field_151454_ax.error("Failed to load options", (Throwable)exception);
+         }
++        finally { IOUtils.closeQuietly(fileInputStream); } // Forge: fix MC-151173
+     }
+ 
+     private NBTTagCompound func_189988_a(NBTTagCompound p_189988_1_)
+@@ -1132,6 +1141,7 @@
  
      public void func_74303_b()
      {
@@ -56,7 +81,7 @@
          PrintWriter printwriter = null;
  
          try
-@@ -1206,7 +1214,8 @@
+@@ -1206,7 +1216,8 @@
  
              for (KeyBinding keybinding : this.field_74324_K)
              {
@@ -66,7 +91,7 @@
              }
  
              for (SoundCategory soundcategory : SoundCategory.values())
-@@ -1440,4 +1449,35 @@
+@@ -1440,4 +1451,35 @@
              return p_148264_1_;
          }
      }
