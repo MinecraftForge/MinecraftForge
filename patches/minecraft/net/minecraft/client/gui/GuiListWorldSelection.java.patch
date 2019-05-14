@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/GuiListWorldSelection.java
++++ b/net/minecraft/client/gui/GuiListWorldSelection.java
+@@ -51,6 +51,7 @@
+       String s = p_212330_1_.get().toLowerCase(Locale.ROOT);
+ 
+       for(WorldSummary worldsummary : this.field_212331_y) {
++         if (net.minecraftforge.client.ForgeHooksClient.deleteMarkedHardcoreWorld(worldsummary)) {continue;}
+          if (worldsummary.func_75788_b().toLowerCase(Locale.ROOT).contains(s) || worldsummary.func_75786_a().toLowerCase(Locale.ROOT).contains(s)) {
+             this.func_195085_a(new GuiListWorldSelectionEntry(this, worldsummary, this.field_148161_k.func_71359_d()));
+          }

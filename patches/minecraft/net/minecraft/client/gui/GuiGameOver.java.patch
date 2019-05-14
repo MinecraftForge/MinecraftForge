@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/GuiGameOver.java
++++ b/net/minecraft/client/gui/GuiGameOver.java
+@@ -40,6 +40,7 @@
+       GuiButton guibutton = this.func_189646_b(new GuiButton(1, this.field_146294_l / 2 - 100, this.field_146295_m / 4 + 96, s1) {
+          public void func_194829_a(double p_194829_1_, double p_194829_3_) {
+             if (GuiGameOver.this.field_146297_k.field_71441_e.func_72912_H().func_76093_s()) {
++               net.minecraftforge.client.ForgeHooksClient.fixHardcore();
+                GuiGameOver.this.field_146297_k.func_147108_a(new GuiMainMenu());
+             } else {
+                GuiYesNo guiyesno = new GuiYesNo(GuiGameOver.this, I18n.func_135052_a("deathScreen.quit.confirm"), "", I18n.func_135052_a("deathScreen.titleScreen"), I18n.func_135052_a("deathScreen.respawn"), 0);

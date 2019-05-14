@@ -93,9 +93,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -106,9 +109,13 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.GameType;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.storage.ISaveFormat;
+import net.minecraft.world.storage.WorldInfo;
+import net.minecraft.world.storage.WorldSummary;
 import net.minecraftforge.client.event.ColorHandlerEvent;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -135,6 +142,7 @@ import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.VersionChecker;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.server.ServerLifecycleHooks;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.resource.ReloadRequirements;
 import net.minecraftforge.resource.SelectiveReloadStateHandler;
@@ -1027,4 +1035,76 @@ public class ForgeHooksClient
     {
         MinecraftForge.EVENT_BUS.post(new InputEvent.KeyInputEvent(key, scanCode, action, modifiers));
     }
+    
+    /**
+     * Fixes MC-96521 directly, and marks the current world to be deleted by 
+     * {@link #deleteMarkedHardcoreWorld(WorldSummary)}
+     * 
+     * @see net.minecraft.client.gui.GuiGameOver
+     * @see #deleteMarkedHardcoreWorld
+     */
+    public static void fixHardcore() 
+    {
+        Minecraft mc = Minecraft.getInstance();
+        IntegratedServer server = ((IntegratedServer) ServerLifecycleHooks.getCurrentServer());
+        if(server != null) {
+	        server.addScheduledTask(() -> {
+	            String ownerName = server.getServerOwner();
+	            EntityPlayerMP owner = server.getPlayerList().getPlayerByUsername(ownerName);
+	            owner.setGameType(GameType.NOT_SET);
+	            mc.world.sendQuittingDisconnectingPacket();
+	        });
+        }
+        else {
+        	mc.world.sendQuittingDisconnectingPacket();
+        }
+        while(mc.getConnection().getNetworkManager().isChannelOpen()) {}
+        mc.loadWorld(null);
+    }
+    
+    /**
+     * Used to fix MC-30646<p>
+     * <p>
+     * Deletes the world specified by the provided WorldSummary under the following
+     * conditions:<p>
+     * 
+     * 1. The world is Hardcore <p>
+     * 2. The player's health is <= 0 <p>
+     * 3. The player's game type is set to {@link GameType#NOT_SET}<p>
+     * 
+     * @param world the WorldSummary to delete
+     * 
+     * @see #fixHardcore
+     * @see net.minecraft.client.gui.GuiListWorldSelection#func_212330_a
+     * 
+     * @return true if the world was just deleted, or the world has already been deleted
+     */
+    public static boolean deleteMarkedHardcoreWorld(WorldSummary world)
+    {
+        ISaveFormat saveLoader = Minecraft.getInstance().getSaveLoader();
+        if(!saveLoader.getWorldFolder(world.getFileName()).toFile().exists())
+        {
+        	return true;
+        }
+        if(world.isHardcoreModeEnabled())
+        {
+            WorldInfo worldInfo = Minecraft.getInstance().getSaveLoader().getWorldInfo(world.getFileName());
+            if(worldInfo != null)
+            {
+                NBTTagCompound playerNBT = worldInfo.getPlayerNBTTagCompound();
+                if(playerNBT != null)
+                {
+                    if(playerNBT.hasKey("playerGameType") && playerNBT.hasKey("Health"))
+                    {
+                        if(playerNBT.getShort("playerGameType") == -1 && playerNBT.getFloat("Health") <= 0)
+                        {
+                            return Minecraft.getInstance().getSaveLoader().deleteWorldDirectory(world.getFileName());
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 }
