@@ -108,6 +108,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.registry.IRegistry;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.IWorldReader;
@@ -1052,7 +1053,7 @@ public class ForgeHooksClient
 	            String ownerName = server.getServerOwner();
 	            EntityPlayerMP owner = server.getPlayerList().getPlayerByUsername(ownerName);
 	            owner.setGameType(GameType.NOT_SET);
-	            mc.world.sendQuittingDisconnectingPacket();
+	            owner.connection.disconnect(new TextComponentTranslation("deathScreen.title.hardcore"));
 	        });
         }
         else {
@@ -1074,7 +1075,7 @@ public class ForgeHooksClient
      * 
      * @param world the WorldSummary to delete
      * 
-     * @see #fixHardcore
+     * @see #fixHardcore()
      * @see net.minecraft.client.gui.GuiListWorldSelection#func_212330_a
      * 
      * @return true if the world was just deleted, or the world has already been deleted
