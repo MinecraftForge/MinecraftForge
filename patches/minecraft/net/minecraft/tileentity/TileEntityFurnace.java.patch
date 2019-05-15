@@ -75,17 +75,14 @@
           }
  
           if (!this.field_145850_b.field_72995_K) {
-@@ -342,16 +346,11 @@
-    }
- 
-    private static int func_145952_a(ItemStack p_145952_0_) {
--      if (p_145952_0_.func_190926_b()) {
--         return 0;
--      } else {
+@@ -345,13 +349,12 @@
+       if (p_145952_0_.func_190926_b()) {
+          return 0;
+       } else {
 -         Item item = p_145952_0_.func_77973_b();
 -         return func_201564_p().getOrDefault(item, 0);
--      }
-+      return net.minecraftforge.common.crafting.FurnaceHelper.getItemBurnTime(p_145952_0_);
++         return net.minecraftforge.common.crafting.FurnaceHelper.getItemBurnTime(p_145952_0_);
+       }
     }
  
     public static boolean func_145954_b(ItemStack p_145954_0_) {
@@ -94,7 +91,7 @@
     }
  
     public boolean func_70300_a(EntityPlayer p_70300_1_) {
-@@ -500,4 +499,27 @@
+@@ -500,4 +503,27 @@
  
        this.field_203901_m.clear();
     }
