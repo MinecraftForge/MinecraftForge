@@ -81,7 +81,10 @@ public class MinecraftForge
     {
         addGrassSeed(new SeedEntry(seed, weight));
     }
-    /** @deprecated see {@link #addGrassSeed(ItemStack, int)}*/ @Deprecated
+    /**
+     * @deprecated see {@link #addGrassSeed(ItemStack, int)} for its replacement
+     */
+    @Deprecated
     public static void addGrassSeed(SeedEntry seed)
     {
         ForgeHooks.seedList.add(seed);
