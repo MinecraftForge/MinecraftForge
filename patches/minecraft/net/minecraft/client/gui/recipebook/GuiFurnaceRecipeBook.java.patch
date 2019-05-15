@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/gui/recipebook/GuiFurnaceRecipeBook.java
++++ b/net/minecraft/client/gui/recipebook/GuiFurnaceRecipeBook.java
+@@ -69,7 +69,7 @@
+       NonNullList<Ingredient> nonnulllist = p_193951_1_.func_192400_c();
+       this.field_201527_n = p_193951_2_.get(1);
+       if (this.field_201526_m == null) {
+-         this.field_201526_m = TileEntityFurnace.func_201564_p().keySet();
++         this.field_201526_m = net.minecraftforge.common.crafting.FurnaceHelper.getBurnTimes().keySet();
+       }
+ 
+       this.field_201525_l = this.field_201526_m.iterator();
+@@ -116,7 +116,7 @@
+          this.field_201524_p = 0.0F;
+          if (this.field_201525_l == null || !this.field_201525_l.hasNext()) {
+             if (this.field_201526_m == null) {
+-               this.field_201526_m = TileEntityFurnace.func_201564_p().keySet();
++               this.field_201526_m = net.minecraftforge.common.crafting.FurnaceHelper.getBurnTimes().keySet();
+             }
+ 
+             this.field_201525_l = this.field_201526_m.iterator();
