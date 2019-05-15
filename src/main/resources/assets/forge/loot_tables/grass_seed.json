@@ -1,3 +1,14 @@
 {
-  "pools": []
+  "pools": [
+    {
+      "name": "vanilla_grass_drop",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:wheat_seeds"
+        }
+      ]      
+    }
+  ]
 }
