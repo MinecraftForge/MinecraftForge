@@ -47,15 +47,25 @@
        } else {
           return i;
        }
-@@ -470,6 +472,7 @@
+@@ -468,8 +470,17 @@
+ 
+    @Deprecated
     public void func_196243_a(IBlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, IBlockState p_196243_4_, boolean p_196243_5_) {
++       // FORGE: Remove modded TEs when the block changes
++       if (hasTileEntity(p_196243_1_) && !(this instanceof BlockContainer // Vanilla ITEP classes, they do this themselves
++                                  || this instanceof net.minecraft.block.BlockBed
++                                  || this instanceof net.minecraft.block.BlockRedstoneDiode)) {
++           if (p_196243_1_.func_177230_c() != p_196243_4_.func_177230_c()) {
++               p_196243_2_.func_175713_t(p_196243_3_);
++           }
++       }
     }
  
 +   @Deprecated //Forge: Use fortune/location sensitive version
     public int func_196264_a(IBlockState p_196264_1_, Random p_196264_2_) {
        return 1;
     }
-@@ -484,30 +487,30 @@
+@@ -484,30 +495,30 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -100,7 +110,7 @@
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -529,6 +532,7 @@
+@@ -529,6 +540,7 @@
  
     }
  
@@ -108,7 +118,7 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -543,7 +547,7 @@
+@@ -543,7 +555,7 @@
           }
        }
  
@@ -117,7 +127,7 @@
     }
  
     public void func_180652_a(World p_180652_1_, BlockPos p_180652_2_, Explosion p_180652_3_) {
-@@ -597,16 +601,22 @@
+@@ -597,16 +609,22 @@
     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_) {
        p_180657_2_.func_71029_a(StatList.field_188065_ae.func_199076_b(this));
        p_180657_2_.func_71020_j(0.005F);
@@ -142,7 +152,7 @@
     protected boolean func_149700_E() {
        return this.func_176223_P().func_185917_h() && !this.func_149716_u();
     }
-@@ -663,6 +673,7 @@
+@@ -663,6 +681,7 @@
        p_176216_2_.field_70181_x = 0.0D;
     }
  
@@ -150,7 +160,7 @@
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_) {
        return new ItemStack(this);
     }
-@@ -737,6 +748,7 @@
+@@ -737,6 +756,7 @@
        }
     }
  
@@ -158,7 +168,7 @@
     public SoundType func_185467_w() {
        return this.field_149762_H;
     }
-@@ -758,11 +770,11 @@
+@@ -758,11 +778,11 @@
     }
  
     public static boolean func_196252_e(Block p_196252_0_) {
@@ -172,7 +182,7 @@
     }
  
     public static void func_149671_p() {
-@@ -1129,7 +1141,7 @@
+@@ -1129,7 +1149,7 @@
        func_196254_a("chiseled_quartz_block", new Block(Block.Properties.func_200949_a(Material.field_151576_e, MaterialColor.field_151677_p).func_200943_b(0.8F)));
        func_196254_a("quartz_pillar", new BlockRotatedPillar(Block.Properties.func_200949_a(Material.field_151576_e, MaterialColor.field_151677_p).func_200943_b(0.8F)));
        func_196254_a("quartz_stairs", new BlockStairs(block42.func_176223_P(), Block.Properties.func_200950_a(block42)));
@@ -181,7 +191,7 @@
        func_196254_a("dropper", new BlockDropper(Block.Properties.func_200945_a(Material.field_151576_e).func_200943_b(3.5F)));
        func_196254_a("white_terracotta", new Block(Block.Properties.func_200949_a(Material.field_151576_e, MaterialColor.field_193561_M).func_200948_a(1.25F, 4.2F)));
        func_196254_a("orange_terracotta", new Block(Block.Properties.func_200949_a(Material.field_151576_e, MaterialColor.field_193562_N).func_200948_a(1.25F, 4.2F)));
-@@ -1455,6 +1467,7 @@
+@@ -1455,6 +1475,7 @@
        func_196254_a("bubble_column", new BlockBubbleColumn(Block.Properties.func_200945_a(Material.field_203244_i).func_200942_a()));
        func_196254_a("structure_block", new BlockStructure(Block.Properties.func_200949_a(Material.field_151573_f, MaterialColor.field_197656_x).func_200948_a(-1.0F, 3600000.0F)));
  
@@ -189,7 +199,7 @@
        for(Block block85 : IRegistry.field_212618_g) {
           for(IBlockState iblockstate : block85.func_176194_O().func_177619_a()) {
              field_176229_d.func_195867_b(iblockstate);
-@@ -1594,4 +1607,83 @@
+@@ -1594,4 +1615,83 @@
           return Objects.hash(this.field_212164_a, this.field_212165_b, this.field_212166_c);
        }
     }
