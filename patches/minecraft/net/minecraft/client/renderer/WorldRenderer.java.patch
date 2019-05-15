@@ -110,7 +110,7 @@
     public void func_195465_a(float p_195465_1_) {
 +      net.minecraftforge.client.IRenderHandler renderer = this.field_72769_h.func_201675_m().getSkyRenderer();
 +      if (renderer != null) {
-+         renderer.render(p_195465_1_, field_72769_h, field_72777_q);
++         renderer.render(this.field_72773_u, p_195465_1_, this.field_72769_h, this.field_72777_q);
 +         return;
 +      }
        if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p() == DimensionType.THE_END) {
