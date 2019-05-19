@@ -1,5 +1,23 @@
 --- a/net/minecraft/entity/monster/EntityEnderman.java
 +++ b/net/minecraft/entity/monster/EntityEnderman.java
+@@ -84,7 +84,6 @@
+    }
+ 
+    public void func_70624_b(@Nullable EntityLivingBase p_70624_1_) {
+-      super.func_70624_b(p_70624_1_);
+       IAttributeInstance iattributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+       if (p_70624_1_ == null) {
+          this.field_184721_by = 0;
+@@ -97,7 +96,8 @@
+             iattributeinstance.func_111121_a(field_110193_bq);
+          }
+       }
+-
++      //Forge: Moved to give {@link net.minecraftforge.event.entity.living.LivingSetAttackTargetEvent} full context
++      super.func_70624_b(p_70624_1_);
+    }
+ 
+    protected void func_70088_a() {
 @@ -209,7 +209,9 @@
     }
  
