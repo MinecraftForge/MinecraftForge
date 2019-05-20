@@ -1,0 +1,20 @@
+--- a/net/minecraft/data/Main.java
++++ b/net/minecraft/data/Main.java
+@@ -10,6 +10,8 @@
+ import joptsimple.OptionParser;
+ import joptsimple.OptionSet;
+ import joptsimple.OptionSpecBuilder;
++import net.minecraftforge.common.MinecraftForge;
++import net.minecraftforge.event.AddDatapackProviderEvent;
+ 
+ public class Main {
+    public static void main(String[] p_main_0_) throws IOException {
+@@ -61,6 +63,8 @@
+          datagenerator.func_200390_a(new ItemListReport(datagenerator));
+          datagenerator.func_200390_a(new CommandsReport(datagenerator));
+       }
++      
++      MinecraftForge.EVENT_BUS.post(new AddDatapackProviderEvent(datagenerator,p_200264_3_,p_200264_2_,p_200264_4_,p_200264_5_));
+ 
+       return datagenerator;
+    }
