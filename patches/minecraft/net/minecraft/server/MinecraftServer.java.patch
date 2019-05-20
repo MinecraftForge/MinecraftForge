@@ -1,183 +1,2614 @@
 --- a/net/minecraft/server/MinecraftServer.java
 +++ b/net/minecraft/server/MinecraftServer.java
-@@ -335,20 +335,19 @@
-          worldserver.func_72912_H().func_76060_a(this.func_71265_f());
+@@ -1,23 +1,5 @@
+ package net.minecraft.server;
+ 
+-import com.google.common.base.Stopwatch;
+-import com.google.common.collect.Lists;
+-import com.google.common.collect.Maps;
+-import com.google.common.collect.Queues;
+-import com.google.common.collect.Sets;
+-import com.google.common.util.concurrent.Futures;
+-import com.google.common.util.concurrent.ListenableFuture;
+-import com.google.common.util.concurrent.ListenableFutureTask;
+-import com.google.gson.JsonElement;
+-import com.mojang.authlib.GameProfile;
+-import com.mojang.authlib.GameProfileRepository;
+-import com.mojang.authlib.minecraft.MinecraftSessionService;
+-import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
+-import com.mojang.datafixers.DataFixer;
+-import io.netty.buffer.ByteBuf;
+-import io.netty.buffer.ByteBufOutputStream;
+-import io.netty.buffer.Unpooled;
+-import it.unimi.dsi.fastutil.longs.LongIterator;
+ import java.awt.GraphicsEnvironment;
+ import java.awt.image.BufferedImage;
+ import java.io.File;
+@@ -29,12 +11,15 @@
+ import java.nio.charset.StandardCharsets;
+ import java.security.KeyPair;
+ import java.text.SimpleDateFormat;
++import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Base64;
+ import java.util.Collections;
+ import java.util.Date;
++import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Map.Entry;
+ import java.util.Queue;
+ import java.util.Random;
+ import java.util.Set;
+@@ -47,8 +32,30 @@
+ import java.util.concurrent.TimeUnit;
+ import java.util.concurrent.TimeoutException;
+ import java.util.function.BooleanSupplier;
++import java.util.stream.Collectors;
+ import javax.annotation.Nullable;
+ import javax.imageio.ImageIO;
++import org.apache.commons.lang3.Validate;
++import org.apache.logging.log4j.LogManager;
++import org.apache.logging.log4j.Logger;
++import com.google.common.base.Stopwatch;
++import com.google.common.collect.Lists;
++import com.google.common.collect.Maps;
++import com.google.common.collect.Queues;
++import com.google.common.collect.Sets;
++import com.google.common.util.concurrent.Futures;
++import com.google.common.util.concurrent.ListenableFuture;
++import com.google.common.util.concurrent.ListenableFutureTask;
++import com.google.gson.JsonElement;
++import com.mojang.authlib.GameProfile;
++import com.mojang.authlib.GameProfileRepository;
++import com.mojang.authlib.minecraft.MinecraftSessionService;
++import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
++import com.mojang.datafixers.DataFixer;
++import io.netty.buffer.ByteBuf;
++import io.netty.buffer.ByteBufOutputStream;
++import io.netty.buffer.Unpooled;
++import it.unimi.dsi.fastutil.longs.LongIterator;
+ import net.minecraft.advancements.AdvancementManager;
+ import net.minecraft.advancements.FunctionManager;
+ import net.minecraft.command.CommandSource;
+@@ -118,1358 +125,1457 @@
+ import net.minecraft.world.storage.loot.LootTableManager;
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+-import org.apache.commons.lang3.Validate;
+-import org.apache.logging.log4j.LogManager;
+-import org.apache.logging.log4j.Logger;
+ 
+-public abstract class MinecraftServer implements IThreadListener, ISnooperInfo, ICommandSource, Runnable {
+-   private static final Logger field_147145_h = LogManager.getLogger();
+-   public static final File field_152367_a = new File("usercache.json");
+-   private final ISaveFormat field_71310_m;
+-   private final Snooper field_71307_n = new Snooper("server", this, Util.func_211177_b());
+-   private final File field_71308_o;
+-   private final List<ITickable> field_71322_p = Lists.newArrayList();
+-   public final Profiler field_71304_b = new Profiler();
+-   private final NetworkSystem field_147144_o;
+-   private final ServerStatusResponse field_147147_p = new ServerStatusResponse();
+-   private final Random field_147146_q = new Random();
+-   private final DataFixer field_184112_s;
+-   private String field_71320_r;
+-   private int field_71319_s = -1;
+-   private final Map<DimensionType, WorldServer> field_71305_c = Maps.newIdentityHashMap();
+-   private PlayerList field_71318_t;
+-   private boolean field_71317_u = true;
+-   private boolean field_71316_v;
+-   private int field_71315_w;
+-   protected final Proxy field_110456_c;
+-   private ITextComponent field_71302_d;
+-   private int field_71303_e;
+-   private boolean field_71325_x;
+-   private boolean field_190519_A;
+-   private boolean field_71324_y;
+-   private boolean field_71323_z;
+-   private boolean field_71284_A;
+-   private boolean field_71285_B;
+-   private String field_71286_C;
+-   private int field_71280_D;
+-   private int field_143008_E;
+-   public final long[] field_71311_j = new long[100];
+-   protected final Map<DimensionType, long[]> field_71312_k = Maps.newIdentityHashMap();
+-   private KeyPair field_71292_I;
+-   private String field_71293_J;
+-   private String field_71294_K;
+-   @OnlyIn(Dist.CLIENT)
+-   private String field_71287_L;
+-   private boolean field_71288_M;
+-   private boolean field_71289_N;
+-   private String field_147141_M = "";
+-   private String field_175588_P = "";
+-   private boolean field_71296_Q;
+-   private long field_71299_R;
+-   private ITextComponent field_71298_S;
+-   private boolean field_71295_T;
+-   private boolean field_104057_T;
+-   private final YggdrasilAuthenticationService field_152364_T;
+-   private final MinecraftSessionService field_147143_S;
+-   private final GameProfileRepository field_152365_W;
+-   private final PlayerProfileCache field_152366_X;
+-   private long field_147142_T;
+-   public final Queue<FutureTask<?>> field_175589_i = Queues.newConcurrentLinkedQueue();
+-   private Thread field_175590_aa;
+-   protected long field_211151_aa = Util.func_211177_b();
+-   @OnlyIn(Dist.CLIENT)
+-   private boolean field_184111_ab;
+-   private final IReloadableResourceManager field_195576_ac = new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
+-   private final ResourcePackList<ResourcePackInfo> field_195577_ad = new ResourcePackList<>(ResourcePackInfo::new);
+-   private FolderPackFinder field_195578_ae;
+-   private final Commands field_195579_af;
+-   private final RecipeManager field_199530_ag = new RecipeManager();
+-   private final NetworkTagManager field_199736_ah = new NetworkTagManager();
+-   private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
+-   private final CustomBossEvents field_201301_aj = new CustomBossEvents(this);
+-   private final LootTableManager field_200256_aj = new LootTableManager();
+-   private final AdvancementManager field_200257_ak = new AdvancementManager();
+-   private final FunctionManager field_200258_al = new FunctionManager(this);
+-   private boolean field_205745_an;
+-   private boolean field_212205_ao;
+-   private float field_211152_ao;
++public abstract class MinecraftServer
++    implements IThreadListener, ISnooperInfo, ICommandSource, Runnable {
++  private static final Logger field_147145_h = LogManager.getLogger();
++  public static final File field_152367_a = new File("usercache.json");
++  private final ISaveFormat field_71310_m;
++  private final Snooper field_71307_n = new Snooper("server", this, Util.func_211177_b());
++  private final File field_71308_o;
++  private final List<ITickable> field_71322_p = Lists.newArrayList();
++  public final Profiler field_71304_b = new Profiler();
++  private final NetworkSystem field_147144_o;
++  private final ServerStatusResponse field_147147_p = new ServerStatusResponse();
++  private final Random field_147146_q = new Random();
++  private final DataFixer field_184112_s;
++  private String field_71320_r;
++  private int field_71319_s = -1;
++  private final Map<DimensionType, WorldServer> field_71305_c = Maps.newIdentityHashMap();
++  private PlayerList field_71318_t;
++  private boolean field_71317_u = true;
++  private boolean field_71316_v;
++  private int field_71315_w;
++  protected final Proxy field_110456_c;
++  private ITextComponent field_71302_d;
++  private int field_71303_e;
++  private boolean field_71325_x;
++  private boolean field_190519_A;
++  private boolean field_71324_y;
++  private boolean field_71323_z;
++  private boolean field_71284_A;
++  private boolean field_71285_B;
++  private String field_71286_C;
++  private int field_71280_D;
++  private int field_143008_E;
++  public final long[] field_71311_j = new long[100];
++  protected final Map<DimensionType, long[]> field_71312_k = Maps.newIdentityHashMap();
++  private KeyPair field_71292_I;
++  private String field_71293_J;
++  private String field_71294_K;
++  @OnlyIn(Dist.CLIENT)
++  private String field_71287_L;
++  private boolean field_71288_M;
++  private boolean field_71289_N;
++  private String field_147141_M = "";
++  private String field_175588_P = "";
++  private boolean field_71296_Q;
++  private long field_71299_R;
++  private ITextComponent field_71298_S;
++  private boolean field_71295_T;
++  private boolean field_104057_T;
++  private final YggdrasilAuthenticationService field_152364_T;
++  private final MinecraftSessionService field_147143_S;
++  private final GameProfileRepository field_152365_W;
++  private final PlayerProfileCache field_152366_X;
++  private long field_147142_T;
++  public final Queue<FutureTask<?>> field_175589_i = Queues.newConcurrentLinkedQueue();
++  private Thread field_175590_aa;
++  protected long field_211151_aa = Util.func_211177_b();
++  @OnlyIn(Dist.CLIENT)
++  private boolean field_184111_ab;
++  private final IReloadableResourceManager field_195576_ac =
++      new SimpleReloadableResourceManager(ResourcePackType.SERVER_DATA);
++  private final ResourcePackList<ResourcePackInfo> field_195577_ad =
++      new ResourcePackList<>(ResourcePackInfo::new);
++  private FolderPackFinder field_195578_ae;
++  private final Commands field_195579_af;
++  private final RecipeManager field_199530_ag = new RecipeManager();
++  private final NetworkTagManager field_199736_ah = new NetworkTagManager();
++  private final ServerScoreboard field_200255_ai = new ServerScoreboard(this);
++  private final CustomBossEvents field_201301_aj = new CustomBossEvents(this);
++  private final LootTableManager field_200256_aj = new LootTableManager();
++  private final AdvancementManager field_200257_ak = new AdvancementManager();
++  private final FunctionManager field_200258_al = new FunctionManager(this);
++  private boolean field_205745_an;
++  private boolean field_212205_ao;
++  private float field_211152_ao;
+ 
+-   public MinecraftServer(@Nullable File p_i49697_1_, Proxy p_i49697_2_, DataFixer p_i49697_3_, Commands p_i49697_4_, YggdrasilAuthenticationService p_i49697_5_, MinecraftSessionService p_i49697_6_, GameProfileRepository p_i49697_7_, PlayerProfileCache p_i49697_8_) {
+-      this.field_110456_c = p_i49697_2_;
+-      this.field_195579_af = p_i49697_4_;
+-      this.field_152364_T = p_i49697_5_;
+-      this.field_147143_S = p_i49697_6_;
+-      this.field_152365_W = p_i49697_7_;
+-      this.field_152366_X = p_i49697_8_;
+-      this.field_71308_o = p_i49697_1_;
+-      this.field_147144_o = p_i49697_1_ == null ? null : new NetworkSystem(this);
+-      this.field_71310_m = p_i49697_1_ == null ? null : new AnvilSaveConverter(p_i49697_1_.toPath(), p_i49697_1_.toPath().resolve("../backups"), p_i49697_3_);
+-      this.field_184112_s = p_i49697_3_;
+-      this.field_195576_ac.func_199006_a(this.field_199736_ah);
+-      this.field_195576_ac.func_199006_a(this.field_199530_ag);
+-      this.field_195576_ac.func_199006_a(this.field_200256_aj);
+-      this.field_195576_ac.func_199006_a(this.field_200258_al);
+-      this.field_195576_ac.func_199006_a(this.field_200257_ak);
+-   }
++  public MinecraftServer(@Nullable File p_i49697_1_, Proxy p_i49697_2_, DataFixer p_i49697_3_,
++      Commands p_i49697_4_, YggdrasilAuthenticationService p_i49697_5_,
++      MinecraftSessionService p_i49697_6_, GameProfileRepository p_i49697_7_,
++      PlayerProfileCache p_i49697_8_) {
++    this.field_110456_c = p_i49697_2_;
++    this.field_195579_af = p_i49697_4_;
++    this.field_152364_T = p_i49697_5_;
++    this.field_147143_S = p_i49697_6_;
++    this.field_152365_W = p_i49697_7_;
++    this.field_152366_X = p_i49697_8_;
++    this.field_71308_o = p_i49697_1_;
++    this.field_147144_o = p_i49697_1_ == null ? null : new NetworkSystem(this);
++    this.field_71310_m = p_i49697_1_ == null ? null
++        : new AnvilSaveConverter(p_i49697_1_.toPath(), p_i49697_1_.toPath().resolve("../backups"),
++            p_i49697_3_);
++    this.field_184112_s = p_i49697_3_;
++    this.field_195576_ac.func_199006_a(this.field_199736_ah);
++    this.field_195576_ac.func_199006_a(this.field_199530_ag);
++    this.field_195576_ac.func_199006_a(this.field_200256_aj);
++    this.field_195576_ac.func_199006_a(this.field_200258_al);
++    this.field_195576_ac.func_199006_a(this.field_200257_ak);
++  }
+ 
+-   public abstract boolean func_71197_b() throws IOException;
++  public abstract boolean func_71197_b() throws IOException;
+ 
+-   public void func_71237_c(String p_71237_1_) {
+-      if (this.func_71254_M().func_75801_b(p_71237_1_)) {
+-         field_147145_h.info("Converting map!");
+-         this.func_200245_b(new TextComponentTranslation("menu.convertingLevel"));
+-         this.func_71254_M().func_75805_a(p_71237_1_, new IProgressUpdate() {
+-            private long field_96245_b = Util.func_211177_b();
++  public void func_71237_c(String p_71237_1_) {
++    if (this.func_71254_M().func_75801_b(p_71237_1_)) {
++      field_147145_h.info("Converting map!");
++      this.func_200245_b(new TextComponentTranslation("menu.convertingLevel"));
++      this.func_71254_M().func_75805_a(p_71237_1_, new IProgressUpdate() {
++        private long field_96245_b = Util.func_211177_b();
+ 
+-            public void func_200210_a(ITextComponent p_200210_1_) {
+-            }
++        public void func_200210_a(ITextComponent p_200210_1_) {}
+ 
+-            @OnlyIn(Dist.CLIENT)
+-            public void func_200211_b(ITextComponent p_200211_1_) {
+-            }
++        @OnlyIn(Dist.CLIENT)
++        public void func_200211_b(ITextComponent p_200211_1_) {}
+ 
+-            public void func_73718_a(int p_73718_1_) {
+-               if (Util.func_211177_b() - this.field_96245_b >= 1000L) {
+-                  this.field_96245_b = Util.func_211177_b();
+-                  MinecraftServer.field_147145_h.info("Converting... {}%", (int)p_73718_1_);
+-               }
++        public void func_73718_a(int p_73718_1_) {
++          if (Util.func_211177_b() - this.field_96245_b >= 1000L) {
++            this.field_96245_b = Util.func_211177_b();
++            MinecraftServer.field_147145_h.info("Converting... {}%", (int) p_73718_1_);
++          }
+ 
+-            }
++        }
+ 
+-            @OnlyIn(Dist.CLIENT)
+-            public void func_146586_a() {
+-            }
++        @OnlyIn(Dist.CLIENT)
++        public void func_146586_a() {}
+ 
+-            public void func_200209_c(ITextComponent p_200209_1_) {
+-            }
+-         });
+-      }
++        public void func_200209_c(ITextComponent p_200209_1_) {}
++      });
++    }
+ 
+-      if (this.field_212205_ao) {
+-         field_147145_h.info("Forcing world upgrade!");
+-         WorldInfo worldinfo = this.func_71254_M().func_75803_c(this.func_71270_I());
+-         if (worldinfo != null) {
+-            WorldOptimizer worldoptimizer = new WorldOptimizer(this.func_71270_I(), this.func_71254_M(), worldinfo);
+-            ITextComponent itextcomponent = null;
++    if (this.field_212205_ao) {
++      field_147145_h.info("Forcing world upgrade!");
++      WorldInfo worldinfo = this.func_71254_M().func_75803_c(this.func_71270_I());
++      if (worldinfo != null) {
++        WorldOptimizer worldoptimizer =
++            new WorldOptimizer(this.func_71270_I(), this.func_71254_M(), worldinfo);
++        ITextComponent itextcomponent = null;
+ 
+-            while(!worldoptimizer.func_212218_b()) {
+-               ITextComponent itextcomponent1 = worldoptimizer.func_212215_m();
+-               if (itextcomponent != itextcomponent1) {
+-                  itextcomponent = itextcomponent1;
+-                  field_147145_h.info(worldoptimizer.func_212215_m().getString());
+-               }
++        while (!worldoptimizer.func_212218_b()) {
++          ITextComponent itextcomponent1 = worldoptimizer.func_212215_m();
++          if (itextcomponent != itextcomponent1) {
++            itextcomponent = itextcomponent1;
++            field_147145_h.info(worldoptimizer.func_212215_m().getString());
++          }
+ 
+-               int i = worldoptimizer.func_212211_j();
+-               if (i > 0) {
+-                  int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
+-                  field_147145_h.info("{}% completed ({} / {} chunks)...", MathHelper.func_76141_d((float)j / (float)i * 100.0F), j, i);
+-               }
++          int i = worldoptimizer.func_212211_j();
++          if (i > 0) {
++            int j = worldoptimizer.func_212208_k() + worldoptimizer.func_212209_l();
++            field_147145_h.info("{}% completed ({} / {} chunks)...",
++                MathHelper.func_76141_d((float) j / (float) i * 100.0F), j, i);
++          }
+ 
+-               if (this.func_71241_aa()) {
+-                  worldoptimizer.func_212217_a();
+-               } else {
+-                  try {
+-                     Thread.sleep(1000L);
+-                  } catch (InterruptedException var8) {
+-                     ;
+-                  }
+-               }
++          if (this.func_71241_aa()) {
++            worldoptimizer.func_212217_a();
++          } else {
++            try {
++              Thread.sleep(1000L);
++            } catch (InterruptedException var8) {
++              ;
+             }
+-         }
++          }
++        }
        }
++    }
+ 
+-   }
++  }
+ 
+-   protected synchronized void func_200245_b(ITextComponent p_200245_1_) {
+-      this.field_71298_S = p_200245_1_;
+-   }
++  protected synchronized void func_200245_b(ITextComponent p_200245_1_) {
++    this.field_71298_S = p_200245_1_;
++  }
+ 
+-   @Nullable
+-   @OnlyIn(Dist.CLIENT)
+-   public synchronized ITextComponent func_200253_h_() {
+-      return this.field_71298_S;
+-   }
++  @Nullable
++  @OnlyIn(Dist.CLIENT)
++  public synchronized ITextComponent func_200253_h_() {
++    return this.field_71298_S;
++  }
+ 
+-   public void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_, JsonElement p_71247_6_) {
+-      this.func_71237_c(p_71247_1_);
+-      this.func_200245_b(new TextComponentTranslation("menu.loadingLevel"));
+-      ISaveHandler isavehandler = this.func_71254_M().func_197715_a(p_71247_1_, this);
+-      this.func_175584_a(this.func_71270_I(), isavehandler);
+-      WorldInfo worldinfo = isavehandler.func_75757_d();
+-      WorldSettings worldsettings;
+-      if (worldinfo == null) {
+-         if (this.func_71242_L()) {
+-            worldsettings = WorldServerDemo.field_73071_a;
+-         } else {
+-            worldsettings = new WorldSettings(p_71247_3_, this.func_71265_f(), this.func_71225_e(), this.func_71199_h(), p_71247_5_);
+-            worldsettings.func_205390_a(p_71247_6_);
+-            if (this.field_71289_N) {
+-               worldsettings.func_77159_a();
+-            }
+-         }
+-
+-         worldinfo = new WorldInfo(worldsettings, p_71247_2_);
++  public void func_71247_a(String p_71247_1_, String p_71247_2_, long p_71247_3_, WorldType p_71247_5_,
++      JsonElement p_71247_6_) {
++    this.func_71237_c(p_71247_1_);
++    this.func_200245_b(new TextComponentTranslation("menu.loadingLevel"));
++    ISaveHandler isavehandler = this.func_71254_M().func_197715_a(p_71247_1_, this);
++    this.func_175584_a(this.func_71270_I(), isavehandler);
++    WorldInfo worldinfo = isavehandler.func_75757_d();
++    WorldSettings worldsettings;
++    if (worldinfo == null) {
++      if (this.func_71242_L()) {
++        worldsettings = WorldServerDemo.field_73071_a;
+       } else {
+-         worldinfo.func_76062_a(p_71247_2_);
+-         worldsettings = new WorldSettings(worldinfo);
++        worldsettings = new WorldSettings(p_71247_3_, this.func_71265_f(), this.func_71225_e(),
++            this.func_71199_h(), p_71247_5_);
++        worldsettings.func_205390_a(p_71247_6_);
++        if (this.field_71289_N) {
++          worldsettings.func_77159_a();
++        }
+       }
+ 
+-      this.func_195560_a(isavehandler.func_75765_b(), worldinfo);
+-      WorldSavedDataStorage worldsaveddatastorage = new WorldSavedDataStorage(isavehandler);
+-      this.func_212369_a(isavehandler, worldsaveddatastorage, worldinfo, worldsettings);
+-      this.func_147139_a(this.func_147135_j());
+-      this.func_71222_d(worldsaveddatastorage);
+-   }
++      worldinfo = new WorldInfo(worldsettings, p_71247_2_);
++    } else {
++      worldinfo.func_76062_a(p_71247_2_);
++      worldsettings = new WorldSettings(worldinfo);
++    }
+ 
+-   public void func_212369_a(ISaveHandler p_212369_1_, WorldSavedDataStorage p_212369_2_, WorldInfo p_212369_3_, WorldSettings p_212369_4_) {
+-      if (this.func_71242_L()) {
+-         this.field_71305_c.put(DimensionType.OVERWORLD, (new WorldServerDemo(this, p_212369_1_, p_212369_2_, p_212369_3_, DimensionType.OVERWORLD, this.field_71304_b)).func_212251_i__());
+-      } else {
+-         this.field_71305_c.put(DimensionType.OVERWORLD, (new WorldServer(this, p_212369_1_, p_212369_2_, p_212369_3_, DimensionType.OVERWORLD, this.field_71304_b)).func_212251_i__());
+-      }
++    this.func_195560_a(isavehandler.func_75765_b(), worldinfo);
++    WorldSavedDataStorage worldsaveddatastorage = new WorldSavedDataStorage(isavehandler);
++    this.func_212369_a(isavehandler, worldsaveddatastorage, worldinfo, worldsettings);
++    this.func_147139_a(this.func_147135_j());
++    this.func_71222_d(worldsaveddatastorage);
++  }
+ 
+-      WorldServer worldserver = this.func_71218_a(DimensionType.OVERWORLD);
+-      worldserver.func_72963_a(p_212369_4_);
+-      worldserver.func_72954_a(new ServerWorldEventHandler(this, worldserver));
+-      if (!this.func_71264_H()) {
+-         worldserver.func_72912_H().func_76060_a(this.func_71265_f());
+-      }
++  public void func_212369_a(ISaveHandler p_212369_1_, WorldSavedDataStorage p_212369_2_,
++      WorldInfo p_212369_3_, WorldSettings p_212369_4_) {
++    if (this.func_71242_L()) {
++      this.field_71305_c.put(DimensionType.OVERWORLD, (new WorldServerDemo(this, p_212369_1_, p_212369_2_,
++          p_212369_3_, DimensionType.OVERWORLD, this.field_71304_b)).func_212251_i__());
++    } else {
++      this.field_71305_c.put(DimensionType.OVERWORLD, (new WorldServer(this, p_212369_1_, p_212369_2_,
++          p_212369_3_, DimensionType.OVERWORLD, this.field_71304_b)).func_212251_i__());
++    }
  
 -      WorldServerMulti worldservermulti = (new WorldServerMulti(this, p_212369_1_, DimensionType.NETHER, worldserver, this.field_71304_b)).func_212251_i__();
 -      this.field_71305_c.put(DimensionType.NETHER, worldservermulti);
 -      worldservermulti.func_72954_a(new ServerWorldEventHandler(this, worldservermulti));
 -      if (!this.func_71264_H()) {
 -         worldservermulti.func_72912_H().func_76060_a(this.func_71265_f());
-+      for (DimensionType dim : DimensionType.func_212681_b()) {
-+         WorldServer world = worldserver;
-+         if (dim != DimensionType.OVERWORLD) {
-+            world = (new WorldServerMulti(this, p_212369_1_, dim, worldserver, this.field_71304_b)).func_212251_i__();
-+            this.field_71305_c.put(dim, world);
-+            world.func_72954_a(new ServerWorldEventHandler(this, world));
-+            if (!this.func_71264_H()) {
-+               world.func_72912_H().func_76060_a(func_71265_f());
-+            }
-+         }
-+         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Load(world));
-       }
+-      }
++    WorldServer worldserver = this.func_71218_a(DimensionType.OVERWORLD);
++    worldserver.func_72963_a(p_212369_4_);
++    worldserver.func_72954_a(new ServerWorldEventHandler(this, worldserver));
++    if (!this.func_71264_H()) {
++      worldserver.func_72912_H().func_76060_a(this.func_71265_f());
++    }
  
 -      WorldServerMulti worldservermulti1 = (new WorldServerMulti(this, p_212369_1_, DimensionType.THE_END, worldserver, this.field_71304_b)).func_212251_i__();
 -      this.field_71305_c.put(DimensionType.THE_END, worldservermulti1);
 -      worldservermulti1.func_72954_a(new ServerWorldEventHandler(this, worldservermulti1));
 -      if (!this.func_71264_H()) {
 -         worldservermulti1.func_72912_H().func_76060_a(this.func_71265_f());
++    for (DimensionType dim : DimensionType.func_212681_b()) {
++      WorldServer world = worldserver;
++      if (dim != DimensionType.OVERWORLD) {
++        world = (new WorldServerMulti(this, p_212369_1_, dim, worldserver, this.field_71304_b))
++            .func_212251_i__();
++        this.field_71305_c.put(dim, world);
++        world.func_72954_a(new ServerWorldEventHandler(this, world));
++        if (!this.func_71264_H()) {
++          world.func_72912_H().func_76060_a(func_71265_f());
++        }
+       }
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS
++          .post(new net.minecraftforge.event.world.WorldEvent.Load(world));
++    }
+ 
+-      this.func_184103_al().func_212504_a(worldserver);
+-      if (p_212369_3_.func_201357_P() != null) {
+-         this.func_201300_aS().func_201381_a(p_212369_3_.func_201357_P());
 -      }
--
-       this.func_184103_al().func_212504_a(worldserver);
-       if (p_212369_3_.func_201357_P() != null) {
-          this.func_201300_aS().func_201381_a(p_212369_3_.func_201357_P());
-@@ -514,6 +513,7 @@
++    this.func_184103_al().func_212504_a(worldserver);
++    if (p_212369_3_.func_201357_P() != null) {
++      this.func_201300_aS().func_201381_a(p_212369_3_.func_201357_P());
++    }
  
-       for(WorldServer worldserver1 : this.func_212370_w()) {
-          if (worldserver1 != null) {
-+            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver1));
-             worldserver1.close();
-          }
+-   }
++  }
+ 
+-   public void func_195560_a(File p_195560_1_, WorldInfo p_195560_2_) {
+-      this.field_195577_ad.func_198982_a(new ServerPackFinder());
+-      this.field_195578_ae = new FolderPackFinder(new File(p_195560_1_, "datapacks"));
+-      this.field_195577_ad.func_198982_a(this.field_195578_ae);
+-      this.field_195577_ad.func_198983_a();
+-      List<ResourcePackInfo> list = Lists.newArrayList();
++  public void func_195560_a(File p_195560_1_, WorldInfo p_195560_2_) {
++    this.field_195577_ad.func_198982_a(new ServerPackFinder());
++    this.field_195578_ae = new FolderPackFinder(new File(p_195560_1_, "datapacks"));
++    this.field_195577_ad.func_198982_a(this.field_195578_ae);
++    this.field_195577_ad.func_198983_a();
++    List<ResourcePackInfo> list = Lists.newArrayList();
+ 
+-      for(String s : p_195560_2_.func_197720_O()) {
+-         ResourcePackInfo resourcepackinfo = this.field_195577_ad.func_198981_a(s);
+-         if (resourcepackinfo != null) {
+-            list.add(resourcepackinfo);
+-         } else {
+-            field_147145_h.warn("Missing data pack {}", (Object)s);
+-         }
++    for (String s : p_195560_2_.func_197720_O()) {
++      ResourcePackInfo resourcepackinfo = this.field_195577_ad.func_198981_a(s);
++      if (resourcepackinfo != null) {
++        list.add(resourcepackinfo);
++      } else {
++        field_147145_h.warn("Missing data pack {}", (Object) s);
        }
-@@ -547,6 +547,7 @@
-    public void run() {
-       try {
-          if (this.func_71197_b()) {
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarted(this);
-             this.field_211151_aa = Util.func_211177_b();
-             this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
-             this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.13.2", 404));
-@@ -570,7 +571,10 @@
++    }
  
-                this.field_71296_Q = true;
-             }
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopping(this);
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
-          } else {
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
-             this.func_71228_a((CrashReport)null);
-          }
-       } catch (Throwable throwable1) {
-@@ -589,6 +593,7 @@
-             field_147145_h.error("We were unable to save this crash report to disk.");
-          }
+-      this.field_195577_ad.func_198985_a(list);
+-      this.func_195568_a(p_195560_2_);
+-   }
++    this.field_195577_ad.func_198985_a(list);
++    this.func_195568_a(p_195560_2_);
++  }
  
-+         net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come before finalTick to avoid race conditions
-          this.func_71228_a(crashreport);
-       } finally {
-          try {
-@@ -597,6 +602,7 @@
-          } catch (Throwable throwable) {
-             field_147145_h.error("Exception stopping the server", throwable);
-          } finally {
-+            net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
-             this.func_71240_o();
-          }
+-   public void func_71222_d(WorldSavedDataStorage p_71222_1_) {
+-      int i = 16;
+-      int j = 4;
+-      int k = 12;
+-      int l = 192;
+-      int i1 = 625;
+-      this.func_200245_b(new TextComponentTranslation("menu.generatingTerrain"));
+-      WorldServer worldserver = this.func_71218_a(DimensionType.OVERWORLD);
+-      field_147145_h.info("Preparing start region for dimension " + DimensionType.func_212678_a(worldserver.field_73011_w.func_186058_p()));
+-      BlockPos blockpos = worldserver.func_175694_M();
+-      List<ChunkPos> list = Lists.newArrayList();
+-      Set<ChunkPos> set = Sets.newConcurrentHashSet();
+-      Stopwatch stopwatch = Stopwatch.createStarted();
++  public void func_71222_d(WorldSavedDataStorage p_71222_1_) {
++    int i = 16;
++    int j = 4;
++    int k = 12;
++    int l = 192;
++    int i1 = 625;
++    this.func_200245_b(new TextComponentTranslation("menu.generatingTerrain"));
++    WorldServer worldserver = this.func_71218_a(DimensionType.OVERWORLD);
++    field_147145_h.info("Preparing start region for dimension "
++        + DimensionType.func_212678_a(worldserver.field_73011_w.func_186058_p()));
++    BlockPos blockpos = worldserver.func_175694_M();
++    List<ChunkPos> list = Lists.newArrayList();
++    Set<ChunkPos> set = Sets.newConcurrentHashSet();
++    Stopwatch stopwatch = Stopwatch.createStarted();
  
-@@ -652,6 +658,7 @@
- 
-    public void func_71217_p(BooleanSupplier p_71217_1_) {
-       long i = Util.func_211178_c();
-+      net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
-       ++this.field_71315_w;
-       if (this.field_71295_T) {
-          this.field_71295_T = false;
-@@ -672,6 +679,7 @@
- 
-          Collections.shuffle(Arrays.asList(agameprofile));
-          this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
-+         this.field_147147_p.invalidateJson();
-       }
- 
-       if (this.field_71315_w % 900 == 0) {
-@@ -696,6 +704,7 @@
-       this.field_211152_ao = this.field_211152_ao * 0.8F + (float)l / 1000000.0F * 0.19999999F;
-       this.field_71304_b.func_76319_b();
-       this.field_71304_b.func_76319_b();
-+      net.minecraftforge.fml.hooks.BasicEventHooks.onPostServerTick();
-    }
- 
-    public void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -723,6 +732,7 @@
-             }
- 
-             this.field_71304_b.func_76320_a("tick");
-+            net.minecraftforge.fml.hooks.BasicEventHooks.onPreWorldTick(worldserver);
- 
-             try {
-                worldserver.func_72835_b(p_71190_1_);
-@@ -740,6 +750,7 @@
-                throw new ReportedException(crashreport1);
-             }
- 
-+            net.minecraftforge.fml.hooks.BasicEventHooks.onPostWorldTick(worldserver);
-             this.field_71304_b.func_76319_b();
-             this.field_71304_b.func_76320_a("tracker");
-             worldserver.func_73039_n().func_72788_a();
-@@ -752,6 +763,8 @@
-          }))[this.field_71315_w % 100] = Util.func_211178_c() - i;
-       }
- 
-+      this.field_71304_b.func_76318_c("dim_unloading");
-+      net.minecraftforge.common.DimensionManager.unloadWorlds(this, this.field_71315_w % 200 == 0);
-       this.field_71304_b.func_76318_c("connection");
-       this.func_147137_ag().func_151269_c();
-       this.field_71304_b.func_76318_c("players");
-@@ -774,6 +787,14 @@
-    }
- 
-    public static void main(String[] p_main_0_) {
-+      //Forge: Copied from DedicatedServer.init as to run as early as possible, Old code left in place intentionally.
-+      //Done in good faith with permission: https://github.com/MinecraftForge/MinecraftForge/issues/3659#issuecomment-390467028
-+      ServerEula eula = new ServerEula(new File("eula.txt"));
-+      if (!eula.func_154346_a()) {
-+          field_147145_h.info("You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
-+          eula.func_154348_b();
-+          return;
+-      for(int j1 = -192; j1 <= 192 && this.func_71278_l(); j1 += 16) {
+-         for(int k1 = -192; k1 <= 192 && this.func_71278_l(); k1 += 16) {
+-            list.add(new ChunkPos(blockpos.func_177958_n() + j1 >> 4, blockpos.func_177952_p() + k1 >> 4));
+-         }
++    for (int j1 = -192; j1 <= 192 && this.func_71278_l(); j1 += 16) {
++      for (int k1 = -192; k1 <= 192 && this.func_71278_l(); k1 += 16) {
++        list.add(new ChunkPos(blockpos.func_177958_n() + j1 >> 4, blockpos.func_177952_p() + k1 >> 4));
 +      }
-       Bootstrap.func_151354_b();
  
-       try {
-@@ -876,7 +897,7 @@
-    }
+-         CompletableFuture<?> completablefuture = worldserver.func_72863_F().func_201720_a(list, (p_201701_1_) -> {
++      CompletableFuture<?> completablefuture =
++          worldserver.func_72863_F().func_201720_a(list, (p_201701_1_) -> {
+             set.add(p_201701_1_.func_76632_l());
+-         });
++          });
  
-    public void func_71256_s() {
--      this.field_175590_aa = new Thread(this, "Server thread");
-+      this.field_175590_aa = new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER, this, "Server thread");
-       this.field_175590_aa.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
-          field_147145_h.error(p_195574_1_);
-       });
-@@ -896,7 +917,7 @@
-    }
+-         while(!completablefuture.isDone()) {
+-            try {
+-               completablefuture.get(1L, TimeUnit.SECONDS);
+-            } catch (InterruptedException interruptedexception) {
+-               throw new RuntimeException(interruptedexception);
+-            } catch (ExecutionException executionexception) {
+-               if (executionexception.getCause() instanceof RuntimeException) {
+-                  throw (RuntimeException)executionexception.getCause();
+-               }
++      while (!completablefuture.isDone()) {
++        try {
++          completablefuture.get(1L, TimeUnit.SECONDS);
++        } catch (InterruptedException interruptedexception) {
++          throw new RuntimeException(interruptedexception);
++        } catch (ExecutionException executionexception) {
++          if (executionexception.getCause() instanceof RuntimeException) {
++            throw (RuntimeException) executionexception.getCause();
++          }
  
-    public WorldServer func_71218_a(DimensionType p_71218_1_) {
--      return this.field_71305_c.get(p_71218_1_);
-+      return net.minecraftforge.common.DimensionManager.getWorld(this, p_71218_1_, true, true);
-    }
- 
-    public Iterable<WorldServer> func_212370_w() {
-@@ -935,7 +956,7 @@
-    }
- 
-    public String getServerModName() {
--      return "vanilla";
-+      return net.minecraftforge.fml.BrandingControl.getServerBranding();
-    }
- 
-    public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1472,4 +1493,14 @@
-          return 0;
+-               throw new RuntimeException(executionexception.getCause());
+-            } catch (TimeoutException var22) {
+-               this.func_200250_a(new TextComponentTranslation("menu.preparingSpawn"), set.size() * 100 / 625);
+-            }
+-         }
+-
+-         this.func_200250_a(new TextComponentTranslation("menu.preparingSpawn"), set.size() * 100 / 625);
++          throw new RuntimeException(executionexception.getCause());
++        } catch (TimeoutException var22) {
++          this.func_200250_a(new TextComponentTranslation("menu.preparingSpawn"),
++              set.size() * 100 / 625);
++        }
        }
-    }
+ 
+-      field_147145_h.info("Time elapsed: {} ms", (long)stopwatch.elapsed(TimeUnit.MILLISECONDS));
++      this.func_200250_a(new TextComponentTranslation("menu.preparingSpawn"),
++          set.size() * 100 / 625);
++    }
+ 
+-      for(DimensionType dimensiontype : DimensionType.func_212681_b()) {
+-         ForcedChunksSaveData forcedchunkssavedata = p_71222_1_.func_212426_a(dimensiontype, ForcedChunksSaveData::new, "chunks");
+-         if (forcedchunkssavedata != null) {
+-            WorldServer worldserver1 = this.func_71218_a(dimensiontype);
+-            LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
++    field_147145_h.info("Time elapsed: {} ms", (long) stopwatch.elapsed(TimeUnit.MILLISECONDS));
+ 
+-            while(longiterator.hasNext()) {
+-               this.func_200250_a(new TextComponentTranslation("menu.loadingForcedChunks", dimensiontype), forcedchunkssavedata.func_212438_a().size() * 100 / 625);
+-               long l1 = longiterator.nextLong();
+-               ChunkPos chunkpos = new ChunkPos(l1);
+-               worldserver1.func_72863_F().func_186025_d(chunkpos.field_77276_a, chunkpos.field_77275_b, true, true);
+-            }
+-         }
++    for (DimensionType dimensiontype : DimensionType.func_212681_b()) {
++      ForcedChunksSaveData forcedchunkssavedata =
++          p_71222_1_.func_212426_a(dimensiontype, ForcedChunksSaveData::new, "chunks");
++      if (forcedchunkssavedata != null) {
++        WorldServer worldserver1 = this.func_71218_a(dimensiontype);
++        LongIterator longiterator = forcedchunkssavedata.func_212438_a().iterator();
 +
-+   @Nullable
-+   public long[] getTickTime(DimensionType dim) {
-+      return field_71312_k.get(dim);
-+   }
++        while (longiterator.hasNext()) {
++          this.func_200250_a(
++              new TextComponentTranslation("menu.loadingForcedChunks", dimensiontype),
++              forcedchunkssavedata.func_212438_a().size() * 100 / 625);
++          long l1 = longiterator.nextLong();
++          ChunkPos chunkpos = new ChunkPos(l1);
++          worldserver1.func_72863_F().func_186025_d(chunkpos.field_77276_a, chunkpos.field_77275_b, true, true);
++        }
+       }
++    }
+ 
+-      this.func_71243_i();
+-   }
++    this.func_71243_i();
++  }
+ 
+-   public void func_175584_a(String p_175584_1_, ISaveHandler p_175584_2_) {
+-      File file1 = new File(p_175584_2_.func_75765_b(), "resources.zip");
+-      if (file1.isFile()) {
+-         try {
+-            this.func_180507_a_("level://" + URLEncoder.encode(p_175584_1_, StandardCharsets.UTF_8.toString()) + "/" + "resources.zip", "");
+-         } catch (UnsupportedEncodingException var5) {
+-            field_147145_h.warn("Something went wrong url encoding {}", (Object)p_175584_1_);
+-         }
++  public void func_175584_a(String p_175584_1_, ISaveHandler p_175584_2_) {
++    File file1 = new File(p_175584_2_.func_75765_b(), "resources.zip");
++    if (file1.isFile()) {
++      try {
++        this.func_180507_a_(
++            "level://" + URLEncoder.encode(p_175584_1_, StandardCharsets.UTF_8.toString()) + "/"
++                + "resources.zip",
++            "");
++      } catch (UnsupportedEncodingException var5) {
++        field_147145_h.warn("Something went wrong url encoding {}", (Object) p_175584_1_);
+       }
++    }
+ 
+-   }
++  }
+ 
+-   public abstract boolean func_71225_e();
++  public abstract boolean func_71225_e();
+ 
+-   public abstract GameType func_71265_f();
++  public abstract GameType func_71265_f();
+ 
+-   public abstract EnumDifficulty func_147135_j();
++  public abstract EnumDifficulty func_147135_j();
+ 
+-   public abstract boolean func_71199_h();
++  public abstract boolean func_71199_h();
+ 
+-   public abstract int func_110455_j();
++  public abstract int func_110455_j();
+ 
+-   public abstract boolean func_195569_l();
++  public abstract boolean func_195569_l();
+ 
+-   protected void func_200250_a(ITextComponent p_200250_1_, int p_200250_2_) {
+-      this.field_71302_d = p_200250_1_;
+-      this.field_71303_e = p_200250_2_;
+-      field_147145_h.info("{}: {}%", p_200250_1_.getString(), p_200250_2_);
+-   }
++  protected void func_200250_a(ITextComponent p_200250_1_, int p_200250_2_) {
++    this.field_71302_d = p_200250_1_;
++    this.field_71303_e = p_200250_2_;
++    field_147145_h.info("{}: {}%", p_200250_1_.getString(), p_200250_2_);
++  }
+ 
+-   protected void func_71243_i() {
+-      this.field_71302_d = null;
+-      this.field_71303_e = 0;
+-   }
++  protected void func_71243_i() {
++    this.field_71302_d = null;
++    this.field_71303_e = 0;
++  }
+ 
+-   public void func_71267_a(boolean p_71267_1_) {
+-      for(WorldServer worldserver : this.func_212370_w()) {
+-         if (worldserver != null) {
+-            if (!p_71267_1_) {
+-               field_147145_h.info("Saving chunks for level '{}'/{}", worldserver.func_72912_H().func_76065_j(), DimensionType.func_212678_a(worldserver.field_73011_w.func_186058_p()));
+-            }
++  public void func_71267_a(boolean p_71267_1_) {
++    for (WorldServer worldserver : this.func_212370_w()) {
++      if (worldserver != null) {
++        if (!p_71267_1_) {
++          field_147145_h.info("Saving chunks for level '{}'/{}", worldserver.func_72912_H().func_76065_j(),
++              DimensionType.func_212678_a(worldserver.field_73011_w.func_186058_p()));
++        }
+ 
+-            try {
+-               worldserver.func_73044_a(true, (IProgressUpdate)null);
+-            } catch (SessionLockException sessionlockexception) {
+-               field_147145_h.warn(sessionlockexception.getMessage());
+-            }
+-         }
++        try {
++          worldserver.func_73044_a(true, (IProgressUpdate) null);
++        } catch (SessionLockException sessionlockexception) {
++          field_147145_h.warn(sessionlockexception.getMessage());
++        }
+       }
++    }
+ 
+-   }
++  }
+ 
+-   public void func_71260_j() {
+-      field_147145_h.info("Stopping server");
+-      if (this.func_147137_ag() != null) {
+-         this.func_147137_ag().func_151268_b();
+-      }
++  public void func_71260_j() {
++    field_147145_h.info("Stopping server");
++    if (this.func_147137_ag() != null) {
++      this.func_147137_ag().func_151268_b();
++    }
+ 
+-      if (this.field_71318_t != null) {
+-         field_147145_h.info("Saving players");
+-         this.field_71318_t.func_72389_g();
+-         this.field_71318_t.func_72392_r();
+-      }
++    if (this.field_71318_t != null) {
++      field_147145_h.info("Saving players");
++      this.field_71318_t.func_72389_g();
++      this.field_71318_t.func_72392_r();
++    }
+ 
+-      field_147145_h.info("Saving worlds");
++    field_147145_h.info("Saving worlds");
+ 
+-      for(WorldServer worldserver : this.func_212370_w()) {
+-         if (worldserver != null) {
+-            worldserver.field_73058_d = false;
+-         }
++    for (WorldServer worldserver : this.func_212370_w()) {
++      if (worldserver != null) {
++        worldserver.field_73058_d = false;
+       }
++    }
+ 
+-      this.func_71267_a(false);
++    this.func_71267_a(false);
+ 
+-      for(WorldServer worldserver1 : this.func_212370_w()) {
+-         if (worldserver1 != null) {
+-            worldserver1.close();
+-         }
++    for (WorldServer worldserver1 : this.func_212370_w()) {
++      if (worldserver1 != null) {
++        net.minecraftforge.common.MinecraftForge.EVENT_BUS
++            .post(new net.minecraftforge.event.world.WorldEvent.Unload(worldserver1));
++        worldserver1.close();
+       }
++    }
+ 
+-      if (this.field_71307_n.func_76468_d()) {
+-         this.field_71307_n.func_76470_e();
+-      }
++    if (this.field_71307_n.func_76468_d()) {
++      this.field_71307_n.func_76470_e();
++    }
+ 
+-   }
++  }
+ 
+-   public String func_71211_k() {
+-      return this.field_71320_r;
+-   }
++  public String func_71211_k() {
++    return this.field_71320_r;
++  }
+ 
+-   public void func_71189_e(String p_71189_1_) {
+-      this.field_71320_r = p_71189_1_;
+-   }
++  public void func_71189_e(String p_71189_1_) {
++    this.field_71320_r = p_71189_1_;
++  }
+ 
+-   public boolean func_71278_l() {
+-      return this.field_71317_u;
+-   }
++  public boolean func_71278_l() {
++    return this.field_71317_u;
++  }
+ 
+-   public void func_71263_m() {
+-      this.field_71317_u = false;
+-   }
++  public void func_71263_m() {
++    this.field_71317_u = false;
++  }
+ 
+-   private boolean func_212379_aT() {
+-      return Util.func_211177_b() < this.field_211151_aa;
+-   }
++  private boolean func_212379_aT() {
++    return Util.func_211177_b() < this.field_211151_aa;
++  }
+ 
+-   public void run() {
+-      try {
+-         if (this.func_71197_b()) {
+-            this.field_211151_aa = Util.func_211177_b();
+-            this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
+-            this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.13.2", 404));
+-            this.func_184107_a(this.field_147147_p);
++  public void run() {
++    try {
++      if (this.func_71197_b()) {
++        net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarted(this);
++        this.field_211151_aa = Util.func_211177_b();
++        this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
++        this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.13.2", 404));
++        this.func_184107_a(this.field_147147_p);
+ 
+-            while(this.field_71317_u) {
+-               long i = Util.func_211177_b() - this.field_211151_aa;
+-               if (i > 2000L && this.field_211151_aa - this.field_71299_R >= 15000L) {
+-                  long j = i / 50L;
+-                  field_147145_h.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind", i, j);
+-                  this.field_211151_aa += j * 50L;
+-                  this.field_71299_R = this.field_211151_aa;
+-               }
++        while (this.field_71317_u) {
++          long i = Util.func_211177_b() - this.field_211151_aa;
++          if (i > 2000L && this.field_211151_aa - this.field_71299_R >= 15000L) {
++            long j = i / 50L;
++            field_147145_h.warn("Can't keep up! Is the server overloaded? Running {}ms or {} ticks behind",
++                i, j);
++            this.field_211151_aa += j * 50L;
++            this.field_71299_R = this.field_211151_aa;
++          }
+ 
+-               this.func_71217_p(this::func_212379_aT);
+-               this.field_211151_aa += 50L;
++          this.func_71217_p(this::func_212379_aT);
++          this.field_211151_aa += 50L;
+ 
+-               while(this.func_212379_aT()) {
+-                  Thread.sleep(1L);
+-               }
++          while (this.func_212379_aT()) {
++            Thread.sleep(1L);
++          }
+ 
+-               this.field_71296_Q = true;
+-            }
+-         } else {
+-            this.func_71228_a((CrashReport)null);
+-         }
+-      } catch (Throwable throwable1) {
+-         field_147145_h.error("Encountered an unexpected exception", throwable1);
+-         CrashReport crashreport;
+-         if (throwable1 instanceof ReportedException) {
+-            crashreport = this.func_71230_b(((ReportedException)throwable1).func_71575_a());
+-         } else {
+-            crashreport = this.func_71230_b(new CrashReport("Exception in server tick loop", throwable1));
+-         }
++          this.field_71296_Q = true;
++        }
++        net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopping(this);
++        net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come
++                                                                                  // before
++                                                                                  // finalTick to
++                                                                                  // avoid race
++                                                                                  // conditions
++      } else {
++        net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come
++                                                                                  // before
++                                                                                  // finalTick to
++                                                                                  // avoid race
++                                                                                  // conditions
++        this.func_71228_a((CrashReport) null);
++      }
++    } catch (Throwable throwable1) {
++      field_147145_h.error("Encountered an unexpected exception", throwable1);
++      CrashReport crashreport;
++      if (throwable1 instanceof ReportedException) {
++        crashreport =
++            this.func_71230_b(((ReportedException) throwable1).func_71575_a());
++      } else {
++        crashreport = this.func_71230_b(
++            new CrashReport("Exception in server tick loop", throwable1));
++      }
+ 
+-         File file1 = new File(new File(this.func_71238_n(), "crash-reports"), "crash-" + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
+-         if (crashreport.func_147149_a(file1)) {
+-            field_147145_h.error("This crash report has been saved to: {}", (Object)file1.getAbsolutePath());
+-         } else {
+-            field_147145_h.error("We were unable to save this crash report to disk.");
+-         }
++      File file1 = new File(new File(this.func_71238_n(), "crash-reports"), "crash-"
++          + (new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss")).format(new Date()) + "-server.txt");
++      if (crashreport.func_147149_a(file1)) {
++        field_147145_h.error("This crash report has been saved to: {}", (Object) file1.getAbsolutePath());
++      } else {
++        field_147145_h.error("We were unable to save this crash report to disk.");
++      }
+ 
+-         this.func_71228_a(crashreport);
++      net.minecraftforge.fml.server.ServerLifecycleHooks.expectServerStopped(); // has to come
++                                                                                // before finalTick
++                                                                                // to avoid race
++                                                                                // conditions
++      this.func_71228_a(crashreport);
++    } finally {
++      try {
++        this.field_71316_v = true;
++        this.func_71260_j();
++      } catch (Throwable throwable) {
++        field_147145_h.error("Exception stopping the server", throwable);
+       } finally {
+-         try {
+-            this.field_71316_v = true;
+-            this.func_71260_j();
+-         } catch (Throwable throwable) {
+-            field_147145_h.error("Exception stopping the server", throwable);
+-         } finally {
+-            this.func_71240_o();
+-         }
+-
++        net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStopped(this);
++        this.func_71240_o();
+       }
+ 
+-   }
++    }
+ 
+-   public void func_184107_a(ServerStatusResponse p_184107_1_) {
+-      File file1 = this.func_71209_f("server-icon.png");
+-      if (!file1.exists()) {
+-         file1 = this.func_71254_M().func_186352_b(this.func_71270_I(), "icon.png");
+-      }
++  }
+ 
+-      if (file1.isFile()) {
+-         ByteBuf bytebuf = Unpooled.buffer();
++  public void func_184107_a(ServerStatusResponse p_184107_1_) {
++    File file1 = this.func_71209_f("server-icon.png");
++    if (!file1.exists()) {
++      file1 = this.func_71254_M().func_186352_b(this.func_71270_I(), "icon.png");
++    }
+ 
+-         try {
+-            BufferedImage bufferedimage = ImageIO.read(file1);
+-            Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
+-            Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
+-            ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
+-            ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
+-            p_184107_1_.func_151320_a("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
+-         } catch (Exception exception) {
+-            field_147145_h.error("Couldn't load server icon", (Throwable)exception);
+-         } finally {
+-            bytebuf.release();
+-         }
++    if (file1.isFile()) {
++      ByteBuf bytebuf = Unpooled.buffer();
 +
-+   @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.
-+   public synchronized Map<DimensionType, WorldServer> forgeGetWorldMap() {
-+      return this.field_71305_c;
-+   }
++      try {
++        BufferedImage bufferedimage = ImageIO.read(file1);
++        Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
++        Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
++        ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));
++        ByteBuffer bytebuffer = Base64.getEncoder().encode(bytebuf.nioBuffer());
++        p_184107_1_.func_151320_a("data:image/png;base64," + StandardCharsets.UTF_8.decode(bytebuffer));
++      } catch (Exception exception) {
++        field_147145_h.error("Couldn't load server icon", (Throwable) exception);
++      } finally {
++        bytebuf.release();
+       }
++    }
+ 
+-   }
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public boolean func_184106_y() {
+-      this.field_184111_ab = this.field_184111_ab || this.func_184109_z().isFile();
+-      return this.field_184111_ab;
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public boolean func_184106_y() {
++    this.field_184111_ab = this.field_184111_ab || this.func_184109_z().isFile();
++    return this.field_184111_ab;
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public File func_184109_z() {
+-      return this.func_71254_M().func_186352_b(this.func_71270_I(), "icon.png");
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public File func_184109_z() {
++    return this.func_71254_M().func_186352_b(this.func_71270_I(), "icon.png");
++  }
+ 
+-   public File func_71238_n() {
+-      return new File(".");
+-   }
++  public File func_71238_n() {
++    return new File(".");
++  }
+ 
+-   public void func_71228_a(CrashReport p_71228_1_) {
+-   }
++  public void func_71228_a(CrashReport p_71228_1_) {}
+ 
+-   public void func_71240_o() {
+-   }
++  public void func_71240_o() {}
+ 
+-   public void func_71217_p(BooleanSupplier p_71217_1_) {
+-      long i = Util.func_211178_c();
+-      ++this.field_71315_w;
+-      if (this.field_71295_T) {
+-         this.field_71295_T = false;
+-         this.field_71304_b.func_199095_a(this.field_71315_w);
+-      }
++  public void func_71217_p(BooleanSupplier p_71217_1_) {
++    long i = Util.func_211178_c();
++    net.minecraftforge.fml.hooks.BasicEventHooks.onPreServerTick();
++    ++this.field_71315_w;
++    if (this.field_71295_T) {
++      this.field_71295_T = false;
++      this.field_71304_b.func_199095_a(this.field_71315_w);
++    }
+ 
+-      this.field_71304_b.func_76320_a("root");
+-      this.func_71190_q(p_71217_1_);
+-      if (i - this.field_147142_T >= 5000000000L) {
+-         this.field_147142_T = i;
+-         this.field_147147_p.func_151319_a(new ServerStatusResponse.Players(this.func_71275_y(), this.func_71233_x()));
+-         GameProfile[] agameprofile = new GameProfile[Math.min(this.func_71233_x(), 12)];
+-         int j = MathHelper.func_76136_a(this.field_147146_q, 0, this.func_71233_x() - agameprofile.length);
++    this.field_71304_b.func_76320_a("root");
++    this.func_71190_q(p_71217_1_);
++    if (i - this.field_147142_T >= 5000000000L) {
++      this.field_147142_T = i;
++      this.field_147147_p.func_151319_a(
++          new ServerStatusResponse.Players(this.func_71275_y(), this.func_71233_x()));
++      GameProfile[] agameprofile = new GameProfile[Math.min(this.func_71233_x(), 12)];
++      int j =
++          MathHelper.func_76136_a(this.field_147146_q, 0, this.func_71233_x() - agameprofile.length);
+ 
+-         for(int k = 0; k < agameprofile.length; ++k) {
+-            agameprofile[k] = this.field_71318_t.func_181057_v().get(j + k).func_146103_bH();
+-         }
+-
+-         Collections.shuffle(Arrays.asList(agameprofile));
+-         this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
++      for (int k = 0; k < agameprofile.length; ++k) {
++        agameprofile[k] = this.field_71318_t.func_181057_v().get(j + k).func_146103_bH();
+       }
+ 
+-      if (this.field_71315_w % 900 == 0) {
+-         this.field_71304_b.func_76320_a("save");
+-         this.field_71318_t.func_72389_g();
+-         this.func_71267_a(true);
+-         this.field_71304_b.func_76319_b();
+-      }
++      Collections.shuffle(Arrays.asList(agameprofile));
++      this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
++      this.field_147147_p.invalidateJson();
++    }
+ 
+-      this.field_71304_b.func_76320_a("snooper");
+-      if (!this.field_71307_n.func_76468_d() && this.field_71315_w > 100) {
+-         this.field_71307_n.func_76463_a();
+-      }
++    if (this.field_71315_w % 900 == 0) {
++      this.field_71304_b.func_76320_a("save");
++      this.field_71318_t.func_72389_g();
++      this.func_71267_a(true);
++      this.field_71304_b.func_76319_b();
++    }
+ 
+-      if (this.field_71315_w % 6000 == 0) {
+-         this.field_71307_n.func_76471_b();
+-      }
++    this.field_71304_b.func_76320_a("snooper");
++    if (!this.field_71307_n.func_76468_d() && this.field_71315_w > 100) {
++      this.field_71307_n.func_76463_a();
++    }
+ 
+-      this.field_71304_b.func_76319_b();
+-      this.field_71304_b.func_76320_a("tallying");
+-      long l = this.field_71311_j[this.field_71315_w % 100] = Util.func_211178_c() - i;
+-      this.field_211152_ao = this.field_211152_ao * 0.8F + (float)l / 1000000.0F * 0.19999999F;
+-      this.field_71304_b.func_76319_b();
+-      this.field_71304_b.func_76319_b();
+-   }
++    if (this.field_71315_w % 6000 == 0) {
++      this.field_71307_n.func_76471_b();
++    }
+ 
+-   public void func_71190_q(BooleanSupplier p_71190_1_) {
+-      this.field_71304_b.func_76320_a("jobs");
++    this.field_71304_b.func_76319_b();
++    this.field_71304_b.func_76320_a("tallying");
++    long l = this.field_71311_j[this.field_71315_w % 100] = Util.func_211178_c() - i;
++    this.field_211152_ao = this.field_211152_ao * 0.8F + (float) l / 1000000.0F * 0.19999999F;
++    this.field_71304_b.func_76319_b();
++    this.field_71304_b.func_76319_b();
++    net.minecraftforge.fml.hooks.BasicEventHooks.onPostServerTick();
++  }
+ 
+-      FutureTask<?> futuretask;
+-      while((futuretask = this.field_175589_i.poll()) != null) {
+-         Util.func_181617_a(futuretask, field_147145_h);
+-      }
++  public void func_71190_q(BooleanSupplier p_71190_1_) {
++    this.field_71304_b.func_76320_a("jobs");
+ 
+-      this.field_71304_b.func_76318_c("commandFunctions");
+-      this.func_193030_aL().func_73660_a();
+-      this.field_71304_b.func_76318_c("levels");
++    FutureTask<?> futuretask;
++    while ((futuretask = this.field_175589_i.poll()) != null) {
++      Util.func_181617_a(futuretask, field_147145_h);
++    }
+ 
+-      for(WorldServer worldserver : this.func_212370_w()) {
+-         long i = Util.func_211178_c();
+-         if (worldserver.field_73011_w.func_186058_p() == DimensionType.OVERWORLD || this.func_71255_r()) {
+-            this.field_71304_b.func_194340_a(() -> {
+-               return "dim-" + worldserver.field_73011_w.func_186058_p().func_186068_a();
+-            });
+-            if (this.field_71315_w % 20 == 0) {
+-               this.field_71304_b.func_76320_a("timeSync");
+-               this.field_71318_t.func_148537_a(new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(), worldserver.func_82736_K().func_82766_b("doDaylightCycle")), worldserver.field_73011_w.func_186058_p());
+-               this.field_71304_b.func_76319_b();
+-            }
++    this.field_71304_b.func_76318_c("commandFunctions");
++    this.func_193030_aL().func_73660_a();
++    this.field_71304_b.func_76318_c("levels");
+ 
+-            this.field_71304_b.func_76320_a("tick");
++    for (WorldServer worldserver : this.func_212370_w()) {
++      long i = Util.func_211178_c();
++      if (worldserver.field_73011_w.func_186058_p() == DimensionType.OVERWORLD || this.func_71255_r()) {
++        this.field_71304_b.func_194340_a(() -> {
++          return "dim-" + worldserver.field_73011_w.func_186058_p().func_186068_a();
++        });
++        if (this.field_71315_w % 20 == 0) {
++          this.field_71304_b.func_76320_a("timeSync");
++          this.field_71318_t.func_148537_a(
++              new SPacketTimeUpdate(worldserver.func_82737_E(), worldserver.func_72820_D(),
++                  worldserver.func_82736_K().func_82766_b("doDaylightCycle")),
++              worldserver.field_73011_w.func_186058_p());
++          this.field_71304_b.func_76319_b();
++        }
+ 
+-            try {
+-               worldserver.func_72835_b(p_71190_1_);
+-            } catch (Throwable throwable1) {
+-               CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception ticking world");
+-               worldserver.func_72914_a(crashreport);
+-               throw new ReportedException(crashreport);
+-            }
++        this.field_71304_b.func_76320_a("tick");
++        net.minecraftforge.fml.hooks.BasicEventHooks.onPreWorldTick(worldserver);
+ 
+-            try {
+-               worldserver.func_72939_s();
+-            } catch (Throwable throwable) {
+-               CrashReport crashreport1 = CrashReport.func_85055_a(throwable, "Exception ticking world entities");
+-               worldserver.func_72914_a(crashreport1);
+-               throw new ReportedException(crashreport1);
+-            }
++        try {
++          worldserver.func_72835_b(p_71190_1_);
++        } catch (Throwable throwable1) {
++          CrashReport crashreport =
++              CrashReport.func_85055_a(throwable1, "Exception ticking world");
++          worldserver.func_72914_a(crashreport);
++          throw new ReportedException(crashreport);
++        }
+ 
+-            this.field_71304_b.func_76319_b();
+-            this.field_71304_b.func_76320_a("tracker");
+-            worldserver.func_73039_n().func_72788_a();
+-            this.field_71304_b.func_76319_b();
+-            this.field_71304_b.func_76319_b();
+-         }
++        try {
++          worldserver.func_72939_s();
++        } catch (Throwable throwable) {
++          CrashReport crashreport1 =
++              CrashReport.func_85055_a(throwable, "Exception ticking world entities");
++          worldserver.func_72914_a(crashreport1);
++          throw new ReportedException(crashreport1);
++        }
+ 
+-         (this.field_71312_k.computeIfAbsent(worldserver.field_73011_w.func_186058_p(), (p_212377_0_) -> {
+-            return new long[100];
+-         }))[this.field_71315_w % 100] = Util.func_211178_c() - i;
++        net.minecraftforge.fml.hooks.BasicEventHooks.onPostWorldTick(worldserver);
++        this.field_71304_b.func_76319_b();
++        this.field_71304_b.func_76320_a("tracker");
++        worldserver.func_73039_n().func_72788_a();
++        this.field_71304_b.func_76319_b();
++        this.field_71304_b.func_76319_b();
+       }
+ 
+-      this.field_71304_b.func_76318_c("connection");
+-      this.func_147137_ag().func_151269_c();
+-      this.field_71304_b.func_76318_c("players");
+-      this.field_71318_t.func_72374_b();
+-      this.field_71304_b.func_76318_c("tickables");
++      (this.field_71312_k.computeIfAbsent(worldserver.field_73011_w.func_186058_p(),
++          (p_212377_0_) -> {
++            return new long[100];
++          }))[this.field_71315_w % 100] = Util.func_211178_c() - i;
++    }
+ 
+-      for(int j = 0; j < this.field_71322_p.size(); ++j) {
+-         this.field_71322_p.get(j).func_73660_a();
+-      }
++    this.field_71304_b.func_76318_c("dim_unloading");
++    net.minecraftforge.common.DimensionManager.unloadWorlds(this, this.field_71315_w % 200 == 0);
++    this.field_71304_b.func_76318_c("connection");
++    this.func_147137_ag().func_151269_c();
++    this.field_71304_b.func_76318_c("players");
++    this.field_71318_t.func_72374_b();
++    this.field_71304_b.func_76318_c("tickables");
+ 
+-      this.field_71304_b.func_76319_b();
+-   }
++    for (int j = 0; j < this.field_71322_p.size(); ++j) {
++      this.field_71322_p.get(j).func_73660_a();
++    }
+ 
+-   public boolean func_71255_r() {
+-      return true;
+-   }
++    this.field_71304_b.func_76319_b();
++  }
+ 
+-   public void func_82010_a(ITickable p_82010_1_) {
+-      this.field_71322_p.add(p_82010_1_);
+-   }
++  public boolean func_71255_r() {
++    return true;
++  }
+ 
+-   public static void main(String[] p_main_0_) {
+-      Bootstrap.func_151354_b();
++  public void func_82010_a(ITickable p_82010_1_) {
++    this.field_71322_p.add(p_82010_1_);
++  }
+ 
+-      try {
+-         boolean flag = true;
+-         String s = null;
+-         String s1 = ".";
+-         String s2 = null;
+-         boolean flag1 = false;
+-         boolean flag2 = false;
+-         boolean flag3 = false;
+-         int i = -1;
++  public static void main(String[] p_main_0_) {
++    // Forge: Copied from DedicatedServer.init as to run as early as possible, Old code left in
++    // place intentionally.
++    // Done in good faith with permission:
++    // https://github.com/MinecraftForge/MinecraftForge/issues/3659#issuecomment-390467028
++    ServerEula eula = new ServerEula(new File("eula.txt"));
++    if (!eula.func_154346_a()) {
++      field_147145_h.info(
++          "You need to agree to the EULA in order to run the server. Go to eula.txt for more info.");
++      eula.func_154348_b();
++      return;
++    }
++    Bootstrap.func_151354_b();
+ 
+-         for(int j = 0; j < p_main_0_.length; ++j) {
+-            String s3 = p_main_0_[j];
+-            String s4 = j == p_main_0_.length - 1 ? null : p_main_0_[j + 1];
+-            boolean flag4 = false;
+-            if (!"nogui".equals(s3) && !"--nogui".equals(s3)) {
+-               if ("--port".equals(s3) && s4 != null) {
+-                  flag4 = true;
++    try {
++      boolean flag = true;
++      String s = null;
++      String s1 = ".";
++      String s2 = null;
++      boolean flag1 = false;
++      boolean flag2 = false;
++      boolean flag3 = false;
++      int i = -1;
+ 
+-                  try {
+-                     i = Integer.parseInt(s4);
+-                  } catch (NumberFormatException var15) {
+-                     ;
+-                  }
+-               } else if ("--singleplayer".equals(s3) && s4 != null) {
+-                  flag4 = true;
+-                  s = s4;
+-               } else if ("--universe".equals(s3) && s4 != null) {
+-                  flag4 = true;
+-                  s1 = s4;
+-               } else if ("--world".equals(s3) && s4 != null) {
+-                  flag4 = true;
+-                  s2 = s4;
+-               } else if ("--demo".equals(s3)) {
+-                  flag1 = true;
+-               } else if ("--bonusChest".equals(s3)) {
+-                  flag2 = true;
+-               } else if ("--forceUpgrade".equals(s3)) {
+-                  flag3 = true;
+-               }
+-            } else {
+-               flag = false;
+-            }
++      for (int j = 0; j < p_main_0_.length; ++j) {
++        String s3 = p_main_0_[j];
++        String s4 = j == p_main_0_.length - 1 ? null : p_main_0_[j + 1];
++        boolean flag4 = false;
++        if (!"nogui".equals(s3) && !"--nogui".equals(s3)) {
++          if ("--port".equals(s3) && s4 != null) {
++            flag4 = true;
+ 
+-            if (flag4) {
+-               ++j;
++            try {
++              i = Integer.parseInt(s4);
++            } catch (NumberFormatException var15) {
++              ;
+             }
+-         }
++          } else if ("--singleplayer".equals(s3) && s4 != null) {
++            flag4 = true;
++            s = s4;
++          } else if ("--universe".equals(s3) && s4 != null) {
++            flag4 = true;
++            s1 = s4;
++          } else if ("--world".equals(s3) && s4 != null) {
++            flag4 = true;
++            s2 = s4;
++          } else if ("--demo".equals(s3)) {
++            flag1 = true;
++          } else if ("--bonusChest".equals(s3)) {
++            flag2 = true;
++          } else if ("--forceUpgrade".equals(s3)) {
++            flag3 = true;
++          }
++        } else {
++          flag = false;
++        }
+ 
+-         YggdrasilAuthenticationService yggdrasilauthenticationservice = new YggdrasilAuthenticationService(Proxy.NO_PROXY, UUID.randomUUID().toString());
+-         MinecraftSessionService minecraftsessionservice = yggdrasilauthenticationservice.createMinecraftSessionService();
+-         GameProfileRepository gameprofilerepository = yggdrasilauthenticationservice.createProfileRepository();
+-         PlayerProfileCache playerprofilecache = new PlayerProfileCache(gameprofilerepository, new File(s1, field_152367_a.getName()));
+-         final DedicatedServer dedicatedserver = new DedicatedServer(new File(s1), DataFixesManager.func_210901_a(), yggdrasilauthenticationservice, minecraftsessionservice, gameprofilerepository, playerprofilecache);
+-         if (s != null) {
+-            dedicatedserver.func_71224_l(s);
+-         }
++        if (flag4) {
++          ++j;
++        }
++      }
+ 
+-         if (s2 != null) {
+-            dedicatedserver.func_71261_m(s2);
+-         }
++      YggdrasilAuthenticationService yggdrasilauthenticationservice =
++          new YggdrasilAuthenticationService(Proxy.NO_PROXY, UUID.randomUUID().toString());
++      MinecraftSessionService minecraftsessionservice =
++          yggdrasilauthenticationservice.createMinecraftSessionService();
++      GameProfileRepository gameprofilerepository =
++          yggdrasilauthenticationservice.createProfileRepository();
++      PlayerProfileCache playerprofilecache =
++          new PlayerProfileCache(gameprofilerepository, new File(s1, field_152367_a.getName()));
++      final DedicatedServer dedicatedserver = new DedicatedServer(new File(s1),
++          DataFixesManager.func_210901_a(), yggdrasilauthenticationservice, minecraftsessionservice,
++          gameprofilerepository, playerprofilecache);
++      if (s != null) {
++        dedicatedserver.func_71224_l(s);
++      }
+ 
+-         if (i >= 0) {
+-            dedicatedserver.func_71208_b(i);
+-         }
++      if (s2 != null) {
++        dedicatedserver.func_71261_m(s2);
++      }
+ 
+-         if (flag1) {
+-            dedicatedserver.func_71204_b(true);
+-         }
++      if (i >= 0) {
++        dedicatedserver.func_71208_b(i);
++      }
+ 
+-         if (flag2) {
+-            dedicatedserver.func_71194_c(true);
+-         }
++      if (flag1) {
++        dedicatedserver.func_71204_b(true);
++      }
+ 
+-         if (flag && !GraphicsEnvironment.isHeadless()) {
+-            dedicatedserver.func_120011_ar();
+-         }
++      if (flag2) {
++        dedicatedserver.func_71194_c(true);
++      }
+ 
+-         if (flag3) {
+-            dedicatedserver.func_212204_b(true);
+-         }
++      if (flag && !GraphicsEnvironment.isHeadless()) {
++        dedicatedserver.func_120011_ar();
++      }
+ 
+-         dedicatedserver.func_71256_s();
+-         Thread thread = new Thread("Server Shutdown Thread") {
+-            public void run() {
+-               dedicatedserver.func_71260_j();
+-            }
+-         };
+-         thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_147145_h));
+-         Runtime.getRuntime().addShutdownHook(thread);
+-      } catch (Exception exception) {
+-         field_147145_h.fatal("Failed to start the minecraft server", (Throwable)exception);
++      if (flag3) {
++        dedicatedserver.func_212204_b(true);
+       }
+ 
+-   }
++      dedicatedserver.func_71256_s();
++      Thread thread = new Thread("Server Shutdown Thread") {
++        public void run() {
++          dedicatedserver.func_71260_j();
++        }
++      };
++      thread.setUncaughtExceptionHandler(new DefaultUncaughtExceptionHandler(field_147145_h));
++      Runtime.getRuntime().addShutdownHook(thread);
++    } catch (Exception exception) {
++      field_147145_h.fatal("Failed to start the minecraft server", (Throwable) exception);
++    }
+ 
+-   protected void func_212204_b(boolean p_212204_1_) {
+-      this.field_212205_ao = p_212204_1_;
+-   }
++  }
+ 
+-   public void func_71256_s() {
+-      this.field_175590_aa = new Thread(this, "Server thread");
+-      this.field_175590_aa.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
+-         field_147145_h.error(p_195574_1_);
+-      });
+-      this.field_175590_aa.start();
+-   }
++  protected void func_212204_b(boolean p_212204_1_) {
++    this.field_212205_ao = p_212204_1_;
++  }
+ 
+-   public File func_71209_f(String p_71209_1_) {
+-      return new File(this.func_71238_n(), p_71209_1_);
+-   }
++  public void func_71256_s() {
++    this.field_175590_aa = new Thread(net.minecraftforge.fml.common.thread.SidedThreadGroups.SERVER,
++        this, "Server thread");
++    this.field_175590_aa.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
++      field_147145_h.error(p_195574_1_);
++    });
++    this.field_175590_aa.start();
++  }
+ 
+-   public void func_71244_g(String p_71244_1_) {
+-      field_147145_h.info(p_71244_1_);
+-   }
++  public File func_71209_f(String p_71209_1_) {
++    return new File(this.func_71238_n(), p_71209_1_);
++  }
+ 
+-   public void func_71236_h(String p_71236_1_) {
+-      field_147145_h.warn(p_71236_1_);
+-   }
++  public void func_71244_g(String p_71244_1_) {
++    field_147145_h.info(p_71244_1_);
++  }
+ 
+-   public WorldServer func_71218_a(DimensionType p_71218_1_) {
+-      return this.field_71305_c.get(p_71218_1_);
+-   }
++  public void func_71236_h(String p_71236_1_) {
++    field_147145_h.warn(p_71236_1_);
++  }
+ 
+-   public Iterable<WorldServer> func_212370_w() {
+-      return this.field_71305_c.values();
+-   }
++  public WorldServer func_71218_a(DimensionType p_71218_1_) {
++    return net.minecraftforge.common.DimensionManager.getWorld(this, p_71218_1_, true, true);
++  }
+ 
+-   public String func_71249_w() {
+-      return "1.13.2";
+-   }
++  public Iterable<WorldServer> func_212370_w() {
++    return new ArrayList<WorldServer>(field_71305_c.values());
++  }  
+ 
+-   public int func_71233_x() {
+-      return this.field_71318_t.func_72394_k();
+-   }
++  public String func_71249_w() {
++    return "1.13.2";
++  }
+ 
+-   public int func_71275_y() {
+-      return this.field_71318_t.func_72352_l();
+-   }
++  public int func_71233_x() {
++    return this.field_71318_t.func_72394_k();
++  }
+ 
+-   public String[] func_71213_z() {
+-      return this.field_71318_t.func_72369_d();
+-   }
++  public int func_71275_y() {
++    return this.field_71318_t.func_72352_l();
++  }
+ 
+-   public boolean func_71239_B() {
+-      return false;
+-   }
++  public String[] func_71213_z() {
++    return this.field_71318_t.func_72369_d();
++  }
+ 
+-   public void func_71201_j(String p_71201_1_) {
+-      field_147145_h.error(p_71201_1_);
+-   }
++  public boolean func_71239_B() {
++    return false;
++  }
+ 
+-   public void func_71198_k(String p_71198_1_) {
+-      if (this.func_71239_B()) {
+-         field_147145_h.info(p_71198_1_);
+-      }
++  public void func_71201_j(String p_71201_1_) {
++    field_147145_h.error(p_71201_1_);
++  }
+ 
+-   }
++  public void func_71198_k(String p_71198_1_) {
++    if (this.func_71239_B()) {
++      field_147145_h.info(p_71198_1_);
++    }
+ 
+-   public String getServerModName() {
+-      return "vanilla";
+-   }
++  }
+ 
+-   public CrashReport func_71230_b(CrashReport p_71230_1_) {
+-      p_71230_1_.func_85056_g().func_189529_a("Profiler Position", () -> {
+-         return this.field_71304_b.func_199094_a() ? this.field_71304_b.func_76322_c() : "N/A (disabled)";
++  public String getServerModName() {
++    return net.minecraftforge.fml.BrandingControl.getServerBranding();
++  }
++
++  public CrashReport func_71230_b(CrashReport p_71230_1_) {
++    p_71230_1_.func_85056_g().func_189529_a("Profiler Position", () -> {
++      return this.field_71304_b.func_199094_a() ? this.field_71304_b.func_76322_c() : "N/A (disabled)";
++    });
++    if (this.field_71318_t != null) {
++      p_71230_1_.func_85056_g().func_189529_a("Player Count", () -> {
++        return this.field_71318_t.func_72394_k() + " / " + this.field_71318_t.func_72352_l()
++            + "; " + this.field_71318_t.func_181057_v();
+       });
+-      if (this.field_71318_t != null) {
+-         p_71230_1_.func_85056_g().func_189529_a("Player Count", () -> {
+-            return this.field_71318_t.func_72394_k() + " / " + this.field_71318_t.func_72352_l() + "; " + this.field_71318_t.func_181057_v();
+-         });
+-      }
++    }
+ 
+-      p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
+-         StringBuilder stringbuilder = new StringBuilder();
++    p_71230_1_.func_85056_g().func_189529_a("Data Packs", () -> {
++      StringBuilder stringbuilder = new StringBuilder();
+ 
+-         for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
+-            if (stringbuilder.length() > 0) {
+-               stringbuilder.append(", ");
+-            }
++      for (ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198980_d()) {
++        if (stringbuilder.length() > 0) {
++          stringbuilder.append(", ");
++        }
+ 
+-            stringbuilder.append(resourcepackinfo.func_195790_f());
+-            if (!resourcepackinfo.func_195791_d().func_198968_a()) {
+-               stringbuilder.append(" (incompatible)");
+-            }
+-         }
++        stringbuilder.append(resourcepackinfo.func_195790_f());
++        if (!resourcepackinfo.func_195791_d().func_198968_a()) {
++          stringbuilder.append(" (incompatible)");
++        }
++      }
+ 
+-         return stringbuilder.toString();
+-      });
+-      return p_71230_1_;
+-   }
++      return stringbuilder.toString();
++    });
++    return p_71230_1_;
++  }
+ 
+-   public boolean func_175578_N() {
+-      return this.field_71308_o != null;
+-   }
++  public boolean func_175578_N() {
++    return this.field_71308_o != null;
++  }
+ 
+-   public void func_145747_a(ITextComponent p_145747_1_) {
+-      field_147145_h.info(p_145747_1_.getString());
+-   }
++  public void func_145747_a(ITextComponent p_145747_1_) {
++    field_147145_h.info(p_145747_1_.getString());
++  }
+ 
+-   public KeyPair func_71250_E() {
+-      return this.field_71292_I;
+-   }
++  public KeyPair func_71250_E() {
++    return this.field_71292_I;
++  }
+ 
+-   public int func_71215_F() {
+-      return this.field_71319_s;
+-   }
++  public int func_71215_F() {
++    return this.field_71319_s;
++  }
+ 
+-   public void func_71208_b(int p_71208_1_) {
+-      this.field_71319_s = p_71208_1_;
+-   }
++  public void func_71208_b(int p_71208_1_) {
++    this.field_71319_s = p_71208_1_;
++  }
+ 
+-   public String func_71214_G() {
+-      return this.field_71293_J;
+-   }
++  public String func_71214_G() {
++    return this.field_71293_J;
++  }
+ 
+-   public void func_71224_l(String p_71224_1_) {
+-      this.field_71293_J = p_71224_1_;
+-   }
++  public void func_71224_l(String p_71224_1_) {
++    this.field_71293_J = p_71224_1_;
++  }
+ 
+-   public boolean func_71264_H() {
+-      return this.field_71293_J != null;
+-   }
++  public boolean func_71264_H() {
++    return this.field_71293_J != null;
++  }
+ 
+-   public String func_71270_I() {
+-      return this.field_71294_K;
+-   }
++  public String func_71270_I() {
++    return this.field_71294_K;
++  }
+ 
+-   public void func_71261_m(String p_71261_1_) {
+-      this.field_71294_K = p_71261_1_;
+-   }
++  public void func_71261_m(String p_71261_1_) {
++    this.field_71294_K = p_71261_1_;
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public void func_71246_n(String p_71246_1_) {
+-      this.field_71287_L = p_71246_1_;
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public void func_71246_n(String p_71246_1_) {
++    this.field_71287_L = p_71246_1_;
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public String func_71221_J() {
+-      return this.field_71287_L;
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public String func_71221_J() {
++    return this.field_71287_L;
++  }
+ 
+-   public void func_71253_a(KeyPair p_71253_1_) {
+-      this.field_71292_I = p_71253_1_;
+-   }
++  public void func_71253_a(KeyPair p_71253_1_) {
++    this.field_71292_I = p_71253_1_;
++  }
+ 
+-   public void func_147139_a(EnumDifficulty p_147139_1_) {
+-      for(WorldServer worldserver : this.func_212370_w()) {
+-         if (worldserver.func_72912_H().func_76093_s()) {
+-            worldserver.func_72912_H().func_176144_a(EnumDifficulty.HARD);
+-            worldserver.func_72891_a(true, true);
+-         } else if (this.func_71264_H()) {
+-            worldserver.func_72912_H().func_176144_a(p_147139_1_);
+-            worldserver.func_72891_a(worldserver.func_175659_aa() != EnumDifficulty.PEACEFUL, true);
+-         } else {
+-            worldserver.func_72912_H().func_176144_a(p_147139_1_);
+-            worldserver.func_72891_a(this.func_71193_K(), this.field_71324_y);
+-         }
++  public void func_147139_a(EnumDifficulty p_147139_1_) {
++    for (WorldServer worldserver : this.func_212370_w()) {
++      if (worldserver.func_72912_H().func_76093_s()) {
++        worldserver.func_72912_H().func_176144_a(EnumDifficulty.HARD);
++        worldserver.func_72891_a(true, true);
++      } else if (this.func_71264_H()) {
++        worldserver.func_72912_H().func_176144_a(p_147139_1_);
++        worldserver.func_72891_a(worldserver.func_175659_aa() != EnumDifficulty.PEACEFUL,
++            true);
++      } else {
++        worldserver.func_72912_H().func_176144_a(p_147139_1_);
++        worldserver.func_72891_a(this.func_71193_K(), this.field_71324_y);
+       }
++    }
+ 
+-   }
++  }
+ 
+-   public boolean func_71193_K() {
+-      return true;
+-   }
++  public boolean func_71193_K() {
++    return true;
++  }
+ 
+-   public boolean func_71242_L() {
+-      return this.field_71288_M;
+-   }
++  public boolean func_71242_L() {
++    return this.field_71288_M;
++  }
+ 
+-   public void func_71204_b(boolean p_71204_1_) {
+-      this.field_71288_M = p_71204_1_;
+-   }
++  public void func_71204_b(boolean p_71204_1_) {
++    this.field_71288_M = p_71204_1_;
++  }
+ 
+-   public void func_71194_c(boolean p_71194_1_) {
+-      this.field_71289_N = p_71194_1_;
+-   }
++  public void func_71194_c(boolean p_71194_1_) {
++    this.field_71289_N = p_71194_1_;
++  }
+ 
+-   public ISaveFormat func_71254_M() {
+-      return this.field_71310_m;
+-   }
++  public ISaveFormat func_71254_M() {
++    return this.field_71310_m;
++  }
+ 
+-   public String func_147133_T() {
+-      return this.field_147141_M;
+-   }
++  public String func_147133_T() {
++    return this.field_147141_M;
++  }
+ 
+-   public String func_175581_ab() {
+-      return this.field_175588_P;
+-   }
++  public String func_175581_ab() {
++    return this.field_175588_P;
++  }
+ 
+-   public void func_180507_a_(String p_180507_1_, String p_180507_2_) {
+-      this.field_147141_M = p_180507_1_;
+-      this.field_175588_P = p_180507_2_;
+-   }
++  public void func_180507_a_(String p_180507_1_, String p_180507_2_) {
++    this.field_147141_M = p_180507_1_;
++    this.field_175588_P = p_180507_2_;
++  }
+ 
+-   public void func_70000_a(Snooper p_70000_1_) {
+-      p_70000_1_.func_152768_a("whitelist_enabled", false);
+-      p_70000_1_.func_152768_a("whitelist_count", 0);
+-      if (this.field_71318_t != null) {
+-         p_70000_1_.func_152768_a("players_current", this.func_71233_x());
+-         p_70000_1_.func_152768_a("players_max", this.func_71275_y());
+-         p_70000_1_.func_152768_a("players_seen", this.field_71318_t.func_72373_m().length);
+-      }
++  public void func_70000_a(Snooper p_70000_1_) {
++    p_70000_1_.func_152768_a("whitelist_enabled", false);
++    p_70000_1_.func_152768_a("whitelist_count", 0);
++    if (this.field_71318_t != null) {
++      p_70000_1_.func_152768_a("players_current", this.func_71233_x());
++      p_70000_1_.func_152768_a("players_max", this.func_71275_y());
++      p_70000_1_.func_152768_a("players_seen", this.field_71318_t.func_72373_m().length);
++    }
+ 
+-      p_70000_1_.func_152768_a("uses_auth", this.field_71325_x);
+-      p_70000_1_.func_152768_a("gui_state", this.func_71279_ae() ? "enabled" : "disabled");
+-      p_70000_1_.func_152768_a("run_time", (Util.func_211177_b() - p_70000_1_.func_130105_g()) / 60L * 1000L);
+-      p_70000_1_.func_152768_a("avg_tick_ms", (int)(MathHelper.func_76127_a(this.field_71311_j) * 1.0E-6D));
+-      int i = 0;
++    p_70000_1_.func_152768_a("uses_auth", this.field_71325_x);
++    p_70000_1_.func_152768_a("gui_state", this.func_71279_ae() ? "enabled" : "disabled");
++    p_70000_1_.func_152768_a("run_time",
++        (Util.func_211177_b() - p_70000_1_.func_130105_g()) / 60L * 1000L);
++    p_70000_1_.func_152768_a("avg_tick_ms",
++        (int) (MathHelper.func_76127_a(this.field_71311_j) * 1.0E-6D));
++    int i = 0;
+ 
+-      for(WorldServer worldserver : this.func_212370_w()) {
+-         if (worldserver != null) {
+-            WorldInfo worldinfo = worldserver.func_72912_H();
+-            p_70000_1_.func_152768_a("world[" + i + "][dimension]", worldserver.field_73011_w.func_186058_p());
+-            p_70000_1_.func_152768_a("world[" + i + "][mode]", worldinfo.func_76077_q());
+-            p_70000_1_.func_152768_a("world[" + i + "][difficulty]", worldserver.func_175659_aa());
+-            p_70000_1_.func_152768_a("world[" + i + "][hardcore]", worldinfo.func_76093_s());
+-            p_70000_1_.func_152768_a("world[" + i + "][generator_name]", worldinfo.func_76067_t().func_211888_a());
+-            p_70000_1_.func_152768_a("world[" + i + "][generator_version]", worldinfo.func_76067_t().func_77131_c());
+-            p_70000_1_.func_152768_a("world[" + i + "][height]", this.field_71280_D);
+-            p_70000_1_.func_152768_a("world[" + i + "][chunks_loaded]", worldserver.func_72863_F().func_73152_e());
+-            ++i;
+-         }
++    for (WorldServer worldserver : this.func_212370_w()) {
++      if (worldserver != null) {
++        WorldInfo worldinfo = worldserver.func_72912_H();
++        p_70000_1_.func_152768_a("world[" + i + "][dimension]", worldserver.field_73011_w.func_186058_p());
++        p_70000_1_.func_152768_a("world[" + i + "][mode]", worldinfo.func_76077_q());
++        p_70000_1_.func_152768_a("world[" + i + "][difficulty]", worldserver.func_175659_aa());
++        p_70000_1_.func_152768_a("world[" + i + "][hardcore]", worldinfo.func_76093_s());
++        p_70000_1_.func_152768_a("world[" + i + "][generator_name]",
++            worldinfo.func_76067_t().func_211888_a());
++        p_70000_1_.func_152768_a("world[" + i + "][generator_version]",
++            worldinfo.func_76067_t().func_77131_c());
++        p_70000_1_.func_152768_a("world[" + i + "][height]", this.field_71280_D);
++        p_70000_1_.func_152768_a("world[" + i + "][chunks_loaded]",
++            worldserver.func_72863_F().func_73152_e());
++        ++i;
+       }
++    }
+ 
+-      p_70000_1_.func_152768_a("worlds", i);
+-   }
++    p_70000_1_.func_152768_a("worlds", i);
++  }
+ 
+-   public boolean func_70002_Q() {
+-      return true;
+-   }
++  public boolean func_70002_Q() {
++    return true;
++  }
+ 
+-   public abstract boolean func_71262_S();
++  public abstract boolean func_71262_S();
+ 
+-   public boolean func_71266_T() {
+-      return this.field_71325_x;
+-   }
++  public boolean func_71266_T() {
++    return this.field_71325_x;
++  }
+ 
+-   public void func_71229_d(boolean p_71229_1_) {
+-      this.field_71325_x = p_71229_1_;
+-   }
++  public void func_71229_d(boolean p_71229_1_) {
++    this.field_71325_x = p_71229_1_;
++  }
+ 
+-   public boolean func_190518_ac() {
+-      return this.field_190519_A;
+-   }
++  public boolean func_190518_ac() {
++    return this.field_190519_A;
++  }
+ 
+-   public void func_190517_e(boolean p_190517_1_) {
+-      this.field_190519_A = p_190517_1_;
+-   }
++  public void func_190517_e(boolean p_190517_1_) {
++    this.field_190519_A = p_190517_1_;
++  }
+ 
+-   public boolean func_71268_U() {
+-      return this.field_71324_y;
+-   }
++  public boolean func_71268_U() {
++    return this.field_71324_y;
++  }
+ 
+-   public void func_71251_e(boolean p_71251_1_) {
+-      this.field_71324_y = p_71251_1_;
+-   }
++  public void func_71251_e(boolean p_71251_1_) {
++    this.field_71324_y = p_71251_1_;
++  }
+ 
+-   public boolean func_71220_V() {
+-      return this.field_71323_z;
+-   }
++  public boolean func_71220_V() {
++    return this.field_71323_z;
++  }
+ 
+-   public abstract boolean func_181035_ah();
++  public abstract boolean func_181035_ah();
+ 
+-   public void func_71257_f(boolean p_71257_1_) {
+-      this.field_71323_z = p_71257_1_;
+-   }
++  public void func_71257_f(boolean p_71257_1_) {
++    this.field_71323_z = p_71257_1_;
++  }
+ 
+-   public boolean func_71219_W() {
+-      return this.field_71284_A;
+-   }
++  public boolean func_71219_W() {
++    return this.field_71284_A;
++  }
+ 
+-   public void func_71188_g(boolean p_71188_1_) {
+-      this.field_71284_A = p_71188_1_;
+-   }
++  public void func_71188_g(boolean p_71188_1_) {
++    this.field_71284_A = p_71188_1_;
++  }
+ 
+-   public boolean func_71231_X() {
+-      return this.field_71285_B;
+-   }
++  public boolean func_71231_X() {
++    return this.field_71285_B;
++  }
+ 
+-   public void func_71245_h(boolean p_71245_1_) {
+-      this.field_71285_B = p_71245_1_;
+-   }
++  public void func_71245_h(boolean p_71245_1_) {
++    this.field_71285_B = p_71245_1_;
++  }
+ 
+-   public abstract boolean func_82356_Z();
++  public abstract boolean func_82356_Z();
+ 
+-   public String func_71273_Y() {
+-      return this.field_71286_C;
+-   }
++  public String func_71273_Y() {
++    return this.field_71286_C;
++  }
+ 
+-   public void func_71205_p(String p_71205_1_) {
+-      this.field_71286_C = p_71205_1_;
+-   }
++  public void func_71205_p(String p_71205_1_) {
++    this.field_71286_C = p_71205_1_;
++  }
+ 
+-   public int func_71207_Z() {
+-      return this.field_71280_D;
+-   }
++  public int func_71207_Z() {
++    return this.field_71280_D;
++  }
+ 
+-   public void func_71191_d(int p_71191_1_) {
+-      this.field_71280_D = p_71191_1_;
+-   }
++  public void func_71191_d(int p_71191_1_) {
++    this.field_71280_D = p_71191_1_;
++  }
+ 
+-   public boolean func_71241_aa() {
+-      return this.field_71316_v;
+-   }
++  public boolean func_71241_aa() {
++    return this.field_71316_v;
++  }
+ 
+-   public PlayerList func_184103_al() {
+-      return this.field_71318_t;
+-   }
++  public PlayerList func_184103_al() {
++    return this.field_71318_t;
++  }
+ 
+-   public void func_184105_a(PlayerList p_184105_1_) {
+-      this.field_71318_t = p_184105_1_;
+-   }
++  public void func_184105_a(PlayerList p_184105_1_) {
++    this.field_71318_t = p_184105_1_;
++  }
+ 
+-   public abstract boolean func_71344_c();
++  public abstract boolean func_71344_c();
+ 
+-   public void func_71235_a(GameType p_71235_1_) {
+-      for(WorldServer worldserver : this.func_212370_w()) {
+-         worldserver.func_72912_H().func_76060_a(p_71235_1_);
+-      }
++  public void func_71235_a(GameType p_71235_1_) {
++    for (WorldServer worldserver : this.func_212370_w()) {
++      worldserver.func_72912_H().func_76060_a(p_71235_1_);
++    }
+ 
+-   }
++  }
+ 
+-   public NetworkSystem func_147137_ag() {
+-      return this.field_147144_o;
+-   }
++  public NetworkSystem func_147137_ag() {
++    return this.field_147144_o;
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public boolean func_71200_ad() {
+-      return this.field_71296_Q;
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public boolean func_71200_ad() {
++    return this.field_71296_Q;
++  }
+ 
+-   public boolean func_71279_ae() {
+-      return false;
+-   }
++  public boolean func_71279_ae() {
++    return false;
++  }
+ 
+-   public abstract boolean func_195565_a(GameType p_195565_1_, boolean p_195565_2_, int p_195565_3_);
++  public abstract boolean func_195565_a(GameType p_195565_1_, boolean p_195565_2_, int p_195565_3_);
+ 
+-   public int func_71259_af() {
+-      return this.field_71315_w;
+-   }
++  public int func_71259_af() {
++    return this.field_71315_w;
++  }
+ 
+-   public void func_71223_ag() {
+-      this.field_71295_T = true;
+-   }
++  public void func_71223_ag() {
++    this.field_71295_T = true;
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public Snooper func_80003_ah() {
+-      return this.field_71307_n;
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public Snooper func_80003_ah() {
++    return this.field_71307_n;
++  }
+ 
+-   public int func_82357_ak() {
+-      return 16;
+-   }
++  public int func_82357_ak() {
++    return 16;
++  }
+ 
+-   public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_) {
+-      return false;
+-   }
++  public boolean func_175579_a(World p_175579_1_, BlockPos p_175579_2_, EntityPlayer p_175579_3_) {
++    return false;
++  }
+ 
+-   public void func_104055_i(boolean p_104055_1_) {
+-      this.field_104057_T = p_104055_1_;
+-   }
++  public void func_104055_i(boolean p_104055_1_) {
++    this.field_104057_T = p_104055_1_;
++  }
+ 
+-   public boolean func_104056_am() {
+-      return this.field_104057_T;
+-   }
++  public boolean func_104056_am() {
++    return this.field_104057_T;
++  }
+ 
+-   public int func_143007_ar() {
+-      return this.field_143008_E;
+-   }
++  public int func_143007_ar() {
++    return this.field_143008_E;
++  }
+ 
+-   public void func_143006_e(int p_143006_1_) {
+-      this.field_143008_E = p_143006_1_;
+-   }
++  public void func_143006_e(int p_143006_1_) {
++    this.field_143008_E = p_143006_1_;
++  }
+ 
+-   public MinecraftSessionService func_147130_as() {
+-      return this.field_147143_S;
+-   }
++  public MinecraftSessionService func_147130_as() {
++    return this.field_147143_S;
++  }
+ 
+-   public GameProfileRepository func_152359_aw() {
+-      return this.field_152365_W;
+-   }
++  public GameProfileRepository func_152359_aw() {
++    return this.field_152365_W;
++  }
+ 
+-   public PlayerProfileCache func_152358_ax() {
+-      return this.field_152366_X;
+-   }
++  public PlayerProfileCache func_152358_ax() {
++    return this.field_152366_X;
++  }
+ 
+-   public ServerStatusResponse func_147134_at() {
+-      return this.field_147147_p;
+-   }
++  public ServerStatusResponse func_147134_at() {
++    return this.field_147147_p;
++  }
+ 
+-   public void func_147132_au() {
+-      this.field_147142_T = 0L;
+-   }
++  public void func_147132_au() {
++    this.field_147142_T = 0L;
++  }
+ 
+-   public int func_175580_aG() {
+-      return 29999984;
+-   }
++  public int func_175580_aG() {
++    return 29999984;
++  }
+ 
+-   public <V> ListenableFuture<V> func_175586_a(Callable<V> p_175586_1_) {
+-      Validate.notNull(p_175586_1_);
+-      if (!this.func_152345_ab() && !this.func_71241_aa()) {
+-         ListenableFutureTask<V> listenablefuturetask = ListenableFutureTask.create(p_175586_1_);
+-         this.field_175589_i.add(listenablefuturetask);
+-         return listenablefuturetask;
+-      } else {
+-         try {
+-            return Futures.immediateFuture(p_175586_1_.call());
+-         } catch (Exception exception) {
+-            return Futures.immediateFailedCheckedFuture(exception);
+-         }
++  public <V> ListenableFuture<V> func_175586_a(Callable<V> p_175586_1_) {
++    Validate.notNull(p_175586_1_);
++    if (!this.func_152345_ab() && !this.func_71241_aa()) {
++      ListenableFutureTask<V> listenablefuturetask = ListenableFutureTask.create(p_175586_1_);
++      this.field_175589_i.add(listenablefuturetask);
++      return listenablefuturetask;
++    } else {
++      try {
++        return Futures.immediateFuture(p_175586_1_.call());
++      } catch (Exception exception) {
++        return Futures.immediateFailedCheckedFuture(exception);
+       }
+-   }
++    }
++  }
+ 
+-   public ListenableFuture<Object> func_152344_a(Runnable p_152344_1_) {
+-      Validate.notNull(p_152344_1_);
+-      return this.func_175586_a(Executors.callable(p_152344_1_));
+-   }
++  public ListenableFuture<Object> func_152344_a(Runnable p_152344_1_) {
++    Validate.notNull(p_152344_1_);
++    return this.func_175586_a(Executors.callable(p_152344_1_));
++  }
+ 
+-   public boolean func_152345_ab() {
+-      return Thread.currentThread() == this.field_175590_aa;
+-   }
++  public boolean func_152345_ab() {
++    return Thread.currentThread() == this.field_175590_aa;
++  }
+ 
+-   public int func_175577_aI() {
+-      return 256;
+-   }
++  public int func_175577_aI() {
++    return 256;
++  }
+ 
+-   public long func_211150_az() {
+-      return this.field_211151_aa;
+-   }
++  public long func_211150_az() {
++    return this.field_211151_aa;
++  }
+ 
+-   public Thread func_175583_aK() {
+-      return this.field_175590_aa;
+-   }
++  public Thread func_175583_aK() {
++    return this.field_175590_aa;
++  }
+ 
+-   public DataFixer func_195563_aC() {
+-      return this.field_184112_s;
+-   }
++  public DataFixer func_195563_aC() {
++    return this.field_184112_s;
++  }
+ 
+-   public int func_184108_a(@Nullable WorldServer p_184108_1_) {
+-      return p_184108_1_ != null ? p_184108_1_.func_82736_K().func_180263_c("spawnRadius") : 10;
+-   }
++  public int func_184108_a(@Nullable WorldServer p_184108_1_) {
++    return p_184108_1_ != null ? p_184108_1_.func_82736_K().func_180263_c("spawnRadius") : 10;
++  }
+ 
+-   public AdvancementManager func_191949_aK() {
+-      return this.field_200257_ak;
+-   }
++  public AdvancementManager func_191949_aK() {
++    return this.field_200257_ak;
++  }
+ 
+-   public FunctionManager func_193030_aL() {
+-      return this.field_200258_al;
+-   }
++  public FunctionManager func_193030_aL() {
++    return this.field_200258_al;
++  }
+ 
+-   public void func_193031_aM() {
+-      if (!this.func_152345_ab()) {
+-         this.func_152344_a(this::func_193031_aM);
+-      } else {
+-         this.func_184103_al().func_72389_g();
+-         this.field_195577_ad.func_198983_a();
+-         this.func_195568_a(this.func_71218_a(DimensionType.OVERWORLD).func_72912_H());
+-         this.func_184103_al().func_193244_w();
+-      }
+-   }
++  public void func_193031_aM() {
++    if (!this.func_152345_ab()) {
++      this.func_152344_a(this::func_193031_aM);
++    } else {
++      this.func_184103_al().func_72389_g();
++      this.field_195577_ad.func_198983_a();
++      this.func_195568_a(this.func_71218_a(DimensionType.OVERWORLD).func_72912_H());
++      this.func_184103_al().func_193244_w();
++    }
++  }
+ 
+-   private void func_195568_a(WorldInfo p_195568_1_) {
+-      List<ResourcePackInfo> list = Lists.newArrayList(this.field_195577_ad.func_198980_d());
++  private void func_195568_a(WorldInfo p_195568_1_) {
++    List<ResourcePackInfo> list = Lists.newArrayList(this.field_195577_ad.func_198980_d());
+ 
+-      for(ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198978_b()) {
+-         if (!p_195568_1_.func_197719_N().contains(resourcepackinfo.func_195790_f()) && !list.contains(resourcepackinfo)) {
+-            field_147145_h.info("Found new data pack {}, loading it automatically", (Object)resourcepackinfo.func_195790_f());
+-            resourcepackinfo.func_195792_i().func_198993_a(list, resourcepackinfo, (p_200247_0_) -> {
+-               return p_200247_0_;
+-            }, false);
+-         }
++    for (ResourcePackInfo resourcepackinfo : this.field_195577_ad.func_198978_b()) {
++      if (!p_195568_1_.func_197719_N().contains(resourcepackinfo.func_195790_f())
++          && !list.contains(resourcepackinfo)) {
++        field_147145_h.info("Found new data pack {}, loading it automatically",
++            (Object) resourcepackinfo.func_195790_f());
++        resourcepackinfo.func_195792_i().func_198993_a(list, resourcepackinfo, (p_200247_0_) -> {
++          return p_200247_0_;
++        }, false);
+       }
++    }
+ 
+-      this.field_195577_ad.func_198985_a(list);
+-      List<IResourcePack> list1 = Lists.newArrayList();
+-      this.field_195577_ad.func_198980_d().forEach((p_200244_1_) -> {
+-         list1.add(p_200244_1_.func_195796_e());
+-      });
+-      this.field_195576_ac.func_199005_a(list1);
+-      p_195568_1_.func_197720_O().clear();
+-      p_195568_1_.func_197719_N().clear();
+-      this.field_195577_ad.func_198980_d().forEach((p_195562_1_) -> {
+-         p_195568_1_.func_197720_O().add(p_195562_1_.func_195790_f());
+-      });
+-      this.field_195577_ad.func_198978_b().forEach((p_200248_2_) -> {
+-         if (!this.field_195577_ad.func_198980_d().contains(p_200248_2_)) {
+-            p_195568_1_.func_197719_N().add(p_200248_2_.func_195790_f());
+-         }
++    this.field_195577_ad.func_198985_a(list);
++    List<IResourcePack> list1 = Lists.newArrayList();
++    this.field_195577_ad.func_198980_d().forEach((p_200244_1_) -> {
++      list1.add(p_200244_1_.func_195796_e());
++    });
++    this.field_195576_ac.func_199005_a(list1);
++    p_195568_1_.func_197720_O().clear();
++    p_195568_1_.func_197719_N().clear();
++    this.field_195577_ad.func_198980_d().forEach((p_195562_1_) -> {
++      p_195568_1_.func_197720_O().add(p_195562_1_.func_195790_f());
++    });
++    this.field_195577_ad.func_198978_b().forEach((p_200248_2_) -> {
++      if (!this.field_195577_ad.func_198980_d().contains(p_200248_2_)) {
++        p_195568_1_.func_197719_N().add(p_200248_2_.func_195790_f());
++      }
+ 
+-      });
+-   }
++    });
++  }
+ 
+-   public void func_205743_a(CommandSource p_205743_1_) {
+-      if (this.func_205744_aT()) {
+-         PlayerList playerlist = p_205743_1_.func_197028_i().func_184103_al();
+-         UserListWhitelist userlistwhitelist = playerlist.func_152599_k();
+-         if (userlistwhitelist.func_152689_b()) {
+-            for(EntityPlayerMP entityplayermp : Lists.newArrayList(playerlist.func_181057_v())) {
+-               if (!userlistwhitelist.func_152705_a(entityplayermp.func_146103_bH())) {
+-                  entityplayermp.field_71135_a.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.not_whitelisted"));
+-               }
+-            }
++  public void func_205743_a(CommandSource p_205743_1_) {
++    if (this.func_205744_aT()) {
++      PlayerList playerlist = p_205743_1_.func_197028_i().func_184103_al();
++      UserListWhitelist userlistwhitelist = playerlist.func_152599_k();
++      if (userlistwhitelist.func_152689_b()) {
++        for (EntityPlayerMP entityplayermp : Lists.newArrayList(playerlist.func_181057_v())) {
++          if (!userlistwhitelist.func_152705_a(entityplayermp.func_146103_bH())) {
++            entityplayermp.field_71135_a
++                .func_194028_b(new TextComponentTranslation("multiplayer.disconnect.not_whitelisted"));
++          }
++        }
+ 
+-         }
+       }
+-   }
++    }
++  }
+ 
+-   public IReloadableResourceManager func_195570_aG() {
+-      return this.field_195576_ac;
+-   }
++  public IReloadableResourceManager func_195570_aG() {
++    return this.field_195576_ac;
++  }
+ 
+-   public ResourcePackList<ResourcePackInfo> func_195561_aH() {
+-      return this.field_195577_ad;
+-   }
++  public ResourcePackList<ResourcePackInfo> func_195561_aH() {
++    return this.field_195577_ad;
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public ITextComponent func_200246_aJ() {
+-      return this.field_71302_d;
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public ITextComponent func_200246_aJ() {
++    return this.field_71302_d;
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public int func_195566_aK() {
+-      return this.field_71303_e;
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public int func_195566_aK() {
++    return this.field_71303_e;
++  }
+ 
+-   public Commands func_195571_aL() {
+-      return this.field_195579_af;
+-   }
++  public Commands func_195571_aL() {
++    return this.field_195579_af;
++  }
+ 
+-   public CommandSource func_195573_aM() {
+-      return new CommandSource(this, this.func_71218_a(DimensionType.OVERWORLD) == null ? Vec3d.field_186680_a : new Vec3d(this.func_71218_a(DimensionType.OVERWORLD).func_175694_M()), Vec2f.field_189974_a, this.func_71218_a(DimensionType.OVERWORLD), 4, "Server", new TextComponentString("Server"), this, (Entity)null);
+-   }
++  public CommandSource func_195573_aM() {
++    return new CommandSource(this,
++        this.func_71218_a(DimensionType.OVERWORLD) == null ? Vec3d.field_186680_a
++            : new Vec3d(this.func_71218_a(DimensionType.OVERWORLD).func_175694_M()),
++        Vec2f.field_189974_a, this.func_71218_a(DimensionType.OVERWORLD), 4, "Server",
++        new TextComponentString("Server"), this, (Entity) null);
++  }
+ 
+-   public boolean func_195039_a() {
+-      return true;
+-   }
++  public boolean func_195039_a() {
++    return true;
++  }
+ 
+-   public boolean func_195040_b() {
+-      return true;
+-   }
++  public boolean func_195040_b() {
++    return true;
++  }
+ 
+-   public RecipeManager func_199529_aN() {
+-      return this.field_199530_ag;
+-   }
++  public RecipeManager func_199529_aN() {
++    return this.field_199530_ag;
++  }
+ 
+-   public NetworkTagManager func_199731_aO() {
+-      return this.field_199736_ah;
+-   }
++  public NetworkTagManager func_199731_aO() {
++    return this.field_199736_ah;
++  }
+ 
+-   public ServerScoreboard func_200251_aP() {
+-      return this.field_200255_ai;
+-   }
++  public ServerScoreboard func_200251_aP() {
++    return this.field_200255_ai;
++  }
+ 
+-   public LootTableManager func_200249_aQ() {
+-      return this.field_200256_aj;
+-   }
++  public LootTableManager func_200249_aQ() {
++    return this.field_200256_aj;
++  }
+ 
+-   public GameRules func_200252_aR() {
+-      return this.func_71218_a(DimensionType.OVERWORLD).func_82736_K();
+-   }
++  public GameRules func_200252_aR() {
++    return this.func_71218_a(DimensionType.OVERWORLD).func_82736_K();
++  }
+ 
+-   public CustomBossEvents func_201300_aS() {
+-      return this.field_201301_aj;
+-   }
++  public CustomBossEvents func_201300_aS() {
++    return this.field_201301_aj;
++  }
+ 
+-   public boolean func_205744_aT() {
+-      return this.field_205745_an;
+-   }
++  public boolean func_205744_aT() {
++    return this.field_205745_an;
++  }
+ 
+-   public void func_205741_k(boolean p_205741_1_) {
+-      this.field_205745_an = p_205741_1_;
+-   }
++  public void func_205741_k(boolean p_205741_1_) {
++    this.field_205745_an = p_205741_1_;
++  }
+ 
+-   @OnlyIn(Dist.CLIENT)
+-   public float func_211149_aT() {
+-      return this.field_211152_ao;
+-   }
++  @OnlyIn(Dist.CLIENT)
++  public float func_211149_aT() {
++    return this.field_211152_ao;
++  }
+ 
+-   public int func_211833_a(GameProfile p_211833_1_) {
+-      if (this.func_184103_al().func_152596_g(p_211833_1_)) {
+-         UserListOpsEntry userlistopsentry = this.func_184103_al().func_152603_m().func_152683_b(p_211833_1_);
+-         if (userlistopsentry != null) {
+-            return userlistopsentry.func_152644_a();
+-         } else if (this.func_71264_H()) {
+-            if (this.func_71214_G().equals(p_211833_1_.getName())) {
+-               return 4;
+-            } else {
+-               return this.func_184103_al().func_206257_x() ? 4 : 0;
+-            }
+-         } else {
+-            return this.func_110455_j();
+-         }
++  public int func_211833_a(GameProfile p_211833_1_) {
++    if (this.func_184103_al().func_152596_g(p_211833_1_)) {
++      UserListOpsEntry userlistopsentry = this.func_184103_al().func_152603_m().func_152683_b(p_211833_1_);
++      if (userlistopsentry != null) {
++        return userlistopsentry.func_152644_a();
++      } else if (this.func_71264_H()) {
++        if (this.func_71214_G().equals(p_211833_1_.getName())) {
++          return 4;
++        } else {
++          return this.func_184103_al().func_206257_x() ? 4 : 0;
++        }
+       } else {
+-         return 0;
++        return this.func_110455_j();
+       }
+-   }
++    } else {
++      return 0;
++    }
++  }
++
++  @Nullable
++  public long[] getTickTime(DimensionType dim) {
++    return field_71312_k.get(dim);
++  }
++
++  @Deprecated // Forge Internal use Only, You can screw up a lot of things if you mess with this
++              // map.
++  public synchronized Map<DimensionType, WorldServer> forgeGetWorldMap() {
++    return this.field_71305_c;
++  }
  }
