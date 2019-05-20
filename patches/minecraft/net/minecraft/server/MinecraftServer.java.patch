@@ -148,7 +148,7 @@
        this.field_175590_aa.setUncaughtExceptionHandler((p_195574_0_, p_195574_1_) -> {
           field_147145_h.error(p_195574_1_);
        });
-@@ -896,7 +917,7 @@
+@@ -896,11 +917,11 @@
     }
  
     public WorldServer func_71218_a(DimensionType p_71218_1_) {
@@ -157,6 +157,11 @@
     }
  
     public Iterable<WorldServer> func_212370_w() {
+-      return this.field_71305_c.values();
++      return new java.util.ArrayList<WorldServer>(this.field_71305_c.values());
+    }
+ 
+    public String func_71249_w() {
 @@ -935,7 +956,7 @@
     }
  
