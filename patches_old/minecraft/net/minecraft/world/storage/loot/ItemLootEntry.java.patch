@@ -1,0 +1,30 @@
+--- a/net/minecraft/world/storage/loot/ItemLootEntry.java
++++ b/net/minecraft/world/storage/loot/ItemLootEntry.java
+@@ -18,8 +18,8 @@
+    protected final Item field_186368_a;
+    protected final ILootFunction[] field_186369_b;
+ 
+-   public ItemLootEntry(Item p_i46644_1_, int p_i46644_2_, int p_i46644_3_, ILootFunction[] p_i46644_4_, ILootCondition[] p_i46644_5_) {
+-      super(p_i46644_2_, p_i46644_3_, p_i46644_5_);
++   public ItemLootEntry(Item p_i46644_1_, int p_i46644_2_, int p_i46644_3_, ILootFunction[] p_i46644_4_, ILootCondition[] p_i46644_5_, String entryName) {
++      super(p_i46644_2_, p_i46644_3_, p_i46644_5_, entryName);
+       this.field_186368_a = p_i46644_1_;
+       this.field_186369_b = p_i46644_4_;
+    }
+@@ -34,7 +34,7 @@
+       }
+ 
+       if (!itemstack.func_190926_b()) {
+-         if (itemstack.func_190916_E() < this.field_186368_a.func_77639_j()) {
++         if (itemstack.func_190916_E() < itemstack.func_77976_d()) {
+             p_186363_1_.add(itemstack);
+          } else {
+             int i = itemstack.func_190916_E();
+@@ -72,6 +72,6 @@
+          alootfunction = new ILootFunction[0];
+       }
+ 
+-      return new ItemLootEntry(item, p_186367_2_, p_186367_3_, alootfunction, p_186367_4_);
++      return new ItemLootEntry(item, p_186367_2_, p_186367_3_, alootfunction, p_186367_4_, net.minecraftforge.common.ForgeHooks.readLootEntryName(p_186367_0_, "item"));
+    }
+ }

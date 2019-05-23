@@ -19,23 +19,18 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.items.IItemHandlerModifiable;
 
 public class RecipeWrapper implements IInventory {
 
     protected final IItemHandlerModifiable inv;
-    protected final int width;
-    protected final int height;
 
-    public RecipeWrapper(IItemHandlerModifiable inv, int width, int height)
+    public RecipeWrapper(IItemHandlerModifiable inv)
     {
         this.inv = inv;
-        this.width = width;
-        this.height = height;
     }
 
     /**
@@ -44,7 +39,7 @@ public class RecipeWrapper implements IInventory {
     @Override
     public int getSizeInventory()
     {
-        return getHeight() * getWidth();
+        return inv.getSlots();
     }
 
     /**
@@ -73,24 +68,6 @@ public class RecipeWrapper implements IInventory {
     public void setInventorySlotContents(int slot, ItemStack stack)
     {
         inv.setStackInSlot(slot, stack);
-    }
-
-    /**
-     * Returns the height of this inventory.
-     */
-    @Override
-    public int getHeight()
-    {
-        return height;
-    }
-
-    /**
-     * Returns the width of this inventory.
-     */
-    @Override
-    public int getWidth()
-    {
-        return width;
     }
 
     /**
@@ -136,22 +113,10 @@ public class RecipeWrapper implements IInventory {
     @Override
     public void markDirty() {}
     @Override
-    public boolean isUsableByPlayer(EntityPlayer player) { return false; }
+    public boolean isUsableByPlayer(PlayerEntity player) { return false; }
     @Override
-    public void openInventory(EntityPlayer player) {}
+    public void openInventory(PlayerEntity player) {}
     @Override
-    public void closeInventory(EntityPlayer player) {}
-    @Override
-    public int getField(int id) { return 0; }
-    @Override
-    public void setField(int id, int value) {}
-    @Override
-    public int getFieldCount() { return 0; }
-    @Override
-    public ITextComponent getName() { return null; }
-    @Override
-    public boolean hasCustomName() { return false; }
-    @Override
-    public ITextComponent getCustomName() { return null; }
-    
+    public void closeInventory(PlayerEntity player) {}
+
 }

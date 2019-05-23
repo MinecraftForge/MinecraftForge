@@ -1,91 +1,128 @@
 --- a/net/minecraft/entity/EntityType.java
 +++ b/net/minecraft/entity/EntityType.java
-@@ -123,7 +123,7 @@
+@@ -135,7 +135,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public class EntityType<T extends Entity> {
 +public class EntityType<T extends Entity> extends net.minecraftforge.registries.ForgeRegistryEntry<EntityType<?>> {
     private static final Logger field_200731_aJ = LogManager.getLogger();
-    public static final EntityType<EntityAreaEffectCloud> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.func_201757_a(EntityAreaEffectCloud.class, EntityAreaEffectCloud::new));
-    public static final EntityType<EntityArmorStand> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.func_201757_a(EntityArmorStand.class, EntityArmorStand::new));
-@@ -263,6 +263,7 @@
+    public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F));
+    public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F));
+@@ -254,6 +254,11 @@
+    private final Type<?> field_206832_aX;
+    private final EntitySize field_220359_bi;
+ 
++   private final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier;
++   private final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier;
++   private final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier;
++   private final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
++
+    private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
+       return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
+    }
+@@ -266,7 +271,7 @@
+       return Registry.field_212629_r.func_218349_b(ResourceLocation.func_208304_a(p_220327_0_));
+    }
+ 
+-   public EntityType(EntityType.IFactory<T> p_i50385_1_, EntityClassification p_i50385_2_, boolean p_i50385_3_, boolean p_i50385_4_, boolean p_i50385_5_, @Nullable Type<?> p_i50385_6_, EntitySize p_i50385_7_) {
++   public EntityType(IFactory<T> p_i50385_1_, EntityClassification p_i50385_2_, boolean p_i50385_3_, boolean p_i50385_4_, boolean p_i50385_5_, @Nullable Type<?> p_i50385_6_, EntitySize p_i50385_7_, final java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier, final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier, final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier, final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
+       this.field_200732_aK = p_i50385_1_;
+       this.field_220355_ba = p_i50385_2_;
+       this.field_200733_aL = p_i50385_3_;
+@@ -274,6 +279,10 @@
+       this.field_220357_bd = p_i50385_5_;
+       this.field_206832_aX = p_i50385_6_;
+       this.field_220359_bi = p_i50385_7_;
++      this.velocityUpdateSupplier = velocityUpdateSupplier;
++      this.trackingRangeSupplier = trackingRangeSupplier;
++      this.updateIntervalSupplier = updateIntervalSupplier;
++      this.customClientFactory = customClientFactory;
+    }
+ 
     @Nullable
-    public T func_208050_a(World p_208050_1_, @Nullable NBTTagCompound p_208050_2_, @Nullable ITextComponent p_208050_3_, @Nullable EntityPlayer p_208050_4_, BlockPos p_208050_5_, boolean p_208050_6_, boolean p_208050_7_) {
-       T t = this.func_210761_b(p_208050_1_, p_208050_2_, p_208050_3_, p_208050_4_, p_208050_5_, p_208050_6_, p_208050_7_);
-+      if (t instanceof net.minecraft.entity.EntityLiving && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((EntityLiving) t, p_208050_1_, p_208050_5_.func_177958_n(), p_208050_5_.func_177956_o(), p_208050_5_.func_177952_p(), null)) return null;
-       p_208050_1_.func_72838_d(t);
+@@ -284,6 +293,7 @@
+    @Nullable
+    public T func_220342_a(World p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
+       T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
++      if (t instanceof net.minecraft.entity.MobEntity && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((net.minecraft.entity.MobEntity) t, p_220342_1_, p_220342_5_.func_177958_n(), p_220342_5_.func_177956_o(), p_220342_5_.func_177952_p(), null)) return null;
+       p_220342_1_.func_217376_c(t);
        return t;
     }
-@@ -386,15 +387,53 @@
-       return p_200719_1_ == null ? null : p_200719_1_.func_200721_a(p_200719_0_);
+@@ -462,6 +472,9 @@
     }
  
-+   /* Forge Start */
-+   private boolean useVanillaSpawning;
-+   private Function<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, Entity> customSpawnCallback;
-+   private boolean hasCustomTracking;
-+   private int customTrackingRange, customUpdateFrequency;
-+   private boolean customSendVelocityUpdates;
-+
-+   public boolean hasCustomTracking() { return hasCustomTracking; }
-+   public int getTrackingRange() { return customTrackingRange; }
-+   public int getUpdateFrequency() { return customUpdateFrequency; }
-+   public boolean shouldSendVelocityUpdates() { return customSendVelocityUpdates; }
-+   public boolean usesVanillaSpawning() { return useVanillaSpawning; }
-+
-+   public EntityType(Class<? extends T> clazz, Function<? super World, ? extends T> factory, boolean serializable, boolean summonable, @Nullable Type<?> dataFixerType,
-+                     boolean useVanillaSpawning, Function<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, Entity> customSpawnCallback,
-+                     boolean hasCustomTracking, int range, int updateFreq, boolean sendVelocityUpdates) {
-+      this(clazz, factory, serializable, summonable, dataFixerType);
-+      this.useVanillaSpawning = useVanillaSpawning;
-+      this.customSpawnCallback = customSpawnCallback;
-+      this.hasCustomTracking = hasCustomTracking;
-+      this.customTrackingRange = range;
-+      this.customUpdateFrequency = updateFreq;
-+      this.customSendVelocityUpdates = sendVelocityUpdates;
+    public int func_220345_k() {
++      return trackingRangeSupplier.applyAsInt(this);
 +   }
-+
-+   @Nullable public Entity handleSpawnMessage(World world, net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity msg)
-+   {
-+      return customSpawnCallback == null ? func_200721_a(world) : customSpawnCallback.apply(msg);
++   private int defaultTrackingRangeSupplier() {
+       if (this == field_200729_aH) {
+          return 32;
+       } else if (this == field_200801_o) {
+@@ -474,6 +487,9 @@
+    }
+ 
+    public int func_220332_l() {
++      return updateIntervalSupplier.applyAsInt(this);
 +   }
-+   /* Forge End */
++   private int defaultUpdateIntervalSupplier() {
+       if (this != field_200729_aH && this != field_200805_s) {
+          if (this == field_200808_v) {
+             return 4;
+@@ -494,6 +510,9 @@
+    }
+ 
+    public boolean func_220340_m() {
++      return velocityUpdateSupplier.test(this);
++   }
++   private boolean defaultVelocitySupplier() {
+       return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
+    }
+ 
+@@ -501,12 +520,22 @@
+       return p_220341_1_.func_199685_a_(this);
+    }
+ 
++   public T customClientSpawn(net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity packet, World world) {
++      if (customClientFactory == null) throw new RuntimeException("Missing custom spawn data for entity type "+this);
++      return customClientFactory.apply(packet, world);
++   }
 +
     public static class Builder<T extends Entity> {
-       private final Class<? extends T> field_201759_a;
-       private final Function<? super World, ? extends T> field_200709_a;
+       private final EntityType.IFactory<T> field_200709_a;
+       private final EntityClassification field_220324_b;
        private boolean field_200710_b = true;
        private boolean field_200711_c = true;
-+      private boolean useVanillaSpawning;
-+      private Function<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, Entity> customSpawnCallback = null;
-+      private boolean hasCustomTracking = false;
-+      private int trackingRange;
-+      private int updateFrequency;
-+      private boolean sendVelocityUpdates;
+       private boolean field_220325_e;
++      private java.util.function.Predicate<EntityType<?>> velocityUpdateSupplier = EntityType::defaultVelocitySupplier;
++      private java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier = EntityType::defaultTrackingRangeSupplier;
++      private java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier = EntityType::defaultUpdateIntervalSupplier;
++      private java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
++
+       private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
-       private Builder(Class<? extends T> p_i48756_1_, Function<? super World, ? extends T> p_i48756_2_) {
-          this.field_201759_a = p_i48756_1_;
-          this.field_200709_a = p_i48756_2_;
-+         this.useVanillaSpawning = field_201759_a.getName().startsWith("net.minecraft.");
-       }
- 
-       public static <T extends Entity> EntityType.Builder<T> func_201757_a(Class<? extends T> p_201757_0_, Function<? super World, ? extends T> p_201757_1_) {
-@@ -417,12 +456,26 @@
+       private Builder(EntityType.IFactory<T> p_i50479_1_, EntityClassification p_i50479_2_) {
+@@ -544,12 +573,32 @@
           return this;
        }
  
-+      public EntityType.Builder<T> customSpawning(Function<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, Entity> cb, boolean useVanillaSpawning) {
-+         this.customSpawnCallback = cb;
-+         this.useVanillaSpawning = useVanillaSpawning;
++      public EntityType.Builder<T> setUpdateInterval(int interval) {
++         this.updateIntervalSupplier = t->interval;
 +         return this;
 +      }
 +
-+      public final EntityType.Builder<T> tracker(int range, int updateFrequency, boolean sendVelocityUpdates) {
-+         this.hasCustomTracking = true;
-+         this.trackingRange = range;
-+         this.updateFrequency = updateFrequency;
-+         this.sendVelocityUpdates = sendVelocityUpdates;
++      public EntityType.Builder<T> setTrackingRange(int range) {
++         this.trackingRangeSupplier = t->range;
++         return this;
++      }
++
++      public EntityType.Builder<T> setShouldReceiveVelocityUpdates(boolean value) {
++         this.velocityUpdateSupplier = t->value;
++         return this;
++      }
++
++      public EntityType.Builder<T> setCustomClientFactory(java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory) {
++         this.customClientFactory = customClientFactory;
 +         return this;
 +      }
 +
@@ -93,18 +130,18 @@
           Type<?> type = null;
           if (this.field_200710_b) {
              try {
-                type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(1631)).getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
+                type = DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(SharedConstants.func_215069_a().getWorldVersion())).getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
 -            } catch (IllegalStateException illegalstateexception) {
 +            } catch (IllegalArgumentException illegalstateexception) {
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -431,7 +484,7 @@
+@@ -558,7 +607,7 @@
              }
           }
  
--         return new EntityType<>(this.field_201759_a, this.field_200709_a, this.field_200710_b, this.field_200711_c, type);
-+         return new EntityType<>(this.field_201759_a, this.field_200709_a, this.field_200710_b, this.field_200711_c, type, useVanillaSpawning, customSpawnCallback, hasCustomTracking, trackingRange, updateFrequency, sendVelocityUpdates);
+-         return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, type, this.field_220326_f);
++         return new EntityType<>(this.field_200709_a, this.field_220324_b, this.field_200710_b, this.field_200711_c, this.field_220325_e, type, this.field_220326_f, velocityUpdateSupplier, trackingRangeSupplier, updateIntervalSupplier, customClientFactory);
        }
     }
- }
+ 

@@ -20,7 +20,6 @@
 package net.minecraftforge.client.settings;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 
 public enum KeyConflictContext implements IKeyConflictContext
 {

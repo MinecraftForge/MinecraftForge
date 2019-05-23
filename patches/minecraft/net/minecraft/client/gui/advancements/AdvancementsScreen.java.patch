@@ -1,0 +1,72 @@
+--- a/net/minecraft/client/gui/advancements/AdvancementsScreen.java
++++ b/net/minecraft/client/gui/advancements/AdvancementsScreen.java
+@@ -25,6 +25,7 @@
+    private final Map<Advancement, AdvancementTabGui> field_191947_i = Maps.newLinkedHashMap();
+    private AdvancementTabGui field_191940_s;
+    private boolean field_191944_v;
++   private static int tabPage, maxPages;
+ 
+    public AdvancementsScreen(ClientAdvancementManager p_i47383_1_) {
+       super(NarratorChatListener.field_216868_a);
+@@ -40,7 +41,13 @@
+       } else {
+          this.field_191946_h.func_194230_a(this.field_191940_s == null ? null : this.field_191940_s.func_193935_c(), true);
+       }
+-
++      if (this.field_191947_i.size() > AdvancementTabType.MAX_TABS) {
++          int guiLeft = (this.width - 252) / 2;
++          int guiTop = (this.height - 140) / 2;
++          addButton(new net.minecraft.client.gui.widget.button.Button(guiLeft,            guiTop - 50, 20, 20, "<", b -> tabPage = Math.max(tabPage - 1, 0       )));
++          addButton(new net.minecraft.client.gui.widget.button.Button(guiLeft + 252 - 20, guiTop - 50, 20, 20, ">", b -> tabPage = Math.min(tabPage + 1, maxPages)));
++          maxPages = this.field_191947_i.size() / AdvancementTabType.MAX_TABS;
++      }
+    }
+ 
+    public void removed() {
+@@ -58,7 +65,7 @@
+          int j = (this.height - 140) / 2;
+ 
+          for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
+-            if (advancementtabgui.func_195627_a(i, j, p_mouseClicked_1_, p_mouseClicked_3_)) {
++            if (advancementtabgui.getPage() == tabPage && advancementtabgui.func_195627_a(i, j, p_mouseClicked_1_, p_mouseClicked_3_)) {
+                this.field_191946_h.func_194230_a(advancementtabgui.func_193935_c(), true);
+                break;
+             }
+@@ -83,6 +90,12 @@
+       int j = (this.height - 140) / 2;
+       this.renderBackground();
+       this.func_191936_c(p_render_1_, p_render_2_, i, j);
++      if (maxPages != 0) {
++         String page = String.format("%d / %d", tabPage + 1, maxPages + 1);
++         int width = this.font.func_78256_a(page);
++         GlStateManager.disableLighting();
++         this.font.func_175063_a(page, i + (252 / 2) - (width / 2), j - 44, -1);
++      }
+       this.func_191934_b(i, j);
+       this.func_191937_d(p_render_1_, p_render_2_, i, j);
+    }
+@@ -131,6 +144,7 @@
+          this.minecraft.func_110434_K().func_110577_a(field_191945_g);
+ 
+          for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
++            if (advancementtabgui.getPage() == tabPage)
+             advancementtabgui.func_191798_a(p_191934_1_, p_191934_2_, advancementtabgui == this.field_191940_s);
+          }
+ 
+@@ -139,6 +153,7 @@
+          RenderHelper.func_74520_c();
+ 
+          for(AdvancementTabGui advancementtabgui1 : this.field_191947_i.values()) {
++            if (advancementtabgui1.getPage() == tabPage)
+             advancementtabgui1.func_191796_a(p_191934_1_, p_191934_2_, this.itemRenderer);
+          }
+ 
+@@ -161,7 +176,7 @@
+ 
+       if (this.field_191947_i.size() > 1) {
+          for(AdvancementTabGui advancementtabgui : this.field_191947_i.values()) {
+-            if (advancementtabgui.func_195627_a(p_191937_3_, p_191937_4_, (double)p_191937_1_, (double)p_191937_2_)) {
++            if (advancementtabgui.getPage() == tabPage && advancementtabgui.func_195627_a(p_191937_3_, p_191937_4_, (double)p_191937_1_, (double)p_191937_2_)) {
+                this.renderTooltip(advancementtabgui.func_191795_d(), p_191937_1_, p_191937_2_);
+             }
+          }

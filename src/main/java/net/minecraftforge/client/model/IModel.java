@@ -28,6 +28,8 @@ import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
+import net.minecraft.client.renderer.model.ModelBakery;
+import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.ResourceLocation;
@@ -41,9 +43,9 @@ import net.minecraftforge.common.model.animation.IClip;
  */
 @SuppressWarnings("unchecked")
 public interface IModel<T extends IModel<T>>
-{    
+{
     @Nullable
-    IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, IModelState state, boolean uvlock, VertexFormat format);
+    IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format);
 
     /*
      * Default state this model will be baked with.

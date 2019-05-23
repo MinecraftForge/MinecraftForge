@@ -22,16 +22,17 @@ package net.minecraftforge.fml.network;
 import javax.annotation.Nullable;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.INetHandler;
-import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.IThreadListener;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.concurrent.ThreadTaskExecutor;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSidedProvider;
 
@@ -177,19 +178,23 @@ public class NetworkEvent extends Event
 
         @SuppressWarnings("unchecked")
         public <V> ListenableFuture<V> enqueueWork(Runnable runnable) {
-            return (ListenableFuture<V>)LogicalSidedProvider.WORKQUEUE.<IThreadListener>get(getDirection().getReceptionSide()).addScheduledTask(runnable);
+            ListenableFutureTask<V> f = ListenableFutureTask.create(runnable, null);
+
+            LogicalSidedProvider.WORKQUEUE.<ThreadTaskExecutor<?> >get(getDirection().getReceptionSide()).execute(f);
+
+            return f;
         }
 
         /**
          * When available, gets the sender for packets that are sent from a client to the server.
          */
         @Nullable
-        public EntityPlayerMP getSender()
+        public ServerPlayerEntity getSender()
         {
             INetHandler netHandler = networkManager.getNetHandler();
-            if (netHandler instanceof NetHandlerPlayServer)
+            if (netHandler instanceof ServerPlayNetHandler)
             {
-                NetHandlerPlayServer netHandlerPlayServer = (NetHandlerPlayServer) netHandler;
+                ServerPlayNetHandler netHandlerPlayServer = (ServerPlayNetHandler) netHandler;
                 return netHandlerPlayServer.player;
             }
             return null;

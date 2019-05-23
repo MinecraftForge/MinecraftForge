@@ -5,7 +5,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 +/**
-+ * @deprecated use {@link net.minecraftforge.client.model.IModelState} and {@link net.minecraftforge.client.model.TRSRTransformation}
++ * @deprecated use {@link net.minecraftforge.common.model.IModelState} and {@link net.minecraftforge.common.model.TRSRTransformation}
 + */
  @OnlyIn(Dist.CLIENT)
 -public class ItemTransformVec3f {

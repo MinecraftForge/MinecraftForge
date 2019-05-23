@@ -23,23 +23,21 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.block.state.BlockWorldState;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.CachedBlockInfo;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.passive.EntityHorse;
-import net.minecraft.entity.passive.HorseArmorType;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.StatList;
-import net.minecraft.util.EnumActionResult;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.stats.Stats;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
@@ -48,7 +46,7 @@ import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 /*
  * Extension added to ItemStack that bounces to ItemSack sensitive Item methods. Typically this is just for convince.
  */
-public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
+public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
 {
     // Helpers for accessing Item data
     default ItemStack getStack()
@@ -99,7 +97,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param state The block to harvest
      * @return Harvest level, or -1 if not the specified tool type.
      */
-    default int getHarvestLevel(ToolType tool, @Nullable EntityPlayer player, @Nullable IBlockState state)
+    default int getHarvestLevel(ToolType tool, @Nullable PlayerEntity player, @Nullable BlockState state)
     {
         return getStack().getItem().getHarvestLevel(getStack(), tool, player, state);
     }
@@ -108,27 +106,27 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
         return getStack().getItem().getToolTypes(getStack());
     }
 
-    default EnumActionResult onItemUseFirst(ItemUseContext context)
+    default ActionResultType onItemUseFirst(ItemUseContext context)
     {
-       EntityPlayer entityplayer = context.getPlayer();
+       PlayerEntity entityplayer = context.getPlayer();
        BlockPos blockpos = context.getPos();
-       BlockWorldState blockworldstate = new BlockWorldState(context.getWorld(), blockpos, false);
+       CachedBlockInfo blockworldstate = new CachedBlockInfo(context.getWorld(), blockpos, false);
        if (entityplayer != null && !entityplayer.abilities.allowEdit && !getStack().canPlaceOn(context.getWorld().getTags(), blockworldstate)) {
-          return EnumActionResult.PASS;
+          return ActionResultType.PASS;
        } else {
           Item item = getStack().getItem();
-          EnumActionResult enumactionresult = item.onItemUseFirst(getStack(), context);
-          if (entityplayer != null && enumactionresult == EnumActionResult.SUCCESS) {
-             entityplayer.addStat(StatList.ITEM_USED.get(item));
+          ActionResultType enumactionresult = item.onItemUseFirst(getStack(), context);
+          if (entityplayer != null && enumactionresult == ActionResultType.SUCCESS) {
+             entityplayer.addStat(Stats.ITEM_USED.get(item));
           }
 
           return enumactionresult;
        }
     }
 
-    default NBTTagCompound serializeNBT()
+    default CompoundNBT serializeNBT()
     {
-        NBTTagCompound ret = new NBTTagCompound();
+        CompoundNBT ret = new CompoundNBT();
         getStack().write(ret);
         return ret;
     }
@@ -142,7 +140,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param player    The Player that is wielding the item
      * @return True to prevent harvesting, false to continue as normal
      */
-    default boolean onBlockStartBreak(BlockPos pos, EntityPlayer player)
+    default boolean onBlockStartBreak(BlockPos pos, PlayerEntity player)
     {
         return !getStack().isEmpty() && getStack().getItem().onBlockStartBreak(getStack(), pos, player);
     }
@@ -197,7 +195,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      *         decide
      */
     @Nullable
-    default EntityEquipmentSlot getEquipmentSlot()
+    default EquipmentSlotType getEquipmentSlot()
     {
         return getStack().getItem().getEquipmentSlot(getStack());
     }
@@ -210,7 +208,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param attacker The EntityLivingBase holding the ItemStack
      * @retrun True if this ItemStack can disable the shield in question.
      */
-    default boolean canDisableShield(ItemStack shield, EntityLivingBase entity, EntityLivingBase attacker)
+    default boolean canDisableShield(ItemStack shield, LivingEntity entity, LivingEntity attacker)
     {
         return getStack().getItem().canDisableShield(getStack(), shield, entity, attacker);
     }
@@ -221,7 +219,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param entity The Entity holding the ItemStack
      * @return True if the ItemStack is considered a shield
      */
-    default boolean isShield(@Nullable EntityLivingBase entity)
+    default boolean isShield(@Nullable LivingEntity entity)
     {
         return getStack().getItem().isShield(getStack(), entity);
     }
@@ -232,7 +230,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param entity The entity swinging the item.
      * @return True to cancel any further processing by EntityLiving
      */
-    default boolean onEntitySwing(EntityLivingBase entity)
+    default boolean onEntitySwing(LivingEntity entity)
     {
         return getStack().getItem().onEntitySwing(getStack(), entity);
     }
@@ -244,7 +242,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param count  The amount of time in tick the item has been used for
      *               continuously
      */
-    default void onUsingTick(EntityLivingBase player, int count)
+    default void onUsingTick(LivingEntity player, int count)
     {
         getStack().getItem().onUsingTick(getStack(), player, count);
     }
@@ -269,28 +267,24 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param entity The entity Item
      * @return Return true to skip any further update code.
      */
-    default boolean onEntityItemUpdate(EntityItem entity)
+    default boolean onEntityItemUpdate(ItemEntity entity)
     {
         return getStack().getItem().onEntityItemUpdate(getStack(), entity);
     }
 
     /**
-     * Returns an enum constant of type {@code HorseArmorType}. The returned enum
-     * constant will be used to determine the armor value and texture of this item
-     * when equipped.
-     *
-     * @return an enum constant of type {@code HorseArmorType}. Return
-     *         HorseArmorType.NONE if this is not horse armor
-     */
-    default HorseArmorType getHorseArmorType()
+    * Determines the amount of durability the mending enchantment
+    * will repair, on average, per point of experience.
+    */
+    default float getXpRepairRatio()
     {
-        return getStack().getItem().getHorseArmorType(getStack());
+        return getStack().getItem().getXpRepairRatio(getStack());
     }
 
     /**
      * Called to tick armor in the armor slot. Override to do something
      */
-    default void onArmorTick(World world, EntityPlayer player)
+    default void onArmorTick(World world, PlayerEntity player)
     {
         getStack().getItem().onArmorTick(getStack(), world, player);
     }
@@ -302,7 +296,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param world the world the horse is in
      * @param horse the horse wearing this armor
      */
-    default void onHorseArmorTick(World world, EntityLiving horse)
+    default void onHorseArmorTick(World world, MobEntity horse)
     {
         getStack().getItem().onHorseArmorTick(getStack(), world, horse);
     }
@@ -325,7 +319,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param entity    The entity trying to equip the armor
      * @return True if the given ItemStack can be inserted in the slot
      */
-    default boolean canEquip(EntityEquipmentSlot armorType, Entity entity)
+    default boolean canEquip(EquipmentSlotType armorType, Entity entity)
     {
         return getStack().getItem().canEquip(getStack(), armorType, entity);
     }
@@ -351,7 +345,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param player The player that dropped the item
      * @param item   The item stack, before the item is removed.
      */
-    default boolean onDroppedByPlayer(EntityPlayer player)
+    default boolean onDroppedByPlayer(PlayerEntity player)
     {
         return getStack().getItem().onDroppedByPlayer(getStack(), player);
     }
@@ -370,7 +364,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @return The NBT tag
      */
     @Nullable
-    default NBTTagCompound getShareTag()
+    default CompoundNBT getShareTag()
     {
         return getStack().getItem().getShareTag(getStack());
     }
@@ -382,7 +376,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param stack The stack that received NBT
      * @param nbt   Received NBT, can be null
      */
-    default void readShareTag(@Nullable NBTTagCompound nbt)
+    default void readShareTag(@Nullable CompoundNBT nbt)
     {
         getStack().getItem().readShareTag(getStack(), nbt);
     }
@@ -396,7 +390,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      * @param player The Player that is wielding the item
      * @return
      */
-    default boolean doesSneakBypassUse(net.minecraft.world.IWorldReader world, BlockPos pos, EntityPlayer player)
+    default boolean doesSneakBypassUse(net.minecraft.world.IWorldReader world, BlockPos pos, PlayerEntity player)
     {
         return getStack().isEmpty() || getStack().getItem().doesSneakBypassUse(getStack(), world, pos, player);
     }
@@ -408,8 +402,8 @@ public interface IForgeItemStack extends ICapabilitySerializable<NBTTagCompound>
      */
     default boolean areShareTagsEqual(ItemStack other)
     {
-        NBTTagCompound shareTagA = getStack().getShareTag();
-        NBTTagCompound shareTagB = other.getShareTag();
+        CompoundNBT shareTagA = getStack().getShareTag();
+        CompoundNBT shareTagB = other.getShareTag();
         if (shareTagA == null)
             return shareTagB == null;
         else

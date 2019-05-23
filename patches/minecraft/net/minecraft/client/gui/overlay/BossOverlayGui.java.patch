@@ -1,0 +1,23 @@
+--- a/net/minecraft/client/gui/overlay/BossOverlayGui.java
++++ b/net/minecraft/client/gui/overlay/BossOverlayGui.java
+@@ -30,6 +30,9 @@
+ 
+          for(ClientBossInfo clientbossinfo : this.field_184060_g.values()) {
+             int k = i / 2 - 91;
++            net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo event =
++               net.minecraftforge.client.ForgeHooksClient.bossBarRenderPre(this.field_184059_f.field_195558_d, clientbossinfo, k, j, 10 + this.field_184059_f.field_71466_p.field_78288_b);
++            if (!event.isCanceled()) {
+             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+             this.field_184059_f.func_110434_K().func_110577_a(field_184058_a);
+             this.func_184052_a(k, j, clientbossinfo);
+@@ -38,7 +41,9 @@
+             int i1 = i / 2 - l / 2;
+             int j1 = j - 9;
+             this.field_184059_f.field_71466_p.func_175063_a(s, (float)i1, (float)j1, 16777215);
+-            j += 10 + 9;
++            }
++            j += event.getIncrement();
++            net.minecraftforge.client.ForgeHooksClient.bossBarRenderPost(this.field_184059_f.field_195558_d);
+             if (j >= this.field_184059_f.field_195558_d.func_198087_p() / 3) {
+                break;
+             }

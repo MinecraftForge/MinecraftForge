@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.DamageSource;
 
 public class LootingLevelEvent extends LivingEvent {
@@ -28,7 +28,7 @@ public class LootingLevelEvent extends LivingEvent {
 
     private int lootingLevel;
 
-    public LootingLevelEvent(EntityLivingBase entity, DamageSource damageSource, int lootingLevel) {
+    public LootingLevelEvent(LivingEntity entity, DamageSource damageSource, int lootingLevel) {
         super(entity);
         this.damageSource = damageSource;
         this.lootingLevel = lootingLevel;

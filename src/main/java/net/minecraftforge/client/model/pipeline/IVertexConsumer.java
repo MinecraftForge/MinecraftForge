@@ -21,7 +21,7 @@ package net.minecraftforge.client.model.pipeline;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /**
  * Assumes that the data length is not less than e.getElementCount().
@@ -36,7 +36,7 @@ public interface IVertexConsumer
     VertexFormat getVertexFormat();
 
     void setQuadTint(int tint);
-    void setQuadOrientation(EnumFacing orientation);
+    void setQuadOrientation(Direction orientation);
     void setApplyDiffuseLighting(boolean diffuse);
     void setTexture(TextureAtlasSprite texture);
     void put(int element, float... data);

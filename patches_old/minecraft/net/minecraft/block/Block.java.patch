@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/Block.java
++++ b/net/minecraft/block/Block.java
+@@ -543,7 +555,7 @@
+          }
+       }
+ 
+-      return raytraceresult;
++      return p_180636_0_.func_177230_c().getRayTraceResult(p_180636_0_, p_180636_1_, p_180636_2_, p_180636_3_, p_180636_4_, raytraceresult);
+    }
+ 
+    public void func_180652_a(World p_180652_1_, BlockPos p_180652_2_, Explosion p_180652_3_) {

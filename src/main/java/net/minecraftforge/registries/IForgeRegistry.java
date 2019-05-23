@@ -22,6 +22,10 @@ package net.minecraftforge.registries;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.util.ResourceLocation;
+
 
 import net.minecraft.util.ResourceLocation;
 

@@ -1,66 +1,72 @@
-net/minecraft/block/BlockFire.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/EnumFacing;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
-net/minecraft/block/BlockNetherWart.getDrops(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/NonNullList;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;I)V=|p_196255_1_,drops,p_196255_2_,p_196255_3_,p_196255_5_
-net/minecraft/block/BlockRailPowered.<init>(Lnet/minecraft/block/Block$Properties;Z)=|p_i48349_1_,isActivator
-net/minecraft/block/BlockRedstoneWire.canConnectTo(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/EnumFacing;)Z=|p_176343_0_,world,pos,p_176343_1_
+net/minecraft/block/FireBlock.tryCatchFire(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;ILjava/util/Random;ILnet/minecraft/util/Direction;)V=|p_176536_1_,p_176536_2_,p_176536_3_,p_176536_4_,p_176536_5_,face
 
-net/minecraft/client/multiplayer/WorldClient.removeEntity(Lnet/minecraft/entity/Entity;Z)V=|p_72900_1_,keepData
+net/minecraft/block/RedstoneWireBlock.canConnectTo(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/IBlockReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/util/Direction;)Z=|p_176343_0_,world,pos,p_176343_1_
 
-net/minecraft/client/renderer/BlockRendererDispatcher.renderBlock(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IWorldReader;Lnet/minecraft/client/renderer/BufferBuilder;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Z=|p_195475_1_,p_195475_2_,p_195475_3_,p_195475_4_,p_195475_5_,modelData
-net/minecraft/client/renderer/BlockModelRenderer.renderModel(Lnet/minecraft/world/IWorldReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZLjava/util/Random;JLnet/minecraftforge/client/model/data/IModelData;)Z=|p_199324_1_,p_199324_2_,p_199324_3_,p_199324_4_,p_199324_5_,p_199324_6_,p_199324_7_,p_199324_8_,modelData
-net/minecraft/client/renderer/BlockModelRenderer.renderModelSmooth(Lnet/minecraft/world/IWorldReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZLjava/util/Random;JLnet/minecraftforge/client/model/data/IModelData;)Z=|p_199326_1_,p_199326_2_,p_199326_3_,p_199326_4_,p_199326_5_,p_199326_6_,p_199326_7_,p_199326_8_,modelData
-net/minecraft/client/renderer/BlockModelRenderer.renderModelFlat(Lnet/minecraft/world/IWorldReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZLjava/util/Random;JLnet/minecraftforge/client/model/data/IModelData;)Z=|p_199325_1_,p_199325_2_,p_199325_3_,p_199325_4_,p_199325_5_,p_199325_6_,p_199325_7_,p_199325_8_,modelData
-net/minecraft/client/renderer/model/BakedQuad.<init>([IILnet/minecraft/util/EnumFacing;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting,format
-net/minecraft/client/renderer/model/FaceBakery.makeBakedQuad(Lnet/minecraft/client/renderer/Vector3f;Lnet/minecraft/client/renderer/Vector3f;Lnet/minecraft/client/renderer/model/BlockPartFace;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/util/EnumFacing;Lnet/minecraftforge/common/model/ITransformation;Lnet/minecraft/client/renderer/model/BlockPartRotation;ZZ)Lnet/minecraft/client/renderer/model/BakedQuad;=|p_199332_1_,p_199332_2_,p_199332_3_,p_199332_4_,p_199332_5_,p_199332_6_,p_199332_7_,p_199332_8_,p_199332_9_
-net/minecraft/client/renderer/model/FaceBakery.makeQuadVertexData(Lnet/minecraft/client/renderer/model/BlockFaceUV;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/util/EnumFacing;[FLnet/minecraftforge/common/model/ITransformation;Lnet/minecraft/client/renderer/model/BlockPartRotation;Z)[I=|p_188012_1_,p_188012_2_,p_188012_3_,p_188012_4_,p_188012_5_,p_188012_6_,p_188012_7_
-net/minecraft/client/renderer/model/FaceBakery.fillVertexData([IILnet/minecraft/util/EnumFacing;Lnet/minecraft/client/renderer/model/BlockFaceUV;[FLnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraftforge/common/model/ITransformation;Lnet/minecraft/client/renderer/model/BlockPartRotation;Z)V=|p_188015_1_,p_188015_2_,p_188015_3_,p_188015_4_,p_188015_5_,p_188015_6_,p_188015_7_,p_188015_8_,p_188015_9_
-net/minecraft/client/renderer/model/ItemOverrideList.<init>(Lnet/minecraft/client/renderer/model/IUnbakedModel;Ljava/util/function/Function;Ljava/util/function/Function;Ljava/util/List;)V=|p_i49525_1_,p_i49525_2_,p_i49525_3_,p_i49525_4_
-net/minecraft/client/renderer/model/ModelBlock.bake(Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraftforge/common/model/IModelState;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_209558_1_,p_209558_2_,p_209558_3_,p_209558_4_,format
-net/minecraft/client/renderer/model/ModelBlock.bake(Lnet/minecraft/client/renderer/model/ModelBlock;Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraftforge/common/model/IModelState;Z)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_209565_1_,p_209565_2_,p_209565_3_,p_209565_4_,p_209565_5_
-net/minecraft/client/renderer/model/ModelBlock.fromJson(Lnet/minecraft/client/renderer/model/ModelBlockDefinition$ContainerHolder;Ljava/io/Reader;Lnet/minecraft/util/ResourceLocation;)Lnet/minecraft/client/renderer/model/ModelBlockDefinition;=|p_209577_0_,p_209577_1_,location
-net/minecraft/client/renderer/model/ModelBlock.makeBakedQuad(Lnet/minecraft/client/renderer/model/BlockPart;Lnet/minecraft/client/renderer/model/BlockPartFace;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/util/EnumFacing;Lnet/minecraftforge/common/model/IModelState;Z)Lnet/minecraft/client/renderer/model/BakedQuad;=|p_209567_0,p_209567_1_,p_209567_2_,p_209567_3_,p_209567_4_,p_209567_5_
-net/minecraft/client/renderer/model/VariantList.bake(Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraftforge/common/model/IModelState;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_209558_1_,p_209558_2_,p_209558_3_,p_209558_4_,format
-net/minecraft/client/renderer/model/multipart/Multipart.bake(Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraftforge/common/model/IModelState;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_209558_1_,p_209558_2_,p_209558_3_,p_209558_4_,format
+net/minecraft/block/PoweredRailBlock.<init>(Lnet/minecraft/block/Block$Properties;Z)=|p_i48349_1_,isActivator
 
-net/minecraft/client/resources/ResourcePackInfoClient.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/resources/IResourcePack;Lnet/minecraft/resources/data/PackMetadataSection;Lnet/minecraft/resources/ResourcePackInfo$Priority;Z)V=|p_i48113_1_,p_i48113_2_,p_i48113_3_,p_i48113_4_,p_i48113_5_,p_i48113_6_,hidden
-net/minecraft/client/resources/ResourcePackInfoClient.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZLnet/minecraft/client/renderer/texture/NativeImage;Z)V=|p_i48114_1_,p_i48114_2_,p_i48114_3_,p_i48114_4_,p_i48114_5_,p_i48114_6_,p_i48114_7_,p_i48114_8_,p_i48114_9_,hidden
+net/minecraft/client/renderer/BlockRendererDispatcher.renderBlock(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/IEnviromentBlockReader;Lnet/minecraft/client/renderer/BufferBuilder;Ljava/util/Random;Lnet/minecraftforge/client/model/data/IModelData;)Z=|p_215330_1_,p_215330_2_,p_215330_3_,p_215330_4_,p_215330_5_,modelData
 
-net/minecraft/entity/Entity.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
-net/minecraft/entity/EnumCreatureType.create(Ljava/lang/String;Ljava/lang/Class;IZZ)Lnet/minecraft/entity/EnumCreatureType;=|name,p_i47849_3_,p_i47849_4_,p_i47849_5_,p_i47849_6_
-net/minecraft/entity/item/EntityEnderPearl.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
-net/minecraft/entity/item/EntityItem.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
-net/minecraft/entity/item/EntityMinecartContainer.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
-net/minecraft/entity/player/EntityPlayer.getDigSpeed(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
-net/minecraft/entity/player/EntityPlayerMP.changeDimension(Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)Lnet/minecraft/entity/Entity;=|p_212321_1_,teleporter
+net/minecraft/client/renderer/BlockModelRenderer.renderModel(Lnet/minecraft/world/IEnviromentReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZLjava/util/Random;JLnet/minecraftforge/client/model/data/IModelData;)Z=|p_217631_1_,p_217631_2_,p_217631_3_,p_217631_4_,p_217631_5_,p_217631_6_,p_217631_7_,p_217631_8_,modelData
+net/minecraft/client/renderer/BlockModelRenderer.renderModelSmooth(Lnet/minecraft/world/IEnviromentReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZLjava/util/Random;JLnet/minecraftforge/client/model/data/IModelData;)Z=|p_217634_1_,p_217634_2_,p_217634_3_,p_217634_4_,p_217634_5_,p_217634_6_,p_217634_7_,p_217634_8_,modelData
+net/minecraft/client/renderer/BlockModelRenderer.renderModelFlat(Lnet/minecraft/world/IEnviromentReader;Lnet/minecraft/client/renderer/model/IBakedModel;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/client/renderer/BufferBuilder;ZLjava/util/Random;JLnet/minecraftforge/client/model/data/IModelData;)Z=|p_217635_1_,p_217635_2_,p_217635_3_,p_217635_4_,p_217635_5_,p_217635_6_,p_217635_7_,p_217635_8_,modelData
 
-net/minecraft/item/ArmorMaterial.create(Ljava/lang/String;Ljava/lang/String;I[IILnet/minecraft/util/SoundEvent;FLjava/util/function/Supplier;)Lnet/minecraft/item/ArmorMaterial;=|name,p_i48533_3_,p_i48533_4_,p_i48533_5_,p_i48533_6_,p_i48533_7_,p_i48533_8_,p_i48533_9_
-net/minecraft/item/EnumRarity.create(Ljava/lang/String;Lnet/minecraft/util/text/TextFormatting;)Lnet/minecraft/item/EnumRarity;=|enumName,p_i48837_3_
-net/minecraft/item/ItemStack.<init>(Lnet/minecraft/util/IItemProvider;ILnet/minecraft/nbt/NBTTagCompound;)V=|p_i48204_1_,p_i48204_2_,capNBT
+net/minecraft/client/renderer/model/BakedQuad.<init>([IILnet/minecraft/util/Direction;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;ZLnet/minecraft/client/renderer/vertex/VertexFormat;)V=|p_i46574_1_,p_i46574_2_,p_i46574_3_,p_i46574_4_,applyDiffuseLighting,format
+
+net/minecraft/client/renderer/model/FaceBakery.makeBakedQuad(Lnet/minecraft/client/renderer/Vector3f;Lnet/minecraft/client/renderer/Vector3f;Lnet/minecraft/client/renderer/model/BlockPartFace;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/util/Direction;Lnet/minecraft/client/renderer/texture/ISprite;Lnet/minecraft/client/renderer/model/BlockPartRotation;Z)Lnet/minecraft/client/renderer/model/BakedQuad;=|p_217648_1_,p_217648_2_,p_217648_3_,p_217648_4_,p_217648_5_,p_217648_6_,p_217648_7_,p_217648_8_,p_217648_9_
+net/minecraft/client/renderer/model/FaceBakery.makeQuadVertexData(Lnet/minecraft/client/renderer/model/BlockFaceUV;Lnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraft/util/Direction;[FLnet/minecraftforge/common/model/ITransformation;Lnet/minecraft/client/renderer/model/BlockPartRotation;Z)[I=|p_188012_1_,p_188012_2_,p_188012_3_,p_188012_4_,p_188012_5_,p_188012_6_,p_188012_7_
+net/minecraft/client/renderer/model/FaceBakery.fillVertexData([IILnet/minecraft/util/Direction;Lnet/minecraft/client/renderer/model/BlockFaceUV;[FLnet/minecraft/client/renderer/texture/TextureAtlasSprite;Lnet/minecraftforge/common/model/ITransformation;Lnet/minecraft/client/renderer/model/BlockPartRotation;Z)V=|p_188015_1_,p_188015_2_,p_188015_3_,p_188015_4_,p_188015_5_,p_188015_6_,p_188015_7_,p_188015_8_,p_188015_9_
+
+net/minecraft/client/renderer/model/ItemOverrideList.<init>(Lnet/minecraft/client/renderer/model/ModelBakery;Lnet/minecraft/client/renderer/model/IUnbakedModel;Ljava/util/function/Function;Ljava/util/List;)V=|p_i50984_1_,p_i50984_2_,p_i50984_3_,p_i50984_4_
+net/minecraft/client/renderer/model/ItemOverrideList.<init>(Lnet/minecraft/client/renderer/model/IUnbakedModel;Ljava/util/function/Function;Ljava/util/List;Ljava/util/function/Function;)V=|p_i50984_2_,p_i50984_3_,p_i50984_4_,spriteGetter
+
+net/minecraft/client/renderer/model/BlockModel.bake(Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraft/client/renderer/texture/ISprite;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217644_1_,p_217644_3_,p_217644_2_,format
+
+net/minecraft/client/renderer/model/VariantList.bake(Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraft/client/renderer/texture/ISprite;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217641_1_,p_217641_2_,p_217641_3_,format
+
+net/minecraft/client/renderer/model/multipart/Multipart.bake(Ljava/util/function/Function;Ljava/util/function/Function;Lnet/minecraft/client/renderer/texture/ISprite;Lnet/minecraft/client/renderer/vertex/VertexFormat;)Lnet/minecraft/client/renderer/model/IBakedModel;=|p_217641_1_,p_217641_2_,p_217641_3_,format
+
+net/minecraft/client/resources/ClientResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/resources/IResourcePack;Lnet/minecraft/resources/data/PackMetadataSection;Lnet/minecraft/resources/ResourcePackInfo$Priority;Z)V=|p_i48113_1_,p_i48113_2_,p_i48113_3_,p_i48113_4_,p_i48113_5_,p_i48113_6_,hidden
+net/minecraft/client/resources/ClientResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZLnet/minecraft/client/renderer/texture/NativeImage;Z)V=|p_i48114_1_,p_i48114_2_,p_i48114_3_,p_i48114_4_,p_i48114_5_,p_i48114_6_,p_i48114_7_,p_i48114_8_,p_i48114_9_,hidden
+
+net/minecraft/entity/EntityClassification.create(Ljava/lang/String;Ljava/lang/String;IZZ)Lnet/minecraft/entity/EntityClassification;=|name,p_i50381_3_,p_i50381_4_,p_i50381_5_,p_i50381_6_
+
+net/minecraft/entity/player/PlayerEntity.getDigSpeed(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
+
+net/minecraft/item/Rarity.create(Ljava/lang/String;Lnet/minecraft/util/text/TextFormatting;)Lnet/minecraft/item/EnumRarity;=|name,p_i48837_3_
+
+net/minecraft/item/ItemStack.<init>(Lnet/minecraft/util/IItemProvider;ILnet/minecraft/nbt/CompoundNBT;)V=|p_i48204_1_,p_i48204_2_,capNBT
+net/minecraft/item/ItemStack.onItemUse(Lnet/minecraft/item/ItemUseContext;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_
+net/minecraft/item/ItemStack.onItemUse(Lnet/minecraft/item/ItemUseContext;Ljava/util/function/Function;)Lnet/minecraft/util/ActionResultType;=|p_196084_1_,callback
+net/minecraft/item/FilledMapItem.getCustomMapData(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;)Lnet/minecraft/world/storage/MapData;=|p_195950_0_,p_195950_1_
+net/minecraft/potion/PotionBrewing$MixPredicate.<init>(Lnet/minecraftforge/registries/ForgeRegistryEntry;Lnet/minecraft/item/crafting/Ingredient;Lnet/minecraftforge/registries/ForgeRegistryEntry;)V=|p_i47570_1_,p_i47570_2_,p_i47570_3_
 
 net/minecraft/network/PacketBuffer.writeItemStack(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/network/PacketBuffer;=|p_150788_1_,limitedTag
 
 net/minecraft/resources/ResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZZ)V=|p_i47907_1_,p_i47907_2_,p_i47907_3_,p_i47907_4_,p_i47907_5_,p_i47907_6_,p_i47907_7_,p_i47907_8_,hidden
 net/minecraft/resources/ResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/resources/IResourcePack;Lnet/minecraft/resources/data/PackMetadataSection;Lnet/minecraft/resources/ResourcePackInfo$Priority;Z)V=|p_i47908_1_,p_i47908_2_,p_i47908_3_,p_i47908_4_,p_i47908_5_,p_i47908_6_,hidden
 
-net/minecraft/server/management/PlayerList.changePlayerDimension(Lnet/minecraft/entity/player/EntityPlayerMP;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_187242_1_,p_187242_2_,teleporter
-net/minecraft/server/management/PlayerList.transferEntityToWorld(Lnet/minecraft/entity/Entity;Lnet/minecraft/world/dimension/DimensionType;Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/WorldServer;Lnet/minecraftforge/common/util/ITeleporter;)V=|p_82448_1_,p_82448_2_,p_82448_3_,p_82448_4_,teleporter
+net/minecraft/server/management/PlayerInteractionManager.removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z=|p_180235_1_,canHarvest
 
 net/minecraft/tileentity/BannerPattern.create(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/tileentity/BannerPattern;=|enumName,p_i47246_3_,p_i47246_4_,p_i47246_5_
 net/minecraft/tileentity/BannerPattern.create(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/minecraft/tileentity/BannerPattern;=|enumName,p_i47247_3_,p_i47247_4_,p_i47247_5_,p_i47247_6_,p_i47247_7_
 
-net/minecraft/village/Village.getPlayerReputation(Ljava/util/UUID;)I=|p_82684_1_
-net/minecraft/village/Village.modifyPlayerReputation(Ljava/util/UUID;I)I=|p_82688_1_,p_82688_2_
-
 net/minecraft/world/World.getBiomeBody(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/world/biome/Biome;=|p_180494_1_
-net/minecraft/world/World.markAndNotifyBlock(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/chunk/Chunk;Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/block/state/IBlockState;I)V=|p_180501_1_,chunk,iblockstate,p_180501_2_,p_180501_3_
-net/minecraft/world/World.getSunBrightnessFactor(F)F=|p_72967_1_
+net/minecraft/world/World.markAndNotifyBlock(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/chunk/Chunk;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;I)V=|p_180501_1_,chunk,blockstate,p_180501_2_,p_180501_3_
 net/minecraft/world/World.getSunBrightnessBody(F)F=|p_72971_1_
-net/minecraft/world/World.getSkyColorBody(Lnet/minecraft/entity/Entity;F)Lnet/minecraft/util/math/Vec3d;=|p_72833_1_,p_72833_2_
+net/minecraft/world/World.getSkyColorBody(Lnet/minecraft/util/math/BlockPos;F)Lnet/minecraft/util/math/Vec3d;=|p_217382_1_,p_217382_2_
 net/minecraft/world/World.getCloudColorBody(F)Lnet/minecraft/util/math/Vec3d;=|p_72824_1_
-net/minecraft/world/World.removeEntity(Lnet/minecraft/entity/Entity;Z)V=|p_72900_1_,keepData
-net/minecraft/world/World.removeEntityDangerously(Lnet/minecraft/entity/Entity;Z)V=|p_72973_1_,keepData
-net/minecraft/world/WorldServer.canMineBlockBody(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/math/BlockPos;)Z=|p_175660_1_,p_175660_2_
-net/minecraft/world/WorldEntitySpawner.canSpawnAtBody(Lnet/minecraft/entity/EntitySpawnPlacementRegistry$SpawnPlacementType;Lnet/minecraft/world/IWorldReaderBase;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z=|p_209382_0_,p_209382_1_,p_209382_2_,p_209382_3_
-net/minecraft/world/storage/SaveFormatOld.getWorldData(Ljava/io/File;Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/world/storage/SaveHandler;)Lnet/minecraft/world/storage/WorldInfo;=|p_186353_0_,p_186353_1_,saveHandler
+net/minecraft/world/ServerWorld.canMineBlockBody(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;)Z=|p_175660_1_,p_175660_2_
+
+net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBits
+
+net/minecraft/world/end/DragonFightManager.<init>(Lnet/minecraft/world/ServerWorld;Lnet/minecraft/nbt/CompoundNBT;Lnet/minecraft/world/dimension/EndDimension;)V=|p_i46669_1_,p_i46669_2_,dim
+
+net/minecraft/world/spawner/WorldEntitySpawner.getSpawnList(Lnet/minecraft/world/gen/ChunkGenerator;Lnet/minecraft/entity/EntityClassification;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;)Z|p_222264_0_,p_222264_1_,p_222264_2_,p_222264_3_,world
+net/minecraft/world/spawner/WorldEntitySpawner.getSpawnList(Lnet/minecraft/world/gen/ChunkGenerator;Lnet/minecraft/entity/EntityClassification;Lnet/minecraft/world/biome/Biome$SpawnListEntry;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;)Z|p_222261_0_,p_222261_1_,p_222261_2_,p_222261_3_,world
+net/minecraft/world/spawner/WorldEntitySpawner.canSpawnAtBody(Lnet/minecraft/entity/EntitySpawnPlacementRegistry$PlacementType;Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z=|p_209382_0_,p_209382_1_,p_209382_2_,p_209382_3_
+
+net/minecraft/world/storage/SaveFormat.getWorldData(Ljava/io/File;Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/world/storage/SaveHandler;)Lnet/minecraft/world/storage/WorldInfo;=|p_215780_0_,p_215780_1_,saveHandler
+
 net/minecraft/world/storage/loot/LootEntry.<init>(II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46642_1_,p_i46642_2_,p_i46642_3_,entryName
 net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46645_1_,p_i46645_2_,p_i46645_3_,entryName
 net/minecraft/world/storage/loot/LootEntryItem.<init>(Lnet/minecraft/item/Item;II[Lnet/minecraft/world/storage/loot/functions/LootFunction;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46644_1_,p_i46644_2_,p_i46644_3_,p_i46644_4_,p_i46644_5_,entryName

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/SmallFireballEntity.java
++++ b/net/minecraft/entity/projectile/SmallFireballEntity.java
+@@ -36,7 +36,7 @@
+                   this.func_174815_a(this.field_70235_a, entity);
+                }
+             }
+-         } else if (this.field_70235_a == null || !(this.field_70235_a instanceof MobEntity) || this.field_70170_p.func_82736_K().func_82766_b("mobGriefing")) {
++         } else if (this.field_70235_a == null || !(this.field_70235_a instanceof MobEntity) || net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a)) {
+             BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)p_70227_1_;
+             BlockPos blockpos = blockraytraceresult.func_216350_a().func_177972_a(blockraytraceresult.func_216354_b());
+             if (this.field_70170_p.func_175623_d(blockpos)) {

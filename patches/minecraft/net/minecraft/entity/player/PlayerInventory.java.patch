@@ -1,0 +1,30 @@
+--- a/net/minecraft/entity/player/PlayerInventory.java
++++ b/net/minecraft/entity/player/PlayerInventory.java
+@@ -214,7 +214,8 @@
+       int i = p_191973_2_.func_190916_E();
+       ItemStack itemstack = this.func_70301_a(p_191973_1_);
+       if (itemstack.func_190926_b()) {
+-         itemstack = new ItemStack(item, 0);
++         itemstack = p_191973_2_.func_77946_l(); // Forge: Replace Item clone above to preserve item capabilities when picking the item up.
++         itemstack.func_190920_e(0);
+          if (p_191973_2_.func_77942_o()) {
+             itemstack.func_77982_d(p_191973_2_.func_77978_p().func_74737_b());
+          }
+@@ -265,7 +266,7 @@
+             }
+          }
+       }
+-
++      field_70460_b.forEach(e -> e.onArmorTick(field_70458_d.field_70170_p, field_70458_d));
+    }
+ 
+    public boolean func_70441_a(ItemStack p_70441_1_) {
+@@ -318,6 +319,8 @@
+          } catch (Throwable throwable) {
+             CrashReport crashreport = CrashReport.func_85055_a(throwable, "Adding item to inventory");
+             CrashReportCategory crashreportcategory = crashreport.func_85058_a("Item being added");
++            crashreportcategory.func_189529_a("Registry Name", () -> String.valueOf(p_191971_2_.func_77973_b().getRegistryName()));
++            crashreportcategory.func_189529_a("Item Class", () -> p_191971_2_.func_77973_b().getClass().getName());
+             crashreportcategory.func_71507_a("Item ID", Item.func_150891_b(p_191971_2_.func_77973_b()));
+             crashreportcategory.func_71507_a("Item data", p_191971_2_.func_77952_i());
+             crashreportcategory.func_189529_a("Item name", () -> {

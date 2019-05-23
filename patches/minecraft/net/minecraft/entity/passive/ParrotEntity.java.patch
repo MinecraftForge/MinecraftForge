@@ -1,0 +1,20 @@
+--- a/net/minecraft/entity/passive/ParrotEntity.java
++++ b/net/minecraft/entity/passive/ParrotEntity.java
+@@ -225,7 +225,7 @@
+          }
+ 
+          if (!this.field_70170_p.field_72995_K) {
+-            if (this.field_70146_Z.nextInt(10) == 0) {
++            if (this.field_70146_Z.nextInt(10) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_)) {
+                this.func_193101_c(p_184645_1_);
+                this.func_70908_e(true);
+                this.field_70170_p.func_72960_a(this, (byte)7);
+@@ -266,7 +266,7 @@
+       int k = MathHelper.func_76128_c(this.field_70161_v);
+       BlockPos blockpos = new BlockPos(i, j, k);
+       Block block = p_213380_1_.func_180495_p(blockpos.func_177977_b()).func_177230_c();
+-      return block.func_203417_a(BlockTags.field_206952_E) || block == Blocks.field_196658_i || block instanceof LogBlock || block == Blocks.field_150350_a && super.func_213380_a(p_213380_1_, p_213380_2_);
++      return block.func_203417_a(BlockTags.field_206952_E) || block == Blocks.field_196658_i || block instanceof LogBlock || block == Blocks.field_150350_a && super.func_213380_a(p_213380_1_, p_213380_2_); //Forge: GRASS -> GRASS_BLOCK
+    }
+ 
+    public void func_180430_e(float p_180430_1_, float p_180430_2_) {

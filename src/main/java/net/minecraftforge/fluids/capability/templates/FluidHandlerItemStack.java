@@ -23,8 +23,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
@@ -46,7 +46,7 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProvider
 {
     public static final String FLUID_NBT_KEY = "Fluid";
-    
+
     private final LazyOptional<IFluidHandlerItem> holder = LazyOptional.of(() -> this);
 
     @Nonnull
@@ -73,8 +73,8 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     @Nullable
     public FluidStack getFluid()
     {
-        NBTTagCompound tagCompound = container.getTag();
-        if (tagCompound == null || !tagCompound.hasKey(FLUID_NBT_KEY))
+        CompoundNBT tagCompound = container.getTag();
+        if (tagCompound == null || !tagCompound.contains(FLUID_NBT_KEY))
         {
             return null;
         }
@@ -85,12 +85,12 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
     {
         if (!container.hasTag())
         {
-            container.setTag(new NBTTagCompound());
+            container.setTag(new CompoundNBT());
         }
 
-        NBTTagCompound fluidTag = new NBTTagCompound();
+        CompoundNBT fluidTag = new CompoundNBT();
         fluid.writeToNBT(fluidTag);
-        container.getTag().setTag(FLUID_NBT_KEY, fluidTag);
+        container.getTag().func_218657_a(FLUID_NBT_KEY, fluidTag);
     }
 
     @Override
@@ -200,12 +200,12 @@ public class FluidHandlerItemStack implements IFluidHandlerItem, ICapabilityProv
      */
     protected void setContainerToEmpty()
     {
-        container.getTag().removeTag(FLUID_NBT_KEY);
+        container.getTag().remove(FLUID_NBT_KEY);
     }
 
     @Override
     @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
     {
         return CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY.orEmpty(capability, holder);
     }

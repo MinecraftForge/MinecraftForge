@@ -64,7 +64,7 @@ public class StartupQuery {
     public static void abort()
     {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server != null) server.initiateShutdown();
+        if (server != null) server.initiateShutdown(false);
 
         aborted = true; // to abort loading and go back to the main menu
         throw new AbortedException(); // to halt the server

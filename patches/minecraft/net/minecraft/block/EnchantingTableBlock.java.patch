@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/EnchantingTableBlock.java
++++ b/net/minecraft/block/EnchantingTableBlock.java
+@@ -53,7 +53,7 @@
+             if (p_180655_4_.nextInt(16) == 0) {
+                for(int k = 0; k <= 1; ++k) {
+                   BlockPos blockpos = p_180655_3_.func_177982_a(i, k, j);
+-                  if (p_180655_2_.func_180495_p(blockpos).func_177230_c() == Blocks.field_150342_X) {
++                  if (p_180655_2_.func_180495_p(blockpos).getEnchantPowerBonus(p_180655_2_, p_180655_3_) > 0) {
+                      if (!p_180655_2_.func_175623_d(p_180655_3_.func_177982_a(i / 2, 0, j / 2))) {
+                         break;
+                      }

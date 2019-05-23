@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/entity/player/RemoteClientPlayerEntity.java
++++ b/net/minecraft/client/entity/player/RemoteClientPlayerEntity.java
+@@ -28,6 +28,7 @@
+    }
+ 
+    public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_) {
++      net.minecraftforge.common.ForgeHooks.onPlayerAttack(this, p_70097_1_, p_70097_2_);
+       return true;
+    }
+ 

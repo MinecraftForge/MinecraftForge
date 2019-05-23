@@ -21,23 +21,23 @@ package net.minecraftforge.registries;
 
 import com.google.common.collect.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
+import net.minecraft.block.AirBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.network.datasync.DataSerializer;
+import net.minecraft.item.BlockItem;
+import net.minecraft.network.datasync.IDataSerializer;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionType;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.registry.RegistryNamespaced;
-import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
+import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
@@ -47,7 +47,6 @@ import net.minecraftforge.fml.LifecycleEventProvider;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.StartupQuery;
 import net.minecraftforge.fml.common.EnhancedRuntimeException;
-import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
 import net.minecraftforge.fml.event.lifecycle.FMLModIdMappingEvent;
 import net.minecraftforge.fml.loading.AdvancedLogMessageAdapter;
@@ -70,6 +69,8 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
+import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
+
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -90,20 +91,8 @@ public class GameData
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
     public static final ResourceLocation SERIALIZERS  = new ResourceLocation("minecraft:dataserializers");
-    
-    private static final int MAX_REGISTRY_SIZE = Integer.MAX_VALUE >> 5;
-    private static final int MAX_BLOCK_ID = 4095;
-    private static final int MAX_ITEM_ID = 31999;
-    private static final int MAX_POTION_ID = 255; // SPacketEntityEffect sends bytes, we can only use 255
-    private static final int MAX_BIOME_ID = 255; // Maximum number in a byte in the chunk
-    private static final int MAX_SOUND_ID = Integer.MAX_VALUE >> 5; // Varint (SPacketSoundEffect)
-    private static final int MAX_POTIONTYPE_ID = MAX_REGISTRY_SIZE; // Int (SPacketEffect)
-    private static final int MAX_ENCHANTMENT_ID = Short.MAX_VALUE - 1; // Short - serialized as a short in ItemStack NBTs.
-    private static final int MAX_ENTITY_ID = MAX_REGISTRY_SIZE; // Varint (SPacketSpawnMob)
-    private static final int MAX_TILE_ENTITY_ID = Integer.MAX_VALUE; //Doesnt seem to be serialized anywhere, so no max.
-    private static final int MAX_PROFESSION_ID = 1024; //TODO: Is this serialized anywhere anymore?
-    private static final int MIN_SERIALIZER_ID = 256; // Leave room for vanilla entries
-    private static final int MAX_SERIALIZER_ID = Integer.MAX_VALUE >> 5; // Varint (EntityDataManager)
+
+    private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
     private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
@@ -128,50 +117,48 @@ public class GameData
         if (hasInit)
             return;
         hasInit = true;
-        makeRegistry(BLOCKS,       Block.class,       MAX_BLOCK_ID, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).create();
-        makeRegistry(ITEMS,        Item.class,        MAX_ITEM_ID).addCallback(ItemCallbacks.INSTANCE).create();
-        makeRegistry(POTIONS,      Potion.class,      MAX_POTION_ID).create();
-        makeRegistry(BIOMES,       Biome.class,       MAX_BIOME_ID).create();
-        makeRegistry(SOUNDEVENTS,  SoundEvent.class,  MAX_SOUND_ID).create();
-        makeRegistry(POTIONTYPES,  PotionType.class,  MAX_POTIONTYPE_ID, new ResourceLocation("empty")).create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class, MAX_ENCHANTMENT_ID).create();
-        makeRegistry(PROFESSIONS,  VillagerProfession.class, MAX_PROFESSION_ID).create();
-        // TODO do we need the callback and the static field anymore?
-        makeRegistry(ENTITIES,     EntityType.class, MAX_ENTITY_ID).create();
-        makeRegistry(TILEENTITIES, TileEntityType.class, MAX_TILE_ENTITY_ID).disableSaving().create();
-        makeRegistry(MODDIMENSIONS, ModDimension.class, MAX_REGISTRY_SIZE).disableSaving().create();
-        makeRegistry(SERIALIZERS,  DataSerializerEntry.class, MIN_SERIALIZER_ID, MAX_SERIALIZER_ID).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
+        makeRegistry(BLOCKS,       Block.class,        new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).create();
+        makeRegistry(ITEMS,        Item.class,         new ResourceLocation("air")).addCallback(ItemCallbacks.INSTANCE).create();
+        makeRegistry(POTIONS,      Effect.class        ).create();
+        makeRegistry(BIOMES,       Biome.class         ).create();
+        makeRegistry(SOUNDEVENTS,  SoundEvent.class    ).create();
+        makeRegistry(POTIONTYPES,  Potion.class,       new ResourceLocation("empty")).create();
+        makeRegistry(ENCHANTMENTS, Enchantment.class   ).create();
+        makeRegistry(ENTITIES,     EntityType.class,   new ResourceLocation("pig")).create();
+        makeRegistry(TILEENTITIES, TileEntityType.class).disableSaving().create();
+        makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
+        makeRegistry(SERIALIZERS,  DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
     }
 
-    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max)
+    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type)
     {
-        return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedWrapper.Factory<T>());
+        return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedWrapper.Factory<T>());
     }
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int min, int max)
     {
         return new RegistryBuilder<T>().setName(name).setType(type).setIDRange(min, max).addCallback(new NamespacedWrapper.Factory<T>());
     }
-    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, int max, ResourceLocation _default)
+    private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type, ResourceLocation _default)
     {
-        return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(max).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(_default);
+        return new RegistryBuilder<T>().setName(name).setType(type).setMaxID(MAX_VARINT).addCallback(new NamespacedDefaultedWrapper.Factory<T>()).setDefaultKey(_default);
     }
 
-    public static <V extends IForgeRegistryEntry<V>> RegistryNamespacedDefaultedByKey<V> getWrapperDefaulted(Class<V> cls)
+    public static <V extends IForgeRegistryEntry<V>> DefaultedRegistry<V> getWrapperDefaulted(Class<? super V> cls)
     {
-        IForgeRegistry<V> reg = RegistryManager.ACTIVE.getRegistry(cls);
+        IForgeRegistry<V> reg = RegistryManager.ACTIVE.<V>getRegistry(cls);
         Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + cls.toString());
         @SuppressWarnings("unchecked")
-        RegistryNamespacedDefaultedByKey<V> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
+        DefaultedRegistry<V> ret = reg.getSlaveMap(NamespacedDefaultedWrapper.Factory.ID, NamespacedDefaultedWrapper.class);
         Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + cls.toString());
         return ret;
     }
 
-    public static <V extends IForgeRegistryEntry<V>> RegistryNamespaced<V> getWrapper(Class<V> cls)
+    public static <V extends IForgeRegistryEntry<V>> SimpleRegistry<V> getWrapper(Class<? super V> cls)
     {
-        IForgeRegistry<V> reg = RegistryManager.ACTIVE.getRegistry(cls);
+        IForgeRegistry<V> reg = RegistryManager.ACTIVE.<V>getRegistry(cls);
         Validate.notNull(reg, "Attempted to get vanilla wrapper for unknown registry: " + cls.toString());
         @SuppressWarnings("unchecked")
-        RegistryNamespaced<V> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
+        SimpleRegistry<V> ret = reg.getSlaveMap(NamespacedWrapper.Factory.ID, NamespacedWrapper.class);
         Validate.notNull(ret, "Attempted to get vanilla wrapper for registry created incorrectly: " + cls.toString());
         return ret;
     }
@@ -183,13 +170,13 @@ public class GameData
     }
 
     @SuppressWarnings("unchecked")
-    public static ObjectIntIdentityMap<IBlockState> getBlockStateIDMap()
+    public static ObjectIntIdentityMap<BlockState> getBlockStateIDMap()
     {
         return RegistryManager.ACTIVE.getRegistry(Block.class).getSlaveMap(BLOCKSTATE_TO_ID, ObjectIntIdentityMap.class);
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<DataSerializer<?>, DataSerializerEntry> getSerializerMap()
+    public static Map<IDataSerializer<?>, DataSerializerEntry> getSerializerMap()
     {
         return RegistryManager.ACTIVE.getRegistry(DataSerializerEntry.class).getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
     }
@@ -312,10 +299,10 @@ public class GameData
         {
             if (oldBlock != null)
             {
-                StateContainer<Block, IBlockState> oldContainer = oldBlock.getStateContainer();
-                StateContainer<Block, IBlockState> newContainer = block.getStateContainer();
-                ImmutableList<IBlockState> oldValidStates = oldContainer.getValidStates();
-                ImmutableList<IBlockState> newValidStates = newContainer.getValidStates();
+                StateContainer<Block, BlockState> oldContainer = oldBlock.getStateContainer();
+                StateContainer<Block, BlockState> newContainer = block.getStateContainer();
+                ImmutableList<BlockState> oldValidStates = oldContainer.getValidStates();
+                ImmutableList<BlockState> newValidStates = newContainer.getValidStates();
 
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
                 if (block.getRegistryName().getNamespace().equals("minecraft") && (
@@ -342,51 +329,6 @@ public class GameData
                     throw new RuntimeException("Invalid vanilla replacement. See log for details.");
                 }
             }
-/*
-
-            if (oldBlock != null)
-            {
-                for (IBlockState state : oldBlock.getBlockState().getValidStates())
-                {
-                    blockstateMap.remove(state);
-                }
-            }
-
-            if ("minecraft:tripwire".equals(block.getRegistryName().toString())) //Tripwire is crap so we have to special case whee!
-            {
-                for (int meta = 0; meta < 15; meta++)
-                    blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta);
-            }
-
-            //So, due to blocks having more in-world states then metadata allows, we have to turn the map into a semi-milti-bimap.
-            //We can do this however because the implementation of the map is last set wins. So we can add all states, then fix the meta bimap.
-            //Multiple states -> meta. But meta to CORRECT state.
-
-            final boolean[] usedMeta = new boolean[16]; //Hold a list of known meta from all states.
-            for (IBlockState state : block.getBlockState().getValidStates())
-            {
-                final int meta = block.getMetaFromState(state);
-                blockstateMap.put(state, id << 4 | meta); //Add ALL the things!
-                usedMeta[meta] = true;
-            }
-
-            for (int meta = 0; meta < 16; meta++)
-            {
-                if (block.getClass() == BlockObserver.class)
-                    continue; //Observers are bad and have non-cyclical states. So we HAVE to use the vanilla logic above.
-                if (usedMeta[meta])
-                    blockstateMap.put(block.getStateFromMeta(meta), id << 4 | meta); // Put the CORRECT thing!
-            }
-
-            if (oldBlock != null)
-            {
-                @SuppressWarnings("unchecked")
-                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
-                Item item = blockToItem.get(oldBlock);
-                if (item != null)
-                    blockToItem.forcePut(block, item);
-            }
-*/
         }
 
         @Override
@@ -398,10 +340,10 @@ public class GameData
         @Override
         public void onCreate(IForgeRegistryInternal<Block> owner, RegistryManager stage)
         {
-            final ClearableObjectIntIdentityMap<IBlockState> idMap = new ClearableObjectIntIdentityMap<IBlockState>()
+            final ClearableObjectIntIdentityMap<BlockState> idMap = new ClearableObjectIntIdentityMap<BlockState>()
             {
                 @Override
-                public int get(IBlockState key)
+                public int get(BlockState key)
                 {
                     Integer integer = (Integer)this.identityMap.get(key);
                     // There are some cases where this map is queried to serialize a state that is valid,
@@ -427,18 +369,21 @@ public class GameData
         public void onBake(IForgeRegistryInternal<Block> owner, RegistryManager stage)
         {
             @SuppressWarnings("unchecked")
-            ClearableObjectIntIdentityMap<IBlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
+            ClearableObjectIntIdentityMap<BlockState> blockstateMap = owner.getSlaveMap(BLOCKSTATE_TO_ID, ClearableObjectIntIdentityMap.class);
 
             for (Block block : owner)
             {
-                for (IBlockState state : block.getStateContainer().getValidStates())
+                for (BlockState state : block.getStateContainer().getValidStates())
                 {
                     blockstateMap.add(state);
+                    state.func_215692_c();
                 }
+
+                block.func_220068_i();
             }
         }
 
-        private static class BlockDummyAir extends BlockAir //A named class so DummyBlockReplacementTest can detect if its a dummy
+        private static class BlockDummyAir extends AirBlock //A named class so DummyBlockReplacementTest can detect if its a dummy
         {
             private BlockDummyAir(Block.Properties properties)
             {
@@ -460,17 +405,17 @@ public class GameData
         @Override
         public void onAdd(IForgeRegistryInternal<Item> owner, RegistryManager stage, int id, Item item, @Nullable Item oldItem)
         {
-            if (oldItem instanceof ItemBlock)
+            if (oldItem instanceof BlockItem)
             {
                 @SuppressWarnings("unchecked")
                 BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
-                blockToItem.remove(((ItemBlock)oldItem).getBlock());
+                blockToItem.remove(((BlockItem)oldItem).getBlock());
             }
-            if (item instanceof ItemBlock)
+            if (item instanceof BlockItem)
             {
                 @SuppressWarnings("unchecked")
                 Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
-                ((ItemBlock)item).addToBlockToItemMap(blockToItem, item);
+                ((BlockItem)item).addToBlockToItemMap(blockToItem, item);
             }
         }
 
@@ -566,7 +511,7 @@ public class GameData
         public void onAdd(IForgeRegistryInternal<DataSerializerEntry> owner, RegistryManager stage, int id, DataSerializerEntry entry, @Nullable DataSerializerEntry oldEntry)
         {
             @SuppressWarnings("unchecked")
-            Map<DataSerializer<?>, DataSerializerEntry> map = owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
+            Map<IDataSerializer<?>, DataSerializerEntry> map = owner.getSlaveMap(SERIALIZER_TO_ENTRY, Map.class);
             if (oldEntry != null) map.remove(oldEntry.getSerializer());
             map.put(entry.getSerializer(), entry);
         }
@@ -908,11 +853,11 @@ public class GameData
     /**
      * Check a name for a domain prefix, and if not present infer it from the
      * current active mod container.
-     * 
+     *
      * @param name          The name or resource location
      * @param warnOverrides If true, logs a warning if domain differs from that of
      *                      the currently currently active mod container
-     * 
+     *
      * @return The {@link ResourceLocation} with given or inferred domain
      */
     public static ResourceLocation checkPrefix(String name, boolean warnOverrides)

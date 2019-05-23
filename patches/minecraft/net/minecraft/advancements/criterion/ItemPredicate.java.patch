@@ -1,7 +1,7 @@
 --- a/net/minecraft/advancements/criterion/ItemPredicate.java
 +++ b/net/minecraft/advancements/criterion/ItemPredicate.java
-@@ -24,6 +24,8 @@
- import net.minecraft.util.registry.IRegistry;
+@@ -25,6 +25,8 @@
+ import net.minecraft.util.registry.Registry;
  
  public class ItemPredicate {
 +   private static final Map<ResourceLocation, java.util.function.Function<JsonObject, ItemPredicate>> custom_predicates = new java.util.HashMap<>();
@@ -9,14 +9,14 @@
     public static final ItemPredicate field_192495_a = new ItemPredicate();
     @Nullable
     private final Tag<Item> field_200018_b;
-@@ -90,6 +92,11 @@
+@@ -93,6 +95,11 @@
     public static ItemPredicate func_192492_a(@Nullable JsonElement p_192492_0_) {
        if (p_192492_0_ != null && !p_192492_0_.isJsonNull()) {
-          JsonObject jsonobject = JsonUtils.func_151210_l(p_192492_0_, "item");
+          JsonObject jsonobject = JSONUtils.func_151210_l(p_192492_0_, "item");
 +         if (jsonobject.has("type")) {
-+              final ResourceLocation rl = new ResourceLocation(JsonUtils.func_151200_h(jsonobject, "type"));
-+              if (custom_predicates.containsKey(rl)) return custom_predicates.get(rl).apply(jsonobject);
-+              else throw new JsonSyntaxException("There is no ItemPredicate of type "+rl);
++            final ResourceLocation rl = new ResourceLocation(JSONUtils.func_151200_h(jsonobject, "type"));
++            if (custom_predicates.containsKey(rl)) return custom_predicates.get(rl).apply(jsonobject);
++            else throw new JsonSyntaxException("There is no ItemPredicate of type "+rl);
 +         }
           MinMaxBounds.IntBound minmaxbounds$intbound = MinMaxBounds.IntBound.func_211344_a(jsonobject.get("count"));
           MinMaxBounds.IntBound minmaxbounds$intbound1 = MinMaxBounds.IntBound.func_211344_a(jsonobject.get("durability"));
@@ -30,7 +30,7 @@
 +   }
 +
 +   public static Map<ResourceLocation, java.util.function.Function<JsonObject, ItemPredicate>> getPredicates() {
-+       return unmod_predicates;
++      return unmod_predicates;
 +   }
 +
     public static class Builder {

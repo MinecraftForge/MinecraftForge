@@ -1,0 +1,29 @@
+--- a/net/minecraft/enchantment/EnchantmentType.java
++++ b/net/minecraft/enchantment/EnchantmentType.java
+@@ -14,7 +14,7 @@
+ import net.minecraft.item.ToolItem;
+ import net.minecraft.item.TridentItem;
+ 
+-public enum EnchantmentType {
++public enum EnchantmentType implements net.minecraftforge.common.IExtensibleEnum {
+    ALL {
+       public boolean func_77557_a(Item p_77557_1_) {
+          for(EnchantmentType enchantmenttype : EnchantmentType.values()) {
+@@ -96,5 +96,16 @@
+    private EnchantmentType() {
+    }
+ 
+-   public abstract boolean func_77557_a(Item p_77557_1_);
++   private java.util.function.Predicate<Item> delegate;
++   private EnchantmentType(java.util.function.Predicate<Item> delegate) {
++      this.delegate = delegate;
++   }
++
++   public static EnchantmentType create(String name, java.util.function.Predicate<Item> delegate) {
++      throw new IllegalStateException("Enum not extended");
++   }
++
++   public boolean func_77557_a(Item p_77557_1_) {
++      return this.delegate == null ? false : this.delegate.test(p_77557_1_);
++   }
+ }

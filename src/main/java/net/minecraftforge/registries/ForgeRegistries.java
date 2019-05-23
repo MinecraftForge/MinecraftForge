@@ -22,17 +22,15 @@ package net.minecraftforge.registries;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
-import net.minecraft.init.Bootstrap;
+import net.minecraft.util.registry.Bootstrap;
 import net.minecraft.item.Item;
+import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.VillagerRegistry;
-import net.minecraftforge.fml.common.registry.VillagerRegistry.VillagerProfession;
 
 /**
  * A class that exposes static references to all vanilla and Forge registries.
@@ -45,12 +43,11 @@ public class ForgeRegistries
 
     public static final IForgeRegistry<Block>               BLOCKS       = RegistryManager.ACTIVE.getRegistry(Block.class);
     public static final IForgeRegistry<Item>                ITEMS        = RegistryManager.ACTIVE.getRegistry(Item.class);
-    public static final IForgeRegistry<Potion>              POTIONS      = RegistryManager.ACTIVE.getRegistry(Potion.class);
+    public static final IForgeRegistry<Effect>              POTIONS      = RegistryManager.ACTIVE.getRegistry(Effect.class);
     public static final IForgeRegistry<Biome>               BIOMES       = RegistryManager.ACTIVE.getRegistry(Biome.class);
     public static final IForgeRegistry<SoundEvent>          SOUND_EVENTS = RegistryManager.ACTIVE.getRegistry(SoundEvent.class);
-    public static final IForgeRegistry<PotionType>          POTION_TYPES = RegistryManager.ACTIVE.getRegistry(PotionType.class);
+    public static final IForgeRegistry<Potion>              POTION_TYPES = RegistryManager.ACTIVE.getRegistry(Potion.class);
     public static final IForgeRegistry<Enchantment>         ENCHANTMENTS = RegistryManager.ACTIVE.getRegistry(Enchantment.class);
-    public static final IForgeRegistry<VillagerProfession>  VILLAGER_PROFESSIONS = RegistryManager.ACTIVE.getRegistry(VillagerProfession.class);
     public static final IForgeRegistry<EntityType<?>>       ENTITIES       = RegistryManager.ACTIVE.getRegistry(EntityType.class); //Untyped casys needed to fix javac issues.
     public static final IForgeRegistry<TileEntityType<?>>   TILE_ENTITIES  = RegistryManager.ACTIVE.getRegistry(TileEntityType.class);
     public static final IForgeRegistry<ModDimension>        MOD_DIMENSIONS = RegistryManager.ACTIVE.getRegistry(ModDimension.class);
@@ -62,7 +59,6 @@ public class ForgeRegistries
     private static void init()
     {
         GameData.init();
-        VillagerRegistry.instance();
         Bootstrap.register();
     }
 

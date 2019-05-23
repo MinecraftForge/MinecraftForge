@@ -43,7 +43,7 @@ public class StackList implements IItemList
     }
 
     @Override
-    public JsonObject toJson()
+    public JsonObject serialize()
     {
         if (items.size() == 1)
             return toJson(items.iterator().next());

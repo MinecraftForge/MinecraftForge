@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/effect/LightningBoltEntity.java
++++ b/net/minecraft/entity/effect/LightningBoltEntity.java
+@@ -79,6 +79,7 @@
+             List<Entity> list = this.field_70170_p.func_175674_a(this, new AxisAlignedBB(this.field_70165_t - 3.0D, this.field_70163_u - 3.0D, this.field_70161_v - 3.0D, this.field_70165_t + 3.0D, this.field_70163_u + 6.0D + 3.0D, this.field_70161_v + 3.0D), Entity::func_70089_S);
+ 
+             for(Entity entity : list) {
++               if (!net.minecraftforge.event.ForgeEventFactory.onEntityStruckByLightning(entity, this))
+                entity.func_70077_a(this);
+             }
+ 

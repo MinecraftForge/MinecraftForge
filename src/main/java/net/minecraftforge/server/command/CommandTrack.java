@@ -19,17 +19,10 @@
 
 package net.minecraftforge.server.command;
 
-import javax.annotation.Nullable;
-
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -38,18 +31,12 @@ import java.util.function.Function;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.entity.Entity;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.server.timings.ForgeTimings;
 import net.minecraftforge.server.timings.TimeTracker;
 
@@ -79,7 +66,7 @@ class CommandTrack
                             int duration = IntegerArgumentType.getInteger(ctx, "duration");
                             TimeTracker.TILE_ENTITY_UPDATE.reset();
                             TimeTracker.TILE_ENTITY_UPDATE.enable(duration);
-                            ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tracking.te.enabled", duration), true);
+                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tracking.te.enabled", duration), true);
                             return 0;
                         })
                     )
@@ -90,7 +77,7 @@ class CommandTrack
                             int duration = IntegerArgumentType.getInteger(ctx, "duration");
                             TimeTracker.ENTITY_UPDATE.reset();
                             TimeTracker.ENTITY_UPDATE.enable(duration);
-                            ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tracking.entity.enabled", duration), true);
+                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tracking.entity.enabled", duration), true);
                             return 0;
                         })
                     )
@@ -107,14 +94,14 @@ class CommandTrack
                 .then(Commands.literal("te")
                     .executes(ctx -> {
                         TimeTracker.TILE_ENTITY_UPDATE.reset();
-                        ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tracking.te.reset"), true);
+                        ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tracking.te.reset"), true);
                         return 0;
                     })
                 )
                 .then(Commands.literal("entity")
                     .executes(ctx -> {
                         TimeTracker.ENTITY_UPDATE.reset();
-                        ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tracking.entity.reset"), true);
+                        ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tracking.entity.reset"), true);
                         return 0;
                     })
                 );
@@ -144,7 +131,7 @@ class CommandTrack
             List<ForgeTimings<T>> timingsList = getSortedTimings(tracker);
             if (timingsList.isEmpty())
             {
-                source.sendFeedback(new TextComponentTranslation("commands.forge.tracking.no_data"), true);
+                source.sendFeedback(new TranslationTextComponent("commands.forge.tracking.no_data"), true);
             }
             else
             {
@@ -165,13 +152,13 @@ class CommandTrack
                 {
                     Entity entity = data.getObject().get();
                     if (entity == null)
-                        return new TextComponentTranslation("commands.forge.tracking.invalid");
+                        return new TranslationTextComponent("commands.forge.tracking.invalid");
 
                     BlockPos pos = entity.getPosition();
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "�s" : "ms");
 
-                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), DimensionType.func_212678_a(entity.world.dimension.getType()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TranslationTextComponent("commands.forge.tracking.timing_entry", entity.getType().getRegistryName(), DimensionType.getKey(entity.world.dimension.getType()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }
@@ -185,13 +172,13 @@ class CommandTrack
                 {
                     TileEntity te = data.getObject().get();
                     if (te == null)
-                        return new TextComponentTranslation("commands.forge.tracking.invalid");
+                        return new TranslationTextComponent("commands.forge.tracking.invalid");
 
                     BlockPos pos = te.getPos();
 
                     double averageTimings = data.getAverageTimings();
                     String tickTime = (averageTimings > 1000 ? TIME_FORMAT.format(averageTimings / 1000) : TIME_FORMAT.format(averageTimings)) + (averageTimings < 1000 ? "�s" : "ms");
-                    return new TextComponentTranslation("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), DimensionType.func_212678_a(te.getWorld().dimension.getType()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
+                    return new TranslationTextComponent("commands.forge.tracking.timing_entry", te.getType().getRegistryName(), DimensionType.getKey(te.getWorld().dimension.getType()), pos.getX(), pos.getY(), pos.getZ(), tickTime);
                 })
             );
         }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/WorldType.java
 +++ b/net/minecraft/world/WorldType.java
-@@ -3,7 +3,7 @@
+@@ -4,7 +4,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,7 +9,7 @@
     public static WorldType[] field_77139_a = new WorldType[16];
     public static final WorldType field_77137_b = (new WorldType(0, "default", 1)).func_77129_f();
     public static final WorldType field_77138_c = (new WorldType(1, "flat")).func_205392_a(true);
-@@ -22,6 +22,10 @@
+@@ -23,6 +23,10 @@
     private boolean field_151361_l;
     private boolean field_205395_p;
  
@@ -20,7 +20,7 @@
     private WorldType(int p_i1959_1_, String p_i1959_2_) {
        this(p_i1959_1_, p_i1959_2_, p_i1959_2_, 0);
     }
-@@ -31,6 +35,7 @@
+@@ -32,6 +36,7 @@
     }
  
     private WorldType(int p_i49778_1_, String p_i49778_2_, String p_i49778_3_, int p_i49778_4_) {
@@ -28,7 +28,7 @@
        this.field_77133_f = p_i49778_2_;
        this.field_211890_l = p_i49778_3_;
        this.field_77134_g = p_i49778_4_;
-@@ -39,6 +44,17 @@
+@@ -40,6 +45,17 @@
        field_77139_a[p_i49778_1_] = this;
     }
  

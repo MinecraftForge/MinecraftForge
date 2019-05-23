@@ -28,9 +28,9 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 
 import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.nbt.INBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.util.LazyOptional;
@@ -47,10 +47,10 @@ import net.minecraftforge.common.util.LazyOptional;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompound>, ICapabilityProvider
+public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>, ICapabilityProvider
 {
     private ICapabilityProvider[] caps;
-    private INBTSerializable<INBTBase>[] writers;
+    private INBTSerializable<INBT>[] writers;
     private String[] names;
     private final List<Runnable> listeners;
 
@@ -63,7 +63,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     public CapabilityDispatcher(Map<ResourceLocation, ICapabilityProvider> list, List<Runnable> listeners, @Nullable ICapabilityProvider parent)
     {
         List<ICapabilityProvider> lstCaps = Lists.newArrayList();
-        List<INBTSerializable<INBTBase>> lstWriters = Lists.newArrayList();
+        List<INBTSerializable<INBT>> lstWriters = Lists.newArrayList();
         List<String> lstNames = Lists.newArrayList();
         this.listeners = listeners;
 
@@ -72,7 +72,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             lstCaps.add(parent);
             if (parent instanceof INBTSerializable)
             {
-                lstWriters.add((INBTSerializable<INBTBase>)parent);
+                lstWriters.add((INBTSerializable<INBT>)parent);
                 lstNames.add("Parent");
             }
         }
@@ -83,7 +83,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
             lstCaps.add(prov);
             if (prov instanceof INBTSerializable)
             {
-                lstWriters.add((INBTSerializable<INBTBase>)prov);
+                lstWriters.add((INBTSerializable<INBT>)prov);
                 lstNames.add(entry.getKey().toString());
             }
         }
@@ -95,7 +95,7 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
 
 
     @Override
-    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable EnumFacing side)
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side)
     {
         for (ICapabilityProvider c : caps)
         {
@@ -108,24 +108,24 @@ public final class CapabilityDispatcher implements INBTSerializable<NBTTagCompou
     }
 
     @Override
-    public NBTTagCompound serializeNBT()
+    public CompoundNBT serializeNBT()
     {
-        NBTTagCompound nbt = new NBTTagCompound();
+        CompoundNBT nbt = new CompoundNBT();
         for (int x = 0; x < writers.length; x++)
         {
-            nbt.setTag(names[x], writers[x].serializeNBT());
+            nbt.func_218657_a(names[x], writers[x].serializeNBT());
         }
         return nbt;
     }
 
     @Override
-    public void deserializeNBT(NBTTagCompound nbt)
+    public void deserializeNBT(CompoundNBT nbt)
     {
         for (int x = 0; x < writers.length; x++)
         {
-            if (nbt.hasKey(names[x]))
+            if (nbt.contains(names[x]))
             {
-                writers[x].deserializeNBT(nbt.getTag(names[x]));
+                writers[x].deserializeNBT(nbt.get(names[x]));
             }
         }
     }

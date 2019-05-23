@@ -19,12 +19,11 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.util.DamageSource;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 
 /**
  * LivingAttackEvent is fired when a living Entity is attacked. <br>
@@ -44,12 +43,12 @@ import net.minecraft.entity.EntityLivingBase;
  *<br>
  * This event is fired on the {@link MinecraftForge#EVENT_BUS}.
  **/
-@net.minecraftforge.eventbus.api.Cancelable
+@Cancelable
 public class LivingAttackEvent extends LivingEvent
 {
     private final DamageSource source;
     private final float amount;
-    public LivingAttackEvent(EntityLivingBase entity, DamageSource source, float amount)
+    public LivingAttackEvent(LivingEntity entity, DamageSource source, float amount)
     {
         super(entity);
         this.source = source;

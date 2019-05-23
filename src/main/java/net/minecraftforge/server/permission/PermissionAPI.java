@@ -21,7 +21,7 @@ package net.minecraftforge.server.permission;
 
 import com.google.common.base.Preconditions;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.server.permission.context.IContext;
 import net.minecraftforge.server.permission.context.PlayerContext;
 
@@ -90,7 +90,7 @@ public class PermissionAPI
      *
      * @see PermissionAPI#hasPermission(GameProfile, String, IContext)
      */
-    public static boolean hasPermission(EntityPlayer player, String node)
+    public static boolean hasPermission(PlayerEntity player, String node)
     {
         Preconditions.checkNotNull(player, "Player can't be null!");
         return hasPermission(player.getGameProfile(), node, new PlayerContext(player));

@@ -1,0 +1,67 @@
+--- a/net/minecraft/world/gen/feature/DarkOakTreeFeature.java
++++ b/net/minecraft/world/gen/feature/DarkOakTreeFeature.java
+@@ -18,6 +18,7 @@
+ 
+    public DarkOakTreeFeature(Function<Dynamic<?>, ? extends NoFeatureConfig> p_i49895_1_, boolean p_i49895_2_) {
+       super(p_i49895_1_, p_i49895_2_);
++      setSapling((net.minecraftforge.common.IPlantable)Blocks.field_196680_y);
+    }
+ 
+    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_) {
+@@ -27,15 +28,15 @@
+       int l = p_208519_4_.func_177952_p();
+       if (k >= 1 && k + i + 1 < 256) {
+          BlockPos blockpos = p_208519_4_.func_177977_b();
+-         if (!func_214589_h(p_208519_2_, blockpos)) {
++         if (!isSoil(p_208519_2_, blockpos)) {
+             return false;
+          } else if (!this.func_214615_a(p_208519_2_, p_208519_4_, i)) {
+             return false;
+          } else {
+-            this.func_214584_a(p_208519_2_, blockpos);
+-            this.func_214584_a(p_208519_2_, blockpos.func_177974_f());
+-            this.func_214584_a(p_208519_2_, blockpos.func_177968_d());
+-            this.func_214584_a(p_208519_2_, blockpos.func_177968_d().func_177974_f());
++            this.setDirtAt(p_208519_2_, blockpos, p_208519_4_);
++            this.setDirtAt(p_208519_2_, blockpos.func_177974_f(), p_208519_4_);
++            this.setDirtAt(p_208519_2_, blockpos.func_177968_d(), p_208519_4_);
++            this.setDirtAt(p_208519_2_, blockpos.func_177968_d().func_177974_f(), p_208519_4_);
+             Direction direction = Direction.Plane.HORIZONTAL.func_179518_a(p_208519_3_);
+             int i1 = i - p_208519_3_.nextInt(4);
+             int j1 = 2 - p_208519_3_.nextInt(3);
+@@ -52,7 +53,7 @@
+ 
+                int k2 = k + j2;
+                BlockPos blockpos1 = new BlockPos(k1, k2, l1);
+-               if (func_214572_g(p_208519_2_, blockpos1)) {
++               if (canBeReplacedByLeaves(p_208519_2_, blockpos1)) {
+                   this.func_214616_a(p_208519_1_, p_208519_2_, blockpos1, p_208519_5_);
+                   this.func_214616_a(p_208519_1_, p_208519_2_, blockpos1.func_177974_f(), p_208519_5_);
+                   this.func_214616_a(p_208519_1_, p_208519_2_, blockpos1.func_177968_d(), p_208519_5_);
+@@ -143,7 +144,7 @@
+ 
+          for(int j1 = -i1; j1 <= i1; ++j1) {
+             for(int k1 = -i1; k1 <= i1; ++k1) {
+-               if (!func_214587_a(p_214615_1_, blockpos$mutableblockpos.func_181079_c(i + j1, j + l, k + k1))) {
++               if (!canBeReplacedByLog(p_214615_1_, blockpos$mutableblockpos.func_181079_c(i + j1, j + l, k + k1))) {
+                   return false;
+                }
+             }
+@@ -154,7 +155,7 @@
+    }
+ 
+    private void func_214616_a(Set<BlockPos> p_214616_1_, IWorldGenerationReader p_214616_2_, BlockPos p_214616_3_, MutableBoundingBox p_214616_4_) {
+-      if (func_214587_a(p_214616_2_, p_214616_3_)) {
++      if (canBeReplacedByLog(p_214616_2_, p_214616_3_)) {
+          this.func_208520_a(p_214616_1_, p_214616_2_, p_214616_3_, field_214618_a, p_214616_4_);
+       }
+ 
+@@ -162,7 +163,7 @@
+ 
+    private void func_214617_a(IWorldGenerationReader p_214617_1_, int p_214617_2_, int p_214617_3_, int p_214617_4_, MutableBoundingBox p_214617_5_, Set<BlockPos> p_214617_6_) {
+       BlockPos blockpos = new BlockPos(p_214617_2_, p_214617_3_, p_214617_4_);
+-      if (func_214574_b(p_214617_1_, blockpos)) {
++      if (isAir(p_214617_1_, blockpos)) {
+          this.func_208520_a(p_214617_6_, p_214617_1_, blockpos, field_214619_aS, p_214617_5_);
+       }
+ 

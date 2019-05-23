@@ -22,8 +22,8 @@ package net.minecraftforge.fml.common;
 import java.util.Random;
 
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.IChunkGenerator;
+import net.minecraft.world.chunk.AbstractChunkProvider;
+import net.minecraft.world.gen.ChunkGenerator;
 
 
 /**
@@ -45,5 +45,5 @@ public interface IWorldGenerator
      * @param chunkProvider : additionalData[2] {@link IChunkProvider} that is requesting the world generation.
      *
      */
-    void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider);
+    void generate(Random random, int chunkX, int chunkZ, World world, ChunkGenerator chunkGenerator, AbstractChunkProvider chunkProvider);
 }

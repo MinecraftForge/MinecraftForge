@@ -1,0 +1,15 @@
+--- a/net/minecraft/entity/item/ItemEntity.java
++++ b/net/minecraft/entity/item/ItemEntity.java
+@@ -286,9 +313,10 @@
+       return false;
+    }
+ 
++   @Override
+    @Nullable
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
+-      Entity entity = super.func_212321_a(p_212321_1_);
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      Entity entity = super.changeDimension(p_212321_1_, teleporter);
+       if (!this.field_70170_p.field_72995_K && entity instanceof ItemEntity) {
+          ((ItemEntity)entity).func_85054_d();
+       }

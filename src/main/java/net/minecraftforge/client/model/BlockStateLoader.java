@@ -31,7 +31,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ModelBlockDefinition;
+import net.minecraft.client.renderer.model.BlockModelDefinition;
 import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.client.renderer.model.Variant;
 import net.minecraft.client.renderer.model.VariantList;
@@ -75,7 +75,7 @@ public class BlockStateLoader
      *
      * @return Model definition including variants for all known combinations.
      */
-    public static ModelBlockDefinition load(Reader reader, ResourceLocation location, final Gson vanillaGSON)
+    public static BlockModelDefinition load(Reader reader, ResourceLocation location, final Gson vanillaGSON)
     {
         try
         {
@@ -106,10 +106,10 @@ public class BlockStateLoader
                         variants.put(entry.getKey(), new VariantList(mcVars));
                     }
 
-                    return new ModelBlockDefinition(variants, null);
+                    return new BlockModelDefinition(variants, null);
 
                 default: //Unknown version.. try loading it as normal.
-                    return vanillaGSON.fromJson(reader, ModelBlockDefinition.class);
+                    return vanillaGSON.fromJson(reader, BlockModelDefinition.class);
             }
         }
         catch (IOException e)

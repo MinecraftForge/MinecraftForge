@@ -6,7 +6,7 @@
     }
 +
 +   //Just a generic helper function to make typecasing easier...
-+   public static <T> ActionResult<T> newResult(EnumActionResult result, T value) {
++   public static <T> ActionResult<T> newResult(ActionResultType result, T value) {
 +      return new ActionResult<T>(result, value);
 +   }
  }

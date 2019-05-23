@@ -1,0 +1,15 @@
+--- a/net/minecraft/entity/item/minecart/SpawnerMinecartEntity.java
++++ b/net/minecraft/entity/item/minecart/SpawnerMinecartEntity.java
+@@ -23,6 +23,12 @@
+       public BlockPos func_177221_b() {
+          return new BlockPos(SpawnerMinecartEntity.this);
+       }
++
++      @Override
++      @javax.annotation.Nullable
++      public net.minecraft.entity.Entity getSpawnerEntity() {
++         return SpawnerMinecartEntity.this;
++      }
+    };
+ 
+    public SpawnerMinecartEntity(EntityType<? extends SpawnerMinecartEntity> p_i50114_1_, World p_i50114_2_) {

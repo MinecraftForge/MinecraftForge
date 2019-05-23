@@ -21,7 +21,7 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.capability.FluidTankPropertiesWrapper;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -56,9 +56,9 @@ public class FluidTank implements IFluidTank, IFluidHandler
         this(new FluidStack(fluid, amount), capacity);
     }
 
-    public FluidTank readFromNBT(NBTTagCompound nbt)
+    public FluidTank readFromNBT(CompoundNBT nbt)
     {
-        if (!nbt.hasKey("Empty"))
+        if (!nbt.contains("Empty"))
         {
             FluidStack fluid = FluidStack.loadFluidStackFromNBT(nbt);
             setFluid(fluid);
@@ -70,7 +70,7 @@ public class FluidTank implements IFluidTank, IFluidHandler
         return this;
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+    public CompoundNBT writeToNBT(CompoundNBT nbt)
     {
         if (fluid != null)
         {
@@ -78,7 +78,7 @@ public class FluidTank implements IFluidTank, IFluidHandler
         }
         else
         {
-            nbt.setString("Empty", "");
+            nbt.putString("Empty", "");
         }
         return nbt;
     }

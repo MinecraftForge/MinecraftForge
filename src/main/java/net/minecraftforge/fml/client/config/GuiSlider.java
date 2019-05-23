@@ -50,14 +50,14 @@ public class GuiSlider extends GuiButtonExt
 
     public boolean drawString = true;
 
-    public GuiSlider(int id, int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr)
+    public GuiSlider(int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, IPressable handler)
     {
-        this(id, xPos, yPos, width, height, prefix, suf, minVal, maxVal, currentVal, showDec, drawStr, null);
+        this(xPos, yPos, width, height, prefix, suf, minVal, maxVal, currentVal, showDec, drawStr, handler, null);
     }
 
-    public GuiSlider(int id, int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, @Nullable ISlider par)
+    public GuiSlider(int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal, double currentVal, boolean showDec, boolean drawStr, IPressable handler, @Nullable ISlider par)
     {
-        super(id, xPos, yPos, width, height, prefix);
+        super(xPos, yPos, width, height, prefix, handler);
         minValue = minVal;
         maxValue = maxVal;
         sliderValue = (currentVal - minValue) / (maxValue - minValue);
@@ -78,18 +78,16 @@ public class GuiSlider extends GuiButtonExt
             precision = 0;
         }
 
-        displayString = dispString + val + suffix;
+        setMessage(dispString + val + suffix);
 
         drawString = drawStr;
         if(!drawString)
-        {
-            displayString = "";
-        }
+            setMessage("");
     }
 
-    public GuiSlider(int id, int xPos, int yPos, String displayStr, double minVal, double maxVal, double currentVal, ISlider par)
+    public GuiSlider(int xPos, int yPos, String displayStr, double minVal, double maxVal, double currentVal, IPressable handler, ISlider par)
     {
-        this(id, xPos, yPos, 150, 20, displayStr, "", minVal, maxVal, currentVal, true, true, par);
+        this(xPos, yPos, 150, 20, displayStr, "", minVal, maxVal, currentVal, true, true, handler, par);
     }
 
     /**
@@ -97,7 +95,7 @@ public class GuiSlider extends GuiButtonExt
      * this button.
      */
     @Override
-    public int getHoverState(boolean par1)
+    public int getYImage(boolean par1)
     {
         return 0;
     }
@@ -116,7 +114,7 @@ public class GuiSlider extends GuiButtonExt
                 updateSlider();
             }
 
-            GuiUtils.drawContinuousTexturedBox(BUTTON_TEXTURES, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.zLevel);
+            GuiUtils.drawContinuousTexturedBox(WIDGETS_LOCATION, this.x + (int)(this.sliderValue * (float)(this.width - 8)), this.y, 0, 66, 8, this.height, 200, 20, 2, 3, 2, 2, this.blitOffset);
         }
     }
 
@@ -174,7 +172,7 @@ public class GuiSlider extends GuiButtonExt
 
         if(drawString)
         {
-            displayString = dispString + val + suffix;
+            setMessage(dispString + val + suffix);
         }
 
         if (parent != null)

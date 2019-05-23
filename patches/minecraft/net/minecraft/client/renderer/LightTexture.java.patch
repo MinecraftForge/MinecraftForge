@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/LightTexture.java
 +++ b/net/minecraft/client/renderer/LightTexture.java
-@@ -112,6 +112,15 @@
+@@ -114,6 +114,15 @@
                       f12 = 0.25F + f9 * 0.75F;
                    }
  

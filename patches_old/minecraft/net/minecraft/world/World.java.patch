@@ -1,0 +1,151 @@
+--- a/net/minecraft/world/World.java
++++ b/net/minecraft/world/World.java
+@@ -742,6 +789,8 @@
+    }
+ 
+    public boolean func_72838_d(Entity p_72838_1_) {
++      // do not drop any items while restoring blocksnapshots. Prevents dupes
++      if (!this.field_72995_K && (p_72838_1_ == null || (p_72838_1_ instanceof net.minecraft.entity.item.ItemEntity && this.restoringBlockSnapshots))) return false;
+       int i = MathHelper.func_76128_c(p_72838_1_.field_70165_t / 16.0D);
+       int j = MathHelper.func_76128_c(p_72838_1_.field_70161_v / 16.0D);
+       boolean flag = p_72838_1_.field_98038_p;
+@@ -777,9 +828,14 @@
+    public void func_72900_e(Entity p_72900_1_) {
++      this.removeEntity(p_72900_1_, false);
++   }
++
++   public void removeEntity(Entity p_72900_1_, boolean keepData) {
+       if (p_72900_1_.func_184207_aI()) {
+          p_72900_1_.func_184226_ay();
+       }
+@@ -788,7 +844,7 @@
+          p_72900_1_.func_184210_p();
+       }
+ 
+-      p_72900_1_.func_70106_y();
++      p_72900_1_.remove(keepData);
+       if (p_72900_1_ instanceof PlayerEntity) {
+          this.field_73010_i.remove(p_72900_1_);
+          this.func_72854_c();
+@@ -798,8 +854,12 @@
+    }
+ 
+    public void func_72973_f(Entity p_72973_1_) {
++       this.removeEntityDangerously(p_72973_1_, false);
++   }
++
++   public void removeEntityDangerously(Entity p_72973_1_, boolean keepData) {
+       p_72973_1_.func_184174_b(false);
+-      p_72973_1_.func_70106_y();
++      p_72973_1_.remove(keepData);
+       if (p_72973_1_ instanceof PlayerEntity) {
+          this.field_73010_i.remove(p_72973_1_);
+          this.func_72854_c();
+@@ -819,24 +879,31 @@
+       this.field_73021_x.add(p_72954_1_);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public void func_72848_b(IWorldEventListener p_72848_1_) {
+       this.field_73021_x.remove(p_72848_1_);
+    }
+ 
+    public int func_72967_a(float p_72967_1_) {
++      float f = 1.0F - this.field_73011_w.getSunBrightnessFactor(p_72967_1_);
++      return (int)(f * 11);
++   }
++   public float getSunBrightnessFactor(float p_72967_1_) {
+       float f = this.func_72826_c(p_72967_1_);
+       float f1 = 1.0F - (MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.5F);
+       f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
+       f1 = 1.0F - f1;
+       f1 = (float)((double)f1 * (1.0D - (double)(this.func_72867_j(p_72967_1_) * 5.0F) / 16.0D));
+       f1 = (float)((double)f1 * (1.0D - (double)(this.func_72819_i(p_72967_1_) * 5.0F) / 16.0D));
+-      f1 = 1.0F - f1;
+-      return (int)(f1 * 11.0F);
++      return f1;
+    }
+@@ -967,6 +1039,10 @@
+                entity.func_85029_a(crashreportcategory);
+             }
+ 
+            if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
+               LogManager.getLogger().fatal("{}", crashreport.func_71502_e());
+               func_72900_e(entity);
+            } else
+             throw new ReportedException(crashreport);
+          }
+ 
+@@ -1009,11 +1085,17 @@
+             } catch (Throwable throwable1) {
+                CrashReport crashreport1 = CrashReport.func_85055_a(throwable1, "Ticking entity");
+                CrashReportCategory crashreportcategory1 = crashreport1.func_85058_a("Entity being ticked");
+                entity2.func_85029_a(crashreportcategory1);
++               if (net.minecraftforge.common.ForgeConfig.SERVER.removeErroringEntities.get()) {
++                  LogManager.getLogger().fatal("{}", crashreport1.func_71502_e());
++                  func_72900_e(entity2);
++               } else
+                throw new ReportedException(crashreport1);
+             }
+          }
+@@ -1891,7 +2020,7 @@
+    }
+ 
+    public void func_212420_a(Stream<Entity> p_212420_1_) {
+-      p_212420_1_.forEach((p_212418_1_) -> {
++      p_212420_1_.filter(e -> !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(e, this))).forEach((p_212418_1_) -> {
+          this.field_72996_f.add(p_212418_1_);
+          this.func_72923_a(p_212418_1_);
+       });
+@@ -2096,6 +2225,8 @@
+                d2 *= MoreObjects.firstNonNull(p_184150_11_.apply(entityplayer1), 1.0D);
+             }
+ 
++            d2 = net.minecraftforge.common.ForgeHooks.getPlayerVisibilityDistance(entityplayer1, d2, p_184150_9_);
++
+             if ((p_184150_9_ < 0.0D || Math.abs(entityplayer1.field_70163_u - p_184150_3_) < p_184150_9_ * p_184150_9_) && (p_184150_7_ < 0.0D || d1 < d2 * d2) && (d0 == -1.0D || d1 < d0)) {
+                d0 = d1;
+                entityplayer = entityplayer1;
+@@ -2185,12 +2316,17 @@
+       }
+ 
+       if (!this.field_72996_f.contains(p_72897_1_)) {
++         if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_72897_1_, this)))
+          this.field_72996_f.add(p_72897_1_);
+       }
+@@ -2303,16 +2438,15 @@
+    }
+ 
+    public int func_72800_K() {
+-      return 256;
++      return this.field_73011_w.getHeight();
+    }
+@@ -2464,4 +2598,40 @@
+    public abstract RecipeManager func_199532_z();
+ 
+    public abstract NetworkTagManager func_205772_D();
++
++   protected void initCapabilities() {
++      net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
++      this.gatherCapabilities(parent);
++      net.minecraftforge.common.util.WorldCapabilityData data = func_175693_T().func_212426_a(func_201675_m().func_186058_p(), net.minecraftforge.common.util.WorldCapabilityData::new, net.minecraftforge.common.util.WorldCapabilityData.ID);
++      if (data == null) {
++         capabilityData = new net.minecraftforge.common.util.WorldCapabilityData(getCapabilities());
++         func_175693_T().func_212424_a(func_201675_m().func_186058_p(), capabilityData.func_195925_e(), capabilityData);
++      } else {
++         capabilityData = data;
++         capabilityData.setCapabilities(field_73011_w, getCapabilities());
++      }
++   }
++
++   public int countEntities(net.minecraft.entity.EntityClassification type, int max, boolean forSpawnCount) {
++      int ret = 0;
++      for(Entity entity : this.field_72996_f) {
++         if (entity.isCreatureType(type, forSpawnCount)) {
++            if (ret++ > max)
++               return ret;
++         }
++      }
++      return ret;
++   }
+ }

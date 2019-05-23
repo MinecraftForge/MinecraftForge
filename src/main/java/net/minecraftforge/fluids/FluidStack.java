@@ -20,7 +20,7 @@
 package net.minecraftforge.fluids;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.IRegistryDelegate;
 
@@ -42,7 +42,7 @@ public class FluidStack
     private static final Logger LOGGER = LogManager.getLogger();
 
     public int amount;
-    public NBTTagCompound tag;
+    public CompoundNBT tag;
     private IRegistryDelegate<Fluid> fluidDelegate;
 
     public FluidStack(Fluid fluid, int amount)
@@ -61,13 +61,13 @@ public class FluidStack
         this.amount = amount;
     }
 
-    public FluidStack(Fluid fluid, int amount, NBTTagCompound nbt)
+    public FluidStack(Fluid fluid, int amount, CompoundNBT nbt)
     {
         this(fluid, amount);
 
         if (nbt != null)
         {
-            tag = (NBTTagCompound) nbt.copy();
+            tag = (CompoundNBT) nbt.copy();
         }
     }
 
@@ -81,7 +81,7 @@ public class FluidStack
      * will return as null.
      */
     @Nullable
-    public static FluidStack loadFluidStackFromNBT(NBTTagCompound nbt)
+    public static FluidStack loadFluidStackFromNBT(CompoundNBT nbt)
     {
         if (nbt == null)
         {
@@ -106,14 +106,14 @@ public class FluidStack
         return stack;*/
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound nbt)
+    public CompoundNBT writeToNBT(CompoundNBT nbt)
     {
         // TODO fluids bt.setString("FluidName", FluidRegistry.getFluidName(getFluid()));
-        nbt.setInt("Amount", amount);
+        nbt.putInt("Amount", amount);
 
         if (tag != null)
         {
-            nbt.setTag("Tag", tag);
+            nbt.func_218657_a("Tag", tag);
         }
         return nbt;
     }

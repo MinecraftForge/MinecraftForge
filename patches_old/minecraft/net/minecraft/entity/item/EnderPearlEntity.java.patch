@@ -1,0 +1,18 @@
+--- a/net/minecraft/entity/item/EnderPearlEntity.java
++++ b/net/minecraft/entity/item/EnderPearlEntity.java
+@@ -110,12 +114,13 @@
+ 
+    }
+ 
++   @Override
+    @Nullable
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
+       if (this.field_70192_c.field_71093_bK != p_212321_1_) {
+          this.field_70192_c = null;
+       }
+ 
+-      return super.func_212321_a(p_212321_1_);
++      return super.changeDimension(p_212321_1_, teleporter);
+    }
+ }

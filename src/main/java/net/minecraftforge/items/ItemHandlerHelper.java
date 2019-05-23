@@ -19,13 +19,13 @@
 
 package net.minecraftforge.items;
 
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.items.wrapper.PlayerMainInvWrapper;
 
@@ -150,7 +150,7 @@ public class ItemHandlerHelper
     }
 
     /** giveItemToPlayer without preferred slot */
-    public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack) {
+    public static void giveItemToPlayer(PlayerEntity player, @Nonnull ItemStack stack) {
         giveItemToPlayer(player, stack, -1);
     }
 
@@ -161,7 +161,7 @@ public class ItemHandlerHelper
      * @param player The player to give the item to
      * @param stack  The itemstack to insert
      */
-    public static void giveItemToPlayer(EntityPlayer player, @Nonnull ItemStack stack, int preferredSlot)
+    public static void giveItemToPlayer(PlayerEntity player, @Nonnull ItemStack stack, int preferredSlot)
     {
         if (stack.isEmpty()) return;
 
@@ -191,12 +191,11 @@ public class ItemHandlerHelper
         // drop remaining itemstack into the world
         if (!remainder.isEmpty() && !world.isRemote)
         {
-            EntityItem entityitem = new EntityItem(world, player.posX, player.posY + 0.5, player.posZ, remainder);
+            ItemEntity entityitem = new ItemEntity(world, player.posX, player.posY + 0.5, player.posZ, remainder);
             entityitem.setPickupDelay(40);
-            entityitem.motionX = 0;
-            entityitem.motionZ = 0;
+            entityitem.func_213317_d(entityitem.func_213322_ci().func_216372_d(0, 1, 0));
 
-            world.spawnEntity(entityitem);
+            world.func_217376_c(entityitem);
         }
     }
 

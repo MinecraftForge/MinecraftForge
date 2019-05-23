@@ -118,7 +118,7 @@ public class CompoundIngredient extends Ingredient
         @Override
         public CompoundIngredient parse(PacketBuffer buffer)
         {
-            return new CompoundIngredient(Stream.generate(() -> Ingredient.fromBuffer(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
+            return new CompoundIngredient(Stream.generate(() -> Ingredient.read(buffer)).limit(buffer.readVarInt()).collect(Collectors.toList()));
         }
 
         @Override
@@ -131,7 +131,7 @@ public class CompoundIngredient extends Ingredient
         public void write(PacketBuffer buffer, CompoundIngredient ingredient)
         {
             buffer.writeVarInt(ingredient.children.size());
-            ingredient.children.forEach(c -> c.writeToBuffer(buffer));
+            ingredient.children.forEach(c -> c.write(buffer));
         }
 
     }

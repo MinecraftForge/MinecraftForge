@@ -1,16 +1,25 @@
 --- a/net/minecraft/client/renderer/model/ItemOverrideList.java
 +++ b/net/minecraft/client/renderer/model/ItemOverrideList.java
-@@ -25,7 +25,8 @@
+@@ -24,10 +24,17 @@
        this.field_209582_c = Collections.emptyList();
     }
  
--   public ItemOverrideList(ModelBlock p_i49525_1_, Function<ResourceLocation, IUnbakedModel> p_i49525_2_, Function<ResourceLocation, TextureAtlasSprite> p_i49525_3_, List<ItemOverride> p_i49525_4_) {
-+   // FORGE: No reason for first param to be limited to ModelBlock
-+   public ItemOverrideList(IUnbakedModel p_i49525_1_, Function<ResourceLocation, IUnbakedModel> p_i49525_2_, Function<ResourceLocation, TextureAtlasSprite> p_i49525_3_, List<ItemOverride> p_i49525_4_) {
-       this.field_209582_c = p_i49525_4_.stream().map((p_209580_3_) -> {
-          IUnbakedModel iunbakedmodel = p_i49525_2_.apply(p_209580_3_.func_188026_a());
-          return Objects.equals(iunbakedmodel, p_i49525_1_) ? null : iunbakedmodel.func_209558_a(p_i49525_2_, p_i49525_3_, ModelRotation.X0_Y0, false);
-@@ -56,4 +57,8 @@
++   @Deprecated //Forge: Use IUnbakedModel
+    public ItemOverrideList(ModelBakery p_i50984_1_, BlockModel p_i50984_2_, Function<ResourceLocation, IUnbakedModel> p_i50984_3_, List<ItemOverride> p_i50984_4_) {
++      this(p_i50984_1_, (IUnbakedModel)p_i50984_2_, p_i50984_3_, p_i50984_4_);
++   }
++   public ItemOverrideList(ModelBakery p_i50984_1_, IUnbakedModel p_i50984_2_, Function<ResourceLocation, IUnbakedModel> p_i50984_3_, List<ItemOverride> p_i50984_4_) {
++      this(p_i50984_2_, p_i50984_3_, p_i50984_4_, net.minecraftforge.client.model.ModelLoader.defaultTextureGetter());
++   }
++   public ItemOverrideList(IUnbakedModel p_i50984_2_, Function<ResourceLocation, IUnbakedModel> p_i50984_3_, List<ItemOverride> p_i50984_4_, Function<ResourceLocation, net.minecraft.client.renderer.texture.TextureAtlasSprite> spriteGetter) {
+       this.field_209582_c = p_i50984_4_.stream().map((p_217649_3_) -> {
+          IUnbakedModel iunbakedmodel = p_i50984_3_.apply(p_217649_3_.func_188026_a());
+-         return Objects.equals(iunbakedmodel, p_i50984_2_) ? null : p_i50984_1_.func_217845_a(p_217649_3_.func_188026_a(), ModelRotation.X0_Y0);
++         return Objects.equals(iunbakedmodel, p_i50984_2_) ? null : p_i50984_3_.apply(p_217649_3_.func_188026_a()).bake(p_i50984_3_, spriteGetter, ModelRotation.X0_Y0, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
+       }).collect(Collectors.toList());
+       Collections.reverse(this.field_209582_c);
+ 
+@@ -55,4 +62,8 @@
  
        return p_209581_1_;
     }

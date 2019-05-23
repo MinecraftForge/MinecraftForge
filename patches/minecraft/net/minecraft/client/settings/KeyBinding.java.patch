@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/settings/KeyBinding.java
 +++ b/net/minecraft/client/settings/KeyBinding.java
-@@ -12,9 +12,9 @@
+@@ -14,9 +14,9 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -12,7 +12,7 @@
     private static final Set<String> field_151473_c = Sets.newHashSet();
     private static final Map<String, Integer> field_193627_d = Util.func_200696_a(Maps.newHashMap(), (p_205215_0_) -> {
        p_205215_0_.put("key.categories.movement", 1);
-@@ -33,7 +33,7 @@
+@@ -35,7 +35,7 @@
     private int field_151474_i;
  
     public static void func_197981_a(InputMappings.Input p_197981_0_) {
@@ -21,7 +21,7 @@
        if (keybinding != null) {
           ++keybinding.field_151474_i;
        }
-@@ -41,7 +41,7 @@
+@@ -43,7 +43,7 @@
     }
  
     public static void func_197980_a(InputMappings.Input p_197980_0_, boolean p_197980_1_) {
@@ -30,7 +30,7 @@
        if (keybinding != null) {
           keybinding.field_74513_e = p_197980_1_;
        }
-@@ -65,10 +65,10 @@
+@@ -67,10 +67,10 @@
     }
  
     public static void func_74508_b() {
@@ -43,7 +43,7 @@
        }
  
     }
-@@ -83,12 +83,12 @@
+@@ -85,12 +85,12 @@
        this.field_151472_e = this.field_74512_d;
        this.field_151471_f = p_i47675_4_;
        field_74516_a.put(p_i47675_1_, this);
@@ -58,7 +58,7 @@
     }
  
     public String func_151466_e() {
-@@ -122,7 +122,13 @@
+@@ -124,7 +124,13 @@
     }
  
     public int compareTo(KeyBinding p_compareTo_1_) {
@@ -73,7 +73,7 @@
     }
  
     public static Supplier<String> func_193626_b(String p_193626_0_) {
-@@ -133,6 +139,20 @@
+@@ -135,6 +141,20 @@
     }
  
     public boolean func_197983_b(KeyBinding p_197983_1_) {
@@ -94,17 +94,24 @@
        return this.field_74512_d.equals(p_197983_1_.field_74512_d);
     }
  
-@@ -153,14 +173,110 @@
+@@ -155,6 +175,7 @@
     }
  
     public String func_197978_k() {
--      return this.field_74512_d.func_197936_a();
-+      return getKeyModifier().getLocalizedComboName(this.field_74512_d);
++      return getKeyModifier().getLocalizedComboName(this.field_74512_d, () -> {
+       String s = this.field_74512_d.func_197935_d();
+       int i = this.field_74512_d.func_197937_c();
+       String s1 = null;
+@@ -171,13 +192,94 @@
+       }
+ 
+       return s1 == null ? I18n.func_135052_a(s) : s1;
++      });
     }
  
     public boolean func_197985_l() {
 -      return this.field_74512_d.equals(this.field_151472_e);
-+       return getKey().equals(this.field_151472_e) && getKeyModifier() == getKeyModifierDefault();
++      return this.field_74512_d.equals(this.field_151472_e) && getKeyModifier() == getKeyModifierDefault();
     }
  
     public String func_197982_m() {
@@ -112,7 +119,6 @@
     }
 +
 +   /****************** Forge Start *****************************/
-+
 +   private net.minecraftforge.client.settings.KeyModifier keyModifierDefault = net.minecraftforge.client.settings.KeyModifier.NONE;
 +   private net.minecraftforge.client.settings.KeyModifier keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
 +   private net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext = net.minecraftforge.client.settings.KeyConflictContext.UNIVERSAL;
@@ -120,32 +126,28 @@
 +   /**
 +    * Convenience constructor for creating KeyBindings with keyConflictContext set.
 +    */
-+   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, final InputMappings.Type inputType, final int keyCode, String category)
-+   {
++   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, final InputMappings.Type inputType, final int keyCode, String category) {
 +      this(description, keyConflictContext, inputType.func_197944_a(keyCode), category);
 +   }
 +
 +   /**
 +    * Convenience constructor for creating KeyBindings with keyConflictContext set.
 +    */
-+   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, InputMappings.Input keyCode, String category)
-+   {
-+       this(description, keyConflictContext, net.minecraftforge.client.settings.KeyModifier.NONE, keyCode, category);
++   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, InputMappings.Input keyCode, String category) {
++      this(description, keyConflictContext, net.minecraftforge.client.settings.KeyModifier.NONE, keyCode, category);
 +   }
 +
 +   /**
 +    * Convenience constructor for creating KeyBindings with keyConflictContext and keyModifier set.
 +    */
-+   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, final InputMappings.Type inputType, final int keyCode, String category)
-+   {
++   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, final InputMappings.Type inputType, final int keyCode, String category) {
 +      this(description, keyConflictContext, keyModifier, inputType.func_197944_a(keyCode), category);
 +   }
 +
 +   /**
 +    * Convenience constructor for creating KeyBindings with keyConflictContext and keyModifier set.
 +    */
-+   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, InputMappings.Input keyCode, String category)
-+   {
++   public KeyBinding(String description, net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext, net.minecraftforge.client.settings.KeyModifier keyModifier, InputMappings.Input keyCode, String category) {
 +       this.field_74515_c = description;
 +       this.field_74512_d = keyCode;
 +       this.field_151472_e = keyCode;
@@ -154,56 +156,45 @@
 +       this.keyModifier = keyModifier;
 +       this.keyModifierDefault = keyModifier;
 +       if (this.keyModifier.matches(keyCode))
-+       {
-+           this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
-+       }
++          this.keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
 +       field_74516_a.put(description, this);
 +       field_74514_b.addKey(keyCode, this);
 +       field_151473_c.add(category);
 +   }
 +
 +   @Override
-+   public InputMappings.Input getKey()
-+   {
++   public InputMappings.Input getKey() {
 +      return this.field_74512_d;
 +   }
 +
 +   @Override
-+   public void setKeyConflictContext(net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext)
-+   {
-+       this.keyConflictContext = keyConflictContext;
++   public void setKeyConflictContext(net.minecraftforge.client.settings.IKeyConflictContext keyConflictContext) {
++      this.keyConflictContext = keyConflictContext;
 +   }
 +
 +   @Override
-+   public net.minecraftforge.client.settings.IKeyConflictContext getKeyConflictContext()
-+   {
-+       return keyConflictContext;
++   public net.minecraftforge.client.settings.IKeyConflictContext getKeyConflictContext() {
++      return keyConflictContext;
 +   }
 +
 +   @Override
-+   public net.minecraftforge.client.settings.KeyModifier getKeyModifierDefault()
-+   {
-+       return keyModifierDefault;
++   public net.minecraftforge.client.settings.KeyModifier getKeyModifierDefault() {
++      return keyModifierDefault;
 +   }
 +
 +   @Override
-+   public net.minecraftforge.client.settings.KeyModifier getKeyModifier()
-+   {
-+       return keyModifier;
++   public net.minecraftforge.client.settings.KeyModifier getKeyModifier() {
++      return keyModifier;
 +   }
 +
 +   @Override
-+   public void setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier keyModifier, InputMappings.Input keyCode)
-+   {
-+       this.field_74512_d = keyCode;
-+       if (keyModifier.matches(keyCode))
-+       {
-+           keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
-+       }
-+       field_74514_b.removeKey(this);
-+       this.keyModifier = keyModifier;
-+       field_74514_b.addKey(keyCode, this);
++   public void setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier keyModifier, InputMappings.Input keyCode) {
++      this.field_74512_d = keyCode;
++      if (keyModifier.matches(keyCode))
++         keyModifier = net.minecraftforge.client.settings.KeyModifier.NONE;
++      field_74514_b.removeKey(this);
++      this.keyModifier = keyModifier;
++      field_74514_b.addKey(keyCode, this);
 +   }
-+
 +   /****************** Forge End *****************************/
  }

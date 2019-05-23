@@ -20,9 +20,9 @@
 package net.minecraftforge.server.permission.context;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 
@@ -31,10 +31,10 @@ import javax.annotation.Nullable;
 public class BlockPosContext extends PlayerContext
 {
     private final BlockPos blockPos;
-    private IBlockState blockState;
-    private EnumFacing facing;
+    private BlockState blockState;
+    private Direction facing;
 
-    public BlockPosContext(EntityPlayer ep, BlockPos pos, @Nullable IBlockState state, @Nullable EnumFacing f)
+    public BlockPosContext(PlayerEntity ep, BlockPos pos, @Nullable BlockState state, @Nullable Direction f)
     {
         super(ep);
         blockPos = Preconditions.checkNotNull(pos, "BlockPos can't be null in BlockPosContext!");
@@ -42,7 +42,7 @@ public class BlockPosContext extends PlayerContext
         facing = f;
     }
 
-    public BlockPosContext(EntityPlayer ep, ChunkPos pos)
+    public BlockPosContext(PlayerEntity ep, ChunkPos pos)
     {
         this(ep, new BlockPos(pos.getXStart() + 8, 0, pos.getZStart() + 8), null, null);
     }

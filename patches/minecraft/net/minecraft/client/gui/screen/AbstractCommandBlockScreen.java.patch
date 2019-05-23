@@ -1,0 +1,29 @@
+--- a/net/minecraft/client/gui/screen/AbstractCommandBlockScreen.java
++++ b/net/minecraft/client/gui/screen/AbstractCommandBlockScreen.java
+@@ -86,7 +86,7 @@
+       this.field_195239_f.func_146180_a("-");
+       this.children.add(this.field_195239_f);
+       this.func_212928_a(this.field_195237_a);
+-      this.field_195237_a.func_146195_b(true);
++      this.field_195237_a.setFocused(true);
+       this.func_209106_o();
+    }
+ 
+@@ -247,7 +247,7 @@
+ 
+       if (!list.isEmpty()) {
+          this.field_209111_t.addAll(list);
+-         this.field_209112_u = MathHelper.func_76125_a(this.field_195237_a.func_195611_j(suggestioncontext.startPos), 0, this.field_195237_a.func_195611_j(0) + this.field_195237_a.func_146200_o() - i);
++         this.field_209112_u = MathHelper.func_76125_a(this.field_195237_a.func_195611_j(suggestioncontext.startPos), 0, this.field_195237_a.func_195611_j(0) + this.field_195237_a.getWidth() - i);
+          this.field_209113_v = i;
+       }
+ 
+@@ -290,7 +290,7 @@
+                i = Math.max(i, this.font.func_78256_a(suggestion.getText()));
+             }
+ 
+-            int j = MathHelper.func_76125_a(this.field_195237_a.func_195611_j(suggestions.getRange().getStart()), 0, this.field_195237_a.func_195611_j(0) + this.field_195237_a.func_146200_o() - i);
++            int j = MathHelper.func_76125_a(this.field_195237_a.func_195611_j(suggestions.getRange().getStart()), 0, this.field_195237_a.func_195611_j(0) + this.field_195237_a.getWidth() - i);
+             this.field_209116_y = new AbstractCommandBlockScreen.SuggestionsList(j, 72, i, suggestions);
+          }
+       }

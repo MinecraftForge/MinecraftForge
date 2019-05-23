@@ -1,0 +1,19 @@
+--- a/net/minecraft/block/OreBlock.java
++++ b/net/minecraft/block/OreBlock.java
+@@ -29,12 +29,10 @@
+ 
+    public void func_220062_a(BlockState p_220062_1_, World p_220062_2_, BlockPos p_220062_3_, ItemStack p_220062_4_) {
+       super.func_220062_a(p_220062_1_, p_220062_2_, p_220062_3_, p_220062_4_);
+-      if (EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_220062_4_) == 0) {
+-         int i = this.func_220281_a(p_220062_2_.field_73012_v);
+-         if (i > 0) {
+-            this.func_180637_b(p_220062_2_, p_220062_3_, i);
+-         }
+-      }
++   }
+ 
++   @Override
++   public int getExpDrop(BlockState state, net.minecraft.world.IWorldReader reader, BlockPos pos, int fortune, int silktouch) {
++      return silktouch == 0 ? this.func_220281_a(RANDOM) : 0;
+    }
+ }

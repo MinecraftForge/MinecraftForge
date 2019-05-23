@@ -28,7 +28,7 @@ import net.minecraft.client.renderer.model.ItemOverride;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -57,7 +57,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
 
     public AnimationItemOverrideList(IUnbakedModel model, IModelState state, VertexFormat format, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, List<ItemOverride> overrides)
     {
-        super(model, ModelLoader.defaultModelGetter(), bakedTextureGetter, overrides);
+        super(model, ModelLoader.defaultModelGetter(), overrides, bakedTextureGetter);
         this.model = model;
         this.state = state;
         this.format = format;
@@ -65,7 +65,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
     }
 
     @Override
-    public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+    public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable LivingEntity entity)
     {
         return stack.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
             .map(asm ->
@@ -83,7 +83,7 @@ public final class AnimationItemOverrideList extends ItemOverrideList
                 return asm.apply(Animation.getWorldTime(world, Animation.getPartialTickTime())).getLeft();
             })
             // TODO where should uvlock data come from?
-            .map(state -> model.bake(ModelLoader.defaultModelGetter(), bakedTextureGetter, new ModelStateComposition(state, this.state), false, format))
+            .map(state -> model.bake(ModelLoader.defaultModelGetter(), bakedTextureGetter, new ModelStateComposition(state, this.state), format))
             .orElseGet(() -> super.getModelWithOverrides(originalModel, stack, world, entity));
     }
 }

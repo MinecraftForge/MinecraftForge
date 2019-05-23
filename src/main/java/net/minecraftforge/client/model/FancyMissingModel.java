@@ -26,16 +26,13 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.model.*;
+import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.model.IModelState;
@@ -100,18 +97,19 @@ final class FancyMissingModel implements IUnbakedModel
     }
 
     @Override
-    public Collection<ResourceLocation> getOverrideLocations()
+    public Collection<ResourceLocation> getDependencies()
     {
         return Collections.emptyList();
     }
 
+    @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
+    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
-        IBakedModel bigMissing = missingModel.bake(modelGetter, bakedTextureGetter, state, uvlock, format);
-        IModelState smallState = new ModelStateComposition(state, smallTransformation);
-        IBakedModel smallMissing = missingModel.bake(modelGetter, bakedTextureGetter, smallState, uvlock, format);
-        return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(format), message, bakedTextureGetter.apply(font2));
+        IBakedModel bigMissing = missingModel.bake(modelGetter, spriteGetter, sprite, format);
+        ModelStateComposition smallState = new ModelStateComposition(sprite.getState(), smallTransformation);
+        IBakedModel smallMissing = missingModel.bake(modelGetter, spriteGetter, smallState, format);
+        return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(format), message, spriteGetter.apply(font2));
     }
 
     static final class BakedModel implements IBakedModel
@@ -145,7 +143,7 @@ final class FancyMissingModel implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
         {
             if (side == null)
             {

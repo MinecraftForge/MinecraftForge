@@ -1,0 +1,10 @@
+--- a/net/minecraft/item/crafting/SmokingRecipe.java
++++ b/net/minecraft/item/crafting/SmokingRecipe.java
+@@ -11,7 +11,6 @@
+       super(IRecipeType.field_222152_d, p_i50022_1_, p_i50022_2_, p_i50022_3_, p_i50022_4_, p_i50022_5_, p_i50022_6_);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public ItemStack func_222128_h() {
+       return new ItemStack(Blocks.field_222423_lL);
+    }

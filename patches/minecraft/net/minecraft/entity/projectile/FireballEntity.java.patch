@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/FireballEntity.java
++++ b/net/minecraft/entity/projectile/FireballEntity.java
+@@ -36,7 +36,7 @@
+             this.func_174815_a(this.field_70235_a, entity);
+          }
+ 
+-         boolean flag = this.field_70170_p.func_82736_K().func_82766_b("mobGriefing");
++         boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this.field_70235_a);
+          this.field_70170_p.func_217398_a((Entity)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, (float)this.field_92057_e, flag, flag ? Explosion.Mode.DESTROY : Explosion.Mode.NONE);
+          this.func_70106_y();
+       }

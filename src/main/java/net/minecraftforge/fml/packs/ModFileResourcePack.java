@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.packs;
 
-import net.minecraft.resources.AbstractResourcePack;
+import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
@@ -52,7 +52,7 @@ import org.apache.logging.log4j.Logger;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
-public class ModFileResourcePack extends AbstractResourcePack
+public class ModFileResourcePack extends ResourcePack
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private final ModFile modFile;

@@ -20,16 +20,16 @@
 package net.minecraftforge.items;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.tileentity.HopperTileEntity;
 import net.minecraftforge.items.wrapper.InvWrapper;
 
 import javax.annotation.Nonnull;
 
 public class VanillaHopperItemHandler extends InvWrapper
 {
-    private final TileEntityHopper hopper;
+    private final HopperTileEntity hopper;
 
-    public VanillaHopperItemHandler(TileEntityHopper hopper)
+    public VanillaHopperItemHandler(HopperTileEntity hopper)
     {
         super(hopper);
         this.hopper = hopper;

@@ -1,0 +1,50 @@
+--- a/net/minecraft/inventory/container/RepairContainer.java
++++ b/net/minecraft/inventory/container/RepairContainer.java
+@@ -63,6 +63,8 @@
+                p_190901_1_.func_82242_a(-RepairContainer.this.field_82854_e.func_221495_b());
+             }
+ 
++            float breakChance = net.minecraftforge.common.ForgeHooks.onAnvilRepair(p_190901_1_, p_190901_2_, RepairContainer.this.field_82853_g.func_70301_a(0), RepairContainer.this.field_82853_g.func_70301_a(1));
++
+             RepairContainer.this.field_82853_g.func_70299_a(0, ItemStack.field_190927_a);
+             if (RepairContainer.this.field_82856_l > 0) {
+                ItemStack itemstack = RepairContainer.this.field_82853_g.func_70301_a(1);
+@@ -79,7 +81,7 @@
+             RepairContainer.this.field_82854_e.func_221494_a(0);
+             p_i50102_3_.func_221486_a((p_216931_1_, p_216931_2_) -> {
+                BlockState blockstate = p_216931_1_.func_180495_p(p_216931_2_);
+-               if (!p_190901_1_.field_71075_bZ.field_75098_d && blockstate.func_203425_a(BlockTags.field_200572_k) && p_190901_1_.func_70681_au().nextFloat() < 0.12F) {
++               if (!p_190901_1_.field_71075_bZ.field_75098_d && blockstate.func_203425_a(BlockTags.field_200572_k) && p_190901_1_.func_70681_au().nextFloat() < breakChance) {
+                   BlockState blockstate1 = AnvilBlock.func_196433_f(blockstate);
+                   if (blockstate1 == null) {
+                      p_216931_1_.func_217377_a(p_216931_2_, false);
+@@ -132,8 +134,11 @@
+          Map<Enchantment, Integer> map = EnchantmentHelper.func_82781_a(itemstack1);
+          j = j + itemstack.func_82838_A() + (itemstack2.func_190926_b() ? 0 : itemstack2.func_82838_A());
+          this.field_82856_l = 0;
++         boolean flag = false;
++
+          if (!itemstack2.func_190926_b()) {
+-            boolean flag = itemstack2.func_77973_b() == Items.field_151134_bR && !EnchantedBookItem.func_92110_g(itemstack2).isEmpty();
++            if (!net.minecraftforge.common.ForgeHooks.onAnvilChange(this, itemstack, itemstack2, field_82852_f, field_82857_m, j)) return;
++            flag = itemstack2.func_77973_b() == Items.field_151134_bR && !EnchantedBookItem.func_92110_g(itemstack2).isEmpty();
+             if (itemstack1.func_77984_f() && itemstack1.func_77973_b().func_82789_a(itemstack, itemstack2)) {
+                int l2 = Math.min(itemstack1.func_77952_i(), itemstack1.func_77958_k() / 4);
+                if (l2 <= 0) {
+@@ -250,6 +255,7 @@
+             i += k;
+             itemstack1.func_200302_a(new StringTextComponent(this.field_82857_m));
+          }
++         if (flag && !itemstack1.isBookEnchantable(itemstack2)) itemstack1 = ItemStack.field_190927_a;
+ 
+          this.field_82854_e.func_221494_a(j + i);
+          if (i <= 0) {
+@@ -354,4 +360,8 @@
+    public int func_216976_f() {
+       return this.field_82854_e.func_221495_b();
+    }
++
++   public void setMaximumCost(int value) {
++      this.field_82854_e.func_221494_a(value);
++   }
+ }

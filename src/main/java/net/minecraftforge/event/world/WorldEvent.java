@@ -20,22 +20,16 @@
 package net.minecraftforge.event.world;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.EntityClassification;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.IProgressUpdate;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -131,26 +125,22 @@ public class WorldEvent extends Event
     @net.minecraftforge.eventbus.api.Cancelable
     public static class PotentialSpawns extends WorldEvent
     {
-        private final EnumCreatureType type;
+        private final EntityClassification type;
         private final BlockPos pos;
         private final List<SpawnListEntry> list;
 
-        public PotentialSpawns(IWorld world, EnumCreatureType type, BlockPos pos, List<SpawnListEntry> oldList)
+        public PotentialSpawns(IWorld world, EntityClassification type, BlockPos pos, List<SpawnListEntry> oldList)
         {
             super(world);
             this.pos = pos;
             this.type = type;
             if (oldList != null)
-            {
                 this.list = new ArrayList<SpawnListEntry>(oldList);
-            }
             else
-            {
                 this.list = new ArrayList<SpawnListEntry>();
-            }
         }
 
-        public EnumCreatureType getType()
+        public EntityClassification getType()
         {
             return type;
         }

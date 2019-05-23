@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/GlowstoneBlobFeature.java
++++ b/net/minecraft/world/gen/feature/GlowstoneBlobFeature.java
+@@ -25,7 +25,7 @@
+ 
+          for(int i = 0; i < 1500; ++i) {
+             BlockPos blockpos = p_212245_4_.func_177982_a(p_212245_3_.nextInt(8) - p_212245_3_.nextInt(8), -p_212245_3_.nextInt(12), p_212245_3_.nextInt(8) - p_212245_3_.nextInt(8));
+-            if (p_212245_1_.func_180495_p(blockpos).func_196958_f()) {
++            if (p_212245_1_.func_180495_p(blockpos).isAir(p_212245_1_, blockpos)) {
+                int j = 0;
+ 
+                for(Direction direction : Direction.values()) {

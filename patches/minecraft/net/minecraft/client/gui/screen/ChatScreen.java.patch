@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/ChatScreen.java
++++ b/net/minecraft/client/gui/screen/ChatScreen.java
+@@ -351,7 +351,7 @@
+ 
+    public void render(int p_render_1_, int p_render_2_, float p_render_3_) {
+       this.setFocused(this.field_146415_a);
+-      this.field_146415_a.func_146195_b(true);
++      this.field_146415_a.setFocused(true);
+       fill(2, this.height - 14, this.width - 2, this.height - 2, this.minecraft.field_71474_y.func_216839_a(Integer.MIN_VALUE));
+       this.field_146415_a.render(p_render_1_, p_render_2_, p_render_3_);
+       if (this.field_195139_w != null) {

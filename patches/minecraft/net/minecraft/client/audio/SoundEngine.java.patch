@@ -1,0 +1,49 @@
+--- a/net/minecraft/client/audio/SoundEngine.java
++++ b/net/minecraft/client/audio/SoundEngine.java
+@@ -53,6 +53,7 @@
+       this.field_148622_c = p_i50892_1_;
+       this.field_148619_d = p_i50892_2_;
+       this.field_217939_i = new AudioStreamManager(p_i50892_3_);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundSetupEvent(this));
+    }
+ 
+    public void func_148596_a() {
+@@ -68,6 +69,7 @@
+ 
+       this.func_148613_b();
+       this.func_148608_i();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.SoundLoadEvent(this));
+    }
+ 
+    private synchronized void func_148608_i() {
+@@ -246,6 +248,8 @@
+ 
+    public void func_148611_c(ISound p_148611_1_) {
+       if (this.field_148617_f) {
++         p_148611_1_ = net.minecraftforge.client.ForgeHooksClient.playSound(this, p_148611_1_);
++         if (p_148611_1_ == null) return;
+          SoundEventAccessor soundeventaccessor = p_148611_1_.func_184366_a(this.field_148622_c);
+          ResourceLocation resourcelocation = p_148611_1_.func_147650_b();
+          if (soundeventaccessor == null) {
+@@ -300,11 +304,13 @@
+                         p_217930_7_.func_216420_a(vec3d);
+                         p_217930_7_.func_216432_b(flag);
+                      });
++                     final ISound isound = p_148611_1_;
+                      if (!sound.func_188723_h()) {
+                         this.field_217939_i.func_217909_a(sound.func_188721_b()).thenAccept((p_217934_1_) -> {
+                            channelmanager$entry.func_217888_a((p_217925_1_) -> {
+                               p_217925_1_.func_216429_a(p_217934_1_);
+                               p_217925_1_.func_216438_c();
++                              net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlaySoundSourceEvent(this, isound, p_217925_1_));
+                            });
+                         });
+                      } else {
+@@ -312,6 +318,7 @@
+                            channelmanager$entry.func_217888_a((p_217935_1_) -> {
+                               p_217935_1_.func_216433_a(p_217928_1_);
+                               p_217935_1_.func_216438_c();
++                              net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.sound.PlayStreamingSourceEvent(this, isound, p_217935_1_));
+                            });
+                         });
+                      }

@@ -24,29 +24,26 @@ import javax.annotation.Nullable;
 
 import com.google.common.base.Preconditions;
 import net.minecraft.block.Block;
-import net.minecraft.block.IBucketPickupHandler;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 import net.minecraftforge.fluids.capability.wrappers.BlockWrapper;
-import net.minecraftforge.fluids.capability.wrappers.FluidBlockWrapper;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -70,7 +67,7 @@ public class FluidUtil
      * @param side   The side of the block to interact with. May be null.
      * @return true if the interaction succeeded and updated the item held by the player, false otherwise.
      */
-    public static boolean interactWithFluidHandler(@Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull World world, @Nonnull BlockPos pos, @Nullable EnumFacing side)
+    public static boolean interactWithFluidHandler(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull World world, @Nonnull BlockPos pos, @Nullable Direction side)
     {
         Preconditions.checkNotNull(world);
         Preconditions.checkNotNull(pos);
@@ -89,7 +86,7 @@ public class FluidUtil
      * @param handler The fluid handler.
      * @return true if the interaction succeeded and updated the item held by the player, false otherwise.
      */
-    public static boolean interactWithFluidHandler(@Nonnull EntityPlayer player, @Nonnull EnumHand hand, @Nonnull IFluidHandler handler)
+    public static boolean interactWithFluidHandler(@Nonnull PlayerEntity player, @Nonnull Hand hand, @Nonnull IFluidHandler handler)
     {
         Preconditions.checkNotNull(player);
         Preconditions.checkNotNull(hand);
@@ -132,7 +129,7 @@ public class FluidUtil
      * @return a {@link FluidActionResult} holding the filled container if successful.
      */
     @Nonnull
-    public static FluidActionResult tryFillContainer(@Nonnull ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable EntityPlayer player, boolean doFill)
+    public static FluidActionResult tryFillContainer(@Nonnull ItemStack container, IFluidHandler fluidSource, int maxAmount, @Nullable PlayerEntity player, boolean doFill)
     {
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         return getFluidHandler(containerCopy)
@@ -176,7 +173,7 @@ public class FluidUtil
      *         NOTE If the container is consumable, the empty container will be null on success.
      */
     @Nonnull
-    public static FluidActionResult tryEmptyContainer(@Nonnull ItemStack container, IFluidHandler fluidDestination, int maxAmount, @Nullable EntityPlayer player, boolean doDrain)
+    public static FluidActionResult tryEmptyContainer(@Nonnull ItemStack container, IFluidHandler fluidDestination, int maxAmount, @Nullable PlayerEntity player, boolean doDrain)
     {
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         return getFluidHandler(containerCopy)
@@ -228,7 +225,7 @@ public class FluidUtil
      * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
      */
     @Nonnull
-    public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player, boolean doFill)
+    public static FluidActionResult tryFillContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidSource, IItemHandler inventory, int maxAmount, @Nullable PlayerEntity player, boolean doFill)
     {
         if (container.isEmpty())
         {
@@ -296,7 +293,7 @@ public class FluidUtil
      * @return a {@link FluidActionResult} holding the result and the resulting container. The resulting container is empty on failure.
      */
     @Nonnull
-    public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable EntityPlayer player, boolean doDrain)
+    public static FluidActionResult tryEmptyContainerAndStow(@Nonnull ItemStack container, IFluidHandler fluidDestination, IItemHandler inventory, int maxAmount, @Nullable PlayerEntity player, boolean doDrain)
     {
         if (container.isEmpty())
         {
@@ -456,9 +453,9 @@ public class FluidUtil
     /**
      * Helper method to get an IFluidHandler for at a block position.
      */
-    public static LazyOptional<IFluidHandler> getFluidHandler(World world, BlockPos blockPos, @Nullable EnumFacing side)
+    public static LazyOptional<IFluidHandler> getFluidHandler(World world, BlockPos blockPos, @Nullable Direction side)
     {
-        IBlockState state = world.getBlockState(blockPos);
+        BlockState state = world.getBlockState(blockPos);
         Block block = state.getBlock();
 
         if (block.hasTileEntity(state))
@@ -493,14 +490,14 @@ public class FluidUtil
      * @return a {@link FluidActionResult} holding the result and the resulting container.
      */
     @Nonnull
-    public static FluidActionResult tryPickUpFluid(@Nonnull ItemStack emptyContainer, @Nullable EntityPlayer playerIn, World worldIn, BlockPos pos, EnumFacing side)
+    public static FluidActionResult tryPickUpFluid(@Nonnull ItemStack emptyContainer, @Nullable PlayerEntity playerIn, World worldIn, BlockPos pos, Direction side)
     {
         if (emptyContainer.isEmpty() || worldIn == null || pos == null)
         {
             return FluidActionResult.FAILURE;
         }
 
-        IBlockState state = worldIn.getBlockState(pos);
+        BlockState state = worldIn.getBlockState(pos);
         Block block = state.getBlock();
 
         /* TODO fluid blocks?
@@ -521,17 +518,18 @@ public class FluidUtil
      *
      * @param player    Player who places the fluid. May be null for blocks like dispensers.
      * @param world     World to place the fluid in
+     * @param hand 
      * @param pos       The position in the world to place the fluid block
      * @param container The fluid container holding the fluidStack to place
      * @param resource  The fluidStack to place
      * @return the container's ItemStack with the remaining amount of fluid if the placement was successful, null otherwise
      */
     @Nonnull
-    public static FluidActionResult tryPlaceFluid(@Nullable EntityPlayer player, World world, BlockPos pos, @Nonnull ItemStack container, FluidStack resource)
+    public static FluidActionResult tryPlaceFluid(@Nullable PlayerEntity player, World world, Hand hand, BlockPos pos, @Nonnull ItemStack container, FluidStack resource)
     {
         ItemStack containerCopy = ItemHandlerHelper.copyStackWithSize(container, 1); // do not modify the input
         return getFluidHandler(containerCopy)
-            .filter(handler -> tryPlaceFluid(player, world, pos, handler, resource))
+            .filter(handler -> tryPlaceFluid(player, world, hand, pos, handler, resource))
             .map(IFluidHandlerItem::getContainer)
             .map(FluidActionResult::new)
             .orElse(FluidActionResult.FAILURE);
@@ -547,12 +545,13 @@ public class FluidUtil
      *
      * @param player      Player who places the fluid. May be null for blocks like dispensers.
      * @param world       World to place the fluid in
+     * @param hand 
      * @param pos         The position in the world to place the fluid block
      * @param fluidSource The fluid source holding the fluidStack to place
      * @param resource    The fluidStack to place.
      * @return true if the placement was successful, false otherwise
      */
-    public static boolean tryPlaceFluid(@Nullable EntityPlayer player, World world, BlockPos pos, IFluidHandler fluidSource, FluidStack resource)
+    public static boolean tryPlaceFluid(@Nullable PlayerEntity player, World world, Hand hand, BlockPos pos, IFluidHandler fluidSource, FluidStack resource)
     {
         if (world == null || resource == null || pos == null)
         {
@@ -570,10 +569,10 @@ public class FluidUtil
             return false;
         }
 
-        BlockItemUseContext context = new BlockItemUseContext(world, player, ItemStack.EMPTY, pos, EnumFacing.UP, 0, 0, 0); //TODO: This neds proper context...
+        BlockItemUseContext context = new BlockItemUseContext(new ItemUseContext(player, hand, new BlockRayTraceResult(Vec3d.ZERO, Direction.UP, pos, false))); //TODO: This neds proper context...
 
         // check that we can place the fluid at the destination
-        IBlockState destBlockState = world.getBlockState(pos);
+        BlockState destBlockState = world.getBlockState(pos);
         Material destMaterial = destBlockState.getMaterial();
         boolean isDestNonSolid = !destMaterial.isSolid();
         boolean isDestReplaceable = destBlockState.isReplaceable(context);
@@ -642,7 +641,7 @@ public class FluidUtil
     {
         if (!world.isRemote)
         {
-            IBlockState destBlockState = world.getBlockState(pos);
+            BlockState destBlockState = world.getBlockState(pos);
             Material destMaterial = destBlockState.getMaterial();
             boolean isDestNonSolid = !destMaterial.isSolid();
             boolean isDestReplaceable = false; //TODO: Needs BlockItemUseContext destBlockState.getBlock().isReplaceable(world, pos);

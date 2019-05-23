@@ -1,18 +1,17 @@
 --- a/net/minecraft/tags/Tag.java
 +++ b/net/minecraft/tags/Tag.java
-@@ -151,9 +151,11 @@
-                this.func_200159_a(new ResourceLocation(s.substring(1)));
-             }
+@@ -147,8 +147,10 @@
           }
-+         net.minecraftforge.common.ForgeHooks.deserializeTagAdditions(this, p_200158_1_, p_200158_2_, p_200158_3_);
  
+          this.field_200052_a.addAll(list);
++         net.minecraftforge.common.ForgeHooks.deserializeTagAdditions(this, p_219783_1_, p_219783_2_);
           return this;
        }
 +      public Tag.Builder<T> remove(Tag.ITagEntry<T> e) { this.field_200052_a.remove(e); return this; }
     }
  
     public interface ITagEntry<T> {
-@@ -192,6 +194,8 @@
+@@ -187,6 +189,8 @@
        public Collection<T> func_200578_a() {
           return this.field_200165_a;
        }
@@ -21,7 +20,7 @@
     }
  
     public static class TagEntry<T> implements Tag.ITagEntry<T> {
-@@ -238,5 +242,7 @@
+@@ -233,5 +237,7 @@
        public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
           p_200576_1_.add("#" + this.func_200577_a());
        }

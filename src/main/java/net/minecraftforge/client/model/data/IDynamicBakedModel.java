@@ -25,10 +25,10 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /**
  * Convenience interface with default implementation of {@link IBakedModel#getQuads(net.minecraft.block.state.IBlockState, net.minecraft.util.EnumFacing, java.util.Random)}.
@@ -36,7 +36,7 @@ import net.minecraft.util.EnumFacing;
 public interface IDynamicBakedModel extends IBakedModel
 {
     @Override
-    default @Nonnull List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, @Nonnull Random rand)
+    default @Nonnull List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand)
     {
         return getQuads(state, side, rand, EmptyModelData.INSTANCE);
     }
@@ -44,5 +44,5 @@ public interface IDynamicBakedModel extends IBakedModel
     // Force this to be overriden otherwise this introduces a default cycle between the two overloads.
     @Override
     @Nonnull
-    List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, @Nonnull Random rand, @Nonnull IModelData extraData);
+    List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData);
 }

@@ -21,8 +21,7 @@ package net.minecraftforge.fml.client.config;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.BufferBuilder;
@@ -33,6 +32,8 @@ import net.minecraftforge.client.event.RenderTooltipEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.platform.GlStateManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -427,7 +428,7 @@ public class GuiUtils
         float endGreen   = (float)(endColor   >>  8 & 255) / 255.0F;
         float endBlue    = (float)(endColor         & 255) / 255.0F;
 
-        GlStateManager.disableTexture2D();
+        GlStateManager.disableTexture();
         GlStateManager.enableBlend();
         GlStateManager.disableAlphaTest();
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
@@ -445,7 +446,7 @@ public class GuiUtils
         GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.disableBlend();
         GlStateManager.enableAlphaTest();
-        GlStateManager.enableTexture2D();
+        GlStateManager.enableTexture();
     }
 
     public static void drawInscribedRect(int x, int y, int boundsWidth, int boundsHeight, int rectWidth, int rectHeight)
@@ -465,6 +466,6 @@ public class GuiUtils
             if (centerX) x += (w - boundsWidth) / 2;
         }
 
-        Gui.drawScaledCustomSizeModalRect(x, y, 0, 0, rectWidth, rectHeight, boundsWidth, boundsHeight, rectWidth, rectHeight);
+        AbstractGui.blit(x, y, 0, 0, rectWidth, rectHeight, boundsWidth, boundsHeight, rectWidth, rectHeight);
     }
 }

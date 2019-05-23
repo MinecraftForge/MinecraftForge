@@ -1,0 +1,28 @@
+--- a/net/minecraft/block/ComparatorBlock.java
++++ b/net/minecraft/block/ComparatorBlock.java
+@@ -66,7 +66,7 @@
+          blockstate = p_176397_1_.func_180495_p(blockpos);
+          if (blockstate.func_185912_n()) {
+             i = blockstate.func_185888_a(p_176397_1_, blockpos);
+-         } else if (blockstate.func_196958_f()) {
++         } else if (blockstate.isAir(p_176397_1_, blockpos)) {
+             ItemFrameEntity itemframeentity = this.func_176461_a(p_176397_1_, direction, blockpos);
+             if (itemframeentity != null) {
+                i = itemframeentity.func_174866_q();
+@@ -152,4 +152,16 @@
+    protected void func_206840_a(StateContainer.Builder<Block, BlockState> p_206840_1_) {
+       p_206840_1_.func_206894_a(field_185512_D, field_176463_b, field_196348_c);
+    }
++
++   @Override
++   public boolean getWeakChanges(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos) {
++      return true;
++   }
++
++   @Override
++   public void onNeighborChange(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, BlockPos neighbor) {
++      if (pos.func_177956_o() == neighbor.func_177956_o() && world instanceof World && !((World)world).func_201670_d()) {
++         state.func_215697_a((World)world, pos, world.func_180495_p(neighbor).func_177230_c(), neighbor, false);
++      }
++   }
+ }

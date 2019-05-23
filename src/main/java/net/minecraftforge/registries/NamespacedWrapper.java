@@ -23,29 +23,26 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
-
 import javax.annotation.Nullable;
-
-import org.apache.commons.lang3.Validate;
-
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.RegistryNamespaced;
+import net.minecraft.util.registry.SimpleRegistry;
+import org.apache.commons.lang3.Validate;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespaced<V> implements ILockableRegistry
+class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry<T> implements ILockableRegistry
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private boolean locked = false;
-    private ForgeRegistry<V> delegate;
+    private ForgeRegistry<T> delegate;
 
-    public NamespacedWrapper(ForgeRegistry<V> owner)
+    public NamespacedWrapper(ForgeRegistry<T> owner)
     {
         this.delegate = owner;
     }
 
     @Override
-    public void register(int id, ResourceLocation key, V value)
+    public <V extends T> V func_218382_a(int id, ResourceLocation key, V value)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -58,66 +55,66 @@ class NamespacedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamesp
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
             LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
+        return value;
     }
 
     @Override
-    public void put(ResourceLocation key, V value)
+    public <R extends T> R func_218381_a(ResourceLocation key, R value)
     {
-        register(-1, key, value);
+        return func_218382_a(-1, key, value);
     }
-
 
     // Reading Functions
     @Override
     @Nullable
-    public V func_212608_b(@Nullable ResourceLocation name)
+    public T getOrDefault(@Nullable ResourceLocation name)
     {
         return this.delegate.getRaw(name); //get without default
     }
 
     @Override
     @Nullable
-    public ResourceLocation getKey(V value)
+    public ResourceLocation getKey(T value)
     {
         return this.delegate.getKey(value);
     }
 
     @Override
-    public boolean func_212607_c(ResourceLocation key)
+    public boolean containsKey(ResourceLocation key)
     {
         return this.delegate.containsKey(key);
     }
 
     @Override
-    public int getId(@Nullable V value)
+    public int getId(@Nullable T value)
     {
         return this.delegate.getID(value);
     }
 
     @Override
     @Nullable
-    public V get(int id)
+    public T getByValue(int id)
     {
         return this.delegate.getValue(id);
     }
 
     @Override
-    public Iterator<V> iterator()
+    public Iterator<T> iterator()
     {
         return this.delegate.iterator();
     }
 
     @Override
-    public Set<ResourceLocation> getKeys()
+    public Set<ResourceLocation> keySet()
     {
         return this.delegate.getKeys();
     }
 
     @Override
     @Nullable
-    public V getRandom(Random random)
+    public T getRandom(Random random)
     {
-        Collection<V> values = this.delegate.getValues();
+        Collection<T> values = this.delegate.getValues();
         return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(null);
     }
 

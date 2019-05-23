@@ -1,53 +1,59 @@
 --- a/net/minecraft/world/gen/feature/BirchTreeFeature.java
 +++ b/net/minecraft/world/gen/feature/BirchTreeFeature.java
-@@ -26,7 +26,7 @@
+@@ -18,6 +18,7 @@
+    public BirchTreeFeature(Function<Dynamic<?>, ? extends NoFeatureConfig> p_i49917_1_, boolean p_i49917_2_, boolean p_i49917_3_) {
+       super(p_i49917_1_, p_i49917_2_);
+       this.field_150531_a = p_i49917_3_;
++      this.setSapling((net.minecraftforge.common.IPlantable)Blocks.field_196676_v);
+    }
+ 
+    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_) {
+@@ -27,7 +28,7 @@
        }
  
        boolean flag = true;
 -      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= 256) {
-+      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= p_208519_2_.func_201672_e().func_72800_K()) {
++      if (p_208519_4_.func_177956_o() >= 1 && p_208519_4_.func_177956_o() + i + 1 <= p_208519_2_.getMaxHeight()) {
           for(int j = p_208519_4_.func_177956_o(); j <= p_208519_4_.func_177956_o() + 1 + i; ++j) {
              int k = 1;
              if (j == p_208519_4_.func_177956_o()) {
-@@ -41,8 +41,8 @@
+@@ -42,8 +43,8 @@
  
              for(int l = p_208519_4_.func_177958_n() - k; l <= p_208519_4_.func_177958_n() + k && flag; ++l) {
                 for(int i1 = p_208519_4_.func_177952_p() - k; i1 <= p_208519_4_.func_177952_p() + k && flag; ++i1) {
 -                  if (j >= 0 && j < 256) {
--                     if (!this.func_150523_a(p_208519_2_.func_180495_p(blockpos$mutableblockpos.func_181079_c(l, j, i1)).func_177230_c())) {
-+                  if (j >= 0 && j < p_208519_2_.func_201672_e().func_72800_K()) {
-+                     if (!this.canGrowInto(p_208519_2_, blockpos$mutableblockpos.func_181079_c(l, j, i1))) {
+-                     if (!func_214587_a(p_208519_2_, blockpos$mutableblockpos.func_181079_c(l, j, i1))) {
++                  if (j >= 0 && j < p_208519_2_.getMaxHeight()) {
++                     if (!canBeReplacedByLog(p_208519_2_, blockpos$mutableblockpos.func_181079_c(l, j, i1))) {
                          flag = false;
                       }
                    } else {
-@@ -55,9 +55,9 @@
+@@ -55,8 +56,8 @@
+ 
           if (!flag) {
              return false;
-          } else {
--            Block block = p_208519_2_.func_180495_p(p_208519_4_.func_177977_b()).func_177230_c();
--            if ((block == Blocks.field_196658_i || Block.func_196245_f(block) || block == Blocks.field_150458_ak) && p_208519_4_.func_177956_o() < 256 - i - 1) {
--               this.func_175921_a(p_208519_2_, p_208519_4_.func_177977_b());
-+            boolean isSoil = p_208519_2_.func_180495_p(p_208519_4_.func_177977_b()).canSustainPlant(p_208519_2_, p_208519_4_.func_177977_b(), net.minecraft.util.EnumFacing.UP, (net.minecraft.block.BlockSapling)Blocks.field_196674_t);
-+            if (isSoil && p_208519_4_.func_177956_o() < p_208519_2_.func_201672_e().func_72800_K() - i - 1) {
-+               this.setDirtAt(p_208519_2_, p_208519_4_.func_177977_b(), p_208519_4_);
+-         } else if (func_214585_i(p_208519_2_, p_208519_4_.func_177977_b()) && p_208519_4_.func_177956_o() < 256 - i - 1) {
+-            this.func_214584_a(p_208519_2_, p_208519_4_.func_177977_b());
++         } else if ((isSoil(p_208519_2_, p_208519_4_.func_177977_b())) && p_208519_4_.func_177956_o() < p_208519_2_.getMaxHeight() - i - 1) {
++            this.setDirtAt(p_208519_2_, p_208519_4_.func_177977_b(), p_208519_4_);
  
-                for(int i2 = p_208519_4_.func_177956_o() - 3 + i; i2 <= p_208519_4_.func_177956_o() + i; ++i2) {
-                   int k2 = i2 - (p_208519_4_.func_177956_o() + i);
-@@ -71,7 +71,7 @@
-                         if (Math.abs(j1) != l2 || Math.abs(l1) != l2 || p_208519_3_.nextInt(2) != 0 && k2 != 0) {
-                            BlockPos blockpos = new BlockPos(i3, i2, k1);
-                            IBlockState iblockstate = p_208519_2_.func_180495_p(blockpos);
--                           if (iblockstate.func_196958_f() || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
-+                           if (iblockstate.isAir(p_208519_2_, blockpos) || iblockstate.func_203425_a(BlockTags.field_206952_E)) {
-                               this.func_202278_a(p_208519_2_, blockpos, field_181630_b);
-                            }
+             for(int l1 = p_208519_4_.func_177956_o() - 3 + i; l1 <= p_208519_4_.func_177956_o() + i; ++l1) {
+                int j2 = l1 - (p_208519_4_.func_177956_o() + i);
+@@ -69,7 +70,7 @@
+                      int k1 = j1 - p_208519_4_.func_177952_p();
+                      if (Math.abs(i3) != k2 || Math.abs(k1) != k2 || p_208519_3_.nextInt(2) != 0 && j2 != 0) {
+                         BlockPos blockpos = new BlockPos(l2, l1, j1);
+-                        if (func_214572_g(p_208519_2_, blockpos)) {
++                        if (canBeReplacedByLeaves(p_208519_2_, blockpos)) {
+                            this.func_208520_a(p_208519_1_, p_208519_2_, blockpos, field_181630_b, p_208519_5_);
                          }
-@@ -81,7 +81,7 @@
+                      }
+@@ -78,7 +79,7 @@
+             }
  
-                for(int j2 = 0; j2 < i; ++j2) {
-                   IBlockState iblockstate1 = p_208519_2_.func_180495_p(p_208519_4_.func_177981_b(j2));
--                  if (iblockstate1.func_196958_f() || iblockstate1.func_203425_a(BlockTags.field_206952_E)) {
-+                  if (iblockstate1.isAir(p_208519_2_, p_208519_4_.func_177981_b(j2)) || iblockstate1.func_203425_a(BlockTags.field_206952_E)) {
-                      this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177981_b(j2), field_181629_a);
-                   }
+             for(int i2 = 0; i2 < i; ++i2) {
+-               if (func_214572_g(p_208519_2_, p_208519_4_.func_177981_b(i2))) {
++               if (canBeReplacedByLeaves(p_208519_2_, p_208519_4_.func_177981_b(i2))) {
+                   this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177981_b(i2), field_181629_a, p_208519_5_);
                 }
+             }
