@@ -627,7 +627,7 @@ public class ForgeHooks
         // handle all placement events here
         int size = itemstack.getCount();
         NBTTagCompound nbt = null;
-        if (itemstack.hasTag())
+        if (itemstack.getTag() != null)
         {
             nbt = itemstack.getTag().copy();
         }
@@ -645,7 +645,7 @@ public class ForgeHooks
             // save new item data
             int newSize = itemstack.getCount();
             NBTTagCompound newNBT = null;
-            if (itemstack.hasTag())
+            if (itemstack.getTag() != null)
             {
                 newNBT = itemstack.getTag().copy();
             }
@@ -655,10 +655,7 @@ public class ForgeHooks
 
             // make sure to set pre-placement item data for event
             itemstack.setCount(size);
-            if (nbt != null)
-            {
-                itemstack.setTag(nbt);
-            }
+            itemstack.setTag(nbt);
 
             EntityPlayer player = context.getPlayer();
             EnumFacing side = context.getFace();
@@ -688,10 +685,7 @@ public class ForgeHooks
             {
                 // Change the stack to its new content
                 itemstack.setCount(newSize);
-                if (nbt != null)
-                {
-                    itemstack.setTag(newNBT);
-                }
+                itemstack.setTag(newNBT);
 
                 for (BlockSnapshot snap : blockSnapshots)
                 {
