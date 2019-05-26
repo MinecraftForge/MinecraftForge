@@ -148,7 +148,9 @@ public class MinecraftForgeClient
         if (supplier != null)
             return supplier.get();
 
-        IResource iresource1 = resourceManager.getResource(resourceLocation);
-        return TextureUtil.readBufferedImage(iresource1.getInputStream());
+        try (IResource iresource1 = resourceManager.getResource(resourceLocation))
+        {
+            return TextureUtil.readBufferedImage(iresource1.getInputStream());
+        }
     }
 }
