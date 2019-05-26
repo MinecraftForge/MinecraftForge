@@ -100,7 +100,6 @@ public enum B3DLoader implements ICustomModelLoader
     private IResourceManager manager;
 
     private final Set<String> enabledDomains = new HashSet<>();
-    private final Map<ResourceLocation, B3DModel> cache = new HashMap<>();
 
     public void addDomain(String domain)
     {
@@ -111,7 +110,6 @@ public enum B3DLoader implements ICustomModelLoader
     public void onResourceManagerReload(IResourceManager manager)
     {
         this.manager = manager;
-        cache.clear();
     }
 
     @Override
@@ -125,38 +123,33 @@ public enum B3DLoader implements ICustomModelLoader
     public IModel loadModel(ResourceLocation modelLocation) throws Exception
     {
         ResourceLocation file = new ResourceLocation(modelLocation.getResourceDomain(), modelLocation.getResourcePath());
-        if(!cache.containsKey(file))
+        B3DModel model;
+        IResource resource = null;
+        try
         {
-            IResource resource = null;
             try
             {
-                try
-                {
-                    resource = manager.getResource(file);
-                }
-                catch(FileNotFoundException e)
-                {
-                    if(modelLocation.getResourcePath().startsWith("models/block/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
-                    else if(modelLocation.getResourcePath().startsWith("models/item/"))
-                        resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
-                    else throw e;
-                }
-                B3DModel.Parser parser = new B3DModel.Parser(resource.getInputStream());
-                B3DModel model = parser.parse();
-                cache.put(file, model);
+                resource = manager.getResource(file);
             }
-            catch(IOException e)
+            catch(FileNotFoundException e)
             {
-                cache.put(file, null);
-                throw e;
+                if(modelLocation.getResourcePath().startsWith("models/block/"))
+                    resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/item/" + file.getResourcePath().substring("models/block/".length())));
+                else if(modelLocation.getResourcePath().startsWith("models/item/"))
+                    resource = manager.getResource(new ResourceLocation(file.getResourceDomain(), "models/block/" + file.getResourcePath().substring("models/item/".length())));
+                else throw e;
             }
-            finally
-            {
-                IOUtils.closeQuietly(resource);
-            }
+            B3DModel.Parser parser = new B3DModel.Parser(resource.getInputStream());
+            model = parser.parse();
         }
-        B3DModel model = cache.get(file);
+        catch(IOException e)
+        {
+            throw e;
+        }
+        finally
+        {
+            IOUtils.closeQuietly(resource);
+        }
         if(model == null) throw new ModelLoaderRegistry.LoaderException("Error loading model previously: " + file);
         if(!(model.getRoot().getKind() instanceof Mesh))
         {
