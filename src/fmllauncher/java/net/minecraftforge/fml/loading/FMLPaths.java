@@ -79,6 +79,10 @@ public enum FMLPaths
         }
     }
 
+    public Path relative() {
+        return relativePath;
+    }
+
     public Path get() {
         return absolutePath;
     }
