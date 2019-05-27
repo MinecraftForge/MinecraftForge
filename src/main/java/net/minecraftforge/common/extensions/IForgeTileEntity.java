@@ -176,7 +176,11 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      {
          return false;
      }
-     
+
+    /**
+     * Requests a refresh for the model data of your TE
+     * Call this every time your {@link #getModelData()} changes
+     */
      default void requestModelDataUpdate()
      {
          TileEntity te = getTileEntity();
@@ -186,7 +190,14 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
              ModelDataManager.requestModelDataRefresh(te);
          }
      }
-     
+
+    /**
+     * Allows you to return additional model data.
+     * This data can be used to provide additional functionality in your {@link net.minecraft.client.renderer.model.IBakedModel}
+     * You need to schedule a refresh of you model data via {@link #requestModelDataUpdate()} if the result of this function changes.
+     * <b>Note that this method may be called on a chunk render thread instead of the main client thread</b>
+     * @return Your model data
+     */
      default @Nonnull IModelData getModelData()
      {
          return EmptyModelData.INSTANCE;
