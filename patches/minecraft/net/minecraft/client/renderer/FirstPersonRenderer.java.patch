@@ -50,8 +50,9 @@
           }
  
           if (iblockstate.func_185901_i() != EnumBlockRenderType.INVISIBLE) {
+-            this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
 +            if (!net.minecraftforge.event.ForgeEventFactory.renderBlockOverlay(field_78455_a.field_71439_g, p_78447_1_, net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType.BLOCK, iblockstate, overlayPos))
-             this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().func_178122_a(iblockstate));
++            this.func_178108_a(this.field_78455_a.func_175602_ab().func_175023_a().getTexture(iblockstate, field_78455_a.field_71441_e, overlayPos));
           }
        }
  

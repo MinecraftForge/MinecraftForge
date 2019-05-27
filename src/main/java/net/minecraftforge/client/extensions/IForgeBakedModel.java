@@ -29,6 +29,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorldReader;
@@ -61,5 +62,10 @@ public interface IForgeBakedModel
     default @Nonnull IModelData getModelData(@Nonnull IWorldReader world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull IModelData tileData)
     {
         return tileData;
+    }
+
+    default TextureAtlasSprite getParticleTexture(@Nonnull IModelData data)
+    {
+        return getBakedModel().getParticleTexture();
     }
 }
