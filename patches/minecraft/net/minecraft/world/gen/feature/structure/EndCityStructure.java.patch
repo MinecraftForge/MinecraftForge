@@ -1,0 +1,18 @@
+--- a/net/minecraft/world/gen/feature/structure/EndCityStructure.java
++++ b/net/minecraft/world/gen/feature/structure/EndCityStructure.java
+@@ -110,5 +110,15 @@
+       public boolean func_75069_d() {
+          return this.field_186163_c;
+       }
++
++      //Forge: Fix losing of 'valid' flag on world reload. TODO: Remove in 1.14 as vanilla fixed.
++      public void func_143022_a(net.minecraft.nbt.NBTTagCompound tag) {
++         super.func_143022_a(tag);
++         tag.func_74757_a("Valid", this.field_186163_c);
++      }
++      public void func_143017_b(net.minecraft.nbt.NBTTagCompound tag) {
++         super.func_143017_b(tag);
++         this.field_186163_c = tag.func_74764_b("Valid") && tag.func_74767_n("Valid");
++      }
+    }
+ }
