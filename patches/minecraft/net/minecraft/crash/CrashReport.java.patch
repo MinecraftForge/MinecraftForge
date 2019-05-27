@@ -8,7 +8,25 @@
     }
  
     public String func_71501_a() {
-@@ -132,6 +133,7 @@
+@@ -115,23 +116,13 @@
+          throwable.setStackTrace(this.field_71511_b.getStackTrace());
+       }
+ 
+-      String s;
+-      try {
+-         stringwriter = new StringWriter();
+-         printwriter = new PrintWriter(stringwriter);
+-         throwable.printStackTrace(printwriter);
+-         s = stringwriter.toString();
+-      } finally {
+-         IOUtils.closeQuietly((Writer)stringwriter);
+-         IOUtils.closeQuietly((Writer)printwriter);
+-      }
+-
+-      return s;
++      return net.minecraftforge.fml.CrashReportExtender.generateEnhancedStackTrace(throwable);
+    }
+ 
     public String func_71502_e() {
        StringBuilder stringbuilder = new StringBuilder();
        stringbuilder.append("---- Minecraft Crash Report ----\n");

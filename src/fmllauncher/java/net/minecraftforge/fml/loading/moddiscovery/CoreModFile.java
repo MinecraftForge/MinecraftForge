@@ -46,4 +46,9 @@ public class CoreModFile implements ICoreModFile {
     public Path getPath() {
         return this.internalPath;
     }
+
+    @Override
+    public String getOwnerId() {
+        return this.file.getModInfos().get(0).getModId();
+    }
 }
