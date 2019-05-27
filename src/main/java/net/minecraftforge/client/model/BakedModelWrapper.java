@@ -19,6 +19,7 @@
 
 package net.minecraftforge.client.model;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import java.util.List;
@@ -31,6 +32,9 @@ import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IWorldReader;
+import net.minecraftforge.client.model.data.IModelData;
 import org.apache.commons.lang3.tuple.Pair;
 
 public abstract class BakedModelWrapper<T extends IBakedModel> implements IBakedModel
@@ -94,5 +98,19 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
     public Pair<? extends IBakedModel, Matrix4f> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)
     {
         return originalModel.handlePerspective(cameraTransformType);
+    }
+
+    @Nonnull
+    @Override
+    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, @Nonnull Random rand, @Nonnull IModelData extraData)
+    {
+        return originalModel.getQuads(state, side, rand, extraData);
+    }
+
+    @Nonnull
+    @Override
+    public IModelData getModelData(@Nonnull IWorldReader world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull IModelData tileData)
+    {
+        return originalModel.getModelData(world, pos, state, tileData);
     }
 }
