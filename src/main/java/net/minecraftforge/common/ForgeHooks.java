@@ -125,8 +125,8 @@ public class ForgeHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
-    //TODO: Loot tables?
-    static class SeedEntry extends WeightedRandom.Item
+    //TODO: Remove in 1.14 as vanilla uses loot tables
+    public static class SeedEntry extends WeightedRandom.Item
     {
         @Nonnull
         public final ItemStack seed;
@@ -141,6 +141,25 @@ public class ForgeHooks
             return seed.copy();
         }
     }
+    public static class FortuneSeedEntry extends SeedEntry
+    {
+        private int min, factor;
+        public FortuneSeedEntry(@Nonnull ItemStack seed, int weight, int min, int factor)
+        {
+            super(seed, weight);
+            this.min = min;
+            this.factor = factor;
+        }
+
+        @Nonnull
+        public ItemStack getStack(Random rand, int fortune)
+        {
+            ItemStack ret = seed.copy();
+            ret.setCount(min + rand.nextInt(fortune * factor + 1));
+            return ret;
+        }
+    }
+
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
 
     @Nonnull
@@ -841,7 +860,7 @@ public class ForgeHooks
 
     private static final Map<DataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
     //private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
-    // Do not reimplement this ^ it introduces a chicken-egg scenario by classloading registries during bootstrap 
+    // Do not reimplement this ^ it introduces a chicken-egg scenario by classloading registries during bootstrap
 
     @Nullable
     public static DataSerializer<?> getSerializer(int id, IntIdentityHashBiMap<DataSerializer<?>> vanilla)

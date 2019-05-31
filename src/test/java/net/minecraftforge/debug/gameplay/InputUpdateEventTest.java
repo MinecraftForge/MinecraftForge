@@ -29,12 +29,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(modid = InputUpdateEventTest.MODID, name = "InputUpdateTest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = InputUpdateEventTest.MODID, name = "InputUpdateTest", version = "1.0", acceptableRemoteVersions = "*")
 public class InputUpdateEventTest
 {
     static final String MODID = "input_update_test";
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

@@ -37,7 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Mod(modid = "clientcommandtest", name = "Client Command Test", version = "0.0.0", clientSideOnly = true)
+//@Mod(modid = "clientcommandtest", name = "Client Command Test", version = "0.0.0", clientSideOnly = true)
 public class ClientCommandTest
 {
     @EventHandler

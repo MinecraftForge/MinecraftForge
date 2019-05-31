@@ -1,6 +1,14 @@
 --- a/net/minecraft/client/renderer/model/BakedQuadRetextured.java
 +++ b/net/minecraft/client/renderer/model/BakedQuadRetextured.java
-@@ -17,10 +17,15 @@
+@@ -10,17 +10,22 @@
+    private final TextureAtlasSprite field_178218_d;
+ 
+    public BakedQuadRetextured(BakedQuad p_i46217_1_, TextureAtlasSprite p_i46217_2_) {
+-      super(Arrays.copyOf(p_i46217_1_.func_178209_a(), p_i46217_1_.func_178209_a().length), p_i46217_1_.field_178213_b, FaceBakery.func_178410_a(p_i46217_1_.func_178209_a()), p_i46217_1_.func_187508_a());
++      super(Arrays.copyOf(p_i46217_1_.func_178209_a(), p_i46217_1_.func_178209_a().length), p_i46217_1_.field_178213_b, FaceBakery.func_178410_a(p_i46217_1_.func_178209_a()), p_i46217_1_.func_187508_a(), p_i46217_1_.shouldApplyDiffuseLighting(), p_i46217_1_.getFormat());
+       this.field_178218_d = p_i46217_2_;
+       this.func_178217_e();
+    }
  
     private void func_178217_e() {
        for(int i = 0; i < 4; ++i) {

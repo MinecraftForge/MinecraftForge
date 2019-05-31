@@ -27,7 +27,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "playersetspawntest", name = "Player Set Spawn Test", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "playersetspawntest", name = "Player Set Spawn Test", version = "0.0.0", acceptableRemoteVersions = "*")
 public class PlayerSetSpawnTest
 {
     private static final boolean ENABLE = false;

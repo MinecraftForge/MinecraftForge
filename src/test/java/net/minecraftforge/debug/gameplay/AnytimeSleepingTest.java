@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = AnytimeSleepingTest.MODID, name = "Anytime Sleeping Test", version = "0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = AnytimeSleepingTest.MODID, name = "Anytime Sleeping Test", version = "0.0", acceptableRemoteVersions = "*")
 public class AnytimeSleepingTest
 {
     public static final String MODID = "anytimesleepingtest";
@@ -58,7 +58,7 @@ public class AnytimeSleepingTest
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @SubscribeEvent

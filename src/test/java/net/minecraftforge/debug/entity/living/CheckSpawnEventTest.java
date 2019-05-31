@@ -27,7 +27,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = CheckSpawnEventTest.MODID, name = "CheckSpawnTest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = CheckSpawnEventTest.MODID, name = "CheckSpawnTest", version = "1.0", acceptableRemoteVersions = "*")
 public class CheckSpawnEventTest
 {
     public static final String MODID = "checkspawntest";

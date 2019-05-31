@@ -28,7 +28,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.api.distmarker.Dist;
 
-@Mod(modid = SearchableCreativeTabTest.MODID, name = "Debug Search Tab", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = SearchableCreativeTabTest.MODID, name = "Debug Search Tab", version = "1.0", acceptableRemoteVersions = "*")
 public class SearchableCreativeTabTest
 {
     public static final String MODID = "debugsearchtab";

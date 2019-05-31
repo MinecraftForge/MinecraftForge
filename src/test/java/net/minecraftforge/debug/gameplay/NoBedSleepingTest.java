@@ -56,7 +56,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@Mod(modid = NoBedSleepingTest.MODID, name = "ForgeDebugNoBedSleeping", version = NoBedSleepingTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = NoBedSleepingTest.MODID, name = "ForgeDebugNoBedSleeping", version = NoBedSleepingTest.VERSION, acceptableRemoteVersions = "*")
 public class NoBedSleepingTest
 {
     public static final String MODID = "forgedebugnobedsleeping";
@@ -66,7 +66,7 @@ public class NoBedSleepingTest
     @ObjectHolder(ItemSleepingPill.name)
     public static final Item SLEEPING_PILL = null;
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @SubscribeEvent

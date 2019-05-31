@@ -39,7 +39,7 @@ public class Tags
         public static final Tag<Block> FENCE_GATES = tag("fence_gates");
         public static final Tag<Block> FENCE_GATES_WOODEN = tag("fence_gates/wooden");
         public static final Tag<Block> FENCES = tag("fences");
-        public static final Tag<Block> FENCES_NETHER_BRRICK = tag("fences/nether_brick");
+        public static final Tag<Block> FENCES_NETHER_BRICK = tag("fences/nether_brick");
         public static final Tag<Block> FENCES_WOODEN = tag("fences/wooden");
         public static final Tag<Block> ORES = tag("ores");
         public static final Tag<Block> ORES_COAL = tag("ores/coal");
@@ -105,7 +105,7 @@ public class Tags
         public static final Tag<Item> GEMS_EMERALD = tag("gems/emerald");
         public static final Tag<Item> GEMS_LAPIS = tag("gems/lapis");
         public static final Tag<Item> GEMS_PRISMARINE = tag("gems/prismarine");
-        public static final Tag<Item> GEMS_QUARRTZ = tag("gems/quartz");
+        public static final Tag<Item> GEMS_QUARTZ = tag("gems/quartz");
         public static final Tag<Item> INGOTS = tag("ingots");
         public static final Tag<Item> INGOTS_BRICK = tag("ingots/brick");
         public static final Tag<Item> INGOTS_GOLD = tag("ingots/gold");

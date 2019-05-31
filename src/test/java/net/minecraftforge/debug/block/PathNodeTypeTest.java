@@ -35,8 +35,8 @@ import net.minecraftforge.fml.common.Mod;
 
 import java.util.Collections;
 
-@Mod(modid = PathNodeTypeTest.MOD_ID, name = "AiNodeTypeTest", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = PathNodeTypeTest.MOD_ID, name = "AiNodeTypeTest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class PathNodeTypeTest
 {
     static final String MOD_ID = "ai_node_type_test";
@@ -53,7 +53,7 @@ public class PathNodeTypeTest
         }
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

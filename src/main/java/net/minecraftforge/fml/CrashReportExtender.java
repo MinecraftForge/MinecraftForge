@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import cpw.mods.modlauncher.log.TransformingThrowablePatternConverter;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraftforge.fml.common.ICrashCallable;
@@ -78,4 +79,9 @@ public class CrashReportExtender
     public static void addCrashReportHeader(StringBuilder stringbuilder, CrashReport crashReport)
     {
     }
+
+    public static String generateEnhancedStackTrace(final Throwable throwable) {
+        return TransformingThrowablePatternConverter.generateEnhancedStackTrace(throwable);
+    }
+
 }

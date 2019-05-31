@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -33,7 +33,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  * Tests {@link MerchantTradeOffersEvent}. When enabled, the item that the villager sells to
  * the player will be maxed out in stack size.
  */
-@Mod(modid = MerchantTradeOffersEventTest.MODID, name = MerchantTradeOffersEventTest.NAME, version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = MerchantTradeOffersEventTest.MODID, name = MerchantTradeOffersEventTest.NAME, version = "0.0.0", acceptableRemoteVersions = "*")
 public class MerchantTradeOffersEventTest
 {
     public static final String MODID = "merchanttradeofferseventtest";

@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-@Mod(modid = TooltipColorEventTest.MODID, name = "Tooltip Color Test", version = "0.1", clientSideOnly = true)
+//@Mod(modid = TooltipColorEventTest.MODID, name = "Tooltip Color Test", version = "0.1", clientSideOnly = true)
 public class TooltipColorEventTest
 {
     public static final String MODID = "tooltipcolortest";

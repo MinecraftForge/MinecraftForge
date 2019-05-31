@@ -40,7 +40,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@Mod(modid = RotatingWrench.modID, name = "Wrench Rotate Debug", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = RotatingWrench.modID, name = "Wrench Rotate Debug", version = "0.0.0", acceptableRemoteVersions = "*")
 public class RotatingWrench
 {
     public static final String modID = "wrenchrotatedebug";
@@ -49,7 +49,7 @@ public class RotatingWrench
     public static final Item TEST_WRENCH = null;
 
 
-    @Mod.EventBusSubscriber(modid = modID)
+    //@Mod.EventBusSubscriber(modid = modID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

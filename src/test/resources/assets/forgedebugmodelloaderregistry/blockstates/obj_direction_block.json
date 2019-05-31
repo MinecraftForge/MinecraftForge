@@ -2,13 +2,10 @@
     "forge_marker": 1,
     "defaults": {
         "textures": {},
-        "model": "forgedebugmodelloaderregistry:direction_test.obj"
+        "model": "forgedebugmodelloaderregistry:direction_test.obj",
+        "transform": "forge:default-block"
     },
     "variants": {
-        "normal": [{}],
-        "inventory": [{
-            "transform": "forge:default-block"
-        }],
         "facing": {
             "down": {"model": "forgedebugmodelloaderregistry:direction_test.obj", "x": 90},
             "up": {"model": "forgedebugmodelloaderregistry:direction_test.obj", "x": 270},

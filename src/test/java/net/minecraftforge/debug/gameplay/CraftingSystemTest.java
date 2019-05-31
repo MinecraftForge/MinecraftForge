@@ -35,8 +35,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.function.BooleanSupplier;
 
-@Mod(modid = CraftingSystemTest.MOD_ID, name = "CraftingTestMod", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = CraftingSystemTest.MOD_ID, name = "CraftingTestMod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class CraftingSystemTest
 {
     static final String MOD_ID = "crafting_system_test";

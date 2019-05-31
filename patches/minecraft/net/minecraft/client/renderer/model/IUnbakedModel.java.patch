@@ -17,6 +17,6 @@
 -   IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_);
 +   @Deprecated
 +   default IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_) {
-+       return bake(p_209558_1_, p_209558_2_, p_209558_3_, p_209558_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
++       return bake(p_209558_1_, p_209558_2_, p_209558_3_, p_209558_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
 +   }
  }

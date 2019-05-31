@@ -26,7 +26,7 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.event.FMLInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(modid = "clientchateventtest", name = "Client Chat Event Test", version = "0.0.0", clientSideOnly = true)
+//@Mod(modid = "clientchateventtest", name = "Client Chat Event Test", version = "0.0.0", clientSideOnly = true)
 public class ClientChatEventTest
 {
     static final boolean ENABLED = false;

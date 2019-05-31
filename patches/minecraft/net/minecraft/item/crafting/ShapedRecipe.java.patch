@@ -89,7 +89,13 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -258,6 +277,7 @@
+@@ -253,11 +272,12 @@
+          throw new JsonParseException("Disallowed data tag found");
+       } else {
+          int i = JsonUtils.func_151208_a(p_199798_0_, "count", 1);
+-         return new ItemStack(item, i);
++         return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(p_199798_0_, true);
+       }
     }
  
     public static class Serializer implements IRecipeSerializer<ShapedRecipe> {

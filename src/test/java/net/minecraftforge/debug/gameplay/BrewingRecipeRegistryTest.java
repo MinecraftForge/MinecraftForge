@@ -28,7 +28,7 @@ import net.minecraftforge.fml.event.FMLInitializationEvent;
 import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "brewingreciperegistrytest", name = "BrewingRecipeRegistryTest", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "brewingreciperegistrytest", name = "BrewingRecipeRegistryTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class BrewingRecipeRegistryTest
 {
     public static final boolean ENABLE = false;

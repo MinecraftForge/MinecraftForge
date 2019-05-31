@@ -26,7 +26,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "projectile_event_test", name = "ProjectileImpactEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "projectile_event_test", name = "ProjectileImpactEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
 public class ProjectileImpactEventTest
 {
     private static final boolean ENABLED = false;

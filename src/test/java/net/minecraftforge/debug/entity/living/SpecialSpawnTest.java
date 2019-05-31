@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,8 +24,8 @@ import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = SpecialSpawnTest.MOD_ID, name = "Special Spawn Test", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber(modid = SpecialSpawnTest.MOD_ID)
+//@Mod(modid = SpecialSpawnTest.MOD_ID, name = "Special Spawn Test", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber(modid = SpecialSpawnTest.MOD_ID)
 public class SpecialSpawnTest
 {
     static final String MOD_ID = "special_spawn_test";

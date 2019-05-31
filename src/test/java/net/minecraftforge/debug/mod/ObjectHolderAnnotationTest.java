@@ -31,7 +31,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 import net.minecraftforge.registries.RegistryBuilder;
 
-@Mod(modid = ObjectHolderAnnotationTest.MODID, name = "ObjectHolderTests", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = ObjectHolderAnnotationTest.MODID, name = "ObjectHolderTests", version = "1.0", acceptableRemoteVersions = "*")
 public class ObjectHolderAnnotationTest
 {
     public static final String MODID = "objectholdertest";
@@ -64,7 +64,7 @@ public class ObjectHolderAnnotationTest
         }
     }
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

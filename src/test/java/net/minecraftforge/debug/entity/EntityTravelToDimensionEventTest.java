@@ -27,7 +27,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "entitytraveltodimensioneventtest", name = "EntityTravelToDimensionEventTest", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "entitytraveltodimensioneventtest", name = "EntityTravelToDimensionEventTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class EntityTravelToDimensionEventTest
 {
     public static final boolean ENABLE = false;
