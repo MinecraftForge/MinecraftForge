@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -650,7 +652,10 @@ public class Loader
             FMLLog.log.trace("Found a mod state file {}", forcedModFile.getName());
             try
             {
-                forcedModListProperties.load(new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8));
+                try (Reader reader = new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8))
+                {
+                    forcedModListProperties.load(reader);
+                }
                 FMLLog.log.trace("Loaded states for {} mods from file", forcedModListProperties.size());
             }
             catch (Exception e)
@@ -863,7 +868,10 @@ public class Loader
             Properties loaded = new Properties();
             try
             {
-                loaded.load(getClass().getClassLoader().getResourceAsStream("fmlbranding.properties"));
+                try (InputStream stream = getClass().getClassLoader().getResourceAsStream("fmlbranding.properties"))
+                {
+                    loaded.load(stream);
+                }
             }
             catch (Exception e)
             {
@@ -935,9 +943,15 @@ public class Loader
         try
         {
             Properties props = new Properties();
-            props.load(new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8));
+            try (Reader reader = new InputStreamReader(new FileInputStream(forcedModFile), StandardCharsets.UTF_8))
+            {
+                props.load(reader);
+            }
             props.put(modId, "false");
-            props.store(new OutputStreamWriter(new FileOutputStream(forcedModFile), StandardCharsets.UTF_8), null);
+            try (Writer writer = new OutputStreamWriter(new FileOutputStream(forcedModFile), StandardCharsets.UTF_8))
+            {
+                props.store(writer, null);
+            }
         }
         catch (Exception e)
         {
@@ -966,7 +980,10 @@ public class Loader
         JsonElement injectedDeps;
         try
         {
-            injectedDeps = parser.parse(new InputStreamReader(new FileInputStream(injectedDepFile), StandardCharsets.UTF_8));
+            try (Reader reader = new InputStreamReader(new FileInputStream(injectedDepFile), StandardCharsets.UTF_8))
+            {
+                injectedDeps = parser.parse(reader);
+            }
             for (JsonElement el : injectedDeps.getAsJsonArray())
             {
                 JsonObject jo = el.getAsJsonObject();
