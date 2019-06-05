@@ -2,6 +2,7 @@
 
 MinecraftForge [![Latest Release](https://img.shields.io/maven-metadata/v/https/files.minecraftforge.net/maven/net/minecraftforge/forge/maven-metadata.xml.svg?label=latest)](https://files.minecraftforge.net) [![Discord](https://img.shields.io/discord/313125603924639766.svg?color=%237289da&label=discord&logo=discord&logoColor=%237289da)](https://discord.gg/UvedJ9m) [![Support](https://img.shields.io/badge/patreon-support-orange.svg)](https://www.patreon.com/LexManos)
 =============
+
 Forge is a free, open-source modding API all of your favourite mods use!
 
 | Version  | Support |
@@ -14,6 +15,9 @@ Forge is a free, open-source modding API all of your favourite mods use!
 * [Forum]
 * [Discord]
 * [Documentation]
+
+#### Notes:
+- Introduced in 1.13 was a new FML, information found [here](NewFML.md).
 
 # Installing Forge
 
