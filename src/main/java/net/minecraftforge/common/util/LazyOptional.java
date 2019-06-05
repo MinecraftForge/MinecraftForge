@@ -114,7 +114,8 @@ public class LazyOptional<T>
         {
             resolved = new AtomicReference<>(null);
             T temp = supplier.get();
-            if (temp == null) {
+            if (temp == null)
+            {
                 LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
                 return null;
             }
