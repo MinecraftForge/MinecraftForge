@@ -10,7 +10,14 @@ Forge is a free, open-source modding API all of your favourite mods use!
 | 1.13.2  | Maintained  |
 | 1.12.2  | Maintained  |
 
-# Installing Forge
+* [Download]
+* [Forum]
+* [Discord]
+* [Documentation]
+
+# Players
+
+## Installing Forge
 
 Go to [the Forge website](http://files.minecraftforge.net)
  and select the minecraft version you wish to get forge for from the list.
@@ -23,27 +30,39 @@ You can download the installer for the *Recommended Build* or the
  
 For support and questions, visit [the Support Forum](http://www.minecraftforge.net/forum/forum/18-support-bug-reports/).
 
-Here is a short video from Rorax showing how to install and setup Forge:
+[Here is a short video from Rorax showing how to install and setup Forge.](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
 
-[![HOWTO Install Forge](https://img.youtube.com/vi/lB3ArN_-3Oc/0.jpg)](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
+# Modders
 
-# Creating Mods
+## Creating Mods
 
 [See the "Getting Started" section in the Forge Documentation](http://mcforge.readthedocs.io/en/latest/gettingstarted/).
 
-# Contribute to Forge
+# Contributing
+
+## Contribute to Forge
 
 If you wish to actually inspect Forge, submit PRs or otherwise work
  with Forge itself, you're in the right place!
  
  [See the guide to setting up a Forge workspace](http://mcforge.readthedocs.io/en/latest/forgedev/).
 
-## Pull requests
+### Pull requests
 
 [See the "Making Changes and Pull Requests" section in the Forge documentation](http://mcforge.readthedocs.io/en/latest/forgedev/#making-changes-and-pull-requests).
+
+Please read the contributing guidelines found [here](CONTRIBUTING.md) before making a pull request.
 
 ### Contributor License Agreement
 We require all contributors to acknowledge the [Forge Contributor
  License Agreement](https://cla-assistant.io/MinecraftForge/MinecraftForge). Please ensure you have a valid email address
  associated with your github account to do this. If you have previously
  signed it, you should be OK.
+
+#### Donate
+*Forge is a large project with many collaborators working on it around the clock. Forge is and will always remain free to use and modify. However, it costs money to run such a large project as this, so please consider [becoming a patron](https://www.patreon.com/LexManos).*
+
+[Download]: https://files.minecraftforge.net/
+[Forum]: https://www.minecraftforge.net/forum/
+[Discord]: https://discord.gg/UvedJ9m
+[Documentation]: https://mcforge.readthedocs.io
