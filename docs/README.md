@@ -1,4 +1,4 @@
-<img src="https://files.minecraftforge.net/maven/manage/static/images/logo.svg">
+<img src="docs/assets/forge-banner.jpeg">
 
 MinecraftForge [![Latest Release](https://img.shields.io/maven-metadata/v/https/files.minecraftforge.net/maven/net/minecraftforge/forge/maven-metadata.xml.svg?label=latest)](https://files.minecraftforge.net) [![Discord](https://img.shields.io/discord/313125603924639766.svg?color=%237289da&label=discord&logo=discord&logoColor=%237289da)](https://discord.gg/UvedJ9m) [![Support](https://img.shields.io/badge/patreon-support-orange.svg)](https://www.patreon.com/LexManos)
 =============
