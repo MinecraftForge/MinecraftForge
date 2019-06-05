@@ -1,4 +1,10 @@
-# How to install Forge: For Players
+<img src="https://files.minecraftforge.net/maven/manage/static/images/logo.svg">
+
+MinecraftForge [![Latest Release](https://img.shields.io/maven-metadata/v/https/files.minecraftforge.net/maven/net/minecraftforge/forge/maven-metadata.xml.svg?label=latest)](https://files.minecraftforge.net) [![Support](https://img.shields.io/badge/patreon-support-orange.svg)](https://www.patreon.com/LexManos)
+=============
+Forge is a free, open-source modding API all of your favourite mods use!
+
+# Installing Forge
 
 Go to [the Forge website](http://files.minecraftforge.net)
  and select the minecraft version you wish to get forge for from the list.
@@ -15,11 +21,11 @@ Here is a short video from Rorax showing how to install and setup Forge:
 
 [![HOWTO Install Forge](https://img.youtube.com/vi/lB3ArN_-3Oc/0.jpg)](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
 
-# How to install Forge: For Modders
+# Creating Mods
 
 [See the "Getting Started" section in the Forge Documentation](http://mcforge.readthedocs.io/en/latest/gettingstarted/).
 
-# How to install Forge: For those wishing to work on Forge itself
+# Contribute to Forge
 
 If you wish to actually inspect Forge, submit PRs or otherwise work
  with Forge itself, you're in the right place!
