@@ -1,12 +1,12 @@
 <!-- Thank you for reporting! -->
 <!-- Please go to the forum first for support with crashes and issues. -->
-<!-- http://www.minecraftforge.net/forum/forum/18-support-bug-reports/ -->
+<!-- https://www.minecraftforge.net/forum/forum/18-support-bug-reports/ -->
 
-**Minecraft Version:** {mc version}
+**Minecraft Version:** {Minecraft version}
 
-**Forge Version:** {forge version}
+**Forge Version:** {Forge version. *Version number, not latest/rb*}
 
-**Full Log:** {link to gist/pastebin with full latest.log}
+**Full Log:** {Link to GitHub Gist with full latest.log}
 
 **Steps to Reproduce:**
  1. Do this
