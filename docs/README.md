@@ -15,9 +15,7 @@ Forge is a free, open-source modding API all of your favourite mods use!
 * [Discord]
 * [Documentation]
 
-# Players
-
-## Installing Forge
+# Installing Forge
 
 Go to [the Forge website](http://files.minecraftforge.net)
  and select the minecraft version you wish to get forge for from the list.
@@ -32,15 +30,11 @@ For support and questions, visit [the Support Forum](http://www.minecraftforge.n
 
 [Here is a short video from Rorax showing how to install and setup Forge.](https://www.youtube.com/watch?v=lB3ArN_-3Oc)
 
-# Modders
-
-## Creating Mods
+# Creating Mods
 
 [See the "Getting Started" section in the Forge Documentation](http://mcforge.readthedocs.io/en/latest/gettingstarted/).
 
-# Contributing
-
-## Contribute to Forge
+# Contribute to Forge
 
 If you wish to actually inspect Forge, submit PRs or otherwise work
  with Forge itself, you're in the right place!
