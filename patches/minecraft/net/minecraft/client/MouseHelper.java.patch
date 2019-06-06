@@ -49,3 +49,22 @@
              }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
           }
  
+@@ -267,4 +275,18 @@
+          GLFW.glfwSetCursorPos(this.field_198036_a.field_195558_d.func_198092_i(), this.field_198040_e, this.field_198041_f);
+       }
+    }
++
++   /* ======================================== FORGE START =====================================*/
++   public double getXVelocity() {
++      return this.field_198048_m;
++   }
++
++   public double getYVelocity() {
++      return this.field_198049_n;
++   }
++
++   public boolean isMiddleDown() {
++      return this.field_198038_c;
++   }
++   /* ======================================== FORGE END =====================================*/
+ }
