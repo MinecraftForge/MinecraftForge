@@ -43,6 +43,11 @@
   "fml.modloading.cycle": "Detected a mod dependency cycle: {0}",
   "fml.modloading.failedtoprocesswork":"{0,modinfo,name} ({0,modinfo,id}) encountered an error processing deferred work\n\u00a77{2,exc,msg}",
   "fml.modloading.brokenfile": "File {2} is not a valid mod file",
+  "fml.modloading.brokenfile.oldforge": "File {2} is for an older version of Forge and cannot be loaded",
+  "fml.modloading.brokenfile.liteloader": "File {2} is a LiteLoader mod and cannot be loaded",
+  "fml.modloading.brokenfile.fabric": "File {2} is a Fabric mod and cannot be loaded",
+  "fml.modloading.brokenfile.optifine": "File {2} is OptiFine, which is unsupported",
+  "fml.modloading.brokenfile.invalidzip": "File {2} is not a jar file",
   "fml.modloading.brokenresources": "File {2} failed to load a valid ResourcePackInfo",
 
   "fml.messages.artifactversion.ornotinstalled":"{0,ornull,fml.messages.artifactversion.notinstalled}",

@@ -30,6 +30,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LoadingModList;
+import net.minecraftforge.fml.loading.moddiscovery.InvalidModIdentifier;
 import net.minecraftforge.fml.loading.moddiscovery.ModFile;
 import net.minecraftforge.fml.loading.moddiscovery.ModFileInfo;
 import net.minecraftforge.fml.network.FMLNetworkConstants;
@@ -105,7 +106,8 @@ public class ModLoader
         this.loadingExceptions = FMLLoader.getLoadingModList().
                 getErrors().stream().flatMap(ModLoadingException::fromEarlyException).collect(Collectors.toList());
         this.loadingWarnings = FMLLoader.getLoadingModList().
-                getBrokenFiles().stream().map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE, "fml.modloading.brokenfile", file.getFileName())).collect(Collectors.toList());
+                getBrokenFiles().stream().map(file -> new ModLoadingWarning(null, ModLoadingStage.VALIDATE,
+                        InvalidModIdentifier.identifyJarProblem(file.getFilePath()).orElse("fml.modloading.brokenfile"), file.getFileName())).collect(Collectors.toList());
         LOGGER.info(CORE, "Loading Network data for FML net version: {}", FMLNetworkConstants.NETVERSION);
     }
 
