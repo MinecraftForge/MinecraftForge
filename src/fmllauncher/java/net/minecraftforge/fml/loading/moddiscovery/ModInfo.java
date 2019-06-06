@@ -50,6 +50,7 @@ public class ModInfo implements IModInfo
     private final ArtifactVersion version;
     private final String displayName;
     private final String description;
+    private final Optional<String> logoFile;
     private final URL updateJSONURL;
     private final List<IModInfo.ModVersion> dependencies;
     private final Map<String,Object> properties;
@@ -74,6 +75,13 @@ public class ModInfo implements IModInfo
                 map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
         this.displayName = modConfig.<String>getOptional("displayName").orElse(null);
         this.description = modConfig.get("description");
+
+        Optional<String> tmp = modConfig.<String>getOptional("logoFile");
+        if (!tmp.isPresent() && this.owningFile != null) {
+            tmp = this.owningFile.getConfig().getOptional("logoFile");
+        }
+        this.logoFile = tmp;
+
         this.updateJSONURL = modConfig.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
         if (owningFile != null) {
             this.dependencies = owningFile.getConfig().<List<UnmodifiableConfig>>getOptional(Arrays.asList("dependencies", this.modId)).
@@ -140,7 +148,7 @@ public class ModInfo implements IModInfo
 
     public Optional<String> getLogoFile()
     {
-        return this.owningFile != null ? this.owningFile.getConfig().getOptional("logoFile") : this.modConfig.getOptional("logoFile");
+        return this.logoFile;
     }
 
     public boolean hasConfigUI()
