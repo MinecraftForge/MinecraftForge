@@ -103,10 +103,10 @@ public class LazyOptional<T>
         this.supplier = instanceSupplier;
     }
 
-    private @Nullable T getValue()
+    private T getValue()
     {
         if (!isValid)
-            return null;
+            throw new IllegalStateException();
         if (resolved != null)
             return resolved.get();
 
@@ -116,13 +116,12 @@ public class LazyOptional<T>
             T temp = supplier.get();
             if (temp == null)
             {
-                LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
-                return null;
+                throw new NullPointerException("Supplier should not return null value");
             }
             resolved.set(temp);
             return resolved.get();
         }
-        return null;
+        throw new NullPointerException("Supplier is null");
     }
     
     private T getValueUnsafe()
