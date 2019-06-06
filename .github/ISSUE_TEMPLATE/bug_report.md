@@ -1,6 +1,11 @@
-<!-- Thank you for reporting! -->
-<!-- Please go to the forum first for support with crashes and issues. -->
-<!-- https://www.minecraftforge.net/forum/forum/18-support-bug-reports/ -->
+---
+name: Bug report
+about: Game crashing? Report it here!
+title: ''
+labels: Bug
+assignees: ''
+
+---
 
 **Minecraft Version:** {Minecraft version}
 
