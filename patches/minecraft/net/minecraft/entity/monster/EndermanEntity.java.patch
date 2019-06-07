@@ -1,6 +1,23 @@
 --- a/net/minecraft/entity/monster/EndermanEntity.java
 +++ b/net/minecraft/entity/monster/EndermanEntity.java
-@@ -225,7 +225,9 @@
+@@ -91,7 +91,6 @@
+    }
+ 
+    public void func_70624_b(@Nullable LivingEntity p_70624_1_) {
+-      super.func_70624_b(p_70624_1_);
+       IAttributeInstance iattributeinstance = this.func_110148_a(SharedMonsterAttributes.field_111263_d);
+       if (p_70624_1_ == null) {
+          this.field_184721_by = 0;
+@@ -104,7 +103,7 @@
+             iattributeinstance.func_111121_a(field_110193_bq);
+          }
+       }
+-
++      super.func_70624_b(p_70624_1_);
+    }
+ 
+    protected void func_70088_a() {
+@@ -225,7 +224,9 @@
        if (!this.field_70170_p.func_180495_p(blockpos$mutableblockpos).func_185904_a().func_76230_c()) {
           return false;
        } else {
@@ -11,7 +28,7 @@
           if (flag) {
              this.field_70170_p.func_184148_a((PlayerEntity)null, this.field_70169_q, this.field_70167_r, this.field_70166_s, SoundEvents.field_187534_aX, this.func_184176_by(), 1.0F, 1.0F);
              this.func_184185_a(SoundEvents.field_187534_aX, 1.0F, 1.0F);
-@@ -370,7 +372,7 @@
+@@ -370,7 +371,7 @@
        public boolean func_75250_a() {
           if (this.field_179475_a.func_195405_dq() == null) {
              return false;
@@ -20,7 +37,7 @@
              return false;
           } else {
              return this.field_179475_a.func_70681_au().nextInt(2000) == 0;
-@@ -388,7 +390,7 @@
+@@ -388,7 +389,7 @@
           BlockPos blockpos1 = blockpos.func_177977_b();
           BlockState blockstate1 = iworld.func_180495_p(blockpos1);
           BlockState blockstate2 = this.field_179475_a.func_195405_dq();
@@ -29,7 +46,7 @@
              iworld.func_180501_a(blockpos, blockstate2, 3);
              this.field_179475_a.func_195406_b((BlockState)null);
           }
-@@ -433,7 +435,7 @@
+@@ -433,7 +434,7 @@
        public boolean func_75250_a() {
           if (this.field_179473_a.func_195405_dq() != null) {
              return false;
