@@ -9,7 +9,7 @@ assignees: ''
 
 <!-- Thank you for reporting! -->
 
-<!-- Please go to the forum first for support with crashes and issues. -->
+<!-- For support with crashes and issues, please create a post on the forum instead: -->
 <!-- https://www.minecraftforge.net/forum/forum/18-support-bug-reports/ -->
 
 **Minecraft Version:** {Minecraft version}
