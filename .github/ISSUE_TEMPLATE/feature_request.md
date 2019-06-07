@@ -1,20 +1,13 @@
 ---
 name: Feature request
-about: Suggest an idea for Forge!
+about: Want to request a feature?
 title: ''
 labels: Feature
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is.
-
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+<!-- Please note, feature requests are rarely implemented. -->
+<!-- If you'd like to see something in Forge, you should be ready to implement it yourself. -->
+<!-- If you're not sure, open a Draft PR or discuss it in the Discord server. -->
+<!-- Discord: https://discord.gg/UvedJ9m -->
