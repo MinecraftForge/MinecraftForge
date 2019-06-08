@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
+import java.util.Optional;
 import javax.annotation.Nullable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.SimpleRegistry;
@@ -65,6 +66,12 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     // Reading Functions
+    @Override
+    public Optional<T> func_218349_b(@Nullable ResourceLocation key)
+    {
+        return Optional.ofNullable(this.delegate.getRaw(key));
+    }
+
     @Override
     @Nullable
     public T getOrDefault(@Nullable ResourceLocation name)
