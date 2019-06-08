@@ -119,7 +119,7 @@
        this.field_147008_s.clear();
        (this.field_147002_h).field_148330_a.clear();
        if (p_147050_1_ == ItemGroup.field_192395_m) {
-@@ -494,19 +531,21 @@
+@@ -494,13 +531,15 @@
        }
  
        if (this.field_147062_A != null) {
@@ -127,8 +127,7 @@
 +         if (p_147050_1_.hasSearchBar()) {
              this.field_147062_A.func_146189_e(true);
              this.field_147062_A.func_146205_d(false);
--            this.field_147062_A.func_146195_b(true);
-+            this.field_147062_A.setFocused(true);
+             this.field_147062_A.func_146195_b(true);
              if (i != p_147050_1_.func_78021_a()) {
                 this.field_147062_A.func_146180_a("");
              }
@@ -137,13 +136,6 @@
  
              this.func_147053_i();
           } else {
-             this.field_147062_A.func_146189_e(false);
-             this.field_147062_A.func_146205_d(true);
--            this.field_147062_A.func_146195_b(false);
-+            this.field_147062_A.setFocused(false);
-             this.field_147062_A.func_146180_a("");
-          }
-       }
 @@ -560,16 +599,35 @@
        this.renderBackground();
        super.render(p_render_1_, p_render_2_, p_render_3_);

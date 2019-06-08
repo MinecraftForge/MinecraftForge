@@ -1,14 +1,5 @@
 --- a/net/minecraft/client/gui/recipebook/RecipeBookGui.java
 +++ b/net/minecraft/client/gui/recipebook/RecipeBookGui.java
-@@ -367,7 +367,7 @@
-             return true;
-          } else if (this.field_191888_F.field_71474_y.field_74310_D.func_197976_a(p_keyPressed_1_, p_keyPressed_2_) && !this.field_193962_q.isFocused()) {
-             this.field_199738_u = true;
--            this.field_193962_q.func_146195_b(true);
-+            this.field_193962_q.setFocused(true);
-             return true;
-          } else {
-             return false;
 @@ -421,7 +421,7 @@
  
           languagemanager.func_135045_a(language);

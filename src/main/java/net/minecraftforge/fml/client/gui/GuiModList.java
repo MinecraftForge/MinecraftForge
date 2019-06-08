@@ -283,7 +283,7 @@ public class GuiModList extends Screen
         children.add(search);
         children.add(modList);
         children.add(modInfo);
-        search.setFocused(true);
+        search.setFocused2(true);
         search.setCanLoseFocus(true);
 
         final int width = listWidth / numButtons;
