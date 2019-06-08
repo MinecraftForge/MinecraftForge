@@ -21,6 +21,7 @@ package net.minecraftforge.registries;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -70,6 +71,12 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     public T getOrDefault(@Nullable ResourceLocation name)
     {
         return this.delegate.getRaw(name); //get without default
+    }
+
+    @Override
+    public Optional<T> func_218349_b(@Nullable ResourceLocation name)
+    {
+        return Optional.ofNullable( this.delegate.getRaw(name)); //get without default
     }
 
     @Override

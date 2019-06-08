@@ -1,6 +1,4 @@
-# The name of the mod loader type to load
 modLoader="javafml"
-# A version range to match for said mod loader
 loaderVersion="[2.0,)"
 
 # debug/client/model
@@ -8,7 +6,7 @@ loaderVersion="[2.0,)"
 	modId="forgedebugmodeldata"
 	version="1.0"
 	displayName="ModelDataTest"
-[[mods]]
-    modId="forgedebugmodelloaderregistry"
-    version="1.0"
-    displayName="ModelLoaderRegistryTest"
+#[[mods]]
+#    modId="forgedebugmodelloaderregistry"
+#    version="1.0"
+#    displayName="ModelLoaderRegistryTest"

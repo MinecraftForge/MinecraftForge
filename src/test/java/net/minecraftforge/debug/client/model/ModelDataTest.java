@@ -26,24 +26,24 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockContainer;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ContainerBlock;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.MissingTextureSprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EnumBlockRenderType;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ModelDataManager;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
@@ -55,6 +55,7 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ObjectHolder;
 
 @Mod(ModelDataTest.MODID)
 public class ModelDataTest
@@ -63,6 +64,12 @@ public class ModelDataTest
     public static final String VERSION = "1.0";
 
     private static final ModelProperty<Boolean> MAGIC_PROP = new ModelProperty<Boolean>();
+    private static final String BLOCK_NAME = "block";
+
+    @ObjectHolder(MODID + ":" + BLOCK_NAME)
+    private static final Block MY_BLOCK = null;
+    @ObjectHolder(MODID + ":" + BLOCK_NAME)
+    private static final TileEntityType<Tile> TILE_TYPE = null;
 
     public ModelDataTest()
     {
@@ -76,8 +83,7 @@ public class ModelDataTest
     {
         final IBakedModel stone = event.getModelRegistry().get(new ModelResourceLocation("minecraft:stone"));
         final IBakedModel dirt = event.getModelRegistry().get(new ModelResourceLocation("minecraft:dirt"));
-        final IBakedModel old = event.getModelRegistry().get(new ModelResourceLocation("forge:modeltest"));
-        event.getModelRegistry().put(new ModelResourceLocation("forge:modeltest"), new IDynamicBakedModel()
+        event.getModelRegistry().put(new ModelResourceLocation(MODID, BLOCK_NAME), new IDynamicBakedModel()
         {
             @Override
             public boolean isGui3d()
@@ -98,7 +104,7 @@ public class ModelDataTest
             }
 
             @Override
-            public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand, IModelData modelData)
+            public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData modelData)
             {
                 return modelData.getData(MAGIC_PROP) ? stone.getQuads(state, side, rand, modelData) : dirt.getQuads(state, side, rand, modelData);
             }
@@ -106,7 +112,7 @@ public class ModelDataTest
             @Override
             public TextureAtlasSprite getParticleTexture()
             {
-                return MissingTextureSprite.getSprite();
+                return MissingTextureSprite.func_217790_a();
             }
 
             @Override
@@ -117,7 +123,7 @@ public class ModelDataTest
 
             @Override
             @Nonnull
-            public IModelData getModelData(@Nonnull IWorldReader world, @Nonnull BlockPos pos, @Nonnull IBlockState state, @Nonnull IModelData tileData)
+            public IModelData getModelData(@Nonnull IEnviromentBlockReader world, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull IModelData tileData)
             {
                 if (world.getBlockState(pos.down()).getBlock() == Blocks.AIR)
                 {
@@ -128,9 +134,8 @@ public class ModelDataTest
         });
     }
 
-    private static final TileEntityType<Tile> TILE_TYPE = TileEntityType.Builder.create(Tile::new).build(null);
 
-    private static class Tile extends TileEntity implements ITickable
+    private static class Tile extends TileEntity implements ITickableTileEntity
     {
 
         public Tile()
@@ -146,7 +151,7 @@ public class ModelDataTest
             if (world.isRemote && counter++ == 100)
             {
                 ModelDataManager.requestModelDataRefresh(this);
-                world.markBlockRangeForRenderUpdate(getPos(), getPos());
+                world.func_217396_m(getPos());
             }
         }
 
@@ -159,9 +164,8 @@ public class ModelDataTest
 
     public void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        event.getRegistry().register(new BlockContainer(Block.Properties.create(Material.ROCK))
+        event.getRegistry().register(new ContainerBlock(Block.Properties.create(Material.ROCK))
         {
-
             @Override
             @Nullable
             public TileEntity createNewTileEntity(IBlockReader worldIn)
@@ -170,15 +174,15 @@ public class ModelDataTest
             }
 
             @Override
-            public EnumBlockRenderType getRenderType(IBlockState state)
+            public BlockRenderType getRenderType(BlockState state)
             {
-                return EnumBlockRenderType.MODEL;
+                return BlockRenderType.MODEL;
             }
-        }.setRegistryName("forge:modeltest"));
+        }.setRegistryName(MODID, BLOCK_NAME));
     }
 
     public void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event)
     {
-        event.getRegistry().register(TILE_TYPE.setRegistryName("forge:modeltest"));
+        event.getRegistry().register(TileEntityType.Builder.func_223042_a(Tile::new, MY_BLOCK).build(null).setRegistryName(MODID, BLOCK_NAME));
     }
 }

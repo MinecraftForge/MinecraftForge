@@ -138,8 +138,8 @@ project(':forge') {
             runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
             java {
                 srcDirs = [
-                    //"$rootDir/src/test/java", 
-                    //"$rootDir/src/fmllaunchertest/java"
+                    "$rootDir/src/test/java", 
+                    "$rootDir/src/fmllaunchertest/java"
                 ]
             }
             resources {
