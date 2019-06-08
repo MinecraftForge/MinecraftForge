@@ -261,26 +261,26 @@ public final class MultiModel implements IUnbakedModel
 
     @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
         IBakedModel bakedBase = null;
 
         if (base != null)
-            bakedBase = base.bake(modelGetter, spriteGetter, sprite, format);
+            bakedBase = base.bake(bakery, spriteGetter, sprite, format);
 
         ImmutableMap.Builder<String, IBakedModel> mapBuilder = ImmutableMap.builder();
 
         for (Entry<String, Pair<IUnbakedModel, IModelState>> entry : parts.entrySet())
         {
             Pair<IUnbakedModel, IModelState> pair = entry.getValue();
-            mapBuilder.put(entry.getKey(), pair.getLeft().bake(modelGetter, spriteGetter, new ModelStateComposition(sprite.getState(), pair.getRight(), sprite.isUvLock()), format));
+            mapBuilder.put(entry.getKey(), pair.getLeft().bake(bakery, spriteGetter, new ModelStateComposition(sprite.getState(), pair.getRight(), sprite.isUvLock()), format));
         }
 
         if(bakedBase == null && parts.isEmpty())
         {
             LOGGER.error("MultiModel {} is empty (no base model or parts were provided/resolved)", location);
             IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
-            return missing.bake(modelGetter, spriteGetter, new BasicState(missing.getDefaultState(), sprite.isUvLock()), format);
+            return missing.bake(bakery, spriteGetter, new BasicState(missing.getDefaultState(), sprite.isUvLock()), format);
         }
         return new Baked(location, true, bakedBase, mapBuilder.build());
     }

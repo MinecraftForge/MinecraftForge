@@ -17,6 +17,6 @@
 -   IBakedModel func_217641_a(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_);
 +   @Deprecated
 +   default IBakedModel func_217641_a(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_) {
-+       return bake(p_217641_1_::func_209597_a, p_217641_2_, p_217641_3_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++       return bake(p_217641_1_, p_217641_2_, p_217641_3_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
 +   }
  }

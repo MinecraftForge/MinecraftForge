@@ -10,38 +10,43 @@
     public boolean func_178309_b() {
        return this.field_178315_d != null ? this.field_178315_d.func_178309_b() : this.field_178322_i;
     }
-@@ -87,6 +90,10 @@
-       return this.field_187968_k;
-    }
- 
-+   public ItemOverrideList getOverrides(BlockModel model, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter) {
-+      return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(model, modelGetter, this.field_187968_k, spriteGetter);
-+   }
-+
+@@ -90,6 +93,10 @@
     private ItemOverrideList func_217646_a(ModelBakery p_217646_1_, BlockModel p_217646_2_) {
        return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, this.field_187968_k);
     }
-@@ -160,25 +167,26 @@
++   
++   public ItemOverrideList getOverrides(ModelBakery p_217646_1_, BlockModel p_217646_2_, Function<ResourceLocation, TextureAtlasSprite> textureGetter, net.minecraft.client.renderer.vertex.VertexFormat format) {
++      return this.field_187968_k.isEmpty() ? ItemOverrideList.field_188022_a : new ItemOverrideList(p_217646_1_, p_217646_2_, p_217646_1_::func_209597_a, textureGetter, this.field_187968_k, format);
++   }
+ 
+    public Collection<ResourceLocation> func_187965_e() {
+       Set<ResourceLocation> set = Sets.newHashSet();
+@@ -160,25 +167,33 @@
        return set1;
     }
  
 -   public IBakedModel func_217641_a(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_) {
 -      return this.func_217644_a(p_217641_1_, this, p_217641_2_, p_217641_3_);
--   }
-+   @Nullable
-+   @Override
-+   public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_217644_1_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_2_, net.minecraft.client.renderer.vertex.VertexFormat format) {
-+      if (!net.minecraftforge.client.model.Attributes.moreSpecific(format, net.minecraftforge.client.model.Attributes.DEFAULT_BAKED_FORMAT))
-+         throw new IllegalArgumentException("Cannot bake vanilla model to format other than BLOCK");
++   // FORGE: Override our interface method, binary compatible
++   public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, net.minecraft.client.renderer.vertex.VertexFormat format) {
++       if (!net.minecraftforge.client.model.Attributes.moreSpecific(format, net.minecraftforge.client.model.Attributes.DEFAULT_BAKED_FORMAT))
++           throw new IllegalArgumentException("Cannot bake vanilla model to format other than BLOCK");
++      return this.bake(bakery, this, spriteGetter, sprite, format);
+    }
  
--   public IBakedModel func_217644_a(ModelBakery p_217644_1_, BlockModel p_217644_2_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_4_) {
++   @Deprecated
+    public IBakedModel func_217644_a(ModelBakery p_217644_1_, BlockModel p_217644_2_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_4_) {
++       return bake(p_217644_1_, p_217644_2_, p_217644_3_, p_217644_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++   }
++   
++   public IBakedModel bake(ModelBakery p_217644_1_, BlockModel p_217644_2_, Function<ResourceLocation, TextureAtlasSprite> p_217644_3_, ISprite p_217644_4_, net.minecraft.client.renderer.vertex.VertexFormat format) {
        TextureAtlasSprite textureatlassprite = p_217644_3_.apply(new ResourceLocation(this.func_178308_c("particle")));
        if (this.func_178310_f() == ModelBakery.field_177616_r) {
 -         return new BuiltInModel(this.func_181682_g(), this.func_217646_a(p_217644_1_, p_217644_2_), textureatlassprite);
-+         return new BuiltInModel(this.func_181682_g(), this.getOverrides(this, p_217644_1_, p_217644_3_), textureatlassprite);
++         return new BuiltInModel(this.func_181682_g(), this.getOverrides(p_217644_1_, p_217644_2_, p_217644_3_, format), textureatlassprite);
        } else {
 -         SimpleBakedModel.Builder simplebakedmodel$builder = (new SimpleBakedModel.Builder(this, this.func_217646_a(p_217644_1_, p_217644_2_))).func_177646_a(textureatlassprite);
-+         SimpleBakedModel.Builder simplebakedmodel$builder = (new SimpleBakedModel.Builder(this, this.getOverrides(this, p_217644_1_, p_217644_3_))).func_177646_a(textureatlassprite);
++         SimpleBakedModel.Builder simplebakedmodel$builder = (new SimpleBakedModel.Builder(this, this.getOverrides(p_217644_1_, p_217644_2_, p_217644_3_, format))).func_177646_a(textureatlassprite);
  
           for(BlockPart blockpart : this.func_178298_a()) {
              for(Direction direction : blockpart.field_178240_c.keySet()) {
@@ -49,14 +54,14 @@
                 TextureAtlasSprite textureatlassprite1 = p_217644_3_.apply(new ResourceLocation(this.func_178308_c(blockpartface.field_178242_d)));
                 if (blockpartface.field_178244_b == null) {
 -                  simplebakedmodel$builder.func_177648_a(func_217645_a(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
-+                  simplebakedmodel$builder.func_177648_a(makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_2_));
++                  simplebakedmodel$builder.func_177648_a(makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
                 } else {
 -                  simplebakedmodel$builder.func_177650_a(p_217644_4_.func_188048_b().func_177523_a(blockpartface.field_178244_b), func_217645_a(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
-+                  simplebakedmodel$builder.func_177650_a(p_217644_2_.getState().apply(java.util.Optional.empty()).map(trsr -> trsr.rotate(direction)).orElse(direction), makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_2_));
++                  simplebakedmodel$builder.func_177650_a(p_217644_4_.getState().apply(java.util.Optional.empty()).map(trsr -> trsr.rotate(direction)).orElse(direction), makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
                 }
              }
           }
-@@ -191,6 +199,10 @@
+@@ -191,6 +206,10 @@
        return field_217647_g.func_217648_a(p_217645_0_.field_178241_a, p_217645_0_.field_178239_b, p_217645_1_, p_217645_2_, p_217645_3_, p_217645_4_, p_217645_0_.field_178237_d, p_217645_0_.field_178238_e);
     }
  

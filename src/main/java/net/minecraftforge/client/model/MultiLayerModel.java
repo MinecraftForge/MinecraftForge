@@ -79,25 +79,25 @@ public final class MultiLayerModel implements IUnbakedModel
     	return Collections.emptyList();
     }
 
-    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, ISprite sprite, VertexFormat format, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter)
+    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, ISprite sprite, VertexFormat format, ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter)
     {
         ImmutableMap.Builder<Optional<BlockRenderLayer>, IBakedModel> builder = ImmutableMap.builder();
         for(Optional<BlockRenderLayer> key : models.keySet())
         {
         	IUnbakedModel model = ModelLoaderRegistry.getModelOrLogError(models.get(key), "Couldn't load MultiLayerModel dependency: " + models.get(key));
-            builder.put(key, model.bake(modelGetter, spriteGetter, new ModelStateComposition(sprite.getState(), model.getDefaultState(), sprite.isUvLock()), format));
+            builder.put(key, model.bake(bakery, spriteGetter, new ModelStateComposition(sprite.getState(), model.getDefaultState(), sprite.isUvLock()), format));
         }
         return builder.build();
     }
 
     @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
         IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
         return new MultiLayerBakedModel(
-            buildModels(models, sprite, format, modelGetter, spriteGetter),
-            missing.bake(modelGetter, spriteGetter, new BasicState(missing.getDefaultState(), sprite.isUvLock()), format),
+            buildModels(models, sprite, format, bakery, spriteGetter),
+            missing.bake(bakery, spriteGetter, new BasicState(missing.getDefaultState(), sprite.isUvLock()), format),
             PerspectiveMapWrapper.getTransforms(sprite.getState())
         );
     }

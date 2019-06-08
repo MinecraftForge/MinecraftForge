@@ -6,7 +6,7 @@
     @Nullable
 -   public IBakedModel func_217641_a(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_) {
 +   @Override
-+   public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_, net.minecraft.client.renderer.vertex.VertexFormat format) {
++   public IBakedModel bake(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_, net.minecraft.client.renderer.vertex.VertexFormat format) {
        if (this.func_188114_a().isEmpty()) {
           return null;
        } else {
@@ -14,7 +14,7 @@
  
           for(Variant variant : this.func_188114_a()) {
 -            IBakedModel ibakedmodel = p_217641_1_.func_217845_a(variant.func_188046_a(), variant);
-+            IBakedModel ibakedmodel = p_217641_1_.apply(variant.func_188046_a()).bake(p_217641_1_, p_217641_2_, variant, format);
++            IBakedModel ibakedmodel = p_217641_1_.getBakedModel(variant.func_188046_a(), variant, p_217641_2_, format);
              weightedbakedmodel$builder.func_177677_a(ibakedmodel, variant.func_188047_d());
           }
  

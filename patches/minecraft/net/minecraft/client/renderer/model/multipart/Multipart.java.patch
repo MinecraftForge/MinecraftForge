@@ -6,7 +6,7 @@
     @Nullable
 -   public IBakedModel func_217641_a(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_) {
 +   @Override
-+   public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_, net.minecraft.client.renderer.vertex.VertexFormat format) {
++   public IBakedModel bake(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_, net.minecraft.client.renderer.vertex.VertexFormat format) {
        MultipartBakedModel.Builder multipartbakedmodel$builder = new MultipartBakedModel.Builder();
  
        for(Selector selector : this.func_188136_a()) {

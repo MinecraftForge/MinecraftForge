@@ -71,9 +71,9 @@ public final class ItemLayerModel implements IUnbakedModel
         this.overrides = overrides;
     }
 
-    public ItemLayerModel(BlockModel model)
+    public ItemLayerModel(ModelBakery bakery, BlockModel model, VertexFormat format)
     {
-        this(getTextures(model), model.getOverrides(model, ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter()));
+        this(getTextures(model), model.getOverrides(bakery, model, ModelLoader.defaultTextureGetter(), format));
     }
 
     private static ImmutableList<ResourceLocation> getTextures(BlockModel model)
@@ -118,7 +118,7 @@ public final class ItemLayerModel implements IUnbakedModel
 
     @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
         Optional<TRSRTransformation> transform = sprite.getState().apply(Optional.empty());

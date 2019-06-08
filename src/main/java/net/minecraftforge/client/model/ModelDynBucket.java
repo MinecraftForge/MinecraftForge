@@ -126,7 +126,7 @@ public final class ModelDynBucket implements IUnbakedModel
 
     @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
         IModelState state = sprite.getState();
         ImmutableMap<TransformType, TRSRTransformation> transformMap = PerspectiveMapWrapper.getTransforms(state);
@@ -151,7 +151,7 @@ public final class ModelDynBucket implements IUnbakedModel
         if (baseLocation != null)
         {
             // build base (insidest)
-            IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(modelGetter, spriteGetter, sprite, format);
+            IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(bakery, spriteGetter, sprite, format);
             random.setSeed(42);
             builder.addAll(model.getQuads(null, null, random));
             particleSprite = model.getParticleTexture();
@@ -176,7 +176,7 @@ public final class ModelDynBucket implements IUnbakedModel
             }
         }
 
-        return new BakedDynBucket(this, builder.build(), particleSprite, format, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity());
+        return new BakedDynBucket(bakery, this, builder.build(), particleSprite, format, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity());
     }
 
     /**
@@ -426,8 +426,12 @@ public final class ModelDynBucket implements IUnbakedModel
 
     private static final class BakedDynBucketOverrideHandler extends ItemOverrideList
     {
-        public static final BakedDynBucketOverrideHandler INSTANCE = new BakedDynBucketOverrideHandler();
-        private BakedDynBucketOverrideHandler() {}
+        private final ModelBakery bakery;
+        
+        private BakedDynBucketOverrideHandler(ModelBakery bakery)
+        {
+            this.bakery = bakery;
+        }
 
         @Override
         public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable LivingEntity entity)
@@ -445,7 +449,7 @@ public final class ModelDynBucket implements IUnbakedModel
                             Function<ResourceLocation, TextureAtlasSprite> textureGetter;
                             textureGetter = location -> Minecraft.getInstance().getTextureMap().getAtlasSprite(location.toString());
 
-                            IBakedModel bakedModel = parent.bake(ModelLoader.defaultModelGetter(), textureGetter, new SimpleModelState(model.transforms), model.format);
+                            IBakedModel bakedModel = parent.bake(bakery, textureGetter, new SimpleModelState(model.transforms), model.format);
                             model.cache.put(name, bakedModel);
                             return bakedModel;
                         }
@@ -464,7 +468,8 @@ public final class ModelDynBucket implements IUnbakedModel
         private final Map<String, IBakedModel> cache; // contains all the baked models since they'll never change
         private final VertexFormat format;
 
-        BakedDynBucket(ModelDynBucket parent,
+        BakedDynBucket(ModelBakery bakery,
+                       ModelDynBucket parent,
                        ImmutableList<BakedQuad> quads,
                        TextureAtlasSprite particle,
                        VertexFormat format,
@@ -472,7 +477,7 @@ public final class ModelDynBucket implements IUnbakedModel
                        Map<String, IBakedModel> cache,
                        boolean untransformed)
         {
-            super(quads, particle, transforms, BakedDynBucketOverrideHandler.INSTANCE, untransformed);
+            super(quads, particle, transforms, new BakedDynBucketOverrideHandler(bakery), untransformed);
             this.format = format;
             this.parent = parent;
             this.cache = cache;

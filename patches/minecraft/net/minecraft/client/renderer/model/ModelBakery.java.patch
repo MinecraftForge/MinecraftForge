@@ -18,21 +18,31 @@
                                return pair1;
                             } catch (Exception exception1) {
                                throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_217839_1_.func_199029_a(), p_217839_1_.func_199026_d(), exception1.getMessage()));
-@@ -381,7 +381,7 @@
+@@ -381,7 +381,12 @@
  
     @Nullable
     public IBakedModel func_217845_a(ResourceLocation p_217845_1_, ISprite p_217845_2_) {
 -      Triple<ResourceLocation, ModelRotation, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.func_188048_b(), p_217845_2_.func_188049_c());
++      return getBakedModel(p_217845_1_, p_217845_2_, this.field_177609_j::func_195424_a, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++   }
++   
++   @Nullable
++   public IBakedModel getBakedModel(ResourceLocation p_217845_1_, ISprite p_217845_2_, java.util.function.Function<ResourceLocation, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter, net.minecraft.client.renderer.vertex.VertexFormat format) {
 +      Triple<ResourceLocation, net.minecraftforge.common.model.IModelState, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.getState(), p_217845_2_.func_188049_c());
        if (this.field_217850_G.containsKey(triple)) {
           return this.field_217850_G.get(triple);
        } else {
-@@ -389,7 +389,7 @@
+@@ -389,11 +394,11 @@
           if (iunbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)iunbakedmodel;
              if (blockmodel.func_178310_f() == field_177606_o) {
 -               return field_217854_z.func_209579_a(this.field_177609_j::func_195424_a, blockmodel).func_217644_a(this, blockmodel, this.field_177609_j::func_195424_a, p_217845_2_);
-+               return field_217854_z.func_209579_a(this.field_177609_j::func_195424_a, blockmodel).bake(this::func_209597_a, this.field_177609_j::func_195424_a, p_217845_2_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++               return field_217854_z.func_209579_a(textureGetter, blockmodel).func_217644_a(this, blockmodel, textureGetter, p_217845_2_);
              }
           }
  
+-         IBakedModel ibakedmodel = iunbakedmodel.func_217641_a(this, this.field_177609_j::func_195424_a, p_217845_2_);
++         IBakedModel ibakedmodel = iunbakedmodel.bake(this, this.field_177609_j::func_195424_a, p_217845_2_, format);
+          this.field_217850_G.put(triple, ibakedmodel);
+          return ibakedmodel;
+       }

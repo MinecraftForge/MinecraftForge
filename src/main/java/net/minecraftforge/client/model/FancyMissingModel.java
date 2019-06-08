@@ -104,11 +104,11 @@ final class FancyMissingModel implements IUnbakedModel
 
     @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
-        IBakedModel bigMissing = missingModel.bake(modelGetter, spriteGetter, sprite, format);
+        IBakedModel bigMissing = missingModel.bake(bakery, spriteGetter, sprite, format);
         ModelStateComposition smallState = new ModelStateComposition(sprite.getState(), smallTransformation);
-        IBakedModel smallMissing = missingModel.bake(modelGetter, spriteGetter, smallState, format);
+        IBakedModel smallMissing = missingModel.bake(bakery, spriteGetter, smallState, format);
         return new BakedModel(bigMissing, smallMissing, fontCache.getUnchecked(format), message, spriteGetter.apply(font2));
     }
 

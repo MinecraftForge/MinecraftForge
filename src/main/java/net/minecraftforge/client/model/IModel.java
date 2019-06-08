@@ -27,7 +27,6 @@ import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
 import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -45,7 +44,7 @@ import net.minecraftforge.common.model.animation.IClip;
 public interface IModel<T extends IModel<T>>
 {
     @Nullable
-    IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format);
+    IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format);
 
     /*
      * Default state this model will be baked with.

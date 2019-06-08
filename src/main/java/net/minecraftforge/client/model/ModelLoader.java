@@ -436,19 +436,19 @@ public final class ModelLoader extends ModelBakery
 
         @Nullable
         @Override
-        public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+        public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
         {
-            return VanillaLoader.INSTANCE.modelCache.getUnchecked(new BakedModelCacheKey(this, modelGetter, spriteGetter, sprite.getState(), uvlock, format));
+            return VanillaLoader.INSTANCE.modelCache.getUnchecked(new BakedModelCacheKey(this, bakery, spriteGetter, sprite.getState(), uvlock, format));
         }
 
-        public IBakedModel bakeImpl(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
+        public IBakedModel bakeImpl(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
                 throw new IllegalArgumentException("can't bake vanilla models to the format that doesn't fit into the default one: " + format);
             }
             BlockModel model = this.model;
-            if(model == null) return getMissingModel().bake(modelGetter, bakedTextureGetter, new BasicState(getMissingModel().getDefaultState(), uvlock), format);
+            if(model == null) return getMissingModel().bake(bakery, bakedTextureGetter, new BasicState(getMissingModel().getDefaultState(), uvlock), format);
 
             List<TRSRTransformation> newTransforms = Lists.newArrayList();
             for(int i = 0; i < model.getElements().size(); i++)
@@ -465,18 +465,18 @@ public final class ModelLoader extends ModelBakery
 
             if(model == ModelBakery.MODEL_GENERATED)
             {
-                return new ItemLayerModel(model).bake(modelGetter, bakedTextureGetter, new BasicState(perState, uvlock), format);
+                return new ItemLayerModel(bakery, model, format).bake(bakery, bakedTextureGetter, new BasicState(perState, uvlock), format);
             }
             TextureAtlasSprite textureatlassprite = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
-            if(model == ModelBakery.MODEL_ENTITY) return new BuiltInModel(transforms, model.getOverrides(model, modelGetter, bakedTextureGetter), textureatlassprite);
-            return bakeNormal(model, perState, state, newTransforms, format, modelGetter, bakedTextureGetter, uvlock);
+            if(model == ModelBakery.MODEL_ENTITY) return new BuiltInModel(transforms, model.getOverrides(bakery, model, bakedTextureGetter, format), textureatlassprite);
+            return bakeNormal(bakery, model, perState, state, newTransforms, format, bakedTextureGetter, uvlock);
         }
 
-        private IBakedModel bakeNormal(BlockModel model, IModelState perState, final IModelState modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, IUnbakedModel> modelGetter, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
+        private IBakedModel bakeNormal(ModelBakery bakery, BlockModel model, IModelState perState, final IModelState modelState, List<TRSRTransformation> newTransforms, final VertexFormat format, final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, boolean uvLocked)
         {
             final TRSRTransformation baseState = modelState.apply(Optional.empty()).orElse(TRSRTransformation.identity());
             TextureAtlasSprite particle = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
-            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.getOverrides(model, modelGetter, bakedTextureGetter))).setTexture(particle);
+            SimpleBakedModel.Builder builder = (new SimpleBakedModel.Builder(model, model.getOverrides(bakery, model, bakedTextureGetter, format))).setTexture(particle);
             for(int i = 0; i < model.getElements().size(); i++)
             {
                 if(modelState.apply(Optional.of(Models.getHiddenModelPart(ImmutableList.of(Integer.toString(i))))).isPresent())
@@ -509,7 +509,7 @@ public final class ModelLoader extends ModelBakery
 
             return new PerspectiveMapWrapper(builder.build(), perState)
             {
-                private final ItemOverrideList overrides = new AnimationItemOverrideList(VanillaModelWrapper.this, modelState, format, bakedTextureGetter, super.getOverrides());
+                private final ItemOverrideList overrides = new AnimationItemOverrideList(bakery, VanillaModelWrapper.this, modelState, format, bakedTextureGetter, super.getOverrides());
 
                 @Override
                 public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand, IModelData modelData)
@@ -517,7 +517,7 @@ public final class ModelLoader extends ModelBakery
                     IModelState newState = modelData.getData(Properties.AnimationProperty);
                     if(newState != null)
                     {
-                        return VanillaModelWrapper.this.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(modelState, newState, uvlock), format).getQuads(state, side, rand, modelData);
+                        return VanillaModelWrapper.this.bake(bakery, bakedTextureGetter, new ModelStateComposition(modelState, newState, uvlock), format).getQuads(state, side, rand, modelData);
                     }
                     return super.getQuads(state, side, rand);
                 }
@@ -707,7 +707,7 @@ public final class ModelLoader extends ModelBakery
 
         @Nullable
         @Override
-        public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
+        public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
         {
             if(!Attributes.moreSpecific(format, Attributes.DEFAULT_BAKED_FORMAT))
             {
@@ -716,13 +716,13 @@ public final class ModelLoader extends ModelBakery
             if(variants.size() == 1)
             {
                 IUnbakedModel model = models.get(0);
-                return model.bake(modelGetter, spriteGetter, new BasicState(MultiModelState.getPartState(sprite.getState(), model, 0), sprite.isUvLock()), format);
+                return model.bake(bakery, spriteGetter, new BasicState(MultiModelState.getPartState(sprite.getState(), model, 0), sprite.isUvLock()), format);
             }
             WeightedBakedModel.Builder builder = new WeightedBakedModel.Builder();
             for(int i = 0; i < variants.size(); i++)
             {
                 IUnbakedModel model = models.get(i);
-                builder.add(model.bake(modelGetter, spriteGetter, new BasicState(MultiModelState.getPartState(sprite.getState(), model, i), sprite.isUvLock()), format), variants.get(i).getWeight());
+                builder.add(model.bake(bakery, spriteGetter, new BasicState(MultiModelState.getPartState(sprite.getState(), model, i), sprite.isUvLock()), format), variants.get(i).getWeight());
             }
             return builder.build();
         }
@@ -775,16 +775,16 @@ public final class ModelLoader extends ModelBakery
     protected final class BakedModelCacheKey
     {
         private final VanillaModelWrapper model;
-        private final Function<ResourceLocation, IUnbakedModel> modelGetter;
+        private final ModelBakery bakery;
         private final Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter;
         private final IModelState state;
         private final boolean uvlock;
         private final VertexFormat format;
 
-        public BakedModelCacheKey(VanillaModelWrapper model, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
+        public BakedModelCacheKey(VanillaModelWrapper model, ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
         {
             this.model = model;
-            this.modelGetter = modelGetter;
+            this.bakery = bakery;
             this.bakedTextureGetter = bakedTextureGetter;
             this.state = state;
             this.uvlock = uvlock;
@@ -803,7 +803,7 @@ public final class ModelLoader extends ModelBakery
                 return false;
             }
             BakedModelCacheKey that = (BakedModelCacheKey) o;
-            return Objects.equal(model, that.model) && Objects.equal(modelGetter, that.modelGetter) && Objects.equal(bakedTextureGetter, that.bakedTextureGetter) && Objects.equal(state, that.state) && uvlock == that.uvlock && Objects.equal(format, that.format);
+            return Objects.equal(model, that.model) && Objects.equal(bakery, that.bakery) && Objects.equal(bakedTextureGetter, that.bakedTextureGetter) && Objects.equal(state, that.state) && uvlock == that.uvlock && Objects.equal(format, that.format);
         }
 
         @Override
@@ -823,7 +823,7 @@ public final class ModelLoader extends ModelBakery
             @Override
             public IBakedModel load(BakedModelCacheKey key) throws Exception
             {
-                return key.model.bakeImpl(key.modelGetter, key.bakedTextureGetter, key.state, key.uvlock, key.format);
+                return key.model.bakeImpl(key.bakery, key.bakedTextureGetter, key.state, key.uvlock, key.format);
             }
         });
 
