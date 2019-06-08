@@ -201,7 +201,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         CompoundNBT dims = new CompoundNBT();
         DimensionManager.writeRegistry(dims);
         if (!dims.isEmpty())
-            forgeData.func_218657_a("dims", dims);
+            forgeData.put("dims", dims);
         // TODO fluids FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }

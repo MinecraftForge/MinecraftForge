@@ -34,14 +34,14 @@ public class GuiConfirmation extends GuiNotification
     {
         this.addButton(new Button(this.width / 2 - 104, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.yes"), b ->
             {
-                GuiConfirmation.this.minecraft.currentScreen = null;
+                GuiConfirmation.this.minecraft.field_71462_r = null;
                 query.setResult(true);
                 query.finish();
             }
         ));
         this.addButton(new Button(this.width / 2 + 4, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.no"), b ->
             {
-                GuiConfirmation.this.minecraft.currentScreen = null;
+                GuiConfirmation.this.minecraft.field_71462_r = null;
                 query.setResult(false);
                 query.finish();
             }

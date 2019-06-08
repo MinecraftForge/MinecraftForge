@@ -601,7 +601,7 @@ public interface IForgeItem
      */
     default boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment)
     {
-        return enchantment.type.canEnchantItem(stack.getItem());
+        return enchantment.field_77351_y.canEnchantItem(stack.getItem());
     }
 
     /**

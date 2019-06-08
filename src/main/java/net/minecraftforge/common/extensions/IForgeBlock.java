@@ -237,7 +237,7 @@ public interface IForgeBlock
     default boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid)
     {
         getBlock().onBlockHarvested(world, pos, state, player);
-        return world.func_217377_a(pos, false);
+        return world.removeBlock(pos, false);
     }
 
     /**
@@ -268,7 +268,7 @@ public interface IForgeBlock
      */
     default boolean canCreatureSpawn(BlockState state, IBlockReader world, BlockPos pos, EntitySpawnPlacementRegistry.PlacementType type, @Nullable EntityType<?> entityType)
     {
-        return state.func_215688_a(world, pos, entityType);
+        return state.canEntitySpawn(world, pos, entityType);
     }
 
     /**
@@ -771,7 +771,7 @@ public interface IForgeBlock
      */
     default SoundType getSoundType(BlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity)
     {
-        return this.getBlock().func_220072_p(state);
+        return this.getBlock().getSoundType(state);
     }
 
     /**
@@ -812,7 +812,7 @@ public interface IForgeBlock
                 LivingEntity ent = (LivingEntity)entity;
                 f12 = (float) EnchantmentHelper.getRespirationModifier(ent) * 0.2F;
 
-                if (ent.isPotionActive(Effects.WATER_BREATHING))
+                if (ent.isPotionActive(Effects.field_76427_o))
                 {
                     f12 = f12 * 0.3F + 0.6F;
                 }

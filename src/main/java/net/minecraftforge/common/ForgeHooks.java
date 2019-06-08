@@ -237,12 +237,12 @@ public class ForgeHooks
     public static boolean onPickBlock(RayTraceResult target, PlayerEntity player, World world)
     {
         ItemStack result = ItemStack.EMPTY;
-        boolean isCreative = player.abilities.isCreativeMode;
+        boolean isCreative = player.playerAbilities.isCreativeMode;
         TileEntity te = null;
 
-        if (target.func_216346_c() == RayTraceResult.Type.BLOCK)
+        if (target.getType() == RayTraceResult.Type.BLOCK)
         {
-            BlockPos pos = ((BlockRayTraceResult)target).func_216350_a();
+            BlockPos pos = ((BlockRayTraceResult)target).getPos();
             BlockState state = world.getBlockState(pos);
 
             if (state.isAir(world, pos))
@@ -254,15 +254,15 @@ public class ForgeHooks
             result = state.getBlock().getPickBlock(state, target, world, pos, player);
 
             if (result.isEmpty())
-                LOGGER.warn("Picking on: [{}] {} gave null item", target.func_216346_c(), state.getBlock().getRegistryName());
+                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), state.getBlock().getRegistryName());
         }
-        else if (target.func_216346_c() == RayTraceResult.Type.ENTITY)
+        else if (target.getType() == RayTraceResult.Type.ENTITY)
         {
-            Entity entity = ((EntityRayTraceResult)target).func_216348_a();
+            Entity entity = ((EntityRayTraceResult)target).getEntity();
             result = entity.getPickedResult(target);
 
             if (result.isEmpty())
-                LOGGER.warn("Picking on: [{}] {} gave null item", target.func_216346_c(), entity.getType().getRegistryName());
+                LOGGER.warn("Picking on: [{}] {} gave null item", target.getType(), entity.getType().getRegistryName());
         }
 
         if (result.isEmpty())
@@ -274,7 +274,7 @@ public class ForgeHooks
         if (isCreative)
         {
             player.inventory.setPickedItemStack(result);
-            Minecraft.getInstance().playerController.sendSlotPacket(player.getHeldItem(Hand.MAIN_HAND), 36 + player.inventory.currentItem);
+            Minecraft.getInstance().field_71442_b.sendSlotPacket(player.getHeldItem(Hand.MAIN_HAND), 36 + player.inventory.currentItem);
             return true;
         }
         int slot = player.inventory.getSlotFor(result);
@@ -283,7 +283,7 @@ public class ForgeHooks
             if (PlayerInventory.isHotbar(slot))
                 player.inventory.currentItem = slot;
             else
-                Minecraft.getInstance().playerController.pickItem(slot);
+                Minecraft.getInstance().field_71442_b.pickItem(slot);
             return true;
         }
         return false;
@@ -438,7 +438,7 @@ public class ForgeHooks
     @Nullable
     public static ITextComponent onServerChatEvent(ServerPlayNetHandler net, String raw, ITextComponent comp)
     {
-        ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
+        ServerChatEvent event = new ServerChatEvent(net.field_147369_b, raw, comp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;
@@ -660,7 +660,7 @@ public class ForgeHooks
                     BlockState newBlock = world.getBlockState(snap.getPos());
                     if (!newBlock.getBlock().hasTileEntity(newBlock)) // Containers get placed automatically
                     {
-                        newBlock.func_215705_a(world, snap.getPos(), oldBlock, false);
+                        newBlock.onBlockAdded(world, snap.getPos(), oldBlock, false);
                     }
 
                     world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
@@ -741,7 +741,7 @@ public class ForgeHooks
 
     public static ActionResultType onInteractEntityAt(PlayerEntity player, Entity entity, RayTraceResult ray, Hand hand)
     {
-        Vec3d vec3d = new Vec3d(ray.func_216347_e().x - entity.posX, ray.func_216347_e().y - entity.posY, ray.func_216347_e().z - entity.posZ);
+        Vec3d vec3d = new Vec3d(ray.getHitVec().x - entity.posX, ray.getHitVec().y - entity.posY, ray.getHitVec().z - entity.posZ);
         return onInteractEntityAt(player, entity, vec3d, hand);
     }
 

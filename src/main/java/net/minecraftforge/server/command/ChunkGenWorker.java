@@ -146,7 +146,7 @@ public class ChunkGenWorker implements IWorker
             int x = next.getX();
             int z = next.getZ();
 
-            IChunk chunk = world.func_217353_a(x, z, ChunkStatus.field_222617_m, false);
+            IChunk chunk = world.getChunk(x, z, ChunkStatus.FULL, false);
             /* TODO: Mark things to unload
             PlayerChunkMapEntry watchers = world.getPlayerChunkMap().getEntry(chunk.x, chunk.z);
             if (watchers == null) //If there are no players watching this, this will be null, so we can unload.

@@ -66,7 +66,7 @@ public class FMLPlayMessages
         SpawnEntity(Entity e)
         {
             this.entity = e;
-            this.typeId = Registry.ENTITY_TYPE.getId(e.getType());
+            this.typeId = Registry.field_212629_r.getId(e.getType());
             this.entityId = e.getEntityId();
             this.uuid = e.getUniqueID();
             this.posX = e.posX;
@@ -75,7 +75,7 @@ public class FMLPlayMessages
             this.pitch = (byte) MathHelper.floor(e.rotationPitch * 256.0F / 360.0F);
             this.yaw = (byte) MathHelper.floor(e.rotationYaw * 256.0F / 360.0F);
             this.headYaw = (byte) (e.getRotationYawHead() * 256.0F / 360.0F);
-            Vec3d vec3d = e.func_213322_ci();
+            Vec3d vec3d = e.getMotion();
             double d1 = MathHelper.clamp(vec3d.x, -3.9D, 3.9D);
             double d2 = MathHelper.clamp(vec3d.y, -3.9D, 3.9D);
             double d3 = MathHelper.clamp(vec3d.z, -3.9D, 3.9D);
@@ -141,7 +141,7 @@ public class FMLPlayMessages
         public static void handle(SpawnEntity msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                EntityType<?> type = Registry.ENTITY_TYPE.getByValue(msg.typeId);
+                EntityType<?> type = Registry.field_212629_r.getByValue(msg.typeId);
                 if (type == null)
                 {
                     throw new RuntimeException(String.format("Could not spawn entity (id %d) with unknown type at (%f, %f, %f)", msg.entityId, msg.posX, msg.posY, msg.posZ));
@@ -209,7 +209,7 @@ public class FMLPlayMessages
         {
             ctx.get().enqueueWork(() -> {
                 // TODO extend IScreenFactory to allow for extra data
-                ScreenManager.func_216909_a(msg.getType(), Minecraft.getInstance(), msg.getWindowId(), msg.getName());
+                ScreenManager.openScreen(msg.getType(), Minecraft.getInstance(), msg.getWindowId(), msg.getName());
             });
             ctx.get().setPacketHandled(true);
         }

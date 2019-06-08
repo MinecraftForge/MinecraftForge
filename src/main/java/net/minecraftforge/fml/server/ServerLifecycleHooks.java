@@ -147,7 +147,7 @@ public class ServerLifecycleHooks
 
     private static void rejectConnection(final NetworkManager manager, ConnectionType type, String message) {
         manager.setConnectionState(ProtocolType.LOGIN);
-        LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: ", type, message);
+        LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: {}", type, message);
         StringTextComponent text = new StringTextComponent(message);
         manager.sendPacket(new SDisconnectLoginPacket(text));
         manager.closeChannel(text);

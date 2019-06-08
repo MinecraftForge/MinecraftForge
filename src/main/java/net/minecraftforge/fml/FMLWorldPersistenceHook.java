@@ -67,15 +67,15 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
             mod.putString("ModVersion", MavenVersionStringHelper.artifactVersionToString(mi.getVersion()));
             modList.add(mod);
         });
-        fmlData.func_218657_a("LoadingModList", modList);
+        fmlData.put("LoadingModList", modList);
 
         CompoundNBT registries = new CompoundNBT();
-        fmlData.func_218657_a("Registries", registries);
+        fmlData.put("Registries", registries);
         LOGGER.debug(WORLDPERSISTENCE,"Gathering id map for writing to world save {}", info.getWorldName());
 
         for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
         {
-            registries.func_218657_a(e.getKey().toString(), e.getValue().write());
+            registries.put(e.getKey().toString(), e.getValue().write());
         }
         return fmlData;
     }

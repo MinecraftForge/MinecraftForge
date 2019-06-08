@@ -130,14 +130,14 @@ public class ForgeIngameGui extends IngameGui
 
         if (renderHelmet) renderHelmet(partialTicks);
 
-        if (renderPortal && !mc.player.isPotionActive(Effects.NAUSEA))
+        if (renderPortal && !mc.player.isPotionActive(Effects.field_76431_k))
         {
             renderPortal(partialTicks);
         }
 
-        if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
+        if (this.mc.field_71442_b.getCurrentGameType() == GameType.SPECTATOR)
         {
-            if (renderSpectatorTooltip) spectatorGui.renderTooltip(partialTicks);
+            if (renderSpectatorTooltip) field_175197_u.renderTooltip(partialTicks);
         }
         else if (!this.mc.gameSettings.hideGUI)
         {
@@ -153,7 +153,7 @@ public class ForgeIngameGui extends IngameGui
             if (renderBossHealth) renderBossHealth();
 
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            if (this.mc.playerController.shouldDrawHUD() && this.mc.getRenderViewEntity() instanceof PlayerEntity)
+            if (this.mc.field_71442_b.shouldDrawHUD() && this.mc.getRenderViewEntity() instanceof PlayerEntity)
             {
                 if (renderHealth) renderHealth(this.scaledWidth, this.scaledHeight);
                 if (renderArmor)  renderArmor(this.scaledWidth, this.scaledHeight);
@@ -170,10 +170,10 @@ public class ForgeIngameGui extends IngameGui
             {
                 renderExperience(this.scaledWidth / 2 - 91);
             }
-            if (this.mc.gameSettings.heldItemTooltips && this.mc.playerController.getCurrentGameType() != GameType.SPECTATOR) {
+            if (this.mc.gameSettings.heldItemTooltips && this.mc.field_71442_b.getCurrentGameType() != GameType.SPECTATOR) {
                 this.renderSelectedItem();
              } else if (this.mc.player.isSpectator()) {
-                this.spectatorGui.renderSelectedItem();
+                this.field_175197_u.renderSelectedItem();
              }
         }
 
@@ -240,7 +240,7 @@ public class ForgeIngameGui extends IngameGui
     protected void renderSubtitles()
     {
         if (pre(SUBTITLES)) return;
-        this.overlaySubtitle.render();
+        this.field_184049_t.render();
         post(SUBTITLES);
     }
 
@@ -249,11 +249,11 @@ public class ForgeIngameGui extends IngameGui
         if (pre(BOSSHEALTH)) return;
         bind(AbstractGui.GUI_ICONS_LOCATION);
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        mc.func_213239_aq().startSection("bossHealth");
+        mc.getProfiler().startSection("bossHealth");
         GlStateManager.enableBlend();
-        this.overlayBoss.render();
+        this.field_184050_w.render();
         GlStateManager.disableBlend();
-        mc.func_213239_aq().endSection();
+        mc.getProfiler().endSection();
         post(BOSSHEALTH);
     }
 
@@ -296,7 +296,7 @@ public class ForgeIngameGui extends IngameGui
     protected void renderArmor(int width, int height)
     {
         if (pre(ARMOR)) return;
-        mc.func_213239_aq().startSection("armor");
+        mc.getProfiler().startSection("armor");
 
         GlStateManager.enableBlend();
         int left = width / 2 - 91;
@@ -322,7 +322,7 @@ public class ForgeIngameGui extends IngameGui
         left_height += 10;
 
         GlStateManager.disableBlend();
-        mc.func_213239_aq().endSection();
+        mc.getProfiler().endSection();
         post(ARMOR);
     }
 
@@ -346,9 +346,9 @@ public class ForgeIngameGui extends IngameGui
     {
         if (pre(HOTBAR)) return;
 
-        if (mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
+        if (mc.field_71442_b.getCurrentGameType() == GameType.SPECTATOR)
         {
-            this.spectatorGui.renderTooltip(partialTicks);
+            this.field_175197_u.renderTooltip(partialTicks);
         }
         else
         {
@@ -367,7 +367,7 @@ public class ForgeIngameGui extends IngameGui
     protected void renderAir(int width, int height)
     {
         if (pre(AIR)) return;
-        mc.func_213239_aq().startSection("air");
+        mc.getProfiler().startSection("air");
         PlayerEntity player = (PlayerEntity)this.mc.getRenderViewEntity();
         GlStateManager.enableBlend();
         int left = width / 2 + 91;
@@ -387,7 +387,7 @@ public class ForgeIngameGui extends IngameGui
         }
 
         GlStateManager.disableBlend();
-        mc.func_213239_aq().endSection();
+        mc.getProfiler().endSection();
         post(AIR);
     }
 
@@ -395,7 +395,7 @@ public class ForgeIngameGui extends IngameGui
     {
         bind(GUI_ICONS_LOCATION);
         if (pre(HEALTH)) return;
-        mc.func_213239_aq().startSection("health");
+        mc.getProfiler().startSection("health");
         GlStateManager.enableBlend();
 
         PlayerEntity player = (PlayerEntity)this.mc.getRenderViewEntity();
@@ -438,7 +438,7 @@ public class ForgeIngameGui extends IngameGui
         if (rowHeight != 10) left_height += 10 - rowHeight;
 
         int regen = -1;
-        if (player.isPotionActive(Effects.REGENERATION))
+        if (player.isPotionActive(Effects.field_76428_l))
         {
             regen = ticks % 25;
         }
@@ -446,8 +446,8 @@ public class ForgeIngameGui extends IngameGui
         final int TOP =  9 * (mc.world.getWorldInfo().isHardcore() ? 5 : 0);
         final int BACKGROUND = (highlight ? 25 : 16);
         int MARGIN = 16;
-        if (player.isPotionActive(Effects.POISON))      MARGIN += 36;
-        else if (player.isPotionActive(Effects.WITHER)) MARGIN += 72;
+        if (player.isPotionActive(Effects.field_76436_u))      MARGIN += 36;
+        else if (player.isPotionActive(Effects.field_82731_v)) MARGIN += 72;
         float absorbRemaining = absorb;
 
         for (int i = MathHelper.ceil((healthMax + absorb) / 2.0F) - 1; i >= 0; --i)
@@ -493,14 +493,14 @@ public class ForgeIngameGui extends IngameGui
         }
 
         GlStateManager.disableBlend();
-        mc.func_213239_aq().endSection();
+        mc.getProfiler().endSection();
         post(HEALTH);
     }
 
     public void renderFood(int width, int height)
     {
         if (pre(FOOD)) return;
-        mc.func_213239_aq().startSection("food");
+        mc.getProfiler().startSection("food");
 
         PlayerEntity player = (PlayerEntity)this.mc.getRenderViewEntity();
         GlStateManager.enableBlend();
@@ -520,7 +520,7 @@ public class ForgeIngameGui extends IngameGui
             int icon = 16;
             byte background = 0;
 
-            if (mc.player.isPotionActive(Effects.HUNGER))
+            if (mc.player.isPotionActive(Effects.field_76438_s))
             {
                 icon += 36;
                 background = 13;
@@ -540,7 +540,7 @@ public class ForgeIngameGui extends IngameGui
                 blit(x, y, icon + 45, 27, 9, 9);
         }
         GlStateManager.disableBlend();
-        mc.func_213239_aq().endSection();
+        mc.getProfiler().endSection();
         post(FOOD);
     }
 
@@ -548,7 +548,7 @@ public class ForgeIngameGui extends IngameGui
     {
         if (mc.player.getSleepTimer() > 0)
         {
-            mc.func_213239_aq().startSection("sleep");
+            mc.getProfiler().startSection("sleep");
             GlStateManager.disableDepthTest();
             GlStateManager.disableAlphaTest();
             int sleepTime = mc.player.getSleepTimer();
@@ -563,7 +563,7 @@ public class ForgeIngameGui extends IngameGui
             fill(0, 0, width, height, color);
             GlStateManager.enableAlphaTest();
             GlStateManager.enableDepthTest();
-            mc.func_213239_aq().endSection();
+            mc.getProfiler().endSection();
         }
     }
 
@@ -574,7 +574,7 @@ public class ForgeIngameGui extends IngameGui
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableBlend();
 
-        if (mc.playerController.gameIsSurvivalOrAdventure())
+        if (mc.field_71442_b.gameIsSurvivalOrAdventure())
         {
             super.renderExpBar(x);
         }
@@ -595,7 +595,7 @@ public class ForgeIngameGui extends IngameGui
         super.renderHorseJumpBar(x);
 
         GlStateManager.enableBlend();
-        mc.func_213239_aq().endSection();
+        mc.getProfiler().endSection();
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         post(JUMPBAR);
@@ -603,7 +603,7 @@ public class ForgeIngameGui extends IngameGui
 
     protected void renderHUDText(int width, int height)
     {
-        mc.func_213239_aq().startSection("forgeHudText");
+        mc.getProfiler().startSection("forgeHudText");
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         ArrayList<String> listL = new ArrayList<String>();
         ArrayList<String> listR = new ArrayList<String>();
@@ -653,7 +653,7 @@ public class ForgeIngameGui extends IngameGui
             }
         }
 
-        mc.func_213239_aq().endSection();
+        mc.getProfiler().endSection();
         post(TEXT);
     }
 
@@ -670,7 +670,7 @@ public class ForgeIngameGui extends IngameGui
     {
         if (overlayMessageTime > 0)
         {
-            mc.func_213239_aq().startSection("overlayMessage");
+            mc.getProfiler().startSection("overlayMessage");
             float hue = (float)overlayMessageTime - partialTicks;
             int opacity = (int)(hue * 256.0F / 20.0F);
             if (opacity > 255) opacity = 255;
@@ -687,7 +687,7 @@ public class ForgeIngameGui extends IngameGui
                 GlStateManager.popMatrix();
             }
 
-            mc.func_213239_aq().endSection();
+            mc.getProfiler().endSection();
         }
     }
 
@@ -695,7 +695,7 @@ public class ForgeIngameGui extends IngameGui
     {
         if (titlesTimer > 0)
         {
-            mc.func_213239_aq().startSection("titleAndSubtitle");
+            mc.getProfiler().startSection("titleAndSubtitle");
             float age = (float)this.titlesTimer - partialTicks;
             int opacity = 255;
 
@@ -727,42 +727,42 @@ public class ForgeIngameGui extends IngameGui
                 GlStateManager.popMatrix();
             }
 
-            this.mc.func_213239_aq().endSection();
+            this.mc.getProfiler().endSection();
         }
     }
 
     protected void renderChat(int width, int height)
     {
-        mc.func_213239_aq().startSection("chat");
+        mc.getProfiler().startSection("chat");
 
         RenderGameOverlayEvent.Chat event = new RenderGameOverlayEvent.Chat(eventParent, 0, height - 48);
         if (MinecraftForge.EVENT_BUS.post(event)) return;
 
         GlStateManager.pushMatrix();
         GlStateManager.translatef((float) event.getPosX(), (float) event.getPosY(), 0.0F);
-        persistantChatGUI.render(ticks);
+        field_73840_e.render(ticks);
         GlStateManager.popMatrix();
 
         post(CHAT);
 
-        mc.func_213239_aq().endSection();
+        mc.getProfiler().endSection();
     }
 
     protected void renderPlayerList(int width, int height)
     {
         ScoreObjective scoreobjective = this.mc.world.getScoreboard().getObjectiveInDisplaySlot(0);
-        ClientPlayNetHandler handler = mc.player.connection;
+        ClientPlayNetHandler handler = mc.player.field_71174_a;
 
         if (mc.gameSettings.keyBindPlayerList.isKeyDown() && (!mc.isIntegratedServerRunning() || handler.getPlayerInfoMap().size() > 1 || scoreobjective != null))
         {
-            this.overlayPlayerList.setVisible(true);
+            this.field_175196_v.setVisible(true);
             if (pre(PLAYER_LIST)) return;
-            this.overlayPlayerList.render(width, this.mc.world.getScoreboard(), scoreobjective);
+            this.field_175196_v.render(width, this.mc.world.getScoreboard(), scoreobjective);
             post(PLAYER_LIST);
         }
         else
         {
-            this.overlayPlayerList.setVisible(false);
+            this.field_175196_v.setVisible(false);
         }
     }
 
@@ -779,7 +779,7 @@ public class ForgeIngameGui extends IngameGui
         boolean unused = false;
         int left_align = width / 2 + 91;
 
-        mc.func_213239_aq().func_219895_b("mountHealth");
+        mc.getProfiler().endStartSection("mountHealth");
         GlStateManager.enableBlend();
         LivingEntity mount = (LivingEntity)tmp;
         int health = (int)Math.ceil((double)mount.getHealth());

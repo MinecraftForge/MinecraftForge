@@ -68,6 +68,6 @@ public interface IForgeEffectInstance {
     default void writeCurativeItems(CompoundNBT nbt) {
        ListNBT list = new ListNBT();
        getCurativeItems().forEach(s -> list.add(s.write(new CompoundNBT())));
-       nbt.func_218657_a("CurativeItems", list);
+       nbt.put("CurativeItems", list);
     }
 }

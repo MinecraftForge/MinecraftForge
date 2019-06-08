@@ -172,25 +172,25 @@ public class UniversalBucket extends Item
         ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack, rt);
         if (ret != null) return ret;
 
-        if(rt == null || rt.func_216346_c() != RayTraceResult.Type.BLOCK)
+        if(rt == null || rt.getType() != RayTraceResult.Type.BLOCK)
         {
             return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
         }
 
         BlockRayTraceResult brt = (BlockRayTraceResult) rt;
-        BlockPos clickPos = brt.func_216350_a();
+        BlockPos clickPos = brt.getPos();
         // can we place liquid there?
         if (world.isBlockModifiable(player, clickPos))
         {
             // the block adjacent to the side we clicked on
-            BlockPos targetPos = clickPos.offset(brt.func_216354_b());
+            BlockPos targetPos = clickPos.offset(brt.getFace());
 
             // can the player place there?
-            if (player.canPlayerEdit(targetPos, brt.func_216354_b(), itemstack))
+            if (player.canPlayerEdit(targetPos, brt.getFace(), itemstack))
             {
                 // try placing liquid
                 FluidActionResult result = FluidUtil.tryPlaceFluid(player, world, hand, targetPos, itemstack, fluidStack);
-                if (result.isSuccess() && !player.abilities.isCreativeMode)
+                if (result.isSuccess() && !player.playerAbilities.isCreativeMode)
                 {
                     // success!
                     player.addStat(Stats.ITEM_USED.get(this));
@@ -238,18 +238,18 @@ public class UniversalBucket extends Item
 
         // needs to target a block
         RayTraceResult target = event.getTarget();
-        if (target == null || target.func_216346_c() != RayTraceResult.Type.BLOCK)
+        if (target == null || target.getType() != RayTraceResult.Type.BLOCK)
         {
             return;
         }
 
         World world = event.getWorld();
-        BlockPos pos = ((BlockRayTraceResult) target).func_216350_a();
+        BlockPos pos = ((BlockRayTraceResult) target).getPos();
 
         ItemStack singleBucket = emptyBucket.copy();
         singleBucket.setCount(1);
 
-        FluidActionResult filledResult = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, ((BlockRayTraceResult) target).func_216354_b());
+        FluidActionResult filledResult = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, ((BlockRayTraceResult) target).getFace());
         if (filledResult.isSuccess())
         {
             event.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);

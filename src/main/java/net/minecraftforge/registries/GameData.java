@@ -379,7 +379,7 @@ public class GameData
                     state.func_215692_c();
                 }
 
-                block.func_220068_i();
+                block.getLootTable();
             }
         }
 

@@ -37,7 +37,7 @@ public class WorldPersistenceHooks
 
     public static void handleWorldDataSave(final SaveHandler handler, final WorldInfo worldInfo, final CompoundNBT tagCompound)
     {
-        worldPersistenceHooks.forEach(wac->tagCompound.func_218657_a(wac.getModId(), wac.getDataForWriting(handler, worldInfo)));
+        worldPersistenceHooks.forEach(wac->tagCompound.put(wac.getModId(), wac.getDataForWriting(handler, worldInfo)));
     }
 
     public static void handleWorldDataLoad(SaveHandler handler, WorldInfo worldInfo, CompoundNBT tagCompound)

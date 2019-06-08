@@ -43,7 +43,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public <V extends T> V func_218382_a(int id, ResourceLocation key, V value)
+    public <V extends T> V register(int id, ResourceLocation key, V value)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -60,9 +60,9 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public <R extends T> R func_218381_a(ResourceLocation key, R value)
+    public <R extends T> R register(ResourceLocation key, R value)
     {
-        return func_218382_a(-1, key, value);
+        return register(-1, key, value);
     }
 
     // Reading Functions

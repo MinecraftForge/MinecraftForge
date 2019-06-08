@@ -185,7 +185,7 @@ public class ItemStackHandler implements IItemHandler, IItemHandlerModifiable, I
             }
         }
         CompoundNBT nbt = new CompoundNBT();
-        nbt.func_218657_a("Items", nbtTagList);
+        nbt.put("Items", nbtTagList);
         nbt.putInt("Size", stacks.size());
         return nbt;
     }

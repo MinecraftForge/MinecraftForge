@@ -18,15 +18,17 @@
              this.func_146190_e(this.field_146211_a.func_78269_a(s, i).length() + this.field_146225_q);
              return true;
           } else {
-@@ -367,7 +367,7 @@
+@@ -367,8 +367,8 @@
        }
     }
  
 -   public void func_146195_b(boolean p_146195_1_) {
-+   public void setFocused(boolean p_146195_1_) {
-       super.setFocused(p_146195_1_);
+-      super.setFocused(p_146195_1_);
++   public void setFocused(boolean isFocusedIn) {
++      super.setFocused(isFocusedIn);
     }
  
+    public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
 @@ -381,7 +381,7 @@
           int i = this.field_146226_p ? this.field_146222_t : this.field_146221_u;
           int j = this.field_146224_r - this.field_146225_q;

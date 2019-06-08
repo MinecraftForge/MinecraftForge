@@ -111,7 +111,7 @@ public interface IForgeItemStack extends ICapabilitySerializable<CompoundNBT>
        PlayerEntity entityplayer = context.getPlayer();
        BlockPos blockpos = context.getPos();
        CachedBlockInfo blockworldstate = new CachedBlockInfo(context.getWorld(), blockpos, false);
-       if (entityplayer != null && !entityplayer.abilities.allowEdit && !getStack().canPlaceOn(context.getWorld().getTags(), blockworldstate)) {
+       if (entityplayer != null && !entityplayer.playerAbilities.allowEdit && !getStack().canPlaceOn(context.getWorld().getTags(), blockworldstate)) {
           return ActionResultType.PASS;
        } else {
           Item item = getStack().getItem();

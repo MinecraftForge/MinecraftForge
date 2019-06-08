@@ -243,11 +243,11 @@ public class CraftingHelper
                 CompoundNBT tmp = new CompoundNBT();
                 if (nbt.contains("ForgeCaps"))
                 {
-                    tmp.func_218657_a("ForgeCaps", nbt.get("ForgeCaps"));
+                    tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
                     nbt.remove("ForgeCaps");
                 }
 
-                tmp.func_218657_a("tag", nbt);
+                tmp.put("tag", nbt);
                 tmp.putString("id", itemName);
                 tmp.putInt("Count", JSONUtils.getInt(json, "count", 1));
 

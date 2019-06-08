@@ -24,6 +24,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.widget.button.Button;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 /**
  * This class provides a button that shows a string glyph at the beginning. The glyph can be scaled using the glyphScale parameter.
  *

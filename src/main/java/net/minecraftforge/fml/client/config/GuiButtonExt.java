@@ -23,6 +23,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.button.Button;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 /**
  * This class provides a button that fixes several bugs present in the vanilla GuiButton drawing code.
  * The gist of it is that it allows buttons of any size without gaps in the graphics and with the

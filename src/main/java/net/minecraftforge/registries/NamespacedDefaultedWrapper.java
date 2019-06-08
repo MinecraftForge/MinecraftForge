@@ -47,7 +47,7 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
-    public <V extends T> V func_218382_a(int id, ResourceLocation key, V value)
+    public <V extends T> V register(int id, ResourceLocation key, V value)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -64,9 +64,9 @@ class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends Defau
     }
 
     @Override
-    public <V extends T> V func_218381_a(ResourceLocation key, V value)
+    public <V extends T> V register(ResourceLocation key, V value)
     {
-        return func_218382_a(-1, key, value);
+        return register(-1, key, value);
     }
 
     // Reading Functions

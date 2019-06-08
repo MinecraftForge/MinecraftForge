@@ -23,6 +23,8 @@ import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.client.gui.widget.button.Button.IPressable;
+
 /**
  * This class is blatantly stolen from iChunUtils with permission.
  *

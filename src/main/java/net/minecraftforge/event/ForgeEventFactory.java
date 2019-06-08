@@ -186,7 +186,7 @@ public class ForgeEventFactory
     {
         Result result = canEntitySpawn(entity, world, x, y, z, spawner);
         if (result == Result.DEFAULT)
-            return entity.func_213380_a(world, SpawnReason.SPAWNER) || !entity.isNotColliding(world); // vanilla logic
+            return entity.canSpawn(world, SpawnReason.SPAWNER) || !entity.isNotColliding(world); // vanilla logic
         else
             return result == Result.ALLOW;
     }
@@ -372,7 +372,7 @@ public class ForgeEventFactory
 
         if (event.getResult() == Result.ALLOW)
         {
-            if (player.abilities.isCreativeMode)
+            if (player.playerAbilities.isCreativeMode)
                 return new ActionResult<ItemStack>(ActionResultType.SUCCESS, stack);
 
             stack.shrink(1);

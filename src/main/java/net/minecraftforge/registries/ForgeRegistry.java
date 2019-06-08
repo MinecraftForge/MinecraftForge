@@ -829,7 +829,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 tag.putInt("V", e.getValue());
                 ids.add(tag);
             });
-            data.func_218657_a("ids", ids);
+            data.put("ids", ids);
 
             ListNBT aliases = new ListNBT();
             this.aliases.entrySet().stream().forEach(e ->
@@ -839,7 +839,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 tag.putString("V", e.getKey().toString());
                 aliases.add(tag);
             });
-            data.func_218657_a("aliases", aliases);
+            data.put("aliases", aliases);
 
             ListNBT overrides = new ListNBT();
             this.overrides.entrySet().stream().forEach(e ->
@@ -849,14 +849,14 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 tag.putString("V", e.getValue());
                 overrides.add(tag);
             });
-            data.func_218657_a("overrides", overrides);
+            data.put("overrides", overrides);
 
             int[] blocked = this.blocked.stream().mapToInt(x->x).sorted().toArray();
             data.putIntArray("blocked", blocked);
 
             ListNBT dummied = new ListNBT();
             this.dummied.stream().sorted().forEach(e -> dummied.add(new StringNBT(e.toString())));
-            data.func_218657_a("dummied", dummied);
+            data.put("dummied", dummied);
 
             return data;
         }

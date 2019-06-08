@@ -87,7 +87,7 @@ public class FluidHandlerItemStackSimple implements IFluidHandlerItem, ICapabili
 
         CompoundNBT fluidTag = new CompoundNBT();
         fluid.writeToNBT(fluidTag);
-        container.getTag().func_218657_a(FLUID_NBT_KEY, fluidTag);
+        container.getTag().put(FLUID_NBT_KEY, fluidTag);
     }
 
     @Override

@@ -113,7 +113,7 @@ public final class CapabilityDispatcher implements INBTSerializable<CompoundNBT>
         CompoundNBT nbt = new CompoundNBT();
         for (int x = 0; x < writers.length; x++)
         {
-            nbt.func_218657_a(names[x], writers[x].serializeNBT());
+            nbt.put(names[x], writers[x].serializeNBT());
         }
         return nbt;
     }

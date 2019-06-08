@@ -51,7 +51,7 @@ public class NetworkRegistry
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker NETREGISTRY = MarkerManager.getMarker("NETREGISTRY");
 
-    private static Map<ResourceLocation, NetworkInstance> instances = new HashMap<>();
+    private static Map<ResourceLocation, NetworkInstance> instances = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Special value for clientAcceptedVersions and serverAcceptedVersions predicates indicating the other side lacks

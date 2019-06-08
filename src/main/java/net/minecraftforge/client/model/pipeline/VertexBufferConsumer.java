@@ -36,7 +36,7 @@ public class VertexBufferConsumer implements IVertexConsumer
     private BufferBuilder renderer;
     private int[] quadData;
     private int v = 0;
-    private BlockPos offset = BlockPos.ORIGIN;
+    private BlockPos offset = BlockPos.ZERO;
 
     public VertexBufferConsumer() {}
 

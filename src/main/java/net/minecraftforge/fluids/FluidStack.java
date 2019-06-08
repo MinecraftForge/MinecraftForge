@@ -113,7 +113,7 @@ public class FluidStack
 
         if (tag != null)
         {
-            nbt.func_218657_a("Tag", tag);
+            nbt.put("Tag", tag);
         }
         return nbt;
     }

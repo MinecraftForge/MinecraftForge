@@ -228,7 +228,7 @@ public class BlockSnapshot
 
         if (getNbt() != null)
         {
-            compound.func_218657_a("tileEntity", getNbt());
+            compound.put("tileEntity", getNbt());
         }
     }
 

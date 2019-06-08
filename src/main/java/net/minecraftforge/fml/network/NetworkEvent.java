@@ -195,7 +195,7 @@ public class NetworkEvent extends Event
             if (netHandler instanceof ServerPlayNetHandler)
             {
                 ServerPlayNetHandler netHandlerPlayServer = (ServerPlayNetHandler) netHandler;
-                return netHandlerPlayServer.player;
+                return netHandlerPlayServer.field_147369_b;
             }
             return null;
         }

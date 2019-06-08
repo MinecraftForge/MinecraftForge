@@ -98,7 +98,7 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
     }
 
     @Override
-    public <V extends T> V func_218382_a(int id, ResourceLocation key, V value)
+    public <V extends T> V register(int id, ResourceLocation key, V value)
     {
         Validate.isTrue(id >= 0, "Invalid ID, can not be < 0");
         Validate.notNull(key);
@@ -121,9 +121,9 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
     }
 
     @Override
-    public <V extends T> V func_218381_a(ResourceLocation key, V value)
+    public <V extends T> V register(ResourceLocation key, V value)
     {
-        return func_218382_a(nextId, key, value);
+        return register(nextId, key, value);
     }
 
     @Override

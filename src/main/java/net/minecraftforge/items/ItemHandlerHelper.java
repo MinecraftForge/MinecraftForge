@@ -193,7 +193,7 @@ public class ItemHandlerHelper
         {
             ItemEntity entityitem = new ItemEntity(world, player.posX, player.posY + 0.5, player.posZ, remainder);
             entityitem.setPickupDelay(40);
-            entityitem.func_213317_d(entityitem.func_213322_ci().func_216372_d(0, 1, 0));
+            entityitem.setMotion(entityitem.getMotion().mul(0, 1, 0));
 
             world.func_217376_c(entityitem);
         }

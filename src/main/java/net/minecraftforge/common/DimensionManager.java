@@ -108,7 +108,7 @@ public class DimensionManager
         }
         @SuppressWarnings("deprecation")
         DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), hasSkyLight, type, data);
-        REGISTRY.func_218382_a(id, name, instance);
+        REGISTRY.register(id, name, instance);
         LOGGER.info(DIMMGR, "Registered dimension {} of type {} and id {}", name.toString(), type.getRegistryName().toString(), id);
         return instance;
     }
@@ -190,7 +190,7 @@ public class DimensionManager
 
         @SuppressWarnings("deprecation")
         DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), hasSkyLight, type, data);
-        REGISTRY.func_218382_a(id, name, instance);
+        REGISTRY.register(id, name, instance);
         LOGGER.info(DIMMGR, "Registered dimension {} of type {} and id {}", name.toString(), type.getRegistryName().toString(), id);
         return instance;
     }
@@ -219,7 +219,7 @@ public class DimensionManager
     private static boolean canUnloadWorld(ServerWorld world)
     {
         return world.func_217469_z().isEmpty()
-                && world.func_217369_A().isEmpty()
+                && world.getPlayers().isEmpty()
                 //&& !world.dimension.getType().shouldLoadSpawn()
                 && !getData(world.getDimension().getType()).keepLoaded;
     }
@@ -322,7 +322,7 @@ public class DimensionManager
         ListNBT lst = new ListNBT();
         list.forEach(e -> lst.add(e.write()));
 
-        data.func_218657_a("entries", lst);
+        data.put("entries", lst);
     }
 
     public static void readRegistry(CompoundNBT data)
@@ -336,7 +336,7 @@ public class DimensionManager
         REGISTRY.clear();
         vanilla.forEach((key, value) -> {
             LOGGER.debug(DIMMGR, "Registering vanilla entry ID: {} Name: {} Value: {}", value.getId() + 1, key.toString(), value.toString());
-            REGISTRY.func_218382_a(value.getId() + 1, key, value);
+            REGISTRY.register(value.getId() + 1, key, value);
         });
 
         savedEntries.clear();
