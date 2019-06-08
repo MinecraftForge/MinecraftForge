@@ -163,7 +163,7 @@
                 p_187250_1_.func_184611_a(p_187250_4_, ItemStack.field_190927_a);
              }
  
-@@ -286,19 +329,39 @@
+@@ -286,19 +329,45 @@
              return ActionResultType.PASS;
           }
        } else {
@@ -184,6 +184,12 @@
 -         if (!flag1 && blockstate.func_215687_a(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_)) {
 -            return ActionResultType.SUCCESS;
 -         } else if (!p_219441_3_.func_190926_b() && !p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {
++         if ((!flag1 || event.getUseBlock() == net.minecraftforge.eventbus.api.Event.Result.ALLOW) &&
++               event.getUseBlock() != net.minecraftforge.eventbus.api.Event.Result.DENY &&
++               blockstate.func_215687_a(p_219441_2_, p_219441_1_, p_219441_4_, p_219441_5_)) {
++            result = ActionResultType.SUCCESS;
++         }
++
 +         if (!p_219441_3_.func_190926_b() && !p_219441_1_.func_184811_cZ().func_185141_a(p_219441_3_.func_77973_b())) {
              ItemUseContext itemusecontext = new ItemUseContext(p_219441_1_, p_219441_4_, p_219441_5_);
              if (this.func_73083_d()) {
