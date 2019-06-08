@@ -1001,6 +1001,7 @@ public class ForgeHooksClient
     // This serves a workaround for no built-in method of triggering this type of refresh as brought up by LOG4J2-2178.
     public static void invalidateLog4jThreadCache()
     {
+        if (System.getProperty("java.version").compareTo("1.8.0_102") >= 0) return; // skip for later JDKs, because it's not CACHED see LOG4J2-2052
         try
         {
             Field nameField = ThreadNameCachingStrategy.class.getDeclaredField("THREADLOCAL_NAME");
