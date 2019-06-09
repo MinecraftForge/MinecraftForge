@@ -64,8 +64,23 @@
              BlockPos blockpos1 = blockpos.func_177977_b();
              BlockState blockstate1 = this.field_70170_p.func_180495_p(blockpos1);
              Block block = blockstate1.func_177230_c();
-@@ -816,6 +818,7 @@
-             this.field_71135_a.func_147359_a(new SOpenWindowPacket(container.field_75152_c, container.func_216957_a(), p_213829_1_.func_145748_c_()));
+@@ -795,8 +797,8 @@
+    public void func_71117_bO() {
+       this.field_71139_cq = this.field_71139_cq % 100 + 1;
+    }
+-
+-   public OptionalInt func_213829_a(@Nullable INamedContainerProvider p_213829_1_) {
++   
++   public OptionalInt openContainer(@Nullable INamedContainerProvider p_213829_1_, @Nullable net.minecraftforge.common.ContainerExtraData extraData) {
+       if (p_213829_1_ == null) {
+          return OptionalInt.empty();
+       } else {
+@@ -813,9 +815,10 @@
+ 
+             return OptionalInt.empty();
+          } else {
+-            this.field_71135_a.func_147359_a(new SOpenWindowPacket(container.field_75152_c, container.func_216957_a(), p_213829_1_.func_145748_c_()));
++            this.field_71135_a.func_147359_a(new SOpenWindowPacket(container.field_75152_c, container.func_216957_a(), p_213829_1_.func_145748_c_(), extraData));
              container.func_75132_a(this);
              this.field_71070_bA = container;
 +            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));

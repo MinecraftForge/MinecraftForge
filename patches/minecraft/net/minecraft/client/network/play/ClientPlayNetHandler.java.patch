@@ -28,6 +28,15 @@
        clientplayerentity1.func_70065_x();
        clientplayerentity1.func_175158_f(s);
        this.field_147300_g.func_217408_a(i, clientplayerentity1);
+@@ -993,7 +996,7 @@
+ 
+    public void func_217272_a(SOpenWindowPacket p_217272_1_) {
+       PacketThreadUtil.func_218797_a(p_217272_1_, this, this.field_147299_f);
+-      ScreenManager.func_216909_a(p_217272_1_.func_218749_c(), this.field_147299_f, p_217272_1_.func_218750_b(), p_217272_1_.func_218748_d());
++      net.minecraftforge.common.ForgeHooks.openScreen(p_217272_1_.func_218749_c(), this.field_147299_f, p_217272_1_.func_218750_b(), p_217272_1_.func_218748_d(), p_217272_1_.getExtraData());
+    }
+ 
+    public void func_147266_a(SSetSlotPacket p_147266_1_) {
 @@ -1078,6 +1081,12 @@
           boolean flag = i == 2 && tileentity instanceof CommandBlockTileEntity;
           if (i == 1 && tileentity instanceof MobSpawnerTileEntity || flag || i == 3 && tileentity instanceof BeaconTileEntity || i == 4 && tileentity instanceof SkullTileEntity || i == 6 && tileentity instanceof BannerTileEntity || i == 7 && tileentity instanceof StructureBlockTileEntity || i == 8 && tileentity instanceof EndGatewayTileEntity || i == 9 && tileentity instanceof SignTileEntity || i == 11 && tileentity instanceof BedTileEntity || i == 5 && tileentity instanceof ConduitTileEntity || i == 12 && tileentity instanceof JigsawTileEntity || i == 13 && tileentity instanceof CampfireTileEntity) {

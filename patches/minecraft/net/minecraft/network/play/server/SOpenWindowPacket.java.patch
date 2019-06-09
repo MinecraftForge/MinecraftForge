@@ -1,0 +1,38 @@
+--- a/net/minecraft/network/play/server/SOpenWindowPacket.java
++++ b/net/minecraft/network/play/server/SOpenWindowPacket.java
+@@ -29,12 +29,14 @@
+       this.field_218751_a = p_148837_1_.func_150792_a();
+       this.field_218752_b = p_148837_1_.func_150792_a();
+       this.field_218753_c = p_148837_1_.func_179258_d();
++      net.minecraftforge.common.ForgeHooks.readContainerExtra(this, p_148837_1_); //FORGE
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+       p_148840_1_.func_150787_b(this.field_218751_a);
+       p_148840_1_.func_150787_b(this.field_218752_b);
+       p_148840_1_.func_179256_a(this.field_218753_c);
++      net.minecraftforge.common.ForgeHooks.writeContainerExtra(this, p_148840_1_); //FORGE
+    }
+ 
+    public void func_148833_a(IClientPlayNetHandler p_148833_1_) {
+@@ -56,4 +58,20 @@
+    public ITextComponent func_218748_d() {
+       return this.field_218753_c;
+    }
++   
++   /* ================================== Forge Start =====================================*/
++   public net.minecraftforge.common.ContainerExtraData extras;
++   
++   @Nullable
++   @OnlyIn(Dist.CLIENT)
++   public net.minecraftforge.common.ContainerExtraData getExtraData() {
++      return this.extras;
++   }
++   
++   public SOpenWindowPacket(int windowIdIn, ContainerType<?> typeIn, ITextComponent titleIn, net.minecraftforge.common.ContainerExtraData extras) {
++	   this.field_218751_a = windowIdIn;
++	   this.field_218752_b = Registry.field_218366_G.func_148757_b(typeIn);
++	   this.field_218753_c = titleIn;
++	   this.extras = extras;
++   }
+ }

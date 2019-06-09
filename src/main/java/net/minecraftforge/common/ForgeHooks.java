@@ -41,6 +41,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import io.netty.buffer.Unpooled;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.advancements.Advancement;
@@ -48,6 +51,7 @@ import net.minecraft.block.Block;
 import net.minecraft.util.CachedBlockInfo;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -61,6 +65,8 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.RepairContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -78,8 +84,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.play.ServerPlayNetHandler;
 import net.minecraft.network.IPacket;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.network.play.server.SChangeBlockPacket;
+import net.minecraft.network.play.server.SOpenWindowPacket;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.stats.Stats;
@@ -1150,5 +1158,48 @@ public class ForgeHooks
             if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getID(entry);
         }
         return id;
+    }
+    
+    @Nullable
+    public static ContainerExtraData readContainerExtra(SOpenWindowPacket packet, PacketBuffer buf) {
+    	ContainerType<?> type = packet.func_218749_c();
+    	if(type == null) {
+    		return null;
+    	} else {
+    		ContainerExtraData handler = type.getExtraData();
+    		if(handler == null) {
+    			return null;
+    		} else {
+    			handler.read(buf);
+    			return handler;
+    		}
+    	}
+    }
+    
+    public static void writeContainerExtra(SOpenWindowPacket packet, PacketBuffer buf) {
+    	ContainerExtraData handler = packet.getExtraData();
+    	if(handler == null) {
+    		return;
+    	} else {
+    		PacketBuffer extraData = new PacketBuffer(Unpooled.buffer());
+    		handler.write(extraData);
+            extraData.readerIndex(0); // reset to beginning in case modders read for whatever reason
+            buf.writeBytes(extraData);
+    		
+    		if(buf.readableBytes() > 32600 || buf.readableBytes() < 1) {
+                throw new IllegalArgumentException("Invalid PacketBuffer for writeContainerExtra, found "+ buf.readableBytes()+ " bytes");
+            }
+    	}
+    }
+    
+    public static void openScreen(ContainerType<?> type, Minecraft minecraft, int windowId, ITextComponent title, ContainerExtraData extraData) {
+ 	   ScreenManager.openScreen(type, minecraft, windowId, title);
+ 	   // Checks if container correctly set
+ 	   if(type != null) {
+ 		   Container container = minecraft.player.openContainer;
+ 		   if(container instanceof ContainerExtraData.Accept) {
+ 			   ((ContainerExtraData.Accept)container).set(extraData);
+ 		   }
+ 	   }
     }
 }
