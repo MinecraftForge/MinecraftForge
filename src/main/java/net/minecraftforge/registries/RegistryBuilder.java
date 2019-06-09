@@ -19,7 +19,9 @@
 
 package net.minecraftforge.registries;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.collect.Lists;
 
@@ -48,6 +50,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private boolean allowModifications = false;
     private DummyFactory<T> dummyFactory;
     private MissingFactory<T> missingFactory;
+    private Set<ResourceLocation> legacyNames = new HashSet<>();
 
     public RegistryBuilder<T> setName(ResourceLocation name)
     {
@@ -162,6 +165,17 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public RegistryBuilder<T> allowModification()
     {
         this.allowModifications = true;
+        return this;
+    }
+    
+    public RegistryBuilder<T> legacyName(String name)
+    {
+        return legacyName(new ResourceLocation(name));
+    }
+    
+    public RegistryBuilder<T> legacyName(ResourceLocation name)
+    {
+        this.legacyNames.add(name);
         return this;
     }
 
@@ -296,5 +310,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public boolean getSync()
     {
         return sync;
+    }
+    
+    public Set<ResourceLocation> getLegacyNames()
+    {
+        return legacyNames;
     }
 }

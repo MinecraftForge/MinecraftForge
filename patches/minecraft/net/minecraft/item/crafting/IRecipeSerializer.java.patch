@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/crafting/IRecipeSerializer.java
++++ b/net/minecraft/item/crafting/IRecipeSerializer.java
+@@ -5,7 +5,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.Registry;
+ 
+-public interface IRecipeSerializer<T extends IRecipe<?>> {
++public interface IRecipeSerializer<T extends IRecipe<?>> extends net.minecraftforge.registries.IForgeRegistryEntry<IRecipeSerializer<?>> {
+    IRecipeSerializer<ShapedRecipe> field_222157_a = func_222156_a("crafting_shaped", new ShapedRecipe.Serializer());
+    IRecipeSerializer<ShapelessRecipe> field_222158_b = func_222156_a("crafting_shapeless", new ShapelessRecipe.Serializer());
+    SpecialRecipeSerializer<ArmorDyeRecipe> field_222159_c = func_222156_a("crafting_special_armordye", new SpecialRecipeSerializer<>(ArmorDyeRecipe::new));

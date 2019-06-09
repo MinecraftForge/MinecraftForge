@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/Feature.java
++++ b/net/minecraft/world/gen/feature/Feature.java
+@@ -44,7 +44,7 @@
+ import net.minecraft.world.gen.feature.structure.WoodlandMansionStructure;
+ import net.minecraft.world.gen.placement.CountConfig;
+ 
+-public abstract class Feature<FC extends IFeatureConfig> {
++public abstract class Feature<FC extends IFeatureConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Feature<?>> {
+    public static final Structure<PillagerOutpostConfig> field_214536_b = func_214468_a("pillager_outpost", new PillagerOutpostStructure(PillagerOutpostConfig::func_214642_a));
+    public static final Structure<MineshaftConfig> field_202329_g = func_214468_a("mineshaft", new MineshaftStructure(MineshaftConfig::func_214638_a));
+    public static final Structure<NoFeatureConfig> field_202330_h = func_214468_a("woodland_mansion", new WoodlandMansionStructure(NoFeatureConfig::func_214639_a));

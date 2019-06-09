@@ -26,20 +26,38 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.brain.memory.MemoryModuleType;
+import net.minecraft.entity.ai.brain.schedule.Activity;
+import net.minecraft.entity.ai.brain.schedule.Schedule;
+import net.minecraft.entity.ai.brain.sensor.SensorType;
+import net.minecraft.entity.item.PaintingType;
+import net.minecraft.entity.merchant.villager.VillagerProfession;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
+import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.BlockItem;
 import net.minecraft.network.datasync.IDataSerializer;
+import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
 import net.minecraft.state.StateContainer;
+import net.minecraft.stats.StatType;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.ObjectIntIdentityMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.village.PointOfInterestType;
 import net.minecraft.util.registry.DefaultedRegistry;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.provider.BiomeProviderType;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.gen.ChunkGeneratorType;
+import net.minecraft.world.gen.carver.WorldCarver;
+import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.placement.Placement;
+import net.minecraft.world.gen.surfacebuilders.SurfaceBuilder;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.ModDimension;
 import net.minecraftforge.event.RegistryEvent;
@@ -70,8 +88,6 @@ import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
 
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
-
 /**
  * INTERNAL ONLY
  * MODDERS SHOULD HAVE NO REASON TO USE THIS CLASS
@@ -80,25 +96,52 @@ public class GameData
 {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static final ResourceLocation BLOCKS       = new ResourceLocation("minecraft:blocks");
-    public static final ResourceLocation ITEMS        = new ResourceLocation("minecraft:items");
-    public static final ResourceLocation POTIONS      = new ResourceLocation("minecraft:potions");
-    public static final ResourceLocation BIOMES       = new ResourceLocation("minecraft:biomes");
-    public static final ResourceLocation SOUNDEVENTS  = new ResourceLocation("minecraft:soundevents");
-    public static final ResourceLocation POTIONTYPES  = new ResourceLocation("minecraft:potiontypes");
-    public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
-    public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
-    public static final ResourceLocation TILEENTITIES = new ResourceLocation("minecraft:tileentities");
-    public static final ResourceLocation CONTAINERS   = new ResourceLocation("minecraft:containers");
-    public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
+    // Vanilla registries
+    // Names used here match those in net.minecraft.util.Registry
+    
+    // Game objects
+    public static final ResourceLocation BLOCKS = new ResourceLocation("block");
+    public static final ResourceLocation FLUIDS = new ResourceLocation("fluid");
+    public static final ResourceLocation ITEMS = new ResourceLocation("item");
+    public static final ResourceLocation POTIONS = new ResourceLocation("mob_effect");
+    public static final ResourceLocation BIOMES = new ResourceLocation("biome");
+    public static final ResourceLocation SOUNDEVENTS = new ResourceLocation("sound_event");
+    public static final ResourceLocation POTIONTYPES = new ResourceLocation("potion");
+    public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("enchantment");
+    public static final ResourceLocation ENTITIES = new ResourceLocation("entity_type");
+    public static final ResourceLocation TILEENTITIES = new ResourceLocation("block_entity_type");
+    public static final ResourceLocation PARTICLE_TYPES = new ResourceLocation("particle_type");
+    public static final ResourceLocation CONTAINERS = new ResourceLocation("menu");
+    public static final ResourceLocation PAINTING_TYPES = new ResourceLocation("motive"); // sic
+    public static final ResourceLocation RECIPE_SERIALIZERS = new ResourceLocation("recipe_serializer");
+    public static final ResourceLocation STAT_TYPES = new ResourceLocation("stat_type");
+    
+    // Villages
+    public static final ResourceLocation PROFESSIONS = new ResourceLocation("villager_profession");
+    public static final ResourceLocation POI_TYPES = new ResourceLocation("point_of_interest_type");
+    public static final ResourceLocation MEMORY_MODULE_TYPES = new ResourceLocation("memory_module_type");
+    public static final ResourceLocation SENSOR_TYPES = new ResourceLocation("sensor_type");
+    public static final ResourceLocation SCHEDULES = new ResourceLocation("schedule");
+    public static final ResourceLocation ACTIVITIES = new ResourceLocation("activities");
+
+    // Worldgen
+    public static final ResourceLocation WORLD_CARVERS = new ResourceLocation("carver");
+    public static final ResourceLocation SURFACE_BUILDERS = new ResourceLocation("surface_builder");
+    public static final ResourceLocation FEATURES = new ResourceLocation("feature");
+    public static final ResourceLocation DECORATORS = new ResourceLocation("decorator");
+    public static final ResourceLocation BIOME_PROVIDER_TYPES = new ResourceLocation("biome_source_type");
+    public static final ResourceLocation CHUNK_GENERATOR_TYPES = new ResourceLocation("chunk_generator_type");
+    public static final ResourceLocation CHUNK_STATUS = new ResourceLocation("chunk_status");
+    
+    // Custom forge registries
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
-    public static final ResourceLocation SERIALIZERS  = new ResourceLocation("minecraft:dataserializers");
+    public static final ResourceLocation SERIALIZERS = new ResourceLocation("minecraft:dataserializers");
 
     private static final int MAX_VARINT = Integer.MAX_VALUE - 1; //We were told it is their intention to have everything in a reg be unlimited, so assume that until we find cases where it isnt.
 
-    private static final ResourceLocation BLOCK_TO_ITEM    = new ResourceLocation("minecraft:blocktoitemmap");
+    private static final ResourceLocation BLOCK_TO_ITEM = new ResourceLocation("minecraft:blocktoitemmap");
     private static final ResourceLocation BLOCKSTATE_TO_ID = new ResourceLocation("minecraft:blockstatetoid");
-    private static final ResourceLocation SERIALIZER_TO_ENTRY   = new ResourceLocation("forge:serializer_to_entry");
+    private static final ResourceLocation SERIALIZER_TO_ENTRY = new ResourceLocation("forge:serializer_to_entry");
 
     private static boolean hasInit = false;
     private static final boolean DISABLE_VANILLA_REGISTRIES = Boolean.parseBoolean(System.getProperty("forge.disableVanillaGameData", "false")); // Use for unit tests/debugging
@@ -119,18 +162,44 @@ public class GameData
         if (hasInit)
             return;
         hasInit = true;
-        makeRegistry(BLOCKS,       Block.class,        new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).create();
-        makeRegistry(ITEMS,        Item.class,         new ResourceLocation("air")).addCallback(ItemCallbacks.INSTANCE).create();
-        makeRegistry(POTIONS,      Effect.class        ).create();
-        makeRegistry(BIOMES,       Biome.class         ).create();
-        makeRegistry(SOUNDEVENTS,  SoundEvent.class    ).create();
-        makeRegistry(POTIONTYPES,  Potion.class,       new ResourceLocation("empty")).create();
-        makeRegistry(ENCHANTMENTS, Enchantment.class   ).create();
-        makeRegistry(ENTITIES,     EntityType.class,   new ResourceLocation("pig")).create();
-        makeRegistry(TILEENTITIES, TileEntityType.class).disableSaving().create();
-        makeRegistry(CONTAINERS,   ContainerType.class).disableSaving().create();
+        
+        // Game objects
+        makeRegistry(BLOCKS, Block.class, new ResourceLocation("air")).addCallback(BlockCallbacks.INSTANCE).legacyName("blocks").create();
+        makeRegistry(FLUIDS, Fluid.class, new ResourceLocation("empty")).create();
+        makeRegistry(ITEMS, Item.class, new ResourceLocation("air")).addCallback(ItemCallbacks.INSTANCE).legacyName("items").create();
+        makeRegistry(POTIONS, Effect.class).legacyName("potions").create();
+        makeRegistry(BIOMES, Biome.class).legacyName("biomes").create();
+        makeRegistry(SOUNDEVENTS, SoundEvent.class).legacyName("soundevents").create();
+        makeRegistry(POTIONTYPES, Potion.class, new ResourceLocation("empty")).legacyName("potiontypes").create();
+        makeRegistry(ENCHANTMENTS, Enchantment.class).legacyName("enchantments").create();
+        makeRegistry(ENTITIES, EntityType.class, new ResourceLocation("pig")).legacyName("entities").create();
+        makeRegistry(TILEENTITIES, TileEntityType.class).disableSaving().legacyName("tileentities").create();
+        makeRegistry(PARTICLE_TYPES, ParticleType.class).disableSaving().create();
+        makeRegistry(CONTAINERS, ContainerType.class).disableSaving().create();
+        makeRegistry(PAINTING_TYPES, PaintingType.class, new ResourceLocation("kebab")).create();
+        makeRegistry(RECIPE_SERIALIZERS, IRecipeSerializer.class).disableSaving().create();
+        makeRegistry(STAT_TYPES, StatType.class).create();
+        
+        // Villagers
+        makeRegistry(PROFESSIONS, VillagerProfession.class, new ResourceLocation("none")).create();
+        makeRegistry(POI_TYPES, PointOfInterestType.class, new ResourceLocation("unemployed")).disableSync().create();
+        makeRegistry(MEMORY_MODULE_TYPES, MemoryModuleType.class, new ResourceLocation("dummy")).disableSync().create();
+        makeRegistry(SENSOR_TYPES, SensorType.class, new ResourceLocation("dummy")).disableSaving().disableSync().create();
+        makeRegistry(SCHEDULES, Schedule.class).disableSaving().disableSync().create();
+        makeRegistry(ACTIVITIES, Activity.class).disableSaving().disableSync().create();
+
+        // Worldgen
+        makeRegistry(WORLD_CARVERS, WorldCarver.class).disableSaving().disableSync().create();
+        makeRegistry(SURFACE_BUILDERS, SurfaceBuilder.class).disableSaving().disableSync().create();
+        makeRegistry(FEATURES, Feature.class).disableSaving().disableSync().create();
+        makeRegistry(DECORATORS, Placement.class).disableSaving().disableSync().create();
+        makeRegistry(BIOME_PROVIDER_TYPES, BiomeProviderType.class).disableSaving().disableSync().create();
+        makeRegistry(CHUNK_GENERATOR_TYPES, ChunkGeneratorType.class).disableSaving().disableSync().create();
+        makeRegistry(CHUNK_STATUS, ChunkStatus.class, new ResourceLocation("empty")).disableSaving().disableSync().create();
+        
+        // Custom forge registries
         makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
-        makeRegistry(SERIALIZERS,  DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
+        makeRegistry(SERIALIZERS, DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
     }
 
     private static <T extends IForgeRegistryEntry<T>> RegistryBuilder<T> makeRegistry(ResourceLocation name, Class<T> type)
@@ -579,6 +648,11 @@ public class GameData
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.validateContent(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.dump(name));
         RegistryManager.ACTIVE.registries.forEach((name, reg) -> reg.resetDelegates());
+        
+        // Update legacy names
+        snapshot = snapshot.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey()) // FIXME Registries need dependency ordering, this makes sure blocks are done before items (for ItemCallbacks) but it's lazy as hell
+                .collect(Collectors.toMap(e -> RegistryManager.ACTIVE.updateLegacyName(e.getKey()), Map.Entry::getValue, (k1, k2) -> k1, LinkedHashMap::new));
 
         if (isLocalWorld)
         {
