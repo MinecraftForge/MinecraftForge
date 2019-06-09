@@ -975,17 +975,7 @@ public interface IForgeBlock
     {
         if (entity instanceof EnderDragonEntity)
         {
-            return this != Blocks.BARRIER &&
-                   this != Blocks.OBSIDIAN &&
-                   this != Blocks.END_STONE &&
-                   this != Blocks.BEDROCK &&
-                   this != Blocks.END_PORTAL &&
-                   this != Blocks.END_PORTAL_FRAME &&
-                   this != Blocks.COMMAND_BLOCK &&
-                   this != Blocks.REPEATING_COMMAND_BLOCK &&
-                   this != Blocks.CHAIN_COMMAND_BLOCK &&
-                   this != Blocks.IRON_BARS &&
-                   this != Blocks.END_GATEWAY;
+            return !BlockTags.field_219754_W.contains(this.getBlock());
         }
         else if ((entity instanceof WitherEntity) ||
                  (entity instanceof WitherSkullEntity))
