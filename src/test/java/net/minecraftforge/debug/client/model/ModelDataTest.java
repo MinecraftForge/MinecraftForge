@@ -67,9 +67,9 @@ public class ModelDataTest
     private static final String BLOCK_NAME = "block";
 
     @ObjectHolder(MODID + ":" + BLOCK_NAME)
-    private static final Block MY_BLOCK = null;
+    public static final Block MY_BLOCK = null;
     @ObjectHolder(MODID + ":" + BLOCK_NAME)
-    private static final TileEntityType<Tile> TILE_TYPE = null;
+    public static final TileEntityType<Tile> TILE_TYPE = null;
 
     public ModelDataTest()
     {
@@ -151,7 +151,7 @@ public class ModelDataTest
             if (world.isRemote && counter++ == 100)
             {
                 ModelDataManager.requestModelDataRefresh(this);
-                world.func_217396_m(getPos());
+                world.markForRerender(getPos());
             }
         }
 
