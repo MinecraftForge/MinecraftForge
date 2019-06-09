@@ -26,6 +26,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityType;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.Item;
 import net.minecraft.item.BlockItem;
 import net.minecraft.network.datasync.IDataSerializer;
@@ -88,6 +89,7 @@ public class GameData
     public static final ResourceLocation ENCHANTMENTS = new ResourceLocation("minecraft:enchantments");
     public static final ResourceLocation ENTITIES     = new ResourceLocation("minecraft:entities");
     public static final ResourceLocation TILEENTITIES = new ResourceLocation("minecraft:tileentities");
+    public static final ResourceLocation CONTAINERS   = new ResourceLocation("minecraft:containers");
     public static final ResourceLocation PROFESSIONS  = new ResourceLocation("minecraft:villagerprofessions");
     public static final ResourceLocation MODDIMENSIONS = new ResourceLocation("forge:moddimensions");
     public static final ResourceLocation SERIALIZERS  = new ResourceLocation("minecraft:dataserializers");
@@ -126,6 +128,7 @@ public class GameData
         makeRegistry(ENCHANTMENTS, Enchantment.class   ).create();
         makeRegistry(ENTITIES,     EntityType.class,   new ResourceLocation("pig")).create();
         makeRegistry(TILEENTITIES, TileEntityType.class).disableSaving().create();
+        makeRegistry(CONTAINERS,   ContainerType.class).disableSaving().create();
         makeRegistry(MODDIMENSIONS, ModDimension.class ).disableSaving().create();
         makeRegistry(SERIALIZERS,  DataSerializerEntry.class, 256 /*vanilla space*/, MAX_VARINT).disableSaving().disableOverrides().addCallback(SerializerCallbacks.INSTANCE).create();
     }

@@ -69,6 +69,15 @@
        return DimensionType.OVERWORLD;
     });
     public static final DefaultedRegistry<PaintingType> field_212620_i = func_222933_a("motive", "kebab", () -> {
+@@ -148,7 +152,7 @@
+    public static final Registry<IJigsawDeserializer> field_218365_F = func_222935_a("structure_pool_element", () -> {
+       return IJigsawDeserializer.field_214931_e;
+    });
+-   public static final Registry<ContainerType<?>> field_218366_G = func_222935_a("menu", () -> {
++   public static final Registry<ContainerType<?>> field_218366_G = forge("menu", ContainerType.class, () -> {
+       return ContainerType.field_221514_h;
+    });
+    public static final Registry<IRecipeType<?>> field_218367_H = func_222935_a("recipe_type", () -> {
 @@ -230,6 +234,14 @@
        return ((MutableRegistry<T>)p_218343_0_).func_218382_a(p_218343_1_, new ResourceLocation(p_218343_2_), p_218343_3_);
     }

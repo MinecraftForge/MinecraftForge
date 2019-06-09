@@ -10,3 +10,7 @@ loaderVersion="[2.0,)"
 #    modId="forgedebugmodelloaderregistry"
 #    version="1.0"
 #    displayName="ModelLoaderRegistryTest"
+[[mods]]
+	modId="containertypetest"
+	version="1.0"
+	displayName="ContainerTypeTest"

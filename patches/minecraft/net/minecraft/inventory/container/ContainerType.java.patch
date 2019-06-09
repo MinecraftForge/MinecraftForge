@@ -1,0 +1,11 @@
+--- a/net/minecraft/inventory/container/ContainerType.java
++++ b/net/minecraft/inventory/container/ContainerType.java
+@@ -5,7 +5,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class ContainerType<T extends Container> {
++public class ContainerType<T extends Container> extends net.minecraftforge.registries.ForgeRegistryEntry<ContainerType<?>> {
+    public static final ContainerType<ChestContainer> field_221507_a = func_221505_a("generic_9x1", ChestContainer::func_216986_a);
+    public static final ContainerType<ChestContainer> field_221508_b = func_221505_a("generic_9x2", ChestContainer::func_216987_b);
+    public static final ContainerType<ChestContainer> field_221509_c = func_221505_a("generic_9x3", ChestContainer::func_216988_c);
