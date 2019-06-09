@@ -49,6 +49,7 @@ public class RegistryManager
     BiMap<ResourceLocation, ForgeRegistry<? extends IForgeRegistryEntry<?>>> registries = HashBiMap.create();
     private BiMap<Class<? extends IForgeRegistryEntry<?>>, ResourceLocation> superTypes = HashBiMap.create();
     private Set<ResourceLocation> persisted = Sets.newHashSet();
+    private Set<ResourceLocation> synced = Sets.newHashSet();
     private final String name;
 
     public RegistryManager(String name)
@@ -94,6 +95,8 @@ public class RegistryManager
             this.superTypes.put(ot.getRegistrySuperType(), key);
             if (other.persisted.contains(key))
                 this.persisted.add(key);
+            if (other.synced.contains(key))
+                this.synced.add(key);
         }
         return getRegistry(key);
     }
@@ -115,6 +118,8 @@ public class RegistryManager
         superTypes.put(builder.getType(), name);
         if (builder.getSaveToDisc())
             this.persisted.add(name);
+        if (builder.getSync())
+            this.synced.add(name);
         return getRegistry(name);
     }
 
@@ -135,7 +140,7 @@ public class RegistryManager
     public Map<ResourceLocation, Snapshot> takeSnapshot(boolean savingToDisc)
     {
         Map<ResourceLocation, Snapshot> ret = Maps.newHashMap();
-        Set<ResourceLocation> keys = savingToDisc ? this.persisted : this.registries.keySet();
+        Set<ResourceLocation> keys = savingToDisc ? this.persisted : this.synced;
         keys.forEach(name -> ret.put(name, getRegistry(name).makeSnapshot()));
         return ret;
     }
@@ -144,6 +149,7 @@ public class RegistryManager
     public void clean()
     {
         this.persisted.clear();
+        this.synced.clear();
         this.registries.clear();
         this.superTypes.clear();
     }

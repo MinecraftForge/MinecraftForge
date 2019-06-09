@@ -43,6 +43,7 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     private List<ValidateCallback<T>> validateCallback = Lists.newArrayList();
     private List<BakeCallback<T>> bakeCallback = Lists.newArrayList();
     private boolean saveToDisc = true;
+    private boolean sync = true;
     private boolean allowOverrides = true;
     private boolean allowModifications = false;
     private DummyFactory<T> dummyFactory;
@@ -143,6 +144,12 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public RegistryBuilder<T> disableSaving()
     {
         this.saveToDisc = false;
+        return this;
+    }
+    
+    public RegistryBuilder<T> disableSync()
+    {
+        this.sync = false;
         return this;
     }
 
@@ -284,5 +291,10 @@ public class RegistryBuilder<T extends IForgeRegistryEntry<T>>
     public boolean getSaveToDisc()
     {
         return saveToDisc;
+    }
+    
+    public boolean getSync()
+    {
+        return sync;
     }
 }
