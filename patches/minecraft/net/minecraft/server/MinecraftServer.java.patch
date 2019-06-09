@@ -109,7 +109,15 @@
        this.field_71304_b.func_219895_b("connection");
        this.func_147137_ag().func_151269_c();
        this.field_71304_b.func_219895_b("players");
-@@ -942,7 +957,7 @@
+@@ -850,6 +865,7 @@
+       OptionSpec<Integer> optionspec10 = optionparser.accepts("port").withRequiredArg().ofType(Integer.class).defaultsTo(-1);
+       OptionSpec<String> optionspec11 = optionparser.accepts("serverId").withRequiredArg();
+       OptionSpec<String> optionspec12 = optionparser.nonOptions();
++      optionparser.accepts("gameDir").withRequiredArg().ofType(File.class).defaultsTo(new File(".")); //Forge: Consume this argument, we use it in the launcher, and the client side.
+ 
+       try {
+          OptionSet optionset = optionparser.parse(p_main_0_);
+@@ -942,7 +958,7 @@
     }
  
     public ServerWorld func_71218_a(DimensionType p_71218_1_) {
@@ -118,7 +126,7 @@
     }
  
     public Iterable<ServerWorld> func_212370_w() {
-@@ -981,7 +996,7 @@
+@@ -981,7 +997,7 @@
     }
  
     public String getServerModName() {
@@ -127,7 +135,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1516,4 +1531,14 @@
+@@ -1516,4 +1532,14 @@
     }
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
