@@ -63,6 +63,7 @@ public class ClientModLoader
         try {
             ModLoader.get().loadMods();
         } catch (LoadingFailedException e) {
+            e.printStackTrace();
             MinecraftForge.EVENT_BUS.shutdown();
             error = e;
         }
@@ -74,6 +75,7 @@ public class ClientModLoader
         try {
             ModLoader.get().finishMods();
         } catch (LoadingFailedException e) {
+            e.printStackTrace();
             MinecraftForge.EVENT_BUS.shutdown();
             if (error == null) error = e;
         }
