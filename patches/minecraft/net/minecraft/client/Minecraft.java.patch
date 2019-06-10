@@ -157,9 +157,8 @@
              BlockRayTraceResult blockraytraceresult = (BlockRayTraceResult)this.field_71476_x;
              BlockPos blockpos = blockraytraceresult.func_216350_a();
 -            if (!this.field_71441_e.func_180495_p(blockpos).func_196958_f()) {
--               Direction direction = blockraytraceresult.func_216354_b();
-+            Direction direction = blockraytraceresult.func_216354_b();
-+            if (!this.field_71441_e.func_175623_d(blockpos) && this.field_71442_b.func_180512_c(blockpos, direction)) {
++            if (!this.field_71441_e.func_175623_d(blockpos)) {
+                Direction direction = blockraytraceresult.func_216354_b();
                 if (this.field_71442_b.func_180512_c(blockpos, direction)) {
 -                  this.field_71452_i.func_180532_a(blockpos, direction);
 +                  this.field_71452_i.addBlockHitEffects(blockpos, blockraytraceresult);

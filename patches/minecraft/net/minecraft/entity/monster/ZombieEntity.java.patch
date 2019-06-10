@@ -23,7 +23,7 @@
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.DENY) return true;
 +         if (event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW  ||
 +            livingentity != null && this.field_70170_p.func_175659_aa() == Difficulty.HARD && (double)this.field_70146_Z.nextFloat() < this.func_110148_a(field_110186_bp).func_111126_e() && this.field_70170_p.func_82736_K().func_82766_b("doMobSpawning")) {
-+            ZombieEntity zombieentity = event.getCustomSummonedAid() != null && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW ? event.getCustomSummonedAid() : new ZombieEntity(this.field_70170_p);
++            ZombieEntity zombieentity = event.getCustomSummonedAid() != null && event.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW ? event.getCustomSummonedAid() : EntityType.field_200725_aD.func_200721_a(this.field_70170_p);
 +
              for(int l = 0; l < 50; ++l) {
                 int i1 = i + MathHelper.func_76136_a(this.field_70146_Z, 7, 40) * MathHelper.func_76136_a(this.field_70146_Z, -1, 1);

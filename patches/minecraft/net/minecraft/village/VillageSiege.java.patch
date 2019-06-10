@@ -1,10 +1,28 @@
 --- a/net/minecraft/village/VillageSiege.java
 +++ b/net/minecraft/village/VillageSiege.java
-@@ -84,6 +84,7 @@
-                }
+@@ -85,6 +85,7 @@
  
                 Vec3d vec3d = this.func_179867_a(new BlockPos(this.field_75532_g, this.field_75538_h, this.field_75539_i));
-+               if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, field_75537_a, playerentity, vec3d))) return false;
                 if (vec3d != null) {
++                  if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, field_75537_a, playerentity, vec3d))) return false;
                    break;
                 }
+             }
+@@ -101,7 +102,7 @@
+       if (vec3d != null) {
+          ZombieEntity zombieentity;
+          try {
+-            zombieentity = new ZombieEntity(this.field_75537_a);
++            zombieentity = EntityType.field_200725_aD.func_200721_a(this.field_75537_a); //Forge: Direct Initialization is deprecated, use EntityType.
+             zombieentity.func_213386_a(this.field_75537_a, this.field_75537_a.func_175649_E(new BlockPos(zombieentity)), SpawnReason.EVENT, (ILivingEntityData)null, (CompoundNBT)null);
+          } catch (Exception exception) {
+             exception.printStackTrace();
+@@ -117,7 +118,7 @@
+    private Vec3d func_179867_a(BlockPos p_179867_1_) {
+       for(int i = 0; i < 10; ++i) {
+          BlockPos blockpos = p_179867_1_.func_177982_a(this.field_75537_a.field_73012_v.nextInt(16) - 8, this.field_75537_a.field_73012_v.nextInt(6) - 3, this.field_75537_a.field_73012_v.nextInt(16) - 8);
+-         if (this.field_75537_a.func_217483_b_(blockpos) && WorldEntitySpawner.func_209382_a(EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, this.field_75537_a, blockpos, (EntityType<?>)null)) {
++         if (this.field_75537_a.func_217483_b_(blockpos) && WorldEntitySpawner.func_209382_a(EntitySpawnPlacementRegistry.PlacementType.ON_GROUND, this.field_75537_a, blockpos, EntityType.field_200725_aD)) { //Forge: MC-154328 passing in null always returns false, so pass in ZOMBIE
+             return new Vec3d((double)blockpos.func_177958_n(), (double)blockpos.func_177956_o(), (double)blockpos.func_177952_p());
+          }
+       }

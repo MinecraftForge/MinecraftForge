@@ -29,7 +29,7 @@
                 serverworld.func_195598_a(ParticleTypes.field_218422_X, d4, d5, d6, 2 + this.field_70146_Z.nextInt(2), (double)0.1F, 0.0D, (double)0.1F, 0.0D);
              }
           }
-@@ -357,15 +357,26 @@
+@@ -357,6 +357,7 @@
     public int func_146034_e(ItemStack p_146034_1_) {
        if (!this.field_70170_p.field_72995_K && this.field_146042_b != null) {
           int i = 0;
@@ -37,15 +37,11 @@
           if (this.field_146043_c != null) {
              this.func_184527_k();
              CriteriaTriggers.field_204811_D.func_204820_a((ServerPlayerEntity)this.field_146042_b, p_146034_1_, this, Collections.emptyList());
-             this.field_70170_p.func_72960_a(this, (byte)31);
+@@ -364,8 +365,15 @@
              i = this.field_146043_c instanceof ItemEntity ? 3 : 5;
           } else if (this.field_146045_ax > 0) {
--            LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_70170_p)).func_216015_a(LootParameters.field_216286_f, new BlockPos(this)).func_216015_a(LootParameters.field_216289_i, p_146034_1_).func_216023_a(this.field_70146_Z).func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da());
-+            LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_70170_p)).func_216015_a(LootParameters.field_216286_f, new BlockPos(this)).
-+                    func_216015_a(LootParameters.field_216289_i, p_146034_1_).
-+                    func_216023_a(this.field_70146_Z).func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da());
-+            lootcontext$builder.func_216015_a(LootParameters.field_216284_d, this.field_146042_b).
-+                    func_216015_a(LootParameters.field_216281_a,this);
+             LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_70170_p)).func_216015_a(LootParameters.field_216286_f, new BlockPos(this)).func_216015_a(LootParameters.field_216289_i, p_146034_1_).func_216023_a(this.field_70146_Z).func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da());
++            lootcontext$builder.func_216015_a(LootParameters.field_216284_d, this.field_146042_b).func_216015_a(LootParameters.field_216281_a, this);
              LootTable loottable = this.field_70170_p.func_73046_m().func_200249_aQ().func_186521_a(LootTables.field_186387_al);
              List<ItemStack> list = loottable.func_216113_a(lootcontext$builder.func_216022_a(LootParameterSets.field_216262_c));
 +            event = new net.minecraftforge.event.entity.player.ItemFishedEvent(list, this.field_146051_au ? 2 : 1, this);
@@ -57,7 +53,7 @@
              CriteriaTriggers.field_204811_D.func_204820_a((ServerPlayerEntity)this.field_146042_b, p_146034_1_, this, list);
  
              for(ItemStack itemstack : list) {
-@@ -390,7 +401,7 @@
+@@ -390,7 +398,7 @@
           }
  
           this.func_70106_y();
