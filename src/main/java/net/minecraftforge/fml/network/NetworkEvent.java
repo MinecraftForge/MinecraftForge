@@ -21,8 +21,6 @@ package net.minecraftforge.fml.network;
 
 import javax.annotation.Nullable;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListenableFutureTask;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 
@@ -37,6 +35,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.LogicalSidedProvider;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
 
 public class NetworkEvent extends Event
@@ -176,13 +175,16 @@ public class NetworkEvent extends Event
             return packetHandled;
         }
 
-        @SuppressWarnings("unchecked")
-        public <V> ListenableFuture<V> enqueueWork(Runnable runnable) {
-            ListenableFutureTask<V> f = ListenableFutureTask.create(runnable, null);
-
-            LogicalSidedProvider.WORKQUEUE.<ThreadTaskExecutor<?> >get(getDirection().getReceptionSide()).execute(f);
-
-            return f;
+        public CompletableFuture<Void> enqueueWork(Runnable runnable) {
+            ThreadTaskExecutor<?> executor = LogicalSidedProvider.WORKQUEUE.get(getDirection().getReceptionSide());
+            // Must check ourselves as Minecraft will sometimes delay tasks even when they are received on the client thread
+            // Same logic as ThreadTaskExecutor#runImmediately without the join
+            if (!executor.isOnExecutionThread()) {
+                return executor.func_213165_a(runnable); // Use the internal method so thread check isn't done twice
+            } else {
+                runnable.run();
+                return CompletableFuture.completedFuture(null);
+            }
         }
 
         /**
