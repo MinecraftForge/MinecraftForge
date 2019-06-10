@@ -21,11 +21,13 @@ package net.minecraftforge.fml.network;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IHasContainer;
 import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
@@ -208,8 +210,14 @@ public class FMLPlayMessages
         public static void handle(OpenContainer msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                // TODO extend IScreenFactory to allow for extra data
-                ScreenManager.openScreen(msg.getType(), Minecraft.getInstance(), msg.getWindowId(), msg.getName());
+                ScreenManager.getScreenFactory(msg.getType(), Minecraft.getInstance(), msg.getWindowId(), msg.getName())
+                             .ifPresent(f -> {
+                                 Container c = msg.getType().create(msg.getWindowId(), Minecraft.getInstance().player.inventory, msg.getAdditionalData());
+                                 @SuppressWarnings("unchecked")
+                                 Screen s = ((ScreenManager.IScreenFactory<Container, ?>)f).create(c, Minecraft.getInstance().player.inventory, msg.getName());
+                                 Minecraft.getInstance().player.openContainer = ((IHasContainer<?>)s).getContainer();
+                                 Minecraft.getInstance().displayGuiScreen(s);
+                             });
             });
             ctx.get().setPacketHandled(true);
         }

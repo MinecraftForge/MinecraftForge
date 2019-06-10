@@ -24,18 +24,26 @@ import net.minecraft.client.gui.ScreenManager;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.Hand;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.network.NetworkHooks;
 import net.minecraftforge.registries.ObjectHolder;
 
 @Mod("containertypetest")
@@ -45,9 +53,21 @@ public class ContainerTypeTest
     public static final ContainerType<TestContainer> TYPE = null;
     public class TestContainer extends Container
     {
-        protected TestContainer(int windowId, PlayerInventory inv)
+        private final String text;
+        
+        protected TestContainer(int windowId, PlayerInventory playerInv, PacketBuffer extraData)
+        {
+            this(windowId, new Inventory(9), extraData.readString(128));
+        }
+        
+        public TestContainer(int windowId, Inventory inv, String text)
         {
             super(TYPE, windowId);
+            this.text = text;
+            for (int i = 0; i < 9; i++)
+            {
+                this.addSlot(new Slot(inv, i, (i % 3) * 18, (i / 3) * 18));
+            }
         }
 
         @Override
@@ -67,7 +87,7 @@ public class ContainerTypeTest
         @Override
         protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
         {
-            drawString(this.font, "Hello World!", mouseX, mouseY, -1);
+            drawString(this.font, getContainer().text, mouseX, mouseY, -1);
         }
     }
 
@@ -80,7 +100,7 @@ public class ContainerTypeTest
 
     private void registerContainers(final RegistryEvent.Register<ContainerType<?>> event)
     {
-        event.getRegistry().register(new ContainerType<TestContainer>(TestContainer::new).setRegistryName("container"));
+        event.getRegistry().register(IForgeContainerType.create(TestContainer::new).setRegistryName("container"));
     }
     
     private void setup(FMLClientSetupEvent event)
@@ -94,13 +114,18 @@ public class ContainerTypeTest
         {
             if (event.getWorld().getBlockState(event.getPos()).getBlock() == Blocks.SPONGE)
             {
-                event.getEntityPlayer().openContainer(new INamedContainerProvider()
+                String text = "Hello World!";
+                NetworkHooks.openGui((ServerPlayerEntity) event.getEntityPlayer(), new INamedContainerProvider()
                 {
-                    
                     @Override
                     public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_)
                     {
-                        return TYPE.func_221506_a(p_createMenu_1_, p_createMenu_2_);
+                        Inventory inv = new Inventory(9);
+                        for (int i = 0; i < inv.getSizeInventory(); i++)
+                        {
+                            inv.setInventorySlotContents(i, new ItemStack(Items.DIAMOND));
+                        }
+                        return new TestContainer(p_createMenu_1_, inv, text);
                     }
                     
                     @Override
@@ -108,6 +133,8 @@ public class ContainerTypeTest
                     {
                         return new StringTextComponent("Test");
                     }
+                }, extraData -> {
+                    extraData.writeString(text);
                 });
             }
         }
