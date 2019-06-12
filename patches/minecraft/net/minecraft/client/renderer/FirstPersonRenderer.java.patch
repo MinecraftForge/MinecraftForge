@@ -42,7 +42,7 @@
        if (flag1) {
           float f4 = hand == Hand.OFF_HAND ? f : 0.0F;
           float f6 = 1.0F - MathHelper.func_219799_g(p_78440_1_, this.field_187472_i, this.field_187471_h);
-+         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.MAIN_HAND, p_78440_1_, f1, f4, f6, this.field_187467_d))
++         if(!net.minecraftforge.client.ForgeHooksClient.renderSpecificFirstPersonHand(Hand.OFF_HAND, p_78440_1_, f1, f4, f6, this.field_187467_d))
           this.func_187457_a(abstractclientplayerentity, p_78440_1_, f1, Hand.OFF_HAND, f4, this.field_187468_e, f6);
        }
  
