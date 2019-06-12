@@ -167,7 +167,6 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
 
     @Override
     public Optional<T> func_218349_b(ResourceLocation p_218349_1_) {
-        // TODO Auto-generated method stub
-        return null;
+        return Optional.ofNullable(map.get(p_218349_1_));
     }
 }
