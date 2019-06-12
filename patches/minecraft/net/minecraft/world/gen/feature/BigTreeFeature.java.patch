@@ -1,23 +1,5 @@
 --- a/net/minecraft/world/gen/feature/BigTreeFeature.java
 +++ b/net/minecraft/world/gen/feature/BigTreeFeature.java
-@@ -31,7 +31,7 @@
-          for(int k = -i; k <= i; ++k) {
-             if (Math.pow((double)Math.abs(j) + 0.5D, 2.0D) + Math.pow((double)Math.abs(k) + 0.5D, 2.0D) <= (double)(p_208529_3_ * p_208529_3_)) {
-                BlockPos blockpos = p_208529_2_.func_177982_a(j, 0, k);
--               if (func_214572_g(p_208529_1_, blockpos)) {
-+               if (canBeReplacedByLeaves(p_208529_1_, blockpos)) {
-                   this.func_208520_a(p_208529_5_, p_208529_1_, blockpos, field_208531_b, p_208529_4_);
-                }
-             }
-@@ -86,7 +86,7 @@
-             BlockPos blockpos1 = p_208523_3_.func_177963_a((double)(0.5F + (float)j * f), (double)(0.5F + (float)j * f1), (double)(0.5F + (float)j * f2));
-             if (p_208523_5_) {
-                this.func_208520_a(p_208523_1_, p_208523_2_, blockpos1, field_208530_a.func_206870_a(LogBlock.field_176298_M, this.func_197170_b(p_208523_3_, blockpos1)), p_208523_6_);
--            } else if (!func_214587_a(p_208523_2_, blockpos1)) {
-+            } else if (!canBeReplacedByLog(p_208523_2_, blockpos1)) {
-                return j;
-             }
-          }
 @@ -156,7 +156,7 @@
        if (i == -1) {
           return false;
@@ -32,7 +14,7 @@
  
     private int func_208528_b(Set<BlockPos> p_208528_1_, IWorldGenerationReader p_208528_2_, BlockPos p_208528_3_, int p_208528_4_, MutableBoundingBox p_208528_5_) {
 -      if (!func_214585_i(p_208528_2_, p_208528_3_.func_177977_b())) {
-+      if (!isSoilOrFarm(p_208528_2_, p_208528_3_.func_177977_b())) {
++      if (!isSoilOrFarm(p_208528_2_, p_208528_3_.func_177977_b(), getSapling())) {
           return -1;
        } else {
           int i = this.func_208523_a(p_208528_1_, p_208528_2_, p_208528_3_, p_208528_3_.func_177981_b(p_208528_4_ - 1), false, p_208528_5_);

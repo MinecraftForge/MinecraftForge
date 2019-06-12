@@ -22,7 +22,7 @@
              for(int k = -j; k <= j && flag; ++k) {
                 for(int l = -j; l <= j && flag; ++l) {
 -                  if (p_175926_2_.func_177956_o() + i < 0 || p_175926_2_.func_177956_o() + i >= 256 || !func_214587_a(p_175926_1_, p_175926_2_.func_177982_a(k, i, l))) {
-+                  if (p_175926_2_.func_177956_o() + i < 0 || p_175926_2_.func_177956_o() + i >= p_175926_1_.getMaxHeight() || !canBeReplacedByLog(p_175926_1_, p_175926_2_.func_177982_a(k, i, l))) {
++                  if (p_175926_2_.func_177956_o() + i < 0 || p_175926_2_.func_177956_o() + i >= p_175926_1_.getMaxHeight() || !func_214587_a(p_175926_1_, p_175926_2_.func_177982_a(k, i, l))) {
                       flag = false;
                    }
                 }
@@ -36,7 +36,7 @@
 -         this.func_214584_a(p_202405_1_, blockpos.func_177968_d());
 -         this.func_214584_a(p_202405_1_, blockpos.func_177968_d().func_177974_f());
 +
-+      if (isSoil(p_202405_1_, blockpos) && p_202405_2_.func_177956_o() >= 2) {
++      if (isSoil(p_202405_1_, blockpos, getSapling()) && p_202405_2_.func_177956_o() >= 2) {
 +         setDirtAt(p_202405_1_, blockpos, p_202405_2_);
 +         setDirtAt(p_202405_1_, blockpos.func_177974_f(), p_202405_2_);
 +         setDirtAt(p_202405_1_, blockpos.func_177968_d(), p_202405_2_);
@@ -44,21 +44,3 @@
           return true;
        } else {
           return false;
-@@ -85,7 +87,7 @@
-             int i1 = Math.min(Math.abs(k), Math.abs(k - 1));
-             if (l + i1 < 7 && l * l + i1 * i1 <= i) {
-                BlockPos blockpos = p_222839_2_.func_177982_a(j, 0, k);
--               if (func_214572_g(p_222839_1_, blockpos)) {
-+               if (canBeReplacedByLeaves(p_222839_1_, blockpos)) {
-                   this.func_208520_a(p_222839_5_, p_222839_1_, blockpos, this.field_76521_c, p_222839_4_);
-                }
-             }
-@@ -101,7 +103,7 @@
-          for(int k = -p_222838_3_; k <= p_222838_3_; ++k) {
-             if (j * j + k * k <= i) {
-                BlockPos blockpos = p_222838_2_.func_177982_a(j, 0, k);
--               if (func_214572_g(p_222838_1_, blockpos)) {
-+               if (canBeReplacedByLeaves(p_222838_1_, blockpos)) {
-                   this.func_208520_a(p_222838_5_, p_222838_1_, blockpos, this.field_76521_c, p_222838_4_);
-                }
-             }

@@ -9,77 +9,23 @@
           for(int j = p_208519_4_.func_177956_o(); j <= p_208519_4_.func_177956_o() + 1 + i; ++j) {
              int k = 1;
              if (j == p_208519_4_.func_177956_o()) {
-@@ -40,9 +40,9 @@
+@@ -40,7 +40,7 @@
  
              for(int l = p_208519_4_.func_177958_n() - k; l <= p_208519_4_.func_177958_n() + k && flag; ++l) {
                 for(int i1 = p_208519_4_.func_177952_p() - k; i1 <= p_208519_4_.func_177952_p() + k && flag; ++i1) {
 -                  if (j >= 0 && j < 256) {
 +                  if (j >= 0 && j < p_208519_2_.getMaxHeight()) {
                       blockpos$mutableblockpos.func_181079_c(l, j, i1);
--                     if (!func_214572_g(p_208519_2_, blockpos$mutableblockpos)) {
-+                     if (!canBeReplacedByLeaves(p_208519_2_, blockpos$mutableblockpos)) {
+                      if (!func_214572_g(p_208519_2_, blockpos$mutableblockpos)) {
                          if (func_214571_e(p_208519_2_, blockpos$mutableblockpos)) {
-                            if (j > p_208519_4_.func_177956_o()) {
-                               flag = false;
 @@ -60,8 +60,8 @@
  
           if (!flag) {
              return false;
 -         } else if (func_214589_h(p_208519_2_, p_208519_4_.func_177977_b()) && p_208519_4_.func_177956_o() < 256 - i - 1) {
 -            this.func_214584_a(p_208519_2_, p_208519_4_.func_177977_b());
-+         } else if (isSoil(p_208519_2_, p_208519_4_.func_177977_b()) && p_208519_4_.func_177956_o() < p_208519_2_.getMaxHeight() - i - 1) {
++         } else if (isSoil(p_208519_2_, p_208519_4_.func_177977_b(), getSapling()) && p_208519_4_.func_177956_o() < p_208519_2_.getMaxHeight() - i - 1) {
 +            this.setDirtAt(p_208519_2_, p_208519_4_.func_177977_b(), p_208519_4_);
  
              for(int l1 = p_208519_4_.func_177956_o() - 3 + i; l1 <= p_208519_4_.func_177956_o() + i; ++l1) {
                 int k2 = l1 - (p_208519_4_.func_177956_o() + i);
-@@ -74,7 +74,7 @@
-                      int k1 = j1 - p_208519_4_.func_177952_p();
-                      if (Math.abs(l3) != i3 || Math.abs(k1) != i3 || p_208519_3_.nextInt(2) != 0 && k2 != 0) {
-                         BlockPos blockpos = new BlockPos(k3, l1, j1);
--                        if (func_214572_g(p_208519_2_, blockpos) || func_214576_j(p_208519_2_, blockpos)) {
-+                        if (canBeReplacedByLeaves(p_208519_2_, blockpos) || func_214576_j(p_208519_2_, blockpos)) {
-                            this.func_208520_a(p_208519_1_, p_208519_2_, blockpos, field_181649_b, p_208519_5_);
-                         }
-                      }
-@@ -84,7 +84,7 @@
- 
-             for(int i2 = 0; i2 < i; ++i2) {
-                BlockPos blockpos3 = p_208519_4_.func_177981_b(i2);
--               if (func_214572_g(p_208519_2_, blockpos3) || func_214571_e(p_208519_2_, blockpos3)) {
-+               if (canBeReplacedByLeaves(p_208519_2_, blockpos3) || func_214571_e(p_208519_2_, blockpos3)) {
-                   this.func_208520_a(p_208519_1_, p_208519_2_, blockpos3, field_181648_a, p_208519_5_);
-                }
-             }
-@@ -102,19 +102,19 @@
-                         BlockPos blockpos5 = blockpos$mutableblockpos1.func_177974_f();
-                         BlockPos blockpos1 = blockpos$mutableblockpos1.func_177978_c();
-                         BlockPos blockpos2 = blockpos$mutableblockpos1.func_177968_d();
--                        if (p_208519_3_.nextInt(4) == 0 && func_214574_b(p_208519_2_, blockpos4)) {
-+                        if (p_208519_3_.nextInt(4) == 0 && isAir(p_208519_2_, blockpos4)) {
-                            this.func_181647_a(p_208519_2_, blockpos4, VineBlock.field_176278_M);
-                         }
- 
--                        if (p_208519_3_.nextInt(4) == 0 && func_214574_b(p_208519_2_, blockpos5)) {
-+                        if (p_208519_3_.nextInt(4) == 0 && isAir(p_208519_2_, blockpos5)) {
-                            this.func_181647_a(p_208519_2_, blockpos5, VineBlock.field_176280_O);
-                         }
- 
--                        if (p_208519_3_.nextInt(4) == 0 && func_214574_b(p_208519_2_, blockpos1)) {
-+                        if (p_208519_3_.nextInt(4) == 0 && isAir(p_208519_2_, blockpos1)) {
-                            this.func_181647_a(p_208519_2_, blockpos1, VineBlock.field_176279_N);
-                         }
- 
--                        if (p_208519_3_.nextInt(4) == 0 && func_214574_b(p_208519_2_, blockpos2)) {
-+                        if (p_208519_3_.nextInt(4) == 0 && isAir(p_208519_2_, blockpos2)) {
-                            this.func_181647_a(p_208519_2_, blockpos2, VineBlock.field_176273_b);
-                         }
-                      }
-@@ -136,7 +136,7 @@
-       this.func_202278_a(p_181647_1_, p_181647_2_, blockstate);
-       int i = 4;
- 
--      for(BlockPos blockpos = p_181647_2_.func_177977_b(); func_214574_b(p_181647_1_, blockpos) && i > 0; --i) {
-+      for(BlockPos blockpos = p_181647_2_.func_177977_b(); isAir(p_181647_1_, blockpos) && i > 0; --i) {
-          this.func_202278_a(p_181647_1_, blockpos, blockstate);
-          blockpos = blockpos.func_177977_b();
-       }

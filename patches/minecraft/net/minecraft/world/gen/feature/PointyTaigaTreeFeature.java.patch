@@ -17,43 +17,23 @@
           boolean flag = true;
  
           for(int i1 = p_208519_4_.func_177956_o(); i1 <= p_208519_4_.func_177956_o() + 1 + i && flag; ++i1) {
-@@ -38,8 +39,8 @@
+@@ -38,7 +39,7 @@
  
              for(int k1 = p_208519_4_.func_177958_n() - j1; k1 <= p_208519_4_.func_177958_n() + j1 && flag; ++k1) {
                 for(int l1 = p_208519_4_.func_177952_p() - j1; l1 <= p_208519_4_.func_177952_p() + j1 && flag; ++l1) {
 -                  if (i1 >= 0 && i1 < 256) {
--                     if (!func_214587_a(p_208519_2_, blockpos$mutableblockpos.func_181079_c(k1, i1, l1))) {
 +                  if (i1 >= 0 && i1 < p_208519_2_.getMaxHeight()) {
-+                     if (!canBeReplacedByLog(p_208519_2_, blockpos$mutableblockpos.func_181079_c(k1, i1, l1))) {
+                      if (!func_214587_a(p_208519_2_, blockpos$mutableblockpos.func_181079_c(k1, i1, l1))) {
                          flag = false;
                       }
-                   } else {
 @@ -51,8 +52,8 @@
  
           if (!flag) {
              return false;
 -         } else if (func_214589_h(p_208519_2_, p_208519_4_.func_177977_b()) && p_208519_4_.func_177956_o() < 256 - i - 1) {
 -            this.func_214584_a(p_208519_2_, p_208519_4_.func_177977_b());
-+         } else if (isSoil(p_208519_2_, p_208519_4_.func_177977_b()) && p_208519_4_.func_177956_o() < p_208519_2_.getMaxHeight() - i - 1) {
++         } else if (isSoil(p_208519_2_, p_208519_4_.func_177977_b(), getSapling()) && p_208519_4_.func_177956_o() < p_208519_2_.getMaxHeight() - i - 1) {
 +            this.setDirtAt(p_208519_2_, p_208519_4_.func_177977_b(), p_208519_4_);
              int j2 = 0;
  
              for(int k2 = p_208519_4_.func_177956_o() + i; k2 >= p_208519_4_.func_177956_o() + j; --k2) {
-@@ -63,7 +64,7 @@
-                      int i2 = k3 - p_208519_4_.func_177952_p();
-                      if (Math.abs(j3) != j2 || Math.abs(i2) != j2 || j2 <= 0) {
-                         BlockPos blockpos = new BlockPos(i3, k2, k3);
--                        if (func_214572_g(p_208519_2_, blockpos)) {
-+                        if (canBeReplacedByLeaves(p_208519_2_, blockpos)) {
-                            this.func_208520_a(p_208519_1_, p_208519_2_, blockpos, field_181637_b, p_208519_5_);
-                         }
-                      }
-@@ -78,7 +79,7 @@
-             }
- 
-             for(int l2 = 0; l2 < i - 1; ++l2) {
--               if (func_214572_g(p_208519_2_, p_208519_4_.func_177981_b(l2))) {
-+               if (canBeReplacedByLeaves(p_208519_2_, p_208519_4_.func_177981_b(l2))) {
-                   this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177981_b(l2), field_181636_a, p_208519_5_);
-                }
-             }

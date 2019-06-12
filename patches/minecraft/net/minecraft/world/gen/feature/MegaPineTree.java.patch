@@ -8,43 +8,12 @@
     }
  
     public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_) {
-@@ -30,20 +31,20 @@
-          this.func_214596_a(p_208519_2_, p_208519_4_.func_177958_n(), p_208519_4_.func_177952_p(), p_208519_4_.func_177956_o() + i, 0, p_208519_3_, p_208519_5_, p_208519_1_);
- 
-          for(int j = 0; j < i; ++j) {
--            if (func_214572_g(p_208519_2_, p_208519_4_.func_177981_b(j))) {
-+            if (canBeReplacedByLeaves(p_208519_2_, p_208519_4_.func_177981_b(j))) {
-                this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177981_b(j), this.field_76520_b, p_208519_5_);
-             }
- 
-             if (j < i - 1) {
--               if (func_214572_g(p_208519_2_, p_208519_4_.func_177982_a(1, j, 0))) {
-+               if (canBeReplacedByLeaves(p_208519_2_, p_208519_4_.func_177982_a(1, j, 0))) {
-                   this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177982_a(1, j, 0), this.field_76520_b, p_208519_5_);
-                }
- 
--               if (func_214572_g(p_208519_2_, p_208519_4_.func_177982_a(1, j, 1))) {
-+               if (canBeReplacedByLeaves(p_208519_2_, p_208519_4_.func_177982_a(1, j, 1))) {
-                   this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177982_a(1, j, 1), this.field_76520_b, p_208519_5_);
-                }
- 
--               if (func_214572_g(p_208519_2_, p_208519_4_.func_177982_a(0, j, 1))) {
-+               if (canBeReplacedByLeaves(p_208519_2_, p_208519_4_.func_177982_a(0, j, 1))) {
-                   this.func_208520_a(p_208519_1_, p_208519_2_, p_208519_4_.func_177982_a(0, j, 1), this.field_76520_b, p_208519_5_);
-                }
-             }
-@@ -98,12 +99,12 @@
+@@ -98,7 +99,7 @@
     private void func_175934_c(IWorldGenerationReader p_175934_1_, BlockPos p_175934_2_) {
        for(int i = 2; i >= -3; --i) {
           BlockPos blockpos = p_175934_2_.func_177981_b(i);
 -         if (func_214589_h(p_175934_1_, blockpos)) {
-+         if (isSoil(p_175934_1_, blockpos)) {
++         if (isSoil(p_175934_1_, blockpos, getSapling())) {
              this.func_202278_a(p_175934_1_, blockpos, field_181635_g);
              break;
           }
- 
--         if (!func_214574_b(p_175934_1_, blockpos) && i < 0) {
-+         if (!isAir(p_175934_1_, blockpos) && i < 0) {
-             break;
-          }
-       }
