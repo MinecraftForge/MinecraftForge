@@ -123,7 +123,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -779,13 +785,74 @@
+@@ -779,13 +785,80 @@
     }
  
     public static boolean func_196252_e(Block p_196252_0_) {
@@ -140,6 +140,7 @@
 +   protected Random RANDOM = new Random();
 +   private net.minecraftforge.common.ToolType harvestTool;
 +   private int harvestLevel;
++   private final net.minecraftforge.common.util.ReverseTagWrapper<Block> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, BlockTags::getGeneration, BlockTags::func_199896_a);
 +
 +   @Override
 +   public float getSlipperiness(BlockState state, IWorldReader world, BlockPos pos, @Nullable Entity entity) {
@@ -187,6 +188,11 @@
 +               return isBeach && hasWater;
 +       }
 +       return false;
++   }
++
++   @Override
++   public final java.util.Set<ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
 +   }
 +
 +   static {

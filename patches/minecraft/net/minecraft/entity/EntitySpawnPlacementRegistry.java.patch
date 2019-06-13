@@ -3,7 +3,7 @@
 @@ -9,6 +9,7 @@
     private static final Map<EntityType<?>, EntitySpawnPlacementRegistry.Entry> field_209347_a = Maps.newHashMap();
  
-    private static void func_209343_a(EntityType<?> p_209343_0_, EntitySpawnPlacementRegistry.PlacementType p_209343_1_, Heightmap.Type p_209343_2_) {
+    public static void func_209343_a(EntityType<?> p_209343_0_, EntitySpawnPlacementRegistry.PlacementType p_209343_1_, Heightmap.Type p_209343_2_) {
 +      if (field_209347_a.containsKey(p_209343_0_)) throw new IllegalArgumentException("Invalid register call, " + p_209343_0_ + " already registered.");
        field_209347_a.put(p_209343_0_, new EntitySpawnPlacementRegistry.Entry(p_209343_2_, p_209343_1_));
     }

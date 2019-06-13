@@ -28,6 +28,7 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.entity.model.BipedModel;
+import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.LivingEntity;
@@ -43,6 +44,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -759,5 +761,11 @@ public interface IForgeItem
      *         one.
      */
     @OnlyIn(Dist.CLIENT)
-    net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer getTileEntityItemStackRenderer();
+    ItemStackTileEntityRenderer getTileEntityItemStackRenderer();
+
+    /**
+     * Retrieves a list of tags names this is known to be associated with.
+     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
+     */
+    Set<ResourceLocation> getTags();
 }

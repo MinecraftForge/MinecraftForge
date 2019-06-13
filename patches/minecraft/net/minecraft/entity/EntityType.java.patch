@@ -9,7 +9,7 @@
     private static final Logger field_200731_aJ = LogManager.getLogger();
     public static final EntityType<AreaEffectCloudEntity> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.<AreaEffectCloudEntity>func_220322_a(AreaEffectCloudEntity::new, EntityClassification.MISC).func_220320_c().func_220321_a(6.0F, 0.5F));
     public static final EntityType<ArmorStandEntity> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.<ArmorStandEntity>func_220322_a(ArmorStandEntity::new, EntityClassification.MISC).func_220321_a(0.5F, 1.975F));
-@@ -254,6 +254,11 @@
+@@ -254,6 +254,12 @@
     private final Type<?> field_206832_aX;
     private final EntitySize field_220359_bi;
  
@@ -17,11 +17,12 @@
 +   private final java.util.function.ToIntFunction<EntityType<?>> trackingRangeSupplier;
 +   private final java.util.function.ToIntFunction<EntityType<?>> updateIntervalSupplier;
 +   private final java.util.function.BiFunction<net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity, World, T> customClientFactory;
++   private final net.minecraftforge.common.util.ReverseTagWrapper<EntityType<?>> reverseTags = new net.minecraftforge.common.util.ReverseTagWrapper<>(this, net.minecraft.tags.EntityTypeTags::getGeneration, net.minecraft.tags.EntityTypeTags::func_219762_a);
 +
     private static <T extends Entity> EntityType<T> func_200712_a(String p_200712_0_, EntityType.Builder<T> p_200712_1_) {
        return Registry.func_218325_a(Registry.field_212629_r, p_200712_0_, p_200712_1_.func_206830_a(p_200712_0_));
     }
-@@ -266,7 +271,7 @@
+@@ -266,7 +272,7 @@
        return Registry.field_212629_r.func_218349_b(ResourceLocation.func_208304_a(p_220327_0_));
     }
  
@@ -30,7 +31,7 @@
        this.field_200732_aK = p_i50385_1_;
        this.field_220355_ba = p_i50385_2_;
        this.field_200733_aL = p_i50385_3_;
-@@ -274,6 +279,10 @@
+@@ -274,6 +280,10 @@
        this.field_220357_bd = p_i50385_5_;
        this.field_206832_aX = p_i50385_6_;
        this.field_220359_bi = p_i50385_7_;
@@ -41,7 +42,7 @@
     }
  
     @Nullable
-@@ -284,6 +293,7 @@
+@@ -284,6 +294,7 @@
     @Nullable
     public T func_220342_a(World p_220342_1_, @Nullable CompoundNBT p_220342_2_, @Nullable ITextComponent p_220342_3_, @Nullable PlayerEntity p_220342_4_, BlockPos p_220342_5_, SpawnReason p_220342_6_, boolean p_220342_7_, boolean p_220342_8_) {
        T t = this.func_220349_b(p_220342_1_, p_220342_2_, p_220342_3_, p_220342_4_, p_220342_5_, p_220342_6_, p_220342_7_, p_220342_8_);
@@ -49,7 +50,7 @@
        p_220342_1_.func_217376_c(t);
        return t;
     }
-@@ -462,6 +472,9 @@
+@@ -462,6 +473,9 @@
     }
  
     public int func_220345_k() {
@@ -59,7 +60,7 @@
        if (this == field_200729_aH) {
           return 32;
        } else if (this == field_200801_o) {
-@@ -474,6 +487,9 @@
+@@ -474,6 +488,9 @@
     }
  
     public int func_220332_l() {
@@ -69,7 +70,7 @@
        if (this != field_200729_aH && this != field_200805_s) {
           if (this == field_200808_v) {
              return 4;
-@@ -494,6 +510,9 @@
+@@ -494,6 +511,9 @@
     }
  
     public boolean func_220340_m() {
@@ -79,13 +80,21 @@
        return this != field_200729_aH && this != field_200770_J && this != field_200760_az && this != field_200791_e && this != field_200766_F && this != field_200768_H && this != field_200782_V && this != field_200801_o && this != field_200805_s;
     }
  
-@@ -501,12 +520,22 @@
+@@ -501,12 +521,30 @@
        return p_220341_1_.func_199685_a_(this);
     }
  
 +   public T customClientSpawn(net.minecraftforge.fml.network.FMLPlayMessages.SpawnEntity packet, World world) {
 +      if (customClientFactory == null) throw new RuntimeException("Missing custom spawn data for entity type "+this);
 +      return customClientFactory.apply(packet, world);
++   }
++
++   /**
++    * Retrieves a list of tags names this is known to be associated with.
++    * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
++    */
++   public java.util.Set<ResourceLocation> getTags() {
++      return reverseTags.getTagNames();
 +   }
 +
     public static class Builder<T extends Entity> {
@@ -102,7 +111,7 @@
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
        private Builder(EntityType.IFactory<T> p_i50479_1_, EntityClassification p_i50479_2_) {
-@@ -544,12 +573,32 @@
+@@ -544,12 +582,32 @@
           return this;
        }
  
@@ -136,7 +145,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -558,7 +607,7 @@
+@@ -558,7 +616,7 @@
              }
           }
  

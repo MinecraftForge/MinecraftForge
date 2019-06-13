@@ -96,6 +96,15 @@
        if (this.field_71474_y.field_74353_u && !this.field_195558_d.func_198113_j()) {
           this.field_195558_d.func_198077_g();
           this.field_71474_y.field_74353_u = this.field_195558_d.func_198113_j();
+@@ -557,7 +571,7 @@
+          return Stream.of(Registry.field_212630_s.func_177774_c(p_213251_0_.func_77973_b()));
+       });
+       SearchTreeReloadable<ItemStack> searchtreereloadable = new SearchTreeReloadable<>((p_213235_0_) -> {
+-         return ItemTags.func_199903_a().func_199913_a(p_213235_0_.func_77973_b()).stream();
++         return p_213235_0_.func_77973_b().getTags().stream();
+       });
+       NonNullList<ItemStack> nonnulllist = NonNullList.func_191196_a();
+ 
 @@ -646,7 +660,7 @@
        Bootstrap.func_179870_a(p_71377_1_.func_71502_e());
        if (p_71377_1_.func_71497_f() != null) {

@@ -19,6 +19,8 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.block.material.Material;
@@ -28,6 +30,7 @@ import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.tags.Tag;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Explosion;
@@ -108,4 +111,10 @@ public interface IForgeFluid
     {
         return this.getFluid().getRenderLayer() == layer;
     }
+
+    /**
+     * Retrieves a list of tags names this is known to be associated with.
+     * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
+     */
+    Set<ResourceLocation> getTags();
 }
