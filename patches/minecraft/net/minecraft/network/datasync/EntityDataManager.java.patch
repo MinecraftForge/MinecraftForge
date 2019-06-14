@@ -1,0 +1,18 @@
+--- a/net/minecraft/network/datasync/EntityDataManager.java
++++ b/net/minecraft/network/datasync/EntityDataManager.java
+@@ -35,11 +35,13 @@
+    }
+ 
+    public static <T> DataParameter<T> func_187226_a(Class<? extends Entity> p_187226_0_, DataSerializer<T> p_187226_1_) {
+-      if (field_190303_a.isDebugEnabled()) {
++      if (true || field_190303_a.isDebugEnabled()) { // Forge: This is very useful for mods that register keys on classes that are not their own
+          try {
+             Class<?> oclass = Class.forName(Thread.currentThread().getStackTrace()[2].getClassName());
+             if (!oclass.equals(p_187226_0_)) {
+-               field_190303_a.debug("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
++               // Forge: log at warn, mods should not add to classes that they don't own, and only add stacktrace when in debug is enabled as it is mostly not needed and consumes time
++               if (field_190303_a.isDebugEnabled()) field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass, new RuntimeException());
++               else field_190303_a.warn("defineId called for: {} from {}", p_187226_0_, oclass);
+             }
+          } catch (ClassNotFoundException var5) {
+             ;

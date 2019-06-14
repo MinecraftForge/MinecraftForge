@@ -1,0 +1,11 @@
+--- a/net/minecraft/resources/IResourcePack.java
++++ b/net/minecraft/resources/IResourcePack.java
+@@ -12,7 +12,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public interface IResourcePack extends Closeable {
++public interface IResourcePack extends Closeable, net.minecraftforge.client.extensions.IForgeResourcePack {
+    @OnlyIn(Dist.CLIENT)
+    InputStream func_195763_b(String p_195763_1_) throws IOException;
+ 

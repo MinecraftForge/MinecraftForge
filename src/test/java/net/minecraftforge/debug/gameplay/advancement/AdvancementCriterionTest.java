@@ -29,8 +29,8 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-@Mod(name = "advancementcriteriontest", modid = "advancementcriteriontest", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(name = "advancementcriteriontest", modid = "advancementcriteriontest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class AdvancementCriterionTest {
     private static final PositionTrigger TRIGGER = new PositionTrigger(new ResourceLocation("advancementcriteriontest", "position"));
 

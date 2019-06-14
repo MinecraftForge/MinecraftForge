@@ -18,19 +18,17 @@
  */
 
 package net.minecraftforge.fml.common;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
 import javax.annotation.Nonnull;
 
+import cpw.mods.modlauncher.api.INameMappingService;
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
@@ -40,7 +38,7 @@ import com.google.common.base.Preconditions;
 
 /**
  * Some reflection helper code.
- * This may not work properly in Java9 with their new more restrictive reflection management.
+ * This may not work properly in Java 9 with its new, more restrictive, reflection management.
  * As such, if issues are encountered, please report them and we can see what we can do to expand
  * the compatibility.
  *
@@ -59,25 +57,9 @@ public class ObfuscationReflectionHelper
 
 
 
-    public static String[] remapNames(String... names)
+    public static String remapName(INameMappingService.Domain domain, String name)
     {
-        loadMappings();
-        if (map.isEmpty())
-            return names;
-
-        String[] mappedNames = new String[names.length];
-        int i = 0;
-        for (String name : names)
-            mappedNames[i++] = map.getOrDefault(name, name);
-        return mappedNames;
-    }
-
-    public static String remapName(String name)
-    {
-        loadMappings();
-        if (map.isEmpty())
-            return name;
-        return map.getOrDefault(name, name);
+        return FMLLoader.getNameFunction("srg").map(f->f.apply(domain, name)).orElse(name);
     }
 
     public static <T, E> T getPrivateValue(Class<? super E> classToAccess, E instance, int fieldIndex)
@@ -90,7 +72,7 @@ public class ObfuscationReflectionHelper
         }
         catch (Exception e)
         {
-            LOGGER.error(REFLECTION, "There was a problem getting field index {} from {}", classToAccess.getName(), e);
+            LOGGER.error(REFLECTION, "There was a problem getting field index {} from {}", fieldIndex, classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -99,16 +81,16 @@ public class ObfuscationReflectionHelper
     {
         try
         {
-            return (T)findField(classToAccess, remapName(fieldName)).get(instance);
+            return (T)findField(classToAccess, remapName(INameMappingService.Domain.FIELD, fieldName)).get(instance);
         }
         catch (UnableToFindFieldException e)
         {
-            LOGGER.error("Unable to locate field {} ({}) on type {}", fieldName, remapName(fieldName), classToAccess.getName(), e);
+            LOGGER.error(REFLECTION,"Unable to locate field {} ({}) on type {}", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
             throw e;
         }
         catch (IllegalAccessException e)
         {
-            LOGGER.error("Unable to access field {} ({}) on type {}", fieldName, remapName(fieldName), classToAccess.getName(), e);
+            LOGGER.error(REFLECTION,"Unable to access field {} ({}) on type {}", fieldName, remapName(INameMappingService.Domain.FIELD, fieldName), classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -123,7 +105,7 @@ public class ObfuscationReflectionHelper
         }
         catch (IllegalAccessException e)
         {
-            LOGGER.error("There was a problem setting field index {} on type {}", classToAccess.getName(), e);
+            LOGGER.error("There was a problem setting field index {} on type {}", fieldIndex, classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
@@ -132,28 +114,28 @@ public class ObfuscationReflectionHelper
     {
         try
         {
-            findField(classToAccess, remapName(fieldName)).set(instance, value);
+            findField(classToAccess, remapName(INameMappingService.Domain.FIELD, fieldName)).set(instance, value);
         }
         catch (UnableToFindFieldException e)
         {
-            LOGGER.error("Unable to locate any field {} on type {}", classToAccess.getName(), e);
+            LOGGER.error("Unable to locate any field {} on type {}", fieldName, classToAccess.getName(), e);
             throw e;
         }
         catch (IllegalAccessException e)
         {
-            LOGGER.error("Unable to set any field {} on type {}", classToAccess.getName(), e);
+            LOGGER.error("Unable to set any field {} on type {}", fieldName, classToAccess.getName(), e);
             throw new UnableToAccessFieldException(e);
         }
     }
 
     /**
      * Finds a method with the specified name and parameters in the given class and makes it accessible.
-     * Note: for performance, store the returned value and avoid calling this repeatedly.
+     * Note: For performance, store the returned value and avoid calling this repeatedly.
      * <p>
      * Throws an exception if the method is not found.
      *
      * @param clazz          The class to find the method on.
-     * @param methodName     The SRG (obfuscated) name of the method to find(e.g. "func_72820_D").
+     * @param methodName     The SRG (obfuscated) name of the method to find(e.g. "func_12820_D").
      * @param parameterTypes The parameter types of the method to find.
      * @return The method with the specified name and parameters in the given class.
      */
@@ -166,7 +148,7 @@ public class ObfuscationReflectionHelper
 
         try
         {
-            Method m = clazz.getDeclaredMethod(remapName(methodName), parameterTypes);
+            Method m = clazz.getDeclaredMethod(remapName(INameMappingService.Domain.METHOD, methodName), parameterTypes);
             m.setAccessible(true);
             return m;
         }
@@ -229,38 +211,6 @@ public class ObfuscationReflectionHelper
         }
     }
 
-    private static void loadMappings()
-    {
-        if (loaded)
-            return;
-
-        synchronized(map) //Just in case?
-        {
-            if (loaded) //Incase something else loaded while we were here, jump out
-                return;
-            for (String file  : new String[]{"fields.csv", "methods.csv"})
-            {
-                URL path = ClassLoader.getSystemResource(file); //We EXPLICITLY go throught the SystemClassLoader here because this is dev-time only. And will be on the root classpath.
-                if (path == null)
-                    continue;
-
-                int count = map.size();
-                LOGGER.info(REFLECTION, "Loading Mappings: {}", path);
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(path.openStream())))
-                {
-                    reader.lines().skip(1).map(e -> e.split(",")).forEach(e -> map.put(e[0], e[1]));
-                }
-                catch (IOException e1)
-                {
-                    LOGGER.error(REFLECTION, "Error reading mappings", e1);
-                }
-                LOGGER.info(REFLECTION, "Loaded {} entries", map.size() - count);
-            }
-            loaded = true;
-        }
-    }
-
-    //Add SRG names to these exception?
     public static class UnableToAccessFieldException extends RuntimeException
     {
         private UnableToAccessFieldException(Exception e)

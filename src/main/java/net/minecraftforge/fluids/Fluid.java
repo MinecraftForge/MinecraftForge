@@ -24,7 +24,6 @@ import javax.annotation.Nullable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.Color;
 import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -142,17 +141,6 @@ public class Fluid
      */
     protected int color = 0xFFFFFFFF;
 
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, Color color)
-    {
-        this(fluidName, still, flowing, null, color);
-    }
-
-    public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, @Nullable ResourceLocation overlay, Color color)
-    {
-        this(fluidName, still, flowing, overlay);
-        this.setColor(color);
-    }
-
     public Fluid(String fluidName, ResourceLocation still, ResourceLocation flowing, int color)
     {
         this(fluidName, still, flowing, null, color);
@@ -243,12 +231,6 @@ public class Fluid
     public Fluid setEmptySound(SoundEvent emptySound)
     {
         this.emptySound = emptySound;
-        return this;
-    }
-
-    public Fluid setColor(Color color)
-    {
-        this.color = color.getRGB();
         return this;
     }
 

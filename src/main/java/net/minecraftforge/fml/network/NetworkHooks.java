@@ -75,15 +75,14 @@ public class NetworkHooks
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_CLIENT);
     }
 
-    public static void registerClientLoginChannel(NetworkManager manager)
+    public synchronized static void registerClientLoginChannel(NetworkManager manager)
     {
-        if (manager == null || manager.channel() == null) return;
         manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(FMLNetworkConstants.NOVERSION);
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_SERVER);
     }
 
     public static void handleClientLoginSuccess(NetworkManager manager) {
-        if (manager == null || manager.channel() == null) return;
+        if (manager == null || manager.channel() == null) throw new NullPointerException("ARGH! Network Manager is null (" + manager != null ? "CHANNEL" : "MANAGER"+")" );
         if (getConnectionType(()->manager) == ConnectionType.VANILLA) {
             LOGGER.info("Connected to a vanilla server. Catching up missing behaviour.");
             ConfigTracker.INSTANCE.loadDefaultServerConfigs();

@@ -19,8 +19,6 @@
 
 package net.minecraftforge.common.extensions;
 
-import java.util.Collection;
-
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.common.crafting.RecipeType;
 import net.minecraftforge.common.crafting.VanillaRecipeTypes;
@@ -28,7 +26,7 @@ import net.minecraftforge.common.crafting.VanillaRecipeTypes;
 public interface IForgeRecipe {
 
     /**
-     * Used when sorting this recipe into it's category during load, and in the default type matcher below.
+     * Used when sorting this recipe into it's category during load.  This type determines what class the recipe must subclass.
      * @return The type of this recipe.
      */
     default RecipeType<? extends IRecipe> getType()

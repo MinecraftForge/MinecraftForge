@@ -37,6 +37,7 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 public class CommandSetDimension
 {
@@ -58,7 +59,7 @@ public class CommandSetDimension
 
     private static int execute(CommandSource sender, Collection<? extends Entity> entities, DimensionType dim, BlockPos pos) throws CommandSyntaxException
     {
-        entities.removeIf(CommandSetDimension::checkEntity);
+        entities.removeIf(e -> !canEntityTeleport(e));
         if (entities.isEmpty())
             throw NO_ENTITIES.create();
 
@@ -72,10 +73,10 @@ public class CommandSetDimension
         return 0;
     }
 
-    private static boolean checkEntity(Entity entity)
+    private static boolean canEntityTeleport(Entity entity)
     {
-        // use vanilla portal logic, try to avoid doing anything too silly
-        return entity.isPassenger() || entity.isBeingRidden() || entity.isNonBoss();
+        // use vanilla portal logic from BlockPortal#onEntityCollision
+        return !entity.isPassenger() && !entity.isBeingRidden() && entity.isNonBoss();
     }
 
     private static class CommandTeleporter implements ITeleporter

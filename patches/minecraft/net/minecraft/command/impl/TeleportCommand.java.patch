@@ -1,5 +1,14 @@
 --- a/net/minecraft/command/impl/TeleportCommand.java
 +++ b/net/minecraft/command/impl/TeleportCommand.java
+@@ -54,7 +54,7 @@
+ 
+    private static int func_201126_a(CommandSource p_201126_0_, Collection<? extends Entity> p_201126_1_, Entity p_201126_2_) {
+       for(Entity entity : p_201126_1_) {
+-         func_201127_a(p_201126_0_, entity, p_201126_0_.func_197023_e(), p_201126_2_.field_70165_t, p_201126_2_.field_70163_u, p_201126_2_.field_70161_v, EnumSet.noneOf(SPacketPlayerPosLook.EnumFlags.class), p_201126_2_.field_70177_z, p_201126_2_.field_70125_A, (TeleportCommand.Facing)null);
++         func_201127_a(p_201126_0_, entity, (WorldServer) p_201126_2_.func_130014_f_(), p_201126_2_.field_70165_t, p_201126_2_.field_70163_u, p_201126_2_.field_70161_v, EnumSet.noneOf(SPacketPlayerPosLook.EnumFlags.class), p_201126_2_.field_70177_z, p_201126_2_.field_70125_A, (TeleportCommand.Facing)null); // Forge: Fix MC-128441 cross-dimension teleporting does not work
+       }
+ 
+       if (p_201126_1_.size() == 1) {
 @@ -135,9 +135,9 @@
              p_201127_1_.func_70034_d(f);
           } else {

@@ -9,7 +9,15 @@
     private static final Logger field_200731_aJ = LogManager.getLogger();
     public static final EntityType<EntityAreaEffectCloud> field_200788_b = func_200712_a("area_effect_cloud", EntityType.Builder.func_201757_a(EntityAreaEffectCloud.class, EntityAreaEffectCloud::new));
     public static final EntityType<EntityArmorStand> field_200789_c = func_200712_a("armor_stand", EntityType.Builder.func_201757_a(EntityArmorStand.class, EntityArmorStand::new));
-@@ -386,15 +386,53 @@
+@@ -263,6 +263,7 @@
+    @Nullable
+    public T func_208050_a(World p_208050_1_, @Nullable NBTTagCompound p_208050_2_, @Nullable ITextComponent p_208050_3_, @Nullable EntityPlayer p_208050_4_, BlockPos p_208050_5_, boolean p_208050_6_, boolean p_208050_7_) {
+       T t = this.func_210761_b(p_208050_1_, p_208050_2_, p_208050_3_, p_208050_4_, p_208050_5_, p_208050_6_, p_208050_7_);
++      if (t instanceof net.minecraft.entity.EntityLiving && net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn((EntityLiving) t, p_208050_1_, p_208050_5_.func_177958_n(), p_208050_5_.func_177956_o(), p_208050_5_.func_177952_p(), null)) return null;
+       p_208050_1_.func_72838_d(t);
+       return t;
+    }
+@@ -386,15 +387,53 @@
        return p_200719_1_ == null ? null : p_200719_1_.func_200721_a(p_200719_0_);
     }
  
@@ -63,7 +71,7 @@
        }
  
        public static <T extends Entity> EntityType.Builder<T> func_201757_a(Class<? extends T> p_201757_0_, Function<? super World, ? extends T> p_201757_1_) {
-@@ -417,12 +455,26 @@
+@@ -417,12 +456,26 @@
           return this;
        }
  
@@ -91,7 +99,7 @@
                 if (SharedConstants.field_206244_b) {
                    throw illegalstateexception;
                 }
-@@ -431,7 +483,7 @@
+@@ -431,7 +484,7 @@
              }
           }
  

@@ -39,7 +39,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 
-@Mod(modid = RecipeMatchingTest.MODID, name = "Recipe test mod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = RecipeMatchingTest.MODID, name = "Recipe test mod", version = "1.0", acceptableRemoteVersions = "*")
 public class RecipeMatchingTest
 {
     public static final String MODID = "recipetest";

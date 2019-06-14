@@ -1,0 +1,10 @@
+--- a/net/minecraft/village/VillageSiege.java
++++ b/net/minecraft/village/VillageSiege.java
+@@ -115,6 +115,7 @@
+ 
+                Vec3d vec3d = this.func_179867_a(new BlockPos(this.field_75532_g, this.field_75538_h, this.field_75539_i));
+                if (vec3d != null) {
++                  if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.village.VillageSiegeEvent(this, field_75537_a, entityplayer, field_75531_f, vec3d))) return false;
+                   break;
+                }
+             }

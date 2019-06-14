@@ -88,16 +88,10 @@ public class WorldWorkerManager
     {
         boolean hasWork();
 
-        default void work() {}; //TODO: Remove in 1.13.
-
         /**
          * Perform a task, returning true from this will have the manager call this function again this tick if there is time left.
          * Returning false will skip calling this worker until next tick.
          */
-        default boolean doWork()
-        {
-            work();
-            return true;
-        }
+        boolean doWork();
     }
 }

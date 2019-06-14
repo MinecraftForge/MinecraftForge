@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml.loading.moddiscovery;
 
+import net.minecraftforge.fml.loading.ModDirTransformerDiscoverer;
 import net.minecraftforge.fml.loading.StringUtils;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
@@ -54,7 +55,9 @@ public class ModsFolderLocator extends AbstractJarFileLocator {
     @Override
     public List<ModFile> scanMods() {
         LOGGER.debug(SCAN,"Scanning mods dir {} for mods", this.modFolder);
+        List<Path> excluded = new ModDirTransformerDiscoverer().candidates(FMLPaths.GAMEDIR.get());
         return uncheck(()-> Files.list(this.modFolder)).
+                filter(p->!excluded.contains(p)).
                 sorted(Comparator.comparing(path-> StringUtils.toLowerCase(path.getFileName().toString()))).
                 filter(p->StringUtils.toLowerCase(p.getFileName().toString()).endsWith(SUFFIX)).
                 map(p->new ModFile(p, this)).

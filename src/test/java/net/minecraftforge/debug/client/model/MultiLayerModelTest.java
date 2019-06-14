@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@Mod(modid = MultiLayerModelTest.MODID, name = "ForgeDebugMultiLayerModel", version = MultiLayerModelTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = MultiLayerModelTest.MODID, name = "ForgeDebugMultiLayerModel", version = MultiLayerModelTest.VERSION, acceptableRemoteVersions = "*")
 public class MultiLayerModelTest
 {
     private static final boolean ENABLED = true;
@@ -47,7 +47,7 @@ public class MultiLayerModelTest
     @ObjectHolder(blockName)
     public static final Block TEST_BLOCK = null;
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

@@ -47,14 +47,14 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
 import static org.lwjgl.opengl.GL11.*;
 
-@Mod(modid = ItemTESRTest.MODID, name = "ForgeDebugItemTile", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = ItemTESRTest.MODID, name = "ForgeDebugItemTile", version = "1.0", acceptableRemoteVersions = "*")
 public class ItemTESRTest
 {
     public static final String MODID = "forgedebugitemtile";
     @ObjectHolder(TestBlock.name)
     public static final Block TEST_BLOCK = null;
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -71,7 +71,7 @@ public class ItemTESRTest
         }
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class BakeEventHandler
     {
         @SubscribeEvent

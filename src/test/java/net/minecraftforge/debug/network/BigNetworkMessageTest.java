@@ -30,8 +30,8 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
-@Mod(modid = BigNetworkMessageTest.MOD_ID, name = "Big network message test mod", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = BigNetworkMessageTest.MOD_ID, name = "Big network message test mod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class BigNetworkMessageTest
 {
     static final boolean ENABLED = false;

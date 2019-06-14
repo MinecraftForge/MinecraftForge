@@ -74,6 +74,7 @@
 -      BlockPos blockpos = p_196084_1_.func_195995_a();
 -      BlockWorldState blockworldstate = new BlockWorldState(p_196084_1_.func_195991_k(), blockpos, false);
 -      if (entityplayer != null && !entityplayer.field_71075_bZ.field_75099_e && !this.func_206847_b(p_196084_1_.func_195991_k().func_205772_D(), blockworldstate)) {
++      if (!p_196084_1_.field_196006_g.field_72995_K) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(p_196084_1_);
 +      return onItemUse(p_196084_1_, (c) -> func_77973_b().func_195939_a(p_196084_1_));
 +   }
 +
@@ -82,7 +83,6 @@
 +   }
 +
 +   private EnumActionResult onItemUse(ItemUseContext context, java.util.function.Function<ItemUseContext, EnumActionResult> callback) {
-+      //if (!context.world.isRemote) return net.minecraftforge.common.ForgeHooks.onPlaceItemIntoWorld(context);
 +      EntityPlayer entityplayer = context.func_195999_j();
 +      BlockPos blockpos = context.func_195995_a();
 +      BlockWorldState blockworldstate = new BlockWorldState(context.func_195991_k(), blockpos, false);

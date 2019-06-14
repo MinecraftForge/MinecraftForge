@@ -36,6 +36,15 @@
                 }
  
              }, "keyPressed event handler", iguieventlistener.getClass().getCanonicalName());
+@@ -341,7 +348,7 @@
+                }
+             }
+          }
+-
++         net.minecraftforge.client.ForgeHooksClient.fireKeyInput(p_197961_3_, p_197961_4_, p_197961_5_, p_197961_6_);
+       }
+    }
+ 
 @@ -351,12 +358,16 @@
           if (iguieventlistener != null) {
              if (Character.charCount(p_197963_3_) == 1) {

@@ -113,6 +113,15 @@ public interface IForgeItem
      * @return True if reparable
      */
     boolean isRepairable();
+    
+    /**
+    * Determines the amount of durability the mending enchantment
+    * will repair, on average, per point of experience.
+    */
+    default float getXpRepairRatio(ItemStack stack)
+    {
+        return 2f;
+    }
 
     /**
      * Override this method to change the NBT data being sent to the client. You
@@ -636,6 +645,20 @@ public interface IForgeItem
     {
         return !(newStack.getItem() == oldStack.getItem() && ItemStack.areItemStackTagsEqual(newStack, oldStack)
                 && (newStack.isDamageable() || newStack.getDamage() == oldStack.getDamage()));
+    }
+
+    /**
+     * Called while an item is in 'active' use to determine if usage should
+     * continue. Allows items to continue being used while sustaining damage, for
+     * example.
+     *
+     * @param oldStack the previous 'active' stack
+     * @param newStack the stack currently in the active hand
+     * @return true to set the new stack to active and continue using it
+     */
+    default boolean canContinueUsing(ItemStack oldStack, ItemStack newStack)
+    {
+        return oldStack.equals(newStack);
     }
 
     /**

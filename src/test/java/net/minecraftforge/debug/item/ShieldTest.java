@@ -41,8 +41,8 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.api.distmarker.Dist;
 
 @ObjectHolder("shield_test")
-@EventBusSubscriber
-@Mod(modid = "shield_test", name = "Shield Test", version = "0.0.0", acceptableRemoteVersions = "*")
+//@EventBusSubscriber
+//@Mod(modid = "shield_test", name = "Shield Test", version = "0.0.0", acceptableRemoteVersions = "*")
 public class ShieldTest
 {
     public static final ItemShield DIAMOND_SHIELD = null;

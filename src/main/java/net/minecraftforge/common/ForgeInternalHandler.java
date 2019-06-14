@@ -27,6 +27,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -79,6 +80,13 @@ public class ForgeInternalHandler
     {
         if (event.phase == Phase.END)
             CloudRenderer.updateCloudSettings();
+    }
+
+    @SubscribeEvent
+    public void onChunkUnload(ChunkEvent.Unload event)
+    {
+        if (!event.getWorld().isRemote())
+            FarmlandWaterManager.removeTickets(event.getChunk());
     }
 }
 

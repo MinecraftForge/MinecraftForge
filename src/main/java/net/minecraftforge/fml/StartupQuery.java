@@ -70,7 +70,9 @@ public class StartupQuery {
         throw new AbortedException(); // to halt the server
     }
 
-
+    public static boolean pendingQuery() {
+        return pending != null;
+    }
     public static void reset()
     {
         pending = null;
@@ -89,6 +91,7 @@ public class StartupQuery {
                 }
                 catch (RuntimeException e)
                 {
+                    LOGGER.error(SQ,"An exception occurred during startup query handling", e);
                 }
                 pending.throwException();
             }
@@ -212,44 +215,35 @@ public class StartupQuery {
     }
 
 
-    public static class QueryWrapper
-    {
-        public static Consumer<StartupQuery> clientQuery(Supplier<Minecraft> clientSupplier)
-        {
+    public static class QueryWrapperClient {
+        public static Consumer<StartupQuery> clientQuery(Supplier<Minecraft> clientSupplier) {
             return (query) -> {
                 Minecraft client = clientSupplier.get();
-                if (query.getResult() == null)
-                {
+                if (query.getResult() == null) {
                     client.displayGuiScreen(new GuiNotification(query));
-                }
-                else
-                {
+                } else {
                     client.displayGuiScreen(new GuiConfirmation(query));
                 }
 
-                if (query.isSynchronous())
-                {
-                    while (client.currentScreen instanceof GuiNotification)
-                    {
-                        if (Thread.interrupted())
-                        {
+                if (query.isSynchronous()) {
+                    while (client.currentScreen instanceof GuiNotification) {
+                        if (Thread.interrupted()) {
                             query.exception = new InterruptedException();
                             throw new RuntimeException();
                         }
 
-                        try
-                        {
+                        try {
                             Thread.sleep(50);
-                        }
-                        catch (InterruptedException ie)
-                        {
+                        } catch (InterruptedException ie) {
                             query.exception = ie;
                         }
                     }
                 }
             };
         }
+    }
 
+    public static class QueryWrapperServer {
         public static Consumer<StartupQuery> dedicatedServerQuery(Supplier<DedicatedServer> serverSupplier)
         {
             return (query) -> {

@@ -19,66 +19,67 @@
 
 package net.minecraftforge.debug.client.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import com.google.common.collect.UnmodifiableIterator;
-import net.minecraft.block.Block;
-import net.minecraft.block.ITileEntityProvider;
-import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.ITickable;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.client.model.b3d.B3DLoader;
-import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.common.model.IModelPart;
-import net.minecraftforge.common.model.IModelState;
-import net.minecraftforge.common.model.Models;
-import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.common.property.Properties;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.event.FMLPreInitializationEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
-import org.apache.logging.log4j.Logger;
 
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4f;
-import java.util.ArrayList;
-import java.util.List;
 
-@Mod(modid = ModelLoaderRegistryTest.MODID, name = "ForgeDebugModelLoaderRegistry", version = ModelLoaderRegistryTest.VERSION, acceptableRemoteVersions = "*")
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.collect.UnmodifiableIterator;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.BlockItemUseContext;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.state.BooleanProperty;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.state.StateContainer;
+import net.minecraft.state.StateContainer.Builder;
+import net.minecraft.state.properties.BlockStateProperties;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ITickable;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IWorld;
+import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.client.model.b3d.B3DLoader;
+import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.common.model.IModelPart;
+import net.minecraftforge.common.model.IModelState;
+import net.minecraftforge.common.model.Models;
+import net.minecraftforge.common.model.TRSRTransformation;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.ObjectHolder;
+
+@Mod(ModelLoaderRegistryTest.MODID)
 public class ModelLoaderRegistryTest
 {
-    public static final boolean ENABLED = false;
+    public static final boolean ENABLED = true;
     public static final String MODID = "forgedebugmodelloaderregistry";
     public static final String VERSION = "1.0";
     private static Logger logger;
@@ -99,18 +100,28 @@ public class ModelLoaderRegistryTest
     public static final Block DYNAMIC_EYE = null;
     @ObjectHolder(OBJCustomDataBlock.name)
     public static final Block CUSTOM_DATA = null;
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    
+    @ObjectHolder(OBJTesseractBlock.name)
+    public static final TileEntityType<OBJTesseractTileEntity> TESSERACT_TILE = null;
+    @ObjectHolder(OBJVertexColoring2.name)
+    public static final TileEntityType<OBJVertexColoring2TileEntity> VERTEX_COLOR_2_TILE = null;
+    
+    public ModelLoaderRegistryTest()
     {
         if (!ENABLED)
             return;
 
-        logger = event.getModLog();
+        logger = LogManager.getLogger();
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setupClient);
+    }
+    
+    private void setupClient(FMLClientSetupEvent event)
+    {
+        B3DLoader.INSTANCE.addDomain(MODID);
+        OBJLoader.INSTANCE.addDomain(MODID);
     }
 
-
-    @Mod.EventBusSubscriber(modid = MODID)
+    @Mod.EventBusSubscriber(modid = MODID, bus = Bus.MOD)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -128,8 +139,14 @@ public class ModelLoaderRegistryTest
                 //new OBJDynamicEye(),
                 new OBJCustomDataBlock()
             );
-            GameRegistry.registerTileEntity(OBJTesseractTileEntity.class, OBJTesseractBlock.name);
-            GameRegistry.registerTileEntity(OBJVertexColoring2TileEntity.class, OBJVertexColoring2.name);
+        }
+        
+        @SubscribeEvent
+        public static void registerTileEntities(RegistryEvent.Register<TileEntityType<?>> event)
+        {
+            event.getRegistry().registerAll(
+                    new TileEntityType<>(OBJTesseractTileEntity::new, null).setRegistryName(OBJTesseractBlock.name),
+                    new TileEntityType<>(OBJVertexColoring2TileEntity::new, null).setRegistryName(OBJVertexColoring2.name));
             //GameRegistry.registerTileEntity(OBJDynamicEyeTileEntity.class, OBJDynamicEye.name);
         }
 
@@ -149,7 +166,7 @@ public class ModelLoaderRegistryTest
                 CUSTOM_DATA
             };
             for (Block block : blocks)
-                event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+                event.getRegistry().register(new ItemBlock(block, new Item.Properties().group(ItemGroup.BUILDING_BLOCKS)).setRegistryName(block.getRegistryName()));
         }
 
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -169,30 +186,28 @@ public class ModelLoaderRegistryTest
                 //DYNAMIC_EYE,
                 CUSTOM_DATA
             };
-            for (Block block : blocks)
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(block.getRegistryName(), "inventory"));
         }
     }
+    
+    static final VoxelShape SHAPE = VoxelShapes.create(1/16D, 1/16D, 1/16D, 15/16D, 15/16D, 15/16D); // We don't really care, just not solid
 
     public static class CustomModelBlock extends Block
     {
-        public static final PropertyDirection FACING = PropertyDirection.create("facing");
+        public static final DirectionProperty FACING = BlockStateProperties.FACING;
         public static final String name = "custom_model_block";
         private int counter = 1;
 
         private CustomModelBlock()
         {
-            super(Material.IRON);
-            this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            super(Properties.create(Material.IRON));
+            this.setDefaultState(this.getStateContainer().getBaseState().with(FACING, EnumFacing.NORTH));
             setRegistryName(new ResourceLocation(MODID, name));
         }
-
+        
         @Override
-        public boolean isOpaqueCube(IBlockState state)
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
         {
-            return false;
+            return SHAPE;
         }
 
         @Override
@@ -208,33 +223,21 @@ public class ModelLoaderRegistryTest
         }
 
         @Override
-        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(BlockItemUseContext context)
         {
-            return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
+            return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
         }
 
-        @Override
-        public IBlockState getStateFromMeta(int meta)
-        {
-            return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
-        }
-
-        @Override
-        public int getMetaFromState(IBlockState state)
-        {
-            return state.getValue(FACING).getIndex();
-        }
-
-        @Override
+/*        @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
             //Only return an IExtendedBlockState from this method and createState(), otherwise block placement might break!
             B3DLoader.B3DState newState = new B3DLoader.B3DState(null, counter);
             return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, newState);
         }
-
+*/
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(IBlockState state, World world, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if (world.isRemote)
             {
@@ -254,29 +257,9 @@ public class ModelLoaderRegistryTest
         }
 
         @Override
-        public BlockStateContainer createBlockState()
+        public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder)
         {
-            return new ExtendedBlockState(this, new IProperty[]{FACING}, new IUnlistedProperty[]{Properties.AnimationProperty});
-        }
-
-        public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
-        {
-            if (MathHelper.abs((float) entityIn.posX - (float) clickedBlock.getX()) < 2.0F && MathHelper.abs((float) entityIn.posZ - (float) clickedBlock.getZ()) < 2.0F)
-            {
-                double d0 = entityIn.posY + (double) entityIn.getEyeHeight();
-
-                if (d0 - (double) clickedBlock.getY() > 2.0D)
-                {
-                    return EnumFacing.UP;
-                }
-
-                if ((double) clickedBlock.getY() - d0 > 0.0D)
-                {
-                    return EnumFacing.DOWN;
-                }
-            }
-
-            return entityIn.getHorizontalFacing().getOpposite();
+            builder.add(FACING);
         }
     }
 
@@ -291,28 +274,32 @@ public class ModelLoaderRegistryTest
      * @author shadekiller666
      *
      */
-    public static class OBJTesseractBlock extends Block implements ITileEntityProvider
+    public static class OBJTesseractBlock extends Block
     {
         public static final String name = "obj_tesseract_block";
 
         private OBJTesseractBlock()
         {
-            super(Material.IRON);
-            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            super(Properties.create(Material.IRON));
             setRegistryName(new ResourceLocation(MODID, name));
         }
-
+        
         @Override
-        public TileEntity createNewTileEntity(World worldIn, int meta)
+        public boolean hasTileEntity()
+        {
+            return true;
+        }
+        
+        @Override
+        public TileEntity createTileEntity(IBlockState state, IBlockReader world)
         {
             return new OBJTesseractTileEntity();
         }
-
+        
         @Override
-        public boolean isOpaqueCube(IBlockState state)
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
         {
-            return false;
+            return SHAPE;
         }
 
         @Override
@@ -328,7 +315,7 @@ public class ModelLoaderRegistryTest
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(IBlockState state, World world, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if (world.getTileEntity(pos) == null)
             {
@@ -355,7 +342,7 @@ public class ModelLoaderRegistryTest
             return true;
         }
 
-        @Override
+/*        @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
             if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJTesseractTileEntity)
@@ -364,13 +351,7 @@ public class ModelLoaderRegistryTest
                 return ((IExtendedBlockState) state).withProperty(Properties.AnimationProperty, te.state);
             }
             return state;
-        }
-
-        @Override
-        public BlockStateContainer createBlockState()
-        {
-            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{Properties.AnimationProperty});
-        }
+        }*/
     }
 
     public static class OBJTesseractTileEntity extends TileEntity
@@ -402,6 +383,11 @@ public class ModelLoaderRegistryTest
                 return Optional.empty();
             }
         };
+        
+        public OBJTesseractTileEntity()
+        {
+            super(TESSERACT_TILE);
+        }
 
         public void increment()
         {
@@ -415,7 +401,7 @@ public class ModelLoaderRegistryTest
             TextComponentString text = new TextComponentString("" + this.counter);
             if (this.world.isRemote)
             {
-                Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+                Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(text);
             }
         }
 
@@ -431,7 +417,7 @@ public class ModelLoaderRegistryTest
             TextComponentString text = new TextComponentString("" + this.counter);
             if (this.world.isRemote)
             {
-                Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(text);
+                Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(text);
             }
         }
 
@@ -457,16 +443,14 @@ public class ModelLoaderRegistryTest
 
         private OBJVertexColoring1()
         {
-            super(Material.IRON);
-            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(name);
+            super(Properties.create(Material.IRON));
             setRegistryName(new ResourceLocation(MODID, name));
         }
-
+        
         @Override
-        public boolean isOpaqueCube(IBlockState state)
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
         {
-            return false;
+            return SHAPE;
         }
 
         @Override
@@ -492,48 +476,34 @@ public class ModelLoaderRegistryTest
      */
     public static class OBJDirectionEye extends Block
     {
-        public static final PropertyDirection FACING = PropertyDirection.create("facing");
+        public static final DirectionProperty FACING = BlockStateProperties.FACING;
         public static final String name = "obj_direction_eye";
 
         private OBJDirectionEye()
         {
-            super(Material.IRON);
-            setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(name);
+            super(Properties.create(Material.IRON));
+            setDefaultState(this.getStateContainer().getBaseState().with(FACING, EnumFacing.NORTH));
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
-        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(BlockItemUseContext context)
         {
-            return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
+            return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
         }
 
         @Override
-        public IBlockState getStateFromMeta(int meta)
+        public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder)
         {
-            return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
+            builder.add(FACING);
         }
-
+        
         @Override
-        public int getMetaFromState(IBlockState state)
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
         {
-            return state.getValue(FACING).getIndex();
+            return SHAPE;
         }
-
-        @Override
-        public BlockStateContainer createBlockState()
-        {
-            return new BlockStateContainer(this, FACING);
-        }
-
-        @Override
-        public boolean isOpaqueCube(IBlockState state)
-        {
-            return false;
-        }
-
+        
         @Override
         public boolean isFullCube(IBlockState state)
         {
@@ -545,26 +515,6 @@ public class ModelLoaderRegistryTest
         {
             return false;
         }
-
-        public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
-        {
-            if (MathHelper.abs((float) entityIn.posX - (float) clickedBlock.getX()) < 2.0F && MathHelper.abs((float) entityIn.posZ - (float) clickedBlock.getZ()) < 2.0F)
-            {
-                double d0 = entityIn.posY + (double) entityIn.getEyeHeight();
-
-                if (d0 - (double) clickedBlock.getY() > 2.0D)
-                {
-                    return EnumFacing.DOWN;
-                }
-
-                if ((double) clickedBlock.getY() - d0 > 0.0D)
-                {
-                    return EnumFacing.UP;
-                }
-            }
-
-            return entityIn.getHorizontalFacing();
-        }
     }
 
     /**
@@ -574,26 +524,30 @@ public class ModelLoaderRegistryTest
      * @author shadekiller666
      *
      */
-    public static class OBJVertexColoring2 extends Block implements ITileEntityProvider
+    public static class OBJVertexColoring2 extends Block
     {
         public static final String name = "obj_vertex_coloring2";
 
         private OBJVertexColoring2()
         {
-            super(Material.IRON);
-            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(name);
+            super(Properties.create(Material.IRON));
             setRegistryName(new ResourceLocation(MODID, name));
         }
 
         @Override
-        public TileEntity createNewTileEntity(World worldIn, int meta)
+        public boolean hasTileEntity(IBlockState state)
+        {
+            return true;
+        }
+        
+        @Override
+        public TileEntity createTileEntity(IBlockState state, IBlockReader world)
         {
             return new OBJVertexColoring2TileEntity();
         }
 
         @Override
-        public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
+        public boolean onBlockActivated(IBlockState state, World world, BlockPos pos, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ)
         {
             if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJVertexColoring2TileEntity)
             {
@@ -611,9 +565,10 @@ public class ModelLoaderRegistryTest
         private List<Vector4f> colorList = new ArrayList<Vector4f>();
         private boolean hasFilledList = false;
         private boolean shouldIncrement = true;
-
+        
         public OBJVertexColoring2TileEntity()
         {
+            super(VERTEX_COLOR_2_TILE);
         }
 
         public void cycleColors()
@@ -678,22 +633,20 @@ public class ModelLoaderRegistryTest
      */
     public static class OBJDirectionBlock extends Block
     {
-        public static final PropertyDirection FACING = PropertyDirection.create("facing");
+        public static final DirectionProperty FACING = BlockStateProperties.FACING;
         public static final String name = "obj_direction_block";
 
         private OBJDirectionBlock()
         {
-            super(Material.IRON);
-            this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            super(Properties.create(Material.IRON));
+            this.setDefaultState(this.getStateContainer().getBaseState().with(FACING, EnumFacing.NORTH));
             setRegistryName(new ResourceLocation(MODID, name));
         }
-
+        
         @Override
-        public boolean isOpaqueCube(IBlockState state)
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
         {
-            return false;
+            return SHAPE;
         }
 
         @Override
@@ -709,47 +662,15 @@ public class ModelLoaderRegistryTest
         }
 
         @Override
-        public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
+        public IBlockState getStateForPlacement(BlockItemUseContext context)
         {
-            return this.getDefaultState().withProperty(FACING, getFacingFromEntity(world, pos, placer));
+            return this.getDefaultState().with(FACING, context.getPlacementHorizontalFacing().getOpposite());
         }
 
         @Override
-        public IBlockState getStateFromMeta(int meta)
+        public void fillStateContainer(StateContainer.Builder<Block, IBlockState> builder)
         {
-            return this.getDefaultState().withProperty(FACING, EnumFacing.getFront(meta));
-        }
-
-        @Override
-        public int getMetaFromState(IBlockState state)
-        {
-            return state.getValue(FACING).getIndex();
-        }
-
-        @Override
-        public BlockStateContainer createBlockState()
-        {
-            return new BlockStateContainer(this, FACING);
-        }
-
-        public static EnumFacing getFacingFromEntity(World worldIn, BlockPos clickedBlock, EntityLivingBase entityIn)
-        {
-            if (MathHelper.abs((float) entityIn.posX - (float) clickedBlock.getX()) < 2.0F && MathHelper.abs((float) entityIn.posZ - (float) clickedBlock.getZ()) < 2.0F)
-            {
-                double d0 = entityIn.posY + (double) entityIn.getEyeHeight();
-
-                if (d0 - (double) clickedBlock.getY() > 2.0D)
-                {
-                    return EnumFacing.UP;
-                }
-
-                if ((double) clickedBlock.getY() - d0 > 0.0D)
-                {
-                    return EnumFacing.DOWN;
-                }
-            }
-
-            return entityIn.getHorizontalFacing().getOpposite();
+            builder.add(FACING);
         }
     }
 
@@ -761,25 +682,23 @@ public class ModelLoaderRegistryTest
      */
     public static class OBJCustomDataBlock extends Block
     {
-        public static final PropertyBool NORTH = PropertyBool.create("north");
-        public static final PropertyBool SOUTH = PropertyBool.create("south");
-        public static final PropertyBool WEST = PropertyBool.create("west");
-        public static final PropertyBool EAST = PropertyBool.create("east");
+        public static final BooleanProperty NORTH = BooleanProperty.create("north");
+        public static final BooleanProperty SOUTH = BooleanProperty.create("south");
+        public static final BooleanProperty WEST = BooleanProperty.create("west");
+        public static final BooleanProperty EAST = BooleanProperty.create("east");
         public static final String name = "obj_custom_data_block";
 
         private OBJCustomDataBlock()
         {
-            super(Material.IRON);
-            this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, false).withProperty(SOUTH, false).withProperty(WEST, false).withProperty(EAST, false));
-            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            super(Properties.create(Material.IRON));
+            this.setDefaultState(this.getStateContainer().getBaseState().with(NORTH, false).with(SOUTH, false).with(WEST, false).with(EAST, false));
             setRegistryName(new ResourceLocation(MODID, name));
         }
-
+        
         @Override
-        public boolean isOpaqueCube(IBlockState state)
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
         {
-            return false;
+            return SHAPE;
         }
 
         @Override
@@ -788,28 +707,22 @@ public class ModelLoaderRegistryTest
             return false;
         }
 
-        @Override
-        public int getMetaFromState(IBlockState state)
-        {
-            return 0;
-        }
-
-        public boolean canConnectTo(IBlockAccess world, BlockPos pos)
+        public boolean canConnectTo(IBlockReader world, BlockPos pos)
         {
             Block block = world.getBlockState(pos).getBlock();
             return block instanceof OBJCustomDataBlock;
         }
-
+        
         @Override
-        public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+        public IBlockState updatePostPlacement(IBlockState state, EnumFacing facing, IBlockState facingState, IWorld world, BlockPos pos, BlockPos facingPos)
         {
-            return state.withProperty(NORTH, this.canConnectTo(world, pos.north())).withProperty(SOUTH, this.canConnectTo(world, pos.south())).withProperty(WEST, this.canConnectTo(world, pos.west())).withProperty(EAST, this.canConnectTo(world, pos.east()));
+            return state.with(NORTH, this.canConnectTo(world, pos.north())).with(SOUTH, this.canConnectTo(world, pos.south())).with(WEST, this.canConnectTo(world, pos.west())).with(EAST, this.canConnectTo(world, pos.east()));
         }
 
         @Override
-        public BlockStateContainer createBlockState()
+        protected void fillStateContainer(Builder<Block, IBlockState> builder)
         {
-            return new BlockStateContainer(this, NORTH, SOUTH, WEST, EAST);
+            builder.add(NORTH, SOUTH, WEST, EAST);
         }
     }
 
@@ -819,28 +732,26 @@ public class ModelLoaderRegistryTest
      * @author shadekiller666
      *
      */
-    public static class OBJDynamicEye extends Block implements ITileEntityProvider
+    public static class OBJDynamicEye extends Block
     {
         public static final String name = "obj_dynamic_eye";
 
         private OBJDynamicEye()
         {
-            super(Material.IRON);
-            setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
-            setUnlocalizedName(MODID + ":" + name);
+            super(Properties.create(Material.IRON));
             setRegistryName(new ResourceLocation(MODID, name));
         }
-
+        
         @Override
-        public TileEntity createNewTileEntity(World worldIn, int meta)
+        public TileEntity createTileEntity(IBlockState state, IBlockReader world)
         {
             return new OBJDynamicEyeTileEntity();
         }
-
+        
         @Override
-        public boolean isOpaqueCube(IBlockState state)
+        public VoxelShape getRenderShape(IBlockState state, IBlockReader worldIn, BlockPos pos)
         {
-            return false;
+            return SHAPE;
         }
 
         @Override
@@ -855,7 +766,7 @@ public class ModelLoaderRegistryTest
             return true;
         }
 
-        @Override
+/*        @Override
         public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos)
         {
             if (world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof OBJDynamicEyeTileEntity)
@@ -867,26 +778,25 @@ public class ModelLoaderRegistryTest
                 }
             }
             return state;
-        }
-
-        @Override
-        public BlockStateContainer createBlockState()
-        {
-            return new ExtendedBlockState(this, new IProperty[0], new IUnlistedProperty[]{Properties.AnimationProperty});
-        }
+        }*/
     }
 
     public static class OBJDynamicEyeTileEntity extends TileEntity implements ITickable
     {
+        public OBJDynamicEyeTileEntity()
+        {
+            super(null); // TODO
+        }
+
         private TRSRTransformation transform = TRSRTransformation.identity();
 
         @Override
-        public void update()
+        public void tick()
         {
             if (this.world.isRemote)
             {
                 Vector3d teLoc = new Vector3d(this.getPos().getX(), this.getPos().getY(), this.getPos().getZ());
-                EntityPlayer player = Minecraft.getMinecraft().player;
+                EntityPlayer player = Minecraft.getInstance().player;
                 Vector3d playerLoc = new Vector3d();
                 playerLoc.setX(player.posX);
                 playerLoc.setY(player.posY + player.getEyeHeight());

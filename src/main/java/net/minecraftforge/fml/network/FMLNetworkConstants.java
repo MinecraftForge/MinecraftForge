@@ -42,4 +42,8 @@ public class FMLNetworkConstants
     static final ResourceLocation FML_PLAY_RESOURCE = new ResourceLocation("fml:play");
     static final SimpleChannel handshakeChannel = NetworkInitialization.getHandshakeChannel();
     static final SimpleChannel playChannel = NetworkInitialization.getPlayChannel();
+    /**
+     * Return this value in your {@link net.minecraftforge.fml.ExtensionPoint#DISPLAYTEST} function to be ignored.
+     */
+    public static final String IGNORESERVERONLY = "OHNOES\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31\uD83D\uDE31";
 }

@@ -23,8 +23,10 @@ import net.minecraftforge.eventbus.api.BusBuilder;
 import net.minecraftforge.eventbus.api.IEventBus;
 
 import net.minecraft.crash.CrashReport;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.ForgeHooks.SeedEntry;
+import net.minecraftforge.common.ForgeHooks.FortuneSeedEntry;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,6 +83,8 @@ public class MinecraftForge
 
        //For all the normal CrashReport classes to be defined. We're in MC's classloader so this should all be fine
        new CrashReport("ThisIsFake", new Exception("Not real"));
+
+       addGrassSeed(new FortuneSeedEntry(new ItemStack(Items.WHEAT_SEEDS), 100, 1, 2));
    }
 
 

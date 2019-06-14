@@ -40,8 +40,8 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-@Mod(modid = TrackingTargetTest.ID, name = "Tracking Target Test", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = TrackingTargetTest.ID, name = "Tracking Target Test", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class TrackingTargetTest
 {
     public static final String ID = "trackingtargettest";

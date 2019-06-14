@@ -16,7 +16,18 @@
  
        this.field_184395_f = p_i46552_3_;
     }
-@@ -97,7 +98,7 @@
+@@ -74,6 +75,10 @@
+    }
+ 
+    private void func_191967_a(IBakedModel p_191967_1_, int p_191967_2_, ItemStack p_191967_3_) {
++      if (net.minecraftforge.common.ForgeConfig.CLIENT.allowEmissiveItems.get()) {
++         net.minecraftforge.client.ForgeHooksClient.renderLitItem(this, p_191967_1_, p_191967_2_, p_191967_3_);
++         return;
++      }
+       Tessellator tessellator = Tessellator.func_178181_a();
+       BufferBuilder bufferbuilder = tessellator.func_178180_c();
+       bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_176599_b);
+@@ -97,7 +102,7 @@
           if (p_180454_2_.func_188618_c()) {
              GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
              GlStateManager.func_179091_B();
@@ -25,7 +36,7 @@
           } else {
              this.func_191961_a(p_180454_2_, p_180454_1_);
              if (p_180454_1_.func_77962_s()) {
-@@ -163,7 +164,7 @@
+@@ -163,7 +168,7 @@
              k = k | -16777216;
           }
  
@@ -34,7 +45,7 @@
        }
  
     }
-@@ -224,11 +225,8 @@
+@@ -224,11 +229,8 @@
           GlStateManager.func_179147_l();
           GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
           GlStateManager.func_179094_E();
@@ -48,7 +59,7 @@
  
           this.func_180454_a(p_184394_1_, p_184394_2_);
           GlStateManager.func_187407_a(GlStateManager.CullFace.BACK);
-@@ -259,7 +257,7 @@
+@@ -259,7 +261,7 @@
        GlStateManager.func_187401_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
        GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
        this.func_180452_a(p_191962_2_, p_191962_3_, p_191962_4_.func_177556_c());
@@ -57,7 +68,7 @@
        this.func_180454_a(p_191962_1_, p_191962_4_);
        GlStateManager.func_179118_c();
        GlStateManager.func_179101_C();
-@@ -298,6 +296,7 @@
+@@ -298,6 +300,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());
              });
@@ -65,7 +76,7 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_184391_2_.func_77952_i());
              });
-@@ -329,9 +328,12 @@
+@@ -329,9 +332,12 @@
              GlStateManager.func_179147_l();
              GlStateManager.func_179145_e();
              GlStateManager.func_179126_j();
@@ -79,7 +90,7 @@
              GlStateManager.func_179140_f();
              GlStateManager.func_179097_i();
              GlStateManager.func_179090_x();
-@@ -339,11 +341,9 @@
+@@ -339,11 +345,9 @@
              GlStateManager.func_179084_k();
              Tessellator tessellator = Tessellator.func_178181_a();
              BufferBuilder bufferbuilder = tessellator.func_178180_c();
@@ -94,7 +105,7 @@
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
              GlStateManager.func_179147_l();
-@@ -382,4 +382,9 @@
+@@ -382,4 +386,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }

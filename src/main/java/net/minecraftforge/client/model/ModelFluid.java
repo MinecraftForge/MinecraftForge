@@ -30,7 +30,6 @@ import java.util.Set;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Vector4f;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -44,11 +43,13 @@ import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.pipeline.IVertexConsumer;
+import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fluids.Fluid;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -102,7 +103,7 @@ public final class ModelFluid implements IUnbakedModel
                 bakedTextureGetter.apply(fluid.getFlowing()),
                 Optional.ofNullable(fluid.getOverlay()).map(bakedTextureGetter),
                 fluid.isLighterThanAir(),
-                Optional.empty()
+                null
         );
     }
 
@@ -156,7 +157,7 @@ public final class ModelFluid implements IUnbakedModel
             }
         });
 
-        public CachingBakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, Optional<TextureAtlasSprite> overlay, boolean gas, Optional<IExtendedBlockState> stateOption)
+        public CachingBakedFluid(Optional<TRSRTransformation> transformation, ImmutableMap<TransformType, TRSRTransformation> transforms, VertexFormat format, int color, TextureAtlasSprite still, TextureAtlasSprite flowing, Optional<TextureAtlasSprite> overlay, boolean gas, Optional<IModelData> stateOption)
         {
             super(transformation, transforms, format, color, still, flowing, overlay, gas, stateOption.isPresent(), getCorners(stateOption), getFlow(stateOption), getOverlay(stateOption));
         }
@@ -170,12 +171,12 @@ public final class ModelFluid implements IUnbakedModel
          * while also providing good use of the available value range.
          * (For fluids with default quanta, this evenly divides the per-block intervals of 1/9 by 96)
          */
-        private static int[] getCorners(Optional<IExtendedBlockState> stateOption)
+        private static int[] getCorners(Optional<IModelData> stateOption)
         {
             int[] cornerRound = {0, 0, 0, 0};
             if (stateOption.isPresent())
             {
-                IExtendedBlockState state = stateOption.get();
+                IModelData state = stateOption.get();
                 for (int i = 0; i < 4; i++)
                 {
                     Float level = null; // TODO fluids state.getValue(BlockFluidBase.LEVEL_CORNERS[i]);
@@ -192,7 +193,7 @@ public final class ModelFluid implements IUnbakedModel
          * The value is currently stored as the angle rounded to the nearest degree.
          * A value of -1000 is used to signify no flow.
          */
-        private static int getFlow(Optional<IExtendedBlockState> stateOption)
+        private static int getFlow(Optional<IModelData> stateOption)
         {
             Float flow = -1000f;
             if (stateOption.isPresent())
@@ -212,12 +213,12 @@ public final class ModelFluid implements IUnbakedModel
          * instead of the normal "flowing" texture (if applicable for that fluid).
          * The sides are stored here by their regular horizontal index.
          */
-        private static boolean[] getOverlay(Optional<IExtendedBlockState> stateOption)
+        private static boolean[] getOverlay(Optional<IModelData> stateOption)
         {
             boolean[] overlaySides = new boolean[4];
             if (stateOption.isPresent())
             {
-                IExtendedBlockState state = stateOption.get();
+                IModelData state = stateOption.get();
                 for (int i = 0; i < 4; i++)
                 {
                     Boolean overlay = null; // TODO fluids state.getValue(BlockFluidBase.SIDE_OVERLAYS[i]);
@@ -228,11 +229,11 @@ public final class ModelFluid implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand, IModelData modelData)
         {
-            if (side != null && state instanceof IExtendedBlockState)
+            if (side != null)
             {
-                Optional<IExtendedBlockState> exState = Optional.of((IExtendedBlockState)state);
+                Optional<IModelData> exState = Optional.of(modelData);
 
                 int[] cornerRound = getCorners(exState);
                 int flowRound = getFlow(exState);
@@ -399,15 +400,19 @@ public final class ModelFluid implements IUnbakedModel
         private BakedQuad buildQuad(EnumFacing side, TextureAtlasSprite texture, boolean flip, boolean offset, VertexParameter x, VertexParameter y, VertexParameter z, VertexParameter u, VertexParameter v)
         {
             UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
+
             builder.setQuadOrientation(side);
             builder.setTexture(texture);
             builder.setQuadTint(0);
+
+            boolean hasTransform = transformation.isPresent() && !transformation.get().isIdentity();
+            IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transformation.get()) : builder;
 
             for (int i = 0; i < 4; i++)
             {
                 int vertex = flip ? 3 - i : i;
                 putVertex(
-                    builder, side, offset,
+                    consumer, side, offset,
                     x.get(vertex), y.get(vertex), z.get(vertex),
                     texture.getInterpolatedU(u.get(vertex)),
                     texture.getInterpolatedV(v.get(vertex))
@@ -417,7 +422,7 @@ public final class ModelFluid implements IUnbakedModel
             return builder.build();
         }
 
-        private void putVertex(UnpackedBakedQuad.Builder builder, EnumFacing side, boolean offset, float x, float y, float z, float u, float v)
+        private void putVertex(IVertexConsumer consumer, EnumFacing side, boolean offset, float x, float y, float z, float u, float v)
         {
             for(int e = 0; e < format.getElementCount(); e++)
             {
@@ -427,32 +432,30 @@ public final class ModelFluid implements IUnbakedModel
                     float dx = offset ? side.getDirectionVec().getX() * eps : 0f;
                     float dy = offset ? side.getDirectionVec().getY() * eps : 0f;
                     float dz = offset ? side.getDirectionVec().getZ() * eps : 0f;
-                    float[] data = { x - dx, y - dy, z - dz, 1f };
-                    if(transformation.isPresent() && !transformation.get().isIdentity())
-                    {
-                        Vector4f vec = new Vector4f(data);
-                        transformation.get().getMatrixVec().transform(vec);
-                        vec.get(data);
-                    }
-                    builder.put(e, data);
+                    consumer.put(e, x - dx, y - dy, z - dz, 1f);
                     break;
                 case COLOR:
-                    builder.put(e,
-                        ((color >> 16) & 0xFF) / 255f,
-                        ((color >> 8) & 0xFF) / 255f,
-                        (color & 0xFF) / 255f,
-                        ((color >> 24) & 0xFF) / 255f);
+                    float r = ((color >> 16) & 0xFF) / 255f;
+                    float g = ((color >>  8) & 0xFF) / 255f;
+                    float b = ( color        & 0xFF) / 255f;
+                    float a = ((color >> 24) & 0xFF) / 255f;
+                    consumer.put(e, r, g, b, a);
                     break;
-                case UV: if(format.getElement(e).getIndex() == 0)
-                {
-                    builder.put(e, u, v, 0f, 1f);
-                    break;
-                }
                 case NORMAL:
-                    builder.put(e, (float)side.getXOffset(), (float)side.getYOffset(), (float)side.getZOffset(), 0f);
+                    float offX = (float) side.getXOffset();
+                    float offY = (float) side.getYOffset();
+                    float offZ = (float) side.getZOffset();
+                    consumer.put(e, offX, offY, offZ, 0f);
                     break;
+                case UV:
+                    if(format.getElement(e).getIndex() == 0)
+                    {
+                        consumer.put(e, u, v, 0f, 1f);
+                        break;
+                    }
+                    // else fallthrough to default
                 default:
-                    builder.put(e);
+                    consumer.put(e);
                     break;
                 }
             }

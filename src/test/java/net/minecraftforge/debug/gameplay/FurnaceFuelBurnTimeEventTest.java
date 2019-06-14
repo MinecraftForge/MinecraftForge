@@ -35,8 +35,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
-@Mod(modid = FurnaceFuelBurnTimeEventTest.MOD_ID, name = "Test for FurnaceFuelBurnTimeEvent", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = FurnaceFuelBurnTimeEventTest.MOD_ID, name = "Test for FurnaceFuelBurnTimeEvent", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class FurnaceFuelBurnTimeEventTest
 {
     public static final String MOD_ID = "furnacefuelburntimeeventtest";

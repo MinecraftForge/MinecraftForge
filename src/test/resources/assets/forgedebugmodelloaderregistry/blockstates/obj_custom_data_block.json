@@ -6,13 +6,6 @@
         //"custom": {"show": ["post"]}
      },
     "variants": {
-        "normal": [{}],
-        "inventory": [{
-            "transform": "forge:default-block"
-            /*"custom": {
-                "show": ["post"]
-            }*/
-        }],
         "north": {
             "true": {
                 "model": "forgedebugmodelloaderregistry:fancy_fence.obj"

@@ -35,7 +35,7 @@ import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(modid = BlockstateRetextureTest.MODID, name = "BlockstateRetextureTest", version = BlockstateRetextureTest.VERSION, acceptableRemoteVersions = "*", clientSideOnly = true)
+//@Mod(modid = BlockstateRetextureTest.MODID, name = "BlockstateRetextureTest", version = BlockstateRetextureTest.VERSION, acceptableRemoteVersions = "*", clientSideOnly = true)
 public class BlockstateRetextureTest
 {
     public static final String MODID = "forge_blockstate_retexture_test";
@@ -53,7 +53,7 @@ public class BlockstateRetextureTest
         return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
     };
 
-    @Mod.EventBusSubscriber(modid = MODID, value = Side.CLIENT)
+    //@Mod.EventBusSubscriber(modid = MODID, value = Side.CLIENT)
     public static class ClientEvents
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

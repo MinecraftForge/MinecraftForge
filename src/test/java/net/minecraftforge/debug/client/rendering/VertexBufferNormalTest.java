@@ -36,7 +36,7 @@ import net.minecraftforge.fml.common.Mod.Instance;
 import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 
-@Mod(modid = "wrnormal", name = "WRNormal", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "wrnormal", name = "WRNormal", version = "1.0", acceptableRemoteVersions = "*")
 public class VertexBufferNormalTest
 {
     @Instance("wrnormal")

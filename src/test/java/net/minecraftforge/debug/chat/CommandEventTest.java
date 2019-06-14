@@ -34,7 +34,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mod("command_event_test")
+//@Mod("command_event_test")
 public class CommandEventTest
 {
     public final Logger LOGGER = LogManager.getLogger();

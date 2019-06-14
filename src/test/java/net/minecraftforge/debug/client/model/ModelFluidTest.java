@@ -41,7 +41,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@Mod(modid = ModelFluidTest.MODID, name = "ForgeDebugModelFluid", version = ModelFluidTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = ModelFluidTest.MODID, name = "ForgeDebugModelFluid", version = ModelFluidTest.VERSION, acceptableRemoteVersions = "*")
 public class ModelFluidTest
 {
     public static final String MODID = "forgedebugmodelfluid";
@@ -70,7 +70,7 @@ public class ModelFluidTest
     public static final Fluid GAS = new TestGas();
 
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @SubscribeEvent
@@ -105,7 +105,7 @@ public class ModelFluidTest
         }
     }
 
-    @Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class ClientEventHandler
     {
         @SubscribeEvent

@@ -19,9 +19,6 @@
 
 package net.minecraftforge.client.model;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
@@ -80,12 +77,12 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.registry.IRegistry;
 import net.minecraftforge.client.model.animation.AnimationItemOverrideList;
 import net.minecraftforge.client.model.animation.ModelBlockAnimation;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.client.ClientModLoader;
@@ -463,7 +460,7 @@ public final class ModelLoader extends ModelBakery
             Map<TransformType, TRSRTransformation> tMap = Maps.newEnumMap(TransformType.class);
             tMap.putAll(PerspectiveMapWrapper.getTransforms(transforms));
             tMap.putAll(PerspectiveMapWrapper.getTransforms(state));
-            IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap));
+            IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap), state.apply(Optional.empty()));
 
             if(model == ModelBakery.MODEL_GENERATED)
             {
@@ -513,20 +510,12 @@ public final class ModelLoader extends ModelBakery
                 private final ItemOverrideList overrides = new AnimationItemOverrideList(VanillaModelWrapper.this, modelState, format, bakedTextureGetter, super.getOverrides());
 
                 @Override
-                public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+                public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand, IModelData modelData)
                 {
-                    if(state instanceof IExtendedBlockState)
+                    IModelState newState = modelData.getData(Properties.AnimationProperty);
+                    if(newState != null)
                     {
-                        IExtendedBlockState exState = (IExtendedBlockState)state;
-                        if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
-                        {
-                            IModelState newState = exState.getValue(Properties.AnimationProperty);
-                            IExtendedBlockState newExState = (IExtendedBlockState) exState.withProperty(Properties.AnimationProperty, null);
-                            if(newState != null)
-                            {
-                                return VanillaModelWrapper.this.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(modelState, newState), uvlock, format).getQuads(newExState, side, rand);
-                            }
-                        }
+                        return VanillaModelWrapper.this.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(modelState, newState), uvlock, format).getQuads(state, side, rand, modelData);
                     }
                     return super.getQuads(state, side, rand);
                 }

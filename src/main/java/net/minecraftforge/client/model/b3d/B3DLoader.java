@@ -27,12 +27,32 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
+
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.base.Objects;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -59,6 +79,8 @@ import net.minecraftforge.client.model.b3d.B3DModel.Mesh;
 import net.minecraftforge.client.model.b3d.B3DModel.Node;
 import net.minecraftforge.client.model.b3d.B3DModel.Texture;
 import net.minecraftforge.client.model.b3d.B3DModel.Vertex;
+import net.minecraftforge.client.model.data.IDynamicBakedModel;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
@@ -66,29 +88,7 @@ import net.minecraftforge.common.model.Models;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.common.model.animation.IClip;
 import net.minecraftforge.common.model.animation.IJoint;
-import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.Properties;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.function.Function;
-import com.google.common.base.Objects;
-import java.util.Optional;
-import java.util.Random;
-
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 
 /*
  * Loader for Blitz3D models.
@@ -599,7 +599,7 @@ public enum B3DLoader implements ICustomModelLoader
         }
     }
 
-    private static final class BakedWrapper implements IBakedModel
+    private static final class BakedWrapper implements IDynamicBakedModel
     {
         private final Node<?> node;
         private final IModelState state;
@@ -647,34 +647,27 @@ public enum B3DLoader implements ICustomModelLoader
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand, IModelData data)
         {
             if(side != null) return ImmutableList.of();
             IModelState modelState = this.state;
-            if(state instanceof IExtendedBlockState)
+            IModelState newState = data.getData(Properties.AnimationProperty);
+            if(newState != null)
             {
-                IExtendedBlockState exState = (IExtendedBlockState)state;
-                if(exState.getUnlistedNames().contains(Properties.AnimationProperty))
+                // FIXME: should animation state handle the parent state, or should it remain here?
+                IModelState parent = this.state;
+                if(parent instanceof B3DState)
                 {
-                    // FIXME: should animation state handle the parent state, or should it remain here?
-                    IModelState parent = this.state;
-                    if(parent instanceof B3DState)
-                    {
-                        B3DState ps = (B3DState)parent;
-                        parent = ps.getParent();
-                    }
-                    IModelState newState = exState.getValue(Properties.AnimationProperty);
-                    if(newState != null)
-                    {
-                        if (parent == null)
-                        {
-                            modelState = newState;
-                        }
-                        else
-                        {
-                            modelState = new ModelStateComposition(parent, newState);
-                        }
-                    }
+                    B3DState ps = (B3DState)parent;
+                    parent = ps.getParent();
+                }
+                if (parent == null)
+                {
+                    modelState = newState;
+                }
+                else
+                {
+                    modelState = new ModelStateComposition(parent, newState);
                 }
             }
             if(quads == null)

@@ -23,6 +23,7 @@ import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
 import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
 import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
+import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 import java.util.stream.Collectors
 
@@ -106,49 +107,54 @@ project(':forge') {
     apply plugin: 'de.undercouch.download'
     
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-    group = 'net.minecraftforge' //TODO: remove test when we finish patches and want users to find it
+    group = 'net.minecraftforge'
 
     sourceSets {
         fmllauncher {
             java {
-                srcDir "$rootDir/src/fmllauncher/java"
+                srcDirs = ["$rootDir/src/fmllauncher/java"]
             }
             resources {
-                srcDir "$rootDir/src/fmllauncher/resources"
+                srcDirs = ["$rootDir/src/fmllauncher/resources"]
             }
         }
         main {
             compileClasspath += sourceSets.fmllauncher.runtimeClasspath
             runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
             java {
-                srcDir "$rootDir/src/main/java"
+                srcDirs = ["$rootDir/src/main/java"]
             }
             resources {
-                srcDir "$rootDir/src/main/resources"
+                srcDirs = ["$rootDir/src/main/resources"]
             }
         }
         test {
             compileClasspath += sourceSets.fmllauncher.runtimeClasspath
             runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
             java {
-                // srcDir "$rootDir/src/test/java" TODO fix later
-                srcDir "$rootDir/src/fmllaunchertest/java"
+                srcDirs = [
+                    "$rootDir/src/test/java", 
+                    "$rootDir/src/fmllaunchertest/java"
+                ]
             }
             resources {
-                srcDir "$rootDir/src/test/resources"
+                srcDirs = ["$rootDir/src/test/resources"]
             }
         }
         userdev {
             compileClasspath += sourceSets.main.runtimeClasspath
             runtimeClasspath += sourceSets.main.runtimeClasspath
             java {
-                srcDir "$rootDir/src/userdev/java"
+                srcDirs = ["$rootDir/src/userdev/java"]
             }
             resources {
-                srcDir "$rootDir/src/userdev/resources"
+                srcDirs = ["$rootDir/src/userdev/resources"]
             }
         }
     }
+    //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
+    eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
+
     repositories {
         mavenLocal()
         mavenCentral()
@@ -208,6 +214,22 @@ project(':forge') {
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'terminal.ansi', 'true'
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+            }
+
+            forge_test_client {
+                parent runs.forge_client
+                taskName 'forge_test_client'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    TestMods { sources sourceSets.test }
+                }
             }
 
             forge_server {
@@ -224,6 +246,22 @@ project(':forge') {
                 environment 'FORGE_SPEC', SPEC_VERSION
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+            }
+
+            forge_test_server {
+                parent runs.forge_server
+                taskName 'forge_test_server'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    TestMods { sources sourceSets.test }
+                }
             }
         }
     }
@@ -288,20 +326,21 @@ project(':forge') {
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:0.12.+'
-        installer 'net.minecraftforge:accesstransformers:0.15.+:shadowed'
-        installer 'net.minecraftforge:eventbus:0.8.+:service'
-        installer 'net.minecraftforge:forgespi:0.11.+'
-        installer 'net.minecraftforge:coremods:0.4.+'
+        installer 'cpw.mods:modlauncher:2.1.+'
+        installer 'cpw.mods:grossjava9hacks:1.1.+'
+        installer 'net.minecraftforge:accesstransformers:0.16.+:shadowed'
+        installer 'net.minecraftforge:eventbus:0.9.+:service'
+        installer 'net.minecraftforge:forgespi:0.13.+'
+        installer 'net.minecraftforge:coremods:0.5.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
-        installer 'com.electronwill.night-config:core:3.4.2'
-        installer 'com.electronwill.night-config:toml:3.4.2'
+        installer 'com.electronwill.night-config:core:3.6.0'
+        installer 'com.electronwill.night-config:toml:3.6.0'
         installer 'org.jline:jline:3.9.0'
         installer 'org.apache.maven:maven-artifact:3.6.0'
         installer 'net.jodah:typetools:0.6.0'
         installer 'java3d:vecmath:1.5.2'
-        installer 'org.apache.logging.log4j:log4j-api:2.11.1'
-        installer 'org.apache.logging.log4j:log4j-core:2.11.1'
+        installer 'org.apache.logging.log4j:log4j-api:2.11.2'
+        installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.1.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
@@ -450,18 +489,7 @@ project(':forge') {
                 type: 'release',
                 mainClass: 'cpw.mods.modlauncher.Launcher',
                 inheritsFrom: MC_VERSION,
-                logging: [ 
-                    client: [
-                        argument: '-Dlog4j.configurationFile=${path}',
-                        file: [
-                            id:'client-1.12.xml',
-                            sha1:'ef4f57b922df243d0cef096efe808c72db042149',
-                            size:877,
-                            url:'https://launcher.mojang.com/v1/objects/ef4f57b922df243d0cef096efe808c72db042149/client-1.12.xml'
-                        ],
-                        type: 'log4j2-xml'
-                    ]
-                ],
+                logging: {},
                 arguments: [
                     game: ['--launchTarget', 'fmlclient', '--fml.forgeVersion',  "${project.version.substring(MC_VERSION.length() + 1)}", '--fml.mcVersion', "${MC_VERSION}", '--fml.forgeGroup', "${project.group}", '--fml.mcpVersion', "${MCP_VERSION}"]
                 ],
@@ -867,8 +895,12 @@ project(':forge') {
         }
     }
 
+    extractRangeMap {
+        addDependencies jar.archivePath
+        addSources sourceSets.userdev.java.srcDirs
+    }
     applyRangeMap {
-        setSources sourceSets.userdev.java.srcDirs.findAll({f -> (f != patcher.patchedSrc) })
+        setSources sourceSets.userdev.java.srcDirs
     }
     
     tasks.eclipse.dependsOn('genEclipseRuns')

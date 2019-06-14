@@ -25,8 +25,8 @@ import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(modid = "kbhtest", name = "Knock Back Hook Test", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = "kbhtest", name = "Knock Back Hook Test", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class KnockBackEventTest
 {
     private static final boolean ENABLED = false;

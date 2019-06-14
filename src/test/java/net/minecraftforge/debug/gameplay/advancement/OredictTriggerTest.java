@@ -46,8 +46,8 @@ import java.util.Set;
  * Most of the real work is in the advancements directory of this mod.
  * This mod tests ore-dict advancement triggers.
  */
-@Mod.EventBusSubscriber
-@Mod(modid = OredictTriggerTest.MODID, name = "Oredict Item Predicate Test", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
+//@Mod(modid = OredictTriggerTest.MODID, name = "Oredict Item Predicate Test", version = "1.0", acceptableRemoteVersions = "*")
 public class OredictTriggerTest
 {
     public static final String MODID = "oredict_predicate";

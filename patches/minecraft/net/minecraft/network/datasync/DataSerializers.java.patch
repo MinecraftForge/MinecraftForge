@@ -1,0 +1,22 @@
+--- a/net/minecraft/network/datasync/DataSerializers.java
++++ b/net/minecraft/network/datasync/DataSerializers.java
+@@ -320,16 +320,16 @@
+    };
+ 
+    public static void func_187189_a(DataSerializer<?> p_187189_0_) {
+-      field_187204_n.func_186808_c(p_187189_0_);
++      if (field_187204_n.func_186808_c(p_187189_0_) >= 256) throw new RuntimeException("Vanilla DataSerializer ID limit exceeded");
+    }
+ 
+    @Nullable
+    public static DataSerializer<?> func_187190_a(int p_187190_0_) {
+-      return field_187204_n.func_186813_a(p_187190_0_);
++      return net.minecraftforge.common.ForgeHooks.getSerializer(p_187190_0_, field_187204_n);
+    }
+ 
+    public static int func_187188_b(DataSerializer<?> p_187188_0_) {
+-      return field_187204_n.func_186815_a(p_187188_0_);
++      return net.minecraftforge.common.ForgeHooks.getSerializerId(p_187188_0_, field_187204_n);
+    }
+ 
+    static {

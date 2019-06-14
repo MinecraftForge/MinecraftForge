@@ -31,12 +31,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.IntBuffer;
 
-@Mod(modid = TextureDumper.MODID, name = "Forge Texture Atlas Dump", version = TextureDumper.VERSION, clientSideOnly = true)
+// TODO 1.13: implement without java.awt
+//@Mod(modid = TextureDumper.MODID, name = "Forge Texture Atlas Dump", version = TextureDumper.VERSION, clientSideOnly = true)
 public class TextureDumper
 {
     public static final String MODID = "forge_texture_dump";

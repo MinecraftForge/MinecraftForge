@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Function;
@@ -49,7 +50,6 @@ import net.minecraft.block.state.BlockWorldState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
@@ -66,6 +66,7 @@ import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemAxe;
+import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemPotion;
@@ -73,13 +74,16 @@ import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemSpawnEgg;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemTippedArrow;
+import net.minecraft.item.ItemUseContext;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
+import net.minecraft.network.datasync.DataSerializer;
 import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.stats.StatList;
 import net.minecraft.tags.Tag;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
@@ -87,6 +91,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.WeightedRandom;
@@ -110,6 +115,7 @@ import net.minecraft.world.storage.loot.LootEntry;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraft.world.storage.loot.conditions.LootCondition;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.DifficultyChangeEvent;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -137,6 +143,10 @@ import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.DataSerializerEntry;
+import net.minecraftforge.registries.ForgeRegistry;
+import net.minecraftforge.registries.GameData;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -150,8 +160,8 @@ public class ForgeHooks
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker FORGEHOOKS = MarkerManager.getMarker("FORGEHOOKS");
-    //TODO: Loot tables?
-    static class SeedEntry extends WeightedRandom.Item
+    //TODO: Remove in 1.14 as vanilla uses loot tables
+    public static class SeedEntry extends WeightedRandom.Item
     {
         @Nonnull
         public final ItemStack seed;
@@ -166,6 +176,25 @@ public class ForgeHooks
             return seed.copy();
         }
     }
+    public static class FortuneSeedEntry extends SeedEntry
+    {
+        private int min, factor;
+        public FortuneSeedEntry(@Nonnull ItemStack seed, int weight, int min, int factor)
+        {
+            super(seed, weight);
+            this.min = min;
+            this.factor = factor;
+        }
+
+        @Nonnull
+        public ItemStack getStack(Random rand, int fortune)
+        {
+            ItemStack ret = seed.copy();
+            ret.setCount(min + rand.nextInt(fortune * factor + 1));
+            return ret;
+        }
+    }
+
     static final List<SeedEntry> seedList = new ArrayList<SeedEntry>();
 
     @Nonnull
@@ -181,6 +210,15 @@ public class ForgeHooks
             return ItemStack.EMPTY;
         }
         return entry.getStack(rand, fortune);
+    }
+
+    public static boolean canContinueUsing(@Nonnull ItemStack from, @Nonnull ItemStack to)
+    {
+        if (!from.isEmpty() && !to.isEmpty())
+        {
+            return from.getItem().canContinueUsing(from, to);
+        }
+        return false;
     }
 
     public static boolean canHarvestBlock(@Nonnull IBlockState state, @Nonnull EntityPlayer player, @Nonnull IBlockReader world, @Nonnull BlockPos pos)
@@ -599,19 +637,17 @@ public class ForgeHooks
         return event.isCanceled() ? -1 : event.getExpToDrop();
     }
 
-    /* TODO: Talk to Sponge folk about World rollbacks.
     public static EnumActionResult onPlaceItemIntoWorld(@Nonnull ItemUseContext context)
     {
         ItemStack itemstack = context.getItem();
         World world = context.getWorld();
 
         // handle all placement events here
-        int meta = itemstack.getItemDamage();
         int size = itemstack.getCount();
         NBTTagCompound nbt = null;
-        if (itemstack.getTagCompound() != null)
+        if (itemstack.hasTag())
         {
-            nbt = itemstack.getTagCompound().copy();
+            nbt = itemstack.getTag().copy();
         }
 
         if (!(itemstack.getItem() instanceof ItemBucket)) // if not bucket
@@ -625,39 +661,37 @@ public class ForgeHooks
         if (ret == EnumActionResult.SUCCESS)
         {
             // save new item data
-            int newMeta = itemstack.getItemDamage();
             int newSize = itemstack.getCount();
             NBTTagCompound newNBT = null;
-            if (itemstack.getTagCompound() != null)
+            if (itemstack.hasTag())
             {
-                newNBT = itemstack.getTagCompound().copy();
+                newNBT = itemstack.getTag().copy();
             }
-            BlockEvent.PlaceEvent placeEvent = null;
             @SuppressWarnings("unchecked")
             List<BlockSnapshot> blockSnapshots = (List<BlockSnapshot>)world.capturedBlockSnapshots.clone();
             world.capturedBlockSnapshots.clear();
 
             // make sure to set pre-placement item data for event
-            itemstack.setDamage(meta);
             itemstack.setCount(size);
             if (nbt != null)
             {
-                itemstack.setTagCompound(nbt);
+                itemstack.setTag(nbt);
             }
 
             EntityPlayer player = context.getPlayer();
             EnumFacing side = context.getFace();
 
+            boolean eventResult = false;
             if (blockSnapshots.size() > 1)
             {
-                placeEvent = ForgeEventFactory.onPlayerMultiBlockPlace(player, blockSnapshots, side, hand);
+                eventResult = ForgeEventFactory.onMultiBlockPlace(player, blockSnapshots, side);
             }
             else if (blockSnapshots.size() == 1)
             {
-                placeEvent = ForgeEventFactory.onPlayerBlockPlace(player, blockSnapshots.get(0), side, hand);
+                eventResult = ForgeEventFactory.onBlockPlace(player, blockSnapshots.get(0), side);
             }
 
-            if (placeEvent != null && placeEvent.isCanceled())
+            if (eventResult)
             {
                 ret = EnumActionResult.FAIL; // cancel placement
                 // revert back all captured blocks
@@ -671,11 +705,10 @@ public class ForgeHooks
             else
             {
                 // Change the stack to its new content
-                itemstack.setDamage(newMeta);
                 itemstack.setCount(newSize);
                 if (nbt != null)
                 {
-                    itemstack.setTagCompound(newNBT);
+                    itemstack.setTag(newNBT);
                 }
 
                 for (BlockSnapshot snap : blockSnapshots)
@@ -685,19 +718,18 @@ public class ForgeHooks
                     IBlockState newBlock = world.getBlockState(snap.getPos());
                     if (!newBlock.getBlock().hasTileEntity(newBlock)) // Containers get placed automatically
                     {
-                        newBlock.getBlock().onBlockAdded(world, snap.getPos(), newBlock);
+                        newBlock.onBlockAdded(world, snap.getPos(), oldBlock);
                     }
 
                     world.markAndNotifyBlock(snap.getPos(), null, oldBlock, newBlock, updateFlag);
                 }
-                player.addStat(StatList.getObjectUseStats(itemstack.getItem()));
+                player.addStat(StatList.ITEM_USED.get(itemstack.getItem()));
             }
         }
         world.capturedBlockSnapshots.clear();
 
         return ret;
     }
-    */
 
     public static boolean onAnvilChange(ContainerRepair container, @Nonnull ItemStack left, @Nonnull ItemStack right, IInventory outputSlot, String name, int baseCost)
     {
@@ -1172,5 +1204,32 @@ public class ForgeHooks
                 items.addAll(this.resolvedTag.getAllElements());
             }
         }
+    }
+
+    private static final Map<DataSerializer<?>, DataSerializerEntry> serializerEntries = GameData.getSerializerMap();
+    //private static final ForgeRegistry<DataSerializerEntry> serializerRegistry = (ForgeRegistry<DataSerializerEntry>) ForgeRegistries.DATA_SERIALIZERS;
+    // Do not reimplement this ^ it introduces a chicken-egg scenario by classloading registries during bootstrap
+
+    @Nullable
+    public static DataSerializer<?> getSerializer(int id, IntIdentityHashBiMap<DataSerializer<?>> vanilla)
+    {
+        DataSerializer<?> serializer = vanilla.get(id);
+        if (serializer == null)
+        {
+            DataSerializerEntry entry = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getValue(id);
+            if (entry != null) serializer = entry.getSerializer();
+        }
+        return serializer;
+    }
+
+    public static int getSerializerId(DataSerializer<?> serializer, IntIdentityHashBiMap<DataSerializer<?>> vanilla)
+    {
+        int id = vanilla.getId(serializer);
+        if (id < 0)
+        {
+            DataSerializerEntry entry = serializerEntries.get(serializer);
+            if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getID(entry);
+        }
+        return id;
     }
 }
