@@ -107,6 +107,12 @@ public class CompoundIngredient extends Ingredient
         return isSimple;
     }
 
+    @Override
+    public IIngredientSerializer<? extends Ingredient> getSerializer()
+    {
+        return CraftingHelper.INGREDIENT_COMPOUND;
+    }
+
     @Nonnull
     public Collection<Ingredient> getChildren()
     {
