@@ -36,7 +36,7 @@
              }
  
              nbttagcompound = this.field_193416_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
-+            datainputstream.close();
++            datainputstream.close(); // Forge: close stream after use
          }
  
 -        return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);

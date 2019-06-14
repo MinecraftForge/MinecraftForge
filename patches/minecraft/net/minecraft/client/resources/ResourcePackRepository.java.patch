@@ -16,7 +16,7 @@
          {
              field_177320_c.warn("File {} couldn't be hashed.", p_190113_2_, ioexception);
          }
-+        finally { IOUtils.closeQuietly(is); }
++        finally { IOUtils.closeQuietly(is); } // Forge: close stream after use
  
          return false;
      }

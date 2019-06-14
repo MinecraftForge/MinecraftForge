@@ -12,7 +12,7 @@
 +        }
 +        finally
 +        {
-+            IOUtils.closeQuietly(inputstream);
++            IOUtils.closeQuietly(inputstream); // Forge: close stream after use (MC-153470)
 +        }
 +    }
  
