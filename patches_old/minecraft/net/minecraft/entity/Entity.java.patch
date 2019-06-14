@@ -1,0 +1,63 @@
+@@ -2054,6 +2083,14 @@
+ 
+    @Nullable
+    public Entity func_212321_a(DimensionType p_212321_1_) {
++      if (this.field_70170_p.field_72995_K || this.field_70128_L) return null;
++      return changeDimension(p_212321_1_, this.func_184102_h().func_71218_a(p_212321_1_).func_85176_s());
++   }
++
++   @Nullable
++   @Override
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
+       if (!this.field_70170_p.field_72995_K && !this.field_70128_L) {
+          this.field_70170_p.field_72984_F.func_76320_a("changeDimension");
+          MinecraftServer minecraftserver = this.func_184102_h();
+@@ -2061,25 +2098,25 @@
+          ServerWorld worldserver = minecraftserver.func_71218_a(dimensiontype);
+          ServerWorld worldserver1 = minecraftserver.func_71218_a(p_212321_1_);
+          this.field_71093_bK = p_212321_1_;
+-         if (dimensiontype == DimensionType.THE_END && p_212321_1_ == DimensionType.THE_END) {
++         if (dimensiontype == DimensionType.THE_END && p_212321_1_ == DimensionType.THE_END && teleporter.isVanilla()) {
+             worldserver1 = minecraftserver.func_71218_a(DimensionType.OVERWORLD);
+             this.field_71093_bK = DimensionType.OVERWORLD;
+          }
+ 
+-         this.field_70170_p.func_72900_e(this);
+-         this.field_70128_L = false;
++         this.field_70170_p.removeEntity(this, true); //Forge: Keep data until we copy.
++         this.revive();
+          this.field_70170_p.field_72984_F.func_76320_a("reposition");
+          BlockPos blockpos;
+-         if (p_212321_1_ == DimensionType.THE_END) {
++         if (p_212321_1_ == DimensionType.THE_END && teleporter.isVanilla()) {
+             blockpos = worldserver1.func_180504_m();
+          } else {
+@@ -2088,8 +2125,7 @@
+             d1 = (double)MathHelper.func_76125_a((int)d1, -29999872, 29999872);
+             float f = this.field_70177_z;
+             this.func_70012_b(d0, this.field_70163_u, d1, 90.0F, 0.0F);
+-            Teleporter teleporter = worldserver1.func_85176_s();
+-            teleporter.func_180620_b(this, f);
++            teleporter.placeEntity(worldserver1, this, f);
+             blockpos = new BlockPos(this);
+          }
+ 
+@@ -2098,7 +2134,7 @@
+          Entity entity = this.func_200600_R().func_200721_a(worldserver1);
+          if (entity != null) {
+             entity.func_180432_n(this);
+-            if (dimensiontype == DimensionType.THE_END && p_212321_1_ == DimensionType.THE_END) {
++            if (dimensiontype == DimensionType.THE_END && p_212321_1_ == DimensionType.THE_END && teleporter.isVanilla()) {
+                BlockPos blockpos1 = worldserver1.func_205770_a(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, worldserver1.func_175694_M());
+                entity.func_174828_a(blockpos1, entity.field_70177_z, entity.field_70125_A);
+             } else {
+@@ -2112,7 +2148,7 @@
+             worldserver1.func_72866_a(entity, false);
+          }
+ 
+-         this.field_70128_L = true;
++         this.remove(false); //Forge: now invalidate old entity
+          this.field_70170_p.field_72984_F.func_76319_b();
+          worldserver.func_82742_i();
+          worldserver1.func_82742_i();

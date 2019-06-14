@@ -18,24 +18,24 @@
        return blockcolors;
     }
  
-    public int func_189991_a(IBlockState p_189991_1_, World p_189991_2_, BlockPos p_189991_3_) {
--      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(IRegistry.field_212618_g.func_148757_b(p_189991_1_.func_177230_c()));
+    public int func_189991_a(BlockState p_189991_1_, World p_189991_2_, BlockPos p_189991_3_) {
+-      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Registry.field_212618_g.func_148757_b(p_189991_1_.func_177230_c()));
 +      IBlockColor iblockcolor = this.field_186725_a.get(p_189991_1_.func_177230_c().delegate);
        if (iblockcolor != null) {
-          return iblockcolor.getColor(p_189991_1_, (IWorldReaderBase)null, (BlockPos)null, 0);
+          return iblockcolor.getColor(p_189991_1_, (IEnviromentBlockReader)null, (BlockPos)null, 0);
        } else {
 @@ -77,13 +79,13 @@
     }
  
-    public int func_186724_a(IBlockState p_186724_1_, @Nullable IWorldReaderBase p_186724_2_, @Nullable BlockPos p_186724_3_, int p_186724_4_) {
--      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(IRegistry.field_212618_g.func_148757_b(p_186724_1_.func_177230_c()));
-+      IBlockColor iblockcolor = this.field_186725_a.get(p_186724_1_.func_177230_c().delegate);
-       return iblockcolor == null ? -1 : iblockcolor.getColor(p_186724_1_, p_186724_2_, p_186724_3_, p_186724_4_);
+    public int func_216860_a(BlockState p_216860_1_, @Nullable IEnviromentBlockReader p_216860_2_, @Nullable BlockPos p_216860_3_, int p_216860_4_) {
+-      IBlockColor iblockcolor = this.field_186725_a.func_148745_a(Registry.field_212618_g.func_148757_b(p_216860_1_.func_177230_c()));
++      IBlockColor iblockcolor = this.field_186725_a.get(p_216860_1_.func_177230_c().delegate);
+       return iblockcolor == null ? -1 : iblockcolor.getColor(p_216860_1_, p_216860_2_, p_216860_3_, p_216860_4_);
     }
  
     public void func_186722_a(IBlockColor p_186722_1_, Block... p_186722_2_) {
        for(Block block : p_186722_2_) {
--         this.field_186725_a.func_148746_a(p_186722_1_, IRegistry.field_212618_g.func_148757_b(block));
+-         this.field_186725_a.func_148746_a(p_186722_1_, Registry.field_212618_g.func_148757_b(block));
 +         this.field_186725_a.put(block.delegate, p_186722_1_);
        }
  

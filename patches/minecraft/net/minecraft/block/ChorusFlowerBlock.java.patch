@@ -1,0 +1,50 @@
+--- a/net/minecraft/block/ChorusFlowerBlock.java
++++ b/net/minecraft/block/ChorusFlowerBlock.java
+@@ -30,9 +30,9 @@
+          p_196267_2_.func_175655_b(p_196267_3_, true);
+       } else {
+          BlockPos blockpos = p_196267_3_.func_177984_a();
+-         if (p_196267_2_.func_175623_d(blockpos) && blockpos.func_177956_o() < 256) {
++         if (p_196267_2_.func_175623_d(blockpos) && blockpos.func_177956_o() < p_196267_2_.func_201675_m().getHeight()) {
+             int i = p_196267_1_.func_177229_b(field_185607_a);
+-            if (i < 5) {
++            if (i < 5 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, blockpos, p_196267_1_, true)) {
+                boolean flag = false;
+                boolean flag1 = false;
+                BlockState blockstate = p_196267_2_.func_180495_p(p_196267_3_.func_177977_b());
+@@ -57,7 +57,7 @@
+                   if (j < 2 || j <= p_196267_4_.nextInt(flag1 ? 5 : 4)) {
+                      flag = true;
+                   }
+-               } else if (blockstate.func_196958_f()) {
++               } else if (blockstate.isAir(p_196267_2_, p_196267_3_.func_177977_b())) {
+                   flag = true;
+                }
+ 
+@@ -89,7 +89,7 @@
+                } else {
+                   this.func_185605_c(p_196267_2_, p_196267_3_);
+                }
+-
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
+             }
+          }
+       }
+@@ -127,7 +127,7 @@
+       BlockState blockstate = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
+       Block block = blockstate.func_177230_c();
+       if (block != this.field_196405_b && block != Blocks.field_150377_bs) {
+-         if (!blockstate.func_196958_f()) {
++         if (!blockstate.isAir(p_196260_2_, p_196260_3_.func_177977_b())) {
+             return false;
+          } else {
+             boolean flag = false;
+@@ -140,7 +140,7 @@
+                   }
+ 
+                   flag = true;
+-               } else if (!blockstate1.func_196958_f()) {
++               } else if (!blockstate1.isAir(p_196260_2_, p_196260_3_.func_177972_a(direction))) {
+                   return false;
+                }
+             }

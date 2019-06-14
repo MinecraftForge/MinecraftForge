@@ -20,7 +20,7 @@
 package net.minecraftforge.event.entity.item;
 
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.ItemEntity;
 
 /**
  * Event that is fired when an EntityItem's age has reached its maximum
@@ -40,7 +40,7 @@ public class ItemExpireEvent extends ItemEvent
      * @param entityItem The EntityItem being deleted.
      * @param extraLife The amount of time to be added to this entities lifespan if the event is canceled.
      */
-    public ItemExpireEvent(EntityItem entityItem, int extraLife)
+    public ItemExpireEvent(ItemEntity entityItem, int extraLife)
     {
         super(entityItem);
         this.setExtraLife(extraLife);

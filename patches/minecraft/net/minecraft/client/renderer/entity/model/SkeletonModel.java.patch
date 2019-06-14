@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/renderer/entity/model/SkeletonModel.java
++++ b/net/minecraft/client/renderer/entity/model/SkeletonModel.java
+@@ -41,7 +41,7 @@
+       this.field_187076_m = BipedModel.ArmPose.EMPTY;
+       this.field_187075_l = BipedModel.ArmPose.EMPTY;
+       ItemStack itemstack = p_212843_1_.func_184586_b(Hand.MAIN_HAND);
+-      if (itemstack.func_77973_b() == Items.field_151031_f && p_212843_1_.func_213398_dR()) {
++      if (itemstack.func_77973_b() instanceof net.minecraft.item.BowItem && p_212843_1_.func_213398_dR()) {
+          if (p_212843_1_.func_184591_cq() == HandSide.RIGHT) {
+             this.field_187076_m = BipedModel.ArmPose.BOW_AND_ARROW;
+          } else {
+@@ -55,7 +55,7 @@
+    public void func_212844_a_(T p_212844_1_, float p_212844_2_, float p_212844_3_, float p_212844_4_, float p_212844_5_, float p_212844_6_, float p_212844_7_) {
+       super.func_212844_a_(p_212844_1_, p_212844_2_, p_212844_3_, p_212844_4_, p_212844_5_, p_212844_6_, p_212844_7_);
+       ItemStack itemstack = p_212844_1_.func_184614_ca();
+-      if (p_212844_1_.func_213398_dR() && (itemstack.func_190926_b() || itemstack.func_77973_b() != Items.field_151031_f)) {
++      if (p_212844_1_.func_213398_dR() && (itemstack.func_190926_b() || !(itemstack.func_77973_b() instanceof net.minecraft.item.BowItem))) {
+          float f = MathHelper.func_76126_a(this.field_217112_c * (float)Math.PI);
+          float f1 = MathHelper.func_76126_a((1.0F - (1.0F - this.field_217112_c) * (1.0F - this.field_217112_c)) * (float)Math.PI);
+          this.field_178723_h.field_78808_h = 0.0F;

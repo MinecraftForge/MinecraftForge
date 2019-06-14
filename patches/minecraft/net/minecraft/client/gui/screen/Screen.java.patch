@@ -1,0 +1,80 @@
+--- a/net/minecraft/client/gui/screen/Screen.java
++++ b/net/minecraft/client/gui/screen/Screen.java
+@@ -109,7 +109,10 @@
+    }
+ 
+    protected void renderTooltip(ItemStack p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
+-      this.renderTooltip(this.getTooltipFromItem(p_renderTooltip_1_), p_renderTooltip_2_, p_renderTooltip_3_);
++      FontRenderer font = p_renderTooltip_1_.func_77973_b().getFontRenderer(p_renderTooltip_1_);
++      net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(p_renderTooltip_1_);
++      this.renderTooltip(this.getTooltipFromItem(p_renderTooltip_1_), p_renderTooltip_2_, p_renderTooltip_3_, (font == null ? this.font : font));
++      net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+    }
+ 
+    public List<String> getTooltipFromItem(ItemStack p_getTooltipFromItem_1_) {
+@@ -128,7 +131,11 @@
+    }
+ 
+    public void renderTooltip(List<String> p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_) {
+-      if (!p_renderTooltip_1_.isEmpty()) {
++      renderTooltip(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_, font);
++   }
++   public void renderTooltip(List<String> p_renderTooltip_1_, int p_renderTooltip_2_, int p_renderTooltip_3_, FontRenderer font) {
++      net.minecraftforge.fml.client.config.GuiUtils.drawHoveringText(p_renderTooltip_1_, p_renderTooltip_2_, p_renderTooltip_3_, width, height, -1, font);
++      if (false && !p_renderTooltip_1_.isEmpty()) {
+          GlStateManager.disableRescaleNormal();
+          RenderHelper.func_74518_a();
+          GlStateManager.disableLighting();
+@@ -301,9 +308,12 @@
+    }
+ 
+    public void sendMessage(String p_sendMessage_1_, boolean p_sendMessage_2_) {
++      p_sendMessage_1_ = net.minecraftforge.event.ForgeEventFactory.onClientSendMessage(p_sendMessage_1_);
++      if (p_sendMessage_1_.isEmpty()) return;
+       if (p_sendMessage_2_) {
+          this.minecraft.field_71456_v.func_146158_b().func_146239_a(p_sendMessage_1_);
+       }
++      //if (net.minecraftforge.client.ClientCommandHandler.instance.executeCommand(mc.player, msg) != 0) return; //Forge: TODO Client command re-write
+ 
+       this.minecraft.field_71439_g.func_71165_d(p_sendMessage_1_);
+    }
+@@ -314,10 +324,14 @@
+       this.font = p_init_1_.field_71466_p;
+       this.width = p_init_2_;
+       this.height = p_init_3_;
++      java.util.function.Consumer<Widget> remove = (b) -> { buttons.remove(b); children.remove(b); };
++      if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre(this, this.buttons, this::addButton, remove))) {
+       this.buttons.clear();
+       this.children.clear();
+       this.setFocused((IGuiEventListener)null);
+       this.init();
++      }
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post(this, this.buttons, this::addButton, remove));
+    }
+ 
+    public void setSize(int p_setSize_1_, int p_setSize_2_) {
+@@ -345,6 +359,7 @@
+    public void renderBackground(int p_renderBackground_1_) {
+       if (this.minecraft.field_71441_e != null) {
+          this.fillGradient(0, 0, this.width, this.height, -1072689136, -804253680);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
+       } else {
+          this.renderDirtBackground(p_renderBackground_1_);
+       }
+@@ -365,6 +380,7 @@
+       bufferbuilder.func_181662_b((double)this.width, 0.0D, 0.0D).func_187315_a((double)((float)this.width / 32.0F), (double)p_renderDirtBackground_1_).func_181669_b(64, 64, 64, 255).func_181675_d();
+       bufferbuilder.func_181662_b(0.0D, 0.0D, 0.0D).func_187315_a(0.0D, (double)p_renderDirtBackground_1_).func_181669_b(64, 64, 64, 255).func_181675_d();
+       tessellator.func_78381_a();
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent(this));
+    }
+ 
+    public boolean isPauseScreen() {
+@@ -448,4 +464,8 @@
+    public boolean isMouseOver(double p_isMouseOver_1_, double p_isMouseOver_3_) {
+       return true;
+    }
++
++   public Minecraft getMinecraft() {
++      return this.minecraft;
++   }
+ }

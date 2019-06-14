@@ -20,7 +20,7 @@
 package net.minecraftforge.event.entity.player;
 
 import com.google.common.base.Preconditions;
-import net.minecraft.entity.projectile.EntityFishHook;
+import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -39,10 +39,10 @@ import java.util.List;
 public class ItemFishedEvent extends PlayerEvent
 {
     private final NonNullList<ItemStack> stacks = NonNullList.create();
-    private final EntityFishHook hook;
+    private final FishingBobberEntity hook;
     private int rodDamage;
 
-    public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, EntityFishHook hook)
+    public ItemFishedEvent(List<ItemStack> stacks, int rodDamage, FishingBobberEntity hook)
     {
         super(hook.getAngler());
         this.stacks.addAll(stacks);
@@ -83,7 +83,7 @@ public class ItemFishedEvent extends PlayerEvent
     /**
      * Use this to stuff related to the hook itself, like the position of the bobber.
      */
-    public EntityFishHook getHookEntity()
+    public FishingBobberEntity getHookEntity()
     {
         return hook;
     }

@@ -1,15 +1,15 @@
 --- a/net/minecraft/enchantment/Enchantment.java
 +++ b/net/minecraft/enchantment/Enchantment.java
-@@ -18,7 +18,7 @@
+@@ -17,7 +17,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
 -public abstract class Enchantment {
 +public abstract class Enchantment extends net.minecraftforge.registries.ForgeRegistryEntry<Enchantment> {
-    private final EntityEquipmentSlot[] field_185263_a;
+    private final EquipmentSlotType[] field_185263_a;
     private final Enchantment.Rarity field_77333_a;
     @Nullable
-@@ -115,7 +115,7 @@
+@@ -110,7 +110,7 @@
     }
  
     public boolean func_92089_a(ItemStack p_92089_1_) {
@@ -17,8 +17,8 @@
 +      return canApplyAtEnchantingTable(p_92089_1_);
     }
  
-    public void func_151368_a(EntityLivingBase p_151368_1_, Entity p_151368_2_, int p_151368_3_) {
-@@ -132,6 +132,24 @@
+    public void func_151368_a(LivingEntity p_151368_1_, Entity p_151368_2_, int p_151368_3_) {
+@@ -127,12 +127,31 @@
        return false;
     }
  
@@ -40,6 +40,13 @@
 +      return true;
 +   }
 +
-    public static void func_185257_f() {
-       EntityEquipmentSlot[] aentityequipmentslot = new EntityEquipmentSlot[]{EntityEquipmentSlot.HEAD, EntityEquipmentSlot.CHEST, EntityEquipmentSlot.LEGS, EntityEquipmentSlot.FEET};
-       func_210770_a("protection", new EnchantmentProtection(Enchantment.Rarity.COMMON, EnchantmentProtection.Type.ALL, aentityequipmentslot));
+    public static enum Rarity {
+       COMMON(30),
+       UNCOMMON(10),
+       RARE(3),
+       VERY_RARE(1);
+ 
++
+       private final int field_185275_e;
+ 
+       private Rarity(int p_i47026_3_) {

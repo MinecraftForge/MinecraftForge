@@ -76,7 +76,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.ObjectHolder;
 
-@Mod(ModelLoaderRegistryTest.MODID)
+//@Mod(ModelLoaderRegistryTest.MODID)
 public class ModelLoaderRegistryTest
 {
     public static final boolean ENABLED = true;
@@ -84,26 +84,26 @@ public class ModelLoaderRegistryTest
     public static final String VERSION = "1.0";
     private static Logger logger;
 
-    @ObjectHolder(CustomModelBlock.name)
+    //@ObjectHolder(CustomModelBlock.name)
     public static final Block CUSTOM_MODEL_BLOCK = null;
-    @ObjectHolder(OBJTesseractBlock.name)
+    //@ObjectHolder(OBJTesseractBlock.name)
     public static final Block TESSERACT_BLOCK = null;
-    @ObjectHolder(OBJVertexColoring1.name)
+    //@ObjectHolder(OBJVertexColoring1.name)
     public static final Block VERTEX_COLOR_1 = null;
-    @ObjectHolder(OBJVertexColoring2.name)
+    //@ObjectHolder(OBJVertexColoring2.name)
     public static final Block VERTEX_COLOR_2 = null;
-    @ObjectHolder(OBJDirectionBlock.name)
+    //@ObjectHolder(OBJDirectionBlock.name)
     public static final Block DIRECTION = null;
-    @ObjectHolder(OBJDirectionEye.name)
+    //@ObjectHolder(OBJDirectionEye.name)
     public static final Block DIRECTION_EYE = null;
-    @ObjectHolder(OBJDynamicEye.name)
+    //@ObjectHolder(OBJDynamicEye.name)
     public static final Block DYNAMIC_EYE = null;
-    @ObjectHolder(OBJCustomDataBlock.name)
+    //@ObjectHolder(OBJCustomDataBlock.name)
     public static final Block CUSTOM_DATA = null;
     
-    @ObjectHolder(OBJTesseractBlock.name)
+    //@ObjectHolder(OBJTesseractBlock.name)
     public static final TileEntityType<OBJTesseractTileEntity> TESSERACT_TILE = null;
-    @ObjectHolder(OBJVertexColoring2.name)
+    //@ObjectHolder(OBJVertexColoring2.name)
     public static final TileEntityType<OBJVertexColoring2TileEntity> VERTEX_COLOR_2_TILE = null;
     
     public ModelLoaderRegistryTest()

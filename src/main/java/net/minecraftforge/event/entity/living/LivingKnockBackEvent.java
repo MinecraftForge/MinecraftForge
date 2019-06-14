@@ -20,9 +20,7 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
@@ -31,9 +29,9 @@ import net.minecraftforge.eventbus.api.Cancelable;
 /**
  * LivingKnockBackEvent is fired when a living entity is about to be knocked back. <br>
  * This event is fired whenever an Entity is knocked back in
- * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)}, 
- * {@link EntityLivingBase#blockWithShield(EntityLivingBase)}, 
- * {@link EntityMob#attackEntityAsMob(Entity)} and 
+ * {@link EntityLivingBase#attackEntityFrom(DamageSource, float)},
+ * {@link EntityLivingBase#blockWithShield(EntityLivingBase)},
+ * {@link EntityMob#attackEntityAsMob(Entity)} and
  * {@link EntityPlayer#attackTargetEntityWithCurrentItem(Entity)} <br>
  * <br>
  * This event is fired via {@link ForgeHooks#onLivingKnockBack(EntityLivingBase, Entity, float, double, double)}.<br>
@@ -60,7 +58,7 @@ public class LivingKnockBackEvent extends LivingEvent
     protected final float originalStrength;
     protected final double originalRatioX, originalRatioZ;
 
-    public LivingKnockBackEvent(EntityLivingBase target, Entity attacker, float strength, double ratioX, double ratioZ)
+    public LivingKnockBackEvent(LivingEntity target, Entity attacker, float strength, double ratioX, double ratioZ)
     {
         super(target);
         this.attacker = this.originalAttacker = attacker;

@@ -1,0 +1,18 @@
+--- a/net/minecraft/item/crafting/AbstractCookingRecipe.java
++++ b/net/minecraft/item/crafting/AbstractCookingRecipe.java
+@@ -35,7 +35,6 @@
+       return this.field_222143_e.func_77946_l();
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return true;
+    }
+@@ -54,7 +53,6 @@
+       return this.field_222143_e;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public String func_193358_e() {
+       return this.field_222141_c;
+    }

@@ -22,9 +22,11 @@ package net.minecraftforge.fml.client.gui;
 import com.google.common.base.Strings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiErrorScreen;
-import net.minecraft.client.gui.GuiListExtended;
+import net.minecraft.client.gui.screen.ErrorScreen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.Util;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.LoadingFailedException;
@@ -41,7 +43,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-public class LoadingErrorScreen extends GuiErrorScreen {
+public class LoadingErrorScreen extends ErrorScreen {
     private static final Logger LOGGER = LogManager.getLogger();
     private final Path modsDir;
     private final Path logFile;
@@ -53,36 +55,17 @@ public class LoadingErrorScreen extends GuiErrorScreen {
 
     public LoadingErrorScreen(LoadingFailedException loadingException, List<ModLoadingWarning> warnings)
     {
-        super(null, null);
+        super(new StringTextComponent("Loading Error"), null);
         this.modLoadWarnings = warnings;
         this.modLoadErrors = loadingException == null ? Collections.emptyList() : loadingException.getErrors();
         this.modsDir = FMLPaths.MODSDIR.get();
         this.logFile = FMLPaths.GAMEDIR.get().resolve(Paths.get("logs","latest.log"));
     }
 
-    private double openModsDir(double mouseX, double mouseY)
-    {
-        Util.getOSType().openFile(modsDir.toFile());
-        return 0.0;
-    }
-
-    private double openLogFile(double mouseX, double mouseY)
-    {
-        Util.getOSType().openFile(logFile.toFile());
-        return 0.0;
-    }
-
-    private double continueGame(double mouseX, double mouseY)
-    {
-        ClientHooks.logMissingTextureErrors();
-        mc.displayGuiScreen(null);
-        return 0.0;
-    }
-
     @Override
-    public void initGui()
+    public void init()
     {
-        super.initGui();
+        super.init();
         this.buttons.clear();
         this.children.clear();
 
@@ -90,13 +73,13 @@ public class LoadingErrorScreen extends GuiErrorScreen {
         this.warningHeader = TextFormatting.YELLOW + ForgeI18n.parseMessage("fml.loadingerrorscreen.warningheader", this.modLoadErrors.size()) + TextFormatting.RESET;
 
         int yOffset = this.modLoadErrors.isEmpty() ? 46 : 38;
-        this.addButton(new GuiButtonClickConsumer(10, 50, this.height - yOffset, this.width / 2 - 55, 20,
-                ForgeI18n.parseMessage("fml.button.open.mods.folder"), this::openModsDir));
-        this.addButton(new GuiButtonClickConsumer(11, this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20,
-                ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName()), this::openLogFile));
+        this.addButton(new Button(50, this.height - yOffset, this.width / 2 - 55, 20, ForgeI18n.parseMessage("fml.button.open.mods.folder"), b -> Util.getOSType().openFile(modsDir.toFile())));
+        this.addButton(new Button(this.width / 2 + 5, this.height - yOffset, this.width / 2 - 55, 20, ForgeI18n.parseMessage("fml.button.open.file", logFile.getFileName()), b -> Util.getOSType().openFile(logFile.toFile())));
         if (this.modLoadErrors.isEmpty()) {
-            this.addButton(new GuiButtonClickConsumer(12, this.width / 4, this.height - 24, this.width / 2, 20,
-                    ForgeI18n.parseMessage("fml.button.continue.launch"), this::continueGame));
+            this.addButton(new Button(this.width / 4, this.height - 24, this.width / 2, 20, ForgeI18n.parseMessage("fml.button.continue.launch"), b -> {
+                ClientHooks.logMissingTextureErrors();
+                this.minecraft.displayGuiScreen(null);
+            }));
         }
 
         this.entryList = new LoadingEntryList(this, this.modLoadErrors, this.modLoadWarnings);
@@ -107,9 +90,9 @@ public class LoadingErrorScreen extends GuiErrorScreen {
     @Override
     public void render(int mouseX, int mouseY, float partialTicks)
     {
-        this.drawDefaultBackground();
-        this.entryList.drawScreen(mouseX, mouseY, partialTicks);
-        drawMultiLineCenteredString(fontRenderer, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
+        this.renderBackground();
+        this.entryList.render(mouseX, mouseY, partialTicks);
+        drawMultiLineCenteredString(font, this.modLoadErrors.isEmpty() ? warningHeader : errorHeader, this.width / 2, 10);
         this.buttons.forEach(button -> button.render(mouseX, mouseY, partialTicks));
     }
 
@@ -119,15 +102,15 @@ public class LoadingErrorScreen extends GuiErrorScreen {
             y+=fr.FONT_HEIGHT;
         }
     }
-    public static class LoadingEntryList extends GuiListExtended<LoadingEntryList.LoadingMessageEntry> {
+    public static class LoadingEntryList extends ExtendedList<LoadingEntryList.LoadingMessageEntry> {
         LoadingEntryList(final LoadingErrorScreen parent, final List<ModLoadingException> errors, final List<ModLoadingWarning> warnings) {
-            super(parent.mc, parent.width, parent.height, 35, parent.height - 50, 2 * parent.mc.fontRenderer.FONT_HEIGHT + 8);
+            super(parent.minecraft, parent.width, parent.height, 35, parent.height - 50, 2 * parent.minecraft.fontRenderer.FONT_HEIGHT + 8);
             boolean both = !errors.isEmpty() && !warnings.isEmpty();
             if (both)
                 addEntry(new LoadingMessageEntry(parent.errorHeader, true));
             errors.forEach(e->addEntry(new LoadingMessageEntry(e.formatToString())));
             if (both) {
-                int maxChars = (this.width - 10) / parent.mc.fontRenderer.getStringWidth("-");
+                int maxChars = (this.width - 10) / parent.minecraft.fontRenderer.getStringWidth("-");
                 addEntry(new LoadingMessageEntry("\n" + Strings.repeat("-", maxChars) + "\n"));
                 addEntry(new LoadingMessageEntry(parent.warningHeader, true));
             }
@@ -135,18 +118,18 @@ public class LoadingErrorScreen extends GuiErrorScreen {
         }
 
         @Override
-        protected int getScrollBarX()
+        protected int getScrollbarPosition()
         {
-            return this.right - 6;
+            return this.getRight() - 6;
         }
 
         @Override
-        public int getListWidth()
+        public int getRowWidth()
         {
             return this.width;
         }
 
-        public class LoadingMessageEntry extends GuiListExtended.IGuiListEntry<LoadingMessageEntry> {
+        public class LoadingMessageEntry extends ExtendedList.AbstractListEntry<LoadingMessageEntry> {
             private final String message;
             private final boolean center;
 
@@ -160,9 +143,7 @@ public class LoadingErrorScreen extends GuiErrorScreen {
             }
 
             @Override
-            public void drawEntry(final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTicks) {
-                int top = this.getY();
-                int left = this.getX();
+            public void render(int entryIdx, int top, int left, final int entryWidth, final int entryHeight, final int mouseX, final int mouseY, final boolean p_194999_5_, final float partialTicks) {
                 FontRenderer font = Minecraft.getInstance().fontRenderer;
                 final List<String> strings = font.listFormattedStringToWidth(message, LoadingEntryList.this.width);
                 int y = top + 2;

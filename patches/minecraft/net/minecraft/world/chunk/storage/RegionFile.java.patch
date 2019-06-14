@@ -1,92 +1,103 @@
 --- a/net/minecraft/world/chunk/storage/RegionFile.java
 +++ b/net/minecraft/world/chunk/storage/RegionFile.java
-@@ -18,6 +18,10 @@
- import net.minecraft.util.Util;
+@@ -19,13 +19,19 @@
+ import net.minecraft.util.math.ChunkPos;
  
- public class RegionFile {
+ public class RegionFile implements AutoCloseable {
 +   // Minecraft is limited to 256 sections per chunk. So 1MB. This can easily be override.
 +   // So we extend this to use the REAL size when the count is maxed by seeking to that section and reading the length.
 +   private static final boolean FORGE_ENABLE_EXTENDED_SAVE = Boolean.parseBoolean(System.getProperty("forge.enableExtendedSave", "true"));
 +   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
     private static final byte[] field_76720_a = new byte[4096];
-    private final File field_76718_b;
-    private RandomAccessFile field_76719_c;
-@@ -63,11 +67,21 @@
-          for(int j1 = 0; j1 < 1024; ++j1) {
-             int k = this.field_76719_c.readInt();
-             this.field_76716_d[j1] = k;
--            if (k != 0 && (k >> 8) + (k & 255) <= this.field_76714_f.size()) {
--               for(int l = 0; l < (k & 255); ++l) {
-+            int length = k & 255;
-+            if (length == 255) {
-+               if ((k >> 8) <= this.field_76714_f.size()) { // We're maxed out, so we need to read the proper length from the section
-+                  this.field_76719_c.seek((k >> 8) * 4096);
-+                  length = (this.field_76719_c.readInt() + 4) / 4096 + 1;
-+                  this.field_76719_c.seek(j1 * 4 + 4); //Go back to where we were
-+               }
-+            }
-+            if (k != 0 && (k >> 8) + length <= this.field_76714_f.size()) {
-+               for (int l = 0; l < length; ++l) {
-                   this.field_76714_f.set((k >> 8) + l, false);
-                }
-             }
-+            else if (length > 0)
-+               LOGGER.warn("Invalid chunk: ({}, {}) Offset: {} Length: {} runs off end file. {}", j1 % 32, (int)(j1 / 32), k >> 8, length, p_i2001_1_);
-          }
+    private final RandomAccessFile field_76719_c;
+    private final int[] field_76716_d = new int[1024];
+    private final int[] field_76717_e = new int[1024];
+    private final List<Boolean> field_76714_f;
++   private final File filepath;
  
-          for(int k1 = 0; k1 < 1024; ++k1) {
-@@ -92,14 +106,20 @@
-             } else {
-                int j = i >> 8;
-                int k = i & 255;
-+               if (k == 255) {
-+                  this.field_76719_c.seek(j * 4096);
-+                  k = (this.field_76719_c.readInt() + 4) / 4096 + 1;
-+               }
-                if (j + k > this.field_76714_f.size()) {
-                   return null;
-                } else {
-                   this.field_76719_c.seek((long)(j * 4096));
-                   int l = this.field_76719_c.readInt();
-                   if (l > 4096 * k) {
-+                     LOGGER.warn("Invalid chunk: ({}, {}) Offset: {} Invalid Size: {}>{} {}", p_76704_1_, p_76704_2_, j, l, k * 4096, field_76718_b);
-                      return null;
-                   } else if (l <= 0) {
-+                     LOGGER.warn("Invalid chunk: ({}, {}) Offset: {} Invalid Size: {} {}", p_76704_1_, p_76704_2_, j, l, field_76718_b);
-                      return null;
-                   } else {
-                      byte b0 = this.field_76719_c.readByte();
-@@ -162,9 +182,14 @@
-          int i = this.func_76707_e(p_76706_1_, p_76706_2_);
+    public RegionFile(File p_i2001_1_) throws IOException {
++      this.filepath = p_i2001_1_;
+       this.field_76719_c = new RandomAccessFile(p_i2001_1_, "rw");
+       if (this.field_76719_c.length() < 4096L) {
+          this.field_76719_c.write(field_76720_a);
+@@ -52,11 +58,21 @@
+       for(int j1 = 0; j1 < 1024; ++j1) {
+          int k = this.field_76719_c.readInt();
+          this.field_76716_d[j1] = k;
+-         if (k != 0 && (k >> 8) + (k & 255) <= this.field_76714_f.size()) {
+-            for(int l = 0; l < (k & 255); ++l) {
++         int length = k & 255;
++         if (length == 255) {
++            if ((k >> 8) <= this.field_76714_f.size()) { // We're maxed out, so we need to read the proper length from the section
++               this.field_76719_c.seek((k >> 8) * 4096);
++               length = (this.field_76719_c.readInt() + 4) / 4096 + 1;
++               this.field_76719_c.seek(j1 * 4 + 4); //Go back to where we were
++            }
++         }
++         if (k != 0 && (k >> 8) + length <= this.field_76714_f.size()) {
++            for (int l = 0; l < length; ++l) {
+                this.field_76714_f.set((k >> 8) + l, false);
+             }
+          }
++         else if (length > 0)
++            LOGGER.warn("Invalid chunk: ({}, {}) Offset: {} Length: {} runs off end file. {}", j1 % 32, (int)(j1 / 32), k >> 8, length, p_i2001_1_);
+       }
+ 
+       for(int k1 = 0; k1 < 1024; ++k1) {
+@@ -74,14 +90,20 @@
+       } else {
           int j = i >> 8;
           int k = i & 255;
 +         if (k == 255) {
-+             this.field_76719_c.seek(j * 4096);
-+             k = (this.field_76719_c.readInt() + 4) / 4096 + 1;
++            this.field_76719_c.seek(j * 4096);
++            k = (this.field_76719_c.readInt() + 4) / 4096 + 1;
 +         }
-          int l = (p_76706_4_ + 5) / 4096 + 1;
-          if (l >= 256) {
--            return;
-+            if (!FORGE_ENABLE_EXTENDED_SAVE) return;
-+            LOGGER.warn("Large Chunk Detected: ({}, {}) Size: {} {}", p_76706_1_, p_76706_2_, l, field_76718_b);
-          }
- 
+          if (j + k > this.field_76714_f.size()) {
+             return null;
+          } else {
+             this.field_76719_c.seek((long)(j * 4096));
+             int l = this.field_76719_c.readInt();
+             if (l > 4096 * k) {
++               LOGGER.warn("Invalid chunk: ({}, {}) Offset: {} Invalid Size: {}>{} {}", p_222666_1_.field_77276_a, p_222666_1_.field_77275_b, j, l, k * 4096, filepath);
+                return null;
+             } else if (l <= 0) {
++               LOGGER.warn("Invalid chunk: ({}, {}) Offset: {} Invalid Size: {} {}", p_222666_1_.field_77276_a, p_222666_1_.field_77275_b, j, l, filepath);
+                return null;
+             } else {
+                byte b0 = this.field_76719_c.readByte();
+@@ -134,10 +156,16 @@
+       int i = this.func_222660_e(p_222664_1_);
+       int j = i >> 8;
+       int k = i & 255;
++      if (k == 255) {
++         this.field_76719_c.seek(j * 4096);
++         k = (this.field_76719_c.readInt() + 4) / 4096 + 1;
++      }
+       int l = (p_222664_3_ + 5) / 4096 + 1;
+-      if (l >= 256) {
++      if (l >= 256 && !FORGE_ENABLE_EXTENDED_SAVE) {
+          throw new RuntimeException(String.format("Too big to save, %d > 1048576", p_222664_3_));
+       } else {
++         if (l >= 256) LOGGER.warn("Large Chunk Detected: ({}, {}) Size: {} {}", p_222664_1_.field_77276_a, p_222664_1_.field_77275_b, l, filepath);
++
           if (j != 0 && k == l) {
-@@ -197,7 +222,7 @@
+             this.func_76712_a(j, p_222664_2_, p_222664_3_);
+          } else {
+@@ -168,7 +196,7 @@
  
              if (j1 >= l) {
                 j = l1;
--               this.func_76711_a(p_76706_1_, p_76706_2_, l1 << 8 | l);
-+               this.func_76711_a(p_76706_1_, p_76706_2_, l1 << 8 | (l > 255 ? 255 : l));
+-               this.func_222663_a(p_222664_1_, l1 << 8 | l);
++               this.func_222663_a(p_222664_1_, l1 << 8 | (l > 255 ? 255 : l));
  
-                for(int j2 = 0; j2 < l; ++j2) {
-                   this.field_76714_f.set(j + j2, false);
-@@ -215,7 +240,7 @@
+                for(int i2 = 0; i2 < l; ++i2) {
+                   this.field_76714_f.set(j + i2, false);
+@@ -185,7 +213,7 @@
+                }
  
-                this.field_76715_g += 4096 * l;
-                this.func_76712_a(j, p_76706_3_, p_76706_4_);
--               this.func_76711_a(p_76706_1_, p_76706_2_, j << 8 | l);
-+               this.func_76711_a(p_76706_1_, p_76706_2_, j << 8 | (l > 255 ? 255 : l));
+                this.func_76712_a(j, p_222664_2_, p_222664_3_);
+-               this.func_222663_a(p_222664_1_, j << 8 | l);
++               this.func_222663_a(p_222664_1_, j << 8 | (l > 255 ? 255 : l));
              }
           }
  

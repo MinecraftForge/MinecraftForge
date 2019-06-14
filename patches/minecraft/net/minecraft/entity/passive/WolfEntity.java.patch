@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/passive/WolfEntity.java
++++ b/net/minecraft/entity/passive/WolfEntity.java
+@@ -348,7 +348,7 @@
+          }
+ 
+          if (!this.field_70170_p.field_72995_K) {
+-            if (this.field_70146_Z.nextInt(3) == 0) {
++            if (this.field_70146_Z.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, p_184645_1_)) {
+                this.func_193101_c(p_184645_1_);
+                this.field_70699_by.func_75499_g();
+                this.func_70624_b((LivingEntity)null);

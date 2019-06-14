@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/LlamaSpitEntity.java
++++ b/net/minecraft/entity/projectile/LlamaSpitEntity.java
+@@ -57,7 +57,7 @@
+       RayTraceResult raytraceresult = ProjectileHelper.func_221267_a(this, this.func_174813_aQ().func_216361_a(vec3d).func_186662_g(1.0D), (p_213879_1_) -> {
+          return !p_213879_1_.func_175149_v() && p_213879_1_ != this.field_190539_a;
+       }, RayTraceContext.BlockMode.OUTLINE, true);
+-      if (raytraceresult != null) {
++      if (raytraceresult != null && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+          this.func_190536_a(raytraceresult);
+       }
+ 

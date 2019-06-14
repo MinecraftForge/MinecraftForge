@@ -1,0 +1,13 @@
+--- a/net/minecraft/tags/EntityTypeTags.java
++++ b/net/minecraft/tags/EntityTypeTags.java
+@@ -22,6 +22,10 @@
+       return field_219766_c;
+    }
+ 
++   public static int getGeneration() {
++      return field_219767_d;
++   }
++
+    private static Tag<EntityType<?>> func_219763_a(String p_219763_0_) {
+       return new EntityTypeTags.Wrapper(new ResourceLocation(p_219763_0_));
+    }

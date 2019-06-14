@@ -1,0 +1,35 @@
+--- a/net/minecraft/item/ItemSeedFood.java
++++ b/net/minecraft/item/ItemSeedFood.java
+@@ -10,7 +10,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.IWorld;
+ 
+-public class ItemSeedFood extends ItemFood {
++public class ItemSeedFood extends ItemFood implements net.minecraftforge.common.IPlantable {
+    private final BlockState field_195972_b;
+ 
+    public ItemSeedFood(int p_i48473_1_, float p_i48473_2_, Block p_i48473_3_, Item.Properties p_i48473_4_) {
+@@ -21,7 +21,7 @@
+    public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
+       IWorld iworld = p_195939_1_.func_195991_k();
+       BlockPos blockpos = p_195939_1_.func_195995_a().func_177984_a();
+-      if (p_195939_1_.func_196000_l() == Direction.UP && iworld.func_175623_d(blockpos) && this.field_195972_b.func_196955_c(iworld, blockpos)) {
++      if (p_195939_1_.func_196000_l() == Direction.UP && iworld.func_175623_d(blockpos) && this.field_195972_b.func_196955_c(iworld, blockpos) && iworld.func_180495_p(p_195939_1_.func_195995_a()).canSustainPlant(iworld, p_195939_1_.func_195995_a(), Direction.UP, this)) {
+          iworld.func_180501_a(blockpos, this.field_195972_b, 11);
+          PlayerEntity entityplayer = p_195939_1_.func_195999_j();
+          ItemStack itemstack = p_195939_1_.func_195996_i();
+@@ -35,4 +35,14 @@
+          return ActionResultType.PASS;
+       }
+    }
++
++   @Override
++   public net.minecraftforge.common.EnumPlantType getPlantType(net.minecraft.world.IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.EnumPlantType.Crop;
++   }
++
++   @Override
++   public BlockState getPlant(net.minecraft.world.IBlockReader world, BlockPos pos) {
++      return this.field_195972_b;
++   }
+ }

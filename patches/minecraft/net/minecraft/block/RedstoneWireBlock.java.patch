@@ -1,0 +1,60 @@
+--- a/net/minecraft/block/RedstoneWireBlock.java
++++ b/net/minecraft/block/RedstoneWireBlock.java
+@@ -124,7 +124,7 @@
+       BlockState blockstate1 = p_208074_1_.func_180495_p(blockpos1);
+       if (!blockstate1.func_215686_e(p_208074_1_, blockpos1)) {
+          boolean flag = Block.func_220056_d(blockstate, p_208074_1_, blockpos, Direction.UP) || blockstate.func_177230_c() == Blocks.field_150438_bZ;
+-         if (flag && func_176346_d(p_208074_1_.func_180495_p(blockpos.func_177984_a()))) {
++         if (flag && canConnectTo(p_208074_1_.func_180495_p(blockpos.func_177984_a()), p_208074_1_, blockpos.func_177984_a(), null)) {
+             if (func_208062_a(blockstate.func_196952_d(p_208074_1_, blockpos))) {
+                return RedstoneSide.UP;
+             }
+@@ -133,7 +133,7 @@
+          }
+       }
+ 
+-      return !func_176343_a(blockstate, p_208074_3_) && (blockstate.func_215686_e(p_208074_1_, blockpos) || !func_176346_d(p_208074_1_.func_180495_p(blockpos.func_177977_b()))) ? RedstoneSide.NONE : RedstoneSide.SIDE;
++      return !canConnectTo(blockstate, p_208074_1_, blockpos, p_208074_3_) && (blockstate.func_215686_e(p_208074_1_, blockpos) || !canConnectTo(p_208074_1_.func_180495_p(blockpos.func_177977_b()), p_208074_1_, blockpos.func_177977_b(), null)) ? RedstoneSide.NONE : RedstoneSide.SIDE;
+    }
+ 
+    public boolean func_196260_a(BlockState p_196260_1_, IWorldReader p_196260_2_, BlockPos p_196260_3_) {
+@@ -318,26 +318,18 @@
+       boolean flag = blockstate.func_215686_e(p_176339_1_, blockpos);
+       BlockPos blockpos1 = p_176339_2_.func_177984_a();
+       boolean flag1 = p_176339_1_.func_180495_p(blockpos1).func_215686_e(p_176339_1_, blockpos1);
+-      if (!flag1 && flag && func_176340_e(p_176339_1_, blockpos.func_177984_a())) {
++      if (!flag1 && flag && canConnectTo(p_176339_1_.func_180495_p(blockpos.func_177984_a()), p_176339_1_, blockpos.func_177984_a(), null)) {
+          return true;
+-      } else if (func_176343_a(blockstate, p_176339_3_)) {
++      } else if (canConnectTo(blockstate, p_176339_1_, blockpos, p_176339_3_)) {
+          return true;
+       } else if (blockstate.func_177230_c() == Blocks.field_196633_cV && blockstate.func_177229_b(RedstoneDiodeBlock.field_196348_c) && blockstate.func_177229_b(RedstoneDiodeBlock.field_185512_D) == p_176339_3_) {
+          return true;
+       } else {
+-         return !flag && func_176340_e(p_176339_1_, blockpos.func_177977_b());
++         return !flag && canConnectTo(p_176339_1_.func_180495_p(blockpos.func_177977_b()), p_176339_1_, blockpos.func_177977_b(), null);
+       }
+    }
+ 
+-   protected static boolean func_176340_e(IBlockReader p_176340_0_, BlockPos p_176340_1_) {
+-      return func_176346_d(p_176340_0_.func_180495_p(p_176340_1_));
+-   }
+-
+-   protected static boolean func_176346_d(BlockState p_176346_0_) {
+-      return func_176343_a(p_176346_0_, (Direction)null);
+-   }
+-
+-   protected static boolean func_176343_a(BlockState p_176343_0_, @Nullable Direction p_176343_1_) {
++   protected static boolean canConnectTo(BlockState p_176343_0_, IBlockReader world, BlockPos pos, @Nullable Direction p_176343_1_) {
+       Block block = p_176343_0_.func_177230_c();
+       if (block == Blocks.field_150488_af) {
+          return true;
+@@ -347,7 +339,7 @@
+       } else if (Blocks.field_190976_dk == p_176343_0_.func_177230_c()) {
+          return p_176343_1_ == p_176343_0_.func_177229_b(ObserverBlock.field_176387_N);
+       } else {
+-         return p_176343_0_.func_185897_m() && p_176343_1_ != null;
++         return p_176343_0_.canConnectRedstone(world, pos, p_176343_1_) && p_176343_1_ != null;
+       }
+    }
+ 

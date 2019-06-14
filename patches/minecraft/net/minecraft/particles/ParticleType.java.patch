@@ -1,0 +1,11 @@
+--- a/net/minecraft/particles/ParticleType.java
++++ b/net/minecraft/particles/ParticleType.java
+@@ -3,7 +3,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class ParticleType<T extends IParticleData> {
++public class ParticleType<T extends IParticleData> extends net.minecraftforge.registries.ForgeRegistryEntry<ParticleType<?>> {
+    private final boolean field_197581_e;
+    private final IParticleData.IDeserializer<T> field_197582_f;
+ 

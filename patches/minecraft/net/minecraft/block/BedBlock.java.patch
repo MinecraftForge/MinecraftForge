@@ -1,0 +1,13 @@
+--- a/net/minecraft/block/BedBlock.java
++++ b/net/minecraft/block/BedBlock.java
+@@ -85,7 +85,9 @@
+             }
+          }
+ 
+-         if (p_220051_2_.field_73011_w.func_76567_e() && p_220051_2_.func_180494_b(p_220051_3_) != Biomes.field_76778_j) {
++         net.minecraftforge.common.extensions.IForgeDimension.SleepResult sleepResult = p_220051_2_.field_73011_w.canSleepAt(p_220051_4_, p_220051_3_);
++         if (sleepResult != net.minecraftforge.common.extensions.IForgeDimension.SleepResult.BED_EXPLODES) {
++            if (sleepResult == net.minecraftforge.common.extensions.IForgeDimension.SleepResult.DENY) return true;
+             if (p_220051_1_.func_177229_b(field_176471_b)) {
+                p_220051_4_.func_146105_b(new TranslationTextComponent("block.minecraft.bed.occupied"), true);
+                return true;

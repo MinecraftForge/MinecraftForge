@@ -1,0 +1,20 @@
+--- a/net/minecraft/block/FallingBlock.java
++++ b/net/minecraft/block/FallingBlock.java
+@@ -35,7 +35,7 @@
+    }
+ 
+    private void func_176503_e(World p_176503_1_, BlockPos p_176503_2_) {
+-      if (func_185759_i(p_176503_1_.func_180495_p(p_176503_2_.func_177977_b())) && p_176503_2_.func_177956_o() >= 0) {
++      if (p_176503_1_.func_175623_d(p_176503_2_.func_177977_b()) || func_185759_i(p_176503_1_.func_180495_p(p_176503_2_.func_177977_b())) && p_176503_2_.func_177956_o() >= 0) {
+          if (!p_176503_1_.field_72995_K) {
+             FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_176503_1_, (double)p_176503_2_.func_177958_n() + 0.5D, (double)p_176503_2_.func_177956_o(), (double)p_176503_2_.func_177952_p() + 0.5D, p_176503_1_.func_180495_p(p_176503_2_));
+             this.func_149829_a(fallingblockentity);
+@@ -68,7 +68,7 @@
+    public void func_180655_c(BlockState p_180655_1_, World p_180655_2_, BlockPos p_180655_3_, Random p_180655_4_) {
+       if (p_180655_4_.nextInt(16) == 0) {
+          BlockPos blockpos = p_180655_3_.func_177977_b();
+-         if (func_185759_i(p_180655_2_.func_180495_p(blockpos))) {
++         if (p_180655_2_.func_175623_d(blockpos) || func_185759_i(p_180655_2_.func_180495_p(blockpos))) {
+             double d0 = (double)((float)p_180655_3_.func_177958_n() + p_180655_4_.nextFloat());
+             double d1 = (double)p_180655_3_.func_177956_o() - 0.05D;
+             double d2 = (double)((float)p_180655_3_.func_177952_p() + p_180655_4_.nextFloat());

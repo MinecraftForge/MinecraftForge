@@ -19,9 +19,10 @@
 
 package net.minecraftforge.common;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -34,7 +35,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
  */
 public abstract class ModDimension extends ForgeRegistryEntry<ModDimension>
 {
-    public abstract Function<DimensionType, ? extends Dimension> getFactory();
+    public abstract BiFunction<World, DimensionType, ? extends Dimension> getFactory();
 
     /**
      * Serialize any necessary data, this is called both when saving the world on the server.

@@ -1,0 +1,13 @@
+--- a/net/minecraft/tags/ItemTags.java
++++ b/net/minecraft/tags/ItemTags.java
+@@ -59,6 +59,10 @@
+       return field_199906_c;
+    }
+ 
++   public static int getGeneration() {
++      return field_199907_d;
++   }
++
+    private static Tag<Item> func_199901_a(String p_199901_0_) {
+       return new ItemTags.Wrapper(new ResourceLocation(p_199901_0_));
+    }

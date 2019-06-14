@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/multiplayer/ClientChunkProvider.java
++++ b/net/minecraft/client/multiplayer/ClientChunkProvider.java
+@@ -72,6 +72,7 @@
+       if (this.field_217256_d.func_217183_b(p_212849_1_, p_212849_2_)) {
+          Chunk chunk = this.field_217256_d.func_217192_a(this.field_217256_d.func_217191_a(p_212849_1_, p_212849_2_));
+          if (func_217249_a(chunk, p_212849_1_, p_212849_2_)) {
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.ChunkEvent.Load(chunk));
+             return chunk;
+          }
+       }

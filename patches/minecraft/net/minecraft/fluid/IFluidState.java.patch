@@ -1,6 +1,6 @@
 --- a/net/minecraft/fluid/IFluidState.java
 +++ b/net/minecraft/fluid/IFluidState.java
-@@ -16,7 +16,7 @@
+@@ -29,7 +29,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,3 +9,11 @@
     Fluid func_206886_c();
  
     default boolean func_206889_d() {
+@@ -103,6 +103,7 @@
+       return this.func_206886_c().func_207185_a(p_206884_1_);
+    }
+ 
++   @Deprecated //Forge: Use more sensitive version.
+    default float func_210200_l() {
+       return this.func_206886_c().func_210195_d();
+    }

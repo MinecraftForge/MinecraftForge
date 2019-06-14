@@ -1,0 +1,28 @@
+--- a/net/minecraft/client/renderer/texture/TextureManager.java
++++ b/net/minecraft/client/renderer/texture/TextureManager.java
+@@ -113,11 +114,13 @@
+ 
+    public void func_195410_a(IResourceManager p_195410_1_) {
+       MissingTextureSprite.func_195676_d();
++      try (net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Reloading Texture Manager", this.field_110585_a.entrySet().size(), true)) {
+       Iterator<Entry<ResourceLocation, ITextureObject>> iterator = this.field_110585_a.entrySet().iterator();
+ 
+       while(iterator.hasNext()) {
+          Entry<ResourceLocation, ITextureObject> entry = iterator.next();
+          ResourceLocation resourcelocation = entry.getKey();
++         bar.step(resourcelocation.toString());
+          ITextureObject itextureobject = entry.getValue();
+          if (itextureobject == MissingTextureSprite.func_195676_d() && !resourcelocation.equals(MissingTextureSprite.func_195675_b())) {
+             iterator.remove();
+@@ -125,6 +128,11 @@
+             this.func_110579_a(entry.getKey(), itextureobject);
+          }
+       }
++      }; // Forge: end progress bar
++   }
+ 
++   @Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.TEXTURES;
+    }
+ }

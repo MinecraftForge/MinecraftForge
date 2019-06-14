@@ -61,6 +61,6 @@ public class FMLUserdevClientLaunchProvider extends FMLUserdevLaunchProvider imp
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
     {
         super.configureTransformationClassLoader(builder);
-        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/RealmsVersion.class", "realms"));
+        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/plugin/RealmsPluginImpl.class", "realms"));
     }
 }

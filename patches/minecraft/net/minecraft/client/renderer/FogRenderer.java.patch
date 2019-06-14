@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/FogRenderer.java
 +++ b/net/minecraft/client/renderer/FogRenderer.java
-@@ -103,6 +103,9 @@
+@@ -101,6 +101,9 @@
              f3 = 1.0F / this.field_205095_e;
           }
  
@@ -10,7 +10,7 @@
           this.field_205093_c = this.field_205093_c * (1.0F - f1) + this.field_205093_c * f3 * f1;
           this.field_205094_d = this.field_205094_d * (1.0F - f1) + this.field_205094_d * f3 * f1;
           this.field_205095_e = this.field_205095_e * (1.0F - f1) + this.field_205095_e * f3 * f1;
-@@ -117,11 +120,21 @@
+@@ -115,11 +118,21 @@
              f4 = 1.0F / this.field_205095_e;
           }
  
@@ -22,32 +22,41 @@
           this.field_205095_e = this.field_205095_e * (1.0F - f2) + this.field_205095_e * f4 * f2;
        }
  
-+      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(this, this.field_205104_n, entity, ActiveRenderInfo.func_186703_a(world, entity, p_78466_1_), ifluidstate, p_78466_1_, this.field_205093_c, this.field_205094_d, this.field_205095_e);
++      net.minecraftforge.client.event.EntityViewRenderEvent.FogColors event = new net.minecraftforge.client.event.EntityViewRenderEvent.FogColors(this, this.field_205104_n, p_217619_1_, p_217619_2_, this.field_205093_c, this.field_205094_d, this.field_205095_e);
 +      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
 +
 +      this.field_205093_c = event.getRed();
 +      this.field_205094_d = event.getGreen();
 +      this.field_205095_e = event.getBlue();
 +
-       GlStateManager.func_179082_a(this.field_205093_c, this.field_205094_d, this.field_205095_e, 0.0F);
+       GlStateManager.clearColor(this.field_205093_c, this.field_205094_d, this.field_205095_e, 0.0F);
     }
  
-@@ -213,6 +226,10 @@
-       GlStateManager.func_187432_a(0.0F, -1.0F, 0.0F);
-       GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
-       IFluidState ifluidstate = ActiveRenderInfo.func_206243_b(this.field_205105_o.field_71441_e, entity, p_78468_2_);
-+      net.minecraft.block.state.IBlockState iblockstate = ActiveRenderInfo.func_186703_a(this.field_205105_o.field_71441_e, entity, p_78468_2_);
-+      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(this, this.field_205104_n, entity, iblockstate, ifluidstate, p_78468_2_, 0.1F);
-+      if (hook >= 0) GlStateManager.func_179095_a(hook);
+@@ -205,11 +218,19 @@
+ 
+    }
+ 
++   @Deprecated //Forge: pass in partial ticks to setupFog
+    public void func_217618_a(ActiveRenderInfo p_217618_1_, int p_217618_2_) {
++      setupFog(p_217618_1_, p_217618_2_, 0F);
++   }
++
++   public void setupFog(ActiveRenderInfo p_217618_1_, int p_217618_2_, float partialTicks) {
+       this.func_205090_a(false);
+       GlStateManager.normal3f(0.0F, -1.0F, 0.0F);
+       GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+       IFluidState ifluidstate = p_217618_1_.func_216771_k();
++      float hook = net.minecraftforge.client.ForgeHooksClient.getFogDensity(this, this.field_205104_n, p_217618_1_, partialTicks, 0.1F);
++      if (hook >= 0) GlStateManager.fogDensity(hook);
 +      else
-       if (entity instanceof EntityLivingBase && ((EntityLivingBase)entity).func_70644_a(MobEffects.field_76440_q)) {
+       if (p_217618_1_.func_216773_g() instanceof LivingEntity && ((LivingEntity)p_217618_1_.func_216773_g()).func_70644_a(Effects.field_76440_q)) {
           float f2 = 5.0F;
-          int i = ((EntityLivingBase)entity).func_70660_b(MobEffects.field_76440_q).func_76459_b();
-@@ -272,6 +289,7 @@
-             GlStateManager.func_179102_b(f1 * 0.05F);
-             GlStateManager.func_179153_c(Math.min(f1, 192.0F) * 0.5F);
+          int i = ((LivingEntity)p_217618_1_.func_216773_g()).func_70660_b(Effects.field_76440_q).func_76459_b();
+@@ -264,6 +285,7 @@
+             GlStateManager.fogStart(f1 * 0.05F);
+             GlStateManager.fogEnd(Math.min(f1, 192.0F) * 0.5F);
           }
-+         net.minecraftforge.client.ForgeHooksClient.onFogRender(this, this.field_205104_n, entity, iblockstate, ifluidstate, p_78468_2_, p_78468_1_, f1);
++         net.minecraftforge.client.ForgeHooksClient.onFogRender(this, this.field_205104_n, p_217618_1_, partialTicks, p_217618_2_, f1);
        }
  
-       GlStateManager.func_179142_g();
+       GlStateManager.enableColorMaterial();

@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/spawner/AbstractSpawner.java
++++ b/net/minecraft/world/spawner/AbstractSpawner.java
+@@ -126,7 +126,7 @@
+                   entity.func_70012_b(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v, world.field_73012_v.nextFloat() * 360.0F, 0.0F);
+                   if (entity instanceof MobEntity) {
+                      MobEntity mobentity = (MobEntity)entity;
+-                     if (!mobentity.func_213380_a(world, SpawnReason.SPAWNER) || !mobentity.func_205019_a(world)) {
++                     if (!net.minecraftforge.event.ForgeEventFactory.canEntitySpawnSpawner(mobentity, world, (float)entity.field_70165_t, (float)entity.field_70163_u, (float)entity.field_70161_v, this)) {
+                         continue;
+                      }
+ 
+@@ -282,4 +282,9 @@
+    public double func_177223_e() {
+       return this.field_98284_d;
+    }
++
++   @Nullable
++   public Entity getSpawnerEntity() {
++      return null;
++   }
+ }

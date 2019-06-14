@@ -7,5 +7,5 @@
 +               net.minecraftforge.fml.client.ClientHooks.processForgeListPingData(serverstatusresponse, p_147224_1_);
 +
                 this.field_175092_e = Util.func_211177_b();
-                networkmanager.func_179290_a(new CPacketPing(this.field_175092_e));
+                networkmanager.func_179290_a(new CPingPacket(this.field_175092_e));
                 this.field_147403_d = true;

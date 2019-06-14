@@ -19,35 +19,33 @@
 
 package net.minecraftforge.fml.client.gui;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.StartupQuery;
 
-public class GuiNotification extends GuiScreen
+public class GuiNotification extends Screen
 {
     public GuiNotification(StartupQuery query)
     {
+        super(new TranslationTextComponent("fml.menu.notification.title"));
         this.query = query;
     }
 
     @Override
-    public void initGui()
+    public void init()
     {
-        this.buttons.add(new GuiButton(0, this.width / 2 - 100, this.height - 38, I18n.format("gui.done"))
-        {
-            public void onClick(double mouseX, double mouseY)
-            {
-                GuiNotification.this.mc.displayGuiScreen(null);
-                query.finish();
-            }
-        });
+        this.buttons.add(new Button(this.width / 2 - 100, this.height - 38, 200, 20, I18n.format("gui.done"), b -> {
+            GuiNotification.this.minecraft.displayGuiScreen(null);
+            query.finish();
+        }));
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks)
     {
-        this.drawDefaultBackground();
+        this.renderBackground();
 
         String[] lines = query.getText().split("\n");
 
@@ -60,12 +58,12 @@ public class GuiNotification extends GuiScreen
         {
             if (offset >= spaceAvailable)
             {
-                this.drawCenteredString(this.fontRenderer, "...", this.width / 2, offset, 0xFFFFFF);
+                this.drawCenteredString(this.font, "...", this.width / 2, offset, 0xFFFFFF);
                 break;
             }
             else
             {
-                if (!line.isEmpty()) this.drawCenteredString(this.fontRenderer, line, this.width / 2, offset, 0xFFFFFF);
+                if (!line.isEmpty()) this.drawCenteredString(this.font, line, this.width / 2, offset, 0xFFFFFF);
                 offset += 10;
             }
         }

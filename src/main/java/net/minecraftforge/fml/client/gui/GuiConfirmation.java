@@ -18,6 +18,7 @@
  */
 
 package net.minecraftforge.fml.client.gui;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.StartupQuery;
 
@@ -29,18 +30,18 @@ public class GuiConfirmation extends GuiNotification
     }
 
     @Override
-    public void initGui()
+    public void init()
     {
-        this.addButton(new GuiButtonClickConsumer(0, this.width / 2 - 104, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.yes"),(x, y)->
+        this.addButton(new Button(this.width / 2 - 104, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.yes"), b ->
             {
-                GuiConfirmation.this.mc.currentScreen = null;
+                GuiConfirmation.this.minecraft.field_71462_r = null;
                 query.setResult(true);
                 query.finish();
             }
         ));
-        this.addButton(new GuiButtonClickConsumer(1, this.width / 2 + 4, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.no"), (x,y)->
+        this.addButton(new Button(this.width / 2 + 4, this.height - 38, 100, 20, ForgeI18n.parseMessage("gui.no"), b ->
             {
-                GuiConfirmation.this.mc.currentScreen = null;
+                GuiConfirmation.this.minecraft.field_71462_r = null;
                 query.setResult(false);
                 query.finish();
             }

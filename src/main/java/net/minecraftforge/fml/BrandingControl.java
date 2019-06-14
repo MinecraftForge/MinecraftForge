@@ -21,6 +21,16 @@ package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
+import net.minecraft.resources.IResourceManager;
+import net.minecraftforge.resource.IResourceType;
+import net.minecraftforge.resource.VanillaResourceType;
+import net.minecraftforge.versions.forge.ForgeVersion;
+import net.minecraftforge.versions.mcp.MCPVersion;
+
 
 import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.resource.IResourceType;

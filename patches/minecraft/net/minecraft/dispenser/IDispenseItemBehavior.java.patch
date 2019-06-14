@@ -1,0 +1,29 @@
+--- a/net/minecraft/dispenser/IDispenseItemBehavior.java
++++ b/net/minecraft/dispenser/IDispenseItemBehavior.java
+@@ -370,15 +370,23 @@
+       }
+ 
+       DispenserBlock.func_199774_a(Items.field_151097_aZ.func_199767_j(), new OptionalDispenseBehavior() {
++         @SuppressWarnings("deprecation")
+          protected ItemStack func_82487_b(IBlockSource p_82487_1_, ItemStack p_82487_2_) {
+             World world = p_82487_1_.func_197524_h();
+             if (!world.func_201670_d()) {
+                this.field_218407_b = false;
+                BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(p_82487_1_.func_189992_e().func_177229_b(DispenserBlock.field_176441_a));
+ 
+-               for(SheepEntity sheepentity : world.func_217357_a(SheepEntity.class, new AxisAlignedBB(blockpos))) {
+-                  if (sheepentity.func_70089_S() && !sheepentity.func_70892_o() && !sheepentity.func_70631_g_()) {
+-                     sheepentity.func_213612_dV();
++               for(net.minecraft.entity.Entity entity : world.func_175674_a(null, new AxisAlignedBB(blockpos), e -> !e.func_175149_v() && e instanceof net.minecraftforge.common.IShearable)) {
++                  net.minecraftforge.common.IShearable target = (net.minecraftforge.common.IShearable)entity;
++                  if (target.isShearable(p_82487_2_, world, blockpos)) {
++                     java.util.List<ItemStack> drops = target.onSheared(p_82487_2_, entity.field_70170_p, blockpos,
++                             net.minecraft.enchantment.EnchantmentHelper.func_77506_a(net.minecraft.enchantment.Enchantments.field_185308_t, p_82487_2_));
++                     java.util.Random rand = new java.util.Random();
++                     drops.forEach(d -> {
++                        net.minecraft.entity.item.ItemEntity ent = entity.func_70099_a(p_82487_2_, 1.0F);
++                        ent.func_213317_d(ent.func_213322_ci().func_72441_c((double)((rand.nextFloat() - rand.nextFloat()) * 0.1F), (double)(rand.nextFloat() * 0.05F), (double)((rand.nextFloat() - rand.nextFloat()) * 0.1F)));
++                     });
+                      if (p_82487_2_.func_96631_a(1, world.field_73012_v, (ServerPlayerEntity)null)) {
+                         p_82487_2_.func_190920_e(0);
+                      }

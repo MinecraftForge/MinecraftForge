@@ -1,0 +1,11 @@
+--- a/net/minecraft/nbt/StringNBT.java
++++ b/net/minecraft/nbt/StringNBT.java
+@@ -26,7 +26,7 @@
+    public void func_152446_a(DataInput p_152446_1_, int p_152446_2_, NBTSizeTracker p_152446_3_) throws IOException {
+       p_152446_3_.func_152450_a(288L);
+       this.field_74751_a = p_152446_1_.readUTF();
+-      p_152446_3_.func_152450_a((long)(16 * this.field_74751_a.length()));
++      NBTSizeTracker.readUTF(p_152446_3_, this.field_74751_a);  // Forge: Correctly read String length including header.
+    }
+ 
+    public byte func_74732_a() {

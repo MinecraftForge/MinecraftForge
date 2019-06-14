@@ -44,7 +44,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -138,9 +138,9 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             VersionChecker.startVersionCheck();
         }
-        
+
         // Brandings need to recompute when language changes
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> ((SimpleReloadableResourceManager)Minecraft.getInstance().getResourceManager()).addReloadListener((ISelectiveResourceReloadListener) BrandingControl::clearCaches));
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> ((SimpleReloadableResourceManager)Minecraft.getInstance().getResourceManager()).func_219534_a((ISelectiveResourceReloadListener) BrandingControl::clearCaches));
     }
 
 /*
@@ -195,19 +195,19 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
     @Override
-    public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
+    public CompoundNBT getDataForWriting(SaveHandler handler, WorldInfo info)
     {
-        NBTTagCompound forgeData = new NBTTagCompound();
-        NBTTagCompound dims = new NBTTagCompound();
+        CompoundNBT forgeData = new CompoundNBT();
+        CompoundNBT dims = new CompoundNBT();
         DimensionManager.writeRegistry(dims);
         if (!dims.isEmpty())
-            forgeData.setTag("dims", dims);
+            forgeData.put("dims", dims);
         // TODO fluids FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
+    public void readData(SaveHandler handler, WorldInfo info, CompoundNBT tag)
     {
         if (tag.contains("dims", 10))
             DimensionManager.readRegistry(tag.getCompound("dims"));

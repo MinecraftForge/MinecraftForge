@@ -19,10 +19,10 @@
 
 package net.minecraftforge.fluids.capability;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.Fluid;
@@ -43,14 +43,14 @@ public class TileFluidHandler extends TileEntity
     }
 
     @Override
-    public void read(NBTTagCompound tag)
+    public void read(CompoundNBT tag)
     {
         super.read(tag);
         tank.readFromNBT(tag);
     }
 
     @Override
-    public NBTTagCompound write(NBTTagCompound tag)
+    public CompoundNBT write(CompoundNBT tag)
     {
         tag = super.write(tag);
         tank.writeToNBT(tag);
@@ -59,7 +59,7 @@ public class TileFluidHandler extends TileEntity
 
     @Override
     @Nonnull
-    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing)
+    public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing)
     {
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
             return holder.cast();

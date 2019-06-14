@@ -40,15 +40,17 @@ public abstract class ForgeMessage {
         int id;
         ResourceLocation name;
         ModDimension dim;
+        boolean skyLight;
         @Nullable
         PacketBuffer data;
 
         public DimensionRegisterMessage(){}
-        public DimensionRegisterMessage(int id, ResourceLocation name, ModDimension dim, @Nullable PacketBuffer data)
+        public DimensionRegisterMessage(int id, ResourceLocation name, ModDimension dim, boolean skyLight, @Nullable PacketBuffer data)
         {
             this.id = id;
             this.dim = dim;
             this.data = data;
+            this.skyLight = skyLight;
         }
 
         @Override
@@ -58,6 +60,7 @@ public abstract class ForgeMessage {
             output.writeInt(id);
             output.writeResourceLocation(name);
             output.writeResourceLocation(dim.getRegistryName());
+            output.writeBoolean(skyLight);
 
             if (data == null)
             {
@@ -78,6 +81,7 @@ public abstract class ForgeMessage {
             id = input.readInt();
             name = input.readResourceLocation();
             dim = ForgeRegistries.MOD_DIMENSIONS.getValue(input.readResourceLocation());
+            skyLight = input.readBoolean();
 
             int len = input.readShort();
             if (len != 0)

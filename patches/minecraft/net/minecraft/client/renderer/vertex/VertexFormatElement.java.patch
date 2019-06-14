@@ -18,4 +18,4 @@
 +
        private final String field_177392_h;
  
-       private EnumUsage(String p_i46094_3_) {
+       private Usage(String p_i46094_3_) {

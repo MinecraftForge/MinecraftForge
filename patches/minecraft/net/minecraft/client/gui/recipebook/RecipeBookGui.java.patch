@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/recipebook/RecipeBookGui.java
++++ b/net/minecraft/client/gui/recipebook/RecipeBookGui.java
+@@ -421,7 +421,7 @@
+ 
+          languagemanager.func_135045_a(language);
+          this.field_191888_F.field_71474_y.field_74363_ab = language.getCode();
+-         this.field_191888_F.func_213237_g();
++         net.minecraftforge.client.ForgeHooksClient.refreshResources(this.field_191888_F, net.minecraftforge.resource.VanillaResourceType.LANGUAGES);
+          this.field_191888_F.field_71466_p.func_78275_b(languagemanager.func_135044_b());
+          this.field_191888_F.field_71474_y.func_74303_b();
+       }

@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/RenderComponentsUtil.java
++++ b/net/minecraft/client/gui/RenderComponentsUtil.java
+@@ -54,6 +54,7 @@
+                   s2 = "";
+                   s3 = s4;
+                }
++               s3 = TextFormatting.func_211164_a(s2) + s3; //Forge: Fix chat formatting not surviving line wrapping.
+ 
+                ITextComponent itextcomponent4 = (new StringTextComponent(s3)).func_150255_a(itextcomponent1.func_150256_b().func_150232_l());
+                list1.add(j + 1, itextcomponent4);

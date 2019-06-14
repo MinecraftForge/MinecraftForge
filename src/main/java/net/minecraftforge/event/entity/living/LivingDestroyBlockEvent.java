@@ -20,9 +20,9 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -41,16 +41,16 @@ import net.minecraftforge.eventbus.api.Cancelable;
 public class LivingDestroyBlockEvent extends LivingEvent
 {
     private final BlockPos pos;
-    private final IBlockState state;
+    private final BlockState state;
     
-    public LivingDestroyBlockEvent(EntityLivingBase entity, BlockPos pos, IBlockState state)
+    public LivingDestroyBlockEvent(LivingEntity entity, BlockPos pos, BlockState state)
     {
         super(entity);
         this.pos = pos;
         this.state = state;
     }
 
-    public IBlockState getState()
+    public BlockState getState()
     {
         return state;
     }

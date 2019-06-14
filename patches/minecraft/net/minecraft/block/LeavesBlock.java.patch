@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/LeavesBlock.java
++++ b/net/minecraft/block/LeavesBlock.java
+@@ -18,7 +18,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class LeavesBlock extends Block {
++public class LeavesBlock extends Block implements net.minecraftforge.common.IShearable {
+    public static final IntegerProperty field_208494_a = BlockStateProperties.field_208514_aa;
+    public static final BooleanProperty field_208495_b = BlockStateProperties.field_208515_s;
+    protected static boolean field_196478_c;

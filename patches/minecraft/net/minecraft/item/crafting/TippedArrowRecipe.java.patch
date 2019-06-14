@@ -1,0 +1,10 @@
+--- a/net/minecraft/item/crafting/TippedArrowRecipe.java
++++ b/net/minecraft/item/crafting/TippedArrowRecipe.java
+@@ -53,7 +53,6 @@
+       }
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ >= 2 && p_194133_2_ >= 2;
+    }

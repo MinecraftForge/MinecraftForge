@@ -26,10 +26,9 @@ import net.minecraft.command.arguments.DimensionArgument;
 import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.util.ITeleporter;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -41,14 +40,14 @@ import java.util.function.Predicate;
 
 public class CommandSetDimension
 {
-    private static final SimpleCommandExceptionType NO_ENTITIES = new SimpleCommandExceptionType(new TextComponentTranslation("commands.forge.setdim.invalid.entity"));
-    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TextComponentTranslation("commands.forge.setdim.invalid.dim", dim));
+    private static final SimpleCommandExceptionType NO_ENTITIES = new SimpleCommandExceptionType(new TranslationTextComponent("commands.forge.setdim.invalid.entity"));
+    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TranslationTextComponent("commands.forge.setdim.invalid.dim", dim));
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("setdimension")
             .requires(cs->cs.hasPermissionLevel(2)) //permission
-            .then(Commands.argument("targets", EntityArgument.multipleEntities())
-                .then(Commands.argument("dim", DimensionArgument.func_212595_a())
+            .then(Commands.argument("targets", EntityArgument.entities())
+                .then(Commands.argument("dim", DimensionArgument.getDimension())
                     .then(Commands.argument("pos", BlockPosArgument.blockPos())
                         .executes(ctx -> execute(ctx.getSource(), EntityArgument.getEntitiesAllowingNone(ctx, "targets"), DimensionArgument.func_212592_a(ctx, "dim"), BlockPosArgument.getBlockPos(ctx, "pos")))
                     )
@@ -66,9 +65,8 @@ public class CommandSetDimension
         //if (!DimensionManager.isDimensionRegistered(dim))
         //    throw INVALID_DIMENSION.create(dim);
 
-        final ITeleporter teleporter = new CommandTeleporter(pos);
-        entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TextComponentTranslation("commands.forge.setdim.invalid.nochange", e.getDisplayName(), dim), true));
-        entities.stream().filter(e -> e.dimension != dim).forEach(e -> e.changeDimension(dim, teleporter));
+        entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName(), dim), true));
+        entities.stream().filter(e -> e.dimension != dim).forEach(e -> e.changeDimension(dim));
 
         return 0;
     }
@@ -77,21 +75,5 @@ public class CommandSetDimension
     {
         // use vanilla portal logic from BlockPortal#onEntityCollision
         return !entity.isPassenger() && !entity.isBeingRidden() && entity.isNonBoss();
-    }
-
-    private static class CommandTeleporter implements ITeleporter
-    {
-        private final BlockPos targetPos;
-
-        private CommandTeleporter(BlockPos targetPos)
-        {
-            this.targetPos = targetPos;
-        }
-
-        @Override
-        public void placeEntity(World world, Entity entity, float yaw)
-        {
-            entity.moveToBlockPosAndAngles(targetPos, yaw, entity.rotationPitch);
-        }
     }
 }

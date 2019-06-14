@@ -1,0 +1,13 @@
+--- a/net/minecraft/client/renderer/Matrix4f.java
++++ b/net/minecraft/client/renderer/Matrix4f.java
+@@ -106,6 +106,10 @@
+ 
+    }
+ 
++   public float get(int col, int row) {
++      return this.field_195888_a[col + 4 * row];
++   }
++
+    public void func_195878_a(int p_195878_1_, int p_195878_2_, float p_195878_3_) {
+       this.field_195888_a[p_195878_1_ + 4 * p_195878_2_] = p_195878_3_;
+    }

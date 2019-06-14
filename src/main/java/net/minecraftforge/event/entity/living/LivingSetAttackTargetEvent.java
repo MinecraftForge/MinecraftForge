@@ -19,11 +19,9 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
  * LivingSetAttackTargetEvent is fired when an Entity sets a target to attack.<br>
@@ -44,14 +42,14 @@ import net.minecraftforge.eventbus.api.Cancelable;
 public class LivingSetAttackTargetEvent extends LivingEvent
 {
 
-    private final EntityLivingBase target;
-    public LivingSetAttackTargetEvent(EntityLivingBase entity, EntityLivingBase target)
+    private final LivingEntity target;
+    public LivingSetAttackTargetEvent(LivingEntity entity, LivingEntity target)
     {
         super(entity);
         this.target = target;
     }
 
-    public EntityLivingBase getTarget()
+    public LivingEntity getTarget()
     {
         return target;
     }

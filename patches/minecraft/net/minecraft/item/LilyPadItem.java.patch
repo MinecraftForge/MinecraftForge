@@ -1,0 +1,18 @@
+--- a/net/minecraft/item/LilyPadItem.java
++++ b/net/minecraft/item/LilyPadItem.java
+@@ -50,7 +50,15 @@
+             Material material = blockstate.func_185904_a();
+             IFluidState ifluidstate = p_77659_1_.func_204610_c(blockpos);
+             if ((ifluidstate.func_206886_c() == Fluids.field_204546_a || material == Material.field_151588_w) && p_77659_1_.func_175623_d(blockpos1)) {
++
++               // special case for handling block placement with water lilies
++               net.minecraftforge.common.util.BlockSnapshot blocksnapshot = net.minecraftforge.common.util.BlockSnapshot.getBlockSnapshot(p_77659_1_, blockpos1);
+                p_77659_1_.func_180501_a(blockpos1, Blocks.field_196651_dG.func_176223_P(), 11);
++               if (net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_77659_2_, blocksnapshot, net.minecraft.util.Direction.UP)) {
++                  blocksnapshot.restore(true, false);
++                  return new ActionResult<ItemStack>(ActionResultType.FAIL, itemstack);
++               }
++
+                if (p_77659_2_ instanceof ServerPlayerEntity) {
+                   CriteriaTriggers.field_193137_x.func_193173_a((ServerPlayerEntity)p_77659_2_, blockpos1, itemstack);
+                }

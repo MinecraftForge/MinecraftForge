@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
 +++ b/net/minecraft/client/renderer/texture/TextureAtlasSprite.java
-@@ -17,7 +17,7 @@
+@@ -18,7 +18,7 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -9,7 +9,7 @@
     private final ResourceLocation field_110984_i;
     protected final int field_130223_c;
     protected final int field_130224_d;
-@@ -89,7 +89,10 @@
+@@ -104,7 +104,10 @@
                 anativeimage[k1] = this.field_195670_c[k1];
              } else {
                 NativeImage nativeimage1 = anativeimage[k1 - 1];
@@ -21,7 +21,7 @@
                 int k = nativeimage.func_195702_a();
                 int l = nativeimage.func_195714_b();
  
-@@ -98,8 +101,11 @@
+@@ -113,8 +116,11 @@
                       nativeimage.func_195700_a(i1, j1, func_195661_b(nativeimage1.func_195709_a(i1 * 2 + 0, j1 * 2 + 0), nativeimage1.func_195709_a(i1 * 2 + 1, j1 * 2 + 0), nativeimage1.func_195709_a(i1 * 2 + 0, j1 * 2 + 1), nativeimage1.func_195709_a(i1 * 2 + 1, j1 * 2 + 1), flag));
                    }
                 }
@@ -34,7 +34,7 @@
              }
           }
  
-@@ -181,6 +187,7 @@
+@@ -196,6 +202,7 @@
  
     private void func_195667_a(int p_195667_1_, int p_195667_2_, NativeImage[] p_195667_3_) {
        for(int i = 0; i < this.field_195670_c.length; ++i) {
@@ -42,24 +42,7 @@
           p_195667_3_[i].func_195706_a(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_130223_c >> i, this.field_130224_d >> i, this.field_195670_c.length > 1);
        }
  
-@@ -190,12 +197,10 @@
-       this.field_110975_c = p_110971_3_;
-       this.field_110974_d = p_110971_4_;
-       this.field_130222_e = p_110971_5_;
--      float f = (float)((double)0.01F / (double)p_110971_1_);
--      float f1 = (float)((double)0.01F / (double)p_110971_2_);
--      this.field_110979_l = (float)p_110971_3_ / (float)((double)p_110971_1_) + f;
--      this.field_110980_m = (float)(p_110971_3_ + this.field_130223_c) / (float)((double)p_110971_1_) - f;
--      this.field_110977_n = (float)p_110971_4_ / (float)p_110971_2_ + f1;
--      this.field_110978_o = (float)(p_110971_4_ + this.field_130224_d) / (float)p_110971_2_ - f1;
-+      this.field_110979_l = (float)p_110971_3_ / (float)((double)p_110971_1_);
-+      this.field_110980_m = (float)(p_110971_3_ + this.field_130223_c) / (float)((double)p_110971_1_);
-+      this.field_110977_n = (float)p_110971_4_ / (float)p_110971_2_;
-+      this.field_110978_o = (float)(p_110971_4_ + this.field_130224_d) / (float)p_110971_2_;
-    }
- 
-    public int func_94211_a() {
-@@ -439,4 +444,10 @@
+@@ -451,4 +458,10 @@
     public void func_195663_q() {
        this.func_195659_d(0);
     }
@@ -68,5 +51,5 @@
 +   
 +   public int getPixelRGBA(int frameIndex, int x, int y) {
 +       return this.field_195670_c[frameIndex].func_195709_a(x + this.field_195671_d[frameIndex] * this.field_130223_c, y + this.field_195672_e[frameIndex] * this.field_130224_d);
++   }
  }
-+}

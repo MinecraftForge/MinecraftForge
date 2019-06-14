@@ -1,0 +1,21 @@
+--- a/net/minecraft/client/renderer/GameRenderer.java
++++ b/net/minecraft/client/renderer/GameRenderer.java
+@@ -487,8 +489,16 @@
+       }
+ 
+       if (!this.field_78531_r.field_71474_y.field_74325_U) {
+-         GlStateManager.func_179114_b(entity.func_195050_f(p_78467_1_), 1.0F, 0.0F, 0.0F);
+-         GlStateManager.func_179114_b(entity.func_195046_g(p_78467_1_) + 180.0F, 0.0F, 1.0F, 0.0F);
++         float yaw = entity.func_195046_g(p_78467_1_) + 180F;
++         float pitch = entity.func_195050_f(p_78467_1_);
++         float roll = 0.0F;
++         BlockState state = ActiveRenderInfo.func_186703_a(this.field_78531_r.field_71441_e, entity, p_78467_1_);
++         IFluidState fluidState = ActiveRenderInfo.func_206243_b(this.field_78531_r.field_71441_e, entity, p_78467_1_);
++         net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup event = new net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup(this, entity, state, fluidState, p_78467_1_, yaw, pitch, roll);
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++         GlStateManager.func_179114_b(event.getRoll(), 0.0F, 0.0F, 1.0F);
++         GlStateManager.func_179114_b(event.getPitch(), 1.0F, 0.0F, 0.0F);
++         GlStateManager.func_179114_b(event.getYaw(), 0.0F, 1.0F, 0.0F);
+       }
+ 
+       GlStateManager.func_179109_b(0.0F, -f, 0.0F);

@@ -19,8 +19,6 @@
 
 package net.minecraftforge.fml.client.config;
 
-import net.minecraft.client.gui.GuiTextField;
-
 /**
  * Provides an interface for defining GuiConfigEntry.listEntry objects.
  */

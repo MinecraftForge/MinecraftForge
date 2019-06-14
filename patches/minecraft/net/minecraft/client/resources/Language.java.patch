@@ -12,8 +12,8 @@
 +      }
     }
  
-    public String func_135034_a() {
-@@ -44,4 +50,8 @@
+    public String getCode() {
+@@ -52,4 +58,8 @@
     public int compareTo(Language p_compareTo_1_) {
        return this.field_135039_a.compareTo(p_compareTo_1_.field_135039_a);
     }

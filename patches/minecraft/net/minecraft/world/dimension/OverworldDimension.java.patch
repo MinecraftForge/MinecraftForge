@@ -1,23 +1,13 @@
 --- a/net/minecraft/world/dimension/OverworldDimension.java
 +++ b/net/minecraft/world/dimension/OverworldDimension.java
-@@ -47,12 +47,18 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -51,10 +51,6 @@
+       super(p_i49933_1_, p_i49933_2_);
+    }
  
- public class OverworldDimension extends Dimension {
-+   private final DimensionType type;
-+   public OverworldDimension() { this(DimensionType.OVERWORLD); }
-+   public OverworldDimension(DimensionType type) {
-+      this.type = type;
-+   }
-+
-    public DimensionType func_186058_p() {
+-   public DimensionType func_186058_p() {
 -      return DimensionType.OVERWORLD;
-+      return type;
-    }
- 
-    public boolean func_186056_c(int p_186056_1_, int p_186056_2_) {
--      return !this.field_76579_a.func_72916_c(p_186056_1_, p_186056_2_) && super.func_186056_c(p_186056_1_, p_186056_2_);
-+      return (this.type != DimensionType.OVERWORLD || !this.field_76579_a.func_72916_c(p_186056_1_, p_186056_2_)) && super.func_186056_c(p_186056_1_, p_186056_2_);
-    }
- 
-    protected void func_76572_b() {
+-   }
+-
+    public ChunkGenerator<? extends GenerationSettings> func_186060_c() {
+       WorldType worldtype = this.field_76579_a.func_72912_H().func_76067_t();
+       ChunkGeneratorType<FlatGenerationSettings, FlatChunkGenerator> chunkgeneratortype = ChunkGeneratorType.field_205489_f;

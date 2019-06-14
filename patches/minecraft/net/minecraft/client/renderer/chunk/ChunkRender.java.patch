@@ -1,0 +1,75 @@
+--- a/net/minecraft/client/renderer/chunk/ChunkRender.java
++++ b/net/minecraft/client/renderer/chunk/ChunkRender.java
+@@ -33,7 +33,7 @@
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+ @OnlyIn(Dist.CLIENT)
+-public class ChunkRender {
++public class ChunkRender implements net.minecraftforge.client.extensions.IForgeRenderChunk {
+    private volatile World field_178588_d;
+    private final WorldRenderer field_178589_e;
+    public static int field_178592_a;
+@@ -151,22 +151,24 @@
+                   lvt_10_1_.func_178606_a(blockpos2);
+                }
+ 
+-               if (block.func_149716_u()) {
++               if (blockstate.hasTileEntity()) {
+                   TileEntity tileentity = lvt_12_1_.func_212399_a(blockpos2, Chunk.CreateEntityType.CHECK);
+                   if (tileentity != null) {
+                      TileEntityRenderer<TileEntity> tileentityrenderer = TileEntityRendererDispatcher.field_147556_a.func_147547_b(tileentity);
+                      if (tileentityrenderer != null) {
+-                        compiledchunk.func_178490_a(tileentity);
+                         if (tileentityrenderer.func_188185_a(tileentity)) {
+                            lvt_11_1_.add(tileentity);
+                         }
++                        else compiledchunk.func_178490_a(tileentity); // FORGE: Fix MC-112730
+                      }
+                   }
+                }
+ 
+                IFluidState ifluidstate = lvt_12_1_.func_204610_c(blockpos2);
+-               if (!ifluidstate.func_206888_e()) {
+-                  BlockRenderLayer blockrenderlayer1 = ifluidstate.func_180664_k();
++               net.minecraftforge.client.model.data.IModelData modelData = p_178581_4_.getModelData(blockpos2);
++               for(BlockRenderLayer blockrenderlayer1 : BlockRenderLayer.values()) {
++                   net.minecraftforge.client.ForgeHooksClient.setRenderLayer(blockrenderlayer1);
++               if (!ifluidstate.func_206888_e() && ifluidstate.canRenderInLayer(blockrenderlayer1)) {
+                   int j = blockrenderlayer1.ordinal();
+                   BufferBuilder bufferbuilder = p_178581_4_.func_178545_d().func_179039_a(j);
+                   if (!compiledchunk.func_178492_d(blockrenderlayer1)) {
+@@ -177,17 +179,18 @@
+                   aboolean[j] |= blockrendererdispatcher.func_215331_a(blockpos2, lvt_12_1_, bufferbuilder, ifluidstate);
+                }
+ 
+-               if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE) {
+-                  BlockRenderLayer blockrenderlayer2 = block.func_180664_k();
+-                  int k = blockrenderlayer2.ordinal();
++               if (blockstate.func_185901_i() != BlockRenderType.INVISIBLE && blockstate.canRenderInLayer(blockrenderlayer1)) {
++                  int k = blockrenderlayer1.ordinal();
+                   BufferBuilder bufferbuilder1 = p_178581_4_.func_178545_d().func_179039_a(k);
+-                  if (!compiledchunk.func_178492_d(blockrenderlayer2)) {
+-                     compiledchunk.func_178493_c(blockrenderlayer2);
++                  if (!compiledchunk.func_178492_d(blockrenderlayer1)) {
++                     compiledchunk.func_178493_c(blockrenderlayer1);
+                      this.func_178573_a(bufferbuilder1, blockpos);
+                   }
+ 
+-                  aboolean[k] |= blockrendererdispatcher.func_215330_a(blockstate, blockpos2, lvt_12_1_, bufferbuilder1, random);
++                  aboolean[k] |= blockrendererdispatcher.renderBlock(blockstate, blockpos2, lvt_12_1_, bufferbuilder1, random, modelData);
+                }
++               }
++               net.minecraftforge.client.ForgeHooksClient.setRenderLayer(null);
+             }
+ 
+             for(BlockRenderLayer blockrenderlayer : BlockRenderLayer.values()) {
+@@ -247,7 +250,8 @@
+          this.func_178578_b();
+          BlockPos blockpos = this.field_178586_f.func_185334_h();
+          int i = 1;
+-         ChunkRenderCache chunkrendercache = ChunkRenderCache.func_212397_a(this.field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
++         ChunkRenderCache chunkrendercache = createRegionRenderCache(field_178588_d, blockpos.func_177982_a(-1, -1, -1), blockpos.func_177982_a(16, 16, 16), 1);
++
+          this.field_178599_i = new ChunkRenderTask(this, ChunkRenderTask.Type.REBUILD_CHUNK, this.func_188280_f(), chunkrendercache);
+          chunkrendertask = this.field_178599_i;
+       } finally {

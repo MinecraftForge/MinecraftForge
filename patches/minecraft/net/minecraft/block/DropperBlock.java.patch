@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/DropperBlock.java
++++ b/net/minecraft/block/DropperBlock.java
+@@ -37,7 +37,7 @@
+          p_176439_1_.func_217379_c(1001, p_176439_2_, 0);
+       } else {
+          ItemStack itemstack = dispensertileentity.func_70301_a(i);
+-         if (!itemstack.func_190926_b()) {
++         if (!itemstack.func_190926_b() && net.minecraftforge.items.VanillaInventoryCodeHooks.dropperInsertHook(p_176439_1_, p_176439_2_, dispensertileentity, i, itemstack)) {
+             Direction direction = p_176439_1_.func_180495_p(p_176439_2_).func_177229_b(field_176441_a);
+             IInventory iinventory = HopperTileEntity.func_195484_a(p_176439_1_, p_176439_2_.func_177972_a(direction));
+             ItemStack itemstack1;

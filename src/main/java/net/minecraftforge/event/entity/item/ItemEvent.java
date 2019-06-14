@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event.entity.item;
 
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraftforge.event.entity.EntityEvent;
 
 /**
@@ -30,14 +30,14 @@ import net.minecraftforge.event.entity.EntityEvent;
  */
 public class ItemEvent extends EntityEvent
 {
-    private final EntityItem entityItem;
+    private final ItemEntity entityItem;
 
     /**
      * Creates a new event for an EntityItem.
      * 
      * @param itemEntity The EntityItem for this event
      */
-    public ItemEvent(EntityItem itemEntity)
+    public ItemEvent(ItemEntity itemEntity)
     {
         super(itemEntity);
         this.entityItem = itemEntity;
@@ -46,7 +46,7 @@ public class ItemEvent extends EntityEvent
     /**
      * The relevant EntityItem for this event, already cast for you.
      */
-    public EntityItem getEntityItem()
+    public ItemEntity getEntityItem()
     {
         return entityItem;
     }

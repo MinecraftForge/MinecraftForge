@@ -20,13 +20,17 @@
 package net.minecraftforge.items.wrapper;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nonnull;
+
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -41,24 +45,24 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     /**
      * The entity.
      */
-    protected final EntityLivingBase entity;
+    protected final LivingEntity entity;
 
     /**
      * The slots exposed by this wrapper, with {@link EntityEquipmentSlot#index} as the index.
      */
-    protected final List<EntityEquipmentSlot> slots;
+    protected final List<EquipmentSlotType> slots;
 
     /**
      * @param entity   The entity.
      * @param slotType The slot type to expose.
      */
-    public EntityEquipmentInvWrapper(final EntityLivingBase entity, final EntityEquipmentSlot.Type slotType)
+    public EntityEquipmentInvWrapper(final LivingEntity entity, final EquipmentSlotType.Group slotType)
     {
         this.entity = entity;
 
-        final List<EntityEquipmentSlot> slots = new ArrayList<EntityEquipmentSlot>();
+        final List<EquipmentSlotType> slots = new ArrayList<EquipmentSlotType>();
 
-        for (final EntityEquipmentSlot slot : EntityEquipmentSlot.values())
+        for (final EquipmentSlotType slot : EquipmentSlotType.values())
         {
             if (slot.getSlotType() == slotType)
             {
@@ -89,7 +93,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         if (stack.isEmpty())
             return ItemStack.EMPTY;
 
-        final EntityEquipmentSlot equipmentSlot = validateSlotIndex(slot);
+        final EquipmentSlotType equipmentSlot = validateSlotIndex(slot);
 
         final ItemStack existing = entity.getItemStackFromSlot(equipmentSlot);
 
@@ -130,7 +134,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         if (amount == 0)
             return ItemStack.EMPTY;
 
-        final EntityEquipmentSlot equipmentSlot = validateSlotIndex(slot);
+        final EquipmentSlotType equipmentSlot = validateSlotIndex(slot);
 
         final ItemStack existing = entity.getItemStackFromSlot(equipmentSlot);
 
@@ -162,8 +166,8 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     @Override
     public int getSlotLimit(final int slot)
     {
-        final EntityEquipmentSlot equipmentSlot = validateSlotIndex(slot);
-        return equipmentSlot.getSlotType() == EntityEquipmentSlot.Type.ARMOR ? 1 : 64;
+        final EquipmentSlotType equipmentSlot = validateSlotIndex(slot);
+        return equipmentSlot.getSlotType() == EquipmentSlotType.Group.ARMOR ? 1 : 64;
     }
 
     protected int getStackLimit(final int slot, @Nonnull final ItemStack stack)
@@ -174,7 +178,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
     @Override
     public void setStackInSlot(final int slot, @Nonnull final ItemStack stack)
     {
-        final EntityEquipmentSlot equipmentSlot = validateSlotIndex(slot);
+        final EquipmentSlotType equipmentSlot = validateSlotIndex(slot);
         if (ItemStack.areItemStacksEqual(entity.getItemStackFromSlot(equipmentSlot), stack))
             return;
         entity.setItemStackToSlot(equipmentSlot, stack);
@@ -186,7 +190,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         return true;
     }
 
-    protected EntityEquipmentSlot validateSlotIndex(final int slot)
+    protected EquipmentSlotType validateSlotIndex(final int slot)
     {
         if (slot < 0 || slot >= slots.size())
             throw new IllegalArgumentException("Slot " + slot + " not in valid range - [0," + slots.size() + ")");
@@ -194,7 +198,7 @@ public abstract class EntityEquipmentInvWrapper implements IItemHandlerModifiabl
         return slots.get(slot);
     }
 
-    public static LazyOptional<IItemHandlerModifiable>[] create(EntityLivingBase entity)
+    public static LazyOptional<IItemHandlerModifiable>[] create(LivingEntity entity)
     {
         @SuppressWarnings("unchecked")
         LazyOptional<IItemHandlerModifiable>[] ret = new LazyOptional[3];

@@ -52,7 +52,7 @@ public class ModLoadingException extends RuntimeException
     private final List<Object> context;
 
     public ModLoadingException(final IModInfo modInfo, final ModLoadingStage errorStage, final String i18nMessage, final Throwable originalException, Object... context) {
-        super(ForgeI18n.parseMessage(i18nMessage, Streams.concat(Stream.of(modInfo, errorStage, originalException), Stream.of(context)).toArray()), originalException);
+        super("Mod Loading Exception : "+i18nMessage, originalException);
         this.modInfo = modInfo;
         this.errorStage = errorStage;
         this.i18nMessage = i18nMessage;

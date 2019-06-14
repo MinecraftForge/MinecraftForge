@@ -1,0 +1,25 @@
+--- a/net/minecraft/client/gui/ScreenManager.java
++++ b/net/minecraft/client/gui/ScreenManager.java
+@@ -39,6 +39,10 @@
+    private static final Map<ContainerType<?>, ScreenManager.IScreenFactory<?, ?>> field_216914_b = Maps.newHashMap();
+ 
+    public static <T extends Container> void func_216909_a(@Nullable ContainerType<T> p_216909_0_, Minecraft p_216909_1_, int p_216909_2_, ITextComponent p_216909_3_) {
++      getScreenFactory(p_216909_0_, p_216909_1_, p_216909_2_, p_216909_3_).ifPresent(f -> f.func_216908_a(p_216909_3_, p_216909_0_, p_216909_1_, p_216909_2_));
++   }
++
++   public static <T extends Container> java.util.Optional<IScreenFactory<T, ?>> getScreenFactory(@Nullable ContainerType<T> p_216909_0_, Minecraft p_216909_1_, int p_216909_2_, ITextComponent p_216909_3_) {
+       if (p_216909_0_ == null) {
+          field_216913_a.warn("Trying to open invalid screen with name: {}", (Object)p_216909_3_.getString());
+       } else {
+@@ -46,9 +50,10 @@
+          if (iscreenfactory == null) {
+             field_216913_a.warn("Failed to create screen for menu type: {}", (Object)Registry.field_218366_G.func_177774_c(p_216909_0_));
+          } else {
+-            iscreenfactory.func_216908_a(p_216909_3_, p_216909_0_, p_216909_1_, p_216909_2_);
++            return java.util.Optional.of(iscreenfactory);
+          }
+       }
++      return java.util.Optional.empty();
+    }
+ 
+    @Nullable

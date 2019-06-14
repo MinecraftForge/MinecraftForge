@@ -1,0 +1,23 @@
+--- a/net/minecraft/entity/ai/brain/task/FarmTask.java
++++ b/net/minecraft/entity/ai/brain/task/FarmTask.java
+@@ -39,7 +39,7 @@
+    }
+ 
+    protected boolean func_212832_a_(ServerWorld p_212832_1_, VillagerEntity p_212832_2_) {
+-      if (!p_212832_1_.func_82736_K().func_82766_b("mobGriefing")) {
++      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_212832_1_, p_212832_2_)) {
+          return false;
+       } else if (p_212832_2_.func_213700_eh().func_221130_b() != VillagerProfession.field_221156_f) {
+          return false;
+@@ -106,6 +106,11 @@
+                   } else if (itemstack.func_77973_b() == Items.field_185163_cU) {
+                      p_212833_1_.func_180501_a(this.field_220422_a, Blocks.field_185773_cZ.func_176223_P(), 3);
+                      flag = true;
++                  } else if (itemstack.func_77973_b() instanceof net.minecraftforge.common.IPlantable) {
++                     if (((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlantType(p_212833_1_, field_220422_a) == net.minecraftforge.common.PlantType.Crop) {
++                        p_212833_1_.func_180501_a(field_220422_a, ((net.minecraftforge.common.IPlantable)itemstack.func_77973_b()).getPlant(p_212833_1_, field_220422_a),3);
++                        flag = true;
++                     }
+                   }
+                }
+ 

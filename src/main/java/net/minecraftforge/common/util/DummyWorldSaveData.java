@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.util;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.storage.WorldSavedData;
 
 public class DummyWorldSaveData extends WorldSavedData {
@@ -29,12 +29,12 @@ public class DummyWorldSaveData extends WorldSavedData {
     }
 
     @Override
-    public void read(final NBTTagCompound nbt) {
+    public void read(final CompoundNBT nbt) {
         // NOOP
     }
 
     @Override
-    public NBTTagCompound write(final NBTTagCompound compound) {
+    public CompoundNBT write(final CompoundNBT compound) {
         // NOOP
         return null;
     }

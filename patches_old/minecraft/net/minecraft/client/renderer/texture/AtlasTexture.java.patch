@@ -1,0 +1,53 @@
+--- a/net/minecraft/client/renderer/texture/AtlasTexture.java
++++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
+@@ -57,8 +58,14 @@
+       int j = Integer.MAX_VALUE;
+       int k = 1 << this.field_147636_j;
+ 
+-      for(ResourceLocation resourcelocation : this.field_195427_i) {
++      field_147635_d.info("Max texture size: {}", i);
++      try (net.minecraftforge.fml.common.progress.ProgressBar textureLoadingBar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture loading", this.field_195427_i.size())) {
++      loadedSprites.clear();
++      for(ResourceLocation resourcelocation : Sets.newHashSet(this.field_195427_i)) {
++         textureLoadingBar.step(this.func_195420_b(resourcelocation).toString());
+          if (!this.field_94249_f.func_195668_m().equals(resourcelocation)) {
++            j = loadTexture(stitcher, p_195421_1_, resourcelocation, j, k);
++            if (true) continue; // Forge: skip the rest of this if statement, we're using loadTexture instead
+             ResourceLocation resourcelocation1 = this.func_195420_b(resourcelocation);
+ 
+             TextureAtlasSprite textureatlassprite;
+@@ -84,9 +91,11 @@
+             stitcher.func_110934_a(textureatlassprite);
+          }
+       }
++      } // Forge: end progress bar
+ 
+       int l = Math.min(j, k);
+       int i1 = MathHelper.func_151239_c(l);
+@@ -94,18 +103,25 @@
+ 
+       this.field_94249_f.func_147963_d(this.field_147636_j);
+       stitcher.func_110934_a(this.field_94249_f);
++      try (net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture creation", 2)) {
+ 
+       try {
++         bar.step("Stitching");
+          stitcher.func_94305_f();
+       } catch (StitcherException stitcherexception) {
+          throw stitcherexception;
+       }
+ 
+       field_147635_d.info("Created: {}x{} {}-atlas", stitcher.func_110935_a(), stitcher.func_110936_b(), this.field_94254_c);
++      bar.step("Allocating GL texture");
+       TextureUtil.func_180600_a(this.func_110552_b(), this.field_147636_j, stitcher.func_110935_a(), stitcher.func_110936_b());
+ 
++      }; // Forge: end progress bar
++      try (net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture mipmap and upload", stitcher.func_94309_g().size())) {
+       for(TextureAtlasSprite textureatlassprite1 : stitcher.func_94309_g()) {
+-         if (textureatlassprite1 == this.field_94249_f || this.func_195422_a(p_195421_1_, textureatlassprite1)) {
++         bar.step(textureatlassprite1.func_195668_m().toString());
++         // FORGE: Sprite loading is now done during stitching, short-circuit this check
++         if (true || textureatlassprite1 == this.field_94249_f || this.func_195422_a(p_195421_1_, textureatlassprite1)) {
+             this.field_94252_e.put(textureatlassprite1.func_195668_m(), textureatlassprite1);
+ 
+             try {

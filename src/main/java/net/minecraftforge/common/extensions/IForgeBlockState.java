@@ -19,22 +19,22 @@
 
 package net.minecraftforge.common.extensions;
 
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.annotation.Nullable;
 
 import net.minecraft.block.*;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.ParticleManager;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EntitySpawnPlacementRegistry.SpawnPlacementType;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.EntitySpawnPlacementRegistry.PlacementType;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.IFluidState;
-import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.DyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.pathfinding.PathNodeType;
@@ -45,11 +45,11 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
-import net.minecraft.world.IWorldReaderBase;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.IPlantable;
@@ -57,9 +57,9 @@ import net.minecraftforge.common.ToolType;
 
 public interface IForgeBlockState
 {
-    default IBlockState getBlockState()
+    default BlockState getBlockState()
     {
-        return (IBlockState)this;
+        return (BlockState)this;
     }
 
     /**
@@ -84,7 +84,7 @@ public interface IForgeBlockState
     /**
      * Get a light value for this block, taking into account the given state and coordinates, normal ranges are between 0 and 15
      */
-    default int getLightValue(IWorldReader world, BlockPos pos)
+    default int getLightValue(IEnviromentBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getLightValue(getBlockState(), world, pos);
     }
@@ -97,23 +97,9 @@ public interface IForgeBlockState
      * @param entity The entity trying to use the ladder, CAN be null.
      * @return True if the block should act like a ladder
      */
-    default boolean isLadder(IWorldReader world, BlockPos pos, EntityLivingBase entity)
+    default boolean isLadder(IWorldReader world, BlockPos pos, LivingEntity entity)
     {
         return getBlockState().getBlock().isLadder(getBlockState(), world, pos, entity);
-    }
-
-    /**
-     * Return true if the block is a normal, solid cube.  This
-     * determines indirect power state, entity ejection from blocks, and a few
-     * others.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return True if the block is a full cube
-     */
-    default boolean isNormalCube(IBlockReader world, BlockPos pos)
-    {
-        return getBlockState().getBlock().isNormalCube(getBlockState(), world, pos);
     }
 
     /**
@@ -127,7 +113,7 @@ public interface IForgeBlockState
      * @param face The side to check
      * @return True if the block is opaque on the specified side.
      */
-    default boolean doesSideBlockRendering(IWorldReader world, BlockPos pos, EnumFacing face)
+    default boolean doesSideBlockRendering(IEnviromentBlockReader world, BlockPos pos, Direction face)
     {
         return getBlockState().getBlock().doesSideBlockRendering(getBlockState(), world, pos, face);
     }
@@ -161,19 +147,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Return true from this function if the player with silk touch can harvest this block directly, and not it's normal drops.
-     *
-     * @param world The world
-     * @param pos Block position in world
-     * @param player The player doing the harvesting
-     * @return True if the block can be directly harvested using silk touch
-     */
-    default boolean canSilkHarvest(IWorldReader world, BlockPos pos, EntityPlayer player)
-    {
-        return getBlockState().getBlock().canSilkHarvest(getBlockState(), world, pos, player);
-    }
-
-    /**
      * Determines if the player can harvest this block, obtaining it's drops when the block is destroyed.
      *
      * @param world The current world
@@ -181,7 +154,7 @@ public interface IForgeBlockState
      * @param player The player damaging the block
      * @return True to spawn the drops
      */
-    default boolean canHarvestBlock(IBlockReader world, BlockPos pos, EntityPlayer player)
+    default boolean canHarvestBlock(IBlockReader world, BlockPos pos, PlayerEntity player)
     {
         return getBlockState().getBlock().canHarvestBlock(getBlockState(), world, pos, player);
     }
@@ -205,7 +178,7 @@ public interface IForgeBlockState
      * @param fluid The current fluid and block state for the position in the world.
      * @return True if the block is actually destroyed.
      */
-    default boolean removedByPlayer(World world, BlockPos pos, EntityPlayer player, boolean willHarvest, IFluidState fluid)
+    default boolean removedByPlayer(World world, BlockPos pos, PlayerEntity player, boolean willHarvest, IFluidState fluid)
     {
         return getBlockState().getBlock().removedByPlayer(getBlockState(), world, pos, player, willHarvest, fluid);
     }
@@ -220,7 +193,7 @@ public interface IForgeBlockState
      * @param player The player or camera entity, null in some cases.
      * @return True to treat this as a bed
      */
-    default boolean isBed(IBlockReader world, BlockPos pos, @Nullable EntityPlayer player)
+    default boolean isBed(IBlockReader world, BlockPos pos, @Nullable LivingEntity player)
     {
         return getBlockState().getBlock().isBed(getBlockState(), world, pos, player);
     }
@@ -234,23 +207,22 @@ public interface IForgeBlockState
      * @param type The Mob Category Type
      * @return True to allow a mob of the specified category to spawn, false to prevent it.
      */
-    default boolean canCreatureSpawn(IWorldReaderBase world, BlockPos pos, SpawnPlacementType type, EntityType<? extends EntityLiving> entityType)
+    default boolean canCreatureSpawn(IWorldReader world, BlockPos pos, PlacementType type, EntityType<?> entityType)
     {
         return getBlockState().getBlock().canCreatureSpawn(getBlockState(), world, pos, type, entityType);
     }
     /**
-     * Returns the position that the player is moved to upon
+     * Returns the position that the sleeper is moved to upon
      * waking up, or respawning at the bed.
      *
      * @param world The current world
      * @param pos Block position in world
-     * @param player The player or camera entity, null in some cases.
+     * @param sleeper The sleeper or camera entity, null in some cases.
      * @return The spawn position
      */
-    @Nullable
-    default BlockPos getBedSpawnPosition(IBlockReader world, BlockPos pos, @Nullable EntityPlayer player)
+    default Optional<Vec3d> getBedSpawnPosition(EntityType<?> type, IWorldReader world, BlockPos pos, @Nullable LivingEntity sleeper)
     {
-        return getBlockState().getBlock().getBedSpawnPosition(getBlockState(), world, pos, player);
+        return getBlockState().getBlock().getBedSpawnPosition(type, getBlockState(), world, pos, sleeper);
     }
 
     /**
@@ -258,12 +230,12 @@ public interface IForgeBlockState
      *
      * @param world The current world
      * @param pos Block position in world
-     * @param player The player or camera entity, null in some cases.
+     * @param sleeper The sleeper or camera entity, null in some cases.
      * @param occupied True if we are occupying the bed, or false if they are stopping use of the bed
      */
-    default void setBedOccupied(IWorldReader world, BlockPos pos, EntityPlayer player, boolean occupied)
+    default void setBedOccupied(IWorldReader world, BlockPos pos, LivingEntity sleeper, boolean occupied)
     {
-        getBlockState().getBlock().setBedOccupied(getBlockState(), world, pos, player, occupied);
+        getBlockState().getBlock().setBedOccupied(getBlockState(), world, pos, sleeper, occupied);
     }
 
    /**
@@ -274,7 +246,7 @@ public interface IForgeBlockState
     * @param pos Block position in world
     * @return Bed direction
     */
-    default EnumFacing getBedDirection(IWorldReader world, BlockPos pos)
+    default Direction getBedDirection(IWorldReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getBedDirection(getBlockState(), world, pos);
     }
@@ -324,9 +296,22 @@ public interface IForgeBlockState
      * @param pos Block position in world
      * @return true if this block can be replaced by growing leaves.
      */
-    default boolean canBeReplacedByLeaves(IWorldReaderBase world, BlockPos pos)
+    default boolean canBeReplacedByLeaves(IWorldReader world, BlockPos pos)
     {
         return getBlockState().getBlock().canBeReplacedByLeaves(getBlockState(), world, pos);
+    }
+
+    /**
+     * Used during tree growth to determine if newly generated logs can replace this block.
+     *
+     * @param state The current state
+     * @param world The current world
+     * @param pos Block position in world
+     * @return true if this block can be replaced by growing leaves.
+     */
+    default boolean canBeReplacedByLogs(IWorldReader world, BlockPos pos)
+    {
+        return getBlockState().getBlock().canBeReplacedByLogs(getBlockState(), world, pos);
     }
 
     /**
@@ -338,7 +323,7 @@ public interface IForgeBlockState
      *      for overworld generation, and neatherack for the nether.
      * @return True to allow this block to be replaced by a ore
      */
-    default boolean isReplaceableOreGen(IWorldReader world, BlockPos pos, Predicate<IBlockState> target)
+    default boolean isReplaceableOreGen(IWorldReader world, BlockPos pos, Predicate<BlockState> target)
     {
         return getBlockState().getBlock().isReplaceableOreGen(getBlockState(), world, pos, target);
     }
@@ -358,20 +343,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * Called when the block is destroyed by an explosion.
-     * Useful for allowing the block to take into account tile entities,
-     * state, etc. when exploded, before it is removed.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @param explosion The explosion instance affecting the block
-     */
-    default void onBlockExploded(World world, BlockPos pos, Explosion explosion)
-    {
-        getBlockState().getBlock().onBlockExploded(getBlockState(), world, pos, explosion);
-    }
-
-    /**
      * Determine if this block can make a redstone connection on the side provided,
      * Useful to control which sides are inputs and outputs for redstone wires.
      *
@@ -380,22 +351,9 @@ public interface IForgeBlockState
      * @param side The side that is trying to make the connection, CAN BE NULL
      * @return True to make the connection
      */
-    default boolean canConnectRedstone(IBlockReader world, BlockPos pos, @Nullable EnumFacing side)
+    default boolean canConnectRedstone(IBlockReader world, BlockPos pos, @Nullable Direction side)
     {
         return getBlockState().getBlock().canConnectRedstone(getBlockState(), world, pos, side);
-    }
-
-    /**
-     * Determines if a torch can be placed on the top surface of this block.
-     * Useful for creating your own block that torches can be on, such as fences.
-     *
-     * @param world The current world
-     * @param pos Block position in world
-     * @return True to allow the torch to be placed
-     */
-    default boolean canPlaceTorchOnTop(IWorldReaderBase world, BlockPos pos)
-    {
-        return getBlockState().getBlock().canPlaceTorchOnTop(getBlockState(), world, pos);
     }
 
     /**
@@ -405,7 +363,7 @@ public interface IForgeBlockState
      * @param target The full target the player is looking at
      * @return A ItemStack to add to the player's inventory, empty itemstack if nothing should be added.
      */
-    default ItemStack getPickBlock(RayTraceResult target, IBlockReader world, BlockPos pos, EntityPlayer player)
+    default ItemStack getPickBlock(RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player)
     {
         return getBlockState().getBlock().getPickBlock(getBlockState(), target, world, pos, player);
     }
@@ -433,7 +391,7 @@ public interface IForgeBlockState
      * @param numberOfParticles That vanilla world have spawned
      * @return True to prevent vanilla landing particles from spawning
      */
-    default boolean addLandingEffects(WorldServer worldserver, BlockPos pos, IBlockState state2, EntityLivingBase entity, int numberOfParticles)
+    default boolean addLandingEffects(ServerWorld worldserver, BlockPos pos, BlockState state2, LivingEntity entity, int numberOfParticles)
     {
         return getBlockState().getBlock().addLandingEffects(getBlockState(), worldserver, pos, state2, entity, numberOfParticles);
     }
@@ -503,7 +461,7 @@ public interface IForgeBlockState
     * @param plantable The plant that wants to check
     * @return True to allow the plant to be planted/stay.
     */
-    default boolean canSustainPlant(IBlockReader world, BlockPos pos, EnumFacing facing, IPlantable plantable)
+    default boolean canSustainPlant(IBlockReader world, BlockPos pos, Direction facing, IPlantable plantable)
     {
         return getBlockState().getBlock().canSustainPlant(getBlockState(), world, pos, facing, plantable);
     }
@@ -561,12 +519,12 @@ public interface IForgeBlockState
     * @param fortune
     * @return Amount of XP from breaking this block.
     */
-    default int getExpDrop(IWorldReader world, BlockPos pos, int fortune)
+    default int getExpDrop(IWorldReader world, BlockPos pos, int fortune, int silktouch)
     {
-        return getBlockState().getBlock().getExpDrop(getBlockState(), world, pos, fortune);
+        return getBlockState().getBlock().getExpDrop(getBlockState(), world, pos, fortune, silktouch);
     }
 
-    default IBlockState rotate(IWorld world, BlockPos pos, Rotation direction)
+    default BlockState rotate(IWorld world, BlockPos pos, Rotation direction)
     {
         return getBlockState().getBlock().rotate(getBlockState(), world, pos, direction);
     }
@@ -592,7 +550,7 @@ public interface IForgeBlockState
      * @param fortune
      * @return Amount of XP from breaking this block.
      */
-    default boolean recolorBlock(IWorld world, BlockPos pos, EnumFacing facing, EnumDyeColor color)
+    default boolean recolorBlock(IWorld world, BlockPos pos, Direction facing, DyeColor color)
     {
         return getBlockState().getBlock().recolorBlock(getBlockState(), world, pos, facing, color);
     }
@@ -629,7 +587,7 @@ public interface IForgeBlockState
     * @param side The INPUT side of the block to be powered - ie the opposite of this block's output side
     * @return Whether Block#isProvidingWeakPower should be called when determining indirect power
     */
-    default boolean shouldCheckWeakPower(IWorldReader world, BlockPos pos, EnumFacing side)
+    default boolean shouldCheckWeakPower(IWorldReader world, BlockPos pos, Direction side)
     {
         return getBlockState().getBlock().shouldCheckWeakPower(getBlockState(), world, pos, side);
     }
@@ -674,7 +632,7 @@ public interface IForgeBlockState
     /**
      * Can return IExtendedBlockState
      */
-    default IBlockState getExtendedState(IBlockReader world, BlockPos pos)
+    default BlockState getExtendedState(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getExtendedState(getBlockState(), world, pos);
     }
@@ -738,7 +696,7 @@ public interface IForgeBlockState
      * @param viewpoint the viewpoint
      * @return the block state that should be 'seen'
      */
-    default IBlockState getStateAtViewpoint(IWorldReader world, BlockPos pos, Vec3d viewpoint)
+    default BlockState getStateAtViewpoint(IBlockReader world, BlockPos pos, Vec3d viewpoint)
     {
         return getBlockState().getBlock().getStateAtViewpoint(getBlockState(), world, pos, viewpoint);
     }
@@ -756,7 +714,7 @@ public interface IForgeBlockState
      * @param hand The player hand used to place this block
      * @return The state to be placed in the world
      */
-    default IBlockState getStateForPlacement(EnumFacing facing, IBlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, EnumHand hand)
+    default BlockState getStateForPlacement(Direction facing, BlockState state2, IWorld world, BlockPos pos1, BlockPos pos2, Hand hand)
     {
         return getBlockState().getBlock().getStateForPlacement(getBlockState(), facing, state2, world, pos1, pos2, hand);
     }
@@ -769,21 +727,9 @@ public interface IForgeBlockState
      * @param facing The side the connecting block is on
      * @return True to allow another block to connect to this block
      */
-    default boolean canBeConnectedTo(IBlockReader world, BlockPos pos, EnumFacing facing)
+    default boolean canBeConnectedTo(IBlockReader world, BlockPos pos, Direction facing)
     {
         return getBlockState().getBlock().canBeConnectedTo(getBlockState(), world, pos, facing);
-    }
-
-    /**
-     * @param blockState The state for this block
-     * @param world The world this block is in
-     * @param pos The position of this block
-     * @param side The side of this block that the chest lid is trying to open into
-     * @return true if the chest should be prevented from opening by this block
-     */
-    default boolean doesSideBlockChestOpening(IBlockReader world, BlockPos pos, EnumFacing side)
-    {
-        return getBlockState().getBlock().doesSideBlockChestOpening(getBlockState(), world, pos, side);
     }
 
     /**
@@ -796,19 +742,6 @@ public interface IForgeBlockState
     }
 
     /**
-     * This gets a complete list of items dropped from this block.
-     *
-     * @param drops add all items this block drops to this drops list
-     * @param world The current world
-     * @param pos Block position in world
-     * @param fortune Breakers fortune level
-     */
-    default void getDrops(NonNullList<ItemStack> drops, World world, BlockPos pos, int fortune)
-    {
-        getBlockState().getBlock().getDrops(getBlockState(), drops, world, pos, fortune);
-    }
-
-    /**
      * Chance that fire will spread and consume this block.
      * 300 being a 100% chance, 0, being a 0% chance.
      *
@@ -817,7 +750,7 @@ public interface IForgeBlockState
      * @param face The face that the fire is coming from
      * @return A number ranging from 0 to 300 relating used to determine if the block will be consumed by fire
      */
-    default int getFlammability(IBlockReader world, BlockPos pos, EnumFacing face)
+    default int getFlammability(IBlockReader world, BlockPos pos, Direction face)
     {
         return getBlockState().getBlock().getFlammability(getBlockState(), world, pos, face);
     }
@@ -830,7 +763,7 @@ public interface IForgeBlockState
      * @param face The face that the fire is coming from
      * @return True if the face can be on fire, false otherwise.
      */
-    default boolean isFlammable(IBlockReader world, BlockPos pos, EnumFacing face)
+    default boolean isFlammable(IBlockReader world, BlockPos pos, Direction face)
     {
         return getBlockState().getBlock().isFlammable(getBlockState(), world, pos, face);
     }
@@ -844,7 +777,7 @@ public interface IForgeBlockState
      * @param face The face that the fire is coming from
      * @return A number that is used to determine the speed of fire growth around the block
      */
-    default int getFireSpreadSpeed(IBlockReader world, BlockPos pos, EnumFacing face)
+    default int getFireSpreadSpeed(IBlockReader world, BlockPos pos, Direction face)
     {
         return getBlockState().getBlock().getFireSpreadSpeed(getBlockState(), world, pos, face);
     }
@@ -859,7 +792,7 @@ public interface IForgeBlockState
      * @param side The face that the fire is coming from
      * @return True if this block sustains fire, meaning it will never go out.
      */
-    default boolean isFireSource(IBlockReader world, BlockPos pos, EnumFacing side)
+    default boolean isFireSource(IBlockReader world, BlockPos pos, Direction side)
     {
         return getBlockState().getBlock().isFireSource(getBlockState(), world, pos, side);
     }
@@ -884,7 +817,7 @@ public interface IForgeBlockState
      * @return An array of valid axes to rotate around, or null for none or unknown
      */
     @Nullable
-    default EnumFacing[] getValidRotations(IBlockReader world, BlockPos pos)
+    default Direction[] getValidRotations(IBlockReader world, BlockPos pos)
     {
         return getBlockState().getBlock().getValidRotations(getBlockState(), world, pos);
     }
@@ -903,26 +836,21 @@ public interface IForgeBlockState
     }
 
     /**
-     * Determines if the top is consider 'solid'. This is a helper for getBlockFaceShape(UP) == SOLID.
-     * Sadly some vanilla logic doesn't sync this value, so we have to have this special function.
-     *
-     * @param world The world
-     * @param pos Block position in world
-     * @return True if the top is considered solid
-     */
-     default boolean isTopSolid(IWorldReader world, BlockPos pos)
-     {
-         return getBlockState().getBlock().isTopSolid(getBlockState(), world, pos);
-     }
-
-    /**
      * Get the {@code PathNodeType} for this block. Return {@code null} for vanilla behavior.
      *
      * @return the PathNodeType
      */
     @Nullable
-    default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos, @Nullable EntityLiving entity)
+    default PathNodeType getAiPathNodeType(IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
     {
         return getBlockState().getBlock().getAiPathNodeType(getBlockState(), world, pos, entity);
+    }
+
+    /**
+     * Determines if this block should drop loot when exploded.
+     */
+    default boolean canDropFromExplosion(IBlockReader world, BlockPos pos, Explosion explosion)
+    {
+        return getBlockState().getBlock().canDropFromExplosion(getBlockState(), world, pos, explosion);
     }
 }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/crash/CrashReport.java
 +++ b/net/minecraft/crash/CrashReport.java
-@@ -63,6 +63,7 @@
+@@ -65,6 +65,7 @@
           List<String> list = Util.func_211565_f().collect(Collectors.toList());
           return String.format("%d total; %s", list.size(), list.stream().collect(Collectors.joining(" ")));
        });
@@ -8,7 +8,7 @@
     }
  
     public String func_71501_a() {
-@@ -115,23 +116,13 @@
+@@ -117,23 +118,13 @@
           throwable.setStackTrace(this.field_71511_b.getStackTrace());
        }
  
