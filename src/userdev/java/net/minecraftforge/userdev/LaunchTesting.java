@@ -89,7 +89,10 @@ public class LaunchTesting
             }
         }
 
-        if (target.equals("fmldevclient") || target.equals("fmldevserver") || target.equals("fmluserdevclient") || target.equals("fmluserdevserver")) {
+        if (Arrays.asList(
+                "fmldevclient", "fmldevserver", "fmldevdata",
+                "fmluserdevclient", "fmluserdevserver"
+            ).contains(target)) {
             //nop
         } else {
             throw new IllegalArgumentException("Unknown value for 'target' property: " + target);

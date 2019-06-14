@@ -1,0 +1,11 @@
+--- a/net/minecraft/data/DirectoryCache.java
++++ b/net/minecraft/data/DirectoryCache.java
+@@ -23,7 +23,7 @@
+    private final Path field_208326_c;
+    private int field_208327_d;
+    private final Map<Path, String> field_208328_e = Maps.newHashMap();
+-   private final Map<Path, String> field_208329_f = Maps.newHashMap();
++   private final Map<Path, String> field_208329_f = Maps.newTreeMap(); //Forge: TreeMap, makes the file output predictable/sorted.
+    private final Set<Path> field_218457_g = Sets.newHashSet();
+ 
+    public DirectoryCache(Path p_i49352_1_, String p_i49352_2_) throws IOException {

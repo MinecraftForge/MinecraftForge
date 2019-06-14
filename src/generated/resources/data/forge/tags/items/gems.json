@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:gems/diamond",
+    "#forge:gems/emerald",
+    "#forge:gems/lapis",
+    "#forge:gems/prismarine",
+    "#forge:gems/quartz"
+  ]
+}

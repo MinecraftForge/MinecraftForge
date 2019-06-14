@@ -130,7 +130,10 @@ project(':forge') {
                 srcDirs = ["$rootDir/src/main/java"]
             }
             resources {
-                srcDirs = ["$rootDir/src/main/resources"]
+                srcDirs = [
+                    "$rootDir/src/main/resources",
+                    "$rootDir/src/generated/resources"
+                ]
             }
         }
         test {
@@ -267,6 +270,29 @@ project(':forge') {
                 mods {
                     TestMods { sources sourceSets.test }
                 }
+            }
+
+            forge_data {
+                taskName 'forge_data'
+
+                main 'net.minecraftforge.userdev.LaunchTesting'
+                workingDirectory project.file('run')
+
+                environment 'target', 'fmldevdata'
+
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+                
+                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
             }
         }
     }

@@ -48,6 +48,8 @@ net/minecraft/resources/ResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/fu
 
 net/minecraft/server/management/PlayerInteractionManager.removeBlock(Lnet/minecraft/util/math/BlockPos;Z)Z=|p_180235_1_,canHarvest
 
+net/minecraft/tags/Tag.<init>(Lnet/minecraft/util/ResourceLocation;Ljava/util/Collection;ZZ)V=|p_i48224_1_,p_i48224_2_,p_i48224_3_,replace
+
 net/minecraft/tileentity/BannerPattern.create(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/tileentity/BannerPattern;=|enumName,p_i47246_3_,p_i47246_4_,p_i47246_5_
 net/minecraft/tileentity/BannerPattern.create(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lnet/minecraft/tileentity/BannerPattern;=|enumName,p_i47247_3_,p_i47247_4_,p_i47247_5_,p_i47247_6_,p_i47247_7_
 
