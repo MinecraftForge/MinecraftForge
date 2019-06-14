@@ -16,7 +16,8 @@ import java.util.Objects;
  */
 public interface IForgePacketBuffer
 {
-    default PacketBuffer getBuffer() {
+    default PacketBuffer getBuffer()
+    {
         return (PacketBuffer) this;
     }
     /**
