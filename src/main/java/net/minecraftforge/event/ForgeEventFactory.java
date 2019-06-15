@@ -509,7 +509,7 @@ public class ForgeEventFactory
         return event.getExtraLife();
     }
 
-    public static float onItemDamage(EntityItem entity, DamageSource source, float amount)
+    public static float onEntityItemDamage(EntityItem entity, DamageSource source, float amount)
     {
         EntityItemDamageEvent event = new EntityItemDamageEvent(entity, source, amount);
         if (!entity.getItem().isEmpty() && entity.getItem().getItem() == Items.NETHER_STAR && source.isExplosion()) event.setCanceled(true);
