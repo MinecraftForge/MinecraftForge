@@ -93,6 +93,7 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.ThrowableImpactEvent;
+import net.minecraftforge.event.entity.item.ItemDamageEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
@@ -505,6 +506,12 @@ public class ForgeEventFactory
         ItemExpireEvent event = new ItemExpireEvent(entity, (item.isEmpty() ? 6000 : item.getItem().getEntityLifespan(item, entity.world)));
         if (!MinecraftForge.EVENT_BUS.post(event)) return -1;
         return event.getExtraLife();
+    }
+
+    public static float onItemDamage(EntityItem entity, DamageSource source, float amount)
+    {
+        ItemDamageEvent event = new ItemDamageEvent(entity, source, amount);
+        return !MinecraftForge.EVENT_BUS.post(event) ? event.getAmount() : 0F;
     }
 
     public static int onItemPickup(EntityItem entityItem, EntityPlayer player)
