@@ -17,35 +17,35 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
 @Cancelable
 public class ItemDamageEvent extends ItemEvent
 {
-	private DamageSource source;
-	private float amount;
+    private final DamageSource source;
+    private float amount;
 
-	/**
-	 * Creates a new event for an EntityItem that is taking damage.
-	 *
-	 * @param entityItem The EntityItem being damaged.
-	 * @param source The {@link DamageSource} source of the damage.
-	 * @param amount The amount of damage being dealt.
-	 */
-	public ItemDamageEvent(EntityItem entityItem, DamageSource source, float amount)
-	{
-		super(entityItem);
-		this.source = source;
-		this.amount = amount;
-	}
+    /**
+     * Creates a new event for an EntityItem that is taking damage.
+     *
+     * @param entityItem The EntityItem being damaged.
+     * @param source The {@link DamageSource} source of the damage.
+     * @param amount The amount of damage being dealt.
+     */
+    public ItemDamageEvent(EntityItem entityItem, DamageSource source, float amount)
+    {
+        super(entityItem);
+        this.source = source;
+        this.amount = amount;
+    }
 
-	public DamageSource getSource()
-	{
-		return source;
-	}
+    public DamageSource getSource()
+    {
+        return source;
+    }
 
-	public float getAmount()
-	{
-		return amount;
-	}
+    public float getAmount()
+    {
+        return amount;
+    }
 
-	public void setAmount(float amount)
-	{
-		this.amount = amount;
-	}
+    public void setAmount(float amount)
+    {
+        this.amount = amount;
+    }
 }

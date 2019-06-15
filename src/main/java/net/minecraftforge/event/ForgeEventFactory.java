@@ -42,6 +42,7 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -511,6 +512,7 @@ public class ForgeEventFactory
     public static float onItemDamage(EntityItem entity, DamageSource source, float amount)
     {
         ItemDamageEvent event = new ItemDamageEvent(entity, source, amount);
+        if (!entity.getItem().isEmpty() && entity.getItem().getItem() == Items.NETHER_STAR && source.isExplosion()) event.setCanceled(true);
         return !MinecraftForge.EVENT_BUS.post(event) ? event.getAmount() : 0F;
     }
 
