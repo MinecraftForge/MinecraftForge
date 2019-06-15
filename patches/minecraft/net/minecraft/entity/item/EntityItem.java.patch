@@ -76,7 +76,7 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -282,6 +304,7 @@
+@@ -282,16 +304,16 @@
  
      public boolean func_70097_a(DamageSource p_70097_1_, float p_70097_2_)
      {
@@ -84,8 +84,11 @@
          if (this.func_180431_b(p_70097_1_))
          {
              return false;
-@@ -292,6 +315,9 @@
          }
+-        else if (!this.func_92059_d().func_190926_b() && this.func_92059_d().func_77973_b() == Items.field_151156_bN && p_70097_1_.func_94541_c())
+-        {
+-            return false;
+-        }
          else
          {
 +            p_70097_2_ = ForgeEventFactory.onItemDamage(this, p_70097_1_, p_70097_2_);
@@ -94,7 +97,7 @@
              this.func_70018_K();
              this.field_70291_e = (int)((float)this.field_70291_e - p_70097_2_);
  
-@@ -314,6 +340,7 @@
+@@ -314,6 +336,7 @@
          p_70014_1_.func_74777_a("Health", (short)this.field_70291_e);
          p_70014_1_.func_74777_a("Age", (short)this.field_70292_b);
          p_70014_1_.func_74777_a("PickupDelay", (short)this.field_145804_b);
@@ -102,7 +105,7 @@
  
          if (this.func_145800_j() != null)
          {
-@@ -358,22 +385,30 @@
+@@ -358,22 +381,30 @@
          {
              this.func_70106_y();
          }
@@ -135,7 +138,7 @@
                      this.func_70106_y();
                      itemstack.func_190920_e(i);
                  }
-@@ -394,9 +429,9 @@
+@@ -394,9 +425,9 @@
      }
  
      @Nullable
@@ -147,7 +150,7 @@
  
          if (!this.field_70170_p.field_72995_K && entity instanceof EntityItem)
          {
-@@ -476,6 +511,6 @@
+@@ -476,6 +507,6 @@
      public void func_174870_v()
      {
          this.func_174871_r();
