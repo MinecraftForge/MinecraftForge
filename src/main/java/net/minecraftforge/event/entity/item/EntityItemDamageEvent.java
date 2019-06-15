@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.eventhandler.Cancelable;
  * If this event is canceled, the EntityItem is not damaged.
  */
 @Cancelable
-public class ItemDamageEvent extends ItemEvent
+public class EntityItemDamageEvent extends ItemEvent
 {
     private final DamageSource source;
     private float amount;
@@ -27,7 +27,7 @@ public class ItemDamageEvent extends ItemEvent
      * @param source The {@link DamageSource} source of the damage.
      * @param amount The amount of damage being dealt.
      */
-    public ItemDamageEvent(EntityItem entityItem, DamageSource source, float amount)
+    public EntityItemDamageEvent(EntityItem entityItem, DamageSource source, float amount)
     {
         super(entityItem);
         this.source = source;

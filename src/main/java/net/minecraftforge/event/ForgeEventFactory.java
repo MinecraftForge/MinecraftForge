@@ -94,7 +94,7 @@ import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
 import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.ThrowableImpactEvent;
-import net.minecraftforge.event.entity.item.ItemDamageEvent;
+import net.minecraftforge.event.entity.item.EntityItemDamageEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
@@ -511,7 +511,7 @@ public class ForgeEventFactory
 
     public static float onItemDamage(EntityItem entity, DamageSource source, float amount)
     {
-        ItemDamageEvent event = new ItemDamageEvent(entity, source, amount);
+        EntityItemDamageEvent event = new EntityItemDamageEvent(entity, source, amount);
         if (!entity.getItem().isEmpty() && entity.getItem().getItem() == Items.NETHER_STAR && source.isExplosion()) event.setCanceled(true);
         return !MinecraftForge.EVENT_BUS.post(event) ? event.getAmount() : 0F;
     }
