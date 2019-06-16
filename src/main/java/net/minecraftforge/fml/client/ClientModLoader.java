@@ -65,6 +65,7 @@ public class ClientModLoader
         } catch (LoadingFailedException e) {
             MinecraftForge.EVENT_BUS.shutdown();
             error = e;
+            TEMP_printLoadingExceptions(e);
         }
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
     }
@@ -76,6 +77,7 @@ public class ClientModLoader
         } catch (LoadingFailedException e) {
             MinecraftForge.EVENT_BUS.shutdown();
             if (error == null) error = e;
+            TEMP_printLoadingExceptions(e);
         }
         loading = false;
         mc.gameSettings.loadOptions();
@@ -115,5 +117,11 @@ public class ClientModLoader
     public static boolean isLoading()
     {
         return loading;
+    }
+
+    private static void TEMP_printLoadingExceptions(LoadingFailedException error)
+    {
+        error.getErrors().forEach(e -> LOGGER.error("Exception: " + e.formatToString()));
+        throw new RuntimeException(error);
     }
 }

@@ -78,7 +78,7 @@ public class ForgeI18n {
     }
 
     public static String getPattern(final String patternName) {
-        return i18n.getOrDefault(patternName, patternName);
+        return i18n == null ? patternName : i18n.getOrDefault(patternName, patternName);
     }
 
     public static void loadLanguageData(final Map<String, String> properties) {
