@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common.util;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.IntSupplier;
@@ -47,7 +48,7 @@ public class ReverseTagWrapper<T>
     {
         if (cache == null || generation != genSupplier.getAsInt())
         {
-            this.cache = new HashSet<>(colSupplier.get().getOwningTags(target));
+            this.cache = Collections.unmodifiableSet(new HashSet<>(colSupplier.get().getOwningTags(target)));
             this.generation = genSupplier.getAsInt();
         }
         return this.cache;
