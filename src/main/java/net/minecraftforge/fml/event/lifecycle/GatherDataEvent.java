@@ -74,9 +74,9 @@ public class GatherDataEvent extends ModLifecycleEvent
             return mods;
         }
 
-        public DataGenerator makeGenerator(final Function<Path,Path> pathEnhancer) {
+        public DataGenerator makeGenerator(final Function<Path,Path> pathEnhancer, final boolean shouldExecute) {
             final DataGenerator generator = new DataGenerator(pathEnhancer.apply(path), inputs);
-            generators.add(generator);
+            if (shouldExecute) generators.add(generator);
             return generator;
         }
 

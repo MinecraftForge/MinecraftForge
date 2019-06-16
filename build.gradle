@@ -877,6 +877,19 @@ project(':forge') {
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
                 environment 'FORGE_VERSION', "${project.version.substring(MC_VERSION.length() + 1)}"
             }
+
+            data {
+                main 'net.minecraftforge.userdev.LaunchTesting'
+
+                environment 'target', 'fmldevdata'
+
+                environment 'MC_VERSION', "${MC_VERSION}"
+                environment 'FORGE_GROUP', "${project.group}"
+                environment 'MCP_VERSION', "${MCP_VERSION}"
+                environment 'MOD_CLASSES', '{source_roots}'
+                environment 'MCP_MAPPINGS', '{mcp_mappings}'
+                environment 'FORGE_VERSION', "${project.version.substring(MC_VERSION.length() + 1)}"
+            }
         }
     }
     

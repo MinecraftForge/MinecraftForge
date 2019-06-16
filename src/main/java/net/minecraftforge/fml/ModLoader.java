@@ -231,6 +231,6 @@ public class ModLoader
     }
 
     public Function<ModContainer, ModLifecycleEvent> getDataGeneratorEvent() {
-        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.getMods().size() == 1 ? p : p.resolve(mc.getModId())), dataGeneratorConfig);
+        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.getMods().size() == 1 ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig);
     }
 }
