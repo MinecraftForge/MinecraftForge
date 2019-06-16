@@ -37,7 +37,8 @@ public enum LifecycleEventProvider
     SIDED_SETUP(()->new LifecycleEvent(ModLoadingStage.SIDED_SETUP)),
     ENQUEUE_IMC(()->new LifecycleEvent(ModLoadingStage.ENQUEUE_IMC)),
     PROCESS_IMC(()->new LifecycleEvent(ModLoadingStage.PROCESS_IMC)),
-    COMPLETE(()->new LifecycleEvent(ModLoadingStage.COMPLETE));
+    COMPLETE(()->new LifecycleEvent(ModLoadingStage.COMPLETE)),
+    GATHERDATA(()->new GatherDataLifecycleEvent(ModLoadingStage.GATHERDATA), ModList.inlineDispatcher);
 
     private final Supplier<? extends LifecycleEvent> event;
     private final BiConsumer<LifecycleEvent, Consumer<List<ModLoadingException>>> eventDispatcher;
@@ -128,6 +129,22 @@ public enum LifecycleEventProvider
             public ModLoadingStage apply(ModLoadingStage in) {
                 return this.edge.apply(in);
             }
+        }
+    }
+
+    private static class GatherDataLifecycleEvent extends LifecycleEvent {
+        GatherDataLifecycleEvent(final ModLoadingStage stage) {
+            super(stage);
+        }
+
+        @Override
+        public ModLoadingStage fromStage() {
+            return ModLoadingStage.COMMON_SETUP;
+        }
+
+        @Override
+        public ModLoadingStage toStage() {
+            return ModLoadingStage.DONE;
         }
     }
 }
