@@ -1,6 +1,11 @@
 --- a/net/minecraft/client/renderer/BlockModelShapes.java
 +++ b/net/minecraft/client/renderer/BlockModelShapes.java
-@@ -28,6 +28,11 @@
+@@ -24,10 +24,16 @@
+       this.field_178128_c = p_i46245_1_;
+    }
+ 
++   @Deprecated
+    public TextureAtlasSprite func_178122_a(BlockState p_178122_1_) {
        return this.func_178125_b(p_178122_1_).func_177554_e();
     }
  
