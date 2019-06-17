@@ -19,7 +19,6 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.client.multiplayer.ChunkProviderClient;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.MinecraftForge;
 

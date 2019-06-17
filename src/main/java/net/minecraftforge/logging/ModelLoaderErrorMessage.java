@@ -22,7 +22,7 @@ package net.minecraftforge.logging;
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.BlockModelShapes;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -41,7 +41,7 @@ public class ModelLoaderErrorMessage extends SimpleMessage
     private final ModelResourceLocation resourceLocation;
     private final Exception exception;
 
-    private static Multimap<ModelResourceLocation, IBlockState> reverseBlockMap = HashMultimap.create();
+    private static Multimap<ModelResourceLocation, BlockState> reverseBlockMap = HashMultimap.create();
     private static Multimap<ModelResourceLocation, String> reverseItemMap = HashMultimap.create();
 
     private static void buildLookups() {
@@ -70,7 +70,7 @@ public class ModelLoaderErrorMessage extends SimpleMessage
     private void stuffs() {
         String domain = resourceLocation.getNamespace();
         String errorMsg = "Exception loading model for variant " + resourceLocation;
-        Collection<IBlockState> blocks = reverseBlockMap.get(resourceLocation);
+        Collection<BlockState> blocks = reverseBlockMap.get(resourceLocation);
         if(!blocks.isEmpty())
         {
             if(blocks.size() == 1)

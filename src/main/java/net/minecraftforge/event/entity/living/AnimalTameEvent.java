@@ -19,8 +19,8 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.passive.AnimalEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -35,22 +35,22 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @net.minecraftforge.eventbus.api.Cancelable
 public class AnimalTameEvent extends LivingEvent
 {
-    private final EntityAnimal animal;
-    private final EntityPlayer tamer;
+    private final AnimalEntity animal;
+    private final PlayerEntity tamer;
 
-    public AnimalTameEvent(EntityAnimal animal, EntityPlayer tamer)
+    public AnimalTameEvent(AnimalEntity animal, PlayerEntity tamer)
     {
         super(animal);
         this.animal = animal;
         this.tamer = tamer;
     }
 
-    public EntityAnimal getAnimal()
+    public AnimalEntity getAnimal()
     {
         return animal;
     }
 
-    public EntityPlayer getTamer()
+    public PlayerEntity getTamer()
     {
         return tamer;
     }

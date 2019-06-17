@@ -27,13 +27,13 @@ import java.util.Random;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -74,7 +74,7 @@ public class BakedItemModel implements IBakedModel
     @Override public ItemOverrideList getOverrides() { return overrides; }
 
     @Override
-    public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+    public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
     {
         if (side == null)
         {
@@ -103,7 +103,7 @@ public class BakedItemModel implements IBakedModel
             ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
             for (BakedQuad quad : originalModel.quads)
             {
-                if (quad.getFace() == EnumFacing.SOUTH)
+                if (quad.getFace() == Direction.SOUTH)
                 {
                     builder.add(quad);
                 }
@@ -112,7 +112,7 @@ public class BakedItemModel implements IBakedModel
         }
 
         @Override
-        public List<BakedQuad> getQuads (@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads (@Nullable BlockState state, @Nullable Direction side, Random rand)
         {
             if(side == null)
             {

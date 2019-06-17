@@ -1,12 +1,12 @@
 --- a/net/minecraft/world/gen/feature/structure/StructurePiece.java
 +++ b/net/minecraft/world/gen/feature/structure/StructurePiece.java
-@@ -48,6 +48,9 @@
+@@ -55,6 +55,9 @@
     }
  
-    public final NBTTagCompound func_143010_b() {
-+      if (StructureIO.func_143036_a(this) == null) { // FORGE: Friendlier error then the Null String error below.
-+         throw new RuntimeException("StructureComponent \"" + this.getClass().getName() + "\" missing ID Mapping, Modder see MapGenStructureIO");
+    public final CompoundNBT func_143010_b() {
++      if (Registry.field_218362_C.func_177774_c(this.func_214807_k()) == null) { // FORGE: Friendlier error then the Null String error below.
++         throw new RuntimeException("StructurePiece \"" + this.getClass().getName() + "\": \"" + this.func_214807_k() + "\" missing ID Mapping, Modder see MapGenStructureIO");
 +      }
-       NBTTagCompound nbttagcompound = new NBTTagCompound();
-       nbttagcompound.func_74778_a("id", StructureIO.func_143036_a(this));
-       nbttagcompound.func_74782_a("BB", this.field_74887_e.func_151535_h());
+       CompoundNBT compoundnbt = new CompoundNBT();
+       compoundnbt.func_74778_a("id", Registry.field_218362_C.func_177774_c(this.func_214807_k()).toString());
+       compoundnbt.func_218657_a("BB", this.field_74887_e.func_151535_h());

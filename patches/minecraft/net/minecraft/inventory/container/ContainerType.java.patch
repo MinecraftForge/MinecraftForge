@@ -1,0 +1,26 @@
+--- a/net/minecraft/inventory/container/ContainerType.java
++++ b/net/minecraft/inventory/container/ContainerType.java
+@@ -5,7 +5,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class ContainerType<T extends Container> {
++public class ContainerType<T extends Container> extends net.minecraftforge.registries.ForgeRegistryEntry<ContainerType<?>> implements net.minecraftforge.common.extensions.IForgeContainerType<T> {
+    public static final ContainerType<ChestContainer> field_221507_a = func_221505_a("generic_9x1", ChestContainer::func_216986_a);
+    public static final ContainerType<ChestContainer> field_221508_b = func_221505_a("generic_9x2", ChestContainer::func_216987_b);
+    public static final ContainerType<ChestContainer> field_221509_c = func_221505_a("generic_9x3", ChestContainer::func_216988_c);
+@@ -45,6 +45,14 @@
+    public T func_221506_a(int p_221506_1_, PlayerInventory p_221506_2_) {
+       return this.field_221530_x.create(p_221506_1_, p_221506_2_);
+    }
++   
++   @Override
++   public T create(int windowId, PlayerInventory playerInv, net.minecraft.network.PacketBuffer extraData) {
++      if (this.field_221530_x instanceof net.minecraftforge.fml.network.IContainerFactory) {
++         return ((net.minecraftforge.fml.network.IContainerFactory<T>) this.field_221530_x).create(windowId, playerInv, extraData);
++      }
++      return func_221506_a(windowId, playerInv);
++   }
+ 
+    public interface IFactory<T extends Container> {
+       @OnlyIn(Dist.CLIENT)

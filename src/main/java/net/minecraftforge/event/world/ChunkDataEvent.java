@@ -19,10 +19,10 @@
 
 package net.minecraftforge.event.world;
 
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunk;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -38,15 +38,15 @@ import net.minecraftforge.eventbus.api.Event;
  **/
 public class ChunkDataEvent extends ChunkEvent
 {
-    private final NBTTagCompound data;
+    private final CompoundNBT data;
 
-    public ChunkDataEvent(IChunk chunk, NBTTagCompound data)
+    public ChunkDataEvent(IChunk chunk, CompoundNBT data)
     {
         super(chunk);
         this.data = data;
     }
 
-    public NBTTagCompound getData()
+    public CompoundNBT getData()
     {
         return data;
     }
@@ -64,7 +64,7 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Load extends ChunkDataEvent
     {
-        public Load(IChunk chunk, NBTTagCompound data)
+        public Load(IChunk chunk, CompoundNBT data)
         {
             super(chunk, data);
         }
@@ -83,7 +83,7 @@ public class ChunkDataEvent extends ChunkEvent
      **/
     public static class Save extends ChunkDataEvent
     {
-        public Save(IChunk chunk, NBTTagCompound data)
+        public Save(IChunk chunk, CompoundNBT data)
         {
             super(chunk, data);
         }

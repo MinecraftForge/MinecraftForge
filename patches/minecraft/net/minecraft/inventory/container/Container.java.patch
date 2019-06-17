@@ -1,0 +1,43 @@
+--- a/net/minecraft/inventory/container/Container.java
++++ b/net/minecraft/inventory/container/Container.java
+@@ -116,9 +116,11 @@
+          ItemStack itemstack = this.field_75151_b.get(i).func_75211_c();
+          ItemStack itemstack1 = this.field_75153_a.get(i);
+          if (!ItemStack.func_77989_b(itemstack1, itemstack)) {
++            boolean clientStackChanged = !itemstack1.equals(itemstack, true);
+             itemstack1 = itemstack.func_190926_b() ? ItemStack.field_190927_a : itemstack.func_77946_l();
+             this.field_75153_a.set(i, itemstack1);
+ 
++            if (clientStackChanged)
+             for(IContainerListener icontainerlistener : this.field_75149_d) {
+                icontainerlistener.func_71111_a(this, i, itemstack1);
+             }
+@@ -476,14 +478,15 @@
+             ItemStack itemstack = slot.func_75211_c();
+             if (!itemstack.func_190926_b() && func_195929_a(p_75135_1_, itemstack)) {
+                int j = itemstack.func_190916_E() + p_75135_1_.func_190916_E();
+-               if (j <= p_75135_1_.func_77976_d()) {
++               int maxSize = Math.min(slot.func_75219_a(), p_75135_1_.func_77976_d());
++               if (j <= maxSize) {
+                   p_75135_1_.func_190920_e(0);
+                   itemstack.func_190920_e(j);
+                   slot.func_75218_e();
+                   flag = true;
+-               } else if (itemstack.func_190916_E() < p_75135_1_.func_77976_d()) {
+-                  p_75135_1_.func_190918_g(p_75135_1_.func_77976_d() - itemstack.func_190916_E());
+-                  itemstack.func_190920_e(p_75135_1_.func_77976_d());
++               } else if (itemstack.func_190916_E() < maxSize) {
++                  p_75135_1_.func_190918_g(maxSize - itemstack.func_190916_E());
++                  itemstack.func_190920_e(maxSize);
+                   slot.func_75218_e();
+                   flag = true;
+                }
+@@ -584,7 +587,7 @@
+          p_94525_2_.func_190920_e(1);
+          break;
+       case 2:
+-         p_94525_2_.func_190920_e(p_94525_2_.func_77973_b().func_77639_j());
++         p_94525_2_.func_190920_e(p_94525_2_.func_77976_d());
+       }
+ 
+       p_94525_2_.func_190917_f(p_94525_3_);

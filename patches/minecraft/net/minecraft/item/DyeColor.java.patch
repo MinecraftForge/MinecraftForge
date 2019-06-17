@@ -1,0 +1,40 @@
+--- a/net/minecraft/item/DyeColor.java
++++ b/net/minecraft/item/DyeColor.java
+@@ -43,6 +43,7 @@
+    private final int field_196066_w;
+    private final float[] field_193352_x;
+    private final int field_196067_y;
++   private final net.minecraft.tags.Tag<Item> tag;
+    private final int field_218390_z;
+ 
+    private DyeColor(int p_i50049_3_, String p_i50049_4_, int p_i50049_5_, MaterialColor p_i50049_6_, int p_i50049_7_, int p_i50049_8_) {
+@@ -55,6 +56,7 @@
+       int j = (p_i50049_5_ & '\uff00') >> 8;
+       int k = (p_i50049_5_ & 255) >> 0;
+       this.field_196066_w = k << 16 | j << 8 | i << 0;
++      this.tag = new net.minecraft.tags.ItemTags.Wrapper(new net.minecraft.util.ResourceLocation("minecraft", "dyes_" + p_i50049_4_));
+       this.field_193352_x = new float[]{(float)i / 255.0F, (float)j / 255.0F, (float)k / 255.0F};
+       this.field_196067_y = p_i50049_7_;
+    }
+@@ -120,4 +122,21 @@
+    public String func_176610_l() {
+       return this.field_176785_v;
+    }
++
++   public net.minecraft.tags.Tag<Item> getTag() {
++      return tag;
++   }
++
++   @Nullable
++   public static DyeColor getColor(ItemStack stack) {
++      if (stack.func_77973_b() instanceof DyeItem)
++         return ((DyeItem)stack.func_77973_b()).func_195962_g();
++
++      for (DyeColor color : field_196062_q) {
++         if (stack.func_77973_b().func_206844_a(color.getTag()))
++             return color;
++      }
++
++      return null;
++   }
+ }

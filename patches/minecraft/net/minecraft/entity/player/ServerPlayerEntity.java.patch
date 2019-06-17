@@ -1,0 +1,147 @@
+--- a/net/minecraft/entity/player/ServerPlayerEntity.java
++++ b/net/minecraft/entity/player/ServerPlayerEntity.java
+@@ -433,6 +433,7 @@
+    }
+ 
+    public void func_70645_a(DamageSource p_70645_1_) {
++      if (net.minecraftforge.common.ForgeHooks.onLivingDeath(this,  p_70645_1_)) return;
+       boolean flag = this.field_70170_p.func_82736_K().func_82766_b("showDeathMessages");
+       if (flag) {
+          ITextComponent itextcomponent = this.func_110142_aN().func_151521_b();
+@@ -565,8 +566,10 @@
+       return this.field_71133_b.func_71219_W();
+    }
+ 
++   @Override
+    @Nullable
+    public Entity func_212321_a(DimensionType p_212321_1_) {
++      if (!net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_212321_1_)) return null;
+       this.field_184851_cj = true;
+       DimensionType dimensiontype = this.field_71093_bK;
+       if (dimensiontype == DimensionType.THE_END && p_212321_1_ == DimensionType.OVERWORLD) {
+@@ -588,8 +591,8 @@
+          this.field_71135_a.func_147359_a(new SServerDifficultyPacket(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+          PlayerList playerlist = this.field_71133_b.func_184103_al();
+          playerlist.func_187243_f(this);
+-         serverworld.func_217434_e(this);
+-         this.field_70128_L = false;
++         serverworld.removeEntity(this, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
++         this.revive();
+          double d0 = this.field_70165_t;
+          double d1 = this.field_70163_u;
+          double d2 = this.field_70161_v;
+@@ -598,13 +601,11 @@
+          double d3 = 8.0D;
+          float f2 = f1;
+          serverworld.func_217381_Z().func_76320_a("moving");
++         double moveFactor = serverworld.func_201675_m().getMovementFactor() / serverworld1.func_201675_m().getMovementFactor();
++         d0 *= moveFactor;
++         d2 *= moveFactor;
+          if (dimensiontype == DimensionType.OVERWORLD && p_212321_1_ == DimensionType.NETHER) {
+             this.field_193110_cw = new Vec3d(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+-            d0 /= 8.0D;
+-            d2 /= 8.0D;
+-         } else if (dimensiontype == DimensionType.NETHER && p_212321_1_ == DimensionType.OVERWORLD) {
+-            d0 *= 8.0D;
+-            d2 *= 8.0D;
+          } else if (dimensiontype == DimensionType.OVERWORLD && p_212321_1_ == DimensionType.THE_END) {
+             BlockPos blockpos = serverworld1.func_180504_m();
+             d0 = (double)blockpos.func_177958_n();
+@@ -668,6 +669,7 @@
+          this.field_71144_ck = -1;
+          this.field_71149_ch = -1.0F;
+          this.field_71146_ci = -1;
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, dimensiontype, p_212321_1_);
+          return this;
+       }
+    }
+@@ -773,7 +775,7 @@
+       BlockPos blockpos = new BlockPos(i, j, k);
+       if (this.field_70170_p.func_175667_e(blockpos)) {
+          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
+-         if (blockstate.func_196958_f()) {
++         if (blockstate.isAir(field_70170_p, blockpos)) {
+             BlockPos blockpos1 = blockpos.func_177977_b();
+             BlockState blockstate1 = this.field_70170_p.func_180495_p(blockpos1);
+             Block block = blockstate1.func_177230_c();
+@@ -816,6 +818,7 @@
+             this.field_71135_a.func_147359_a(new SOpenWindowPacket(container.field_75152_c, container.func_216957_a(), p_213829_1_.func_145748_c_()));
+             container.func_75132_a(this);
+             this.field_71070_bA = container;
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+             return OptionalInt.of(this.field_71139_cq);
+          }
+       }
+@@ -834,6 +837,7 @@
+       this.field_71135_a.func_147359_a(new SOpenHorseWindowPacket(this.field_71139_cq, p_184826_2_.func_70302_i_(), p_184826_1_.func_145782_y()));
+       this.field_71070_bA = new HorseInventoryContainer(this.field_71139_cq, this.field_71071_by, p_184826_2_, p_184826_1_);
+       this.field_71070_bA.func_75132_a(this);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Open(this, this.field_71070_bA));
+    }
+ 
+    public void func_184814_a(ItemStack p_184814_1_, Hand p_184814_2_) {
+@@ -891,6 +895,7 @@
+ 
+    public void func_71128_l() {
+       this.field_71070_bA.func_75134_a(this);
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.player.PlayerContainerEvent.Close(this, this.field_71070_bA));
+       this.field_71070_bA = this.field_71069_bz;
+    }
+ 
+@@ -1017,6 +1022,20 @@
+       this.field_193110_cw = p_193104_1_.field_193110_cw;
+       this.func_192029_h(p_193104_1_.func_192023_dk());
+       this.func_192031_i(p_193104_1_.func_192025_dl());
++
++      this.spawnPosMap = p_193104_1_.spawnPosMap;
++      this.spawnForcedMap = p_193104_1_.spawnForcedMap;
++      if(p_193104_1_.field_71093_bK != net.minecraft.world.dimension.DimensionType.OVERWORLD) {
++          this.field_71077_c = p_193104_1_.field_71077_c;
++          this.field_82248_d = p_193104_1_.field_82248_d;
++      }
++
++      //Copy over a section of the Entity Data from the old player.
++      //Allows mods to specify data that persists after players respawn.
++      CompoundNBT old = p_193104_1_.getEntityData();
++      if (old.func_74764_b(PERSISTED_NBT_TAG))
++          getEntityData().func_218657_a(PERSISTED_NBT_TAG, old.func_74781_a(PERSISTED_NBT_TAG));
++      net.minecraftforge.event.ForgeEventFactory.onPlayerClone(this, p_193104_1_, !p_193104_2_);
+    }
+ 
+    protected void func_70670_a(EffectInstance p_70670_1_) {
+@@ -1239,15 +1258,15 @@
+       this.func_184210_p();
+       if (p_200619_1_ == this.field_70170_p) {
+          this.field_71135_a.func_147364_a(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
+-      } else {
++      } else if (net.minecraftforge.common.ForgeHooks.onTravelToDimension(this, p_200619_1_.field_73011_w.func_186058_p())) {
+          ServerWorld serverworld = this.func_71121_q();
+          this.field_71093_bK = p_200619_1_.field_73011_w.func_186058_p();
+          WorldInfo worldinfo = p_200619_1_.func_72912_H();
+          this.field_71135_a.func_147359_a(new SRespawnPacket(this.field_71093_bK, worldinfo.func_76067_t(), this.field_71134_c.func_73081_b()));
+          this.field_71135_a.func_147359_a(new SServerDifficultyPacket(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+          this.field_71133_b.func_184103_al().func_187243_f(this);
+-         serverworld.func_217434_e(this);
+-         this.field_70128_L = false;
++         serverworld.removePlayer(this, true); //Forge: The player entity itself is moved, and not cloned. So we need to keep the data alive with no matching invalidate call later.
++         this.revive();
+          this.func_70012_b(p_200619_2_, p_200619_4_, p_200619_6_, p_200619_8_, p_200619_9_);
+          this.func_70029_a(p_200619_1_);
+          p_200619_1_.func_217446_a(this);
+@@ -1256,6 +1275,7 @@
+          this.field_71134_c.func_73080_a(p_200619_1_);
+          this.field_71133_b.func_184103_al().func_72354_b(this, p_200619_1_);
+          this.field_71133_b.func_184103_al().func_72385_f(this);
++         net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(this, p_200619_1_.field_73011_w.func_186058_p(), this.field_71093_bK);
+       }
+ 
+    }
+@@ -1290,6 +1310,8 @@
+       if (itementity == null) {
+          return null;
+       } else {
++         if (captureDrops() != null) captureDrops().add(itementity);
++         else
+          this.field_70170_p.func_217376_c(itementity);
+          ItemStack itemstack = itementity.func_92059_d();
+          if (p_146097_3_) {

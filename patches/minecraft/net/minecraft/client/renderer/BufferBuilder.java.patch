@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/BufferBuilder.java
 +++ b/net/minecraft/client/renderer/BufferBuilder.java
-@@ -107,7 +107,8 @@
+@@ -120,7 +120,8 @@
  
           bitset.set(i1);
        }
@@ -10,7 +10,7 @@
     }
  
     public BufferBuilder.State func_181672_a() {
-@@ -438,15 +439,15 @@
+@@ -459,15 +460,15 @@
           break;
        case USHORT:
        case SHORT:
@@ -32,7 +32,7 @@
        }
  
        this.func_181667_k();
-@@ -521,4 +522,23 @@
+@@ -542,4 +543,23 @@
           return this.field_179018_e;
        }
     }

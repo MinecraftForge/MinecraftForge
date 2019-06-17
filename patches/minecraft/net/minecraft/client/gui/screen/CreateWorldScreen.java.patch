@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/gui/screen/CreateWorldScreen.java
++++ b/net/minecraft/client/gui/screen/CreateWorldScreen.java
+@@ -137,14 +137,7 @@
+       }));
+       this.field_146320_D.visible = false;
+       this.field_146322_F = this.addButton(new Button(this.width / 2 + 5, 120, 150, 20, I18n.func_135052_a("selectWorld.customizeType"), (p_214314_1_) -> {
+-         if (WorldType.field_77139_a[this.field_146331_K] == WorldType.field_77138_c) {
+-            this.minecraft.func_147108_a(new CreateFlatWorldScreen(this, this.field_146334_a));
+-         }
+-
+-         if (WorldType.field_77139_a[this.field_146331_K] == WorldType.field_205394_h) {
+-            this.minecraft.func_147108_a(new CreateBuffetWorldScreen(this, this.field_146334_a));
+-         }
+-
++         WorldType.field_77139_a[this.field_146331_K].onCustomizeButton(this.minecraft, CreateWorldScreen.this);
+       }));
+       this.field_146322_F.visible = false;
+       this.field_146321_E = this.addButton(new Button(this.width / 2 - 155, 151, 150, 20, I18n.func_135052_a("selectWorld.allowCommands"), (p_214315_1_) -> {
+@@ -223,6 +216,7 @@
+                i = (long)s.hashCode();
+             }
+          }
++         WorldType.field_77139_a[this.field_146331_K].onGUICreateWorldPress();
+ 
+          WorldSettings worldsettings = new WorldSettings(i, GameType.func_77142_a(this.field_146342_r), this.field_146341_s, this.field_146337_w, WorldType.field_77139_a[this.field_146331_K]);
+          worldsettings.func_205390_a(Dynamic.convert(NBTDynamicOps.field_210820_a, JsonOps.INSTANCE, this.field_146334_a));

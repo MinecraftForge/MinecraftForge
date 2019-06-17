@@ -19,9 +19,10 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.ServerWorld;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * ChunkWatchEvent is fired when an event involving a chunk being watched occurs.<br>
@@ -36,20 +37,20 @@ import net.minecraft.world.chunk.Chunk;
  * <br>
  * All children of this event are fired on the {@link MinecraftForge#EVENT_BUS}.<br>
  **/
-public class ChunkWatchEvent extends ChunkEvent
+public class ChunkWatchEvent extends Event
 {
-
-    private final EntityPlayerMP player;
+    private final ServerWorld world;
+    private final ServerPlayerEntity player;
     private final ChunkPos pos;
 
-    public ChunkWatchEvent(Chunk chunk, EntityPlayerMP player)
+    public ChunkWatchEvent(ServerPlayerEntity player, ChunkPos pos, ServerWorld world)
     {
-        super(chunk);
         this.player = player;
-        this.pos = chunk.getPos();
+        this.pos = pos;
+        this.world = world;
     }
 
-    public EntityPlayerMP getPlayer()
+    public ServerPlayerEntity getPlayer()
     {
         return this.player;
     }
@@ -57,6 +58,11 @@ public class ChunkWatchEvent extends ChunkEvent
     public ChunkPos getPos()
     {
         return this.pos;
+    }
+
+    public ServerWorld getWorld()
+    {
+        return this.world;
     }
 
     /**
@@ -72,7 +78,7 @@ public class ChunkWatchEvent extends ChunkEvent
      **/
     public static class Watch extends ChunkWatchEvent
     {
-        public Watch(Chunk chunk, EntityPlayerMP player) {super(chunk, player);}
+        public Watch(ServerPlayerEntity player, ChunkPos pos, ServerWorld world) {super(player, pos, world);}
     }
 
     /**
@@ -88,6 +94,6 @@ public class ChunkWatchEvent extends ChunkEvent
      **/
     public static class UnWatch extends ChunkWatchEvent
     {
-        public UnWatch(Chunk chunk, EntityPlayerMP player) {super(chunk, player);}
+        public UnWatch(ServerPlayerEntity player, ChunkPos pos, ServerWorld world) {super(player, pos, world);}
     }
 }

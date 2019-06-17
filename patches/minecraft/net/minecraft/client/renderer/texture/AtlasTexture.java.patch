@@ -1,0 +1,126 @@
+--- a/net/minecraft/client/renderer/texture/AtlasTexture.java
++++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
+@@ -79,10 +79,12 @@
+          }
+       }
+ 
++      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPost(this);
+    }
+ 
+    public AtlasTexture.SheetData func_215254_a(IResourceManager p_215254_1_, Iterable<ResourceLocation> p_215254_2_, IProfiler p_215254_3_) {
+       Set<ResourceLocation> set = Sets.newHashSet();
++      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
+       p_215254_3_.func_76320_a("preparing");
+       p_215254_2_.forEach((p_215253_1_) -> {
+          if (p_215253_1_ == null) {
+@@ -110,6 +112,7 @@
+ 
+       int i1 = Math.min(j, k);
+       int j1 = MathHelper.func_151239_c(i1);
++      if (false) // FORGE: do not lower the mipmap level
+       if (j1 < this.field_147636_j) {
+          field_147635_d.warn("{}: dropping miplevel from {} to {}, because of minimum power of two: {}", this.field_94254_c, this.field_147636_j, j1, i1);
+          this.field_147636_j = j1;
+@@ -191,6 +194,7 @@
+ 
+       label62: {
+          boolean flag;
++         if (p_195422_2_.hasCustomLoader(p_195422_1_, resourcelocation)) break label62;
+          try {
+             iresource = p_195422_1_.func_199002_a(resourcelocation);
+             p_195422_2_.func_195664_a(iresource, this.field_147636_j + 1);
+@@ -267,7 +271,94 @@
+       this.field_94252_e.clear();
+       this.field_94258_i.clear();
+    }
++   
++   //===================================================================================================
++   //                                           Forge Start
++   //===================================================================================================
+ 
++   private final java.util.Deque<ResourceLocation> loadingSprites = new java.util.ArrayDeque<>();
++   private final java.util.Set<ResourceLocation> loadedSprites = new java.util.HashSet<>();
++
++   public String getBasePath()
++   {
++       return field_94254_c;
++   }
++
++   public int getMipmapLevels()
++   {
++       return field_147636_j;
++   }
++
++   private int loadTexture(Stitcher stitcher, IResourceManager manager, ResourceLocation resourcelocation, int j, int k)
++   {
++      if (loadedSprites.contains(resourcelocation))
++      {
++         return j;
++      }
++      TextureAtlasSprite textureatlassprite;
++      ResourceLocation resourcelocation1 = this.func_195420_b(resourcelocation);
++      for (ResourceLocation loading : loadingSprites)
++      {
++         if (resourcelocation1.equals(loading))
++         {
++            final String error = "circular model dependencies, stack: [" + com.google.common.base.Joiner.on(", ").join(loadingSprites) + "]";
++            net.minecraftforge.fml.client.ClientHooks.trackBrokenTexture(resourcelocation, error);
++         }
++      }
++      loadingSprites.addLast(resourcelocation1);
++      try (IResource iresource = manager.func_199002_a(resourcelocation1))
++      {
++         PngSizeInfo pngsizeinfo = new PngSizeInfo(iresource.toString(), iresource.func_199027_b());
++         AnimationMetadataSection animationmetadatasection = iresource.func_199028_a(AnimationMetadataSection.field_195817_a);
++         textureatlassprite = new TextureAtlasSprite(resourcelocation, pngsizeinfo, animationmetadatasection);
++
++         for (ResourceLocation dependency : textureatlassprite.getDependencies())
++         {
++            if (!field_195427_i.contains(dependency))
++            {
++               this.field_195427_i.add(dependency);
++            }
++            j = loadTexture(stitcher, manager, dependency, j, k);
++         }
++         if (textureatlassprite.hasCustomLoader(manager, resourcelocation))
++         {
++            if (textureatlassprite.load(manager, resourcelocation, field_94252_e::get))
++            {
++               return j;
++            }
++         }
++         j = Math.min(j, Math.min(textureatlassprite.func_94211_a(), textureatlassprite.func_94216_b()));
++         int j1 = Math.min(Integer.lowestOneBit(textureatlassprite.func_94211_a()), Integer.lowestOneBit(textureatlassprite.func_94216_b()));
++         if (j1 < k)
++         {
++            // FORGE: do not lower the mipmap level, just log the problematic textures
++            field_147635_d.warn("Texture {} with size {}x{} will have visual artifacts at mip level {}, it can only support level {}." +
++                    "Please report to the mod author that the texture should be some multiple of 16x16.",
++                    resourcelocation1, textureatlassprite.func_94211_a(), textureatlassprite.func_94216_b(), MathHelper.func_151239_c(k), MathHelper.func_151239_c(j1));
++         }
++         if (func_195422_a(manager, textureatlassprite))
++         {
++            stitcher.func_110934_a(textureatlassprite);
++         }
++         return j;
++      }
++      catch (RuntimeException runtimeexception)
++      {
++         net.minecraftforge.fml.client.ClientHooks.trackBrokenTexture(resourcelocation, runtimeexception.getMessage());
++         return j;
++      }
++      catch (IOException ioexception)
++      {
++         net.minecraftforge.fml.client.ClientHooks.trackMissingTexture(resourcelocation);
++         return j;
++      }
++      finally
++      {
++         loadingSprites.removeLast();
++         field_195427_i.add(resourcelocation1);
++      }
++   }
++
+    @OnlyIn(Dist.CLIENT)
+    public static class SheetData {
+       final Set<ResourceLocation> field_217805_a;

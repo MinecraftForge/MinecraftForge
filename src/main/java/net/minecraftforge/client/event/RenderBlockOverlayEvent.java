@@ -20,8 +20,8 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
@@ -37,13 +37,13 @@ public class RenderBlockOverlayEvent extends net.minecraftforge.eventbus.api.Eve
         FIRE, BLOCK, WATER
     }
     
-    private final EntityPlayer player;
+    private final PlayerEntity player;
     private final float renderPartialTicks;
     private final OverlayType overlayType;
-    private final IBlockState blockForOverlay;
+    private final BlockState blockForOverlay;
     private final BlockPos blockPos;
     
-    public RenderBlockOverlayEvent(EntityPlayer player, float renderPartialTicks, OverlayType type, IBlockState block, BlockPos blockPos)
+    public RenderBlockOverlayEvent(PlayerEntity player, float renderPartialTicks, OverlayType type, BlockState block, BlockPos blockPos)
     {
         this.player = player;
         this.renderPartialTicks = renderPartialTicks;
@@ -56,7 +56,7 @@ public class RenderBlockOverlayEvent extends net.minecraftforge.eventbus.api.Eve
     /**
      * The player which the overlay will apply to
      */
-    public EntityPlayer getPlayer() { return player; }
+    public PlayerEntity getPlayer() { return player; }
     public float getRenderPartialTicks() { return renderPartialTicks; }
     /**
      * The type of overlay to occur
@@ -65,6 +65,6 @@ public class RenderBlockOverlayEvent extends net.minecraftforge.eventbus.api.Eve
     /**
      * If the overlay type is BLOCK, then this is the block which the overlay is getting it's icon from
      */
-    public IBlockState getBlockForOverlay() { return blockForOverlay; }
+    public BlockState getBlockForOverlay() { return blockForOverlay; }
     public BlockPos getBlockPos() { return blockPos; }
 }

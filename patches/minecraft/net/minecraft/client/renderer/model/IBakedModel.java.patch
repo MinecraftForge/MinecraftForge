@@ -8,7 +8,7 @@
 +public interface IBakedModel extends net.minecraftforge.client.extensions.IForgeBakedModel {
 +   /**@deprecated Forge: Use {@link net.minecraftforge.client.extensions.IForgeBakedModel#getQuads(IBlockState, EnumFacing, Random, net.minecraftforge.client.model.data.IModelData)}*/
 +   @Deprecated
-    List<BakedQuad> func_200117_a(@Nullable IBlockState p_200117_1_, @Nullable EnumFacing p_200117_2_, Random p_200117_3_);
+    List<BakedQuad> func_200117_a(@Nullable BlockState p_200117_1_, @Nullable Direction p_200117_2_, Random p_200117_3_);
  
     boolean func_177555_b();
 @@ -21,7 +23,8 @@

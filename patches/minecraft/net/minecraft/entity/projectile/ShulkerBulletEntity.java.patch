@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/ShulkerBulletEntity.java
++++ b/net/minecraft/entity/projectile/ShulkerBulletEntity.java
+@@ -251,7 +251,7 @@
+             }
+ 
+             RayTraceResult raytraceresult = ProjectileHelper.func_221266_a(this, true, false, this.field_184570_a, RayTraceContext.BlockMode.COLLIDER);
+-            if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
++            if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+                this.func_184567_a(raytraceresult);
+             }
+          }

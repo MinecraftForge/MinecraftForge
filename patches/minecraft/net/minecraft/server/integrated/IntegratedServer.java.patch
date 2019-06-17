@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/integrated/IntegratedServer.java
 +++ b/net/minecraft/server/integrated/IntegratedServer.java
-@@ -91,9 +91,10 @@
+@@ -89,9 +89,10 @@
        this.func_71245_h(true);
        field_147148_h.info("Generating keypair");
        this.func_71253_a(CryptManager.func_75891_b());
@@ -12,19 +12,19 @@
     }
  
     public void func_71217_p(BooleanSupplier p_71217_1_) {
-@@ -146,6 +147,7 @@
+@@ -126,6 +127,7 @@
     }
  
-    public EnumDifficulty func_147135_j() {
+    public Difficulty func_147135_j() {
 +      if (this.field_71349_l.field_71441_e == null) return this.field_71349_l.field_71474_y.field_74318_M; // Fix NPE just in case.
        return this.field_71349_l.field_71441_e.func_72912_H().func_176130_y();
     }
  
-@@ -245,6 +247,7 @@
+@@ -213,6 +215,7 @@
     }
  
-    public void func_71263_m() {
+    public void func_71263_m(boolean p_71263_1_) {
 +      if (func_71278_l())
-       Futures.getUnchecked(this.func_152344_a(() -> {
-          for(EntityPlayerMP entityplayermp : Lists.newArrayList(this.func_184103_al().func_181057_v())) {
-             if (!entityplayermp.func_110124_au().equals(this.field_211528_n)) {
+       this.func_213167_f(() -> {
+          for(ServerPlayerEntity serverplayerentity : Lists.newArrayList(this.func_184103_al().func_181057_v())) {
+             if (!serverplayerentity.func_110124_au().equals(this.field_211528_n)) {

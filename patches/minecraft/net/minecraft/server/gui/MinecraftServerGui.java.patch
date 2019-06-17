@@ -1,6 +1,6 @@
 --- a/net/minecraft/server/gui/MinecraftServerGui.java
 +++ b/net/minecraft/server/gui/MinecraftServerGui.java
-@@ -129,11 +129,16 @@
+@@ -138,8 +138,10 @@
        return jpanel;
     }
  
@@ -8,6 +8,10 @@
     public void func_206931_a() {
        this.field_206932_d.start();
 +      latch.countDown();
+    }
+ 
+    public void func_219050_b() {
+@@ -154,6 +156,9 @@
     }
  
     public void func_164247_a(JTextArea p_164247_1_, JScrollPane p_164247_2_, String p_164247_3_) {

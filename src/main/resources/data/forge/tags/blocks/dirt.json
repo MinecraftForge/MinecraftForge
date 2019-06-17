@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:dirt",
-    "minecraft:coarse_dirt",
-    "minecraft:podzol"
-  ]
-}

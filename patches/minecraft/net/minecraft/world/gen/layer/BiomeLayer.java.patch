@@ -1,0 +1,81 @@
+--- a/net/minecraft/world/gen/layer/BiomeLayer.java
++++ b/net/minecraft/world/gen/layer/BiomeLayer.java
+@@ -24,17 +24,33 @@
+    private static final int field_202740_n = Registry.field_212624_m.func_148757_b(Biomes.field_76780_h);
+    private static final int field_202741_o = Registry.field_212624_m.func_148757_b(Biomes.field_76768_g);
+    private static final int field_202742_p = Registry.field_212624_m.func_148757_b(Biomes.field_150584_S);
+-   private static final int[] field_202743_q = new int[]{field_202728_b, field_202730_d, field_202729_c, field_202740_n, field_202736_j, field_202741_o};
+-   private static final int[] field_202744_r = new int[]{field_202728_b, field_202728_b, field_202728_b, field_202739_m, field_202739_m, field_202736_j};
+-   private static final int[] field_202745_s = new int[]{field_202730_d, field_202738_l, field_202729_c, field_202736_j, field_202727_a, field_202740_n};
+-   private static final int[] field_202746_t = new int[]{field_202730_d, field_202729_c, field_202741_o, field_202736_j};
+-   private static final int[] field_202747_u = new int[]{field_202731_e, field_202731_e, field_202731_e, field_202742_p};
++   @SuppressWarnings("unchecked")
++   private java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry>[] biomes = new java.util.ArrayList[net.minecraftforge.common.BiomeManager.BiomeType.values().length];
+    private final OverworldGenSettings field_175973_g;
+-   private int[] field_151623_c = field_202744_r;
+ 
+    public BiomeLayer(WorldType p_i48641_1_, OverworldGenSettings p_i48641_2_) {
++      for (net.minecraftforge.common.BiomeManager.BiomeType type : net.minecraftforge.common.BiomeManager.BiomeType.values()) {
++         com.google.common.collect.ImmutableList<net.minecraftforge.common.BiomeManager.BiomeEntry> biomesToAdd = net.minecraftforge.common.BiomeManager.getBiomes(type);
++         int idx = type.ordinal();
++
++         if (biomes[idx] == null) biomes[idx] = new java.util.ArrayList<net.minecraftforge.common.BiomeManager.BiomeEntry>();
++         if (biomesToAdd != null) biomes[idx].addAll(biomesToAdd);
++      }
++
++      int desertIdx = net.minecraftforge.common.BiomeManager.BiomeType.DESERT.ordinal();
++
++      biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_76769_d, 30));
++      biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_150588_X, 20));
++      biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_76772_c, 10));
++
+       if (p_i48641_1_ == WorldType.field_77136_e) {
+-         this.field_151623_c = field_202743_q;
++         biomes[desertIdx].clear();
++         biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_76769_d, 10));
++         biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_76767_f, 10));
++         biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_76770_e, 10));
++         biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_76780_h, 10));
++         biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_76772_c, 10));
++         biomes[desertIdx].add(new net.minecraftforge.common.BiomeManager.BiomeEntry(Biomes.field_76768_g, 10));
+          this.field_175973_g = null;
+       } else {
+          this.field_175973_g = p_i48641_2_;
+@@ -55,21 +71,21 @@
+                   return p_202726_1_.func_202696_a(3) == 0 ? field_202733_g : field_202734_h;
+                }
+ 
+-               return this.field_151623_c[p_202726_1_.func_202696_a(this.field_151623_c.length)];
++               return Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.DESERT, p_202726_1_).biome);
+             case 2:
+                if (i > 0) {
+                   return field_202732_f;
+                }
+ 
+-               return field_202745_s[p_202726_1_.func_202696_a(field_202745_s.length)];
++               return Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.WARM, p_202726_1_).biome);
+             case 3:
+                if (i > 0) {
+                   return field_202737_k;
+                }
+ 
+-               return field_202746_t[p_202726_1_.func_202696_a(field_202746_t.length)];
++               return Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.COOL, p_202726_1_).biome);
+             case 4:
+-               return field_202747_u[p_202726_1_.func_202696_a(field_202747_u.length)];
++               return Registry.field_212624_m.func_148757_b(getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType.ICY, p_202726_1_).biome);
+             default:
+                return field_202735_i;
+             }
+@@ -78,4 +94,11 @@
+          }
+       }
+    }
++
++   protected net.minecraftforge.common.BiomeManager.BiomeEntry getWeightedBiomeEntry(net.minecraftforge.common.BiomeManager.BiomeType type, INoiseRandom context) {
++      java.util.List<net.minecraftforge.common.BiomeManager.BiomeEntry> biomeList = biomes[type.ordinal()];
++      int totalWeight = net.minecraft.util.WeightedRandom.func_76272_a(biomeList);
++      int weight = net.minecraftforge.common.BiomeManager.isTypeListModded(type)?context.func_202696_a(totalWeight):context.func_202696_a(totalWeight / 10) * 10;
++      return (net.minecraftforge.common.BiomeManager.BiomeEntry)net.minecraft.util.WeightedRandom.func_180166_a(biomeList, weight);
++   }
+ }

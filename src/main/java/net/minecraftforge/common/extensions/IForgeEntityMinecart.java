@@ -19,20 +19,14 @@
 
 package net.minecraftforge.common.extensions;
 
-import net.minecraft.block.BlockRailBase;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.MoverType;
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.item.EntityMinecartChest;
-import net.minecraft.entity.item.EntityMinecartCommandBlock;
-import net.minecraft.entity.item.EntityMinecartFurnace;
-import net.minecraft.entity.item.EntityMinecartHopper;
-import net.minecraft.entity.item.EntityMinecartTNT;
-import net.minecraft.init.Items;
+import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.common.IMinecartCollisionHandler;
 
 public interface IForgeEntityMinecart
@@ -42,8 +36,8 @@ public interface IForgeEntityMinecart
     public static double DEFAULT_AIR_DRAG = 0.95f;
     public static IMinecartCollisionHandler COLLISIONS = null;
 
-    default EntityMinecart getMinecart() {
-        return (EntityMinecart)this;
+    default AbstractMinecartEntity getMinecart() {
+        return (AbstractMinecartEntity)this;
     }
 
     /**
@@ -74,23 +68,7 @@ public interface IForgeEntityMinecart
      * Moved to allow overrides.
      * This code handles minecart movement and speed capping when on a rail.
      */
-    default void moveMinecartOnRail(BlockPos pos)
-    {
-        EntityMinecart mc = getMinecart();
-        double mX = mc.motionX;
-        double mZ = mc.motionZ;
-
-        if (mc.isBeingRidden())
-        {
-            mX *= 0.75D;
-            mZ *= 0.75D;
-        }
-
-        double max = getMaxSpeed();
-        mX = MathHelper.clamp(mX, -max, max);
-        mZ = MathHelper.clamp(mZ, -max, max);
-        mc.move(MoverType.SELF, mX, 0.0D, mZ);
-    }
+    void moveMinecartOnRail(BlockPos pos);
 
     /**
      * This function returns an ItemStack that represents this cart.
@@ -138,7 +116,7 @@ public interface IForgeEntityMinecart
      * @return True if powered.
      */
     default boolean isPoweredCart() {
-        return getMinecart().getMinecartType() == EntityMinecart.Type.FURNACE;
+        return getMinecart().getMinecartType() == AbstractMinecartEntity.Type.FURNACE;
     }
 
     /**
@@ -146,7 +124,7 @@ public interface IForgeEntityMinecart
      * @return True if this cart can be ridden.
      */
     default boolean canBeRidden() {
-        return getMinecart().getMinecartType() == EntityMinecart.Type.RIDEABLE;
+        return getMinecart().getMinecartType() == AbstractMinecartEntity.Type.RIDEABLE;
     }
 
     /**

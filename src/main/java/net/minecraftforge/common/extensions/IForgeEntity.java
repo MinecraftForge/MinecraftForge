@@ -20,52 +20,43 @@
 package net.minecraftforge.common.extensions;
 
 import java.util.Collection;
-
 import javax.annotation.Nullable;
-
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLeashKnot;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.item.EntityPainting;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemSpawnEgg;
+import net.minecraft.entity.item.LeashKnotEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.item.ArmorStandEntity;
+import net.minecraft.entity.item.BoatEntity;
+import net.minecraft.entity.item.EnderCrystalEntity;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.item.ItemFrameEntity;
+import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
+import net.minecraft.entity.item.PaintingEntity;
+import net.minecraft.item.Items;
+import net.minecraft.item.SpawnEggItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.INBTSerializable;
-import net.minecraftforge.common.util.ITeleporter;
 
-public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
+public interface IForgeEntity extends ICapabilitySerializable<CompoundNBT>
 {
     default Entity getEntity() { return (Entity) this; }
 
-    default void deserializeNBT(NBTTagCompound nbt)
+    default void deserializeNBT(CompoundNBT nbt)
     {
         getEntity().read(nbt);
     }
 
-    default NBTTagCompound serializeNBT()
+    default CompoundNBT serializeNBT()
     {
-        NBTTagCompound ret = new NBTTagCompound();
+        CompoundNBT ret = new CompoundNBT();
         String id = getEntity().getEntityString();
         if (id != null)
         {
-            ret.setString("id", getEntity().getEntityString());
+            ret.putString("id", getEntity().getEntityString());
         }
         return getEntity().writeWithoutTypeId(ret);
     }
@@ -74,8 +65,8 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
     void canUpdate(boolean value);
 
     @Nullable
-    Collection<EntityItem> captureDrops();
-    Collection<EntityItem> captureDrops(@Nullable Collection<EntityItem> captureDrops);
+    Collection<ItemEntity> captureDrops();
+    Collection<ItemEntity> captureDrops(@Nullable Collection<ItemEntity> captureDrops);
 
 
     /**
@@ -83,7 +74,7 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
      * It will be written, and read from disc, so it persists over world saves.
      * @return A NBTTagCompound
      */
-    NBTTagCompound getEntityData();
+    CompoundNBT getEntityData();
 
     /**
      * Used in model rendering to determine if the entity riding this entity should be in the 'sitting' position.
@@ -102,49 +93,32 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
      */
     default ItemStack getPickedResult(RayTraceResult target)
     {
-        if (this instanceof EntityPainting)
-        {
+        if (this instanceof PaintingEntity)
             return new ItemStack(Items.PAINTING);
-        }
-        else if (this instanceof EntityLeashKnot)
-        {
+        else if (this instanceof LeashKnotEntity)
             return new ItemStack(Items.LEAD);
-        }
-        else if (this instanceof EntityItemFrame)
+        else if (this instanceof ItemFrameEntity)
         {
-            ItemStack held = ((EntityItemFrame)this).getDisplayedItem();
+            ItemStack held = ((ItemFrameEntity)this).getDisplayedItem();
             if (held.isEmpty())
                 return new ItemStack(Items.ITEM_FRAME);
             else
                 return held.copy();
         }
-        else if (this instanceof EntityMinecart)
-        {
-            return ((EntityMinecart)this).getCartItem();
-        }
-        else if (this instanceof EntityBoat)
-        {
-            return new ItemStack(((EntityBoat)this).getItemBoat());
-        }
-        else if (this instanceof EntityArmorStand)
-        {
+        else if (this instanceof AbstractMinecartEntity)
+            return ((AbstractMinecartEntity)this).getCartItem();
+        else if (this instanceof BoatEntity)
+            return new ItemStack(((BoatEntity)this).getItemBoat());
+        else if (this instanceof ArmorStandEntity)
             return new ItemStack(Items.ARMOR_STAND);
-        }
-        else if (this instanceof EntityEnderCrystal)
-        {
+        else if (this instanceof EnderCrystalEntity)
             return new ItemStack(Items.END_CRYSTAL);
-        }
         else
         {
-            ItemSpawnEgg egg = ItemSpawnEgg.getEgg(getEntity().getType());
+            SpawnEggItem egg = SpawnEggItem.getEgg(getEntity().getType());
             if (egg != null) return new ItemStack(egg);
         }
         return ItemStack.EMPTY;
-    }
-
-    default boolean shouldRenderInPass(int pass)
-    {
-        return pass == 0;
     }
 
     /**
@@ -166,20 +140,8 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
      */
     default boolean canBeRiddenInWater(Entity rider)
     {
-        return this instanceof EntityLivingBase;
+        return this instanceof LivingEntity;
     }
-
-    /**
-     * Override instead of
-     * {@link Entity#changeDimension(DimensionType, ITeleporter)} if your entity
-     * needs special handling for specific teleporters.
-     *
-     * @param type The target dimension
-     * @param teleporter The teleporter being used to move the entity to the dimension
-     * @return The entity to be placed in the target dimension. {@code null} if the entity should despawn.
-     */
-    @Nullable
-    Entity changeDimension(DimensionType type, ITeleporter teleporter);
 
     /**
      * Checks if this {@link Entity} can trample a {@link Block}.
@@ -188,18 +150,16 @@ public interface IForgeEntity extends ICapabilitySerializable<NBTTagCompound>
      * @param fallDistance The fall distance
      * @return {@code true} if this entity can trample, {@code false} otherwise
      */
-    boolean canTrample(IBlockState state, BlockPos pos, float fallDistance);
+    boolean canTrample(BlockState state, BlockPos pos, float fallDistance);
 
     /**
-     * Returns true if the entity is of the @link{EnumCreatureType} provided
-     * @param type The EnumCreatureType type this entity is evaluating
+     * Returns The classification of this entity
      * @param forSpawnCount If this is being invoked to check spawn count caps.
      * @return If the creature is of the type provided
      */
-    default boolean isCreatureType(EnumCreatureType type, boolean forSpawnCount)
+    default EntityClassification getClassification(boolean forSpawnCount)
     {
-        if (forSpawnCount && (this instanceof EntityLiving) && ((EntityLiving)this).isNoDespawnRequired()) return false;
-        return type.getBaseClass().isAssignableFrom(this.getClass());
+        return getEntity().getType().getClassiciation();
     }
 
     /**

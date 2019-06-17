@@ -19,22 +19,25 @@
 
 package net.minecraftforge.fluids;
 
-import net.minecraft.block.BlockDispenser;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.StatList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.stats.Stats;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.RayTraceContext.FluidMode;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -47,6 +50,8 @@ import net.minecraftforge.items.ItemHandlerHelper;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.minecraft.item.Item.Properties;
 
 /**
  * A universal bucket that can hold any liquid
@@ -81,7 +86,7 @@ public class UniversalBucket extends Item
 
         this.setCreativeTab(CreativeTabs.MISC);
 */
-        BlockDispenser.registerDispenseBehavior(this, DispenseFluidContainer.getInstance());
+        DispenserBlock.registerDispenseBehavior(this, DispenseFluidContainer.getInstance());
     }
 
     @Override
@@ -143,51 +148,52 @@ public class UniversalBucket extends Item
         // TODO this is not reliable on the server
         if (LanguageMap.getInstance().exists(unloc + "." + fluidStack.getFluid().getName()))
         {
-            return new TextComponentTranslation(unloc + "." + fluidStack.getFluid().getName());
+            return new TranslationTextComponent(unloc + "." + fluidStack.getFluid().getName());
         }
 
-        return new TextComponentTranslation(unloc + ".name", fluidStack.getLocalizedName());
+        return new TranslationTextComponent(unloc + ".name", fluidStack.getLocalizedName());
     }
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull EntityPlayer player, @Nonnull EnumHand hand)
+    public ActionResult<ItemStack> onItemRightClick(@Nonnull World world, @Nonnull PlayerEntity player, @Nonnull Hand hand)
     {
         ItemStack itemstack = player.getHeldItem(hand);
         FluidStack fluidStack = getFluid(itemstack);
         // empty bucket shouldn't exist, do nothing since it should be handled by the bucket event
         if (fluidStack == null)
         {
-            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+            return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
         }
 
         // clicked on a block?
-        RayTraceResult mop = this.rayTrace(world, player, false);
+        RayTraceResult rt = func_219968_a(world, player, FluidMode.NONE);
 
-        ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack, mop);
+        ActionResult<ItemStack> ret = ForgeEventFactory.onBucketUse(player, world, itemstack, rt);
         if (ret != null) return ret;
 
-        if(mop == null || mop.type != RayTraceResult.Type.BLOCK)
+        if(rt == null || rt.getType() != RayTraceResult.Type.BLOCK)
         {
-            return new ActionResult<ItemStack>(EnumActionResult.PASS, itemstack);
+            return new ActionResult<ItemStack>(ActionResultType.PASS, itemstack);
         }
 
-        BlockPos clickPos = mop.getBlockPos();
+        BlockRayTraceResult brt = (BlockRayTraceResult) rt;
+        BlockPos clickPos = brt.getPos();
         // can we place liquid there?
         if (world.isBlockModifiable(player, clickPos))
         {
             // the block adjacent to the side we clicked on
-            BlockPos targetPos = clickPos.offset(mop.sideHit);
+            BlockPos targetPos = clickPos.offset(brt.getFace());
 
             // can the player place there?
-            if (player.canPlayerEdit(targetPos, mop.sideHit, itemstack))
+            if (player.canPlayerEdit(targetPos, brt.getFace(), itemstack))
             {
                 // try placing liquid
-                FluidActionResult result = FluidUtil.tryPlaceFluid(player, world, targetPos, itemstack, fluidStack);
-                if (result.isSuccess() && !player.abilities.isCreativeMode)
+                FluidActionResult result = FluidUtil.tryPlaceFluid(player, world, hand, targetPos, itemstack, fluidStack);
+                if (result.isSuccess() && !player.playerAbilities.isCreativeMode)
                 {
                     // success!
-                    player.addStat(StatList.ITEM_USED.get(this));
+                    player.addStat(Stats.ITEM_USED.get(this));
 
                     itemstack.shrink(1);
                     ItemStack drained = result.getResult();
@@ -196,20 +202,20 @@ public class UniversalBucket extends Item
                     // check whether we replace the item or add the empty one to the inventory
                     if (itemstack.isEmpty())
                     {
-                        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, emptyStack);
+                        return new ActionResult<ItemStack>(ActionResultType.SUCCESS, emptyStack);
                     }
                     else
                     {
                         // add empty bucket to player inventory
                         ItemHandlerHelper.giveItemToPlayer(player, emptyStack);
-                        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
+                        return new ActionResult<ItemStack>(ActionResultType.SUCCESS, itemstack);
                     }
                 }
             }
         }
 
         // couldn't place liquid there2
-        return new ActionResult<ItemStack>(EnumActionResult.FAIL, itemstack);
+        return new ActionResult<ItemStack>(ActionResultType.FAIL, itemstack);
     }
 
     @SubscribeEvent(priority = EventPriority.LOW) // low priority so other mods can handle their stuff first
@@ -232,18 +238,18 @@ public class UniversalBucket extends Item
 
         // needs to target a block
         RayTraceResult target = event.getTarget();
-        if (target == null || target.type != RayTraceResult.Type.BLOCK)
+        if (target == null || target.getType() != RayTraceResult.Type.BLOCK)
         {
             return;
         }
 
         World world = event.getWorld();
-        BlockPos pos = target.getBlockPos();
+        BlockPos pos = ((BlockRayTraceResult) target).getPos();
 
         ItemStack singleBucket = emptyBucket.copy();
         singleBucket.setCount(1);
 
-        FluidActionResult filledResult = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, target.sideHit);
+        FluidActionResult filledResult = FluidUtil.tryPickUpFluid(singleBucket, event.getEntityPlayer(), world, pos, ((BlockRayTraceResult) target).getFace());
         if (filledResult.isSuccess())
         {
             event.setResult(net.minecraftforge.eventbus.api.Event.Result.ALLOW);
@@ -289,7 +295,7 @@ public class UniversalBucket extends Item
     }
 
     @Override
-    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, NBTTagCompound nbt)
+    public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, CompoundNBT nbt)
     {
         return new FluidBucketWrapper(stack);
     }

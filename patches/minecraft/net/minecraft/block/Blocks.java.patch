@@ -1,0 +1,36 @@
+--- a/net/minecraft/block/Blocks.java
++++ b/net/minecraft/block/Blocks.java
+@@ -13,6 +13,7 @@
+ import net.minecraft.potion.Effects;
+ import net.minecraft.util.registry.Registry;
+ 
++@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class Blocks {
+    public static final Block field_150350_a = func_222382_a("air", new AirBlock(Block.Properties.func_200945_a(Material.field_151579_a).func_200942_a().func_222380_e()));
+    public static final Block field_150348_b = func_222382_a("stone", new Block(Block.Properties.func_200949_a(Material.field_151576_e, MaterialColor.field_151665_m).func_200948_a(1.5F, 6.0F)));
+@@ -104,7 +105,7 @@
+    public static final Block field_196601_az = func_222382_a("green_bed", new BedBlock(DyeColor.GREEN, Block.Properties.func_200945_a(Material.field_151580_n).func_200947_a(SoundType.field_185848_a).func_200943_b(0.2F)));
+    public static final Block field_196550_aA = func_222382_a("red_bed", new BedBlock(DyeColor.RED, Block.Properties.func_200945_a(Material.field_151580_n).func_200947_a(SoundType.field_185848_a).func_200943_b(0.2F)));
+    public static final Block field_196551_aB = func_222382_a("black_bed", new BedBlock(DyeColor.BLACK, Block.Properties.func_200945_a(Material.field_151580_n).func_200947_a(SoundType.field_185848_a).func_200943_b(0.2F)));
+-   public static final Block field_196552_aC = func_222382_a("powered_rail", new PoweredRailBlock(Block.Properties.func_200945_a(Material.field_151594_q).func_200942_a().func_200943_b(0.7F).func_200947_a(SoundType.field_185852_e)));
++   public static final Block field_196552_aC = func_222382_a("powered_rail", new PoweredRailBlock(Block.Properties.func_200945_a(Material.field_151594_q).func_200942_a().func_200943_b(0.7F).func_200947_a(SoundType.field_185852_e), true));
+    public static final Block field_150319_E = func_222382_a("detector_rail", new DetectorRailBlock(Block.Properties.func_200945_a(Material.field_151594_q).func_200942_a().func_200943_b(0.7F).func_200947_a(SoundType.field_185852_e)));
+    public static final Block field_150320_F = func_222382_a("sticky_piston", new PistonBlock(true, Block.Properties.func_200945_a(Material.field_76233_E).func_200943_b(0.5F)));
+    public static final Block field_196553_aF = func_222382_a("cobweb", new WebBlock(Block.Properties.func_200945_a(Material.field_151569_G).func_200942_a().func_200943_b(4.0F)));
+@@ -694,16 +695,4 @@
+    private static Block func_222382_a(String p_222382_0_, Block p_222382_1_) {
+       return Registry.func_218325_a(Registry.field_212618_g, p_222382_0_, p_222382_1_);
+    }
+-
+-   static {
+-      for(Block block : Registry.field_212618_g) {
+-         for(BlockState blockstate : block.func_176194_O().func_177619_a()) {
+-            blockstate.func_215692_c();
+-            Block.field_176229_d.func_195867_b(blockstate);
+-         }
+-
+-         block.func_220068_i();
+-      }
+-
+-   }
+ }

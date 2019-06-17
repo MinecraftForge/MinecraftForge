@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/renderer/tileentity/TileEntityRenderer.java
 +++ b/net/minecraft/client/renderer/tileentity/TileEntityRenderer.java
-@@ -63,6 +63,8 @@
+@@ -66,6 +66,8 @@
        return false;
     }
  
 +   public void renderTileEntityFast(T te, double x, double y, double z, float partialTicks, int destroyStage, net.minecraft.client.renderer.BufferBuilder buffer) {}
 +
     protected void func_190052_a(T p_190052_1_, String p_190052_2_, double p_190052_3_, double p_190052_5_, double p_190052_7_, int p_190052_9_) {
-       Entity entity = this.field_147501_a.field_147551_g;
-       double d0 = p_190052_1_.func_145835_a(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v);
+       ActiveRenderInfo activerenderinfo = this.field_147501_a.field_217666_g;
+       double d0 = p_190052_1_.func_145835_a(activerenderinfo.func_216785_c().field_72450_a, activerenderinfo.func_216785_c().field_72448_b, activerenderinfo.func_216785_c().field_72449_c);

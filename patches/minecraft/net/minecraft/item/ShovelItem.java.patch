@@ -1,0 +1,20 @@
+--- a/net/minecraft/item/ShovelItem.java
++++ b/net/minecraft/item/ShovelItem.java
+@@ -21,7 +21,7 @@
+    protected static final Map<Block, BlockState> field_195955_e = Maps.newHashMap(ImmutableMap.of(Blocks.field_196658_i, Blocks.field_185774_da.func_176223_P()));
+ 
+    public ShovelItem(IItemTier p_i48469_1_, float p_i48469_2_, float p_i48469_3_, Item.Properties p_i48469_4_) {
+-      super(p_i48469_2_, p_i48469_3_, p_i48469_1_, field_150916_c, p_i48469_4_);
++      super(p_i48469_2_, p_i48469_3_, p_i48469_1_, field_150916_c, p_i48469_4_.addToolType(net.minecraftforge.common.ToolType.SHOVEL, p_i48469_1_.func_200925_d()));
+    }
+ 
+    public boolean func_150897_b(BlockState p_150897_1_) {
+@@ -32,7 +32,7 @@
+    public ActionResultType func_195939_a(ItemUseContext p_195939_1_) {
+       World world = p_195939_1_.func_195991_k();
+       BlockPos blockpos = p_195939_1_.func_195995_a();
+-      if (p_195939_1_.func_196000_l() != Direction.DOWN && world.func_180495_p(blockpos.func_177984_a()).func_196958_f()) {
++      if (p_195939_1_.func_196000_l() != Direction.DOWN && world.func_180495_p(blockpos.func_177984_a()).isAir(world, blockpos.func_177984_a())) {
+          BlockState blockstate = field_195955_e.get(world.func_180495_p(blockpos).func_177230_c());
+          if (blockstate != null) {
+             PlayerEntity playerentity = p_195939_1_.func_195999_j();

@@ -1,22 +1,22 @@
 --- a/net/minecraft/client/renderer/ItemRenderer.java
 +++ b/net/minecraft/client/renderer/ItemRenderer.java
-@@ -50,13 +50,14 @@
+@@ -51,13 +51,14 @@
  
     public ItemRenderer(TextureManager p_i46552_1_, ModelManager p_i46552_2_, ItemColors p_i46552_3_) {
        this.field_175057_n = p_i46552_1_;
 -      this.field_175059_m = new ItemModelMesher(p_i46552_2_);
 +      this.field_175059_m = new net.minecraftforge.client.ItemModelMesherForge(p_i46552_2_);
  
-       for(Item item : IRegistry.field_212630_s) {
+       for(Item item : Registry.field_212630_s) {
           if (!field_195411_c.contains(item)) {
-             this.field_175059_m.func_199311_a(item, new ModelResourceLocation(IRegistry.field_212630_s.func_177774_c(item), "inventory"));
+             this.field_175059_m.func_199311_a(item, new ModelResourceLocation(Registry.field_212630_s.func_177774_c(item), "inventory"));
           }
        }
 +      net.minecraftforge.client.model.ModelLoader.onRegisterItems(this.field_175059_m);
  
        this.field_184395_f = p_i46552_3_;
     }
-@@ -74,6 +75,10 @@
+@@ -75,6 +76,10 @@
     }
  
     private void func_191967_a(IBakedModel p_191967_1_, int p_191967_2_, ItemStack p_191967_3_) {
@@ -27,16 +27,16 @@
        Tessellator tessellator = Tessellator.func_178181_a();
        BufferBuilder bufferbuilder = tessellator.func_178180_c();
        bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_176599_b);
-@@ -97,7 +102,7 @@
+@@ -98,7 +103,7 @@
           if (p_180454_2_.func_188618_c()) {
-             GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
-             GlStateManager.func_179091_B();
--            TileEntityItemStackRenderer.field_147719_a.func_179022_a(p_180454_1_);
+             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+             GlStateManager.enableRescaleNormal();
+-            ItemStackTileEntityRenderer.field_147719_a.func_179022_a(p_180454_1_);
 +            p_180454_1_.func_77973_b().getTileEntityItemStackRenderer().func_179022_a(p_180454_1_);
           } else {
              this.func_191961_a(p_180454_2_, p_180454_1_);
              if (p_180454_1_.func_77962_s()) {
-@@ -163,7 +168,7 @@
+@@ -164,7 +169,7 @@
              k = k | -16777216;
           }
  
@@ -45,30 +45,30 @@
        }
  
     }
-@@ -224,11 +229,8 @@
-          GlStateManager.func_179147_l();
-          GlStateManager.func_187428_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-          GlStateManager.func_179094_E();
+@@ -225,11 +230,8 @@
+          GlStateManager.enableBlend();
+          GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+          GlStateManager.pushMatrix();
 -         ItemCameraTransforms itemcameratransforms = p_184394_2_.func_177552_f();
 -         ItemCameraTransforms.func_188034_a(itemcameratransforms.func_181688_b(p_184394_3_), p_184394_4_);
 -         if (this.func_183005_a(itemcameratransforms.func_181688_b(p_184394_3_))) {
--            GlStateManager.func_187407_a(GlStateManager.CullFace.FRONT);
+-            GlStateManager.cullFace(GlStateManager.CullFace.FRONT);
 -         }
 +         // TODO: check if negative scale is a thing
 +         p_184394_2_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_184394_2_, p_184394_3_, p_184394_4_);
  
           this.func_180454_a(p_184394_1_, p_184394_2_);
-          GlStateManager.func_187407_a(GlStateManager.CullFace.BACK);
-@@ -259,7 +261,7 @@
-       GlStateManager.func_187401_a(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-       GlStateManager.func_179131_c(1.0F, 1.0F, 1.0F, 1.0F);
+          GlStateManager.cullFace(GlStateManager.CullFace.BACK);
+@@ -260,7 +262,7 @@
+       GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+       GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
        this.func_180452_a(p_191962_2_, p_191962_3_, p_191962_4_.func_177556_c());
 -      p_191962_4_.func_177552_f().func_181689_a(ItemCameraTransforms.TransformType.GUI);
 +      p_191962_4_ = net.minecraftforge.client.ForgeHooksClient.handleCameraTransforms(p_191962_4_, ItemCameraTransforms.TransformType.GUI, false);
        this.func_180454_a(p_191962_1_, p_191962_4_);
-       GlStateManager.func_179118_c();
-       GlStateManager.func_179101_C();
-@@ -298,6 +300,7 @@
+       GlStateManager.disableAlphaTest();
+       GlStateManager.disableRescaleNormal();
+@@ -299,6 +301,7 @@
              crashreportcategory.func_189529_a("Item Type", () -> {
                 return String.valueOf((Object)p_184391_2_.func_77973_b());
              });
@@ -76,22 +76,22 @@
              crashreportcategory.func_189529_a("Item Damage", () -> {
                 return String.valueOf(p_184391_2_.func_77952_i());
              });
-@@ -329,9 +332,12 @@
-             GlStateManager.func_179147_l();
-             GlStateManager.func_179145_e();
-             GlStateManager.func_179126_j();
+@@ -330,9 +333,12 @@
+             GlStateManager.enableBlend();
+             GlStateManager.enableLighting();
+             GlStateManager.enableDepthTest();
 +            // Fixes opaque cooldown overlay a bit lower
 +            // TODO: check if enabled blending still screws things up down the line.
-+            GlStateManager.func_179147_l();
++            GlStateManager.enableBlend();
           }
  
 -         if (p_180453_2_.func_77951_h()) {
 +         if (p_180453_2_.func_77973_b().showDurabilityBar(p_180453_2_)) {
-             GlStateManager.func_179140_f();
-             GlStateManager.func_179097_i();
-             GlStateManager.func_179090_x();
-@@ -339,11 +345,9 @@
-             GlStateManager.func_179084_k();
+             GlStateManager.disableLighting();
+             GlStateManager.disableDepthTest();
+             GlStateManager.disableTexture();
+@@ -340,11 +346,9 @@
+             GlStateManager.disableBlend();
              Tessellator tessellator = Tessellator.func_178181_a();
              BufferBuilder bufferbuilder = tessellator.func_178180_c();
 -            float f = (float)p_180453_2_.func_77952_i();
@@ -104,8 +104,8 @@
 +            int j = p_180453_2_.func_77973_b().getRGBDurabilityForDisplay(p_180453_2_);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, 13, 2, 0, 0, 0, 255);
              this.func_181565_a(bufferbuilder, p_180453_3_ + 2, p_180453_4_ + 13, i, 1, j >> 16 & 255, j >> 8 & 255, j & 255, 255);
-             GlStateManager.func_179147_l();
-@@ -382,4 +386,9 @@
+             GlStateManager.enableBlend();
+@@ -383,4 +387,9 @@
     public void func_195410_a(IResourceManager p_195410_1_) {
        this.field_175059_m.func_178085_b();
     }

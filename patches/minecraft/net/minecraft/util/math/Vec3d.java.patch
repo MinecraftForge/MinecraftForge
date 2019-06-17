@@ -1,15 +1,14 @@
 --- a/net/minecraft/util/math/Vec3d.java
 +++ b/net/minecraft/util/math/Vec3d.java
-@@ -2,8 +2,6 @@
+@@ -80,7 +80,6 @@
+       return this.func_216372_d(p_186678_1_, p_186678_1_, p_186678_1_);
+    }
  
- import java.util.EnumSet;
- import net.minecraft.util.EnumFacing;
--import net.minecraftforge.api.distmarker.Dist;
--import net.minecraftforge.api.distmarker.OnlyIn;
- 
- public class Vec3d {
-    public static final Vec3d field_186680_a = new Vec3d(0.0D, 0.0D, 0.0D);
-@@ -136,12 +134,10 @@
+-   @OnlyIn(Dist.CLIENT)
+    public Vec3d func_216371_e() {
+       return this.func_186678_a(-1.0D);
+    }
+@@ -150,12 +149,10 @@
        return new Vec3d(d0, d1, d2);
     }
  

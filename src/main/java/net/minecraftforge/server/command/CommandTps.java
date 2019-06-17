@@ -29,28 +29,28 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.arguments.DimensionArgument;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.dimension.DimensionType;
 
 class CommandTps
 {
-    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TextComponentTranslation("commands.forge.tps.invalid", dim, StreamSupport.stream(DimensionType.func_212681_b().spliterator(), false).map(d -> DimensionType.func_212678_a(d).toString()).sorted().collect(Collectors.joining(", "))));
+    private static final DynamicCommandExceptionType INVALID_DIMENSION = new DynamicCommandExceptionType(dim -> new TranslationTextComponent("commands.forge.tps.invalid", dim, StreamSupport.stream(DimensionType.getAll().spliterator(), false).map(d -> DimensionType.getKey(d).toString()).sorted().collect(Collectors.joining(", "))));
     private static final DecimalFormat TIME_FORMATTER = new DecimalFormat("########0.000");
 
     static ArgumentBuilder<CommandSource, ?> register()
     {
         return Commands.literal("tps")
             .requires(cs->cs.hasPermissionLevel(0)) //permission
-            .then(Commands.argument("dim", DimensionArgument.func_212595_a())
+            .then(Commands.argument("dim", DimensionArgument.getDimension())
                 .executes(ctx -> sendTime(ctx.getSource(), DimensionArgument.func_212592_a(ctx, "dim")))
             )
             .executes(ctx -> {
-                for (DimensionType dim : DimensionType.func_212681_b())
+                for (DimensionType dim : DimensionType.getAll())
                     sendTime(ctx.getSource(), dim);
 
                 double meanTickTime = mean(ctx.getSource().getServer().tickTimeArray) * 1.0E-6D;
                 double meanTPS = Math.min(1000.0/meanTickTime, 20);
-                ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), true);
+                ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.all", TIME_FORMATTER.format(meanTickTime), TIME_FORMATTER.format(meanTPS)), true);
 
                 return 0;
             }
@@ -62,11 +62,11 @@ class CommandTps
         long[] times = cs.getServer().getTickTime(dim);
 
         if (times == null)
-            throw INVALID_DIMENSION.create(DimensionType.func_212678_a(dim));
+            throw INVALID_DIMENSION.create(DimensionType.getKey(dim));
 
         double worldTickTime = mean(times) * 1.0E-6D;
         double worldTPS = Math.min(1000.0 / worldTickTime, 20);
-        cs.sendFeedback(new TextComponentTranslation("commands.forge.tps.summary.named", dim.getId(), DimensionType.func_212678_a(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
+        cs.sendFeedback(new TranslationTextComponent("commands.forge.tps.summary.named", dim.getId(), DimensionType.getKey(dim), TIME_FORMATTER.format(worldTickTime), TIME_FORMATTER.format(worldTPS)), true);
 
         return 1;
     }

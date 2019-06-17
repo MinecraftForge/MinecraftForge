@@ -1,0 +1,64 @@
+--- a/net/minecraft/entity/projectile/FishingBobberEntity.java
++++ b/net/minecraft/entity/projectile/FishingBobberEntity.java
+@@ -210,8 +210,8 @@
+    private boolean func_190625_o() {
+       ItemStack itemstack = this.field_146042_b.func_184614_ca();
+       ItemStack itemstack1 = this.field_146042_b.func_184592_cb();
+-      boolean flag = itemstack.func_77973_b() == Items.field_151112_aM;
+-      boolean flag1 = itemstack1.func_77973_b() == Items.field_151112_aM;
++      boolean flag = itemstack.func_77973_b() instanceof net.minecraft.item.FishingRodItem;
++      boolean flag1 = itemstack1.func_77973_b() instanceof net.minecraft.item.FishingRodItem;
+       if (!this.field_146042_b.field_70128_L && this.field_146042_b.func_70089_S() && (flag || flag1) && !(this.func_70068_e(this.field_146042_b) > 1024.0D)) {
+          return false;
+       } else {
+@@ -295,7 +295,7 @@
+             double d1 = (double)((float)MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) + 1.0F);
+             double d2 = this.field_70161_v + (double)(f2 * (float)this.field_146038_az * 0.1F);
+             Block block = serverworld.func_180495_p(new BlockPos(d0, d1 - 1.0D, d2)).func_177230_c();
+-            if (block == Blocks.field_150355_j) {
++            if (serverworld.func_180495_p(new BlockPos((int)d0, (int)d1 - 1, (int)d2)).func_185904_a() == net.minecraft.block.material.Material.field_151586_h) {
+                if (this.field_70146_Z.nextFloat() < 0.15F) {
+                   serverworld.func_195598_a(ParticleTypes.field_197612_e, d0, d1 - (double)0.1F, d2, 1, (double)f1, 0.1D, (double)f2, 0.0D);
+                }
+@@ -332,7 +332,7 @@
+             double d5 = (double)((float)MathHelper.func_76128_c(this.func_174813_aQ().field_72338_b) + 1.0F);
+             double d6 = this.field_70161_v + (double)(MathHelper.func_76134_b(f6) * f7 * 0.1F);
+             Block block1 = serverworld.func_180495_p(new BlockPos(d4, d5 - 1.0D, d6)).func_177230_c();
+-            if (block1 == Blocks.field_150355_j) {
++            if (serverworld.func_180495_p(new BlockPos(d4, d5 - 1.0D, d6)).func_185904_a() == net.minecraft.block.material.Material.field_151586_h) {
+                serverworld.func_195598_a(ParticleTypes.field_218422_X, d4, d5, d6, 2 + this.field_70146_Z.nextInt(2), (double)0.1F, 0.0D, (double)0.1F, 0.0D);
+             }
+          }
+@@ -357,6 +357,7 @@
+    public int func_146034_e(ItemStack p_146034_1_) {
+       if (!this.field_70170_p.field_72995_K && this.field_146042_b != null) {
+          int i = 0;
++         net.minecraftforge.event.entity.player.ItemFishedEvent event = null;
+          if (this.field_146043_c != null) {
+             this.func_184527_k();
+             CriteriaTriggers.field_204811_D.func_204820_a((ServerPlayerEntity)this.field_146042_b, p_146034_1_, this, Collections.emptyList());
+@@ -364,8 +365,15 @@
+             i = this.field_146043_c instanceof ItemEntity ? 3 : 5;
+          } else if (this.field_146045_ax > 0) {
+             LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_70170_p)).func_216015_a(LootParameters.field_216286_f, new BlockPos(this)).func_216015_a(LootParameters.field_216289_i, p_146034_1_).func_216023_a(this.field_70146_Z).func_186469_a((float)this.field_191518_aw + this.field_146042_b.func_184817_da());
++            lootcontext$builder.func_216015_a(LootParameters.field_216284_d, this.field_146042_b).func_216015_a(LootParameters.field_216281_a, this);
+             LootTable loottable = this.field_70170_p.func_73046_m().func_200249_aQ().func_186521_a(LootTables.field_186387_al);
+             List<ItemStack> list = loottable.func_216113_a(lootcontext$builder.func_216022_a(LootParameterSets.field_216262_c));
++            event = new net.minecraftforge.event.entity.player.ItemFishedEvent(list, this.field_146051_au ? 2 : 1, this);
++            net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event);
++            if (event.isCanceled()) {
++               this.func_70106_y();
++               return event.getRodDamage();
++            }
+             CriteriaTriggers.field_204811_D.func_204820_a((ServerPlayerEntity)this.field_146042_b, p_146034_1_, this, list);
+ 
+             for(ItemStack itemstack : list) {
+@@ -390,7 +398,7 @@
+          }
+ 
+          this.func_70106_y();
+-         return i;
++         return event == null ? i : event.getRodDamage();
+       } else {
+          return 0;
+       }

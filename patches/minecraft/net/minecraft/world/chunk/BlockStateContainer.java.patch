@@ -1,29 +1,25 @@
 --- a/net/minecraft/world/chunk/BlockStateContainer.java
 +++ b/net/minecraft/world/chunk/BlockStateContainer.java
-@@ -63,8 +63,11 @@
+@@ -63,6 +63,9 @@
     }
  
     private void func_186012_b(int p_186012_1_) {
--      if (p_186012_1_ != this.field_186024_e) {
--         this.field_186024_e = p_186012_1_;
 +      setBits(p_186012_1_, false);
 +   }
-+   private void setBits(int bitsIn, boolean forceBits) {
-+      if (bitsIn != this.field_186024_e) {
-+         this.field_186024_e = bitsIn;
++   private void setBits(int p_186012_1_, boolean forceBits) {
+       if (p_186012_1_ != this.field_186024_e) {
+          this.field_186024_e = p_186012_1_;
           if (this.field_186024_e <= 4) {
-             this.field_186024_e = 4;
-             this.field_186022_c = new BlockStatePaletteLinear<>(this.field_205523_d, this.field_186024_e, this, this.field_205524_e);
 @@ -73,6 +76,8 @@
           } else {
              this.field_186022_c = this.field_205521_b;
              this.field_186024_e = MathHelper.func_151241_e(this.field_205523_d.func_186804_a());
 +            if (forceBits)
-+               this.field_186024_e = bitsIn;
++               this.field_186024_e = p_186012_1_;
           }
  
           this.field_186022_c.func_186041_a(this.field_205526_g);
-@@ -123,12 +128,16 @@
+@@ -135,12 +140,16 @@
        this.func_210459_b();
        int i = p_186010_1_.readByte();
        if (this.field_186024_e != i) {

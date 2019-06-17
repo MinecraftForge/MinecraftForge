@@ -19,8 +19,8 @@
 
 package net.minecraftforge.common.capabilities;
 
-import net.minecraft.nbt.INBTBase;
+import net.minecraft.nbt.INBT;
 import net.minecraftforge.common.util.INBTSerializable;
 
 //Just a mix of the two, useful in patches to lower the size.
-public interface ICapabilitySerializable<T extends INBTBase> extends ICapabilityProvider, INBTSerializable<T>{}
+public interface ICapabilitySerializable<T extends INBT> extends ICapabilityProvider, INBTSerializable<T>{}

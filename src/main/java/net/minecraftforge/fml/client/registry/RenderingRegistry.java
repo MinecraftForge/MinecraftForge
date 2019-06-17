@@ -22,8 +22,8 @@ package net.minecraftforge.fml.client.registry;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererManager;
 import net.minecraft.entity.Entity;
 
 public class RenderingRegistry
@@ -43,13 +43,13 @@ public class RenderingRegistry
         INSTANCE.entityRenderers.put(entityClass, renderFactory);
     }
 
-    public static void loadEntityRenderers(RenderManager manager, Map<Class<? extends Entity>, Render<? extends Entity>> renderMap)
+    public static void loadEntityRenderers(EntityRendererManager manager, Map<Class<? extends Entity>, EntityRenderer<? extends Entity>> renderMap)
     {
         INSTANCE.entityRenderers.forEach((key, value) -> register(manager, renderMap, key, value));
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Entity> void register(RenderManager manager, Map<Class<? extends Entity>, Render<? extends Entity>> renderMap, Class<T> entityClass, IRenderFactory<?> renderFactory)
+    private static <T extends Entity> void register(EntityRendererManager manager, Map<Class<? extends Entity>, EntityRenderer<? extends Entity>> renderMap, Class<T> entityClass, IRenderFactory<?> renderFactory)
     {
         renderMap.put(entityClass, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
     }

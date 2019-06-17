@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/SharedMonsterAttributes.java
 +++ b/net/minecraft/entity/SharedMonsterAttributes.java
-@@ -16,7 +16,7 @@
+@@ -15,7 +15,7 @@
  
  public class SharedMonsterAttributes {
     private static final Logger field_151476_f = LogManager.getLogger();

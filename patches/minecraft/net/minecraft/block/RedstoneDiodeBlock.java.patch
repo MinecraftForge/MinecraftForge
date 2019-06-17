@@ -1,0 +1,28 @@
+--- a/net/minecraft/block/RedstoneDiodeBlock.java
++++ b/net/minecraft/block/RedstoneDiodeBlock.java
+@@ -65,7 +65,7 @@
+       if (p_220069_1_.func_196955_c(p_220069_2_, p_220069_3_)) {
+          this.func_176398_g(p_220069_2_, p_220069_3_, p_220069_1_);
+       } else {
+-         TileEntity tileentity = this.func_149716_u() ? p_220069_2_.func_175625_s(p_220069_3_) : null;
++         TileEntity tileentity = p_220069_1_.hasTileEntity() ? p_220069_2_.func_175625_s(p_220069_3_) : null;
+          func_220059_a(p_220069_1_, p_220069_2_, p_220069_3_, tileentity);
+          p_220069_2_.func_217377_a(p_220069_3_, false);
+ 
+@@ -164,6 +164,8 @@
+    protected void func_176400_h(World p_176400_1_, BlockPos p_176400_2_, BlockState p_176400_3_) {
+       Direction direction = p_176400_3_.func_177229_b(field_185512_D);
+       BlockPos blockpos = p_176400_2_.func_177972_a(direction.func_176734_d());
++      if (net.minecraftforge.event.ForgeEventFactory.onNeighborNotify(p_176400_1_, p_176400_2_, p_176400_1_.func_180495_p(p_176400_2_), java.util.EnumSet.of(direction.func_176734_d()), false).isCanceled())
++         return;
+       p_176400_1_.func_190524_a(blockpos, this, p_176400_2_);
+       p_176400_1_.func_175695_a(blockpos, this, direction);
+    }
+@@ -171,7 +173,6 @@
+    protected boolean func_185545_A(BlockState p_185545_1_) {
+       return p_185545_1_.func_185897_m();
+    }
+-
+    protected int func_176408_a(IBlockReader p_176408_1_, BlockPos p_176408_2_, BlockState p_176408_3_) {
+       return 15;
+    }

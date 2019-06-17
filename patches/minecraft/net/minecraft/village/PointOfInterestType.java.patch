@@ -1,0 +1,11 @@
+--- a/net/minecraft/village/PointOfInterestType.java
++++ b/net/minecraft/village/PointOfInterestType.java
+@@ -21,7 +21,7 @@
+ import net.minecraft.util.SoundEvents;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class PointOfInterestType {
++public class PointOfInterestType extends net.minecraftforge.registries.ForgeRegistryEntry<PointOfInterestType> {
+    private static final Predicate<PointOfInterestType> field_221071_s = (p_221041_0_) -> {
+       return Registry.field_218370_L.func_201756_e().map(VillagerProfession::func_221149_b).collect(Collectors.toSet()).contains(p_221041_0_);
+    };

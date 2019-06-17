@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/renderer/tileentity/PistonTileEntityRenderer.java
++++ b/net/minecraft/client/renderer/tileentity/PistonTileEntityRenderer.java
+@@ -67,6 +67,7 @@
+    }
+ 
+    private boolean func_188186_a(BlockPos p_188186_1_, BlockState p_188186_2_, BufferBuilder p_188186_3_, World p_188186_4_, boolean p_188186_5_) {
++      if (field_178462_c == null) field_178462_c = Minecraft.func_71410_x().func_175602_ab();
+       return this.field_178462_c.func_175019_b().func_217631_a(p_188186_4_, this.field_178462_c.func_184389_a(p_188186_2_), p_188186_2_, p_188186_1_, p_188186_3_, p_188186_5_, new Random(), p_188186_2_.func_209533_a(p_188186_1_));
+    }
+ }

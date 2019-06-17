@@ -1,0 +1,16 @@
+--- a/net/minecraft/block/CocoaBlock.java
++++ b/net/minecraft/block/CocoaBlock.java
+@@ -30,10 +30,11 @@
+    }
+ 
+    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
+-      if (p_196267_2_.field_73012_v.nextInt(5) == 0) {
++      if (true) {
+          int i = p_196267_1_.func_177229_b(field_176501_a);
+-         if (i < 2) {
++         if (i < 2 && net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, p_196267_3_, p_196267_1_, p_196267_2_.field_73012_v.nextInt(5) == 0)) {
+             p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_.func_206870_a(field_176501_a, Integer.valueOf(i + 1)), 2);
++            net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
+          }
+       }
+ 

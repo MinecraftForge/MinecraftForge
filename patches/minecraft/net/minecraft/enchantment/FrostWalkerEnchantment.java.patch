@@ -1,0 +1,15 @@
+--- a/net/minecraft/enchantment/FrostWalkerEnchantment.java
++++ b/net/minecraft/enchantment/FrostWalkerEnchantment.java
+@@ -38,9 +38,10 @@
+             if (blockpos.func_218137_a(p_185266_0_.func_213303_ch(), (double)f)) {
+                blockpos$mutableblockpos.func_181079_c(blockpos.func_177958_n(), blockpos.func_177956_o() + 1, blockpos.func_177952_p());
+                BlockState blockstate1 = p_185266_1_.func_180495_p(blockpos$mutableblockpos);
+-               if (blockstate1.func_196958_f()) {
++               if (blockstate1.isAir(p_185266_1_, blockpos$mutableblockpos)) {
+                   BlockState blockstate2 = p_185266_1_.func_180495_p(blockpos);
+-                  if (blockstate2.func_185904_a() == Material.field_151586_h && blockstate2.func_177229_b(FlowingFluidBlock.field_176367_b) == 0 && blockstate.func_196955_c(p_185266_1_, blockpos) && p_185266_1_.func_217350_a(blockstate, blockpos, ISelectionContext.func_216377_a())) {
++                  boolean isFull = blockstate2.func_177230_c() == Blocks.field_150355_j && blockstate2.func_177229_b(FlowingFluidBlock.field_176367_b) == 0; //TODO: Forge, modded waters?
++                  if (blockstate2.func_185904_a() == Material.field_151586_h && isFull && blockstate.func_196955_c(p_185266_1_, blockpos) && p_185266_1_.func_217350_a(blockstate, blockpos, ISelectionContext.func_216377_a()) && !net.minecraftforge.event.ForgeEventFactory.onBlockPlace(p_185266_0_, new net.minecraftforge.common.util.BlockSnapshot(p_185266_1_, blockpos, blockstate2), net.minecraft.util.Direction.UP)) {
+                      p_185266_1_.func_175656_a(blockpos, blockstate);
+                      p_185266_1_.func_205220_G_().func_205360_a(blockpos, Blocks.field_185778_de, MathHelper.func_76136_a(p_185266_0_.func_70681_au(), 60, 120));
+                   }

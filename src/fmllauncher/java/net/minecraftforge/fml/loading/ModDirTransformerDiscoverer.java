@@ -18,6 +18,7 @@ public class ModDirTransformerDiscoverer implements ITransformerDiscoveryService
         final Path modsDir = gameDirectory.resolve(FMLPaths.MODSDIR.relative());
         List<Path> paths = new ArrayList<>();
         try {
+            Files.createDirectories(modsDir);
             Files.walk(modsDir, 1).forEach(p -> {
                 if (!Files.isRegularFile(p)) return;
                 if (!p.toString().endsWith(".jar")) return;

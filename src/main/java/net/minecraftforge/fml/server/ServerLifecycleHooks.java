@@ -19,12 +19,12 @@
 
 package net.minecraftforge.fml.server;
 
-import net.minecraft.network.EnumConnectionState;
+import net.minecraft.network.ProtocolType;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.handshake.client.CPacketHandshake;
-import net.minecraft.network.login.server.SPacketDisconnectLogin;
+import net.minecraft.network.handshake.client.CHandshakePacket;
+import net.minecraft.network.login.server.SDisconnectLoginPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.DistExecutor;
@@ -113,17 +113,17 @@ public class ServerLifecycleHooks
     }
     private static AtomicBoolean allowLogins = new AtomicBoolean(false);
 
-    public static boolean handleServerLogin(final CPacketHandshake packet, final NetworkManager manager) {
+    public static boolean handleServerLogin(final CHandshakePacket packet, final NetworkManager manager) {
         if (!allowLogins.get())
         {
-            TextComponentString text = new TextComponentString("Server is still starting! Please wait before reconnecting.");
+            StringTextComponent text = new StringTextComponent("Server is still starting! Please wait before reconnecting.");
             LOGGER.info(SERVERHOOKS,"Disconnecting Player (server is still starting): {}", text.getUnformattedComponentText());
-            manager.sendPacket(new SPacketDisconnectLogin(text));
+            manager.sendPacket(new SDisconnectLoginPacket(text));
             manager.closeChannel(text);
             return false;
         }
 
-        if (packet.getRequestedState() == EnumConnectionState.LOGIN) {
+        if (packet.getRequestedState() == ProtocolType.LOGIN) {
             final ConnectionType connectionType = ConnectionType.forVersionFlag(packet.getFMLVersion());
             final int versionNumber = connectionType.getFMLVersionNumber(packet.getFMLVersion());
 
@@ -138,7 +138,7 @@ public class ServerLifecycleHooks
             }
         }
 
-        if (packet.getRequestedState() == EnumConnectionState.STATUS) return true;
+        if (packet.getRequestedState() == ProtocolType.STATUS) return true;
 
         NetworkHooks.registerServerLoginChannel(manager, packet);
         return true;
@@ -146,10 +146,10 @@ public class ServerLifecycleHooks
     }
 
     private static void rejectConnection(final NetworkManager manager, ConnectionType type, String message) {
-        manager.setConnectionState(EnumConnectionState.LOGIN);
-        LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: ", type, message);
-        TextComponentString text = new TextComponentString(message);
-        manager.sendPacket(new SPacketDisconnectLogin(text));
+        manager.setConnectionState(ProtocolType.LOGIN);
+        LOGGER.info(SERVERHOOKS, "Disconnecting {} connection attempt: {}", type, message);
+        StringTextComponent text = new StringTextComponent(message);
+        manager.sendPacket(new SDisconnectLoginPacket(text));
         manager.closeChannel(text);
     }
 

@@ -1,47 +1,47 @@
 --- a/net/minecraft/world/dimension/DimensionType.java
 +++ b/net/minecraft/world/dimension/DimensionType.java
-@@ -6,14 +6,17 @@
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.registry.IRegistry;
+@@ -10,7 +10,7 @@
+ import net.minecraft.util.registry.Registry;
+ import net.minecraft.world.World;
  
--public class DimensionType {
-+public class DimensionType extends net.minecraftforge.registries.ForgeRegistryEntry<DimensionType> {
-    public static final DimensionType OVERWORLD = func_212677_a("overworld", new DimensionType(1, "", "", OverworldDimension::new));
-    public static final DimensionType NETHER = func_212677_a("the_nether", new DimensionType(0, "_nether", "DIM-1", NetherDimension::new));
-    public static final DimensionType THE_END = func_212677_a("the_end", new DimensionType(2, "_end", "DIM1", EndDimension::new));
-    private final int field_186074_d;
-    private final String field_186076_f;
+-public class DimensionType implements IDynamicSerializable {
++public class DimensionType extends net.minecraftforge.registries.ForgeRegistryEntry<DimensionType> implements IDynamicSerializable {
+    public static final DimensionType OVERWORLD = func_212677_a("overworld", new DimensionType(1, "", "", OverworldDimension::new, true));
+    public static final DimensionType NETHER = func_212677_a("the_nether", new DimensionType(0, "_nether", "DIM-1", NetherDimension::new, false));
+    public static final DimensionType THE_END = func_212677_a("the_end", new DimensionType(2, "_end", "DIM1", EndDimension::new, false));
+@@ -19,17 +19,31 @@
     private final String field_212682_f;
--   private final Supplier<? extends Dimension> field_201038_g;
-+   private final java.util.function.Function<DimensionType, ? extends Dimension> field_201038_g;
+    private final BiFunction<World, DimensionType, ? extends Dimension> field_201038_g;
+    private final boolean field_218273_h;
 +   private final boolean isVanilla;
 +   private final net.minecraftforge.common.ModDimension modType;
 +   private final net.minecraft.network.PacketBuffer data;
  
-    public static void func_212680_a() {
-    }
-@@ -23,11 +26,19 @@
-       return p_212677_1_;
+    private static DimensionType func_212677_a(String p_212677_0_, DimensionType p_212677_1_) {
+       return Registry.func_218343_a(Registry.field_212622_k, p_212677_1_.field_186074_d, p_212677_0_, p_212677_1_);
     }
  
--   protected DimensionType(int p_i49807_1_, String p_i49807_2_, String p_i49807_3_, Supplier<? extends Dimension> p_i49807_4_) {
-+   public DimensionType(int p_i49807_1_, String p_i49807_2_, String p_i49807_3_, Supplier<? extends Dimension> p_i49807_4_) {
-+      this(p_i49807_1_, p_i49807_2_, p_i49807_3_, type -> p_i49807_4_.get(), null, null);
++   //Forge, Internal use only. Use DimensionManager instead.
++   @Deprecated
+    protected DimensionType(int p_i49935_1_, String p_i49935_2_, String p_i49935_3_, BiFunction<World, DimensionType, ? extends Dimension> p_i49935_4_, boolean p_i49935_5_) {
++      this(p_i49935_1_, p_i49935_2_, p_i49935_3_, p_i49935_4_, p_i49935_5_, null, null);
 +   }
 +
 +   //Forge, Internal use only. Use DimensionManager instead.
-+   public DimensionType(int p_i49807_1_, String p_i49807_2_, String p_i49807_3_, java.util.function.Function<DimensionType, ? extends Dimension> p_i49807_4_, @Nullable net.minecraftforge.common.ModDimension modType, @Nullable net.minecraft.network.PacketBuffer data) {
-       this.field_186074_d = p_i49807_1_;
-       this.field_186076_f = p_i49807_2_;
-       this.field_212682_f = p_i49807_3_;
-       this.field_201038_g = p_i49807_4_;
++   @Deprecated
++   public DimensionType(int p_i49935_1_, String p_i49935_2_, String p_i49935_3_, BiFunction<World, DimensionType, ? extends Dimension> p_i49935_4_, boolean p_i49935_5_, @Nullable net.minecraftforge.common.ModDimension modType, @Nullable net.minecraft.network.PacketBuffer data) {
+       this.field_186074_d = p_i49935_1_;
+       this.field_186076_f = p_i49935_2_;
+       this.field_212682_f = p_i49935_3_;
+       this.field_201038_g = p_i49935_4_;
+       this.field_218273_h = p_i49935_5_;
 +      this.isVanilla = this.field_186074_d >= 0 && this.field_186074_d <= 2;
 +      this.modType = modType;
 +      this.data = data;
     }
  
-    public static Iterable<DimensionType> func_212681_b() {
-@@ -38,8 +49,9 @@
+    public static DimensionType func_218271_a(Dynamic<?> p_218271_0_) {
+@@ -44,8 +58,9 @@
        return this.field_186074_d + -1;
     }
  
@@ -52,12 +52,7 @@
     }
  
     public File func_212679_a(File p_212679_1_) {
-@@ -47,11 +59,11 @@
-    }
- 
-    public Dimension func_186070_d() {
--      return this.field_201038_g.get();
-+      return this.field_201038_g.apply(this);
+@@ -57,7 +72,7 @@
     }
  
     public String toString() {
@@ -66,8 +61,8 @@
     }
  
     @Nullable
-@@ -59,7 +71,21 @@
-       return IRegistry.field_212622_k.func_148754_a(p_186069_0_ - -1);
+@@ -65,7 +80,21 @@
+       return Registry.field_212622_k.func_148745_a(p_186069_0_ - -1);
     }
  
 +   public boolean isVanilla() {
@@ -86,5 +81,5 @@
 +
 +   @Nullable
     public static DimensionType func_193417_a(ResourceLocation p_193417_0_) {
-       return IRegistry.field_212622_k.func_212608_b(p_193417_0_);
+       return Registry.field_212622_k.func_82594_a(p_193417_0_);
     }

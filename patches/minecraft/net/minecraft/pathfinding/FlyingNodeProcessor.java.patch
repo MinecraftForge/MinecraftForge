@@ -1,6 +1,6 @@
 --- a/net/minecraft/pathfinding/FlyingNodeProcessor.java
 +++ b/net/minecraft/pathfinding/FlyingNodeProcessor.java
-@@ -206,7 +206,9 @@
+@@ -207,7 +207,9 @@
        EnumSet<PathNodeType> enumset = EnumSet.noneOf(PathNodeType.class);
        PathNodeType pathnodetype = PathNodeType.BLOCKED;
        BlockPos blockpos = new BlockPos(p_186319_5_);
@@ -10,12 +10,12 @@
        if (enumset.contains(PathNodeType.FENCE)) {
           return PathNodeType.FENCE;
        } else {
-@@ -238,6 +240,8 @@
-          if (pathnodetype1 != PathNodeType.DAMAGE_FIRE && block != Blocks.field_196814_hQ && pathnodetype1 != PathNodeType.LAVA) {
+@@ -239,6 +241,8 @@
+          if (pathnodetype1 != PathNodeType.DAMAGE_FIRE && block != Blocks.field_196814_hQ && pathnodetype1 != PathNodeType.LAVA && block != Blocks.field_222433_lV) {
              if (pathnodetype1 == PathNodeType.DAMAGE_CACTUS) {
                 pathnodetype = PathNodeType.DAMAGE_CACTUS;
 +            } else if (pathnodetype1 == PathNodeType.DAMAGE_OTHER) { // Forge: consider modded damage types
 +               pathnodetype = PathNodeType.DAMAGE_OTHER;
+             } else if (pathnodetype1 == PathNodeType.DAMAGE_OTHER) {
+                pathnodetype = PathNodeType.DAMAGE_OTHER;
              } else {
-                pathnodetype = pathnodetype1 != PathNodeType.WALKABLE && pathnodetype1 != PathNodeType.OPEN && pathnodetype1 != PathNodeType.WATER ? PathNodeType.WALKABLE : PathNodeType.OPEN;
-             }

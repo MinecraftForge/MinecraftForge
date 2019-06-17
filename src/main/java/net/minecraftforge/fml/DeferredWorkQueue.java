@@ -39,7 +39,6 @@ import org.apache.logging.log4j.Logger;
 import com.google.common.base.Function;
 import com.google.common.base.Stopwatch;
 
-import net.minecraft.util.IThreadListener;
 import net.minecraftforge.forgespi.language.IModInfo;
 
 /**
@@ -59,7 +58,7 @@ public class DeferredWorkQueue
     {
         public final IModInfo owner;
         public final Runnable task;
-        
+
         TaskInfo(IModInfo owner, Runnable task) {
             this.owner = owner;
             this.task = task;
@@ -68,15 +67,15 @@ public class DeferredWorkQueue
 
     /**
      * {@link Runnable} except it allows throwing checked exceptions.
-     * 
+     *
      * Is to {@link Runnable} as {@link Callable} is to {@link Supplier}.
      */
     @FunctionalInterface
-    public interface CheckedRunnable 
+    public interface CheckedRunnable
     {
         void run() throws Exception;
     }
-    
+
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static ThreadLocal<ModContainer> currentOwner = new ThreadLocal<>();
@@ -84,7 +83,7 @@ public class DeferredWorkQueue
 
     private static final ConcurrentLinkedDeque<TaskInfo> taskQueue = new ConcurrentLinkedDeque<>();
     private static final Executor deferredExecutor = r -> taskQueue.add(new TaskInfo(currentOwner.get().getModInfo(), r));
-    
+
     private static <T> Function<Throwable, T> handleException() {
         final ModContainer owner = currentOwner.get();
         return t -> {
@@ -103,7 +102,7 @@ public class DeferredWorkQueue
      * <p>
      * If the task has a result, use {@link #getLater(Supplier)} or
      * {@link #getLaterChecked(Callable)}.
-     * 
+     *
      * @param workToEnqueue A {@link Runnable} to execute later, on the loading
      *                      thread
      * @return A {@link CompletableFuture} that completes at said time
@@ -123,7 +122,7 @@ public class DeferredWorkQueue
      * <p>
      * If the task has a result, use {@link #getLater(Supplier)} or
      * {@link #getLaterChecked(Callable)}.
-     * 
+     *
      * @param workToEnqueue A {@link CheckedRunnable} to execute later, on the
      *                      loading thread
      * @return A {@link CompletableFuture} that completes at said time
@@ -147,7 +146,7 @@ public class DeferredWorkQueue
      * <p>
      * If the task does not have a result, use {@link #runLater(Runnable)} or
      * {@link #runLaterChecked(CheckedRunnable)}.
-     * 
+     *
      * @param               <T> The result type of the task
      * @param workToEnqueue A {@link Supplier} to execute later, on the loading
      *                      thread
@@ -168,7 +167,7 @@ public class DeferredWorkQueue
      * <p>
      * If the task does not have a result, use {@link #runLater(Runnable)} or
      * {@link #runLaterChecked(CheckedRunnable)}.
-     * 
+     *
      * @param               <T> The result type of the task
      * @param workToEnqueue A {@link Supplier} to execute later, on the loading
      *                      thread
@@ -183,7 +182,7 @@ public class DeferredWorkQueue
             }
         });
     }
-    
+
     static void clear() {
         taskQueue.clear();
     }

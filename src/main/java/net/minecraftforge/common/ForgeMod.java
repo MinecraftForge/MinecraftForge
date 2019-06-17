@@ -44,13 +44,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.data.ForgeBlockTagsProvider;
+import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.resource.ISelectiveResourceReloadListener;
@@ -95,6 +99,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.addListener(this::preInit);
         modEventBus.addListener(this::postInit);
         modEventBus.addListener(this::onAvailable);
+        modEventBus.addListener(this::gatherData);
         MinecraftForge.EVENT_BUS.addListener(this::serverStarting);
         MinecraftForge.EVENT_BUS.addListener(this::playerLogin);
         MinecraftForge.EVENT_BUS.addListener(this::serverStopping);
@@ -138,9 +143,13 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             VersionChecker.startVersionCheck();
         }
-        
+
         // Brandings need to recompute when language changes
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> ((SimpleReloadableResourceManager)Minecraft.getInstance().getResourceManager()).addReloadListener((ISelectiveResourceReloadListener) BrandingControl::clearCaches));
+        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc != null)
+                ((SimpleReloadableResourceManager)mc.getResourceManager()).func_219534_a((ISelectiveResourceReloadListener) BrandingControl::clearCaches);
+        });
     }
 
 /*
@@ -195,19 +204,19 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     }
 
     @Override
-    public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
+    public CompoundNBT getDataForWriting(SaveHandler handler, WorldInfo info)
     {
-        NBTTagCompound forgeData = new NBTTagCompound();
-        NBTTagCompound dims = new NBTTagCompound();
+        CompoundNBT forgeData = new CompoundNBT();
+        CompoundNBT dims = new CompoundNBT();
         DimensionManager.writeRegistry(dims);
         if (!dims.isEmpty())
-            forgeData.setTag("dims", dims);
+            forgeData.put("dims", dims);
         // TODO fluids FluidRegistry.writeDefaultFluidList(forgeData);
         return forgeData;
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
+    public void readData(SaveHandler handler, WorldInfo info, CompoundNBT tag)
     {
         if (tag.contains("dims", 10))
             DimensionManager.readRegistry(tag.getCompound("dims"));
@@ -222,5 +231,16 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
     public String getModId()
     {
         return ForgeVersion.MOD_ID;
+    }
+
+    public void gatherData(GatherDataEvent event)
+    {
+        DataGenerator gen = event.getGenerator();
+
+        if (event.includeServer())
+        {
+            gen.addProvider(new ForgeBlockTagsProvider(gen));
+            gen.addProvider(new ForgeItemTagsProvider(gen));
+        }
     }
 }

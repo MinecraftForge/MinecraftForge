@@ -1,0 +1,17 @@
+--- a/net/minecraft/client/gui/screen/ResourcePacksScreen.java
++++ b/net/minecraft/client/gui/screen/ResourcePacksScreen.java
+@@ -84,11 +84,14 @@
+          resourcepacklist.func_198983_a();
+          List<ClientResourcePackInfo> list = Lists.newArrayList(resourcepacklist.func_198978_b());
+          list.removeAll(resourcepacklist.func_198980_d());
++         list.removeIf(net.minecraft.resources.ResourcePackInfo::isHidden); // Forge: Hide some resource packs from the UI entirely
+ 
+          for(ClientResourcePackInfo clientresourcepackinfo : list) {
+             this.field_146970_i.func_214365_a(new AbstractResourcePackList.ResourcePackEntry(this.field_146970_i, this, clientresourcepackinfo));
+          }
+ 
++         java.util.Collection<ClientResourcePackInfo> enabledList = resourcepacklist.func_198980_d();
++         enabledList.removeIf(net.minecraft.resources.ResourcePackInfo::isHidden); // Forge: Hide some resource packs from the UI entirely
+          for(ClientResourcePackInfo clientresourcepackinfo1 : Lists.reverse(Lists.newArrayList(resourcepacklist.func_198980_d()))) {
+             this.field_146967_r.func_214365_a(new AbstractResourcePackList.ResourcePackEntry(this.field_146967_r, this, clientresourcepackinfo1));
+          }

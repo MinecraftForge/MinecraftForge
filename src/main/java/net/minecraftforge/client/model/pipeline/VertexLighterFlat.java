@@ -21,22 +21,23 @@ package net.minecraftforge.client.model.pipeline;
 
 import javax.vecmath.Vector3f;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorldReader;
 
 import java.util.Objects;
 
 public class VertexLighterFlat extends QuadGatheringTransformer
 {
-    protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.NORMAL, 4);
+    protected static final VertexFormatElement NORMAL_4F = new VertexFormatElement(0, VertexFormatElement.Type.FLOAT, VertexFormatElement.Usage.NORMAL, 4);
 
     protected final BlockInfo blockInfo;
     private int tint = -1;
@@ -243,14 +244,14 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         final float e2 = 0.95f;
 
         boolean full = blockInfo.isFullCube();
-        EnumFacing side = null;
+        Direction side = null;
 
-             if((full || y < -e1) && normal[1] < -e2) side = EnumFacing.DOWN;
-        else if((full || y >  e1) && normal[1] >  e2) side = EnumFacing.UP;
-        else if((full || z < -e1) && normal[2] < -e2) side = EnumFacing.NORTH;
-        else if((full || z >  e1) && normal[2] >  e2) side = EnumFacing.SOUTH;
-        else if((full || x < -e1) && normal[0] < -e2) side = EnumFacing.WEST;
-        else if((full || x >  e1) && normal[0] >  e2) side = EnumFacing.EAST;
+             if((full || y < -e1) && normal[1] < -e2) side = Direction.DOWN;
+        else if((full || y >  e1) && normal[1] >  e2) side = Direction.UP;
+        else if((full || z < -e1) && normal[2] < -e2) side = Direction.NORTH;
+        else if((full || z >  e1) && normal[2] >  e2) side = Direction.SOUTH;
+        else if((full || x < -e1) && normal[0] < -e2) side = Direction.WEST;
+        else if((full || x >  e1) && normal[0] >  e2) side = Direction.EAST;
 
         int i = side == null ? 0 : side.ordinal() + 1;
         int brightness = blockInfo.getPackedLight()[i];
@@ -275,7 +276,7 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         this.tint = tint;
     }
     @Override
-    public void setQuadOrientation(EnumFacing orientation) {}
+    public void setQuadOrientation(Direction orientation) {}
     public void setQuadCulled() {}
     @Override
     public void setTexture(TextureAtlasSprite texture) {}
@@ -285,12 +286,12 @@ public class VertexLighterFlat extends QuadGatheringTransformer
         this.diffuse = diffuse;
     }
 
-    public void setWorld(IWorldReader world)
+    public void setWorld(IEnviromentBlockReader world)
     {
         blockInfo.setWorld(world);
     }
 
-    public void setState(IBlockState state)
+    public void setState(BlockState state)
     {
         blockInfo.setState(state);
     }

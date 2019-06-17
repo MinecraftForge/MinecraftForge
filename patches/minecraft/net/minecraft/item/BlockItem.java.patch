@@ -1,0 +1,22 @@
+--- a/net/minecraft/item/BlockItem.java
++++ b/net/minecraft/item/BlockItem.java
+@@ -69,7 +69,7 @@
+                   }
+                }
+ 
+-               SoundType soundtype = blockstate1.func_215695_r();
++               SoundType soundtype = blockstate1.getSoundType(world, blockpos, p_195942_1_.func_195999_j());
+                world.func_184133_a(playerentity, blockpos, this.func_219983_a(blockstate1), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+                itemstack.func_190918_g(1);
+                return ActionResultType.SUCCESS;
+@@ -189,6 +189,10 @@
+    }
+ 
+    public Block func_179223_d() {
++      return this.getBlockRaw() == null ? null : this.getBlockRaw().delegate.get();
++   }
++
++   private Block getBlockRaw() {
+       return this.field_150939_a;
+    }
+ 

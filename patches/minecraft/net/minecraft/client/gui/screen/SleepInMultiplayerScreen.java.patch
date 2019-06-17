@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/SleepInMultiplayerScreen.java
++++ b/net/minecraft/client/gui/screen/SleepInMultiplayerScreen.java
+@@ -30,7 +30,7 @@
+       } else if (p_keyPressed_1_ == 257 || p_keyPressed_1_ == 335) {
+          String s = this.field_146415_a.func_146179_b().trim();
+          if (!s.isEmpty()) {
+-            this.minecraft.field_71439_g.func_71165_d(s);
++            this.sendMessage(s); // Forge: fix vanilla not adding messages to the sent list while sleeping
+          }
+ 
+          this.field_146415_a.func_146180_a("");

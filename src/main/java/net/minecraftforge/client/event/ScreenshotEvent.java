@@ -21,7 +21,7 @@ package net.minecraftforge.client.event;
 
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -40,7 +40,7 @@ import java.io.File;
 public class ScreenshotEvent extends Event
 {
 
-    public static final ITextComponent DEFAULT_CANCEL_REASON = new TextComponentString("Screenshot canceled");
+    public static final ITextComponent DEFAULT_CANCEL_REASON = new StringTextComponent("Screenshot canceled");
 
     private NativeImage image;
     private File screenshotFile;

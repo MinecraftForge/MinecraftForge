@@ -1,61 +1,10 @@
 --- a/net/minecraft/item/crafting/FurnaceRecipe.java
 +++ b/net/minecraft/item/crafting/FurnaceRecipe.java
-@@ -11,8 +11,6 @@
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.registry.IRegistry;
- import net.minecraft.world.World;
--import net.minecraftforge.api.distmarker.Dist;
--import net.minecraftforge.api.distmarker.OnlyIn;
- 
- public class FurnaceRecipe implements IRecipe {
-    private final ResourceLocation field_201832_a;
-@@ -32,14 +30,13 @@
-    }
- 
-    public boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_) {
--      return p_77569_1_ instanceof TileEntityFurnace && this.field_201834_c.test(p_77569_1_.func_70301_a(0));
-+      return this.field_201834_c.test(p_77569_1_.func_70301_a(0));
-    }
- 
-    public ItemStack func_77572_b(IInventory p_77572_1_) {
-       return this.field_201835_d.func_77946_l();
+@@ -11,7 +11,6 @@
+       super(IRecipeType.field_222150_b, p_i48715_1_, p_i48715_2_, p_i48715_3_, p_i48715_4_, p_i48715_5_, p_i48715_6_);
     }
  
 -   @OnlyIn(Dist.CLIENT)
-    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
-       return true;
+    public ItemStack func_222128_h() {
+       return new ItemStack(Blocks.field_150460_al);
     }
-@@ -62,7 +59,6 @@
-       return this.field_201835_d;
-    }
- 
--   @OnlyIn(Dist.CLIENT)
-    public String func_193358_e() {
-       return this.field_201833_b;
-    }
-@@ -75,7 +71,13 @@
-       return this.field_201832_a;
-    }
- 
-+   @Override
-+   public net.minecraftforge.common.crafting.RecipeType<FurnaceRecipe> getType() {
-+      return net.minecraftforge.common.crafting.VanillaRecipeTypes.SMELTING;
-+   }
-+
-    public static class Serializer implements IRecipeSerializer<FurnaceRecipe> {
-+      private static ResourceLocation NAME = new ResourceLocation("minecraft", "smelting");
-       public FurnaceRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
-          String s = JsonUtils.func_151219_a(p_199425_2_, "group", "");
-          Ingredient ingredient;
-@@ -114,8 +116,9 @@
-          p_199427_1_.func_150787_b(p_199427_2_.field_201837_f);
-       }
- 
--      public String func_199567_a() {
--         return "smelting";
-+      @Override
-+      public ResourceLocation getName() {
-+         return NAME;
-       }
-    }
- }

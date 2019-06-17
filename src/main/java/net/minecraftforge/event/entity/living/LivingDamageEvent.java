@@ -19,11 +19,10 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.util.DamageSource;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 
 /**
  * LivingDamageEvent is fired just before damage is applied to entity.<br>
@@ -49,7 +48,7 @@ public class LivingDamageEvent extends LivingEvent
 {
     private final DamageSource source;
     private float amount;
-    public LivingDamageEvent(EntityLivingBase entity, DamageSource source, float amount)
+    public LivingDamageEvent(LivingEntity entity, DamageSource source, float amount)
     {
         super(entity);
         this.source = source;

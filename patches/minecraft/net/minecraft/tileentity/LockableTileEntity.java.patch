@@ -1,0 +1,26 @@
+--- a/net/minecraft/tileentity/LockableTileEntity.java
++++ b/net/minecraft/tileentity/LockableTileEntity.java
+@@ -80,4 +80,23 @@
+    }
+ 
+    protected abstract Container func_213906_a(int p_213906_1_, PlayerInventory p_213906_2_);
++
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> createUnSidedHandler());
++   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++      return new net.minecraftforge.items.wrapper.InvWrapper(this);
++   }
++
++   @javax.annotation.Nullable
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> cap, @javax.annotation.Nullable net.minecraft.util.Direction side) {
++      if (!this.field_145846_f && cap == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY ) {
++         return itemHandler.cast();
++      }
++      return super.getCapability(cap, side);
++   }
++
++   @Override
++   public void func_145843_s() {
++      super.func_145843_s();
++      itemHandler.invalidate();
++   }
+ }

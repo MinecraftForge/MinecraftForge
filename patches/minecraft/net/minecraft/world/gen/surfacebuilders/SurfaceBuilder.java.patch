@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/surfacebuilders/SurfaceBuilder.java
++++ b/net/minecraft/world/gen/surfacebuilders/SurfaceBuilder.java
+@@ -9,7 +9,7 @@
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.chunk.IChunk;
+ 
+-public abstract class SurfaceBuilder<C extends ISurfaceBuilderConfig> {
++public abstract class SurfaceBuilder<C extends ISurfaceBuilderConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<SurfaceBuilder<?>> {
+    public static final BlockState field_215409_f = Blocks.field_150350_a.func_176223_P();
+    public static final BlockState field_215410_g = Blocks.field_150346_d.func_176223_P();
+    public static final BlockState field_215411_h = Blocks.field_196658_i.func_176223_P();

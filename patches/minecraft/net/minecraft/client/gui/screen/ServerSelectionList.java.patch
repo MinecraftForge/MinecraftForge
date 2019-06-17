@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/gui/screen/ServerSelectionList.java
++++ b/net/minecraft/client/gui/screen/ServerSelectionList.java
+@@ -292,6 +292,8 @@
+             this.field_148303_c.func_146793_a(s);
+          }
+ 
++         net.minecraftforge.fml.client.ClientHooks.drawForgePingInfo(this.field_148303_c, field_148301_e, p_render_3_, p_render_2_, p_render_4_, i1, j1);
++
+          if (this.field_148300_d.field_71474_y.field_85185_A || p_render_8_) {
+             this.field_148300_d.func_110434_K().func_110577_a(ServerSelectionList.field_214360_d);
+             AbstractGui.fill(p_render_3_, p_render_2_, p_render_3_ + 32, p_render_2_ + 32, -1601138544);

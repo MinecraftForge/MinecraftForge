@@ -22,6 +22,7 @@ package net.minecraftforge.common;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.IWorldReader;
@@ -38,6 +39,8 @@ import javax.annotation.Nonnull;
  */
 //TODO Change to World, not IWorldReader and make Implementor responsible for removing itself from the world.
 //Better mimics vanilla behavior and allows more control for the user.
+
+@Deprecated //TODO: Reevaluate the entire thing, loot from blocks is now a loot table. So this is just a marker now.
 public interface IShearable
 {
     /**
@@ -72,5 +75,7 @@ public interface IShearable
      * @return A List containing all items from this shearing. May be empty.
      */
     @Nonnull
-    List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune);
+    default List<ItemStack> onSheared(@Nonnull ItemStack item, IWorld world, BlockPos pos, int fortune) {
+        return NonNullList.create();
+    }
 }

@@ -1,0 +1,37 @@
+--- a/net/minecraft/client/gui/advancements/AdvancementTabGui.java
++++ b/net/minecraft/client/gui/advancements/AdvancementTabGui.java
+@@ -36,6 +36,7 @@
+    private int field_191814_q = Integer.MIN_VALUE;
+    private float field_191815_r;
+    private boolean field_192992_s;
++   private int page;
+ 
+    public AdvancementTabGui(Minecraft p_i47589_1_, AdvancementsScreen p_i47589_2_, AdvancementTabType p_i47589_3_, int p_i47589_4_, Advancement p_i47589_5_, DisplayInfo p_i47589_6_) {
+       this.field_191802_a = p_i47589_1_;
+@@ -50,6 +51,15 @@
+       this.func_193937_a(this.field_191809_l, p_i47589_5_);
+    }
+ 
++   public AdvancementTabGui(Minecraft mc, AdvancementsScreen screen, AdvancementTabType type, int index, int page, Advancement adv, DisplayInfo info) {
++      this(mc, screen, type, index, adv, info);
++      this.page = page;
++   }
++
++   public int getPage() {
++      return page;
++   }
++
+    public Advancement func_193935_c() {
+       return this.field_191805_h;
+    }
+@@ -136,8 +146,8 @@
+          return null;
+       } else {
+          for(AdvancementTabType advancementtabtype : AdvancementTabType.values()) {
+-            if (p_193936_2_ < advancementtabtype.func_192650_a()) {
+-               return new AdvancementTabGui(p_193936_0_, p_193936_1_, advancementtabtype, p_193936_2_, p_193936_3_, p_193936_3_.func_192068_c());
++            if ((p_193936_2_ % AdvancementTabType.MAX_TABS) < advancementtabtype.func_192650_a()) {
++               return new AdvancementTabGui(p_193936_0_, p_193936_1_, advancementtabtype, p_193936_2_ % AdvancementTabType.MAX_TABS, p_193936_2_ / AdvancementTabType.MAX_TABS, p_193936_3_, p_193936_3_.func_192068_c());
+             }
+ 
+             p_193936_2_ -= advancementtabtype.func_192650_a();

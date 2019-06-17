@@ -1,7 +1,7 @@
 --- a/net/minecraft/item/crafting/IRecipePlacer.java
 +++ b/net/minecraft/item/crafting/IRecipePlacer.java
 @@ -7,10 +7,10 @@
-    default void func_201501_a(int p_201501_1_, int p_201501_2_, int p_201501_3_, IRecipe p_201501_4_, Iterator<T> p_201501_5_, int p_201501_6_) {
+    default void func_201501_a(int p_201501_1_, int p_201501_2_, int p_201501_3_, IRecipe<?> p_201501_4_, Iterator<T> p_201501_5_, int p_201501_6_) {
        int i = p_201501_1_;
        int j = p_201501_2_;
 -      if (p_201501_4_ instanceof ShapedRecipe) {

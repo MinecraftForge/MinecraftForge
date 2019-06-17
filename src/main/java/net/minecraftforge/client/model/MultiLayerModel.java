@@ -26,18 +26,15 @@ import java.util.List;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResourceManager;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -71,7 +68,7 @@ public final class MultiLayerModel implements IUnbakedModel
     }
     
     @Override
-    public Collection<ResourceLocation> getOverrideLocations()
+    public Collection<ResourceLocation> getDependencies()
     {
         return ImmutableList.copyOf(models.values());
     }
@@ -82,25 +79,26 @@ public final class MultiLayerModel implements IUnbakedModel
     	return Collections.emptyList();
     }
 
-    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, IModelState state, boolean uvlock, VertexFormat format, Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter)
+    private static ImmutableMap<Optional<BlockRenderLayer>, IBakedModel> buildModels(ImmutableMap<Optional<BlockRenderLayer>, ModelResourceLocation> models, ISprite sprite, VertexFormat format, ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter)
     {
         ImmutableMap.Builder<Optional<BlockRenderLayer>, IBakedModel> builder = ImmutableMap.builder();
         for(Optional<BlockRenderLayer> key : models.keySet())
         {
         	IUnbakedModel model = ModelLoaderRegistry.getModelOrLogError(models.get(key), "Couldn't load MultiLayerModel dependency: " + models.get(key));
-            builder.put(key, model.bake(modelGetter, bakedTextureGetter, new ModelStateComposition(state, model.getDefaultState()), uvlock, format));
+            builder.put(key, model.bake(bakery, spriteGetter, new ModelStateComposition(sprite.getState(), model.getDefaultState(), sprite.isUvLock()), format));
         }
         return builder.build();
     }
 
+    @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
         IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
         return new MultiLayerBakedModel(
-            buildModels(models, state, uvlock, format, modelGetter, bakedTextureGetter),
-            missing.bake(modelGetter, bakedTextureGetter, missing.getDefaultState(), uvlock, format),
-            PerspectiveMapWrapper.getTransforms(state)
+            buildModels(models, sprite, format, bakery, spriteGetter),
+            missing.bake(bakery, spriteGetter, new BasicState(missing.getDefaultState(), sprite.isUvLock()), format),
+            PerspectiveMapWrapper.getTransforms(sprite.getState())
         );
     }
 
@@ -154,7 +152,7 @@ public final class MultiLayerModel implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
         {
             BlockRenderLayer layer = MinecraftForgeClient.getRenderLayer();
             if (layer == null)
@@ -177,7 +175,7 @@ public final class MultiLayerModel implements IUnbakedModel
         }
 
         @Override
-        public boolean isAmbientOcclusion(IBlockState state)
+        public boolean isAmbientOcclusion(BlockState state)
         {
             return base.isAmbientOcclusion(state);
         }

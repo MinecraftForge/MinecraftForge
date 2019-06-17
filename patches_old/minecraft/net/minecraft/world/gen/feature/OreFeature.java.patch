@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/OreFeature.java
++++ b/net/minecraft/world/gen/feature/OreFeature.java
+@@ -103,7 +103,7 @@
+                               if (!bitset.get(k2)) {
+                                  bitset.set(k2);
+                                  blockpos$mutableblockpos.func_181079_c(l1, i2, j2);
+-                                 if (p_207803_3_.field_202442_b.test(p_207803_1_.func_180495_p(blockpos$mutableblockpos))) {
++                                 if (p_207803_1_.func_180495_p(blockpos$mutableblockpos).isReplaceableOreGen(p_207803_1_.func_201672_e(), blockpos$mutableblockpos, p_207803_3_.field_202442_b)) {
+                                     p_207803_1_.func_180501_a(blockpos$mutableblockpos, p_207803_3_.field_202444_d, 2);
+                                     ++i;
+                                  }

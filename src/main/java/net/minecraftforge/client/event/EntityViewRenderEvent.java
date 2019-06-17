@@ -19,8 +19,9 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.fluid.IFluidState;
@@ -36,59 +37,45 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.api.Event
 {
     private final GameRenderer renderer;
-    private final Entity entity;
-    private final IBlockState state;
-    private final IFluidState fluidState;
+    private final ActiveRenderInfo info;
     private final double renderPartialTicks;
 
-    public EntityViewRenderEvent(GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, double renderPartialTicks)
+    public EntityViewRenderEvent(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks)
     {
         this.renderer = renderer;
-        this.entity = entity;
-        this.state = state;
-        this.fluidState = fluidState;
+        this.info = info;
         this.renderPartialTicks = renderPartialTicks;
     }
 
     public GameRenderer getRenderer()
     {
-	    return renderer;
-	}
-
-    public Entity getEntity()
-    {
-        return entity;
+        return renderer;
     }
 
-    public IBlockState getBlockState()
+    public ActiveRenderInfo getInfo()
     {
-        return state;
-    }
-    
-    public IFluidState getFluidState()
-    {
-        return fluidState;
+        return info;
     }
 
     public double getRenderPartialTicks()
     {
         return renderPartialTicks;
     }
-    
+
     private static class FogEvent extends EntityViewRenderEvent
     {
         private final FogRenderer fogRenderer;
-        
-        protected FogEvent(FogRenderer fogRenderer, GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, double renderPartialTicks)
+
+        protected FogEvent(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks)
         {
-            super(renderer, entity, state, fluidState, renderPartialTicks);
+            super(renderer, info, renderPartialTicks);
             this.fogRenderer = fogRenderer;
         }
-        
+
         public FogRenderer getFogRenderer() { return fogRenderer; }
     }
 
-	/**
+    /**
      * Event that allows any feature to customize the fog density the player sees.
      * NOTE: In order to make this event have an effect, you must cancel the event
      */
@@ -97,9 +84,9 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     {
         private float density;
 
-        public FogDensity(FogRenderer fogRenderer, GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, double renderPartialTicks, float density)
+        public FogDensity(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, float density)
         {
-            super(fogRenderer, renderer, entity, state, fluidState, renderPartialTicks);
+            super(fogRenderer, renderer, info, renderPartialTicks);
             this.setDensity(density);
         }
 
@@ -123,9 +110,9 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         private final int fogMode;
         private final float farPlaneDistance;
 
-        public RenderFogEvent(FogRenderer fogRenderer, GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, double renderPartialTicks, int fogMode, float farPlaneDistance)
+        public RenderFogEvent(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, int fogMode, float farPlaneDistance)
         {
-            super(fogRenderer, renderer, entity, state, fluidState, renderPartialTicks);
+            super(fogRenderer, renderer, info, renderPartialTicks);
             this.fogMode = fogMode;
             this.farPlaneDistance = farPlaneDistance;
         }
@@ -146,14 +133,14 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
      * NOTE: Any change made to one of the color variables will affect the result seen in-game.
      */
     public static class FogColors extends FogEvent
-    {        
+    {
         private float red;
         private float green;
         private float blue;
 
-        public FogColors(FogRenderer fogRenderer, GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, double renderPartialTicks, float red, float green, float blue)
+        public FogColors(FogRenderer fogRenderer, GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, float red, float green, float blue)
         {
-            super(fogRenderer, renderer, entity, state, fluidState, renderPartialTicks);
+            super(fogRenderer, renderer, info, renderPartialTicks);
             this.setRed(red);
             this.setGreen(green);
             this.setBlue(blue);
@@ -166,8 +153,8 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         public float getBlue() { return blue; }
         public void setBlue(float blue) { this.blue = blue; }
     }
-    
-    /** 
+
+    /**
      * Event that allows mods to alter the angles of the player's camera. Mainly useful for applying roll.
      */
     public static class CameraSetup extends EntityViewRenderEvent
@@ -176,9 +163,9 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         private float pitch;
         private float roll;
 
-        public CameraSetup(GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, double renderPartialTicks, float yaw, float pitch, float roll)
+        public CameraSetup(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, float yaw, float pitch, float roll)
         {
-            super(renderer, entity, state, fluidState, renderPartialTicks);
+            super(renderer, info, renderPartialTicks);
             this.setYaw(yaw);
             this.setPitch(pitch);
             this.setRoll(roll);
@@ -191,7 +178,7 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
         public float getRoll() { return roll; }
         public void setRoll(float roll) { this.roll = roll; }
     }
-    
+
     /**
      * Event that allows mods to alter the raw FOV itself.
      * This directly affects to the FOV without being modified.
@@ -199,9 +186,9 @@ public abstract class EntityViewRenderEvent extends net.minecraftforge.eventbus.
     public static class FOVModifier extends EntityViewRenderEvent
     {
         private double fov;
-        
-        public FOVModifier(GameRenderer renderer, Entity entity, IBlockState state, IFluidState fluidState, double renderPartialTicks, double fov) {
-            super(renderer, entity, state, fluidState, renderPartialTicks);
+
+        public FOVModifier(GameRenderer renderer, ActiveRenderInfo info, double renderPartialTicks, double fov) {
+            super(renderer, info, renderPartialTicks);
             this.setFOV(fov);
         }
 

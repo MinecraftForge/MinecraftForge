@@ -1,16 +1,7 @@
 --- a/net/minecraft/item/ItemGroup.java
 +++ b/net/minecraft/item/ItemGroup.java
-@@ -12,7 +12,7 @@
- import net.minecraftforge.api.distmarker.OnlyIn;
- 
- public abstract class ItemGroup {
--   public static final ItemGroup[] field_78032_a = new ItemGroup[12];
-+   public static ItemGroup[] field_78032_a = new ItemGroup[12];
-    public static final ItemGroup field_78030_b = (new ItemGroup(0, "buildingBlocks") {
-       @OnlyIn(Dist.CLIENT)
-       public ItemStack func_78016_d() {
-@@ -105,11 +105,14 @@
-    private EnumEnchantmentType[] field_111230_s = new EnumEnchantmentType[0];
+@@ -104,11 +104,14 @@
+    private EnchantmentType[] field_111230_s = new EnchantmentType[0];
     private ItemStack field_151245_t;
  
 +   public ItemGroup(String label) {
@@ -26,7 +17,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -180,11 +183,13 @@
+@@ -179,11 +182,13 @@
  
     @OnlyIn(Dist.CLIENT)
     public int func_78020_k() {
@@ -40,7 +31,7 @@
        return this.field_78033_n < 6;
     }
  
-@@ -221,4 +226,58 @@
+@@ -220,4 +225,58 @@
        }
  
     }

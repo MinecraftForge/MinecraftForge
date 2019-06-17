@@ -1,28 +1,27 @@
 --- a/net/minecraft/client/renderer/texture/Stitcher.java
 +++ b/net/minecraft/client/renderer/texture/Stitcher.java
-@@ -12,6 +12,8 @@
+@@ -13,6 +13,8 @@
  
  @OnlyIn(Dist.CLIENT)
  public class Stitcher {
 +   private static final org.apache.logging.log4j.Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();
-+    
-    private final int field_147971_a;
-    private final Set<Stitcher.Holder> field_94319_a = Sets.newHashSetWithExpectedSize(256);
-    private final List<Stitcher.Slot> field_94317_b = Lists.newArrayListWithCapacity(256);
-@@ -48,16 +50,22 @@
++
+    private static final Comparator<Stitcher.Holder> field_217797_a = Comparator.<Stitcher.Holder, Integer>comparing((p_217793_0_) -> {
+       return -p_217793_0_.field_94201_d;
+    }).thenComparing((p_217795_0_) -> {
+@@ -50,15 +52,21 @@
     public void func_94305_f() {
-       Stitcher.Holder[] astitcher$holder = this.field_94319_a.toArray(new Stitcher.Holder[this.field_94319_a.size()]);
-       Arrays.sort((Object[])astitcher$holder);
-+      try(net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture stitching", astitcher$holder.length)) {
+       List<Stitcher.Holder> list = Lists.newArrayList(this.field_94319_a);
+       list.sort(field_217797_a);
++      try(net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture stitching", list.size())) {
  
-       for(Stitcher.Holder stitcher$holder : astitcher$holder) {
-+         bar.step(stitcher$holder.func_98150_a().func_195668_m().toString());
+       for(Stitcher.Holder stitcher$holder : list) {
++         bar.step(stitcher$holder.field_98151_a.func_195668_m().toString());
           if (!this.func_94310_b(stitcher$holder)) {
-             String s = String.format("Unable to fit: %s - size: %dx%d - Maybe try a lowerresolution resourcepack?", stitcher$holder.func_98150_a().func_195668_m(), stitcher$holder.func_98150_a().func_94211_a(), stitcher$holder.func_98150_a().func_94216_b());
-+            LOGGER.info(s);
-+            for (Stitcher.Holder h : astitcher$holder)
++            LOGGER.info(String.format("Unable to fit: %s - size: %dx%d - Maybe try a lower resolution resourcepack?", stitcher$holder.field_98151_a.func_195668_m(), stitcher$holder.field_98151_a.func_94211_a(), stitcher$holder.field_98151_a.func_94216_b()));
++            for (Stitcher.Holder h : list)
 +                LOGGER.info("  {}", h);
-             throw new StitcherException(stitcher$holder, s);
+             throw new StitcherException(stitcher$holder.field_98151_a);
           }
        }
  
@@ -32,21 +31,21 @@
     }
  
     public List<TextureAtlasSprite> func_94309_g() {
-@@ -121,7 +129,7 @@
-          boolean flag4 = flag2 && l != j1;
+@@ -104,7 +112,7 @@
+          boolean flag4 = flag2 && j != l;
           boolean flag;
           if (flag3 ^ flag4) {
 -            flag = flag3;
 +            flag = !flag3 && flag1; // Forge: Fix stitcher not expanding entire height before growing width, and (potentially) growing larger then the max size.
           } else {
-             flag = flag1 && k <= l;
+             flag = flag1 && i <= j;
           }
-@@ -195,7 +203,7 @@
+@@ -141,7 +149,7 @@
        }
  
        public String toString() {
 -         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + '}';
 +         return "Holder{width=" + this.field_94204_c + ", height=" + this.field_94201_d + ", name=" + this.field_98151_a.func_195668_m() + '}';
        }
+    }
  
-       public int compareTo(Stitcher.Holder p_compareTo_1_) {

@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/multiplayer/ServerData.java
 +++ b/net/minecraft/client/multiplayer/ServerData.java
-@@ -20,6 +20,7 @@
+@@ -22,6 +22,7 @@
     private ServerData.ServerResourceMode field_152587_j = ServerData.ServerResourceMode.PROMPT;
     private String field_147411_m;
     private boolean field_181042_l;

@@ -1,0 +1,38 @@
+--- a/net/minecraft/client/gui/SlotGui.java
++++ b/net/minecraft/client/gui/SlotGui.java
+@@ -154,15 +154,8 @@
+          GlStateManager.disableFog();
+          Tessellator tessellator = Tessellator.func_178181_a();
+          BufferBuilder bufferbuilder = tessellator.func_178180_c();
+-         this.minecraft.func_110434_K().func_110577_a(AbstractGui.BACKGROUND_LOCATION);
+-         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+-         float f = 32.0F;
+-         bufferbuilder.func_181668_a(7, DefaultVertexFormats.field_181709_i);
+-         bufferbuilder.func_181662_b((double)this.x0, (double)this.y1, 0.0D).func_187315_a((double)((float)this.x0 / 32.0F), (double)((float)(this.y1 + (int)this.yo) / 32.0F)).func_181669_b(32, 32, 32, 255).func_181675_d();
+-         bufferbuilder.func_181662_b((double)this.x1, (double)this.y1, 0.0D).func_187315_a((double)((float)this.x1 / 32.0F), (double)((float)(this.y1 + (int)this.yo) / 32.0F)).func_181669_b(32, 32, 32, 255).func_181675_d();
+-         bufferbuilder.func_181662_b((double)this.x1, (double)this.y0, 0.0D).func_187315_a((double)((float)this.x1 / 32.0F), (double)((float)(this.y0 + (int)this.yo) / 32.0F)).func_181669_b(32, 32, 32, 255).func_181675_d();
+-         bufferbuilder.func_181662_b((double)this.x0, (double)this.y0, 0.0D).func_187315_a((double)((float)this.x0 / 32.0F), (double)((float)(this.y0 + (int)this.yo) / 32.0F)).func_181669_b(32, 32, 32, 255).func_181675_d();
+-         tessellator.func_78381_a();
++         // Forge: background rendering moved into separate method.
++         this.drawContainerBackground(tessellator);
+          int k = this.x0 + this.width / 2 - this.getRowWidth() / 2 + 2;
+          int l = this.y0 + 4 - (int)this.yo;
+          if (this.renderHeader) {
+@@ -402,4 +395,17 @@
+    public int getItemHeight() {
+       return this.itemHeight;
+    }
++
++   protected void drawContainerBackground(Tessellator tessellator) {
++      BufferBuilder buffer = tessellator.func_178180_c();
++      this.minecraft.func_110434_K().func_110577_a(AbstractGui.BACKGROUND_LOCATION);
++      GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
++      float scale = 32.0F;
++      buffer.func_181668_a(7, DefaultVertexFormats.field_181709_i);
++      buffer.func_181662_b((double)this.x0, (double)this.y1, 0.0D).func_187315_a(this.x0 / scale, (this.y1 + (int)this.yo) / scale).func_181669_b(32, 32, 32, 255).func_181675_d();
++      buffer.func_181662_b((double)this.x1, (double)this.y1, 0.0D).func_187315_a(this.x1 / scale, (this.y1 + (int)this.yo) / scale).func_181669_b(32, 32, 32, 255).func_181675_d();
++      buffer.func_181662_b((double)this.x1, (double)this.y0, 0.0D).func_187315_a(this.x1 / scale, (this.y0 + (int)this.yo) / scale).func_181669_b(32, 32, 32, 255).func_181675_d();
++      buffer.func_181662_b((double)this.x0, (double)this.y0, 0.0D).func_187315_a(this.x0 / scale, (this.y0 + (int)this.yo) / scale).func_181669_b(32, 32, 32, 255).func_181675_d();
++      tessellator.func_78381_a();
++   }
+ }

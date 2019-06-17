@@ -20,12 +20,12 @@
 package net.minecraftforge.fml.network;
 
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceArrayMap;
-import net.minecraft.network.Packet;
+import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.login.client.CPacketCustomPayloadLogin;
-import net.minecraft.network.login.server.SPacketCustomPayloadLogin;
-import net.minecraft.network.play.client.CPacketCustomPayload;
-import net.minecraft.network.play.server.SPacketCustomPayload;
+import net.minecraft.network.login.client.CCustomPayloadLoginPacket;
+import net.minecraft.network.login.server.SCustomPayloadLoginPacket;
+import net.minecraft.network.play.client.CCustomPayloadPacket;
+import net.minecraft.network.play.server.SCustomPayloadPlayPacket;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.unsafe.UnsafeHacks;
 
@@ -37,13 +37,13 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public interface ICustomPacket<T extends Packet<?>> {
+public interface ICustomPacket<T extends IPacket<?>> {
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     enum Fields {
-        CPACKETCUSTOMPAYLOAD(CPacketCustomPayload.class),
-        SPACKETCUSTOMPAYLOAD(SPacketCustomPayload.class),
-        CPACKETCUSTOMLOGIN(CPacketCustomPayloadLogin.class),
-        SPACKETCUSTOMLOGIN(SPacketCustomPayloadLogin.class),
+        CPACKETCUSTOMPAYLOAD(CCustomPayloadPacket.class),
+        SPACKETCUSTOMPAYLOAD(SCustomPayloadPlayPacket.class),
+        CPACKETCUSTOMLOGIN(CCustomPayloadLoginPacket.class),
+        SPACKETCUSTOMLOGIN(SCustomPayloadLoginPacket.class),
         ;
 
         static final Reference2ReferenceArrayMap<Class<?>, Fields> lookup;

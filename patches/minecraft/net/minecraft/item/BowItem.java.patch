@@ -1,0 +1,57 @@
+--- a/net/minecraft/item/BowItem.java
++++ b/net/minecraft/item/BowItem.java
+@@ -22,7 +22,7 @@
+          if (p_210310_2_ == null) {
+             return 0.0F;
+          } else {
+-            return p_210310_2_.func_184607_cu().func_77973_b() != Items.field_151031_f ? 0.0F : (float)(p_210310_0_.func_77988_m() - p_210310_2_.func_184605_cv()) / 20.0F;
++            return !(p_210310_2_.func_184607_cu().func_77973_b() instanceof BowItem) ? 0.0F : (float)(p_210310_0_.func_77988_m() - p_210310_2_.func_184605_cv()) / 20.0F;
+          }
+       });
+       this.func_185043_a(new ResourceLocation("pulling"), (p_210309_0_, p_210309_1_, p_210309_2_) -> {
+@@ -35,18 +35,23 @@
+          PlayerEntity playerentity = (PlayerEntity)p_77615_3_;
+          boolean flag = playerentity.field_71075_bZ.field_75098_d || EnchantmentHelper.func_77506_a(Enchantments.field_185312_x, p_77615_1_) > 0;
+          ItemStack itemstack = playerentity.func_213356_f(p_77615_1_);
++
++         int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
++         i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(p_77615_1_, p_77615_2_, playerentity, i, !itemstack.func_190926_b() || flag);
++         if (i < 0) return;
++
+          if (!itemstack.func_190926_b() || flag) {
+             if (itemstack.func_190926_b()) {
+                itemstack = new ItemStack(Items.field_151032_g);
+             }
+ 
+-            int i = this.func_77626_a(p_77615_1_) - p_77615_4_;
+             float f = func_185059_b(i);
+             if (!((double)f < 0.1D)) {
+-               boolean flag1 = flag && itemstack.func_77973_b() == Items.field_151032_g;
++               boolean flag1 = playerentity.field_71075_bZ.field_75098_d || (itemstack.func_77973_b() instanceof ArrowItem && ((ArrowItem)itemstack.func_77973_b()).isInfinite(itemstack, p_77615_1_, playerentity));
+                if (!p_77615_2_.field_72995_K) {
+                   ArrowItem arrowitem = (ArrowItem)(itemstack.func_77973_b() instanceof ArrowItem ? itemstack.func_77973_b() : Items.field_151032_g);
+                   AbstractArrowEntity abstractarrowentity = arrowitem.func_200887_a(p_77615_2_, itemstack, playerentity);
++                  abstractarrowentity = customeArrow(abstractarrowentity);
+                   abstractarrowentity.func_184547_a(playerentity, playerentity.field_70125_A, playerentity.field_70177_z, 0.0F, f * 3.0F, 1.0F);
+                   if (f == 1.0F) {
+                      abstractarrowentity.func_70243_d(true);
+@@ -111,6 +116,10 @@
+    public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
+       ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
+       boolean flag = !p_77659_2_.func_213356_f(itemstack).func_190926_b();
++
++      ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, p_77659_1_, p_77659_2_, p_77659_3_, flag);
++      if (ret != null) return ret;
++
+       if (!p_77659_2_.field_71075_bZ.field_75098_d && !flag) {
+          return flag ? new ActionResult<>(ActionResultType.PASS, itemstack) : new ActionResult<>(ActionResultType.FAIL, itemstack);
+       } else {
+@@ -122,4 +131,8 @@
+    public Predicate<ItemStack> func_220004_b() {
+       return field_220007_a;
+    }
++
++   public AbstractArrowEntity customeArrow(AbstractArrowEntity arrow) {
++      return arrow;
++   }
+ }

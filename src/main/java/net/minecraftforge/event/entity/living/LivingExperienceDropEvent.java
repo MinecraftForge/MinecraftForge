@@ -19,8 +19,8 @@
 
 package net.minecraftforge.event.entity.living;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.eventbus.api.Cancelable;
 
 /**
@@ -31,12 +31,12 @@ import net.minecraftforge.eventbus.api.Cancelable;
 @net.minecraftforge.eventbus.api.Cancelable
 public class LivingExperienceDropEvent extends LivingEvent 
 {
-    private final EntityPlayer attackingPlayer;
+    private final PlayerEntity attackingPlayer;
     private final int originalExperiencePoints;
 
     private int droppedExperiencePoints;
 
-    public LivingExperienceDropEvent(EntityLivingBase entity, EntityPlayer attackingPlayer, int originalExperience)
+    public LivingExperienceDropEvent(LivingEntity entity, PlayerEntity attackingPlayer, int originalExperience)
     {
         super(entity);
 
@@ -54,7 +54,7 @@ public class LivingExperienceDropEvent extends LivingEvent
         this.droppedExperiencePoints = droppedExperience;
     }
 
-    public EntityPlayer getAttackingPlayer()
+    public PlayerEntity getAttackingPlayer()
     {
         return attackingPlayer;
     }

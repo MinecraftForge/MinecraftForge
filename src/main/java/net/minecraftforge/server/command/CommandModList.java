@@ -22,7 +22,7 @@ package net.minecraftforge.server.command;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
@@ -34,7 +34,7 @@ public class CommandModList {
         return Commands.literal("mods")
                 .requires(cs->cs.hasPermissionLevel(0)) //permission
                 .executes(ctx -> {
-                            ctx.getSource().sendFeedback(new TextComponentTranslation("commands.forge.mods.list",
+                            ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.mods.list",
                                     ModList.get().getMods().stream().map(ModInfo::getModId).collect(Collectors.joining(","))),
                                     true);
                             return 0;

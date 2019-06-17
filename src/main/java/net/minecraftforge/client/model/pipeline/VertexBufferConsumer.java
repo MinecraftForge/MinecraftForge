@@ -22,9 +22,9 @@ package net.minecraftforge.client.model.pipeline;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
+import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /**
  * Assumes VertexFormatElement is present in the BufferBuilder's vertex format.
@@ -36,7 +36,7 @@ public class VertexBufferConsumer implements IVertexConsumer
     private BufferBuilder renderer;
     private int[] quadData;
     private int v = 0;
-    private BlockPos offset = BlockPos.ORIGIN;
+    private BlockPos offset = BlockPos.ZERO;
 
     public VertexBufferConsumer() {}
 
@@ -55,7 +55,7 @@ public class VertexBufferConsumer implements IVertexConsumer
     public void put(int e, float... data)
     {
         VertexFormat format = getVertexFormat();
-        if(renderer.isColorDisabled() && format.getElement(e).getUsage() == EnumUsage.COLOR)
+        if(renderer.isColorDisabled() && format.getElement(e).getUsage() == Usage.COLOR)
         {
             data = dummyColor;
         }
@@ -95,7 +95,7 @@ public class VertexBufferConsumer implements IVertexConsumer
     @Override
     public void setQuadTint(int tint) {}
     @Override
-    public void setQuadOrientation(EnumFacing orientation) {}
+    public void setQuadOrientation(Direction orientation) {}
     @Override
     public void setApplyDiffuseLighting(boolean diffuse) {}
     @Override
