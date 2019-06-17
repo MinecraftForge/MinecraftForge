@@ -1,0 +1,16 @@
+--- a/net/minecraft/client/gui/widget/list/AbstractList.java
++++ b/net/minecraft/client/gui/widget/list/AbstractList.java
+@@ -451,6 +451,13 @@
+       return flag;
+    }
+ 
++   public int getWidth() { return this.width; }
++   public int getHeight() { return this.height; }
++   public int getTop() { return this.y0; }
++   public int getBottom() { return this.y1; }
++   public int getLeft() { return this.x1; }
++   public int getRight() { return this.x0; }
++
+    @OnlyIn(Dist.CLIENT)
+    public abstract static class AbstractListEntry<E extends AbstractList.AbstractListEntry<E>> implements IGuiEventListener {
+       @Deprecated

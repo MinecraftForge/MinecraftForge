@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event;
 
-import net.minecraft.world.EnumDifficulty;
+import net.minecraft.world.Difficulty;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -39,21 +39,21 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  **/
 public class DifficultyChangeEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private final EnumDifficulty difficulty;
-    private final EnumDifficulty oldDifficulty;
+    private final Difficulty difficulty;
+    private final Difficulty oldDifficulty;
 
-    public DifficultyChangeEvent(EnumDifficulty difficulty, EnumDifficulty oldDifficulty)
+    public DifficultyChangeEvent(Difficulty difficulty, Difficulty oldDifficulty)
     {
         this.difficulty = difficulty;
         this.oldDifficulty = oldDifficulty;
     }
 
-    public EnumDifficulty getDifficulty()
+    public Difficulty getDifficulty()
     {
         return difficulty;
     }
 
-    public EnumDifficulty getOldDifficulty()
+    public Difficulty getOldDifficulty()
     {
         return oldDifficulty;
     }

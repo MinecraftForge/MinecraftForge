@@ -24,13 +24,13 @@ import java.util.Optional;
 import java.util.Random;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 import org.apache.commons.lang3.tuple.Pair;
@@ -104,13 +104,13 @@ public class PerspectiveMapWrapper implements IBakedModel
     }
 
     @Override public boolean isAmbientOcclusion() { return parent.isAmbientOcclusion(); }
-    @Override public boolean isAmbientOcclusion(IBlockState state) { return parent.isAmbientOcclusion(state); }
+    @Override public boolean isAmbientOcclusion(BlockState state) { return parent.isAmbientOcclusion(state); }
     @Override public boolean isGui3d() { return parent.isGui3d(); }
     @Override public boolean isBuiltInRenderer() { return parent.isBuiltInRenderer(); }
     @Override public TextureAtlasSprite getParticleTexture() { return parent.getParticleTexture(); }
     @SuppressWarnings("deprecation")
     @Override public ItemCameraTransforms getItemCameraTransforms() { return parent.getItemCameraTransforms(); }
-    @Override public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand) { return parent.getQuads(state, side, rand); }
+    @Override public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand) { return parent.getQuads(state, side, rand); }
     @Override public ItemOverrideList getOverrides() { return parent.getOverrides(); }
 
     @Override

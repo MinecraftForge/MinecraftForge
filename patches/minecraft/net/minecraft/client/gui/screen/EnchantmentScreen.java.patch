@@ -1,0 +1,27 @@
+--- a/net/minecraft/client/gui/screen/EnchantmentScreen.java
++++ b/net/minecraft/client/gui/screen/EnchantmentScreen.java
+@@ -146,7 +146,7 @@
+             String s1 = EnchantmentNameParts.func_178176_a().func_148334_a(this.font, i2);
+             FontRenderer fontrenderer = this.minecraft.func_211500_ak().func_211504_a(Minecraft.field_71464_q);
+             int j2 = 6839882;
+-            if ((l < i1 + 1 || this.minecraft.field_71439_g.field_71068_ca < l1) && !this.minecraft.field_71439_g.field_71075_bZ.field_75098_d) {
++            if (((l < i1 + 1 || this.minecraft.field_71439_g.field_71068_ca < l1) && !this.minecraft.field_71439_g.field_71075_bZ.field_75098_d) || this.field_147002_h.field_185001_h[i1] == -1) { // Forge: render buttons as disabled when enchantable but enchantability not met on lower levels
+                this.blit(j1, j + 14 + 19 * i1, 0, 185, 108, 19);
+                this.blit(j1 + 1, j + 15 + 19 * i1, 16 * i1, 239, 16, 16);
+                fontrenderer.func_78279_b(s1, k1, j + 16 + 19 * i1, i2, (j2 & 16711422) >> 1);
+@@ -186,10 +186,12 @@
+          Enchantment enchantment = Enchantment.func_185262_c((this.field_147002_h).field_185001_h[j]);
+          int l = (this.field_147002_h).field_185002_i[j];
+          int i1 = j + 1;
+-         if (this.func_195359_a(60, 14 + 19 * j, 108, 17, (double)p_render_1_, (double)p_render_2_) && k > 0 && l >= 0 && enchantment != null) {
++         if (this.func_195359_a(60, 14 + 19 * j, 108, 17, (double)p_render_1_, (double)p_render_2_) && k > 0) {
+             List<String> list = Lists.newArrayList();
+-            list.add("" + TextFormatting.WHITE + TextFormatting.ITALIC + I18n.func_135052_a("container.enchant.clue", enchantment.func_200305_d(l).func_150254_d()));
+-            if (!flag) {
++            list.add("" + TextFormatting.WHITE + TextFormatting.ITALIC + I18n.func_135052_a("container.enchant.clue", enchantment == null ? "" : enchantment.func_200305_d(l).func_150254_d()));
++            if (enchantment == null) {
++               java.util.Collections.addAll(list, "", TextFormatting.RED + I18n.func_135052_a("forge.container.enchant.limitedEnchantability"));
++            } else if (!flag) {
+                list.add("");
+                if (this.minecraft.field_71439_g.field_71068_ca < k) {
+                   list.add(TextFormatting.RED + I18n.func_135052_a("container.enchant.level.requirement", (this.field_147002_h).field_75167_g[j]));

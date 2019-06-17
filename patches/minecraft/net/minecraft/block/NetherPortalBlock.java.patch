@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/NetherPortalBlock.java
++++ b/net/minecraft/block/NetherPortalBlock.java
+@@ -68,7 +68,7 @@
+ 
+    public boolean func_176548_d(IWorld p_176548_1_, BlockPos p_176548_2_) {
+       NetherPortalBlock.Size netherportalblock$size = this.func_201816_b(p_176548_1_, p_176548_2_);
+-      if (netherportalblock$size != null) {
++      if (netherportalblock$size != null && !net.minecraftforge.event.ForgeEventFactory.onTrySpawnPortal(p_176548_1_, p_176548_2_, netherportalblock$size)) {
+          netherportalblock$size.func_150859_c();
+          return true;
+       } else {

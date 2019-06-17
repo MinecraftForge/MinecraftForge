@@ -1,0 +1,14 @@
+--- a/net/minecraft/tileentity/ShulkerBoxTileEntity.java
++++ b/net/minecraft/tileentity/ShulkerBoxTileEntity.java
+@@ -288,6 +288,11 @@
+       return new ShulkerBoxContainer(p_213906_1_, p_213906_2_, this);
+    }
+ 
++   @Override
++   protected net.minecraftforge.items.IItemHandler createUnSidedHandler() {
++      return new net.minecraftforge.items.wrapper.SidedInvWrapper(this, Direction.UP);
++   }
++
+    public static enum AnimationStatus {
+       CLOSED,
+       OPENING,

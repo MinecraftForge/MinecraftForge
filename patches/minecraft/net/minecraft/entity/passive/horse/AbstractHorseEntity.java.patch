@@ -1,0 +1,33 @@
+--- a/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
++++ b/net/minecraft/entity/passive/horse/AbstractHorseEntity.java
+@@ -260,6 +260,7 @@
+ 
+       this.field_110296_bG.func_110134_a(this);
+       this.func_110232_cE();
++      this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(() -> new net.minecraftforge.items.wrapper.InvWrapper(this.field_110296_bG));
+    }
+ 
+    protected void func_110232_cE() {
+@@ -944,4 +945,22 @@
+ 
+       return p_213386_4_;
+    }
++
++   private net.minecraftforge.common.util.LazyOptional<?> itemHandler = null;
++
++   @Override
++   public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.Direction facing) {
++      if (this.func_70089_S() && capability == net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY && itemHandler != null)
++         return itemHandler.cast();
++      return super.getCapability(capability, facing);
++   }
++
++   @Override
++   public void remove(boolean keepData) {
++      super.remove(keepData);
++      if (!keepData && itemHandler != null) {
++         itemHandler.invalidate();
++         itemHandler = null;
++      }
++   }
+ }

@@ -1,0 +1,50 @@
+--- a/net/minecraft/client/gui/widget/Widget.java
++++ b/net/minecraft/client/gui/widget/Widget.java
+@@ -110,12 +110,7 @@
+       this.blit(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
+       this.blit(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
+       this.renderBg(minecraft, p_renderButton_1_, p_renderButton_2_);
+-      int j = 14737632;
+-      if (!this.active) {
+-         j = 10526880;
+-      } else if (this.isHovered()) {
+-         j = 16777120;
+-      }
++      int j = getFGColor();
+ 
+       this.drawCenteredString(fontrenderer, this.message, this.x + this.width / 2, this.y + (this.height - 8) / 2, j | MathHelper.func_76123_f(this.alpha * 255.0F) << 24);
+    }
+@@ -211,6 +206,14 @@
+       this.width = p_setWidth_1_;
+    }
+ 
++   public int getHeight() {
++      return this.height;
++   }
++
++   public void setHeight(int value) {
++      this.height = value;
++   }
++
+    public void setAlpha(float p_setAlpha_1_) {
+       this.alpha = p_setAlpha_1_;
+    }
+@@ -234,4 +237,18 @@
+    protected void setFocused(boolean p_setFocused_1_) {
+       this.focused = p_setFocused_1_;
+    }
++
++   protected int packedFGColor = 0;
++   public int getFGColor() {
++      if (packedFGColor != 0) return packedFGColor;
++      int ret = 14737632;
++      if (!this.active)
++        ret = 10526880;
++      else if (this.isHovered())
++        ret = 16777120;
++     return ret;
++   }
++   public void setFGColor(int color) {
++      this.packedFGColor = color;
++   }
+ }

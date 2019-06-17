@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/FishRenderer.java
++++ b/net/minecraft/client/renderer/entity/FishRenderer.java
+@@ -59,7 +59,7 @@
+          GlStateManager.popMatrix();
+          int i = playerentity.func_184591_cq() == HandSide.RIGHT ? 1 : -1;
+          ItemStack itemstack = playerentity.func_184614_ca();
+-         if (itemstack.func_77973_b() != Items.field_151112_aM) {
++         if (!(itemstack.func_77973_b() instanceof net.minecraft.item.FishingRodItem)) {
+             i = -i;
+          }
+ 

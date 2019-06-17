@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/storage/loot/LootTableManager.java
++++ b/net/minecraft/world/storage/loot/LootTableManager.java
+@@ -39,7 +39,7 @@
+          ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), s.substring(field_195435_a, s.length() - field_195436_b));
+ 
+          try (IResource iresource = p_195410_1_.func_199002_a(resourcelocation)) {
+-            LootTable loottable = JSONUtils.func_188178_a(field_186526_b, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), LootTable.class);
++            LootTable loottable =net.minecraftforge.common.ForgeHooks.loadLootTable(field_186526_b, resourcelocation, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), iresource.func_199026_d().equals("Default"), this);
+             if (loottable != null) {
+                this.field_186527_c.put(resourcelocation1, loottable);
+             }

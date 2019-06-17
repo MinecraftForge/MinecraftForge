@@ -1,0 +1,11 @@
+--- a/net/minecraft/inventory/container/PlayerContainer.java
++++ b/net/minecraft/inventory/container/PlayerContainer.java
+@@ -43,7 +43,7 @@
+             }
+ 
+             public boolean func_75214_a(ItemStack p_75214_1_) {
+-               return equipmentslottype == MobEntity.func_184640_d(p_75214_1_);
++               return p_75214_1_.canEquip(equipmentslottype, field_82862_h);
+             }
+ 
+             public boolean func_82869_a(PlayerEntity p_82869_1_) {

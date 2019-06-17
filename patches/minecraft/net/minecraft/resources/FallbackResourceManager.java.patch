@@ -1,0 +1,18 @@
+--- a/net/minecraft/resources/FallbackResourceManager.java
++++ b/net/minecraft/resources/FallbackResourceManager.java
+@@ -30,7 +30,6 @@
+       this.field_199023_a.add(p_199021_1_);
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public Set<String> func_199001_a() {
+       return Collections.emptySet();
+    }
+@@ -59,7 +58,6 @@
+       throw new FileNotFoundException(p_199002_1_.toString());
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean func_219533_b(ResourceLocation p_219533_1_) {
+       if (!this.func_219541_f(p_219533_1_)) {
+          return false;

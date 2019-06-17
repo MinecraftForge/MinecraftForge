@@ -34,9 +34,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Table;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.client.gui.GuiWorldSelection;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.screen.MultiplayerScreen;
+import net.minecraft.client.gui.screen.WorldSelectionScreen;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.ForgeI18n;
 import net.minecraftforge.fml.ModList;
@@ -55,10 +55,10 @@ import com.google.common.base.Strings;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
-import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.ServerStatusResponse;
-import net.minecraft.resources.AbstractResourcePack;
+import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.FallbackResourceManager;
 import net.minecraft.resources.IResourcePack;
 import net.minecraft.resources.SimpleReloadableResourceManager;
@@ -127,7 +127,7 @@ public class ClientHooks
 
     }
 
-    public static void drawForgePingInfo(GuiMultiplayer gui, ServerData target, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
+    public static void drawForgePingInfo(MultiplayerScreen gui, ServerData target, int x, int y, int width, int relativeMouseX, int relativeMouseY) {
         int idx;
         String tooltip;
         if (target.forgeData == null)
@@ -162,7 +162,7 @@ public class ClientHooks
         }
 
         Minecraft.getInstance().getTextureManager().bindTexture(iconSheet);
-        Gui.drawModalRectWithCustomSizedTexture(x + width - 18, y + 10, 0, (float)idx, 16, 16, 256.0f, 256.0f);
+        AbstractGui.blit(x + width - 18, y + 10, 16, 16, 0, idx, 16, 16, 256, 256);
 
         if(relativeMouseX > width - 15 && relativeMouseX < width && relativeMouseY > 10 && relativeMouseY < 26)
             gui.setHoveringText(tooltip);
@@ -179,7 +179,7 @@ public class ClientHooks
         return new File(Minecraft.getInstance().gameDir, "saves");
     }
 
-    public static void tryLoadExistingWorld(GuiWorldSelection selectWorldGUI, WorldSummary comparator)
+    public static void tryLoadExistingWorld(WorldSelectionScreen selectWorldGUI, WorldSummary comparator)
     {
         try
         {
@@ -196,7 +196,7 @@ public class ClientHooks
         return Minecraft.getInstance().getConnection()!=null ? Minecraft.getInstance().getConnection().getNetworkManager() : null;
     }
 
-    public static void handleClientWorldClosing(WorldClient world)
+    public static void handleClientWorldClosing(ClientWorld world)
     {
         NetworkManager client = getClientToServerNetworkManager();
         // ONLY revert a non-local connection
@@ -268,9 +268,9 @@ public class ClientHooks
                         List<IModInfo> mods = modRP.getModFile().getModInfos();
                         logger.error("      mod(s) {} resources at {}", mods.stream().map(IModInfo::getDisplayName).collect(Collectors.toList()), modRP.getModFile().getFilePath());
                     }
-                    else if (resPack instanceof AbstractResourcePack)
+                    else if (resPack instanceof ResourcePack)
                     {
-                        logger.error("      resource pack at path {}", ((AbstractResourcePack)resPack).file.getPath());
+                        logger.error("      resource pack at path {}", ((ResourcePack)resPack).file.getPath());
                     }
                     else
                     {

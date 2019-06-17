@@ -1,0 +1,31 @@
+--- a/net/minecraft/world/gen/feature/DarkOakTreeFeature.java
++++ b/net/minecraft/world/gen/feature/DarkOakTreeFeature.java
+@@ -18,6 +18,7 @@
+ 
+    public DarkOakTreeFeature(Function<Dynamic<?>, ? extends NoFeatureConfig> p_i49895_1_, boolean p_i49895_2_) {
+       super(p_i49895_1_, p_i49895_2_);
++      setSapling((net.minecraftforge.common.IPlantable)Blocks.field_196680_y);
+    }
+ 
+    public boolean func_208519_a(Set<BlockPos> p_208519_1_, IWorldGenerationReader p_208519_2_, Random p_208519_3_, BlockPos p_208519_4_, MutableBoundingBox p_208519_5_) {
+@@ -27,15 +28,15 @@
+       int l = p_208519_4_.func_177952_p();
+       if (k >= 1 && k + i + 1 < 256) {
+          BlockPos blockpos = p_208519_4_.func_177977_b();
+-         if (!func_214589_h(p_208519_2_, blockpos)) {
++         if (!isSoil(p_208519_2_, blockpos, getSapling())) {
+             return false;
+          } else if (!this.func_214615_a(p_208519_2_, p_208519_4_, i)) {
+             return false;
+          } else {
+-            this.func_214584_a(p_208519_2_, blockpos);
+-            this.func_214584_a(p_208519_2_, blockpos.func_177974_f());
+-            this.func_214584_a(p_208519_2_, blockpos.func_177968_d());
+-            this.func_214584_a(p_208519_2_, blockpos.func_177968_d().func_177974_f());
++            this.setDirtAt(p_208519_2_, blockpos, p_208519_4_);
++            this.setDirtAt(p_208519_2_, blockpos.func_177974_f(), p_208519_4_);
++            this.setDirtAt(p_208519_2_, blockpos.func_177968_d(), p_208519_4_);
++            this.setDirtAt(p_208519_2_, blockpos.func_177968_d().func_177974_f(), p_208519_4_);
+             Direction direction = Direction.Plane.HORIZONTAL.func_179518_a(p_208519_3_);
+             int i1 = i - p_208519_3_.nextInt(4);
+             int j1 = 2 - p_208519_3_.nextInt(3);

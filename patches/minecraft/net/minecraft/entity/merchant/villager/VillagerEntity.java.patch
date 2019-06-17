@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/merchant/villager/VillagerEntity.java
++++ b/net/minecraft/entity/merchant/villager/VillagerEntity.java
+@@ -229,7 +229,7 @@
+       if (flag) {
+          itemstack.func_111282_a(p_184645_1_, this, p_184645_2_);
+          return true;
+-      } else if (itemstack.func_77973_b() != Items.field_196172_da && this.func_70089_S() && !this.func_213716_dX() && !this.func_70608_bn()) {
++      } else if (itemstack.func_77973_b() != Items.field_196172_da && this.func_70089_S() && !this.func_213716_dX() && !this.func_70608_bn() && !p_184645_1_.func_70093_af()) {
+          if (this.func_70631_g_()) {
+             this.func_213756_es();
+             return super.func_184645_a(p_184645_1_, p_184645_2_);

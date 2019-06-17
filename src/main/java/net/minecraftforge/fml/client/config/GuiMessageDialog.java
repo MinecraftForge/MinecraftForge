@@ -19,27 +19,20 @@
 
 package net.minecraftforge.fml.client.config;
 
-import net.minecraft.client.gui.GuiDisconnected;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
 
-public class GuiMessageDialog extends GuiDisconnected
+public class GuiMessageDialog extends DisconnectedScreen
 {
     protected String buttonText;
 
-    public GuiMessageDialog(@Nullable GuiScreen nextScreen, String title, ITextComponent message, String buttonText)
+    public GuiMessageDialog(@Nullable Screen nextScreen, String title, ITextComponent message, String buttonText)
     {
         super(nextScreen, title, message);
-        this.buttonText = buttonText;
-    }
-
-    @Override
-    public void initGui()
-    {
-        super.initGui();
-        buttons.get(0).displayString = I18n.format(buttonText);
+        this.buttonText = I18n.format(buttonText);
     }
 }

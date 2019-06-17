@@ -20,7 +20,7 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.advancements.Advancement;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 
@@ -37,7 +37,7 @@ public class AdvancementEvent extends PlayerEvent
 {
     private final Advancement advancement;
 
-    public AdvancementEvent(EntityPlayer player, Advancement advancement)
+    public AdvancementEvent(PlayerEntity player, Advancement advancement)
     {
         super(player);
         this.advancement = advancement;

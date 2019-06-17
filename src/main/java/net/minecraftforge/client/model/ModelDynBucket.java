@@ -28,22 +28,19 @@ import javax.annotation.Nullable;
 import javax.vecmath.Quat4f;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.model.ItemOverrideList;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
+import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.PngSizeInfo;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.data.AnimationMetadataSection;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -122,21 +119,23 @@ public final class ModelDynBucket implements IUnbakedModel
     }
     
     @Override
-    public Collection<ResourceLocation> getOverrideLocations() 
+    public Collection<ResourceLocation> getDependencies() 
     {
     	return Collections.emptyList();
     }
 
+    @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
-
+        IModelState state = sprite.getState();
         ImmutableMap<TransformType, TRSRTransformation> transformMap = PerspectiveMapWrapper.getTransforms(state);
 
         // if the fluid is lighter than air, will manipulate the initial state to be rotated 180° to turn it upside down
         if (flipGas && fluid != null && fluid.isLighterThanAir())
         {
-            state = new ModelStateComposition(state, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, new Quat4f(0, 0, 1, 0), null, null)));
+            sprite = new ModelStateComposition(state, TRSRTransformation.blockCenterToCorner(new TRSRTransformation(null, new Quat4f(0, 0, 1, 0), null, null)));
+            state = sprite.getState();
         }
 
         TRSRTransformation transform = state.apply(Optional.empty()).orElse(TRSRTransformation.identity());
@@ -145,39 +144,39 @@ public final class ModelDynBucket implements IUnbakedModel
         ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
 
         if(fluid != null) {
-            fluidSprite = bakedTextureGetter.apply(fluid.getStill());
+            fluidSprite = spriteGetter.apply(fluid.getStill());
         }
 
         Random random = new Random();
         if (baseLocation != null)
         {
             // build base (insidest)
-            IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(modelGetter, bakedTextureGetter, state, uvlock, format);
+            IBakedModel model = (new ItemLayerModel(ImmutableList.of(baseLocation))).bake(bakery, spriteGetter, sprite, format);
             random.setSeed(42);
             builder.addAll(model.getQuads(null, null, random));
             particleSprite = model.getParticleTexture();
         }
         if (liquidLocation != null && fluidSprite != null)
         {
-            TextureAtlasSprite liquid = bakedTextureGetter.apply(liquidLocation);
+            TextureAtlasSprite liquid = spriteGetter.apply(liquidLocation);
             // build liquid layer (inside)
-            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, NORTH_Z_FLUID, EnumFacing.NORTH, tint ? fluid.getColor() : 0xFFFFFFFF, 1));
-            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, SOUTH_Z_FLUID, EnumFacing.SOUTH, tint ? fluid.getColor() : 0xFFFFFFFF, 1));
+            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, NORTH_Z_FLUID, Direction.NORTH, tint ? fluid.getColor() : 0xFFFFFFFF, 1));
+            builder.addAll(ItemTextureQuadConverter.convertTexture(format, transform, liquid, fluidSprite, SOUTH_Z_FLUID, Direction.SOUTH, tint ? fluid.getColor() : 0xFFFFFFFF, 1));
             particleSprite = fluidSprite;
         }
         if (coverLocation != null)
         {
             // cover (the actual item around the other two)
-            TextureAtlasSprite cover = bakedTextureGetter.apply(coverLocation);
-            builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, NORTH_Z_COVER, cover, EnumFacing.NORTH, 0xFFFFFFFF, 2));
-            builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, SOUTH_Z_COVER, cover, EnumFacing.SOUTH, 0xFFFFFFFF, 2));
+            TextureAtlasSprite cover = spriteGetter.apply(coverLocation);
+            builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, NORTH_Z_COVER, cover, Direction.NORTH, 0xFFFFFFFF, 2));
+            builder.add(ItemTextureQuadConverter.genQuad(format, transform, 0, 0, 16, 16, SOUTH_Z_COVER, cover, Direction.SOUTH, 0xFFFFFFFF, 2));
             if (particleSprite == null)
             {
                 particleSprite = cover;
             }
         }
 
-        return new BakedDynBucket(this, builder.build(), particleSprite, format, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity());
+        return new BakedDynBucket(bakery, this, builder.build(), particleSprite, format, Maps.immutableEnumMap(transformMap), Maps.newHashMap(), transform.isIdentity());
     }
 
     /**
@@ -267,7 +266,7 @@ public final class ModelDynBucket implements IUnbakedModel
     {
         try
         {
-            return new PngSizeInfo(resource);
+            return new PngSizeInfo(resource.toString(), resource.getInputStream());
         }
         catch (IOException e)
         {
@@ -297,7 +296,7 @@ public final class ModelDynBucket implements IUnbakedModel
             // no need to clear cache since we create a new model instance
         }
 
-        public void register(TextureMap map)
+        public void register(AtlasTexture map)
         {
             // only create these textures if they are not added by a resource pack
 
@@ -427,11 +426,15 @@ public final class ModelDynBucket implements IUnbakedModel
 
     private static final class BakedDynBucketOverrideHandler extends ItemOverrideList
     {
-        public static final BakedDynBucketOverrideHandler INSTANCE = new BakedDynBucketOverrideHandler();
-        private BakedDynBucketOverrideHandler() {}
+        private final ModelBakery bakery;
+        
+        private BakedDynBucketOverrideHandler(ModelBakery bakery)
+        {
+            this.bakery = bakery;
+        }
 
         @Override
-        public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+        public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable LivingEntity entity)
         {
             return FluidUtil.getFluidContained(stack)
                     .map(fluidStack -> {
@@ -446,7 +449,7 @@ public final class ModelDynBucket implements IUnbakedModel
                             Function<ResourceLocation, TextureAtlasSprite> textureGetter;
                             textureGetter = location -> Minecraft.getInstance().getTextureMap().getAtlasSprite(location.toString());
 
-                            IBakedModel bakedModel = parent.bake(ModelLoader.defaultModelGetter(), textureGetter, new SimpleModelState(model.transforms), false, model.format);
+                            IBakedModel bakedModel = parent.bake(bakery, textureGetter, new SimpleModelState(model.transforms), model.format);
                             model.cache.put(name, bakedModel);
                             return bakedModel;
                         }
@@ -465,7 +468,8 @@ public final class ModelDynBucket implements IUnbakedModel
         private final Map<String, IBakedModel> cache; // contains all the baked models since they'll never change
         private final VertexFormat format;
 
-        BakedDynBucket(ModelDynBucket parent,
+        BakedDynBucket(ModelBakery bakery,
+                       ModelDynBucket parent,
                        ImmutableList<BakedQuad> quads,
                        TextureAtlasSprite particle,
                        VertexFormat format,
@@ -473,7 +477,7 @@ public final class ModelDynBucket implements IUnbakedModel
                        Map<String, IBakedModel> cache,
                        boolean untransformed)
         {
-            super(quads, particle, transforms, BakedDynBucketOverrideHandler.INSTANCE, untransformed);
+            super(quads, particle, transforms, new BakedDynBucketOverrideHandler(bakery), untransformed);
             this.format = format;
             this.parent = parent;
             this.cache = cache;

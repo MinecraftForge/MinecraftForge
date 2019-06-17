@@ -24,13 +24,13 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 import net.minecraft.command.CommandSource;
-import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentBase;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.world.WorldServer;
+import net.minecraft.util.text.TextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.ServerWorld;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.storage.SessionLockException;
 import net.minecraftforge.common.DimensionManager;
@@ -86,9 +86,9 @@ public class ChunkGenWorker implements IWorker
         return ret;
     }
 
-    public TextComponentBase getStartMessage(CommandSource sender)
+    public TextComponent getStartMessage(CommandSource sender)
     {
-        return new TextComponentTranslation("commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
+        return new TranslationTextComponent("commands.forge.gen.start", total, start.getX(), start.getZ(), dim);
     }
 
     @Override
@@ -100,29 +100,31 @@ public class ChunkGenWorker implements IWorker
     @Override
     public boolean doWork()
     {
-        WorldServer world = DimensionManager.getWorld(listener.getServer(), dim, false, false);
+        ServerWorld world = DimensionManager.getWorld(listener.getServer(), dim, false, false);
         if (world == null)
         {
             world = DimensionManager.initWorld(listener.getServer(), dim);
             if (world == null)
             {
-                listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.dim_fail", dim), true);
+                listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.dim_fail", dim), true);
                 queue.clear();
                 return false;
             }
         }
 
+        /* TODO: Check how many things are pending save, and slow down world gen if to many
         AnvilChunkLoader loader = world.getChunkProvider().chunkLoader instanceof AnvilChunkLoader ? (AnvilChunkLoader)world.getChunkProvider().chunkLoader : null;
         if (loader != null && loader.getPendingSaveCount() > 100)
         {
 
             if (lastNotifcationTime < System.currentTimeMillis() - 10*1000)
             {
-                listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.progress", total - queue.size(), total), true);
+                listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.progress", total - queue.size(), total), true);
                 lastNotifcationTime = System.currentTimeMillis();
             }
             return false;
         }
+        */
 
         BlockPos next = queue.poll();
 
@@ -136,7 +138,7 @@ public class ChunkGenWorker implements IWorker
 
             if (++lastNotification >= notificationFrequency || lastNotifcationTime < System.currentTimeMillis() - 60*1000)
             {
-                listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.progress", total - queue.size(), total), true);
+                listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.progress", total - queue.size(), total), true);
                 lastNotification = 0;
                 lastNotifcationTime = System.currentTimeMillis();
             }
@@ -144,42 +146,17 @@ public class ChunkGenWorker implements IWorker
             int x = next.getX();
             int z = next.getZ();
 
-            Chunk target = world.getChunk(x, z);
-            Chunk[] chunks = { target };
-
-            if (!target.isPopulated())
-            {
-                // In order for a chunk to populate, The chunks around its bottom right corner need to be loaded.
-                // So lets load those chunks, but this needs to be done in a certain order to make this trigger.
-                // So this does load more chunks then it should, and is a hack, but lets go!.
-                chunks = new Chunk[] {
-                    target,
-                    world.getChunk(x + 1, z),
-                    world.getChunk(x + 1, z + 1),
-                    world.getChunk(x,     z + 1),
-                };
-                try
-                {
-                    world.getChunkProvider().chunkLoader.saveChunk(world, target);
-                }
-                catch (IOException | SessionLockException e)
-                {
-                    listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.saveerror", e.getMessage()), true);
-                }
-                genned++;
-            }
-
-            for (Chunk chunk : chunks) //Now lets unload them. Note: Saving is done off thread so there may be cache hits, but this should still unload everything.
-            {
-                PlayerChunkMapEntry watchers = world.getPlayerChunkMap().getEntry(chunk.x, chunk.z);
-                if (watchers == null) //If there are no players watching this, this will be null, so we can unload.
-                    world.getChunkProvider().queueUnload(chunk);
-            }
+            IChunk chunk = world.getChunk(x, z, ChunkStatus.FULL, false);
+            /* TODO: Mark things to unload
+            PlayerChunkMapEntry watchers = world.getPlayerChunkMap().getEntry(chunk.x, chunk.z);
+            if (watchers == null) //If there are no players watching this, this will be null, so we can unload.
+                world.getChunkProvider().queueUnload(chunk);
+            */
         }
 
         if (queue.size() == 0)
         {
-            listener.sendFeedback(new TextComponentTranslation("commands.forge.gen.complete", genned, total, dim), true);
+            listener.sendFeedback(new TranslationTextComponent("commands.forge.gen.complete", genned, total, dim), true);
             if (keepingLoaded != null && !keepingLoaded)
             {
                 DimensionManager.keepLoaded(dim, false);

@@ -1,0 +1,29 @@
+@@ -537,8 +540,10 @@
+       return this.field_71133_b.func_71219_W();
+    }
+ 
++   @Override
+    @Nullable
+-   public Entity func_212321_a(DimensionType p_212321_1_) {
++   public Entity changeDimension(DimensionType p_212321_1_, net.minecraftforge.common.util.ITeleporter teleporter) {
+       this.field_184851_cj = true;
+       if (this.field_71093_bK == DimensionType.OVERWORLD && p_212321_1_ == DimensionType.NETHER) {
+          this.field_193110_cw = new Vec3d(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+@@ -546,7 +551,7 @@
+          this.field_193110_cw = null;
+       }
+ 
+-      if (this.field_71093_bK == DimensionType.THE_END && p_212321_1_ == DimensionType.THE_END) {
++      if (this.field_71093_bK == DimensionType.THE_END && p_212321_1_ == DimensionType.THE_END && teleporter.isVanilla()) {
+          this.field_70170_p.func_72900_e(this);
+          if (!this.field_71136_j) {
+             this.field_71136_j = true;
+@@ -560,7 +565,7 @@
+             p_212321_1_ = DimensionType.THE_END;
+          }
+ 
+-         this.field_71133_b.func_184103_al().func_187242_a(this, p_212321_1_);
++         this.field_71133_b.func_184103_al().changePlayerDimension(this, p_212321_1_, teleporter);
+          this.field_71135_a.func_147359_a(new SPlaySoundEventPacket(1032, BlockPos.field_177992_a, 0, false));
+          this.field_71144_ck = -1;
+          this.field_71149_ch = -1.0F;

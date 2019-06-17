@@ -19,11 +19,11 @@
 
 package net.minecraftforge.fluids.capability;
 
-import net.minecraft.init.Items;
+import net.minecraft.item.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -49,11 +49,11 @@ public class CapabilityFluidHandler
 
     private static class DefaultFluidHandlerStorage<T extends IFluidHandler> implements Capability.IStorage<T> {
         @Override
-		public INBTBase writeNBT(Capability<T> capability, T instance, EnumFacing side)
+		public INBT writeNBT(Capability<T> capability, T instance, Direction side)
 		{
 			if (!(instance instanceof IFluidTank))
 				throw new RuntimeException("IFluidHandler instance does not implement IFluidTank");
-			NBTTagCompound nbt = new NBTTagCompound();
+			CompoundNBT nbt = new CompoundNBT();
 			IFluidTank tank = (IFluidTank) instance;
 			FluidStack fluid = tank.getFluid();
 			if (fluid != null)
@@ -62,18 +62,18 @@ public class CapabilityFluidHandler
 			}
 			else
 			{
-				nbt.setString("Empty", "");
+				nbt.putString("Empty", "");
 			}
-			nbt.setInt("Capacity", tank.getCapacity());
+			nbt.putInt("Capacity", tank.getCapacity());
 			return nbt;
 		}
 
         @Override
-		public void readNBT(Capability<T> capability, T instance, EnumFacing side, INBTBase nbt)
+		public void readNBT(Capability<T> capability, T instance, Direction side, INBT nbt)
 		{
 			if (!(instance instanceof FluidTank))
 				throw new RuntimeException("IFluidHandler instance is not instance of FluidTank");
-			NBTTagCompound tags = (NBTTagCompound) nbt;
+			CompoundNBT tags = (CompoundNBT) nbt;
 			FluidTank tank = (FluidTank) instance;
 			tank.setCapacity(tags.getInt("Capacity"));
 			tank.readFromNBT(tags);

@@ -19,9 +19,16 @@
 /mdk/build
 
 #occupational hazards
-/projects/
+/projects/mcp/
+/projects/clean/
+/projects/forge/
+/projects/**/build/
+/projects/**/out/
+/projects/**/run/
+/projects/**/*.launch
 /repo/
 /buildSrc
+src/generated/resources/.cache/
 
 #Patch rejects
 /patches-/

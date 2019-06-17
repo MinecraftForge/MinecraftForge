@@ -24,7 +24,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.TRSRTransformer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
@@ -52,7 +52,7 @@ public final class ItemTextureQuadConverter
      * @param sprite   The texture whose UVs shall be used
      * @return The generated quads.
      */
-    public static List<UnpackedBakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color, int tint)
+    public static List<UnpackedBakedQuad> convertTexture(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
     {
         List<UnpackedBakedQuad> horizontal = convertTextureHorizontal(format, transform, template, sprite, z, facing, color, tint);
         List<UnpackedBakedQuad> vertical = convertTextureVertical(format, transform, template, sprite, z, facing, color, tint);
@@ -64,7 +64,7 @@ public final class ItemTextureQuadConverter
      * Scans a texture and converts it into a list of horizontal strips stacked on top of each other.
      * The height of the strips is as big as possible.
      */
-    public static List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color, int tint)
+    public static List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
     {
         int w = template.getWidth();
         int h = template.getHeight();
@@ -135,7 +135,7 @@ public final class ItemTextureQuadConverter
      * Scans a texture and converts it into a list of vertical strips stacked next to each other from left to right.
      * The width of the strips is as big as possible.
      */
-    public static List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, EnumFacing facing, int color, int tint)
+    public static List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format, TRSRTransformation transform, TextureAtlasSprite template, TextureAtlasSprite sprite, float z, Direction facing, int color, int tint)
     {
         int w = template.getWidth();
         int h = template.getHeight();
@@ -211,7 +211,7 @@ public final class ItemTextureQuadConverter
      * Generates a Front/Back quad for an itemmodel. Therefore only supports facing NORTH and SOUTH.
      * Coordinates are [0,16] to match the usual coordinates used in TextureAtlasSprites
      */
-    public static UnpackedBakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, EnumFacing facing, int color, int tint)
+    public static UnpackedBakedQuad genQuad(VertexFormat format, TRSRTransformation transform, float x1, float y1, float x2, float y2, float z, TextureAtlasSprite sprite, Direction facing, int color, int tint)
     {
         float u1 = sprite.getInterpolatedU(x1);
         float v1 = sprite.getInterpolatedV(y1);
@@ -230,7 +230,7 @@ public final class ItemTextureQuadConverter
         return putQuad(format, transform, facing, sprite, color, tint, x1, y1, x2, y2, z, u1, v1, u2, v2);
     }
 
-    private static UnpackedBakedQuad putQuad(VertexFormat format, TRSRTransformation transform, EnumFacing side, TextureAtlasSprite sprite, int color, int tint,
+    private static UnpackedBakedQuad putQuad(VertexFormat format, TRSRTransformation transform, Direction side, TextureAtlasSprite sprite, int color, int tint,
                                              float x1, float y1, float x2, float y2, float z,
                                              float u1, float v1, float u2, float v2)
     {
@@ -244,7 +244,7 @@ public final class ItemTextureQuadConverter
         boolean hasTransform = !transform.isIdentity();
         IVertexConsumer consumer = hasTransform ? new TRSRTransformer(builder, transform) : builder;
 
-        if (side == EnumFacing.SOUTH)
+        if (side == Direction.SOUTH)
         {
             putVertex(consumer, format, side, x1, y1, z, u1, v2, color);
             putVertex(consumer, format, side, x2, y1, z, u2, v2, color);
@@ -261,7 +261,7 @@ public final class ItemTextureQuadConverter
         return builder.build();
     }
 
-    private static void putVertex(IVertexConsumer consumer, VertexFormat format, EnumFacing side,
+    private static void putVertex(IVertexConsumer consumer, VertexFormat format, Direction side,
                                   float x, float y, float z, float u, float v, int color)
     {
         for (int e = 0; e < format.getElementCount(); e++)

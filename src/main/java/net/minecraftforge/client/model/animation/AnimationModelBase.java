@@ -23,19 +23,19 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.entity.model.ModelBase;
+import net.minecraft.client.renderer.model.Model;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
+import net.minecraft.block.Blocks;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.BasicState;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.client.model.pipeline.VertexLighterFlat;
@@ -46,12 +46,15 @@ import net.minecraftforge.common.model.animation.CapabilityAnimation;
 
 import org.lwjgl.opengl.GL11;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
 /**
  * ModelBase that works with the Forge model system and animations.
  * Some quirks are still left, deprecated for the moment.
  */
+/*
 @Deprecated
-public class AnimationModelBase<T extends Entity> extends ModelBase implements IEventHandler<T>
+public class AnimationModelBase<T extends Entity> extends Model implements IEventHandler<T>
 {
     private final VertexLighterFlat lighter;
     private final ResourceLocation modelLocation;
@@ -63,7 +66,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
     }
 
     @SuppressWarnings("unchecked")
-    @Override
+    //@Override
     public void render(Entity entity, float limbSwing, float limbSwingSpeed, float timeAlive, float yawHead, float rotationPitch, float scale)
     {
         entity.getCapability(CapabilityAnimation.ANIMATION_CAPABILITY, null)
@@ -72,7 +75,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
                 handleEvents((T) entity, timeAlive / 20, pair.getRight());
                 IUnbakedModel unbaked = ModelLoaderRegistry.getModelOrMissing(modelLocation);
                 // TODO where should uvlock data come from?
-                return unbaked.bake(ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter(), pair.getLeft(), false, DefaultVertexFormats.ITEM);
+                return unbaked.bake(ModelLoader.defaultModelGetter(), ModelLoader.defaultTextureGetter(), new BasicState(pair.getLeft(), false), DefaultVertexFormats.ITEM);
             }).ifPresent(model -> drawModel(model, entity));
     }
 
@@ -105,7 +108,7 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
                 quad.pipe(lighter);
             }
         }
-        for(EnumFacing side : EnumFacing.values())
+        for(Direction side : Direction.values())
         {
             random.setSeed(42);
             quads = bakedModel.getQuads(null, side, random);
@@ -121,10 +124,10 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
         }
 
         // debug quad
-        /*VertexBuffer.pos(0, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 0).lightmap(240, 0).endVertex();
-        VertexBuffer.pos(0, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 1).lightmap(240, 0).endVertex();
-        VertexBuffer.pos(1, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
-        VertexBuffer.pos(1, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();*/
+        //VertexBuffer.pos(0, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 0).lightmap(240, 0).endVertex();
+        //VertexBuffer.pos(0, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(0, 1).lightmap(240, 0).endVertex();
+        //VertexBuffer.pos(1, 1, 1).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 1).lightmap(240, 0).endVertex();
+        //VertexBuffer.pos(1, 1, 0).color(0xFF, 0xFF, 0xFF, 0xFF).tex(1, 0).lightmap(240, 0).endVertex();
 
         builder.setTranslation(0, 0, 0);
 
@@ -136,3 +139,4 @@ public class AnimationModelBase<T extends Entity> extends ModelBase implements I
     @Override
     public void handleEvents(T instance, float time, Iterable<Event> pastEvents) {}
 }
+*/

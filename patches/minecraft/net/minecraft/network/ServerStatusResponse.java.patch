@@ -66,7 +66,7 @@
 +         mutex.acquireUninterruptibly();
 +         ret = this.json;
 +         if (ret == null) {
-+            ret = net.minecraft.network.status.server.SPacketServerInfo.field_149297_a.toJson(this);
++            ret = net.minecraft.network.status.server.SServerInfoPacket.field_149297_a.toJson(this);
 +            this.json = ret;
 +         }
 +         mutex.release();
@@ -86,11 +86,11 @@
        private final int field_151336_a;
        private final int field_151334_b;
 @@ -143,6 +190,10 @@
-             serverstatusresponse.func_151320_a(JsonUtils.func_151200_h(jsonobject, "favicon"));
+             serverstatusresponse.func_151320_a(JSONUtils.func_151200_h(jsonobject, "favicon"));
           }
  
 +         if (jsonobject.has("forgeData")) {
-+            serverstatusresponse.setForgeData(net.minecraftforge.fml.network.FMLStatusPing.Serializer.deserialize(JsonUtils.func_152754_s(jsonobject, "forgeData"), p_deserialize_3_));
++            serverstatusresponse.setForgeData(net.minecraftforge.fml.network.FMLStatusPing.Serializer.deserialize(JSONUtils.func_152754_s(jsonobject, "forgeData"), p_deserialize_3_));
 +         }
 +
           return serverstatusresponse;

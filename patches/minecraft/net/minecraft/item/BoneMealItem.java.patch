@@ -1,0 +1,38 @@
+--- a/net/minecraft/item/BoneMealItem.java
++++ b/net/minecraft/item/BoneMealItem.java
+@@ -27,7 +27,7 @@
+       World world = p_195939_1_.func_195991_k();
+       BlockPos blockpos = p_195939_1_.func_195995_a();
+       BlockPos blockpos1 = blockpos.func_177972_a(p_195939_1_.func_196000_l());
+-      if (func_195966_a(p_195939_1_.func_195996_i(), world, blockpos)) {
++      if (applyBonemeal(p_195939_1_.func_195996_i(), world, blockpos, p_195939_1_.func_195999_j())) {
+          if (!world.field_72995_K) {
+             world.func_217379_c(2005, blockpos, 0);
+          }
+@@ -48,8 +48,17 @@
+       }
+    }
+ 
++   @Deprecated //Forge: Use Player/Hand version
+    public static boolean func_195966_a(ItemStack p_195966_0_, World p_195966_1_, BlockPos p_195966_2_) {
++      if (p_195966_1_ instanceof net.minecraft.world.ServerWorld)
++         return applyBonemeal(p_195966_0_, p_195966_1_, p_195966_2_, net.minecraftforge.common.util.FakePlayerFactory.getMinecraft((net.minecraft.world.ServerWorld)p_195966_1_));
++      return false;
++   }
++
++   public static boolean applyBonemeal(ItemStack p_195966_0_, World p_195966_1_, BlockPos p_195966_2_, net.minecraft.entity.player.PlayerEntity player) {
+       BlockState blockstate = p_195966_1_.func_180495_p(p_195966_2_);
++      int hook = net.minecraftforge.event.ForgeEventFactory.onApplyBonemeal(player, p_195966_1_, p_195966_2_, blockstate, p_195966_0_);
++      if (hook != 0) return hook > 0;
+       if (blockstate.func_177230_c() instanceof IGrowable) {
+          IGrowable igrowable = (IGrowable)blockstate.func_177230_c();
+          if (igrowable.func_176473_a(p_195966_1_, p_195966_2_, blockstate, p_195966_1_.field_72995_K)) {
+@@ -125,7 +134,7 @@
+       }
+ 
+       BlockState blockstate = p_195965_0_.func_180495_p(p_195965_1_);
+-      if (!blockstate.func_196958_f()) {
++      if (!blockstate.isAir(p_195965_0_, p_195965_1_)) {
+          for(int i = 0; i < p_195965_2_; ++i) {
+             double d0 = field_77697_d.nextGaussian() * 0.02D;
+             double d1 = field_77697_d.nextGaussian() * 0.02D;

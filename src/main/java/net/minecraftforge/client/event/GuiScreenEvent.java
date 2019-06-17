@@ -26,12 +26,11 @@ import java.util.function.Consumer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
-import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputMappings;
 
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -47,9 +46,9 @@ import org.lwjgl.glfw.GLFW;
 @OnlyIn(Dist.CLIENT)
 public class GuiScreenEvent extends Event
 {
-    private final GuiScreen gui;
+    private final Screen gui;
 
-    public GuiScreenEvent(GuiScreen gui)
+    public GuiScreenEvent(Screen gui)
     {
         this.gui = gui;
     }
@@ -57,42 +56,42 @@ public class GuiScreenEvent extends Event
     /**
      * The GuiScreen object generating this event.
      */
-    public GuiScreen getGui()
+    public Screen getGui()
     {
         return gui;
     }
 
     public static class InitGuiEvent extends GuiScreenEvent
     {
-        private Consumer<GuiButton> addButton;
-        private Consumer<GuiButton> removeButton;
+        private Consumer<Widget> add;
+        private Consumer<Widget> remove;
 
-        private List<GuiButton> buttonList;
+        private List<Widget> list;
 
-        public InitGuiEvent(GuiScreen gui, List<GuiButton> buttonList, Consumer<GuiButton> addButton, Consumer<GuiButton> removeButton)
+        public InitGuiEvent(Screen gui, List<Widget> list, Consumer<Widget> add, Consumer<Widget> remove)
         {
             super(gui);
-            this.buttonList = Collections.unmodifiableList(buttonList);
-            this.addButton = addButton;
-            this.removeButton = removeButton;
+            this.list = Collections.unmodifiableList(list);
+            this.add = add;
+            this.remove = remove;
         }
 
         /**
          * Unmodifiable reference to the list of buttons on the {@link #gui}.
          */
-        public List<GuiButton> getButtonList()
+        public List<Widget> getWidgetList()
         {
-            return buttonList;
+            return list;
         }
 
-        public void addButton(GuiButton button)
+        public void addWidget(Widget button)
         {
-            addButton.accept(button);
+            add.accept(button);
         }
 
-        public void removeButton(GuiButton button)
+        public void removeWidget(Widget button)
         {
-            removeButton.accept(button);
+            remove.accept(button);
         }
 
         /**
@@ -107,9 +106,9 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends InitGuiEvent
         {
-            public Pre(GuiScreen gui, List<GuiButton> buttonList, Consumer<GuiButton> addButton, Consumer<GuiButton> removeButton)
+            public Pre(Screen gui, List<Widget> list, Consumer<Widget> add, Consumer<Widget> remove)
             {
-                super(gui, buttonList, addButton, removeButton);
+                super(gui, list, add, remove);
             }
         }
 
@@ -119,9 +118,9 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends InitGuiEvent
         {
-            public Post(GuiScreen gui, List<GuiButton> buttonList, Consumer<GuiButton> addButton, Consumer<GuiButton> removeButton)
+            public Post(Screen gui, List<Widget> list, Consumer<Widget> add, Consumer<Widget> remove)
             {
-                super(gui, buttonList, addButton, removeButton);
+                super(gui, list, add, remove);
             }
         }
     }
@@ -132,7 +131,7 @@ public class GuiScreenEvent extends Event
         private final int mouseY;
         private final float renderPartialTicks;
 
-        public DrawScreenEvent(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks)
+        public DrawScreenEvent(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
         {
             super(gui);
             this.mouseX = mouseX;
@@ -171,7 +170,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends DrawScreenEvent
         {
-            public Pre(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks)
+            public Pre(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
             {
                 super(gui, mouseX, mouseY, renderPartialTicks);
             }
@@ -182,7 +181,7 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends DrawScreenEvent
         {
-            public Post(GuiScreen gui, int mouseX, int mouseY, float renderPartialTicks)
+            public Post(Screen gui, int mouseX, int mouseY, float renderPartialTicks)
             {
                 super(gui, mouseX, mouseY, renderPartialTicks);
             }
@@ -195,7 +194,7 @@ public class GuiScreenEvent extends Event
      */
     public static class BackgroundDrawnEvent extends GuiScreenEvent
     {
-        public BackgroundDrawnEvent(GuiScreen gui)
+        public BackgroundDrawnEvent(Screen gui)
         {
             super(gui);
         }
@@ -209,7 +208,7 @@ public class GuiScreenEvent extends Event
     @Cancelable
     public static class PotionShiftEvent extends GuiScreenEvent
     {
-        public PotionShiftEvent(GuiScreen gui)
+        public PotionShiftEvent(Screen gui)
         {
             super(gui);
         }
@@ -217,25 +216,25 @@ public class GuiScreenEvent extends Event
 
     public static class ActionPerformedEvent extends GuiScreenEvent
     {
-        private GuiButton button;
-        private List<GuiButton> buttonList;
+        private Button button;
+        private List<Button> buttonList;
 
-        public ActionPerformedEvent(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
+        public ActionPerformedEvent(Screen gui, Button button, List<Button> buttonList)
         {
             super(gui);
             this.setButton(button);
-            this.setButtonList(new ArrayList<GuiButton>(buttonList));
+            this.setButtonList(new ArrayList<Button>(buttonList));
         }
 
         /**
          * The button that was clicked.
          */
-        public GuiButton getButton()
+        public Button getButton()
         {
             return button;
         }
 
-        public void setButton(GuiButton button)
+        public void setButton(Button button)
         {
             this.button = button;
         }
@@ -243,12 +242,12 @@ public class GuiScreenEvent extends Event
         /**
          * A COPY of the {@link #buttonList} field from the GuiScreen referenced by {@link #gui}.
          */
-        public List<GuiButton> getButtonList()
+        public List<Button> getButtonList()
         {
             return buttonList;
         }
 
-        public void setButtonList(List<GuiButton> buttonList)
+        public void setButtonList(List<Button> buttonList)
         {
             this.buttonList = buttonList;
         }
@@ -261,7 +260,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends ActionPerformedEvent
         {
-            public Pre(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
+            public Pre(Screen gui, Button button, List<Button> buttonList)
             {
                 super(gui, button, buttonList);
             }
@@ -273,7 +272,7 @@ public class GuiScreenEvent extends Event
          */
         public static class Post extends ActionPerformedEvent
         {
-            public Post(GuiScreen gui, GuiButton button, List<GuiButton> buttonList)
+            public Post(Screen gui, Button button, List<Button> buttonList)
             {
                 super(gui, button, buttonList);
             }
@@ -285,7 +284,7 @@ public class GuiScreenEvent extends Event
         private final double mouseX;
         private final double mouseY;
 
-        public MouseInputEvent(GuiScreen gui, double mouseX, double mouseY)
+        public MouseInputEvent(Screen gui, double mouseX, double mouseY)
         {
             super(gui);
             this.mouseX = mouseX;
@@ -307,7 +306,7 @@ public class GuiScreenEvent extends Event
     {
         private final int button;
 
-        public MouseClickedEvent(GuiScreen gui, double mouseX, double mouseY, int button)
+        public MouseClickedEvent(Screen gui, double mouseX, double mouseY, int button)
         {
             super(gui, mouseX, mouseY);
             this.button = button;
@@ -325,7 +324,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends MouseClickedEvent
         {
-            public Pre(GuiScreen gui, double mouseX, double mouseY, int button)
+            public Pre(Screen gui, double mouseX, double mouseY, int button)
             {
                 super(gui, mouseX, mouseY, button);
             }
@@ -338,7 +337,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Post extends MouseClickedEvent
         {
-            public Post(GuiScreen gui, double mouseX, double mouseY, int button)
+            public Post(Screen gui, double mouseX, double mouseY, int button)
             {
                 super(gui, mouseX, mouseY, button);
             }
@@ -349,7 +348,7 @@ public class GuiScreenEvent extends Event
     {
         private final int button;
 
-        public MouseReleasedEvent(GuiScreen gui, double mouseX, double mouseY, int button)
+        public MouseReleasedEvent(Screen gui, double mouseX, double mouseY, int button)
         {
             super(gui, mouseX, mouseY);
             this.button = button;
@@ -367,7 +366,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends MouseReleasedEvent
         {
-            public Pre(GuiScreen gui, double mouseX, double mouseY, int button)
+            public Pre(Screen gui, double mouseX, double mouseY, int button)
             {
                 super(gui, mouseX, mouseY, button);
             }
@@ -380,7 +379,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Post extends MouseReleasedEvent
         {
-            public Post(GuiScreen gui, double mouseX, double mouseY, int button)
+            public Post(Screen gui, double mouseX, double mouseY, int button)
             {
                 super(gui, mouseX, mouseY, button);
             }
@@ -393,7 +392,7 @@ public class GuiScreenEvent extends Event
         private final double dragX;
         private final double dragY;
 
-        public MouseDragEvent(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+        public MouseDragEvent(Screen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
         {
             super(gui, mouseX, mouseY);
             this.mouseButton = mouseButton;
@@ -423,7 +422,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends MouseDragEvent
         {
-            public Pre(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+            public Pre(Screen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
             {
                 super(gui, mouseX, mouseY, mouseButton, dragX, dragY);
             }
@@ -436,7 +435,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Post extends MouseDragEvent
         {
-            public Post(GuiScreen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
+            public Post(Screen gui, double mouseX, double mouseY, int mouseButton, double dragX, double dragY)
             {
                 super(gui, mouseX, mouseY, mouseButton, dragX, dragY);
             }
@@ -447,7 +446,7 @@ public class GuiScreenEvent extends Event
     {
         private final double scrollDelta;
 
-        public MouseScrollEvent(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+        public MouseScrollEvent(Screen gui, double mouseX, double mouseY, double scrollDelta)
         {
             super(gui, mouseX, mouseY);
             this.scrollDelta = scrollDelta;
@@ -465,7 +464,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends MouseScrollEvent
         {
-            public Pre(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+            public Pre(Screen gui, double mouseX, double mouseY, double scrollDelta)
             {
                 super(gui, mouseX, mouseY, scrollDelta);
             }
@@ -478,7 +477,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Post extends MouseScrollEvent
         {
-            public Post(GuiScreen gui, double mouseX, double mouseY, double scrollDelta)
+            public Post(Screen gui, double mouseX, double mouseY, double scrollDelta)
             {
                 super(gui, mouseX, mouseY, scrollDelta);
             }
@@ -491,7 +490,7 @@ public class GuiScreenEvent extends Event
         private final int scanCode;
         private final int modifiers;
 
-        public KeyboardKeyEvent(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+        public KeyboardKeyEvent(Screen gui, int keyCode, int scanCode, int modifiers)
         {
             super(gui);
             this.keyCode = keyCode;
@@ -540,7 +539,7 @@ public class GuiScreenEvent extends Event
 
     public static abstract class KeyboardKeyPressedEvent extends KeyboardKeyEvent
     {
-        public KeyboardKeyPressedEvent(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+        public KeyboardKeyPressedEvent(Screen gui, int keyCode, int scanCode, int modifiers)
         {
             super(gui,  keyCode, scanCode, modifiers);
         }
@@ -552,7 +551,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends KeyboardKeyPressedEvent
         {
-            public Pre(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+            public Pre(Screen gui, int keyCode, int scanCode, int modifiers)
             {
                 super(gui, keyCode, scanCode, modifiers);
             }
@@ -565,7 +564,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Post extends KeyboardKeyPressedEvent
         {
-            public Post(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+            public Post(Screen gui, int keyCode, int scanCode, int modifiers)
             {
                 super(gui, keyCode, scanCode, modifiers);
             }
@@ -574,7 +573,7 @@ public class GuiScreenEvent extends Event
 
     public static abstract class KeyboardKeyReleasedEvent extends KeyboardKeyEvent
     {
-        public KeyboardKeyReleasedEvent(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+        public KeyboardKeyReleasedEvent(Screen gui, int keyCode, int scanCode, int modifiers)
         {
             super(gui, keyCode, scanCode, modifiers);
         }
@@ -586,7 +585,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends KeyboardKeyReleasedEvent
         {
-            public Pre(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+            public Pre(Screen gui, int keyCode, int scanCode, int modifiers)
             {
                 super(gui, keyCode, scanCode, modifiers);
             }
@@ -599,7 +598,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Post extends KeyboardKeyReleasedEvent
         {
-            public Post(GuiScreen gui, int keyCode, int scanCode, int modifiers)
+            public Post(Screen gui, int keyCode, int scanCode, int modifiers)
             {
                 super(gui, keyCode, scanCode, modifiers);
             }
@@ -611,7 +610,7 @@ public class GuiScreenEvent extends Event
         private final char codePoint;
         private final int modifiers;
 
-        public KeyboardCharTypedEvent(GuiScreen gui, char codePoint, int modifiers)
+        public KeyboardCharTypedEvent(Screen gui, char codePoint, int modifiers)
         {
             super(gui);
             this.codePoint = codePoint;
@@ -646,7 +645,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Pre extends KeyboardCharTypedEvent
         {
-            public Pre(GuiScreen gui, char codePoint, int modifiers)
+            public Pre(Screen gui, char codePoint, int modifiers)
             {
                 super(gui, codePoint, modifiers);
             }
@@ -659,7 +658,7 @@ public class GuiScreenEvent extends Event
         @Cancelable
         public static class Post extends KeyboardCharTypedEvent
         {
-            public Post(GuiScreen gui, char codePoint, int modifiers)
+            public Post(Screen gui, char codePoint, int modifiers)
             {
                 super(gui, codePoint, modifiers);
             }

@@ -19,7 +19,7 @@
 
 package net.minecraftforge.common.util;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.ChunkPos;
 
 // Sorter to load nearby chunks first
@@ -28,7 +28,7 @@ public class ChunkCoordComparator implements java.util.Comparator<ChunkPos>
     private int x;
     private int z;
 
-    public ChunkCoordComparator(EntityPlayerMP entityplayer)
+    public ChunkCoordComparator(ServerPlayerEntity entityplayer)
     {
         x = (int) entityplayer.posX >> 4;
         z = (int) entityplayer.posZ >> 4;

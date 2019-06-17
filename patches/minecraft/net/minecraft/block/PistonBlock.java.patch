@@ -1,0 +1,40 @@
+--- a/net/minecraft/block/PistonBlock.java
++++ b/net/minecraft/block/PistonBlock.java
+@@ -197,7 +197,7 @@
+             }
+ 
+             if (!flag1) {
+-               if (p_189539_4_ != 1 || blockstate.func_196958_f() || !func_185646_a(blockstate, p_189539_2_, blockpos, direction.func_176734_d(), false, direction) || blockstate.func_185905_o() != PushReaction.NORMAL && block != Blocks.field_150331_J && block != Blocks.field_150320_F) {
++               if (p_189539_4_ != 1 || blockstate.isAir(p_189539_2_, blockpos) || !func_185646_a(blockstate, p_189539_2_, blockpos, direction.func_176734_d(), false, direction) || blockstate.func_185905_o() != PushReaction.NORMAL && block != Blocks.field_150331_J && block != Blocks.field_150320_F) {
+                   p_189539_2_.func_217377_a(p_189539_3_.func_177972_a(direction), false);
+                } else {
+                   this.func_176319_a(p_189539_2_, p_189539_3_, direction, false);
+@@ -238,7 +238,7 @@
+                return false;
+             }
+ 
+-            return !block.func_149716_u();
++            return !p_185646_0_.hasTileEntity();
+          } else {
+             return false;
+          }
+@@ -274,7 +274,7 @@
+          for(int j = list2.size() - 1; j >= 0; --j) {
+             BlockPos blockpos2 = list2.get(j);
+             BlockState blockstate = p_176319_1_.func_180495_p(blockpos2);
+-            TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? p_176319_1_.func_175625_s(blockpos2) : null;
++            TileEntity tileentity = blockstate.hasTileEntity() ? p_176319_1_.func_175625_s(blockpos2) : null;
+             func_220059_a(blockstate, p_176319_1_, blockpos2, tileentity);
+             p_176319_1_.func_180501_a(blockpos2, Blocks.field_150350_a.func_176223_P(), 18);
+             --k;
+@@ -328,6 +328,10 @@
+       return p_185499_1_.func_206870_a(field_176387_N, p_185499_2_.func_185831_a(p_185499_1_.func_177229_b(field_176387_N)));
+    }
+ 
++   public BlockState rotate(BlockState state, net.minecraft.world.IWorld world, BlockPos pos, Rotation direction) {
++       return state.func_177229_b(field_176320_b) ? state : super.rotate(state, world, pos, direction);
++   }
++
+    public BlockState func_185471_a(BlockState p_185471_1_, Mirror p_185471_2_) {
+       return p_185471_1_.func_185907_a(p_185471_2_.func_185800_a(p_185471_1_.func_177229_b(field_176387_N)));
+    }

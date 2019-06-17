@@ -19,7 +19,7 @@
 
 package net.minecraftforge.client.event;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraftforge.eventbus.api.Event;
 
 /**
@@ -28,18 +28,18 @@ import net.minecraftforge.eventbus.api.Event;
  */
 public class FOVUpdateEvent extends Event
 {
-    private final EntityPlayer entity;
+    private final PlayerEntity entity;
     private final float fov;
     private float newfov;
 
-    public FOVUpdateEvent(EntityPlayer entity, float fov)
+    public FOVUpdateEvent(PlayerEntity entity, float fov)
     {
         this.entity = entity;
         this.fov = fov;
         this.setNewfov(fov);
     }
 
-    public EntityPlayer getEntity()
+    public PlayerEntity getEntity()
     {
         return entity;
     }

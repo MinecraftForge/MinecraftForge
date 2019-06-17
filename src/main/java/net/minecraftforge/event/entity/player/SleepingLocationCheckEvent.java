@@ -20,10 +20,10 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
@@ -36,12 +36,12 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
  * setResult(DEFAULT) causes game to check {@link Block#isBed(IBlockState, net.minecraft.world.IWorldReader, BlockPos, Entity)} instead
  */
 @HasResult
-public class SleepingLocationCheckEvent extends PlayerEvent
+public class SleepingLocationCheckEvent extends LivingEvent
 {
 
     private final BlockPos sleepingLocation;
 
-    public SleepingLocationCheckEvent(EntityPlayer player, BlockPos sleepingLocation)
+    public SleepingLocationCheckEvent(LivingEntity player, BlockPos sleepingLocation)
     {
         super(player);
         this.sleepingLocation = sleepingLocation;

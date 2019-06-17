@@ -20,7 +20,7 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 
 /**
  * Event for when an Enderman/Shulker teleports or an ender pearl is used.  Can be used to either modify the target position, or cancel the teleport outright.
@@ -36,7 +36,7 @@ public class EnderTeleportEvent extends LivingEvent
     private double targetZ;
     private float attackDamage;
 
-    public EnderTeleportEvent(EntityLivingBase entity, double targetX, double targetY, double targetZ, float attackDamage)
+    public EnderTeleportEvent(LivingEntity entity, double targetX, double targetY, double targetZ, float attackDamage)
     {
         super(entity);
         this.setTargetX(targetX);

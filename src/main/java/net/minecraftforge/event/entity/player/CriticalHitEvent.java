@@ -23,7 +23,7 @@ import net.minecraftforge.eventbus.api.Event.HasResult;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 
 /**
  * This event is fired whenever a player attacks an Entity in
@@ -46,7 +46,7 @@ public class CriticalHitEvent extends PlayerEvent
     private final Entity target;
     private final boolean vanillaCritical;
     
-    public CriticalHitEvent(EntityPlayer player, Entity target, float damageModifier, boolean vanillaCritical)
+    public CriticalHitEvent(PlayerEntity player, Entity target, float damageModifier, boolean vanillaCritical)
     {
         super(player);
         this.target = target;

@@ -1,0 +1,20 @@
+--- a/net/minecraft/entity/EntityClassification.java
++++ b/net/minecraft/entity/EntityClassification.java
+@@ -4,7 +4,7 @@
+ import java.util.Map;
+ import java.util.stream.Collectors;
+ 
+-public enum EntityClassification {
++public enum EntityClassification implements net.minecraftforge.common.IExtensibleEnum {
+    MONSTER("monster", 70, false, false),
+    CREATURE("creature", 10, true, true),
+    AMBIENT("ambient", 15, true, false),
+@@ -41,4 +41,8 @@
+    public boolean func_82705_e() {
+       return this.field_82707_i;
+    }
++
++   public static EntityClassification create(String name, String p_i50381_3_, int p_i50381_4_, boolean p_i50381_5_, boolean p_i50381_6_) {
++      throw new IllegalStateException("Enum not extended");
++   }
+ }

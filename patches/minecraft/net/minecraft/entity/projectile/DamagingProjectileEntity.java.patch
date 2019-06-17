@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/DamagingProjectileEntity.java
++++ b/net/minecraft/entity/projectile/DamagingProjectileEntity.java
+@@ -79,7 +79,7 @@
+ 
+          ++this.field_70234_an;
+          RayTraceResult raytraceresult = ProjectileHelper.func_221266_a(this, true, this.field_70234_an >= 25, this.field_70235_a, RayTraceContext.BlockMode.COLLIDER);
+-         if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
++         if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS && !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)) {
+             this.func_70227_a(raytraceresult);
+          }
+ 

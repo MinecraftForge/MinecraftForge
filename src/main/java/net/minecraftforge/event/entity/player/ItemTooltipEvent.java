@@ -23,7 +23,7 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 
@@ -41,7 +41,7 @@ public class ItemTooltipEvent extends PlayerEvent
      * This event is fired in {@link ItemStack#getTooltip(EntityPlayer, ITooltipFlag)}, which in turn is called from it's respective GUIContainer.
      * Tooltips are also gathered with a null entityPlayer during startup by {@link Minecraft#populateSearchTreeManager()}.
      */
-    public ItemTooltipEvent(@Nonnull ItemStack itemStack, @Nullable EntityPlayer entityPlayer, List<ITextComponent> list, ITooltipFlag flags)
+    public ItemTooltipEvent(@Nonnull ItemStack itemStack, @Nullable PlayerEntity entityPlayer, List<ITextComponent> list, ITooltipFlag flags)
     {
         super(entityPlayer);
         this.itemStack = itemStack;
@@ -79,7 +79,7 @@ public class ItemTooltipEvent extends PlayerEvent
      */
     @Override
     @Nullable
-    public EntityPlayer getEntityPlayer()
+    public PlayerEntity getEntityPlayer()
     {
         return super.getEntityPlayer();
     }

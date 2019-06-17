@@ -19,30 +19,17 @@
 
 package net.minecraftforge.server.command;
 
-import javax.annotation.Nullable;
-
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.ArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 
-import it.unimi.dsi.fastutil.ints.IntSortedSet;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.command.ISuggestionProvider;
 import net.minecraft.command.arguments.BlockPosArgument;
 import net.minecraft.command.arguments.DimensionArgument;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.world.dimension.DimensionType;
-import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.WorldWorkerManager;
 
 class CommandGenerate
@@ -53,7 +40,7 @@ class CommandGenerate
             .requires(cs->cs.hasPermissionLevel(4)) //permission
             .then(Commands.argument("pos", BlockPosArgument.blockPos())
                 .then(Commands.argument("count", IntegerArgumentType.integer(1))
-                    .then(Commands.argument("dim", DimensionArgument.func_212595_a())
+                    .then(Commands.argument("dim", DimensionArgument.getDimension())
                         .then(Commands.argument("interval", IntegerArgumentType.integer())
                             .executes(ctx -> execute(ctx.getSource(), BlockPosArgument.getBlockPos(ctx, "pos"), getInt(ctx, "count"), DimensionArgument.func_212592_a(ctx, "dim"), getInt(ctx, "interval")))
                         )

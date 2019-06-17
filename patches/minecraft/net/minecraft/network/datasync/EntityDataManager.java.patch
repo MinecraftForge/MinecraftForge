@@ -3,7 +3,7 @@
 @@ -35,11 +35,13 @@
     }
  
-    public static <T> DataParameter<T> func_187226_a(Class<? extends Entity> p_187226_0_, DataSerializer<T> p_187226_1_) {
+    public static <T> DataParameter<T> func_187226_a(Class<? extends Entity> p_187226_0_, IDataSerializer<T> p_187226_1_) {
 -      if (field_190303_a.isDebugEnabled()) {
 +      if (true || field_190303_a.isDebugEnabled()) { // Forge: This is very useful for mods that register keys on classes that are not their own
           try {

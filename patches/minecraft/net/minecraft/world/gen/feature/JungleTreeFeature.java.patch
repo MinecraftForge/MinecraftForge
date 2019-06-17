@@ -1,0 +1,10 @@
+--- a/net/minecraft/world/gen/feature/JungleTreeFeature.java
++++ b/net/minecraft/world/gen/feature/JungleTreeFeature.java
+@@ -8,6 +8,7 @@
+ public class JungleTreeFeature extends TreeFeature {
+    public JungleTreeFeature(Function<Dynamic<?>, ? extends NoFeatureConfig> p_i51488_1_, boolean p_i51488_2_, int p_i51488_3_, BlockState p_i51488_4_, BlockState p_i51488_5_, boolean p_i51488_6_) {
+       super(p_i51488_1_, p_i51488_2_, p_i51488_3_, p_i51488_4_, p_i51488_5_, p_i51488_6_);
++      setSapling((net.minecraftforge.common.IPlantable)net.minecraft.block.Blocks.field_196678_w);
+    }
+ 
+    protected int func_208534_a(Random p_208534_1_) {

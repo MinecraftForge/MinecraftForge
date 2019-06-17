@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/play/server/SCustomPayloadPlayPacket.java
++++ b/net/minecraft/network/play/server/SCustomPayloadPlayPacket.java
+@@ -8,7 +8,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class SCustomPayloadPlayPacket implements IPacket<IClientPlayNetHandler> {
++public class SCustomPayloadPlayPacket implements IPacket<IClientPlayNetHandler>, net.minecraftforge.fml.network.ICustomPacket<SCustomPayloadPlayPacket> {
+    public static final ResourceLocation field_209911_b = new ResourceLocation("brand");
+    public static final ResourceLocation field_209913_d = new ResourceLocation("debug/path");
+    public static final ResourceLocation field_209914_e = new ResourceLocation("debug/neighbors_update");

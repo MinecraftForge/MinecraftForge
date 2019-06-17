@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/crafting/CookingRecipeSerializer.java
++++ b/net/minecraft/item/crafting/CookingRecipeSerializer.java
+@@ -8,7 +8,7 @@
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class CookingRecipeSerializer<T extends AbstractCookingRecipe> implements IRecipeSerializer<T> {
++public class CookingRecipeSerializer<T extends AbstractCookingRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<T> {
+    private final int field_222178_t;
+    private final CookingRecipeSerializer.IFactory<T> field_222179_u;
+ 

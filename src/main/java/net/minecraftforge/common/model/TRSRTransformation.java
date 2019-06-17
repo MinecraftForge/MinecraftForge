@@ -37,7 +37,7 @@ import javax.vecmath.Vector4f;
 
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.model.ModelRotation;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 
@@ -110,19 +110,19 @@ public final class TRSRTransformation implements IModelState, ITransformation
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static TRSRTransformation from(EnumFacing facing)
+    public static TRSRTransformation from(Direction facing)
     {
         return Cache.get(getRotation(facing));
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static Matrix4f getMatrix(EnumFacing facing)
+    public static Matrix4f getMatrix(Direction facing)
     {
         return getRotation(facing).getMatrixVec();
     }
 
     @OnlyIn(Dist.CLIENT)
-    public static ModelRotation getRotation(EnumFacing facing)
+    public static ModelRotation getRotation(Direction facing)
     {
         switch (facing)
         {
@@ -589,17 +589,17 @@ public final class TRSRTransformation implements IModelState, ITransformation
     }
 
     @Override
-    public EnumFacing rotate(EnumFacing facing)
+    public Direction rotate(Direction facing)
     {
         return rotate(matrix, facing);
     }
 
-    public static EnumFacing rotate(Matrix4f matrix, EnumFacing facing)
+    public static Direction rotate(Matrix4f matrix, Direction facing)
     {
         Vec3i dir = facing.getDirectionVec();
         Vector4f vec = new Vector4f(dir.getX(), dir.getY(), dir.getZ(), 0);
         matrix.transform(vec);
-        return EnumFacing.getFacingFromVector(vec.x, vec.y, vec.z);
+        return Direction.getFacingFromVector(vec.x, vec.y, vec.z);
     }
 
     public static boolean isInteger(Matrix4f matrix)
@@ -621,7 +621,7 @@ public final class TRSRTransformation implements IModelState, ITransformation
     }
 
     @Override
-    public int rotate(EnumFacing facing, int vertexIndex)
+    public int rotate(Direction facing, int vertexIndex)
     {
         // FIXME check if this is good enough
         return vertexIndex;
@@ -800,43 +800,43 @@ public final class TRSRTransformation implements IModelState, ITransformation
         );
     }
 
-    private static final EnumMap<EnumFacing, TRSRTransformation> vanillaUvTransformLocalToGlobal = Maps.newEnumMap(EnumFacing.class);
-    private static final EnumMap<EnumFacing, TRSRTransformation> vanillaUvTransformGlobalToLocal = Maps.newEnumMap(EnumFacing.class);
+    private static final EnumMap<Direction, TRSRTransformation> vanillaUvTransformLocalToGlobal = Maps.newEnumMap(Direction.class);
+    private static final EnumMap<Direction, TRSRTransformation> vanillaUvTransformGlobalToLocal = Maps.newEnumMap(Direction.class);
 
     static
     {
-        vanillaUvTransformLocalToGlobal.put(EnumFacing.SOUTH, identity);
+        vanillaUvTransformLocalToGlobal.put(Direction.SOUTH, identity);
         Quat4f tmp = new Quat4f();
         tmp.set(new AxisAngle4f(0, 1, 0, (float)Math.toRadians(90)));
-        vanillaUvTransformLocalToGlobal.put(EnumFacing.EAST,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.EAST,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
         tmp.set(new AxisAngle4f(0, 1, 0, (float)Math.toRadians(-90)));
-        vanillaUvTransformLocalToGlobal.put(EnumFacing.WEST,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.WEST,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
         tmp.set(new AxisAngle4f(0, 1, 0, (float)Math.toRadians(180)));
-        vanillaUvTransformLocalToGlobal.put(EnumFacing.NORTH, new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.NORTH, new TRSRTransformation(null, new Quat4f(tmp), null, null));
         tmp.set(new AxisAngle4f(1, 0, 0, (float)Math.toRadians(-90)));
-        vanillaUvTransformLocalToGlobal.put(EnumFacing.UP,    new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.UP,    new TRSRTransformation(null, new Quat4f(tmp), null, null));
         tmp.set(new AxisAngle4f(1, 0, 0, (float)Math.toRadians(90)));
-        vanillaUvTransformLocalToGlobal.put(EnumFacing.DOWN,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
+        vanillaUvTransformLocalToGlobal.put(Direction.DOWN,  new TRSRTransformation(null, new Quat4f(tmp), null, null));
 
-        for(EnumFacing side : EnumFacing.values())
+        for(Direction side : Direction.values())
         {
             vanillaUvTransformGlobalToLocal.put(side, vanillaUvTransformLocalToGlobal.get(side).inverse());
         }
     }
 
-    public static TRSRTransformation getVanillaUvTransformLocalToGlobal(EnumFacing side)
+    public static TRSRTransformation getVanillaUvTransformLocalToGlobal(Direction side)
     {
         return vanillaUvTransformLocalToGlobal.get(side);
     }
 
-    public static TRSRTransformation getVanillaUvTransformGlobalToLocal(EnumFacing side)
+    public static TRSRTransformation getVanillaUvTransformGlobalToLocal(Direction side)
     {
         return vanillaUvTransformGlobalToLocal.get(side);
     }
 
-    public TRSRTransformation getUVLockTransform(EnumFacing originalSide)
+    public TRSRTransformation getUVLockTransform(Direction originalSide)
     {
-        EnumFacing newSide = rotate(originalSide);
+        Direction newSide = rotate(originalSide);
         try
         {
             return blockCenterToCorner(vanillaUvTransformGlobalToLocal.get(originalSide).compose(blockCornerToCenter(this.inverse())).compose(vanillaUvTransformLocalToGlobal.get(newSide)));

@@ -1,0 +1,41 @@
+--- a/net/minecraft/world/chunk/storage/ChunkSerializer.java
++++ b/net/minecraft/world/chunk/storage/ChunkSerializer.java
+@@ -147,6 +147,7 @@
+          ichunk = new Chunk(p_222656_0_.func_201672_e(), p_222656_3_, abiome, upgradedata, iticklist, iticklist1, i2, achunksection, (p_222648_1_) -> {
+             func_222650_a(compoundnbt, p_222648_1_);
+          });
++         if (compoundnbt.func_74764_b("ForgeCaps")) ((Chunk)ichunk).readCapsFromNBT(compoundnbt.func_74775_l("ForgeCaps"));
+       } else {
+          ChunkPrimer chunkprimer = new ChunkPrimer(p_222656_3_, upgradedata, achunksection, chunkprimerticklist1, chunkprimerticklist);
+          ichunk = chunkprimer;
+@@ -313,12 +314,22 @@
+          for(int k = 0; k < chunk.func_177429_s().length; ++k) {
+             for(Entity entity : chunk.func_177429_s()[k]) {
+                CompoundNBT compoundnbt3 = new CompoundNBT();
++               try {
+                if (entity.func_70039_c(compoundnbt3)) {
+                   chunk.func_177409_g(true);
+                   listnbt2.add(compoundnbt3);
+                }
++               } catch (Exception e) {
++                  LogManager.getLogger().error("An Entity type {} has thrown an exception trying to write state. It will not persist. Report this to the mod author", entity.func_200600_R(), e);
++               }
+             }
+          }
++         try {
++             final CompoundNBT capTag = chunk.writeCapsToNBT();
++             if (capTag != null) compoundnbt1.func_218657_a("ForgeCaps", capTag);
++         } catch (Exception exception) {
++             LogManager.getLogger().error("A capability provider has thrown an exception trying to write state. It will not persist. Report this to the mod author", exception);
++         }
+       } else {
+          ChunkPrimer chunkprimer = (ChunkPrimer)p_222645_1_;
+          listnbt2.addAll(chunkprimer.func_201652_l());
+@@ -362,6 +373,7 @@
+ 
+       compoundnbt1.func_218657_a("Heightmaps", compoundnbt6);
+       compoundnbt1.func_218657_a("Structures", func_222649_a(chunkpos, p_222645_1_.func_201609_c(), p_222645_1_.func_201604_d()));
++
+       return compoundnbt;
+    }
+ 

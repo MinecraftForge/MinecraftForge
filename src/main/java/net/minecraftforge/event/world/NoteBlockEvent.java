@@ -19,7 +19,7 @@
 
 package net.minecraftforge.event.world;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.state.properties.NoteBlockInstrument;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -35,7 +35,7 @@ public class NoteBlockEvent extends BlockEvent
 {
     private int noteId;
 
-    protected NoteBlockEvent(World world, BlockPos pos, IBlockState state, int note)
+    protected NoteBlockEvent(World world, BlockPos pos, BlockState state, int note)
     {
         super(world, pos, state);
         this.noteId = note;
@@ -89,7 +89,7 @@ public class NoteBlockEvent extends BlockEvent
     {
         private NoteBlockInstrument instrument;
 
-        public Play(World world, BlockPos pos, IBlockState state, int note, NoteBlockInstrument instrument)
+        public Play(World world, BlockPos pos, BlockState state, int note, NoteBlockInstrument instrument)
         {
             super(world, pos, state, note);
             this.instrument = instrument;
@@ -116,7 +116,7 @@ public class NoteBlockEvent extends BlockEvent
         private final Note oldNote;
         private final Octave oldOctave;
 
-        public Change(World world, BlockPos pos, IBlockState state, int oldNote, int newNote)
+        public Change(World world, BlockPos pos, BlockState state, int oldNote, int newNote)
         {
             super(world, pos, state, newNote);
             this.oldNote = Note.fromId(oldNote);

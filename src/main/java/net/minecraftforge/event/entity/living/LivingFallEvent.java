@@ -22,7 +22,7 @@ package net.minecraftforge.event.entity.living;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 
 /**
  * LivingFallEvent is fired when an Entity is set to be falling.<br>
@@ -45,7 +45,7 @@ public class LivingFallEvent extends LivingEvent
 {
     private float distance;
     private float damageMultiplier;
-    public LivingFallEvent(EntityLivingBase entity, float distance, float damageMultiplier)
+    public LivingFallEvent(LivingEntity entity, float distance, float damageMultiplier)
     {
         super(entity);
         this.setDistance(distance);

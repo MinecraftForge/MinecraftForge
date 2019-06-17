@@ -19,12 +19,14 @@
 
 package net.minecraftforge.client.gui;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.screen.MainMenuScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.versions.forge.ForgeVersion;
@@ -33,22 +35,23 @@ import net.minecraftforge.fml.client.ClientModLoader;
 import net.minecraftforge.api.distmarker.Dist;
 
 @OnlyIn(Dist.CLIENT)
-public class NotificationModUpdateScreen extends GuiScreen
+public class NotificationModUpdateScreen extends Screen
 {
 
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
 
-    private final GuiButton modButton;
+    private final Button modButton;
     private VersionChecker.Status showNotification = null;
     private boolean hasCheckedForUpdates = false;
 
-    public NotificationModUpdateScreen(GuiButton modButton)
+    public NotificationModUpdateScreen(Button modButton)
     {
+        super(new TranslationTextComponent("forge.menu.updatescreen.title"));
         this.modButton = modButton;
     }
 
     @Override
-    public void initGui()
+    public void init()
     {
         if (!hasCheckedForUpdates)
         {
@@ -74,18 +77,18 @@ public class NotificationModUpdateScreen extends GuiScreen
 
         int x = modButton.x;
         int y = modButton.y;
-        int w = modButton.width;
-        int h = modButton.height;
+        int w = modButton.getWidth();
+        int h = modButton.getHeight();
 
-        drawModalRectWithCustomSizedTexture(x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
+        blit(x + w - (h / 2 + 4), y + (h / 2 - 4), showNotification.getSheetOffset() * 8, (showNotification.isAnimated() && ((System.currentTimeMillis() / 800 & 1) == 1)) ? 8 : 0, 8, 8, 64, 16);
         GlStateManager.popMatrix();
     }
 
-    public static NotificationModUpdateScreen init(GuiMainMenu guiMainMenu, GuiButton modButton)
+    public static NotificationModUpdateScreen init(MainMenuScreen guiMainMenu, Button modButton)
     {
         NotificationModUpdateScreen notificationModUpdateScreen = new NotificationModUpdateScreen(modButton);
-        notificationModUpdateScreen.setWorldAndResolution(guiMainMenu.mc, guiMainMenu.width, guiMainMenu.height);
-        notificationModUpdateScreen.initGui();
+        notificationModUpdateScreen.init(guiMainMenu.getMinecraft(), guiMainMenu.width, guiMainMenu.height);
+        notificationModUpdateScreen.init();
         return notificationModUpdateScreen;
     }
 

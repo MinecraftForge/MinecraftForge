@@ -1,0 +1,26 @@
+--- a/net/minecraft/client/gui/screen/ControlsScreen.java
++++ b/net/minecraft/client/gui/screen/ControlsScreen.java
+@@ -37,7 +37,7 @@
+       this.children.add(this.field_146494_r);
+       this.field_146493_s = this.addButton(new Button(this.width / 2 - 155, this.height - 29, 150, 20, I18n.func_135052_a("controls.resetAll"), (p_213125_1_) -> {
+          for(KeyBinding keybinding : this.minecraft.field_71474_y.field_74324_K) {
+-            keybinding.func_197979_b(keybinding.func_197977_i());
++            keybinding.setToDefault();
+          }
+ 
+          KeyBinding.func_74508_b();
+@@ -61,11 +61,14 @@
+    public boolean keyPressed(int p_keyPressed_1_, int p_keyPressed_2_, int p_keyPressed_3_) {
+       if (this.field_146491_f != null) {
+          if (p_keyPressed_1_ == 256) {
++            this.field_146491_f.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.getActiveModifier(), InputMappings.field_197958_a);
+             this.field_146497_i.func_198014_a(this.field_146491_f, InputMappings.field_197958_a);
+          } else {
++            this.field_146491_f.setKeyModifierAndCode(net.minecraftforge.client.settings.KeyModifier.getActiveModifier(), InputMappings.func_197954_a(p_keyPressed_1_, p_keyPressed_2_));
+             this.field_146497_i.func_198014_a(this.field_146491_f, InputMappings.func_197954_a(p_keyPressed_1_, p_keyPressed_2_));
+          }
+ 
++         if (!net.minecraftforge.client.settings.KeyModifier.isKeyCodeModifier(this.field_146491_f.getKey()))
+          this.field_146491_f = null;
+          this.field_152177_g = Util.func_211177_b();
+          KeyBinding.func_74508_b();

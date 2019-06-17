@@ -21,7 +21,7 @@ package net.minecraftforge.common;
 
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.item.minecart.AbstractMinecartEntity;
 
 /**
  * This class defines a replacement for the default minecart collision code.
@@ -38,7 +38,7 @@ public interface IMinecartCollisionHandler
      * @param cart The cart that called the collision.
      * @param other The object it collided with.
      */
-    void onEntityCollision(EntityMinecart cart, Entity other);
+    void onEntityCollision(AbstractMinecartEntity cart, Entity other);
 
     /**
      * This function replaced the function of the same name in EntityMinecart.
@@ -48,7 +48,7 @@ public interface IMinecartCollisionHandler
      * @param other The entity requesting the collision box.
      * @return The collision box or null.
      */
-    AxisAlignedBB getCollisionBox(EntityMinecart cart, Entity other);
+    AxisAlignedBB getCollisionBox(AbstractMinecartEntity cart, Entity other);
 
     /**
      * This function is used to define the box used for detecting minecart collisions.
@@ -56,7 +56,7 @@ public interface IMinecartCollisionHandler
      * @param cart The cart for which the collision box was requested.
      * @return The collision box, cannot be null.
      */
-    AxisAlignedBB getMinecartCollisionBox(EntityMinecart cart);
+    AxisAlignedBB getMinecartCollisionBox(AbstractMinecartEntity cart);
 
     /**
      * This function replaces the function of the same name in EntityMinecart.
@@ -64,6 +64,6 @@ public interface IMinecartCollisionHandler
      * @param cart The cart for which the bounding box was requested.
      * @return The bounding box or null.
      */
-    AxisAlignedBB getBoundingBox(EntityMinecart cart);
+    AxisAlignedBB getBoundingBox(AbstractMinecartEntity cart);
 }
 

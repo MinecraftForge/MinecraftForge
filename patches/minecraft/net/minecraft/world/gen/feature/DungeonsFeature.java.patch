@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/gen/feature/DungeonsFeature.java
 +++ b/net/minecraft/world/gen/feature/DungeonsFeature.java
-@@ -117,6 +117,6 @@
+@@ -123,6 +123,6 @@
     }
  
     private EntityType<?> func_201043_a(Random p_201043_1_) {

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/SpringFeature.java
++++ b/net/minecraft/world/gen/feature/SpringFeature.java
+@@ -22,7 +22,7 @@
+          return false;
+       } else {
+          BlockState blockstate = p_212245_1_.func_180495_p(p_212245_4_);
+-         if (!blockstate.func_196958_f() && !Block.func_196252_e(blockstate.func_177230_c())) {
++         if (!blockstate.isAir(p_212245_1_, p_212245_4_) && !Block.func_196252_e(blockstate.func_177230_c())) {
+             return false;
+          } else {
+             int i = 0;

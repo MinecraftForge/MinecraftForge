@@ -20,7 +20,7 @@
 package net.minecraftforge.client.event;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.Hand;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 
@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
 @Cancelable
 public class RenderSpecificHandEvent extends Event
 {
-    private final EnumHand hand;
+    private final Hand hand;
     private final float partialTicks;
     private final float interpolatedPitch;
     private final float swingProgress;
@@ -43,7 +43,7 @@ public class RenderSpecificHandEvent extends Event
     @Nonnull
     private final ItemStack stack;
 
-    public RenderSpecificHandEvent(EnumHand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack)
+    public RenderSpecificHandEvent(Hand hand, float partialTicks, float interpolatedPitch, float swingProgress, float equipProgress, @Nonnull ItemStack stack)
     {
         this.hand = hand;
         this.partialTicks = partialTicks;
@@ -53,7 +53,7 @@ public class RenderSpecificHandEvent extends Event
         this.stack = stack;
     }
 
-    public EnumHand getHand()
+    public Hand getHand()
     {
         return hand;
     }

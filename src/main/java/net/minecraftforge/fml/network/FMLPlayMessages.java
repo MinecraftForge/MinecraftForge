@@ -21,17 +21,24 @@ package net.minecraftforge.fml.network;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.IHasContainer;
+import net.minecraft.client.gui.ScreenManager;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityTracker;
 import net.minecraft.entity.EntityType;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.ExtensionPoint;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModList;
-import net.minecraft.util.registry.IRegistry;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 
 import java.util.Optional;
@@ -40,6 +47,13 @@ import java.util.function.Supplier;
 
 public class FMLPlayMessages
 {
+    /**
+     * Used to spawn a custom entity without the same restrictions as
+     * {@link net.minecraft.network.play.server.SSpawnObjectPacket} or {@link net.minecraft.network.play.server.SSpawnMobPacket}
+     *
+     * Ensure your {@link EntityType} registration supplies a {@link EntityType.Builder#customClientFactory} or the
+     * mob won't actually spawn on the client.
+     */
     public static class SpawnEntity
     {
         private final Entity entity;
@@ -48,13 +62,13 @@ public class FMLPlayMessages
         private final UUID uuid;
         private final double posX, posY, posZ;
         private final byte pitch, yaw, headYaw;
-        private final short velX, velY, velZ;
+        private final int velX, velY, velZ;
         private final PacketBuffer buf;
 
         SpawnEntity(Entity e)
         {
             this.entity = e;
-            this.typeId = IRegistry.field_212629_r.getId(e.getType());
+            this.typeId = Registry.field_212629_r.getId(e.getType());
             this.entityId = e.getEntityId();
             this.uuid = e.getUniqueID();
             this.posX = e.posX;
@@ -63,14 +77,18 @@ public class FMLPlayMessages
             this.pitch = (byte) MathHelper.floor(e.rotationPitch * 256.0F / 360.0F);
             this.yaw = (byte) MathHelper.floor(e.rotationYaw * 256.0F / 360.0F);
             this.headYaw = (byte) (e.getRotationYawHead() * 256.0F / 360.0F);
-            this.velX = (short)(MathHelper.clamp(e.motionX, -3.9D, 3.9D) * 8000.0D);
-            this.velY = (short)(MathHelper.clamp(e.motionY, -3.9D, 3.9D) * 8000.0D);
-            this.velZ = (short)(MathHelper.clamp(e.motionZ, -3.9D, 3.9D) * 8000.0D);
+            Vec3d vec3d = e.getMotion();
+            double d1 = MathHelper.clamp(vec3d.x, -3.9D, 3.9D);
+            double d2 = MathHelper.clamp(vec3d.y, -3.9D, 3.9D);
+            double d3 = MathHelper.clamp(vec3d.z, -3.9D, 3.9D);
+            this.velX = (int)(d1 * 8000.0D);
+            this.velY = (int)(d2 * 8000.0D);
+            this.velZ = (int)(d3 * 8000.0D);
             this.buf = null;
         }
 
         private SpawnEntity(int typeId, int entityId, UUID uuid, double posX, double posY, double posZ,
-                           byte pitch, byte yaw, byte headYaw, short velX, short velY, short velZ, PacketBuffer buf)
+                byte pitch, byte yaw, byte headYaw, int velX, int velY, int velZ, PacketBuffer buf)
         {
             this.entity = null;
             this.typeId = typeId;
@@ -119,43 +137,33 @@ public class FMLPlayMessages
                     buf.readByte(), buf.readByte(), buf.readByte(),
                     buf.readShort(), buf.readShort(), buf.readShort(),
                     buf
-            );
+                    );
         }
 
         public static void handle(SpawnEntity msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                EntityType<?> type = IRegistry.field_212629_r.get(msg.typeId);
+                EntityType<?> type = Registry.field_212629_r.getByValue(msg.typeId);
                 if (type == null)
                 {
                     throw new RuntimeException(String.format("Could not spawn entity (id %d) with unknown type at (%f, %f, %f)", msg.entityId, msg.posX, msg.posY, msg.posZ));
                 }
 
                 Optional<World> world = LogicalSidedProvider.CLIENTWORLD.get(ctx.get().getDirection().getReceptionSide());
-                Entity e = world.map(w->type.handleSpawnMessage(w, msg)).orElse(null);
+                Entity e = world.map(w->type.customClientSpawn(msg, w)).orElse(null);
                 if (e == null)
                 {
                     return;
                 }
 
-                EntityTracker.updateServerPosition(e, msg.posX, msg.posY, msg.posZ);
+                e.func_213312_b(msg.posX, msg.posY, msg.posZ);
                 e.setPositionAndRotation(msg.posX, msg.posY, msg.posZ, (msg.yaw * 360) / 256.0F, (msg.pitch * 360) / 256.0F);
                 e.setRotationYawHead((msg.headYaw * 360) / 256.0F);
                 e.setRenderYawOffset((msg.headYaw * 360) / 256.0F);
 
-                Entity[] parts = e.getParts();
-                if (parts != null)
-                {
-                    int offset = msg.entityId - e.getEntityId();
-                    for (Entity part : parts)
-                    {
-                        part.setEntityId(part.getEntityId() + offset);
-                    }
-                }
-
                 e.setEntityId(msg.entityId);
                 e.setUniqueId(msg.uuid);
-                Minecraft.getInstance().world.addEntityToWorld(msg.entityId, e);
+                world.filter(ClientWorld.class::isInstance).ifPresent(w->((ClientWorld)w).func_217411_a(msg.entityId, e));
                 e.setVelocity(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
                 if (e instanceof IEntityAdditionalSpawnData)
                 {
@@ -168,45 +176,62 @@ public class FMLPlayMessages
 
     public static class OpenContainer
     {
-        private final ResourceLocation id;
+        private final int id;
         private final int windowId;
+        private final ITextComponent name;
         private final PacketBuffer additionalData;
 
-        OpenContainer(ResourceLocation id, int windowId, PacketBuffer additionalData)
+        OpenContainer(ContainerType<?> id, int windowId, ITextComponent name, PacketBuffer additionalData)
+        {
+            this(Registry.field_218366_G.getId(id), windowId, name, additionalData);
+        }
+
+        private OpenContainer(int id, int windowId, ITextComponent name, PacketBuffer additionalData) 
         {
             this.id = id;
             this.windowId = windowId;
+            this.name = name;
             this.additionalData = additionalData;
         }
 
         public static void encode(OpenContainer msg, PacketBuffer buf)
         {
-            buf.writeResourceLocation(msg.id);
+            buf.writeVarInt(msg.id);
             buf.writeVarInt(msg.windowId);
+            buf.writeTextComponent(msg.name);
             buf.writeByteArray(msg.additionalData.readByteArray());
         }
 
         public static OpenContainer decode(PacketBuffer buf)
         {
-            return new OpenContainer(buf.readResourceLocation(), buf.readVarInt(), new PacketBuffer(Unpooled.wrappedBuffer(buf.readByteArray(32600))));
+            return new OpenContainer(buf.readVarInt(), buf.readVarInt(), buf.readTextComponent(), new PacketBuffer(Unpooled.wrappedBuffer(buf.readByteArray(32600))));
         }
 
         public static void handle(OpenContainer msg, Supplier<NetworkEvent.Context> ctx)
         {
-            ctx.get().enqueueWork(() -> ModList.get().getModContainerById(msg.id.getNamespace()).ifPresent(mc->
-            mc.getCustomExtension(ExtensionPoint.GUIFACTORY).map(f -> f.apply(msg)).ifPresent(gui-> {
-                    Minecraft.getInstance().displayGuiScreen(gui);
-                    Minecraft.getInstance().player.openContainer.windowId = msg.windowId;
-            })));
+            ctx.get().enqueueWork(() -> {
+                ScreenManager.getScreenFactory(msg.getType(), Minecraft.getInstance(), msg.getWindowId(), msg.getName())
+                             .ifPresent(f -> {
+                                 Container c = msg.getType().create(msg.getWindowId(), Minecraft.getInstance().player.inventory, msg.getAdditionalData());
+                                 @SuppressWarnings("unchecked")
+                                 Screen s = ((ScreenManager.IScreenFactory<Container, ?>)f).create(c, Minecraft.getInstance().player.inventory, msg.getName());
+                                 Minecraft.getInstance().player.openContainer = ((IHasContainer<?>)s).getContainer();
+                                 Minecraft.getInstance().displayGuiScreen(s);
+                             });
+            });
             ctx.get().setPacketHandled(true);
         }
 
-        public final ResourceLocation getId() {
-            return this.id;
+        public final ContainerType<?> getType() {
+            return Registry.field_218366_G.getByValue(this.id);
         }
 
         public int getWindowId() {
             return windowId;
+        }
+
+        public ITextComponent getName() {
+            return name;
         }
 
         public PacketBuffer getAdditionalData() {

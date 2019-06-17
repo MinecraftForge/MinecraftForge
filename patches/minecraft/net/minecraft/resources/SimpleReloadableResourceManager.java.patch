@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/SimpleReloadableResourceManager.java
 +++ b/net/minecraft/resources/SimpleReloadableResourceManager.java
-@@ -45,7 +45,6 @@
+@@ -50,7 +50,6 @@
  
     }
  
@@ -8,50 +8,33 @@
     public Set<String> func_199001_a() {
        return this.field_199016_e;
     }
-@@ -86,35 +85,46 @@
+@@ -64,7 +63,6 @@
+       }
     }
  
-    public void func_199005_a(List<IResourcePack> p_199005_1_) {
-+      try (net.minecraftforge.fml.common.progress.ProgressBar resReload = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Loading Resources", p_199005_1_.size() + 1, true)) {
+-   @OnlyIn(Dist.CLIENT)
+    public boolean func_219533_b(ResourceLocation p_219533_1_) {
+       IResourceManager iresourcemanager = this.field_199014_c.get(p_219533_1_.func_110624_b());
+       return iresourcemanager != null ? iresourcemanager.func_219533_b(p_219533_1_) : false;
+@@ -118,18 +116,20 @@
+       return iasyncreloader;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public IAsyncReloader func_219535_a(Executor p_219535_1_, Executor p_219535_2_, CompletableFuture<Unit> p_219535_3_) {
+       return this.func_219538_b(p_219535_1_, p_219535_2_, this.field_219539_d, p_219535_3_);
+    }
+ 
+    public IAsyncReloader func_219537_a(Executor p_219537_1_, Executor p_219537_2_, CompletableFuture<Unit> p_219537_3_, List<IResourcePack> p_219537_4_) {
++      net.minecraftforge.fml.common.progress.StartupProgressManager.start("Loading Resources", p_219537_4_.size(), true, bar -> {
        this.func_199008_b();
-       field_199012_a.info("Reloading ResourceManager: {}", p_199005_1_.stream().map(IResourcePack::func_195762_a).collect(Collectors.joining(", ")));
+       field_199012_a.info("Reloading ResourceManager: {}", p_219537_4_.stream().map(IResourcePack::func_195762_a).collect(Collectors.joining(", ")));
  
-       for(IResourcePack iresourcepack : p_199005_1_) {
-+         resReload.step(iresourcepack.func_195762_a());
-          this.func_199009_a(iresourcepack);
+       for(IResourcePack iresourcepack : p_219537_4_) {
++         bar.step(iresourcepack.func_195762_a());
+          this.func_199021_a(iresourcepack);
        }
++      });
  
-+      resReload.step("Reloading listeners");
-       if (field_199012_a.isDebugEnabled()) {
-          this.func_199011_d();
-       } else {
-          this.func_199010_c();
-       }
-+      }; // Forge: end progress bar
- 
+       return this.func_219538_b(p_219537_1_, p_219537_2_, this.field_199015_d, p_219537_3_);
     }
- 
-    public void func_199006_a(IResourceManagerReloadListener p_199006_1_) {
-+      try (net.minecraftforge.fml.common.progress.ProgressBar resReload = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Loading Resource", 1)) {
-+      resReload.step(p_199006_1_.getClass());
-       this.field_199015_d.add(p_199006_1_);
-       if (field_199012_a.isDebugEnabled()) {
-          field_199012_a.info(this.func_199007_b(p_199006_1_));
-       } else {
-          p_199006_1_.func_195410_a(this);
-       }
-+      }; // Forge: end progress bar
- 
-    }
- 
-    private void func_199010_c() {
-+      try (net.minecraftforge.fml.common.progress.ProgressBar resReload = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Reloading", this.field_199015_d.size())) {
-       for(IResourceManagerReloadListener iresourcemanagerreloadlistener : this.field_199015_d) {
-+         resReload.step(iresourcemanagerreloadlistener.getClass());
-+         if (!net.minecraftforge.resource.SelectiveReloadStateHandler.INSTANCE.test(iresourcemanagerreloadlistener)) continue; // Forge: Selective reloading for vanilla listeners
-          iresourcemanagerreloadlistener.func_195410_a(this);
-       }
-+      }; // Forge: end progress bar
- 
-    }
- 

@@ -20,19 +20,19 @@
 package net.minecraftforge.client.event;
 
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.AtlasTexture;
 
 
 public class TextureStitchEvent extends Event
 {
-    private final TextureMap map;
+    private final AtlasTexture map;
 
-    public TextureStitchEvent(TextureMap map)
+    public TextureStitchEvent(AtlasTexture map)
     {
         this.map = map;
     }
 
-    public TextureMap getMap()
+    public AtlasTexture getMap()
     {
         return map;
     }
@@ -44,7 +44,7 @@ public class TextureStitchEvent extends Event
      */
     public static class Pre extends TextureStitchEvent
     {
-        public Pre(TextureMap map){ super(map); }
+        public Pre(AtlasTexture map){ super(map); }
     }
 
     /**
@@ -54,6 +54,6 @@ public class TextureStitchEvent extends Event
      */
     public static class Post extends TextureStitchEvent
     {
-        public Post(TextureMap map){ super(map); }
+        public Post(AtlasTexture map){ super(map); }
     }
 }

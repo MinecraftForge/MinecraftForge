@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/biome/provider/BiomeProviderType.java
++++ b/net/minecraft/world/biome/provider/BiomeProviderType.java
+@@ -4,7 +4,7 @@
+ import java.util.function.Supplier;
+ import net.minecraft.util.registry.Registry;
+ 
+-public class BiomeProviderType<C extends IBiomeProviderSettings, T extends BiomeProvider> {
++public class BiomeProviderType<C extends IBiomeProviderSettings, T extends BiomeProvider> extends net.minecraftforge.registries.ForgeRegistryEntry<BiomeProviderType<?, ?>> {
+    public static final BiomeProviderType<CheckerboardBiomeProviderSettings, CheckerboardBiomeProvider> field_205460_b = func_212581_a("checkerboard", CheckerboardBiomeProvider::new, CheckerboardBiomeProviderSettings::new);
+    public static final BiomeProviderType<SingleBiomeProviderSettings, SingleBiomeProvider> field_205461_c = func_212581_a("fixed", SingleBiomeProvider::new, SingleBiomeProviderSettings::new);
+    public static final BiomeProviderType<OverworldBiomeProviderSettings, OverworldBiomeProvider> field_206859_d = func_212581_a("vanilla_layered", OverworldBiomeProvider::new, OverworldBiomeProviderSettings::new);

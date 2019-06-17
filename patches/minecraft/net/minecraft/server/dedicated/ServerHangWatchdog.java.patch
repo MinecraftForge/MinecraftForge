@@ -8,4 +8,4 @@
 +            Error error = new Error(String.format("ServerHangWatchdog detected that a single server tick took %.2f seconds (should be max 0.05)", k / 1000F)); // Forge: don't just make a crash report with a seemingly-inexplicable Error
  
              for(ThreadInfo threadinfo : athreadinfo) {
-                if (threadinfo.getThreadId() == this.field_180249_b.func_175583_aK().getId()) {
+                if (threadinfo.getThreadId() == this.field_180249_b.func_213170_ax().getId()) {

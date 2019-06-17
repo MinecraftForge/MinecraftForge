@@ -1,0 +1,21 @@
+--- a/net/minecraft/world/storage/loot/TableLootEntry.java
++++ b/net/minecraft/world/storage/loot/TableLootEntry.java
+@@ -13,8 +13,8 @@
+ public class TableLootEntry extends ILootGenerator {
+    protected final ResourceLocation field_186371_a;
+ 
+-   public TableLootEntry(ResourceLocation p_i46639_1_, int p_i46639_2_, int p_i46639_3_, ILootCondition[] p_i46639_4_) {
+-      super(p_i46639_2_, p_i46639_3_, p_i46639_4_);
++   public TableLootEntry(ResourceLocation p_i46639_1_, int p_i46639_2_, int p_i46639_3_, ILootCondition[] p_i46639_4_, String entryName) {
++      super(p_i46639_2_, p_i46639_3_, p_i46639_4_, entryName);
+       this.field_186371_a = p_i46639_1_;
+    }
+ 
+@@ -29,6 +29,6 @@
+ 
+    public static TableLootEntry func_186370_a(JsonObject p_186370_0_, JsonDeserializationContext p_186370_1_, int p_186370_2_, int p_186370_3_, ILootCondition[] p_186370_4_) {
+       ResourceLocation resourcelocation = new ResourceLocation(JSONUtils.func_151200_h(p_186370_0_, "name"));
+-      return new TableLootEntry(resourcelocation, p_186370_2_, p_186370_3_, p_186370_4_);
++      return new TableLootEntry(resourcelocation, p_186370_2_, p_186370_3_, p_186370_4_, net.minecraftforge.common.ForgeHooks.readLootEntryName(p_186370_0_, "loot_table"));
+    }
+ }

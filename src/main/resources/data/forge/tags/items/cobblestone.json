@@ -1,8 +1,0 @@
-{
-  "replace": false,
-  "values": [
-    "minecraft:cobblestone",
-    "minecraft:infested_cobblestone",
-    "minecraft:mossy_cobblestone"
-  ]
-}
