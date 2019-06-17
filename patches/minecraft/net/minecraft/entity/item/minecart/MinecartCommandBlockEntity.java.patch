@@ -1,0 +1,10 @@
+--- a/net/minecraft/entity/item/minecart/MinecartCommandBlockEntity.java
++++ b/net/minecraft/entity/item/minecart/MinecartCommandBlockEntity.java
+@@ -72,6 +72,7 @@
+    }
+ 
+    public boolean func_184230_a(PlayerEntity p_184230_1_, Hand p_184230_2_) {
++      if (super.func_184230_a(p_184230_1_, p_184230_2_)) return true;
+       this.field_145824_a.func_175574_a(p_184230_1_);
+       return true;
+    }

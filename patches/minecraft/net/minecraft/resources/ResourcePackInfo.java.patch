@@ -1,6 +1,6 @@
 --- a/net/minecraft/resources/ResourcePackInfo.java
 +++ b/net/minecraft/resources/ResourcePackInfo.java
-@@ -29,6 +29,7 @@
+@@ -30,6 +30,7 @@
     private final ResourcePackInfo.Priority field_195805_g;
     private final boolean field_195806_h;
     private final boolean field_195807_i;
@@ -8,7 +8,7 @@
  
     @Nullable
     public static <T extends ResourcePackInfo> T func_195793_a(String p_195793_0_, boolean p_195793_1_, Supplier<IResourcePack> p_195793_2_, ResourcePackInfo.IFactory<T> p_195793_3_, ResourcePackInfo.Priority p_195793_4_) {
-@@ -52,7 +53,12 @@
+@@ -53,7 +54,12 @@
        return (T)null;
     }
  
@@ -21,7 +21,7 @@
        this.field_195800_b = p_i47907_1_;
        this.field_195801_c = p_i47907_3_;
        this.field_195802_d = p_i47907_4_;
-@@ -61,12 +67,18 @@
+@@ -62,12 +68,18 @@
        this.field_195806_h = p_i47907_2_;
        this.field_195805_g = p_i47907_7_;
        this.field_195807_i = p_i47907_8_;
@@ -30,18 +30,18 @@
  
 +   @Deprecated
     public ResourcePackInfo(String p_i47908_1_, boolean p_i47908_2_, Supplier<IResourcePack> p_i47908_3_, IResourcePack p_i47908_4_, PackMetadataSection p_i47908_5_, ResourcePackInfo.Priority p_i47908_6_) {
--      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, new TextComponentString(p_i47908_4_.func_195762_a()), p_i47908_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i47908_5_.func_198962_b()), p_i47908_6_, false);
+-      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, new StringTextComponent(p_i47908_4_.func_195762_a()), p_i47908_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i47908_5_.func_198962_b()), p_i47908_6_, false);
 +      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, p_i47908_4_, p_i47908_5_, p_i47908_6_, false);
     }
  
 +   public ResourcePackInfo(String p_i47908_1_, boolean p_i47908_2_, Supplier<IResourcePack> p_i47908_3_, IResourcePack p_i47908_4_, PackMetadataSection p_i47908_5_, ResourcePackInfo.Priority p_i47908_6_, boolean hidden) {
-+      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, new TextComponentString(p_i47908_4_.func_195762_a()), p_i47908_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i47908_5_.func_198962_b()), p_i47908_6_, hidden, hidden);
++      this(p_i47908_1_, p_i47908_2_, p_i47908_3_, new StringTextComponent(p_i47908_4_.func_195762_a()), p_i47908_5_.func_198963_a(), PackCompatibility.func_198969_a(p_i47908_5_.func_198962_b()), p_i47908_6_, hidden, hidden);
 +   }
 +
     @OnlyIn(Dist.CLIENT)
     public ITextComponent func_195789_b() {
        return this.field_195802_d;
-@@ -106,6 +118,8 @@
+@@ -107,6 +119,8 @@
     public ResourcePackInfo.Priority func_195792_i() {
        return this.field_195805_g;
     }

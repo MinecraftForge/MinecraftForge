@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.MainWindow;
-import net.minecraft.client.gui.BossInfoClient;
+import net.minecraft.client.gui.ClientBossInfo;
 
 @Cancelable
 public class RenderGameOverlayEvent extends Event
@@ -99,11 +99,11 @@ public class RenderGameOverlayEvent extends Event
 
     public static class BossInfo extends Pre
     {
-        private final BossInfoClient bossInfo;
+        private final ClientBossInfo bossInfo;
         private final int x;
         private final int y;
         private int increment;
-        public BossInfo(RenderGameOverlayEvent parent, ElementType type, BossInfoClient bossInfo, int x, int y, int increment)
+        public BossInfo(RenderGameOverlayEvent parent, ElementType type, ClientBossInfo bossInfo, int x, int y, int increment)
         {
             super(parent, type);
             this.bossInfo = bossInfo;
@@ -115,7 +115,7 @@ public class RenderGameOverlayEvent extends Event
         /**
          * @return The {@link BossInfoClient} currently being rendered
          */
-        public BossInfoClient getBossInfo()
+        public ClientBossInfo getBossInfo()
         {
             return bossInfo;
         }

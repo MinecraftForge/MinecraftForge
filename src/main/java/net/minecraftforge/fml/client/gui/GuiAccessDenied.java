@@ -19,41 +19,39 @@
 
 package net.minecraftforge.fml.client.gui;
 
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.text.TranslationTextComponent;
 
-public class GuiAccessDenied extends GuiScreen
+public class GuiAccessDenied extends Screen
 {
-    private GuiScreen parent;
+    private Screen parent;
     private ServerData data;
-    public GuiAccessDenied(GuiScreen parent, ServerData data)
+    public GuiAccessDenied(Screen parent, ServerData data)
     {
+        super(new TranslationTextComponent("fml.menu.accessdenied.title"));
         this.parent = parent;
         this.data = data;
     }
 
     @Override
-    public void initGui()
+    public void init()
     {
-        this.buttons.add(new GuiButton(1, this.width / 2 - 75, this.height - 38, I18n.format("gui.done"))
-        {
-            public void onClick(double mouseX, double mouseY)
-            {
-                GuiAccessDenied.this.mc.displayGuiScreen(parent);
-            }
-        });
+        this.buttons.add(new Button(this.width / 2 - 75, this.height - 38, 200, 20, I18n.format("gui.done"), b -> GuiAccessDenied.this.minecraft.displayGuiScreen(parent)));
     }
 
     @Override
     public void render(int mouseX, int mouseY, float partialTicks)
     {
-        this.drawDefaultBackground();
-        int offset = Math.max(85 - 2 * 10, 10);
-        this.drawCenteredString(this.fontRenderer, "Forge Mod Loader could not connect to this server", this.width / 2, offset, 0xFFFFFF);
-        offset += 10;
-        this.drawCenteredString(this.fontRenderer, String.format("The server %s has forbidden modded access", data.serverName), this.width / 2, offset, 0xFFFFFF);
+        this.renderBackground();
+        String[] lines = I18n.format("fml.menu.accessdenied.message", data.serverName).split("\n");
+        int offset = Math.max(85 - lines.length * 10, 10);
+        for (String line : lines) {
+            this.drawCenteredString(this.font, line, this.width / 2, offset, 0xFFFFFF);
+            offset += 10;
+        }
         super.render(mouseX, mouseY, partialTicks);
     }
 }

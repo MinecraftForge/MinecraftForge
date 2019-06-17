@@ -1,0 +1,16 @@
+--- a/net/minecraft/client/renderer/entity/layers/HeldItemLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/HeldItemLayer.java
+@@ -39,11 +39,12 @@
+    private void func_188358_a(LivingEntity p_188358_1_, ItemStack p_188358_2_, ItemCameraTransforms.TransformType p_188358_3_, HandSide p_188358_4_) {
+       if (!p_188358_2_.func_190926_b()) {
+          GlStateManager.pushMatrix();
+-         this.func_191361_a(p_188358_4_);
+          if (p_188358_1_.func_213287_bg()) {
+             GlStateManager.translatef(0.0F, 0.2F, 0.0F);
+          }
+ 
++         // Forge: moved this call down, fixes incorrect offset while sneaking.
++         this.func_191361_a(p_188358_4_);
+          GlStateManager.rotatef(-90.0F, 1.0F, 0.0F, 0.0F);
+          GlStateManager.rotatef(180.0F, 0.0F, 1.0F, 0.0F);
+          boolean flag = p_188358_4_ == HandSide.LEFT;

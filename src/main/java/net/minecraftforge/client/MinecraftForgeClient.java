@@ -41,9 +41,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.chunk.RenderChunkCache;
+import net.minecraft.client.renderer.chunk.ChunkRenderCache;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
@@ -57,11 +56,6 @@ import net.minecraftforge.client.model.data.IModelData;
 
 public class MinecraftForgeClient
 {
-    public static int getRenderPass()
-    {
-        return ForgeHooksClient.renderPass;
-    }
-
     public static BlockRenderLayer getRenderLayer()
     {
         return ForgeHooksClient.renderLayer.get();
@@ -113,20 +107,20 @@ public class MinecraftForgeClient
         }
     }
 
-    private static final LoadingCache<Pair<World, BlockPos>, RenderChunkCache> regionCache = CacheBuilder.newBuilder()
+    private static final LoadingCache<Pair<World, BlockPos>, ChunkRenderCache> regionCache = CacheBuilder.newBuilder()
         .maximumSize(500)
         .concurrencyLevel(5)
         .expireAfterAccess(1, TimeUnit.SECONDS)
-        .build(new CacheLoader<Pair<World, BlockPos>, RenderChunkCache>()
+        .build(new CacheLoader<Pair<World, BlockPos>, ChunkRenderCache>()
         {
             @Override
-            public RenderChunkCache load(Pair<World, BlockPos> key)
+            public ChunkRenderCache load(Pair<World, BlockPos> key)
             {
-                return RenderChunkCache.func_212397_a(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
+                return ChunkRenderCache.generateCache(key.getLeft(), key.getRight().add(-1, -1, -1), key.getRight().add(16, 16, 16), 1);
             }
         });
 
-    public static void onRebuildChunk(World world, BlockPos position, RenderChunkCache cache)
+    public static void onRebuildChunk(World world, BlockPos position, ChunkRenderCache cache)
     {
         if (cache == null)
             regionCache.invalidate(Pair.of(world, position));
@@ -134,7 +128,7 @@ public class MinecraftForgeClient
             regionCache.put(Pair.of(world, position), cache);
     }
 
-    public static RenderChunkCache getRegionRenderCache(World world, BlockPos pos)
+    public static ChunkRenderCache getRegionRenderCache(World world, BlockPos pos)
     {
         int x = pos.getX() & ~0xF;
         int y = pos.getY() & ~0xF;

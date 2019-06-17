@@ -1,24 +1,36 @@
 --- a/net/minecraft/world/gen/WorldGenRegion.java
 +++ b/net/minecraft/world/gen/WorldGenRegion.java
-@@ -121,7 +121,7 @@
-    }
+@@ -165,11 +165,11 @@
  
-    public boolean func_175623_d(BlockPos p_175623_1_) {
--      return this.func_180495_p(p_175623_1_).func_196958_f();
-+      return this.func_180495_p(p_175623_1_).isAir(this, p_175623_1_);
-    }
+    public boolean func_175655_b(BlockPos p_175655_1_, boolean p_175655_2_) {
+       BlockState blockstate = this.func_180495_p(p_175655_1_);
+-      if (blockstate.func_196958_f()) {
++      if (blockstate.isAir(this, p_175655_1_)) {
+          return false;
+       } else {
+          if (p_175655_2_) {
+-            TileEntity tileentity = blockstate.func_177230_c().func_149716_u() ? this.func_175625_s(p_175655_1_) : null;
++            TileEntity tileentity = blockstate.hasTileEntity() ? this.func_175625_s(p_175655_1_) : null;
+             Block.func_220059_a(blockstate, this.field_201689_f, p_175655_1_, tileentity);
+          }
  
-    public Biome func_180494_b(BlockPos p_180494_1_) {
-@@ -173,7 +173,7 @@
-          NBTTagCompound nbttagcompound = ichunk.func_201579_g(p_175625_1_);
-          if (nbttagcompound != null) {
-             if ("DUMMY".equals(nbttagcompound.func_74779_i("id"))) {
--               tileentity = ((ITileEntityProvider)this.func_180495_p(p_175625_1_).func_177230_c()).func_196283_a_(this.field_201689_f);
-+               tileentity = this.func_180495_p(p_175625_1_).createTileEntity(this.field_201689_f);
+@@ -187,12 +187,12 @@
+          CompoundNBT compoundnbt = ichunk.func_201579_g(p_175625_1_);
+          if (compoundnbt != null) {
+             if ("DUMMY".equals(compoundnbt.func_74779_i("id"))) {
+-               Block block = this.func_180495_p(p_175625_1_).func_177230_c();
+-               if (!(block instanceof ITileEntityProvider)) {
++               BlockState state = this.func_180495_p(p_175625_1_);
++               if (!state.hasTileEntity()) {
+                   return null;
+                }
+ 
+-               tileentity = ((ITileEntityProvider)block).func_196283_a_(this.field_201689_f);
++               tileentity = state.createTileEntity(this.field_201689_f);
              } else {
-                tileentity = TileEntity.func_203403_c(nbttagcompound);
+                tileentity = TileEntity.func_203403_c(compoundnbt);
              }
-@@ -184,7 +184,7 @@
+@@ -203,7 +203,7 @@
              }
           }
  
@@ -27,9 +39,9 @@
              field_208303_a.warn("Tried to access a block entity before it was created. {}", (Object)p_175625_1_);
           }
  
-@@ -196,9 +196,9 @@
-       IChunk ichunk = this.func_205771_y(p_180501_1_);
-       IBlockState iblockstate = ichunk.func_177436_a(p_180501_1_, p_180501_2_, false);
+@@ -219,9 +219,9 @@
+       }
+ 
        Block block = p_180501_2_.func_177230_c();
 -      if (block.func_149716_u()) {
 +      if (p_180501_2_.hasTileEntity()) {
@@ -37,14 +49,14 @@
 -            ichunk.func_177426_a(p_180501_1_, ((ITileEntityProvider)block).func_196283_a_(this));
 +            ichunk.func_177426_a(p_180501_1_, p_180501_2_.createTileEntity(this));
           } else {
-             NBTTagCompound nbttagcompound = new NBTTagCompound();
-             nbttagcompound.func_74768_a("x", p_180501_1_.func_177958_n());
-@@ -207,7 +207,7 @@
-             nbttagcompound.func_74778_a("id", "DUMMY");
-             ichunk.func_201591_a(nbttagcompound);
+             CompoundNBT compoundnbt = new CompoundNBT();
+             compoundnbt.func_74768_a("x", p_180501_1_.func_177958_n());
+@@ -230,7 +230,7 @@
+             compoundnbt.func_74778_a("id", "DUMMY");
+             ichunk.func_201591_a(compoundnbt);
           }
--      } else if (iblockstate != null && iblockstate.func_177230_c().func_149716_u()) {
-+      } else if (iblockstate != null && iblockstate.hasTileEntity()) {
+-      } else if (blockstate != null && blockstate.func_177230_c().func_149716_u()) {
++      } else if (blockstate != null && blockstate.hasTileEntity()) {
           ichunk.func_177425_e(p_180501_1_);
        }
  

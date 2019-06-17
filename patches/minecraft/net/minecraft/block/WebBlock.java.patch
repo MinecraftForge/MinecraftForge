@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/WebBlock.java
++++ b/net/minecraft/block/WebBlock.java
+@@ -6,7 +6,7 @@
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
+ 
+-public class WebBlock extends Block {
++public class WebBlock extends Block implements net.minecraftforge.common.IShearable {
+    public WebBlock(Block.Properties p_i48296_1_) {
+       super(p_i48296_1_);
+    }

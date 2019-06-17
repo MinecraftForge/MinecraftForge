@@ -35,7 +35,7 @@ import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 
 public abstract class SimpleModelFontRenderer extends FontRenderer {
@@ -45,7 +45,7 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
     private ImmutableList.Builder<BakedQuad> builder = ImmutableList.builder();
     private final VertexFormat format;
     private final Vector3f normal = new Vector3f(0, 0, 1);
-    private final EnumFacing orientation;
+    private final Direction orientation;
     private boolean fillBlanks = false;
 
     private TextureAtlasSprite sprite;
@@ -56,7 +56,7 @@ public abstract class SimpleModelFontRenderer extends FontRenderer {
         this.transform = new TRSRTransformation(matrix);
         this.format = format;
         transform.transformNormal(normal);
-        orientation = EnumFacing.getFacingFromVector(normal.x, normal.y, normal.z);
+        orientation = Direction.getFacingFromVector(normal.x, normal.y, normal.z);
     }
 
     public void setSprite(TextureAtlasSprite sprite)

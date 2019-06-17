@@ -1,0 +1,96 @@
+--- a/net/minecraft/world/spawner/WorldEntitySpawner.java
++++ b/net/minecraft/world/spawner/WorldEntitySpawner.java
+@@ -82,7 +82,7 @@
+                            }
+ 
+                            if (biome$spawnlistentry == null) {
+-                              biome$spawnlistentry = func_222264_a(chunkgenerator, p_222263_0_, p_222263_1_.field_73012_v, blockpos$mutableblockpos);
++                              biome$spawnlistentry = getSpawnList(chunkgenerator, p_222263_0_, p_222263_1_.field_73012_v, blockpos$mutableblockpos, p_222263_1_);
+                               if (biome$spawnlistentry == null) {
+                                  break label116;
+                               }
+@@ -95,7 +95,7 @@
+                            }
+ 
+                            EntityType<?> entitytype = biome$spawnlistentry.field_200702_b;
+-                           if (!entitytype.func_200720_b() || !func_222261_a(chunkgenerator, p_222263_0_, biome$spawnlistentry, blockpos$mutableblockpos)) {
++                           if (!entitytype.func_200720_b() || !getSpawnList(chunkgenerator, p_222263_0_, biome$spawnlistentry, blockpos$mutableblockpos, p_222263_1_)) {
+                               break label108;
+                            }
+ 
+@@ -118,15 +118,17 @@
+                            }
+ 
+                            mobentity.func_70012_b((double)f, (double)k, (double)f1, p_222263_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
+-                           if (playerentity.func_70092_e((double)f, (double)k, (double)f1) > 16384.0D && mobentity.func_213397_c(playerentity.func_70092_e((double)f, (double)k, (double)f1)) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)) {
++                           int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_222263_1_, f, k, f1, null);
++                           if (playerentity.func_70092_e((double)f, (double)k, (double)f1) > 16384.0D && (canSpawn == 1 || (canSpawn == 0 && mobentity.func_213397_c(playerentity.func_70092_e((double)f, (double)k, (double)f1)))) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)) {
+                               break label108;
+                            }
+ 
++                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mobentity, p_222263_1_, f, k, f1, null))
+                            ilivingentitydata = mobentity.func_213386_a(p_222263_1_, p_222263_1_.func_175649_E(new BlockPos(mobentity)), SpawnReason.NATURAL, ilivingentitydata, (CompoundNBT)null);
+                            ++i;
+                            ++j2;
+                            p_222263_1_.func_217376_c(mobentity);
+-                           if (i >= mobentity.func_70641_bl()) {
++                           if (i >= net.minecraftforge.event.ForgeEventFactory.getMaxSpawnPackSize(mobentity)) {
+                               return;
+                            }
+ 
+@@ -149,13 +151,15 @@
+    }
+ 
+    @Nullable
+-   private static Biome.SpawnListEntry func_222264_a(ChunkGenerator<?> p_222264_0_, EntityClassification p_222264_1_, Random p_222264_2_, BlockPos p_222264_3_) {
++   private static Biome.SpawnListEntry getSpawnList(ChunkGenerator<?> p_222264_0_, EntityClassification p_222264_1_, Random p_222264_2_, BlockPos p_222264_3_, World world) {
+       List<Biome.SpawnListEntry> list = p_222264_0_.func_177458_a(p_222264_1_, p_222264_3_);
++      list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(world, p_222264_1_, p_222264_3_, list);
+       return list.isEmpty() ? null : WeightedRandom.func_76271_a(p_222264_2_, list);
+    }
+ 
+-   private static boolean func_222261_a(ChunkGenerator<?> p_222261_0_, EntityClassification p_222261_1_, Biome.SpawnListEntry p_222261_2_, BlockPos p_222261_3_) {
++   private static boolean getSpawnList(ChunkGenerator<?> p_222261_0_, EntityClassification p_222261_1_, Biome.SpawnListEntry p_222261_2_, BlockPos p_222261_3_, World world) {
+       List<Biome.SpawnListEntry> list = p_222261_0_.func_177458_a(p_222261_1_, p_222261_3_);
++      list = net.minecraftforge.event.ForgeEventFactory.getPotentialSpawns(world, p_222261_1_, p_222261_3_, list);
+       return list.isEmpty() ? false : list.contains(p_222261_2_);
+    }
+ 
+@@ -182,6 +186,13 @@
+ 
+    public static boolean func_209382_a(EntitySpawnPlacementRegistry.PlacementType p_209382_0_, IWorldReader p_209382_1_, BlockPos p_209382_2_, @Nullable EntityType<?> p_209382_3_) {
+       if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
++         return p_209382_0_.canSpawnAt(p_209382_1_, p_209382_2_, p_209382_3_);
++      }
++      return false;
++   }
++
++   public static boolean canSpawnAtBody(EntitySpawnPlacementRegistry.PlacementType p_209382_0_, IWorldReader p_209382_1_, BlockPos p_209382_2_, @Nullable EntityType<?> p_209382_3_) {
++      {
+          BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
+          IFluidState ifluidstate = p_209382_1_.func_204610_c(p_209382_2_);
+          BlockPos blockpos = p_209382_2_.func_177984_a();
+@@ -192,14 +203,12 @@
+          case ON_GROUND:
+          default:
+             BlockState blockstate1 = p_209382_1_.func_180495_p(blockpos1);
+-            if (!blockstate1.func_215688_a(p_209382_1_, blockpos1, p_209382_3_)) {
++            if (!blockstate1.canCreatureSpawn(p_209382_1_, blockpos1, p_209382_0_, p_209382_3_)) {
+                return false;
+             } else {
+                return func_222266_a(p_209382_1_, p_209382_2_, blockstate, ifluidstate) && func_222266_a(p_209382_1_, blockpos, p_209382_1_.func_180495_p(blockpos), p_209382_1_.func_204610_c(blockpos));
+             }
+          }
+-      } else {
+-         return false;
+       }
+    }
+ 
+@@ -242,6 +251,7 @@
+                      entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
+                      if (entity instanceof MobEntity) {
+                         MobEntity mobentity = (MobEntity)entity;
++                        if (net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_77191_0_, d0, blockpos.func_177956_o(), d1, null) == -1) continue;
+                         if (mobentity.func_213380_a(p_77191_0_, SpawnReason.CHUNK_GENERATION) && mobentity.func_205019_a(p_77191_0_)) {
+                            ilivingentitydata = mobentity.func_213386_a(p_77191_0_, p_77191_0_.func_175649_E(new BlockPos(mobentity)), SpawnReason.CHUNK_GENERATION, ilivingentitydata, (CompoundNBT)null);
+                            p_77191_0_.func_217376_c(mobentity);

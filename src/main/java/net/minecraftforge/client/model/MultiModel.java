@@ -31,18 +31,15 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.vecmath.Matrix4f;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.model.IModelState;
@@ -76,7 +73,7 @@ public final class MultiModel implements IUnbakedModel
         private final ItemOverrideList overrides = new ItemOverrideList()
         {
             @Override
-            public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity)
+            public IBakedModel getModelWithOverrides(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable LivingEntity entity)
             {
                 if(originalModel != Baked.this)
                 {
@@ -158,7 +155,7 @@ public final class MultiModel implements IUnbakedModel
         }
 
         @Override
-        public boolean isAmbientOcclusion(IBlockState state)
+        public boolean isAmbientOcclusion(BlockState state)
         {
             return internalBase.isAmbientOcclusion(state);
         }
@@ -188,7 +185,7 @@ public final class MultiModel implements IUnbakedModel
         }
 
         @Override
-        public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, Random rand)
+        public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, Random rand)
         {
             ImmutableList.Builder<BakedQuad> quads = ImmutableList.builder();
             if (base != null)
@@ -235,15 +232,15 @@ public final class MultiModel implements IUnbakedModel
     }
 
     @Override
-    public Collection<ResourceLocation> getOverrideLocations()
+    public Collection<ResourceLocation> getDependencies()
     {
         Set<ResourceLocation> deps = Sets.newHashSet();
 
         if (base != null)
-            deps.addAll(base.getOverrideLocations());
+            deps.addAll(base.getDependencies());
 
         for (Pair<IUnbakedModel, IModelState> pair : parts.values())
-            deps.addAll(pair.getLeft().getOverrideLocations());
+            deps.addAll(pair.getLeft().getDependencies());
 
         return deps;
     }
@@ -262,27 +259,28 @@ public final class MultiModel implements IUnbakedModel
         return deps;
     }
 
+    @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
         IBakedModel bakedBase = null;
 
         if (base != null)
-            bakedBase = base.bake(modelGetter, bakedTextureGetter, state, uvlock, format);
+            bakedBase = base.bake(bakery, spriteGetter, sprite, format);
 
         ImmutableMap.Builder<String, IBakedModel> mapBuilder = ImmutableMap.builder();
 
         for (Entry<String, Pair<IUnbakedModel, IModelState>> entry : parts.entrySet())
         {
             Pair<IUnbakedModel, IModelState> pair = entry.getValue();
-            mapBuilder.put(entry.getKey(), pair.getLeft().bake(modelGetter, bakedTextureGetter, new ModelStateComposition(state, pair.getRight()), uvlock, format));
+            mapBuilder.put(entry.getKey(), pair.getLeft().bake(bakery, spriteGetter, new ModelStateComposition(sprite.getState(), pair.getRight(), sprite.isUvLock()), format));
         }
 
         if(bakedBase == null && parts.isEmpty())
         {
             LOGGER.error("MultiModel {} is empty (no base model or parts were provided/resolved)", location);
             IUnbakedModel missing = ModelLoaderRegistry.getMissingModel();
-            return missing.bake(modelGetter, bakedTextureGetter, missing.getDefaultState(), uvlock, format);
+            return missing.bake(bakery, spriteGetter, new BasicState(missing.getDefaultState(), sprite.isUvLock()), format);
         }
         return new Baked(location, true, bakedBase, mapBuilder.build());
     }

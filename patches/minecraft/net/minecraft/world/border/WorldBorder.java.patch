@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/border/WorldBorder.java
 +++ b/net/minecraft/world/border/WorldBorder.java
-@@ -125,6 +125,10 @@
+@@ -134,6 +134,10 @@
        this.field_177758_a.add(p_177737_1_);
     }
  

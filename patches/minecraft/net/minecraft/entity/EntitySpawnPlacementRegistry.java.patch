@@ -1,34 +1,34 @@
 --- a/net/minecraft/entity/EntitySpawnPlacementRegistry.java
 +++ b/net/minecraft/entity/EntitySpawnPlacementRegistry.java
-@@ -17,6 +17,7 @@
+@@ -9,6 +9,7 @@
+    private static final Map<EntityType<?>, EntitySpawnPlacementRegistry.Entry> field_209347_a = Maps.newHashMap();
+ 
+    public static void func_209343_a(EntityType<?> p_209343_0_, EntitySpawnPlacementRegistry.PlacementType p_209343_1_, Heightmap.Type p_209343_2_) {
++      if (field_209347_a.containsKey(p_209343_0_)) throw new IllegalArgumentException("Invalid register call, " + p_209343_0_ + " already registered.");
+       field_209347_a.put(p_209343_0_, new EntitySpawnPlacementRegistry.Entry(p_209343_2_, p_209343_1_));
     }
  
-    public static void func_209346_a(EntityType<?> p_209346_0_, EntitySpawnPlacementRegistry.SpawnPlacementType p_209346_1_, Heightmap.Type p_209346_2_, @Nullable Tag<Block> p_209346_3_) {
-+      if (field_209347_a.containsKey(p_209346_0_)) throw new IllegalArgumentException("Invalid register call, " + p_209346_0_ + " already registered.");
-       field_209347_a.put(p_209346_0_, new EntitySpawnPlacementRegistry.Entry(p_209346_2_, p_209346_1_, p_209346_3_));
-    }
- 
-@@ -106,8 +107,23 @@
+@@ -87,8 +88,23 @@
        }
     }
  
--   public static enum SpawnPlacementType {
-+   public static enum SpawnPlacementType implements net.minecraftforge.common.IExtensibleEnum {
+-   public static enum PlacementType {
++   public static enum PlacementType implements net.minecraftforge.common.IExtensibleEnum {
        ON_GROUND,
        IN_WATER;
 +
-+      public static SpawnPlacementType create(String name, net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReaderBase, net.minecraft.util.math.BlockPos, EntityType<? extends EntityLiving>> predicate) {
++      public static PlacementType create(String name, net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, net.minecraft.util.math.BlockPos, EntityType<? extends MobEntity>> predicate) {
 +         throw new IllegalStateException("Enum not extended");
 +      }
 +
-+      private net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReaderBase, net.minecraft.util.math.BlockPos, EntityType<? extends EntityLiving>> predicate;
-+      private SpawnPlacementType() { this(null); }
-+      private SpawnPlacementType(net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReaderBase, net.minecraft.util.math.BlockPos, EntityType<? extends EntityLiving>> predicate) {
++      private net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, net.minecraft.util.math.BlockPos, EntityType<?>> predicate;
++      private PlacementType() { this(null); }
++      private PlacementType(net.minecraftforge.common.util.TriPredicate<net.minecraft.world.IWorldReader, net.minecraft.util.math.BlockPos, EntityType<?>> predicate) {
 +         this.predicate = predicate;
 +      }
 +
-+      public boolean canSpawnAt(net.minecraft.world.IWorldReaderBase world, net.minecraft.util.math.BlockPos pos, EntityType<? extends EntityLiving> type) {
-+         if (predicate == null) return net.minecraft.world.WorldEntitySpawner.canSpawnAtBody(this, world, pos, type);
++      public boolean canSpawnAt(net.minecraft.world.IWorldReader world, net.minecraft.util.math.BlockPos pos, EntityType<?> type) {
++         if (predicate == null) return net.minecraft.world.spawner.WorldEntitySpawner.canSpawnAtBody(this, world, pos, type);
 +         return predicate.test(world, pos, type);
 +      }
     }

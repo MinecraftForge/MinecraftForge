@@ -1,5 +1,6 @@
 {
   "fml.menu.mods": "Mods",
+  "fml.menu.mods.title": "Mods",
   "fml.menu.mods.normal": "Off",
   "fml.menu.mods.search": "Search",
   "fml.menu.mods.a_to_z": "A-Z",
@@ -27,6 +28,11 @@
   "fml.menu.multiplayer.modsincompatible":"The Server's mods are not compatible",
   "fml.menu.multiplayer.networkincompatible":"The Server's network messages are not compatible",
   "fml.menu.loadingmods": "{0,choice,0#No mods|1#1 mod|1<{0} mods} loaded",
+  "fml.menu.notification.title": "Startup Notification",
+  "fml.menu.accessdenied.title": "Server Access Denied",
+  "fml.menu.accessdenied.message": "Forge Mod Loader could not connect to this server\nThe server {0} has forbidden modded access",
+  "fml.menu.backupfailed.title": "Backup Failed",
+  "fml.menu.backupfailed.message": "There was an error saving the archive {0}\nPlease fix the problem and try again",
   "fml.button.open.file": "Open {0}",
   "fml.button.open.mods.folder": "Open Mods Folder",
   "fml.button.continue.launch": "Proceed to main menu",
@@ -91,6 +97,7 @@
   "forge.update.beta.1": "%sWARNING: %sForge Beta",
   "forge.update.beta.2": "Major issues may arise, verify before reporting.",
   "forge.update.newversion": "New Forge version available: %s",
+  "forge.menu.updatescreen.title": "Mod Update",
 
   "forge.configgui.clumpingThreshold.tooltip": "Controls the number threshold at which Packet51 is preferred over Packet52.",
   "forge.configgui.clumpingThreshold": "Packet Clumping Threshold",

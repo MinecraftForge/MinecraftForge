@@ -64,7 +64,7 @@ public class StartupQuery {
     public static void abort()
     {
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-        if (server != null) server.initiateShutdown();
+        if (server != null) server.initiateShutdown(false);
 
         aborted = true; // to abort loading and go back to the main menu
         throw new AbortedException(); // to halt the server
@@ -226,7 +226,7 @@ public class StartupQuery {
                 }
 
                 if (query.isSynchronous()) {
-                    while (client.currentScreen instanceof GuiNotification) {
+                    while (client.field_71462_r instanceof GuiNotification) {
                         if (Thread.interrupted()) {
                             query.exception = new InterruptedException();
                             throw new RuntimeException();

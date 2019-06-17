@@ -23,16 +23,18 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.BlockModelRenderer;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.model.BakedQuad;
 import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IEnviromentBlockReader;
 import net.minecraft.world.IWorldReader;
 import net.minecraft.world.IWorldReader;
+import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.ForgeMod;
 
 public class ForgeBlockModelRenderer extends BlockModelRenderer
@@ -50,7 +52,7 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
     }
 
     @Override
-    public boolean renderModelFlat(IWorldReader world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed)
+    public boolean renderModelFlat(IEnviromentBlockReader world, IBakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
         if(ForgeMod.forgeLightPipelineEnabled)
         {
@@ -61,16 +63,16 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             VertexLighterFlat lighter = lighterFlat.get();
             lighter.setParent(consumer);
 
-            return render(lighter, world, model, state, pos, buffer, checkSides, rand, seed);
+            return render(lighter, world, model, state, pos, buffer, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.renderModelFlat(world, model, state, pos, buffer, checkSides, rand, seed);
+            return super.renderModelFlat(world, model, state, pos, buffer, checkSides, rand, seed, modelData);
         }
     }
 
     @Override
-    public boolean renderModelSmooth(IWorldReader world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed)
+    public boolean renderModelSmooth(IEnviromentBlockReader world, IBakedModel model, BlockState state, BlockPos pos, BufferBuilder buffer, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
         if(ForgeMod.forgeLightPipelineEnabled)
         {
@@ -81,22 +83,22 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
             VertexLighterSmoothAo lighter = lighterSmooth.get();
             lighter.setParent(consumer);
 
-            return render(lighter, world, model, state, pos, buffer, checkSides, rand, seed);
+            return render(lighter, world, model, state, pos, buffer, checkSides, rand, seed, modelData);
         }
         else
         {
-            return super.renderModelSmooth(world, model, state, pos, buffer, checkSides, rand, seed);
+            return super.renderModelSmooth(world, model, state, pos, buffer, checkSides, rand, seed, modelData);
         }
     }
 
-    public static boolean render(VertexLighterFlat lighter, IWorldReader world, IBakedModel model, IBlockState state, BlockPos pos, BufferBuilder wr, boolean checkSides, Random rand, long seed)
+    public static boolean render(VertexLighterFlat lighter, IEnviromentBlockReader world, IBakedModel model, BlockState state, BlockPos pos, BufferBuilder wr, boolean checkSides, Random rand, long seed, IModelData modelData)
     {
         lighter.setWorld(world);
         lighter.setState(state);
         lighter.setBlockPos(pos);
         boolean empty = true;
         rand.setSeed(seed);
-        List<BakedQuad> quads = model.getQuads(state, null, rand);
+        List<BakedQuad> quads = model.getQuads(state, null, rand, modelData);
         if(!quads.isEmpty())
         {
             lighter.updateBlockInfo();
@@ -106,10 +108,10 @@ public class ForgeBlockModelRenderer extends BlockModelRenderer
                 quad.pipe(lighter);
             }
         }
-        for(EnumFacing side : EnumFacing.values())
+        for(Direction side : Direction.values())
         {
             rand.setSeed(seed);
-            quads = model.getQuads(state, side, rand);
+            quads = model.getQuads(state, side, rand, modelData);
             if(!quads.isEmpty())
             {
                 if(!checkSides || Block.shouldSideBeRendered(state, world, pos, side))

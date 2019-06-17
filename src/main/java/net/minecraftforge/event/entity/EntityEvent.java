@@ -19,12 +19,14 @@
 
 package net.minecraftforge.event.entity;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntitySize;
+import net.minecraft.entity.Pose;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.entity.Entity;
 
 /**
  * EntityEvent is fired when an event involving any Entity occurs.<br>
@@ -134,5 +136,38 @@ public class EntityEvent extends Event
         public void setOldChunkX(int oldChunkX) { this.oldChunkX = oldChunkX; }
         public int getOldChunkZ() { return oldChunkZ; }
         public void setOldChunkZ(int oldChunkZ) { this.oldChunkZ = oldChunkZ; }
+    }
+    
+    /**
+     * EyeHeight is fired when an Entity's eye height changes. <br>
+     * This event is fired whenever the {@link Pose} changes, and in a few other hardcoded scenarios.<br>
+     * <br>
+     * This event is not {@link Cancelable}.<br>
+     * <br>
+     * This event does not have a result. {@link HasResult}
+     * <br>
+     * This event is fired on the {@link MinecraftForge#EVENT_BUS}.<br>
+     **/
+    public static class EyeHeight extends EntityEvent
+    {
+        private final Pose pose;
+        private final EntitySize size;
+        private final float oldHeight;
+        private float newHeight;
+     
+        public EyeHeight(Entity entity, Pose pose, EntitySize size, float defaultHeight)
+        {
+            super(entity);
+            this.pose = pose;
+            this.size = size;
+            this.oldHeight = defaultHeight;
+            this.newHeight = defaultHeight;
+        }
+        
+        public Pose getPose() { return pose; }
+        public EntitySize getSize() { return size; }
+        public float getOldHeight() { return oldHeight; }
+        public float getNewHeight() { return newHeight; }
+        public void setNewHeight(float newSize) { this.newHeight = newSize; }
     }
 }

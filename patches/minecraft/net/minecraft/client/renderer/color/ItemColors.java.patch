@@ -12,14 +12,14 @@
        ItemColors itemcolors = new ItemColors();
 @@ -80,17 +81,18 @@
        itemcolors.func_199877_a((p_210237_0_, p_210237_1_) -> {
-          return p_210237_1_ == 0 ? -1 : ItemMap.func_190907_h(p_210237_0_);
+          return p_210237_1_ == 0 ? -1 : FilledMapItem.func_190907_h(p_210237_0_);
        }, Items.field_151098_aY);
 +      net.minecraftforge.client.ForgeHooksClient.onItemColorsInit(itemcolors, p_186729_0_);
        return itemcolors;
     }
  
     public int func_186728_a(ItemStack p_186728_1_, int p_186728_2_) {
--      IItemColor iitemcolor = this.field_186732_a.func_148745_a(IRegistry.field_212630_s.func_148757_b(p_186728_1_.func_77973_b()));
+-      IItemColor iitemcolor = this.field_186732_a.func_148745_a(Registry.field_212630_s.func_148757_b(p_186728_1_.func_77973_b()));
 +      IItemColor iitemcolor = this.field_186732_a.get(p_186728_1_.func_77973_b().delegate);
        return iitemcolor == null ? -1 : iitemcolor.getColor(p_186728_1_, p_186728_2_);
     }

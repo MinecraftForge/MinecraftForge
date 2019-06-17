@@ -1,0 +1,11 @@
+--- a/net/minecraft/network/login/server/SLoginSuccessPacket.java
++++ b/net/minecraft/network/login/server/SLoginSuccessPacket.java
+@@ -22,7 +22,7 @@
+    public void func_148837_a(PacketBuffer p_148837_1_) throws IOException {
+       String s = p_148837_1_.func_150789_c(36);
+       String s1 = p_148837_1_.func_150789_c(16);
+-      UUID uuid = UUID.fromString(s);
++      UUID uuid = s.length() > 0 ? UUID.fromString(s) : null; // Forge: prevent exception with bad data.
+       this.field_149602_a = new GameProfile(uuid, s1);
+    }
+ 

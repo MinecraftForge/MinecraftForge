@@ -1,0 +1,57 @@
+--- a/net/minecraft/block/RailState.java
++++ b/net/minecraft/block/RailState.java
+@@ -15,14 +15,16 @@
+    private BlockState field_196923_d;
+    private final boolean field_208513_e;
+    private final List<BlockPos> field_196924_e = Lists.newArrayList();
++   private final boolean canMakeSlopes;
+ 
+    public RailState(World p_i47755_1_, BlockPos p_i47755_2_, BlockState p_i47755_3_) {
+       this.field_196920_a = p_i47755_1_;
+       this.field_196921_b = p_i47755_2_;
+       this.field_196923_d = p_i47755_3_;
+       this.field_196922_c = (AbstractRailBlock)p_i47755_3_.func_177230_c();
+-      RailShape railshape = p_i47755_3_.func_177229_b(this.field_196922_c.func_176560_l());
+-      this.field_208513_e = this.field_196922_c.func_208490_b();
++      RailShape railshape = this.field_196922_c.getRailDirection(field_196923_d, p_i47755_1_, p_i47755_2_, null);
++      this.field_208513_e = !this.field_196922_c.isFlexibleRail(field_196923_d, p_i47755_1_, p_i47755_2_);
++      this.canMakeSlopes = this.field_196922_c.canMakeSlopes(field_196923_d, p_i47755_1_, p_i47755_2_);
+       this.func_208509_a(railshape);
+    }
+ 
+@@ -178,7 +180,7 @@
+          }
+       }
+ 
+-      if (railshape == RailShape.NORTH_SOUTH) {
++      if (railshape == RailShape.NORTH_SOUTH && canMakeSlopes) {
+          if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos.func_177984_a())) {
+             railshape = RailShape.ASCENDING_NORTH;
+          }
+@@ -188,7 +190,7 @@
+          }
+       }
+ 
+-      if (railshape == RailShape.EAST_WEST) {
++      if (railshape == RailShape.EAST_WEST && canMakeSlopes) {
+          if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos3.func_177984_a())) {
+             railshape = RailShape.ASCENDING_EAST;
+          }
+@@ -298,7 +300,7 @@
+          }
+       }
+ 
+-      if (railshape == RailShape.NORTH_SOUTH) {
++      if (railshape == RailShape.NORTH_SOUTH && canMakeSlopes) {
+          if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos.func_177984_a())) {
+             railshape = RailShape.ASCENDING_NORTH;
+          }
+@@ -308,7 +310,7 @@
+          }
+       }
+ 
+-      if (railshape == RailShape.EAST_WEST) {
++      if (railshape == RailShape.EAST_WEST && canMakeSlopes) {
+          if (AbstractRailBlock.func_208488_a(this.field_196920_a, blockpos3.func_177984_a())) {
+             railshape = RailShape.ASCENDING_EAST;
+          }

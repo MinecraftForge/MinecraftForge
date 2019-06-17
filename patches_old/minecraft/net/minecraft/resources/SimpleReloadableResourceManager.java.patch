@@ -1,0 +1,27 @@
+--- a/net/minecraft/resources/SimpleReloadableResourceManager.java
++++ b/net/minecraft/resources/SimpleReloadableResourceManager.java
+@@ -86,35 +85,46 @@
+    public void func_199006_a(IResourceManagerReloadListener p_199006_1_) {
++      try (net.minecraftforge.fml.common.progress.ProgressBar resReload = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Loading Resource", 1)) {
++      resReload.step(p_199006_1_.getClass());
+       this.field_199015_d.add(p_199006_1_);
+       if (field_199012_a.isDebugEnabled()) {
+          field_199012_a.info(this.func_199007_b(p_199006_1_));
+       } else {
+          p_199006_1_.func_195410_a(this);
+       }
++      }; // Forge: end progress bar
+ 
+    }
+ 
+    private void func_199010_c() {
++      try (net.minecraftforge.fml.common.progress.ProgressBar resReload = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Reloading", this.field_199015_d.size())) {
+       for(IResourceManagerReloadListener iresourcemanagerreloadlistener : this.field_199015_d) {
++         resReload.step(iresourcemanagerreloadlistener.getClass());
++         if (!net.minecraftforge.resource.SelectiveReloadStateHandler.INSTANCE.test(iresourcemanagerreloadlistener)) continue; // Forge: Selective reloading for vanilla listeners
+          iresourcemanagerreloadlistener.func_195410_a(this);
+       }
++      }; // Forge: end progress bar
+ 
+    }
+ 

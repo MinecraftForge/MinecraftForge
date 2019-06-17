@@ -1,0 +1,14 @@
+--- a/net/minecraft/block/LadderBlock.java
++++ b/net/minecraft/block/LadderBlock.java
+@@ -94,6 +94,11 @@
+       return null;
+    }
+ 
++   @Override
++   public boolean isLadder(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, net.minecraft.entity.LivingEntity entity) {
++      return true;
++   }
++
+    public BlockRenderLayer func_180664_k() {
+       return BlockRenderLayer.CUTOUT;
+    }

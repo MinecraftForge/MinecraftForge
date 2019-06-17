@@ -1,0 +1,24 @@
+--- a/net/minecraft/entity/item/EnderPearlEntity.java
++++ b/net/minecraft/entity/item/EnderPearlEntity.java
+@@ -84,6 +84,8 @@
+          if (livingentity instanceof ServerPlayerEntity) {
+             ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)livingentity;
+             if (serverplayerentity.field_71135_a.func_147362_b().func_150724_d() && serverplayerentity.field_70170_p == this.field_70170_p && !serverplayerentity.func_70608_bn()) {
++               net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(serverplayerentity, this.field_70165_t, this.field_70163_u, this.field_70161_v, 5.0F);
++               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { // Don't indent to lower patch size
+                if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_82766_b("doMobSpawning")) {
+                   EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);
+                   endermiteentity.func_175496_a(true);
+@@ -95,9 +97,10 @@
+                   livingentity.func_184210_p();
+                }
+ 
+-               livingentity.func_70634_a(this.field_70165_t, this.field_70163_u, this.field_70161_v);
++               livingentity.func_70634_a(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+                livingentity.field_70143_R = 0.0F;
+-               livingentity.func_70097_a(DamageSource.field_76379_h, 5.0F);
++               livingentity.func_70097_a(DamageSource.field_76379_h, event.getAttackDamage());
++               }//Forge: End
+             }
+          } else if (livingentity != null) {
+             livingentity.func_70634_a(this.field_70165_t, this.field_70163_u, this.field_70161_v);

@@ -1,15 +1,6 @@
 --- a/net/minecraft/item/crafting/ShieldRecipes.java
 +++ b/net/minecraft/item/crafting/ShieldRecipes.java
-@@ -8,8 +8,6 @@
- import net.minecraft.nbt.NBTTagCompound;
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.world.World;
--import net.minecraftforge.api.distmarker.Dist;
--import net.minecraftforge.api.distmarker.OnlyIn;
- 
- public class ShieldRecipes extends IRecipeHidden {
-    public ShieldRecipes(ResourceLocation p_i48160_1_) {
-@@ -84,7 +82,6 @@
+@@ -79,7 +79,6 @@
        }
     }
  

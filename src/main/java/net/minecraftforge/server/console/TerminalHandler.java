@@ -78,7 +78,7 @@ public final class TerminalHandler
         }
         catch (UserInterruptException e)
         {
-            server.initiateShutdown();
+            server.initiateShutdown(true);
         }
         finally
         {

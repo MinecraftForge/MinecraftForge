@@ -25,8 +25,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import com.google.common.collect.Multimap;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
@@ -56,39 +56,39 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
     }
 
     @Override
-    public NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info)
+    public CompoundNBT getDataForWriting(SaveHandler handler, WorldInfo info)
     {
-        NBTTagCompound fmlData = new NBTTagCompound();
-        NBTTagList modList = new NBTTagList();
+        CompoundNBT fmlData = new CompoundNBT();
+        ListNBT modList = new ListNBT();
         ModList.get().getMods().forEach(mi->
         {
-            final NBTTagCompound mod = new NBTTagCompound();
-            mod.setString("ModId", mi.getModId());
-            mod.setString("ModVersion", MavenVersionStringHelper.artifactVersionToString(mi.getVersion()));
+            final CompoundNBT mod = new CompoundNBT();
+            mod.putString("ModId", mi.getModId());
+            mod.putString("ModVersion", MavenVersionStringHelper.artifactVersionToString(mi.getVersion()));
             modList.add(mod);
         });
-        fmlData.setTag("LoadingModList", modList);
+        fmlData.put("LoadingModList", modList);
 
-        NBTTagCompound registries = new NBTTagCompound();
-        fmlData.setTag("Registries", registries);
+        CompoundNBT registries = new CompoundNBT();
+        fmlData.put("Registries", registries);
         LOGGER.debug(WORLDPERSISTENCE,"Gathering id map for writing to world save {}", info.getWorldName());
 
         for (Map.Entry<ResourceLocation, ForgeRegistry.Snapshot> e : RegistryManager.ACTIVE.takeSnapshot(true).entrySet())
         {
-            registries.setTag(e.getKey().toString(), e.getValue().write());
+            registries.put(e.getKey().toString(), e.getValue().write());
         }
         return fmlData;
     }
 
     @Override
-    public void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag)
+    public void readData(SaveHandler handler, WorldInfo info, CompoundNBT tag)
     {
-        if (tag.hasKey("LoadingModList"))
+        if (tag.contains("LoadingModList"))
         {
-            NBTTagList modList = tag.getList("LoadingModList", (byte)10);
+            ListNBT modList = tag.getList("LoadingModList", (byte)10);
             for (int i = 0; i < modList.size(); i++)
             {
-                NBTTagCompound mod = modList.getCompound(i);
+                CompoundNBT mod = modList.getCompound(i);
                 String modId = mod.getString("ModId");
                 if (Objects.equals("minecraft",  modId)) {
                     continue;
@@ -109,15 +109,15 @@ public final class FMLWorldPersistenceHook implements WorldPersistenceHooks.Worl
 
         Multimap<ResourceLocation, ResourceLocation> failedElements = null;
 
-        if (tag.hasKey("ModItemData") || tag.hasKey("ItemData")) // Pre 1.7
+        if (tag.contains("ModItemData") || tag.contains("ItemData")) // Pre 1.7
         {
             StartupQuery.notify("This save predates 1.7.10, it can no longer be loaded here. Please load in 1.7.10 or 1.8 first");
             StartupQuery.abort();
         }
-        else if (tag.hasKey("Registries")) // 1.8, genericed out the 'registries' list
+        else if (tag.contains("Registries")) // 1.8, genericed out the 'registries' list
         {
             Map<ResourceLocation, ForgeRegistry.Snapshot> snapshot = new HashMap<>();
-            NBTTagCompound regs = tag.getCompound("Registries");
+            CompoundNBT regs = tag.getCompound("Registries");
             for (String key : regs.keySet())
             {
                 snapshot.put(new ResourceLocation(key), ForgeRegistry.Snapshot.read(regs.getCompound(key)));

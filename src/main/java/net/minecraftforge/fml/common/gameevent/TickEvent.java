@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml.common.gameevent;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.LogicalSide;
@@ -67,11 +67,11 @@ public class TickEvent extends net.minecraftforge.eventbus.api.Event
         }
     }
     public static class PlayerTickEvent extends TickEvent {
-        public final EntityPlayer player;
+        public final PlayerEntity player;
 
-        public PlayerTickEvent(Phase phase, EntityPlayer player)
+        public PlayerTickEvent(Phase phase, PlayerEntity player)
         {
-            super(Type.PLAYER, player instanceof EntityPlayerMP ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
+            super(Type.PLAYER, player instanceof ServerPlayerEntity ? LogicalSide.SERVER : LogicalSide.CLIENT, phase);
             this.player = player;
         }
     }

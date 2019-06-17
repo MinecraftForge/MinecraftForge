@@ -21,9 +21,8 @@ package net.minecraftforge.fml.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiListExtended;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.fml.MavenVersionStringHelper;
@@ -32,11 +31,9 @@ import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 
 import static net.minecraft.util.StringUtils.stripControlCodes;
 
-/**
- * @author cpw
- *
- */
-public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
+import com.mojang.blaze3d.platform.GlStateManager;
+
+public class GuiSlotModList extends ExtendedList<GuiSlotModList.ModEntry>
 {
     private static final ResourceLocation VERSION_CHECK_ICONS = new ResourceLocation(ForgeVersion.MOD_ID, "textures/gui/version_check_icons.png");
     private final int listWidth;
@@ -52,13 +49,13 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
     }
 
     @Override
-    protected int getScrollBarX()
+    protected int getScrollbarPosition()
     {
         return this.listWidth;
     }
 
     @Override
-    public int getListWidth()
+    public int getRowWidth()
     {
         return this.listWidth;
     }
@@ -69,18 +66,12 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
     }
 
     @Override
-    protected boolean isSelected(int index)
+    protected void renderBackground()
     {
-        return this.parent.modIndexSelected(index);
+        this.parent.renderBackground();
     }
 
-    @Override
-    protected void drawBackground()
-    {
-        this.parent.drawDefaultBackground();
-    }
-
-    class ModEntry extends GuiListExtended.IGuiListEntry<ModEntry> {
+    class ModEntry extends ExtendedList.AbstractListEntry<ModEntry> {
         private final ModInfo modInfo;
         private final GuiModList parent;
 
@@ -90,10 +81,8 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
         }
 
         @Override
-        public void drawEntry(int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
+        public void render(int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
         {
-            int top = this.getY();
-            int left = this.getX();
             String name = stripControlCodes(modInfo.getDisplayName());
             String version = stripControlCodes(MavenVersionStringHelper.artifactVersionToString(modInfo.getVersion()));
             VersionChecker.CheckResult vercheck = VersionChecker.getResult(modInfo);
@@ -106,7 +95,7 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
                 Minecraft.getInstance().getTextureManager().bindTexture(VERSION_CHECK_ICONS);
                 GlStateManager.color4f(1, 1, 1, 1);
                 GlStateManager.pushMatrix();
-                Gui.drawModalRectWithCustomSizedTexture(right - (height / 2 + 4), GuiSlotModList.this.top + (height / 2 - 4), vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
+                AbstractGui.blit(getRight() - (height / 2 + 4), GuiSlotModList.this.getTop() + (height / 2 - 4), vercheck.status.getSheetOffset() * 8, (vercheck.status.isAnimated() && ((System.currentTimeMillis() / 800 & 1)) == 1) ? 8 : 0, 8, 8, 64, 16);
                 GlStateManager.popMatrix();
             }
         }
@@ -114,8 +103,14 @@ public class GuiSlotModList extends GuiListExtended<GuiSlotModList.ModEntry>
         @Override
         public boolean mouseClicked(double p_mouseClicked_1_, double p_mouseClicked_3_, int p_mouseClicked_5_)
         {
-            parent.selectModIndex(this.getIndex());
+            parent.setSelected(this);
+            GuiSlotModList.this.setSelected(this);
             return false;
+        }
+
+        public ModInfo getInfo()
+        {
+            return modInfo;
         }
     }
 }

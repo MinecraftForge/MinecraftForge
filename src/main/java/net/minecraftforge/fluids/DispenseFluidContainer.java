@@ -21,21 +21,21 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.BlockDispenser;
-import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.tileentity.DispenserTileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.capability.IFluidHandlerItem;
 
 /**
  * Fills or drains a fluid container item using a Dispenser.
  */
-public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
+public class DispenseFluidContainer extends DefaultDispenseItemBehavior
 {
     private static final DispenseFluidContainer INSTANCE = new DispenseFluidContainer();
 
@@ -46,7 +46,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
 
     private DispenseFluidContainer() {}
 
-    private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
+    private final DefaultDispenseItemBehavior dispenseBehavior = new DefaultDispenseItemBehavior();
 
     @Override
     @Nonnull
@@ -69,7 +69,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
     private ItemStack fillContainer(@Nonnull IBlockSource source, @Nonnull ItemStack stack)
     {
         World world = source.getWorld();
-        EnumFacing dispenserFacing = source.getBlockState().get(BlockDispenser.FACING);
+        Direction dispenserFacing = source.getBlockState().get(DispenserBlock.FACING);
         BlockPos blockpos = source.getBlockPos().offset(dispenserFacing);
 
         FluidActionResult actionResult = FluidUtil.tryPickUpFluid(stack, null, world, blockpos, dispenserFacing.getOpposite());
@@ -84,7 +84,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
         {
             return resultStack;
         }
-        else if (((TileEntityDispenser)source.getBlockTileEntity()).addItemStack(resultStack) < 0)
+        else if (((DispenserTileEntity)source.getBlockTileEntity()).addItemStack(resultStack) < 0)
         {
             this.dispenseBehavior.dispense(source, resultStack);
         }
@@ -109,9 +109,9 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
         }
 
         FluidStack fluidStack = fluidHandler.drain(Fluid.BUCKET_VOLUME, false);
-        EnumFacing dispenserFacing = source.getBlockState().get(BlockDispenser.FACING);
+        Direction dispenserFacing = source.getBlockState().get(DispenserBlock.FACING);
         BlockPos blockpos = source.getBlockPos().offset(dispenserFacing);
-        FluidActionResult result = fluidStack != null ? FluidUtil.tryPlaceFluid(null, source.getWorld(), blockpos, stack, fluidStack) : FluidActionResult.FAILURE;
+        FluidActionResult result = fluidStack != null ? FluidUtil.tryPlaceFluid(null, source.getWorld(), Hand.MAIN_HAND, blockpos, stack, fluidStack) : FluidActionResult.FAILURE;
 
         if (result.isSuccess())
         {
@@ -121,7 +121,7 @@ public class DispenseFluidContainer extends BehaviorDefaultDispenseItem
             {
                 return drainedStack;
             }
-            else if (!drainedStack.isEmpty() && ((TileEntityDispenser)source.getBlockTileEntity()).addItemStack(drainedStack) < 0)
+            else if (!drainedStack.isEmpty() && ((DispenserTileEntity)source.getBlockTileEntity()).addItemStack(drainedStack) < 0)
             {
                 this.dispenseBehavior.dispense(source, drainedStack);
             }

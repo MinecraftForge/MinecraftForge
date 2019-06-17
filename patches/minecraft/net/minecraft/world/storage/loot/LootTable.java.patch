@@ -1,20 +1,34 @@
 --- a/net/minecraft/world/storage/loot/LootTable.java
 +++ b/net/minecraft/world/storage/loot/LootTable.java
-@@ -23,10 +23,10 @@
- public class LootTable {
-    private static final Logger field_186465_b = LogManager.getLogger();
-    public static final LootTable field_186464_a = new LootTable(new LootPool[0]);
+@@ -33,13 +33,13 @@
+    public static final LootTable field_186464_a = new LootTable(LootParameterSets.field_216260_a, new LootPool[0], new ILootFunction[0]);
+    public static final LootParameterSet field_216126_b = LootParameterSets.field_216266_g;
+    private final LootParameterSet field_216127_d;
 -   private final LootPool[] field_186466_c;
 +   private final List<LootPool> field_186466_c;
+    private final ILootFunction[] field_216128_f;
+    private final BiFunction<ItemStack, LootContext, ItemStack> field_216129_g;
  
-    public LootTable(LootPool[] p_i46641_1_) {
--      this.field_186466_c = p_i46641_1_;
-+      this.field_186466_c = Lists.newArrayList(p_i46641_1_);
+    private LootTable(LootParameterSet p_i51265_1_, LootPool[] p_i51265_2_, ILootFunction[] p_i51265_3_) {
+       this.field_216127_d = p_i51265_1_;
+-      this.field_186466_c = p_i51265_2_;
++      this.field_186466_c = Lists.newArrayList(p_i51265_2_);
+       this.field_216128_f = p_i51265_3_;
+       this.field_216129_g = LootFunctionManager.func_216241_a(p_i51265_3_);
+    }
+@@ -92,8 +92,8 @@
     }
  
-    public List<ItemStack> func_186462_a(Random p_186462_1_, LootContext p_186462_2_) {
-@@ -112,6 +112,41 @@
-       return list;
+    public void func_216117_a(ValidationResults p_216117_1_, Function<ResourceLocation, LootTable> p_216117_2_, Set<ResourceLocation> p_216117_3_, LootParameterSet p_216117_4_) {
+-      for(int i = 0; i < this.field_186466_c.length; ++i) {
+-         this.field_186466_c[i].func_216099_a(p_216117_1_.func_216108_b(".pools[" + i + "]"), p_216117_2_, p_216117_3_, p_216117_4_);
++      for(int i = 0; i < this.field_186466_c.size(); ++i) {
++         this.field_186466_c.get(i).func_216099_a(p_216117_1_.func_216108_b(".pools[" + i + "]"), p_216117_2_, p_216117_3_, p_216117_4_);
+       }
+ 
+       for(int j = 0; j < this.field_216128_f.length; ++j) {
+@@ -204,6 +204,41 @@
+       }
     }
  
 +   //======================== FORGE START =============================================
@@ -54,4 +68,13 @@
 +
     public static class Serializer implements JsonDeserializer<LootTable>, JsonSerializer<LootTable> {
        public LootTable deserialize(JsonElement p_deserialize_1_, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
-          JsonObject jsonobject = JsonUtils.func_151210_l(p_deserialize_1_, "loot table");
+          JsonObject jsonobject = JSONUtils.func_151210_l(p_deserialize_1_, "loot table");
+@@ -229,7 +264,7 @@
+             }
+          }
+ 
+-         if (p_serialize_1_.field_186466_c.length > 0) {
++         if (!p_serialize_1_.field_186466_c.isEmpty()) {
+             jsonobject.add("pools", p_serialize_3_.serialize(p_serialize_1_.field_186466_c));
+          }
+ 

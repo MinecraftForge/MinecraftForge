@@ -20,10 +20,10 @@
 package net.minecraftforge.common;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 import net.minecraftforge.client.CloudRenderer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -42,9 +42,9 @@ public class ForgeInternalHandler
     public void onEntityJoinWorld(EntityJoinWorldEvent event)
     {
         Entity entity = event.getEntity();
-        if (entity.getClass().equals(EntityItem.class))
+        if (entity.getClass().equals(ItemEntity.class))
         {
-            ItemStack stack = ((EntityItem)entity).getItem();
+            ItemStack stack = ((ItemEntity)entity).getItem();
             Item item = stack.getItem();
 /*
             if (item.hasCustomEntity(stack))
@@ -65,8 +65,8 @@ public class ForgeInternalHandler
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onDimensionUnload(WorldEvent.Unload event)
     {
-        if (event.getWorld() instanceof WorldServer)
-            FakePlayerFactory.unloadWorld((WorldServer) event.getWorld());
+        if (event.getWorld() instanceof ServerWorld)
+            FakePlayerFactory.unloadWorld((ServerWorld) event.getWorld());
     }
 
     @SubscribeEvent

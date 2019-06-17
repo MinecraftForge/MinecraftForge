@@ -1,0 +1,13 @@
+--- a/net/minecraft/tags/BlockTags.java
++++ b/net/minecraft/tags/BlockTags.java
+@@ -70,6 +70,10 @@
+       return field_199899_c;
+    }
+ 
++   public static int getGeneration() {
++      return field_199900_d;
++   }
++
+    private static Tag<Block> func_199894_a(String p_199894_0_) {
+       return new BlockTags.Wrapper(new ResourceLocation(p_199894_0_));
+    }

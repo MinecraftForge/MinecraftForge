@@ -1,0 +1,20 @@
+--- a/net/minecraft/network/play/client/CCustomPayloadPacket.java
++++ b/net/minecraft/network/play/client/CCustomPayloadPacket.java
+@@ -9,7 +9,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class CCustomPayloadPacket implements IPacket<IServerPlayNetHandler> {
++public class CCustomPayloadPacket implements IPacket<IServerPlayNetHandler>, net.minecraftforge.fml.network.ICustomPacket<CCustomPayloadPacket> {
+    public static final ResourceLocation field_210344_a = new ResourceLocation("brand");
+    private ResourceLocation field_149562_a;
+    private PacketBuffer field_149561_c;
+@@ -35,7 +35,7 @@
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+       p_148840_1_.func_192572_a(this.field_149562_a);
+-      p_148840_1_.writeBytes((ByteBuf)this.field_149561_c);
++      p_148840_1_.writeBytes((ByteBuf)this.field_149561_c.copy()); //This may be access multiple times, from multiple threads, lets be safe like the S->C packet
+    }
+ 
+    public void func_148833_a(IServerPlayNetHandler p_148833_1_) {

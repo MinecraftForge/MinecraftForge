@@ -20,14 +20,14 @@
 package net.minecraftforge.items;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDropper;
-import net.minecraft.block.BlockHopper;
+import net.minecraft.block.DropperBlock;
+import net.minecraft.block.HopperBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.IHopper;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.tileentity.DispenserTileEntity;
+import net.minecraft.tileentity.HopperTileEntity;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -48,7 +48,7 @@ public class VanillaInventoryCodeHooks
     @Nullable
     public static Boolean extractHook(IHopper dest)
     {
-        return getItemHandler(dest, EnumFacing.UP)
+        return getItemHandler(dest, Direction.UP)
                 .map(itemHandlerResult -> {
                     IItemHandler handler = itemHandlerResult.getKey();
 
@@ -85,9 +85,9 @@ public class VanillaInventoryCodeHooks
     /**
      * Copied from BlockDropper#dispense and added capability support
      */
-    public static boolean dropperInsertHook(World world, BlockPos pos, TileEntityDispenser dropper, int slot, @Nonnull ItemStack stack)
+    public static boolean dropperInsertHook(World world, BlockPos pos, DispenserTileEntity dropper, int slot, @Nonnull ItemStack stack)
     {
-        EnumFacing enumfacing = world.getBlockState(pos).get(BlockDropper.FACING);
+        Direction enumfacing = world.getBlockState(pos).get(DropperBlock.FACING);
         BlockPos blockpos = pos.offset(enumfacing);
         return getItemHandler(world, (double) blockpos.getX(), (double) blockpos.getY(), (double) blockpos.getZ(), enumfacing.getOpposite())
                 .map(destinationResult -> {
@@ -115,9 +115,9 @@ public class VanillaInventoryCodeHooks
     /**
      * Copied from TileEntityHopper#transferItemsOut and added capability support
      */
-    public static boolean insertHook(TileEntityHopper hopper)
+    public static boolean insertHook(HopperTileEntity hopper)
     {
-        EnumFacing hopperFacing = hopper.getBlockState().get(BlockHopper.FACING);
+        Direction hopperFacing = hopper.getBlockState().get(HopperBlock.FACING);
         return getItemHandler(hopper, hopperFacing)
                 .map(destinationResult -> {
                     IItemHandler itemHandler = destinationResult.getKey();
@@ -187,9 +187,9 @@ public class VanillaInventoryCodeHooks
 
             if (insertedItem)
             {
-                if (inventoryWasEmpty && destination instanceof TileEntityHopper)
+                if (inventoryWasEmpty && destination instanceof HopperTileEntity)
                 {
-                    TileEntityHopper destinationHopper = (TileEntityHopper)destination;
+                    HopperTileEntity destinationHopper = (HopperTileEntity)destination;
 
                     if (!destinationHopper.mayTransfer())
                     {
@@ -212,7 +212,7 @@ public class VanillaInventoryCodeHooks
         return stack;
     }
 
-    private static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, EnumFacing hopperFacing)
+    private static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(IHopper hopper, Direction hopperFacing)
     {
         double x = hopper.getXPos() + (double) hopperFacing.getXOffset();
         double y = hopper.getYPos() + (double) hopperFacing.getYOffset();
@@ -246,13 +246,13 @@ public class VanillaInventoryCodeHooks
         return true;
     }
 
-    public static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final EnumFacing side)
+    public static LazyOptional<Pair<IItemHandler, Object>> getItemHandler(World worldIn, double x, double y, double z, final Direction side)
     {
         int i = MathHelper.floor(x);
         int j = MathHelper.floor(y);
         int k = MathHelper.floor(z);
         BlockPos blockpos = new BlockPos(i, j, k);
-        net.minecraft.block.state.IBlockState state = worldIn.getBlockState(blockpos);
+        net.minecraft.block.BlockState state = worldIn.getBlockState(blockpos);
 
         if (state.hasTileEntity())
         {

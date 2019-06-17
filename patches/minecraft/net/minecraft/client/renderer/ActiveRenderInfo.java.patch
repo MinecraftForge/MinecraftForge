@@ -1,36 +1,14 @@
 --- a/net/minecraft/client/renderer/ActiveRenderInfo.java
 +++ b/net/minecraft/client/renderer/ActiveRenderInfo.java
-@@ -23,6 +23,10 @@
-    private static float field_74596_h;
- 
-    public static void func_197924_a(EntityPlayer p_197924_0_, boolean p_197924_1_, float p_197924_2_) {
-+      updateRenderInfo((Entity) p_197924_0_, p_197924_1_, p_197924_2_);
-+   }
-+   
-+   public static void updateRenderInfo(Entity p_197924_0_, boolean p_197924_1_, float p_197924_2_) {
-       field_178812_b.clear();
-       GlStateManager.func_179111_a(2982, field_178812_b);
-       Matrix4f matrix4f = new Matrix4f();
-@@ -65,7 +69,7 @@
-          }
-       }
- 
--      return iblockstate;
-+      return iblockstate.func_177230_c().getStateAtViewpoint(iblockstate, p_186703_0_, blockpos, vec3d);
+@@ -174,4 +174,11 @@
+       this.field_216791_c = null;
+       this.field_216789_a = false;
     }
- 
-    public static IFluidState func_206243_b(IBlockReader p_206243_0_, Entity p_206243_1_, float p_206243_2_) {
-@@ -101,4 +105,13 @@
-    public static float func_178807_f() {
-       return field_74596_h;
-    }
-+   
-+   /* ======================================== FORGE START =====================================*/
 +
-+   /**
-+    * Vector from render view entity position (corrected for partialTickTime) to the middle of screen
-+    */
-+   public static Vec3d getCameraPosition() {
-+      return field_178811_e;
++   public net.minecraft.block.BlockState getBlockAtCamera() {
++      if (!this.field_216789_a)
++         return net.minecraft.block.Blocks.field_150350_a.func_176223_P();
++      else
++         return this.field_216790_b.func_180495_p(this.field_216793_e).getStateAtViewpoint(this.field_216790_b, this.field_216793_e, this.field_216792_d);
 +   }
  }

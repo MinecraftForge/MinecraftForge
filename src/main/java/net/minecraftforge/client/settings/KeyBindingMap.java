@@ -21,7 +21,6 @@ package net.minecraftforge.client.settings;
 
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.InputMappings;
-import net.minecraft.util.IntHashMap;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;

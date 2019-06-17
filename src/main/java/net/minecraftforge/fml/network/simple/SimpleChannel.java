@@ -22,7 +22,7 @@ package net.minecraftforge.fml.network.simple;
 import io.netty.buffer.Unpooled;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
+import net.minecraft.network.IPacket;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.network.*;
@@ -102,7 +102,7 @@ public class SimpleChannel
         target.send(toVanillaPacket(message, target.getDirection()));
     }
 
-    public <MSG> Packet<?> toVanillaPacket(MSG message, NetworkDirection direction)
+    public <MSG> IPacket<?> toVanillaPacket(MSG message, NetworkDirection direction)
     {
         return direction.buildPacket(toBuffer(message), instance.getChannelName()).getThis();
     }

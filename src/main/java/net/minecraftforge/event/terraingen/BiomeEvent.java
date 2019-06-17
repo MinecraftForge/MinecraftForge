@@ -19,10 +19,12 @@
 
 package net.minecraftforge.event.terraingen;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Event;
+
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * BiomeEvent is fired whenever an event involving biomes occurs.<br>
@@ -90,26 +92,26 @@ public class BiomeEvent extends Event
     @HasResult
     public static class GetVillageBlockID extends BiomeEvent
     {
-        private final IBlockState original;
-        private IBlockState replacement;
+        private final BlockState original;
+        private BlockState replacement;
 
-        public GetVillageBlockID(Biome biome, IBlockState original)
+        public GetVillageBlockID(Biome biome, BlockState original)
         {
             super(biome);
             this.original = original;
         }
 
-        public IBlockState getOriginal()
+        public BlockState getOriginal()
         {
             return original;
         }
 
-        public IBlockState getReplacement()
+        public BlockState getReplacement()
         {
             return replacement;
         }
 
-        public void setReplacement(IBlockState replacement)
+        public void setReplacement(BlockState replacement)
         {
             this.replacement = replacement;
         }

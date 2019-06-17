@@ -47,9 +47,9 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
@@ -58,6 +58,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.MarkerManager;
+
+import net.minecraftforge.registries.IForgeRegistry.AddCallback;
+import net.minecraftforge.registries.IForgeRegistry.BakeCallback;
+import net.minecraftforge.registries.IForgeRegistry.ClearCallback;
+import net.minecraftforge.registries.IForgeRegistry.CreateCallback;
+import net.minecraftforge.registries.IForgeRegistry.DummyFactory;
+import net.minecraftforge.registries.IForgeRegistry.MissingFactory;
+import net.minecraftforge.registries.IForgeRegistry.ValidateCallback;
 
 public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRegistryInternal<V>, IForgeRegistryModifiable<V>
 {
@@ -809,51 +817,51 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
         public final Map<ResourceLocation, String> overrides = Maps.newTreeMap();
         private PacketBuffer binary = null;
 
-        public NBTTagCompound write()
+        public CompoundNBT write()
         {
-            NBTTagCompound data = new NBTTagCompound();
+            CompoundNBT data = new CompoundNBT();
 
-            NBTTagList ids = new NBTTagList();
+            ListNBT ids = new ListNBT();
             this.ids.entrySet().stream().forEach(e ->
             {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("K", e.getKey().toString());
-                tag.setInt("V", e.getValue());
+                CompoundNBT tag = new CompoundNBT();
+                tag.putString("K", e.getKey().toString());
+                tag.putInt("V", e.getValue());
                 ids.add(tag);
             });
-            data.setTag("ids", ids);
+            data.put("ids", ids);
 
-            NBTTagList aliases = new NBTTagList();
+            ListNBT aliases = new ListNBT();
             this.aliases.entrySet().stream().forEach(e ->
             {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("K", e.getKey().toString());
-                tag.setString("V", e.getKey().toString());
+                CompoundNBT tag = new CompoundNBT();
+                tag.putString("K", e.getKey().toString());
+                tag.putString("V", e.getKey().toString());
                 aliases.add(tag);
             });
-            data.setTag("aliases", aliases);
+            data.put("aliases", aliases);
 
-            NBTTagList overrides = new NBTTagList();
+            ListNBT overrides = new ListNBT();
             this.overrides.entrySet().stream().forEach(e ->
             {
-                NBTTagCompound tag = new NBTTagCompound();
-                tag.setString("K", e.getKey().toString());
-                tag.setString("V", e.getValue());
+                CompoundNBT tag = new CompoundNBT();
+                tag.putString("K", e.getKey().toString());
+                tag.putString("V", e.getValue());
                 overrides.add(tag);
             });
-            data.setTag("overrides", overrides);
+            data.put("overrides", overrides);
 
             int[] blocked = this.blocked.stream().mapToInt(x->x).sorted().toArray();
-            data.setIntArray("blocked", blocked);
+            data.putIntArray("blocked", blocked);
 
-            NBTTagList dummied = new NBTTagList();
-            this.dummied.stream().sorted().forEach(e -> dummied.add(new NBTTagString(e.toString())));
-            data.setTag("dummied", dummied);
+            ListNBT dummied = new ListNBT();
+            this.dummied.stream().sorted().forEach(e -> dummied.add(new StringNBT(e.toString())));
+            data.put("dummied", dummied);
 
             return data;
         }
 
-        public static Snapshot read(NBTTagCompound nbt)
+        public static Snapshot read(CompoundNBT nbt)
         {
             Snapshot ret = new Snapshot();
             if (nbt == null)
@@ -861,24 +869,24 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
                 return ret;
             }
 
-            NBTTagList list = nbt.getList("ids", 10);
+            ListNBT list = nbt.getList("ids", 10);
             list.forEach(e ->
             {
-                NBTTagCompound comp = (NBTTagCompound)e;
+                CompoundNBT comp = (CompoundNBT)e;
                 ret.ids.put(new ResourceLocation(comp.getString("K")), comp.getInt("V"));
             });
 
             list = nbt.getList("aliases", 10);
             list.forEach(e ->
             {
-                NBTTagCompound comp = (NBTTagCompound)e;
+                CompoundNBT comp = (CompoundNBT)e;
                 ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
             });
 
             list = nbt.getList("overrides", 10);
             list.forEach(e ->
             {
-                NBTTagCompound comp = (NBTTagCompound)e;
+                CompoundNBT comp = (CompoundNBT)e;
                 ret.overrides.put(new ResourceLocation(comp.getString("K")), comp.getString("V"));
             });
 
@@ -889,7 +897,7 @@ public class ForgeRegistry<V extends IForgeRegistryEntry<V>> implements IForgeRe
             }
 
             list = nbt.getList("dummied", 8);
-            list.forEach(e -> ret.dummied.add(new ResourceLocation(((NBTTagString)e).getString())));
+            list.forEach(e -> ret.dummied.add(new ResourceLocation(((StringNBT)e).getString())));
 
             return ret;
         }

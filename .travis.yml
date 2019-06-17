@@ -29,9 +29,10 @@ script:
 notifications:
   email: false
 
-# skip building travis on 1.13 - it doesn't work there
+# skip building travis on 1.13+ - it doesn't work there
 branches:
   except:
     - 1.13-pre
     - 1.13.x
+    - 1.14.x
     - /^noci-.*$/

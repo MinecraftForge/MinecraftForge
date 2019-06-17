@@ -1,6 +1,6 @@
 --- a/net/minecraft/util/SoundEvent.java
 +++ b/net/minecraft/util/SoundEvent.java
-@@ -4,7 +4,7 @@
+@@ -3,7 +3,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  

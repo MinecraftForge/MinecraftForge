@@ -1,33 +1,33 @@
 --- a/net/minecraft/world/Explosion.java
 +++ b/net/minecraft/world/Explosion.java
-@@ -41,6 +41,7 @@
+@@ -47,6 +47,7 @@
     private DamageSource field_199593_j;
     private final List<BlockPos> field_77281_g = Lists.newArrayList();
-    private final Map<EntityPlayer, Vec3d> field_77288_k = Maps.newHashMap();
+    private final Map<PlayerEntity, Vec3d> field_77288_k = Maps.newHashMap();
 +   private final Vec3d position;
  
     @OnlyIn(Dist.CLIENT)
     public Explosion(World p_i45752_1_, @Nullable Entity p_i45752_2_, double p_i45752_3_, double p_i45752_5_, double p_i45752_7_, float p_i45752_9_, List<BlockPos> p_i45752_10_) {
-@@ -63,6 +64,7 @@
-       this.field_77286_a = p_i45754_10_;
-       this.field_82755_b = p_i45754_11_;
+@@ -69,6 +70,7 @@
+       this.field_77286_a = p_i50007_10_;
+       this.field_222260_b = p_i50007_11_;
        this.field_199593_j = DamageSource.func_94539_a(this);
 +      this.position = new Vec3d(this.field_77284_b, this.field_77285_c, this.field_77282_d);
     }
  
-    public void func_77278_a() {
-@@ -89,8 +91,8 @@
+    public static float func_222259_a(Vec3d p_222259_0_, Entity p_222259_1_) {
+@@ -128,8 +130,8 @@
                       BlockPos blockpos = new BlockPos(d4, d6, d8);
-                      IBlockState iblockstate = this.field_77287_j.func_180495_p(blockpos);
+                      BlockState blockstate = this.field_77287_j.func_180495_p(blockpos);
                       IFluidState ifluidstate = this.field_77287_j.func_204610_c(blockpos);
--                     if (!iblockstate.func_196958_f() || !ifluidstate.func_206888_e()) {
--                        float f2 = Math.max(iblockstate.func_177230_c().func_149638_a(), ifluidstate.func_210200_l());
-+                     if (!iblockstate.isAir(field_77287_j, blockpos) || !ifluidstate.func_206888_e()) {
-+                        float f2 = Math.max(iblockstate.getExplosionResistance(field_77287_j, blockpos, field_77283_e, this), ifluidstate.getExplosionResistance(field_77287_j, blockpos, field_77283_e, this));
+-                     if (!blockstate.func_196958_f() || !ifluidstate.func_206888_e()) {
+-                        float f2 = Math.max(blockstate.func_177230_c().func_149638_a(), ifluidstate.func_210200_l());
++                     if (!blockstate.isAir(this.field_77287_j, blockpos) || !ifluidstate.func_206888_e()) {
++                        float f2 = Math.max(blockstate.getExplosionResistance(this.field_77287_j, blockpos, field_77283_e, this), ifluidstate.getExplosionResistance(this.field_77287_j, blockpos, field_77283_e, this));
                          if (this.field_77283_e != null) {
-                            f2 = this.field_77283_e.func_180428_a(this, this.field_77287_j, blockpos, iblockstate, ifluidstate, f2);
+                            f2 = this.field_77283_e.func_180428_a(this, this.field_77287_j, blockpos, blockstate, ifluidstate, f2);
                          }
-@@ -120,6 +122,7 @@
+@@ -159,6 +161,7 @@
        int j2 = MathHelper.func_76128_c(this.field_77282_d - (double)f3 - 1.0D);
        int j1 = MathHelper.func_76128_c(this.field_77282_d + (double)f3 + 1.0D);
        List<Entity> list = this.field_77287_j.func_72839_b(this.field_77283_e, new AxisAlignedBB((double)k1, (double)i2, (double)j2, (double)l1, (double)i1, (double)j1));
@@ -35,22 +35,20 @@
        Vec3d vec3d = new Vec3d(this.field_77284_b, this.field_77285_c, this.field_77282_d);
  
        for(int k2 = 0; k2 < list.size(); ++k2) {
-@@ -191,20 +194,19 @@
-                this.field_77287_j.func_195594_a(Particles.field_197601_L, d0, d1, d2, d3, d4, d5);
+@@ -229,9 +232,9 @@
+                this.field_77287_j.func_195594_a(ParticleTypes.field_197601_L, d0, d1, d2, d3, d4, d5);
              }
  
--            if (!iblockstate.func_196958_f()) {
-+            if (!iblockstate.isAir(field_77287_j, blockpos)) {
-                if (block.func_149659_a(this)) {
-                   iblockstate.func_196941_a(this.field_77287_j, blockpos, 1.0F / this.field_77280_f, 0);
-                }
- 
--               this.field_77287_j.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 3);
--               block.func_180652_a(this.field_77287_j, blockpos, this);
-+               iblockstate.onBlockExploded(this.field_77287_j, blockpos, this);
-             }
-          }
-       }
+-            if (!blockstate.func_196958_f()) {
+-               if (block.func_149659_a(this) && this.field_77287_j instanceof ServerWorld) {
+-                  TileEntity tileentity = block.func_149716_u() ? this.field_77287_j.func_175625_s(blockpos) : null;
++            if (!blockstate.isAir(this.field_77287_j, blockpos)) {
++               if (this.field_77287_j instanceof ServerWorld && blockstate.canDropFromExplosion(this.field_77287_j, blockpos, this)) {
++                  TileEntity tileentity = blockstate.hasTileEntity() ? this.field_77287_j.func_175625_s(blockpos) : null;
+                   LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_77287_j)).func_216023_a(this.field_77287_j.field_73012_v).func_216015_a(LootParameters.field_216286_f, blockpos).func_216015_a(LootParameters.field_216289_i, ItemStack.field_190927_a).func_216021_b(LootParameters.field_216288_h, tileentity);
+                   if (this.field_222260_b == Explosion.Mode.DESTROY) {
+                      lootcontext$builder.func_216015_a(LootParameters.field_216290_j, this.field_77280_f);
+@@ -248,7 +251,7 @@
  
        if (this.field_77286_a) {
           for(BlockPos blockpos1 : this.field_77281_g) {
@@ -59,12 +57,14 @@
                 this.field_77287_j.func_175656_a(blockpos1, Blocks.field_150480_ab.func_176223_P());
              }
           }
-@@ -242,4 +244,8 @@
-    public List<BlockPos> func_180343_e() {
+@@ -287,6 +290,10 @@
        return this.field_77281_g;
     }
-+
+ 
 +   public Vec3d getPosition() {
 +      return this.position;
 +   }
- }
++
+    public static enum Mode {
+       NONE,
+       BREAK,

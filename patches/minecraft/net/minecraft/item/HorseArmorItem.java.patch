@@ -1,0 +1,27 @@
+--- a/net/minecraft/item/HorseArmorItem.java
++++ b/net/minecraft/item/HorseArmorItem.java
+@@ -6,17 +6,21 @@
+ 
+ public class HorseArmorItem extends Item {
+    private final int field_219978_a;
+-   private final String field_219979_b;
++   private final ResourceLocation texture;
+ 
+    public HorseArmorItem(int p_i50042_1_, String p_i50042_2_, Item.Properties p_i50042_3_) {
++      this(p_i50042_1_, new ResourceLocation("textures/entity/horse/armor/horse_armor_" + p_i50042_2_ + ".png"), p_i50042_3_);
++   }
++
++   public HorseArmorItem(int p_i50042_1_, ResourceLocation texture, Item.Properties p_i50042_3_) {
+       super(p_i50042_3_);
+       this.field_219978_a = p_i50042_1_;
+-      this.field_219979_b = "textures/entity/horse/armor/horse_armor_" + p_i50042_2_ + ".png";
++      this.texture = texture;
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
+    public ResourceLocation func_219976_d() {
+-      return new ResourceLocation(this.field_219979_b);
++      return texture;
+    }
+ 
+    public int func_219977_e() {

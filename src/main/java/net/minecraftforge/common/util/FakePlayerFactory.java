@@ -28,7 +28,7 @@ import java.util.UUID;
 import com.google.common.collect.Maps;
 import com.mojang.authlib.GameProfile;
 
-import net.minecraft.world.WorldServer;
+import net.minecraft.world.ServerWorld;
 
 //To be expanded for generic Mod fake players?
 public class FakePlayerFactory
@@ -38,7 +38,7 @@ public class FakePlayerFactory
     private static Map<GameProfile, FakePlayer> fakePlayers = Maps.newHashMap();
     private static WeakReference<FakePlayer> MINECRAFT_PLAYER = null;
 
-    public static FakePlayer getMinecraft(WorldServer world)
+    public static FakePlayer getMinecraft(ServerWorld world)
     {
         FakePlayer ret = MINECRAFT_PLAYER != null ? MINECRAFT_PLAYER.get() : null;
         if (ret == null)
@@ -54,7 +54,7 @@ public class FakePlayerFactory
      * Mods should either hold weak references to the return value, or listen for a
      * WorldEvent.Unload and kill all references to prevent worlds staying in memory.
      */
-    public static FakePlayer get(WorldServer world, GameProfile username)
+    public static FakePlayer get(ServerWorld world, GameProfile username)
     {
         if (!fakePlayers.containsKey(username))
         {
@@ -65,7 +65,7 @@ public class FakePlayerFactory
         return fakePlayers.get(username);
     }
 
-    public static void unloadWorld(WorldServer world)
+    public static void unloadWorld(ServerWorld world)
     {
         fakePlayers.entrySet().removeIf(entry -> entry.getValue().world == world);
         if (MINECRAFT_PLAYER != null && MINECRAFT_PLAYER.get() != null && MINECRAFT_PLAYER.get().world == world) // This shouldn't be strictly necessary, but lets be aggressive.

@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/placement/Placement.java
++++ b/net/minecraft/world/gen/placement/Placement.java
+@@ -13,7 +13,7 @@
+ import net.minecraft.world.gen.feature.ConfiguredFeature;
+ import net.minecraft.world.gen.feature.IFeatureConfig;
+ 
+-public abstract class Placement<DC extends IPlacementConfig> {
++public abstract class Placement<DC extends IPlacementConfig> extends net.minecraftforge.registries.ForgeRegistryEntry<Placement<?>> {
+    public static final Placement<FrequencyConfig> field_215015_a = func_214999_a("count_heightmap", new AtSurface(FrequencyConfig::func_214721_a));
+    public static final Placement<FrequencyConfig> field_215016_b = func_214999_a("count_top_solid", new TopSolid(FrequencyConfig::func_214721_a));
+    public static final Placement<FrequencyConfig> field_215017_c = func_214999_a("count_heightmap_32", new SurfacePlus32(FrequencyConfig::func_214721_a));

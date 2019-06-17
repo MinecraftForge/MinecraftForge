@@ -1,15 +1,16 @@
 --- a/net/minecraft/world/storage/loot/conditions/RandomChanceWithLooting.java
 +++ b/net/minecraft/world/storage/loot/conditions/RandomChanceWithLooting.java
-@@ -20,11 +20,7 @@
+@@ -28,12 +28,7 @@
     }
  
-    public boolean func_186618_a(Random p_186618_1_, LootContext p_186618_2_) {
+    public boolean test(LootContext p_test_1_) {
+-      Entity entity = p_test_1_.func_216031_c(LootParameters.field_216284_d);
 -      int i = 0;
--      if (p_186618_2_.func_186492_c() instanceof EntityLivingBase) {
--         i = EnchantmentHelper.func_185283_h((EntityLivingBase)p_186618_2_.func_186492_c());
+-      if (entity instanceof LivingEntity) {
+-         i = EnchantmentHelper.func_185283_h((LivingEntity)entity);
 -      }
 -
-+      int i = p_186618_2_.getLootingModifier();
-       return p_186618_1_.nextFloat() < this.field_186627_a + (float)i * this.field_186628_b;
++      int i = p_test_1_.getLootingModifier();
+       return p_test_1_.func_216032_b().nextFloat() < this.field_186627_a + (float)i * this.field_186628_b;
     }
  

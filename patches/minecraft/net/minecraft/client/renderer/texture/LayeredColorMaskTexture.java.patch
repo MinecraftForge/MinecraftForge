@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/LayeredColorMaskTexture.java
 +++ b/net/minecraft/client/renderer/texture/LayeredColorMaskTexture.java
-@@ -38,8 +38,7 @@
+@@ -39,8 +39,7 @@
              String s = this.field_174949_h.get(i);
              if (s != null) {
                 try (

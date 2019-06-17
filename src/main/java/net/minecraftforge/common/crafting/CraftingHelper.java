@@ -49,11 +49,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.item.crafting.Ingredient.IItemList;
 import net.minecraft.nbt.JsonToNBT;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.JsonUtils;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -73,19 +73,19 @@ public class CraftingHelper
     private static Map<ResourceLocation, IItemList> constants = new HashMap<>();
 
     public static final IConditionSerializer CONDITION_MOD_LOADED = condition("mod_loaded", json -> {
-                                                                        String modid = JsonUtils.getString(json, "modid");
+                                                                        String modid = JSONUtils.getString(json, "modid");
                                                                         return () -> ModList.get().isLoaded(modid);
                                                                     });
     public static final IConditionSerializer CONDITION_ITEM_EXISTS = condition("item_exists", json -> {
-                                                                        String itemName = JsonUtils.getString(json, "item");
+                                                                        String itemName = JSONUtils.getString(json, "item");
                                                                         return () -> ForgeRegistries.ITEMS.containsKey(new ResourceLocation(itemName));
                                                                     });
     public static final IConditionSerializer CONDITION_NOT = condition("not", json -> {
-                                                                BooleanSupplier child = CraftingHelper.getCondition(JsonUtils.getJsonObject(json, "value"));
+                                                                BooleanSupplier child = CraftingHelper.getCondition(JSONUtils.getJsonObject(json, "value"));
                                                                 return () -> !child.getAsBoolean();
                                                             });
     public static final IConditionSerializer CONDITION_OR = condition("or", json -> {
-                                                                JsonArray values = JsonUtils.getJsonArray(json, "values");
+                                                                JsonArray values = JSONUtils.getJsonArray(json, "values");
                                                                 List<BooleanSupplier> children = Lists.newArrayList();
                                                                 for (JsonElement j : values)
                                                                 {
@@ -96,7 +96,7 @@ public class CraftingHelper
                                                                 return () -> children.stream().anyMatch(BooleanSupplier::getAsBoolean);
                                                             });
     public static final IConditionSerializer CONDITION_AND = condition("and", json -> {
-                                                                JsonArray values = JsonUtils.getJsonArray(json, "values");
+                                                                JsonArray values = JSONUtils.getJsonArray(json, "values");
                                                                 List<BooleanSupplier> children = Lists.newArrayList();
                                                                 for (JsonElement j : values)
                                                                 {
@@ -208,7 +208,7 @@ public class CraftingHelper
 
         JsonObject obj = (JsonObject)json;
 
-        String type = JsonUtils.getString(obj, "type", "minecraft:item");
+        String type = JSONUtils.getString(obj, "type", "minecraft:item");
         if (type.isEmpty())
             throw new JsonSyntaxException("Ingredient type can not be an empty string");
 
@@ -221,7 +221,7 @@ public class CraftingHelper
 
     public static ItemStack getItemStack(JsonObject json, boolean readNBT)
     {
-        String itemName = JsonUtils.getString(json, "item");
+        String itemName = JSONUtils.getString(json, "item");
 
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
 
@@ -234,22 +234,22 @@ public class CraftingHelper
             try
             {
                 JsonElement element = json.get("nbt");
-                NBTTagCompound nbt;
+                CompoundNBT nbt;
                 if(element.isJsonObject())
                     nbt = JsonToNBT.getTagFromJson(GSON.toJson(element));
                 else
-                    nbt = JsonToNBT.getTagFromJson(JsonUtils.getString(element, "nbt"));
+                    nbt = JsonToNBT.getTagFromJson(JSONUtils.getString(element, "nbt"));
 
-                NBTTagCompound tmp = new NBTTagCompound();
-                if (nbt.hasKey("ForgeCaps"))
+                CompoundNBT tmp = new CompoundNBT();
+                if (nbt.contains("ForgeCaps"))
                 {
-                    tmp.setTag("ForgeCaps", nbt.getTag("ForgeCaps"));
-                    nbt.removeTag("ForgeCaps");
+                    tmp.put("ForgeCaps", nbt.get("ForgeCaps"));
+                    nbt.remove("ForgeCaps");
                 }
 
-                tmp.setTag("tag", nbt);
-                tmp.setString("id", itemName);
-                tmp.setInt("Count", JsonUtils.getInt(json, "count", 1));
+                tmp.put("tag", nbt);
+                tmp.putString("id", itemName);
+                tmp.putInt("Count", JSONUtils.getInt(json, "count", 1));
 
                 return ItemStack.read(tmp);
             }
@@ -259,12 +259,12 @@ public class CraftingHelper
             }
         }
 
-        return new ItemStack(item, JsonUtils.getInt(json, "count", 1));
+        return new ItemStack(item, JSONUtils.getInt(json, "count", 1));
     }
 
     public static boolean processConditions(JsonObject json, String memberName)
     {
-        return !json.has(memberName) || processConditions(JsonUtils.getJsonArray(json, memberName));
+        return !json.has(memberName) || processConditions(JSONUtils.getJsonArray(json, memberName));
     }
 
     public static boolean processConditions(JsonArray conditions)
@@ -284,7 +284,7 @@ public class CraftingHelper
 
     public static BooleanSupplier getCondition(JsonObject json)
     {
-        ResourceLocation type = new ResourceLocation(JsonUtils.getString(json, "type"));
+        ResourceLocation type = new ResourceLocation(JSONUtils.getString(json, "type"));
         IConditionSerializer serrializer = conditions.get(type);
         if (serrializer == null)
             throw new JsonSyntaxException("Unknown condition type: " + type.toString());
@@ -303,23 +303,23 @@ public class CraftingHelper
             String path = key.getPath();
             if (!path.equals("recipes/_constants.json")) //Top level only
                 continue;
-            
+
             tmp.putAll(loadConstants(manager, key));
         }
         constants = tmp;
     }
-    
+
     public static Map<ResourceLocation, IItemList> loadConstants(IResourceManager manager, ResourceLocation key) {
         Map<ResourceLocation, IItemList> tmp = new HashMap<>();
         try (IResource iresource = manager.getResource(key))
         {
-            JsonObject[] elements = JsonUtils.fromJson(GSON, IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8), JsonObject[].class);
+            JsonObject[] elements = JSONUtils.fromJson(GSON, IOUtils.toString(iresource.getInputStream(), StandardCharsets.UTF_8), JsonObject[].class);
             for (int x = 0; x < elements.length; x++)
             {
                 JsonObject json = elements[x];
                 //Force namespace to the directory that this constants file is in, to prevent modders from overriding other's sneakily
                 //TODO: Move back to a resource pack/mod specific constant list?
-                ResourceLocation name = json.has("name") ? new ResourceLocation(JsonUtils.getString(json, "name")) : null;
+                ResourceLocation name = json.has("name") ? new ResourceLocation(JSONUtils.getString(json, "name")) : null;
                 if (name != null)
                     name = new ResourceLocation(key.getNamespace(), name.getPath());
 
@@ -332,7 +332,7 @@ public class CraftingHelper
                 else if (json.has("items"))
                 {
                     List<ItemStack> items = new ArrayList<>();
-                    for (JsonElement item : JsonUtils.getJsonArray(json, "items"))
+                    for (JsonElement item : JSONUtils.getJsonArray(json, "items"))
                     {
                         if (item.isJsonObject())
                             items.add(getItemStack(item.getAsJsonObject(), true));
@@ -349,7 +349,7 @@ public class CraftingHelper
                 else if (json.has("tag"))
                     tmp.put(name, Ingredient.deserializeItemList(json));
                 else if (json.has("item"))
-                    tmp.put(name, new StackList(Lists.newArrayList(getItemStack(JsonUtils.getJsonObject(json, "item"), true))));
+                    tmp.put(name, new StackList(Lists.newArrayList(getItemStack(JSONUtils.getJsonObject(json, "item"), true))));
                 else
                     LOGGER.error(CRAFTHELPER, "Couldn't load constant #{} from {} as it's missing `item` or `items` element", x, key);
             }

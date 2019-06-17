@@ -1,0 +1,26 @@
+--- a/net/minecraft/nbt/CompoundNBT.java
++++ b/net/minecraft/nbt/CompoundNBT.java
+@@ -72,6 +72,7 @@
+ 
+    @Nullable
+    public INBT func_218657_a(String p_218657_1_, INBT p_218657_2_) {
++      if (p_218657_2_ == null) throw new IllegalArgumentException("Invalid null NBT value with key " + p_218657_1_);
+       return this.field_74784_a.put(p_218657_1_, p_218657_2_);
+    }
+ 
+@@ -390,6 +391,7 @@
+    }
+ 
+    private static byte func_152447_a(DataInput p_152447_0_, NBTSizeTracker p_152447_1_) throws IOException {
++      p_152447_1_.func_152450_a(8);
+       return p_152447_0_.readByte();
+    }
+ 
+@@ -398,6 +400,7 @@
+    }
+ 
+    static INBT func_152449_a(byte p_152449_0_, String p_152449_1_, DataInput p_152449_2_, int p_152449_3_, NBTSizeTracker p_152449_4_) throws IOException {
++      p_152449_4_.func_152450_a(32); //Forge: 4 extra bytes for the object allocation.
+       INBT inbt = INBT.func_150284_a(p_152449_0_);
+ 
+       try {

@@ -1,0 +1,19 @@
+--- a/net/minecraft/potion/Effect.java
++++ b/net/minecraft/potion/Effect.java
+@@ -20,7 +20,7 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
+ 
+-public class Effect {
++public class Effect extends net.minecraftforge.registries.ForgeRegistryEntry<Effect> implements net.minecraftforge.common.extensions.IForgeEffect {
+    private final Map<IAttribute, AttributeModifier> field_111188_I = Maps.newHashMap();
+    private final EffectType field_220305_b;
+    private final int field_76414_N;
+@@ -149,7 +149,6 @@
+       return this;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public Map<IAttribute, AttributeModifier> func_111186_k() {
+       return this.field_111188_I;
+    }

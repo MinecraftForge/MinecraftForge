@@ -1,0 +1,11 @@
+--- a/net/minecraft/client/renderer/entity/layers/WitchHeldItemLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/WitchHeldItemLayer.java
+@@ -41,7 +41,7 @@
+             GlStateManager.rotatef(-5.0F, 0.0F, 1.0F, 0.0F);
+             float f1 = 0.375F;
+             GlStateManager.scalef(0.375F, -0.375F, 0.375F);
+-         } else if (item == Items.field_151031_f) {
++         } else if (item instanceof net.minecraft.item.BowItem) {
+             GlStateManager.translatef(0.0F, 0.125F, -0.125F);
+             GlStateManager.rotatef(-45.0F, 0.0F, 1.0F, 0.0F);
+             float f2 = 0.625F;

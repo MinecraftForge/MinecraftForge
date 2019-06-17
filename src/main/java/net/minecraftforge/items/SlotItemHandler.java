@@ -19,18 +19,16 @@
 
 package net.minecraftforge.items;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryBasic;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentString;
-
 import javax.annotation.Nonnull;
 
 public class SlotItemHandler extends Slot
 {
-    private static IInventory emptyInventory = new InventoryBasic(new TextComponentString("[Null]"), 0);
+    private static IInventory emptyInventory = new Inventory(0);
     private final IItemHandler itemHandler;
     private final int index;
 
@@ -107,7 +105,7 @@ public class SlotItemHandler extends Slot
     }
 
     @Override
-    public boolean canTakeStack(EntityPlayer playerIn)
+    public boolean canTakeStack(PlayerEntity playerIn)
     {
         return !this.getItemHandler().extractItem(index, 1, true).isEmpty();
     }

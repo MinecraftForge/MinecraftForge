@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/monster/CreeperEntity.java
++++ b/net/minecraft/entity/monster/CreeperEntity.java
+@@ -207,7 +207,7 @@
+ 
+    private void func_146077_cc() {
+       if (!this.field_70170_p.field_72995_K) {
+-         Explosion.Mode explosion$mode = this.field_70170_p.func_82736_K().func_82766_b("mobGriefing") ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
++         Explosion.Mode explosion$mode = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
+          float f = this.func_70830_n() ? 2.0F : 1.0F;
+          this.field_70729_aU = true;
+          this.field_70170_p.func_217385_a(this, this.field_70165_t, this.field_70163_u, this.field_70161_v, (float)this.field_82226_g * f, explosion$mode);

@@ -19,12 +19,12 @@
 
 package net.minecraftforge.fml.client;
 
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 public interface IDisplayableError
 {
     @OnlyIn(Dist.CLIENT)
-    GuiScreen createGui();
+    Screen createGui();
 }

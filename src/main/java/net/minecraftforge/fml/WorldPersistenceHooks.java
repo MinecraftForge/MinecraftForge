@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml;
 
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.fml.common.thread.EffectiveSide;
@@ -35,12 +35,12 @@ public class WorldPersistenceHooks
         worldPersistenceHooks.add(hook);
     }
 
-    public static void handleWorldDataSave(final SaveHandler handler, final WorldInfo worldInfo, final NBTTagCompound tagCompound)
+    public static void handleWorldDataSave(final SaveHandler handler, final WorldInfo worldInfo, final CompoundNBT tagCompound)
     {
-        worldPersistenceHooks.forEach(wac->tagCompound.setTag(wac.getModId(), wac.getDataForWriting(handler, worldInfo)));
+        worldPersistenceHooks.forEach(wac->tagCompound.put(wac.getModId(), wac.getDataForWriting(handler, worldInfo)));
     }
 
-    public static void handleWorldDataLoad(SaveHandler handler, WorldInfo worldInfo, NBTTagCompound tagCompound)
+    public static void handleWorldDataLoad(SaveHandler handler, WorldInfo worldInfo, CompoundNBT tagCompound)
     {
         if (EffectiveSide.get() == LogicalSide.SERVER)
         {
@@ -70,7 +70,7 @@ public class WorldPersistenceHooks
     public interface WorldPersistenceHook
     {
         String getModId();
-        NBTTagCompound getDataForWriting(SaveHandler handler, WorldInfo info);
-        void readData(SaveHandler handler, WorldInfo info, NBTTagCompound tag);
+        CompoundNBT getDataForWriting(SaveHandler handler, WorldInfo info);
+        void readData(SaveHandler handler, WorldInfo info, CompoundNBT tag);
     }
 }

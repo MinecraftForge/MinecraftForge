@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "#forge:dyes/black",
+    "#forge:dyes/red",
+    "#forge:dyes/green",
+    "#forge:dyes/brown",
+    "#forge:dyes/blue",
+    "#forge:dyes/purple",
+    "#forge:dyes/cyan",
+    "#forge:dyes/light_gray",
+    "#forge:dyes/gray",
+    "#forge:dyes/pink",
+    "#forge:dyes/lime",
+    "#forge:dyes/yellow",
+    "#forge:dyes/light_blue",
+    "#forge:dyes/magenta",
+    "#forge:dyes/orange",
+    "#forge:dyes/white"
+  ]
+}

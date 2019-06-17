@@ -1,6 +1,15 @@
 --- a/net/minecraft/world/end/DragonFightManager.java
 +++ b/net/minecraft/world/end/DragonFightManager.java
-@@ -80,6 +80,7 @@
+@@ -76,7 +76,7 @@
+    private int field_186123_q;
+    private List<EnderCrystalEntity> field_186124_r;
+ 
+-   public DragonFightManager(ServerWorld p_i46669_1_, CompoundNBT p_i46669_2_) {
++   public DragonFightManager(ServerWorld p_i46669_1_, CompoundNBT p_i46669_2_, net.minecraft.world.dimension.EndDimension dim) {
+       this.field_186110_d = p_i46669_1_;
+       if (p_i46669_2_.func_150297_b("DragonKilled", 99)) {
+          if (p_i46669_2_.func_186855_b("DragonUUID")) {
+@@ -85,6 +85,7 @@
  
           this.field_186117_k = p_i46669_2_.func_74767_n("DragonKilled");
           this.field_186118_l = p_i46669_2_.func_74767_n("PreviouslyKilled");
@@ -8,26 +17,34 @@
           if (p_i46669_2_.func_74767_n("IsRespawning")) {
              this.field_186122_p = DragonSpawnState.START;
           }
-@@ -114,6 +115,7 @@
- 
-       nbttagcompound.func_74757_a("DragonKilled", this.field_186117_k);
-       nbttagcompound.func_74757_a("PreviouslyKilled", this.field_186118_l);
-+      nbttagcompound.func_74757_a("LegacyScanPerformed", !this.field_186120_n); // Forge: fix MC-105080
-       if (this.field_186121_o != null) {
-          nbttagcompound.func_74782_a("ExitPortalLocation", NBTUtil.func_186859_a(this.field_186121_o));
+@@ -105,7 +106,7 @@
+          }
+       } else {
+          this.field_186111_e.addAll(ContiguousSet.create(Range.closedOpen(0, 20), DiscreteDomain.integers()));
+-         Collections.shuffle(this.field_186111_e, new Random(p_i46669_1_.func_72905_C()));
++         Collections.shuffle(this.field_186111_e, new Random(dim.getSeed()));
        }
-@@ -502,6 +504,14 @@
  
-    }
+       this.field_186112_f = BlockPatternBuilder.func_177660_a().func_177659_a("       ", "       ", "       ", "   #   ", "       ", "       ", "       ").func_177659_a("       ", "       ", "       ", "   #   ", "       ", "       ", "       ").func_177659_a("       ", "       ", "       ", "   #   ", "       ", "       ", "       ").func_177659_a("  ###  ", " #   # ", "#     #", "#  #  #", "#     #", " #   # ", "  ###  ").func_177659_a("       ", "  ###  ", " ##### ", " ##### ", " ##### ", "  ###  ", "       ").func_177662_a('#', CachedBlockInfo.func_177510_a(BlockMatcher.func_177642_a(Blocks.field_150357_h))).func_177661_b();
+@@ -119,6 +120,7 @@
  
-+   public void addPlayer(EntityPlayerMP player) {
-+      this.field_186109_c.func_186760_a(player);
+       compoundnbt.func_74757_a("DragonKilled", this.field_186117_k);
+       compoundnbt.func_74757_a("PreviouslyKilled", this.field_186118_l);
++      compoundnbt.func_74757_a("LegacyScanPerformed", !this.field_186120_n); // Forge: fix MC-105080
+       if (this.field_186121_o != null) {
+          compoundnbt.func_218657_a("ExitPortalLocation", NBTUtil.func_186859_a(this.field_186121_o));
+       }
+@@ -490,6 +492,13 @@
+             endercrystalentity.func_184516_a((BlockPos)null);
+          }
+       }
 +   }
+ 
++   public void addPlayer(ServerPlayerEntity player) {
++      this.field_186109_c.func_186760_a(player);
+    }
 +
-+   public void removePlayer(EntityPlayerMP player) {
++   public void removePlayer(ServerPlayerEntity player) {
 +      this.field_186109_c.func_186761_b(player);
 +   }
-+
-    class LoadManager {
-       private DragonFightManager.LoadState field_210826_b = DragonFightManager.LoadState.UNKNOWN;
- 
+ }

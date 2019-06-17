@@ -1,0 +1,21 @@
+--- a/net/minecraft/item/crafting/BookCloningRecipe.java
++++ b/net/minecraft/item/crafting/BookCloningRecipe.java
+@@ -81,8 +81,8 @@
+ 
+       for(int i = 0; i < nonnulllist.size(); ++i) {
+          ItemStack itemstack = p_179532_1_.func_70301_a(i);
+-         if (itemstack.func_77973_b().func_77634_r()) {
+-            nonnulllist.set(i, new ItemStack(itemstack.func_77973_b().func_77668_q()));
++         if (itemstack.hasContainerItem()) {
++            nonnulllist.set(i, itemstack.getContainerItem());
+          } else if (itemstack.func_77973_b() instanceof WrittenBookItem) {
+             ItemStack itemstack1 = itemstack.func_77946_l();
+             itemstack1.func_190920_e(1);
+@@ -98,7 +98,6 @@
+       return IRecipeSerializer.field_222160_d;
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ >= 3 && p_194133_2_ >= 3;
+    }

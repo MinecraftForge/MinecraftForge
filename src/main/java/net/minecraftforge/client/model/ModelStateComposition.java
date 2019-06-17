@@ -20,21 +20,41 @@
 package net.minecraftforge.client.model;
 
 import com.google.common.base.Objects;
+import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.IModelState;
 import net.minecraftforge.common.model.TRSRTransformation;
 
 import java.util.Optional;
 
-public class ModelStateComposition implements IModelState
+public class ModelStateComposition implements IModelState, ISprite
 {
     private final IModelState first;
     private final IModelState second;
+    private final boolean uvLock;
 
     public ModelStateComposition(IModelState first, IModelState second)
     {
+        this(first, second, false);
+    }
+
+    public ModelStateComposition(IModelState first, IModelState second, boolean uvLock)
+    {
         this.first = first;
         this.second = second;
+        this.uvLock = uvLock;
+    }
+
+    @Override
+    public IModelState getState()
+    {
+        return this;
+    }
+
+    @Override
+    public boolean isUvLock()
+    {
+        return uvLock;
     }
 
     @Override

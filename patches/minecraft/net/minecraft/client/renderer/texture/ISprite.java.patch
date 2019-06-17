@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/renderer/texture/ISprite.java
++++ b/net/minecraft/client/renderer/texture/ISprite.java
+@@ -6,6 +6,10 @@
+ 
+ @OnlyIn(Dist.CLIENT)
+ public interface ISprite {
++   /**
++    * @deprecated Use {@link #getState()} instead.
++    */
++   @Deprecated
+    default ModelRotation func_188048_b() {
+       return ModelRotation.X0_Y0;
+    }
+@@ -13,4 +17,6 @@
+    default boolean func_188049_c() {
+       return false;
+    }
++
++   default net.minecraftforge.common.model.IModelState getState() { return func_188048_b(); }
+ }

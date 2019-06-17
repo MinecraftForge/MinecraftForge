@@ -1,15 +1,24 @@
 --- a/net/minecraft/world/gen/feature/BigBrownMushroomFeature.java
 +++ b/net/minecraft/world/gen/feature/BigBrownMushroomFeature.java
-@@ -33,7 +33,7 @@
+@@ -26,7 +26,7 @@
+       }
+ 
+       int j = p_212245_4_.func_177956_o();
+-      if (j >= 1 && j + i + 1 < 256) {
++      if (j >= 1 && j + i + 1 < p_212245_1_.func_201672_e().func_201675_m().getHeight()) {
+          Block block = p_212245_1_.func_180495_p(p_212245_4_.func_177977_b()).func_177230_c();
+          if (!Block.func_196245_f(block) && block != Blocks.field_196658_i && block != Blocks.field_150391_bh) {
+             return false;
+@@ -39,7 +39,7 @@
                 for(int i1 = -l; i1 <= l; ++i1) {
                    for(int j1 = -l; j1 <= l; ++j1) {
-                      IBlockState iblockstate = p_212245_1_.func_180495_p(blockpos$mutableblockpos.func_189533_g(p_212245_4_).func_196234_d(i1, k, j1));
--                     if (!iblockstate.func_196958_f() && !iblockstate.func_203425_a(BlockTags.field_206952_E)) {
-+                     if (!iblockstate.isAir(p_212245_1_, blockpos$mutableblockpos) && !iblockstate.func_203425_a(BlockTags.field_206952_E)) {
+                      BlockState blockstate = p_212245_1_.func_180495_p(blockpos$mutableblockpos.func_189533_g(p_212245_4_).func_196234_d(i1, k, j1));
+-                     if (!blockstate.func_196958_f() && !blockstate.func_203425_a(BlockTags.field_206952_E)) {
++                     if (!blockstate.isAir(p_212245_1_, blockpos$mutableblockpos) && !blockstate.func_203425_a(BlockTags.field_206952_E)) {
                          return false;
                       }
                    }
-@@ -53,7 +53,7 @@
+@@ -59,7 +59,7 @@
                    boolean flag4 = flag1 || flag2;
                    if (!flag3 || !flag4) {
                       blockpos$mutableblockpos.func_189533_g(p_212245_4_).func_196234_d(l1, i, i2);
@@ -18,12 +27,12 @@
                          boolean flag5 = flag9 || flag4 && l1 == -2;
                          boolean flag6 = flag || flag4 && l1 == 2;
                          boolean flag7 = flag1 || flag3 && i2 == -2;
-@@ -68,7 +68,7 @@
+@@ -74,7 +74,7 @@
  
              for(int j2 = 0; j2 < i; ++j2) {
-                blockpos$mutableblockpos.func_189533_g(p_212245_4_).func_189534_c(EnumFacing.UP, j2);
+                blockpos$mutableblockpos.func_189533_g(p_212245_4_).func_189534_c(Direction.UP, j2);
 -               if (!p_212245_1_.func_180495_p(blockpos$mutableblockpos).func_200015_d(p_212245_1_, blockpos$mutableblockpos)) {
 +               if (p_212245_1_.func_180495_p(blockpos$mutableblockpos).canBeReplacedByLeaves(p_212245_1_, blockpos$mutableblockpos)) {
-                   this.func_202278_a(p_212245_1_, blockpos$mutableblockpos, iblockstate2);
-                }
-             }
+                   if (p_212245_5_.field_222854_a) {
+                      p_212245_1_.func_180501_a(blockpos$mutableblockpos, blockstate2, 3);
+                   } else {

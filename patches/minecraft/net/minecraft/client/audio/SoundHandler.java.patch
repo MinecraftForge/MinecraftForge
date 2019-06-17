@@ -1,59 +1,50 @@
 --- a/net/minecraft/client/audio/SoundHandler.java
 +++ b/net/minecraft/client/audio/SoundHandler.java
-@@ -64,6 +64,7 @@
-    public void func_195410_a(IResourceManager p_195410_1_) {
-       this.field_147697_e.clear();
+@@ -61,6 +61,7 @@
+       SoundHandler.Loader soundhandler$loader = new SoundHandler.Loader();
+       p_212854_2_.func_219894_a();
  
-+      java.util.List<net.minecraft.util.Tuple<ResourceLocation, SoundList>> resources = new java.util.LinkedList<>();
-       for(String s : p_195410_1_.func_199001_a()) {
-          try {
-             for(IResource iresource : p_195410_1_.func_199004_b(new ResourceLocation(s, "sounds.json"))) {
-@@ -71,7 +72,7 @@
-                   Map<String, SoundList> map = this.func_175085_a(iresource.func_199027_b());
++      java.util.List<net.minecraft.util.Tuple<ResourceLocation, Runnable>> resources = new java.util.LinkedList<>();
+       for(String s : p_212854_1_.func_199001_a()) {
+          p_212854_2_.func_76320_a(s);
+ 
+@@ -74,7 +75,9 @@
+                   p_212854_2_.func_219895_b("register");
  
                    for(Entry<String, SoundList> entry : map.entrySet()) {
--                     this.func_147693_a(new ResourceLocation(s, entry.getKey()), entry.getValue());
-+                     resources.add(new net.minecraft.util.Tuple<>(new ResourceLocation(s, entry.getKey()), entry.getValue()));
++                     resources.add(new net.minecraft.util.Tuple<>(new ResourceLocation(s, entry.getKey()), () -> {
+                      soundhandler$loader.func_217944_a(new ResourceLocation(s, entry.getKey()), entry.getValue(), p_212854_1_);
++                     }));
                    }
-                } catch (RuntimeException runtimeexception) {
-                   field_147698_b.warn("Invalid sounds.json in resourcepack: '{}'", iresource.func_199026_d(), runtimeexception);
-@@ -81,7 +82,18 @@
-             ;
-          }
+ 
+                   p_212854_2_.func_76319_b();
+@@ -91,6 +94,17 @@
+          p_212854_2_.func_76319_b();
        }
-+      try (net.minecraftforge.fml.common.progress.ProgressBar resourcesBar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Loading sounds", resources.size())) {
-+      resources.forEach(entry -> {
-+          resourcesBar.step(entry.func_76341_a().toString());
-+          try {
-+              this.func_147693_a(entry.func_76341_a(), entry.func_76340_b());
-+          } catch (RuntimeException e) {
-+              field_147698_b.warn("Invalid sounds.json", e);
-+          }
+ 
++      net.minecraftforge.fml.common.progress.StartupProgressManager.start("Loading sounds", resources.size(), bar -> {
++         resources.forEach(entry -> {
++            bar.step(entry.func_76341_a().toString());
++            try {
++                entry.func_76340_b().run();
++            } catch (RuntimeException e) {
++                field_147698_b.warn("Invalid sounds.json", e);
++            }
++         });
 +      });
-+      }; // Forge: end progress bar
- 
 +
-       for(ResourceLocation resourcelocation : this.field_147697_e.keySet()) {
-          SoundEventAccessor soundeventaccessor = this.field_147697_e.get(resourcelocation);
-          if (soundeventaccessor.func_188712_c() instanceof TextComponentTranslation) {
-@@ -211,6 +223,10 @@
-       this.field_147694_f.func_148615_a(p_147691_1_, p_147691_2_);
+       p_212854_2_.func_219897_b();
+       return soundhandler$loader;
     }
- 
-+   public void setListener(net.minecraft.entity.Entity entity, float partialTicks) {
-+      this.field_147694_f.setListener(entity, partialTicks);
-+   }
-+
-    public void func_147689_b() {
-       this.field_147694_f.func_148610_e();
-    }
-@@ -258,4 +274,9 @@
-    public void func_195478_a(@Nullable ResourceLocation p_195478_1_, @Nullable SoundCategory p_195478_2_) {
+@@ -210,6 +224,11 @@
        this.field_147694_f.func_195855_a(p_195478_1_, p_195478_2_);
     }
-+
-+   @Override
+ 
++   //@Override //TODO: Filtered reload
 +   public net.minecraftforge.resource.IResourceType getResourceType() {
 +      return net.minecraftforge.resource.VanillaResourceType.SOUNDS;
 +   }
- }
++
+    public String func_215293_f() {
+       return this.field_147694_f.func_217932_f();
+    }

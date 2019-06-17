@@ -21,6 +21,7 @@ package net.minecraftforge.registries;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -29,24 +30,24 @@ import javax.annotation.Nullable;
 import org.apache.commons.lang3.Validate;
 
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.RegistryNamespacedDefaultedByKey;
+import net.minecraft.util.registry.DefaultedRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends RegistryNamespacedDefaultedByKey<V> implements ILockableRegistry
+class NamespacedDefaultedWrapper<T extends IForgeRegistryEntry<T>> extends DefaultedRegistry<T> implements ILockableRegistry
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private boolean locked = false;
-    private ForgeRegistry<V> delegate;
+    private ForgeRegistry<T> delegate;
 
-    private NamespacedDefaultedWrapper(ForgeRegistry<V> owner)
+    private NamespacedDefaultedWrapper(ForgeRegistry<T> owner)
     {
-        super(null);
+        super(owner.getRegistryName().toString());
         this.delegate = owner;
     }
 
     @Override
-    public void register(int id, ResourceLocation key, V value)
+    public <V extends T> V register(int id, ResourceLocation key, V value)
     {
         if (locked)
             throw new IllegalStateException("Can not register to a locked registry. Modder should use Forge Register methods.");
@@ -58,77 +59,78 @@ class NamespacedDefaultedWrapper<V extends IForgeRegistryEntry<V>> extends Regis
         int realId = this.delegate.add(id, value);
         if (realId != id && id != -1)
             LOGGER.warn("Registered object did not get ID it asked for. Name: {} Type: {} Expected: {} Got: {}", key, value.getRegistryType().getName(), id, realId);
+
+        return value;
     }
 
     @Override
-    public void put(ResourceLocation key, V value)
+    public <V extends T> V register(ResourceLocation key, V value)
     {
-        register(-1, key, value);
+        return register(-1, key, value);
     }
 
     // Reading Functions
     @Override
-    @Nullable
-    public V func_212608_b(@Nullable ResourceLocation name)
+    public Optional<T> func_218349_b(@Nullable ResourceLocation name)
     {
-        return this.delegate.getRaw(name); //get without default
+        return Optional.ofNullable( this.delegate.getRaw(name)); //get without default
     }
 
     @Override
     @Nullable
-    public V get(@Nullable ResourceLocation name)
+    public T getOrDefault(@Nullable ResourceLocation name)
     {
         return this.delegate.getValue(name); //getOrDefault
     }
 
     @Override
     @Nullable
-    public ResourceLocation getKey(V value)
+    public ResourceLocation getKey(T value)
     {
         return this.delegate.getKey(value);
     }
 
     @Override
-    public boolean func_212607_c(ResourceLocation key)
+    public boolean containsKey(ResourceLocation key)
     {
         return this.delegate.containsKey(key);
     }
 
     @Override
-    public int getId(@Nullable V value)
+    public int getId(@Nullable T value)
     {
         return this.delegate.getID(value);
     }
 
     @Override
     @Nullable
-    public V get(int id)
+    public T getByValue(int id)
     {
         return this.delegate.getValue(id);
     }
 
     @Override
-    public Iterator<V> iterator()
+    public Iterator<T> iterator()
     {
         return this.delegate.iterator();
     }
 
     @Override
-    public Set<ResourceLocation> getKeys()
+    public Set<ResourceLocation> keySet()
     {
         return this.delegate.getKeys();
     }
 
     @Override
     @Nullable
-    public V getRandom(Random random)
+    public T getRandom(Random random)
     {
-        Collection<V> values = this.delegate.getValues();
+        Collection<T> values = this.delegate.getValues();
         return values.stream().skip(random.nextInt(values.size())).findFirst().orElse(this.delegate.getDefault());
     }
 
     @Override
-    public ResourceLocation func_212609_b()
+    public ResourceLocation getDefaultKey()
     {
         return this.delegate.getDefaultKey();
     }

@@ -21,8 +21,8 @@ package net.minecraftforge.client.model;
 
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumType;
-import net.minecraft.client.renderer.vertex.VertexFormatElement.EnumUsage;
+import net.minecraft.client.renderer.vertex.VertexFormatElement.Type;
+import net.minecraft.client.renderer.vertex.VertexFormatElement.Usage;
 
 public class Attributes
 {
@@ -34,10 +34,10 @@ public class Attributes
     static
     {
         DEFAULT_BAKED_FORMAT = new VertexFormat();
-        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, EnumType.FLOAT, EnumUsage.POSITION, 3));
-        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, EnumType.UBYTE, EnumUsage.COLOR,    4));
-        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, EnumType.FLOAT, EnumUsage.UV,       2));
-        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, EnumType.BYTE,  EnumUsage.PADDING,  4));
+        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, Type.FLOAT, Usage.POSITION, 3));
+        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, Type.UBYTE, Usage.COLOR,    4));
+        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, Type.FLOAT, Usage.UV,       2));
+        DEFAULT_BAKED_FORMAT.addElement(new VertexFormatElement(0, Type.BYTE,  Usage.PADDING,  4));
     }
 
     /*
@@ -52,7 +52,7 @@ public class Attributes
         int j = 0;
         for(VertexFormatElement firstAttr : first.getElements())
         {
-            while(j < second.getElementCount() && second.getElement(j).getUsage() == EnumUsage.PADDING)
+            while(j < second.getElementCount() && second.getElement(j).getUsage() == Usage.PADDING)
             {
                 padding += second.getElement(j++).getSize();
             }

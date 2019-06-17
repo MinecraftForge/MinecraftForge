@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 
@@ -39,21 +40,21 @@ import com.google.common.collect.HashBiMap;
 
 import net.minecraft.util.IntIdentityHashBiMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
+import net.minecraft.util.registry.MutableRegistry;
 
 /**
  * A IRegistry implementation that allows for removing of objects. This is a internal helper
  * class used by Forge for managing things that reset during Server initialization.
  */
-public class ClearableRegistry<V> implements IRegistry<V>
+public class ClearableRegistry<T> extends MutableRegistry<T>
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker REGISTRY = MarkerManager.getMarker("REGISTRY");
 
-    private final IntIdentityHashBiMap<V> ids = new IntIdentityHashBiMap<>(256);
-    private final BiMap<ResourceLocation, V> map = HashBiMap.create();
+    private final IntIdentityHashBiMap<T> ids = new IntIdentityHashBiMap<>(256);
+    private final BiMap<ResourceLocation, T> map = HashBiMap.create();
     private final Set<ResourceLocation> keys = Collections.unmodifiableSet(map.keySet());
-    private List<V> values = new ArrayList<>();
+    private List<T> values = new ArrayList<>();
     private final ResourceLocation name;
     private int nextId = 0;
 
@@ -64,58 +65,46 @@ public class ClearableRegistry<V> implements IRegistry<V>
 
     @Override
     @Nullable
-    public ResourceLocation getKey(V value)
+    public ResourceLocation getKey(T value)
     {
         return map.inverse().get(value);
     }
 
     @Override
-    public V get(ResourceLocation key)
-    {
-        throw new UnsupportedOperationException("No default value");
-    }
-
-    @Override
-    public ResourceLocation func_212609_b()
-    {
-        throw new UnsupportedOperationException("No default key");
-    }
-
-    @Override
     @Nullable
-    public int getId(V value)
+    public int getId(T value)
     {
         return ids.getId(value);
     }
 
     @Override
     @Nullable
-    public V get(int id)
+    public T getByValue(int id)
     {
-        return ids.get(id);
+        return ids.getByValue(id);
     }
 
     @Override
-    public Iterator<V> iterator()
+    public Iterator<T> iterator()
     {
         return ids.iterator();
     }
 
     @Override
     @Nullable
-    public V func_212608_b(ResourceLocation key)
+    public T getOrDefault(ResourceLocation key)
     {
         return map.get(key);
     }
 
     @Override
-    public void register(int id, ResourceLocation key, V value)
+    public <V extends T> V register(int id, ResourceLocation key, V value)
     {
         Validate.isTrue(id >= 0, "Invalid ID, can not be < 0");
         Validate.notNull(key);
         Validate.notNull(value);
 
-        V old = map.get(key);
+        T old = map.get(key);
         if (old != null)
         {
             LOGGER.debug(REGISTRY, "{}: Adding suplicate key '{}' to registry. Old: {} New: {}", name, key, old, value);
@@ -127,16 +116,18 @@ public class ClearableRegistry<V> implements IRegistry<V>
         values.add(value);
         if (nextId <= id)
             nextId = id + 1;
+
+        return value;
     }
 
     @Override
-    public void put(ResourceLocation key, V value)
+    public <V extends T> V register(ResourceLocation key, V value)
     {
-        register(nextId, key, value);
+        return register(nextId, key, value);
     }
 
     @Override
-    public Set<ResourceLocation> getKeys()
+    public Set<ResourceLocation> keySet()
     {
         return keys;
     }
@@ -149,13 +140,13 @@ public class ClearableRegistry<V> implements IRegistry<V>
 
     @Override
     @Nullable
-    public V getRandom(Random random)
+    public T getRandom(Random random)
     {
         return values.isEmpty() ? null : values.get(random.nextInt(values.size()));
     }
 
     @Override
-    public boolean func_212607_c(ResourceLocation key)
+    public boolean containsKey(ResourceLocation key)
     {
         return map.containsKey(key);
     }
@@ -172,5 +163,10 @@ public class ClearableRegistry<V> implements IRegistry<V>
     public int getNextId()
     {
         return nextId;
+    }
+
+    @Override
+    public Optional<T> func_218349_b(ResourceLocation p_218349_1_) {
+        return Optional.ofNullable(map.get(p_218349_1_));
     }
 }
