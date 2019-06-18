@@ -1,0 +1,14 @@
+--- a/net/minecraft/world/storage/loot/LootParameterSets.java
++++ b/net/minecraft/world/storage/loot/LootParameterSets.java
+@@ -12,9 +12,11 @@
+    });
+    public static final LootParameterSet field_216261_b = func_216253_a("chest", (p_216259_0_) -> {
+       p_216259_0_.func_216269_a(LootParameters.field_216286_f).func_216271_b(LootParameters.field_216281_a);
++      p_216259_0_.func_216271_b(LootParameters.field_216284_d); //Forge: Chest Minecarts can have killers.
+    });
+    public static final LootParameterSet field_216262_c = func_216253_a("fishing", (p_216250_0_) -> {
+       p_216250_0_.func_216269_a(LootParameters.field_216286_f).func_216269_a(LootParameters.field_216289_i);
++      p_216250_0_.func_216271_b(LootParameters.field_216284_d).func_216271_b(LootParameters.field_216281_a); //Forge: Allow fisher, and bobber
+    });
+    public static final LootParameterSet field_216263_d = func_216253_a("entity", (p_216254_0_) -> {
+       p_216254_0_.func_216269_a(LootParameters.field_216281_a).func_216269_a(LootParameters.field_216286_f).func_216269_a(LootParameters.field_216283_c).func_216271_b(LootParameters.field_216284_d).func_216271_b(LootParameters.field_216285_e).func_216271_b(LootParameters.field_216282_b);

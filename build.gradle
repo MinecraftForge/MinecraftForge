@@ -23,6 +23,7 @@ import net.minecraftforge.gradle.patcher.task.ApplyBinPatches
 import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
 import net.minecraftforge.gradle.patcher.task.TaskReobfuscateJar
+import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
 import java.util.stream.Collectors
 
@@ -30,7 +31,7 @@ plugins {
     id 'net.minecrell.licenser' version '0.4'
     id 'org.ajoberstar.grgit' version '2.3.0'
     id 'de.undercouch.download' version '3.3.0'
-    id "com.github.ben-manes.versions" version '0.20.0'
+    id 'com.github.ben-manes.versions' version '0.20.0'
 }
 apply plugin: 'eclipse'
 
@@ -44,13 +45,13 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20180921-1.13'
-    MC_VERSION = '1.13.2'
-    MCP_VERSION = '20190213.203750'
+    MAPPING_VERSION = '20190608-1.14.2'
+    MC_VERSION = '1.14.2'
+    MCP_VERSION = '20190603.175704'
 }
 
 project(':mcp') {
-    apply plugin: 'net.minecraftforge.gradle.forgedev.mcp'
+    apply plugin: 'net.minecraftforge.gradle.mcp'
     mcp {
         config = MC_VERSION + '-' + MCP_VERSION
         pipeline = 'joined'
@@ -60,11 +61,16 @@ project(':mcp') {
 project(':clean') {
     evaluationDependsOn(':mcp')
     apply plugin: 'eclipse'
-    apply plugin: 'net.minecraftforge.gradle.forgedev.patcher'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
+    compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+    
     repositories {
         mavenCentral()
     }
-
+    
+    dependencies {
+        implementation 'net.minecraftforge:forgespi:0.13.+'
+    }
     patcher {
         parent = project(':mcp')
         mcVersion = MC_VERSION
@@ -101,61 +107,69 @@ project(':forge') {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'eclipse'
-    apply plugin: 'net.minecraftforge.gradle.forgedev.patcher'
+    apply plugin: 'net.minecraftforge.gradle.patcher'
     apply plugin: 'net.minecrell.licenser'
     apply plugin: 'de.undercouch.download'
     
     compileJava.sourceCompatibility = compileJava.targetCompatibility = sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-    group = 'net.minecraftforge' //TODO: remove test when we finish patches and want users to find it
+    group = 'net.minecraftforge'
 
     sourceSets {
         fmllauncher {
             java {
-                srcDir "$rootDir/src/fmllauncher/java"
+                srcDirs = ["$rootDir/src/fmllauncher/java"]
             }
             resources {
-                srcDir "$rootDir/src/fmllauncher/resources"
+                srcDirs = ["$rootDir/src/fmllauncher/resources"]
             }
         }
         main {
             compileClasspath += sourceSets.fmllauncher.runtimeClasspath
             runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
             java {
-                srcDir "$rootDir/src/main/java"
+                srcDirs = ["$rootDir/src/main/java"]
             }
             resources {
-                srcDir "$rootDir/src/main/resources"
+                srcDirs = [
+                    "$rootDir/src/main/resources",
+                    "$rootDir/src/generated/resources"
+                ]
             }
         }
         test {
             compileClasspath += sourceSets.fmllauncher.runtimeClasspath
             runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
             java {
-                // srcDir "$rootDir/src/test/java" TODO fix later
-                srcDir "$rootDir/src/fmllaunchertest/java"
+                srcDirs = [
+                    "$rootDir/src/test/java", 
+                    "$rootDir/src/fmllaunchertest/java"
+                ]
             }
             resources {
-                srcDir "$rootDir/src/test/resources"
+                srcDirs = ["$rootDir/src/test/resources"]
             }
         }
         userdev {
             compileClasspath += sourceSets.main.runtimeClasspath
             runtimeClasspath += sourceSets.main.runtimeClasspath
             java {
-                srcDir "$rootDir/src/userdev/java"
+                srcDirs = ["$rootDir/src/userdev/java"]
             }
             resources {
-                srcDir "$rootDir/src/userdev/resources"
+                srcDirs = ["$rootDir/src/userdev/resources"]
             }
         }
     }
+    //Eclipse adds the sourcesets twice, once where we tell it to, once in the projects folder. No idea why. So delete them
+    eclipse.classpath.file.whenMerged { cls -> cls.entries.removeIf { e -> e instanceof SourceFolder && e.path.startsWith('src/') && !e.path.startsWith('src/main/') } }
+
     repositories {
         mavenLocal()
         mavenCentral()
     }
 
     ext {
-        SPEC_VERSION = '25.0' // This is overwritten by git tag, but here so dev time doesnt explode
+        SPEC_VERSION = '26.0' // This is overwritten by git tag, but here so dev time doesnt explode
         // The new versioning sceme is <MCVersion>-<ForgeMC>.<RB>.<CommitsSinceRB>
         // ForgeMC is a unique identifier for every MC version we have supported.
         // Essentially, the same as the old, except dropping the first number, and the builds are no longer unique.
@@ -208,6 +222,22 @@ project(':forge') {
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
                 property 'terminal.ansi', 'true'
                 property 'org.lwjgl.system.SharedLibraryExtractDirectory', 'lwjgl_dll'
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+            }
+
+            forge_test_client {
+                parent runs.forge_client
+                taskName 'forge_test_client'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    TestMods { sources sourceSets.test }
+                }
             }
 
             forge_server {
@@ -224,6 +254,45 @@ project(':forge') {
                 environment 'FORGE_SPEC', SPEC_VERSION
                 environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
                 environment 'LAUNCHER_VERSION', SPEC_VERSION
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+            }
+
+            forge_test_server {
+                parent runs.forge_server
+                taskName 'forge_test_server'
+
+                environment 'MOD_CLASSES', 'dummy' // Needed to work around FG limitation, FG will replace this!
+
+                mods {
+                    TestMods { sources sourceSets.test }
+                }
+            }
+
+            forge_data {
+                taskName 'forge_data'
+
+                main 'net.minecraftforge.userdev.LaunchTesting'
+                workingDirectory project.file('run')
+
+                environment 'target', 'fmldevdata'
+
+                environment 'MC_VERSION', MC_VERSION
+                environment 'MCP_VERSION', MCP_VERSION
+                environment 'FORGE_GROUP', project.group
+                environment 'FORGE_SPEC', SPEC_VERSION
+                environment 'FORGE_VERSION', project.version.substring(MC_VERSION.length() + 1).toString()
+                environment 'LAUNCHER_VERSION', SPEC_VERSION
+
+                ideaModule "${rootProject.name}.${project.name}.userdev"
+
+                source sourceSets.main
+                source sourceSets.userdev
+                
+                args '--mod', 'forge', '--all', '--output', rootProject.file('src/generated/resources/')
             }
         }
     }
@@ -283,16 +352,15 @@ project(':forge') {
         fmllauncherImplementation.extendsFrom(installer)
     }
     dependencies {
-        api 'net.minecraft:client:${MC_VERSION}:extra'
-        installer 'com.paulscode:soundsystem:2018+'
         installer 'org.ow2.asm:asm:6.2'
         installer 'org.ow2.asm:asm-commons:6.2'
         installer 'org.ow2.asm:asm-tree:6.2'
-        installer 'cpw.mods:modlauncher:1.0.+'
+        installer 'cpw.mods:modlauncher:2.1.+'
+        installer 'cpw.mods:grossjava9hacks:1.1.+'
         installer 'net.minecraftforge:accesstransformers:0.16.+:shadowed'
-        installer 'net.minecraftforge:eventbus:0.8.+:service'
-        installer 'net.minecraftforge:forgespi:0.12.+'
-        installer 'net.minecraftforge:coremods:0.4.+'
+        installer 'net.minecraftforge:eventbus:0.9.+:service'
+        installer 'net.minecraftforge:forgespi:0.13.+'
+        installer 'net.minecraftforge:coremods:0.5.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.6.0'
         installer 'com.electronwill.night-config:toml:3.6.0'
@@ -300,15 +368,15 @@ project(':forge') {
         installer 'org.apache.maven:maven-artifact:3.6.0'
         installer 'net.jodah:typetools:0.6.0'
         installer 'java3d:vecmath:1.5.2'
-        installer 'org.apache.logging.log4j:log4j-api:2.11.1'
-        installer 'org.apache.logging.log4j:log4j-core:2.11.1'
+        installer 'org.apache.logging.log4j:log4j-api:2.11.2'
+        installer 'org.apache.logging.log4j:log4j-core:2.11.2'
         installer 'net.minecrell:terminalconsoleappender:1.1.+'
         installer 'net.sf.jopt-simple:jopt-simple:5.0.4'
         fmllauncherImplementation 'com.google.guava:guava:21.0'
         fmllauncherImplementation 'com.google.code.gson:gson:2.8.0'
-        testImplementation "org.junit.jupiter:junit-jupiter-api:5.0.0"
-        testImplementation "org.opentest4j:opentest4j:1.0.0" // needed for junit 5
-        testImplementation "org.hamcrest:hamcrest-all:1.3" // needs advanced matching for list order
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.0.0'
+        testImplementation 'org.opentest4j:opentest4j:1.0.0' // needed for junit 5
+        testImplementation 'org.hamcrest:hamcrest-all:1.3' // needs advanced matching for list order
     }
     
     def extraTxts = [
@@ -809,6 +877,19 @@ project(':forge') {
                 environment 'MCP_MAPPINGS', '{mcp_mappings}'
                 environment 'FORGE_VERSION', "${project.version.substring(MC_VERSION.length() + 1)}"
             }
+
+            data {
+                main 'net.minecraftforge.userdev.LaunchTesting'
+
+                environment 'target', 'fmldevdata'
+
+                environment 'MC_VERSION', "${MC_VERSION}"
+                environment 'FORGE_GROUP', "${project.group}"
+                environment 'MCP_VERSION', "${MCP_VERSION}"
+                environment 'MOD_CLASSES', '{source_roots}'
+                environment 'MCP_MAPPINGS', '{mcp_mappings}'
+                environment 'FORGE_VERSION', "${project.version.substring(MC_VERSION.length() + 1)}"
+            }
         }
     }
     
@@ -856,8 +937,12 @@ project(':forge') {
         }
     }
 
+    extractRangeMap {
+        addDependencies jar.archivePath
+        addSources sourceSets.userdev.java.srcDirs
+    }
     applyRangeMap {
-        setSources sourceSets.userdev.java.srcDirs.findAll({f -> (f != patcher.patchedSrc) })
+        setSources sourceSets.userdev.java.srcDirs
     }
     
     tasks.eclipse.dependsOn('genEclipseRuns')

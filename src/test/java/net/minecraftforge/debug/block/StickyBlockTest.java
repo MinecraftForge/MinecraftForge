@@ -42,7 +42,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import net.minecraftforge.api.distmarker.Dist;
 
-@Mod(modid = StickyBlockTest.MODID, name = "ForgeDebugCustomSlimeBlock", version = StickyBlockTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = StickyBlockTest.MODID, name = "ForgeDebugCustomSlimeBlock", version = StickyBlockTest.VERSION, acceptableRemoteVersions = "*")
 public class StickyBlockTest
 {
     public static final String MODID = "forgedebugcustomslimeblock";
@@ -58,7 +58,7 @@ public class StickyBlockTest
         ForgeRegistries.ITEMS.register(new ItemMultiTexture(CUSTOM_SLIME_BLOCK, CUSTOM_SLIME_BLOCK, stack -> CustomSlime.BlockType.values[stack.getMetadata()].toString()).setRegistryName(CUSTOM_SLIME_BLOCK.getRegistryName()));
     }
 
-    @EventBusSubscriber(value = Side.CLIENT, modid = MODID)
+    //@EventBusSubscriber(value = Side.CLIENT, modid = MODID)
     public static class BakeEventHandler
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

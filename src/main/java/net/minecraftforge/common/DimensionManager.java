@@ -19,6 +19,7 @@
 
 package net.minecraftforge.common;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -40,16 +41,18 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Multiset;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.world.World;
-import net.minecraft.world.ServerWorldEventHandler;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldServerMulti;
+import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.world.chunk.listener.IChunkStatusListener;
+import net.minecraft.world.ServerWorld;
+import net.minecraft.world.ServerMultiWorld;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.event.world.RegisterDimensionsEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -88,10 +91,10 @@ public class DimensionManager
      * @param type Dimension Type.
      * @param data Configuration data for this dimension, passed into
      */
-    public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data)
+    public static DimensionType registerDimension(ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
     {
-        Validate.notNull(name, "Can not register a dimesnion with null name");
-        Validate.isTrue(!REGISTRY.func_212607_c(name), "Dimension: " + name + " Already registered");
+        Validate.notNull(name, "Can not register a dimension with null name");
+        Validate.isTrue(!REGISTRY.containsKey(name), "Dimension: " + name + " Already registered");
         Validate.notNull(type, "Can not register a null dimension type");
 
         int id = REGISTRY.getNextId();
@@ -103,7 +106,8 @@ public class DimensionManager
                 LOGGER.info(DIMMGR, "Changing ModDimension for '{}' from '{}' to '{}'", name.toString(), old.getType() == null ? null : old.getType().toString(), type.getRegistryName().toString());
             savedEntries.remove(name);
         }
-        DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), type, data);
+        @SuppressWarnings("deprecation")
+        DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), hasSkyLight, type, data);
         REGISTRY.register(id, name, instance);
         LOGGER.info(DIMMGR, "Registered dimension {} of type {} and id {}", name.toString(), type.getRegistryName().toString(), id);
         return instance;
@@ -147,7 +151,7 @@ public class DimensionManager
      * @return The world, null if unloaded and not loadable.
      */
     @Nullable
-    public static WorldServer getWorld(MinecraftServer server, DimensionType dim, boolean resetUnloadDelay, boolean forceLoad)
+    public static ServerWorld getWorld(MinecraftServer server, DimensionType dim, boolean resetUnloadDelay, boolean forceLoad)
     {
         Validate.notNull(server, "Must provide server when creating world");
         Validate.notNull(dim, "Dimension type must not be null");
@@ -161,7 +165,7 @@ public class DimensionManager
             getData(dim).ticksWaited = 0;
 
         @SuppressWarnings("deprecation")
-        WorldServer ret = server.forgeGetWorldMap().get(dim);
+        ServerWorld ret = server.forgeGetWorldMap().get(dim);
         if (ret == null && forceLoad)
             ret = initWorld(server, dim);
         return ret;
@@ -177,47 +181,45 @@ public class DimensionManager
         dimensions.remove(id);
     }
 
-    public static DimensionType registerDimensionInternal(int id, ResourceLocation name, ModDimension type, PacketBuffer data)
+    public static DimensionType registerDimensionInternal(int id, ResourceLocation name, ModDimension type, PacketBuffer data, boolean hasSkyLight)
     {
-        Validate.notNull(name, "Can not register a dimesnion with null name");
+        Validate.notNull(name, "Can not register a dimension with null name");
         Validate.notNull(type, "Can not register a null dimension type");
-        Validate.isTrue(!REGISTRY.func_212607_c(name), "Dimension: " + name + " Already registered");
-        Validate.isTrue(REGISTRY.get(id) == null, "Dimension with id " + id + " already registered as name " + REGISTRY.getKey(REGISTRY.get(id)));
+        Validate.isTrue(!REGISTRY.containsKey(name), "Dimension: " + name + " Already registered");
+        Validate.isTrue(REGISTRY.getByValue(id) == null, "Dimension with id " + id + " already registered as name " + REGISTRY.getKey(REGISTRY.getByValue(id)));
 
-        DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), type, data);
+        @SuppressWarnings("deprecation")
+        DimensionType instance = new DimensionType(id, "", name.getNamespace() + "/" + name.getPath(), type.getFactory(), hasSkyLight, type, data);
         REGISTRY.register(id, name, instance);
         LOGGER.info(DIMMGR, "Registered dimension {} of type {} and id {}", name.toString(), type.getRegistryName().toString(), id);
         return instance;
     }
 
     @SuppressWarnings("deprecation")
-    public static WorldServer initWorld(MinecraftServer server, DimensionType dim)
+    public static ServerWorld initWorld(MinecraftServer server, DimensionType dim)
     {
         Validate.isTrue(dim != DimensionType.OVERWORLD, "Can not hotload overworld. This must be loaded at all times by main Server.");
         Validate.notNull(server, "Must provide server when creating world");
         Validate.notNull(dim, "Must provide dimension when creating world");
 
-        WorldServer overworld = getWorld(server, DimensionType.OVERWORLD, false, false);
+        ServerWorld overworld = getWorld(server, DimensionType.OVERWORLD, false, false);
         Validate.notNull(overworld, "Cannot Hotload Dim: Overworld is not Loaded!");
 
         @SuppressWarnings("resource")
-        WorldServer world = new WorldServerMulti(server, overworld.getSaveHandler(), dim, overworld, server.profiler).func_212251_i__();
-        world.addEventListener(new ServerWorldEventHandler(server, world));
+        ServerWorld world = new ServerMultiWorld(overworld, server, server.func_213207_aT(), overworld.func_217485_w(), dim, server.func_213185_aS(), new NoopChunkStatusListener());
         if (!server.isSinglePlayer())
             world.getWorldInfo().setGameType(server.getGameType());
         server.forgeGetWorldMap().put(dim, world);
 
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
 
-        server.setDifficultyForAllWorlds(server.getDifficulty());
-
         return world;
     }
 
-    private static boolean canUnloadWorld(WorldServer world)
+    private static boolean canUnloadWorld(ServerWorld world)
     {
-        return world.func_212412_ag().isEmpty()
-                && world.playerEntities.isEmpty()
+        return world.func_217469_z().isEmpty()
+                && world.getPlayers().isEmpty()
                 //&& !world.dimension.getType().shouldLoadSpawn()
                 && !getData(world.getDimension().getType()).keepLoaded;
     }
@@ -226,7 +228,7 @@ public class DimensionManager
      * Queues a dimension to unload, if it can be unloaded.
      * @param id The id of the dimension
      */
-    public static void unloadWorld(WorldServer world)
+    public static void unloadWorld(ServerWorld world)
     {
         if (world == null || !canUnloadWorld(world))
             return;
@@ -261,7 +263,7 @@ public class DimensionManager
 
             queueIterator.remove();
 
-            WorldServer w = server.forgeGetWorldMap().get(dim);
+            ServerWorld w = server.forgeGetWorldMap().get(dim);
 
             dimension.ticksWaited = 0;
             // Don't unload the world if the status changed
@@ -272,7 +274,7 @@ public class DimensionManager
             }
             try
             {
-                w.saveAllChunks(true, null);
+                w.func_217445_a(null, true, true);
             }
             catch (Exception e)
             {
@@ -281,7 +283,11 @@ public class DimensionManager
             finally
             {
                 MinecraftForge.EVENT_BUS.post(new WorldEvent.Unload(w));
-                w.close();
+                try {
+                    w.close();
+                } catch (IOException e) {
+                    LOGGER.error("Exception closing the level", e);
+                }
                 server.forgeGetWorldMap().remove(dim);
             }
         }
@@ -304,22 +310,22 @@ public class DimensionManager
         }
     }
 
-    public static void writeRegistry(NBTTagCompound data)
+    public static void writeRegistry(CompoundNBT data)
     {
-        data.setInt("version", 1);
+        data.putInt("version", 1);
         List<SavedEntry> list = new ArrayList<>();
         for (DimensionType type : REGISTRY)
             list.add(new SavedEntry(type));
         savedEntries.values().forEach(list::add);
 
         Collections.sort(list, (a, b) -> a.id - b.id);
-        NBTTagList lst = new NBTTagList();
+        ListNBT lst = new ListNBT();
         list.forEach(e -> lst.add(e.write()));
 
-        data.setTag("entries", lst);
+        data.put("entries", lst);
     }
 
-    public static void readRegistry(NBTTagCompound data)
+    public static void readRegistry(CompoundNBT data)
     {
         int version = data.getInt("version");
         if (version != 1)
@@ -336,13 +342,13 @@ public class DimensionManager
         savedEntries.clear();
 
         boolean error = false;
-        NBTTagList list = data.getList("entries", 10);
+        ListNBT list = data.getList("entries", 10);
         for (int x = 0; x < list.size(); x++)
         {
             SavedEntry entry = new SavedEntry(list.getCompound(x));
             if (entry.type == null)
             {
-                DimensionType type = REGISTRY.func_212608_b(entry.name);
+                DimensionType type = REGISTRY.getOrDefault(entry.name);
                 if (type == null)
                 {
                     LOGGER.error(DIMMGR, "Vanilla entry '{}' id {} in save file not found in registry.", entry.name.toString(), entry.id);
@@ -366,7 +372,7 @@ public class DimensionManager
                     savedEntries.put(entry.name, entry);
                     continue;
                 }
-                registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)));
+                registerDimensionInternal(entry.id, entry.name, mod, entry.data == null ? null : new PacketBuffer(Unpooled.wrappedBuffer(entry.data)), entry.skyLight());
             }
         }
 
@@ -382,7 +388,7 @@ public class DimensionManager
     }
 
     @Deprecated //Forge: Internal use only.
-    public static IRegistry<DimensionType> getRegistry()
+    public static MutableRegistry<DimensionType> getRegistry()
     {
         return REGISTRY;
     }
@@ -404,6 +410,7 @@ public class DimensionManager
         ResourceLocation name;
         ResourceLocation type;
         byte[] data;
+        boolean skyLight;
 
         public int getId()
         {
@@ -427,12 +434,18 @@ public class DimensionManager
             return data;
         }
 
-        private SavedEntry(NBTTagCompound data)
+        public boolean skyLight()
+        {
+            return this.skyLight;
+        }
+
+        private SavedEntry(CompoundNBT data)
         {
             this.id = data.getInt("id");
             this.name = new ResourceLocation(data.getString("name"));
             this.type = data.contains("type", 8) ? new ResourceLocation(data.getString("type")) : null;
             this.data = data.contains("data", 7) ? data.getByteArray("data") : null;
+            this.skyLight = data.contains("sky_light", 99) ? data.getByte("sky_light") == 0 : true;
         }
 
         private SavedEntry(DimensionType data)
@@ -443,18 +456,27 @@ public class DimensionManager
                 this.type = data.getModType().getRegistryName();
             if (data.getData() != null)
                 this.data = data.getData().array();
+            this.skyLight = data.func_218272_d();
         }
 
-        private NBTTagCompound write()
+        private CompoundNBT write()
         {
-            NBTTagCompound ret = new NBTTagCompound();
-            ret.setInt("id", id);
-            ret.setString("name", name.toString());
+            CompoundNBT ret = new CompoundNBT();
+            ret.putInt("id", id);
+            ret.putString("name", name.toString());
             if (type != null)
-                ret.setString("type", type.toString());
+                ret.putString("type", type.toString());
             if (data != null)
-                ret.setByteArray("data", data);
+                ret.putByteArray("data", data);
+            ret.putByte("sky_light", (byte)(skyLight ? 1 : 0));
             return ret;
         }
+    }
+
+    private static class NoopChunkStatusListener implements IChunkStatusListener
+    {
+        @Override public void func_219509_a(ChunkPos p_219509_1_) { }
+        @Override public void func_219508_a(ChunkPos p_219508_1_, ChunkStatus p_219508_2_) { }
+        @Override public void func_219510_b() { }
     }
 }

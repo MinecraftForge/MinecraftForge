@@ -1,0 +1,23 @@
+--- a/net/minecraft/tileentity/BeaconTileEntity.java
++++ b/net/minecraft/tileentity/BeaconTileEntity.java
+@@ -111,8 +111,8 @@
+       for(int i1 = 0; i1 < 10 && blockpos.func_177956_o() <= l; ++i1) {
+          BlockState blockstate = this.field_145850_b.func_180495_p(blockpos);
+          Block block = blockstate.func_177230_c();
+-         if (block instanceof IBeaconBeamColorProvider) {
+-            float[] afloat = ((IBeaconBeamColorProvider)block).func_196457_d().func_193349_f();
++         float[] afloat = blockstate.getBeaconColorMultiplier(this.field_145850_b, blockpos, func_174877_v());
++         if (afloat != null) {
+             if (this.field_213934_g.size() <= 1) {
+                beacontileentity$beamsegment = new BeaconTileEntity.BeamSegment(afloat);
+                this.field_213934_g.add(beacontileentity$beamsegment);
+@@ -181,8 +181,7 @@
+ 
+          for(int k = p_213927_1_ - i; k <= p_213927_1_ + i && flag; ++k) {
+             for(int l = p_213927_3_ - i; l <= p_213927_3_ + i; ++l) {
+-               Block block = this.field_145850_b.func_180495_p(new BlockPos(k, j, l)).func_177230_c();
+-               if (block != Blocks.field_150475_bE && block != Blocks.field_150340_R && block != Blocks.field_150484_ah && block != Blocks.field_150339_S) {
++               if (!this.field_145850_b.func_180495_p(new BlockPos(k, j, l)).isBeaconBase(this.field_145850_b, new BlockPos(k, j, l), func_174877_v())) {
+                   flag = false;
+                   break;
+                }

@@ -20,14 +20,14 @@
 package net.minecraftforge.fml.client;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.DownloadingPackFinder;
-import net.minecraft.client.resources.ResourcePackInfoClient;
+import net.minecraft.client.resources.ClientResourcePackInfo;
 import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.resources.ResourcePackList;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfig;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
@@ -38,6 +38,8 @@ import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mojang.blaze3d.platform.GlStateManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,7 +54,7 @@ public class ClientModLoader
     private static Minecraft mc;
     private static LoadingFailedException error;
 
-    public static void begin(final Minecraft minecraft, final ResourcePackList<ResourcePackInfoClient> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
+    public static void begin(final Minecraft minecraft, final ResourcePackList<ClientResourcePackInfo> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
     {
         loading = true;
         ClientModLoader.mc = minecraft;
@@ -61,7 +63,9 @@ public class ClientModLoader
         try {
             ModLoader.get().loadMods();
         } catch (LoadingFailedException e) {
+            MinecraftForge.EVENT_BUS.shutdown();
             error = e;
+            TEMP_printLoadingExceptions(e);
         }
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
     }
@@ -71,7 +75,9 @@ public class ClientModLoader
         try {
             ModLoader.get().finishMods();
         } catch (LoadingFailedException e) {
+            MinecraftForge.EVENT_BUS.shutdown();
             if (error == null) error = e;
+            TEMP_printLoadingExceptions(e);
         }
         loading = false;
         mc.gameSettings.loadOptions();
@@ -84,8 +90,8 @@ public class ClientModLoader
 
     public static void complete()
     {
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableTexture2D();
+        GlStateManager.disableTexture();
+        GlStateManager.enableTexture();
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         boolean showWarnings = true;
         try {
@@ -111,5 +117,11 @@ public class ClientModLoader
     public static boolean isLoading()
     {
         return loading;
+    }
+
+    private static void TEMP_printLoadingExceptions(LoadingFailedException error)
+    {
+        error.getErrors().forEach(e -> LOGGER.error("Exception: " + e.formatToString()));
+        throw new RuntimeException(error);
     }
 }

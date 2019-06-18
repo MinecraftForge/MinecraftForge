@@ -1,0 +1,20 @@
+--- a/net/minecraft/client/gui/DisplayEffectsScreen.java
++++ b/net/minecraft/client/gui/DisplayEffectsScreen.java
+@@ -84,6 +84,7 @@
+       int i = this.field_147009_r;
+ 
+       for(EffectInstance effectinstance : p_214077_3_) {
++         if (!effectinstance.func_188419_a().shouldRender(effectinstance)) continue;
+          Effect effect = effectinstance.func_188419_a();
+          blit(p_214077_1_ + 6, i + 7, this.blitOffset, 18, 18, potionspriteuploader.func_215288_a(effect));
+          i += p_214077_2_;
+@@ -95,6 +96,9 @@
+       int i = this.field_147009_r;
+ 
+       for(EffectInstance effectinstance : p_214078_3_) {
++         if (!effectinstance.func_188419_a().shouldRender(effectinstance)) continue;
++         effectinstance.func_188419_a().renderInventoryEffect(effectinstance, this, p_214078_1_, i, this.blitOffset);
++         if (!effectinstance.func_188419_a().shouldRenderInvText(effectinstance)) { i += p_214078_2_; continue; }
+          String s = I18n.func_135052_a(effectinstance.func_188419_a().func_76393_a());
+          if (effectinstance.func_76458_c() >= 1 && effectinstance.func_76458_c() <= 9) {
+             s = s + ' ' + I18n.func_135052_a("enchantment.level." + (effectinstance.func_76458_c() + 1));

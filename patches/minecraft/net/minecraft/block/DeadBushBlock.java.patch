@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/DeadBushBlock.java
++++ b/net/minecraft/block/DeadBushBlock.java
+@@ -5,7 +5,7 @@
+ import net.minecraft.util.math.shapes.VoxelShape;
+ import net.minecraft.world.IBlockReader;
+ 
+-public class DeadBushBlock extends BushBlock {
++public class DeadBushBlock extends BushBlock implements net.minecraftforge.common.IShearable {
+    protected static final VoxelShape field_196397_a = Block.func_208617_a(2.0D, 0.0D, 2.0D, 14.0D, 13.0D, 14.0D);
+ 
+    protected DeadBushBlock(Block.Properties p_i48418_1_) {

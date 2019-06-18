@@ -21,22 +21,22 @@ package net.minecraftforge.fluids;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.particles.ParticleTypes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Particles;
-import net.minecraft.init.SoundEvents;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.SoundEvents;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.translation.LanguageMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraft.item.EnumRarity;
+import net.minecraft.item.Rarity;
 
 /**
  * Minecraft Forge Fluid Implementation
@@ -122,7 +122,7 @@ public class Fluid
      *
      * Used primarily in tool tips.
      */
-    protected EnumRarity rarity = EnumRarity.COMMON;
+    protected Rarity rarity = Rarity.COMMON;
 
     /**
      * If there is a Block implementation of the Fluid, the Block is linked here.
@@ -216,7 +216,7 @@ public class Fluid
         return this;
     }
 
-    public Fluid setRarity(EnumRarity rarity)
+    public Fluid setRarity(Rarity rarity)
     {
         this.rarity = rarity;
         return this;
@@ -264,7 +264,7 @@ public class Fluid
      * Determines if this fluid should vaporize in dimensions where water vaporizes when placed.
      * To preserve the intentions of vanilla, fluids that can turn lava into obsidian should vaporize.
      * This prevents players from making the nether safe with a single bucket.
-     * Based on {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
+     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
      *
      * @param fluidStack The fluidStack is trying to be placed.
      * @return true if this fluid should vaporize in dimensions where water vaporizes when placed.
@@ -277,22 +277,22 @@ public class Fluid
     }
 
     /**
-     * Called instead of placing the fluid block if {@link WorldProvider#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
+     * Called instead of placing the fluid block if {@link net.minecraft.world.dimension.Dimension#doesWaterVaporize()} and {@link #doesVaporize(FluidStack)} are true.
      * Override this to make your explosive liquid blow up instead of the default smoke, etc.
-     * Based on {@link net.minecraft.item.ItemBucket#tryPlaceContainedLiquid(EntityPlayer, World, BlockPos)}
+     * Based on {@link net.minecraft.item.BucketItem#tryPlaceContainedLiquid(PlayerEntity, World, BlockPos)}
      *
      * @param player     Player who tried to place the fluid. May be null for blocks like dispensers.
      * @param worldIn    World to vaporize the fluid in.
      * @param pos        The position in the world the fluid block was going to be placed.
      * @param fluidStack The fluidStack that was going to be placed.
      */
-    public void vaporize(@Nullable EntityPlayer player, World worldIn, BlockPos pos, FluidStack fluidStack)
+    public void vaporize(@Nullable PlayerEntity player, World worldIn, BlockPos pos, FluidStack fluidStack)
     {
         worldIn.playSound(player, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.rand.nextFloat() - worldIn.rand.nextFloat()) * 0.8F);
 
         for (int l = 0; l < 8; ++l)
         {
-            worldIn.addOptionalParticle(Particles.LARGE_SMOKE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
+            worldIn.addOptionalParticle(ParticleTypes.LARGE_SMOKE, (double) pos.getX() + Math.random(), (double) pos.getY() + Math.random(), (double) pos.getZ() + Math.random(), 0.0D, 0.0D, 0.0D);
         }
     }
 
@@ -347,7 +347,7 @@ public class Fluid
         return this.isGaseous;
     }
 
-    public EnumRarity getRarity()
+    public Rarity getRarity()
     {
         return rarity;
     }
@@ -413,7 +413,7 @@ public class Fluid
     public int getTemperature(FluidStack stack){ return getTemperature(); }
     public int getViscosity(FluidStack stack){ return getViscosity(); }
     public boolean isGaseous(FluidStack stack){ return isGaseous(); }
-    public EnumRarity getRarity(FluidStack stack){ return getRarity(); }
+    public Rarity getRarity(FluidStack stack){ return getRarity(); }
     public int getColor(FluidStack stack){ return getColor(); }
     public ResourceLocation getStill(FluidStack stack) { return getStill(); }
     public ResourceLocation getFlowing(FluidStack stack) { return getFlowing(); }
@@ -426,7 +426,7 @@ public class Fluid
     public int getTemperature(World world, BlockPos pos){ return getTemperature(); }
     public int getViscosity(World world, BlockPos pos){ return getViscosity(); }
     public boolean isGaseous(World world, BlockPos pos){ return isGaseous(); }
-    public EnumRarity getRarity(World world, BlockPos pos){ return getRarity(); }
+    public Rarity getRarity(World world, BlockPos pos){ return getRarity(); }
     public int getColor(World world, BlockPos pos){ return getColor(); }
     public ResourceLocation getStill(World world, BlockPos pos) { return getStill(); }
     public ResourceLocation getFlowing(World world, BlockPos pos) { return getFlowing(); }

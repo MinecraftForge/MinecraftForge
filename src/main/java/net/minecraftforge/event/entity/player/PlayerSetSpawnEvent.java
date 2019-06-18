@@ -20,7 +20,7 @@
 package net.minecraftforge.event.entity.player;
 
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 @net.minecraftforge.eventbus.api.Cancelable
@@ -29,7 +29,7 @@ public class PlayerSetSpawnEvent extends PlayerEvent
     private final boolean forced;
     private final BlockPos newSpawn;
     
-    public PlayerSetSpawnEvent(EntityPlayer player, BlockPos newSpawn, boolean forced) {
+    public PlayerSetSpawnEvent(PlayerEntity player, BlockPos newSpawn, boolean forced) {
         super(player);
         this.newSpawn = newSpawn;
         this.forced = forced;

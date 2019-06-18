@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml.hooks;
 
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -33,37 +33,37 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class BasicEventHooks
 {
-    public static void firePlayerChangedDimensionEvent(EntityPlayer player, DimensionType fromDim, DimensionType toDim)
+    public static void firePlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerChangedDimensionEvent(player, fromDim, toDim));
     }
 
-    public static void firePlayerLoggedIn(EntityPlayer player)
+    public static void firePlayerLoggedIn(PlayerEntity player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedInEvent(player));
     }
 
-    public static void firePlayerLoggedOut(EntityPlayer player)
+    public static void firePlayerLoggedOut(PlayerEntity player)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerLoggedOutEvent(player));
     }
 
-    public static void firePlayerRespawnEvent(EntityPlayer player, boolean endConquered)
+    public static void firePlayerRespawnEvent(PlayerEntity player, boolean endConquered)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.PlayerRespawnEvent(player, endConquered));
     }
 
-    public static void firePlayerItemPickupEvent(EntityPlayer player, EntityItem item, ItemStack clone)
+    public static void firePlayerItemPickupEvent(PlayerEntity player, ItemEntity item, ItemStack clone)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemPickupEvent(player, item, clone));
     }
 
-    public static void firePlayerCraftingEvent(EntityPlayer player, ItemStack crafted, IInventory craftMatrix)
+    public static void firePlayerCraftingEvent(PlayerEntity player, ItemStack crafted, IInventory craftMatrix)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemCraftedEvent(player, crafted, craftMatrix));
     }
 
-    public static void firePlayerSmeltedEvent(EntityPlayer player, ItemStack smelted)
+    public static void firePlayerSmeltedEvent(PlayerEntity player, ItemStack smelted)
     {
         MinecraftForge.EVENT_BUS.post(new PlayerEvent.ItemSmeltedEvent(player, smelted));
     }
@@ -79,12 +79,12 @@ public class BasicEventHooks
         MinecraftForge.EVENT_BUS.post(new TickEvent.RenderTickEvent(TickEvent.Phase.END, timer));
     }
 
-    public static void onPlayerPreTick(EntityPlayer player)
+    public static void onPlayerPreTick(PlayerEntity player)
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.START, player));
     }
 
-    public static void onPlayerPostTick(EntityPlayer player)
+    public static void onPlayerPostTick(PlayerEntity player)
     {
         MinecraftForge.EVENT_BUS.post(new TickEvent.PlayerTickEvent(TickEvent.Phase.END, player));
     }

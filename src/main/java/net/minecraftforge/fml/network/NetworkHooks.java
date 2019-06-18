@@ -19,27 +19,29 @@
 
 package net.minecraftforge.fml.network;
 
-import io.netty.buffer.Unpooled;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.Container;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.Packet;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.handshake.client.CPacketHandshake;
-import net.minecraft.network.NetHandlerLoginServer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IInteractionObject;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.fml.config.ConfigTracker;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.network.IPacket;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.handshake.client.CHandshakePacket;
+import net.minecraft.network.login.ServerLoginNetHandler;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerContainerEvent;
+import net.minecraftforge.fml.config.ConfigTracker;
 
 public class NetworkHooks
 {
@@ -55,13 +57,9 @@ public class NetworkHooks
         return ConnectionType.forVersionFlag(connection.get().channel().attr(FMLNetworkConstants.FML_NETVERSION).get());
     }
 
-    public static Packet<?> getEntitySpawningPacket(Entity entity)
+    public static IPacket<?> getEntitySpawningPacket(Entity entity)
     {
-        if (!entity.getType().usesVanillaSpawning())
-        {
-            return FMLNetworkConstants.playChannel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
-        }
-        return null;
+    	return FMLNetworkConstants.playChannel.toVanillaPacket(new FMLPlayMessages.SpawnEntity(entity), NetworkDirection.PLAY_TO_CLIENT);
     }
 
     public static boolean onCustomPayload(final ICustomPacket<?> packet, final NetworkManager manager) {
@@ -69,7 +67,7 @@ public class NetworkHooks
                 map(ni->ni.dispatch(packet.getDirection(), packet, manager)).orElse(Boolean.FALSE);
     }
 
-    public static void registerServerLoginChannel(NetworkManager manager, CPacketHandshake packet)
+    public static void registerServerLoginChannel(NetworkManager manager, CHandshakePacket packet)
     {
         manager.channel().attr(FMLNetworkConstants.FML_NETVERSION).set(packet.getFMLVersion());
         FMLHandshakeHandler.registerHandshake(manager, NetworkDirection.LOGIN_TO_CLIENT);
@@ -91,7 +89,7 @@ public class NetworkHooks
         }
     }
 
-    public static boolean tickNegotiation(NetHandlerLoginServer netHandlerLoginServer, NetworkManager networkManager, EntityPlayerMP player)
+    public static boolean tickNegotiation(ServerLoginNetHandler netHandlerLoginServer, NetworkManager networkManager, ServerPlayerEntity player)
     {
         return FMLHandshakeHandler.tickLogin(networkManager);
     }
@@ -109,7 +107,7 @@ public class NetworkHooks
      * @param player The player to open the GUI for
      * @param containerSupplier A supplier of container properties including the registry name of the container
      */
-    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier)
+    public static void openGui(ServerPlayerEntity player, INamedContainerProvider containerSupplier)
     {
         openGui(player, containerSupplier, buf -> {});
     }
@@ -128,7 +126,7 @@ public class NetworkHooks
      * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param pos A block pos, which will be encoded into the auxillary data for this request
      */
-    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, BlockPos pos)
+    public static void openGui(ServerPlayerEntity player, INamedContainerProvider containerSupplier, BlockPos pos)
     {
         openGui(player, containerSupplier, buf -> buf.writeBlockPos(pos));
     }
@@ -147,10 +145,9 @@ public class NetworkHooks
      * @param containerSupplier A supplier of container properties including the registry name of the container
      * @param extraDataWriter Consumer to write any additional data the GUI needs
      */
-    public static void openGui(EntityPlayerMP player, IInteractionObject containerSupplier, Consumer<PacketBuffer> extraDataWriter)
+    public static void openGui(ServerPlayerEntity player, INamedContainerProvider containerSupplier, Consumer<PacketBuffer> extraDataWriter)
     {
         if (player.world.isRemote) return;
-        ResourceLocation id = new ResourceLocation(containerSupplier.getGuiID());
         player.closeContainer();
         player.getNextWindowId();
         int openContainerId = player.currentWindowId;
@@ -165,12 +162,12 @@ public class NetworkHooks
         if (output.readableBytes() > 32600 || output.readableBytes() < 1) {
             throw new IllegalArgumentException("Invalid PacketBuffer for openGui, found "+ output.readableBytes()+ " bytes");
         }
-        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(id, openContainerId, output);
+        Container c = containerSupplier.createMenu(openContainerId, player.inventory, player);
+        ContainerType<?> type = c.getType();
+        FMLPlayMessages.OpenContainer msg = new FMLPlayMessages.OpenContainer(type, openContainerId, containerSupplier.getDisplayName(), output);
         FMLNetworkConstants.playChannel.sendTo(msg, player.connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
 
-        Container c = containerSupplier.createContainer(player.inventory, player);
         player.openContainer = c;
-        player.openContainer.windowId = openContainerId;
         player.openContainer.addListener(player);
         MinecraftForge.EVENT_BUS.post(new PlayerContainerEvent.Open(player, c));
     }

@@ -21,7 +21,7 @@ package net.minecraftforge.items.wrapper;
 
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemHandlerHelper;
@@ -31,25 +31,25 @@ import javax.annotation.Nonnull;
 public class SidedInvWrapper implements IItemHandlerModifiable
 {
     protected final ISidedInventory inv;
-    protected final EnumFacing side;
+    protected final Direction side;
 
     @SuppressWarnings("unchecked")
-    public static LazyOptional<IItemHandlerModifiable>[] create(ISidedInventory inv, EnumFacing... sides) {
+    public static LazyOptional<IItemHandlerModifiable>[] create(ISidedInventory inv, Direction... sides) {
         LazyOptional<IItemHandlerModifiable>[] ret = new LazyOptional[sides.length];
         for (int x = 0; x < sides.length; x++) {
-            final EnumFacing side = sides[x];
+            final Direction side = sides[x];
             ret[x] = LazyOptional.of(() -> new SidedInvWrapper(inv, side));
         }
         return ret;
     }
 
-    public SidedInvWrapper(ISidedInventory inv, EnumFacing side)
+    public SidedInvWrapper(ISidedInventory inv, Direction side)
     {
         this.inv = inv;
         this.side = side;
     }
 
-    public static int getSlot(ISidedInventory inv, int slot, EnumFacing side)
+    public static int getSlot(ISidedInventory inv, int slot, Direction side)
     {
         int[] slots = inv.getSlotsForFace(side);
         if (slot < slots.length)

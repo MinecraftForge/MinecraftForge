@@ -43,7 +43,7 @@ import java.util.function.Function;
 /**
  * Test for {@link TextureStitchEvent.Pre}.
  */
-@Mod(modid = CustomTextureAtlasSpriteTest.MOD_ID, name = CustomTextureAtlasSpriteTest.NAME, version = "1.0", clientSideOnly = true)
+//@Mod(modid = CustomTextureAtlasSpriteTest.MOD_ID, name = CustomTextureAtlasSpriteTest.NAME, version = "1.0", clientSideOnly = true)
 public class CustomTextureAtlasSpriteTest
 {
     static final String MOD_ID = "custom_sprite_test";
@@ -51,7 +51,7 @@ public class CustomTextureAtlasSpriteTest
     private static Logger logger;
 
 
-    @Mod.EventBusSubscriber(modid = MOD_ID)
+    //@Mod.EventBusSubscriber(modid = MOD_ID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

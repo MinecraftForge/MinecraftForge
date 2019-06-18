@@ -1,0 +1,41 @@
+--- a/net/minecraft/entity/monster/SlimeEntity.java
++++ b/net/minecraft/entity/monster/SlimeEntity.java
+@@ -113,7 +113,7 @@
+ 
+    public void func_70071_h_() {
+       if (!this.field_70170_p.field_72995_K && this.field_70170_p.func_175659_aa() == Difficulty.PEACEFUL && this.func_70809_q() > 0) {
+-         this.field_70128_L = true;
++         this.func_70106_y(); //Forge: Kill entity with notification to caps/subclasses.
+       }
+ 
+       this.field_70811_b += (this.field_70813_a - this.field_70811_b) * 0.5F;
+@@ -122,6 +122,7 @@
+       if (this.field_70122_E && !this.field_175452_bi) {
+          int i = this.func_70809_q();
+ 
++         if (spawnCustomParticles()) i = 0; // don't spawn particles if it's handled by the implementation itself
+          for(int j = 0; j < i * 8; ++j) {
+             float f = this.field_70146_Z.nextFloat() * ((float)Math.PI * 2F);
+             float f1 = this.field_70146_Z.nextFloat() * 0.5F + 0.5F;
+@@ -251,7 +252,7 @@
+ 
+    public boolean func_213380_a(IWorld p_213380_1_, SpawnReason p_213380_2_) {
+       BlockPos blockpos = new BlockPos(this.field_70165_t, 0.0D, this.field_70161_v);
+-      if (p_213380_1_.func_72912_H().func_76067_t() == WorldType.field_77138_c && this.field_70146_Z.nextInt(4) != 1) {
++      if (p_213380_1_.func_72912_H().func_76067_t().handleSlimeSpawnReduction(field_70146_Z, field_70170_p)) {
+          return false;
+       } else {
+          if (p_213380_1_.func_175659_aa() != Difficulty.PEACEFUL) {
+@@ -309,6 +310,12 @@
+       return super.func_213305_a(p_213305_1_).func_220313_a(0.255F * (float)this.func_70809_q());
+    }
+ 
++   /**
++    * Called when the slime spawns particles on landing, see onUpdate.
++    * Return true to prevent the spawning of the default particles.
++    */
++   protected boolean spawnCustomParticles() { return false; }
++
+    static class AttackGoal extends Goal {
+       private final SlimeEntity field_179466_a;
+       private int field_179465_b;

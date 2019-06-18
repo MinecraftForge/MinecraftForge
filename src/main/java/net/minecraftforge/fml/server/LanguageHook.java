@@ -24,7 +24,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.IResource;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.JsonUtils;
+import net.minecraft.util.JSONUtils;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.ForgeI18n;
 import org.apache.commons.io.IOUtils;
@@ -65,10 +65,10 @@ public class LanguageHook
         try
         {
             JsonElement jsonelement = GSON.fromJson(new InputStreamReader(inputstream, StandardCharsets.UTF_8), JsonElement.class);
-            JsonObject jsonobject = JsonUtils.getJsonObject(jsonelement, "strings");
+            JsonObject jsonobject = JSONUtils.getJsonObject(jsonelement, "strings");
 
             jsonobject.entrySet().forEach(entry -> {
-                String s = PATTERN.matcher(JsonUtils.getString(entry.getValue(), entry.getKey())).replaceAll("%$1s");
+                String s = PATTERN.matcher(JSONUtils.getString(entry.getValue(), entry.getKey())).replaceAll("%$1s");
                 modTable.put(entry.getKey(), s);
             });
         }

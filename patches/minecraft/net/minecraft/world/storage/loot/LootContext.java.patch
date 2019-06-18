@@ -1,13 +1,13 @@
 --- a/net/minecraft/world/storage/loot/LootContext.java
 +++ b/net/minecraft/world/storage/loot/LootContext.java
-@@ -91,6 +91,10 @@
-       }
+@@ -76,6 +76,10 @@
+       return this.field_186499_b;
     }
  
 +   public int getLootingModifier() {
-+      return net.minecraftforge.common.ForgeHooks.getLootingLevel(func_186493_a(), func_186492_c(), field_186503_f);
++      return net.minecraftforge.common.ForgeHooks.getLootingLevel(func_216031_c(LootParameters.field_216281_a), func_216031_c(LootParameters.field_216284_d), func_216031_c(LootParameters.field_216283_c));
 +   }
 +
     public static class Builder {
-       private final WorldServer field_186474_a;
-       private float field_186475_b;
+       private final ServerWorld field_186474_a;
+       private final Map<LootParameter<?>, Object> field_216025_b = Maps.newIdentityHashMap();

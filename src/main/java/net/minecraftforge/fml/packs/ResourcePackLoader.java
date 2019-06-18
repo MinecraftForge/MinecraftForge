@@ -70,7 +70,7 @@ public class ResourcePackLoader
             {
                 IModInfo mod = e.getKey().getModInfos().get(0);
                 final String name = "mod:" + mod.getModId();
-                final T packInfo = ResourcePackInfo.func_195793_a(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
+                final T packInfo = ResourcePackInfo.createResourcePack(name, true, e::getValue, factory, ResourcePackInfo.Priority.BOTTOM);
                 if (packInfo == null) {
                     // Vanilla only logs an error, instead of propagating, so handle null and warn that something went wrong
                     ModLoader.get().addWarning(new ModLoadingWarning(mod, ModLoadingStage.ERROR, "fml.modloading.brokenresources", e.getKey()));

@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/projectile/ThrowableEntity.java
++++ b/net/minecraft/entity/projectile/ThrowableEntity.java
+@@ -133,7 +133,7 @@
+       if (raytraceresult.func_216346_c() != RayTraceResult.Type.MISS) {
+          if (raytraceresult.func_216346_c() == RayTraceResult.Type.BLOCK && this.field_70170_p.func_180495_p(((BlockRayTraceResult)raytraceresult).func_216350_a()).func_177230_c() == Blocks.field_150427_aO) {
+             this.func_181015_d(((BlockRayTraceResult)raytraceresult).func_216350_a());
+-         } else {
++         } else if (!net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, raytraceresult)){
+             this.func_70184_a(raytraceresult);
+          }
+       }

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/IWorld.java
 +++ b/net/minecraft/world/IWorld.java
-@@ -21,16 +21,16 @@
+@@ -24,16 +24,16 @@
     long func_72905_C();
  
     default float func_130001_d() {

@@ -1,0 +1,34 @@
+--- a/net/minecraft/network/handshake/client/CHandshakePacket.java
++++ b/net/minecraft/network/handshake/client/CHandshakePacket.java
+@@ -14,6 +14,7 @@
+    private String field_149598_b;
+    private int field_149599_c;
+    private ProtocolType field_149597_d;
++   private String fmlVersion = net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION;
+ 
+    public CHandshakePacket() {
+    }
+@@ -31,11 +32,13 @@
+       this.field_149598_b = p_148837_1_.func_150789_c(255);
+       this.field_149599_c = p_148837_1_.readUnsignedShort();
+       this.field_149597_d = ProtocolType.func_150760_a(p_148837_1_.func_150792_a());
++      this.fmlVersion = net.minecraftforge.fml.network.NetworkHooks.getFMLVersion(this.field_149598_b);
++      this.field_149598_b = this.field_149598_b.split("\0")[0];
+    }
+ 
+    public void func_148840_b(PacketBuffer p_148840_1_) throws IOException {
+       p_148840_1_.func_150787_b(this.field_149600_a);
+-      p_148840_1_.func_180714_a(this.field_149598_b);
++      p_148840_1_.func_180714_a(this.field_149598_b + "\0"+net.minecraftforge.fml.network.FMLNetworkConstants.NETVERSION+"\0");
+       p_148840_1_.writeShort(this.field_149599_c);
+       p_148840_1_.func_150787_b(this.field_149597_d.func_150759_c());
+    }
+@@ -51,4 +54,8 @@
+    public int func_149595_d() {
+       return this.field_149600_a;
+    }
++
++   public String getFMLVersion() {
++      return this.fmlVersion;
++   }
+ }

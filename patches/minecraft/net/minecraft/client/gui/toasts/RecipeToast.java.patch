@@ -1,11 +1,11 @@
 --- a/net/minecraft/client/gui/toasts/RecipeToast.java
 +++ b/net/minecraft/client/gui/toasts/RecipeToast.java
-@@ -38,7 +38,7 @@
+@@ -36,7 +36,7 @@
           p_193653_1_.func_192989_b().field_71466_p.func_211126_b(I18n.func_135052_a("recipe.toast.title"), 30.0F, 7.0F, -11534256);
           p_193653_1_.func_192989_b().field_71466_p.func_211126_b(I18n.func_135052_a("recipe.toast.description"), 30.0F, 18.0F, -16777216);
           RenderHelper.func_74520_c();
--         IRecipe irecipe = this.field_202906_c.get((int)(p_193653_2_ / (5000L / (long)this.field_202906_c.size()) % (long)this.field_202906_c.size()));
-+         IRecipe irecipe = this.field_202906_c.get((int)((p_193653_2_ * (long)this.field_202906_c.size() / 5000L) % (long)this.field_202906_c.size()));  //Forge: fix math so that it doesn't divide by 0 when there are more than 5000 recipes
-          ItemStack itemstack;
-          if (irecipe instanceof FurnaceRecipe) {
-             itemstack = new ItemStack(Blocks.field_150460_al);
+-         IRecipe<?> irecipe = this.field_202906_c.get((int)(p_193653_2_ / (5000L / (long)this.field_202906_c.size()) % (long)this.field_202906_c.size()));
++         IRecipe<?> irecipe = this.field_202906_c.get((int)((p_193653_2_ * (long)this.field_202906_c.size() / 5000L) % (long)this.field_202906_c.size())); //Forge: fix math so that it doesn't divide by 0 when there are more than 5000 recipes
+          ItemStack itemstack = irecipe.func_222128_h();
+          GlStateManager.pushMatrix();
+          GlStateManager.scalef(0.6F, 0.6F, 1.0F);

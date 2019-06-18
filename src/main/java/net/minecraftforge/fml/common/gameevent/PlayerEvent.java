@@ -19,8 +19,8 @@
 
 package net.minecraftforge.fml.common.gameevent;
 
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.dimension.DimensionType;
@@ -29,13 +29,13 @@ import net.minecraftforge.eventbus.api.Event;
 import javax.annotation.Nonnull;
 
 public class PlayerEvent extends Event {
-    private final EntityPlayer player;
-    private PlayerEvent(EntityPlayer player)
+    private final PlayerEntity player;
+    private PlayerEvent(PlayerEntity player)
     {
         this.player = player;
     }
 
-    public EntityPlayer getPlayer()
+    public PlayerEntity getPlayer()
     {
         return this.player;
     }
@@ -44,12 +44,12 @@ public class PlayerEvent extends Event {
         /**
         * Original EntityItem with current remaining stack size
         */
-        private final EntityItem originalEntity;
+        private final ItemEntity originalEntity;
         /**
          * Clone item stack, containing the item and amount picked up
          */
         private final ItemStack stack;
-        public ItemPickupEvent(EntityPlayer player, EntityItem entPickedUp, ItemStack stack)
+        public ItemPickupEvent(PlayerEntity player, ItemEntity entPickedUp, ItemStack stack)
         {
             super(player);
             this.originalEntity = entPickedUp;
@@ -60,7 +60,7 @@ public class PlayerEvent extends Event {
             return stack;
         }
 
-        public EntityItem getOriginalEntity() {
+        public ItemEntity getOriginalEntity() {
             return originalEntity;
         }
     }
@@ -69,7 +69,7 @@ public class PlayerEvent extends Event {
         @Nonnull
         private final ItemStack crafting;
         private final IInventory craftMatrix;
-        public ItemCraftedEvent(EntityPlayer player, @Nonnull ItemStack crafting, IInventory craftMatrix)
+        public ItemCraftedEvent(PlayerEntity player, @Nonnull ItemStack crafting, IInventory craftMatrix)
         {
             super(player);
             this.crafting = crafting;
@@ -90,7 +90,7 @@ public class PlayerEvent extends Event {
     public static class ItemSmeltedEvent extends PlayerEvent {
         @Nonnull
         private final ItemStack smelting;
-        public ItemSmeltedEvent(EntityPlayer player, @Nonnull ItemStack crafting)
+        public ItemSmeltedEvent(PlayerEntity player, @Nonnull ItemStack crafting)
         {
             super(player);
             this.smelting = crafting;
@@ -104,14 +104,14 @@ public class PlayerEvent extends Event {
     }
 
     public static class PlayerLoggedInEvent extends PlayerEvent {
-        public PlayerLoggedInEvent(EntityPlayer player)
+        public PlayerLoggedInEvent(PlayerEntity player)
         {
             super(player);
         }
     }
 
     public static class PlayerLoggedOutEvent extends PlayerEvent {
-        public PlayerLoggedOutEvent(EntityPlayer player)
+        public PlayerLoggedOutEvent(PlayerEntity player)
         {
             super(player);
         }
@@ -120,7 +120,7 @@ public class PlayerEvent extends Event {
     public static class PlayerRespawnEvent extends PlayerEvent {
         private final boolean endConquered;
 
-        public PlayerRespawnEvent(EntityPlayer player, boolean endConquered)
+        public PlayerRespawnEvent(PlayerEntity player, boolean endConquered)
         {
             super(player);
             this.endConquered = endConquered;
@@ -141,7 +141,7 @@ public class PlayerEvent extends Event {
     public static class PlayerChangedDimensionEvent extends PlayerEvent {
         private final DimensionType fromDim;
         private final DimensionType toDim;
-        public PlayerChangedDimensionEvent(EntityPlayer player, DimensionType fromDim, DimensionType toDim)
+        public PlayerChangedDimensionEvent(PlayerEntity player, DimensionType fromDim, DimensionType toDim)
         {
             super(player);
             this.fromDim = fromDim;

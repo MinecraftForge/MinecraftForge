@@ -19,10 +19,12 @@
 
 package net.minecraftforge.client.settings;
 
+import java.util.function.Supplier;
+
 import javax.annotation.Nullable;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.InputMappings;
 
@@ -47,13 +49,13 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return GuiScreen.isCtrlKeyDown();
+            return Screen.hasControlDown();
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key)
+        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
         {
-            String keyName = key.getName();
+            String keyName = defaultLogic.get();
             String localizationFormatKey = Minecraft.IS_RUNNING_ON_MAC ? "forge.controlsgui.control.mac" : "forge.controlsgui.control";
             return I18n.format(localizationFormatKey, keyName);
         }
@@ -68,13 +70,13 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return GuiScreen.isShiftKeyDown();
+            return Screen.hasShiftDown();
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key)
+        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
         {
-            return I18n.format("forge.controlsgui.shift", key.getName());
+            return I18n.format("forge.controlsgui.shift", defaultLogic.get());
         }
     },
     ALT {
@@ -87,13 +89,13 @@ public enum KeyModifier {
         @Override
         public boolean isActive(@Nullable IKeyConflictContext conflictContext)
         {
-            return GuiScreen.isAltKeyDown();
+            return Screen.hasAltDown();
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input keyCode)
+        public String getLocalizedComboName(InputMappings.Input keyCode, Supplier<String> defaultLogic)
         {
-            return I18n.format("forge.controlsgui.alt", keyCode.getName());
+            return I18n.format("forge.controlsgui.alt", defaultLogic.get());
         }
     },
     NONE {
@@ -120,9 +122,9 @@ public enum KeyModifier {
         }
 
         @Override
-        public String getLocalizedComboName(InputMappings.Input key)
+        public String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic)
         {
-            return key.getName();
+            return defaultLogic.get();
         }
     };
 
@@ -168,5 +170,5 @@ public enum KeyModifier {
 
     public abstract boolean isActive(@Nullable IKeyConflictContext conflictContext);
 
-    public abstract String getLocalizedComboName(InputMappings.Input key);
+    public abstract String getLocalizedComboName(InputMappings.Input key, Supplier<String> defaultLogic);
 }

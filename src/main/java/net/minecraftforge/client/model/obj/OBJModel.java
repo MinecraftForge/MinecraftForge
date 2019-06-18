@@ -41,17 +41,15 @@ import javax.vecmath.Vector2f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.model.BakedQuad;
-import net.minecraft.client.renderer.model.IBakedModel;
-import net.minecraft.client.renderer.model.IUnbakedModel;
+import net.minecraft.block.BlockState;
+import net.minecraft.client.renderer.model.*;
 import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
-import net.minecraft.client.renderer.model.ItemOverrideList;
+import net.minecraft.client.renderer.texture.ISprite;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.resources.IResource;
 import net.minecraft.resources.IResourceManager;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.*;
 import net.minecraftforge.client.model.data.IDynamicBakedModel;
@@ -118,17 +116,18 @@ public class OBJModel implements IUnbakedModel
     }
 
     @Override
-    public Collection<ResourceLocation> getOverrideLocations()
+    public Collection<ResourceLocation> getDependencies()
     {
         return Collections.emptyList();
     }
 
+    @Nullable
     @Override
-    public IBakedModel bake(Function<ResourceLocation, IUnbakedModel> modelGetter, Function<ResourceLocation, TextureAtlasSprite> bakedTextureGetter, IModelState state, boolean uvlock, VertexFormat format)
+    public IBakedModel bake(ModelBakery bakery, Function<ResourceLocation, TextureAtlasSprite> spriteGetter, ISprite sprite, VertexFormat format)
     {
         ImmutableMap.Builder<String, TextureAtlasSprite> builder = ImmutableMap.builder();
         builder.put(ModelLoader.White.LOCATION.toString(), ModelLoader.White.INSTANCE);
-        TextureAtlasSprite missing = bakedTextureGetter.apply(new ResourceLocation("missingno"));
+        TextureAtlasSprite missing = spriteGetter.apply(new ResourceLocation("missingno"));
         for (Map.Entry<String, Material> e : matLib.materials.entrySet())
         {
             if (e.getValue().getTexture().getTextureLocation().getPath().startsWith("#"))
@@ -138,11 +137,11 @@ public class OBJModel implements IUnbakedModel
             }
             else
             {
-                builder.put(e.getKey(), bakedTextureGetter.apply(e.getValue().getTexture().getTextureLocation()));
+                builder.put(e.getKey(), spriteGetter.apply(e.getValue().getTexture().getTextureLocation()));
             }
         }
         builder.put("missingno", missing);
-        return new OBJBakedModel(this, state, format, builder.build());
+        return new OBJBakedModel(this, sprite.getState(), format, builder.build());
     }
 
     public MaterialLibrary getMatLib()
@@ -1279,7 +1278,7 @@ public class OBJModel implements IUnbakedModel
 
         // FIXME: merge with getQuads
         @Override
-        public List<BakedQuad> getQuads(IBlockState blockState, EnumFacing side, Random rand, IModelData modelData)
+        public List<BakedQuad> getQuads(BlockState blockState, Direction side, Random rand, IModelData modelData)
         {
             if (side != null) return ImmutableList.of();
             if (quads == null)
@@ -1373,7 +1372,7 @@ public class OBJModel implements IUnbakedModel
                 else sprite = this.textures.get(f.getMaterialName());
                 UnpackedBakedQuad.Builder builder = new UnpackedBakedQuad.Builder(format);
                 builder.setContractUVs(true);
-                builder.setQuadOrientation(EnumFacing.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
+                builder.setQuadOrientation(Direction.getFacingFromVector(f.getNormal().x, f.getNormal().y, f.getNormal().z));
                 builder.setTexture(sprite);
                 Normal faceNormal = f.getNormal();
                 putVertexData(builder, f.verts[0], faceNormal, TextureCoordinate.getDefaultUVs()[0], sprite);

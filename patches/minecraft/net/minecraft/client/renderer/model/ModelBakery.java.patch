@@ -1,11 +1,48 @@
 --- a/net/minecraft/client/renderer/model/ModelBakery.java
 +++ b/net/minecraft/client/renderer/model/ModelBakery.java
-@@ -198,7 +198,7 @@
+@@ -87,7 +87,7 @@
+    private final Set<ResourceLocation> field_217848_D = Sets.newHashSet();
+    private final BlockModelDefinition.ContainerHolder field_209610_F = new BlockModelDefinition.ContainerHolder();
+    private final Map<ResourceLocation, IUnbakedModel> field_217849_F = Maps.newHashMap();
+-   private final Map<Triple<ResourceLocation, ModelRotation, Boolean>, IBakedModel> field_217850_G = Maps.newHashMap();
++   private final Map<Triple<ResourceLocation, net.minecraftforge.common.model.IModelState, Boolean>, IBakedModel> field_217850_G = Maps.newHashMap();
+    private final Map<ResourceLocation, IUnbakedModel> field_217851_H = Maps.newHashMap();
+    private final Map<ResourceLocation, IBakedModel> field_217852_I = Maps.newHashMap();
+    private final AtlasTexture.SheetData field_217853_J;
+@@ -269,7 +269,7 @@
                          flag = true;
-                         lvt_9_4_ = this.field_177598_f.func_199004_b(resourcelocation1).stream().map((p_209591_1_) -> {
-                            try (InputStream inputstream = p_209591_1_.func_199027_b()) {
--                              return Pair.of(p_209591_1_.func_199026_d(), ModelBlockDefinition.func_209577_a(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8)));
-+                              return Pair.of(p_209591_1_.func_199026_d(), ModelBlockDefinition.fromJson(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8), p_209598_1_));
+                         lvt_9_4_ = this.field_177598_f.func_199004_b(resourcelocation1).stream().map((p_217839_1_) -> {
+                            try (InputStream inputstream = p_217839_1_.func_199027_b()) {
+-                              Pair pair1 = Pair.of(p_217839_1_.func_199026_d(), BlockModelDefinition.func_209577_a(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8)));
++                              Pair pair1 = Pair.of(p_217839_1_.func_199026_d(), BlockModelDefinition.fromJson(this.field_209610_F, new InputStreamReader(inputstream, StandardCharsets.UTF_8), p_209598_1_));
+                               return pair1;
                             } catch (Exception exception1) {
-                               throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_209591_1_.func_199029_a(), p_209591_1_.func_199026_d(), exception1.getMessage()));
-                            }
+                               throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_217839_1_.func_199029_a(), p_217839_1_.func_199026_d(), exception1.getMessage()));
+@@ -381,7 +381,12 @@
+ 
+    @Nullable
+    public IBakedModel func_217845_a(ResourceLocation p_217845_1_, ISprite p_217845_2_) {
+-      Triple<ResourceLocation, ModelRotation, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.func_188048_b(), p_217845_2_.func_188049_c());
++      return getBakedModel(p_217845_1_, p_217845_2_, this.field_177609_j::func_195424_a, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
++   }
++   
++   @Nullable
++   public IBakedModel getBakedModel(ResourceLocation p_217845_1_, ISprite p_217845_2_, java.util.function.Function<ResourceLocation, net.minecraft.client.renderer.texture.TextureAtlasSprite> textureGetter, net.minecraft.client.renderer.vertex.VertexFormat format) {
++      Triple<ResourceLocation, net.minecraftforge.common.model.IModelState, Boolean> triple = Triple.of(p_217845_1_, p_217845_2_.getState(), p_217845_2_.func_188049_c());
+       if (this.field_217850_G.containsKey(triple)) {
+          return this.field_217850_G.get(triple);
+       } else {
+@@ -389,11 +394,11 @@
+          if (iunbakedmodel instanceof BlockModel) {
+             BlockModel blockmodel = (BlockModel)iunbakedmodel;
+             if (blockmodel.func_178310_f() == field_177606_o) {
+-               return field_217854_z.func_209579_a(this.field_177609_j::func_195424_a, blockmodel).func_217644_a(this, blockmodel, this.field_177609_j::func_195424_a, p_217845_2_);
++               return field_217854_z.func_209579_a(textureGetter, blockmodel).func_217644_a(this, blockmodel, textureGetter, p_217845_2_);
+             }
+          }
+ 
+-         IBakedModel ibakedmodel = iunbakedmodel.func_217641_a(this, this.field_177609_j::func_195424_a, p_217845_2_);
++         IBakedModel ibakedmodel = iunbakedmodel.bake(this, this.field_177609_j::func_195424_a, p_217845_2_, format);
+          this.field_217850_G.put(triple, ibakedmodel);
+          return ibakedmodel;
+       }

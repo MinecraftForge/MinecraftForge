@@ -1,0 +1,10 @@
+--- a/net/minecraft/particles/ParticleTypes.java
++++ b/net/minecraft/particles/ParticleTypes.java
+@@ -2,6 +2,7 @@
+ 
+ import net.minecraft.util.registry.Registry;
+ 
++//@net.minecraftforge.registries.ObjectHolder("minecraft")
+ public class ParticleTypes {
+    public static final BasicParticleType field_197608_a = func_218415_a("ambient_entity_effect", false);
+    public static final BasicParticleType field_197609_b = func_218415_a("angry_villager", false);

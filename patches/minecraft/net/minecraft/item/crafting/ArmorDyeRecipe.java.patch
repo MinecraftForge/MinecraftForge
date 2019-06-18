@@ -1,0 +1,19 @@
+--- a/net/minecraft/item/crafting/ArmorDyeRecipe.java
++++ b/net/minecraft/item/crafting/ArmorDyeRecipe.java
+@@ -31,7 +31,7 @@
+ 
+                itemstack = itemstack1;
+             } else {
+-               if (!(itemstack1.func_77973_b() instanceof DyeItem)) {
++               if (!(itemstack.func_77973_b() instanceof DyeItem)) {
+                   return false;
+                }
+ 
+@@ -74,7 +74,6 @@
+       }
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
+       return p_194133_1_ * p_194133_2_ >= 2;
+    }

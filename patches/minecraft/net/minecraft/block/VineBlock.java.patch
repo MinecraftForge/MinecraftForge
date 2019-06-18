@@ -1,0 +1,20 @@
+--- a/net/minecraft/block/VineBlock.java
++++ b/net/minecraft/block/VineBlock.java
+@@ -20,7 +20,7 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
+ 
+-public class VineBlock extends Block {
++public class VineBlock extends Block implements net.minecraftforge.common.IShearable {
+    public static final BooleanProperty field_176277_a = SixWayBlock.field_196496_z;
+    public static final BooleanProperty field_176273_b = SixWayBlock.field_196488_a;
+    public static final BooleanProperty field_176278_M = SixWayBlock.field_196490_b;
+@@ -154,7 +154,7 @@
+                p_196267_2_.func_217377_a(p_196267_3_, false);
+             }
+ 
+-         } else if (p_196267_2_.field_73012_v.nextInt(4) == 0) {
++         } else if (p_196267_2_.field_73012_v.nextInt(4) == 0 && p_196267_2_.isAreaLoaded(p_196267_3_, 4)) { // Forge: check area to prevent loading unloaded chunks
+             Direction direction = Direction.func_176741_a(p_196267_4_);
+             BlockPos blockpos = p_196267_3_.func_177984_a();
+             if (direction.func_176740_k().func_176722_c() && !p_196267_1_.func_177229_b(func_176267_a(direction))) {

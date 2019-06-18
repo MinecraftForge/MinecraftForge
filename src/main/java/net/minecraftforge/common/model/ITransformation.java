@@ -21,7 +21,7 @@ package net.minecraftforge.common.model;
 
 import javax.vecmath.Matrix4f;
 
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 
 /*
  * Replacement interface for ModelRotation to allow custom transformations of vanilla models.
@@ -31,7 +31,7 @@ public interface ITransformation
 {
     Matrix4f getMatrixVec();
 
-    EnumFacing rotate(EnumFacing facing);
+    Direction rotate(Direction facing);
 
-    int rotate(EnumFacing facing, int vertexIndex);
+    int rotate(Direction facing, int vertexIndex);
 }

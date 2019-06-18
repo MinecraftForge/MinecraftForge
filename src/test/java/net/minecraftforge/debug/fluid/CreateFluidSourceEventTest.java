@@ -27,7 +27,7 @@ import net.minecraftforge.fml.event.FMLInitializationEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(modid = "createfluidsourcetest", name = "CreateFluidSourceTest", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "createfluidsourcetest", name = "CreateFluidSourceTest", version = "1.0", acceptableRemoteVersions = "*")
 public class CreateFluidSourceEventTest
 {
     public static final boolean ENABLE = false;

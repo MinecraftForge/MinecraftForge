@@ -1,76 +1,68 @@
 --- a/net/minecraft/server/management/PlayerList.java
 +++ b/net/minecraft/server/management/PlayerList.java
-@@ -107,7 +107,16 @@
-       String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
+@@ -109,6 +109,14 @@
        playerprofilecache.func_152649_a(gameprofile);
-       NBTTagCompound nbttagcompound = this.func_72380_a(p_72355_2_);
--      p_72355_2_.func_70029_a(this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK));
+       CompoundNBT compoundnbt = this.func_72380_a(p_72355_2_);
+       ServerWorld serverworld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
 +
 +      //Forge: Make sure the dimension hasn't been deleted, if so stick them in the overworld.
-+      WorldServer playerWorld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
-+      if (playerWorld == null) {
++      if (serverworld == null) {
 +         p_72355_2_.field_71093_bK = DimensionType.OVERWORLD;
-+         playerWorld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
-+         p_72355_2_.func_70107_b(playerWorld.func_72912_H().func_76079_c(), playerWorld.func_72912_H().func_76075_d(), playerWorld.func_72912_H().func_76074_e());
++         serverworld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
++         p_72355_2_.func_70107_b(serverworld.func_72912_H().func_76079_c(), serverworld.func_72912_H().func_76075_d(), serverworld.func_72912_H().func_76074_e());
 +      }
 +
-+      p_72355_2_.func_70029_a(playerWorld);
-       p_72355_2_.field_71134_c.func_73080_a((WorldServer)p_72355_2_.field_70170_p);
+       p_72355_2_.func_70029_a(serverworld);
+       p_72355_2_.field_71134_c.func_73080_a((ServerWorld)p_72355_2_.field_70170_p);
        String s1 = "local";
-       if (p_72355_1_.func_74430_c() != null) {
-@@ -178,6 +187,7 @@
+@@ -162,8 +170,9 @@
+ 
+       if (compoundnbt != null && compoundnbt.func_150297_b("RootVehicle", 10)) {
+          CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("RootVehicle");
++         final ServerWorld worldf = serverworld;
+          Entity entity1 = EntityType.func_220335_a(compoundnbt1.func_74775_l("Entity"), serverworld, (p_217885_1_) -> {
+-            return !serverworld.func_217470_d(p_217885_1_) ? null : p_217885_1_;
++            return !worldf.func_217470_d(p_217885_1_) ? null : p_217885_1_;
+          });
+          if (entity1 != null) {
+             UUID uuid = compoundnbt1.func_186857_a("Attach");
+@@ -190,6 +199,7 @@
        }
  
        p_72355_2_.func_71116_b();
 +      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedIn( p_72355_2_ );
     }
  
-    protected void func_96456_a(ServerScoreboard p_96456_1_, EntityPlayerMP p_96456_2_) {
-@@ -260,6 +270,7 @@
-          nbttagcompound1 = nbttagcompound;
-          p_72380_1_.func_70020_e(nbttagcompound);
+    protected void func_96456_a(ServerScoreboard p_96456_1_, ServerPlayerEntity p_96456_2_) {
+@@ -251,6 +261,7 @@
+          compoundnbt1 = compoundnbt;
+          p_72380_1_.func_70020_e(compoundnbt);
           field_148546_d.debug("loading single player");
 +         net.minecraftforge.event.ForgeEventFactory.firePlayerLoadingEvent(p_72380_1_, this.field_72412_k, p_72380_1_.func_110124_au().toString());
        } else {
-          nbttagcompound1 = this.field_72412_k.func_75752_b(p_72380_1_);
+          compoundnbt1 = this.field_72412_k.func_75752_b(p_72380_1_);
        }
-@@ -268,6 +279,7 @@
+@@ -259,6 +270,7 @@
     }
  
-    protected void func_72391_b(EntityPlayerMP p_72391_1_) {
+    protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
 +      if (p_72391_1_.field_71135_a == null) return;
        this.field_72412_k.func_75753_a(p_72391_1_);
-       StatisticsManagerServer statisticsmanagerserver = this.field_148547_k.get(p_72391_1_.func_110124_au());
-       if (statisticsmanagerserver != null) {
-@@ -291,6 +303,7 @@
-          p_72377_1_.field_71135_a.func_147359_a(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, this.field_72404_b.get(i)));
-       }
- 
-+      net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.func_72394_k());
-       worldserver.func_72838_d(p_72377_1_);
-       this.func_72375_a(p_72377_1_, (WorldServer)null);
-       this.field_72400_f.func_201300_aS().func_201383_a(p_72377_1_);
-@@ -301,6 +314,7 @@
+       ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
+       if (serverstatisticsmanager != null) {
+@@ -273,6 +285,7 @@
     }
  
-    public void func_72367_e(EntityPlayerMP p_72367_1_) {
-+      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedOut( p_72367_1_ );
-       WorldServer worldserver = p_72367_1_.func_71121_q();
-       p_72367_1_.func_195066_a(StatList.field_75947_j);
+    public void func_72367_e(ServerPlayerEntity p_72367_1_) {
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerLoggedOut(p_72367_1_);
+       ServerWorld serverworld = p_72367_1_.func_71121_q();
+       p_72367_1_.func_195066_a(Stats.field_75947_j);
        this.func_72391_b(p_72367_1_);
-@@ -318,6 +332,7 @@
-             worldserver.func_72964_e(p_72367_1_.field_70176_ah, p_72367_1_.field_70164_aj).func_76630_e();
-          }
-       }
-+      net.minecraftforge.common.chunkio.ChunkIOExecutor.adjustPoolSize(this.func_72394_k());
- 
-       worldserver.func_72900_e(p_72367_1_);
-       worldserver.func_184164_w().func_72695_c(p_72367_1_);
-@@ -391,13 +406,21 @@
+@@ -363,10 +376,18 @@
     }
  
-    public EntityPlayerMP func_72368_a(EntityPlayerMP p_72368_1_, DimensionType p_72368_2_, boolean p_72368_3_) {
-+      WorldServer world = field_72400_f.func_71218_a(p_72368_2_);
+    public ServerPlayerEntity func_72368_a(ServerPlayerEntity p_72368_1_, DimensionType p_72368_2_, boolean p_72368_3_) {
++      ServerWorld world = field_72400_f.func_71218_a(p_72368_2_);
 +      if (world == null)
 +         p_72368_2_ = p_72368_1_.getSpawnDimension();
 +      else if (!world.func_201675_m().func_76567_e())
@@ -78,133 +70,39 @@
 +      if (field_72400_f.func_71218_a(p_72368_2_) == null)
 +         p_72368_2_ = DimensionType.OVERWORLD;
 +
-       p_72368_1_.func_71121_q().func_73039_n().func_72787_a(p_72368_1_);
-       p_72368_1_.func_71121_q().func_73039_n().func_72790_b(p_72368_1_);
-       p_72368_1_.func_71121_q().func_184164_w().func_72695_c(p_72368_1_);
        this.field_72404_b.remove(p_72368_1_);
-       this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK).func_72973_f(p_72368_1_);
+-      p_72368_1_.func_71121_q().func_217434_e(p_72368_1_);
 -      BlockPos blockpos = p_72368_1_.func_180470_cg();
 -      boolean flag = p_72368_1_.func_82245_bX();
++      p_72368_1_.func_71121_q().removePlayer(p_72368_1_, true); // Forge: keep data until copyFrom called
 +      BlockPos blockpos = p_72368_1_.getBedLocation(p_72368_2_);
 +      boolean flag = p_72368_1_.isSpawnForced(p_72368_2_);
        p_72368_1_.field_71093_bK = p_72368_2_;
        PlayerInteractionManager playerinteractionmanager;
        if (this.field_72400_f.func_71242_L()) {
-@@ -409,6 +432,7 @@
-       EntityPlayerMP entityplayermp = new EntityPlayerMP(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
-       entityplayermp.field_71135_a = p_72368_1_.field_71135_a;
-       entityplayermp.func_193104_a(p_72368_1_, p_72368_3_);
-+      entityplayermp.field_71093_bK = p_72368_2_;
-       entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
-       entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
+@@ -378,6 +399,8 @@
+       ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
+       serverplayerentity.field_71135_a = p_72368_1_.field_71135_a;
+       serverplayerentity.func_193104_a(p_72368_1_, p_72368_3_);
++      p_72368_1_.remove(false); // Forge: clone event had a chance to see old data, now discard it
++      serverplayerentity.field_71093_bK = p_72368_2_;
+       serverplayerentity.func_145769_d(p_72368_1_.func_145782_y());
+       serverplayerentity.func_184819_a(p_72368_1_.func_184591_cq());
  
-@@ -422,7 +446,7 @@
-          BlockPos blockpos1 = EntityPlayer.func_180467_a(this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), blockpos, flag);
-          if (blockpos1 != null) {
-             entityplayermp.func_70012_b((double)((float)blockpos1.func_177958_n() + 0.5F), (double)((float)blockpos1.func_177956_o() + 0.1F), (double)((float)blockpos1.func_177952_p() + 0.5F), 0.0F, 0.0F);
--            entityplayermp.func_180473_a(blockpos, flag);
-+            entityplayermp.setSpawnPoint(blockpos, flag, p_72368_1_.field_71093_bK);
+@@ -392,7 +415,7 @@
+          if (optional.isPresent()) {
+             Vec3d vec3d = optional.get();
+             serverplayerentity.func_70012_b(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c, 0.0F, 0.0F);
+-            serverplayerentity.func_180473_a(blockpos, flag);
++            serverplayerentity.setSpawnPoint(blockpos, flag, p_72368_2_);
           } else {
-             entityplayermp.field_71135_a.func_147359_a(new SPacketChangeGameState(0, 0.0F));
+             serverplayerentity.field_71135_a.func_147359_a(new SChangeGameStatePacket(0, 0.0F));
           }
-@@ -434,7 +458,7 @@
-          entityplayermp.func_70107_b(entityplayermp.field_70165_t, entityplayermp.field_70163_u + 1.0D, entityplayermp.field_70161_v);
-       }
- 
--      entityplayermp.field_71135_a.func_147359_a(new SPacketRespawn(entityplayermp.field_71093_bK, entityplayermp.field_70170_p.func_175659_aa(), entityplayermp.field_70170_p.func_72912_H().func_76067_t(), entityplayermp.field_71134_c.func_73081_b()));
-+      entityplayermp.field_71135_a.func_147359_a(new SPacketRespawn(entityplayermp.field_71093_bK, world.func_175659_aa(), world.func_72912_H().func_76067_t(), entityplayermp.field_71134_c.func_73081_b())); // Forge: Use new dimensions information 
-       BlockPos blockpos2 = worldserver.func_175694_M();
-       entityplayermp.field_71135_a.func_147364_a(entityplayermp.field_70165_t, entityplayermp.field_70163_u, entityplayermp.field_70161_v, entityplayermp.field_70177_z, entityplayermp.field_70125_A);
-       entityplayermp.field_71135_a.func_147359_a(new SPacketSpawnPosition(blockpos2));
-@@ -447,6 +471,7 @@
-       this.field_177454_f.put(entityplayermp.func_110124_au(), entityplayermp);
-       entityplayermp.func_71116_b();
-       entityplayermp.func_70606_j(entityplayermp.func_110143_aJ());
-+      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(entityplayermp, p_72368_3_);
-       return entityplayermp;
+@@ -416,6 +439,7 @@
+       this.field_177454_f.put(serverplayerentity.func_110124_au(), serverplayerentity);
+       serverplayerentity.func_71116_b();
+       serverplayerentity.func_70606_j(serverplayerentity.func_110143_aJ());
++      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerRespawnEvent(serverplayerentity, p_72368_3_);
+       return serverplayerentity;
     }
  
-@@ -457,15 +482,19 @@
-    }
- 
-    public void func_187242_a(EntityPlayerMP p_187242_1_, DimensionType p_187242_2_) {
-+      changePlayerDimension(p_187242_1_, p_187242_2_, field_72400_f.func_71218_a(p_187242_2_).func_85176_s());
-+   }
-+
-+   public void changePlayerDimension(EntityPlayerMP p_187242_1_, DimensionType p_187242_2_, net.minecraftforge.common.util.ITeleporter teleporter) {
-       DimensionType dimensiontype = p_187242_1_.field_71093_bK;
-       WorldServer worldserver = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
-       p_187242_1_.field_71093_bK = p_187242_2_;
-       WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
--      p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
-+      p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
-       this.func_187243_f(p_187242_1_);
--      worldserver.func_72973_f(p_187242_1_);
--      p_187242_1_.field_70128_L = false;
--      this.func_82448_a(p_187242_1_, dimensiontype, worldserver, worldserver1);
-+      worldserver.removeEntityDangerously(p_187242_1_, true); //Forge: the player entity is moved to the new world, NOT cloned. So keep the data alive with no matching invalidate call.
-+      p_187242_1_.revive();
-+      this.transferEntityToWorld(p_187242_1_, dimensiontype, worldserver, worldserver1, teleporter);
-       this.func_72375_a(p_187242_1_, worldserver);
-       p_187242_1_.field_71135_a.func_147364_a(p_187242_1_.field_70165_t, p_187242_1_.field_70163_u, p_187242_1_.field_70161_v, p_187242_1_.field_70177_z, p_187242_1_.field_70125_A);
-       p_187242_1_.field_71134_c.func_73080_a(worldserver1);
-@@ -477,29 +506,25 @@
-          p_187242_1_.field_71135_a.func_147359_a(new SPacketEntityEffect(p_187242_1_.func_145782_y(), potioneffect));
-       }
- 
-+      // Fix MC-88179: on non-death SPacketRespawn, also resend attributes
-+      net.minecraft.entity.ai.attributes.AttributeMap attributemap = (net.minecraft.entity.ai.attributes.AttributeMap) p_187242_1_.func_110140_aT();
-+      java.util.Collection<net.minecraft.entity.ai.attributes.IAttributeInstance> watchedAttribs = attributemap.func_111160_c();
-+      if (!watchedAttribs.isEmpty()) p_187242_1_.field_71135_a.func_147359_a(new net.minecraft.network.play.server.SPacketEntityProperties(p_187242_1_.func_145782_y(), watchedAttribs));
-+      net.minecraftforge.fml.hooks.BasicEventHooks.firePlayerChangedDimensionEvent(p_187242_1_, dimensiontype, p_187242_2_);
-    }
- 
-    public void func_82448_a(Entity p_82448_1_, DimensionType p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_) {
--      double d0 = p_82448_1_.field_70165_t;
--      double d1 = p_82448_1_.field_70161_v;
-+      transferEntityToWorld(p_82448_1_, p_82448_2_, p_82448_3_, p_82448_4_, p_82448_4_.func_85176_s());
-+   }
-+
-+   public void transferEntityToWorld(Entity p_82448_1_, DimensionType p_82448_2_, WorldServer p_82448_3_, WorldServer p_82448_4_, net.minecraftforge.common.util.ITeleporter teleporter) {
-+      double moveFactor = p_82448_3_.func_201675_m().getMovementFactor() / p_82448_4_.func_201675_m().getMovementFactor();
-+      double d0 = MathHelper.func_151237_a(p_82448_1_.field_70165_t * moveFactor, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
-+      double d1 = MathHelper.func_151237_a(p_82448_1_.field_70161_v * moveFactor, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
-       double d2 = 8.0D;
-       float f = p_82448_1_.field_70177_z;
-       p_82448_3_.field_72984_F.func_76320_a("moving");
--      if (p_82448_1_.field_71093_bK == DimensionType.NETHER) {
--         d0 = MathHelper.func_151237_a(d0 / 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
--         d1 = MathHelper.func_151237_a(d1 / 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
--         p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
--         if (p_82448_1_.func_70089_S()) {
--            p_82448_3_.func_72866_a(p_82448_1_, false);
--         }
--      } else if (p_82448_1_.field_71093_bK == DimensionType.OVERWORLD) {
--         d0 = MathHelper.func_151237_a(d0 * 8.0D, p_82448_4_.func_175723_af().func_177726_b() + 16.0D, p_82448_4_.func_175723_af().func_177728_d() - 16.0D);
--         d1 = MathHelper.func_151237_a(d1 * 8.0D, p_82448_4_.func_175723_af().func_177736_c() + 16.0D, p_82448_4_.func_175723_af().func_177733_e() - 16.0D);
--         p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
--         if (p_82448_1_.func_70089_S()) {
--            p_82448_3_.func_72866_a(p_82448_1_, false);
--         }
--      } else {
-+      if (p_82448_1_.field_71093_bK == DimensionType.THE_END && teleporter.isVanilla()) {
-          BlockPos blockpos;
-          if (p_82448_2_ == DimensionType.THE_END) {
-             blockpos = p_82448_4_.func_175694_M();
-@@ -517,13 +542,14 @@
-       }
- 
-       p_82448_3_.field_72984_F.func_76319_b();
--      if (p_82448_2_ != DimensionType.THE_END) {
-+      if (p_82448_2_ != DimensionType.THE_END || !teleporter.isVanilla()) {
-          p_82448_3_.field_72984_F.func_76320_a("placing");
-          d0 = (double)MathHelper.func_76125_a((int)d0, -29999872, 29999872);
-          d1 = (double)MathHelper.func_76125_a((int)d1, -29999872, 29999872);
-          if (p_82448_1_.func_70089_S()) {
-             p_82448_1_.func_70012_b(d0, p_82448_1_.field_70163_u, d1, p_82448_1_.field_70177_z, p_82448_1_.field_70125_A);
--            p_82448_4_.func_85176_s().func_180266_a(p_82448_1_, f);
-+            p_82448_4_.func_72866_a(p_82448_1_, false);
-+            teleporter.placeEntity(p_82448_4_, p_82448_1_, f);
-             p_82448_4_.func_72838_d(p_82448_1_);
-             p_82448_4_.func_72866_a(p_82448_1_, false);
-          }

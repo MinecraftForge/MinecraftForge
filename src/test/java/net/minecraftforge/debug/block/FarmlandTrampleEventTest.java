@@ -24,8 +24,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = FarmlandTrampleEventTest.MOD_ID, name = "Farmland Trample Event Test", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = FarmlandTrampleEventTest.MOD_ID, name = "Farmland Trample Event Test", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class FarmlandTrampleEventTest
 {
     static final String MOD_ID = "farmland_trample_test";

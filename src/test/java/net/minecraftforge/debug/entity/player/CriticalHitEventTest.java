@@ -33,7 +33,7 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 
-@Mod(modid = "criticalhiteventtest", name = "CriticalHitEventTest", version = "1.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "criticalhiteventtest", name = "CriticalHitEventTest", version = "1.0.0", acceptableRemoteVersions = "*")
 public class CriticalHitEventTest
 {
     public static final boolean ENABLE = false;

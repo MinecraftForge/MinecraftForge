@@ -38,8 +38,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(modid = RegistryOverrideTest.MODID, name = "Registry override test mod", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = RegistryOverrideTest.MODID, name = "Registry override test mod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class RegistryOverrideTest
 {
     public static final String MODID = "registry_override_test";

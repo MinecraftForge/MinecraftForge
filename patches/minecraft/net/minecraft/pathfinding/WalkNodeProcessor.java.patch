@@ -1,16 +1,16 @@
 --- a/net/minecraft/pathfinding/WalkNodeProcessor.java
 +++ b/net/minecraft/pathfinding/WalkNodeProcessor.java
-@@ -27,6 +27,7 @@
+@@ -26,6 +26,7 @@
  
  public class WalkNodeProcessor extends NodeProcessor {
     protected float field_176183_h;
-+   protected EntityLiving currentEntity;
++   protected MobEntity currentEntity;
  
-    public void func_186315_a(IBlockReader p_186315_1_, EntityLiving p_186315_2_) {
+    public void func_186315_a(IWorldReader p_186315_1_, MobEntity p_186315_2_) {
        super.func_186315_a(p_186315_1_, p_186315_2_);
-@@ -254,7 +255,9 @@
+@@ -258,7 +259,9 @@
        PathNodeType pathnodetype = PathNodeType.BLOCKED;
-       double d0 = (double)p_186319_5_.field_70130_N / 2.0D;
+       double d0 = (double)p_186319_5_.func_213311_cf() / 2.0D;
        BlockPos blockpos = new BlockPos(p_186319_5_);
 +      this.currentEntity = p_186319_5_;
        pathnodetype = this.func_193577_a(p_186319_1_, p_186319_2_, p_186319_3_, p_186319_4_, p_186319_6_, p_186319_7_, p_186319_8_, p_186319_9_, p_186319_10_, enumset, pathnodetype, blockpos);
@@ -18,21 +18,21 @@
        if (enumset.contains(PathNodeType.FENCE)) {
           return PathNodeType.FENCE;
        } else {
-@@ -331,6 +334,7 @@
-          if (pathnodetype1 == PathNodeType.DAMAGE_CACTUS) {
-             pathnodetype = PathNodeType.DAMAGE_CACTUS;
+@@ -348,6 +351,7 @@
+          if (pathnodetype1 == PathNodeType.DAMAGE_OTHER) {
+             pathnodetype = PathNodeType.DAMAGE_OTHER;
           }
 +         if (pathnodetype1 == PathNodeType.DAMAGE_OTHER) pathnodetype = PathNodeType.DAMAGE_OTHER; // Forge: consider modded damage types
        }
  
        pathnodetype = this.func_193578_a(p_186330_1_, p_186330_2_, p_186330_3_, p_186330_4_, pathnodetype);
-@@ -343,11 +347,15 @@
+@@ -360,12 +364,14 @@
              for(int i = -1; i <= 1; ++i) {
                 for(int j = -1; j <= 1; ++j) {
                    if (i != 0 || j != 0) {
 -                     Block block = p_193578_1_.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(i + p_193578_2_, p_193578_3_, j + p_193578_4_)).func_177230_c();
 -                     if (block == Blocks.field_150434_aF) {
-+                     IBlockState state = p_193578_1_.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(i + p_193578_2_, p_193578_3_, j + p_193578_4_));
++                     BlockState state = p_193578_1_.func_180495_p(blockpos$pooledmutableblockpos.func_181079_c(i + p_193578_2_, p_193578_3_, j + p_193578_4_));
 +                     Block block = state.func_177230_c();
 +                     PathNodeType type = block.getAiPathNodeType(state, p_193578_1_, blockpos$pooledmutableblockpos, this.currentEntity);
 +                     if (block == Blocks.field_150434_aF || type == PathNodeType.DAMAGE_CACTUS) {
@@ -40,21 +40,21 @@
 -                     } else if (block == Blocks.field_150480_ab) {
 +                     } else if (block == Blocks.field_150480_ab || type == PathNodeType.DAMAGE_FIRE) {
                          p_193578_5_ = PathNodeType.DANGER_FIRE;
-+                     } else if (type == PathNodeType.DAMAGE_OTHER) {
-+                        p_193578_5_ = PathNodeType.DAMAGE_OTHER;
+-                     } else if (block == Blocks.field_222434_lW) {
++                     } else if (block == Blocks.field_222434_lW || type == PathNodeType.DAMAGE_OTHER) {
+                         p_193578_5_ = PathNodeType.DANGER_OTHER;
                       }
                    }
-                }
-@@ -361,9 +369,11 @@
+@@ -380,9 +386,11 @@
     protected PathNodeType func_189553_b(IBlockReader p_189553_1_, int p_189553_2_, int p_189553_3_, int p_189553_4_) {
        BlockPos blockpos = new BlockPos(p_189553_2_, p_189553_3_, p_189553_4_);
-       IBlockState iblockstate = p_189553_1_.func_180495_p(blockpos);
-+      PathNodeType type = iblockstate.getAiPathNodeType(p_189553_1_, blockpos, this.currentEntity);
+       BlockState blockstate = p_189553_1_.func_180495_p(blockpos);
++      PathNodeType type = blockstate.getAiPathNodeType(p_189553_1_, blockpos, this.currentEntity);
 +      if (type != null) return type;
-       Block block = iblockstate.func_177230_c();
-       Material material = iblockstate.func_185904_a();
--      if (iblockstate.func_196958_f()) {
-+      if (iblockstate.isAir(p_189553_1_, blockpos)) {
+       Block block = blockstate.func_177230_c();
+       Material material = blockstate.func_185904_a();
+-      if (blockstate.func_196958_f()) {
++      if (blockstate.isAir(p_189553_1_, blockpos)) {
           return PathNodeType.OPEN;
        } else if (!block.func_203417_a(BlockTags.field_212185_E) && block != Blocks.field_196651_dG) {
           if (block == Blocks.field_150480_ab) {

@@ -5,8 +5,7 @@
         "model": "forgedebugmodelloaderregistry:vertex_coloring.obj"
      },
     "variants": {
-        "normal": [{}],
-        "inventory": [{
+        "": [{
             "transform": "forge:default-block"
         }]
     }

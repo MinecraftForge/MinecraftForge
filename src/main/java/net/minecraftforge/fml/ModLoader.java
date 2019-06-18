@@ -21,12 +21,16 @@ package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.fml.loading.LoadingModList;
@@ -41,11 +45,9 @@ import net.minecraftforge.registries.ObjectHolderRegistry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -97,6 +99,8 @@ public class ModLoader
 
     private final List<ModLoadingException> loadingExceptions;
     private final List<ModLoadingWarning> loadingWarnings;
+    private GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
+
     private ModLoader()
     {
         INSTANCE = this;
@@ -120,6 +124,15 @@ public class ModLoader
     }
 
     public void loadMods() {
+        gatherAndInitializeMods();
+        DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
+        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
+        dispatchAndHandleError(LifecycleEventProvider.SETUP);
+        DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
+        dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);
+    }
+
+    private void gatherAndInitializeMods() {
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
             throw new LoadingFailedException(loadingExceptions);
@@ -139,21 +152,16 @@ public class ModLoader
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, this::dispatchAndHandleError);
-        DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
-        ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
-        dispatchAndHandleError(LifecycleEventProvider.SETUP);
-        DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
-        dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);
     }
 
     private void dispatchAndHandleError(LifecycleEventProvider event) {
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.error("Skipping lifecycle event {}, {} errors found.", event, loadingExceptions.size());
+            LOGGER.error(LOADING,"Skipping lifecycle event {}, {} errors found.", event, loadingExceptions.size());
         } else {
             event.dispatch(this::accumulateErrors);
         }
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.fatal("Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
+            LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
             throw new LoadingFailedException(loadingExceptions);
         }
     }
@@ -166,8 +174,16 @@ public class ModLoader
         final Map<String, IModInfo> modInfoMap = modFile.getModFileInfo().getMods().stream().collect(Collectors.toMap(IModInfo::getModId, Function.identity()));
 
         LOGGER.debug(LOADING, "ModContainer is {}", ModContainer.class.getClassLoader());
-        return modFile.getScanResult().getTargets().entrySet().stream().
-                map(e-> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e)).collect(Collectors.toList());
+        final List<ModContainer> containers = modFile.getScanResult().getTargets().entrySet().stream().
+                map(e -> buildModContainerFromTOML(modFile, modClassLoader, modInfoMap, e)).collect(Collectors.toList());
+        if (containers.size() != modInfoMap.size()) {
+            LOGGER.fatal(LOADING,"File {} constructed {} mods: {}, but had {} mods specified: {}",
+                    modFile.getFilePath(),
+                    containers.size(), containers.stream().map(ModContainer::getModId).collect(Collectors.toList()),
+                    modInfoMap.size(), modInfoMap.values().stream().map(IModInfo::getModId).collect(Collectors.toList()));
+            loadingExceptions.add(new ModLoadingException(null, ModLoadingStage.CONSTRUCT, "fml.modloading.missingclasses", null, modFile.getFilePath()));
+        }
+        return containers;
     }
 
     private ModContainer buildModContainerFromTOML(final ModFile modFile, final TransformingClassLoader modClassLoader, final Map<String, IModInfo> modInfoMap, final Map.Entry<String, ? extends IModLanguageProvider.IModLanguageLoader> idToProviderEntry) {
@@ -202,5 +218,19 @@ public class ModLoader
     public void addWarning(ModLoadingWarning warning)
     {
         this.loadingWarnings.add(warning);
+    }
+
+    public void runDataGenerator(final Set<String> mods, final Path path, final Collection<Path> inputs, final boolean serverGenerators, final boolean clientGenerators, final boolean devToolGenerators, final boolean reportsGenerator, final boolean structureValidator) {
+        if (mods.contains("minecraft") && mods.size() == 1) return;
+        LOGGER.info("Initializing Data Gatherer for mods {}", mods);
+        Bootstrap.register();
+        dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator);
+        gatherAndInitializeMods();
+        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA);
+        dataGeneratorConfig.runAll();
+    }
+
+    public Function<ModContainer, ModLifecycleEvent> getDataGeneratorEvent() {
+        return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.getMods().size() == 1 ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig);
     }
 }

@@ -21,12 +21,12 @@ package net.minecraftforge.client;
 
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.world.ClientWorld;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @FunctionalInterface
 public interface IRenderHandler
 {
     @OnlyIn(Dist.CLIENT)
-    public abstract void render(float partialTicks, WorldClient world, Minecraft mc);
+    public abstract void render(float partialTicks, ClientWorld world, Minecraft mc);
 }

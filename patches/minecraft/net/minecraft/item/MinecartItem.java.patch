@@ -1,0 +1,35 @@
+--- a/net/minecraft/item/MinecartItem.java
++++ b/net/minecraft/item/MinecartItem.java
+@@ -26,7 +26,7 @@
+          double d2 = p_82487_1_.func_82616_c() + (double)direction.func_82599_e() * 1.125D;
+          BlockPos blockpos = p_82487_1_.func_180699_d().func_177972_a(direction);
+          BlockState blockstate = world.func_180495_p(blockpos);
+-         RailShape railshape = blockstate.func_177230_c() instanceof AbstractRailBlock ? blockstate.func_177229_b(((AbstractRailBlock)blockstate.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
++         RailShape railshape = blockstate.func_177230_c() instanceof AbstractRailBlock ? ((AbstractRailBlock)blockstate.func_177230_c()).getRailDirection(blockstate, world, blockpos, null) : RailShape.NORTH_SOUTH;
+          double d3;
+          if (blockstate.func_203425_a(BlockTags.field_203437_y)) {
+             if (railshape.func_208092_c()) {
+@@ -35,12 +35,12 @@
+                d3 = 0.1D;
+             }
+          } else {
+-            if (!blockstate.func_196958_f() || !world.func_180495_p(blockpos.func_177977_b()).func_203425_a(BlockTags.field_203437_y)) {
++            if (!blockstate.isAir(world, blockpos) || !world.func_180495_p(blockpos.func_177977_b()).func_203425_a(BlockTags.field_203437_y)) {
+                return this.field_96465_b.dispense(p_82487_1_, p_82487_2_);
+             }
+ 
+             BlockState blockstate1 = world.func_180495_p(blockpos.func_177977_b());
+-            RailShape railshape1 = blockstate1.func_177230_c() instanceof AbstractRailBlock ? blockstate1.func_177229_b(((AbstractRailBlock)blockstate1.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
++            RailShape railshape1 = blockstate1.func_177230_c() instanceof AbstractRailBlock ? ((AbstractRailBlock)blockstate1.func_177230_c()).getRailDirection(blockstate1, world, blockpos.func_177977_b(), null) : RailShape.NORTH_SOUTH;
+             if (direction != Direction.DOWN && railshape1.func_208092_c()) {
+                d3 = -0.4D;
+             } else {
+@@ -79,7 +79,7 @@
+       } else {
+          ItemStack itemstack = p_195939_1_.func_195996_i();
+          if (!world.field_72995_K) {
+-            RailShape railshape = blockstate.func_177230_c() instanceof AbstractRailBlock ? blockstate.func_177229_b(((AbstractRailBlock)blockstate.func_177230_c()).func_176560_l()) : RailShape.NORTH_SOUTH;
++            RailShape railshape = blockstate.func_177230_c() instanceof AbstractRailBlock ? ((AbstractRailBlock)blockstate.func_177230_c()).getRailDirection(blockstate, world, blockpos, null) : RailShape.NORTH_SOUTH;
+             double d0 = 0.0D;
+             if (railshape.func_208092_c()) {
+                d0 = 0.5D;

@@ -21,7 +21,7 @@ package net.minecraftforge.client.event;
 
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.screen.Screen;
 
 /**
  * This event is called before any Gui will open.
@@ -33,18 +33,18 @@ import net.minecraft.client.gui.GuiScreen;
 @net.minecraftforge.eventbus.api.Cancelable
 public class GuiOpenEvent extends net.minecraftforge.eventbus.api.Event
 {
-    private GuiScreen gui;
-    public GuiOpenEvent(GuiScreen gui)
+    private Screen gui;
+    public GuiOpenEvent(Screen gui)
     {
         this.setGui(gui);
     }
 
-    public GuiScreen getGui()
+    public Screen getGui()
     {
         return gui;
     }
 
-    public void setGui(GuiScreen gui)
+    public void setGui(Screen gui)
     {
         this.gui = gui;
     }

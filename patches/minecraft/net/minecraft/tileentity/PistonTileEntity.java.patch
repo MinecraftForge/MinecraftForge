@@ -1,0 +1,11 @@
+--- a/net/minecraft/tileentity/PistonTileEntity.java
++++ b/net/minecraft/tileentity/PistonTileEntity.java
+@@ -106,7 +106,7 @@
+          AxisAlignedBB axisalignedbb = this.func_190607_a(this.func_191515_a(list));
+          List<Entity> list1 = this.field_145850_b.func_72839_b((Entity)null, this.func_190610_a(axisalignedbb, direction, d0).func_111270_a(axisalignedbb));
+          if (!list1.isEmpty()) {
+-            boolean flag = this.field_200231_a.func_177230_c() == Blocks.field_180399_cE;
++            boolean flag = this.field_200231_a.func_177230_c().isStickyBlock(this.field_200231_a);
+ 
+             for(int i = 0; i < list1.size(); ++i) {
+                Entity entity = list1.get(i);

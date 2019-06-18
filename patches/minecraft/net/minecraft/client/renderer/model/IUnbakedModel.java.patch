@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/IUnbakedModel.java
 +++ b/net/minecraft/client/renderer/model/IUnbakedModel.java
-@@ -10,11 +10,17 @@
+@@ -11,11 +11,17 @@
  import net.minecraftforge.api.distmarker.OnlyIn;
  
  @OnlyIn(Dist.CLIENT)
@@ -11,12 +11,12 @@
     Collection<ResourceLocation> func_209559_a(Function<ResourceLocation, IUnbakedModel> p_209559_1_, Set<String> p_209559_2_);
  
 +   /**
-+    * @deprecated Use {@link #bake(Function, Function, IModelState, boolean)}.
++    * @deprecated Use {@link #bake(Function, Function, net.minecraftforge.common.model.IModelState, boolean, net.minecraft.client.renderer.vertex.VertexFormat)}.
 +    */
     @Nullable
--   IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_);
+-   IBakedModel func_217641_a(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_);
 +   @Deprecated
-+   default IBakedModel func_209558_a(Function<ResourceLocation, IUnbakedModel> p_209558_1_, Function<ResourceLocation, TextureAtlasSprite> p_209558_2_, ModelRotation p_209558_3_, boolean p_209558_4_) {
-+       return bake(p_209558_1_, p_209558_2_, p_209558_3_, p_209558_4_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176600_a);
++   default IBakedModel func_217641_a(ModelBakery p_217641_1_, Function<ResourceLocation, TextureAtlasSprite> p_217641_2_, ISprite p_217641_3_) {
++       return bake(p_217641_1_, p_217641_2_, p_217641_3_, net.minecraft.client.renderer.vertex.DefaultVertexFormats.field_176599_b);
 +   }
  }

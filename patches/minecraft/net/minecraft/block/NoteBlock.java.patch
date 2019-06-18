@@ -1,0 +1,32 @@
+--- a/net/minecraft/block/NoteBlock.java
++++ b/net/minecraft/block/NoteBlock.java
+@@ -49,7 +49,7 @@
+    }
+ 
+    private void func_196482_a(World p_196482_1_, BlockPos p_196482_2_) {
+-      if (p_196482_1_.func_180495_p(p_196482_2_.func_177984_a()).func_196958_f()) {
++      if (p_196482_1_.func_175623_d(p_196482_2_.func_177984_a())) {
+          p_196482_1_.func_175641_c(p_196482_2_, this, 0, 0);
+       }
+ 
+@@ -59,7 +59,9 @@
+       if (p_220051_2_.field_72995_K) {
+          return true;
+       } else {
+-         p_220051_1_ = p_220051_1_.func_177231_a(field_196485_c);
++         int _new = net.minecraftforge.common.ForgeHooks.onNoteChange(p_220051_2_, p_220051_3_, p_220051_1_, p_220051_1_.func_177229_b(field_196485_c), p_220051_1_.func_177231_a(field_196485_c).func_177229_b(field_196485_c));
++         if (_new == -1) return false;
++         p_220051_1_ = (BlockState)p_220051_1_.func_206870_a(field_196485_c, _new);
+          p_220051_2_.func_180501_a(p_220051_3_, p_220051_1_, 3);
+          this.func_196482_a(p_220051_2_, p_220051_3_);
+          p_220051_4_.func_195066_a(Stats.field_188087_U);
+@@ -75,6 +77,9 @@
+    }
+ 
+    public boolean func_189539_a(BlockState p_189539_1_, World p_189539_2_, BlockPos p_189539_3_, int p_189539_4_, int p_189539_5_) {
++      net.minecraftforge.event.world.NoteBlockEvent.Play e = new net.minecraftforge.event.world.NoteBlockEvent.Play(p_189539_2_, p_189539_3_, p_189539_1_, p_189539_1_.func_177229_b(field_196485_c), p_189539_1_.func_177229_b(field_196483_a));
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(e)) return false;
++      p_189539_1_ = p_189539_1_.func_206870_a(field_196485_c, e.getVanillaNoteId()).func_206870_a(field_196483_a, e.getInstrument());
+       int i = p_189539_1_.func_177229_b(field_196485_c);
+       float f = (float)Math.pow(2.0D, (double)(i - 12) / 12.0D);
+       p_189539_2_.func_184133_a((PlayerEntity)null, p_189539_3_, p_189539_1_.func_177229_b(field_196483_a).func_208088_a(), SoundCategory.RECORDS, 3.0F, f);

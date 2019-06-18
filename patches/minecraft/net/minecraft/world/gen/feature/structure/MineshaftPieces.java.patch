@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/gen/feature/structure/MineshaftPieces.java
++++ b/net/minecraft/world/gen/feature/structure/MineshaftPieces.java
+@@ -206,7 +206,7 @@
+ 
+       protected boolean func_186167_a(IWorld p_186167_1_, MutableBoundingBox p_186167_2_, Random p_186167_3_, int p_186167_4_, int p_186167_5_, int p_186167_6_, ResourceLocation p_186167_7_) {
+          BlockPos blockpos = new BlockPos(this.func_74865_a(p_186167_4_, p_186167_6_), this.func_74862_a(p_186167_5_), this.func_74873_b(p_186167_4_, p_186167_6_));
+-         if (p_186167_2_.func_175898_b(blockpos) && p_186167_1_.func_180495_p(blockpos).func_196958_f() && !p_186167_1_.func_180495_p(blockpos.func_177977_b()).func_196958_f()) {
++         if (p_186167_2_.func_175898_b(blockpos) && p_186167_1_.func_180495_p(blockpos).isAir(p_186167_1_, blockpos) && !p_186167_1_.func_180495_p(blockpos.func_177977_b()).isAir(p_186167_1_, blockpos.func_177977_b())) {
+             BlockState blockstate = Blocks.field_150448_aq.func_176223_P().func_206870_a(RailBlock.field_176565_b, p_186167_3_.nextBoolean() ? RailShape.NORTH_SOUTH : RailShape.EAST_WEST);
+             this.func_175811_a(p_186167_1_, blockstate, p_186167_4_, p_186167_5_, p_186167_6_, p_186167_2_);
+             ChestMinecartEntity chestminecartentity = new ChestMinecartEntity(p_186167_1_.func_201672_e(), (double)((float)blockpos.func_177958_n() + 0.5F), (double)((float)blockpos.func_177956_o() + 0.5F), (double)((float)blockpos.func_177952_p() + 0.5F));

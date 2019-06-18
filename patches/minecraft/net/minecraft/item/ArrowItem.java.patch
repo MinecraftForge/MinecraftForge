@@ -1,0 +1,12 @@
+--- a/net/minecraft/item/ArrowItem.java
++++ b/net/minecraft/item/ArrowItem.java
+@@ -15,4 +15,9 @@
+       arrowentity.func_184555_a(p_200887_2_);
+       return arrowentity;
+    }
++
++   public boolean isInfinite(ItemStack stack, ItemStack bow, net.minecraft.entity.player.PlayerEntity player) {
++      int enchant = net.minecraft.enchantment.EnchantmentHelper.func_77506_a(net.minecraft.enchantment.Enchantments.field_185312_x, bow);
++      return enchant <= 0 ? false : this.getClass() == ArrowItem.class;
++   }
+ }

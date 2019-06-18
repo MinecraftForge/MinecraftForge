@@ -40,8 +40,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Collections;
 
-@Mod(modid = SlipperinessTest.MOD_ID, name = "Slipperiness Test", version = "0.0.0", acceptableRemoteVersions = "*")
-@EventBusSubscriber
+//@Mod(modid = SlipperinessTest.MOD_ID, name = "Slipperiness Test", version = "0.0.0", acceptableRemoteVersions = "*")
+//@EventBusSubscriber
 public class SlipperinessTest
 {
     static final String MOD_ID = "slipperiness_test";
@@ -70,7 +70,7 @@ public class SlipperinessTest
         e.getRegistry().register(new ItemBlock(BB_BLOCK).setRegistryName(BB_BLOCK.getRegistryName()));
     }
 
-    @EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    //@EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {
         @SubscribeEvent

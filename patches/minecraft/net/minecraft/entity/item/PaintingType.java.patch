@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/item/PaintingType.java
++++ b/net/minecraft/entity/item/PaintingType.java
+@@ -2,7 +2,7 @@
+ 
+ import net.minecraft.util.registry.Registry;
+ 
+-public class PaintingType {
++public class PaintingType extends net.minecraftforge.registries.ForgeRegistryEntry<PaintingType> {
+    public static final PaintingType field_200843_b = func_221119_a("kebab", 16, 16);
+    public static final PaintingType field_200844_c = func_221119_a("aztec", 16, 16);
+    public static final PaintingType field_200845_d = func_221119_a("alban", 16, 16);

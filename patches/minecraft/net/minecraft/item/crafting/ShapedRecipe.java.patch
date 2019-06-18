@@ -1,14 +1,11 @@
 --- a/net/minecraft/item/crafting/ShapedRecipe.java
 +++ b/net/minecraft/item/crafting/ShapedRecipe.java
-@@ -21,10 +21,21 @@
- import net.minecraft.util.ResourceLocation;
- import net.minecraft.util.registry.IRegistry;
- import net.minecraft.world.World;
--import net.minecraftforge.api.distmarker.Dist;
--import net.minecraftforge.api.distmarker.OnlyIn;
+@@ -23,7 +23,20 @@
+ import net.minecraftforge.api.distmarker.Dist;
+ import net.minecraftforge.api.distmarker.OnlyIn;
  
--public class ShapedRecipe implements IRecipe {
-+public class ShapedRecipe implements IRecipe, net.minecraftforge.common.crafting.IShapedRecipe {
+-public class ShapedRecipe implements ICraftingRecipe {
++public class ShapedRecipe implements ICraftingRecipe, net.minecraftforge.common.crafting.IShapedRecipe<CraftingInventory> {
 +   static int MAX_WIDTH = 3;
 +   static int MAX_HEIGHT = 3;
 +   /**
@@ -25,15 +22,15 @@
     private final int field_77576_b;
     private final int field_77577_c;
     private final NonNullList<Ingredient> field_77574_d;
-@@ -49,7 +60,6 @@
-       return RecipeSerializers.field_199575_a;
+@@ -48,7 +61,6 @@
+       return IRecipeSerializer.field_222157_a;
     }
  
 -   @OnlyIn(Dist.CLIENT)
     public String func_193358_e() {
        return this.field_194137_e;
     }
-@@ -62,13 +72,12 @@
+@@ -61,7 +73,6 @@
        return this.field_77574_d;
     }
  
@@ -41,14 +38,7 @@
     public boolean func_194133_a(int p_194133_1_, int p_194133_2_) {
        return p_194133_1_ >= this.field_77576_b && p_194133_2_ >= this.field_77577_c;
     }
- 
-    public boolean func_77569_a(IInventory p_77569_1_, World p_77569_2_) {
--      if (!(p_77569_1_ instanceof InventoryCrafting)) {
-+      if (false) {
-          return false;
-       } else {
-          for(int i = 0; i <= p_77569_1_.func_174922_i() - this.field_77576_b; ++i) {
-@@ -118,10 +127,20 @@
+@@ -113,10 +124,20 @@
        return this.field_77576_b;
     }
  
@@ -69,7 +59,7 @@
     private static NonNullList<Ingredient> func_192402_a(String[] p_192402_0_, Map<String, Ingredient> p_192402_1_, int p_192402_2_, int p_192402_3_) {
        NonNullList<Ingredient> nonnulllist = NonNullList.func_191197_a(p_192402_2_ * p_192402_3_, Ingredient.field_193370_a);
        Set<String> set = Sets.newHashSet(p_192402_1_.keySet());
-@@ -203,15 +222,15 @@
+@@ -198,15 +219,15 @@
  
     private static String[] func_192407_a(JsonArray p_192407_0_) {
        String[] astring = new String[p_192407_0_.size()];
@@ -81,7 +71,7 @@
           throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
        } else {
           for(int i = 0; i < astring.length; ++i) {
-             String s = JsonUtils.func_151206_a(p_192407_0_.get(i), "pattern[" + i + "]");
+             String s = JSONUtils.func_151206_a(p_192407_0_.get(i), "pattern[" + i + "]");
 -            if (s.length() > 3) {
 -               throw new JsonSyntaxException("Invalid pattern: too many columns, 3 is maximum");
 +            if (s.length() > MAX_WIDTH) {
@@ -89,23 +79,18 @@
              }
  
              if (i > 0 && astring[0].length() != s.length()) {
-@@ -258,6 +277,7 @@
+@@ -248,11 +269,12 @@
+          throw new JsonParseException("Disallowed data tag found");
+       } else {
+          int i = JSONUtils.func_151208_a(p_199798_0_, "count", 1);
+-         return new ItemStack(item, i);
++         return net.minecraftforge.common.crafting.CraftingHelper.getItemStack(p_199798_0_, true);
+       }
     }
  
-    public static class Serializer implements IRecipeSerializer<ShapedRecipe> {
+-   public static class Serializer implements IRecipeSerializer<ShapedRecipe> {
++   public static class Serializer extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>>  implements IRecipeSerializer<ShapedRecipe> {
 +      private static final ResourceLocation NAME = new ResourceLocation("minecraft", "crafting_shaped");
        public ShapedRecipe func_199425_a_(ResourceLocation p_199425_1_, JsonObject p_199425_2_) {
-          String s = JsonUtils.func_151219_a(p_199425_2_, "group", "");
-          Map<String, Ingredient> map = ShapedRecipe.func_192408_a(JsonUtils.func_152754_s(p_199425_2_, "key"));
-@@ -269,8 +289,9 @@
-          return new ShapedRecipe(p_199425_1_, s, i, j, nonnulllist, itemstack);
-       }
- 
--      public String func_199567_a() {
--         return "crafting_shaped";
-+      @Override
-+      public ResourceLocation getName() {
-+         return NAME;
-       }
- 
-       public ShapedRecipe func_199426_a_(ResourceLocation p_199426_1_, PacketBuffer p_199426_2_) {
+          String s = JSONUtils.func_151219_a(p_199425_2_, "group", "");
+          Map<String, Ingredient> map = ShapedRecipe.func_192408_a(JSONUtils.func_152754_s(p_199425_2_, "key"));

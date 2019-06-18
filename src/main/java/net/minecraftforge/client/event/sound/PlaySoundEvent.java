@@ -20,7 +20,7 @@
 package net.minecraftforge.client.event.sound;
 
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.audio.SoundEngine;
 
 /***
  * Raised when the SoundManager tries to play a normal sound.
@@ -34,7 +34,7 @@ public class PlaySoundEvent extends SoundEvent
     private final ISound sound;
     private ISound result;
 
-    public PlaySoundEvent(SoundManager manager, ISound sound)
+    public PlaySoundEvent(SoundEngine manager, ISound sound)
     {
         super(manager);
         this.sound = sound;

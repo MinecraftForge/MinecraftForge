@@ -44,7 +44,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 // TODO 1.13: implement without java.awt
-@Mod(modid = DynamicBannerTest.MODID, name = "ForgeDebugDynamicBanner", version = DynamicBannerTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = DynamicBannerTest.MODID, name = "ForgeDebugDynamicBanner", version = DynamicBannerTest.VERSION, acceptableRemoteVersions = "*")
 public class DynamicBannerTest
 {
     private static final boolean ENABLE = false;

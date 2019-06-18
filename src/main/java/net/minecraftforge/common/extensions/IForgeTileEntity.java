@@ -22,9 +22,9 @@ package net.minecraftforge.common.extensions;
 import javax.annotation.Nonnull;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -36,20 +36,20 @@ import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.client.model.data.IModelData;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 
-public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound>
+public interface IForgeTileEntity extends ICapabilitySerializable<CompoundNBT>
 {
     default TileEntity getTileEntity() { return (TileEntity) this; }
 
     @Override
-    default void deserializeNBT(NBTTagCompound nbt)
+    default void deserializeNBT(CompoundNBT nbt)
     {
         getTileEntity().read(nbt);
     }
 
     @Override
-    default NBTTagCompound serializeNBT()
+    default CompoundNBT serializeNBT()
     {
-        NBTTagCompound ret = new NBTTagCompound();
+        CompoundNBT ret = new CompoundNBT();
         getTileEntity().write(ret);
         return ret;
     }
@@ -63,7 +63,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      * @param net The NetworkManager the packet originated from
      * @param pkt The data packet
      */
-    default void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SPacketUpdateTileEntity pkt){ }
+    default void onDataPacket(net.minecraft.network.NetworkManager net, net.minecraft.network.play.server.SUpdateTileEntityPacket pkt){ }
 
     /**
      * Called when the chunk's TE update tag, gotten from {@link #getUpdateTag()}, is received on the client.
@@ -72,7 +72,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      *
      * @param tag The {@link NBTTagCompound} sent from {@link #getUpdateTag()}
      */
-     default void handleUpdateTag(NBTTagCompound tag)
+     default void handleUpdateTag(CompoundNBT tag)
      {
          getTileEntity().read(tag);
      }
@@ -83,7 +83,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      *
      * @return A compound tag for custom data
      */
-     NBTTagCompound getTileData();
+     CompoundNBT getTileData();
 
      default void onChunkUnloaded(){}
 
@@ -95,17 +95,12 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      {
          requestModelDataUpdate();
      }
-     
-     default boolean shouldRenderInPass(int pass)
-     {
-         return pass == 0;
-     }
-     
+
      /**
       * Sometimes default render bounding box: infinite in scope. Used to control rendering on {@link TileEntitySpecialRenderer}.
       */
      public static final AxisAlignedBB INFINITE_EXTENT_AABB = new net.minecraft.util.math.AxisAlignedBB(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-     
+
      /**
       * Return an {@link AxisAlignedBB} that controls the visible scope of a {@link TileEntitySpecialRenderer} associated with this {@link TileEntity}
       * Defaults to the collision bounding box {@link Block#getCollisionBoundingBoxFromPool(World, int, int, int)} associated with the block
@@ -117,7 +112,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      default AxisAlignedBB getRenderBoundingBox()
      {
          AxisAlignedBB bb = INFINITE_EXTENT_AABB;
-         IBlockState state = getTileEntity().getBlockState();
+         BlockState state = getTileEntity().getBlockState();
          Block block = state.getBlock();
          BlockPos pos = getTileEntity().getPos();
          if (block == Blocks.ENCHANTING_TABLE)
@@ -162,12 +157,12 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      default boolean canRenderBreaking()
      {
          Block block = getTileEntity().getBlockState().getBlock();
-         return (block instanceof net.minecraft.block.BlockChest ||
-                 block instanceof net.minecraft.block.BlockEnderChest ||
-                 block instanceof net.minecraft.block.BlockSign ||
-                 block instanceof net.minecraft.block.BlockSkull);
+         return (block instanceof net.minecraft.block.ChestBlock ||
+                 block instanceof net.minecraft.block.EnderChestBlock ||
+                 block instanceof net.minecraft.block.AbstractSignBlock ||
+                 block instanceof net.minecraft.block.SkullBlock);
      }
-     
+
      /**
       * If the TileEntitySpecialRenderer associated with this TileEntity can be batched in with another renderers, and won't access the GL state.
       * If TileEntity returns true, then TESR should have the same functionality as (and probably extend) the FastTESR class.
@@ -176,7 +171,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
      {
          return false;
      }
-     
+
      default void requestModelDataUpdate()
      {
          TileEntity te = getTileEntity();
@@ -186,7 +181,7 @@ public interface IForgeTileEntity extends ICapabilitySerializable<NBTTagCompound
              ModelDataManager.requestModelDataRefresh(te);
          }
      }
-     
+
      default @Nonnull IModelData getModelData()
      {
          return EmptyModelData.INSTANCE;

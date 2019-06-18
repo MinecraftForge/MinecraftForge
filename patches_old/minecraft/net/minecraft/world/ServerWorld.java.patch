@@ -1,0 +1,11 @@
+--- a/net/minecraft/world/ServerWorld.java
++++ b/net/minecraft/world/ServerWorld.java
+@@ -725,7 +744,7 @@
+ 
+    public void func_212420_a(Stream<Entity> p_212420_1_) {
+       p_212420_1_.forEach((p_212421_1_) -> {
+-         if (this.func_184165_i(p_212421_1_)) {
++         if (this.func_184165_i(p_212421_1_) && !net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.entity.EntityJoinWorldEvent(p_212421_1_, this))) {
+             this.field_72996_f.add(p_212421_1_);
+             this.func_72923_a(p_212421_1_);
+          }

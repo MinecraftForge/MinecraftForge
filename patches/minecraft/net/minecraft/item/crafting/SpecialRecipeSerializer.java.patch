@@ -1,0 +1,11 @@
+--- a/net/minecraft/item/crafting/SpecialRecipeSerializer.java
++++ b/net/minecraft/item/crafting/SpecialRecipeSerializer.java
+@@ -5,7 +5,7 @@
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.util.ResourceLocation;
+ 
+-public class SpecialRecipeSerializer<T extends IRecipe<?>> implements IRecipeSerializer<T> {
++public class SpecialRecipeSerializer<T extends IRecipe<?>> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>>  implements IRecipeSerializer<T> {
+    private final Function<ResourceLocation, T> field_222176_t;
+ 
+    public SpecialRecipeSerializer(Function<ResourceLocation, T> p_i50024_1_) {

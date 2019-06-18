@@ -1,0 +1,63 @@
+--- a/net/minecraft/block/CactusBlock.java
++++ b/net/minecraft/block/CactusBlock.java
+@@ -19,7 +19,7 @@
+ import net.minecraft.world.IWorldReader;
+ import net.minecraft.world.World;
+ 
+-public class CactusBlock extends Block {
++public class CactusBlock extends Block implements net.minecraftforge.common.IPlantable {
+    public static final IntegerProperty field_176587_a = BlockStateProperties.field_208171_X;
+    protected static final VoxelShape field_196400_b = Block.func_208617_a(1.0D, 0.0D, 1.0D, 15.0D, 15.0D, 15.0D);
+    protected static final VoxelShape field_196401_c = Block.func_208617_a(1.0D, 0.0D, 1.0D, 15.0D, 16.0D, 15.0D);
+@@ -30,6 +30,7 @@
+    }
+ 
+    public void func_196267_b(BlockState p_196267_1_, World p_196267_2_, BlockPos p_196267_3_, Random p_196267_4_) {
++      if (!p_196267_2_.isAreaLoaded(p_196267_3_, 1)) return; // Forge: prevent growing cactus from loading unloaded chunks with block update
+       if (!p_196267_1_.func_196955_c(p_196267_2_, p_196267_3_)) {
+          p_196267_2_.func_175655_b(p_196267_3_, true);
+       } else {
+@@ -42,6 +43,7 @@
+ 
+             if (i < 3) {
+                int j = p_196267_1_.func_177229_b(field_176587_a);
++               if(net.minecraftforge.common.ForgeHooks.onCropsGrowPre(p_196267_2_, blockpos, p_196267_1_, true)) {
+                if (j == 15) {
+                   p_196267_2_.func_175656_a(blockpos, this.func_176223_P());
+                   BlockState blockstate = p_196267_1_.func_206870_a(field_176587_a, Integer.valueOf(0));
+@@ -50,7 +52,8 @@
+                } else {
+                   p_196267_2_.func_180501_a(p_196267_3_, p_196267_1_.func_206870_a(field_176587_a, Integer.valueOf(j + 1)), 4);
+                }
+-
++               net.minecraftforge.common.ForgeHooks.onCropsGrowPost(p_196267_2_, p_196267_3_, p_196267_1_);
++               }
+             }
+          }
+       }
+@@ -85,8 +88,8 @@
+          }
+       }
+ 
+-      Block block = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b()).func_177230_c();
+-      return (block == Blocks.field_150434_aF || block == Blocks.field_150354_m || block == Blocks.field_196611_F) && !p_196260_2_.func_180495_p(p_196260_3_.func_177984_a()).func_185904_a().func_76224_d();
++      BlockState soil = p_196260_2_.func_180495_p(p_196260_3_.func_177977_b());
++      return soil.canSustainPlant(p_196260_2_, p_196260_3_.func_177977_b(), Direction.UP, this) && !p_196260_2_.func_180495_p(p_196260_3_.func_177984_a()).func_185904_a().func_76224_d();
+    }
+ 
+    public void func_196262_a(BlockState p_196262_1_, World p_196262_2_, BlockPos p_196262_3_, Entity p_196262_4_) {
+@@ -104,4 +107,14 @@
+    public boolean func_196266_a(BlockState p_196266_1_, IBlockReader p_196266_2_, BlockPos p_196266_3_, PathType p_196266_4_) {
+       return false;
+    }
++
++   @Override
++   public net.minecraftforge.common.PlantType getPlantType(IBlockReader world, BlockPos pos) {
++      return net.minecraftforge.common.PlantType.Desert;
++   }
++
++   @Override
++   public BlockState getPlant(IBlockReader world, BlockPos pos) {
++      return func_176223_P();
++   }
+ }

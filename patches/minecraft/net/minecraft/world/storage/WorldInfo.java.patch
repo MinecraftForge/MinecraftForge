@@ -1,10 +1,10 @@
 --- a/net/minecraft/world/storage/WorldInfo.java
 +++ b/net/minecraft/world/storage/WorldInfo.java
-@@ -325,6 +325,7 @@
-       NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+@@ -349,6 +349,7 @@
+       CompoundNBT compoundnbt1 = new CompoundNBT();
  
-       for(Entry<DimensionType, NBTTagCompound> entry : this.field_186348_N.entrySet()) {
+       for(Entry<DimensionType, CompoundNBT> entry : this.field_186348_N.entrySet()) {
 +         if (entry.getValue() == null || entry.getValue().isEmpty()) continue;
-          nbttagcompound1.func_74782_a(String.valueOf(entry.getKey().func_186068_a()), entry.getValue());
+          compoundnbt1.func_218657_a(String.valueOf(entry.getKey().func_186068_a()), entry.getValue());
        }
  

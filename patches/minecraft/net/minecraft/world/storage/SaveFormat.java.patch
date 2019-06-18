@@ -1,0 +1,27 @@
+--- a/net/minecraft/world/storage/SaveFormat.java
++++ b/net/minecraft/world/storage/SaveFormat.java
+@@ -138,13 +138,23 @@
+ 
+    @Nullable
+    public static WorldInfo func_215780_a(File p_215780_0_, DataFixer p_215780_1_) {
++       return getWorldData(p_215780_0_, p_215780_1_, null);
++   }
++
++   @Nullable
++   public static WorldInfo getWorldData(File p_215780_0_, DataFixer p_215780_1_, @Nullable SaveHandler saveHandler) {
+       try {
+          CompoundNBT compoundnbt = CompressedStreamTools.func_74796_a(new FileInputStream(p_215780_0_));
+          CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("Data");
+          CompoundNBT compoundnbt2 = compoundnbt1.func_150297_b("Player", 10) ? compoundnbt1.func_74775_l("Player") : null;
+          compoundnbt1.func_82580_o("Player");
+          int i = compoundnbt1.func_150297_b("DataVersion", 99) ? compoundnbt1.func_74762_e("DataVersion") : -1;
+-         return new WorldInfo(NBTUtil.func_210822_a(p_215780_1_, DefaultTypeReferences.LEVEL, compoundnbt1, i), p_215780_1_, i, compoundnbt2);
++         WorldInfo ret = new WorldInfo(NBTUtil.func_210822_a(p_215780_1_, DefaultTypeReferences.LEVEL, compoundnbt1, i), p_215780_1_, i, compoundnbt2);
++         if (saveHandler != null)
++            net.minecraftforge.fml.WorldPersistenceHooks.handleWorldDataLoad(saveHandler, ret, compoundnbt);
++         return ret;
++      } catch (net.minecraftforge.fml.StartupQuery.AbortedException e) {
++          throw e;
+       } catch (Exception exception) {
+          field_215785_a.error("Exception reading {}", p_215780_0_, exception);
+          return null;

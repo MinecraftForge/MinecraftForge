@@ -1,0 +1,19 @@
+--- a/net/minecraft/client/entity/player/AbstractClientPlayerEntity.java
++++ b/net/minecraft/client/entity/player/AbstractClientPlayerEntity.java
+@@ -116,7 +116,7 @@
+          f = 1.0F;
+       }
+ 
+-      if (this.func_184587_cr() && this.func_184607_cu().func_77973_b() == Items.field_151031_f) {
++      if (this.func_184587_cr() && this.func_184607_cu().func_77973_b() instanceof net.minecraft.item.BowItem) {
+          int i = this.func_184612_cw();
+          float f1 = (float)i / 20.0F;
+          if (f1 > 1.0F) {
+@@ -128,6 +128,6 @@
+          f *= 1.0F - f1 * 0.15F;
+       }
+ 
+-      return f;
++      return net.minecraftforge.client.ForgeHooksClient.getOffsetFOV(this, f);
+    }
+ }

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,11 +22,13 @@ package net.minecraftforge.event.entity.living;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.Cancelable;
+
+import net.minecraftforge.eventbus.api.Event.HasResult;
 
 /**
  * This Event and its subevents gets fired from  {@link EntityLivingBase} on the  {@link MinecraftForge#EVENT_BUS}.<br>
@@ -34,9 +36,9 @@ import net.minecraftforge.eventbus.api.Cancelable;
 public class PotionEvent extends LivingEvent
 {
     @Nullable
-    protected final PotionEffect effect;
+    protected final EffectInstance effect;
     
-    public PotionEvent(EntityLivingBase living, PotionEffect effect)
+    public PotionEvent(LivingEntity living, EffectInstance effect)
     {
         super(living);
         this.effect = effect;
@@ -45,7 +47,7 @@ public class PotionEvent extends LivingEvent
      * Retuns the PotionEffect.
      */
     @Nullable
-    public PotionEffect getPotionEffect()
+    public EffectInstance getPotionEffect()
     {
         return effect;
     }
@@ -58,15 +60,15 @@ public class PotionEvent extends LivingEvent
     @Cancelable
     public static class PotionRemoveEvent extends PotionEvent
     {
-        private final Potion potion;
+        private final Effect potion;
         
-        public PotionRemoveEvent(EntityLivingBase living, Potion potion)
+        public PotionRemoveEvent(LivingEntity living, Effect potion)
         {
             super(living, living.getActivePotionEffect(potion));
             this.potion = potion;
         }
         
-        public PotionRemoveEvent(EntityLivingBase living, PotionEffect effect)
+        public PotionRemoveEvent(LivingEntity living, EffectInstance effect)
         {
             super(living, effect);
             this.potion = effect.getPotion();            
@@ -75,7 +77,7 @@ public class PotionEvent extends LivingEvent
         /**
          * @return the Potion which is tried to remove from the Entity.
          */
-        public Potion getPotion()
+        public Effect getPotion()
         {
             return this.potion;
         }
@@ -85,7 +87,7 @@ public class PotionEvent extends LivingEvent
          */
         @Override
         @Nullable
-        public PotionEffect getPotionEffect()
+        public EffectInstance getPotionEffect()
         {
             return super.getPotionEffect();
         }
@@ -102,7 +104,7 @@ public class PotionEvent extends LivingEvent
     @HasResult
     public static class PotionApplicableEvent extends PotionEvent
     {
-        public PotionApplicableEvent(EntityLivingBase living, PotionEffect effect)
+        public PotionApplicableEvent(LivingEntity living, EffectInstance effect)
         {
             super(living, effect);
         }
@@ -112,7 +114,7 @@ public class PotionEvent extends LivingEvent
          */
         @Override
         @Nonnull
-        public PotionEffect getPotionEffect()
+        public EffectInstance getPotionEffect()
         {
             return super.getPotionEffect();
         }
@@ -125,9 +127,9 @@ public class PotionEvent extends LivingEvent
      */
     public static class PotionAddedEvent extends PotionEvent
     {
-        private final PotionEffect oldEffect;
+        private final EffectInstance oldEffect;
         
-        public PotionAddedEvent(EntityLivingBase living, PotionEffect oldEffect, PotionEffect newEffect)
+        public PotionAddedEvent(LivingEntity living, EffectInstance oldEffect, EffectInstance newEffect)
         {
             super(living, newEffect);
             this.oldEffect = oldEffect;
@@ -138,7 +140,7 @@ public class PotionEvent extends LivingEvent
          */
         @Override
         @Nonnull
-        public PotionEffect getPotionEffect()
+        public EffectInstance getPotionEffect()
         {
             return super.getPotionEffect();
         }
@@ -147,7 +149,7 @@ public class PotionEvent extends LivingEvent
          * @return the old PotionEffect. THis can be null if the entity did not have an effect of this kind before.
          */
         @Nullable
-        public PotionEffect getOldPotionEffect()
+        public EffectInstance getOldPotionEffect()
         {
             return oldEffect;
         }
@@ -160,7 +162,7 @@ public class PotionEvent extends LivingEvent
      */
     public static class PotionExpiryEvent extends PotionEvent
     {
-        public PotionExpiryEvent(EntityLivingBase living, PotionEffect effect)
+        public PotionExpiryEvent(LivingEntity living, EffectInstance effect)
         {
             super(living, effect);
         }

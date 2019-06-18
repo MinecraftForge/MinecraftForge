@@ -34,8 +34,8 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 
-@Mod(modid = ColoredFluidTest.MODID, name = "Test Mod", version = "1.0.0", acceptedMinecraftVersions = "*", acceptableRemoteVersions = "*")
-@EventBusSubscriber
+//@Mod(modid = ColoredFluidTest.MODID, name = "Test Mod", version = "1.0.0", acceptedMinecraftVersions = "*", acceptableRemoteVersions = "*")
+//@EventBusSubscriber
 public class ColoredFluidTest
 {
     static final boolean ENABLED = false;      // <-- enable mod

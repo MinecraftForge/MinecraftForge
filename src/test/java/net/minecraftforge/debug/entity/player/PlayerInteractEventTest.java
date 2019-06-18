@@ -38,7 +38,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = "playerinteracteventtest", name = "PlayerInteractEventTest", version = "0.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = "playerinteracteventtest", name = "PlayerInteractEventTest", version = "0.0.0", acceptableRemoteVersions = "*")
 public class PlayerInteractEventTest
 {
     // NOTE: Test with both this ON and OFF - ensure none of the test behaviours show when this is off!

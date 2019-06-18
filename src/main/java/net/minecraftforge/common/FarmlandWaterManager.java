@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,8 +26,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.IWorldReaderBase;
+import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunk;
 import net.minecraftforge.common.ticket.AABBTicket;
@@ -107,7 +106,7 @@ public class FarmlandWaterManager
      * Tests if a block is in a region that is watered by blocks. This does not check vanilla water, see {@link net.minecraft.block.BlockFarmland#hasWater(World, BlockPos)}
      * @return true if there is a ticket with an AABB that includes your block
      */
-    public static boolean hasBlockWaterTicket(IWorldReaderBase world, BlockPos pos)
+    public static boolean hasBlockWaterTicket(IWorldReader world, BlockPos pos)
     {
         ChunkTicketManager<Vec3d> ticketManager = getTicketManager(new ChunkPos(pos.getX() >> 4, pos.getZ() >> 4), world);
         if (ticketManager != null)
@@ -133,7 +132,7 @@ public class FarmlandWaterManager
         }
     }
 
-    private static ChunkTicketManager<Vec3d> getTicketManager(ChunkPos pos, IWorldReaderBase world) {
+    private static ChunkTicketManager<Vec3d> getTicketManager(ChunkPos pos, IWorldReader world) {
         Preconditions.checkArgument(!world.isRemote(), "Water region is only determined server-side");
         Map<ChunkPos, ChunkTicketManager<Vec3d>> ticketMap = customWaterHandler.get(world.getDimension().getType().getId());
         if (ticketMap == null)

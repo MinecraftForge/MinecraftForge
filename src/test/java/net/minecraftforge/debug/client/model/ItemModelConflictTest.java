@@ -33,8 +33,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod.EventBusSubscriber
-@Mod(modid = ItemModelConflictTest.MODID, name = "Test mod for model conflicts", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
+//@Mod(modid = ItemModelConflictTest.MODID, name = "Test mod for model conflicts", version = "1.0", acceptableRemoteVersions = "*")
 public class ItemModelConflictTest
 {
     public static final String MODID = "item_model_conflict_test";
@@ -69,7 +69,7 @@ public class ItemModelConflictTest
         );
     }
 
-    @Mod.EventBusSubscriber(modid = MODID, value = Side.CLIENT)
+    //@Mod.EventBusSubscriber(modid = MODID, value = Side.CLIENT)
     public static class ClientEventHandler
     {
         @SubscribeEvent

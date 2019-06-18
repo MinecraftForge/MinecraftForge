@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/merchant/villager/VillagerProfession.java
++++ b/net/minecraft/entity/merchant/villager/VillagerProfession.java
+@@ -9,7 +9,7 @@
+ import net.minecraft.util.registry.Registry;
+ import net.minecraft.village.PointOfInterestType;
+ 
+-public class VillagerProfession {
++public class VillagerProfession extends net.minecraftforge.registries.ForgeRegistryEntry<VillagerProfession> {
+    public static final VillagerProfession field_221151_a = func_221147_a("none", PointOfInterestType.field_221054_b);
+    public static final VillagerProfession field_221152_b = func_221147_a("armorer", PointOfInterestType.field_221055_c);
+    public static final VillagerProfession field_221153_c = func_221147_a("butcher", PointOfInterestType.field_221056_d);

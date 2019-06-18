@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,18 +19,18 @@
 
 package net.minecraftforge.registries;
 
-import net.minecraft.network.datasync.DataSerializer;
+import net.minecraft.network.datasync.IDataSerializer;
 
 public final class DataSerializerEntry extends ForgeRegistryEntry<DataSerializerEntry>
 {
-    private final DataSerializer<?> serializer;
+    private final IDataSerializer<?> serializer;
 
-    public DataSerializerEntry(DataSerializer<?> serializer)
+    public DataSerializerEntry(IDataSerializer<?> serializer)
     {
         this.serializer = serializer;
     }
 
-    public DataSerializer<?> getSerializer()
+    public IDataSerializer<?> getSerializer()
     {
         return serializer;
     }

@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
 
 import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -82,22 +82,6 @@ public interface IForgeDimension
             return 8.0;
         }
         return 1.0;
-    }
-
-    /**
-     * If this method returns true, then chunks received by the client will
-     * have {@link net.minecraft.world.chunk.Chunk#resetRelightChecks} called
-     * on them, queuing lighting checks for all air blocks in the chunk (and
-     * any adjacent light-emitting blocks).
-     *
-     * Returning true here is recommended if the chunk generator used also
-     * does this for newly generated chunks.
-     *
-     * @return true if lighting checks should be performed
-     */
-    default boolean shouldClientCheckLighting()
-    {
-        return !(this instanceof OverworldDimension);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -166,9 +150,9 @@ public interface IForgeDimension
      * @param pos The location where the player tries to sleep at (the position of the clicked on bed for example)
      * @return the result of a player trying to sleep at the given location
      */
-    default SleepResult canSleepAt(net.minecraft.entity.player.EntityPlayer player, BlockPos pos)
+    default SleepResult canSleepAt(net.minecraft.entity.player.PlayerEntity player, BlockPos pos)
     {
-        return (getDimension().canRespawnHere() && getWorld().getBiome(pos) != net.minecraft.init.Biomes.NETHER) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
+        return (getDimension().canRespawnHere() && getWorld().getBiome(pos) != net.minecraft.world.biome.Biomes.NETHER) ? SleepResult.ALLOW : SleepResult.BED_EXPLODES;
     }
 
     enum SleepResult
@@ -196,24 +180,15 @@ public interface IForgeDimension
      *
      * @return The current brightness factor
      **/
-    default float getSunBrightnessFactor(float partialTicks)
-    {
-        return getWorld().getSunBrightnessFactor(partialTicks);
-    }
-
-    /**
-     * Gets the Sun Brightness for rendering sky.
-     * */
-    @OnlyIn(Dist.CLIENT)
     default float getSunBrightness(float partialTicks)
     {
         return getWorld().getSunBrightnessBody(partialTicks);
     }
 
     @OnlyIn(Dist.CLIENT)
-    default Vec3d getSkyColor(Entity cameraEntity, float partialTicks)
+    default Vec3d getSkyColor(BlockPos cameraPos, float partialTicks)
     {
-        return getWorld().getSkyColorBody(cameraEntity, partialTicks);
+        return getWorld().getSkyColorBody(cameraPos, partialTicks);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -238,10 +213,7 @@ public interface IForgeDimension
     @OnlyIn(Dist.CLIENT)
     default float getStarBrightness(float partialTicks)
     {
-        float f = getWorld().getCelestialAngle(partialTicks);
-        float f1 = 1.0F - (MathHelper.cos(f * ((float)Math.PI * 2F)) * 2.0F + 0.25F);
-        f1 = MathHelper.clamp(f1, 0.0F, 1.0F);
-        return f1 * f1 * 0.5F;
+        return getWorld().getStarBrightnessBody(partialTicks);
     }
 
     default void setAllowedSpawnTypes(boolean allowHostile, boolean allowPeaceful) { }
@@ -251,9 +223,9 @@ public interface IForgeDimension
         getWorld().calculateInitialWeatherBody();
     }
 
-    default void updateWeather()
+    default void updateWeather(Runnable defaultLogic)
     {
-        getWorld().updateWeatherBody();
+        defaultLogic.run();
     }
 
     default long getSeed()
@@ -282,7 +254,7 @@ public interface IForgeDimension
         getWorld().getWorldInfo().setSpawn(pos);
     }
 
-    default boolean canMineBlock(EntityPlayer player, BlockPos pos)
+    default boolean canMineBlock(PlayerEntity player, BlockPos pos)
     {
         return getWorld().canMineBlockBody(player, pos);
     }
@@ -304,7 +276,7 @@ public interface IForgeDimension
 
     default double getHorizon()
     {
-        return getWorld().getWorldInfo().getTerrainType().getHorizon(getWorld());
+        return getWorld().getWorldInfo().getGenerator().getHorizon(getWorld());
     }
 
     /**
@@ -327,7 +299,7 @@ public interface IForgeDimension
      * @param player The player that is respawning
      * @return The dimension to respawn the player in
      */
-    default DimensionType getRespawnDimension(EntityPlayerMP player)
+    default DimensionType getRespawnDimension(ServerPlayerEntity player)
     {
         return player.getSpawnDimension();
     }

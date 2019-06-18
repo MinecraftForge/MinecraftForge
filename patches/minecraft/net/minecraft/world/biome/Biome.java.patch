@@ -1,53 +1,62 @@
 --- a/net/minecraft/world/biome/Biome.java
 +++ b/net/minecraft/world/biome/Biome.java
-@@ -144,7 +144,7 @@
+@@ -55,7 +55,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 -public abstract class Biome {
 +public abstract class Biome extends net.minecraftforge.registries.ForgeRegistryEntry<Biome> {
     public static final Logger field_150586_aC = LogManager.getLogger();
-    public static final WorldCarver<ProbabilityConfig> field_201907_b = new CaveWorldCarver();
-    public static final WorldCarver<ProbabilityConfig> field_201908_c = new NetherCaveWorldCarver();
-@@ -322,11 +322,11 @@
+    public static final Set<Biome> field_201870_ab = Sets.newHashSet();
+    public static final ObjectIntIdentityMap<Biome> field_185373_j = new ObjectIntIdentityMap<>();
+@@ -132,11 +132,11 @@
     }
  
-    protected void func_201866_a(EnumCreatureType p_201866_1_, Biome.SpawnListEntry p_201866_2_) {
+    protected void func_201866_a(EntityClassification p_201866_1_, Biome.SpawnListEntry p_201866_2_) {
 -      this.field_201880_ax.get(p_201866_1_).add(p_201866_2_);
 +      this.field_201880_ax.computeIfAbsent(p_201866_1_, k -> Lists.newArrayList()).add(p_201866_2_);
     }
  
-    public List<Biome.SpawnListEntry> func_76747_a(EnumCreatureType p_76747_1_) {
+    public List<Biome.SpawnListEntry> func_76747_a(EntityClassification p_76747_1_) {
 -      return this.field_201880_ax.get(p_76747_1_);
 +      return this.field_201880_ax.computeIfAbsent(p_76747_1_, k -> Lists.newArrayList());
     }
  
     public Biome.RainType func_201851_b() {
-@@ -383,7 +383,7 @@
+@@ -168,7 +168,7 @@
+       if (this.func_180626_a(p_201854_2_) >= 0.15F) {
+          return false;
        } else {
-          if (p_201850_2_.func_177956_o() >= 0 && p_201850_2_.func_177956_o() < 256 && p_201850_1_.func_175642_b(EnumLightType.BLOCK, p_201850_2_) < 10) {
-             IBlockState iblockstate = p_201850_1_.func_180495_p(p_201850_2_);
--            if (iblockstate.func_196958_f() && Blocks.field_150433_aE.func_176223_P().func_196955_c(p_201850_1_, p_201850_2_)) {
-+            if (iblockstate.isAir(p_201850_1_, p_201850_2_) && Blocks.field_150433_aE.func_176223_P().func_196955_c(p_201850_1_, p_201850_2_)) {
+-         if (p_201854_2_.func_177956_o() >= 0 && p_201854_2_.func_177956_o() < 256 && p_201854_1_.func_175642_b(LightType.BLOCK, p_201854_2_) < 10) {
++         if (p_201854_2_.func_177956_o() >= 0 && p_201854_2_.func_177956_o() < p_201854_1_.func_201675_m().getHeight() && p_201854_1_.func_175642_b(LightType.BLOCK, p_201854_2_) < 10) {
+             BlockState blockstate = p_201854_1_.func_180495_p(p_201854_2_);
+             IFluidState ifluidstate = p_201854_1_.func_204610_c(p_201854_2_);
+             if (ifluidstate.func_206886_c() == Fluids.field_204546_a && blockstate.func_177230_c() instanceof FlowingFluidBlock) {
+@@ -193,7 +193,7 @@
+       } else {
+          if (p_201850_2_.func_177956_o() >= 0 && p_201850_2_.func_177956_o() < 256 && p_201850_1_.func_175642_b(LightType.BLOCK, p_201850_2_) < 10) {
+             BlockState blockstate = p_201850_1_.func_180495_p(p_201850_2_);
+-            if (blockstate.func_196958_f() && Blocks.field_150433_aE.func_176223_P().func_196955_c(p_201850_1_, p_201850_2_)) {
++            if (blockstate.isAir(p_201850_1_, p_201850_2_) && Blocks.field_150433_aE.func_176223_P().func_196955_c(p_201850_1_, p_201850_2_)) {
                 return true;
              }
           }
-@@ -737,6 +737,18 @@
+@@ -488,6 +488,18 @@
        }
     }
  
 +   public static class FlowerEntry extends WeightedRandom.Item {
-+      private final IBlockState state;
-+      public FlowerEntry(IBlockState state, int weight) {
++      private final BlockState state;
++      public FlowerEntry(BlockState state, int weight) {
 +         super(weight);
 +         this.state = state;
 +      }
 +
-+      public IBlockState getState() {
++      public BlockState getState() {
 +         return state;
 +      }
 +   }
 +
     public static enum TempCategory {
-       OCEAN,
-       COLD,
+       OCEAN("ocean"),
+       COLD("cold"),

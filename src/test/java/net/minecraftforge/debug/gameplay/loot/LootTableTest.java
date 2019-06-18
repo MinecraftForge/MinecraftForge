@@ -35,7 +35,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.FMLInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(modid = LootTableTest.MODID, name = "Loot Table Debug", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = LootTableTest.MODID, name = "Loot Table Debug", version = "1.0", acceptableRemoteVersions = "*")
 public class LootTableTest
 {
     public static final String MODID = "loot_table_debug";

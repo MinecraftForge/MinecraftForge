@@ -28,7 +28,7 @@ import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
-@Mod(modid = ItemPickupEventTest.MODID, name = ItemPickupEventTest.NAME, version = ItemPickupEventTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = ItemPickupEventTest.MODID, name = ItemPickupEventTest.NAME, version = ItemPickupEventTest.VERSION, acceptableRemoteVersions = "*")
 public class ItemPickupEventTest
 {
 

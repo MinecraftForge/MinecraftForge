@@ -20,6 +20,7 @@
 package net.minecraftforge.common;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import net.minecraft.entity.EntityType;
@@ -50,11 +51,15 @@ public class DungeonHooks
             throw new IllegalArgumentException("Rarity must be greater then zero");
         }
 
-        for (DungeonMob mob : dungeonMobs)
+        Iterator<DungeonMob> itr = dungeonMobs.iterator();
+        while (itr.hasNext())
         {
+            DungeonMob mob = itr.next();
             if (type == mob.type)
             {
-                return mob.itemWeight += rarity;
+                itr.remove();
+                rarity = mob.itemWeight + rarity;
+                break;
             }
         }
 

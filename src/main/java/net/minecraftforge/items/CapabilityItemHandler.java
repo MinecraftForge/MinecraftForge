@@ -20,10 +20,10 @@
 package net.minecraftforge.items;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.CapabilityManager;
@@ -40,17 +40,17 @@ public class CapabilityItemHandler
         CapabilityManager.INSTANCE.register(IItemHandler.class, new Capability.IStorage<IItemHandler>()
         {
             @Override
-            public INBTBase writeNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side)
+            public INBT writeNBT(Capability<IItemHandler> capability, IItemHandler instance, Direction side)
             {
-                NBTTagList nbtTagList = new NBTTagList();
+                ListNBT nbtTagList = new ListNBT();
                 int size = instance.getSlots();
                 for (int i = 0; i < size; i++)
                 {
                     ItemStack stack = instance.getStackInSlot(i);
                     if (!stack.isEmpty())
                     {
-                        NBTTagCompound itemTag = new NBTTagCompound();
-                        itemTag.setInt("Slot", i);
+                        CompoundNBT itemTag = new CompoundNBT();
+                        itemTag.putInt("Slot", i);
                         stack.write(itemTag);
                         nbtTagList.add(itemTag);
                     }
@@ -59,15 +59,15 @@ public class CapabilityItemHandler
             }
 
             @Override
-            public void readNBT(Capability<IItemHandler> capability, IItemHandler instance, EnumFacing side, INBTBase base)
+            public void readNBT(Capability<IItemHandler> capability, IItemHandler instance, Direction side, INBT base)
             {
                 if (!(instance instanceof IItemHandlerModifiable))
                     throw new RuntimeException("IItemHandler instance does not implement IItemHandlerModifiable");
                 IItemHandlerModifiable itemHandlerModifiable = (IItemHandlerModifiable) instance;
-                NBTTagList tagList = (NBTTagList) base;
+                ListNBT tagList = (ListNBT) base;
                 for (int i = 0; i < tagList.size(); i++)
                 {
-                    NBTTagCompound itemTags = tagList.getCompound(i);
+                    CompoundNBT itemTags = tagList.getCompound(i);
                     int j = itemTags.getInt("Slot");
 
                     if (j >= 0 && j < instance.getSlots())

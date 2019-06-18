@@ -40,7 +40,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-@Mod(modid = ItemLayerModelTest.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelTest.VERSION, acceptableRemoteVersions = "*")
+//@Mod(modid = ItemLayerModelTest.MODID, name = "ForgeDebugItemLayerModel", version = ItemLayerModelTest.VERSION, acceptableRemoteVersions = "*")
 public class ItemLayerModelTest
 {
     public static final String MODID = "forgedebugitemlayermodel";
@@ -48,7 +48,7 @@ public class ItemLayerModelTest
     @ObjectHolder("test_item")
     public static final Item TEST_ITEM = null;
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @SubscribeEvent

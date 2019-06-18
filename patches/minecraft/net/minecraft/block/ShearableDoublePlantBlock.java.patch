@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/ShearableDoublePlantBlock.java
++++ b/net/minecraft/block/ShearableDoublePlantBlock.java
+@@ -4,7 +4,7 @@
+ import net.minecraft.state.EnumProperty;
+ import net.minecraft.state.properties.DoubleBlockHalf;
+ 
+-public class ShearableDoublePlantBlock extends DoublePlantBlock {
++public class ShearableDoublePlantBlock extends DoublePlantBlock implements net.minecraftforge.common.IShearable {
+    public static final EnumProperty<DoubleBlockHalf> field_208063_b = DoublePlantBlock.field_176492_b;
+ 
+    public ShearableDoublePlantBlock(Block.Properties p_i49975_1_) {

@@ -19,8 +19,8 @@
 
 package net.minecraftforge.items.wrapper;
 
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraftforge.items.IItemHandler;
 
 /**
@@ -29,8 +29,8 @@ import net.minecraftforge.items.IItemHandler;
  */
 public class EntityHandsInvWrapper extends EntityEquipmentInvWrapper
 {
-    public EntityHandsInvWrapper(EntityLivingBase entity)
+    public EntityHandsInvWrapper(LivingEntity entity)
     {
-        super(entity, EntityEquipmentSlot.Type.HAND);
+        super(entity, EquipmentSlotType.Group.HAND);
     }
 }

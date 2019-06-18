@@ -1,0 +1,10 @@
+--- a/net/minecraft/item/ToolItem.java
++++ b/net/minecraft/item/ToolItem.java
+@@ -26,6 +26,7 @@
+    }
+ 
+    public float func_150893_a(ItemStack p_150893_1_, BlockState p_150893_2_) {
++      if (getToolTypes(p_150893_1_).stream().anyMatch(e -> p_150893_2_.isToolEffective(e))) return field_77864_a;
+       return this.field_150914_c.contains(p_150893_2_.func_177230_c()) ? this.field_77864_a : 1.0F;
+    }
+ 

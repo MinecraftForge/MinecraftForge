@@ -38,7 +38,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import javax.annotation.Nullable;
 
-@Mod(modid = NBTShareTagTest.MODID, name = "NBTShareTag Item Test", version = "1.0.0", acceptableRemoteVersions = "*")
+//@Mod(modid = NBTShareTagTest.MODID, name = "NBTShareTag Item Test", version = "1.0.0", acceptableRemoteVersions = "*")
 public class NBTShareTagTest
 {
     public static final String MODID = "nbtsharetagitemtest";
@@ -46,7 +46,7 @@ public class NBTShareTagTest
     @ObjectHolder("nbt_share_tag_item")
     public static final Item TEST_ITEM = null;
 
-    @Mod.EventBusSubscriber(modid = MODID)
+    //@Mod.EventBusSubscriber(modid = MODID)
     public static class Registration
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent

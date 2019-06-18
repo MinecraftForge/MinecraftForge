@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/PacketBuffer.java
 +++ b/net/minecraft/network/PacketBuffer.java
-@@ -256,6 +256,15 @@
+@@ -265,6 +265,15 @@
     }
  
     public PacketBuffer func_150788_a(ItemStack p_150788_1_) {
@@ -16,16 +16,16 @@
        if (p_150788_1_.func_190926_b()) {
           this.writeBoolean(false);
        } else {
-@@ -265,7 +274,7 @@
+@@ -274,7 +283,7 @@
           this.writeByte(p_150788_1_.func_190916_E());
-          NBTTagCompound nbttagcompound = null;
+          CompoundNBT compoundnbt = null;
           if (item.func_77645_m() || item.func_77651_p()) {
--            nbttagcompound = p_150788_1_.func_77978_p();
-+            nbttagcompound = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
+-            compoundnbt = p_150788_1_.func_77978_p();
++            compoundnbt = limitedTag ? p_150788_1_.getShareTag() : p_150788_1_.func_77978_p();
           }
  
-          this.func_150786_a(nbttagcompound);
-@@ -281,7 +290,7 @@
+          this.func_150786_a(compoundnbt);
+@@ -290,7 +299,7 @@
           int i = this.func_150792_a();
           int j = this.readByte();
           ItemStack itemstack = new ItemStack(Item.func_150899_d(i), j);

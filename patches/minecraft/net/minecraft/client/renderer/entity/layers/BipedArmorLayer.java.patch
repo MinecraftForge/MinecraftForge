@@ -1,0 +1,12 @@
+--- a/net/minecraft/client/renderer/entity/layers/BipedArmorLayer.java
++++ b/net/minecraft/client/renderer/entity/layers/BipedArmorLayer.java
+@@ -40,4 +40,9 @@
+    protected void func_177194_a(A p_177194_1_) {
+       p_177194_1_.func_178719_a(false);
+    }
++   
++   @Override
++   protected A getArmorModelHook(net.minecraft.entity.LivingEntity entity, net.minecraft.item.ItemStack itemStack, EquipmentSlotType slot, A model) {
++      return net.minecraftforge.client.ForgeHooksClient.getArmorModel(entity, itemStack, slot, model);
++   }
+ }

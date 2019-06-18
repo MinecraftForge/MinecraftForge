@@ -1,7 +1,7 @@
 --- a/net/minecraft/util/text/translation/LanguageMap.java
 +++ b/net/minecraft/util/text/translation/LanguageMap.java
 @@ -35,7 +35,7 @@
-             String s = field_111053_a.matcher(JsonUtils.func_151206_a(entry.getValue(), entry.getKey())).replaceAll("%$1s");
+             String s = field_111053_a.matcher(JSONUtils.func_151206_a(entry.getValue(), entry.getKey())).replaceAll("%$1s");
              this.field_74816_c.put(entry.getKey(), s);
           }
 -

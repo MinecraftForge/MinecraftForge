@@ -24,8 +24,8 @@ import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = AnimalTameEventTest.MOD_ID, name = "AnimalTameEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
-@Mod.EventBusSubscriber
+//@Mod(modid = AnimalTameEventTest.MOD_ID, name = "AnimalTameEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod.EventBusSubscriber
 public class AnimalTameEventTest
 {
     static final String MOD_ID = "animal_tame_event_test";

@@ -1,6 +1,6 @@
 /*
  * Minecraft Forge
- * Copyright (c) 2016-2018.
+ * Copyright (c) 2016-2019.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,9 +19,8 @@
 
 package net.minecraftforge.event.village;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.village.Village;
 import net.minecraft.village.VillageSiege;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -43,16 +42,14 @@ public class VillageSiegeEvent extends Event
 {
     private final VillageSiege siege;
     private final World world;
-    private final EntityPlayer player;
-    private final Village village;
+    private final PlayerEntity player;
     private final Vec3d attemptedSpawnPos;
 
-    public VillageSiegeEvent(VillageSiege siege, World world, EntityPlayer player, Village village, Vec3d attemptedSpawnPos)
+    public VillageSiegeEvent(VillageSiege siege, World world, PlayerEntity player, Vec3d attemptedSpawnPos)
     {
        this.siege = siege;
        this.world = world;
        this.player = player;
-       this.village = village;
        this.attemptedSpawnPos = attemptedSpawnPos;
     }
 
@@ -66,14 +63,9 @@ public class VillageSiegeEvent extends Event
         return world;
     }
 
-    public EntityPlayer getPlayer()
+    public PlayerEntity getPlayer()
     {
         return player;
-    }
-
-    public Village getVillage()
-    {
-        return village;
     }
 
     public Vec3d getAttemptedSpawnPos()

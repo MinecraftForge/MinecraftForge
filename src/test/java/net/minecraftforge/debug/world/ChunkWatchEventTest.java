@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-@Mod(modid = ChunkWatchEventTest.MODID, name = "Chunk Watch Event Test", version = "1.0", acceptableRemoteVersions = "*")
+//@Mod(modid = ChunkWatchEventTest.MODID, name = "Chunk Watch Event Test", version = "1.0", acceptableRemoteVersions = "*")
 public class ChunkWatchEventTest
 {
     public static final String MODID = "chunkwatchworldtest";

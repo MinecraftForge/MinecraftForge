@@ -57,7 +57,7 @@ public class Scanner {
             ClassReader cr = new ClassReader(in);
             cr.accept(mcv, 0);
             mcv.buildData(result.getClasses(), result.getAnnotations());
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             // mark path bad
         }
     }

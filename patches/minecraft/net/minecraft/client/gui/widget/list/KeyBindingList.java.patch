@@ -1,0 +1,60 @@
+--- a/net/minecraft/client/gui/widget/list/KeyBindingList.java
++++ b/net/minecraft/client/gui/widget/list/KeyBindingList.java
+@@ -45,7 +45,7 @@
+    }
+ 
+    protected int getScrollbarPosition() {
+-      return super.getScrollbarPosition() + 15;
++      return super.getScrollbarPosition() + 15 + 20;
+    }
+ 
+    public int getRowWidth() {
+@@ -89,7 +89,7 @@
+       private KeyEntry(final KeyBinding p_i45029_2_) {
+          this.field_148282_b = p_i45029_2_;
+          this.field_148283_c = I18n.func_135052_a(p_i45029_2_.func_151464_g());
+-         this.field_148280_d = new Button(0, 0, 75, 20, this.field_148283_c, (p_214386_2_) -> {
++         this.field_148280_d = new Button(0, 0, 75 + 20 /*Forge: add space*/, 20, this.field_148283_c, (p_214386_2_) -> {
+             KeyBindingList.this.field_148191_k.field_146491_f = p_i45029_2_;
+          }) {
+             protected String getNarrationMessage() {
+@@ -97,6 +97,7 @@
+             }
+          };
+          this.field_148281_e = new Button(0, 0, 50, 20, I18n.func_135052_a("controls.reset"), (p_214387_2_) -> {
++            field_148282_b.setToDefault();
+             KeyBindingList.this.minecraft.field_71474_y.func_198014_a(p_i45029_2_, p_i45029_2_.func_197977_i());
+             KeyBinding.func_74508_b();
+          }) {
+@@ -109,7 +110,7 @@
+       public void render(int p_render_1_, int p_render_2_, int p_render_3_, int p_render_4_, int p_render_5_, int p_render_6_, int p_render_7_, boolean p_render_8_, float p_render_9_) {
+          boolean flag = KeyBindingList.this.field_148191_k.field_146491_f == this.field_148282_b;
+          KeyBindingList.this.minecraft.field_71466_p.func_211126_b(this.field_148283_c, (float)(p_render_3_ + 90 - KeyBindingList.this.field_148188_n), (float)(p_render_2_ + p_render_5_ / 2 - 9 / 2), 16777215);
+-         this.field_148281_e.x = p_render_3_ + 190;
++         this.field_148281_e.x = p_render_3_ + 190 + 20;
+          this.field_148281_e.y = p_render_2_;
+          this.field_148281_e.active = !this.field_148282_b.func_197985_l();
+          this.field_148281_e.render(p_render_6_, p_render_7_, p_render_9_);
+@@ -117,11 +118,12 @@
+          this.field_148280_d.y = p_render_2_;
+          this.field_148280_d.setMessage(this.field_148282_b.func_197978_k());
+          boolean flag1 = false;
++         boolean keyCodeModifierConflict = true; // less severe form of conflict, like SHIFT conflicting with SHIFT+G
+          if (!this.field_148282_b.func_197986_j()) {
+             for(KeyBinding keybinding : KeyBindingList.this.minecraft.field_71474_y.field_74324_K) {
+                if (keybinding != this.field_148282_b && this.field_148282_b.func_197983_b(keybinding)) {
+                   flag1 = true;
+-                  break;
++                  keyCodeModifierConflict &= keybinding.hasKeyCodeModifierConflict(this.field_148282_b);
+                }
+             }
+          }
+@@ -129,7 +131,7 @@
+          if (flag) {
+             this.field_148280_d.setMessage(TextFormatting.WHITE + "> " + TextFormatting.YELLOW + this.field_148280_d.getMessage() + TextFormatting.WHITE + " <");
+          } else if (flag1) {
+-            this.field_148280_d.setMessage(TextFormatting.RED + this.field_148280_d.getMessage());
++            this.field_148280_d.setMessage((keyCodeModifierConflict ? TextFormatting.GOLD : TextFormatting.RED) + this.field_148280_d.getMessage());
+          }
+ 
+          this.field_148280_d.render(p_render_6_, p_render_7_, p_render_9_);

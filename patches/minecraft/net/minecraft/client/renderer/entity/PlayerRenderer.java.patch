@@ -1,0 +1,18 @@
+--- a/net/minecraft/client/renderer/entity/PlayerRenderer.java
++++ b/net/minecraft/client/renderer/entity/PlayerRenderer.java
+@@ -52,6 +52,7 @@
+    public void func_76986_a(AbstractClientPlayerEntity p_76986_1_, double p_76986_2_, double p_76986_4_, double p_76986_6_, float p_76986_8_, float p_76986_9_) {
+       if (!p_76986_1_.func_175144_cb() || this.field_76990_c.field_217783_c.func_216773_g() == p_76986_1_) {
+          double d0 = p_76986_4_;
++      if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Pre(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_))) return;
+          if (p_76986_1_.func_213287_bg()) {
+             d0 = p_76986_4_ - 0.125D;
+          }
+@@ -61,6 +62,7 @@
+          super.func_76986_a(p_76986_1_, p_76986_2_, d0, p_76986_6_, p_76986_8_, p_76986_9_);
+          GlStateManager.unsetProfile(GlStateManager.Profile.PLAYER_SKIN);
+       }
++      net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.client.event.RenderPlayerEvent.Post(p_76986_1_, this, p_76986_9_, p_76986_2_, p_76986_4_, p_76986_6_));
+    }
+ 
+    private void func_177137_d(AbstractClientPlayerEntity p_177137_1_) {

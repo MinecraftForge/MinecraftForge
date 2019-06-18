@@ -1,0 +1,11 @@
+--- a/net/minecraft/entity/ai/goal/BreakBlockGoal.java
++++ b/net/minecraft/entity/ai/goal/BreakBlockGoal.java
+@@ -29,7 +29,7 @@
+    }
+ 
+    public boolean func_75250_a() {
+-      if (!this.field_203118_g.field_70170_p.func_82736_K().func_82766_b("mobGriefing")) {
++      if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_203118_g.field_70170_p, this.field_203118_g) || !this.field_203118_g.field_70170_p.func_180495_p(this.field_179494_b).canEntityDestroy(this.field_203118_g.field_70170_p, this.field_179494_b, this.field_203118_g) || !net.minecraftforge.event.ForgeEventFactory.onEntityDestroyBlock(this.field_203118_g, this.field_179494_b, this.field_203118_g.field_70170_p.func_180495_p(this.field_179494_b))) {
+          return false;
+       } else if (this.field_179496_a > 0) {
+          --this.field_179496_a;

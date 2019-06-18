@@ -57,7 +57,7 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
     {
         super.configureTransformationClassLoader(builder);
-        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/RealmsVersion.class", "realms"));
+        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/plugin/RealmsPluginImpl.class", "realms"));
     }
 
     @SuppressWarnings("unchecked")

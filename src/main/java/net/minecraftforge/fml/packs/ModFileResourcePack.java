@@ -19,7 +19,7 @@
 
 package net.minecraftforge.fml.packs;
 
-import net.minecraft.resources.AbstractResourcePack;
+import net.minecraft.resources.ResourcePack;
 import net.minecraft.resources.ResourcePackInfo;
 import net.minecraft.resources.ResourcePackType;
 import net.minecraft.util.ResourceLocation;
@@ -52,30 +52,10 @@ import org.apache.logging.log4j.Logger;
 
 import static net.minecraftforge.fml.Logging.CORE;
 
-public class ModFileResourcePack extends AbstractResourcePack
+public class ModFileResourcePack extends ResourcePack
 {
-    private static final Logger LOGGER = LogManager.getLogger();
     private final ModFile modFile;
     private ResourcePackInfo packInfo;
-    private static final ExecutorService STUPIDPAULSCODEISSTUPIDWORKAROUNDTHREAD = Executors.newSingleThreadExecutor();
-    private static final Path tempDir;
-
-    static {
-        try {
-            tempDir = Files.createTempDirectory("modpacktmp");
-            Runtime.getRuntime().addShutdownHook(new Thread(()-> {
-                try {
-                    Files.walk(tempDir).forEach(f->{try {Files.deleteIfExists(f);}catch (IOException ioe) {}});
-                    Files.delete(tempDir);
-                } catch (IOException ioe) {
-                    LOGGER.fatal("Failed to clean up tempdir {}", tempDir);
-                }
-            }));
-        } catch (IOException e) {
-            LOGGER.fatal(CORE, "Failed to create temporary directory", e);
-            throw new RuntimeException(e);
-        }
-    }
 
     public ModFileResourcePack(final ModFile modFile)
     {
@@ -96,46 +76,8 @@ public class ModFileResourcePack extends AbstractResourcePack
     @Override
     protected InputStream getInputStream(String name) throws IOException
     {
-        // because paulscode is ancient, we can't return FileChannel based InputStreams here - it will cause a deadlock or crash
-        // Paulscode sends interrupt() to trigger thread processing behaviour, and FileChannels will interpret that interrupt() as
-        // a sign to close the FileChannel and throw an interrupt error. Tis brilliant!
-        // If the Path comes from the default filesystem provider, we will rather use the path to generate an old FileInputStream
         final Path path = modFile.getLocator().findPath(modFile, name);
-        if (path.getFileSystem() == FileSystems.getDefault()) {
-            LOGGER.trace(CORE, "Request for resource {} returning FileInputStream for regular file {}", name, path);
-            return new FileInputStream(path.toFile());
-        // If the resource is in a zip file, and paulscode is the requester, we need to return a file input stream,
-        // but we can't just use path.tofile to do it. Instead, we copy the resource to a temporary file. As all operations
-        // with an nio channel are interruptible, we do this at arms length on another thread, while paulscode spams
-        // interrupts on the paulscode main thread, which we politely ignore.
-        } else if (StackTraceUtils.threadClassNameEquals("paulscode.sound.CommandThread")) {
-            final Path tempFile = Files.createTempFile(tempDir, "modpack", "soundresource");
-            Future<FileInputStream> fis = STUPIDPAULSCODEISSTUPIDWORKAROUNDTHREAD.submit(()->{
-                try (final SeekableByteChannel resourceChannel = Files.newByteChannel(path, StandardOpenOption.READ);
-                     final FileChannel tempFileChannel = FileChannel.open(tempFile, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
-                    long size = resourceChannel.size();
-                    for (long written = 0; written < size; ) {
-                        written += tempFileChannel.transferFrom(resourceChannel, written, size - written);
-                    }
-                }
-                LOGGER.trace(CORE, "Request for resource {} returning DeletingTemporaryFileInputStream for packed file {} on paulscode thread", name, path);
-                return new FileInputStream(tempFile.toFile());
-            });
-            try {
-                while (true) {
-                    try {
-                        return fis.get();
-                    } catch (InterruptedException ie) {
-                        // no op
-                    }
-                }
-            } catch (ExecutionException  e) {
-                LOGGER.fatal(CORE, "Encountered fatal exception copying sound resource", e);
-                throw new RuntimeException(e);
-            }
-        } else {
-            return Files.newInputStream(path, StandardOpenOption.READ);
-        }
+        return Files.newInputStream(path, StandardOpenOption.READ);
     }
 
     @Override

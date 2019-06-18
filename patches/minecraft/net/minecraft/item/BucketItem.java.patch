@@ -1,0 +1,24 @@
+--- a/net/minecraft/item/BucketItem.java
++++ b/net/minecraft/item/BucketItem.java
+@@ -38,6 +38,8 @@
+    public ActionResult<ItemStack> func_77659_a(World p_77659_1_, PlayerEntity p_77659_2_, Hand p_77659_3_) {
+       ItemStack itemstack = p_77659_2_.func_184586_b(p_77659_3_);
+       RayTraceResult raytraceresult = func_219968_a(p_77659_1_, p_77659_2_, this.field_77876_a == Fluids.field_204541_a ? RayTraceContext.FluidMode.SOURCE_ONLY : RayTraceContext.FluidMode.NONE);
++      ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onBucketUse(p_77659_2_, p_77659_1_, itemstack, raytraceresult);
++      if (ret != null) return ret;
+       if (raytraceresult.func_216346_c() == RayTraceResult.Type.MISS) {
+          return new ActionResult<>(ActionResultType.PASS, itemstack);
+       } else if (raytraceresult.func_216346_c() != RayTraceResult.Type.BLOCK) {
+@@ -150,4 +152,12 @@
+       SoundEvent soundevent = this.field_77876_a.func_207185_a(FluidTags.field_206960_b) ? SoundEvents.field_187627_L : SoundEvents.field_187624_K;
+       p_203791_2_.func_184133_a(p_203791_1_, p_203791_3_, soundevent, SoundCategory.BLOCKS, 1.0F, 1.0F);
+    }
++
++   @Override
++   public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(ItemStack stack, @Nullable net.minecraft.nbt.CompoundNBT nbt) {
++      if (this.getClass() == BucketItem.class)
++         return new net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper(stack);
++      else
++         return super.initCapabilities(stack, nbt);
++   }
+ }

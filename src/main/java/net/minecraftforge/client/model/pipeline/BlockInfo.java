@@ -19,20 +19,21 @@
 
 package net.minecraftforge.client.model.pipeline;
 
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.renderer.color.BlockColors;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.IEnviromentBlockReader;
 
 public class BlockInfo
 {
-    private static final EnumFacing[] SIDES = EnumFacing.values();
+    private static final Direction[] SIDES = Direction.values();
 
     private final BlockColors colors;
-    private IWorldReader world;
-    private IBlockState state;
+    private IEnviromentBlockReader world;
+    private BlockState state;
     private BlockPos blockPos;
 
     private final boolean[][][] t = new boolean[3][3][3];
@@ -60,7 +61,7 @@ public class BlockInfo
     {
         if(cachedTint == tint) return cachedMultiplier;
         cachedTint = tint;
-        cachedMultiplier = colors.getColor(state, world, blockPos, tint);
+        cachedMultiplier = colors.func_216860_a(state, world, blockPos, tint);
         return cachedMultiplier;
     }
 
@@ -72,14 +73,14 @@ public class BlockInfo
         shz = (float) offset.z;
     }
 
-    public void setWorld(IWorldReader world)
+    public void setWorld(IEnviromentBlockReader world)
     {
         this.world = world;
         cachedTint = -1;
         cachedMultiplier = -1;
     }
 
-    public void setState(IBlockState state)
+    public void setState(BlockState state)
     {
         this.state = state;
         cachedTint = -1;
@@ -122,16 +123,16 @@ public class BlockInfo
                 for(int z = 0; z <= 2; z++)
                 {
                     BlockPos pos = blockPos.add(x - 1, y - 1, z - 1);
-                    IBlockState state = world.getBlockState(pos);
+                    BlockState state = world.getBlockState(pos);
                     t[x][y][z] = state.getOpacity(world, pos) < 15;
                     int brightness = state.getPackedLightmapCoords(world, pos);
                     s[x][y][z] = (brightness >> 0x14) & 0xF;
                     b[x][y][z] = (brightness >> 0x04) & 0xF;
-                    ao[x][y][z] = state.getAmbientOcclusionLightValue();
+                    ao[x][y][z] = state.func_215703_d(world, pos);
                 }
             }
         }
-        for(EnumFacing side : SIDES)
+        for(Direction side : SIDES)
         {
             if(!state.doesSideBlockRendering(world, blockPos, side))
             {
@@ -185,22 +186,22 @@ public class BlockInfo
 
     public void updateFlatLighting()
     {
-        full = state.isFullCube();
+        full = Block.isOpaque(state.getCollisionShape(world, blockPos));
         packed[0] = state.getPackedLightmapCoords(world, blockPos);
 
-        for (EnumFacing side : SIDES)
+        for (Direction side : SIDES)
         {
             int i = side.ordinal() + 1;
             packed[i] = state.getPackedLightmapCoords(world, blockPos.offset(side));
         }
     }
 
-    public IWorldReader getWorld()
+    public IEnviromentBlockReader getWorld()
     {
         return world;
     }
 
-    public IBlockState getState()
+    public BlockState getState()
     {
         return state;
     }

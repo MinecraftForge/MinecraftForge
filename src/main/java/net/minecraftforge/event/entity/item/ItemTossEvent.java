@@ -20,8 +20,8 @@
 package net.minecraftforge.event.entity.item;
 
 import net.minecraftforge.eventbus.api.Cancelable;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.item.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 
 /**
  * Event that is fired whenever a player tosses (Q) an item or drag-n-drops a
@@ -33,7 +33,7 @@ import net.minecraft.entity.player.EntityPlayer;
 public class ItemTossEvent extends ItemEvent
 {
 
-    private final EntityPlayer player;
+    private final PlayerEntity player;
 
     /**
      * Creates a new event for EntityItems tossed by a player.
@@ -41,7 +41,7 @@ public class ItemTossEvent extends ItemEvent
      * @param entityItem The EntityItem being tossed.
      * @param player The player tossing the item.
      */
-    public ItemTossEvent(EntityItem entityItem, EntityPlayer player)
+    public ItemTossEvent(ItemEntity entityItem, PlayerEntity player)
     {
         super(entityItem);
         this.player = player;
@@ -50,7 +50,7 @@ public class ItemTossEvent extends ItemEvent
     /**
      * The player tossing the item.
      */
-    public EntityPlayer getPlayer()
+    public PlayerEntity getPlayer()
     {
         return player;
     }
