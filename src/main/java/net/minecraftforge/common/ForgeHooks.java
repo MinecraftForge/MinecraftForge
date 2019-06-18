@@ -137,6 +137,7 @@ import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.event.entity.player.CriticalHitEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.grindstone.GrindstoneUpdateEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.NoteBlockEvent;
 import net.minecraftforge.eventbus.api.Event.Result;
@@ -690,6 +691,20 @@ public class ForgeHooks
         AnvilRepairEvent e = new AnvilRepairEvent(player, left, right, output);
         MinecraftForge.EVENT_BUS.post(e);
         return e.getBreakChance();
+    }
+
+    public static boolean onGrindstoneChange(@Nonnull ItemStack first, @Nonnull ItemStack second, IInventory outputSlot)
+    {
+        GrindstoneUpdateEvent e = new GrindstoneUpdateEvent(first, second);
+        if (MinecraftForge.EVENT_BUS.post(e))
+        {
+            outputSlot.setInventorySlotContents(0, ItemStack.EMPTY);
+            return false;
+        }
+        if (e.getOutput().isEmpty()) return true;
+
+        outputSlot.setInventorySlotContents(0, e.getOutput());
+        return false;
     }
 
     private static ThreadLocal<PlayerEntity> craftingPlayer = new ThreadLocal<PlayerEntity>();
