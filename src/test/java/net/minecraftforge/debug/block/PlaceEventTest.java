@@ -19,30 +19,19 @@
 
 package net.minecraftforge.debug.block;
 
-import net.minecraft.init.Blocks;
-import net.minecraftforge.event.world.BlockEvent;
+import net.minecraft.block.Blocks;
+import net.minecraftforge.event.world.BlockEvent.EntityPlaceEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-//@Mod(modid = PlaceEventTest.MOD_ID, name = "BlockPlaceEvent test mod", version = "1.0", acceptableRemoteVersions = "*")
-//@Mod.EventBusSubscriber
+@Mod("block_place_event_test")
+@Mod.EventBusSubscriber
 public class PlaceEventTest
 {
-    static final String MOD_ID = "block_place_event_test";
-    static final boolean ENABLED = false;
-
     @SubscribeEvent
-    public static void onBlockPlaced(BlockEvent.PlaceEvent event)
+    public static void onBlockPlaced(EntityPlaceEvent event)
     {
-        if (!ENABLED)
-        {
-            return;
-        }
-
-        if (event.getPlacedBlock().getBlock() == Blocks.CHEST
-                && event.getPlacedAgainst().getBlock() != Blocks.DIAMOND_BLOCK)
-        {
+        if (event.getPlacedBlock().getBlock() == Blocks.CHEST && event.getPlacedAgainst().getBlock() != Blocks.DIAMOND_BLOCK)
             event.setCanceled(true);
-        }
     }
 }

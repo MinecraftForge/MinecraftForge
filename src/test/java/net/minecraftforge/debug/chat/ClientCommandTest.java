@@ -19,17 +19,12 @@
 
 package net.minecraftforge.debug.chat;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.GameData;
 
 import javax.annotation.Nullable;
@@ -37,9 +32,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-//@Mod(modid = "clientcommandtest", name = "Client Command Test", version = "0.0.0", clientSideOnly = true)
+@Mod("client_command_test")
 public class ClientCommandTest
 {
+    /*
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
@@ -82,12 +78,13 @@ public class ClientCommandTest
         {
             if (args.length > 0)
             {
-                sender.sendMessage(new TextComponentString("Input: " + Arrays.toString(args)));
+                sender.sendMessage(new StringTextComponent("Input: " + Arrays.toString(args)));
             }
             else
             {
-                sender.sendMessage(new TextComponentString("No arguments."));
+                sender.sendMessage(new StringTextComponent("No arguments."));
             }
         }
     }
+    */
 }

@@ -20,122 +20,41 @@
 package net.minecraftforge.debug.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockSlime;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.material.Material;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemMultiTexture;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IStringSerializable;
-import net.minecraft.util.NonNullList;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.registries.ObjectHolder;
 
-//@Mod(modid = StickyBlockTest.MODID, name = "ForgeDebugCustomSlimeBlock", version = StickyBlockTest.VERSION, acceptableRemoteVersions = "*")
+@Mod(StickyBlockTest.MODID)
+@Mod.EventBusSubscriber
 public class StickyBlockTest
 {
-    public static final String MODID = "forgedebugcustomslimeblock";
-    public static final String ASSETS = "forgedebugcustomslimeblock:";
-    public static final String VERSION = "1.0";
-    public static Block CUSTOM_SLIME_BLOCK;
+    static final String MODID = "custom_slime_block_test";
+    static final String BLOCK_ID = "test_block";
 
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
+    @ObjectHolder(BLOCK_ID)
+    public static Block BLUE_BLOCK;
+
+    @SubscribeEvent
+    public static void registerBlocks(RegistryEvent.Register<Block> event)
     {
-        CUSTOM_SLIME_BLOCK = new CustomSlime();
-        ForgeRegistries.BLOCKS.register(CUSTOM_SLIME_BLOCK);
-        ForgeRegistries.ITEMS.register(new ItemMultiTexture(CUSTOM_SLIME_BLOCK, CUSTOM_SLIME_BLOCK, stack -> CustomSlime.BlockType.values[stack.getMetadata()].toString()).setRegistryName(CUSTOM_SLIME_BLOCK.getRegistryName()));
+        event.getRegistry().register((new Block(Block.Properties.create(Material.ROCK))
+        {
+            @Override
+            public boolean isStickyBlock(BlockState state)
+            {
+                return true;
+            }
+        }).setRegistryName(MODID, BLOCK_ID));
     }
 
-    //@EventBusSubscriber(value = Side.CLIENT, modid = MODID)
-    public static class BakeEventHandler
+    @SubscribeEvent
+    public static void registerItems(RegistryEvent.Register<Item> event)
     {
-        @net.minecraftforge.eventbus.api.SubscribeEvent
-        public static void registerModels(ModelRegistryEvent event)
-        {
-            Item item = Item.getItemFromBlock(CUSTOM_SLIME_BLOCK);
-            ModelLoader.setCustomModelResourceLocation(item, 0, new ModelResourceLocation(ASSETS + "blue_slime_block", "inventory"));
-            ModelLoader.setCustomModelResourceLocation(item, 1, new ModelResourceLocation(ASSETS + "obsidian_slime_block", "inventory"));
-        }
-    }
-
-    public static class CustomSlime extends BlockSlime
-    {
-        private static final PropertyEnum<BlockType> VARIANT = PropertyEnum.create("variant", BlockType.class);
-
-        private CustomSlime()
-        {
-            super();
-            this.setDefaultState(this.blockState.getBaseState().withProperty(VARIANT, BlockType.BLUE_SLIME_BLOCK));
-            this.setCreativeTab(CreativeTabs.DECORATIONS);
-            this.setUnlocalizedName("custom_slime_block");
-            this.setRegistryName("forgedebugcustomslimeblock:custom_slime_block");
-            this.setSoundType(SoundType.SLIME);
-        }
-
-        @Override
-        @OnlyIn(Dist.CLIENT)
-        public void getSubBlocks(CreativeTabs creativeTabs, NonNullList<ItemStack> list)
-        {
-            for (int i = 0; i < BlockType.values.length; ++i)
-            {
-                list.add(new ItemStack(this, 1, i));
-            }
-        }
-
-        @Override
-        protected BlockStateContainer createBlockState()
-        {
-            return new BlockStateContainer(this, VARIANT);
-        }
-
-        @Override
-        public IBlockState getStateFromMeta(int meta)
-        {
-            return this.getDefaultState().withProperty(VARIANT, BlockType.values[meta]);
-        }
-
-        @Override
-        public int getMetaFromState(IBlockState state)
-        {
-            return state.getValue(VARIANT).ordinal();
-        }
-
-        @Override
-        public boolean isStickyBlock(IBlockState state)
-        {
-            return state.getValue(VARIANT) != BlockType.OBSIDIAN_SLIME_BLOCK;
-        }
-
-        public static enum BlockType implements IStringSerializable
-        {
-            BLUE_SLIME_BLOCK,
-            OBSIDIAN_SLIME_BLOCK;
-
-            protected static final BlockType[] values = BlockType.values();
-
-            @Override
-            public String toString()
-            {
-                return this.name().toLowerCase();
-            }
-
-            @Override
-            public String getName()
-            {
-                return this.name().toLowerCase();
-            }
-        }
+        event.getRegistry().register(new BlockItem(BLUE_BLOCK, new Item.Properties()).setRegistryName(MODID, BLOCK_ID));
     }
 }

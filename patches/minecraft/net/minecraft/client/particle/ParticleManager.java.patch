@@ -13,7 +13,7 @@
  
     public void func_180533_a(BlockPos p_180533_1_, BlockState p_180533_2_) {
 -      if (!p_180533_2_.func_196958_f()) {
-+      if (!p_180533_2_.isAir(this.field_78878_a, p_180533_1_)) {
++      if (!p_180533_2_.isAir(this.field_78878_a, p_180533_1_) && !p_180533_2_.addDestroyEffects(this.field_78878_a, p_180533_1_, this)) {
           VoxelShape voxelshape = p_180533_2_.func_196954_c(this.field_78878_a, p_180533_1_);
           double d0 = 0.25D;
           voxelshape.func_197755_b((p_199284_3_, p_199284_5_, p_199284_7_, p_199284_9_, p_199284_11_, p_199284_13_) -> {

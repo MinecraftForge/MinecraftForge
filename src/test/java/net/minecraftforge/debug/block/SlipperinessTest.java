@@ -20,57 +20,51 @@
 package net.minecraftforge.debug.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityBoat;
+import net.minecraft.entity.item.BoatEntity;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.world.IWorldReader;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-import java.util.Collections;
-
-//@Mod(modid = SlipperinessTest.MOD_ID, name = "Slipperiness Test", version = "0.0.0", acceptableRemoteVersions = "*")
-//@EventBusSubscriber
+@Mod(SlipperinessTest.MOD_ID)
+@EventBusSubscriber
 public class SlipperinessTest
 {
     static final String MOD_ID = "slipperiness_test";
+    static final String BLOCK_ID = "test_block";
 
-    public static final Block BB_BLOCK = new Block(Material.PACKED_ICE)
-    {
-        @Override
-        public float getSlipperiness(IBlockState state, IBlockAccess world, BlockPos pos, Entity entity)
-        {
-            return entity instanceof EntityBoat ? 2 : super.getSlipperiness(state, world, pos, entity);
-        }
-    };
+    @ObjectHolder(BLOCK_ID)
+    public static final Block BB_BLOCK = null;
 
     @SubscribeEvent
     public static void registerBlocks(RegistryEvent.Register<Block> e)
     {
-        e.getRegistry().register(BB_BLOCK
-                .setUnlocalizedName("boat_blaster")
-                .setRegistryName("boat_blaster")
-                .setCreativeTab(CreativeTabs.BUILDING_BLOCKS));
+        e.getRegistry().register((new Block(Block.Properties.create(Material.PACKED_ICE))
+        {
+            @Override
+            public float getSlipperiness(BlockState state, IWorldReader world, BlockPos pos, Entity entity)
+            {
+                return entity instanceof BoatEntity ? 2 : super.getSlipperiness(state, world, pos, entity);
+            }
+        }).setRegistryName(MOD_ID, BLOCK_ID));
     }
 
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e)
     {
-        e.getRegistry().register(new ItemBlock(BB_BLOCK).setRegistryName(BB_BLOCK.getRegistryName()));
+        e.getRegistry().register(new BlockItem(BB_BLOCK, new Item.Properties()).setRegistryName(BB_BLOCK.getRegistryName()));
     }
 
-    //@EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    /*
+    @EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {
         @SubscribeEvent
@@ -80,4 +74,5 @@ public class SlipperinessTest
             ModelBakery.registerItemVariants(Item.getItemFromBlock(BB_BLOCK));
         }
     }
+    */
 }

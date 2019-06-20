@@ -72,7 +72,7 @@ public class ModInfo implements IModInfo
         this.version = modConfig.<String>getOptional("version").
                 map(s->StringSubstitutor.replace(s, owningFile != null ? owningFile.getFile() : null )).
                 map(DefaultArtifactVersion::new).orElse(DEFAULT_VERSION);
-        this.displayName = modConfig.<String>getOptional("displayName").orElse(null);
+        this.displayName = modConfig.<String>getOptional("displayName").orElse(this.modId);
         this.description = modConfig.get("description");
         this.updateJSONURL = modConfig.<String>getOptional("updateJSONURL").map(StringUtils::toURL).orElse(null);
         if (owningFile != null) {
