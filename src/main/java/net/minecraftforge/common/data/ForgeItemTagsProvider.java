@@ -44,9 +44,9 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         getBuilder(Tags.Items.DUSTS_PRISMARINE).add(Items.PRISMARINE_SHARD);
         getBuilder(Tags.Items.DUSTS_REDSTONE).add(Items.REDSTONE);
         getBuilder(Tags.Items.DYES).add(Tags.Items.DYES_BLACK, Tags.Items.DYES_RED, Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN, Tags.Items.DYES_BLUE, Tags.Items.DYES_PURPLE, Tags.Items.DYES_CYAN, Tags.Items.DYES_LIGHT_GRAY, Tags.Items.DYES_GRAY, Tags.Items.DYES_PINK, Tags.Items.DYES_LIME, Tags.Items.DYES_YELLOW, Tags.Items.DYES_LIGHT_BLUE, Tags.Items.DYES_MAGENTA, Tags.Items.DYES_ORANGE, Tags.Items.DYES_WHITE);
-        getBuilder(Tags.Items.DYES_BLACK).add(Items.INK_SAC);
-        getBuilder(Tags.Items.DYES_BLUE).add(Items.LAPIS_LAZULI);
-        getBuilder(Tags.Items.DYES_BROWN).add(Items.COCOA_BEANS);
+        getBuilder(Tags.Items.DYES_BLACK).add(Items.field_222086_lz);
+        getBuilder(Tags.Items.DYES_BLUE).add(Items.field_222083_lx);
+        getBuilder(Tags.Items.DYES_BROWN).add(Items.field_222085_ly);
         getBuilder(Tags.Items.DYES_CYAN).add(Items.CYAN_DYE);
         getBuilder(Tags.Items.DYES_GRAY).add(Items.GRAY_DYE);
         getBuilder(Tags.Items.DYES_GREEN).add(Items.GREEN_DYE);
