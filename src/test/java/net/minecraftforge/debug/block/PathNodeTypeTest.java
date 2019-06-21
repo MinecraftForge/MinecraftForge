@@ -42,7 +42,7 @@ public class PathNodeTypeTest
 
 
     @ObjectHolder(BLOCK_ID)
-    private static final Block TEST_BLOCK = null;
+    private static Block TEST_BLOCK = null;
 
     @SubscribeEvent
     public static void register(RegistryEvent.Register<Block> event)

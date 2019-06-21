@@ -32,7 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Mod("client_command_test")
+//@Mod("client_command_test")
 public class ClientCommandTest
 {
     /*
