@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "minecraft:lapis_lazuli"
+    "minecraft:lapis_lazuli",
+    "minecraft:blue_dye"
   ]
 }
