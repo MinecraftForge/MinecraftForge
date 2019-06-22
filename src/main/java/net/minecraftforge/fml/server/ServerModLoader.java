@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.server;
 
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.LogicalSidedProvider;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModLoadingWarning;
@@ -41,6 +42,7 @@ public class ServerModLoader
         SidedProvider.setServer(()->dedicatedServer);
         LogicalSidedProvider.setServer(()->dedicatedServer);
         LanguageHook.loadForgeAndMCLangs();
+        ModLoader.get().gatherAndInitializeMods();
         ModLoader.get().loadMods();
     }
 
@@ -51,6 +53,7 @@ public class ServerModLoader
             LOGGER.warn(LOADING, "Mods loaded with {} warnings", warnings.size());
             warnings.forEach(warning -> LOGGER.warn(LOADING, warning.formatToString()));
         }
+        MinecraftForge.EVENT_BUS.start();
         server.getServerStatusResponse().setForgeData(new FMLStatusPing()); //gathers NetworkRegistry data
     }
 }

@@ -35,7 +35,9 @@ public class CommandModList {
                 .requires(cs->cs.hasPermissionLevel(0)) //permission
                 .executes(ctx -> {
                             ctx.getSource().sendFeedback(new TranslationTextComponent("commands.forge.mods.list",
-                                    ModList.get().getMods().stream().map(ModInfo::getModId).collect(Collectors.joining(","))),
+                                    ModList.get().applyForEachModContainer(
+                                            mc->String.format("%s:%s(%s)", mc.getModId(), mc.getModInfo().getVersion().toString(), mc.getCurrentState())).
+                                        collect(Collectors.joining(","))),
                                     true);
                             return 0;
                         }

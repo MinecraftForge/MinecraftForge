@@ -40,6 +40,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 
@@ -186,5 +187,9 @@ public class ModList
 
     public void forEachModContainer(BiConsumer<String, ModContainer> modContainerConsumer) {
         indexedMods.forEach(modContainerConsumer);
+    }
+
+    public <T> Stream<T> applyForEachModContainer(Function<ModContainer, T> function) {
+        return indexedMods.values().stream().map(function);
     }
 }

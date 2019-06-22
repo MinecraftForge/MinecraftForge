@@ -61,9 +61,7 @@ public class ClientModLoader
         try {
             ModLoader.get().gatherAndInitializeMods();
         } catch (LoadingFailedException e) {
-            MinecraftForge.EVENT_BUS.shutdown();
             error = e;
-            TEMP_printLoadingExceptions(e);
         }
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
@@ -125,6 +123,10 @@ public class ClientModLoader
             mc.displayGuiScreen(new LoadingErrorScreen(error, warnings));
         } else {
             ClientHooks.logMissingTextureErrors();
+        }
+        if (error != null) {
+            // We can finally start the forge eventbus up
+            MinecraftForge.EVENT_BUS.start();
         }
     }
 
