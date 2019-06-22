@@ -54,6 +54,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
+import com.google.common.collect.ObjectArrays;
 
 /*
  * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to acept comments, language keys,
@@ -247,6 +248,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public <V extends Comparable<? super V>> ConfigValue<V> defineInRange(List<String> path, Supplier<V> defaultSupplier, V min, V max, Class<V> clazz) {
             Range<V> range = new Range<>(clazz, min, max);
             context.setRange(range);
+            context.setComment(ObjectArrays.concat(context.getComment(), "Range: " + range.toString()));
             if (min.compareTo(max) > 0)
                 throw new IllegalArgumentException("Range min most be less then max.");
             return define(path, defaultSupplier, range);
@@ -539,7 +541,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
     @SuppressWarnings("unused")
     private static class Range<V extends Comparable<? super V>> implements Predicate<Object>
     {
-        private final  Class<V> clazz;
+        private final Class<? extends V> clazz;
         private final V min;
         private final V max;
 
@@ -550,7 +552,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             this.max = max;
         }
 
-        public Class<V> getClazz() { return clazz; }
+        public Class<? extends V> getClazz() { return clazz; }
         public V getMin() { return min; }
         public V getMax() { return max; }
 
@@ -560,6 +562,19 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             if (!clazz.isInstance(t)) return false;
             V c = clazz.cast(t);
             return c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
+        }
+        
+        @Override
+        public String toString()
+        {
+            if (clazz == Integer.class) {
+                if (max.equals(Integer.MAX_VALUE)) {
+                    return "> " + min;
+                } else if (min.equals(Integer.MIN_VALUE)) {
+                    return "< " + max;
+                }
+            } // TODO add more special cases?
+            return min + " ~ " + max;
         }
     }
 
