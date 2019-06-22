@@ -136,19 +136,19 @@ project(':forge') {
                 ]
             }
         }
-//        test {
-//            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
-//            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
-//            java {
-//                srcDirs = [
-//                    "$rootDir/src/test/java", 
-//                    "$rootDir/src/fmllaunchertest/java"
-//                ]
-//            }
-//            resources {
-//                srcDirs = ["$rootDir/src/test/resources"]
-//            }
-//        }
+        test {
+            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
+            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
+            java {
+                srcDirs = [
+                    "$rootDir/src/test/java", 
+                    "$rootDir/src/fmllaunchertest/java"
+                ]
+            }
+            resources {
+                srcDirs = ["$rootDir/src/test/resources"]
+            }
+        }
         userdev {
             compileClasspath += sourceSets.main.runtimeClasspath
             runtimeClasspath += sourceSets.main.runtimeClasspath
