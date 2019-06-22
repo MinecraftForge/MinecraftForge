@@ -58,18 +58,16 @@ public class ClientModLoader
         ClientModLoader.mc = minecraft;
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
-        try {
-            ModLoader.get().gatherAndInitializeMods();
-        } catch (LoadingFailedException e) {
-            error = e;
-        }
+        runTaskWithCatch(ModLoader.get()::gatherAndInitializeMods);
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
         mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
     }
 
     private static CompletableFuture<Void> onreload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {
-        return CompletableFuture.runAsync(runTaskWithCatch(ModLoader.get()::loadMods), syncExecutor).thenCompose(stage::markCompleteAwaitingOthers).thenRunAsync(runTaskWithCatch(ModLoader.get()::finishMods));
+        return CompletableFuture.runAsync(runTaskWithCatch(ModLoader.get()::loadMods), syncExecutor).
+                thenCompose(stage::markCompleteAwaitingOthers).
+                thenRunAsync(runTaskWithCatch(ClientModLoader::end));
     }
 
     private static Runnable runTaskWithCatch(Runnable r) {
@@ -78,19 +76,14 @@ public class ClientModLoader
                 r.run();
             } catch (LoadingFailedException e) {
                 MinecraftForge.EVENT_BUS.shutdown();
-                error = e;
+                if (error == null) error = e;
             }
         };
     }
+
     public static void end()
     {
-        try {
-            ModLoader.get().finishMods();
-        } catch (LoadingFailedException e) {
-            MinecraftForge.EVENT_BUS.shutdown();
-            if (error == null) error = e;
-            TEMP_printLoadingExceptions(e);
-        }
+        runTaskWithCatch(ModLoader.get()::finishMods);
         loading = false;
         mc.gameSettings.loadOptions();
     }
