@@ -271,10 +271,13 @@ public class GuiModList extends Screen
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
         this.modList = new GuiSlotModList(this, listWidth);
         this.modList.setLeftPos(6);
-        this.modInfo = new InfoPanel(this.minecraft, this.width - this.listWidth - 20, this.height, 10, this.height - 30, this.height - 46);
+
+        int modInfoWidth = this.width - this.listWidth - 20;
+        this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height, 10, this.height - 30, this.height - 46);
         this.modInfo.setLeftPos(this.listWidth + 14);
 
-        this.addButton(new Button(((modList.getRight() + this.width) / 2) - 100, this.height - 24, 200, 20,
+        int doneButtonWidth = Math.min(modInfoWidth, 200);
+        this.addButton(new Button(((modList.getWidth() + 8 + this.width - doneButtonWidth) / 2), this.height - 24, doneButtonWidth, 20,
                 I18n.format("gui.done"), b -> GuiModList.this.minecraft.displayGuiScreen(GuiModList.this.mainMenu)));
         this.addButton(this.configButton = new Button(6, this.height - 24, this.listWidth, 20,
                 I18n.format("fml.menu.mods.config"), b -> GuiModList.this.displayModConfig()));
