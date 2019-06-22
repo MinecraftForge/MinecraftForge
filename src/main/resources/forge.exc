@@ -75,3 +75,5 @@ net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/s
 net/minecraft/world/storage/loot/LootEntryItem.<init>(Lnet/minecraft/item/Item;II[Lnet/minecraft/world/storage/loot/functions/LootFunction;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46644_1_,p_i46644_2_,p_i46644_3_,p_i46644_4_,p_i46644_5_,entryName
 net/minecraft/world/storage/loot/LootEntryTable.<init>(Lnet/minecraft/util/ResourceLocation;II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46639_1_,p_i46639_2_,p_i46639_3_,p_i46639_4_,entryName
 net/minecraft/world/storage/loot/LootPool.<init>([Lnet/minecraft/world/storage/loot/LootEntry;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Lnet/minecraft/world/storage/loot/RandomValueRange;Lnet/minecraft/world/storage/loot/RandomValueRange;Ljava/lang/String;)V=|p_i46643_1_,p_i46643_2_,p_i46643_3_,p_i46643_4_
+
+net/minecraft/util/shapes/EntitySelectionContext.<init>(Lnet/minecraft/entity/Entity;ZDLnet/minecraft/item/Item;)V=|entity,p_i51181_1_,p_i51181_2_,p_i51181_4_
