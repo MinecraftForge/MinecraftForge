@@ -943,7 +943,7 @@ public final class ModelLoader extends ModelBakery
     /**
      * Internal, do not use.
      */
-    public void onPostBakeEvent(Map<ModelResourceLocation, IBakedModel> modelRegistry)
+    public void onPostBakeEvent(Map<ResourceLocation, IBakedModel> modelRegistry)
     {
         IBakedModel missingModel = modelRegistry.get(MODEL_MISSING);
         for(Map.Entry<ResourceLocation, Exception> entry : loadingExceptions.entrySet())

@@ -25,35 +25,37 @@ import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.model.IBakedModel;
+import net.minecraft.client.renderer.model.ModelBakery;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.BasicState;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.common.Mod;
 
-//@Mod(modid = BlockstateRetextureTest.MODID, name = "BlockstateRetextureTest", version = BlockstateRetextureTest.VERSION, acceptableRemoteVersions = "*", clientSideOnly = true)
+@Mod(BlockstateRetextureTest.MODID)
 public class BlockstateRetextureTest
 {
     public static final String MODID = "forge_blockstate_retexture_test";
-    public static final String VERSION = "1.0";
-    static final boolean ENABLED = false;
+    static final boolean ENABLED = true;
 
-    private static ResourceLocation fenceName = new ResourceLocation("minecraft", "fence");
-    private static ModelResourceLocation fenceLocation = new ModelResourceLocation(fenceName, "east=true,north=false,south=false,west=true");
+    private static ResourceLocation fenceName = new ResourceLocation("minecraft", "oak_fence");
+    private static ModelResourceLocation fenceLocation = new ModelResourceLocation(fenceName, "east=true,north=false,south=false,waterlogged=false,west=true");
     private static ResourceLocation stoneName = new ResourceLocation("minecraft", "stone");
-    private static ModelResourceLocation stoneLocation = new ModelResourceLocation(stoneName, "normal");
+    private static ModelResourceLocation stoneLocation = new ModelResourceLocation(stoneName, "");
 
     private static Function<ResourceLocation, TextureAtlasSprite> textureGetter = location ->
     {
         assert location != null;
-        return Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString());
+        return Minecraft.getInstance().getTextureMap().getAtlasSprite(location.toString());
     };
 
-    //@Mod.EventBusSubscriber(modid = MODID, value = Side.CLIENT)
+    @Mod.EventBusSubscriber(modid = MODID, value = Dist.CLIENT)
     public static class ClientEvents
     {
         @net.minecraftforge.eventbus.api.SubscribeEvent
@@ -64,16 +66,16 @@ public class BlockstateRetextureTest
                 return;
             }
 
-            IModel fence = ModelLoaderRegistry.getModelOrLogError(fenceLocation, "Error loading fence model");
-            IModel stone = ModelLoaderRegistry.getModelOrLogError(stoneLocation, "Error loading planks model");
-            IModel retexturedFence = fence.retexture(ImmutableMap.of("texture", "blocks/log_oak"));
-            IModel retexturedStone = stone.retexture(ImmutableMap.of("all", "blocks/diamond_block"));
+            IModel<?> fence = ModelLoaderRegistry.getModelOrLogError(fenceLocation, "Error loading fence model");
+            IModel<?> stone = ModelLoaderRegistry.getModelOrLogError(stoneLocation, "Error loading stone model");
+            IModel<?> retexturedFence = fence.retexture(ImmutableMap.of("texture", "blocks/log_oak"));
+            IModel<?> retexturedStone = stone.retexture(ImmutableMap.of("all", "blocks/diamond_block"));
 
-            IBakedModel fenceResult = retexturedFence.bake(fence.getDefaultState(), DefaultVertexFormats.BLOCK, textureGetter);
-            IBakedModel stoneResult = retexturedStone.bake(stone.getDefaultState(), DefaultVertexFormats.BLOCK, textureGetter);
+            IBakedModel fenceResult = retexturedFence.bake(event.getModelLoader(), textureGetter, new BasicState(fence.getDefaultState(), true), DefaultVertexFormats.ITEM);
+            IBakedModel stoneResult = retexturedStone.bake(event.getModelLoader(), textureGetter, new BasicState(stone.getDefaultState(), true), DefaultVertexFormats.ITEM);
 
-            event.getModelRegistry().putObject(fenceLocation, fenceResult);
-            event.getModelRegistry().putObject(stoneLocation, stoneResult);
+            event.getModelRegistry().put(fenceLocation, fenceResult);
+            event.getModelRegistry().put(stoneLocation, ModelLoaderRegistry.getMissingModel().bake(event.getModelLoader(), textureGetter, new BasicState(TRSRTransformation.identity(), false), DefaultVertexFormats.ITEM));
         }
     }
 }

@@ -40,8 +40,8 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.registries.ObjectHolder;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-@Mod(MaterialFogColorTest.MODID)
-@Mod.EventBusSubscriber
+//@Mod(MaterialFogColorTest.MODID)
+//@Mod.EventBusSubscriber
 public class MaterialFogColorTest
 {
     static final String MODID = "fog_color_in_material_test";

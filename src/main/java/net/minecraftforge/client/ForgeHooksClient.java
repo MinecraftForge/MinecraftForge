@@ -371,7 +371,7 @@ public class ForgeHooksClient
         MinecraftForge.EVENT_BUS.post(new EntityViewRenderEvent.RenderFogEvent(fogRenderer, renderer, info, partial, mode, distance));
     }
 
-    public static void onModelBake(ModelManager modelManager, Map<ModelResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
+    public static void onModelBake(ModelManager modelManager, Map<ResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
     {
         MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
         modelLoader.onPostBakeEvent(modelRegistry);
