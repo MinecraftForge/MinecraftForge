@@ -24,7 +24,6 @@ import net.minecraft.client.resources.DownloadingPackFinder;
 import net.minecraft.client.resources.ClientResourcePackInfo;
 import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.*;
-import net.minecraft.util.Unit;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfig;
@@ -58,19 +57,19 @@ public class ClientModLoader
         ClientModLoader.mc = minecraft;
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
-        runTaskWithCatch(ModLoader.get()::gatherAndInitializeMods);
+        createRunnableWithCatch(ModLoader.get()::gatherAndInitializeMods).run();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
         mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
     }
 
     private static CompletableFuture<Void> onreload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {
-        return CompletableFuture.runAsync(runTaskWithCatch(ModLoader.get()::loadMods), syncExecutor).
+        return CompletableFuture.runAsync(createRunnableWithCatch(ModLoader.get()::loadMods), syncExecutor).
                 thenCompose(stage::markCompleteAwaitingOthers).
-                thenRunAsync(runTaskWithCatch(ClientModLoader::end));
+                thenRunAsync(ClientModLoader::end);
     }
 
-    private static Runnable runTaskWithCatch(Runnable r) {
+    private static Runnable createRunnableWithCatch(Runnable r) {
         return ()-> {
             try {
                 r.run();
@@ -83,7 +82,7 @@ public class ClientModLoader
 
     public static void end()
     {
-        runTaskWithCatch(ModLoader.get()::finishMods);
+        createRunnableWithCatch(ModLoader.get()::finishMods).run();
         loading = false;
         mc.gameSettings.loadOptions();
     }
@@ -126,11 +125,5 @@ public class ClientModLoader
     public static boolean isLoading()
     {
         return loading;
-    }
-
-    private static void TEMP_printLoadingExceptions(LoadingFailedException error)
-    {
-        error.getErrors().forEach(e -> LOGGER.error("Exception: " + e.formatToString()));
-        throw new RuntimeException(error);
     }
 }
