@@ -455,4 +455,14 @@ public class GuiModList extends Screen
 
         modInfo.setInfo(modInfo.new Info(modInfo, lines, logoData.getLeft(), logoData.getRight()));
     }
+
+    @Override
+    public void resize(Minecraft mc, int width, int height)
+    {
+        String s = this.search.getText();
+        this.init(mc, width, height);
+        this.search.setText(s);
+        if (!this.search.getText().isEmpty())
+            reloadMods();
+    }
 }
