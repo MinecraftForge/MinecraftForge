@@ -65,10 +65,11 @@ public class ModelDataTest
 
     private static final ModelProperty<Boolean> MAGIC_PROP = new ModelProperty<Boolean>();
     private static final String BLOCK_NAME = "block";
+    private static final String BLOCK_REGNAME = MODID + ":" + BLOCK_NAME;
 
-    @ObjectHolder(MODID + ":" + BLOCK_NAME)
+    @ObjectHolder(BLOCK_REGNAME)
     public static final Block MY_BLOCK = null;
-    @ObjectHolder(MODID + ":" + BLOCK_NAME)
+    @ObjectHolder(BLOCK_REGNAME)
     public static final TileEntityType<Tile> TILE_TYPE = null;
 
     public ModelDataTest()
@@ -83,7 +84,7 @@ public class ModelDataTest
     {
         final IBakedModel stone = event.getModelRegistry().get(new ModelResourceLocation("minecraft:stone"));
         final IBakedModel dirt = event.getModelRegistry().get(new ModelResourceLocation("minecraft:dirt"));
-        event.getModelRegistry().put(new ModelResourceLocation(MODID, BLOCK_NAME), new IDynamicBakedModel()
+        event.getModelRegistry().put(new ModelResourceLocation(BLOCK_REGNAME, ""), new IDynamicBakedModel()
         {
             @Override
             public boolean isGui3d()
