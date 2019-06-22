@@ -394,14 +394,14 @@ public final class ModelLoader extends ModelBakery
             {
                 if(model.getParentLocation().getPath().equals("builtin/generated"))
                 {
-                    model.field_178315_d = field_177606_o;
+                    model.parent = MODEL_GENERATED;
                 }
                 else
                 {
                     IUnbakedModel parent = ModelLoaderRegistry.getModelOrLogError(model.getParentLocation(), "Could not load vanilla model parent '" + model.getParentLocation() + "' for '" + model);
                     if(parent instanceof VanillaModelWrapper)
                     {
-                        model.field_178315_d = ((VanillaModelWrapper) parent).model;
+                        model.parent = ((VanillaModelWrapper) parent).model;
                     }
                     else
                     {
@@ -412,7 +412,7 @@ public final class ModelLoader extends ModelBakery
 
             ImmutableSet.Builder<ResourceLocation> builder = ImmutableSet.builder();
 
-            if(model == ModelBakery.field_177606_o)
+            if(model == ModelBakery.MODEL_GENERATED)
             {
                 for(String s : ItemModelGenerator.LAYERS)
                 {
@@ -463,12 +463,12 @@ public final class ModelLoader extends ModelBakery
             tMap.putAll(PerspectiveMapWrapper.getTransforms(state));
             IModelState perState = new SimpleModelState(ImmutableMap.copyOf(tMap), state.apply(Optional.empty()));
 
-            if(model == ModelBakery.field_177606_o)
+            if(model == ModelBakery.MODEL_GENERATED)
             {
                 return new ItemLayerModel(bakery, model, format).bake(bakery, bakedTextureGetter, new BasicState(perState, uvlock), format);
             }
             TextureAtlasSprite textureatlassprite = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName("particle")));
-            if(model == ModelBakery.field_177616_r) return new BuiltInModel(transforms, model.getOverrides(bakery, model, bakedTextureGetter, format), textureatlassprite);
+            if(model == ModelBakery.MODEL_ENTITY) return new BuiltInModel(transforms, model.getOverrides(bakery, model, bakedTextureGetter, format), textureatlassprite);
             return bakeNormal(bakery, model, perState, state, newTransforms, format, bakedTextureGetter, uvlock);
         }
 
@@ -496,13 +496,13 @@ public final class ModelLoader extends ModelBakery
                 {
                     TextureAtlasSprite textureatlassprite1 = bakedTextureGetter.apply(new ResourceLocation(model.resolveTextureName(e.getValue().texture)));
 
-                    if (e.getValue().field_178244_b == null || !TRSRTransformation.isInteger(transformation.getMatrixVec()))
+                    if (e.getValue().cullFace == null || !TRSRTransformation.isInteger(transformation.getMatrixVec()))
                     {
                         builder.addGeneralQuad(BlockModel.makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), new BasicState(transformation, uvLocked)));
                     }
                     else
                     {
-                        builder.addFaceQuad(baseState.rotate(e.getValue().field_178244_b), BlockModel.makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), new BasicState(transformation, uvLocked)));
+                        builder.addFaceQuad(baseState.rotate(e.getValue().cullFace), BlockModel.makeBakedQuad(part, e.getValue(), textureatlassprite1, e.getKey(), new BasicState(transformation, uvLocked)));
                     }
                 }
             }
@@ -546,7 +546,7 @@ public final class ModelLoader extends ModelBakery
                 Maps.newHashMap(this.model.textures), this.model.isAmbientOcclusion(), this.model.isGui3d(), //New Textures man VERY IMPORTANT
                 model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
             newModel.name = this.model.name;
-            newModel.field_178315_d = this.model.field_178315_d;
+            newModel.parent = this.model.parent;
 
             Set<String> removed = Sets.newHashSet();
 
@@ -603,7 +603,7 @@ public final class ModelLoader extends ModelBakery
                 return this;
             }
             BlockModel newModel = new BlockModel(model.getParentLocation(), model.getElements(), model.textures, value, model.isGui3d(), model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
-            newModel.field_178315_d = model.field_178315_d;
+            newModel.parent = model.parent;
             newModel.name = model.name;
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
         }
@@ -616,7 +616,7 @@ public final class ModelLoader extends ModelBakery
                 return this;
             }
             BlockModel newModel = new BlockModel(model.getParentLocation(), model.getElements(), model.textures, model.ambientOcclusion, value, model.getAllTransforms(), Lists.newArrayList(model.getOverrides()));
-            newModel.field_178315_d = model.field_178315_d;
+            newModel.parent = model.parent;
             newModel.name = model.name;
             return new VanillaModelWrapper(location, newModel, uvlock, animation);
         }

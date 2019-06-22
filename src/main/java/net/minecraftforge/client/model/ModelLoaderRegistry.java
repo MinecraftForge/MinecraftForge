@@ -79,7 +79,7 @@ public class ModelLoaderRegistry
     public static void registerLoader(ICustomModelLoader loader)
     {
         loaders.add(loader);
-        ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).func_219534_a(loader);
+        ((IReloadableResourceManager) Minecraft.getInstance().getResourceManager()).addReloadListener(loader);
     }
 
     public static boolean loaded(ResourceLocation location)

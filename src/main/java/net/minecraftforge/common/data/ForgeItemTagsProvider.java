@@ -49,7 +49,7 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         getBuilder(Tags.Items.DYES_BROWN).add(Items.COCOA_BEANS);
         getBuilder(Tags.Items.DYES_CYAN).add(Items.CYAN_DYE);
         getBuilder(Tags.Items.DYES_GRAY).add(Items.GRAY_DYE);
-        getBuilder(Tags.Items.DYES_GREEN).add(Items.field_222079_lj);
+        getBuilder(Tags.Items.DYES_GREEN).add(Items.GREEN_DYE);
         getBuilder(Tags.Items.DYES_LIGHT_BLUE).add(Items.LIGHT_BLUE_DYE);
         getBuilder(Tags.Items.DYES_LIGHT_GRAY).add(Items.LIGHT_GRAY_DYE);
         getBuilder(Tags.Items.DYES_LIME).add(Items.LIME_DYE);
@@ -57,9 +57,9 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         getBuilder(Tags.Items.DYES_ORANGE).add(Items.ORANGE_DYE);
         getBuilder(Tags.Items.DYES_PINK).add(Items.PINK_DYE);
         getBuilder(Tags.Items.DYES_PURPLE).add(Items.PURPLE_DYE);
-        getBuilder(Tags.Items.DYES_RED).add(Items.field_222078_li);
+        getBuilder(Tags.Items.DYES_RED).add(Items.RED_DYE);
         getBuilder(Tags.Items.DYES_WHITE).add(Items.BONE_MEAL);
-        getBuilder(Tags.Items.DYES_YELLOW).add(Items.field_222081_ls);
+        getBuilder(Tags.Items.DYES_YELLOW).add(Items.YELLOW_DYE);
         copy(Tags.Blocks.FENCE_GATES, Tags.Items.FENCE_GATES);
         copy(Tags.Blocks.FENCE_GATES_WOODEN, Tags.Items.FENCE_GATES_WOODEN);
         copy(Tags.Blocks.FENCES, Tags.Items.FENCES);

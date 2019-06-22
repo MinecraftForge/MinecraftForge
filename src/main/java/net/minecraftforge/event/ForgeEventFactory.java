@@ -345,7 +345,7 @@ public class ForgeEventFactory
         if (MinecraftForge.EVENT_BUS.post(event)) return -1;
         if (event.getResult() == Result.ALLOW)
         {
-            context.getItem().func_222118_a(1, context.getPlayer(), player -> player.func_213334_d(context.func_221531_n()));
+            context.getItem().damageItem(1, context.getPlayer(), player -> player.sendBreakAnimation(context.getHand()));
             return 1;
         }
         return 0;
@@ -372,7 +372,7 @@ public class ForgeEventFactory
 
         if (event.getResult() == Result.ALLOW)
         {
-            if (player.playerAbilities.isCreativeMode)
+            if (player.abilities.isCreativeMode)
                 return new ActionResult<ItemStack>(ActionResultType.SUCCESS, stack);
 
             stack.shrink(1);
@@ -567,7 +567,7 @@ public class ForgeEventFactory
         Result canContinueSleep = evt.getResult();
         if (canContinueSleep == Result.DEFAULT)
         {
-            return player.func_213374_dv().map(pos-> {
+            return player.getBedPosition().map(pos-> {
                 BlockState state = player.world.getBlockState(pos);
                 return state.getBlock().isBed(state, player.world, pos, player);
             }).orElse(false);

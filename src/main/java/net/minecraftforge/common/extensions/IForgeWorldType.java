@@ -65,9 +65,9 @@ public interface IForgeWorldType
     default void onCustomizeButton(Minecraft mc, CreateWorldScreen gui)
     {
         if (this == WorldType.FLAT)
-            mc.displayGuiScreen(new CreateFlatWorldScreen(gui, gui.field_146334_a));
+            mc.displayGuiScreen(new CreateFlatWorldScreen(gui, gui.chunkProviderSettingsJson));
         else if (this == WorldType.BUFFET)
-            mc.displayGuiScreen(new CreateBuffetWorldScreen(gui, gui.field_146334_a));
+            mc.displayGuiScreen(new CreateBuffetWorldScreen(gui, gui.chunkProviderSettingsJson));
     }
 
     default boolean handleSlimeSpawnReduction(java.util.Random random, World world)

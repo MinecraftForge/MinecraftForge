@@ -237,21 +237,21 @@ public class PacketDistributor<T> {
     private Consumer<IPacket<?>> trackingEntity(final Supplier<Entity> entitySupplier) {
         return p-> {
             final Entity entity = entitySupplier.get();
-            ((ServerChunkProvider)entity.getEntityWorld().getChunkProvider()).func_217218_b(entity, p);
+            ((ServerChunkProvider)entity.getEntityWorld().getChunkProvider()).sendToAllTracking(entity, p);
         };
     }
 
     private Consumer<IPacket<?>> trackingEntityAndSelf(final Supplier<Entity> entitySupplier) {
         return p-> {
             final Entity entity = entitySupplier.get();
-            ((ServerChunkProvider)entity.getEntityWorld().getChunkProvider()).func_217216_a(entity, p);
+            ((ServerChunkProvider)entity.getEntityWorld().getChunkProvider()).sendToTrackingAndSelf(entity, p);
         };
     }
 
     private Consumer<IPacket<?>> trackingChunk(final Supplier<Chunk> chunkPosSupplier) {
         return p -> {
             final Chunk chunk = chunkPosSupplier.get();
-            ((ServerChunkProvider)chunk.getWorld().getChunkProvider()).field_217237_a.func_219097_a(chunk.getPos(), false).forEach(e -> e.connection.sendPacket(p));
+            ((ServerChunkProvider)chunk.getWorld().getChunkProvider()).chunkManager.getTrackingPlayers(chunk.getPos(), false).forEach(e -> e.connection.sendPacket(p));
         };
     }
 

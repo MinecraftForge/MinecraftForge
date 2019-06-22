@@ -45,7 +45,7 @@ ext {
         ]
     }
     MAPPING_CHANNEL = 'snapshot'
-    MAPPING_VERSION = '20190608-1.14.2'
+    MAPPING_VERSION = '20190621-1.14.2'
     MC_VERSION = '1.14.2'
     MCP_VERSION = '20190603.175704'
 }
@@ -136,19 +136,19 @@ project(':forge') {
                 ]
             }
         }
-        test {
-            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
-            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
-            java {
-                srcDirs = [
-                    "$rootDir/src/test/java", 
-                    "$rootDir/src/fmllaunchertest/java"
-                ]
-            }
-            resources {
-                srcDirs = ["$rootDir/src/test/resources"]
-            }
-        }
+//        test {
+//            compileClasspath += sourceSets.fmllauncher.runtimeClasspath
+//            runtimeClasspath += sourceSets.fmllauncher.runtimeClasspath
+//            java {
+//                srcDirs = [
+//                    "$rootDir/src/test/java", 
+//                    "$rootDir/src/fmllaunchertest/java"
+//                ]
+//            }
+//            resources {
+//                srcDirs = ["$rootDir/src/test/resources"]
+//            }
+//        }
         userdev {
             compileClasspath += sourceSets.main.runtimeClasspath
             runtimeClasspath += sourceSets.main.runtimeClasspath

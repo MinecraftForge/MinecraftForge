@@ -124,7 +124,6 @@ public class ModLoader
     }
 
     public void loadMods() {
-        gatherAndInitializeMods();
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
         dispatchAndHandleError(LifecycleEventProvider.SETUP);
@@ -132,7 +131,7 @@ public class ModLoader
         dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);
     }
 
-    private void gatherAndInitializeMods() {
+    public void gatherAndInitializeMods() {
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
             throw new LoadingFailedException(loadingExceptions);

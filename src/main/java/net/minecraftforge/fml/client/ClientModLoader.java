@@ -22,18 +22,14 @@ package net.minecraftforge.fml.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DownloadingPackFinder;
 import net.minecraft.client.resources.ClientResourcePackInfo;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.ResourcePackList;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.*;
+import net.minecraft.util.Unit;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.fml.LogicalSidedProvider;
-import net.minecraftforge.fml.ModLoader;
-import net.minecraftforge.fml.ModLoadingWarning;
-import net.minecraftforge.fml.SidedProvider;
-import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +39,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
@@ -61,15 +59,31 @@ public class ClientModLoader
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
         try {
-            ModLoader.get().loadMods();
+            ModLoader.get().gatherAndInitializeMods();
         } catch (LoadingFailedException e) {
             MinecraftForge.EVENT_BUS.shutdown();
             error = e;
             TEMP_printLoadingExceptions(e);
         }
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
+        mcResourceManager.addReloadListener(ClientModLoader::onreload);
+        mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
     }
 
+    private static CompletableFuture<Void> onreload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {
+        return CompletableFuture.runAsync(runTaskWithCatch(ModLoader.get()::loadMods), syncExecutor).thenCompose(stage::markCompleteAwaitingOthers).thenRunAsync(runTaskWithCatch(ModLoader.get()::finishMods));
+    }
+
+    private static Runnable runTaskWithCatch(Runnable r) {
+        return ()-> {
+            try {
+                r.run();
+            } catch (LoadingFailedException e) {
+                MinecraftForge.EVENT_BUS.shutdown();
+                error = e;
+            }
+        };
+    }
     public static void end()
     {
         try {

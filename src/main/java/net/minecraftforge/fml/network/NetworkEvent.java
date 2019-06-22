@@ -180,7 +180,7 @@ public class NetworkEvent extends Event
             // Must check ourselves as Minecraft will sometimes delay tasks even when they are received on the client thread
             // Same logic as ThreadTaskExecutor#runImmediately without the join
             if (!executor.isOnExecutionThread()) {
-                return executor.func_213165_a(runnable); // Use the internal method so thread check isn't done twice
+                return executor.deferTask(runnable); // Use the internal method so thread check isn't done twice
             } else {
                 runnable.run();
                 return CompletableFuture.completedFuture(null);
@@ -197,7 +197,7 @@ public class NetworkEvent extends Event
             if (netHandler instanceof ServerPlayNetHandler)
             {
                 ServerPlayNetHandler netHandlerPlayServer = (ServerPlayNetHandler) netHandler;
-                return netHandlerPlayServer.field_147369_b;
+                return netHandlerPlayServer.player;
             }
             return null;
         }

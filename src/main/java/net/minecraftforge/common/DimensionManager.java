@@ -206,7 +206,7 @@ public class DimensionManager
         Validate.notNull(overworld, "Cannot Hotload Dim: Overworld is not Loaded!");
 
         @SuppressWarnings("resource")
-        ServerWorld world = new ServerMultiWorld(overworld, server, server.func_213207_aT(), overworld.func_217485_w(), dim, server.func_213185_aS(), new NoopChunkStatusListener());
+        ServerWorld world = new ServerMultiWorld(overworld, server, server.getBackgroundExecutor(), overworld.getSaveHandler(), dim, server.getProfiler(), new NoopChunkStatusListener());
         if (!server.isSinglePlayer())
             world.getWorldInfo().setGameType(server.getGameType());
         server.forgeGetWorldMap().put(dim, world);
@@ -218,7 +218,7 @@ public class DimensionManager
 
     private static boolean canUnloadWorld(ServerWorld world)
     {
-        return world.func_217469_z().isEmpty()
+        return world.getForcedChunks().isEmpty()
                 && world.getPlayers().isEmpty()
                 //&& !world.dimension.getType().shouldLoadSpawn()
                 && !getData(world.getDimension().getType()).keepLoaded;
@@ -274,7 +274,7 @@ public class DimensionManager
             }
             try
             {
-                w.func_217445_a(null, true, true);
+                w.save(null, true, true);
             }
             catch (Exception e)
             {

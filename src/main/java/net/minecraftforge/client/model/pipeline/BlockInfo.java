@@ -61,7 +61,7 @@ public class BlockInfo
     {
         if(cachedTint == tint) return cachedMultiplier;
         cachedTint = tint;
-        cachedMultiplier = colors.func_216860_a(state, world, blockPos, tint);
+        cachedMultiplier = colors.getColor(state, world, blockPos, tint);
         return cachedMultiplier;
     }
 

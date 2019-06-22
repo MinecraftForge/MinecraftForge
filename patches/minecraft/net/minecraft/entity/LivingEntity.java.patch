@@ -390,7 +390,7 @@
     @Nullable
     @OnlyIn(Dist.CLIENT)
     public Direction func_213376_dz() {
-+//      this.func_213374_dv().map(pos->{ // This is apparently an "optimization" by Mojang, so we'll copy their lead here for now
++//      this.getBedPosition().map(pos->{ // This is apparently an "optimization" by Mojang, so we'll copy their lead here for now
 +//         BlockState state = this.world.getBlockState(pos);
 +//         return !state.isBed(world, pos, this) ? Direction.UP : state.getBedDirection(world, pos);
 +//      });

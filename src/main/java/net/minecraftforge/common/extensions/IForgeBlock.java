@@ -697,7 +697,7 @@ public interface IForgeBlock
     */
     default boolean shouldCheckWeakPower(BlockState state, IWorldReader world, BlockPos pos, Direction side)
     {
-        return state.func_215686_e(world, pos);
+        return state.isNormalCube(world, pos);
     }
 
     /**
@@ -807,7 +807,7 @@ public interface IForgeBlock
                 LivingEntity ent = (LivingEntity)entity;
                 f12 = (float) EnchantmentHelper.getRespirationModifier(ent) * 0.2F;
 
-                if (ent.isPotionActive(Effects.field_76427_o))
+                if (ent.isPotionActive(Effects.WATER_BREATHING))
                 {
                     f12 = f12 * 0.3F + 0.6F;
                 }
@@ -968,7 +968,7 @@ public interface IForgeBlock
     {
         if (entity instanceof EnderDragonEntity)
         {
-            return !BlockTags.field_219754_W.contains(this.getBlock());
+            return !BlockTags.DRAGON_IMMUNE.contains(this.getBlock());
         }
         else if ((entity instanceof WitherEntity) ||
                  (entity instanceof WitherSkullEntity))

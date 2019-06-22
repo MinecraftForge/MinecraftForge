@@ -237,7 +237,7 @@ public class ForgeHooks
     public static boolean onPickBlock(RayTraceResult target, PlayerEntity player, World world)
     {
         ItemStack result = ItemStack.EMPTY;
-        boolean isCreative = player.playerAbilities.isCreativeMode;
+        boolean isCreative = player.abilities.isCreativeMode;
         TileEntity te = null;
 
         if (target.getType() == RayTraceResult.Type.BLOCK)
@@ -274,7 +274,7 @@ public class ForgeHooks
         if (isCreative)
         {
             player.inventory.setPickedItemStack(result);
-            Minecraft.getInstance().field_71442_b.sendSlotPacket(player.getHeldItem(Hand.MAIN_HAND), 36 + player.inventory.currentItem);
+            Minecraft.getInstance().playerController.sendSlotPacket(player.getHeldItem(Hand.MAIN_HAND), 36 + player.inventory.currentItem);
             return true;
         }
         int slot = player.inventory.getSlotFor(result);
@@ -283,7 +283,7 @@ public class ForgeHooks
             if (PlayerInventory.isHotbar(slot))
                 player.inventory.currentItem = slot;
             else
-                Minecraft.getInstance().field_71442_b.pickItem(slot);
+                Minecraft.getInstance().playerController.pickItem(slot);
             return true;
         }
         return false;
@@ -431,14 +431,14 @@ public class ForgeHooks
             return null;
 
         if (!player.world.isRemote)
-            player.getEntityWorld().func_217376_c(event.getEntityItem());
+            player.getEntityWorld().addEntity(event.getEntityItem());
         return event.getEntityItem();
     }
 
     @Nullable
     public static ITextComponent onServerChatEvent(ServerPlayNetHandler net, String raw, ITextComponent comp)
     {
-        ServerChatEvent event = new ServerChatEvent(net.field_147369_b, raw, comp);
+        ServerChatEvent event = new ServerChatEvent(net.player, raw, comp);
         if (MinecraftForge.EVENT_BUS.post(event))
         {
             return null;

@@ -130,14 +130,14 @@ public class ForgeIngameGui extends IngameGui
 
         if (renderHelmet) renderHelmet(partialTicks);
 
-        if (renderPortal && !mc.player.isPotionActive(Effects.field_76431_k))
+        if (renderPortal && !mc.player.isPotionActive(Effects.NAUSEA))
         {
             renderPortal(partialTicks);
         }
 
-        if (this.mc.field_71442_b.getCurrentGameType() == GameType.SPECTATOR)
+        if (this.mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
         {
-            if (renderSpectatorTooltip) field_175197_u.renderTooltip(partialTicks);
+            if (renderSpectatorTooltip) spectatorGui.renderTooltip(partialTicks);
         }
         else if (!this.mc.gameSettings.hideGUI)
         {
@@ -153,7 +153,7 @@ public class ForgeIngameGui extends IngameGui
             if (renderBossHealth) renderBossHealth();
 
             GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-            if (this.mc.field_71442_b.shouldDrawHUD() && this.mc.getRenderViewEntity() instanceof PlayerEntity)
+            if (this.mc.playerController.shouldDrawHUD() && this.mc.getRenderViewEntity() instanceof PlayerEntity)
             {
                 if (renderHealth) renderHealth(this.scaledWidth, this.scaledHeight);
                 if (renderArmor)  renderArmor(this.scaledWidth, this.scaledHeight);
@@ -170,10 +170,10 @@ public class ForgeIngameGui extends IngameGui
             {
                 renderExperience(this.scaledWidth / 2 - 91);
             }
-            if (this.mc.gameSettings.heldItemTooltips && this.mc.field_71442_b.getCurrentGameType() != GameType.SPECTATOR) {
+            if (this.mc.gameSettings.heldItemTooltips && this.mc.playerController.getCurrentGameType() != GameType.SPECTATOR) {
                 this.renderSelectedItem();
              } else if (this.mc.player.isSpectator()) {
-                this.field_175197_u.renderSelectedItem();
+                this.spectatorGui.renderSelectedItem();
              }
         }
 
@@ -240,7 +240,7 @@ public class ForgeIngameGui extends IngameGui
     protected void renderSubtitles()
     {
         if (pre(SUBTITLES)) return;
-        this.field_184049_t.render();
+        this.overlaySubtitle.render();
         post(SUBTITLES);
     }
 
@@ -251,7 +251,7 @@ public class ForgeIngameGui extends IngameGui
         GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         mc.getProfiler().startSection("bossHealth");
         GlStateManager.enableBlend();
-        this.field_184050_w.render();
+        this.overlayBoss.render();
         GlStateManager.disableBlend();
         mc.getProfiler().endSection();
         post(BOSSHEALTH);
@@ -346,9 +346,9 @@ public class ForgeIngameGui extends IngameGui
     {
         if (pre(HOTBAR)) return;
 
-        if (mc.field_71442_b.getCurrentGameType() == GameType.SPECTATOR)
+        if (mc.playerController.getCurrentGameType() == GameType.SPECTATOR)
         {
-            this.field_175197_u.renderTooltip(partialTicks);
+            this.spectatorGui.renderTooltip(partialTicks);
         }
         else
         {
@@ -438,7 +438,7 @@ public class ForgeIngameGui extends IngameGui
         if (rowHeight != 10) left_height += 10 - rowHeight;
 
         int regen = -1;
-        if (player.isPotionActive(Effects.field_76428_l))
+        if (player.isPotionActive(Effects.REGENERATION))
         {
             regen = ticks % 25;
         }
@@ -446,8 +446,8 @@ public class ForgeIngameGui extends IngameGui
         final int TOP =  9 * (mc.world.getWorldInfo().isHardcore() ? 5 : 0);
         final int BACKGROUND = (highlight ? 25 : 16);
         int MARGIN = 16;
-        if (player.isPotionActive(Effects.field_76436_u))      MARGIN += 36;
-        else if (player.isPotionActive(Effects.field_82731_v)) MARGIN += 72;
+        if (player.isPotionActive(Effects.POISON))      MARGIN += 36;
+        else if (player.isPotionActive(Effects.WITHER)) MARGIN += 72;
         float absorbRemaining = absorb;
 
         for (int i = MathHelper.ceil((healthMax + absorb) / 2.0F) - 1; i >= 0; --i)
@@ -520,7 +520,7 @@ public class ForgeIngameGui extends IngameGui
             int icon = 16;
             byte background = 0;
 
-            if (mc.player.isPotionActive(Effects.field_76438_s))
+            if (mc.player.isPotionActive(Effects.HUNGER))
             {
                 icon += 36;
                 background = 13;
@@ -574,7 +574,7 @@ public class ForgeIngameGui extends IngameGui
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableBlend();
 
-        if (mc.field_71442_b.gameIsSurvivalOrAdventure())
+        if (mc.playerController.gameIsSurvivalOrAdventure())
         {
             super.renderExpBar(x);
         }
@@ -740,7 +740,7 @@ public class ForgeIngameGui extends IngameGui
 
         GlStateManager.pushMatrix();
         GlStateManager.translatef((float) event.getPosX(), (float) event.getPosY(), 0.0F);
-        field_73840_e.render(ticks);
+        persistantChatGUI.render(ticks);
         GlStateManager.popMatrix();
 
         post(CHAT);
@@ -751,18 +751,18 @@ public class ForgeIngameGui extends IngameGui
     protected void renderPlayerList(int width, int height)
     {
         ScoreObjective scoreobjective = this.mc.world.getScoreboard().getObjectiveInDisplaySlot(0);
-        ClientPlayNetHandler handler = mc.player.field_71174_a;
+        ClientPlayNetHandler handler = mc.player.connection;
 
         if (mc.gameSettings.keyBindPlayerList.isKeyDown() && (!mc.isIntegratedServerRunning() || handler.getPlayerInfoMap().size() > 1 || scoreobjective != null))
         {
-            this.field_175196_v.setVisible(true);
+            this.overlayPlayerList.setVisible(true);
             if (pre(PLAYER_LIST)) return;
-            this.field_175196_v.render(width, this.mc.world.getScoreboard(), scoreobjective);
+            this.overlayPlayerList.render(width, this.mc.world.getScoreboard(), scoreobjective);
             post(PLAYER_LIST);
         }
         else
         {
-            this.field_175196_v.setVisible(false);
+            this.overlayPlayerList.setVisible(false);
         }
     }
 
