@@ -123,7 +123,7 @@ public class ClientModLoader
         } else {
             ClientHooks.logMissingTextureErrors();
         }
-        if (error != null) {
+        if (error == null) {
             // We can finally start the forge eventbus up
             MinecraftForge.EVENT_BUS.start();
         }
