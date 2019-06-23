@@ -4,10 +4,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.stb.STBEasyFont;
-import org.lwjgl.system.MemoryUtil;
+import net.minecraftforge.client.gui.EarlyFontRenderer;
 
-import java.nio.ByteBuffer;
 import java.util.function.Consumer;
 
 public class EarlyLoaderGUI {
@@ -17,6 +15,7 @@ public class EarlyLoaderGUI {
 
     public EarlyLoaderGUI(final MainWindow window) {
         this.window = window;
+        EarlyFontRenderer.get().loadEarlyTexture();
         GlStateManager.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
         window.update(false);
@@ -46,19 +45,11 @@ public class EarlyLoaderGUI {
         renderMessage();
     }
     void renderMessage() {
-        GlStateManager.enableClientState(GL11.GL_VERTEX_ARRAY);
-        ByteBuffer charBuffer = MemoryUtil.memAlloc(this.message.length() * 270);
-        int quads = STBEasyFont.stb_easy_font_print(0, 0, this.message, null, charBuffer);
-        GlStateManager.vertexPointer(2, GL11.GL_FLOAT, 16, charBuffer);
-
-        GlStateManager.color3f(0,0,0);
         GlStateManager.pushMatrix();
         GlStateManager.translatef(10, window.getFramebufferHeight() - 50, 0);
         GlStateManager.scalef(3, 3, 0);
-        GlStateManager.drawArrays(GL11.GL_QUADS, 0, quads * 4);
+        EarlyFontRenderer.get().drawString(0, 0, message, 0xff000000);
         GlStateManager.popMatrix();
-
-        MemoryUtil.memFree(charBuffer);
     }
 
     private void doMatrix() {
