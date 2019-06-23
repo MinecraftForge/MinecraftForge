@@ -291,12 +291,12 @@ public class GuiModList extends Screen
 
         final int width = listWidth / numButtons;
         int x = 6, y = 10;
-        addButton(SortType.NORMAL.button = new Button(x, y, width - buttonMargin, 20, SortType.NORMAL.getButtonText(), b -> this.sortType = SortType.NORMAL));
+        addButton(SortType.NORMAL.button = new Button(x, y, width - buttonMargin, 20, SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)));
         x += width + buttonMargin;
-        addButton(SortType.A_TO_Z.button = new Button(x, y, width - buttonMargin, 20, SortType.A_TO_Z.getButtonText(), b -> this.sortType = SortType.A_TO_Z));
+        addButton(SortType.A_TO_Z.button = new Button(x, y, width - buttonMargin, 20, SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)));
         x += width + buttonMargin;
-        addButton(SortType.Z_TO_A.button = new Button(x, y, width - buttonMargin, 20, SortType.Z_TO_A.getButtonText(), b -> this.sortType = SortType.Z_TO_A));
-        resortMods();
+        addButton(SortType.Z_TO_A.button = new Button(x, y, width - buttonMargin, 20, SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)));
+        resortMods(SortType.NORMAL);
         updateCache();
     }
 
@@ -347,8 +347,10 @@ public class GuiModList extends Screen
         lastFilterText = search.getText();
     }
 
-    private void resortMods()
+    private void resortMods(SortType newSort)
     {
+        this.sortType = newSort;
+
         for (SortType sort : SortType.values())
         {
             if (sort.button != null)
