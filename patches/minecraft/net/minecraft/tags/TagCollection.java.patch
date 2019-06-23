@@ -1,0 +1,19 @@
+--- a/net/minecraft/tags/TagCollection.java
++++ b/net/minecraft/tags/TagCollection.java
+@@ -22,8 +22,6 @@
+ import net.minecraft.util.JSONUtils;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.Util;
+-import net.minecraftforge.api.distmarker.Dist;
+-import net.minecraftforge.api.distmarker.OnlyIn;
+ import org.apache.commons.io.IOUtils;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+@@ -67,7 +65,6 @@
+       return this.field_199921_d.keySet();
+    }
+ 
+-   @OnlyIn(Dist.CLIENT)
+    public Collection<ResourceLocation> func_199913_a(T p_199913_1_) {
+       List<ResourceLocation> list = Lists.newArrayList();
+ 
