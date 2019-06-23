@@ -267,7 +267,7 @@ public class GuiModList extends Screen
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getDisplayName()) + 10);
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(MavenVersionStringHelper.artifactVersionToString(mod.getVersion())) + 5);
         }
-        listWidth = Math.max(listWidth, 100);
+        listWidth = Math.max(Math.min(listWidth, width/3), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
         this.modList = new GuiSlotModList(this, listWidth);
         this.modList.setLeftPos(6);
