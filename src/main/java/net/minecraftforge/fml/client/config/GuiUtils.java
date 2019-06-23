@@ -466,6 +466,6 @@ public class GuiUtils
             if (centerX) x += (w - boundsWidth) / 2;
         }
 
-        AbstractGui.blit(x, y, 0, 0, rectWidth, rectHeight, boundsWidth, boundsHeight, rectWidth, rectHeight);
+        AbstractGui.blit(x, y, boundsWidth, boundsHeight, 0.0f,0.0f, rectWidth, rectHeight, rectWidth, rectHeight);
     }
 }

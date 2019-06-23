@@ -143,6 +143,8 @@ public class ModLoader
         statusConsumer.ifPresent(c->c.accept("Loading mods"));
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
+            LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.get(0));
+            modList.setLoadedMods(Collections.emptyList());
             throw new LoadingFailedException(loadingExceptions);
         }
         statusConsumer.ifPresent(c->c.accept("Building Mod List"));
@@ -152,7 +154,8 @@ public class ModLoader
                 flatMap(Collection::stream).
                 collect(Collectors.toList());
         if (!loadingExceptions.isEmpty()) {
-            LOGGER.fatal(CORE, "Failed to initialize mod containers");
+            LOGGER.fatal(CORE, "Failed to initialize mod containers", loadingExceptions.get(0));
+            modList.setLoadedMods(Collections.emptyList());
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainers);

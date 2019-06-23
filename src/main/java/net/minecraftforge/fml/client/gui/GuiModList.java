@@ -267,7 +267,7 @@ public class GuiModList extends Screen
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getDisplayName()) + 10);
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(MavenVersionStringHelper.artifactVersionToString(mod.getVersion())) + 5);
         }
-        listWidth = Math.min(listWidth, 150);
+        listWidth = Math.max(listWidth, 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
         this.modList = new GuiSlotModList(this, listWidth);
         this.modList.setLeftPos(6);
@@ -363,7 +363,7 @@ public class GuiModList extends Screen
         int left = ((this.width - this.listWidth - 38) / 2) + this.listWidth + 30;
 
         String text = I18n.format("fml.menu.mods.search");
-        int x = ((10 + modList.getRight()) / 2) - (getFontRenderer().getStringWidth(text) / 2);
+        int x = ((modList.getLeft()) / 2) - (getFontRenderer().getStringWidth(text) / 2);
         getFontRenderer().drawString(text, x, modList.getBottom() + 5, 0xFFFFFF);
         this.search.render(mouseX, mouseY, partialTicks);
         super.render(mouseX, mouseY, partialTicks);
@@ -411,6 +411,7 @@ public class GuiModList extends Screen
                     logo = NativeImage.read(logoResource);
                 if (logo != null)
                 {
+
                     return Pair.of(tm.getDynamicTextureLocation("modlogo", new DynamicTexture(logo)), new Size2i(logo.getWidth(), logo.getHeight()));
                 }
             }
