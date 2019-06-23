@@ -20,6 +20,7 @@
 package net.minecraftforge.fml.loading.moddiscovery;
 
 import cpw.mods.modlauncher.api.LamdbaExceptionUtils.Supplier_WithExceptions;
+import net.minecraftforge.fml.loading.StringUtils;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public enum InvalidModIdentifier {
 
     private String getReason()
     {
-        return "fml.modloading.brokenfile." + this.name().toLowerCase();
+        return "fml.modloading.brokenfile." + StringUtils.toLowerCase(name());
     }
 
     public static Optional<String> identifyJarProblem(Path path)
