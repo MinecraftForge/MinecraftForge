@@ -466,9 +466,12 @@ public class GuiModList extends Screen
     public void resize(Minecraft mc, int width, int height)
     {
         String s = this.search.getText();
+        SortType sort = this.sortType;
         this.init(mc, width, height);
         this.search.setText(s);
         if (!this.search.getText().isEmpty())
             reloadMods();
+        if (sort != SortType.NORMAL)
+            resortMods(sort);
     }
 }
