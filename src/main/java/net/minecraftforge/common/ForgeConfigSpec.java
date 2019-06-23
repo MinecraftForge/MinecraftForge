@@ -563,6 +563,12 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         @Override
         public boolean test(Object t)
         {
+            // Even if use Long type, the value obtained from the config file may be Integer type
+            if (clazz.equals(Long.class) && t instanceof Integer)
+            {
+                V c = clazz.cast(((Integer) t).longValue());
+                return c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
+            }
             if (!clazz.isInstance(t)) return false;
             V c = clazz.cast(t);
             return c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
