@@ -190,8 +190,10 @@ public class RegistryManager
                 collect(Collectors.toList()) : Collections.emptyList();
     }
 
-    public static List<ResourceLocation> registryNames()
+    public static List<ResourceLocation> getRegistryNamesForSyncToClient()
     {
-        return new ArrayList<>(ACTIVE.registries.keySet());
+        return ACTIVE.registries.keySet().stream().
+                filter(resloc -> ACTIVE.synced.contains(resloc)).
+                collect(Collectors.toList());
     }
 }

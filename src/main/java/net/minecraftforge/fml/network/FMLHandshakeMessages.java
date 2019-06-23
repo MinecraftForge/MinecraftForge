@@ -62,7 +62,7 @@ public class FMLHandshakeMessages
         {
             this.mods = ModList.get().getMods().stream().map(ModInfo::getModId).collect(Collectors.toList());
             this.channels = NetworkRegistry.buildChannelVersions();
-            this.registries = RegistryManager.registryNames();
+            this.registries = RegistryManager.getRegistryNamesForSyncToClient();
         }
 
         private S2CModList(List<String> mods, Map<ResourceLocation, String> channels, List<ResourceLocation> registries)
