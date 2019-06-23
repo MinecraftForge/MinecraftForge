@@ -43,11 +43,11 @@ public class ServerModLoader
         LogicalSidedProvider.setServer(()->dedicatedServer);
         LanguageHook.loadForgeAndMCLangs();
         ModLoader.get().gatherAndInitializeMods();
-        ModLoader.get().loadMods();
+        ModLoader.get().loadMods(Runnable::run);
     }
 
     public static void end() {
-        ModLoader.get().finishMods();
+        ModLoader.get().finishMods(Runnable::run);
         List<ModLoadingWarning> warnings = ModLoader.get().getWarnings();
         if (!warnings.isEmpty()) {
             LOGGER.warn(LOADING, "Mods loaded with {} warnings", warnings.size());

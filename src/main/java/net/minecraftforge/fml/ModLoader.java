@@ -48,6 +48,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -126,15 +127,15 @@ public class ModLoader
         return ()->postEvent(new ModelRegistryEvent());
     }
 
-    public void loadMods() {
+    public void loadMods(Executor mainThreadExecutor) {
         statusConsumer.ifPresent(c->c.accept("Loading mod config"));
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
         statusConsumer.ifPresent(c->c.accept("Mod setup: SETUP"));
-        dispatchAndHandleError(LifecycleEventProvider.SETUP);
+        dispatchAndHandleError(LifecycleEventProvider.SETUP, mainThreadExecutor);
         statusConsumer.ifPresent(c->c.accept("Mod setup: SIDED SETUP"));
         DistExecutor.runWhenOn(Dist.CLIENT, this::fireClientEvents);
-        dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);
+        dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP, mainThreadExecutor);
         statusConsumer.ifPresent(c->c.accept("Mod setup complete"));
     }
 
@@ -156,21 +157,21 @@ public class ModLoader
         }
         modList.setLoadedMods(modContainers);
         statusConsumer.ifPresent(c->c.accept("Constructing mods"));
-        dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT);
+        dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT, Runnable::run);
         statusConsumer.ifPresent(c->c.accept("Creating registries"));
-        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, this::dispatchAndHandleError);
+        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run));
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         statusConsumer.ifPresent(c->c.accept("Populating registries"));
-        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, this::dispatchAndHandleError);
+        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run));
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 
-    private void dispatchAndHandleError(LifecycleEventProvider event) {
+    private void dispatchAndHandleError(LifecycleEventProvider event, Executor executor) {
         if (!loadingExceptions.isEmpty()) {
             LOGGER.error(LOADING,"Skipping lifecycle event {}, {} errors found.", event, loadingExceptions.size());
         } else {
-            event.dispatch(this::accumulateErrors);
+            event.dispatch(this::accumulateErrors, executor);
         }
         if (!loadingExceptions.isEmpty()) {
             LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
@@ -217,14 +218,14 @@ public class ModLoader
         ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
     }
 
-    public void finishMods()
+    public void finishMods(Executor mainThreadExecutor)
     {
         statusConsumer.ifPresent(c->c.accept("Mod setup: ENQUEUE IMC"));
-        dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC);
+        dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC, mainThreadExecutor);
         statusConsumer.ifPresent(c->c.accept("Mod setup: PROCESS IMC"));
-        dispatchAndHandleError(LifecycleEventProvider.PROCESS_IMC);
+        dispatchAndHandleError(LifecycleEventProvider.PROCESS_IMC, mainThreadExecutor);
         statusConsumer.ifPresent(c->c.accept("Mod setup: Final completion"));
-        dispatchAndHandleError(LifecycleEventProvider.COMPLETE);
+        dispatchAndHandleError(LifecycleEventProvider.COMPLETE, mainThreadExecutor);
         statusConsumer.ifPresent(c->c.accept("Freezing data"));
         GameData.freezeData();
         NetworkRegistry.lock();
@@ -247,7 +248,7 @@ public class ModLoader
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator);
         gatherAndInitializeMods();
-        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA);
+        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run);
         dataGeneratorConfig.runAll();
     }
 

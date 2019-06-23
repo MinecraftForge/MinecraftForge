@@ -67,9 +67,9 @@ public class ClientModLoader
     }
 
     private static CompletableFuture<Void> onreload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {
-        return CompletableFuture.runAsync(createRunnableWithCatch(ClientModLoader::startModLoading), syncExecutor).
+        return CompletableFuture.runAsync(createRunnableWithCatch(() -> startModLoading(syncExecutor)), asyncExecutor).
                 thenCompose(stage::markCompleteAwaitingOthers).
-                thenRunAsync(ClientModLoader::finishModLoading, syncExecutor);
+                thenRunAsync(() -> finishModLoading(syncExecutor), asyncExecutor);
     }
 
     private static Runnable createRunnableWithCatch(Runnable r) {
@@ -83,15 +83,16 @@ public class ClientModLoader
         };
     }
 
-    private static void startModLoading() {
+    private static void startModLoading(Executor executor) {
         earlyLoaderGUI.handleElsewhere();
-        createRunnableWithCatch(ModLoader.get()::loadMods).run();
+        createRunnableWithCatch(() -> ModLoader.get().loadMods(executor)).run();
     }
-    private static void finishModLoading()
+    private static void finishModLoading(Executor executor)
     {
-        createRunnableWithCatch(ModLoader.get()::finishMods).run();
+        createRunnableWithCatch(() -> ModLoader.get().finishMods(executor)).run();
         loading = false;
-        mc.gameSettings.loadOptions();
+        // reload game settings on main thread
+        executor.execute(()->mc.gameSettings.loadOptions());
     }
 
     public static VersionChecker.Status checkForUpdates()

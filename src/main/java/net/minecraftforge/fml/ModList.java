@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.function.BiConsumer;
@@ -80,9 +81,9 @@ public class ModList
         return INSTANCE;
     }
 
-    static BiConsumer<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>> inlineDispatcher = (event, errors) -> ModList.get().dispatchSynchronousEvent(event, errors);
+    static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor> inlineDispatcher = (event, errors, executor) -> ModList.get().dispatchSynchronousEvent(event, errors, executor);
 
-    static BiConsumer<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>> parallelDispatcher = (event, errors) -> ModList.get().dispatchParallelEvent(event, errors);
+    static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor> parallelDispatcher = (event, errors, executor) -> ModList.get().dispatchParallelEvent(event, errors, executor);
 
     public static ModList get() {
         return INSTANCE;
@@ -106,13 +107,13 @@ public class ModList
         return this.fileById.get(modid);
     }
 
-    private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
+    private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor) {
         LOGGER.debug(LOADING, "Dispatching synchronous event {}", lifecycleEvent);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
         this.mods.forEach(m->m.transitionState(lifecycleEvent, errorHandler));
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
-    private void dispatchParallelEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
+    private void dispatchParallelEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor) {
         LOGGER.debug(LOADING, "Dispatching parallel event {}", lifecycleEvent);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
         DeferredWorkQueue.clear();
@@ -124,7 +125,7 @@ public class ModList
         {
             LOGGER.error(LOADING, "Encountered an exception during parallel processing", e);
         }
-        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler);
+        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler, executor);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
 
