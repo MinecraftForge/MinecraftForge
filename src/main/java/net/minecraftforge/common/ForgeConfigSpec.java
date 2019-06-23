@@ -39,6 +39,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 
@@ -455,10 +457,10 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
 
         public Builder push(List<String> path) {
             currentPath.addAll(path);
-            if (context.getComment() != null) {
+            if (context.hasComment()) {
 
-                levelComments.put(new ArrayList<String>(currentPath), LINE_JOINER.join(context.getComment()));
-                context.setComment((String[])null);
+                levelComments.put(new ArrayList<String>(currentPath), context.buildComment());
+                context.setComment(); // Set to empty
             }
             context.ensureEmpty();
             return this;
@@ -496,14 +498,16 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
 
     private static class BuilderContext
     {
-        private String[] comment;
+        private @Nonnull String[] comment = new String[0];
         private String langKey;
         private Range<?> range;
         private boolean worldRestart = false;
         private Class<?> clazz;
 
         public void setComment(String... value) { this.comment = value; }
+        public boolean hasComment() { return this.comment.length > 0; }
         public String[] getComment() { return this.comment; }
+        public String buildComment() { return LINE_JOINER.join(comment); }
         public void setTranslationKey(String value) { this.langKey = value; }
         public String getTranslationKey() { return this.langKey; }
         public <V extends Comparable<? super V>> void setRange(Range<V> value)
@@ -520,7 +524,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
 
         public void ensureEmpty()
         {
-            validate(comment, "Non-null comment when null expected");
+            validate(hasComment(), "Non-empty comment when empty expected");
             validate(langKey, "Non-null translation key when null expected");
             validate(range, "Non-null range when null expected");
             validate(worldRestart, "Dangeling world restart value set to true");
@@ -594,7 +598,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             Objects.requireNonNull(supplier, "Default supplier can not be null");
             Objects.requireNonNull(validator, "Validator can not be null");
 
-            this.comment = context.getComment() == null ? null : LINE_JOINER.join(context.getComment());
+            this.comment = context.hasComment() ? context.buildComment() : null;
             this.langKey = context.getTranslationKey();
             this.range = context.getRange();
             this.worldRestart = context.needsWorldRestart();
