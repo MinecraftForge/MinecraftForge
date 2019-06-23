@@ -281,12 +281,13 @@ public class GuiModList extends Screen
                 I18n.format("gui.done"), b -> GuiModList.this.minecraft.displayGuiScreen(GuiModList.this.mainMenu)));
         this.addButton(this.configButton = new Button(6, this.height - 24, this.listWidth, 20,
                 I18n.format("fml.menu.mods.config"), b -> GuiModList.this.displayModConfig()));
+        this.configButton.active = false;
 
         search = new TextFieldWidget(getFontRenderer(), 8, modList.getBottom() + 17, listWidth - 4, 14, I18n.format("fml.menu.mods.search"));
         children.add(search);
         children.add(modList);
         children.add(modInfo);
-        search.setFocused2(true);
+        search.setFocused2(false);
         search.setCanLoseFocus(true);
 
         final int width = listWidth / numButtons;
