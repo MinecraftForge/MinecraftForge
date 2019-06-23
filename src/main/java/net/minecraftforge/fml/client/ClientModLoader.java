@@ -26,10 +26,13 @@ import net.minecraft.profiler.IProfiler;
 import net.minecraft.resources.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.ForgeConfig;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.client.gui.LoadingErrorScreen;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.packs.ResourcePackLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,6 +43,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static net.minecraftforge.fml.loading.LogMarkers.LOADING;
 
@@ -85,8 +90,17 @@ public class ClientModLoader
 
     private static void startModLoading(Executor executor) {
         earlyLoaderGUI.handleElsewhere();
-        createRunnableWithCatch(() -> ModLoader.get().loadMods(executor)).run();
+        createRunnableWithCatch(() -> ModLoader.get().loadMods(executor, ClientModLoader::preSidedRunnable, ClientModLoader::postSidedRunnable)).run();
     }
+
+    private static void postSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
+        RenderingRegistry.loadEntityRenderers(mc.getRenderManager());
+    }
+
+    private static void preSidedRunnable(Consumer<Supplier<Event>> perModContainerEventProcessor) {
+        perModContainerEventProcessor.accept(ModelRegistryEvent::new);
+    }
+
     private static void finishModLoading(Executor executor)
     {
         createRunnableWithCatch(() -> ModLoader.get().finishMods(executor)).run();

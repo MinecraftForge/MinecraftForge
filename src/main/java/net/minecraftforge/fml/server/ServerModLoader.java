@@ -43,7 +43,7 @@ public class ServerModLoader
         LogicalSidedProvider.setServer(()->dedicatedServer);
         LanguageHook.loadForgeAndMCLangs();
         ModLoader.get().gatherAndInitializeMods();
-        ModLoader.get().loadMods(Runnable::run);
+        ModLoader.get().loadMods(Runnable::run, (a)->{}, (a)->{});
     }
 
     public static void end() {

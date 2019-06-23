@@ -43,14 +43,14 @@ public class RenderingRegistry
         INSTANCE.entityRenderers.put(entityClass, renderFactory);
     }
 
-    public static void loadEntityRenderers(EntityRendererManager manager, Map<Class<? extends Entity>, EntityRenderer<? extends Entity>> renderMap)
+    public static void loadEntityRenderers(EntityRendererManager manager)
     {
-        INSTANCE.entityRenderers.forEach((key, value) -> register(manager, renderMap, key, value));
+        INSTANCE.entityRenderers.forEach((key, value) -> register(manager, key, value));
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Entity> void register(EntityRendererManager manager, Map<Class<? extends Entity>, EntityRenderer<? extends Entity>> renderMap, Class<T> entityClass, IRenderFactory<?> renderFactory)
+    private static <T extends Entity> void register(EntityRendererManager manager, Class<T> entityClass, IRenderFactory<?> renderFactory)
     {
-        renderMap.put(entityClass, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
+        manager.func_217782_a(entityClass, ((IRenderFactory<T>)renderFactory).createRenderFor(manager));
     }
 }

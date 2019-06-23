@@ -21,11 +21,8 @@ package net.minecraftforge.fml;
 
 import com.google.common.collect.ImmutableList;
 import cpw.mods.modlauncher.TransformingClassLoader;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ConfigTracker;
@@ -52,6 +49,7 @@ import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.fml.Logging.CORE;
@@ -124,20 +122,16 @@ public class ModLoader
         return INSTANCE == null ? INSTANCE = new ModLoader() : INSTANCE;
     }
 
-    private Runnable fireClientEvents()
-    {
-        return ()->postEvent(new ModelRegistryEvent());
-    }
-
-    public void loadMods(Executor mainThreadExecutor) {
+    public void loadMods(Executor mainThreadExecutor, Consumer<Consumer<Supplier<Event>>> preSidedRunnable, Consumer<Consumer<Supplier<Event>>> postSidedRunnable) {
         statusConsumer.ifPresent(c->c.accept("Loading mod config"));
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
         statusConsumer.ifPresent(c->c.accept("Mod setup: SETUP"));
         dispatchAndHandleError(LifecycleEventProvider.SETUP, mainThreadExecutor);
         statusConsumer.ifPresent(c->c.accept("Mod setup: SIDED SETUP"));
-        DistExecutor.runWhenOn(Dist.CLIENT, this::fireClientEvents);
+        mainThreadExecutor.execute(()->preSidedRunnable.accept(c->ModList.get().forEachModContainer((mi,mc)->mc.acceptEvent(c.get()))));
         dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP, mainThreadExecutor);
+        mainThreadExecutor.execute(()->postSidedRunnable.accept(c->ModList.get().forEachModContainer((mi,mc)->mc.acceptEvent(c.get()))));
         statusConsumer.ifPresent(c->c.accept("Mod setup complete"));
     }
 
