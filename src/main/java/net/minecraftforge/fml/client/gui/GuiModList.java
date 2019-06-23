@@ -332,7 +332,11 @@ public class GuiModList extends Screen
             mods.sort(sortType);
             modList.refreshList();
             if (selected != null)
+            {
                 selected = modList.children().stream().filter(e -> e.getInfo() == selected.getInfo()).findFirst().orElse(null);
+                if (selected == null)
+                    modInfo.clear();
+            }
             sorted = true;
         }
     }
