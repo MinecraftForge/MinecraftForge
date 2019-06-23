@@ -27,6 +27,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -118,16 +119,16 @@ public class ModLoader
         return INSTANCE == null ? INSTANCE = new ModLoader() : INSTANCE;
     }
 
-    private static Runnable fireClientEvents()
+    private Runnable fireClientEvents()
     {
-        return ()->MinecraftForge.EVENT_BUS.post(new ModelRegistryEvent());
+        return ()->postEvent(new ModelRegistryEvent());
     }
 
     public void loadMods() {
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
         dispatchAndHandleError(LifecycleEventProvider.SETUP);
-        DistExecutor.runWhenOn(Dist.CLIENT, ModLoader::fireClientEvents);
+        DistExecutor.runWhenOn(Dist.CLIENT, this::fireClientEvents);
         dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP);
     }
 
@@ -198,6 +199,10 @@ public class ModLoader
             loadingExceptions.add(mle);
             return null;
         }
+    }
+
+    public void postEvent(Event e) {
+        ModList.get().forEachModContainer((id, mc) -> mc.acceptEvent(e));
     }
 
     public void finishMods()

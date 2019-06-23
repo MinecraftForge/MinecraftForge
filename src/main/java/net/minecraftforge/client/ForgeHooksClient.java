@@ -45,6 +45,7 @@ import javax.vecmath.Vector4f;
 
 import net.minecraft.client.MouseHelper;
 import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraftforge.fml.ModLoader;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -179,24 +180,24 @@ public class ForgeHooksClient
 
     public static void onTextureStitchedPre(AtlasTexture map)
     {
-        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Pre(map));
+        ModLoader.get().postEvent(new TextureStitchEvent.Pre(map));
 //        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
         ModelDynBucket.LoaderDynBucket.INSTANCE.register(map);
     }
 
     public static void onTextureStitchedPost(AtlasTexture map)
     {
-        MinecraftForge.EVENT_BUS.post(new TextureStitchEvent.Post(map));
+        ModLoader.get().postEvent(new TextureStitchEvent.Post(map));
     }
 
     public static void onBlockColorsInit(BlockColors blockColors)
     {
-        MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Block(blockColors));
+        ModLoader.get().postEvent(new ColorHandlerEvent.Block(blockColors));
     }
 
     public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors)
     {
-        MinecraftForge.EVENT_BUS.post(new ColorHandlerEvent.Item(itemColors, blockColors));
+        ModLoader.get().postEvent(new ColorHandlerEvent.Item(itemColors, blockColors));
     }
 
     static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>();
@@ -373,7 +374,7 @@ public class ForgeHooksClient
 
     public static void onModelBake(ModelManager modelManager, Map<ResourceLocation, IBakedModel> modelRegistry, ModelLoader modelLoader)
     {
-        MinecraftForge.EVENT_BUS.post(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
+        ModLoader.get().postEvent(new ModelBakeEvent(modelManager, modelRegistry, modelLoader));
         modelLoader.onPostBakeEvent(modelRegistry);
     }
 

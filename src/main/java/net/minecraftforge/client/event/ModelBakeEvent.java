@@ -26,13 +26,14 @@ import net.minecraft.client.renderer.model.ModelManager;
 import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.eventbus.api.Event;
 
 /**
  * Fired when the ModelManager is notified of the resource manager reloading.
  * Called after model registry is setup, but before it's passed to BlockModelShapes.
  */
 // TODO: try to merge with ICustomModelLoader
-public class ModelBakeEvent extends net.minecraftforge.eventbus.api.Event
+public class ModelBakeEvent extends Event
 {
     private final ModelManager modelManager;
     private final Map<ResourceLocation, IBakedModel> modelRegistry;

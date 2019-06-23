@@ -19,6 +19,7 @@
 
 package net.minecraftforge.fml;
 
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.forgespi.language.IModInfo;
 import org.apache.commons.lang3.tuple.Pair;
@@ -158,4 +159,10 @@ public abstract class ModContainer
      * @return the mod object instance
      */
     public abstract Object getMod();
+
+    /**
+     * Accept an arbitrary event for processing by the mod. Probably posted to an event bus in the lower level container.
+     * @param e Event to accept
+     */
+    protected void acceptEvent(Event e) {}
 }
