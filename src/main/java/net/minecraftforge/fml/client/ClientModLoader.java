@@ -50,6 +50,7 @@ public class ClientModLoader
     private static boolean loading;
     private static Minecraft mc;
     private static LoadingFailedException error;
+    private static EarlyLoaderGUI earlyLoaderGUI;
 
     public static void begin(final Minecraft minecraft, final ResourcePackList<ClientResourcePackInfo> defaultResourcePacks, final IReloadableResourceManager mcResourceManager, DownloadingPackFinder metadataSerializer)
     {
@@ -57,6 +58,8 @@ public class ClientModLoader
         ClientModLoader.mc = minecraft;
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
+        earlyLoaderGUI = new EarlyLoaderGUI(minecraft.mainWindow);
+        ModLoader.get().setStatusConsumer(earlyLoaderGUI.getStatusConsumer());
         createRunnableWithCatch(ModLoader.get()::gatherAndInitializeMods).run();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
@@ -64,9 +67,9 @@ public class ClientModLoader
     }
 
     private static CompletableFuture<Void> onreload(final IFutureReloadListener.IStage stage, final IResourceManager resourceManager, final IProfiler prepareProfiler, final IProfiler executeProfiler, final Executor asyncExecutor, final Executor syncExecutor) {
-        return CompletableFuture.runAsync(createRunnableWithCatch(ModLoader.get()::loadMods), syncExecutor).
+        return CompletableFuture.runAsync(createRunnableWithCatch(ClientModLoader::startModLoading), syncExecutor).
                 thenCompose(stage::markCompleteAwaitingOthers).
-                thenRunAsync(ClientModLoader::end);
+                thenRunAsync(ClientModLoader::finishModLoading, syncExecutor);
     }
 
     private static Runnable createRunnableWithCatch(Runnable r) {
@@ -80,7 +83,11 @@ public class ClientModLoader
         };
     }
 
-    public static void end()
+    private static void startModLoading() {
+        earlyLoaderGUI.handleElsewhere();
+        createRunnableWithCatch(ModLoader.get()::loadMods).run();
+    }
+    private static void finishModLoading()
     {
         createRunnableWithCatch(ModLoader.get()::finishMods).run();
         loading = false;
@@ -122,6 +129,9 @@ public class ClientModLoader
         }
     }
 
+    public static void renderProgressText() {
+        earlyLoaderGUI.renderFromGUI();
+    }
     public static boolean isLoading()
     {
         return loading;
