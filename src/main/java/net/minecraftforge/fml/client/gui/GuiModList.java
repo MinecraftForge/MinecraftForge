@@ -318,6 +318,7 @@ public class GuiModList extends Screen
     public void tick()
     {
         search.tick();
+        modList.setSelected(selected);
 
         if (!search.getText().equals(lastFilterText))
         {
@@ -467,11 +468,14 @@ public class GuiModList extends Screen
     {
         String s = this.search.getText();
         SortType sort = this.sortType;
+        GuiSlotModList.ModEntry selected = this.selected;
         this.init(mc, width, height);
         this.search.setText(s);
+        this.selected = selected;
         if (!this.search.getText().isEmpty())
             reloadMods();
         if (sort != SortType.NORMAL)
             resortMods(sort);
+        updateCache();
     }
 }
