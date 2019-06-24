@@ -30,6 +30,7 @@ public class ChunkTicketManager<T> implements ITicketGetter<T>
 {
     private final Set<SimpleTicket<T>> tickets = Collections.newSetFromMap(new WeakHashMap<>());
     public final ChunkPos pos;
+    private boolean destroying = false;
 
     public ChunkTicketManager(ChunkPos pos)
     {
@@ -45,12 +46,29 @@ public class ChunkTicketManager<T> implements ITicketGetter<T>
     @Override
     public void remove(SimpleTicket<T> ticket)
     {
-        this.tickets.remove(ticket);
+        if (!destroying)
+        {
+            this.tickets.remove(ticket);
+        }
     }
 
     @Override
     public Collection<SimpleTicket<T>> getTickets()
     {
+        if (destroying)
+        {
+            throw new IllegalStateException("Ticket Manager is destroying!");
+        }
         return tickets;
+    }
+
+    // We have to call invalidate for all tickets, in case some mod has some special logic. But we cannot allow the
+    // ticket to remove itself from the list to prevent a CME
+    @Override
+    public void destroy()
+    {
+        this.destroying = true;
+        tickets.forEach(SimpleTicket::invalidate);
+        tickets.clear();
     }
 }
