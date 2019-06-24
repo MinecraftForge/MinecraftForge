@@ -101,6 +101,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.resources.IReloadableResourceManager;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
@@ -139,6 +140,7 @@ import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.VersionChecker;
+import net.minecraftforge.fml.client.event.RegisterReloadListeners;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.resource.ReloadRequirements;
@@ -198,6 +200,11 @@ public class ForgeHooksClient
     public static void onItemColorsInit(ItemColors itemColors, BlockColors blockColors)
     {
         ModLoader.get().postEvent(new ColorHandlerEvent.Item(itemColors, blockColors));
+    }
+
+    public static void registerReloadListeners(IReloadableResourceManager resourceManager)
+    {
+        ModLoader.get().postEvent(new RegisterReloadListeners(resourceManager));
     }
 
     static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>();

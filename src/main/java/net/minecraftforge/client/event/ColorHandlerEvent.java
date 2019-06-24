@@ -26,6 +26,8 @@ import net.minecraftforge.eventbus.api.Event;
 /**
  * Use these events to register block/item
  * color handlers at the appropriate time.
+ *
+ * Fired on the mod event bus.
  */
 public abstract class ColorHandlerEvent extends Event
 {
