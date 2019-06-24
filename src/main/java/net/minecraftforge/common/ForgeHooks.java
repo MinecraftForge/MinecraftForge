@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -378,13 +379,14 @@ public class ForgeHooks
         return value >= maxXZDistance ? maxXZDistance : value;
     }
 
-    public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity)
+    public static boolean isLivingOnLadder(@Nonnull BlockState state, @Nonnull World world, @Nonnull BlockPos pos, @Nonnull LivingEntity entity, @Nonnull BiPredicate<BlockState, BlockPos> vanilla)
     {
         boolean isSpectator = (entity instanceof PlayerEntity && ((PlayerEntity)entity).isSpectator());
         if (isSpectator) return false;
         if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get())
         {
-            return state.getBlock().isLadder(state, world, pos, entity);
+            Boolean result = state.getBlock().isLadder(state, world, pos, entity);
+            return result == null ? vanilla.test(state, pos) : result;
         }
         else
         {
@@ -400,7 +402,8 @@ public class ForgeHooks
                     {
                         BlockPos tmp = new BlockPos(x2, y2, z2);
                         state = world.getBlockState(tmp);
-                        if (state.getBlock().isLadder(state, world, tmp, entity))
+                        Boolean result = state.getBlock().isLadder(state, world, tmp, entity);
+                        if (result == null ? vanilla.test(state, tmp) : result)
                         {
                             return true;
                         }

@@ -128,11 +128,12 @@ public interface IForgeBlock
      * @param world The current world
      * @param pos Block position in world
      * @param entity The entity trying to use the ladder, CAN be null.
-     * @return True if the block should act like a ladder
+     * @return If the block should act like a ladder, or {@code null} for vanilla behavior
      */
-    default boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
+    @Nullable
+    default Boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, LivingEntity entity)
     {
-        return false;
+        return null;
     }
 
     /**
