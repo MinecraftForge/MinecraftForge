@@ -11,11 +11,11 @@ import net.minecraft.resources.IReloadableResourceManager;
  *
  * Called on {@link Dist#CLIENT} - the game client.
  */
-public class RegisterReloadListeners extends Event
+public class RegisterReloadListenersEvent extends Event
 {
 	private final IReloadableResourceManager resourceManager;
 
-	public RegisterReloadListeners(IReloadableResourceManager resourceManager)
+	public RegisterReloadListenersEvent(IReloadableResourceManager resourceManager)
 	{
 		this.resourceManager = resourceManager;
 	}

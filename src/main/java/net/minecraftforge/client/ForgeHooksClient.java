@@ -34,8 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 import javax.annotation.Nonnull;
 import javax.vecmath.Matrix3f;
@@ -72,7 +70,6 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.model.BakedQuad;
@@ -81,7 +78,6 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.model.ItemTransformVec3f;
 import net.minecraft.client.renderer.model.ModelManager;
-import net.minecraft.client.renderer.model.ModelResourceLocation;
 import net.minecraft.client.renderer.model.ModelRotation;
 import net.minecraft.client.renderer.model.SimpleBakedModel;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -98,7 +94,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.IFluidState;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.resources.IReloadableResourceManager;
@@ -112,7 +107,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.IEnviromentBlockReader;
-import net.minecraft.world.IWorldReader;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraftforge.client.event.ColorHandlerEvent;
@@ -140,7 +134,7 @@ import net.minecraftforge.common.model.IModelPart;
 import net.minecraftforge.common.model.ITransformation;
 import net.minecraftforge.common.model.TRSRTransformation;
 import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.client.event.RegisterReloadListeners;
+import net.minecraftforge.fml.client.event.RegisterReloadListenersEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.resource.ReloadRequirements;
@@ -204,7 +198,7 @@ public class ForgeHooksClient
 
     public static void registerReloadListeners(IReloadableResourceManager resourceManager)
     {
-        ModLoader.get().postEvent(new RegisterReloadListeners(resourceManager));
+        ModLoader.get().postEvent(new RegisterReloadListenersEvent(resourceManager));
     }
 
     static final ThreadLocal<BlockRenderLayer> renderLayer = new ThreadLocal<BlockRenderLayer>();
