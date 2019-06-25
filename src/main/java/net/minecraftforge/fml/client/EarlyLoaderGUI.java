@@ -13,13 +13,10 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
 
 public class EarlyLoaderGUI {
     private final MainWindow window;
     private final List<Triple<String, String, Long>> messages = new ArrayList<>();
-    private String message;
-    private String id;
     private boolean handledElsewhere;
 
     public EarlyLoaderGUI(final MainWindow window) {
@@ -29,19 +26,12 @@ public class EarlyLoaderGUI {
         window.update(false);
     }
 
-    public BiConsumer<String, String> getStatusConsumer() {
+    public MessageConsumer getStatusConsumer() {
         return this::update;
     }
 
     private void update(final String id, final String message) {
-        // FIXME: needs improving
-        if (!id.equals(this.id) || !message.equals(this.message))
-        {
-            if (message.length() > 0)
-                queueMessage(id, message);
-            this.message = message;
-            this.id = id;
-        }
+        queueMessage(id, message);
 
         // Rest of the processing
         if (handledElsewhere) return;
@@ -99,3 +89,4 @@ public class EarlyLoaderGUI {
         MemoryUtil.memFree(charBuffer);
     }
 }
+

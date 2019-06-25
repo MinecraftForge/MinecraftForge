@@ -25,6 +25,7 @@ import net.minecraft.util.registry.Bootstrap;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.client.MessageConsumer;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -47,7 +48,6 @@ import org.apache.logging.log4j.Logger;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -103,7 +103,7 @@ public class ModLoader
     private final List<ModLoadingWarning> loadingWarnings;
     private GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Optional<BiConsumer<String, String>> statusConsumer = Optional.empty();
+    private Optional<MessageConsumer> statusConsumer = Optional.empty();
 
     private ModLoader()
     {
@@ -124,27 +124,27 @@ public class ModLoader
     }
 
     public void loadMods(Executor mainThreadExecutor, Consumer<Consumer<Supplier<Event>>> preSidedRunnable, Consumer<Consumer<Supplier<Event>>> postSidedRunnable) {
-        statusConsumer.ifPresent(c->c.accept("mod loading","Loading mod config"));
+        statusConsumer.ifPresent(c->c.accept("Loading mod config"));
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
-        statusConsumer.ifPresent(c->c.accept("mod loading","Mod setup: SETUP"));
+        statusConsumer.ifPresent(c->c.accept("Mod setup: SETUP"));
         dispatchAndHandleError(LifecycleEventProvider.SETUP, mainThreadExecutor);
-        statusConsumer.ifPresent(c->c.accept("mod loading","Mod setup: SIDED SETUP"));
+        statusConsumer.ifPresent(c->c.accept("Mod setup: SIDED SETUP"));
         mainThreadExecutor.execute(()->preSidedRunnable.accept(c->ModList.get().forEachModContainer((mi,mc)->mc.acceptEvent(c.get()))));
         dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP, mainThreadExecutor);
         mainThreadExecutor.execute(()->postSidedRunnable.accept(c->ModList.get().forEachModContainer((mi,mc)->mc.acceptEvent(c.get()))));
-        statusConsumer.ifPresent(c->c.accept("mod loading","Mod setup complete"));
+        statusConsumer.ifPresent(c->c.accept("Mod setup complete"));
     }
 
     public void gatherAndInitializeMods() {
-        statusConsumer.ifPresent(c->c.accept("mod loading","Loading mods"));
+        statusConsumer.ifPresent(c->c.accept("Loading mods"));
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
             LOGGER.fatal(CORE, "Error during pre-loading phase", loadingExceptions.get(0));
             modList.setLoadedMods(Collections.emptyList());
             throw new LoadingFailedException(loadingExceptions);
         }
-        statusConsumer.ifPresent(c->c.accept("mod loading","Building Mod List"));
+        statusConsumer.ifPresent(c->c.accept("Building Mod List"));
         final List<ModContainer> modContainers = loadingModList.getModFiles().stream().
                 map(ModFileInfo::getFile).
                 map(mf -> buildMods(mf, launchClassLoader)).
@@ -156,15 +156,15 @@ public class ModLoader
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainers);
-        statusConsumer.ifPresent(c->c.accept("mod loading", "Constructing mods"));
+        statusConsumer.ifPresent(c->c.accept("Constructing mods"));
         dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT, Runnable::run);
-        statusConsumer.ifPresent(c->c.accept("registries", "Creating registries"));
+        statusConsumer.ifPresent(c->c.accept("Creating registries"));
         GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run));
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
-        statusConsumer.ifPresent(c->c.accept("registries", "Populating registries"));
+        statusConsumer.ifPresent(c->c.accept("Populating registries"));
         GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run));
-        statusConsumer.ifPresent(c->c.accept("mod loading", "Early mod loading complete"));
+        statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 
     private void dispatchAndHandleError(LifecycleEventProvider event, Executor executor) {
@@ -220,16 +220,16 @@ public class ModLoader
 
     public void finishMods(Executor mainThreadExecutor)
     {
-        statusConsumer.ifPresent(c->c.accept("mod setup", "Mod setup: ENQUEUE IMC"));
+        statusConsumer.ifPresent(c->c.accept("Mod setup: ENQUEUE IMC"));
         dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC, mainThreadExecutor);
-        statusConsumer.ifPresent(c->c.accept("mod setup", "Mod setup: PROCESS IMC"));
+        statusConsumer.ifPresent(c->c.accept("Mod setup: PROCESS IMC"));
         dispatchAndHandleError(LifecycleEventProvider.PROCESS_IMC, mainThreadExecutor);
-        statusConsumer.ifPresent(c->c.accept("mod setup", "Mod setup: Final completion"));
+        statusConsumer.ifPresent(c->c.accept("Mod setup: Final completion"));
         dispatchAndHandleError(LifecycleEventProvider.COMPLETE, mainThreadExecutor);
-        statusConsumer.ifPresent(c->c.accept("registries", "Freezing data"));
+        statusConsumer.ifPresent(c->c.accept("Freezing data"));
         GameData.freezeData();
         NetworkRegistry.lock();
-        //statusConsumer.ifPresent(c->c.accept(""));
+        statusConsumer.ifPresent(c->c.accept("Loading done. Have fun!"));
     }
 
     public List<ModLoadingWarning> getWarnings()
@@ -256,7 +256,7 @@ public class ModLoader
         return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.getMods().size() == 1 ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig);
     }
 
-    public void setStatusConsumer(BiConsumer<String, String> consumer) {
+    public void setStatusConsumer(MessageConsumer consumer) {
         this.statusConsumer = Optional.ofNullable(consumer);
     }
 }
