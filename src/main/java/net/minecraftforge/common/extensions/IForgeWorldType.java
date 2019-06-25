@@ -25,6 +25,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.CreateBuffetWorldScreen;
 import net.minecraft.client.gui.screen.CreateFlatWorldScreen;
 import net.minecraft.client.gui.screen.CreateWorldScreen;
+import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraft.world.gen.ChunkGenerator;
@@ -39,7 +40,6 @@ import net.minecraft.world.gen.layer.ZoomLayer;
 import net.minecraft.world.gen.layer.LayerUtil;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.client.config.IArrayEntry;
 
 public interface IForgeWorldType
 {
@@ -70,7 +70,7 @@ public interface IForgeWorldType
             mc.displayGuiScreen(new CreateBuffetWorldScreen(gui, gui.chunkProviderSettingsJson));
     }
 
-    default boolean handleSlimeSpawnReduction(java.util.Random random, World world)
+    default boolean handleSlimeSpawnReduction(java.util.Random random, IWorld world)
     {
         return this == WorldType.FLAT ? random.nextInt(4) != 1 : false;
     }

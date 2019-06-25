@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/minecart/AbstractMinecartEntity.java
 +++ b/net/minecraft/entity/item/minecart/AbstractMinecartEntity.java
-@@ -34,7 +34,7 @@
+@@ -35,7 +35,7 @@
  import net.minecraftforge.api.distmarker.Dist;
  import net.minecraftforge.api.distmarker.OnlyIn;
  
@@ -9,7 +9,7 @@
     private static final DataParameter<Integer> field_184265_a = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Integer> field_184266_b = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187192_b);
     private static final DataParameter<Float> field_184267_c = EntityDataManager.func_187226_a(AbstractMinecartEntity.class, DataSerializers.field_187193_c);
-@@ -55,6 +55,7 @@
+@@ -56,6 +56,7 @@
     private double field_70507_ar;
     @OnlyIn(Dist.CLIENT)
     private double field_70506_as;
@@ -17,7 +17,7 @@
  
     protected AbstractMinecartEntity(EntityType<?> p_i48538_1_, World p_i48538_2_) {
        super(p_i48538_1_, p_i48538_2_);
-@@ -101,11 +102,12 @@
+@@ -102,11 +103,12 @@
  
     @Nullable
     public AxisAlignedBB func_70114_g(Entity p_70114_1_) {
@@ -31,7 +31,7 @@
     }
  
     public double func_70042_X() {
-@@ -213,7 +215,7 @@
+@@ -214,7 +216,7 @@
  
           BlockPos blockpos = new BlockPos(i, j, k);
           BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -40,7 +40,7 @@
              this.func_180460_a(blockpos, blockstate);
              if (blockstate.func_177230_c() == Blocks.field_150408_cc) {
                 this.func_96095_a(i, j, k, blockstate.func_177229_b(PoweredRailBlock.field_176569_M));
-@@ -240,8 +242,11 @@
+@@ -241,8 +243,11 @@
           }
  
           this.func_70101_b(this.field_70177_z, this.field_70125_A);
@@ -54,7 +54,7 @@
              if (!list.isEmpty()) {
                 for(int l = 0; l < list.size(); ++l) {
                    Entity entity1 = list.get(l);
-@@ -253,7 +258,7 @@
+@@ -254,7 +259,7 @@
                 }
              }
           } else {
@@ -63,7 +63,7 @@
                 if (!this.func_184196_w(entity) && entity.func_70104_M() && entity instanceof AbstractMinecartEntity) {
                    entity.func_70108_f(this);
                 }
-@@ -261,6 +266,7 @@
+@@ -262,6 +267,7 @@
           }
  
           this.func_70072_I();
@@ -71,7 +71,7 @@
        }
     }
  
-@@ -272,16 +278,24 @@
+@@ -273,16 +279,24 @@
     }
  
     protected void func_180459_n() {
@@ -98,7 +98,7 @@
        }
  
     }
-@@ -298,24 +312,24 @@
+@@ -299,24 +313,24 @@
           flag1 = !flag;
        }
  
@@ -129,7 +129,7 @@
           ++this.field_70163_u;
        }
  
-@@ -344,7 +358,7 @@
+@@ -345,7 +359,7 @@
           }
        }
  
@@ -138,7 +138,7 @@
           double d19 = Math.sqrt(func_213296_b(this.func_213322_ci()));
           if (d19 < 0.03D) {
              this.func_213317_d(Vec3d.field_186680_a);
-@@ -375,10 +389,7 @@
+@@ -376,10 +390,7 @@
        this.field_70165_t = d20 + d1 * d11;
        this.field_70161_v = d7 + d2 * d11;
        this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
@@ -150,7 +150,7 @@
        if (aint[0][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[0][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[0][2]) {
           this.func_70107_b(this.field_70165_t, this.field_70163_u + (double)aint[0][1], this.field_70161_v);
        } else if (aint[1][1] != 0 && MathHelper.func_76128_c(this.field_70165_t) - p_180460_1_.func_177958_n() == aint[1][0] && MathHelper.func_76128_c(this.field_70161_v) - p_180460_1_.func_177952_p() == aint[1][2]) {
-@@ -406,7 +417,10 @@
+@@ -407,7 +418,10 @@
           this.func_213293_j(d23 * (double)(j - p_180460_1_.func_177958_n()), vec3d5.field_72448_b, d23 * (double)(i - p_180460_1_.func_177952_p()));
        }
  
@@ -162,7 +162,7 @@
           Vec3d vec3d6 = this.func_213322_ci();
           double d24 = Math.sqrt(func_213296_b(vec3d6));
           if (d24 > 0.01D) {
-@@ -461,7 +475,7 @@
+@@ -462,7 +476,7 @@
  
        BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (blockstate.func_203425_a(BlockTags.field_203437_y)) {
@@ -171,7 +171,7 @@
           p_70495_3_ = (double)j;
           if (railshape.func_208092_c()) {
              p_70495_3_ = (double)(j + 1);
-@@ -498,7 +512,7 @@
+@@ -499,7 +513,7 @@
  
        BlockState blockstate = this.field_70170_p.func_180495_p(new BlockPos(i, j, k));
        if (blockstate.func_203425_a(BlockTags.field_203437_y)) {
@@ -180,7 +180,7 @@
           int[][] aint = field_70500_g[railshape.func_208091_a()];
           double d0 = (double)i + 0.5D + (double)aint[0][0] * 0.5D;
           double d1 = (double)j + 0.0625D + (double)aint[0][1] * 0.5D;
-@@ -561,6 +575,11 @@
+@@ -562,6 +576,11 @@
     }
  
     public void func_70108_f(Entity p_70108_1_) {
@@ -192,7 +192,7 @@
        if (!this.field_70170_p.field_72995_K) {
           if (!p_70108_1_.field_70145_X && !this.field_70145_X) {
              if (!this.func_184196_w(p_70108_1_)) {
-@@ -596,11 +615,11 @@
+@@ -597,11 +616,11 @@
  
                       Vec3d vec3d2 = this.func_213322_ci();
                       Vec3d vec3d3 = p_70108_1_.func_213322_ci();
@@ -206,7 +206,7 @@
                          p_70108_1_.func_213317_d(vec3d3.func_216372_d(0.2D, 1.0D, 0.2D));
                          p_70108_1_.func_70024_g(vec3d2.field_72450_a + d0, 0.0D, vec3d2.field_72449_c + d1);
                          this.func_213317_d(vec3d2.func_216372_d(0.95D, 1.0D, 0.95D));
-@@ -706,6 +725,40 @@
+@@ -707,6 +726,40 @@
        return new SSpawnObjectPacket(this);
     }
  

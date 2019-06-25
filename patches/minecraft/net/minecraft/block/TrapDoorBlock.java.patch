@@ -1,10 +1,9 @@
 --- a/net/minecraft/block/TrapDoorBlock.java
 +++ b/net/minecraft/block/TrapDoorBlock.java
-@@ -151,4 +151,14 @@
- 
+@@ -153,6 +153,16 @@
        return super.func_196271_a(p_196271_1_, p_196271_2_, p_196271_3_, p_196271_4_, p_196271_5_, p_196271_6_);
     }
-+
+ 
 +   @Override
 +   public boolean isLadder(BlockState state, net.minecraft.world.IWorldReader world, BlockPos pos, net.minecraft.entity.LivingEntity entity) {
 +      if (state.func_177229_b(field_176283_b)) {
@@ -14,4 +13,7 @@
 +      }
 +      return false;
 +   }
- }
++
+    public boolean func_220067_a(BlockState p_220067_1_, IBlockReader p_220067_2_, BlockPos p_220067_3_, EntityType<?> p_220067_4_) {
+       return false;
+    }

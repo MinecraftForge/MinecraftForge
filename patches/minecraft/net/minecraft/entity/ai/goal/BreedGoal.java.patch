@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/BreedGoal.java
 +++ b/net/minecraft/entity/ai/goal/BreedGoal.java
-@@ -79,6 +79,17 @@
+@@ -80,6 +80,17 @@
  
     protected void func_75388_i() {
        AgeableEntity ageableentity = this.field_75390_d.func_90011_a(this.field_75391_e);

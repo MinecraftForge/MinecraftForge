@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/chunk/ChunkHolder.java
 +++ b/net/minecraft/world/chunk/ChunkHolder.java
-@@ -123,7 +123,7 @@
+@@ -127,7 +127,7 @@
        Chunk chunk = this.func_219298_c();
        if (chunk != null) {
           this.field_219322_q |= 1 << (p_219279_2_ >> 4);
@@ -9,7 +9,7 @@
              short short1 = (short)(p_219279_1_ << 12 | p_219279_3_ << 8 | p_219279_2_);
  
              for(int i = 0; i < this.field_219321_p; ++i) {
-@@ -132,6 +132,8 @@
+@@ -136,6 +136,8 @@
                 }
              }
  
@@ -18,7 +18,7 @@
              this.field_219320_o[this.field_219321_p++] = short1;
           }
  
-@@ -154,7 +156,7 @@
+@@ -158,7 +160,7 @@
     public void func_219274_a(Chunk p_219274_1_) {
        if (this.field_219321_p != 0 || this.field_219325_t != 0 || this.field_219324_s != 0) {
           World world = p_219274_1_.func_177412_p();
@@ -27,7 +27,7 @@
              this.field_219323_r = -1;
           }
  
-@@ -177,20 +179,19 @@
+@@ -181,20 +183,19 @@
              int k = (this.field_219320_o[0] >> 8 & 15) + this.field_219319_n.field_77275_b * 16;
              BlockPos blockpos = new BlockPos(l, j1, k);
              this.func_219293_a(new SChangeBlockPacket(world, blockpos), false);

@@ -4,7 +4,7 @@
  
     public EndDimension(World p_i49932_1_, DimensionType p_i49932_2_) {
        super(p_i49932_1_, p_i49932_2_);
--      CompoundNBT compoundnbt = p_i49932_1_.func_72912_H().func_186347_a(DimensionType.THE_END);
+-      CompoundNBT compoundnbt = p_i49932_1_.func_72912_H().func_186347_a(DimensionType.field_223229_c_);
 -      this.field_186064_g = p_i49932_1_ instanceof ServerWorld ? new DragonFightManager((ServerWorld)p_i49932_1_, compoundnbt.func_74775_l("DragonFight")) : null;
 +      CompoundNBT compoundnbt = p_i49932_1_.func_72912_H().func_186347_a(p_i49932_2_);
 +      this.field_186064_g = p_i49932_1_ instanceof ServerWorld ? new DragonFightManager((ServerWorld)p_i49932_1_, compoundnbt.func_74775_l("DragonFight"), this) : null;
@@ -16,7 +16,7 @@
     }
  
 -   public DimensionType func_186058_p() {
--      return DimensionType.THE_END;
+-      return DimensionType.field_223229_c_;
 -   }
 -
     public void func_186057_q() {
@@ -25,8 +25,8 @@
           compoundnbt.func_218657_a("DragonFight", this.field_186064_g.func_186088_a());
        }
  
--      this.field_76579_a.func_72912_H().func_186345_a(DimensionType.THE_END, compoundnbt);
-+      this.field_76579_a.func_72912_H().func_186345_a(field_76579_a.func_201675_m().func_186058_p(), compoundnbt);
+-      this.field_76579_a.func_72912_H().func_186345_a(DimensionType.field_223229_c_, compoundnbt);
++      this.field_76579_a.func_72912_H().func_186345_a(this.field_76579_a.func_201675_m().func_186058_p(), compoundnbt);
     }
  
     public void func_186059_r() {

@@ -64,6 +64,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.Explosion;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
 import net.minecraft.world.ServerWorld;
@@ -670,7 +671,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
 
         Result result = event.getResult();
-        return result == Result.DEFAULT ? world.getGameRules().getBoolean("mobGriefing") : result == Result.ALLOW;
+        return result == Result.DEFAULT ? world.getGameRules().func_223586_b(GameRules.field_223599_b) : result == Result.ALLOW;
     }
 
     public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos)

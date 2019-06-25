@@ -198,11 +198,11 @@ public class DimensionManager
     @SuppressWarnings("deprecation")
     public static ServerWorld initWorld(MinecraftServer server, DimensionType dim)
     {
-        Validate.isTrue(dim != DimensionType.OVERWORLD, "Can not hotload overworld. This must be loaded at all times by main Server.");
+        Validate.isTrue(dim != DimensionType.field_223227_a_, "Can not hotload overworld. This must be loaded at all times by main Server.");
         Validate.notNull(server, "Must provide server when creating world");
         Validate.notNull(dim, "Must provide dimension when creating world");
 
-        ServerWorld overworld = getWorld(server, DimensionType.OVERWORLD, false, false);
+        ServerWorld overworld = getWorld(server, DimensionType.field_223227_a_, false, false);
         Validate.notNull(overworld, "Cannot Hotload Dim: Overworld is not Loaded!");
 
         @SuppressWarnings("resource")

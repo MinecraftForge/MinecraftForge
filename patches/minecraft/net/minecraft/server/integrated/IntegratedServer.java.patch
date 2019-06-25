@@ -15,7 +15,7 @@
        this.func_195560_a(savehandler.func_75765_b(), worldinfo);
 -      IChunkStatusListener ichunkstatuslistener = this.field_213220_d.create(11);
        this.func_213194_a(savehandler, worldinfo, this.field_71350_m, ichunkstatuslistener);
-       if (this.func_71218_a(DimensionType.OVERWORLD).func_72912_H().func_176130_y() == null) {
+       if (this.func_71218_a(DimensionType.field_223227_a_).func_72912_H().func_176130_y() == null) {
           this.func_147139_a(this.field_71349_l.field_71474_y.field_74318_M, true);
 @@ -89,9 +90,10 @@
        this.func_71245_h(true);
@@ -23,7 +23,7 @@
        this.func_71253_a(CryptManager.func_75891_b());
 +      if (!net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerAboutToStart(this)) return false;
        this.func_71247_a(this.func_71270_I(), this.func_71221_J(), this.field_71350_m.func_77160_d(), this.field_71350_m.func_77165_h(), this.field_71350_m.func_205391_j());
-       this.func_71205_p(this.func_71214_G() + " - " + this.func_71218_a(DimensionType.OVERWORLD).func_72912_H().func_76065_j());
+       this.func_71205_p(this.func_71214_G() + " - " + this.func_71218_a(DimensionType.field_223227_a_).func_72912_H().func_76065_j());
 -      return true;
 +      return net.minecraftforge.fml.server.ServerLifecycleHooks.handleServerStarting(this);
     }

@@ -41,7 +41,7 @@
        return Items.field_190931_a;
     });
 -   public static final DefaultedRegistry<Potion> field_212621_j = func_222933_a("potion", "empty", () -> {
-+   @Deprecated public static final DefaultedRegistry<Potion> field_212621_j = forgeDefaulted("potion", Potion.class, ()  -> {
++   @Deprecated public static final DefaultedRegistry<Potion> field_212621_j = forgeDefaulted("potion", Potion.class, () -> {
        return Potions.field_185229_a;
     });
 -   public static final Registry<WorldCarver<?>> field_218377_o = func_222935_a("carver", () -> {
@@ -81,8 +81,8 @@
        return ChunkGeneratorType.field_205489_f;
     });
 -   public static final Registry<DimensionType> field_212622_k = func_222935_a("dimension_type", () -> {
-+   public static final Registry<DimensionType> field_212622_k = func_222939_a("dimension_type", net.minecraftforge.common.DimensionManager.getRegistry(), () -> {
-       return DimensionType.OVERWORLD;
++   @Deprecated public static final Registry<DimensionType> field_212622_k = func_222939_a("dimension_type", net.minecraftforge.common.DimensionManager.getRegistry(), () -> {
+       return DimensionType.field_223227_a_;
     });
 -   public static final DefaultedRegistry<PaintingType> field_212620_i = func_222933_a("motive", "kebab", () -> {
 +   @Deprecated public static final DefaultedRegistry<PaintingType> field_212620_i = forgeDefaulted("motive", PaintingType.class, () -> {
@@ -93,7 +93,7 @@
     });
 -   public static final DefaultedRegistry<ChunkStatus> field_218360_A = func_222933_a("chunk_status", "empty", () -> {
 +   @Deprecated public static final DefaultedRegistry<ChunkStatus> field_218360_A = forgeDefaulted("chunk_status", ChunkStatus.class, () -> {
-       return ChunkStatus.EMPTY;
+       return ChunkStatus.field_223226_a_;
     });
     public static final Registry<Structure<?>> field_218361_B = func_222935_a("structure_feature", () -> {
 @@ -148,37 +152,37 @@
@@ -150,7 +150,7 @@
 +   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> Registry<T> forge(String name, Class<? super T> cls, Supplier<T> def) {
 +      return func_222939_a(name, net.minecraftforge.registries.GameData.<T>getWrapper(cls), def);
 +   }
-+   
++
 +   private static <T extends net.minecraftforge.registries.IForgeRegistryEntry<T>> DefaultedRegistry<T> forgeDefaulted(String name, Class<? super T> cls, Supplier<T> def) {
 +      return Registry.<T, DefaultedRegistry<T>>func_222939_a(name, net.minecraftforge.registries.GameData.<T>getWrapperDefaulted(cls), def);
 +   }

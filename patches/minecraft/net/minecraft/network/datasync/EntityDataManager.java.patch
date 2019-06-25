@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/datasync/EntityDataManager.java
 +++ b/net/minecraft/network/datasync/EntityDataManager.java
-@@ -35,11 +35,13 @@
+@@ -36,11 +36,13 @@
     }
  
     public static <T> DataParameter<T> func_187226_a(Class<? extends Entity> p_187226_0_, IDataSerializer<T> p_187226_1_) {

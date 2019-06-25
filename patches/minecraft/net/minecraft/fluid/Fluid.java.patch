@@ -9,7 +9,7 @@
     public static final ObjectIntIdentityMap<IFluidState> field_207201_d = new ObjectIntIdentityMap<>();
     protected final StateContainer<Fluid, IFluidState> field_207202_e;
     private IFluidState field_207200_b;
-@@ -100,4 +100,10 @@
+@@ -102,4 +102,10 @@
     }
  
     public abstract VoxelShape func_215664_b(IFluidState p_215664_1_, IBlockReader p_215664_2_, BlockPos p_215664_3_);

@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/spawner/AbstractSpawner.java
 +++ b/net/minecraft/world/spawner/AbstractSpawner.java
-@@ -126,7 +126,7 @@
+@@ -127,7 +127,7 @@
                    entity.func_70012_b(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v, world.field_73012_v.nextFloat() * 360.0F, 0.0F);
                    if (entity instanceof MobEntity) {
                       MobEntity mobentity = (MobEntity)entity;
@@ -9,7 +9,7 @@
                          continue;
                       }
  
-@@ -282,4 +282,9 @@
+@@ -283,4 +283,9 @@
     public double func_177223_e() {
        return this.field_98284_d;
     }

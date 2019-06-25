@@ -802,7 +802,7 @@ public class ForgeHooks
     }
 
     @Nullable
-    public static LootTable loadLootTable(Gson gson, ResourceLocation name, String data, boolean custom, LootTableManager lootTableManager)
+    public static LootTable loadLootTable(Gson gson, ResourceLocation name, JsonObject data, boolean custom, LootTableManager lootTableManager)
     {
         Deque<LootTableContext> que = lootContext.get();
         if (que == null)
@@ -1150,5 +1150,11 @@ public class ForgeHooks
             if (entry != null) id = ((ForgeRegistry<DataSerializerEntry>)ForgeRegistries.DATA_SERIALIZERS).getID(entry);
         }
         return id;
+    }
+
+    public static boolean canEntityDestroy(World world, BlockPos pos, LivingEntity entity)
+    {
+        BlockState state = world.getBlockState(pos);
+        return ForgeEventFactory.getMobGriefingEvent(world, entity) && state.canEntityDestroy(world, pos, entity) && ForgeEventFactory.onEntityDestroyBlock(entity, pos, state);
     }
 }
