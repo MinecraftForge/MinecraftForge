@@ -13,12 +13,13 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class EarlyLoaderGUI {
     private final MainWindow window;
     private final List<Triple<String, String, Long>> messages = new ArrayList<>();
     private String message;
+    private String id;
     private boolean handledElsewhere;
 
     public EarlyLoaderGUI(final MainWindow window) {
@@ -28,17 +29,18 @@ public class EarlyLoaderGUI {
         window.update(false);
     }
 
-    public Consumer<String> getStatusConsumer() {
+    public BiConsumer<String, String> getStatusConsumer() {
         return this::update;
     }
 
-    private void update(final String message) {
+    private void update(final String id, final String message) {
         // FIXME: needs improving
-        if (!message.equals(this.message))
+        if (!id.equals(this.id) || !message.equals(this.message))
         {
             if (message.length() > 0)
-                queueMessage(message, message);
+                queueMessage(id, message);
             this.message = message;
+            this.id = id;
         }
 
         // Rest of the processing
@@ -68,14 +70,11 @@ public class EarlyLoaderGUI {
 
     void renderMessages() {
         long now = System.currentTimeMillis();
-        for(int index = 0;index < messages.size();) {
+        for(int index = 0;index < messages.size();index++) {
             Triple<String, String, Long> current = messages.get(index);
             double age = (now - current.getRight()) / 1000.0;
             if (age < 5) {
                 renderMessage(current.getMiddle(), messages.size() - index - 1, MathHelper.clamp(4 - (float)age, 0, 1));
-                index++;
-            } else {
-                messages.remove(index);
             }
         }
     }
