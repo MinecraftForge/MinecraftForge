@@ -384,7 +384,7 @@ public class ForgeHooks
         if (isSpectator) return false;
         if (!ForgeConfig.SERVER.fullBoundingBoxLadders.get())
         {
-            return state.getBlock().isLadder(state, world, pos, entity);
+            return state.isLadder(world, pos, entity);
         }
         else
         {
@@ -400,7 +400,7 @@ public class ForgeHooks
                     {
                         BlockPos tmp = new BlockPos(x2, y2, z2);
                         state = world.getBlockState(tmp);
-                        if (state.getBlock().isLadder(state, world, tmp, entity))
+                        if (state.isLadder(world, tmp, entity))
                         {
                             return true;
                         }
