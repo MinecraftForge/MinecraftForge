@@ -53,6 +53,12 @@ public class IngredientNBT extends Ingredient
         return false;
     }
 
+    @Override
+    public IIngredientSerializer<? extends Ingredient> getSerializer()
+    {
+        return CraftingHelper.INGREDIENT_NBT;
+    }
+
     public static class Serializer implements IIngredientSerializer<IngredientNBT>
     {
         @Override
