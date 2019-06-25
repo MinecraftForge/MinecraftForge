@@ -25,13 +25,15 @@
              return p_i50703_1_.func_71218_a(DimensionType.field_223227_a_).func_217481_x();
           });
        }, p_i50703_6_, false);
-@@ -170,11 +174,13 @@
+@@ -166,6 +170,7 @@
+       }
+ 
+       this.field_217496_L = this.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ ? new WanderingTraderSpawner(this) : null;
++      this.initCapabilities();
+    }
  
     public void func_72835_b(BooleanSupplier p_72835_1_) {
-       IProfiler iprofiler = this.func_217381_Z();
-+      this.initCapabilities();
-       this.field_211159_Q = true;
-       iprofiler.func_76320_a("world border");
+@@ -175,6 +180,7 @@
        this.func_175723_af().func_212673_r();
        iprofiler.func_219895_b("weather");
        boolean flag = this.func_72896_J();
