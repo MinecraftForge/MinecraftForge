@@ -335,6 +335,14 @@ project(':forge') {
                 'Implementation-Title':     'FML Launcher',
                 'Implementation-Version':   SPEC_VERSION,
                 'Implementation-Vendor':    'Forge'
+            ] as LinkedHashMap,
+            'net/minecraftforge/fml/userdev/': [
+                'Specification-Title':      'Forge User Development',
+                'Specification-Vendor':     'Forge Development LLC',
+                'Specification-Version':    SPEC_VERSION,
+                'Implementation-Title':     project.group,
+                'Implementation-Version':   project.version.substring(MC_VERSION.length() + 1),
+                'Implementation-Vendor':    'Forge Development LLC'
             ] as LinkedHashMap
         ]
     }
@@ -881,7 +889,7 @@ project(':forge') {
             data {
                 main 'net.minecraftforge.userdev.LaunchTesting'
 
-                environment 'target', 'fmldevdata'
+                environment 'target', 'fmluserdevdata'
 
                 environment 'MC_VERSION', "${MC_VERSION}"
                 environment 'FORGE_GROUP', "${project.group}"
