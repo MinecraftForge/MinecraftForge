@@ -28,6 +28,8 @@ import javax.annotation.Nullable;
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.entity.SpawnReason;
@@ -73,6 +75,8 @@ import net.minecraft.world.chunk.IChunk;
 import net.minecraft.world.gen.ChunkGenerator;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.SaveHandler;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootParameters;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableManager;
 import net.minecraftforge.client.event.ClientChatEvent;
@@ -243,11 +247,23 @@ public class ForgeEventFactory
         return event.getDisplayname();
     }
 
-    public static float fireBlockHarvesting(NonNullList<ItemStack> drops, World world, BlockPos pos, BlockState state, int fortune, float dropChance, boolean silkTouch, PlayerEntity player)
+    public static void fireBlockHarvesting(NonNullList<ItemStack> drops, LootContext context)
     {
+        // Gathers all the data we need to pass to the HarvestDropsEvent, then fires it on the Forge event bus.
+        ServerWorld world = context.getWorld();
+        Entity entity = context.get(LootParameters.THIS_ENTITY);
+        BlockPos pos = context.get(LootParameters.POSITION);
+        BlockState state = context.get(LootParameters.BLOCK_STATE);
+        ItemStack tool = context.get(LootParameters.TOOL);
+        tool = tool == null ? ItemStack.EMPTY : tool;
+        boolean silkTouch = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, tool) > 0;
+        int fortune = context.getLootingModifier();
+        float dropChance = context.getLuck();
+
+        // The entity that the loot table applies to isn't always going to be a player.
+        PlayerEntity player = entity instanceof PlayerEntity ? (PlayerEntity) entity : null;
         BlockEvent.HarvestDropsEvent event = new BlockEvent.HarvestDropsEvent(world, pos, state, fortune, dropChance, drops, player, silkTouch);
         MinecraftForge.EVENT_BUS.post(event);
-        return event.getDropChance();
     }
 
     public static BlockState fireFluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, BlockState state)
