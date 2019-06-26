@@ -11,7 +11,7 @@
     public static void populateSnooperWithOpenGL(IDataHolder p_populateSnooperWithOpenGL_0_) {
        p_populateSnooperWithOpenGL_0_.setFixedData("opengl_version", GlStateManager.getString(7938));
        p_populateSnooperWithOpenGL_0_.setFixedData("opengl_vendor", GlStateManager.getString(7936));
-@@ -909,6 +913,10 @@
+@@ -913,6 +917,10 @@
           GL13.glMultiTexCoord2f(p_glMultiTexCoord2f_0_, p_glMultiTexCoord2f_1_, p_glMultiTexCoord2f_2_);
        }
  

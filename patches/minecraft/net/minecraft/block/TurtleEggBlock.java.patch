@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/TurtleEggBlock.java
++++ b/net/minecraft/block/TurtleEggBlock.java
+@@ -146,7 +146,7 @@
+       if (p_212570_2_ instanceof TurtleEntity) {
+          return false;
+       } else {
+-         return p_212570_2_ instanceof LivingEntity && !(p_212570_2_ instanceof PlayerEntity) ? p_212570_1_.func_82736_K().func_223586_b(GameRules.field_223599_b) : true;
++         return p_212570_2_ instanceof LivingEntity && !(p_212570_2_ instanceof PlayerEntity) ? net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(p_212570_1_, p_212570_2_) : true;
+       }
+    }
+ }

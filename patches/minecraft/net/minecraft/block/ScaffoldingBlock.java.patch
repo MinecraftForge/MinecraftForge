@@ -1,0 +1,11 @@
+--- a/net/minecraft/block/ScaffoldingBlock.java
++++ b/net/minecraft/block/ScaffoldingBlock.java
+@@ -142,6 +142,8 @@
+       return i;
+    }
+ 
++   @Override public boolean isLadder(BlockState state, IWorldReader world, BlockPos pos, net.minecraft.entity.LivingEntity entity) { return true; }
++
+    static {
+       VoxelShape voxelshape = Block.func_208617_a(0.0D, 14.0D, 0.0D, 16.0D, 16.0D, 16.0D);
+       VoxelShape voxelshape1 = Block.func_208617_a(0.0D, 0.0D, 0.0D, 2.0D, 16.0D, 2.0D);

@@ -1,20 +1,20 @@
 --- a/net/minecraft/entity/monster/SilverfishEntity.java
 +++ b/net/minecraft/entity/monster/SilverfishEntity.java
-@@ -141,7 +141,7 @@
+@@ -138,7 +138,7 @@
              return false;
           } else {
              Random random = this.field_75457_a.func_70681_au();
--            if (this.field_75457_a.field_70170_p.func_82736_K().func_82766_b("mobGriefing") && random.nextInt(10) == 0) {
+-            if (this.field_75457_a.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b) && random.nextInt(10) == 0) {
 +            if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_75457_a.field_70170_p, this.field_75457_a) && random.nextInt(10) == 0) {
                 this.field_179483_b = Direction.func_176741_a(random);
                 BlockPos blockpos = (new BlockPos(this.field_75457_a.field_70165_t, this.field_75457_a.field_70163_u + 0.5D, this.field_75457_a.field_70161_v)).func_177972_a(this.field_179483_b);
                 BlockState blockstate = this.field_75457_a.field_70170_p.func_180495_p(blockpos);
-@@ -210,7 +210,7 @@
+@@ -207,7 +207,7 @@
                       BlockState blockstate = world.func_180495_p(blockpos1);
                       Block block = blockstate.func_177230_c();
                       if (block instanceof SilverfishBlock) {
--                        if (world.func_82736_K().func_82766_b("mobGriefing")) {
-+                        if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(world, field_179464_a)) {
+-                        if (world.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
++                        if (net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(world, this.field_179464_a)) {
                             world.func_175655_b(blockpos1, true);
                          } else {
                             world.func_180501_a(blockpos1, ((SilverfishBlock)block).func_196468_d().func_176223_P(), 3);

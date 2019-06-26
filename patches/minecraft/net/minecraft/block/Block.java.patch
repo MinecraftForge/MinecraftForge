@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -74,9 +74,10 @@
+@@ -75,9 +75,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -13,7 +13,7 @@
     private static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
-@@ -290,7 +291,7 @@
+@@ -291,7 +292,7 @@
  
     @Deprecated
     public boolean func_196253_a(BlockState p_196253_1_, BlockItemUseContext p_196253_2_) {
@@ -22,7 +22,7 @@
     }
  
     @Deprecated
-@@ -302,8 +303,9 @@
+@@ -303,8 +304,9 @@
        return this.field_149789_z;
     }
  
@@ -33,7 +33,7 @@
     }
  
     @Deprecated
-@@ -314,7 +316,7 @@
+@@ -315,7 +317,7 @@
     @Deprecated
     @OnlyIn(Dist.CLIENT)
     public int func_220058_a(BlockState p_220058_1_, IEnviromentBlockReader p_220058_2_, BlockPos p_220058_3_) {
@@ -42,7 +42,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -459,10 +461,9 @@
+@@ -460,10 +462,9 @@
  
     @Deprecated
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
@@ -54,7 +54,7 @@
     }
  
     @Deprecated
-@@ -471,8 +472,8 @@
+@@ -472,8 +473,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -65,46 +65,25 @@
        }
     }
  
-@@ -492,14 +493,15 @@
-    @Deprecated
-    public List<ItemStack> func_220076_a(BlockState p_220076_1_, LootContext.Builder p_220076_2_) {
-       ResourceLocation resourcelocation = this.func_220068_i();
--      if (resourcelocation == LootTables.field_186419_a) {
--         return Collections.emptyList();
--      } else {
--         LootContext lootcontext = p_220076_2_.func_216015_a(LootParameters.field_216287_g, p_220076_1_).func_216022_a(LootParameterSets.field_216267_h);
-+      NonNullList<ItemStack> drops = NonNullList.func_191196_a();
-+      LootContext lootcontext = p_220076_2_.func_216015_a(LootParameters.field_216287_g, p_220076_1_).func_216022_a(LootParameterSets.field_216267_h);
-+      if (resourcelocation != LootTables.field_186419_a) {
-          ServerWorld serverworld = lootcontext.func_202879_g();
-          LootTable loottable = serverworld.func_73046_m().func_200249_aQ().func_186521_a(resourcelocation);
--         return loottable.func_216113_a(lootcontext);
-+         drops.addAll(loottable.func_216113_a(lootcontext));
-+         net.minecraftforge.event.ForgeEventFactory.fireBlockHarvesting(drops, lootcontext);
-       }
-+      return drops;
-    }
- 
-    public static List<ItemStack> func_220070_a(BlockState p_220070_0_, ServerWorld p_220070_1_, BlockPos p_220070_2_, @Nullable TileEntity p_220070_3_) {
-@@ -552,7 +554,7 @@
+@@ -553,7 +554,7 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
--      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_82766_b("doTileDrops")) {
-+      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_82766_b("doTileDrops") && !p_180635_0_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
+-      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
++      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180635_0_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -564,7 +566,7 @@
+@@ -565,7 +566,7 @@
     }
  
     public void func_180637_b(World p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
--      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_82766_b("doTileDrops")) {
-+      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_82766_b("doTileDrops") && !p_180637_1_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
+-      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
++      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180637_1_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -574,6 +576,7 @@
+@@ -575,6 +576,7 @@
  
     }
  
@@ -112,7 +91,7 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -676,6 +679,7 @@
+@@ -677,6 +679,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -120,7 +99,7 @@
     @OnlyIn(Dist.CLIENT)
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
-@@ -690,6 +694,7 @@
+@@ -691,6 +694,7 @@
        return Fluids.field_204541_a.func_207188_f();
     }
  
@@ -128,7 +107,7 @@
     public float func_208618_m() {
        return this.field_149765_K;
     }
-@@ -710,6 +715,7 @@
+@@ -711,6 +715,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -136,7 +115,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -754,6 +760,7 @@
+@@ -755,6 +760,7 @@
        }
     }
  
@@ -144,7 +123,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -779,13 +786,80 @@
+@@ -780,13 +786,80 @@
     }
  
     public static boolean func_196252_e(Block p_196252_0_) {

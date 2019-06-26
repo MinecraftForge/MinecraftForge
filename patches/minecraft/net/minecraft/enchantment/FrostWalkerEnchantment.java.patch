@@ -1,6 +1,6 @@
 --- a/net/minecraft/enchantment/FrostWalkerEnchantment.java
 +++ b/net/minecraft/enchantment/FrostWalkerEnchantment.java
-@@ -38,9 +38,10 @@
+@@ -42,9 +42,10 @@
              if (blockpos.func_218137_a(p_185266_0_.func_213303_ch(), (double)f)) {
                 blockpos$mutableblockpos.func_181079_c(blockpos.func_177958_n(), blockpos.func_177956_o() + 1, blockpos.func_177952_p());
                 BlockState blockstate1 = p_185266_1_.func_180495_p(blockpos$mutableblockpos);

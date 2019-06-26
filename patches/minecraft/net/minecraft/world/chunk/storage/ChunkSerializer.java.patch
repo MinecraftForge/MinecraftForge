@@ -8,7 +8,7 @@
        } else {
           ChunkPrimer chunkprimer = new ChunkPrimer(p_222656_3_, upgradedata, achunksection, chunkprimerticklist1, chunkprimerticklist);
           ichunk = chunkprimer;
-@@ -313,12 +314,22 @@
+@@ -314,12 +315,22 @@
           for(int k = 0; k < chunk.func_177429_s().length; ++k) {
              for(Entity entity : chunk.func_177429_s()[k]) {
                 CompoundNBT compoundnbt3 = new CompoundNBT();
@@ -31,7 +31,7 @@
        } else {
           ChunkPrimer chunkprimer = (ChunkPrimer)p_222645_1_;
           listnbt2.addAll(chunkprimer.func_201652_l());
-@@ -362,6 +373,7 @@
+@@ -363,6 +374,7 @@
  
        compoundnbt1.func_218657_a("Heightmaps", compoundnbt6);
        compoundnbt1.func_218657_a("Structures", func_222649_a(chunkpos, p_222645_1_.func_201609_c(), p_222645_1_.func_201604_d()));

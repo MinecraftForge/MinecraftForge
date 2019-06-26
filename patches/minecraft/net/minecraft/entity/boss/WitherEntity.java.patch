@@ -1,24 +1,24 @@
 --- a/net/minecraft/entity/boss/WitherEntity.java
 +++ b/net/minecraft/entity/boss/WitherEntity.java
-@@ -206,7 +206,7 @@
+@@ -207,7 +207,7 @@
        if (this.func_82212_n() > 0) {
           int j1 = this.func_82212_n() - 1;
           if (j1 <= 0) {
--            Explosion.Mode explosion$mode = this.field_70170_p.func_82736_K().func_82766_b("mobGriefing") ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
+-            Explosion.Mode explosion$mode = this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
 +            Explosion.Mode explosion$mode = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this) ? Explosion.Mode.DESTROY : Explosion.Mode.NONE;
              this.field_70170_p.func_217398_a(this, this.field_70165_t, this.field_70163_u + (double)this.func_70047_e(), this.field_70161_v, 7.0F, false, explosion$mode);
              this.field_70170_p.func_175669_a(1023, new BlockPos(this), 0);
           }
-@@ -281,7 +281,7 @@
+@@ -282,7 +282,7 @@
  
           if (this.field_82222_j > 0) {
              --this.field_82222_j;
--            if (this.field_82222_j == 0 && this.field_70170_p.func_82736_K().func_82766_b("mobGriefing")) {
+-            if (this.field_82222_j == 0 && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
 +            if (this.field_82222_j == 0 && net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(this.field_70170_p, this)) {
                 int i1 = MathHelper.func_76128_c(this.field_70163_u);
                 int l1 = MathHelper.func_76128_c(this.field_70165_t);
                 int i2 = MathHelper.func_76128_c(this.field_70161_v);
-@@ -295,7 +295,7 @@
+@@ -296,7 +296,7 @@
                          int l = i2 + l2;
                          BlockPos blockpos = new BlockPos(i3, k, l);
                          BlockState blockstate = this.field_70170_p.func_180495_p(blockpos);
@@ -27,7 +27,7 @@
                             flag = this.field_70170_p.func_175655_b(blockpos, true) || flag;
                          }
                       }
-@@ -316,6 +316,7 @@
+@@ -317,6 +317,7 @@
        }
     }
  

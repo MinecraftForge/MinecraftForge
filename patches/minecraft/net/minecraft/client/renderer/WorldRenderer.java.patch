@@ -60,7 +60,7 @@
 +         renderer.render(p_195465_1_, field_72769_h, field_72777_q);
 +         return;
 +      }
-       if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p() == DimensionType.THE_END) {
+       if (this.field_72777_q.field_71441_e.field_73011_w.func_186058_p() == DimensionType.field_223229_c_) {
           this.func_180448_r();
        } else if (this.field_72777_q.field_71441_e.field_73011_w.func_76569_d()) {
 @@ -1113,6 +1122,7 @@
