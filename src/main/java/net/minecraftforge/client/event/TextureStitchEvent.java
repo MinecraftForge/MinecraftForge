@@ -19,8 +19,11 @@
 
 package net.minecraftforge.client.event;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraft.client.renderer.texture.AtlasTexture;
+
+import java.util.Set;
 
 
 public class TextureStitchEvent extends Event
@@ -38,17 +41,27 @@ public class TextureStitchEvent extends Event
     }
 
     /**
-     * Fired when the TextureMap is told to refresh it's stitched texture. 
-     * Called after the Stitched list is cleared, but before any blocks or items
-     * add themselves to the list.
+     * Fired when the TextureMap is told to refresh it's stitched texture.
+     * Called before the {@link net.minecraft.client.renderer.texture.TextureAtlasSprite} are loaded.
+     * Contains the set of {@link ResourceLocation}s that will load TextureAtlasSprites.
      */
     public static class Pre extends TextureStitchEvent
     {
-        public Pre(AtlasTexture map){ super(map); }
+        private final Set<ResourceLocation> resourceLocations;
+
+        public Pre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
+        {
+            super(map);
+            this.resourceLocations = resourceLocations;
+        }
+
+        public Set<ResourceLocation> getResourceLocations() {
+            return resourceLocations;
+        }
     }
 
     /**
-     * This event is fired once the texture map has loaded all textures and 
+     * This event is fired once the texture map has loaded all textures and
      * stitched them together. All Icons should have there locations defined
      * by the time this is fired.
      */
