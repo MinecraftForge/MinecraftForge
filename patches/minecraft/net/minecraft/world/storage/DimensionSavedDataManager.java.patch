@@ -8,7 +8,7 @@
        if (worldsaveddata == null && !this.field_212778_c.containsKey(p_215753_2_)) {
           worldsaveddata = this.<T>func_223409_c(p_215753_1_, p_215753_2_);
           this.field_212778_c.put(p_215753_2_, worldsaveddata);
-+      } else {
++      } else if (worldsaveddata == null) {
 +         this.field_212778_c.put(p_215753_2_, net.minecraftforge.common.util.DummyWorldSaveData.DUMMY);
 +         return null;
        }
