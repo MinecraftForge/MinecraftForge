@@ -559,13 +559,35 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public Class<? extends V> getClazz() { return clazz; }
         public V getMin() { return min; }
         public V getMax() { return max; }
+        
+        private boolean isNumber(Object other)
+        {
+            return Number.class.isAssignableFrom(clazz) && other instanceof Number;
+        }
 
         @Override
         public boolean test(Object t)
         {
+            if (isNumber(t))
+            {
+                Number n = (Number) t;
+                return ((Number)min).doubleValue() <= n.doubleValue() && n.doubleValue() <= ((Number)max).doubleValue();
+            }
             if (!clazz.isInstance(t)) return false;
             V c = clazz.cast(t);
             return c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
+        }
+        
+        public Object correct(Object value, Object def)
+        {
+            if (isNumber(value))
+            {
+                Number n = (Number) value;
+                return n.doubleValue() < ((Number)min).doubleValue() ? min : n.doubleValue() > ((Number)max).doubleValue() ? max : value;
+            }
+            if (!clazz.isInstance(value)) return def;
+            V c = clazz.cast(value);
+            return c.compareTo(min) < 0 ? min : c.compareTo(max) > 0 ? max : value;
         }
         
         @Override
@@ -614,7 +636,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public boolean needsWorldRestart() { return this.worldRestart; }
         public Class<?> getClazz(){ return this.clazz; }
         public boolean test(Object value) { return validator.test(value); }
-        public Object correct(Object value) { return getDefault(); }
+        public Object correct(Object value) { return range == null ? getDefault() : range.correct(value, getDefault()); }
 
         public Object getDefault()
         {

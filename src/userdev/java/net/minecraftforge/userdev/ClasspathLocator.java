@@ -67,6 +67,7 @@ public class ClasspathLocator extends AbstractJarFileLocator {
                 if (Files.isDirectory(path))
                     continue;
 
+                LOGGER.debug(CORE, "Found classpath mod: {}", path);
                 this.modCoords.add(path);
             }
         } catch (IOException e) {
