@@ -1,8 +1,8 @@
 ---
-name: Bug report
+name: Issue report
 about: Visit the forum first for issues with crashes.
 title: ''
-labels: Bug
+labels: Triage
 assignees: ''
 
 ---
@@ -23,4 +23,4 @@ assignees: ''
  2. Then do that
  3. ...
 
-**Description of bug:**
+**Description of issue:**
