@@ -44,6 +44,8 @@ public class TextureStitchEvent extends Event
      * Fired when the TextureMap is told to refresh it's stitched texture.
      * Called before the {@link net.minecraft.client.renderer.texture.TextureAtlasSprite} are loaded.
      * Contains the set of {@link ResourceLocation}s that will load TextureAtlasSprites.
+     *
+     * To load new textures to be stitched into the AtlasTexture add to the resourceLocations Set.
      */
     public static class Pre extends TextureStitchEvent
     {
