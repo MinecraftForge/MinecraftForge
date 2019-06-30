@@ -42,4 +42,4 @@ loaderVersion="[2.0,)"
 [[mods]]
     modId="entity_selector_test"
 [[mods]]
-    modId="harvest_drops_event_test"
+    modId="block_loot_test"

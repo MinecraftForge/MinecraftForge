@@ -34,6 +34,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.Direction;
 import net.minecraft.world.IWorld;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.loot.LootContext;
+import net.minecraft.world.storage.loot.LootTable;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.eventbus.api.Cancelable;
@@ -76,40 +78,106 @@ public class BlockEvent extends Event
     }
 
     /**
-     * Fired when a block is about to drop it's harvested items. The {@link #drops} array can be amended, as can the {@link #dropChance}.
-     * <strong>Note well:</strong> the {@link #harvester} player field is null in a variety of scenarios. Code expecting null.
+     * Fired just before a block's loot is generated,
+     * used for modifying the loot context and loot table that will be used to generate the loot for a block.
      *
-     * The {@link #dropChance} is used to determine which items in this array will actually drop, compared to a random number. If you wish, you
-     * can pre-filter yourself, and set {@link #dropChance} to 1.0f to always drop the contents of the {@link #drops} array.
-     *
-     * {@link #isSilkTouching} is set if this is considered a silk touch harvesting operation, vs a normal harvesting operation. Act accordingly.
-     *
-     * @author cpw
+     * Cancelling this event will skip the loot generation entirely and simply pass an empty list to the block.
      */
-    public static class HarvestDropsEvent extends BlockEvent
+    @Cancelable
+    public static class GenerateLootEvent extends BlockEvent
     {
-        private final int fortuneLevel;
-        private final NonNullList<ItemStack> drops;
-        private final boolean isSilkTouching;
-        private float dropChance; // Change to e.g. 1.0f, if you manipulate the list and want to guarantee it always drops
-        private final PlayerEntity harvester; // May be null for non-player harvesting such as explosions or machines
+        private final LootContext.Builder contextBuilder;
+        private LootTable table;
 
-        public HarvestDropsEvent(World world, BlockPos pos, BlockState state, int fortuneLevel, float dropChance, NonNullList<ItemStack> drops, PlayerEntity harvester, boolean isSilkTouching)
+        public GenerateLootEvent(World world, BlockPos pos, BlockState state, LootTable table, LootContext.Builder contextBuilder)
         {
             super(world, pos, state);
-            this.fortuneLevel = fortuneLevel;
-            this.setDropChance(dropChance);
-            this.drops = drops;
-            this.isSilkTouching = isSilkTouching;
-            this.harvester = harvester;
+            this.table = table;
+            this.contextBuilder = contextBuilder;
         }
 
-        public int getFortuneLevel() { return fortuneLevel; }
-        public List<ItemStack> getDrops() { return drops; }
-        public boolean isSilkTouching() { return isSilkTouching; }
-        public float getDropChance() { return dropChance; }
-        public void setDropChance(float dropChance) { this.dropChance = dropChance; }
-        public PlayerEntity getHarvester() { return harvester; }
+        /**
+         * Get the loot context builder that will be used to generate the block's loot.
+         * Used to modify or gather data from the final loot context that will be built.
+         *
+         * @return The loot context builder that will be used for the generation of loot.
+         */
+        public LootContext.Builder getContextBuilder()
+        {
+            return contextBuilder;
+        }
+
+        /**
+         * Get the loot table that was selected to generate loot for the block.
+         *
+         * @return the loot table being used to generate block loot.
+         */
+        public LootTable getTable()
+        {
+            return table;
+        }
+
+        /**
+         * Set the loot table that will be used to generate loot for the block.
+         *
+         * @param table the new loot table that will be used to generate block loot.
+         */
+        public void setTable(LootTable table)
+        {
+            this.table = table;
+        }
+    }
+
+    /**
+     * Fired just before a block's loot is dropped into the world.
+     * Used to modify a block's drops after they're already generated.
+     *
+     * Cancelling this event will prevent the block from spawning in any drops.
+     */
+    @Cancelable
+    public static class DropLootEvent extends BlockEvent
+    {
+        private final LootTable table;
+        private final LootContext context;
+        private final NonNullList<ItemStack> drops;
+
+        public DropLootEvent(World world, BlockPos pos, BlockState state, LootTable table, LootContext context, NonNullList<ItemStack> drops)
+        {
+            super(world, pos, state);
+            this.table = table;
+            this.context = context;
+            this.drops = drops;
+        }
+
+        /**
+         * Get the table that was used to generate the drops to be placed in the world.
+         *
+         * @return The table that was used to generate the drops for the block.
+         */
+        public LootTable getTable()
+        {
+            return table;
+        }
+
+        /**
+         * Get the loot context that was passed to the table when the drops were generated.
+         *
+         * @return The context that was used when generating the drops.
+         */
+        public LootContext getContext()
+        {
+            return context;
+        }
+
+        /**
+         * Get the list of the drops that will be added to the world after the event has processed.
+         *
+         * @return The list of drops to spawn, or an empty list if the event was cancelled.
+         */
+        public NonNullList<ItemStack> getDrops()
+        {
+            return this.isCanceled() ? NonNullList.create() : drops;
+        }
     }
 
     /**
