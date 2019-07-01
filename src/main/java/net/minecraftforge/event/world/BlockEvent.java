@@ -137,33 +137,22 @@ public class BlockEvent extends Event
     @Cancelable
     public static class DropLootEvent extends BlockEvent
     {
-        private final LootTable table;
         private final LootContext context;
         private final NonNullList<ItemStack> drops;
 
-        public DropLootEvent(World world, BlockPos pos, BlockState state, LootTable table, LootContext context, NonNullList<ItemStack> drops)
+        public DropLootEvent(World world, BlockPos pos, BlockState state, @Nullable LootContext context, NonNullList<ItemStack> drops)
         {
             super(world, pos, state);
-            this.table = table;
             this.context = context;
             this.drops = drops;
         }
 
         /**
-         * Get the table that was used to generate the drops to be placed in the world.
+         * Get the loot context that was used to generate the dropped loot.
          *
-         * @return The table that was used to generate the drops for the block.
+         * @return The context that was used when generating the drops, or null if none was used.
          */
-        public LootTable getTable()
-        {
-            return table;
-        }
-
-        /**
-         * Get the loot context that was passed to the table when the drops were generated.
-         *
-         * @return The context that was used when generating the drops.
-         */
+        @Nullable
         public LootContext getContext()
         {
             return context;

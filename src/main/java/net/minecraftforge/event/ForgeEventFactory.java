@@ -245,7 +245,7 @@ public class ForgeEventFactory
         return event.getDisplayname();
     }
 
-    public static NonNullList<ItemStack> fireBlockLootEvents(LootTable table, LootContext.Builder contextBuilder)
+    public static NonNullList<ItemStack> fireBlockGenerateLootEvent(LootTable table, LootContext.Builder contextBuilder)
     {
         // Gather the info we need from the loot context.
         ServerWorld world = contextBuilder.getWorld();
@@ -260,8 +260,12 @@ public class ForgeEventFactory
         NonNullList<ItemStack> drops = NonNullList.create();
         if(generate) drops.addAll(table.generate(context));
 
-        // Post the block drop event to allow any manual editing, then pass the final drops back to the block.
-        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, table, context, drops);
+        return drops;
+    }
+
+    public static NonNullList<ItemStack> fireBlockDropLootEvent(World world, BlockPos pos, BlockState state, @Nullable LootContext context, NonNullList<ItemStack> drops)
+    {
+        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, context, drops);
         MinecraftForge.EVENT_BUS.post(dropEvent);
         return dropEvent.getDrops();
     }
