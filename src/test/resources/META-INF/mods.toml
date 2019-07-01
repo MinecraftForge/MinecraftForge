@@ -41,3 +41,5 @@ loaderVersion="[2.0,)"
     modId="command_event_test"
 [[mods]]
     modId="entity_selector_test"
+[[mods]]
+    modId="gravity_attribute_test"
