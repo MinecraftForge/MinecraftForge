@@ -836,7 +836,8 @@ public class ForgeEventFactory
         LivingTotemEvent event = new LivingTotemEvent(livingBase, source);
         MinecraftForge.EVENT_BUS.post(event);
         Result result = event.getResult();
-        if (result == Result.ALLOW) {
+        if (result == Result.ALLOW)
+        {
             livingBase.setHealth(1.0F);
             livingBase.clearActivePotions();
             livingBase.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 1));
