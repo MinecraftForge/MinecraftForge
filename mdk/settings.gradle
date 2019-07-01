@@ -1,7 +1,9 @@
 pluginManagement {
     repositories {
-        mavenLocal()
-        maven { url = 'https://files.minecraftforge.net/maven' }
+        maven {
+            url = 'https://files.minecraftforge.net/maven'
+            name = 'Forge'
+        }
         jcenter()
         mavenCentral()
         gradlePluginPortal()
@@ -15,12 +17,4 @@ pluginManagement {
     }
 
 }
-rootProject.name = 'Forge'
-
-include ':mcp'
-include ':clean'
-include ':forge'
-
-project(":mcp").projectDir = file("projects/mcp")
-project(":clean").projectDir = file("projects/clean")
-project(":forge").projectDir = file("projects/forge")
+rootProject.name = 'Example'
