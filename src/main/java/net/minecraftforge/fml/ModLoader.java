@@ -102,7 +102,7 @@ public class ModLoader
     private final List<ModLoadingWarning> loadingWarnings;
     private GatherDataEvent.DataGeneratorConfig dataGeneratorConfig;
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    private Optional<Consumer<String>> statusConsumer = Optional.empty();
+    private final Optional<Consumer<String>> statusConsumer = StartupMessageManager.modLoaderConsumer();
 
     private ModLoader()
     {
@@ -127,15 +127,15 @@ public class ModLoader
         DistExecutor.runWhenOn(Dist.CLIENT, ()->()-> ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.CLIENT, FMLPaths.CONFIGDIR.get()));
         ConfigTracker.INSTANCE.loadConfigs(ModConfig.Type.COMMON, FMLPaths.CONFIGDIR.get());
         statusConsumer.ifPresent(c->c.accept("Mod setup: SETUP"));
-        dispatchAndHandleError(LifecycleEventProvider.SETUP, mainThreadExecutor);
+        dispatchAndHandleError(LifecycleEventProvider.SETUP, mainThreadExecutor, null);
         statusConsumer.ifPresent(c->c.accept("Mod setup: SIDED SETUP"));
         mainThreadExecutor.execute(()->preSidedRunnable.accept(c->ModList.get().forEachModContainer((mi,mc)->mc.acceptEvent(c.get()))));
-        dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP, mainThreadExecutor);
+        dispatchAndHandleError(LifecycleEventProvider.SIDED_SETUP, mainThreadExecutor, null);
         mainThreadExecutor.execute(()->postSidedRunnable.accept(c->ModList.get().forEachModContainer((mi,mc)->mc.acceptEvent(c.get()))));
         statusConsumer.ifPresent(c->c.accept("Mod setup complete"));
     }
 
-    public void gatherAndInitializeMods() {
+    public void gatherAndInitializeMods(final Runnable ticker) {
         statusConsumer.ifPresent(c->c.accept("Loading mods"));
         final ModList modList = ModList.of(loadingModList.getModFiles().stream().map(ModFileInfo::getFile).collect(Collectors.toList()), loadingModList.getMods());
         if (!this.loadingExceptions.isEmpty()) {
@@ -155,22 +155,22 @@ public class ModLoader
             throw new LoadingFailedException(loadingExceptions);
         }
         modList.setLoadedMods(modContainers);
-        statusConsumer.ifPresent(c->c.accept("Constructing mods"));
-        dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT, Runnable::run);
+        statusConsumer.ifPresent(c->c.accept(String.format("Constructing %d mods", modList.size())));
+        dispatchAndHandleError(LifecycleEventProvider.CONSTRUCT, Runnable::run, ticker);
         statusConsumer.ifPresent(c->c.accept("Creating registries"));
-        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run));
+        GameData.fireCreateRegistryEvents(LifecycleEventProvider.CREATE_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run, ticker));
         ObjectHolderRegistry.findObjectHolders();
         CapabilityManager.INSTANCE.injectCapabilities(modList.getAllScanData());
         statusConsumer.ifPresent(c->c.accept("Populating registries"));
-        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run));
+        GameData.fireRegistryEvents(rl->true, LifecycleEventProvider.LOAD_REGISTRIES, event -> dispatchAndHandleError(event, Runnable::run, ticker));
         statusConsumer.ifPresent(c->c.accept("Early mod loading complete"));
     }
 
-    private void dispatchAndHandleError(LifecycleEventProvider event, Executor executor) {
+    private void dispatchAndHandleError(LifecycleEventProvider event, Executor executor, final Runnable ticker) {
         if (!loadingExceptions.isEmpty()) {
             LOGGER.error(LOADING,"Skipping lifecycle event {}, {} errors found.", event, loadingExceptions.size());
         } else {
-            event.dispatch(this::accumulateErrors, executor);
+            event.dispatch(this::accumulateErrors, executor, ticker);
         }
         if (!loadingExceptions.isEmpty()) {
             LOGGER.fatal(LOADING,"Failed to complete lifecycle event {}, {} errors found", event, loadingExceptions.size());
@@ -220,15 +220,15 @@ public class ModLoader
     public void finishMods(Executor mainThreadExecutor)
     {
         statusConsumer.ifPresent(c->c.accept("Mod setup: ENQUEUE IMC"));
-        dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC, mainThreadExecutor);
+        dispatchAndHandleError(LifecycleEventProvider.ENQUEUE_IMC, mainThreadExecutor, null);
         statusConsumer.ifPresent(c->c.accept("Mod setup: PROCESS IMC"));
-        dispatchAndHandleError(LifecycleEventProvider.PROCESS_IMC, mainThreadExecutor);
+        dispatchAndHandleError(LifecycleEventProvider.PROCESS_IMC, mainThreadExecutor, null);
         statusConsumer.ifPresent(c->c.accept("Mod setup: Final completion"));
-        dispatchAndHandleError(LifecycleEventProvider.COMPLETE, mainThreadExecutor);
+        dispatchAndHandleError(LifecycleEventProvider.COMPLETE, mainThreadExecutor, null);
         statusConsumer.ifPresent(c->c.accept("Freezing data"));
         GameData.freezeData();
         NetworkRegistry.lock();
-        statusConsumer.ifPresent(c->c.accept(""));
+        statusConsumer.ifPresent(c->c.accept(String.format("Mod loading complete - %d mods loaded", ModList.get().size())));
     }
 
     public List<ModLoadingWarning> getWarnings()
@@ -246,16 +246,12 @@ public class ModLoader
         LOGGER.info("Initializing Data Gatherer for mods {}", mods);
         Bootstrap.register();
         dataGeneratorConfig = new GatherDataEvent.DataGeneratorConfig(mods, path, inputs, serverGenerators, clientGenerators, devToolGenerators, reportsGenerator, structureValidator);
-        gatherAndInitializeMods();
-        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run);
+        gatherAndInitializeMods(null);
+        dispatchAndHandleError(LifecycleEventProvider.GATHERDATA, Runnable::run, null);
         dataGeneratorConfig.runAll();
     }
 
     public Function<ModContainer, ModLifecycleEvent> getDataGeneratorEvent() {
         return mc -> new GatherDataEvent(mc, dataGeneratorConfig.makeGenerator(p->dataGeneratorConfig.getMods().size() == 1 ? p : p.resolve(mc.getModId()), dataGeneratorConfig.getMods().contains(mc.getModId())), dataGeneratorConfig);
-    }
-
-    public void setStatusConsumer(Consumer<String> consumer) {
-        this.statusConsumer = Optional.ofNullable(consumer);
     }
 }
