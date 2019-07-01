@@ -136,7 +136,17 @@
  
                          if (entitywolf.func_70909_n())
                          {
-@@ -1127,7 +1143,7 @@
+@@ -1048,6 +1063,9 @@
+         }
+         else
+         {
++            net.minecraftforge.fml.common.eventhandler.Event.Result result = net.minecraftforge.event.ForgeEventFactory.checkTotemProtection(this, p_190628_1_);
++            if (result != net.minecraftforge.fml.common.eventhandler.Event.Result.DEFAULT) return result == net.minecraftforge.fml.common.eventhandler.Event.Result.ALLOW;
++
+             ItemStack itemstack = null;
+ 
+             for (EnumHand enumhand : EnumHand.values())
+@@ -1127,7 +1145,7 @@
  
      public void func_70669_a(ItemStack p_70669_1_)
      {

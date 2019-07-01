@@ -42,8 +42,10 @@ import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
@@ -94,13 +96,7 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.ThrowableImpactEvent;
 import net.minecraftforge.event.entity.item.ItemExpireEvent;
-import net.minecraftforge.event.entity.living.AnimalTameEvent;
-import net.minecraftforge.event.entity.living.LivingDestroyBlockEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.minecraftforge.event.entity.living.LivingHealEvent;
-import net.minecraftforge.event.entity.living.LivingPackSizeEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent.AllowDespawn;
 import net.minecraftforge.event.entity.living.ZombieEvent.SummonAidEvent;
 import net.minecraftforge.event.entity.player.ArrowLooseEvent;
@@ -834,5 +830,20 @@ public class ForgeEventFactory
         MerchantTradeOffersEvent event = new MerchantTradeOffersEvent(merchant, player, dupeList);
         MinecraftForge.EVENT_BUS.post(event);
         return event.getList();
+    }
+
+    public static Result checkTotemProtection(EntityLivingBase livingBase, DamageSource source) {
+        LivingTotemEvent event = new LivingTotemEvent(livingBase, source);
+        MinecraftForge.EVENT_BUS.post(event);
+        Result result = event.getResult();
+        if (result == Result.ALLOW) {
+            livingBase.setHealth(1.0F);
+            livingBase.clearActivePotions();
+            livingBase.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 1));
+            livingBase.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 1));
+            livingBase.world.setEntityState(livingBase, (byte)35);
+        }
+
+        return result;
     }
 }
