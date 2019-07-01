@@ -7,9 +7,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
- * LivingTotemEvent is fired when a player is about to die but are holding a Totem of Undying.
+ * LivingTotemEvent is fired when a player is about to die.
  * <br>
- * This event is fired whenever a player's death is prevented by a Totem of Undying.
+ * This event is fired whenever a player is about to die.
  * <br>
  * This event isn't {@link Cancelable}
  * <br>
@@ -31,7 +31,8 @@ public class LivingTotemEvent extends LivingEvent
         this.source = source;
     }
 
-    public DamageSource getSource() {
+    public DamageSource getSource()
+    {
         return source;
     }
 
