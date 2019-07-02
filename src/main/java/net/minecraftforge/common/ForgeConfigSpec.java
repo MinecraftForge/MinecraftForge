@@ -59,21 +59,21 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.ObjectArrays;
 
 /*
- * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to acept comments, language keys,
+ * Like {@link com.electronwill.nightconfig.core.ConfigSpec} except in builder format, and extended to accept comments, language keys,
  * and other things Forge configs would find useful.
  */
 
 public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
 {
     private Map<List<String>, String> levelComments = new HashMap<>();
-    
+
     private Config childConfig;
-    
+
     private ForgeConfigSpec(Config storage, Map<List<String>, String> levelComments) {
         super(storage);
         this.levelComments = levelComments;
     }
-    
+
     public void setConfig(CommentedConfig config) {
         this.childConfig = config;
         if (!isCorrect(config)) {
@@ -84,6 +84,14 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             if (config instanceof FileConfig) {
                 ((FileConfig) config).save();
             }
+        }
+    }
+
+    public void save()
+    {
+        Preconditions.checkNotNull(childConfig, "Cannot save config value without assigned Config object present");
+        if (childConfig instanceof FileConfig) {
+            ((FileConfig)childConfig).save();
         }
     }
 
@@ -328,6 +336,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, EnumGetMethod.NAME_IGNORECASE, acceptableValues);
         }
+        @SuppressWarnings("unchecked")
         public <V extends Enum<V>> EnumValue<V> defineEnum(List<String> path, V defaultValue, EnumGetMethod converter, Collection<V> acceptableValues) {
             return defineEnum(path, defaultValue, converter, obj -> {
                 if (obj instanceof Enum) {
@@ -399,7 +408,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public DoubleValue defineInRange(List<String> path, Supplier<Double> defaultSupplier, double min, double max) {
             return new DoubleValue(this, defineInRange(path, defaultSupplier, min, max, Double.class).getPath(), defaultSupplier);
         }
-        
+
         //Ints
         public IntValue defineInRange(String path, int defaultValue, int min, int max) {
             return defineInRange(split(path), defaultValue, min, max);
@@ -413,7 +422,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public IntValue defineInRange(List<String> path, Supplier<Integer> defaultSupplier, int min, int max) {
             return new IntValue(this, defineInRange(path, defaultSupplier, min, max, Integer.class).getPath(), defaultSupplier);
         }
-        
+
         //Longs
         public LongValue defineInRange(String path, long defaultValue, long min, long max) {
             return defineInRange(split(path), defaultValue, min, max);
@@ -559,7 +568,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
         public Class<? extends V> getClazz() { return clazz; }
         public V getMin() { return min; }
         public V getMax() { return max; }
-        
+
         private boolean isNumber(Object other)
         {
             return Number.class.isAssignableFrom(clazz) && other instanceof Number;
@@ -577,7 +586,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             V c = clazz.cast(t);
             return c.compareTo(min) >= 0 && c.compareTo(max) <= 0;
         }
-        
+
         public Object correct(Object value, Object def)
         {
             if (isNumber(value))
@@ -589,7 +598,7 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             V c = clazz.cast(value);
             return c.compareTo(min) < 0 ? min : c.compareTo(max) > 0 ? max : value;
         }
-        
+
         @Override
         public String toString()
         {
@@ -645,15 +654,15 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             return _default;
         }
     }
-    
+
     public static class ConfigValue<T>
     {
         private final Builder parent;
         private final List<String> path;
         private final Supplier<T> defaultSupplier;
-        
+
         private ForgeConfigSpec spec;
-        
+
         ConfigValue(Builder parent, List<String> path, Supplier<T> defaultSupplier)
         {
             this.parent = parent;
@@ -661,30 +670,44 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             this.defaultSupplier = defaultSupplier;
             this.parent.values.add(this);
         }
-        
+
         public List<String> getPath()
         {
             return Lists.newArrayList(path);
         }
-        
+
         public T get()
         {
             Preconditions.checkNotNull(spec, "Cannot get config value before spec is built");
             Preconditions.checkNotNull(spec.childConfig, "Cannot get config value without assigned Config object present");
             return getRaw(spec.childConfig, path, defaultSupplier);
         }
-        
+
         protected T getRaw(Config config, List<String> path, Supplier<T> defaultSupplier)
         {
             return config.getOrElse(path, defaultSupplier);
         }
-        
+
         public Builder next()
         {
             return parent;
         }
+
+        public void save()
+        {
+            Preconditions.checkNotNull(spec, "Cannot save config value before spec is built");
+            Preconditions.checkNotNull(spec.childConfig, "Cannot save config value without assigned Config object present");
+            spec.save();
+        }
+
+        public void set(T value)
+        {
+            Preconditions.checkNotNull(spec, "Cannot set config value before spec is built");
+            Preconditions.checkNotNull(spec.childConfig, "Cannot set config value without assigned Config object present");
+            spec.childConfig.set(path, value);
+        }
     }
-    
+
     public static class BooleanValue extends ConfigValue<Boolean>
     {
         BooleanValue(Builder parent, List<String> path, Supplier<Boolean> defaultSupplier)
@@ -692,43 +715,62 @@ public class ForgeConfigSpec extends UnmodifiableConfigWrapper<Config>
             super(parent, path, defaultSupplier);
         }
     }
-    
+
     public static class IntValue extends ConfigValue<Integer>
     {
         IntValue(Builder parent, List<String> path, Supplier<Integer> defaultSupplier)
         {
             super(parent, path, defaultSupplier);
         }
+
+        @Override
+        protected Integer getRaw(Config config, List<String> path, Supplier<Integer> defaultSupplier)
+        {
+            return config.getIntOrElse(path, () -> defaultSupplier.get());
+        }
     }
-    
+
     public static class LongValue extends ConfigValue<Long>
     {
         LongValue(Builder parent, List<String> path, Supplier<Long> defaultSupplier)
         {
             super(parent, path, defaultSupplier);
         }
+
+        @Override
+        protected Long getRaw(Config config, List<String> path, Supplier<Long> defaultSupplier)
+        {
+            return config.getLongOrElse(path, () -> defaultSupplier.get());
+        }
     }
-    
+
     public static class DoubleValue extends ConfigValue<Double>
     {
         DoubleValue(Builder parent, List<String> path, Supplier<Double> defaultSupplier)
         {
             super(parent, path, defaultSupplier);
         }
+
+        @Override
+        protected Double getRaw(Config config, List<String> path, Supplier<Double> defaultSupplier)
+        {
+            Number n = config.<Number>get(path);
+            return n == null ? defaultSupplier.get() : n.doubleValue();
+        }
     }
-    
+
     public static class EnumValue<T extends Enum<T>> extends ConfigValue<T>
     {
         private final EnumGetMethod converter;
         private final Class<T> clazz;
-        
+
         EnumValue(Builder parent, List<String> path, Supplier<T> defaultSupplier, EnumGetMethod converter, Class<T> clazz)
         {
             super(parent, path, defaultSupplier);
             this.converter = converter;
             this.clazz = clazz;
         }
-        
+
         @Override
         protected T getRaw(Config config, List<String> path, Supplier<T> defaultSupplier)
         {
