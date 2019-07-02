@@ -41,7 +41,7 @@ public enum LifecycleEventProvider
     GATHERDATA(()->new GatherDataLifecycleEvent(ModLoadingStage.GATHERDATA), ModList.inlineDispatcher);
 
     private final Supplier<? extends LifecycleEvent> event;
-    private final EventHandler<LifecycleEvent, Consumer<List<ModLoadingException>>,Executor> eventDispatcher;
+    private final EventHandler<LifecycleEvent, Consumer<List<ModLoadingException>>,Executor, Runnable> eventDispatcher;
     private Supplier<Event> customEventSupplier;
     private LifecycleEvent.Progression progression = LifecycleEvent.Progression.NEXT;
 
@@ -50,7 +50,7 @@ public enum LifecycleEventProvider
         this(e, ModList.parallelDispatcher);
     }
 
-    LifecycleEventProvider(Supplier<? extends LifecycleEvent> e, EventHandler<LifecycleEvent, Consumer<List<ModLoadingException>>,Executor> eventDispatcher)
+    LifecycleEventProvider(Supplier<? extends LifecycleEvent> e, EventHandler<LifecycleEvent, Consumer<List<ModLoadingException>>,Executor, Runnable> eventDispatcher)
     {
         this.event = e;
         this.eventDispatcher = eventDispatcher;
@@ -64,11 +64,11 @@ public enum LifecycleEventProvider
         this.progression = progression;
     }
 
-    public void dispatch(Consumer<List<ModLoadingException>> errorHandler, final Executor executor) {
+    public void dispatch(Consumer<List<ModLoadingException>> errorHandler, final Executor executor, final Runnable ticker) {
         final LifecycleEvent lifecycleEvent = this.event.get();
         lifecycleEvent.setCustomEventSupplier(this.customEventSupplier);
         lifecycleEvent.changeProgression(this.progression);
-        this.eventDispatcher.dispatchEvent(lifecycleEvent, errorHandler, executor);
+        this.eventDispatcher.dispatchEvent(lifecycleEvent, errorHandler, executor, ticker);
     }
 
 
@@ -148,7 +148,7 @@ public enum LifecycleEventProvider
         }
     }
 
-    public interface EventHandler<T extends LifecycleEvent, U extends Consumer<? extends List<? super ModLoadingException>>, V extends Executor>  {
-        void dispatchEvent(T event, U exceptionHandler, V executor);
+    public interface EventHandler<T extends LifecycleEvent, U extends Consumer<? extends List<? super ModLoadingException>>, V extends Executor, R extends Runnable>  {
+        void dispatchEvent(T event, U exceptionHandler, V executor, R ticker);
     }
 }

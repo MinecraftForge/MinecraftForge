@@ -9,28 +9,19 @@
     private static final Comparator<Stitcher.Holder> field_217797_a = Comparator.<Stitcher.Holder, Integer>comparing((p_217793_0_) -> {
        return -p_217793_0_.field_94201_d;
     }).thenComparing((p_217795_0_) -> {
-@@ -50,15 +52,21 @@
-    public void func_94305_f() {
-       List<Stitcher.Holder> list = Lists.newArrayList(this.field_94319_a);
-       list.sort(field_217797_a);
-+      try(net.minecraftforge.fml.common.progress.ProgressBar bar = net.minecraftforge.fml.common.progress.StartupProgressManager.start("Texture stitching", list.size())) {
+@@ -53,6 +55,12 @@
  
        for(Stitcher.Holder stitcher$holder : list) {
-+         bar.step(stitcher$holder.field_98151_a.func_195668_m().toString());
           if (!this.func_94310_b(stitcher$holder)) {
-+            LOGGER.info(String.format("Unable to fit: %s - size: %dx%d - Maybe try a lower resolution resourcepack?", stitcher$holder.field_98151_a.func_195668_m(), stitcher$holder.field_98151_a.func_94211_a(), stitcher$holder.field_98151_a.func_94216_b()));
-+            for (Stitcher.Holder h : list)
-+                LOGGER.info("  {}", h);
++            LOGGER.info(new net.minecraftforge.fml.loading.AdvancedLogMessageAdapter(sb->{
++               sb.append("Unable to fit: ").append(stitcher$holder.field_98151_a.func_195668_m());
++               sb.append(" - size: ").append(stitcher$holder.field_98151_a.func_94211_a()).append("x").append(stitcher$holder.field_98151_a.func_94216_b());
++               sb.append(" - Maybe try a lower resolution resourcepack?\n");
++               list.forEach(h-> sb.append("\t").append(h).append("\n"));
++            }));
              throw new StitcherException(stitcher$holder.field_98151_a);
           }
        }
- 
-       this.field_94318_c = MathHelper.func_151236_b(this.field_94318_c);
-       this.field_94315_d = MathHelper.func_151236_b(this.field_94315_d);
-+      }; // Forge: end progress bar
-    }
- 
-    public List<TextureAtlasSprite> func_94309_g() {
 @@ -104,7 +112,7 @@
           boolean flag4 = flag2 && j != l;
           boolean flag;

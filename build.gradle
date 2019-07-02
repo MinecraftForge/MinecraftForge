@@ -368,7 +368,7 @@ project(':forge') {
         installer 'net.minecraftforge:accesstransformers:0.16.+:shadowed'
         installer 'net.minecraftforge:eventbus:0.10.+:service'
         installer 'net.minecraftforge:forgespi:0.13.+'
-        installer 'net.minecraftforge:coremods:0.5.+'
+        installer 'net.minecraftforge:coremods:0.6.+'
         installer 'net.minecraftforge:unsafe:0.2.+'
         installer 'com.electronwill.night-config:core:3.6.0'
         installer 'com.electronwill.night-config:toml:3.6.0'

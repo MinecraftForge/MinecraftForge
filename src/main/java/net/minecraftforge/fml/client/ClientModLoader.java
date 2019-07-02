@@ -64,8 +64,7 @@ public class ClientModLoader
         SidedProvider.setClient(()->minecraft);
         LogicalSidedProvider.setClient(()->minecraft);
         earlyLoaderGUI = new EarlyLoaderGUI(minecraft.mainWindow);
-        ModLoader.get().setStatusConsumer(earlyLoaderGUI.getStatusConsumer());
-        createRunnableWithCatch(ModLoader.get()::gatherAndInitializeMods).run();
+        createRunnableWithCatch(() -> ModLoader.get().gatherAndInitializeMods(earlyLoaderGUI::renderTick)).run();
         ResourcePackLoader.loadResourcePacks(defaultResourcePacks);
         mcResourceManager.addReloadListener(ClientModLoader::onreload);
         mcResourceManager.addReloadListener(BrandingControl.resourceManagerReloadListener());
