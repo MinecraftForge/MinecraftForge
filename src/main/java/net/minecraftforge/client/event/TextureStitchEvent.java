@@ -57,8 +57,8 @@ public class TextureStitchEvent extends Event
             this.resourceLocations = resourceLocations;
         }
 
-        public Set<ResourceLocation> getResourceLocations() {
-            return resourceLocations;
+        public boolean addResourceLocation(ResourceLocation resourceLocation) {
+            return this.resourceLocations.add(resourceLocation);
         }
     }
 
