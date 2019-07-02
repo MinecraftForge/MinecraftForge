@@ -46,7 +46,7 @@ import com.google.common.base.Preconditions;
  * All field and method names should be passed in as SRG names, and this will automatically resolve if MCP mappings are detected.
  *
  */
-@SuppressWarnings({"serial", "unchecked"})
+@SuppressWarnings({"serial", "unchecked", "unused", "WeakerAccess"})
 public class ObfuscationReflectionHelper
 {
     private static final Logger LOGGER = LogManager.getLogger();
