@@ -21,8 +21,6 @@ package net.minecraftforge.fml.common;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.StringJoiner;
 
 import javax.annotation.Nonnull;
@@ -52,10 +50,6 @@ public class ObfuscationReflectionHelper
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Marker REFLECTION = MarkerManager.getMarker("REFLECTION");
-    private static final Map<String, String> map = new HashMap<>();
-    private static boolean loaded = false;
-
-
 
     public static String remapName(INameMappingService.Domain domain, String name)
     {
