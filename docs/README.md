@@ -7,8 +7,8 @@ Forge is a free, open-source modding API all of your favourite mods use!
 
 | Version  | Support |
 | ------------- | ------------- |
-| 1.14.2  | Active (latest)  |
-| 1.12.2  | Active (stable)  |
+| 1.14.x  | Active (latest)  |
+| 1.12.x  | Active (stable)  |
 
 * [Download]
 * [Forum]
