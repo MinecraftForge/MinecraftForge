@@ -55,7 +55,7 @@ public class TextureStitchEvent extends Event
         }
 
         /**
-         * Add a sprite to be sititched into the Texture Atlas.
+         * Add a sprite to be stitched into the Texture Atlas.
          */
         public boolean addSprite(ResourceLocation sprite) {
             return this.sprites.add(sprite);
