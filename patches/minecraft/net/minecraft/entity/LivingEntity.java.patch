@@ -135,7 +135,17 @@
                 if (wolfentity.func_70909_n()) {
                    this.field_70718_bc = 100;
                    LivingEntity livingentity = wolfentity.func_70902_q();
-@@ -1070,6 +1089,7 @@
+@@ -986,6 +1005,9 @@
+       if (p_190628_1_.func_76357_e()) {
+          return false;
+       } else {
++         net.minecraftforge.eventbus.api.Event.Result result = net.minecraftforge.event.ForgeEventFactory.checkTotemProtection(this, p_190628_1_);
++         if (result != net.minecraftforge.eventbus.api.Event.Result.DEFAULT) return result == net.minecraftforge.eventbus.api.Event.Result.ALLOW;
++
+          ItemStack itemstack = null;
+ 
+          for(Hand hand : Hand.values()) {
+@@ -1070,6 +1092,7 @@
     }
  
     public void func_70645_a(DamageSource p_70645_1_) {
