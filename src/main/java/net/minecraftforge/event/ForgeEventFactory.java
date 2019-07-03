@@ -836,15 +836,14 @@ public class ForgeEventFactory
         LivingTotemEvent event = new LivingTotemEvent(livingBase, source);
         MinecraftForge.EVENT_BUS.post(event);
         Result result = event.getResult();
-        if (result == Result.ALLOW)
-        {
-            livingBase.setHealth(1.0F);
-            livingBase.clearActivePotions();
-            livingBase.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 900, 1));
-            livingBase.addPotionEffect(new PotionEffect(MobEffects.ABSORPTION, 100, 1));
+        if (result == Result.ALLOW) {
             livingBase.world.setEntityState(livingBase, (byte)35);
+            if (!(livingBase.getHealth() > 0)) {
+                livingBase.setHealth(1.0F);
+            }
         }
-
-        return result;
+        return event.getResult();
     }
+
+
 }
