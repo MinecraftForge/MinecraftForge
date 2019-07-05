@@ -576,7 +576,7 @@ project(':forge') {
     task installerJson(dependsOn: [launcherJson, genClientBinPatches, applyClientBinPatches, applyServerBinPatches/*, createClientSRG, createServerSRG*/]) {
         ext {
             output = file('build/install_profile.json')
-            INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.1'
+            INSTALLER_TOOLS = 'net.minecraftforge:installertools:1.1.4'
             JAR_SPLITTER = 'net.minecraftforge:jarsplitter:1.1.0'
         }
         doFirst {
