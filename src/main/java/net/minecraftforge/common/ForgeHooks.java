@@ -801,9 +801,8 @@ public class ForgeHooks
             link.getStyle().setUnderlined(true);
             link.getStyle().setColor(TextFormatting.BLUE);
             if (ichat == null)
-                ichat = link;
-            else
-                ichat.appendSibling(link);
+                ichat = new TextComponentString("");
+            ichat.appendSibling(link);
         }
 
         // Append the rest of the message.
