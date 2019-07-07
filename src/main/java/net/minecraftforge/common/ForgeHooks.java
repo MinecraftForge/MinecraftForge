@@ -513,7 +513,7 @@ public class ForgeHooks
             link.getStyle().setColor(TextFormatting.BLUE);
             if (ichat == null)
                 ichat = new StringTextComponent("");
-			ichat.appendSibling(link);
+            ichat.appendSibling(link);
         }
 
         // Append the rest of the message.
