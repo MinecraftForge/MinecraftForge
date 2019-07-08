@@ -400,6 +400,7 @@ public class GuiModList extends Screen
     {
         if (selected == null) {
             modInfo.clear();
+            this.configButton.active = false;
             return;
         }
         ModInfo selectedMod = selected.getInfo();
