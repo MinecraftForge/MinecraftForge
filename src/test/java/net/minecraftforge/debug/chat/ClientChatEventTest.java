@@ -20,36 +20,19 @@
 package net.minecraftforge.debug.chat;
 
 import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.event.FMLInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
-//@Mod(modid = "clientchateventtest", name = "Client Chat Event Test", version = "0.0.0", clientSideOnly = true)
+@Mod("client_chat_event_test")
+@Mod.EventBusSubscriber
 public class ClientChatEventTest
 {
-    static final boolean ENABLED = false;
-
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
-        if (ENABLED)
-        {
-            MinecraftForge.EVENT_BUS.register(this);
-        }
-    }
-
-    @net.minecraftforge.eventbus.api.SubscribeEvent
-    public void onPlayerAttemptChat(ClientChatEvent event)
+    @SubscribeEvent
+    public static void onPlayerAttemptChat(ClientChatEvent event)
     {
         if (event.getMessage().equals("Cancel"))
-        {
             event.setCanceled(true);
-        }
         else if (event.getMessage().equals("Replace this text"))
-        {
             event.setMessage("Text replaced.");
-        }
     }
 }

@@ -166,7 +166,7 @@ public class ClearableRegistry<T> extends MutableRegistry<T>
     }
 
     @Override
-    public Optional<T> func_218349_b(ResourceLocation p_218349_1_) {
-        return Optional.ofNullable(map.get(p_218349_1_));
+    public Optional<T> getValue(ResourceLocation key) {
+        return Optional.ofNullable(map.get(key));
     }
 }

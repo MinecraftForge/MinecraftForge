@@ -18,12 +18,20 @@
     }
  
     protected boolean func_176566_a(World p_176566_1_, BlockPos p_176566_2_, BlockState p_176566_3_, boolean p_176566_4_, int p_176566_5_) {
-@@ -105,7 +111,7 @@
-          RailShape railshape = blockstate.func_177229_b(field_176568_b);
+@@ -99,13 +105,13 @@
+ 
+    protected boolean func_208071_a(World p_208071_1_, BlockPos p_208071_2_, boolean p_208071_3_, int p_208071_4_, RailShape p_208071_5_) {
+       BlockState blockstate = p_208071_1_.func_180495_p(p_208071_2_);
+-      if (blockstate.func_177230_c() != this) {
++      if (!(blockstate.func_177230_c() instanceof PoweredRailBlock)) {
+          return false;
+       } else {
+-         RailShape railshape = blockstate.func_177229_b(field_176568_b);
++         RailShape railshape = getRailDirection(blockstate, p_208071_1_, p_208071_2_, null);
           if (p_208071_5_ != RailShape.EAST_WEST || railshape != RailShape.NORTH_SOUTH && railshape != RailShape.ASCENDING_NORTH && railshape != RailShape.ASCENDING_SOUTH) {
              if (p_208071_5_ != RailShape.NORTH_SOUTH || railshape != RailShape.EAST_WEST && railshape != RailShape.ASCENDING_EAST && railshape != RailShape.ASCENDING_WEST) {
 -               if (blockstate.func_177229_b(field_176569_M)) {
-+               if (!(blockstate.func_177230_c() instanceof PoweredRailBlock) || isActivator != ((PoweredRailBlock)blockstate.func_177230_c()).isActivator) {
++               if (isActivator == ((PoweredRailBlock)blockstate.func_177230_c()).isActivator) {
                    return p_208071_1_.func_175640_z(p_208071_2_) ? true : this.func_176566_a(p_208071_1_, p_208071_2_, blockstate, p_208071_3_, p_208071_4_ + 1);
                 } else {
                    return false;

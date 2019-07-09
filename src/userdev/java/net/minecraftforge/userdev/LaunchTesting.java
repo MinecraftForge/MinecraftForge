@@ -91,7 +91,7 @@ public class LaunchTesting
 
         if (Arrays.asList(
                 "fmldevclient", "fmldevserver", "fmldevdata",
-                "fmluserdevclient", "fmluserdevserver"
+                "fmluserdevclient", "fmluserdevserver", "fmluserdevdata"
             ).contains(target)) {
             //nop
         } else {

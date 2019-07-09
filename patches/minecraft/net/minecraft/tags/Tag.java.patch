@@ -35,7 +35,7 @@
  
        public static <T> Tag.Builder<T> func_200047_a() {
           return new Tag.Builder<>();
-@@ -107,6 +112,22 @@
+@@ -102,6 +107,22 @@
           return this;
        }
  
@@ -58,7 +58,7 @@
        public Tag.Builder<T> func_200045_a(boolean p_200045_1_) {
           this.field_200053_b = p_200045_1_;
           return this;
-@@ -123,7 +144,7 @@
+@@ -118,7 +139,7 @@
        }
  
        public Tag<T> func_200051_a(ResourceLocation p_200051_1_) {
@@ -67,7 +67,7 @@
        }
  
        public Tag.Builder<T> func_219783_a(Function<ResourceLocation, Optional<T>> p_219783_1_, JsonObject p_219783_2_) {
-@@ -147,8 +168,10 @@
+@@ -142,8 +163,10 @@
           }
  
           this.field_200052_a.addAll(list);
@@ -78,7 +78,7 @@
     }
  
     public interface ITagEntry<T> {
-@@ -187,6 +210,8 @@
+@@ -182,6 +205,8 @@
        public Collection<T> func_200578_a() {
           return this.field_200165_a;
        }
@@ -87,7 +87,7 @@
     }
  
     public static class TagEntry<T> implements Tag.ITagEntry<T> {
-@@ -233,5 +258,7 @@
+@@ -228,5 +253,7 @@
        public void func_200576_a(JsonArray p_200576_1_, Function<T, ResourceLocation> p_200576_2_) {
           p_200576_1_.add("#" + this.func_200577_a());
        }

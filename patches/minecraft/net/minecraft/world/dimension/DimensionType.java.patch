@@ -6,9 +6,9 @@
  
 -public class DimensionType implements IDynamicSerializable {
 +public class DimensionType extends net.minecraftforge.registries.ForgeRegistryEntry<DimensionType> implements IDynamicSerializable {
-    public static final DimensionType OVERWORLD = func_212677_a("overworld", new DimensionType(1, "", "", OverworldDimension::new, true));
-    public static final DimensionType NETHER = func_212677_a("the_nether", new DimensionType(0, "_nether", "DIM-1", NetherDimension::new, false));
-    public static final DimensionType THE_END = func_212677_a("the_end", new DimensionType(2, "_end", "DIM1", EndDimension::new, false));
+    public static final DimensionType field_223227_a_ = func_212677_a("overworld", new DimensionType(1, "", "", OverworldDimension::new, true));
+    public static final DimensionType field_223228_b_ = func_212677_a("the_nether", new DimensionType(0, "_nether", "DIM-1", NetherDimension::new, false));
+    public static final DimensionType field_223229_c_ = func_212677_a("the_end", new DimensionType(2, "_end", "DIM1", EndDimension::new, false));
 @@ -19,17 +19,31 @@
     private final String field_212682_f;
     private final BiFunction<World, DimensionType, ? extends Dimension> field_201038_g;

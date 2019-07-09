@@ -19,13 +19,20 @@
 
 package net.minecraftforge.common.data;
 
+import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.item.Items;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 
 public class ForgeItemTagsProvider extends ItemTagsProvider
 {
+    private Set<ResourceLocation> filter = null;
+
     public ForgeItemTagsProvider(DataGenerator gen)
     {
         super(gen);
@@ -34,6 +41,9 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
     @Override
     public void registerTags()
     {
+        super.registerTags();
+        filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey().getId()).collect(Collectors.toSet());
+
         copy(Tags.Blocks.CHESTS, Tags.Items.CHESTS);
         copy(Tags.Blocks.CHESTS_ENDER, Tags.Items.CHESTS_ENDER);
         copy(Tags.Blocks.CHESTS_TRAPPED, Tags.Items.CHESTS_TRAPPED);
@@ -44,12 +54,12 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         getBuilder(Tags.Items.DUSTS_PRISMARINE).add(Items.PRISMARINE_SHARD);
         getBuilder(Tags.Items.DUSTS_REDSTONE).add(Items.REDSTONE);
         getBuilder(Tags.Items.DYES).add(Tags.Items.DYES_BLACK, Tags.Items.DYES_RED, Tags.Items.DYES_GREEN, Tags.Items.DYES_BROWN, Tags.Items.DYES_BLUE, Tags.Items.DYES_PURPLE, Tags.Items.DYES_CYAN, Tags.Items.DYES_LIGHT_GRAY, Tags.Items.DYES_GRAY, Tags.Items.DYES_PINK, Tags.Items.DYES_LIME, Tags.Items.DYES_YELLOW, Tags.Items.DYES_LIGHT_BLUE, Tags.Items.DYES_MAGENTA, Tags.Items.DYES_ORANGE, Tags.Items.DYES_WHITE);
-        getBuilder(Tags.Items.DYES_BLACK).add(Items.INK_SAC);
-        getBuilder(Tags.Items.DYES_BLUE).add(Items.LAPIS_LAZULI);
-        getBuilder(Tags.Items.DYES_BROWN).add(Items.COCOA_BEANS);
+        getBuilder(Tags.Items.DYES_BLACK).add(Items.BLACK_DYE);
+        getBuilder(Tags.Items.DYES_BLUE).add(Items.BLUE_DYE);
+        getBuilder(Tags.Items.DYES_BROWN).add(Items.BROWN_DYE);
         getBuilder(Tags.Items.DYES_CYAN).add(Items.CYAN_DYE);
         getBuilder(Tags.Items.DYES_GRAY).add(Items.GRAY_DYE);
-        getBuilder(Tags.Items.DYES_GREEN).add(Items.field_222079_lj);
+        getBuilder(Tags.Items.DYES_GREEN).add(Items.GREEN_DYE);
         getBuilder(Tags.Items.DYES_LIGHT_BLUE).add(Items.LIGHT_BLUE_DYE);
         getBuilder(Tags.Items.DYES_LIGHT_GRAY).add(Items.LIGHT_GRAY_DYE);
         getBuilder(Tags.Items.DYES_LIME).add(Items.LIME_DYE);
@@ -57,9 +67,9 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         getBuilder(Tags.Items.DYES_ORANGE).add(Items.ORANGE_DYE);
         getBuilder(Tags.Items.DYES_PINK).add(Items.PINK_DYE);
         getBuilder(Tags.Items.DYES_PURPLE).add(Items.PURPLE_DYE);
-        getBuilder(Tags.Items.DYES_RED).add(Items.field_222078_li);
-        getBuilder(Tags.Items.DYES_WHITE).add(Items.BONE_MEAL);
-        getBuilder(Tags.Items.DYES_YELLOW).add(Items.field_222081_ls);
+        getBuilder(Tags.Items.DYES_RED).add(Items.RED_DYE);
+        getBuilder(Tags.Items.DYES_WHITE).add(Items.WHITE_DYE);
+        getBuilder(Tags.Items.DYES_YELLOW).add(Items.YELLOW_DYE);
         copy(Tags.Blocks.FENCE_GATES, Tags.Items.FENCE_GATES);
         copy(Tags.Blocks.FENCE_GATES_WOODEN, Tags.Items.FENCE_GATES_WOODEN);
         copy(Tags.Blocks.FENCES, Tags.Items.FENCES);
@@ -102,6 +112,12 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.STORAGE_BLOCKS_LAPIS, Tags.Items.STORAGE_BLOCKS_LAPIS);
         copy(Tags.Blocks.STORAGE_BLOCKS_QUARTZ, Tags.Items.STORAGE_BLOCKS_QUARTZ);
         copy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
+    }
+
+    @Override
+    protected Path makePath(ResourceLocation id)
+    {
+        return filter != null && filter.contains(id) ? null : super.makePath(id); //We don't want to save vanilla tags.
     }
 
     @Override

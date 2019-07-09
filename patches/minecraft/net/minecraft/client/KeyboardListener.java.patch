@@ -24,9 +24,9 @@
              Screen.wrapScreenError(() -> {
                 if (p_197961_5_ != 1 && (p_197961_5_ != 2 || !this.field_197973_b)) {
                    if (p_197961_5_ == 0) {
--                     aboolean[0] = inestedguieventhandler.keyReleased(p_197961_3_, p_197961_4_, p_197961_6_);
+-                     aboolean[0] = inestedguieventhandler.func_223281_a_(p_197961_3_, p_197961_4_, p_197961_6_);
 +                     aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyReleasedPre(this.field_197972_a.field_71462_r, p_197961_3_, p_197961_4_, p_197961_6_);
-+                     if (!aboolean[0]) aboolean[0] = inestedguieventhandler.keyReleased(p_197961_3_, p_197961_4_, p_197961_6_);
++                     if (!aboolean[0]) aboolean[0] = inestedguieventhandler.func_223281_a_(p_197961_3_, p_197961_4_, p_197961_6_);
 +                     if (!aboolean[0]) aboolean[0] = net.minecraftforge.client.ForgeHooksClient.onGuiKeyReleasedPost(this.field_197972_a.field_71462_r, p_197961_3_, p_197961_4_, p_197961_6_);
                    }
                 } else {

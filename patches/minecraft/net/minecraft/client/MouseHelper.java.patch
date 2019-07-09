@@ -49,3 +49,29 @@
                 }, "mouseDragged event handler", iguieventlistener.getClass().getCanonicalName());
              }
           }
+@@ -233,6 +241,10 @@
+       return this.field_198039_d;
+    }
+ 
++   public boolean isMiddleDown() {
++      return this.field_198038_c;
++   }
++
+    public double func_198024_e() {
+       return this.field_198040_e;
+    }
+@@ -241,6 +253,14 @@
+       return this.field_198041_f;
+    }
+ 
++   public double getXVelocity() {
++      return this.field_198048_m;
++   }
++
++   public double getYVelocity() {
++      return this.field_198049_n;
++   }
++
+    public void func_198021_g() {
+       this.field_198043_h = true;
+    }

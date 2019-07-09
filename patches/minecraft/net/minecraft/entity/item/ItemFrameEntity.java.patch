@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/item/ItemFrameEntity.java
 +++ b/net/minecraft/entity/item/ItemFrameEntity.java
-@@ -190,7 +190,7 @@
+@@ -191,7 +191,7 @@
     }
  
     private void func_110131_b(ItemStack p_110131_1_) {

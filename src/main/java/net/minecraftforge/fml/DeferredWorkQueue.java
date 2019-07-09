@@ -31,6 +31,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
@@ -187,21 +188,25 @@ public class DeferredWorkQueue
         taskQueue.clear();
     }
 
-    static void runTasks(ModLoadingStage fromStage, Consumer<List<ModLoadingException>> errorHandler) {
+    static void runTasks(ModLoadingStage fromStage, Consumer<List<ModLoadingException>> errorHandler, final Executor executor) {
         raisedExceptions.clear();
         if (taskQueue.isEmpty()) return; // Don't log unnecessarily
         LOGGER.info(LOADING, "Dispatching synchronous work after {}: {} jobs", fromStage, taskQueue.size());
         StopWatch globalTimer = StopWatch.createStarted();
-        while (!taskQueue.isEmpty()) {
-            TaskInfo taskinfo = taskQueue.poll();
-            Stopwatch timer = Stopwatch.createStarted();
-            taskinfo.task.run();
-            timer.stop();
-            if (timer.elapsed(TimeUnit.SECONDS) >= 1) {
-                LOGGER.warn(LOADING, "Mod '{}' took {} to run a deferred task.", taskinfo.owner.getModId(), timer);
-            }
-        }
+        final CompletableFuture<Void> tasks = CompletableFuture.allOf(taskQueue.stream().map(ti -> makeRunnable(ti, executor)).toArray(CompletableFuture[]::new));
+        tasks.join();
         LOGGER.info(LOADING, "Synchronous work queue completed in {}", globalTimer);
         errorHandler.accept(raisedExceptions);
+    }
+
+    private static CompletableFuture<?> makeRunnable(TaskInfo ti, Executor executor) {
+        return CompletableFuture.runAsync(() -> {
+            Stopwatch timer = Stopwatch.createStarted();
+            ti.task.run();
+            timer.stop();
+            if (timer.elapsed(TimeUnit.SECONDS) >= 1) {
+                LOGGER.warn(LOADING, "Mod '{}' took {} to run a deferred task.", ti.owner.getModId(), timer);
+            }
+        }, executor);
     }
 }

@@ -33,6 +33,11 @@ public class RenderGameOverlayEvent extends Event
     {
         return partialTicks;
     }
+    
+    public MainWindow getWindow()
+    {
+        return window;
+    }
 
     public ElementType getType()
     {
@@ -66,17 +71,20 @@ public class RenderGameOverlayEvent extends Event
     }
 
     private final float partialTicks;
+    private final MainWindow window;
     private final ElementType type;
 
-    public RenderGameOverlayEvent(float partialTicks, MainWindow resolution)
+    public RenderGameOverlayEvent(float partialTicks, MainWindow window)
     {
         this.partialTicks = partialTicks;
+        this.window = window;
         this.type = null;
     }
 
     private RenderGameOverlayEvent(RenderGameOverlayEvent parent, ElementType type)
     {
         this.partialTicks = parent.getPartialTicks();
+        this.window = parent.getWindow();
         this.type = type;
     }
 

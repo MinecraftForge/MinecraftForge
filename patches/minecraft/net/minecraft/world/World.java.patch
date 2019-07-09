@@ -532,7 +532,7 @@
     }
  
     public CrashReportCategory func_72914_a(CrashReport p_72914_1_) {
-@@ -1178,16 +1271,15 @@
+@@ -1180,16 +1273,15 @@
     public abstract Scoreboard func_96441_U();
  
     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_) {
@@ -553,7 +553,7 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1266,4 +1358,16 @@
+@@ -1268,4 +1360,16 @@
     public BlockPos func_205770_a(Heightmap.Type p_205770_1_, BlockPos p_205770_2_) {
        return new BlockPos(p_205770_2_.func_177958_n(), this.func_201676_a(p_205770_1_, p_205770_2_.func_177958_n(), p_205770_2_.func_177952_p()), p_205770_2_.func_177952_p());
     }

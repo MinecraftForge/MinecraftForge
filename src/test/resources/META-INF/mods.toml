@@ -1,16 +1,43 @@
 modLoader="javafml"
 loaderVersion="[2.0,)"
 
-# debug/client/model
 [[mods]]
 	modId="forgedebugmodeldata"
-	version="1.0"
-	displayName="ModelDataTest"
 #[[mods]]
 #    modId="forgedebugmodelloaderregistry"
-#    version="1.0"
-#    displayName="ModelLoaderRegistryTest"
+[[mods]]
+    modId="forge_blockstate_retexture_test"
 [[mods]]
 	modId="containertypetest"
-	version="1.0"
-	displayName="ContainerTypeTest"
+[[mods]]
+    modId="potion_event_test"
+[[mods]]
+    modId="base_block_place_event_test"
+[[mods]]
+    modId="farmland_trample_test"
+[[mods]]
+    modId="farmland_water_test"
+#[[mods]] # Fluid System needs implementing
+#    modId="fog_color_in_material_test"
+[[mods]]
+    modId="neighbor_notify_event_test"
+[[mods]]
+    modId="block_particle_effects_test"
+[[mods]]
+    modId="ai_node_type_test"
+[[mods]]
+    modId="block_place_event_test"
+[[mods]]
+    modId="portal_spawn_event_test"
+[[mods]]
+    modId="slipperiness_test"
+[[mods]]
+    modId="custom_slime_block_test"
+[[mods]]
+    modId="client_chat_event_test"
+#[[mods]] # Client Command System doesn't exist yet
+#    modId="client_command_test"
+[[mods]]
+    modId="command_event_test"
+[[mods]]
+    modId="entity_selector_test"

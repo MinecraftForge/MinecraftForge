@@ -1,6 +1,6 @@
 --- a/net/minecraft/network/play/ServerPlayNetHandler.java
 +++ b/net/minecraft/network/play/ServerPlayNetHandler.java
-@@ -336,9 +336,11 @@
+@@ -337,9 +337,11 @@
              }
  
              entity.func_70080_a(d3, d4, d5, f, f1);
@@ -12,7 +12,7 @@
                 this.field_147371_a.func_179290_a(new SMoveVehiclePacket(entity));
                 return;
              }
-@@ -825,7 +827,9 @@
+@@ -826,7 +828,9 @@
           double d1 = this.field_147369_b.field_70163_u - ((double)blockpos.func_177956_o() + 0.5D) + 1.5D;
           double d2 = this.field_147369_b.field_70161_v - ((double)blockpos.func_177952_p() + 0.5D);
           double d3 = d0 * d0 + d1 * d1 + d2 * d2;
@@ -23,7 +23,7 @@
              return;
           } else if (blockpos.func_177956_o() >= this.field_147367_d.func_71207_Z()) {
              return;
-@@ -865,7 +869,9 @@
+@@ -866,7 +870,9 @@
        Direction direction = blockraytraceresult.func_216354_b();
        this.field_147369_b.func_143004_u();
        if (blockpos.func_177956_o() < this.field_147367_d.func_71207_Z() - 1 || direction != Direction.UP && blockpos.func_177956_o() < this.field_147367_d.func_71207_Z()) {
@@ -34,7 +34,7 @@
              this.field_147369_b.field_71134_c.func_219441_a(this.field_147369_b, serverworld, itemstack, hand, blockraytraceresult);
           }
        } else {
-@@ -985,7 +991,9 @@
+@@ -986,7 +992,9 @@
           if (s.startsWith("/")) {
              this.func_147361_d(s);
           } else {
@@ -45,7 +45,7 @@
              this.field_147367_d.func_184103_al().func_148544_a(itextcomponent, false);
           }
  
-@@ -1083,6 +1091,7 @@
+@@ -1084,6 +1092,7 @@
                 this.field_147369_b.func_190775_a(entity, hand);
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.INTERACT_AT) {
                 Hand hand1 = p_147340_1_.func_186994_b();
@@ -53,16 +53,16 @@
                 entity.func_184199_a(this.field_147369_b, p_147340_1_.func_179712_b(), hand1);
              } else if (p_147340_1_.func_149565_c() == CUseEntityPacket.Action.ATTACK) {
                 if (entity instanceof ItemEntity || entity instanceof ExperienceOrbEntity || entity instanceof AbstractArrowEntity || entity == this.field_147369_b) {
-@@ -1113,7 +1122,7 @@
+@@ -1114,7 +1123,7 @@
                 return;
              }
  
--            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, DimensionType.OVERWORLD, false);
-+            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, field_147369_b.field_71093_bK, false);
+-            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, DimensionType.field_223227_a_, false);
++            this.field_147369_b = this.field_147367_d.func_184103_al().func_72368_a(this.field_147369_b, this.field_147369_b.field_71093_bK, false);
              if (this.field_147367_d.func_71199_h()) {
                 this.field_147369_b.func_71033_a(GameType.SPECTATOR);
-                this.field_147369_b.func_71121_q().func_82736_K().func_82764_b("spectatorsGenerateChunks", "false", this.field_147367_d);
-@@ -1290,6 +1299,8 @@
+                this.field_147369_b.func_71121_q().func_82736_K().func_223585_a(GameRules.field_223613_p).func_223570_a(false, this.field_147367_d);
+@@ -1291,6 +1300,8 @@
     }
  
     public void func_147349_a(CCustomPayloadPacket p_147349_1_) {

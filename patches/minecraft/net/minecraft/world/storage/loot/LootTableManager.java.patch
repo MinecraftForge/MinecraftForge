@@ -1,11 +1,12 @@
 --- a/net/minecraft/world/storage/loot/LootTableManager.java
 +++ b/net/minecraft/world/storage/loot/LootTableManager.java
-@@ -45,7 +45,7 @@
-          ResourceLocation resourcelocation1 = new ResourceLocation(resourcelocation.func_110624_b(), s.substring(field_195435_a, s.length() - field_195436_b));
+@@ -43,7 +43,8 @@
  
-          try (IResource iresource = p_195410_1_.func_199002_a(resourcelocation)) {
--            LootTable loottable = JSONUtils.func_188178_a(field_186526_b, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), LootTable.class);
-+            LootTable loottable = net.minecraftforge.common.ForgeHooks.loadLootTable(field_186526_b, resourcelocation, IOUtils.toString(iresource.func_199027_b(), StandardCharsets.UTF_8), iresource.func_199026_d().equals("Default"), this);
-             if (loottable != null) {
-                this.field_186527_c.put(resourcelocation1, loottable);
-             }
+       p_212853_1_.forEach((p_223385_1_, p_223385_2_) -> {
+          try {
+-            LootTable loottable = field_186526_b.fromJson(p_223385_2_, LootTable.class);
++            net.minecraft.resources.IResource res = p_212853_2_.func_199002_a(getPreparedPath(p_223385_1_));
++            LootTable loottable = net.minecraftforge.common.ForgeHooks.loadLootTable(field_186526_b, p_223385_1_, p_223385_2_, res == null || !res.func_199026_d().equals("Default"), this);
+             builder.put(p_223385_1_, loottable);
+          } catch (Exception exception) {
+             field_186525_a.error("Couldn't parse loot table {}", p_223385_1_, exception);

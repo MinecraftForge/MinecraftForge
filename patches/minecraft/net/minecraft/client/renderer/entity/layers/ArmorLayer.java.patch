@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/entity/layers/ArmorLayer.java
 +++ b/net/minecraft/client/renderer/entity/layers/ArmorLayer.java
-@@ -55,12 +55,13 @@
+@@ -55,24 +55,25 @@
           ArmorItem armoritem = (ArmorItem)itemstack.func_77973_b();
           if (armoritem.func_185083_B_() == p_188361_9_) {
              A a = this.func_215337_a(p_188361_9_);
@@ -16,7 +16,12 @@
                 int i = ((DyeableArmorItem)armoritem).func_200886_f(itemstack);
                 float f = (float)(i >> 16 & 255) / 255.0F;
                 float f1 = (float)(i >> 8 & 255) / 255.0F;
-@@ -72,7 +73,7 @@
+                float f2 = (float)(i & 255) / 255.0F;
+                GlStateManager.color4f(this.field_177184_f * f, this.field_177185_g * f1, this.field_177192_h * f2, this.field_177187_e);
+                a.func_78088_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);
+-               this.func_215333_a(this.func_177178_a(armoritem, flag, "overlay"));
++               this.func_215333_a(this.getArmorResource(p_188361_1_, itemstack, p_188361_9_, "overlay"));
+             }
  
              GlStateManager.color4f(this.field_177184_f, this.field_177185_g, this.field_177192_h, this.field_177187_e);
              a.func_78088_a(p_188361_1_, p_188361_2_, p_188361_3_, p_188361_5_, p_188361_6_, p_188361_7_, p_188361_8_);

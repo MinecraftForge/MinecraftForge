@@ -20,43 +20,48 @@
 package net.minecraftforge.debug.block;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.model.ModelBakery;
-import net.minecraft.item.Item;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.model.ModelLoader;
+import net.minecraft.world.IBlockReader;
 import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ObjectHolder;
 
-import java.util.Collections;
+import javax.annotation.Nullable;
 
-//@Mod(modid = PathNodeTypeTest.MOD_ID, name = "AiNodeTypeTest", version = "1.0", acceptableRemoteVersions = "*")
-//@Mod.EventBusSubscriber
+@Mod(PathNodeTypeTest.MOD_ID)
+@Mod.EventBusSubscriber
 public class PathNodeTypeTest
 {
     static final String MOD_ID = "ai_node_type_test";
-    static final boolean ENABLED = false;
+    static final String BLOCK_ID = "test_block";
 
-    private static final Block TEST_BLOCK = new TestBlock();
 
-    @net.minecraftforge.eventbus.api.SubscribeEvent
+    @ObjectHolder(BLOCK_ID)
+    private static Block TEST_BLOCK = null;
+
+    @SubscribeEvent
     public static void register(RegistryEvent.Register<Block> event)
     {
-        if (ENABLED)
+        event.getRegistry().register((new Block(Block.Properties.create(Material.ROCK))
         {
-            event.getRegistry().register(TEST_BLOCK);
-        }
+            @Override
+            public PathNodeType getAiPathNodeType(BlockState state, IBlockReader world, BlockPos pos, @Nullable MobEntity entity)
+            {
+                return PathNodeType.DOOR_OPEN;
+            }
+        }).setRegistryName(MOD_ID, BLOCK_ID));
     }
 
-    //@Mod.EventBusSubscriber(value = Side.CLIENT, modid = MOD_ID)
+    /*
+    @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = MOD_ID)
     public static class ClientEventHandler
     {
-        @net.minecraftforge.eventbus.api.SubscribeEvent
+        @SubscribeEvent
         public static void registerModels(ModelRegistryEvent event)
         {
             if (ENABLED)
@@ -66,19 +71,5 @@ public class PathNodeTypeTest
             }
         }
     }
-
-    private static final class TestBlock extends Block
-    {
-        TestBlock()
-        {
-            super(Material.ROCK);
-            setRegistryName("test_block");
-        }
-
-        @Override
-        public PathNodeType getAiPathNodeType(IBlockState state, IBlockAccess world, BlockPos pos)
-        {
-            return PathNodeType.DOOR_OPEN;
-        }
-    }
+    */
 }

@@ -1,10 +1,10 @@
 --- a/net/minecraft/entity/monster/EvokerEntity.java
 +++ b/net/minecraft/entity/monster/EvokerEntity.java
-@@ -286,7 +286,7 @@
+@@ -287,7 +287,7 @@
              return false;
           } else if (EvokerEntity.this.field_70173_aa < this.field_193322_d) {
              return false;
--         } else if (!EvokerEntity.this.field_70170_p.func_82736_K().func_82766_b("mobGriefing")) {
+-         } else if (!EvokerEntity.this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223599_b)) {
 +         } else if (!net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(EvokerEntity.this.field_70170_p, EvokerEntity.this)) {
              return false;
           } else {

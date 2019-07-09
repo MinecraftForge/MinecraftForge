@@ -1,6 +1,6 @@
 --- a/net/minecraft/block/Block.java
 +++ b/net/minecraft/block/Block.java
-@@ -74,9 +74,10 @@
+@@ -75,9 +75,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -13,7 +13,16 @@
     private static final Direction[] field_212556_a = new Direction[]{Direction.WEST, Direction.EAST, Direction.NORTH, Direction.SOUTH, Direction.DOWN, Direction.UP};
     private static final LoadingCache<VoxelShape, Boolean> field_223006_b = CacheBuilder.newBuilder().maximumSize(512L).weakKeys().build(new CacheLoader<VoxelShape, Boolean>() {
        public Boolean load(VoxelShape p_load_1_) {
-@@ -290,7 +291,7 @@
+@@ -246,6 +247,8 @@
+       this.field_149765_K = p_i48440_1_.field_200961_i;
+       this.field_208621_p = p_i48440_1_.field_208772_j;
+       this.field_220085_g = p_i48440_1_.field_222381_j;
++      this.harvestLevel = p_i48440_1_.harvestLevel;
++      this.harvestTool = p_i48440_1_.harvestTool;
+       this.field_176227_L = builder.func_206893_a(BlockState::new);
+       this.func_180632_j(this.field_176227_L.func_177621_b());
+    }
+@@ -291,7 +294,7 @@
  
     @Deprecated
     public boolean func_196253_a(BlockState p_196253_1_, BlockItemUseContext p_196253_2_) {
@@ -22,7 +31,7 @@
     }
  
     @Deprecated
-@@ -302,8 +303,9 @@
+@@ -303,8 +306,9 @@
        return this.field_149789_z;
     }
  
@@ -33,7 +42,7 @@
     }
  
     @Deprecated
-@@ -314,7 +316,7 @@
+@@ -315,7 +319,7 @@
     @Deprecated
     @OnlyIn(Dist.CLIENT)
     public int func_220058_a(BlockState p_220058_1_, IEnviromentBlockReader p_220058_2_, BlockPos p_220058_3_) {
@@ -42,7 +51,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -459,10 +461,9 @@
+@@ -460,10 +464,9 @@
  
     @Deprecated
     public void func_196243_a(BlockState p_196243_1_, World p_196243_2_, BlockPos p_196243_3_, BlockState p_196243_4_, boolean p_196243_5_) {
@@ -54,7 +63,7 @@
     }
  
     @Deprecated
-@@ -471,8 +472,8 @@
+@@ -472,8 +475,8 @@
        if (f == -1.0F) {
           return 0.0F;
        } else {
@@ -65,25 +74,25 @@
        }
     }
  
-@@ -552,7 +553,7 @@
+@@ -553,7 +556,7 @@
     }
  
     public static void func_180635_a(World p_180635_0_, BlockPos p_180635_1_, ItemStack p_180635_2_) {
--      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_82766_b("doTileDrops")) {
-+      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_82766_b("doTileDrops") && !p_180635_0_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
+-      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
++      if (!p_180635_0_.field_72995_K && !p_180635_2_.func_190926_b() && p_180635_0_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180635_0_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
           float f = 0.5F;
           double d0 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
           double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
-@@ -564,7 +565,7 @@
+@@ -565,7 +568,7 @@
     }
  
     public void func_180637_b(World p_180637_1_, BlockPos p_180637_2_, int p_180637_3_) {
--      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_82766_b("doTileDrops")) {
-+      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_82766_b("doTileDrops") && !p_180637_1_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
+-      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f)) {
++      if (!p_180637_1_.field_72995_K && p_180637_1_.func_82736_K().func_223586_b(GameRules.field_223603_f) && !p_180637_1_.restoringBlockSnapshots) { // do not drop items while restoring blockstates, prevents item dupe
           while(p_180637_3_ > 0) {
              int i = ExperienceOrbEntity.func_70527_a(p_180637_3_);
              p_180637_3_ -= i;
-@@ -574,6 +575,7 @@
+@@ -575,6 +578,7 @@
  
     }
  
@@ -91,7 +100,7 @@
     public float func_149638_a() {
        return this.field_149781_w;
     }
-@@ -676,6 +678,7 @@
+@@ -677,6 +681,7 @@
        p_176216_2_.func_213317_d(p_176216_2_.func_213322_ci().func_216372_d(1.0D, 0.0D, 1.0D));
     }
  
@@ -99,7 +108,7 @@
     @OnlyIn(Dist.CLIENT)
     public ItemStack func_185473_a(IBlockReader p_185473_1_, BlockPos p_185473_2_, BlockState p_185473_3_) {
        return new ItemStack(this);
-@@ -690,6 +693,7 @@
+@@ -691,6 +696,7 @@
        return Fluids.field_204541_a.func_207188_f();
     }
  
@@ -107,7 +116,7 @@
     public float func_208618_m() {
        return this.field_149765_K;
     }
-@@ -710,6 +714,7 @@
+@@ -711,6 +717,7 @@
     public void func_176224_k(World p_176224_1_, BlockPos p_176224_2_) {
     }
  
@@ -115,7 +124,7 @@
     public boolean func_149659_a(Explosion p_149659_1_) {
        return true;
     }
-@@ -754,6 +759,7 @@
+@@ -755,6 +762,7 @@
        }
     }
  
@@ -123,7 +132,7 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
-@@ -779,13 +785,80 @@
+@@ -780,13 +788,80 @@
     }
  
     public static boolean func_196252_e(Block p_196252_0_) {
@@ -206,3 +215,38 @@
     public static enum OffsetType {
        NONE,
        XZ,
+@@ -805,6 +880,8 @@
+       private float field_200961_i = 0.6F;
+       private ResourceLocation field_222381_j;
+       private boolean field_208772_j;
++      private int harvestLevel = -1;
++      private net.minecraftforge.common.ToolType harvestTool;
+ 
+       private Properties(Material p_i48616_1_, MaterialColor p_i48616_2_) {
+          this.field_200953_a = p_i48616_1_;
+@@ -835,6 +912,8 @@
+          block$properties.field_200956_d = p_200950_0_.field_149762_H;
+          block$properties.field_200961_i = p_200950_0_.func_208618_m();
+          block$properties.field_208772_j = p_200950_0_.field_208621_p;
++         block$properties.harvestLevel = p_200950_0_.harvestLevel;
++         block$properties.harvestTool = p_200950_0_.harvestTool;
+          return block$properties;
+       }
+ 
+@@ -883,6 +962,16 @@
+          return this;
+       }
+ 
++      public Block.Properties harvestLevel(int harvestLevel) {
++          this.harvestLevel = harvestLevel;
++          return this;
++      }
++
++      public Block.Properties harvestTool(net.minecraftforge.common.ToolType harvestTool) {
++          this.harvestTool = harvestTool;
++          return this;
++      }
++
+       protected Block.Properties func_222380_e() {
+          this.field_222381_j = LootTables.field_186419_a;
+          return this;

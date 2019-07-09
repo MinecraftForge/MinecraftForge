@@ -57,7 +57,7 @@
 +                  simplebakedmodel$builder.func_177648_a(makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
                 } else {
 -                  simplebakedmodel$builder.func_177650_a(p_217644_4_.func_188048_b().func_177523_a(blockpartface.field_178244_b), func_217645_a(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
-+                  simplebakedmodel$builder.func_177650_a(p_217644_4_.getState().apply(java.util.Optional.empty()).map(trsr -> trsr.rotate(direction)).orElse(direction), makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
++                  simplebakedmodel$builder.func_177650_a(p_217644_4_.getState().apply(java.util.Optional.empty()).map(trsr -> trsr.rotate(blockpartface.field_178244_b)).orElse(blockpartface.field_178244_b), makeBakedQuad(blockpart, blockpartface, textureatlassprite1, direction, p_217644_4_));
                 }
              }
           }

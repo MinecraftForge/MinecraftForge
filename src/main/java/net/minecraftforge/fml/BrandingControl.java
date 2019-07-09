@@ -23,25 +23,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Predicate;
 import java.util.stream.IntStream;
+
 import net.minecraft.resources.IResourceManager;
-import net.minecraftforge.resource.IResourceType;
-import net.minecraftforge.resource.VanillaResourceType;
+import net.minecraft.resources.IResourceManagerReloadListener;
 import net.minecraftforge.versions.forge.ForgeVersion;
 import net.minecraftforge.versions.mcp.MCPVersion;
 
-
-import net.minecraft.resources.IResourceManager;
-import net.minecraftforge.resource.IResourceType;
-import net.minecraftforge.resource.VanillaResourceType;
-import net.minecraftforge.versions.forge.ForgeVersion;
-import net.minecraftforge.versions.mcp.MCPVersion;
-
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
 
 public class BrandingControl
 {
@@ -86,10 +74,12 @@ public class BrandingControl
         return "forge";
     }
 
-    public static void clearCaches(IResourceManager resourceManager, Predicate<IResourceType> resourcePredicate) {
-        if (resourcePredicate.test(VanillaResourceType.LANGUAGES)) {
-            brandings = null;
-            brandingsNoMC = null;
-        }
+    public static IResourceManagerReloadListener resourceManagerReloadListener() {
+        return BrandingControl::onResourceManagerReload;
+    }
+
+    private static void onResourceManagerReload(IResourceManager resourceManager) {
+        brandings = null;
+        brandingsNoMC = null;
     }
 }

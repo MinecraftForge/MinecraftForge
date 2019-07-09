@@ -68,7 +68,7 @@ public class FMLPlayMessages
         SpawnEntity(Entity e)
         {
             this.entity = e;
-            this.typeId = Registry.field_212629_r.getId(e.getType());
+            this.typeId = Registry.ENTITY_TYPE.getId(e.getType());
             this.entityId = e.getEntityId();
             this.uuid = e.getUniqueID();
             this.posX = e.posX;
@@ -143,7 +143,7 @@ public class FMLPlayMessages
         public static void handle(SpawnEntity msg, Supplier<NetworkEvent.Context> ctx)
         {
             ctx.get().enqueueWork(() -> {
-                EntityType<?> type = Registry.field_212629_r.getByValue(msg.typeId);
+                EntityType<?> type = Registry.ENTITY_TYPE.getByValue(msg.typeId);
                 if (type == null)
                 {
                     throw new RuntimeException(String.format("Could not spawn entity (id %d) with unknown type at (%f, %f, %f)", msg.entityId, msg.posX, msg.posY, msg.posZ));
@@ -163,7 +163,7 @@ public class FMLPlayMessages
 
                 e.setEntityId(msg.entityId);
                 e.setUniqueId(msg.uuid);
-                world.filter(ClientWorld.class::isInstance).ifPresent(w->((ClientWorld)w).func_217411_a(msg.entityId, e));
+                world.filter(ClientWorld.class::isInstance).ifPresent(w->((ClientWorld)w).addEntity(msg.entityId, e));
                 e.setVelocity(msg.velX / 8000.0, msg.velY / 8000.0, msg.velZ / 8000.0);
                 if (e instanceof IEntityAdditionalSpawnData)
                 {
@@ -183,7 +183,7 @@ public class FMLPlayMessages
 
         OpenContainer(ContainerType<?> id, int windowId, ITextComponent name, PacketBuffer additionalData)
         {
-            this(Registry.field_218366_G.getId(id), windowId, name, additionalData);
+            this(Registry.MENU.getId(id), windowId, name, additionalData);
         }
 
         private OpenContainer(int id, int windowId, ITextComponent name, PacketBuffer additionalData) 
@@ -223,7 +223,7 @@ public class FMLPlayMessages
         }
 
         public final ContainerType<?> getType() {
-            return Registry.field_218366_G.getByValue(this.id);
+            return Registry.MENU.getByValue(this.id);
         }
 
         public int getWindowId() {

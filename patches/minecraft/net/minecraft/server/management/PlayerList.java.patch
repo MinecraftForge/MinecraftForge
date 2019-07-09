@@ -1,13 +1,13 @@
 --- a/net/minecraft/server/management/PlayerList.java
 +++ b/net/minecraft/server/management/PlayerList.java
-@@ -109,6 +109,14 @@
+@@ -110,6 +110,14 @@
        playerprofilecache.func_152649_a(gameprofile);
        CompoundNBT compoundnbt = this.func_72380_a(p_72355_2_);
        ServerWorld serverworld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
 +
 +      //Forge: Make sure the dimension hasn't been deleted, if so stick them in the overworld.
 +      if (serverworld == null) {
-+         p_72355_2_.field_71093_bK = DimensionType.OVERWORLD;
++         p_72355_2_.field_71093_bK = DimensionType.field_223227_a_;
 +         serverworld = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
 +         p_72355_2_.func_70107_b(serverworld.func_72912_H().func_76079_c(), serverworld.func_72912_H().func_76075_d(), serverworld.func_72912_H().func_76074_e());
 +      }
@@ -15,7 +15,7 @@
        p_72355_2_.func_70029_a(serverworld);
        p_72355_2_.field_71134_c.func_73080_a((ServerWorld)p_72355_2_.field_70170_p);
        String s1 = "local";
-@@ -162,8 +170,9 @@
+@@ -163,8 +171,9 @@
  
        if (compoundnbt != null && compoundnbt.func_150297_b("RootVehicle", 10)) {
           CompoundNBT compoundnbt1 = compoundnbt.func_74775_l("RootVehicle");
@@ -26,7 +26,7 @@
           });
           if (entity1 != null) {
              UUID uuid = compoundnbt1.func_186857_a("Attach");
-@@ -190,6 +199,7 @@
+@@ -191,6 +200,7 @@
        }
  
        p_72355_2_.func_71116_b();
@@ -34,7 +34,7 @@
     }
  
     protected void func_96456_a(ServerScoreboard p_96456_1_, ServerPlayerEntity p_96456_2_) {
-@@ -251,6 +261,7 @@
+@@ -252,6 +262,7 @@
           compoundnbt1 = compoundnbt;
           p_72380_1_.func_70020_e(compoundnbt);
           field_148546_d.debug("loading single player");
@@ -42,7 +42,7 @@
        } else {
           compoundnbt1 = this.field_72412_k.func_75752_b(p_72380_1_);
        }
-@@ -259,6 +270,7 @@
+@@ -260,6 +271,7 @@
     }
  
     protected void func_72391_b(ServerPlayerEntity p_72391_1_) {
@@ -50,7 +50,7 @@
        this.field_72412_k.func_75753_a(p_72391_1_);
        ServerStatisticsManager serverstatisticsmanager = this.field_148547_k.get(p_72391_1_.func_110124_au());
        if (serverstatisticsmanager != null) {
-@@ -273,6 +285,7 @@
+@@ -274,6 +286,7 @@
     }
  
     public void func_72367_e(ServerPlayerEntity p_72367_1_) {
@@ -58,7 +58,7 @@
        ServerWorld serverworld = p_72367_1_.func_71121_q();
        p_72367_1_.func_195066_a(Stats.field_75947_j);
        this.func_72391_b(p_72367_1_);
-@@ -363,10 +376,18 @@
+@@ -364,10 +377,18 @@
     }
  
     public ServerPlayerEntity func_72368_a(ServerPlayerEntity p_72368_1_, DimensionType p_72368_2_, boolean p_72368_3_) {
@@ -68,7 +68,7 @@
 +      else if (!world.func_201675_m().func_76567_e())
 +         p_72368_2_ = world.func_201675_m().getRespawnDimension(p_72368_1_);
 +      if (field_72400_f.func_71218_a(p_72368_2_) == null)
-+         p_72368_2_ = DimensionType.OVERWORLD;
++         p_72368_2_ = DimensionType.field_223227_a_;
 +
        this.field_72404_b.remove(p_72368_1_);
 -      p_72368_1_.func_71121_q().func_217434_e(p_72368_1_);
@@ -80,7 +80,7 @@
        p_72368_1_.field_71093_bK = p_72368_2_;
        PlayerInteractionManager playerinteractionmanager;
        if (this.field_72400_f.func_71242_L()) {
-@@ -378,6 +399,8 @@
+@@ -379,6 +400,8 @@
        ServerPlayerEntity serverplayerentity = new ServerPlayerEntity(this.field_72400_f, this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK), p_72368_1_.func_146103_bH(), playerinteractionmanager);
        serverplayerentity.field_71135_a = p_72368_1_.field_71135_a;
        serverplayerentity.func_193104_a(p_72368_1_, p_72368_3_);
@@ -89,7 +89,7 @@
        serverplayerentity.func_145769_d(p_72368_1_.func_145782_y());
        serverplayerentity.func_184819_a(p_72368_1_.func_184591_cq());
  
-@@ -392,7 +415,7 @@
+@@ -393,7 +416,7 @@
           if (optional.isPresent()) {
              Vec3d vec3d = optional.get();
              serverplayerentity.func_70012_b(vec3d.field_72450_a, vec3d.field_72448_b, vec3d.field_72449_c, 0.0F, 0.0F);
@@ -98,7 +98,7 @@
           } else {
              serverplayerentity.field_71135_a.func_147359_a(new SChangeGameStatePacket(0, 0.0F));
           }
-@@ -416,6 +439,7 @@
+@@ -417,6 +440,7 @@
        this.field_177454_f.put(serverplayerentity.func_110124_au(), serverplayerentity);
        serverplayerentity.func_71116_b();
        serverplayerentity.func_70606_j(serverplayerentity.func_110143_aJ());

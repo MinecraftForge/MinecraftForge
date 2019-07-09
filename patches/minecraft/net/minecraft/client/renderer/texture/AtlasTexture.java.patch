@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/texture/AtlasTexture.java
 +++ b/net/minecraft/client/renderer/texture/AtlasTexture.java
-@@ -79,10 +79,12 @@
+@@ -79,6 +79,7 @@
           }
        }
  
@@ -8,11 +8,14 @@
     }
  
     public AtlasTexture.SheetData func_215254_a(IResourceManager p_215254_1_, Iterable<ResourceLocation> p_215254_2_, IProfiler p_215254_3_) {
-       Set<ResourceLocation> set = Sets.newHashSet();
-+      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this);
-       p_215254_3_.func_76320_a("preparing");
-       p_215254_2_.forEach((p_215253_1_) -> {
-          if (p_215253_1_ == null) {
+@@ -91,6 +92,7 @@
+             set.add(p_215253_1_);
+          }
+       });
++      net.minecraftforge.client.ForgeHooksClient.onTextureStitchedPre(this, set);
+       int i = this.field_215265_o;
+       Stitcher stitcher = new Stitcher(i, i, this.field_147636_j);
+       int j = Integer.MAX_VALUE;
 @@ -110,6 +112,7 @@
  
        int i1 = Math.min(j, k);
@@ -29,15 +32,14 @@
           try {
              iresource = p_195422_1_.func_199002_a(resourcelocation);
              p_195422_2_.func_195664_a(iresource, this.field_147636_j + 1);
-@@ -267,7 +271,94 @@
-       this.field_94252_e.clear();
+@@ -268,6 +272,93 @@
        this.field_94258_i.clear();
     }
-+   
+ 
 +   //===================================================================================================
 +   //                                           Forge Start
 +   //===================================================================================================
- 
++
 +   private final java.util.Deque<ResourceLocation> loadingSprites = new java.util.ArrayDeque<>();
 +   private final java.util.Set<ResourceLocation> loadedSprites = new java.util.HashSet<>();
 +

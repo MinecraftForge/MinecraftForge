@@ -23,7 +23,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.forgespi.language.ILifecycleEvent;
 
 import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -41,7 +41,7 @@ public enum LifecycleEventProvider
     GATHERDATA(()->new GatherDataLifecycleEvent(ModLoadingStage.GATHERDATA), ModList.inlineDispatcher);
 
     private final Supplier<? extends LifecycleEvent> event;
-    private final BiConsumer<LifecycleEvent, Consumer<List<ModLoadingException>>> eventDispatcher;
+    private final EventHandler<LifecycleEvent, Consumer<List<ModLoadingException>>,Executor, Runnable> eventDispatcher;
     private Supplier<Event> customEventSupplier;
     private LifecycleEvent.Progression progression = LifecycleEvent.Progression.NEXT;
 
@@ -50,7 +50,7 @@ public enum LifecycleEventProvider
         this(e, ModList.parallelDispatcher);
     }
 
-    LifecycleEventProvider(Supplier<? extends LifecycleEvent> e, BiConsumer<LifecycleEvent, Consumer<List<ModLoadingException>>> eventDispatcher)
+    LifecycleEventProvider(Supplier<? extends LifecycleEvent> e, EventHandler<LifecycleEvent, Consumer<List<ModLoadingException>>,Executor, Runnable> eventDispatcher)
     {
         this.event = e;
         this.eventDispatcher = eventDispatcher;
@@ -64,11 +64,11 @@ public enum LifecycleEventProvider
         this.progression = progression;
     }
 
-    public void dispatch(Consumer<List<ModLoadingException>> errorHandler) {
+    public void dispatch(Consumer<List<ModLoadingException>> errorHandler, final Executor executor, final Runnable ticker) {
         final LifecycleEvent lifecycleEvent = this.event.get();
         lifecycleEvent.setCustomEventSupplier(this.customEventSupplier);
         lifecycleEvent.changeProgression(this.progression);
-        this.eventDispatcher.accept(lifecycleEvent, errorHandler);
+        this.eventDispatcher.dispatchEvent(lifecycleEvent, errorHandler, executor, ticker);
     }
 
 
@@ -146,5 +146,9 @@ public enum LifecycleEventProvider
         public ModLoadingStage toStage() {
             return ModLoadingStage.DONE;
         }
+    }
+
+    public interface EventHandler<T extends LifecycleEvent, U extends Consumer<? extends List<? super ModLoadingException>>, V extends Executor, R extends Runnable>  {
+        void dispatchEvent(T event, U exceptionHandler, V executor, R ticker);
     }
 }

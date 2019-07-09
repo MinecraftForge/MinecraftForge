@@ -232,7 +232,7 @@ public class FluidUtil
             return FluidActionResult.FAILURE;
         }
 
-        if (player != null && player.playerAbilities.isCreativeMode)
+        if (player != null && player.abilities.isCreativeMode)
         {
             FluidActionResult filledReal = tryFillContainer(container, fluidSource, maxAmount, player, doFill);
             if (filledReal.isSuccess())
@@ -300,7 +300,7 @@ public class FluidUtil
             return FluidActionResult.FAILURE;
         }
 
-        if (player != null && player.playerAbilities.isCreativeMode)
+        if (player != null && player.abilities.isCreativeMode)
         {
             FluidActionResult emptiedReal = tryEmptyContainer(container, fluidDestination, maxAmount, player, doDrain);
             if (emptiedReal.isSuccess())

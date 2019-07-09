@@ -20,13 +20,7 @@
 package net.minecraftforge.common;
 
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.BrandingControl;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.FMLWorldPersistenceHook;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.WorldPersistenceHooks;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -43,21 +37,18 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.resources.SimpleReloadableResourceManager;
 import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
+import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.resource.ISelectiveResourceReloadListener;
 import net.minecraftforge.fluids.UniversalBucket;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
@@ -108,6 +99,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.register(ForgeConfig.class);
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
+        StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
     }
 
 /*
@@ -143,13 +135,6 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             VersionChecker.startVersionCheck();
         }
-
-        // Brandings need to recompute when language changes
-        DistExecutor.runWhenOn(Dist.CLIENT, () -> () -> {
-            Minecraft mc = Minecraft.getInstance();
-            if (mc != null)
-                ((SimpleReloadableResourceManager)mc.getResourceManager()).func_219534_a((ISelectiveResourceReloadListener) BrandingControl::clearCaches);
-        });
     }
 
 /*
@@ -241,6 +226,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             gen.addProvider(new ForgeBlockTagsProvider(gen));
             gen.addProvider(new ForgeItemTagsProvider(gen));
+            gen.addProvider(new ForgeRecipeProvider(gen));
         }
     }
 }

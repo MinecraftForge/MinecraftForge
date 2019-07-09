@@ -33,13 +33,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinWorkerThread;
+import java.util.concurrent.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static net.minecraftforge.fml.Logging.LOADING;
 
@@ -79,9 +78,9 @@ public class ModList
         return INSTANCE;
     }
 
-    static BiConsumer<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>> inlineDispatcher = (event, errors) -> ModList.get().dispatchSynchronousEvent(event, errors);
+    static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor, Runnable> inlineDispatcher = (event, errors, executor, ticker) -> ModList.get().dispatchSynchronousEvent(event, errors, executor);
 
-    static BiConsumer<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>> parallelDispatcher = (event, errors) -> ModList.get().dispatchParallelEvent(event, errors);
+    static LifecycleEventProvider.EventHandler<LifecycleEventProvider.LifecycleEvent, Consumer<List<ModLoadingException>>, Executor, Runnable> parallelDispatcher = (event, errors, executor, ticker) -> ModList.get().dispatchParallelEvent(event, errors, executor, ticker);
 
     public static ModList get() {
         return INSTANCE;
@@ -105,25 +104,29 @@ public class ModList
         return this.fileById.get(modid);
     }
 
-    private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
+    private void dispatchSynchronousEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor) {
         LOGGER.debug(LOADING, "Dispatching synchronous event {}", lifecycleEvent);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
         this.mods.forEach(m->m.transitionState(lifecycleEvent, errorHandler));
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
-    private void dispatchParallelEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler) {
+    private void dispatchParallelEvent(LifecycleEventProvider.LifecycleEvent lifecycleEvent, final Consumer<List<ModLoadingException>> errorHandler, final Executor executor, final Runnable ticker) {
         LOGGER.debug(LOADING, "Dispatching parallel event {}", lifecycleEvent);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
         DeferredWorkQueue.clear();
         try
         {
-            modLoadingThreadPool.submit(()->this.mods.parallelStream().forEach(m->m.transitionState(lifecycleEvent, errorHandler))).get();
+            final ForkJoinTask<?> parallelTask = modLoadingThreadPool.submit(() -> this.mods.parallelStream().forEach(m -> m.transitionState(lifecycleEvent, errorHandler)));
+            while (ticker != null && !parallelTask.isDone()) {
+                executor.execute(ticker);
+            }
+            parallelTask.get();
         }
         catch (InterruptedException | ExecutionException e)
         {
             LOGGER.error(LOADING, "Encountered an exception during parallel processing", e);
         }
-        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler);
+        DeferredWorkQueue.runTasks(lifecycleEvent.fromStage(), errorHandler, executor);
         FMLLoader.getLanguageLoadingProvider().forEach(lp->lp.consumeLifecycleEvent(()->lifecycleEvent));
     }
 
@@ -186,5 +189,9 @@ public class ModList
 
     public void forEachModContainer(BiConsumer<String, ModContainer> modContainerConsumer) {
         indexedMods.forEach(modContainerConsumer);
+    }
+
+    public <T> Stream<T> applyForEachModContainer(Function<ModContainer, T> function) {
+        return indexedMods.values().stream().map(function);
     }
 }

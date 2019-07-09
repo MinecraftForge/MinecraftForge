@@ -26,3 +26,11 @@
        p_212854_2_.func_219897_b();
        return modelbakery;
     }
+@@ -47,6 +53,7 @@
+       p_212853_1_.func_217844_a(p_212853_3_);
+       this.field_174958_a = p_212853_1_.func_217846_a();
+       this.field_174955_d = this.field_174958_a.get(ModelBakery.field_177604_a);
++      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.field_174958_a, (net.minecraftforge.client.model.ModelLoader) p_212853_1_);
+       p_212853_3_.func_219895_b("cache");
+       this.field_174957_c.func_178124_c();
+       p_212853_3_.func_76319_b();

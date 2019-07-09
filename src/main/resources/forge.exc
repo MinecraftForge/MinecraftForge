@@ -28,7 +28,7 @@ net/minecraft/client/renderer/model/multipart/Multipart.bake(Lnet/minecraft/clie
 
 net/minecraft/client/resources/ClientResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/resources/IResourcePack;Lnet/minecraft/resources/data/PackMetadataSection;Lnet/minecraft/resources/ResourcePackInfo$Priority;Z)V=|p_i48113_1_,p_i48113_2_,p_i48113_3_,p_i48113_4_,p_i48113_5_,p_i48113_6_,hidden
 net/minecraft/client/resources/ClientResourcePackInfo.<init>(Ljava/lang/String;ZLjava/util/function/Supplier;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/util/text/ITextComponent;Lnet/minecraft/resources/PackCompatibility;Lnet/minecraft/resources/ResourcePackInfo$Priority;ZLnet/minecraft/client/renderer/texture/NativeImage;Z)V=|p_i48114_1_,p_i48114_2_,p_i48114_3_,p_i48114_4_,p_i48114_5_,p_i48114_6_,p_i48114_7_,p_i48114_8_,p_i48114_9_,hidden
-
+net/minecraft/client/gui/ScreenManager.getScreenFactory(Lnet/minecraft/inventory/container/ContainerType;Lnet/minecraft/client/Minecraft;ILnet/minecraft/util/text/ITextComponent;)Ljava/util/Optional;=|p_216909_0_,p_216909_1_,p_216909_2_,p_216909_3_
 net/minecraft/entity/EntityClassification.create(Ljava/lang/String;Ljava/lang/String;IZZ)Lnet/minecraft/entity/EntityClassification;=|name,p_i50381_3_,p_i50381_4_,p_i50381_5_,p_i50381_6_
 
 net/minecraft/entity/player/PlayerEntity.getDigSpeed(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;)F=|p_184813_1_,pos
@@ -59,11 +59,16 @@ net/minecraft/world/World.getSunBrightnessBody(F)F=|p_72971_1_
 net/minecraft/world/World.getSkyColorBody(Lnet/minecraft/util/math/BlockPos;F)Lnet/minecraft/util/math/Vec3d;=|p_217382_1_,p_217382_2_
 net/minecraft/world/World.getCloudColorBody(F)Lnet/minecraft/util/math/Vec3d;=|p_72824_1_
 net/minecraft/world/ServerWorld.canMineBlockBody(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;)Z=|p_175660_1_,p_175660_2_
+net/minecraft/world/ServerWorld.removeEntityComplete(Lnet/minecraft/entity/Entity;Z)V=|p_217484_1_,keepData
+net/minecraft/world/ServerWorld.removeEntity(Lnet/minecraft/entity/Entity;Z)V=|p_217467_1_,keepData
+net/minecraft/world/ServerWorld.removePlayer(Lnet/minecraft/entity/player/ServerPlayerEntity;Z)V=|p_217434_1_,keepData
 
+net/minecraft/world/dimension/DimensionType.<init>(ILjava/lang/String;Ljava/lang/String;Ljava/util/function/BiFunction;ZLnet/minecraftforge/common/ModDimension;Lnet/minecraft/network/PacketBuffer;)V=|p_i49935_1_,p_i49935_2_,p_i49935_3_,p_i49935_4_,p_i49935_5_,modType,data
 net/minecraft/world/chunk/BlockStateContainer.setBits(IZ)V=|p_186012_1_,forceBits
 
 net/minecraft/world/end/DragonFightManager.<init>(Lnet/minecraft/world/ServerWorld;Lnet/minecraft/nbt/CompoundNBT;Lnet/minecraft/world/dimension/EndDimension;)V=|p_i46669_1_,p_i46669_2_,dim
 
+net/minecraft/entity/EntityType.<init>(Lnet/minecraft/entity/EntityType$IFactory;Lnet/minecraft/entity/EntityClassification;ZZZLcom/mojang/datafixers/types/Type;Lnet/minecraft/entity/EntitySize;Ljava/util/function/Predicate;Ljava/util/function/ToIntFunction;Ljava/util/function/ToIntFunction;Ljava/util/function/BiFunction;)V=|p_i50385_1_,p_i50385_2_,p_i50385_3_,p_i50385_4_,p_i50385_5_,p_i50385_6_,p_i50385_7_,velocityUpdateSupplier,trackingRangeSupplier,updateIntervalSupplier,customClientFactory
 net/minecraft/world/spawner/WorldEntitySpawner.getSpawnList(Lnet/minecraft/world/gen/ChunkGenerator;Lnet/minecraft/entity/EntityClassification;Ljava/util/Random;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;)Z|p_222264_0_,p_222264_1_,p_222264_2_,p_222264_3_,world
 net/minecraft/world/spawner/WorldEntitySpawner.getSpawnList(Lnet/minecraft/world/gen/ChunkGenerator;Lnet/minecraft/entity/EntityClassification;Lnet/minecraft/world/biome/Biome$SpawnListEntry;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/world/World;)Z|p_222261_0_,p_222261_1_,p_222261_2_,p_222261_3_,world
 net/minecraft/world/spawner/WorldEntitySpawner.canSpawnAtBody(Lnet/minecraft/entity/EntitySpawnPlacementRegistry$PlacementType;Lnet/minecraft/world/IWorldReader;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/EntityType;)Z=|p_209382_0_,p_209382_1_,p_209382_2_,p_209382_3_
@@ -75,3 +80,5 @@ net/minecraft/world/storage/loot/LootEntryEmpty.<init>(II[Lnet/minecraft/world/s
 net/minecraft/world/storage/loot/LootEntryItem.<init>(Lnet/minecraft/item/Item;II[Lnet/minecraft/world/storage/loot/functions/LootFunction;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46644_1_,p_i46644_2_,p_i46644_3_,p_i46644_4_,p_i46644_5_,entryName
 net/minecraft/world/storage/loot/LootEntryTable.<init>(Lnet/minecraft/util/ResourceLocation;II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46639_1_,p_i46639_2_,p_i46639_3_,p_i46639_4_,entryName
 net/minecraft/world/storage/loot/LootPool.<init>([Lnet/minecraft/world/storage/loot/LootEntry;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Lnet/minecraft/world/storage/loot/RandomValueRange;Lnet/minecraft/world/storage/loot/RandomValueRange;Ljava/lang/String;)V=|p_i46643_1_,p_i46643_2_,p_i46643_3_,p_i46643_4_
+
+net/minecraft/util/shapes/EntitySelectionContext.<init>(Lnet/minecraft/entity/Entity;ZDLnet/minecraft/item/Item;)V=|entity,p_i51181_1_,p_i51181_2_,p_i51181_4_

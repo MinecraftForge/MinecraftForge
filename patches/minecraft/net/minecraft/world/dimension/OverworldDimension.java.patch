@@ -5,7 +5,7 @@
     }
  
 -   public DimensionType func_186058_p() {
--      return DimensionType.OVERWORLD;
+-      return DimensionType.field_223227_a_;
 -   }
 -
     public ChunkGenerator<? extends GenerationSettings> func_186060_c() {

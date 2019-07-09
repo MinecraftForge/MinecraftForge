@@ -226,7 +226,7 @@ public class StartupQuery {
                 }
 
                 if (query.isSynchronous()) {
-                    while (client.field_71462_r instanceof GuiNotification) {
+                    while (client.currentScreen instanceof GuiNotification) {
                         if (Thread.interrupted()) {
                             query.exception = new InterruptedException();
                             throw new RuntimeException();

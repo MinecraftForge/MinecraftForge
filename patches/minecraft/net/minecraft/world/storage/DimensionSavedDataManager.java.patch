@@ -1,20 +1,16 @@
 --- a/net/minecraft/world/storage/DimensionSavedDataManager.java
 +++ b/net/minecraft/world/storage/DimensionSavedDataManager.java
-@@ -47,6 +47,7 @@
+@@ -47,9 +47,13 @@
     @Nullable
     public <T extends WorldSavedData> T func_215753_b(Supplier<T> p_215753_1_, String p_215753_2_) {
        WorldSavedData worldsaveddata = this.field_212778_c.get(p_215753_2_);
 +      if (worldsaveddata == net.minecraftforge.common.util.DummyWorldSaveData.DUMMY) return null;
-       if (worldsaveddata == null) {
-          try {
-             File file1 = this.func_215754_a(p_215753_2_);
-@@ -55,6 +56,9 @@
-                CompoundNBT compoundnbt = this.func_215755_a(p_215753_2_, SharedConstants.func_215069_a().getWorldVersion());
-                worldsaveddata.func_76184_a(compoundnbt.func_74775_l("data"));
-                this.field_212778_c.put(p_215753_2_, worldsaveddata);
-+            } else {
-+               this.field_212778_c.put(p_215753_2_, net.minecraftforge.common.util.DummyWorldSaveData.DUMMY);
-+               return null;
-             }
-          } catch (Exception exception) {
-             field_212776_a.error("Error loading saved data: {}", p_215753_2_, exception);
+       if (worldsaveddata == null && !this.field_212778_c.containsKey(p_215753_2_)) {
+          worldsaveddata = this.<T>func_223409_c(p_215753_1_, p_215753_2_);
+          this.field_212778_c.put(p_215753_2_, worldsaveddata);
++      } else if (worldsaveddata == null) {
++         this.field_212778_c.put(p_215753_2_, net.minecraftforge.common.util.DummyWorldSaveData.DUMMY);
++         return null;
+       }
+ 
+       return (T)worldsaveddata;

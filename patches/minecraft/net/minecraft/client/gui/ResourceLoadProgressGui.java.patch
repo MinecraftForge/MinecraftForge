@@ -1,0 +1,10 @@
+--- a/net/minecraft/client/gui/ResourceLoadProgressGui.java
++++ b/net/minecraft/client/gui/ResourceLoadProgressGui.java
+@@ -79,6 +79,7 @@
+       this.blit(k1, i1, 0, 0, 256, 256);
+       float f3 = this.field_212975_c.func_219555_b();
+       this.field_212978_f = this.field_212978_f * 0.95F + f3 * 0.050000012F;
++      net.minecraftforge.fml.client.ClientModLoader.renderProgressText();
+       if (f < 1.0F) {
+          this.func_212972_a(i / 2 - 150, j / 4 * 3, i / 2 + 150, j / 4 * 3 + 10, this.field_212978_f, 1.0F - MathHelper.func_76131_a(f, 0.0F, 1.0F));
+       }

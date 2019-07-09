@@ -40,11 +40,11 @@
              this.func_219100_a(chunkpos, compoundnbt1);
              return true;
           } catch (Exception exception) {
-@@ -760,6 +765,7 @@
+@@ -756,6 +761,7 @@
        for(int l = i - this.field_219247_A; l <= i + this.field_219247_A; ++l) {
           for(int k = j - this.field_219247_A; k <= j + this.field_219247_A; ++k) {
              ChunkPos chunkpos = new ChunkPos(l, k);
 +            net.minecraftforge.event.ForgeEventFactory.fireChunkWatch(p_219234_2_, p_219234_1_, chunkpos, field_219255_i);
-             this.func_219199_a(p_219234_1_, chunkpos, new IPacket[2], !p_219234_2_ && !flag1, p_219234_2_ && !flag);
+             this.func_219199_a(p_219234_1_, chunkpos, new IPacket[2], !p_219234_2_, p_219234_2_);
           }
        }

@@ -1,0 +1,11 @@
+--- a/net/minecraft/util/math/shapes/ISelectionContext.java
++++ b/net/minecraft/util/math/shapes/ISelectionContext.java
+@@ -4,7 +4,7 @@
+ import net.minecraft.item.Item;
+ import net.minecraft.util.math.BlockPos;
+ 
+-public interface ISelectionContext {
++public interface ISelectionContext extends net.minecraftforge.common.extensions.IForgeSelectionContext {
+    static ISelectionContext func_216377_a() {
+       return EntitySelectionContext.field_216379_a;
+    }

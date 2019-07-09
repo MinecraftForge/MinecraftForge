@@ -74,7 +74,7 @@ class NamespacedWrapper<T extends IForgeRegistryEntry<T>> extends SimpleRegistry
     }
 
     @Override
-    public Optional<T> func_218349_b(@Nullable ResourceLocation name)
+    public Optional<T> getValue(@Nullable ResourceLocation name)
     {
         return Optional.ofNullable( this.delegate.getRaw(name)); //get without default
     }
