@@ -20,15 +20,15 @@
  
     public ServerWorld(MinecraftServer p_i50703_1_, Executor p_i50703_2_, SaveHandler p_i50703_3_, WorldInfo p_i50703_4_, DimensionType p_i50703_5_, IProfiler p_i50703_6_, IChunkStatusListener p_i50703_7_) {
        super(p_i50703_4_, p_i50703_5_, (p_217442_4_, p_217442_5_) -> {
--         return new ServerChunkProvider((ServerWorld)p_217442_4_, p_i50703_3_.func_75765_b(), p_i50703_3_.func_197718_i(), p_i50703_3_.func_186340_h(), p_i50703_2_, p_217442_5_.func_186060_c(), p_i50703_1_.func_184103_al().func_72395_o(), p_i50703_1_.func_184103_al().func_72395_o() - 2, p_i50703_7_, () -> {
-+         return new ServerChunkProvider((ServerWorld)p_217442_4_, p_i50703_3_.func_75765_b(), p_i50703_3_.func_197718_i(), p_i50703_3_.func_186340_h(), p_i50703_2_, p_217442_4_.func_175624_G().createChunkGenerator(p_217442_4_), p_i50703_1_.func_184103_al().func_72395_o(), p_i50703_1_.func_184103_al().func_72395_o() - 2, p_i50703_7_, () -> {
-             return p_i50703_1_.func_71218_a(DimensionType.OVERWORLD).func_217481_x();
+-         return new ServerChunkProvider((ServerWorld)p_217442_4_, p_i50703_3_.func_75765_b(), p_i50703_3_.func_197718_i(), p_i50703_3_.func_186340_h(), p_i50703_2_, p_217442_5_.func_186060_c(), p_i50703_1_.func_184103_al().func_72395_o(), p_i50703_7_, () -> {
++         return new ServerChunkProvider((ServerWorld)p_217442_4_, p_i50703_3_.func_75765_b(), p_i50703_3_.func_197718_i(), p_i50703_3_.func_186340_h(), p_i50703_2_, p_217442_4_.func_175624_G().createChunkGenerator(p_217442_4_), p_i50703_1_.func_184103_al().func_72395_o(), p_i50703_7_, () -> {
+             return p_i50703_1_.func_71218_a(DimensionType.field_223227_a_).func_217481_x();
           });
        }, p_i50703_6_, false);
 @@ -166,6 +170,7 @@
        }
  
-       this.field_217496_L = this.field_73011_w.func_186058_p() == DimensionType.OVERWORLD ? new WanderingTraderSpawner(this) : null;
+       this.field_217496_L = this.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ ? new WanderingTraderSpawner(this) : null;
 +      this.initCapabilities();
     }
  
@@ -39,7 +39,7 @@
        boolean flag = this.func_72896_J();
 +      this.field_73011_w.updateWeather(() -> {
        if (this.field_73011_w.func_191066_m()) {
-          if (this.func_82736_K().func_82766_b("doWeatherCycle")) {
+          if (this.func_82736_K().func_223586_b(GameRules.field_223617_t)) {
              int i = this.field_72986_A.func_176133_A();
 @@ -236,6 +242,7 @@
  
@@ -76,7 +76,7 @@
 @@ -265,7 +276,7 @@
        })) {
           this.field_73068_P = false;
-          if (this.func_82736_K().func_82766_b("doDaylightCycle")) {
+          if (this.func_82736_K().func_223586_b(GameRules.field_223607_j)) {
 -            long l = this.field_72986_A.func_76073_f() + 24000L;
 +            long l = this.func_72820_D() + 24000L;
              this.func_72877_b(l - l % 24000L);
@@ -186,10 +186,10 @@
           if (!(entity instanceof MobEntity) || !((MobEntity)entity).func_104002_bU()) {
 -            EntityClassification entityclassification = entity.func_200600_R().func_220339_d();
 +            EntityClassification entityclassification = entity.getClassification(true);
-             if (entityclassification != EntityClassification.MISC && this.func_72863_F().func_217204_a(entity)) {
-                object2intmap.computeInt(entityclassification, (p_217480_0_, p_217480_1_) -> {
-                   return 1 + (p_217480_1_ == null ? 0 : p_217480_1_);
-@@ -816,6 +835,7 @@
+             if (entityclassification != EntityClassification.MISC && this.func_72863_F().func_223435_b(entity)) {
+                object2intmap.mergeInt(entityclassification, 1, Integer::sum);
+             }
+@@ -814,6 +833,7 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -197,7 +197,7 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -840,6 +860,7 @@
+@@ -838,6 +858,7 @@
        } else if (this.func_217478_l(p_72838_1_)) {
           return false;
        } else {
@@ -205,7 +205,7 @@
           IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.field_70165_t / 16.0D), MathHelper.func_76128_c(p_72838_1_.field_70161_v / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
           if (!(ichunk instanceof Chunk)) {
              return false;
-@@ -855,6 +876,7 @@
+@@ -853,6 +874,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -213,7 +213,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -891,11 +913,15 @@
+@@ -889,11 +911,15 @@
     }
  
     public void func_217484_g(Entity p_217484_1_) {
@@ -230,7 +230,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -909,6 +935,7 @@
+@@ -907,6 +933,7 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
@@ -238,7 +238,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -929,9 +956,13 @@
+@@ -927,9 +954,13 @@
           }
        }
  
@@ -252,7 +252,7 @@
        if (this.field_217492_a) {
           throw new IllegalStateException("Removing entity while ticking!");
        } else {
-@@ -950,7 +981,10 @@
+@@ -948,7 +979,10 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -264,7 +264,7 @@
        this.func_217467_h(p_217434_1_);
        this.func_72854_c();
     }
-@@ -975,10 +1009,20 @@
+@@ -973,10 +1007,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -285,7 +285,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.field_70165_t, p_217384_2_.field_70163_u, p_217384_2_.field_70161_v, p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1014,6 +1058,7 @@
+@@ -1012,6 +1056,7 @@
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
        Explosion explosion = new Explosion(this, p_217401_1_, p_217401_3_, p_217401_5_, p_217401_7_, p_217401_9_, p_217401_10_, p_217401_11_);
@@ -293,7 +293,7 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
-@@ -1264,4 +1309,15 @@
+@@ -1261,4 +1306,15 @@
     public void func_217489_a(IReputationType p_217489_1_, Entity p_217489_2_, IReputationTracking p_217489_3_) {
        p_217489_3_.func_213739_a(p_217489_1_, p_217489_2_);
     }
