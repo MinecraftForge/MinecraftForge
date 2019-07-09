@@ -264,11 +264,18 @@ public class ForgeEventFactory
         return drops;
     }
 
-    public static NonNullList<ItemStack> fireBlockDropLootEvent(World world, BlockPos pos, BlockState state, @Nullable LootContext context, List<ItemStack> drops)
+    public static NonNullList<ItemStack> fireBlockDropLootEvent(LootContext.Builder contextBuilder, List<ItemStack> drops)
     {
+        // Build the loot context and gather info about the block from it.
+        LootContext context = contextBuilder.build(LootParameterSets.BLOCK);
+        ServerWorld world = context.getWorld();
+        BlockPos pos = context.get(LootParameters.POSITION);
+        BlockState state = context.get(LootParameters.BLOCK_STATE);
+
+        // Create a NonNullList to pass to the event then fire it, return the drops from the event for the game to process.
         NonNullList<ItemStack> nonNullDrops = NonNullList.create();
         nonNullDrops.addAll(drops);
-        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, context, nonNullDrops);
+        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, contextBuilder.build(LootParameterSets.BLOCK), nonNullDrops);
         MinecraftForge.EVENT_BUS.post(dropEvent);
         return dropEvent.getDrops();
     }
