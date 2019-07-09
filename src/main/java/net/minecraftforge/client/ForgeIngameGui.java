@@ -88,6 +88,10 @@ public class ForgeIngameGui extends IngameGui
 
     public static int left_height = 39;
     public static int right_height = 39;
+    /*
+     * If the Euclidian distance to the moused-over block in meters is less than this value, the "Looking at" text will appear on the debug overlay.
+     */
+    public static double rayTraceDistance = 20.0D;
 
     private FontRenderer fontrenderer = null;
     private RenderGameOverlayEvent eventParent;
@@ -842,8 +846,8 @@ public class ForgeIngameGui extends IngameGui
         public void update()
         {
             Entity entity = this.mc.getRenderViewEntity();
-            this.rayTraceBlock = entity.func_213324_a(20.0D, 0.0F, false);
-            this.rayTraceFluid = entity.func_213324_a(20.0D, 0.0F, true);
+            this.rayTraceBlock = entity.func_213324_a(rayTraceDistance, 0.0F, false);
+            this.rayTraceFluid = entity.func_213324_a(rayTraceDistance, 0.0F, true);
         }
         @Override protected void renderDebugInfoLeft(){}
         @Override protected void renderDebugInfoRight(){}

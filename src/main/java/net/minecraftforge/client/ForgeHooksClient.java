@@ -31,6 +31,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
@@ -178,9 +179,9 @@ public class ForgeHooksClient
         return MinecraftForge.EVENT_BUS.post(new RenderSpecificHandEvent(hand, partialTicks, interpPitch, swingProgress, equipProgress, stack));
     }
 
-    public static void onTextureStitchedPre(AtlasTexture map)
+    public static void onTextureStitchedPre(AtlasTexture map, Set<ResourceLocation> resourceLocations)
     {
-        ModLoader.get().postEvent(new TextureStitchEvent.Pre(map));
+        ModLoader.get().postEvent(new TextureStitchEvent.Pre(map, resourceLocations));
 //        ModelLoader.White.INSTANCE.register(map); // TODO Custom TAS
         ModelDynBucket.LoaderDynBucket.INSTANCE.register(map);
     }

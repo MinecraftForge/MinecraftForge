@@ -27,10 +27,15 @@ import net.minecraftforge.api.distmarker.Dist;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+
+import static net.minecraftforge.fml.loading.LogMarkers.CORE;
 
 public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements ILaunchHandlerService
 {
@@ -57,7 +62,10 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
     {
         super.configureTransformationClassLoader(builder);
-        builder.addTransformationPath(LibraryFinder.findJarPathFor("com/mojang/realmsclient/plugin/RealmsPluginImpl.class", "realms"));
+        Path realms = LibraryFinder.findJarPathFor("com/mojang/realmsclient/plugin/RealmsPluginImpl.class", "realms");
+        Path mapped = Paths.get(realms.toString().substring(0, realms.toString().length() - 4) + '-' + FMLLoader.getMcpVersion() + ".jar");
+        LOGGER.debug(CORE, "Found realms library at {}", Files.exists(mapped) ? mapped : realms);
+        builder.addTransformationPath(Files.exists(mapped) ? mapped : realms);
     }
 
     @SuppressWarnings("unchecked")

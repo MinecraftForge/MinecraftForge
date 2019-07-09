@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "#X#",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:rods/wooden"
+    },
+    "X": {
+      "item": "minecraft:leather"
+    }
+  },
+  "result": {
+    "item": "minecraft:item_frame"
+  }
+}

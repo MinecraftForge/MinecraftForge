@@ -19,13 +19,20 @@
 
 package net.minecraftforge.common.data;
 
+import java.nio.file.Path;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.ItemTagsProvider;
 import net.minecraft.item.Items;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 
 public class ForgeItemTagsProvider extends ItemTagsProvider
 {
+    private Set<ResourceLocation> filter = null;
+
     public ForgeItemTagsProvider(DataGenerator gen)
     {
         super(gen);
@@ -34,6 +41,9 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
     @Override
     public void registerTags()
     {
+        super.registerTags();
+        filter = this.tagToBuilder.entrySet().stream().map(e -> e.getKey().getId()).collect(Collectors.toSet());
+
         copy(Tags.Blocks.CHESTS, Tags.Items.CHESTS);
         copy(Tags.Blocks.CHESTS_ENDER, Tags.Items.CHESTS_ENDER);
         copy(Tags.Blocks.CHESTS_TRAPPED, Tags.Items.CHESTS_TRAPPED);
@@ -102,6 +112,12 @@ public class ForgeItemTagsProvider extends ItemTagsProvider
         copy(Tags.Blocks.STORAGE_BLOCKS_LAPIS, Tags.Items.STORAGE_BLOCKS_LAPIS);
         copy(Tags.Blocks.STORAGE_BLOCKS_QUARTZ, Tags.Items.STORAGE_BLOCKS_QUARTZ);
         copy(Tags.Blocks.STORAGE_BLOCKS_REDSTONE, Tags.Items.STORAGE_BLOCKS_REDSTONE);
+    }
+
+    @Override
+    protected Path makePath(ResourceLocation id)
+    {
+        return filter != null && filter.contains(id) ? null : super.makePath(id); //We don't want to save vanilla tags.
     }
 
     @Override

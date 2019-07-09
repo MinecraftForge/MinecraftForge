@@ -20,11 +20,7 @@
 package net.minecraftforge.common;
 
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ExtensionPoint;
-import net.minecraftforge.fml.FMLWorldPersistenceHook;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.VersionChecker;
-import net.minecraftforge.fml.WorldPersistenceHooks;
+import net.minecraftforge.fml.*;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
@@ -47,6 +43,7 @@ import net.minecraft.world.storage.SaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
+import net.minecraftforge.common.data.ForgeRecipeProvider;
 import net.minecraftforge.common.model.animation.CapabilityAnimation;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
@@ -102,6 +99,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         modEventBus.register(ForgeConfig.class);
         // Forge does not display problems when the remote is not matching.
         ModLoadingContext.get().registerExtensionPoint(ExtensionPoint.DISPLAYTEST, ()-> Pair.of(()->"ANY", (remote, isServer)-> true));
+        StartupMessageManager.addModMessage("Forge version "+ForgeVersion.getVersion());
     }
 
 /*
@@ -228,6 +226,7 @@ public class ForgeMod implements WorldPersistenceHooks.WorldPersistenceHook
         {
             gen.addProvider(new ForgeBlockTagsProvider(gen));
             gen.addProvider(new ForgeItemTagsProvider(gen));
+            gen.addProvider(new ForgeRecipeProvider(gen));
         }
     }
 }

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "wooden_fence",
+  "pattern": [
+    "W#W",
+    "W#W"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:rods/wooden"
+    },
+    "W": {
+      "item": "minecraft:jungle_planks"
+    }
+  },
+  "result": {
+    "item": "minecraft:jungle_fence",
+    "count": 3
+  }
+}

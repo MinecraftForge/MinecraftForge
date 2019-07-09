@@ -136,7 +136,15 @@
     }
  
     public boolean func_96631_a(int p_96631_1_, Random p_96631_2_, @Nullable ServerPlayerEntity p_96631_3_) {
-@@ -286,7 +308,7 @@
+@@ -254,6 +276,7 @@
+    public <T extends LivingEntity> void func_222118_a(int p_222118_1_, T p_222118_2_, Consumer<T> p_222118_3_) {
+       if (!p_222118_2_.field_70170_p.field_72995_K && (!(p_222118_2_ instanceof PlayerEntity) || !((PlayerEntity)p_222118_2_).field_71075_bZ.field_75098_d)) {
+          if (this.func_77984_f()) {
++            p_222118_1_ = this.func_77973_b().damageItem(this, p_222118_1_, p_222118_2_, p_222118_3_);
+             if (this.func_96631_a(p_222118_1_, p_222118_2_.func_70681_au(), p_222118_2_ instanceof ServerPlayerEntity ? (ServerPlayerEntity)p_222118_2_ : null)) {
+                p_222118_3_.accept(p_222118_2_);
+                Item item = this.func_77973_b();
+@@ -286,7 +309,7 @@
     }
  
     public boolean func_150998_b(BlockState p_150998_1_) {
@@ -145,7 +153,7 @@
     }
  
     public boolean func_111282_a(PlayerEntity p_111282_1_, LivingEntity p_111282_2_, Hand p_111282_3_) {
-@@ -294,7 +316,7 @@
+@@ -294,7 +317,7 @@
     }
  
     public ItemStack func_77946_l() {
@@ -154,7 +162,7 @@
        itemstack.func_190915_d(this.func_190921_D());
        if (this.field_77990_d != null) {
           itemstack.field_77990_d = this.field_77990_d.func_74737_b();
-@@ -310,7 +332,7 @@
+@@ -310,7 +333,7 @@
           if (p_77970_0_.field_77990_d == null && p_77970_1_.field_77990_d != null) {
              return false;
           } else {
@@ -163,7 +171,7 @@
           }
        } else {
           return false;
-@@ -333,7 +355,7 @@
+@@ -333,7 +356,7 @@
        } else if (this.field_77990_d == null && p_77959_1_.field_77990_d != null) {
           return false;
        } else {
@@ -172,7 +180,7 @@
        }
     }
  
-@@ -639,6 +661,7 @@
+@@ -639,6 +662,7 @@
           }
        }
  
@@ -180,7 +188,7 @@
        return list;
     }
  
-@@ -760,7 +783,7 @@
+@@ -760,7 +784,7 @@
              }
           }
        } else {
@@ -189,7 +197,7 @@
        }
  
        return multimap;
-@@ -899,4 +922,33 @@
+@@ -899,4 +923,33 @@
     public boolean func_222117_E() {
        return this.func_77973_b().func_219971_r();
     }

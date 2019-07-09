@@ -267,33 +267,37 @@ public class GuiModList extends Screen
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(mod.getDisplayName()) + 10);
             listWidth = Math.max(listWidth,getFontRenderer().getStringWidth(MavenVersionStringHelper.artifactVersionToString(mod.getVersion())) + 5);
         }
-        listWidth = Math.max(listWidth, 100);
+        listWidth = Math.max(Math.min(listWidth, width/3), 100);
         listWidth += listWidth % numButtons != 0 ? (numButtons - listWidth % numButtons) : 0;
         this.modList = new GuiSlotModList(this, listWidth);
         this.modList.setLeftPos(6);
-        this.modInfo = new InfoPanel(this.minecraft, this.width - this.listWidth - 20, this.height, 10, this.height - 30, this.height - 46);
+
+        int modInfoWidth = this.width - this.listWidth - 20;
+        this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height, 10, this.height - 30, this.height - 46);
         this.modInfo.setLeftPos(this.listWidth + 14);
 
-        this.addButton(new Button(((modList.getRight() + this.width) / 2) - 100, this.height - 24, 200, 20,
+        int doneButtonWidth = Math.min(modInfoWidth, 200);
+        this.addButton(new Button(((modList.getWidth() + 8 + this.width - doneButtonWidth) / 2), this.height - 24, doneButtonWidth, 20,
                 I18n.format("gui.done"), b -> GuiModList.this.minecraft.displayGuiScreen(GuiModList.this.mainMenu)));
         this.addButton(this.configButton = new Button(6, this.height - 24, this.listWidth, 20,
                 I18n.format("fml.menu.mods.config"), b -> GuiModList.this.displayModConfig()));
+        this.configButton.active = false;
 
         search = new TextFieldWidget(getFontRenderer(), 8, modList.getBottom() + 17, listWidth - 4, 14, I18n.format("fml.menu.mods.search"));
         children.add(search);
         children.add(modList);
         children.add(modInfo);
-        search.setFocused2(true);
+        search.setFocused2(false);
         search.setCanLoseFocus(true);
 
         final int width = listWidth / numButtons;
         int x = 6, y = 10;
-        addButton(SortType.NORMAL.button = new Button(x, y, width - buttonMargin, 20, SortType.NORMAL.getButtonText(), b -> this.sortType = SortType.NORMAL));
+        addButton(SortType.NORMAL.button = new Button(x, y, width - buttonMargin, 20, SortType.NORMAL.getButtonText(), b -> resortMods(SortType.NORMAL)));
         x += width + buttonMargin;
-        addButton(SortType.A_TO_Z.button = new Button(x, y, width - buttonMargin, 20, SortType.A_TO_Z.getButtonText(), b -> this.sortType = SortType.A_TO_Z));
+        addButton(SortType.A_TO_Z.button = new Button(x, y, width - buttonMargin, 20, SortType.A_TO_Z.getButtonText(), b -> resortMods(SortType.A_TO_Z)));
         x += width + buttonMargin;
-        addButton(SortType.Z_TO_A.button = new Button(x, y, width - buttonMargin, 20, SortType.Z_TO_A.getButtonText(), b -> this.sortType = SortType.Z_TO_A));
-        resortMods();
+        addButton(SortType.Z_TO_A.button = new Button(x, y, width - buttonMargin, 20, SortType.Z_TO_A.getButtonText(), b -> resortMods(SortType.Z_TO_A)));
+        resortMods(SortType.NORMAL);
         updateCache();
     }
 
@@ -314,6 +318,7 @@ public class GuiModList extends Screen
     public void tick()
     {
         search.tick();
+        modList.setSelected(selected);
 
         if (!search.getText().equals(lastFilterText))
         {
@@ -327,7 +332,11 @@ public class GuiModList extends Screen
             mods.sort(sortType);
             modList.refreshList();
             if (selected != null)
+            {
                 selected = modList.children().stream().filter(e -> e.getInfo() == selected.getInfo()).findFirst().orElse(null);
+                if (selected == null)
+                    modInfo.clear();
+            }
             sorted = true;
         }
     }
@@ -344,8 +353,10 @@ public class GuiModList extends Screen
         lastFilterText = search.getText();
     }
 
-    private void resortMods()
+    private void resortMods(SortType newSort)
     {
+        this.sortType = newSort;
+
         for (SortType sort : SortType.values())
         {
             if (sort.button != null)
@@ -389,6 +400,7 @@ public class GuiModList extends Screen
     {
         if (selected == null) {
             modInfo.clear();
+            this.configButton.active = false;
             return;
         }
         ModInfo selectedMod = selected.getInfo();
@@ -454,5 +466,21 @@ public class GuiModList extends Screen
         }
 
         modInfo.setInfo(modInfo.new Info(modInfo, lines, logoData.getLeft(), logoData.getRight()));
+    }
+
+    @Override
+    public void resize(Minecraft mc, int width, int height)
+    {
+        String s = this.search.getText();
+        SortType sort = this.sortType;
+        GuiSlotModList.ModEntry selected = this.selected;
+        this.init(mc, width, height);
+        this.search.setText(s);
+        this.selected = selected;
+        if (!this.search.getText().isEmpty())
+            reloadMods();
+        if (sort != SortType.NORMAL)
+            resortMods(sort);
+        updateCache();
     }
 }

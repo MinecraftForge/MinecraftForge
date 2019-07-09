@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "###",
+    "# #",
+    "###"
+  ],
+  "key": {
+    "#": {
+      "tag": "forge:cobblestone"
+    }
+  },
+  "result": {
+    "item": "minecraft:furnace"
+  }
+}

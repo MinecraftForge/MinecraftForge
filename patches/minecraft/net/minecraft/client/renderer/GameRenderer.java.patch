@@ -133,7 +133,7 @@
     protected void func_78474_d(float p_78474_1_) {
 +      net.minecraftforge.client.IRenderHandler renderer = this.field_78531_r.field_71441_e.func_201675_m().getWeatherRenderer();
 +      if (renderer != null) {
-+         renderer.render(p_78474_1_, this.field_78531_r.field_71441_e, field_78531_r);
++         renderer.render(this.field_78529_t, p_78474_1_, this.field_78531_r.field_71441_e, this.field_78531_r);
 +         return;
 +      }
        float f = this.field_78531_r.field_71441_e.func_72867_j(p_78474_1_);

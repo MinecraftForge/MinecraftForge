@@ -174,15 +174,7 @@
     }
  
     private void func_184117_aA() {
-@@ -1430,6 +1446,7 @@
-             this.field_71439_g.func_71040_bB(Screen.hasControlDown());
-          }
-       }
-+      if (field_71441_e != null) net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(field_71441_e));
- 
-       boolean flag2 = this.field_71474_y.field_74343_n != ChatVisibility.HIDDEN;
-       if (flag2) {
-@@ -1526,6 +1543,12 @@
+@@ -1526,6 +1542,12 @@
        this.func_147108_a(worldloadprogressscreen);
  
        while(!this.field_71437_Z.func_71200_ad()) {
@@ -195,7 +187,7 @@
           worldloadprogressscreen.tick();
           this.func_195542_b(false);
  
-@@ -1546,11 +1569,17 @@
+@@ -1546,11 +1568,17 @@
        networkmanager.func_150719_a(new ClientLoginNetHandler(networkmanager, this, (Screen)null, (p_213261_0_) -> {
        }));
        networkmanager.func_179290_a(new CHandshakePacket(socketaddress.toString(), 0, ProtocolType.LOGIN));
@@ -214,6 +206,14 @@
        WorkingScreen workingscreen = new WorkingScreen();
        workingscreen.func_200210_a(new TranslationTextComponent("connect.joining"));
        this.func_213241_c(workingscreen);
+@@ -1586,6 +1614,7 @@
+       NarratorChatListener.field_193643_a.func_193642_b();
+       this.func_213241_c(p_213231_1_);
+       if (this.field_71441_e != null) {
++         net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(new net.minecraftforge.event.world.WorldEvent.Unload(field_71441_e));
+          if (integratedserver != null) {
+             while(!integratedserver.func_213201_w()) {
+                this.func_195542_b(false);
 @@ -1623,6 +1652,7 @@
        }
  
