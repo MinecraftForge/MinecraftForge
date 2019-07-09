@@ -25,6 +25,7 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.NetherPortalBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.util.ITooltipFlag;
@@ -263,11 +264,23 @@ public class ForgeEventFactory
         return drops;
     }
 
-    public static NonNullList<ItemStack> fireBlockDropLootEvent(World world, BlockPos pos, BlockState state, @Nullable LootContext context, NonNullList<ItemStack> drops)
+    public static NonNullList<ItemStack> fireBlockDropLootEvent(World world, BlockPos pos, BlockState state, @Nullable LootContext context, List<ItemStack> drops)
     {
-        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, context, drops);
+        NonNullList<ItemStack> nonNullDrops = NonNullList.create();
+        nonNullDrops.addAll(drops);
+        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, context, nonNullDrops);
         MinecraftForge.EVENT_BUS.post(dropEvent);
         return dropEvent.getDrops();
+    }
+
+    public static void fireBlockDropLootEvent(World world, BlockPos pos, BlockState state, ItemStack drop)
+    {
+        // Handle dropping stacks into the world here to reduce patch size in the block classes, the drop event can introduce more than just one stack to drop.
+        NonNullList<ItemStack> drops = NonNullList.create();
+        drops.add(drop);
+        BlockEvent.DropLootEvent dropEvent = new BlockEvent.DropLootEvent(world, pos, state, null, drops);
+        MinecraftForge.EVENT_BUS.post(dropEvent);
+        dropEvent.getDrops().forEach(s -> Block.spawnAsEntity(world, pos, s));
     }
 
     public static BlockState fireFluidPlaceBlockEvent(World world, BlockPos pos, BlockPos liquidPos, BlockState state)

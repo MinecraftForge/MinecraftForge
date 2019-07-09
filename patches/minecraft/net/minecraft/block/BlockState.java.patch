@@ -24,3 +24,17 @@
     public MaterialColor func_185909_g(IBlockReader p_185909_1_, BlockPos p_185909_2_) {
        return this.func_177230_c().func_180659_g(this, p_185909_1_, p_185909_2_);
     }
+@@ -263,7 +267,12 @@
+    }
+ 
+    public List<ItemStack> func_215693_a(LootContext.Builder p_215693_1_) {
+-      return this.func_177230_c().func_220076_a(this, p_215693_1_);
++      List<ItemStack> drops = this.func_177230_c().func_220076_a(this, p_215693_1_);
++      net.minecraft.world.storage.loot.LootContext ctx = p_215693_1_.func_216022_a(net.minecraft.world.storage.loot.LootParameterSets.field_216267_h);
++      World world = ctx.func_202879_g();
++      BlockPos pos = ctx.func_216031_c(net.minecraft.world.storage.loot.LootParameters.field_216286_f);
++      BlockState state = ctx.func_216031_c(net.minecraft.world.storage.loot.LootParameters.field_216287_g);
++      return net.minecraftforge.event.ForgeEventFactory.fireBlockDropLootEvent(world, pos, state, ctx, drops);
+    }
+ 
+    public boolean func_215687_a(World p_215687_1_, PlayerEntity p_215687_2_, Hand p_215687_3_, BlockRayTraceResult p_215687_4_) {
