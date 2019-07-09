@@ -29,6 +29,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraftforge.common.capabilities.Capability;
 
@@ -58,6 +62,7 @@ public class LazyOptional<T>
     private boolean isValid = true;
 
     private static final @Nonnull LazyOptional<Void> EMPTY = new LazyOptional<>(null);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     /**
      * Construct a new {@link LazyOptional} that wraps the given
@@ -111,7 +116,8 @@ public class LazyOptional<T>
             T temp = supplier.get();
             if (temp == null)
             {
-                throw new NullPointerException("Supplier should not return null value");
+                LOGGER.catching(Level.WARN, new NullPointerException("Supplier should not return null value"));
+                return null;
             }
             resolved.set(temp);
             return resolved.get();
