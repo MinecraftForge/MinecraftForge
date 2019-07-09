@@ -101,6 +101,12 @@ public abstract class BakedModelWrapper<T extends IBakedModel> implements IBaked
         return originalModel.handlePerspective(cameraTransformType);
     }
 
+    @Override
+    public TextureAtlasSprite getParticleTexture(@Nonnull IModelData data)
+    {
+        return originalModel.getParticleTexture(data);
+    }
+
     @Nonnull
     @Override
     public List<BakedQuad> getQuads(@Nullable BlockState state, @Nullable Direction side, @Nonnull Random rand, @Nonnull IModelData extraData)
