@@ -28,5 +28,5 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public interface IRenderHandler
 {
     @OnlyIn(Dist.CLIENT)
-    public abstract void render(float partialTicks, ClientWorld world, Minecraft mc);
+    public abstract void render(int ticks, float partialTicks, ClientWorld world, Minecraft mc)
 }
