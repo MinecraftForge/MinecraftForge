@@ -1,8 +1,8 @@
 ---
-name: Bug report
+name: Issue report
 about: Visit the forum first for issues with crashes.
 title: ''
-labels: Bug
+labels: Triage
 assignees: ''
 
 ---
@@ -16,11 +16,11 @@ assignees: ''
 
 **Forge Version:** {Forge version. *Version number, not latest/rb*}
 
-**Full Log:** {Link to GitHub Gist with full latest.log}
+**Logs:** {Link(s) to GitHub Gist with full latest.log and/or crash report}
 
 **Steps to Reproduce:**
  1. Do this
  2. Then do that
  3. ...
 
-**Description of bug:**
+**Description of issue:**
