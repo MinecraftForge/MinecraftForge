@@ -78,6 +78,7 @@ public class ObfuscationReflectionHelper
      * @return The value of the field with the specified index in the {@code classToAccess}.
      * @throws UnableToAccessFieldException If there was a problem getting the field or the value.
      * @deprecated Use {@link #getPrivateValue(Class, Object, String)} because field indices change a lot more often than field names do.
+     * TODO: Remove in 1.15
      */
     @Deprecated
     @Nullable
@@ -142,6 +143,7 @@ public class ObfuscationReflectionHelper
      * @param <E>           The type of the {@code classToAccess}.
      * @throws UnableToAccessFieldException If there was a problem setting the value of the field.
      * @deprecated Use {@link #setPrivateValue(Class, Object, Object, String)} because field indices change a lot more often than field names do.
+     * TODO: Remove in 1.15
      */
     @Deprecated
     public static <T, E> void setPrivateValue(@Nonnull final Class<? super T> classToAccess, @Nonnull final T instance, @Nullable final E value, int fieldIndex)
@@ -315,6 +317,7 @@ public class ObfuscationReflectionHelper
      * @throws NullPointerException       If {@code clazz} is null.
      * @throws UnableToFindFieldException If the field could not be found.
      * @deprecated Use {@link #findField(Class, String)} because field indices change a lot more often than field names do.
+     * TODO: Remove in 1.15
      */
     @Deprecated
     @Nonnull
