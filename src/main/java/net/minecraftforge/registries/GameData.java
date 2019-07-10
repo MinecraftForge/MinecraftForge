@@ -41,7 +41,6 @@ import net.minecraft.network.datasync.IDataSerializer;
 import net.minecraft.particles.ParticleType;
 import net.minecraft.potion.Effect;
 import net.minecraft.potion.Potion;
-import net.minecraft.state.IProperty;
 import net.minecraft.state.StateContainer;
 import net.minecraft.stats.StatType;
 import net.minecraft.tileentity.TileEntityType;
@@ -88,8 +87,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static net.minecraftforge.registries.ForgeRegistry.REGISTRIES;
-
-import net.minecraftforge.fml.common.EnhancedRuntimeException.WrappedPrintStream;
 
 /**
  * INTERNAL ONLY
@@ -369,13 +366,6 @@ public class GameData
     {
         static final BlockCallbacks INSTANCE = new BlockCallbacks();
 
-        private boolean compareProperty(IProperty<?> a, IProperty<?> b)
-        {
-            if (!a.getName().equals(b.getName()))
-                return false;
-            return Streams.zip(a.getAllowedValues().stream(), b.getAllowedValues().stream(), Object::equals).allMatch(v -> v);
-        }
-
         @Override
         public void onAdd(IForgeRegistryInternal<Block> owner, RegistryManager stage, int id, Block block, @Nullable Block oldBlock)
         {
@@ -389,7 +379,7 @@ public class GameData
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
                 if (block.getRegistryName().getNamespace().equals("minecraft") && (
                         oldValidStates.size() != newValidStates.size() ||
-                        !Streams.zip(oldContainer.getProperties().stream(), newContainer.getProperties().stream(), this::compareProperty).allMatch(v -> v)))
+                        !Streams.zip(oldContainer.getProperties().stream(), newContainer.getProperties().stream(), Object::equals).allMatch(v -> v)))
                 {
                     String oldSequence = oldContainer.getProperties().stream()
                             .map(s -> String.format("%s={%s}", s.getName(),
