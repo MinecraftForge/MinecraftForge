@@ -474,7 +474,7 @@ public class GameData
             if (oldItem instanceof BlockItem)
             {
                 @SuppressWarnings("unchecked")
-                BiMap<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, BiMap.class);
+                Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
                 blockToItem.remove(((BlockItem)oldItem).getBlock());
             }
             if (item instanceof BlockItem)
