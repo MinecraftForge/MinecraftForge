@@ -114,7 +114,7 @@ public interface IForgeItem
      *
      * @return True if reparable
      */
-    boolean isRepairable();
+    boolean isRepairable(ItemStack stack);
 
     /**
     * Determines the amount of durability the mending enchantment

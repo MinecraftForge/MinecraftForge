@@ -92,7 +92,7 @@
 +   protected final boolean canRepair;
 +
 +   @Override
-+   public boolean isRepairable() {
++   public boolean isRepairable(ItemStack stack) {
 +     return canRepair && func_77645_m();
 +   }
 +
