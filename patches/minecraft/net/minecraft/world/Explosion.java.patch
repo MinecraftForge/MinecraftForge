@@ -48,7 +48,16 @@
                    LootContext.Builder lootcontext$builder = (new LootContext.Builder((ServerWorld)this.field_77287_j)).func_216023_a(this.field_77287_j.field_73012_v).func_216015_a(LootParameters.field_216286_f, blockpos).func_216015_a(LootParameters.field_216289_i, ItemStack.field_190927_a).func_216021_b(LootParameters.field_216288_h, tileentity);
                    if (this.field_222260_b == Explosion.Mode.DESTROY) {
                       lootcontext$builder.func_216015_a(LootParameters.field_216290_j, this.field_77280_f);
-@@ -248,7 +251,7 @@
+@@ -240,15 +243,14 @@
+                   Block.func_220078_b(blockstate, lootcontext$builder);
+                }
+ 
+-               this.field_77287_j.func_180501_a(blockpos, Blocks.field_150350_a.func_176223_P(), 3);
+-               block.func_180652_a(this.field_77287_j, blockpos, this);
++               blockstate.onBlockExploded(this.field_77287_j, blockpos, this);
+             }
+          }
+       }
  
        if (this.field_77286_a) {
           for(BlockPos blockpos1 : this.field_77281_g) {
@@ -57,7 +66,7 @@
                 this.field_77287_j.func_175656_a(blockpos1, Blocks.field_150480_ab.func_176223_P());
              }
           }
-@@ -287,6 +290,10 @@
+@@ -287,6 +289,10 @@
        return this.field_77281_g;
     }
  

@@ -1009,4 +1009,19 @@ public interface IForgeBlock
      * This should be used in favor of TagCollection.getOwningTags, as this caches the result and automatically updates when the TagCollection changes.
      */
     Set<ResourceLocation> getTags();
+
+    /**
+     * Called when the block is destroyed by an explosion.
+     * Useful for allowing the block to take into account tile entities,
+     * state, etc. when exploded, before it is removed.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param explosion The explosion instance affecting the block
+     */
+    default void onBlockExploded(BlockState state, World world, BlockPos pos, Explosion explosion)
+    {
+        world.setBlockState(pos, Blocks.AIR.getDefaultState(), 3);
+        getBlock().onExplosionDestroy(world, pos, explosion);
+    }
 }

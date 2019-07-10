@@ -853,4 +853,18 @@ public interface IForgeBlockState
     {
         return getBlockState().getBlock().canDropFromExplosion(getBlockState(), world, pos, explosion);
     }
+
+    /**
+     * Called when the block is destroyed by an explosion.
+     * Useful for allowing the block to take into account tile entities,
+     * state, etc. when exploded, before it is removed.
+     *
+     * @param world The current world
+     * @param pos Block position in world
+     * @param explosion The explosion instance affecting the block
+     */
+    default void onBlockExploded(World world, BlockPos pos, Explosion explosion)
+    {
+        getBlockState().getBlock().onBlockExploded(getBlockState(), world, pos, explosion);
+    }
 }
