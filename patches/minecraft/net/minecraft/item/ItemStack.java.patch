@@ -118,7 +118,7 @@
           CompoundNBT compoundnbt = this.func_77978_p();
           return compoundnbt == null || !compoundnbt.func_74767_n("Unbreakable");
        } else {
-@@ -206,7 +228,7 @@
+@@ -206,19 +228,19 @@
     }
  
     public boolean func_77951_h() {
@@ -127,7 +127,13 @@
     }
  
     public int func_77952_i() {
-@@ -218,7 +240,7 @@
+-      return this.field_77990_d == null ? 0 : this.field_77990_d.func_74762_e("Damage");
++      return this.func_77973_b().getDamage(this);
+    }
+ 
+    public void func_196085_b(int p_196085_1_) {
+-      this.func_196082_o().func_74768_a("Damage", Math.max(0, p_196085_1_));
++      this.func_77973_b().setDamage(this, p_196085_1_);
     }
  
     public int func_77958_k() {
