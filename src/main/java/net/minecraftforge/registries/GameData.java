@@ -373,13 +373,9 @@ public class GameData
             {
                 StateContainer<Block, BlockState> oldContainer = oldBlock.getStateContainer();
                 StateContainer<Block, BlockState> newContainer = block.getStateContainer();
-                ImmutableList<BlockState> oldValidStates = oldContainer.getValidStates();
-                ImmutableList<BlockState> newValidStates = newContainer.getValidStates();
 
                 // Test vanilla blockstates, if the number matches, make sure they also match in their string representations
-                if (block.getRegistryName().getNamespace().equals("minecraft") && (
-                        oldValidStates.size() != newValidStates.size() ||
-                        !Streams.zip(oldContainer.getProperties().stream(), newContainer.getProperties().stream(), Object::equals).allMatch(v -> v)))
+                if (block.getRegistryName().getNamespace().equals("minecraft") && !oldContainer.getProperties().equals(newContainer.getProperties()))
                 {
                     String oldSequence = oldContainer.getProperties().stream()
                             .map(s -> String.format("%s={%s}", s.getName(),
