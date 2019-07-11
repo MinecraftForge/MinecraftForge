@@ -7,6 +7,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
+        classpath 'org.ow2.asm:asm:7.1'
     }
 }
 import groovy.json.JsonSlurper
@@ -25,6 +26,7 @@ import net.minecraftforge.gradle.userdev.tasks.RenameJar
 import org.apache.tools.ant.filters.ReplaceTokens
 import de.undercouch.gradle.tasks.download.Download
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
+import org.objectweb.asm.ClassReader
 
 import java.util.stream.Collectors
 
@@ -513,6 +515,54 @@ project(':forge') {
         ['client', 'server', 'joined'].each { side ->
             ['Base', 'Patched'].each { type -> 
                 dependsOn("${side}${type}Checksum")
+            }
+        }
+    }
+    task checkATs(dependsOn: genJoinedBinPatches) {
+        inputs.file { genJoinedBinPatches.cleanJar }
+        inputs.files patcher.accessTransformers
+        doLast {
+            def vanilla = [:]
+            def zip = new java.util.zip.ZipFile(genJoinedBinPatches.cleanJar)
+            zip.entries().findAll { !it.directory && it.name.endsWith('.class') }.each { entry ->
+                new ClassReader(zip.getInputStream(entry)).accept(new org.objectweb.asm.ClassVisitor(org.objectweb.asm.Opcodes.ASM7) {
+                    String name
+                    void visit(int version, int access, String name, String sig, String superName, String[] interfaces) {
+                        this.name = name
+                        vanilla[name] = access
+                    }
+                    org.objectweb.asm.FieldVisitor visitField(int access, String name, String desc, String sig, Object value) {
+                        vanilla[this.name + ' ' + name] = access
+                        return null
+                    }
+                    org.objectweb.asm.MethodVisitor visitMethod(int access, String name, String desc, String sig, String[] excs) {
+                        vanilla[this.name + ' ' + name + desc] = access
+                        return null
+                    }
+                }, ClassReader.SKIP_CODE | ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES)   
+            }
+            patcher.accessTransformers.each { f -> 
+                TreeMap lines = [:]
+                f.eachLine { line -> 
+                    def idx = line.indexOf('#')
+                    if (idx == 0 || line.isEmpty()) return
+                    def comment = idx == -1 ? null : line.substring(idx)
+                    if (idx != -1) line = line.substring(0, idx - 1)
+                    def (modifier, cls, desc) = (line.trim() + '     ').split(' ', -1)
+                    def key = cls + (desc.isEmpty() ? '' : ' ' + desc)
+                    def access = vanilla[key.replace('.', '/')]
+                    if (access == null) {
+                        if ((desc.equals('*') || desc.equals('*()')) && vanilla[cls.replace('.', '/')] != null)
+                            println('Warning: ' + line)
+                        else {
+                            println('Invalid: ' + line)
+                            return
+                        }
+                    }
+                    //TODO: Check access actually changes, and expand inheretence?
+                    lines[key] = [modifier: modifier, comment: comment]
+                }
+                f.text = lines.collect{ it.value.modifier + ' ' + it.key + (it.value.comment == null ? '' : ' ' + it.value.comment) }.join('\n')
             }
         }
     }

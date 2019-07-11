@@ -247,6 +247,6 @@
 +          return this;
 +      }
 +
-       protected Block.Properties func_222380_e() {
+       public Block.Properties func_222380_e() {
           this.field_222381_j = LootTables.field_186419_a;
           return this;
