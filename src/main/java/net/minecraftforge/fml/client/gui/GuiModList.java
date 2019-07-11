@@ -32,8 +32,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,9 +45,8 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.gui.widget.list.ExtendedList;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.RenderComponentsUtil;
-import net.minecraft.client.renderer.Rectangle2d;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.NativeImage;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -58,6 +55,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.client.gui.ScrollPanel;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Size2i;
 import net.minecraftforge.fml.ForgeI18n;
@@ -126,139 +124,142 @@ public class GuiModList extends Screen
         this.unsortedMods = Collections.unmodifiableList(this.mods);
     }
 
-    class InfoPanel extends ExtendedList<InfoPanel.Info> {
-        InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn, int bottomIn, int slotHeightIn)
+    class InfoPanel extends ScrollPanel {
+        private ResourceLocation logoPath;
+        private Size2i logoDims = new Size2i(0, 0);
+        private List<ITextComponent> lines = Collections.emptyList();
+
+        InfoPanel(Minecraft mcIn, int widthIn, int heightIn, int topIn)
         {
-            super(mcIn, widthIn, heightIn, topIn, bottomIn, slotHeightIn);
+            super(mcIn, widthIn, heightIn, topIn, modList.getLeft() + 10);
+        }
+
+        void setInfo(List<String> lines, ResourceLocation logoPath, Size2i logoDims)
+        {
+            this.logoPath = logoPath;
+            this.logoDims = logoDims;
+            this.lines = resizeContent(lines);
+        }
+
+        void clearInfo()
+        {
+            this.logoPath = null;
+            this.logoDims = new Size2i(0, 0);
+            this.lines = Collections.emptyList();
+        }
+
+        private List<ITextComponent> resizeContent(List<String> lines)
+        {
+            List<ITextComponent> ret = new ArrayList<ITextComponent>();
+            for (String line : lines)
+            {
+                if (line == null)
+                {
+                    ret.add(null);
+                    continue;
+                }
+
+                ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
+                int maxTextLength = this.width - 12;
+                if (maxTextLength >= 0)
+                {
+                    ret.addAll(RenderComponentsUtil.splitText(chat, maxTextLength, GuiModList.this.font, false, true));
+                }
+            }
+            return ret;
         }
 
         @Override
-        protected int getScrollbarPosition()
+        public int getContentHeight() 
         {
-            return this.getRight() - 6;
+            int height = 50;
+            height += (lines.size() * font.FONT_HEIGHT);
+            if (height < this.bottom - this.top - 8)
+                height = this.bottom - this.top - 8;
+            return height;
         }
 
         @Override
-        public int getRowWidth() {
-            return this.width;
+        protected int getScrollAmount()
+        {
+            return font.FONT_HEIGHT * 3;
         }
 
-        void setInfo(Info info)
+        @Override
+        protected void drawPanel(int entryRight, int relativeY, Tessellator tess, int mouseX, int mouseY)
         {
-            this.clearEntries();
-            this.addEntry(info);
-        }
-
-        public void clear()
-        {
-            this.clearEntries();
-        }
-        class Info extends ExtendedList.AbstractListEntry<Info>
-        {
-            private ResourceLocation logoPath;
-            private Size2i logoDims;
-            private List<ITextComponent> lines;
-
-            public Info(ExtendedList<Info> parent, List<String> lines, @Nullable ResourceLocation logoPath, Size2i logoDims)
-            {
-                this.list = parent;
-                this.lines    = resizeContent(lines);
-                this.logoPath = logoPath;
-                this.logoDims = logoDims;
+            if (logoPath != null) {
+                Minecraft.getInstance().getTextureManager().bindTexture(logoPath);
+                GlStateManager.enableBlend();
+                GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+                // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
+                int headerHeight = 50;
+                GuiUtils.drawInscribedRect(left, relativeY, width - 5, headerHeight, logoDims.width, logoDims.height, false, true);
+                relativeY += headerHeight;
             }
 
-            private List<ITextComponent> resizeContent(List<String> lines)
+            for (ITextComponent line : lines)
             {
-                List<ITextComponent> ret = new ArrayList<ITextComponent>();
-                for (String line : lines)
-                {
-                    if (line == null)
-                    {
-                        ret.add(null);
-                        continue;
-                    }
-
-                    ITextComponent chat = ForgeHooks.newChatWithLinks(line, false);
-                    int maxTextLength = InfoPanel.this.width - 8;
-                    if (maxTextLength >= 0)
-                    {
-                        ret.addAll(RenderComponentsUtil.splitText(chat, maxTextLength, GuiModList.this.font, false, true));
-                    }
-                }
-                return ret;
-            }
-
-            @Override
-            public void render(int entryIdx, int top, int left, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean p_194999_5_, float partialTicks)
-            {
-                if (logoPath != null) {
-                    Minecraft.getInstance().getTextureManager().bindTexture(logoPath);
-                    GlStateManager.enableBlend();
-                    GlStateManager.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-                    // Draw the logo image inscribed in a rectangle with width entryWidth (minus some padding) and height 50
-                    int headerHeight = 50;
-                    GuiUtils.drawInscribedRect(left, top, entryWidth - 5, headerHeight, logoDims.width, logoDims.height, false, true);
-                    top += headerHeight;
-                }
-
-                for (ITextComponent line : lines)
-                {
-                    if (line != null)
-                    {
-                        GlStateManager.enableBlend();
-                        GuiModList.this.font.drawStringWithShadow(line.getFormattedText(), left + 4, top, 0xFFFFFF);
-                        GlStateManager.disableAlphaTest();
-                        GlStateManager.disableBlend();
-                    }
-                    top += font.FONT_HEIGHT;
-                }
-
-                final ITextComponent component = findTextLine(mouseX, mouseY, 0, 0);
-                if (component!=null) {
-                    GuiModList.this.renderComponentHoverEffect(component, mouseX, mouseY);
-                }
-            }
-
-            private ITextComponent findTextLine(final int mouseX, final int mouseY, final int offX, final int offY) {
-                int offset = mouseY - offY;
-                if (logoPath != null) {
-                    offset -= logoDims.height + 10;
-                }
-                if (offset <= 0)
-                    return null;
-
-                int lineIdx = offset / font.FONT_HEIGHT;
-                if (lineIdx >= lines.size() || lineIdx < 1)
-                    return null;
-
-                ITextComponent line = lines.get(lineIdx-1);
                 if (line != null)
                 {
-                    int k = offX;
-                    for (ITextComponent part : line) {
-                        if (!(part instanceof StringTextComponent))
-                            continue;
-                        k += GuiModList.this.font.getStringWidth(((StringTextComponent)part).getText());
-                        if (k >= mouseX)
-                        {
-                            return part;
-                        }
-                    }
+                    GlStateManager.enableBlend();
+                    GuiModList.this.font.drawStringWithShadow(line.getFormattedText(), left + 4, relativeY, 0xFFFFFF);
+                    GlStateManager.disableAlphaTest();
+                    GlStateManager.disableBlend();
                 }
-                return null;
+                relativeY += font.FONT_HEIGHT;
             }
 
-            @Override
-            public boolean mouseClicked(final double mouseX, final double mouseY, final int buttonmask) {
-                final ITextComponent component = findTextLine((int) mouseX, (int) mouseY, InfoPanel.this.getLeft(), InfoPanel.this.getTop());
-                if (component != null) {
-                    GuiModList.this.handleComponentClicked(component);
-                    return true;
-                }
-                return false;
+            final ITextComponent component = findTextLine(mouseX, mouseY);
+            if (component!=null) {
+                GuiModList.this.renderComponentHoverEffect(component, mouseX, mouseY);
             }
         }
+
+        private ITextComponent findTextLine(final int mouseX, final int mouseY) {
+            double offset = (mouseY - top) + border + scrollDistance + 1;
+            if (logoPath != null) {
+                offset -= 50;
+            }
+            if (offset <= 0)
+                return null;
+
+            int lineIdx = (int) (offset / font.FONT_HEIGHT);
+            if (lineIdx >= lines.size() || lineIdx < 1)
+                return null;
+
+            ITextComponent line = lines.get(lineIdx-1);
+            if (line != null)
+            {
+                int k = left + border;
+                for (ITextComponent part : line) {
+                    if (!(part instanceof StringTextComponent))
+                        continue;
+                    k += GuiModList.this.font.getStringWidth(((StringTextComponent)part).getText());
+                    if (k >= mouseX)
+                    {
+                        return part;
+                    }
+                }
+            }
+            return null;
+        }
+
+        @Override
+        public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+            final ITextComponent component = findTextLine((int) mouseX, (int) mouseY);
+            if (component != null) {
+                GuiModList.this.handleComponentClicked(component);
+                return true;
+            }
+            return super.mouseClicked(mouseX, mouseY, button);
+        }
+
+        @Override
+        protected void drawBackground() {
+        }
     }
+
     @Override
     public void init()
     {
@@ -273,8 +274,7 @@ public class GuiModList extends Screen
         this.modList.setLeftPos(6);
 
         int modInfoWidth = this.width - this.listWidth - 20;
-        this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height, 10, this.height - 30, this.height - 46);
-        this.modInfo.setLeftPos(this.listWidth + 14);
+        this.modInfo = new InfoPanel(this.minecraft, modInfoWidth, this.height - 30, 10);
 
         int doneButtonWidth = Math.min(modInfoWidth, 200);
         this.addButton(new Button(((modList.getWidth() + 8 + this.width - doneButtonWidth) / 2), this.height - 24, doneButtonWidth, 20,
@@ -334,8 +334,7 @@ public class GuiModList extends Screen
             if (selected != null)
             {
                 selected = modList.children().stream().filter(e -> e.getInfo() == selected.getInfo()).findFirst().orElse(null);
-                if (selected == null)
-                    modInfo.clear();
+                updateCache();
             }
             sorted = true;
         }
@@ -369,9 +368,8 @@ public class GuiModList extends Screen
     public void render(int mouseX, int mouseY, float partialTicks)
     {
         this.modList.render(mouseX, mouseY, partialTicks);
-        this.modInfo.render(mouseX, mouseY, partialTicks);
-
-        int left = ((this.width - this.listWidth - 38) / 2) + this.listWidth + 30;
+        if (this.modInfo != null)
+            this.modInfo.render(mouseX, mouseY, partialTicks);
 
         String text = I18n.format("fml.menu.mods.search");
         int x = ((modList.getLeft()) / 2) - (getFontRenderer().getStringWidth(text) / 2);
@@ -399,8 +397,8 @@ public class GuiModList extends Screen
     private void updateCache()
     {
         if (selected == null) {
-            modInfo.clear();
             this.configButton.active = false;
+            this.modInfo.clearInfo();
             return;
         }
         ModInfo selectedMod = selected.getInfo();
@@ -465,7 +463,7 @@ public class GuiModList extends Screen
             }
         }
 
-        modInfo.setInfo(modInfo.new Info(modInfo, lines, logoData.getLeft(), logoData.getRight()));
+        modInfo.setInfo(lines, logoData.getLeft(), logoData.getRight());
     }
 
     @Override
