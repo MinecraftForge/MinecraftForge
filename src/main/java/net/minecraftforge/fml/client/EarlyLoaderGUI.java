@@ -79,7 +79,7 @@ public class EarlyLoaderGUI {
             final float fade = MathHelper.clamp((4000.0f - (float) pair.getLeft() - ( i - 4 ) * 1000.0f) / 5000.0f, 0.0f, 1.0f);
             if (fade <0.01f) continue;
             StartupMessageManager.Message msg = pair.getRight();
-            renderMessage(msg.getText(), msg.getTypeColour(), ((window.getScaledHeight() - 15) / 10) - i, fade);
+            renderMessage(msg.getText(), msg.getTypeColour(), ((window.getScaledHeight() - 15) / 10) - i + 1, fade);
         }
         renderMemoryInfo();
     }
