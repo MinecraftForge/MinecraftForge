@@ -132,6 +132,15 @@
     public SoundType func_220072_p(BlockState p_220072_1_) {
        return this.field_149762_H;
     }
+@@ -772,7 +780,7 @@
+    }
+ 
+    public String toString() {
+-      return "Block{" + Registry.field_212618_g.func_177774_c(this) + "}";
++      return "Block{" + this.getRegistryName() + "}";
+    }
+ 
+    @OnlyIn(Dist.CLIENT)
 @@ -780,13 +788,80 @@
     }
  
