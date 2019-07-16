@@ -27,7 +27,6 @@ import net.minecraft.command.arguments.EntityArgument;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 
 import com.mojang.brigadier.builder.ArgumentBuilder;
@@ -36,7 +35,6 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 
 import java.util.Collection;
-import java.util.function.Predicate;
 
 public class CommandSetDimension
 {
@@ -65,8 +63,8 @@ public class CommandSetDimension
         //if (!DimensionManager.isDimensionRegistered(dim))
         //    throw INVALID_DIMENSION.create(dim);
 
-        entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName(), dim), true));
-        entities.stream().filter(e -> e.dimension != dim).forEach(e -> e.changeDimension(dim));
+        entities.stream().filter(e -> e.dimension == dim).forEach(e -> sender.sendFeedback(new TranslationTextComponent("commands.forge.setdim.invalid.nochange", e.getDisplayName().getFormattedText(), dim), true));
+        entities.stream().filter(e -> e.dimension != dim).forEach(e ->  e.changeDimension(dim));
 
         return 0;
     }
