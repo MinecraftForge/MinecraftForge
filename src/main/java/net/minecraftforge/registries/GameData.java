@@ -475,7 +475,7 @@ public class GameData
             {
                 @SuppressWarnings("unchecked")
                 Map<Block, Item> blockToItem = owner.getSlaveMap(BLOCK_TO_ITEM, Map.class);
-                blockToItem.remove(((BlockItem)oldItem).getBlock());
+                ((BlockItem)oldItem).removeFromBlockToItemMap(blockToItem, item);
             }
             if (item instanceof BlockItem)
             {
