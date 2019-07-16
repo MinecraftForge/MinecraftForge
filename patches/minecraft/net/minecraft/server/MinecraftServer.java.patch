@@ -101,10 +101,12 @@
     }
  
     protected void func_71190_q(BooleanSupplier p_71190_1_) {
-@@ -783,6 +795,7 @@
+@@ -782,7 +794,8 @@
+       this.func_193030_aL().func_73660_a();
        this.field_71304_b.func_219895_b("levels");
  
-       for(ServerWorld serverworld : this.func_212370_w()) {
+-      for(ServerWorld serverworld : this.func_212370_w()) {
++      for(ServerWorld serverworld : this.getWorldArray()) {
 +         long tickStart = Util.func_211178_c();
           if (serverworld.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ || this.func_71255_r()) {
              this.field_71304_b.func_194340_a(() -> {
@@ -160,7 +162,7 @@
     }
  
     public CrashReport func_71230_b(CrashReport p_71230_1_) {
-@@ -1517,4 +1536,15 @@
+@@ -1517,4 +1536,29 @@
     }
  
     public abstract boolean func_213199_b(GameProfile p_213199_1_);
@@ -174,5 +176,19 @@
 +   @Deprecated //Forge Internal use Only, You can screw up a lot of things if you mess with this map.
 +   public synchronized Map<DimensionType, ServerWorld> forgeGetWorldMap() {
 +      return this.field_71305_c;
++   }
++   private int worldArrayMarker = 0;
++   private int worldArrayLast = -1;
++   private ServerWorld[] worldArray;
++   @Deprecated //Forge Internal use Only, use to protect against concurrent modifications in the world tick loop.
++   public synchronized void markWorldsDirty() {
++      worldArrayMarker++;
++   }
++   private ServerWorld[] getWorldArray() {
++      if (worldArrayMarker == worldArrayLast && worldArray != null)
++         return worldArray;
++      worldArray = this.field_71305_c.values().stream().toArray(x -> new ServerWorld[x]);
++      worldArrayLast = worldArrayMarker;
++      return worldArray;
 +   }
  }

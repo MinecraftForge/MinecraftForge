@@ -210,6 +210,7 @@ public class DimensionManager
         if (!server.isSinglePlayer())
             world.getWorldInfo().setGameType(server.getGameType());
         server.forgeGetWorldMap().put(dim, world);
+        server.markWorldsDirty();
 
         MinecraftForge.EVENT_BUS.post(new WorldEvent.Load(world));
 
@@ -289,6 +290,7 @@ public class DimensionManager
                     LOGGER.error("Exception closing the level", e);
                 }
                 server.forgeGetWorldMap().remove(dim);
+                server.markWorldsDirty();
             }
         }
 
