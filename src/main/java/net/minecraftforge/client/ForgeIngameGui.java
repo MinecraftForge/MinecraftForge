@@ -124,7 +124,7 @@ public class ForgeIngameGui extends IngameGui
         GlStateManager.enableBlend();
         if (renderVignette && Minecraft.isFancyGraphicsEnabled())
         {
-            func_212303_b(mc.getRenderViewEntity());
+            renderVignette(mc.getRenderViewEntity());
         }
         else
         {
@@ -262,7 +262,7 @@ public class ForgeIngameGui extends IngameGui
     }
 
     @Override
-    protected void func_212303_b(Entity entity)
+    protected void renderVignette(Entity entity)
     {
         if (pre(VIGNETTE))
         {
@@ -271,7 +271,7 @@ public class ForgeIngameGui extends IngameGui
             GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             return;
         }
-        super.func_212303_b(entity);
+        super.renderVignette(entity);
         post(VIGNETTE);
     }
 

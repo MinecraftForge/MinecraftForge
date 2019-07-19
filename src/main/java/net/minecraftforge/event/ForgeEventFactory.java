@@ -671,7 +671,7 @@ public class ForgeEventFactory
         MinecraftForge.EVENT_BUS.post(event);
 
         Result result = event.getResult();
-        return result == Result.DEFAULT ? world.getGameRules().func_223586_b(GameRules.field_223599_b) : result == Result.ALLOW;
+        return result == Result.DEFAULT ? world.getGameRules().getBoolean(GameRules.MOB_GRIEFING) : result == Result.ALLOW;
     }
 
     public static boolean saplingGrowTree(IWorld world, Random rand, BlockPos pos)

@@ -198,11 +198,11 @@ public class DimensionManager
     @SuppressWarnings("deprecation")
     public static ServerWorld initWorld(MinecraftServer server, DimensionType dim)
     {
-        Validate.isTrue(dim != DimensionType.field_223227_a_, "Can not hotload overworld. This must be loaded at all times by main Server.");
+        Validate.isTrue(dim != DimensionType.OVERWORLD, "Can not hotload overworld. This must be loaded at all times by main Server.");
         Validate.notNull(server, "Must provide server when creating world");
         Validate.notNull(dim, "Must provide dimension when creating world");
 
-        ServerWorld overworld = getWorld(server, DimensionType.field_223227_a_, false, false);
+        ServerWorld overworld = getWorld(server, DimensionType.OVERWORLD, false, false);
         Validate.notNull(overworld, "Cannot Hotload Dim: Overworld is not Loaded!");
 
         @SuppressWarnings("resource")
@@ -477,8 +477,8 @@ public class DimensionManager
 
     private static class NoopChunkStatusListener implements IChunkStatusListener
     {
-        @Override public void func_219509_a(ChunkPos p_219509_1_) { }
-        @Override public void func_219508_a(ChunkPos p_219508_1_, ChunkStatus p_219508_2_) { }
-        @Override public void func_219510_b() { }
+        @Override public void start(ChunkPos center) { }
+        @Override public void statusChanged(ChunkPos p_219508_1_, ChunkStatus p_219508_2_) { }
+        @Override public void stop() { }
     }
 }

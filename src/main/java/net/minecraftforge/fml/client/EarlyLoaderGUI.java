@@ -62,12 +62,12 @@ public class EarlyLoaderGUI {
 
     void renderTick() {
         if (handledElsewhere) return;
-        int guiScale = window.func_216521_a(0, false);
-        window.func_216525_a(guiScale);
+        int guiScale = window.calcGuiScale(0, false);
+        window.setGuiScale(guiScale);
 
         GlStateManager.clearColor(1.0f, 1.0f, 1.0f, 1.0f);
         GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT, Minecraft.IS_RUNNING_ON_MAC);
-        window.func_216522_a(Minecraft.IS_RUNNING_ON_MAC);
+        window.loadGUIRenderMatrix(Minecraft.IS_RUNNING_ON_MAC);
         renderMessages();
         window.update(false);
     }

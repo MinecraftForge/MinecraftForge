@@ -81,4 +81,6 @@ net/minecraft/world/storage/loot/LootEntryItem.<init>(Lnet/minecraft/item/Item;I
 net/minecraft/world/storage/loot/LootEntryTable.<init>(Lnet/minecraft/util/ResourceLocation;II[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Ljava/lang/String;)V=|p_i46639_1_,p_i46639_2_,p_i46639_3_,p_i46639_4_,entryName
 net/minecraft/world/storage/loot/LootPool.<init>([Lnet/minecraft/world/storage/loot/LootEntry;[Lnet/minecraft/world/storage/loot/conditions/LootCondition;Lnet/minecraft/world/storage/loot/RandomValueRange;Lnet/minecraft/world/storage/loot/RandomValueRange;Ljava/lang/String;)V=|p_i46643_1_,p_i46643_2_,p_i46643_3_,p_i46643_4_
 
-net/minecraft/util/shapes/EntitySelectionContext.<init>(Lnet/minecraft/entity/Entity;ZDLnet/minecraft/item/Item;)V=|entity,p_i51181_1_,p_i51181_2_,p_i51181_4_
+net/minecraft/util/math/shapes/EntitySelectionContext.<init>(Lnet/minecraft/entity/Entity;ZDLnet/minecraft/item/Item;)V=|entityIn,p_i51181_1_,p_i51181_2_,p_i51181_4_
+
+net/minecraft/item/BoneMealItem.applyBonemeal(Lnet/minecraft/item/ItemStack;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)Z=|p_195966_0_,p_195966_1_,p_195966_2_,player
