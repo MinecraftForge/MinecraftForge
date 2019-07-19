@@ -39,7 +39,7 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
     private T value;
     private boolean searched;
 
-    public static <T extends ForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<T>> registryType) {
+    public static <T extends ForgeRegistryEntry<T>, U extends T> RegistryObject<U> of(final String name, Supplier<Class<? super T>> registryType) {
         return new RegistryObject<>(name, registryType);
     }
 
@@ -57,12 +57,12 @@ public final class RegistryObject<T extends ForgeRegistryEntry<? super T>>
         this.owningRegistry = null;
     }
 
-    private <V extends ForgeRegistryEntry<V>> RegistryObject(String name, Supplier<Class<V>> registryType)
+    private <V extends ForgeRegistryEntry<V>> RegistryObject(String name, Supplier<Class<? super V>> registryType)
     {
         this.name = name;
         IForgeRegistry<V> registry;
         try {
-            registry = RegistryManager.ACTIVE.getRegistry(registryType.get());
+            registry = RegistryManager.ACTIVE.<V>getRegistry(registryType.get());
         } catch (Throwable t) {
             registry = null;
         }
