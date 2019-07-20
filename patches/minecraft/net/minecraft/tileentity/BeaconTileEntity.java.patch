@@ -11,7 +11,7 @@
              if (this.field_213934_g.size() <= 1) {
                 beacontileentity$beamsegment = new BeaconTileEntity.BeamSegment(afloat);
                 this.field_213934_g.add(beacontileentity$beamsegment);
-@@ -181,8 +181,7 @@
+@@ -183,8 +183,7 @@
  
           for(int k = p_213927_1_ - i; k <= p_213927_1_ + i && flag; ++k) {
              for(int l = p_213927_3_ - i; l <= p_213927_3_ + i; ++l) {

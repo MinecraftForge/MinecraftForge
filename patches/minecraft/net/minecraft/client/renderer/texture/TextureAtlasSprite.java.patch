@@ -9,7 +9,7 @@
     private final ResourceLocation field_110984_i;
     protected final int field_130223_c;
     protected final int field_130224_d;
-@@ -104,7 +104,10 @@
+@@ -103,7 +103,10 @@
                 anativeimage[k1] = this.field_195670_c[k1];
              } else {
                 NativeImage nativeimage1 = anativeimage[k1 - 1];
@@ -21,7 +21,7 @@
                 int k = nativeimage.func_195702_a();
                 int l = nativeimage.func_195714_b();
  
-@@ -113,8 +116,11 @@
+@@ -112,8 +115,11 @@
                       nativeimage.func_195700_a(i1, j1, func_195661_b(nativeimage1.func_195709_a(i1 * 2 + 0, j1 * 2 + 0), nativeimage1.func_195709_a(i1 * 2 + 1, j1 * 2 + 0), nativeimage1.func_195709_a(i1 * 2 + 0, j1 * 2 + 1), nativeimage1.func_195709_a(i1 * 2 + 1, j1 * 2 + 1), flag));
                    }
                 }
@@ -34,7 +34,7 @@
              }
           }
  
-@@ -196,6 +202,7 @@
+@@ -209,6 +215,7 @@
  
     private void func_195667_a(int p_195667_1_, int p_195667_2_, NativeImage[] p_195667_3_) {
        for(int i = 0; i < this.field_195670_c.length; ++i) {
@@ -42,7 +42,7 @@
           p_195667_3_[i].func_195706_a(i, this.field_110975_c >> i, this.field_110974_d >> i, p_195667_1_ >> i, p_195667_2_ >> i, this.field_130223_c >> i, this.field_130224_d >> i, this.field_195670_c.length > 1);
        }
  
-@@ -451,4 +458,10 @@
+@@ -464,4 +471,10 @@
     public void func_195663_q() {
        this.func_195659_d(0);
     }

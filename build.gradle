@@ -49,8 +49,8 @@ ext {
     }
     MAPPING_CHANNEL = 'snapshot'
     MAPPING_VERSION = '20190719-1.14.3'
-    MC_VERSION = '1.14.3'
-    MCP_VERSION = '20190624.152911'
+    MC_VERSION = '1.14.4'
+    MCP_VERSION = '20190719.173545'
 }
 
 project(':mcp') {
@@ -757,15 +757,6 @@ project(':forge') {
                         ],
                         outputs: [
                             '{PATCHED}': '{PATCHED_SHA}'
-                        ]
-                    ], [
-                        jar: INSTALLER_TOOLS,
-                        classpath: getClasspath(project, libs, INSTALLER_TOOLS),
-                        args: [
-                            '--task', 'DEOBF_REALMS',
-                            '--map',  '{MAPPINGS}',
-                            '--mc',   '{MINECRAFT_JAR}',
-                            '--mcp',  '{MCP_VERSION}'
                         ]
                     ]
                 ]

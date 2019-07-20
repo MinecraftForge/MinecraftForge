@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/ai/goal/BreakBlockGoal.java
 +++ b/net/minecraft/entity/ai/goal/BreakBlockGoal.java
-@@ -30,7 +30,7 @@
+@@ -32,7 +32,7 @@
     }
  
     public boolean func_75250_a() {

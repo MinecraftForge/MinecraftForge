@@ -40,7 +40,7 @@
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
        Chunk chunk = abstractchunkprovider.func_217205_a(p_180494_1_.func_177958_n() >> 4, p_180494_1_.func_177952_p() >> 4, false);
        if (chunk != null) {
-@@ -169,23 +177,51 @@
+@@ -169,17 +177,45 @@
        } else {
           Chunk chunk = this.func_175726_f(p_180501_1_);
           Block block = p_180501_2_.func_177230_c();
@@ -86,14 +86,7 @@
 +         {
              if (blockstate1 == p_180501_2_) {
                 if (blockstate != blockstate1) {
-                   this.func_217396_m(p_180501_1_);
-                }
- 
--               if ((p_180501_3_ & 2) != 0 && (!this.field_72995_K || (p_180501_3_ & 4) == 0) && (this.field_72995_K || chunk.func_217321_u() != null && chunk.func_217321_u().func_219065_a(ChunkHolder.LocationType.TICKING))) {
-+               if ((p_180501_3_ & 2) != 0 && (!this.field_72995_K || (p_180501_3_ & 4) == 0) && (this.field_72995_K || chunk == null || chunk.func_217321_u() != null && chunk.func_217321_u().func_219065_a(ChunkHolder.LocationType.TICKING))) {
-                   this.func_184138_a(p_180501_1_, blockstate, p_180501_2_, p_180501_3_);
-                }
- 
+                   this.func_225319_b(p_180501_1_, blockstate, blockstate1);
 @@ -205,8 +241,6 @@
  
                 this.func_217393_a(p_180501_1_, blockstate, blockstate1);
@@ -178,7 +171,7 @@
  
     @OnlyIn(Dist.CLIENT)
     public Vec3d func_217382_a(BlockPos p_217382_1_, float p_217382_2_) {
-+       return this.field_73011_w.getSkyColor(p_217382_1_, p_217382_2_);
++      return this.field_73011_w.getSkyColor(p_217382_1_, p_217382_2_);
 +   }
 +
 +   @OnlyIn(Dist.CLIENT)
@@ -187,7 +180,7 @@
        float f1 = MathHelper.func_76134_b(f * ((float)Math.PI * 2F)) * 2.0F + 0.5F;
        f1 = MathHelper.func_76131_a(f1, 0.0F, 1.0F);
 -      Biome biome = this.func_180494_b(p_217382_1_);
--      float f2 = biome.func_180626_a(p_217382_1_);
+-      float f2 = biome.func_225486_c(p_217382_1_);
 -      int i = biome.func_76731_a(f2);
 +      int i = net.minecraftforge.client.ForgeHooksClient.getSkyBlendColour(this, p_217382_1_);
        float f3 = (float)(i >> 16 & 255) / 255.0F;
@@ -448,9 +441,9 @@
 +      int k = MathHelper.func_76128_c((p_175647_2_.field_72339_c - getMaxEntityRadius()) / 16.0D);
 +      int l = MathHelper.func_76143_f((p_175647_2_.field_72334_f + getMaxEntityRadius()) / 16.0D);
        List<T> list = Lists.newArrayList();
+       AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
  
-       for(int i1 = i; i1 < j; ++i1) {
-@@ -980,7 +1071,7 @@
+@@ -1001,7 +1092,7 @@
  
     public int func_175651_c(BlockPos p_175651_1_, Direction p_175651_2_) {
        BlockState blockstate = this.func_180495_p(p_175651_1_);
@@ -459,7 +452,7 @@
     }
  
     public boolean func_175640_z(BlockPos p_175640_1_) {
-@@ -1025,7 +1116,7 @@
+@@ -1046,7 +1137,7 @@
     }
  
     public long func_72905_C() {
@@ -468,7 +461,7 @@
     }
  
     public long func_82737_E() {
-@@ -1033,11 +1124,11 @@
+@@ -1054,11 +1145,11 @@
     }
  
     public long func_72820_D() {
@@ -482,7 +475,7 @@
     }
  
     protected void func_217389_a() {
-@@ -1049,7 +1140,7 @@
+@@ -1070,7 +1161,7 @@
     }
  
     public BlockPos func_175694_M() {
@@ -491,7 +484,7 @@
        if (!this.func_175723_af().func_177746_a(blockpos)) {
           blockpos = this.func_205770_a(Heightmap.Type.MOTION_BLOCKING, new BlockPos(this.func_175723_af().func_177731_f(), 0.0D, this.func_175723_af().func_177721_g()));
        }
-@@ -1058,10 +1149,14 @@
+@@ -1079,10 +1170,14 @@
     }
  
     public void func_175652_B(BlockPos p_175652_1_) {
@@ -507,7 +500,7 @@
        return true;
     }
  
-@@ -1129,8 +1224,7 @@
+@@ -1150,8 +1245,7 @@
     }
  
     public boolean func_180502_D(BlockPos p_180502_1_) {
@@ -517,7 +510,7 @@
     }
  
     @Nullable
-@@ -1144,12 +1238,11 @@
+@@ -1165,12 +1259,11 @@
     }
  
     public int func_72940_L() {
@@ -532,7 +525,7 @@
     }
  
     public CrashReportCategory func_72914_a(CrashReport p_72914_1_) {
-@@ -1180,16 +1273,15 @@
+@@ -1201,16 +1294,15 @@
     public abstract Scoreboard func_96441_U();
  
     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_) {
@@ -553,7 +546,7 @@
                    blockstate.func_215697_a(this, blockpos, p_175666_2_, p_175666_1_, false);
                 }
              }
-@@ -1268,4 +1360,16 @@
+@@ -1289,4 +1381,16 @@
     public BlockPos func_205770_a(Heightmap.Type p_205770_1_, BlockPos p_205770_2_) {
        return new BlockPos(p_205770_2_.func_177958_n(), this.func_201676_a(p_205770_1_, p_205770_2_.func_177958_n(), p_205770_2_.func_177952_p()), p_205770_2_.func_177952_p());
     }
