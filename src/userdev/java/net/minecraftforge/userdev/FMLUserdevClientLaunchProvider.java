@@ -56,10 +56,4 @@ public class FMLUserdevClientLaunchProvider extends FMLUserdevLaunchProvider imp
             return null;
         };
     }
-
-    @Override
-    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
-    {
-        super.configureTransformationClassLoader(builder);
-    }
 }

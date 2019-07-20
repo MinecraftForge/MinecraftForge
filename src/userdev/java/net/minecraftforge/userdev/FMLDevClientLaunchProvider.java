@@ -68,12 +68,6 @@ public class FMLDevClientLaunchProvider extends FMLCommonLaunchHandler implement
     }
 
     @Override
-    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
-    {
-        super.configureTransformationClassLoader(builder);
-    }
-
-    @Override
     public Callable<Void> launchService(String[] arguments, ITransformingClassLoader launchClassLoader)
     {
         return () -> {

@@ -58,15 +58,6 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
         };
     }
 
-    @Override
-    public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
-    {
-        super.configureTransformationClassLoader(builder);
-        Path patchy = LibraryFinder.findJarPathFor("com/mojang/patchy/LegacyXMLLayout.class", "patchy");
-        LOGGER.debug(CORE, "Found patchy library at {}", patchy);
-        builder.addTransformationPath(patchy);
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public void setup(final IEnvironment environment, final Map<String, ?> arguments) {
