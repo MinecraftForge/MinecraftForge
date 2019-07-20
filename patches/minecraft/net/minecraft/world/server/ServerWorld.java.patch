@@ -1,6 +1,6 @@
---- a/net/minecraft/world/ServerWorld.java
-+++ b/net/minecraft/world/ServerWorld.java
-@@ -118,7 +118,7 @@
+--- a/net/minecraft/world/server/ServerWorld.java
++++ b/net/minecraft/world/server/ServerWorld.java
+@@ -134,7 +134,7 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
     private static final Logger field_147491_a = LogManager.getLogger();
     private final List<Entity> field_217497_w = Lists.newArrayList();
     private final Int2ObjectMap<Entity> field_217498_x = new Int2ObjectLinkedOpenHashMap<>();
-@@ -145,10 +145,14 @@
+@@ -160,10 +160,14 @@
     private boolean field_211159_Q;
     @Nullable
     private final WanderingTraderSpawner field_217496_L;
@@ -25,7 +25,7 @@
              return p_i50703_1_.func_71218_a(DimensionType.field_223227_a_).func_217481_x();
           });
        }, p_i50703_6_, false);
-@@ -166,6 +170,7 @@
+@@ -181,6 +185,7 @@
        }
  
        this.field_217496_L = this.field_73011_w.func_186058_p() == DimensionType.field_223227_a_ ? new WanderingTraderSpawner(this) : null;
@@ -33,7 +33,7 @@
     }
  
     public void func_72835_b(BooleanSupplier p_72835_1_) {
-@@ -175,6 +180,7 @@
+@@ -190,6 +195,7 @@
        this.func_175723_af().func_212673_r();
        iprofiler.func_219895_b("weather");
        boolean flag = this.func_72896_J();
@@ -41,7 +41,7 @@
        if (this.field_73011_w.func_191066_m()) {
           if (this.func_82736_K().func_223586_b(GameRules.field_223617_t)) {
              int i = this.field_72986_A.func_176133_A();
-@@ -236,6 +242,7 @@
+@@ -251,6 +257,7 @@
  
           this.field_73004_o = MathHelper.func_76131_a(this.field_73004_o, 0.0F, 1.0F);
        }
@@ -49,7 +49,7 @@
  
        if (this.field_73003_n != this.field_73004_o) {
           this.field_73061_a.func_184103_al().func_148537_a(new SChangeGameStatePacket(7, this.field_73004_o), this.field_73011_w.func_186058_p());
-@@ -245,15 +252,19 @@
+@@ -260,15 +267,19 @@
           this.field_73061_a.func_184103_al().func_148537_a(new SChangeGameStatePacket(8, this.field_73017_q), this.field_73011_w.func_186058_p());
        }
  
@@ -73,7 +73,7 @@
        }
  
        if (this.func_72912_H().func_76093_s() && this.func_175659_aa() != Difficulty.HARD) {
-@@ -265,7 +276,7 @@
+@@ -280,7 +291,7 @@
        })) {
           this.field_73068_P = false;
           if (this.func_82736_K().func_223586_b(GameRules.field_223607_j)) {
@@ -82,15 +82,15 @@
              this.func_72877_b(l - l % 24000L);
           }
  
-@@ -291,6 +302,7 @@
-       this.field_175740_d.func_75528_a();
+@@ -304,6 +315,7 @@
+ 
        iprofiler.func_219895_b("portalForcer");
        this.field_85177_Q.func_85189_a(this.func_82737_E());
 +      customTeleporters.forEach(t -> t.func_85189_a(func_82737_E()));
        iprofiler.func_219895_b("raid");
        this.field_217494_c.func_215171_a();
        if (this.field_217496_L != null) {
-@@ -314,6 +326,7 @@
+@@ -327,6 +339,7 @@
              Entity entity = this.field_217497_w.get(i1);
              this.func_217390_a((p_217473_0_) -> {
                 ++p_217473_0_.field_70173_aa;
@@ -98,7 +98,7 @@
                 p_217473_0_.func_70071_h_();
              }, entity);
              if (entity.field_70128_L) {
-@@ -390,7 +403,7 @@
+@@ -403,7 +416,7 @@
        int j = chunkpos.func_180333_d();
        IProfiler iprofiler = this.func_217381_Z();
        iprofiler.func_76320_a("thunder");
@@ -107,7 +107,7 @@
           BlockPos blockpos = this.func_175736_a(this.func_217383_a(i, 0, j, 15));
           if (this.func_175727_C(blockpos)) {
              DifficultyInstance difficultyinstance = this.func_175649_E(blockpos);
-@@ -408,10 +421,11 @@
+@@ -421,10 +434,11 @@
        }
  
        iprofiler.func_219895_b("iceandsnow");
@@ -120,7 +120,7 @@
           if (biome.func_201848_a(this, blockpos3)) {
              this.func_175656_a(blockpos3, Blocks.field_150432_aD.func_176223_P());
           }
-@@ -498,10 +512,7 @@
+@@ -511,10 +525,7 @@
     }
  
     private void func_73051_P() {
@@ -132,7 +132,7 @@
     }
  
     @OnlyIn(Dist.CLIENT)
-@@ -514,7 +525,7 @@
+@@ -527,7 +538,7 @@
        int j = this.field_72986_A.func_76074_e();
        int k = 0;
  
@@ -141,7 +141,7 @@
           i += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           j += this.field_73012_v.nextInt(8) - this.field_73012_v.nextInt(8);
           ++k;
-@@ -557,8 +568,9 @@
+@@ -570,8 +581,9 @@
           if (p_217479_1_.field_70175_ag) {
              ++p_217479_1_.field_70173_aa;
              this.func_217381_Z().func_194340_a(() -> {
@@ -152,7 +152,7 @@
              p_217479_1_.func_70071_h_();
              this.func_217381_Z().func_76319_b();
           }
-@@ -620,6 +632,11 @@
+@@ -633,6 +645,11 @@
     }
  
     public boolean func_175660_a(PlayerEntity p_175660_1_, BlockPos p_175660_2_) {
@@ -164,7 +164,7 @@
        return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
     }
  
-@@ -629,6 +646,7 @@
+@@ -642,6 +659,7 @@
        } else if (this.field_72986_A.func_76067_t() == WorldType.field_180272_g) {
           this.field_72986_A.func_176143_a(BlockPos.field_177992_a.func_177984_a());
        } else {
@@ -172,7 +172,7 @@
           BiomeProvider biomeprovider = this.field_73020_y.func_201711_g().func_202090_b();
           List<Biome> list = biomeprovider.func_76932_a();
           Random random = new Random(this.func_72905_C());
-@@ -711,6 +729,7 @@
+@@ -724,6 +742,7 @@
              p_217445_1_.func_200209_c(new TranslationTextComponent("menu.savingChunks"));
           }
  
@@ -180,16 +180,16 @@
           serverchunkprovider.func_217210_a(p_217445_2_);
        }
     }
-@@ -769,7 +788,7 @@
- 
-       for(Entity entity : this.field_217498_x.values()) {
-          if (!(entity instanceof MobEntity) || !((MobEntity)entity).func_104002_bU()) {
--            EntityClassification entityclassification = entity.func_200600_R().func_220339_d();
-+            EntityClassification entityclassification = entity.getClassification(true);
-             if (entityclassification != EntityClassification.MISC && this.func_72863_F().func_223435_b(entity)) {
-                object2intmap.mergeInt(entityclassification, 1, Integer::sum);
+@@ -799,7 +818,7 @@
              }
-@@ -814,6 +833,7 @@
+          }
+ 
+-         EntityClassification entityclassification = entity.func_200600_R().func_220339_d();
++            EntityClassification entityclassification = entity.getClassification(true);
+          if (entityclassification != EntityClassification.MISC && this.func_72863_F().func_223435_b(entity)) {
+             object2intmap.mergeInt(entityclassification, 1, Integer::sum);
+          }
+@@ -841,6 +860,7 @@
     }
  
     private void func_217448_f(ServerPlayerEntity p_217448_1_) {
@@ -197,7 +197,7 @@
        Entity entity = this.field_175741_N.get(p_217448_1_.func_110124_au());
        if (entity != null) {
           field_147491_a.warn("Force-added player with duplicate UUID {}", (Object)p_217448_1_.func_110124_au().toString());
-@@ -838,6 +858,7 @@
+@@ -865,6 +885,7 @@
        } else if (this.func_217478_l(p_72838_1_)) {
           return false;
        } else {
@@ -205,7 +205,7 @@
           IChunk ichunk = this.func_217353_a(MathHelper.func_76128_c(p_72838_1_.field_70165_t / 16.0D), MathHelper.func_76128_c(p_72838_1_.field_70161_v / 16.0D), ChunkStatus.field_222617_m, p_72838_1_.field_98038_p);
           if (!(ichunk instanceof Chunk)) {
              return false;
-@@ -853,6 +874,7 @@
+@@ -880,6 +901,7 @@
        if (this.func_217478_l(p_217440_1_)) {
           return false;
        } else {
@@ -213,7 +213,7 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -889,11 +911,15 @@
+@@ -916,11 +938,15 @@
     }
  
     public void func_217484_g(Entity p_217484_1_) {
@@ -230,7 +230,7 @@
  
        this.field_175741_N.remove(p_217484_1_.func_110124_au());
        this.func_72863_F().func_217226_b(p_217484_1_);
-@@ -907,6 +933,7 @@
+@@ -934,6 +960,7 @@
           this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
@@ -238,7 +238,7 @@
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -927,9 +954,13 @@
+@@ -954,9 +981,13 @@
           }
        }
  
@@ -252,7 +252,7 @@
        if (this.field_217492_a) {
           throw new IllegalStateException("Removing entity while ticking!");
        } else {
-@@ -948,7 +979,10 @@
+@@ -975,7 +1006,10 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
@@ -264,7 +264,7 @@
        this.func_217467_h(p_217434_1_);
        this.func_72854_c();
     }
-@@ -973,10 +1007,20 @@
+@@ -1000,10 +1034,20 @@
     }
  
     public void func_184148_a(@Nullable PlayerEntity p_184148_1_, double p_184148_2_, double p_184148_4_, double p_184148_6_, SoundEvent p_184148_8_, SoundCategory p_184148_9_, float p_184148_10_, float p_184148_11_) {
@@ -285,7 +285,7 @@
        this.field_73061_a.func_184103_al().func_148543_a(p_217384_1_, p_217384_2_.field_70165_t, p_217384_2_.field_70163_u, p_217384_2_.field_70161_v, p_217384_5_ > 1.0F ? (double)(16.0F * p_217384_5_) : 16.0D, this.field_73011_w.func_186058_p(), new SSpawnMovingSoundEffectPacket(p_217384_3_, p_217384_4_, p_217384_2_, p_217384_5_, p_217384_6_));
     }
  
-@@ -1012,6 +1056,7 @@
+@@ -1039,6 +1083,7 @@
  
     public Explosion func_217401_a(@Nullable Entity p_217401_1_, DamageSource p_217401_2_, double p_217401_3_, double p_217401_5_, double p_217401_7_, float p_217401_9_, boolean p_217401_10_, Explosion.Mode p_217401_11_) {
        Explosion explosion = new Explosion(this, p_217401_1_, p_217401_3_, p_217401_5_, p_217401_7_, p_217401_9_, p_217401_10_, p_217401_11_);
@@ -293,11 +293,10 @@
        if (p_217401_2_ != null) {
           explosion.func_199592_a(p_217401_2_);
        }
-@@ -1261,4 +1306,15 @@
-    public void func_217489_a(IReputationType p_217489_1_, Entity p_217489_2_, IReputationTracking p_217489_3_) {
+@@ -1289,6 +1334,17 @@
        p_217489_3_.func_213739_a(p_217489_1_, p_217489_2_);
     }
-+
+ 
 +   protected void initCapabilities() {
 +      net.minecraftforge.common.capabilities.ICapabilityProvider parent = field_73011_w.initCapabilities();
 +      this.gatherCapabilities(parent);
@@ -308,4 +307,7 @@
 +   public java.util.stream.Stream<Entity> getEntities() {
 +       return field_217498_x.values().stream();
 +   }
- }
++
+    public void func_225322_a(Path p_225322_1_) throws IOException {
+       ChunkManager chunkmanager = this.func_72863_F().field_217237_a;
+ 

@@ -4,7 +4,7 @@
     public BlockState func_196448_a(IBlockReader p_196448_1_, BlockPos p_196448_2_) {
        BlockPos blockpos = p_196448_2_.func_177977_b();
        BlockState blockstate = p_196448_1_.func_180495_p(blockpos);
--      if (!this.func_196446_i(blockstate) && !Block.func_220056_d(blockstate, p_196448_1_, blockpos, Direction.UP)) {
+-      if (!this.func_196446_i(blockstate) && !blockstate.func_224755_d(p_196448_1_, blockpos, Direction.UP)) {
 +      if (!this.canCatchFire(p_196448_1_, p_196448_2_, Direction.UP) && !Block.func_220056_d(blockstate, p_196448_1_, blockpos, Direction.UP)) {
           BlockState blockstate1 = this.func_176223_P();
  
@@ -112,7 +112,7 @@
  
        BlockPos blockpos = p_180655_3_.func_177977_b();
        BlockState blockstate = p_180655_2_.func_180495_p(blockpos);
--      if (!this.func_196446_i(blockstate) && !Block.func_220056_d(blockstate, p_180655_2_, blockpos, Direction.UP)) {
+-      if (!this.func_196446_i(blockstate) && !blockstate.func_224755_d(p_180655_2_, blockpos, Direction.UP)) {
 -         if (this.func_196446_i(p_180655_2_.func_180495_p(p_180655_3_.func_177976_e()))) {
 +      if (!this.canCatchFire(p_180655_2_, blockpos, Direction.UP) && !Block.func_220056_d(blockstate, p_180655_2_, blockpos, Direction.UP)) {
 +         if (this.canCatchFire(p_180655_2_, blockpos.func_177976_e(), Direction.EAST)) {

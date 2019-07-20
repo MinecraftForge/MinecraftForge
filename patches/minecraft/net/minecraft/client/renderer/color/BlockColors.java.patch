@@ -1,16 +1,16 @@
 --- a/net/minecraft/client/renderer/color/BlockColors.java
 +++ b/net/minecraft/client/renderer/color/BlockColors.java
-@@ -22,7 +22,8 @@
+@@ -27,7 +27,8 @@
  
  @OnlyIn(Dist.CLIENT)
  public class BlockColors {
 -   private final ObjectIntIdentityMap<IBlockColor> field_186725_a = new ObjectIntIdentityMap<>(32);
 +   // FORGE: Use RegistryDelegates as non-Vanilla block ids are not constant
 +   private final java.util.Map<net.minecraftforge.registries.IRegistryDelegate<Block>, IBlockColor> field_186725_a = new java.util.HashMap<>();
+    private final Map<Block, Set<IProperty<?>>> field_225311_b = Maps.newHashMap();
  
     public static BlockColors func_186723_a() {
-       BlockColors blockcolors = new BlockColors();
-@@ -63,11 +64,12 @@
+@@ -72,11 +73,12 @@
        blockcolors.func_186722_a((p_210228_0_, p_210228_1_, p_210228_2_, p_210228_3_) -> {
           return p_210228_1_ != null && p_210228_2_ != null ? 2129968 : 7455580;
        }, Blocks.field_196651_dG);
@@ -24,7 +24,7 @@
        if (iblockcolor != null) {
           return iblockcolor.getColor(p_189991_1_, (IEnviromentBlockReader)null, (BlockPos)null, 0);
        } else {
-@@ -77,13 +79,13 @@
+@@ -86,13 +88,13 @@
     }
  
     public int func_216860_a(BlockState p_216860_1_, @Nullable IEnviromentBlockReader p_216860_2_, @Nullable BlockPos p_216860_3_, int p_216860_4_) {

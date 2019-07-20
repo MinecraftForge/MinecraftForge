@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/merchant/villager/VillagerEntity.java
 +++ b/net/minecraft/entity/merchant/villager/VillagerEntity.java
-@@ -227,7 +227,7 @@
+@@ -230,7 +230,7 @@
        if (flag) {
           itemstack.func_111282_a(p_184645_1_, this, p_184645_2_);
           return true;

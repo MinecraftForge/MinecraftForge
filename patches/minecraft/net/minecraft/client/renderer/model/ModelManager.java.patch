@@ -1,6 +1,6 @@
 --- a/net/minecraft/client/renderer/model/ModelManager.java
 +++ b/net/minecraft/client/renderer/model/ModelManager.java
-@@ -12,7 +12,7 @@
+@@ -16,7 +16,7 @@
  
  @OnlyIn(Dist.CLIENT)
  public class ModelManager extends ReloadListener<ModelBakery> {
@@ -8,29 +8,32 @@
 +   private Map<ResourceLocation, IBakedModel> field_174958_a = new java.util.HashMap<>();
     private final AtlasTexture field_174956_b;
     private final BlockModelShapes field_174957_c;
-    private IBakedModel field_174955_d;
-@@ -34,9 +34,15 @@
-       return this.field_174957_c;
-    }
+    private final BlockColors field_224743_d;
+@@ -43,7 +43,7 @@
  
-+   // TODO
-+   //@Override
-+   public net.minecraftforge.resource.IResourceType getResourceType() {
-+      return net.minecraftforge.resource.VanillaResourceType.MODELS;
-+   }
-+
     protected ModelBakery func_212854_a_(IResourceManager p_212854_1_, IProfiler p_212854_2_) {
        p_212854_2_.func_219894_a();
--      ModelBakery modelbakery = new ModelBakery(p_212854_1_, this.field_174956_b, p_212854_2_);
-+      net.minecraftforge.client.model.ModelLoader modelbakery = new net.minecraftforge.client.model.ModelLoader(p_212854_1_, this.field_174956_b, p_212854_2_);
+-      ModelBakery modelbakery = new ModelBakery(p_212854_1_, this.field_174956_b, this.field_224743_d, p_212854_2_);
++      net.minecraftforge.client.model.ModelLoader modelbakery = new net.minecraftforge.client.model.ModelLoader(p_212854_1_, this.field_174956_b, this.field_224743_d, p_212854_2_);
        p_212854_2_.func_219897_b();
        return modelbakery;
     }
-@@ -47,6 +53,7 @@
-       p_212853_1_.func_217844_a(p_212853_3_);
+@@ -55,6 +55,7 @@
        this.field_174958_a = p_212853_1_.func_217846_a();
+       this.field_224744_f = p_212853_1_.func_225354_b();
        this.field_174955_d = this.field_174958_a.get(ModelBakery.field_177604_a);
 +      net.minecraftforge.client.ForgeHooksClient.onModelBake(this, this.field_174958_a, (net.minecraftforge.client.model.ModelLoader) p_212853_1_);
        p_212853_3_.func_219895_b("cache");
        this.field_174957_c.func_178124_c();
        p_212853_3_.func_76319_b();
+@@ -78,4 +79,10 @@
+          return true;
+       }
+    }
++
++   // TODO
++   //@Override
++   public net.minecraftforge.resource.IResourceType getResourceType() {
++      return net.minecraftforge.resource.VanillaResourceType.MODELS;
++   }
+ }

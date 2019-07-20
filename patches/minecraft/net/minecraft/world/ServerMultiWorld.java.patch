@@ -1,6 +1,6 @@
 --- a/net/minecraft/world/ServerMultiWorld.java
 +++ b/net/minecraft/world/ServerMultiWorld.java
-@@ -10,11 +10,18 @@
+@@ -11,11 +11,18 @@
  import net.minecraft.world.storage.SaveHandler;
  
  public class ServerMultiWorld extends ServerWorld {

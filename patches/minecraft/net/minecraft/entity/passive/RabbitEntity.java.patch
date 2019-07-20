@@ -1,6 +1,6 @@
 --- a/net/minecraft/entity/passive/RabbitEntity.java
 +++ b/net/minecraft/entity/passive/RabbitEntity.java
-@@ -502,7 +502,7 @@
+@@ -498,7 +498,7 @@
  
        public boolean func_75250_a() {
           if (this.field_179496_a <= 0) {

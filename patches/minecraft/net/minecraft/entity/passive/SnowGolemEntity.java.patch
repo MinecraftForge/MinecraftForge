@@ -22,8 +22,8 @@
              j = MathHelper.func_76128_c(this.field_70163_u);
              k = MathHelper.func_76128_c(this.field_70161_v + (double)((float)(l / 2 % 2 * 2 - 1) * 0.25F));
              BlockPos blockpos = new BlockPos(i, j, k);
--            if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && this.field_70170_p.func_180494_b(blockpos).func_180626_a(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
-+            if (this.field_70170_p.func_175623_d(blockpos) && this.field_70170_p.func_180494_b(blockpos).func_180626_a(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
+-            if (this.field_70170_p.func_180495_p(blockpos).func_196958_f() && this.field_70170_p.func_180494_b(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
++            if (this.field_70170_p.func_175623_d(blockpos) && this.field_70170_p.func_180494_b(blockpos).func_225486_c(blockpos) < 0.8F && blockstate.func_196955_c(this.field_70170_p, blockpos)) {
                 this.field_70170_p.func_175656_a(blockpos, blockstate);
              }
           }

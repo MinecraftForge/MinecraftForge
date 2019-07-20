@@ -1,31 +1,31 @@
 --- a/net/minecraft/world/spawner/WorldEntitySpawner.java
 +++ b/net/minecraft/world/spawner/WorldEntitySpawner.java
-@@ -82,7 +82,7 @@
+@@ -86,7 +86,7 @@
                             }
  
                             if (biome$spawnlistentry == null) {
 -                              biome$spawnlistentry = func_222264_a(chunkgenerator, p_222263_0_, p_222263_1_.field_73012_v, blockpos$mutableblockpos);
 +                              biome$spawnlistentry = getSpawnList(chunkgenerator, p_222263_0_, p_222263_1_.field_73012_v, blockpos$mutableblockpos, p_222263_1_);
                                if (biome$spawnlistentry == null) {
-                                  break label117;
+                                  break label123;
                                }
-@@ -95,7 +95,7 @@
+@@ -99,7 +99,7 @@
                             }
  
                             EntityType<?> entitytype = biome$spawnlistentry.field_200702_b;
 -                           if (!entitytype.func_200720_b() || !func_222261_a(chunkgenerator, p_222263_0_, biome$spawnlistentry, blockpos$mutableblockpos)) {
 +                           if (!entitytype.func_200720_b() || !getSpawnList(chunkgenerator, p_222263_0_, biome$spawnlistentry, blockpos$mutableblockpos, p_222263_1_)) {
-                               break label109;
+                               break label115;
                             }
  
-@@ -118,15 +118,17 @@
+@@ -122,15 +122,17 @@
                             }
  
                             mobentity.func_70012_b((double)f, (double)k, (double)f1, p_222263_1_.field_73012_v.nextFloat() * 360.0F, 0.0F);
--                           if (playerentity.func_70092_e((double)f, (double)k, (double)f1) > 16384.0D && mobentity.func_213397_c(playerentity.func_70092_e((double)f, (double)k, (double)f1)) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)) {
-+                           int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_222263_1_, f, k, f1, null);
-+                           if (canSpawn == -1 || (canSpawn == 0 && (playerentity.func_70092_e((double)f, (double)k, (double)f1) > 16384.0D && (mobentity.func_213397_c(playerentity.func_70092_e((double)f, (double)k, (double)f1)) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_))))) {
-                               break label109;
+-                           if (d0 > 16384.0D && mobentity.func_213397_c(d0) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)) {
++                            int canSpawn = net.minecraftforge.common.ForgeHooks.canEntitySpawn(mobentity, p_222263_1_, f, k, f1, null);
++                            if (canSpawn == -1 || (canSpawn == 0 && d0 > 16384.0D && (mobentity.func_213397_c(d0) || !mobentity.func_213380_a(p_222263_1_, SpawnReason.NATURAL) || !mobentity.func_205019_a(p_222263_1_)))) {
+                               break label115;
                             }
  
 +                           if (!net.minecraftforge.event.ForgeEventFactory.doSpecialSpawn(mobentity, p_222263_1_, f, k, f1, null))
@@ -38,7 +38,7 @@
                                return;
                             }
  
-@@ -149,13 +151,15 @@
+@@ -153,13 +155,15 @@
     }
  
     @Nullable
@@ -56,7 +56,7 @@
        return list.isEmpty() ? false : list.contains(p_222261_2_);
     }
  
-@@ -184,6 +188,13 @@
+@@ -188,6 +192,13 @@
        if (p_209382_0_ == EntitySpawnPlacementRegistry.PlacementType.NO_RESTRICTIONS) {
           return true;
        } else if (p_209382_3_ != null && p_209382_1_.func_175723_af().func_177746_a(p_209382_2_)) {
@@ -70,7 +70,7 @@
           BlockState blockstate = p_209382_1_.func_180495_p(p_209382_2_);
           IFluidState ifluidstate = p_209382_1_.func_204610_c(p_209382_2_);
           BlockPos blockpos = p_209382_2_.func_177984_a();
-@@ -194,14 +205,12 @@
+@@ -198,14 +209,12 @@
           case ON_GROUND:
           default:
              BlockState blockstate1 = p_209382_1_.func_180495_p(blockpos1);
@@ -86,7 +86,7 @@
        }
     }
  
-@@ -244,6 +253,7 @@
+@@ -248,6 +257,7 @@
                       entity.func_70012_b(d0, (double)blockpos.func_177956_o(), d1, p_77191_4_.nextFloat() * 360.0F, 0.0F);
                       if (entity instanceof MobEntity) {
                          MobEntity mobentity = (MobEntity)entity;

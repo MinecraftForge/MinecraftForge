@@ -6,7 +6,7 @@
              ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)livingentity;
 +               net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(serverplayerentity, this.field_70165_t, this.field_70163_u, this.field_70161_v, 5.0F);
 +               if (!net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) { // Don't indent to lower patch size
-             if (serverplayerentity.field_71135_a.func_147362_b().func_150724_d() && serverplayerentity.field_70170_p == this.field_70170_p && !serverplayerentity.func_70608_bn()) {
+             if (serverplayerentity.field_71135_a.func_147298_b().func_150724_d() && serverplayerentity.field_70170_p == this.field_70170_p && !serverplayerentity.func_70608_bn()) {
                 if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_223586_b(GameRules.field_223601_d)) {
                    EndermiteEntity endermiteentity = EntityType.field_200804_r.func_200721_a(this.field_70170_p);
 @@ -96,9 +98,10 @@

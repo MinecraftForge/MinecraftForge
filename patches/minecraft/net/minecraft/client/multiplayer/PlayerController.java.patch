@@ -1,24 +1,17 @@
 --- a/net/minecraft/client/multiplayer/PlayerController.java
 +++ b/net/minecraft/client/multiplayer/PlayerController.java
-@@ -104,6 +104,8 @@
-          }
-       }
- 
+@@ -103,7 +103,9 @@
+             Block block = blockstate.func_177230_c();
+             if ((block instanceof CommandBlockBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !this.field_78776_a.field_71439_g.func_195070_dx()) {
+                return false;
+-            } else if (blockstate.func_196958_f()) {
++            } else if (blockstate.isAir(world, p_187103_1_)) {
 +      if (field_78776_a.field_71439_g.func_184614_ca().onBlockStartBreak(p_187103_1_, field_78776_a.field_71439_g)) return false;
 +
-       World world = this.field_78776_a.field_71441_e;
-       BlockState blockstate = world.func_180495_p(p_187103_1_);
-       if (!this.field_78776_a.field_71439_g.func_184614_ca().func_77973_b().func_195938_a(blockstate, world, p_187103_1_, this.field_78776_a.field_71439_g)) {
-@@ -112,7 +114,7 @@
-          Block block = blockstate.func_177230_c();
-          if ((block instanceof CommandBlockBlock || block instanceof StructureBlock || block instanceof JigsawBlock) && !this.field_78776_a.field_71439_g.func_195070_dx()) {
-             return false;
--         } else if (blockstate.func_196958_f()) {
-+         } else if (blockstate.isAir(world, p_187103_1_)) {
-             return false;
-          } else {
-             block.func_176208_a(world, p_187103_1_, blockstate, this.field_78776_a.field_71439_g);
-@@ -209,13 +211,13 @@
+                return false;
+             } else {
+                block.func_176208_a(world, p_187103_1_, blockstate, this.field_78776_a.field_71439_g);
+@@ -187,13 +189,13 @@
           return true;
        } else if (this.func_178893_a(p_180512_1_)) {
           BlockState blockstate = this.field_78776_a.field_71441_e.func_180495_p(p_180512_1_);
@@ -34,7 +27,7 @@
                 this.field_78776_a.func_147118_V().func_147682_a(new SimpleSound(soundtype.func_185846_f(), SoundCategory.NEUTRAL, (soundtype.func_185843_a() + 1.0F) / 8.0F, soundtype.func_185847_b() * 0.5F, p_180512_1_));
              }
  
-@@ -239,7 +241,8 @@
+@@ -217,7 +219,8 @@
     }
  
     public float func_78757_d() {
@@ -44,7 +37,7 @@
     }
  
     public void func_78765_e() {
-@@ -256,7 +259,7 @@
+@@ -234,7 +237,7 @@
        ItemStack itemstack = this.field_78776_a.field_71439_g.func_184614_ca();
        boolean flag = this.field_85183_f.func_190926_b() && itemstack.func_190926_b();
        if (!this.field_85183_f.func_190926_b() && !itemstack.func_190926_b()) {
@@ -53,7 +46,7 @@
        }
  
        return p_178893_1_.equals(this.field_178895_c) && flag;
-@@ -320,11 +323,14 @@
+@@ -298,11 +301,14 @@
           if (p_187101_1_.func_184811_cZ().func_185141_a(itemstack.func_77973_b())) {
              return ActionResultType.PASS;
           } else {
@@ -68,7 +61,7 @@
              }
  
              return actionresult.func_188397_a();
-@@ -349,6 +355,9 @@
+@@ -327,6 +333,9 @@
     public ActionResultType func_187097_a(PlayerEntity p_187097_1_, Entity p_187097_2_, Hand p_187097_3_) {
        this.func_78750_j();
        this.field_78774_b.func_147297_a(new CUseEntityPacket(p_187097_2_, p_187097_3_));
@@ -78,7 +71,7 @@
        return this.field_78779_k == GameType.SPECTATOR ? ActionResultType.PASS : p_187097_1_.func_190775_a(p_187097_2_, p_187097_3_);
     }
  
-@@ -356,6 +365,9 @@
+@@ -334,6 +343,9 @@
        this.func_78750_j();
        Vec3d vec3d = p_187102_3_.func_216347_e().func_178786_a(p_187102_2_.field_70165_t, p_187102_2_.field_70163_u, p_187102_2_.field_70161_v);
        this.field_78774_b.func_147297_a(new CUseEntityPacket(p_187102_2_, p_187102_4_, vec3d));
