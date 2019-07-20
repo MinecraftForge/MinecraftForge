@@ -91,7 +91,7 @@ public class ForgeI18n {
         try {
             return parseFormat(pattern, args);
         } catch (IllegalArgumentException e) {
-            LOGGER.error("Illegal format found {}", pattern, e);
+            LOGGER.error(CORE,"Illegal format found `{}`", pattern);
             return pattern;
         }
     }
