@@ -1,48 +1,23 @@
 --- a/net/minecraft/world/end/DragonFightManager.java
 +++ b/net/minecraft/world/end/DragonFightManager.java
-@@ -76,36 +76,37 @@
+@@ -76,7 +76,7 @@
     private int field_186123_q;
     private List<EnderCrystalEntity> field_186124_r;
  
 -   public DragonFightManager(ServerWorld p_i46669_1_, CompoundNBT p_i46669_2_) {
--      this.field_186110_d = p_i46669_1_;
--      if (p_i46669_2_.func_150297_b("DragonKilled", 99)) {
--         if (p_i46669_2_.func_186855_b("DragonUUID")) {
--            this.field_186119_m = p_i46669_2_.func_186857_a("DragonUUID");
-+   public DragonFightManager(ServerWorld worldIn, CompoundNBT compound, net.minecraft.world.dimension.EndDimension dim) {
-+      this.field_186110_d = worldIn;
-+      if (compound.func_150297_b("DragonKilled", 99)) {
-+         if (compound.func_186855_b("DragonUUID")) {
-+            this.field_186119_m = compound.func_186857_a("DragonUUID");
-          }
++   public DragonFightManager(ServerWorld p_i46669_1_, CompoundNBT p_i46669_2_, net.minecraft.world.dimension.EndDimension dim) {
+       this.field_186110_d = p_i46669_1_;
+       if (p_i46669_2_.func_150297_b("DragonKilled", 99)) {
+          if (p_i46669_2_.func_186855_b("DragonUUID")) {
+@@ -85,6 +85,7 @@
  
--         this.field_186117_k = p_i46669_2_.func_74767_n("DragonKilled");
--         this.field_186118_l = p_i46669_2_.func_74767_n("PreviouslyKilled");
--         if (p_i46669_2_.func_74767_n("IsRespawning")) {
-+         this.field_186117_k = compound.func_74767_n("DragonKilled");
-+         this.field_186118_l = compound.func_74767_n("PreviouslyKilled");
-+         this.field_186120_n = !compound.func_74767_n("LegacyScanPerformed"); // Forge: fix MC-105080
-+         if (compound.func_74767_n("IsRespawning")) {
+          this.field_186117_k = p_i46669_2_.func_74767_n("DragonKilled");
+          this.field_186118_l = p_i46669_2_.func_74767_n("PreviouslyKilled");
++         this.field_186120_n = !p_i46669_2_.func_74767_n("LegacyScanPerformed"); // Forge: fix MC-105080
+          if (p_i46669_2_.func_74767_n("IsRespawning")) {
              this.field_186122_p = DragonSpawnState.START;
           }
- 
--         if (p_i46669_2_.func_150297_b("ExitPortalLocation", 10)) {
--            this.field_186121_o = NBTUtil.func_186861_c(p_i46669_2_.func_74775_l("ExitPortalLocation"));
-+         if (compound.func_150297_b("ExitPortalLocation", 10)) {
-+            this.field_186121_o = NBTUtil.func_186861_c(compound.func_74775_l("ExitPortalLocation"));
-          }
-       } else {
-          this.field_186117_k = true;
-          this.field_186118_l = true;
-       }
- 
--      if (p_i46669_2_.func_150297_b("Gateways", 9)) {
--         ListNBT listnbt = p_i46669_2_.func_150295_c("Gateways", 3);
-+      if (compound.func_150297_b("Gateways", 9)) {
-+         ListNBT listnbt = compound.func_150295_c("Gateways", 3);
- 
-          for(int i = 0; i < listnbt.size(); ++i) {
-             this.field_186111_e.add(listnbt.func_186858_c(i));
+@@ -105,7 +106,7 @@
           }
        } else {
           this.field_186111_e.addAll(ContiguousSet.create(Range.closedOpen(0, 20), DiscreteDomain.integers()));

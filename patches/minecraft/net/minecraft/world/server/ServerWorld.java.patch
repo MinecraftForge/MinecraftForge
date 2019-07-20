@@ -152,22 +152,19 @@
              p_217479_1_.func_70071_h_();
              this.func_217381_Z().func_76319_b();
           }
-@@ -633,15 +645,21 @@
+@@ -633,6 +645,11 @@
     }
  
     public boolean func_175660_a(PlayerEntity p_175660_1_, BlockPos p_175660_2_) {
--      return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
 +       return super.func_175660_a(p_175660_1_, p_175660_2_);
-    }
- 
-+   @Override
-+   public boolean canMineBlockBody(PlayerEntity player, BlockPos pos) {
-+      return !this.field_73061_a.func_175579_a(this, pos, player) && this.func_175723_af().func_177746_a(pos);
 +   }
 +
-    public void func_73052_b(WorldSettings p_73052_1_) {
-       if (!this.field_73011_w.func_76567_e()) {
-          this.field_72986_A.func_176143_a(BlockPos.field_177992_a.func_177981_b(this.field_73020_y.func_201711_g().func_205470_d()));
++   @Override
++   public boolean canMineBlockBody(PlayerEntity p_175660_1_, BlockPos p_175660_2_) {
+       return !this.field_73061_a.func_175579_a(this, p_175660_2_, p_175660_1_) && this.func_175723_af().func_177746_a(p_175660_2_);
+    }
+ 
+@@ -642,6 +659,7 @@
        } else if (this.field_72986_A.func_76067_t() == WorldType.field_180272_g) {
           this.field_72986_A.func_176143_a(BlockPos.field_177992_a.func_177984_a());
        } else {
@@ -216,47 +213,32 @@
           this.func_217465_m(p_217440_1_);
           return true;
        }
-@@ -916,24 +938,29 @@
+@@ -916,11 +938,15 @@
     }
  
     public void func_217484_g(Entity p_217484_1_) {
--      if (p_217484_1_ instanceof EnderDragonEntity) {
--         for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217484_1_).func_213404_dT()) {
--            enderdragonpartentity.func_70106_y();
 +      removeEntityComplete(p_217484_1_, false);
 +   }
-+   public void removeEntityComplete(Entity entityIn, boolean keepData) {
-+      if (entityIn instanceof EnderDragonEntity) {
-+         for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)entityIn).func_213404_dT()) {
++   public void removeEntityComplete(Entity p_217484_1_, boolean keepData) {
+       if (p_217484_1_ instanceof EnderDragonEntity) {
+          for(EnderDragonPartEntity enderdragonpartentity : ((EnderDragonEntity)p_217484_1_).func_213404_dT()) {
+-            enderdragonpartentity.func_70106_y();
 +            enderdragonpartentity.remove(keepData);
           }
        }
-+      entityIn.remove(keepData);
++      p_217484_1_.remove(keepData);
  
--      this.field_175741_N.remove(p_217484_1_.func_110124_au());
--      this.func_72863_F().func_217226_b(p_217484_1_);
--      if (p_217484_1_ instanceof ServerPlayerEntity) {
--         ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)p_217484_1_;
-+      this.field_175741_N.remove(entityIn.func_110124_au());
-+      this.func_72863_F().func_217226_b(entityIn);
-+      if (entityIn instanceof ServerPlayerEntity) {
-+         ServerPlayerEntity serverplayerentity = (ServerPlayerEntity)entityIn;
-          this.field_217491_A.remove(serverplayerentity);
+       this.field_175741_N.remove(p_217484_1_.func_110124_au());
+       this.func_72863_F().func_217226_b(p_217484_1_);
+@@ -934,6 +960,7 @@
+          this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
        }
  
--      this.func_96441_U().func_181140_a(p_217484_1_);
--      if (p_217484_1_ instanceof MobEntity) {
--         this.field_217495_I.remove(((MobEntity)p_217484_1_).func_70661_as());
-+      this.func_96441_U().func_181140_a(entityIn);
-+      if (entityIn instanceof MobEntity) {
-+         this.field_217495_I.remove(((MobEntity)entityIn).func_70661_as());
-       }
- 
-+      entityIn.onRemovedFromWorld();
++      p_217484_1_.onRemovedFromWorld();
     }
  
     private void func_217465_m(Entity p_217465_1_) {
-@@ -954,15 +981,19 @@
+@@ -954,9 +981,13 @@
           }
        }
  
@@ -266,33 +248,22 @@
     public void func_217467_h(Entity p_217467_1_) {
 +      removeEntity(p_217467_1_, false);
 +   }
-+   public void removeEntity(Entity entityIn, boolean keepData) {
++   public void removeEntity(Entity p_217467_1_, boolean keepData) {
        if (this.field_217492_a) {
           throw new IllegalStateException("Removing entity while ticking!");
        } else {
--         this.func_217454_n(p_217467_1_);
--         this.field_217498_x.remove(p_217467_1_.func_145782_y());
--         this.func_217484_g(p_217467_1_);
-+         this.func_217454_n(entityIn);
-+         this.field_217498_x.remove(entityIn.func_145782_y());
-+         this.func_217484_g(entityIn);
-       }
-    }
- 
-@@ -975,8 +1006,11 @@
+@@ -975,7 +1006,10 @@
     }
  
     public void func_217434_e(ServerPlayerEntity p_217434_1_) {
 -      p_217434_1_.func_70106_y();
--      this.func_217467_h(p_217434_1_);
 +      removePlayer(p_217434_1_, false);
 +   }
-+   public void removePlayer(ServerPlayerEntity player, boolean keepData) {
-+      player.remove(keepData);
-+      this.func_217467_h(player);
++   public void removePlayer(ServerPlayerEntity p_217434_1_, boolean keepData) {
++      p_217434_1_.remove(keepData);
+       this.func_217467_h(p_217434_1_);
        this.func_72854_c();
     }
- 
 @@ -1000,10 +1034,20 @@
     }
  

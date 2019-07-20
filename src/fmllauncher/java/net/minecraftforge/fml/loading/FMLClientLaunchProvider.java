@@ -62,10 +62,10 @@ public class FMLClientLaunchProvider extends FMLCommonLaunchHandler implements I
     public void configureTransformationClassLoader(final ITransformingClassLoaderBuilder builder)
     {
         super.configureTransformationClassLoader(builder);
-        Path realms = LibraryFinder.findJarPathFor("com/mojang/realmsclient/plugin/RealmsPluginImpl.class", "realms");
-        Path mapped = Paths.get(realms.toString().substring(0, realms.toString().length() - 4) + '-' + FMLLoader.getMcpVersion() + ".jar");
-        LOGGER.debug(CORE, "Found realms library at {}", Files.exists(mapped) ? mapped : realms);
-        builder.addTransformationPath(Files.exists(mapped) ? mapped : realms);
+        Path patchy = LibraryFinder.findJarPathFor("com/mojang/patch/LegacyXMLLayout.class", "patchy");
+        Path mapped = Paths.get(patchy.toString().substring(0, patchy.toString().length() - 4) + '-' + FMLLoader.getMcpVersion() + ".jar");
+        LOGGER.debug(CORE, "Found patchy library at {}", Files.exists(mapped) ? mapped : patchy);
+        builder.addTransformationPath(Files.exists(mapped) ? mapped : patchy);
     }
 
     @SuppressWarnings("unchecked")

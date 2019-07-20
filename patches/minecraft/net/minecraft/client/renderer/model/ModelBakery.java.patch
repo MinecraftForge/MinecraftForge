@@ -1,14 +1,6 @@
 --- a/net/minecraft/client/renderer/model/ModelBakery.java
 +++ b/net/minecraft/client/renderer/model/ModelBakery.java
-@@ -29,6 +29,7 @@
- import java.util.function.Predicate;
- import java.util.function.Supplier;
- import java.util.stream.Collectors;
-+import java.util.stream.Stream;
- import javax.annotation.Nullable;
- import net.minecraft.block.Block;
- import net.minecraft.block.BlockRenderType;
-@@ -97,7 +98,7 @@
+@@ -97,7 +97,7 @@
     private final Set<ResourceLocation> field_217848_D = Sets.newHashSet();
     private final BlockModelDefinition.ContainerHolder field_209610_F = new BlockModelDefinition.ContainerHolder();
     private final Map<ResourceLocation, IUnbakedModel> field_217849_F = Maps.newHashMap();
@@ -17,7 +9,7 @@
     private final Map<ResourceLocation, IUnbakedModel> field_217851_H = Maps.newHashMap();
     private final Map<ResourceLocation, IBakedModel> field_217852_I = Maps.newHashMap();
     private final AtlasTexture.SheetData field_217853_J;
-@@ -288,7 +289,7 @@
+@@ -288,7 +288,7 @@
                       {
                          lvt_13_5_ = this.field_177598_f.func_199004_b(resourcelocation1).stream().map((p_217839_1_) -> {
                             try (InputStream inputstream = p_217839_1_.func_199027_b()) {
@@ -26,7 +18,7 @@
                                return pair2;
                             } catch (Exception exception1) {
                                throw new ModelBakery.BlockStateDefinitionException(String.format("Exception loading blockstate definition: '%s' in resourcepack: '%s': %s", p_217839_1_.func_199029_a(), p_217839_1_.func_199026_d(), exception1.getMessage()));
-@@ -404,7 +405,12 @@
+@@ -404,7 +404,12 @@
  
     @Nullable
     public IBakedModel func_217845_a(ResourceLocation p_217845_1_, ISprite p_217845_2_) {
@@ -40,7 +32,7 @@
        if (this.field_217850_G.containsKey(triple)) {
           return this.field_217850_G.get(triple);
        } else {
-@@ -412,11 +418,11 @@
+@@ -412,11 +417,11 @@
           if (iunbakedmodel instanceof BlockModel) {
              BlockModel blockmodel = (BlockModel)iunbakedmodel;
              if (blockmodel.func_178310_f() == field_177606_o) {
