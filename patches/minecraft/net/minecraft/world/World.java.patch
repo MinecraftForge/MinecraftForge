@@ -40,7 +40,7 @@
        AbstractChunkProvider abstractchunkprovider = this.func_72863_F();
        Chunk chunk = abstractchunkprovider.func_217205_a(p_180494_1_.func_177958_n() >> 4, p_180494_1_.func_177952_p() >> 4, false);
        if (chunk != null) {
-@@ -169,17 +177,45 @@
+@@ -169,23 +177,51 @@
        } else {
           Chunk chunk = this.func_175726_f(p_180501_1_);
           Block block = p_180501_2_.func_177230_c();
@@ -87,6 +87,13 @@
              if (blockstate1 == p_180501_2_) {
                 if (blockstate != blockstate1) {
                    this.func_225319_b(p_180501_1_, blockstate, blockstate1);
+                }
+ 
+-               if ((p_180501_3_ & 2) != 0 && (!this.field_72995_K || (p_180501_3_ & 4) == 0) && (this.field_72995_K || chunk.func_217321_u() != null && chunk.func_217321_u().func_219065_a(ChunkHolder.LocationType.TICKING))) {
++               if ((p_180501_3_ & 2) != 0 && (!this.field_72995_K || (p_180501_3_ & 4) == 0) && (this.field_72995_K || chunk == null || chunk.func_217321_u() != null && chunk.func_217321_u().func_219065_a(ChunkHolder.LocationType.TICKING))) {
+                   this.func_184138_a(p_180501_1_, blockstate, p_180501_2_, p_180501_3_);
+                }
+ 
 @@ -205,8 +241,6 @@
  
                 this.func_217393_a(p_180501_1_, blockstate, blockstate1);

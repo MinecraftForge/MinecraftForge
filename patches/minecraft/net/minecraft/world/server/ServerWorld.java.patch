@@ -185,7 +185,7 @@
           }
  
 -         EntityClassification entityclassification = entity.func_200600_R().func_220339_d();
-+            EntityClassification entityclassification = entity.getClassification(true);
++         EntityClassification entityclassification = entity.getClassification(true);
           if (entityclassification != EntityClassification.MISC && this.func_72863_F().func_223435_b(entity)) {
              object2intmap.mergeInt(entityclassification, 1, Integer::sum);
           }
