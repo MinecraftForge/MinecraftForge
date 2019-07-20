@@ -111,7 +111,7 @@
        private boolean field_225436_f;
        private EntitySize field_220326_f = EntitySize.func_220314_b(0.6F, 1.8F);
  
-@@ -553,6 +591,26 @@
+@@ -553,11 +591,31 @@
           return this;
        }
  
@@ -138,6 +138,12 @@
        public EntityType<T> func_206830_a(String p_206830_1_) {
           if (this.field_200710_b) {
              try {
+                DataFixesManager.func_210901_a().getSchema(DataFixUtils.makeKey(SharedConstants.func_215069_a().getWorldVersion())).getChoiceType(TypeReferences.field_211298_n, p_206830_1_);
+-            } catch (IllegalStateException illegalstateexception) {
++            } catch (IllegalArgumentException illegalstateexception) { // Forge: fix catching wrong exception
+                if (SharedConstants.field_206244_b) {
+                   throw illegalstateexception;
+                }
 @@ -566,7 +624,7 @@
              }
           }
