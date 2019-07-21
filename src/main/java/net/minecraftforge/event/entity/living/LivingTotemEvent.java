@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  * Result.Allow does only handle Life-Setting and Entity State handling by default.
  * This is done to allow mod-authors to create their own "set of effects" for their own totems.
  * <br>
- *  Result.Allow = Respawns the Player regardless of them having a Totem.
+ *  Result.Allow = Protects the player, setting their health to the value set in getHealth or 1F.
  *  Result.Default = Runs the default Totem of Undying checks and balances.
  *  Result.Deny = Do not save the player regardless of them holding the Totem.
  * <br>
@@ -29,11 +29,10 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 public class LivingTotemEvent extends LivingEvent
 {
     /**
-     * If the event returns Result.Allow, the value of health will be used to chose the health the player is "revived" with.
-     * By default it's not set and thus returns 0.
-     * This is checked against in ForgeEventFactory#checkTotemProtection and returns a value of 1 if a value is not set.
+     * If the event returns Result.Allow, the value of health will be used to decide the health of the player is set to when "protected".
+     * By default, the player's health will be set to 1.
      */
-    private int health;
+    private float health;
     private final DamageSource source;
 
     public LivingTotemEvent(EntityLivingBase livingBase, DamageSource source)
@@ -47,13 +46,20 @@ public class LivingTotemEvent extends LivingEvent
         return source;
     }
 
-    public int getHealth()
+    public float getHealth()
     {
         return health;
     }
 
     public void setHealth(int health)
     {
-        this.health = health;
+        if (health > getEntityLiving().getMaxHealth())
+        {
+            this.health = getEntityLiving().getMaxHealth();
+        }
+        else
+        {
+            this.health = health;
+        }
     }
 }
