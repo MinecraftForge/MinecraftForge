@@ -56,13 +56,13 @@ public class LivingTotemEvent extends LivingEvent
      * If the event returns Result.Allow, the value of health will be used to decide the health the player is set to when "protected".
      * By default, the player's health will be set to 1.
      */
-    public float health;
+    private float health;
 
     /**
      * If the event returns Result.Allow, the value of clearEffects will be used to decide if the built-in behavior clears all active potion effects.
      * By default, the player's effects are cleared.
      */
-    public boolean clearEffects = true;
+    private boolean clearEffects = true;
 
     /**
      * If the event returns Result.Allow, the value of effects allows for people to add effects that gets added to the player;
