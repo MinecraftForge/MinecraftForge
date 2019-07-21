@@ -687,10 +687,16 @@ public class ForgeEventFactory
         LivingTotemEvent event = new LivingTotemEvent(livingBase, source);
         MinecraftForge.EVENT_BUS.post(event);
         Result result = event.getResult();
-        if (result == Result.ALLOW) {
-            livingBase.world.setEntityState(livingBase, (byte)35);
-            if (!(livingBase.getHealth() > 0)) {
+        if (result == Result.ALLOW)
+        {
+            livingBase.world.setEntityState(livingBase, (byte) 35);
+            if (event.getHealth() <= 0)
+            {
                 livingBase.setHealth(1.0F);
+            }
+            else
+            {
+                livingBase.setHealth(event.getHealth());
             }
         }
         return event.getResult();
