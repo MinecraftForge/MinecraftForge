@@ -52,6 +52,12 @@ public class LivingTotemEvent extends LivingEvent
      * By default, the player's health will be set to 1.
      */
     private float health;
+
+    /**
+     * If the event returns Result.Allow, the value of clearEffects will be used to decide if the built-in behavior clears all active potion effects.
+     * By default, the player's effects are cleared.
+     */
+    private boolean clearEffects = true;
     private final DamageSource source;
 
     public LivingTotemEvent(LivingEntity livingBase, DamageSource source)
@@ -73,5 +79,13 @@ public class LivingTotemEvent extends LivingEvent
     public void setHealth(float health)
     {
         this.health = health;
+    }
+
+    public boolean doesClearEffects() {
+        return clearEffects;
+    }
+
+    public void setClearEffects(boolean clearEffects) {
+        this.clearEffects = clearEffects;
     }
 }
