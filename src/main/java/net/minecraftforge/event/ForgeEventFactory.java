@@ -47,6 +47,7 @@ import net.minecraft.entity.projectile.ThrowableEntity;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.world.spawner.AbstractSpawner;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.DamageSource;
@@ -705,6 +706,13 @@ public class ForgeEventFactory
             else
             {
                 livingBase.setHealth(event.getHealth());
+            }
+            if (!event.getEffects().isEmpty())
+            {
+                for (EffectInstance instance : event.getEffects())
+                {
+                    livingBase.addPotionEffect(instance);
+                }
             }
         }
         return event.getResult();

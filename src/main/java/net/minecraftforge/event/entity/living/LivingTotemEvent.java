@@ -20,10 +20,15 @@
 package net.minecraftforge.event.entity.living;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.potion.EffectInstance;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.Cancelable;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * LivingTotemEvent is fired when a player is about to die.
@@ -51,19 +56,27 @@ public class LivingTotemEvent extends LivingEvent
      * If the event returns Result.Allow, the value of health will be used to decide the health the player is set to when "protected".
      * By default, the player's health will be set to 1.
      */
-    private float health;
+    public float health;
 
     /**
      * If the event returns Result.Allow, the value of clearEffects will be used to decide if the built-in behavior clears all active potion effects.
      * By default, the player's effects are cleared.
      */
-    private boolean clearEffects = true;
+    public boolean clearEffects = true;
+
+    /**
+     * If the event returns Result.Allow, the value of effects allows for people to add effects that gets added to the player;
+     * By default, the player gets no extra effects.
+     */
+    private List<EffectInstance> effects;
+
     private final DamageSource source;
 
     public LivingTotemEvent(LivingEntity livingBase, DamageSource source)
     {
         super(livingBase);
         this.source = source;
+        effects = new ArrayList<>();
     }
 
     public DamageSource getSource()
@@ -81,11 +94,17 @@ public class LivingTotemEvent extends LivingEvent
         this.health = health;
     }
 
-    public boolean doesClearEffects() {
+    public boolean doesClearEffects()
+    {
         return clearEffects;
     }
 
-    public void setClearEffects(boolean clearEffects) {
+    public void setClearEffects(boolean clearEffects)
+    {
         this.clearEffects = clearEffects;
+    }
+
+    public List<EffectInstance> getEffects() {
+        return effects;
     }
 }
