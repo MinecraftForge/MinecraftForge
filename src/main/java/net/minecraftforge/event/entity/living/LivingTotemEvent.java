@@ -72,13 +72,6 @@ public class LivingTotemEvent extends LivingEvent
 
     public void setHealth(int health)
     {
-        if (health > getEntityLiving().getMaxHealth())
-        {
-            this.health = getEntityLiving().getMaxHealth();
-        }
-        else
-        {
-            this.health = health;
-        }
+        this.health = health;
     }
 }

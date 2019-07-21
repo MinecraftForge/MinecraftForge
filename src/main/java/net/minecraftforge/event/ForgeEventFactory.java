@@ -843,6 +843,10 @@ public class ForgeEventFactory
             {
                 livingBase.setHealth(1.0F);
             }
+            else if (event.getHealth() > livingBase.getMaxHealth())
+            {
+                livingBase.setHealth(livingBase.getMaxHealth());
+            }
             else
             {
                 livingBase.setHealth(event.getHealth());
