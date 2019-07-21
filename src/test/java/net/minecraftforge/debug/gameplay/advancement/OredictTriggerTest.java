@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.gameplay.advancement;
 
@@ -42,10 +43,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+*/
 /**
  * Most of the real work is in the advancements directory of this mod.
  * This mod tests ore-dict advancement triggers.
- */
+ *//*
+
 //@Mod.EventBusSubscriber
 //@Mod(modid = OredictTriggerTest.MODID, name = "Oredict Item Predicate Test", version = "1.0", acceptableRemoteVersions = "*")
 public class OredictTriggerTest
@@ -59,7 +62,9 @@ public class OredictTriggerTest
     {
         try
         {
-            final Method tmp = CriteriaTriggers.class.getDeclaredMethod("register"/* func_192118_a */, ICriterionTrigger.class);
+            final Method tmp = CriteriaTriggers.class.getDeclaredMethod("register"*/
+/* func_192118_a *//*
+, ICriterionTrigger.class);
             tmp.setAccessible(true);
             ctRegister = MethodHandles.lookup().unreflect(tmp);
         }
@@ -94,9 +99,11 @@ public class OredictTriggerTest
     }
 
 
-    /**
+    */
+/**
      * Far more work than expected…oh well.
-     */
+     *//*
+
     public static class EnabledTrigger implements ICriterionTrigger<EnabledTrigger.Instance>
     {
         public static final ResourceLocation ID = new ResourceLocation(MODID, "is_enabled");
@@ -215,3 +222,4 @@ public class OredictTriggerTest
         }
     }
 }
+*/

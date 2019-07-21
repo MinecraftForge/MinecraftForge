@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.item;
 
@@ -39,13 +40,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+*/
 /**
  * Usage (use survival so you can eat food):
  * 1. Drink curable_potion from Brewing creative tab
  * 2. Relog to test that changes to curative items persist, then eat the "medicine" item to cure the effect
  * 3. Drink incurable_potion from Brewing creative tab
  * 4. Relog to test that changes to curative items persist, then try drinking milk and eating medicine: they should have no effect
- */
+ *//*
+
 //@Mod(modid = PotionCurabilityTest.MODID, name = "Potion Curative Item Debug", version = "1.0", acceptableRemoteVersions = "*")
 public class PotionCurabilityTest
 {
@@ -135,3 +138,4 @@ public class PotionCurabilityTest
         }
     }
 }
+*/

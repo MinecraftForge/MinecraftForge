@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.world;
 
@@ -43,10 +44,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+*/
 /**
  * Simple mod to test chunk capabilities.
  * Use flint and steel to increase pollution in a chunk and saplings to decrease pollution in a chunk.
- */
+ *//*
+
 //@Mod(modid = ChunkCapabilityTest.MODID, name = "Chunk Capability Test", version = "0.0.0", acceptableRemoteVersions = "*")
 public class ChunkCapabilityTest
 {
@@ -93,10 +96,12 @@ public class ChunkCapabilityTest
         }
     }
 
-    /**
+    */
+/**
      * Marks the chunk as dirty when the value changes.
      * Cannot be the default implementation because it requires a chunk in the constructor
-     */
+     *//*
+
     public static class SafePollution extends DefaultPollution
     {
         private final Chunk chunk;
@@ -195,3 +200,4 @@ public class ChunkCapabilityTest
     }
 
 }
+*/

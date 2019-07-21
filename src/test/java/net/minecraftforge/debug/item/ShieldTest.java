@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.item;
 
@@ -102,4 +103,4 @@ public class ShieldTest
         ModelLoader.setCustomModelResourceLocation(DIAMOND_SHIELD, 0, new ModelResourceLocation("shield_test:diamond_shield", "inventory"));
         ModelLoader.setCustomModelResourceLocation(HEAVY_DIAMOND_SWORD, 0, new ModelResourceLocation("minecraft:diamond_sword", "inventory"));
     }
-}
+}*/

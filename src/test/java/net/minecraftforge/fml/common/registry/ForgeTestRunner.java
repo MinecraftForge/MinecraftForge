@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.fml.common.registry;
 
@@ -31,6 +32,7 @@ import java.net.URLClassLoader;
 import java.util.Collections;
 import java.util.Set;
 
+*/
 /**
  * Uses {@code ResettingClassLoader} to load the test class. Minecraft and Forge
  * classes are loaded using the separate class loader.
@@ -47,7 +49,8 @@ import java.util.Set;
  * This is a simplified copy of https://github.com/BinaryTweed/quarantining-test-runner
  * tailored for Minecraft use.
  *
- */
+ *//*
+
 public class ForgeTestRunner extends Runner
 {
     private final Object innerRunner;
@@ -104,17 +107,21 @@ public class ForgeTestRunner extends Runner
         }
     }
 
-    /**
+    */
+/**
      * If a class name starts with any of the supplied patterns, it is loaded by
      * <em>this</em> classloader; otherwise it is loaded by the parent classloader.
-     */
+     *//*
+
     private class ResettingClassLoader extends URLClassLoader
     {
         private final Set<String> quarantinedClassNames;
 
-        /**
+        */
+/**
          * @param quarantinedClassNames prefixes to match against when deciding how to load a class
-         */
+         *//*
+
         public ResettingClassLoader(String... quarantinedClassNames)
         {
             super(((URLClassLoader) getSystemClassLoader()).getURLs());
@@ -125,12 +132,14 @@ public class ForgeTestRunner extends Runner
         }
 
 
-        /**
+        */
+/**
          * If a class name starts with any of the supplied patterns, it is loaded by
          * <em>this</em> classloader; otherwise it is loaded by the parent classloader.
          *
          * @param name class to load
-         */
+         *//*
+
         @Override
         public Class<?> loadClass(String name) throws ClassNotFoundException
         {
@@ -161,3 +170,4 @@ public class ForgeTestRunner extends Runner
         }
     }
 }
+*/

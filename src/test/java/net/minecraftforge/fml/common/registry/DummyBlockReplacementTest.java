@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.fml.common.registry;
 
@@ -42,9 +43,11 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
+*/
 /**
  * Dummy block replacement test
- */
+ *//*
+
 @RunWith(ForgeTestRunner.class)
 public class DummyBlockReplacementTest
 {
@@ -120,3 +123,4 @@ public class DummyBlockReplacementTest
         assertTrue("Found a dummy air block", fnd.getClass().getName().endsWith("BlockDummyAir"));
     }
 }
+*/

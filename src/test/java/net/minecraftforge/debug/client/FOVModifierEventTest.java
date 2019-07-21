@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.client;
 
@@ -27,9 +28,11 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.event.FMLInitializationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+*/
 /**
  * Simple mod to test fov modifier.
- */
+ *//*
+
 //@Mod(modid = "fovmodifiertest", name = "FOV Modifier Test", version = "0.0.0", clientSideOnly = true)
 public class FOVModifierEventTest
 {
@@ -53,3 +56,4 @@ public class FOVModifierEventTest
         }
     }
 }
+*/

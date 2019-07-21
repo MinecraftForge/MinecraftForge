@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+ *//*
+
 
 package net.minecraftforge.debug.village;
 
@@ -31,10 +32,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+*/
 /**
  * Tests {@link VillageSiegeEvent}. When enabled, players holding a diamond sword in the mainhand
  * slot are not counted in determining where the zombie siege occurs.
- */
+ *//*
+
 //@Mod(modid = VillageSiegeEventTest.MODID, name = VillageSiegeEventTest.NAME, version = "0.0.0", acceptableRemoteVersions = "*")
 public class VillageSiegeEventTest
 {
@@ -63,3 +66,4 @@ public class VillageSiegeEventTest
         }
     }
 }
+*/
